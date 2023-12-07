@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-hive
 
+## 0.96.3
+
+### Patch Changes
+
+- [#6328](https://github.com/ardatan/graphql-mesh/pull/6328)
+  [`03f5566`](https://github.com/ardatan/graphql-mesh/commit/03f55664cebd98119699cbe6c03833a5f2348714)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/client@^0.27.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.27.0)
+    (from `^0.26.0`, in `dependencies`)
+- Updated dependencies
+  [[`d758afa`](https://github.com/ardatan/graphql-mesh/commit/d758afa7da55cf3ed6b4ed9e8cccfd0ed67fe658),
+  [`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/types@0.96.2
+
 ## 0.96.2
 
 ### Patch Changes

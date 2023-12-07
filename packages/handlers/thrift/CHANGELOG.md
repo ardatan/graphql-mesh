@@ -1,5 +1,51 @@
 # @graphql-mesh/thrift
 
+## 0.97.0
+
+### Minor Changes
+
+- [#6333](https://github.com/ardatan/graphql-mesh/pull/6333)
+  [`68e3783`](https://github.com/ardatan/graphql-mesh/commit/68e3783b92bdbff2485a224291242d4fd72e19c3)
+  Thanks [@ardatan](https://github.com/ardatan)! - New Thrift Loader
+
+### Patch Changes
+
+- [#6333](https://github.com/ardatan/graphql-mesh/pull/6333)
+  [`68e3783`](https://github.com/ardatan/graphql-mesh/commit/68e3783b92bdbff2485a224291242d4fd72e19c3)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@omnigraph/thrift@^0.0.0` ↗︎](https://www.npmjs.com/package/@omnigraph/thrift/v/0.0.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@creditkarma/thrift-client@1.0.4` ↗︎](https://www.npmjs.com/package/@creditkarma/thrift-client/v/1.0.4)
+    (from `dependencies`)
+  - Removed dependency
+    [`@creditkarma/thrift-parser@2.0.0` ↗︎](https://www.npmjs.com/package/@creditkarma/thrift-parser/v/2.0.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`@creditkarma/thrift-server-core@1.0.4` ↗︎](https://www.npmjs.com/package/@creditkarma/thrift-server-core/v/1.0.4)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/string-interpolation@0.5.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.3)
+    (from `dependencies`)
+  - Removed dependency
+    [`graphql-scalars@^1.22.4` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.22.4) (from
+    `dependencies`)
+  - Removed dependency [`pascal-case@3.1.2` ↗︎](https://www.npmjs.com/package/pascal-case/v/3.1.2)
+    (from `dependencies`)
+  - Removed dependency [`thrift@0.19.0` ↗︎](https://www.npmjs.com/package/thrift/v/0.19.0) (from
+    `dependencies`)
+  - Removed dependency [`url-join@4.0.1` ↗︎](https://www.npmjs.com/package/url-join/v/4.0.1) (from
+    `dependencies`)
+- Updated dependencies
+  [[`d758afa`](https://github.com/ardatan/graphql-mesh/commit/d758afa7da55cf3ed6b4ed9e8cccfd0ed67fe658),
+  [`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c),
+  [`68e3783`](https://github.com/ardatan/graphql-mesh/commit/68e3783b92bdbff2485a224291242d4fd72e19c3)]:
+  - @graphql-mesh/types@0.96.2
+  - @graphql-mesh/store@0.96.2
+  - @omnigraph/thrift@0.0.1
+  - @graphql-mesh/utils@0.96.2
+
 ## 0.96.1
 
 ### Patch Changes
