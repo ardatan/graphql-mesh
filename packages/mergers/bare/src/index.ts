@@ -45,6 +45,7 @@ export default class BareMerger implements MeshMerger {
     Object.defineProperty(schema.extensions, 'sourceMap', {
       configurable: true,
       enumerable: true,
+      writable: true,
       value: {
         get() {
           // We should return a version of the schema only with the source-level transforms
