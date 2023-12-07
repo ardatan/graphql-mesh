@@ -29,13 +29,15 @@ describe('OpenAPI Subscriptions', () => {
         return this;
       },
     };
+    const mesh$ = Promise.resolve().then(() =>
+      getMesh({
+        ...config,
+        fetchFn: appWrapper.app.fetch as any,
+      }),
+    );
     meshHandler = createMeshHTTPHandler({
       baseDir: join(__dirname, '..'),
-      getBuiltMesh: () =>
-        getMesh({
-          ...config,
-          fetchFn: appWrapper.app.fetch as any,
-        }),
+      getBuiltMesh: () => mesh$,
       rawServeConfig: config.config.serve,
     });
     appWrapper = createApp(meshHandler.fetch as any);
