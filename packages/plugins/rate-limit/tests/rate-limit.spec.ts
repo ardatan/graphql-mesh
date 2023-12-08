@@ -2,15 +2,11 @@
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { Logger } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import useMeshRateLimit from '../src/index.js';
 
 describe('Rate Limit Plugin', () => {
-  let pubsub: PubSub;
   let cache: InMemoryLRUCache;
-  let logger: Logger;
 
   const graphQLEnginePlugin = useEngine({
     parse,
@@ -21,13 +17,7 @@ describe('Rate Limit Plugin', () => {
   });
 
   beforeEach(() => {
-    pubsub = new PubSub();
     cache = new InMemoryLRUCache();
-    logger = new DefaultLogger('test-rate-limit');
-  });
-
-  afterEach(() => {
-    pubsub.publish('destroy', {} as any);
   });
 
   it('should throw an error if the rate limit is exceeded', async () => {
@@ -61,11 +51,7 @@ describe('Rate Limit Plugin', () => {
               identifier: '{context.userId}',
             },
           ],
-          logger,
           cache,
-          pubsub,
-          baseDir: __dirname,
-          importFn: defaultImportFn,
         }),
       ],
     });
@@ -130,10 +116,6 @@ describe('Rate Limit Plugin', () => {
             },
           ],
           cache,
-          pubsub,
-          logger,
-          baseDir: __dirname,
-          importFn: defaultImportFn,
         }),
       ],
     });
@@ -195,10 +177,6 @@ describe('Rate Limit Plugin', () => {
             },
           ],
           cache,
-          pubsub,
-          logger,
-          baseDir: __dirname,
-          importFn: defaultImportFn,
         }),
       ],
     });
@@ -276,10 +254,6 @@ describe('Rate Limit Plugin', () => {
             },
           ],
           cache,
-          pubsub,
-          logger,
-          baseDir: __dirname,
-          importFn: defaultImportFn,
         }),
       ],
     });
