@@ -25,7 +25,7 @@
     "concurrently": "8.2.2",
     "delay-cli": "2.0.0",
     "jest": "29.7.0",
-    "ts-node": "10.9.1",
+    "ts-node": "10.9.2",
     "typescript": "5.3.3"
   }
 }
