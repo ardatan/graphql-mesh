@@ -116,9 +116,9 @@ export function getComposerFromJSONSchema({
 }: GetComposerFromJSONSchemaOpts): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const formatScalarMap = getJSONSchemaStringFormatScalarMap();
-  getScalarForFormat =
-    getScalarForFormat ||
-    ((format: string) => formatScalarMapWithoutAjv[format] || formatScalarMap.get(format));
+  const getDefaultScalarForFormat = (format: string) =>
+    formatScalarMapWithoutAjv[format] || formatScalarMap.get(format);
+
   const rootInputTypeNameComposerMap: Record<string, () => ObjectTypeComposer<any>> = {
     QueryInput: () => schemaComposer.Query,
     MutationInput: () => schemaComposer.Mutation,
@@ -375,7 +375,8 @@ export function getComposerFromJSONSchema({
       }
 
       if (subSchema.format) {
-        const formatScalar = getScalarForFormat(subSchema.format);
+        const formatScalar =
+          getScalarForFormat?.(subSchema.format) || getDefaultScalarForFormat(subSchema.format);
         if (formatScalar) {
           const typeComposer = schemaComposer.getAnyTC(formatScalar);
           return {
