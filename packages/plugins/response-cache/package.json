@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-response-cache",
-  "version": "0.96.3",
+  "version": "0.96.4",
   "type": "module",
   "repository": {
     "type": "git",

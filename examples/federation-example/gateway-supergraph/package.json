@@ -1,10 +1,10 @@
 {
   "name": "federation-supergraph-gateway",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/cli": "0.88.3",
+    "@graphql-mesh/cli": "0.88.4",
     "@graphql-mesh/supergraph": "0.1.2",
     "graphql": "16.8.1"
   }
