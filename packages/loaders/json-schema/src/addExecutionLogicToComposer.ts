@@ -38,7 +38,7 @@ export interface AddExecutionLogicToComposerOptions {
   logger: Logger;
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
-  getScalarForFormat?: (format: string) => GraphQLScalarType;
+  getScalarForFormat?: (format: string) => GraphQLScalarType | void;
 }
 
 const responseMetadataType = new GraphQLObjectType({

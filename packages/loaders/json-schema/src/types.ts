@@ -20,7 +20,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
   bundle?: boolean;
-  getScalarForFormat?: (format: string) => GraphQLScalarType;
+  getScalarForFormat?: (format: string) => GraphQLScalarType | void;
 }
 
 export interface JSONSchemaOperationResponseConfig {
