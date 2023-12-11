@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.96.3
+
+### Patch Changes
+
+- [`d83b5fe`](https://github.com/ardatan/graphql-mesh/commit/d83b5fe20f66a6853d5b5c83c38607e5cf305c68)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ranged dependencies
+
 ## 0.96.2
 
 ### Patch Changes

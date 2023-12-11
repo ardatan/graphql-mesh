@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.96.3
+
+### Patch Changes
+
+- [`3dae173`](https://github.com/ardatan/graphql-mesh/commit/3dae1736aa74303c426985192483ad538fb40c5a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better Plugin options signature
+
 ## 0.96.2
 
 ### Patch Changes

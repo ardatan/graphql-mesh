@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.88.4
+
+### Patch Changes
+
+- [#6352](https://github.com/ardatan/graphql-mesh/pull/6352)
+  [`10b01a1`](https://github.com/ardatan/graphql-mesh/commit/10b01a1794eaf4313ba8084b409260b99b78ee87)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Removed dependency
+    [`node-libcurl@^3.0.0` ↗︎](https://www.npmjs.com/package/node-libcurl/v/3.0.0) (from
+    `dependencies`)
+
 ## 0.88.3
 
 ### Patch Changes
