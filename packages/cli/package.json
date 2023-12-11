@@ -64,7 +64,6 @@
     "json-bigint-patch": "^0.0.8",
     "json5": "^2.2.3",
     "mkdirp": "^3.0.0",
-    "node-libcurl": "^3.0.0",
     "open": "^7.4.2",
     "pascal-case": "^3.1.2",
     "rimraf": "^5.0.0",
@@ -74,6 +73,9 @@
     "typescript": "^5.0.4",
     "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20",
     "yargs": "^17.7.1"
+  },
+  "optionalDependencies": {
+    "node-libcurl": "3.0.1-0"
   },
   "devDependencies": {
     "@types/lodash.get": "4.4.9",

@@ -39,7 +39,6 @@ jobs:
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@main
-        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
@@ -88,7 +87,6 @@ jobs:
         run: node scripts/remove-node-libcurl.cjs
 
       - uses: the-guild-org/shared-config/setup@main
-        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
@@ -162,7 +160,6 @@ jobs:
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@main
-        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
@@ -253,7 +250,6 @@ jobs:
         run: node scripts/remove-node-libcurl.cjs
 
       - uses: the-guild-org/shared-config/setup@main
-        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
@@ -307,7 +303,6 @@ jobs:
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@main
-        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
