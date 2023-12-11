@@ -24,7 +24,7 @@
     "@types/node": "20.10.4",
     "@types/react": "18.2.43",
     "cross-env": "7.0.3",
-    "eslint-config-next": "14.0.3",
+    "eslint-config-next": "14.0.4",
     "postcss-import": "15.1.0",
     "tailwindcss": "3.3.6",
     "typescript": "5.3.3"
