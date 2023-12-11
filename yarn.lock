@@ -3168,10 +3168,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.5.0"
 
-"@graphql-hive/cli@0.32.1":
-  version "0.32.1"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.32.1.tgz#1da93c87057bf6995335ad661eb0b2a901410b28"
-  integrity sha512-Ezos+ZeUqpoH+imb3q5IeaKVefUmCFjcGiAtj4NKXmkcw1XWFPYqlHLJksjh71KenUgRjdsXq0m47flcnmGLSQ==
+"@graphql-hive/cli@0.33.0":
+  version "0.33.0"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.33.0.tgz#614479d20042ed541faf5bb5ffa1b1dc560c3828"
+  integrity sha512-r4tUqlDTc59CfZGmZ3PD8pJJTLgWlhRk2pIjQVEO0ujZsXn8Ly1u1tS0KEn+qwbKDqPL8r66A1JNdYIlESIpIw==
   dependencies:
     "@graphql-hive/core" "0.2.3"
     "@graphql-inspector/core" "5.0.2"
@@ -3185,7 +3185,7 @@
     "@oclif/core" "^2.8.5"
     "@oclif/plugin-help" "5.2.20"
     "@oclif/plugin-update" "3.2.4"
-    "@whatwg-node/fetch" "0.9.13"
+    "@whatwg-node/node-fetch" "0.5.1"
     colors "1.4.0"
     env-ci "7.3.0"
     graphql "^16.8.1"
@@ -7144,14 +7144,6 @@
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.1.1.tgz#0ca718508249419587e130da26d40e29d99b5356"
   integrity sha512-AyQEn5hIPV7Ze+xFoXVU3QTHXVbWPrzaOkxtENMPMuNL6VVHrp4hHfDt9nrQpjO7BgvuM95dMtkycX5M/DZR3w==
 
-"@whatwg-node/fetch@0.9.13":
-  version "0.9.13"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.13.tgz#1d084cd546b9cd425ae89cbb1252a3e47a9a2e1c"
-  integrity sha512-PPtMwhjtS96XROnSpowCQM85gCUG2m7AXZFw0PZlGbhzx2GK7f2iOXilfgIJ0uSlCuuGbOIzfouISkA7C4FJOw==
-  dependencies:
-    "@whatwg-node/node-fetch" "^0.4.17"
-    urlpattern-polyfill "^9.0.0"
-
 "@whatwg-node/fetch@0.9.14", "@whatwg-node/fetch@^0.9.0", "@whatwg-node/fetch@^0.9.10", "@whatwg-node/fetch@^0.9.13", "@whatwg-node/fetch@^0.9.14", "@whatwg-node/fetch@^0.9.4", "@whatwg-node/fetch@^0.9.7":
   version "0.9.14"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.14.tgz#262039fd8aea52a9c8aac2ec20f316382eae1a3c"
@@ -7160,18 +7152,7 @@
     "@whatwg-node/node-fetch" "^0.5.0"
     urlpattern-polyfill "^9.0.0"
 
-"@whatwg-node/node-fetch@^0.4.17":
-  version "0.4.19"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.4.19.tgz#29c72ff65a8e450949238612ff17a3d3717736d3"
-  integrity sha512-AW7/m2AuweAoSXmESrYQr/KBafueScNbn2iNO0u6xFr2JZdPmYsSm5yvAXYk6yDLv+eDmSSKrf7JnFZ0CsJIdA==
-  dependencies:
-    "@whatwg-node/events" "^0.1.0"
-    busboy "^1.6.0"
-    fast-querystring "^1.1.1"
-    fast-url-parser "^1.1.3"
-    tslib "^2.3.1"
-
-"@whatwg-node/node-fetch@^0.5.0":
+"@whatwg-node/node-fetch@0.5.1", "@whatwg-node/node-fetch@^0.5.0":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.5.1.tgz#36a2bc31e5fc8cffa17826c192a8829d4c0ccc1e"
   integrity sha512-sQz/s3NyyzIZxQ7PHxDFUMM1k4kQQbi2jU8ILdTbt5+S59ME8aI7XF30O9qohRIIYdSrUvm/OwKQmVP1y6e2WQ==
@@ -11040,7 +11021,7 @@ eslint-module-utils@^2.7.4, eslint-module-utils@^2.8.0:
   dependencies:
     debug "^3.2.7"
 
-eslint-plugin-es-x@^7.1.0:
+eslint-plugin-es-x@^7.5.0:
   version "7.5.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-es-x/-/eslint-plugin-es-x-7.5.0.tgz#d08d9cd155383e35156c48f736eb06561d07ba92"
   integrity sha512-ODswlDSO0HJDzXU0XvgZ3lF3lS3XAZEossh15Q2UHjwrJggWeBoKqqEsLTZLXl+dh5eOAozG0zRcYtuE35oTuQ==
@@ -11109,14 +11090,14 @@ eslint-plugin-jsx-a11y@^6.5.1, eslint-plugin-jsx-a11y@^6.7.1:
     object.entries "^1.1.7"
     object.fromentries "^2.0.7"
 
-eslint-plugin-n@16.3.1:
-  version "16.3.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-n/-/eslint-plugin-n-16.3.1.tgz#6cd377d1349fed10854b6535392e91fb4123193b"
-  integrity sha512-w46eDIkxQ2FaTHcey7G40eD+FhTXOdKudDXPUO2n9WNcslze/i/HT2qJ3GXjHngYSGDISIgPNhwGtgoix4zeOw==
+eslint-plugin-n@16.4.0:
+  version "16.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-n/-/eslint-plugin-n-16.4.0.tgz#02ff70d2b164319b6d566672969a9c24688a43df"
+  integrity sha512-IkqJjGoWYGskVaJA7WQuN8PINIxc0N/Pk/jLeYT4ees6Fo5lAhpwGsYek6gS9tCUxgDC4zJ+OwY2bY/6/9OMKQ==
   dependencies:
     "@eslint-community/eslint-utils" "^4.4.0"
     builtins "^5.0.1"
-    eslint-plugin-es-x "^7.1.0"
+    eslint-plugin-es-x "^7.5.0"
     get-tsconfig "^4.7.0"
     ignore "^5.2.4"
     is-builtin-module "^3.2.1"
