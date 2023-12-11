@@ -9,7 +9,10 @@ import {
   isNonNullType,
 } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import {
+  getInterpolatedHeadersFactory,
+  ResolverDataBasedFactory,
+} from '@graphql-mesh/string-interpolation';
 import { MeshFetch } from '@graphql-mesh/types';
 import { Executor, getDirective, getRootTypes } from '@graphql-tools/utils';
 import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
@@ -75,20 +78,21 @@ function normalizeResult(result: any) {
 
 type RootValueMethod = (args: any, context: any, info: GraphQLResolveInfo) => Promise<any>;
 
-function createRootValueMethod(
-  soapAnnotations: SoapAnnotations,
-  fetchFn: MeshFetch,
-  operationHeaders: Record<string, string> = {},
-): RootValueMethod {
-  const jsonToXMLConverter = new JSONToXMLConverter({
-    attributeNamePrefix: '',
-    attributesGroupName: 'attributes',
-    textNodeName: 'innerText',
-  });
-  const xmlToJSONConverter = new XMLParser(PARSE_XML_OPTIONS);
+interface CreateRootValueMethodOpts {
+  soapAnnotations: SoapAnnotations;
+  fetchFn: MeshFetch;
+  jsonToXMLConverter: JSONToXMLConverter;
+  xmlToJSONConverter: XMLParser;
+  operationHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
+}
 
-  const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
-
+function createRootValueMethod({
+  soapAnnotations,
+  fetchFn,
+  jsonToXMLConverter,
+  xmlToJSONConverter,
+  operationHeadersFactory,
+}: CreateRootValueMethodOpts): RootValueMethod {
   return async function rootValueMethod(args: any, context: any, info: GraphQLResolveInfo) {
     const requestJson = {
       'soap:Envelope': {
@@ -135,6 +139,15 @@ function createRootValue(
 ) {
   const rootValue: Record<string, RootValueMethod> = {};
   const rootTypes = getRootTypes(schema);
+
+  const jsonToXMLConverter = new JSONToXMLConverter({
+    attributeNamePrefix: '',
+    attributesGroupName: 'attributes',
+    textNodeName: 'innerText',
+  });
+  const xmlToJSONConverter = new XMLParser(PARSE_XML_OPTIONS);
+
+  const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
   for (const rootType of rootTypes) {
     const rootFieldMap = rootType.getFields();
     for (const fieldName in rootFieldMap) {
@@ -145,7 +158,13 @@ function createRootValue(
         continue;
       }
       const soapAnnotations: SoapAnnotations = Object.assign({}, ...annotations);
-      rootValue[fieldName] = createRootValueMethod(soapAnnotations, fetchFn);
+      rootValue[fieldName] = createRootValueMethod({
+        soapAnnotations,
+        fetchFn,
+        jsonToXMLConverter,
+        xmlToJSONConverter,
+        operationHeadersFactory,
+      });
     }
   }
   return rootValue;
