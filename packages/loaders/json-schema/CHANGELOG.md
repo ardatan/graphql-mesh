@@ -1,5 +1,14 @@
 # @omnigraph/json-schema
 
+## 0.97.3
+
+### Patch Changes
+
+- [#6353](https://github.com/ardatan/graphql-mesh/pull/6353)
+  [`87501f4`](https://github.com/ardatan/graphql-mesh/commit/87501f45127bdc98440e78c591390e3f735ada00)
+  Thanks [@Pagebakers](https://github.com/Pagebakers)! - getScalarForFormat will now fallback to
+  default scalars of no scalar is returned
+
 ## 0.97.2
 
 ### Patch Changes
@@ -1883,11 +1892,11 @@
 
   ```ts filename="myOperationHeaders.ts"
   export default function myOperationHeaders({ context }: ResolverData) {
-    const someToken = context.request.headers.get('some-token')
-    const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
+    const someToken = context.request.headers.get("some-token");
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
     return {
-      'x-bar-token': anotherToken
-    }
+      "x-bar-token": anotherToken,
+    };
   }
   ```
 

@@ -1,5 +1,12 @@
 # @omnigraph/soap
 
+## 0.96.3
+
+### Patch Changes
+
+- [`d51e219`](https://github.com/ardatan/graphql-mesh/commit/d51e219e6214dad333f12080c39c32b3191c6cec)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improve root value method
+
 ## 0.96.2
 
 ### Patch Changes
