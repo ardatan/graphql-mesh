@@ -43,7 +43,7 @@
     "@graphql-yoga/plugin-prometheus": "^3.0.1"
   },
   "devDependencies": {
-    "prom-client": "15.0.0"
+    "prom-client": "15.1.0"
   },
   "publishConfig": {
     "access": "public",
