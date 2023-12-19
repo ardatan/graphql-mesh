@@ -39,7 +39,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20231121.0"
+    "@cloudflare/workers-types": "4.20231218.0"
   },
   "publishConfig": {
     "access": "public",
