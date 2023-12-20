@@ -23847,10 +23847,10 @@ workerd@1.20231030.0:
     "@cloudflare/workerd-linux-arm64" "1.20231030.0"
     "@cloudflare/workerd-windows-64" "1.20231030.0"
 
-wrangler@3.22.0:
-  version "3.22.0"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-3.22.0.tgz#1f79f4005bc05917fbe798a7f40a77c8e98cfc17"
-  integrity sha512-P+HJ2iXsPIVb2uXvfG1HubFVz+GowXfTZv+vTuNWZq7xRgJroB9JSZIM6rZIrtq2rC+I8UxxbBEvwldLVw8+FA==
+wrangler@3.22.1:
+  version "3.22.1"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-3.22.1.tgz#402c77db861a3d90d5755129bd45d6fd618199b8"
+  integrity sha512-fN7WOF6Ono/TV5V90PuJQNf0azS7B+5C/N/KRjqhlAIQBz+c0yLOGkF6kC/akxjr1yIAC9AzcPk9+OuTSq0C+g==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@cspotcode/source-map-support" "0.8.1"
