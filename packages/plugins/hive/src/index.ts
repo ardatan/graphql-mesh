@@ -75,10 +75,16 @@ export default function useMeshHive(
   let selfHosting: HivePluginOptions['selfHosting'];
   if (pluginOptions.selfHosting) {
     selfHosting = {
-      graphqlEndpoint: stringInterpolator.parse(pluginOptions.selfHosting.graphqlEndpoint, { env: process.env }),
-      usageEndpoint: stringInterpolator.parse(pluginOptions.selfHosting.usageEndpoint, { env: process.env }),
-      applicationUrl: stringInterpolator.parse(pluginOptions.selfHosting.applicationUrl, { env: process.env }),
-    }
+      graphqlEndpoint: stringInterpolator.parse(pluginOptions.selfHosting.graphqlEndpoint, {
+        env: process.env,
+      }),
+      usageEndpoint: stringInterpolator.parse(pluginOptions.selfHosting.usageEndpoint, {
+        env: process.env,
+      }),
+      applicationUrl: stringInterpolator.parse(pluginOptions.selfHosting.applicationUrl, {
+        env: process.env,
+      }),
+    };
   }
   const hiveClient = createHive({
     enabled: true,

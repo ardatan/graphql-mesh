@@ -19,7 +19,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       graphql:
-        endpoint: "{env.BASE_URL}/graphql"
+        endpoint: '{env.BASE_URL}/graphql'
 ```
 
 ## Runtime variables
@@ -79,7 +79,7 @@ sources:
         endpoint: https://graph.microsoft.com/v1.0/
         batch: json
         operationHeaders:
-          Authorization: "Bearer {context.cookies.accessToken}"
+          Authorization: 'Bearer {context.cookies.accessToken}'
 ```
 
 If Mesh is initialized with a `context` object, it will be available as a variable as well. Other
