@@ -160,7 +160,7 @@ export async function serveMesh(
       uWebSocketsApp = App();
     }
 
-    uWebSocketsApp.any('/*', meshHTTPHandler);
+    uWebSocketsApp.any('*', meshHTTPHandler);
 
     // yoga's envelop may augment the `execute` and `subscribe` operations
     // so we need to make sure we always use the freshest instance

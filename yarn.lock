@@ -22720,9 +22720,8 @@ typical@^5.2.0:
   integrity sha512-dvdQgNDNJo+8B2uBQoqdb11eUCE1JQXhvjC/CZtgvZseVd5TYMXnq0+vuUemXbd/Se29cTaUuPX3YIc2xgbvIg==
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
-  version "20.34.0"
-  uid fca27c05066342b01951782248640c8013b37196
-  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/fca27c05066342b01951782248640c8013b37196"
+  version "20.36.0"
+  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/2fc43d487628d7ce1919abe7a74ecf8dbe0977e4"
 
 ua-parser-js@^1.0.35:
   version "1.0.37"
