@@ -605,4 +605,72 @@ describe('rename', () => {
     expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeDefined();
     expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeUndefined();
   });
+
+  it('should apply all definied rules to fields', () => {
+    const transform = new RenameTransform({
+      config: {
+        mode: 'bare',
+        renames: [
+          {
+            from: {
+              type: 'Query',
+              field: '([A-Za-z]+)_(.*)' // -> remove prefix
+            },
+            to: {
+              type: 'Query',
+              field: '$2'
+            },
+            useRegExpForFields: true
+          },
+          {
+            from: {
+              type: 'Query',
+              field: '(.*)(ForUser)' // -> remove suffix
+            },
+            to: {
+              type: 'Query',
+              field: '$1'
+            },
+            useRegExpForFields: true
+          },
+          {
+            from: {
+              type: 'Query',
+              field: 'Get(.*)' // -> remove verb
+            },
+            to: {
+              type: 'Query',
+              field: '$1'
+            },
+            useRegExpForFields: true
+          },
+        ]
+      }
+    });
+
+    const originalSchema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          User_GetCartsForUser: UserGetCartsResponse!
+        }
+
+        type UserGetCartsResponse {
+          id: ID!
+          amount: Int!
+        }
+      `,
+      resolvers: {
+        Query: {
+          User_GetCarts: () => ({ id: 'abc123433', amount: 0 }),
+        }
+      },
+    });
+
+    const newSchema = transform.transformSchema(schema, {} as any);
+    const queryType = newSchema.getType('Query') as GraphQLObjectType;
+    const fieldMap = queryType.getFields();
+
+    expect(fieldMap.User_GetCartsForUser).toBeUndefined();
+    expect(fieldMap.Carts).toBeDefined();
+  });
 });
