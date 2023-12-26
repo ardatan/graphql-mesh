@@ -614,38 +614,38 @@ describe('rename', () => {
           {
             from: {
               type: 'Query',
-              field: '([A-Za-z]+)_(.*)' // -> remove prefix
+              field: '([A-Za-z]+)_(.*)', // -> remove prefix
             },
             to: {
               type: 'Query',
-              field: '$2'
+              field: '$2',
             },
-            useRegExpForFields: true
+            useRegExpForFields: true,
           },
           {
             from: {
               type: 'Query',
-              field: '(.*)(ForUser)' // -> remove suffix
+              field: '(.*)(ForUser)', // -> remove suffix
             },
             to: {
               type: 'Query',
-              field: '$1'
+              field: '$1',
             },
-            useRegExpForFields: true
+            useRegExpForFields: true,
           },
           {
             from: {
               type: 'Query',
-              field: 'Get(.*)' // -> remove verb
+              field: 'Get(.*)', // -> remove verb
             },
             to: {
               type: 'Query',
-              field: '$1'
+              field: '$1',
             },
-            useRegExpForFields: true
+            useRegExpForFields: true,
           },
-        ]
-      }
+        ],
+      },
     });
 
     const originalSchema = makeExecutableSchema({
@@ -661,12 +661,12 @@ describe('rename', () => {
       `,
       resolvers: {
         Query: {
-          User_GetCarts: () => ({ id: 'abc123433', amount: 0 }),
-        }
+          User_GetCartsForUser: () => ({ id: 'abc123433', amount: 0 }),
+        },
       },
     });
 
-    const newSchema = transform.transformSchema(schema, {} as any);
+    const newSchema = transform.transformSchema(originalSchema, {} as any);
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
     const fieldMap = queryType.getFields();
 
