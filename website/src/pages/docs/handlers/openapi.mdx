@@ -116,13 +116,20 @@ header in `Authorization-Header`. To introduce the logic needed to generate the 
 `fetch` used by GraphQL Mesh to call the Rest API.
 
 ```ts filename="custom-fetch.ts"
-import { MeshContext } from '@graphql-mesh/runtime';
-import { fetch } from '@whatwg-node/fetch';
+import { MeshContext } from '@graphql-mesh/runtime'
+import { fetch } from '@whatwg-node/fetch'
 
-export default function(url: string, options: RequestInit = {}, context?: MeshContext, info?: GraphQLResolveInfo) {
+export default function (
+  url: string,
+  options: RequestInit = {},
+  context?: MeshContext,
+  info?: GraphQLResolveInfo
+) {
   // Set Authorization header dynamically to context value, or input cookie, or input header, or from context.headers
   options.headers['authorization'] =
-    context.authorization || options.headers['authorization-cookie'] || options.headers['authorization-header']
+    context.authorization ||
+    options.headers['authorization-cookie'] ||
+    options.headers['authorization-header']
   // Clean up headers forwarded to the Rest API
   delete options.headers['authorization-cookie']
   delete options.headers['authorization-header']
