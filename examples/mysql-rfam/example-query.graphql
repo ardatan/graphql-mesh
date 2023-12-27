@@ -1,4 +1,4 @@
-{
+query TestQuery {
   alignment_and_tree(limit: 5) {
     rfam_acc
     family(limit: 1) {
