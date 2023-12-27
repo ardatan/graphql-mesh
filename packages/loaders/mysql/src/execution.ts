@@ -61,13 +61,11 @@ export function getMySQLExecutor({ subgraph, pool, pubsub }: GetMySQLExecutorOpt
                         foreignField,
                         'mysqlTableForeign',
                       );
-                      if (!foreignDirective?.length) {
-                        throw new Error(
-                          `Missing mysqlTableForeign directive for field ${fieldName}`,
-                        );
+                      const foreignDirectiveArgs = foreignDirective?.[0];
+                      const columnName = foreignDirectiveArgs?.columnName;
+                      if (columnName) {
+                        fields.push(columnName);
                       }
-                      const foreignDirectiveArgs = foreignDirective[0];
-                      fields.push(foreignDirectiveArgs.columnName);
                     } else {
                       throw new Error(`Invalid type for field ${fieldName}`);
                     }
