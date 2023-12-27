@@ -6,7 +6,7 @@ import { util } from '@graphql-mesh/cross-helpers';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { Executor, getDirective, getDirectives, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { getConnectionOptsFromEndpointUri } from './parseEndpointUri';
+import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import { MySQLContext } from './types';
 
 function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {

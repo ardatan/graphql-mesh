@@ -26,7 +26,7 @@ import {
   MySQLUpdateDirective,
   TransportDirective,
 } from './directives';
-import { getConnectionOptsFromEndpointUri } from './parseEndpointUri';
+import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import { MySQLContext, MySQLSSLOptions, TableFieldConfig } from './types';
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
