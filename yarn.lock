@@ -3653,6 +3653,16 @@
   dependencies:
     tslib "^2.4.0"
 
+"@graphql-tools/utils@^10.0.12":
+  version "10.0.12"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.0.12.tgz#c90b19bf8e038ea4c9b5c3715deb4553f572d8d4"
+  integrity sha512-+yS1qlFwXlwU3Gv8ek/h2aJ95quog4yF22haC11M0zReMSTddbGJZ5yXKkE3sXoY2BcL1utilSFjylJ9uXpSNQ==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    cross-inspect "1.0.0"
+    dset "^3.1.2"
+    tslib "^2.4.0"
+
 "@graphql-tools/utils@^9.0.0", "@graphql-tools/utils@^9.2.1":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-9.2.1.tgz#1b3df0ef166cfa3eae706e3518b17d5922721c57"
@@ -22723,7 +22733,6 @@ typical@^5.2.0:
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.38.0"
-  uid "560035d4ad6caeda563deee1d3d68143462a305b"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/560035d4ad6caeda563deee1d3d68143462a305b"
 
 ua-parser-js@^1.0.35:
