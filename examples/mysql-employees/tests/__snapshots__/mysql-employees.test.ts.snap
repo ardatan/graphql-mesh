@@ -488,7 +488,7 @@ exports[`MySQL Employees should give correct response for example queries: examp
     "employees": [
       {
         "__typename": "employees",
-        "birth_date": "1953-09-01",
+        "birth_date": "1953-09-02",
         "dept_emp": [
           {
             "departments": [
@@ -499,19 +499,19 @@ exports[`MySQL Employees should give correct response for example queries: examp
             ],
             "dept_no": "d005",
             "emp_no": 10001,
-            "from_date": "1986-06-25",
-            "to_date": "9998-12-31",
+            "from_date": "1986-06-26",
+            "to_date": "9999-01-01",
           },
         ],
         "emp_no": 10001,
         "first_name": "Georgi",
         "gender": "M",
-        "hire_date": "1986-06-25",
+        "hire_date": "1986-06-26",
         "last_name": "Facello",
       },
       {
         "__typename": "employees",
-        "birth_date": "1964-06-01",
+        "birth_date": "1964-06-02",
         "dept_emp": [
           {
             "departments": [
@@ -522,19 +522,19 @@ exports[`MySQL Employees should give correct response for example queries: examp
             ],
             "dept_no": "d007",
             "emp_no": 10002,
-            "from_date": "1996-08-02",
-            "to_date": "9998-12-31",
+            "from_date": "1996-08-03",
+            "to_date": "9999-01-01",
           },
         ],
         "emp_no": 10002,
         "first_name": "Bezalel",
         "gender": "F",
-        "hire_date": "1985-11-20",
+        "hire_date": "1985-11-21",
         "last_name": "Simmel",
       },
       {
         "__typename": "employees",
-        "birth_date": "1959-12-02",
+        "birth_date": "1959-12-03",
         "dept_emp": [
           {
             "departments": [
@@ -545,19 +545,19 @@ exports[`MySQL Employees should give correct response for example queries: examp
             ],
             "dept_no": "d004",
             "emp_no": 10003,
-            "from_date": "1995-12-02",
-            "to_date": "9998-12-31",
+            "from_date": "1995-12-03",
+            "to_date": "9999-01-01",
           },
         ],
         "emp_no": 10003,
         "first_name": "Parto",
         "gender": "M",
-        "hire_date": "1986-08-27",
+        "hire_date": "1986-08-28",
         "last_name": "Bamford",
       },
       {
         "__typename": "employees",
-        "birth_date": "1954-04-30",
+        "birth_date": "1954-05-01",
         "dept_emp": [
           {
             "departments": [
@@ -568,19 +568,19 @@ exports[`MySQL Employees should give correct response for example queries: examp
             ],
             "dept_no": "d004",
             "emp_no": 10004,
-            "from_date": "1986-11-30",
-            "to_date": "9998-12-31",
+            "from_date": "1986-12-01",
+            "to_date": "9999-01-01",
           },
         ],
         "emp_no": 10004,
         "first_name": "Chirstian",
         "gender": "M",
-        "hire_date": "1986-11-30",
+        "hire_date": "1986-12-01",
         "last_name": "Koblick",
       },
       {
         "__typename": "employees",
-        "birth_date": "1955-01-20",
+        "birth_date": "1955-01-21",
         "dept_emp": [
           {
             "departments": [
@@ -591,14 +591,14 @@ exports[`MySQL Employees should give correct response for example queries: examp
             ],
             "dept_no": "d003",
             "emp_no": 10005,
-            "from_date": "1989-09-11",
-            "to_date": "9998-12-31",
+            "from_date": "1989-09-12",
+            "to_date": "9999-01-01",
           },
         ],
         "emp_no": 10005,
         "first_name": "Kyoichi",
         "gender": "M",
-        "hire_date": "1989-09-11",
+        "hire_date": "1989-09-12",
         "last_name": "Maliniak",
       },
     ],
