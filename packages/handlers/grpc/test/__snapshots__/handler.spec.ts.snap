@@ -12,7 +12,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -23,19 +25,27 @@ directive @stream(
 ) on FIELD
 
 type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"foo\\":{\\"nested\\":{\\"SampleService\\":{\\"methods\\":{\\"CreateSample\\":{\\"requestType\\":\\"CreateSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 1: This is a comment with two slashes\\"},\\"GetSample\\":{\\"requestType\\":\\"GetSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 2: This is a comment with initial slash star and final star slash (all on one line)\\"},\\"UpdateSample\\":{\\"requestType\\":\\"UpdateSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 3: This is a comment with initial slash star star and final star slash (all on one line\\"},\\"DeleteSample\\":{\\"requestType\\":\\"DeleteSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 4: This is a comment on multiple lines, initial slash star star\\\\nat beginning of the line.\\"}},\\"comment\\":null},\\"SampleResponse\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":\\"Comment 5: This is a comment on one line, delimiters slash star star at beginning of the line. Trailing comment delimiter at beginning of next line after comment.\\"},\\"CreateSampleRequest\\":{\\"fields\\":{\\"description\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 6: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is at the beginning of the line. Trailing comment delimiter on same line as text.\\"},\\"type\\":{\\"type\\":\\"string\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null},\\"GetSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 8: This is a comment with slash star delimiter on the same line as a field definition.\\"}},\\"comment\\":\\"Comment 7: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line.\\"},\\"UpdateSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 10: This is a comment with slash star star delimiter on the same line as a field definition.\\"}},\\"comment\\":null},\\"DeleteSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 12: This is a two-slash comment on the same line as a field definition.\\"}},\\"comment\\":null}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
-  "Comment 2: This is a comment with initial slash star and final star slash (all on one line)"
+  """
+  Comment 2: This is a comment with initial slash star and final star slash (all on one line)
+  """
   foo_SampleService_GetSample(input: foo__GetSampleRequest_Input): foo__SampleResponse @grpcMethod(rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "GetSample", responseStream: false)
   foo_SampleService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "foo.SampleService")
 }
 
-"Comment 5: This is a comment on one line, delimiters slash star star at beginning of the line. Trailing comment delimiter at beginning of next line after comment."
+"""
+Comment 5: This is a comment on one line, delimiters slash star star at beginning of the line. Trailing comment delimiter at beginning of next line after comment.
+"""
 type foo__SampleResponse {
   sample_id: String
 }
 
-"Comment 7: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line."
+"""
+Comment 7: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line.
+"""
 input foo__GetSampleRequest_Input {
-  "Comment 8: This is a comment with slash star delimiter on the same line as a field definition."
+  """
+  Comment 8: This is a comment with slash star delimiter on the same line as a field definition.
+  """
   sample_id: String
 }
 
@@ -48,27 +58,38 @@ enum ConnectivityState {
 }
 
 type Mutation {
-  "Comment 1: This is a comment with two slashes"
+  """Comment 1: This is a comment with two slashes"""
   foo_SampleService_CreateSample(input: foo__CreateSampleRequest_Input): foo__SampleResponse @grpcMethod(rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "CreateSample", responseStream: false)
-  "Comment 3: This is a comment with initial slash star star and final star slash (all on one line"
+  """
+  Comment 3: This is a comment with initial slash star star and final star slash (all on one line
+  """
   foo_SampleService_UpdateSample(input: foo__UpdateSampleRequest_Input): foo__SampleResponse @grpcMethod(rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "UpdateSample", responseStream: false)
-  "Comment 4: This is a comment on multiple lines, initial slash star star\\nat beginning of the line."
+  """
+  Comment 4: This is a comment on multiple lines, initial slash star star
+  at beginning of the line.
+  """
   foo_SampleService_DeleteSample(input: foo__DeleteSampleRequest_Input): foo__SampleResponse @grpcMethod(rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "DeleteSample", responseStream: false)
 }
 
 input foo__CreateSampleRequest_Input {
-  "Comment 6: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is at the beginning of the line. Trailing comment delimiter on same line as text."
+  """
+  Comment 6: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is at the beginning of the line. Trailing comment delimiter on same line as text.
+  """
   description: String
   type: String
 }
 
 input foo__UpdateSampleRequest_Input {
-  "Comment 10: This is a comment with slash star star delimiter on the same line as a field definition."
+  """
+  Comment 10: This is a comment with slash star star delimiter on the same line as a field definition.
+  """
   sample_id: String
 }
 
 input foo__DeleteSampleRequest_Input {
-  "Comment 12: This is a two-slash comment on the same line as a field definition."
+  """
+  Comment 12: This is a two-slash comment on the same line as a field definition.
+  """
   sample_id: String
 }
 
@@ -86,7 +107,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -109,7 +132,9 @@ type foos__Bam {
   id: BigInt
 }
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
 input foos__GetBamRequest_Input {
@@ -143,7 +168,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -166,7 +193,9 @@ type foo__FOO {
   id: BigInt
 }
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
 input foo__GetFOOsRequest_Input {
@@ -198,7 +227,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -209,31 +240,31 @@ directive @stream(
 ) on FIELD
 
 type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"GetEmpty\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"EmptyRequest\\",\\"comment\\":null},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
-  "get all movies"
+  """get all movies"""
   io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
   io_xtech_Example_GetEmpty(input: io__xtech__MovieRequest_Input): io__xtech__EmptyRequest @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetEmpty", responseStream: false)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.Example")
-  "get all movies"
+  """get all movies"""
   io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
-"movie result message, contains list of movies"
+"""movie result message, contains list of movies"""
 type io__xtech__MoviesResult {
-  "list of movies"
+  """list of movies"""
   result: [io__xtech__Movie]
 }
 
-"movie message payload"
+"""movie message payload"""
 type io__xtech__Movie {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp
   genre: io__xtech__Genre
@@ -244,7 +275,9 @@ type google__protobuf__Timestamp {
   nanos: Int
 }
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
 enum io__xtech__Genre {
@@ -257,12 +290,12 @@ input io__xtech__MovieRequest_Input {
   movie: io__xtech__Movie_Input
 }
 
-"movie message payload"
+"""movie message payload"""
 input io__xtech__Movie_Input {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp_Input
   genre: io__xtech__Genre
@@ -288,9 +321,9 @@ enum ConnectivityState {
 }
 
 type Subscription {
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
@@ -310,7 +343,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -366,7 +401,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -421,7 +458,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -470,7 +509,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -489,7 +530,9 @@ type io__xtech__MapResponse {
   map: JSON
 }
 
-"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 input io__xtech__MapRequest_Input {
@@ -521,7 +564,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -532,30 +577,30 @@ directive @stream(
 ) on FIELD
 
 type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
-  "get all movies"
+  """get all movies"""
   io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.Example")
-  "get all movies"
+  """get all movies"""
   io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
-"movie result message, contains list of movies"
+"""movie result message, contains list of movies"""
 type io__xtech__MoviesResult {
-  "list of movies"
+  """list of movies"""
   result: [io__xtech__Movie]
 }
 
-"movie message payload"
+"""movie message payload"""
 type io__xtech__Movie {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp
   genre: io__xtech__Genre
@@ -566,7 +611,9 @@ type google__protobuf__Timestamp {
   nanos: Int
 }
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
 enum io__xtech__Genre {
@@ -579,12 +626,12 @@ input io__xtech__MovieRequest_Input {
   movie: io__xtech__Movie_Input
 }
 
-"movie message payload"
+"""movie message payload"""
 input io__xtech__Movie_Input {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp_Input
   genre: io__xtech__Genre
@@ -608,9 +655,9 @@ enum ConnectivityState {
 }
 
 type Subscription {
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
@@ -628,7 +675,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -681,7 +730,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -737,7 +788,9 @@ directive @enum(value: String) on ENUM_VALUE
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -750,14 +803,14 @@ directive @stream(
 type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"nested\\":{\\"outside\\":{\\"nested\\":{\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"io.xtech.Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"io.xtech.Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":null}},\\"comment\\":null}}},\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
   io_outside_Example_GetMovies(input: io__outside__MovieRequest_Input): io__outside__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.outside.Example", methodName: "GetMovies", responseStream: false)
   io_outside_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.outside.Example")
-  "get all movies"
+  """get all movies"""
   io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.Example")
-  "get all movies"
+  """get all movies"""
   io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
@@ -766,12 +819,12 @@ type io__outside__MoviesResult {
   result: [io__xtech__Movie]
 }
 
-"movie message payload"
+"""movie message payload"""
 type io__xtech__Movie {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp
   genre: io__xtech__Genre
@@ -782,7 +835,9 @@ type google__protobuf__Timestamp {
   nanos: Int
 }
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
 enum io__xtech__Genre {
@@ -795,12 +850,12 @@ input io__outside__MovieRequest_Input {
   movie: io__xtech__Movie_Input
 }
 
-"movie message payload"
+"""movie message payload"""
 input io__xtech__Movie_Input {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp_Input
   genre: io__xtech__Genre
@@ -819,9 +874,9 @@ enum ConnectivityState {
   SHUTDOWN
 }
 
-"movie result message, contains list of movies"
+"""movie result message, contains list of movies"""
 type io__xtech__MoviesResult {
-  "list of movies"
+  """list of movies"""
   result: [io__xtech__Movie]
 }
 
@@ -834,9 +889,9 @@ input io__xtech__SearchByCastRequest_Input {
 }
 
 type Subscription {
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
@@ -854,7 +909,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -891,13 +948,15 @@ type Item {
   uinteger64: BigInt
 }
 
-"The \`Byte\` scalar type represents byte value as a Buffer"
+"""The \`Byte\` scalar type represents byte value as a Buffer"""
 scalar Byte
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
-"Integers that will have a value of 0 or more."
+"""Integers that will have a value of 0 or more."""
 scalar UnsignedInt
 
 input Item_Input {
@@ -943,7 +1002,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -954,30 +1015,30 @@ directive @stream(
 ) on FIELD
 
 type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"movie_request\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
-  "get all movies"
+  """get all movies"""
   io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.Example")
-  "get all movies"
+  """get all movies"""
   io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
-"movie result message, contains list of movies"
+"""movie result message, contains list of movies"""
 type io__xtech__MoviesResult {
-  "list of movies"
+  """list of movies"""
   result: [io__xtech__Movie]
 }
 
-"movie message payload"
+"""movie message payload"""
 type io__xtech__Movie {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp
   genre: io__xtech__Genre
@@ -988,7 +1049,9 @@ type google__protobuf__Timestamp {
   nanos: Int
 }
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
 enum io__xtech__Genre {
@@ -1001,12 +1064,12 @@ input io__xtech__movie_request_Input {
   movie: io__xtech__Movie_Input
 }
 
-"movie message payload"
+"""movie message payload"""
 input io__xtech__Movie_Input {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp_Input
   genre: io__xtech__Genre
@@ -1030,9 +1093,9 @@ enum ConnectivityState {
 }
 
 type Subscription {
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
@@ -1054,7 +1117,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true
@@ -1065,30 +1130,30 @@ directive @stream(
 ) on FIELD
 
 type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"movie_request\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"movie_request_by_ids\\":{\\"fields\\":{\\"movieIds\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
-  "get all movies"
+  """get all movies"""
   io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
-  "get movies"
+  """get movies"""
   io_xtech_Example_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "RetrieveMovies", responseStream: false)
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.Example")
-  "get all movies"
+  """get all movies"""
   io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
-  "get movies"
+  """get movies"""
   io_xtech_AnotherExample_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "RetrieveMovies", responseStream: false)
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
-"movie result message, contains list of movies"
+"""movie result message, contains list of movies"""
 type io__xtech__MoviesResult {
-  "list of movies"
+  """list of movies"""
   result: [io__xtech__Movie]
 }
 
-"movie message payload"
+"""movie message payload"""
 type io__xtech__Movie {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp
   genre: io__xtech__Genre
@@ -1099,7 +1164,9 @@ type google__protobuf__Timestamp {
   nanos: Int
 }
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
 enum io__xtech__Genre {
@@ -1112,12 +1179,12 @@ input io__xtech__movie_request_Input {
   movie: io__xtech__Movie_Input
 }
 
-"movie message payload"
+"""movie message payload"""
 input io__xtech__Movie_Input {
   name: String
   year: Int
   rating: Float
-  "list of cast"
+  """list of cast"""
   cast: [String]
   time: google__protobuf__Timestamp_Input
   genre: io__xtech__Genre
@@ -1141,9 +1208,9 @@ enum ConnectivityState {
 }
 
 type Mutation {
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
@@ -1152,9 +1219,9 @@ input io__xtech__SearchByCastRequest_Input {
 }
 
 type Subscription {
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  "search movies by the name of the cast"
+  """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 

@@ -16,29 +16,29 @@ directive @linkResolver(linkResolverMap: ObjMap) on FIELD_DEFINITION
 directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
 
 type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost:3000/api") {
-  "Basic simpleNames option test"
+  """Basic simpleNames option test"""
   o_d_d___n_a_m_e: o_d_d___n_a_m_e_200_response @httpOperation(path: "/o_d_d___n_a_m_e", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"w_e_i_r_d___n_a_m_e___l_i_n_k\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"w_e_i_r_d___n_a_m_e\\"},\\"w_e_i_r_d___n_a_m_e2___l_i_n_k\\":{\\"linkObjArgs\\":{\\"f_u_n_k_y___p_a_r_a_m_e_t_e_r\\":\\"Charles\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r\\"},\\"w_e_i_r_d___n_a_m_e3___l_i_n_k\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r\\"}}")
-  "Basic simpleNames option test with GraphQL unsafe values"
+  """Basic simpleNames option test with GraphQL unsafe values"""
   w_e_i_r_d___n_a_m_e: w_e_i_r_d___n_a_m_e_200_response @httpOperation(path: "/w-e-i-r-d___n-a-m-e", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Basic simpleNames option test with links with hard-coded parameters"
+  """Basic simpleNames option test with links with hard-coded parameters"""
   w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @httpOperation(path: "/w-e-i-r-d___n-a-m-e2/{args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Basic simpleNames option test with links with exposed parameters"
+  """Basic simpleNames option test with links with exposed parameters"""
   w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @httpOperation(path: "/w-e-i-r-d___n-a-m-e3/{args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Basic simpleEnumValues option test"
+  """Basic simpleEnumValues option test"""
   getEnum: getEnum_200_response @httpOperation(path: "/getEnum", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Basic simpleEnumValues option test on numerical enum"
+  """Basic simpleEnumValues option test on numerical enum"""
   getNumericalEnum: getNumericalEnum_200_response @httpOperation(path: "/getNumericalEnum", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Basic simpleEnumValues option test on object enum"
+  """Basic simpleEnumValues option test on object enum"""
   getObjectEnum: getObjectEnum_200_response @httpOperation(path: "/getObjectEnum", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
 type o_d_d___n_a_m_e_200_response {
   data: String
-  "Basic link"
+  """Basic link"""
   w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @link(defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
-  "Hardcoded link parameter"
+  """Hardcoded link parameter"""
   w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @link(defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
-  "Exposed link parameter"
+  """Exposed link parameter"""
   w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @link(defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
 }
 

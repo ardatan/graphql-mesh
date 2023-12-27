@@ -10,9 +10,9 @@ directive @globalOptions(sourceName: String, endpoint: String, operationHeaders:
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
 type Query @globalOptions(sourceName: "query-params", endpoint: "http://localhost:3000") {
-  "Get a list of products"
+  """Get a list of products"""
   listOfProducts(
-    "Get approved products"
+    """Get approved products"""
     isApproved: Boolean = true
   ): [Product] @httpOperation(path: "/listOfProducts", httpMethod: GET, queryParamArgMap: "{\\"isApproved\\":\\"isApproved\\"}")
 }

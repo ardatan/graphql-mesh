@@ -13,7 +13,9 @@ type Query @globalOptions(sourceName: "test", endpoint: "http://localhost:3000")
   test(foo_bar: String): JSON @httpOperation(path: "/test", httpMethod: GET, queryParamArgMap: "{\\"foo:bar\\":\\"foo_bar\\"}")
 }
 
-"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 scalar ObjMap

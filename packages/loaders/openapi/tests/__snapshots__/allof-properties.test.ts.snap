@@ -15,35 +15,35 @@ directive @globalOptions(sourceName: String, endpoint: String, operationHeaders:
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
 type Admin implements User {
-  "The name"
+  """The name"""
   name: query_getAdmin_allOf_0_name
-  "The type"
+  """The type"""
   type: String!
-  "The admin"
+  """The admin"""
   admin: Boolean
 }
 
 interface User @discriminator(field: "type") {
-  "The name"
+  """The name"""
   name: query_getAdmin_allOf_0_name
-  "The type"
+  """The type"""
   type: String!
 }
 
-"The name"
+"""The name"""
 scalar query_getAdmin_allOf_0_name @length(min: null, max: 100)
 
 type Query @globalOptions(sourceName: "test") {
-  "Get admin"
+  """Get admin"""
   getAdmin: Admin @httpOperation(path: "/admin", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
 type Mutation {
-  "Create users"
+  """Create users"""
   createUsers: Void @httpOperation(path: "/create", httpMethod: POST)
 }
 
-"Represents empty values"
+"""Represents empty values"""
 scalar Void
 
 scalar ObjMap

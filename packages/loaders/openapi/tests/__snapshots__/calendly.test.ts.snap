@@ -27,238 +27,372 @@ directive @globalOptions(sourceName: String, endpoint: String, operationHeaders:
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
 type Query @globalOptions(sourceName: "calendly", endpoint: "https://api.calendly.com") {
-  "Returns a list of Invitees for an event."
+  """Returns a list of Invitees for an event."""
   getInvitees(
     uuid: String!
     status: queryInput_getInvitees_status
-    "Order results by the **created_at** field and direction specified: ascending (\\"asc\\") or descending (\\"desc\\")"
+    """
+    Order results by the **created_at** field and direction specified: ascending ("asc") or descending ("desc")
+    """
     sort: String = "created_at:asc"
-    "Indicates if the results should be filtered by email address"
+    """Indicates if the results should be filtered by email address"""
     email: EmailAddress
-    "The token to pass to get the next or previous portion of the collection"
+    """
+    The token to pass to get the next or previous portion of the collection
+    """
     page_token: String
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveFloat = 20
   ): getInvitees_response @httpOperation(path: "/scheduled_events/{args.uuid}/invitees", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
-  "Returns a list of  Events.\\n\\n* Pass \`organization\` parameter to return events for that organization (requires admin/owner privilege)\\n* Pass \`user\` parameter to return events for a specific User\\n\\n**NOTES:**\\n* If you are the admin/owner of the organization, you can use both \`organization\` and \`user\` to get a list of events for a specific user within your organization.\\n\\n* \`user\` can only be used alone when requesting your own personal events. This will return your events within any organization that you are currently in or were a part of in the past."
+  """
+  Returns a list of  Events.
+  
+  * Pass \`organization\` parameter to return events for that organization (requires admin/owner privilege)
+  * Pass \`user\` parameter to return events for a specific User
+  
+  **NOTES:**
+  * If you are the admin/owner of the organization, you can use both \`organization\` and \`user\` to get a list of events for a specific user within your organization.
+  
+  * \`user\` can only be used alone when requesting your own personal events. This will return your events within any organization that you are currently in or were a part of in the past.
+  """
   getScheduledEvents(
-    "Return events that are scheduled with the user associated with this URI"
+    """
+    Return events that are scheduled with the user associated with this URI
+    """
     user: URL
-    "Return events that are scheduled with the organization associated with this URI"
+    """
+    Return events that are scheduled with the organization associated with this URI
+    """
     organization: URL
-    "Return events that are scheduled with the invitee associated with this email address"
+    """
+    Return events that are scheduled with the invitee associated with this email address
+    """
     invitee_email: EmailAddress
     status: queryInput_getScheduledEvents_status
-    "Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values.\\nSupported fields are: start_time.\\nSort direction is specified as: asc, desc."
+    """
+    Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values.
+    Supported fields are: start_time.
+    Sort direction is specified as: asc, desc.
+    """
     sort: String
-    "Include events with start times after this time (sample time format: \\"2020-01-02T03:04:05.678123Z\\"). This time should use the UTC timezone."
+    """
+    Include events with start times after this time (sample time format: "2020-01-02T03:04:05.678123Z"). This time should use the UTC timezone.
+    """
     min_start_time: String
-    "Include events with start times prior to this time (sample time format: \\"2020-01-02T03:04:05.678123Z\\"). This time should use the UTC timezone."
+    """
+    Include events with start times prior to this time (sample time format: "2020-01-02T03:04:05.678123Z"). This time should use the UTC timezone.
+    """
     max_start_time: String
-    "The token to pass to get the next or previous portion of the collection"
+    """
+    The token to pass to get the next or previous portion of the collection
+    """
     page_token: String
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveFloat = 20
   ): getScheduledEvents_response @httpOperation(path: "/scheduled_events", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user\\":\\"user\\",\\"organization\\":\\"organization\\",\\"invitee_email\\":\\"invitee_email\\",\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"min_start_time\\":\\"min_start_time\\",\\"max_start_time\\":\\"max_start_time\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
-  "Returns all Event Types associated with a specified User. Use:\\n\\n* \`organization\` to look up all Event Types that belong to the organization\\n\\n* \`user\` to look up a user's Event Types in an organization\\n\\nEither \`organization\` or \`user\` are required query params when using this endpoint."
+  """
+  Returns all Event Types associated with a specified User. Use:
+  
+  * \`organization\` to look up all Event Types that belong to the organization
+  
+  * \`user\` to look up a user's Event Types in an organization
+  
+  Either \`organization\` or \`user\` are required query params when using this endpoint.
+  """
   getEventTypes(
-    "Return only active event types if true, only inactive if false, or all event types if this parameter is omitted."
+    """
+    Return only active event types if true, only inactive if false, or all event types if this parameter is omitted.
+    """
     active: Boolean
-    "View available personal, team, and organization event types associated with the organization's URI."
+    """
+    View available personal, team, and organization event types associated with the organization's URI.
+    """
     organization: URL
-    "View available personal, team, and organization event types associated with the user's URI."
+    """
+    View available personal, team, and organization event types associated with the user's URI.
+    """
     user: URL
-    "Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values.\\nSupported fields are: name.\\nSort direction is specified as: asc, desc."
+    """
+    Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values.
+    Supported fields are: name.
+    Sort direction is specified as: asc, desc.
+    """
     sort: String = "name:asc"
-    "The token to pass to get the next or previous portion of the collection"
+    """
+    The token to pass to get the next or previous portion of the collection
+    """
     page_token: String
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveFloat = 20
   ): getEventTypes_response @httpOperation(path: "/event_types", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"active\\":\\"active\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"sort\\":\\"sort\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
-  "Returns information about a specified User."
+  """Returns information about a specified User."""
   getUser(
-    "User unique identifier, or the constant \\"me\\" to reference the caller"
+    """User unique identifier, or the constant "me" to reference the caller"""
     uuid: String!
   ): getUser_response @httpOperation(path: "/users/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Returns basic information about your user account."
+  """Returns basic information about your user account."""
   getMyUserAccount: getMyUserAccount_response @httpOperation(path: "/users/me", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Returns information about a specified Invitee (person invited to an event)."
+  """
+  Returns information about a specified Invitee (person invited to an event).
+  """
   get_scheduled_events_event_uuid_invitees_invitee_uuid(
-    "The event's unique identifier"
+    """The event's unique identifier"""
     event_uuid: String!
-    "The invitee's unique identifier"
+    """The invitee's unique identifier"""
     invitee_uuid: String!
   ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @httpOperation(path: "/scheduled_events/{args.event_uuid}/invitees/{args.invitee_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Returns information about a specified Event."
+  """Returns information about a specified Event."""
   get_scheduled_events_uuid(
-    "The event's unique identifier"
+    """The event's unique identifier"""
     uuid: String!
   ): get_scheduled_events_uuid_response @httpOperation(path: "/scheduled_events/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Returns information about a specified Event Type."
+  """Returns information about a specified Event Type."""
   get_event_types_uuid(uuid: String!): get_event_types_uuid_response @httpOperation(path: "/event_types/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Returns a list of Organization Invitations that were sent to the organization's members."
+  """
+  Returns a list of Organization Invitations that were sent to the organization's members.
+  """
   get_organizations_uuid_invitations(
-    "The organization's unique identifier"
+    """The organization's unique identifier"""
     uuid: String!
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveFloat = 20
-    "The token to pass to get the next or previous portion of the collection"
+    """
+    The token to pass to get the next or previous portion of the collection
+    """
     page_token: String
-    "Order results by the field name and direction specified (ascending or descending). Returns multiple sets of results in a comma-separated list."
+    """
+    Order results by the field name and direction specified (ascending or descending). Returns multiple sets of results in a comma-separated list.
+    """
     sort: String = "created_at:asc"
-    "Indicates if the results should be filtered by email address"
+    """Indicates if the results should be filtered by email address"""
     email: EmailAddress
     status: queryInput_get_organizations_uuid_invitations_status
   ): get_organizations_uuid_invitations_response @httpOperation(path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"status\\":\\"status\\"}")
-  "Returns an Organization Invitation that was sent to the organization's members."
+  """
+  Returns an Organization Invitation that was sent to the organization's members.
+  """
   get_organizations_org_uuid_invitations_uuid(
-    "The organization’s unique identifier"
+    """The organization’s unique identifier"""
     org_uuid: String!
-    "The organization invitation's unique identifier"
+    """The organization invitation's unique identifier"""
     uuid: String!
   ): get_organizations_org_uuid_invitations_uuid_response @httpOperation(path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Returns information about a user's Organization Membership"
+  """Returns information about a user's Organization Membership"""
   get_organizations_uuid_memberships(
-    "The organization membership's unique identifier"
+    """The organization membership's unique identifier"""
     uuid: String!
   ): get_organizations_uuid_memberships_response @httpOperation(path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Use this to list the Organization Memberships for all users belonging to an organization, use:\\n\\n* \`user\` to look up a user's membership in an organization\\n\\n* \`organization\` to look up all users that belong to the organization\\n\\nThis endpoint can also be used to retrieve your organization URI."
+  """
+  Use this to list the Organization Memberships for all users belonging to an organization, use:
+  
+  * \`user\` to look up a user's membership in an organization
+  
+  * \`organization\` to look up all users that belong to the organization
+  
+  This endpoint can also be used to retrieve your organization URI.
+  """
   get_organization_memberships(
-    "The token to pass to get the next or previous portion of the collection"
+    """
+    The token to pass to get the next or previous portion of the collection
+    """
     page_token: String
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveFloat = 20
-    "Indicates if the results should be filtered by email address"
+    """Indicates if the results should be filtered by email address"""
     email: EmailAddress
-    "Indicates if the results should be filtered by organization"
+    """Indicates if the results should be filtered by organization"""
     organization: URL
-    "Indicates if the results should be filtered by user"
+    """Indicates if the results should be filtered by user"""
     user: URL
   ): get_organization_memberships_response @httpOperation(path: "/organization_memberships", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"email\\":\\"email\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\"}")
-  "Get a list of Webhook Subscriptions for a specified Organization or User."
+  """
+  Get a list of Webhook Subscriptions for a specified Organization or User.
+  """
   get_webhooks(
-    "Indicates if the results should be filtered by organization"
+    """Indicates if the results should be filtered by organization"""
     organization: URL!
-    "Indicates if the results should be filtered by user. This parameter is only required if the \`scope\` parameter is set to \`user\`."
+    """
+    Indicates if the results should be filtered by user. This parameter is only required if the \`scope\` parameter is set to \`user\`.
+    """
     user: URL
-    "The token to pass to get the next or previous portion of the collection"
+    """
+    The token to pass to get the next or previous portion of the collection
+    """
     page_token: String
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveFloat = 20
-    "Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values.\\nSupported fields are: created_at.\\nSort direction is specified as: asc, desc."
+    """
+    Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values.
+    Supported fields are: created_at.
+    Sort direction is specified as: asc, desc.
+    """
     sort: String
     scope: queryInput_get_webhooks_scope!
   ): get_webhooks_response @httpOperation(path: "/webhook_subscriptions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"sort\\":\\"sort\\",\\"scope\\":\\"scope\\"}")
-  "Get a specified Webhook Subscription."
+  """Get a specified Webhook Subscription."""
   get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Returns information about a specified Invitee No Show."
+  """Returns information about a specified Invitee No Show."""
   getInviteeNoShow(uuid: String!): getInviteeNoShow_response @httpOperation(path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Get a list of Routing Forms for a specified Organization."
+  """Get a list of Routing Forms for a specified Organization."""
   get_routing_forms(
-    "View organization routing forms associated with the organization's URI."
+    """
+    View organization routing forms associated with the organization's URI.
+    """
     organization: URL!
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveFloat = 20
-    "The token to pass to get the next or previous portion of the collection"
+    """
+    The token to pass to get the next or previous portion of the collection
+    """
     page_token: String
-    "Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc."
+    """
+    Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
+    """
     sort: String
   ): get_routing_forms_response @httpOperation(path: "/routing_forms", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
-  "Get a specified Routing Form."
+  """Get a specified Routing Form."""
   get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @httpOperation(path: "/routing_forms/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Get a list of Routing Form Submissions for a specified Routing Form."
+  """Get a list of Routing Form Submissions for a specified Routing Form."""
   get_routing_form_submissions(
-    "View routing form submissions associated with the routing form's URI."
+    """View routing form submissions associated with the routing form's URI."""
     form: URL!
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveFloat = 20
-    "The token to pass to get the next or previous portion of the collection"
+    """
+    The token to pass to get the next or previous portion of the collection
+    """
     page_token: String
-    "Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc."
+    """
+    Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
+    """
     sort: String
   ): get_routing_form_submissions_response @httpOperation(path: "/routing_form_submissions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"form\\":\\"form\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
-  "Get a specified Routing Form Submission."
+  """Get a specified Routing Form Submission."""
   get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @httpOperation(path: "/routing_form_submissions/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  "Returns a list of available times for an event type within a specified date range.\\n\\nDate range can be no greater than 1 week (7 days).\\n\\n**NOTE:**\\n* This endpoint does not support traditional keyset pagination."
+  """
+  Returns a list of available times for an event type within a specified date range.
+  
+  Date range can be no greater than 1 week (7 days).
+  
+  **NOTE:**
+  * This endpoint does not support traditional keyset pagination.
+  """
   getEventTypeAvailableTimes(
-    "The uri associated with the event type"
+    """The uri associated with the event type"""
     event_type: URL
-    "Start time of the requested availability range."
+    """Start time of the requested availability range."""
     start_time: String
-    "End time of the requested availability range."
+    """End time of the requested availability range."""
     end_time: String
   ): getEventTypeAvailableTimes_response @httpOperation(path: "/event_type_available_times", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"event_type\\":\\"event_type\\",\\"start_time\\":\\"start_time\\",\\"end_time\\":\\"end_time\\"}")
-  "<!-- theme: info -->\\n  > This endpoint requires an <strong>Enterprise</strong> subscription.\\n\\nReturns a list of activity log entries"
+  """
+  <!-- theme: info -->
+    > This endpoint requires an <strong>Enterprise</strong> subscription.
+  
+  Returns a list of activity log entries
+  """
   activityLog(
-    "Return activity log entries from the organization associated with this URI"
+    """
+    Return activity log entries from the organization associated with this URI
+    """
     organization: URL!
-    "Filters entries based on the search term.\\n\\nSupported operators:\\n  - \`|\` - to allow filtering by one term or another. Example: \`this | that\`\\n  - \`+\` - to allow filtering by one term and another. Example: \`this + that\`\\n  - \`\\"\` - to allow filtering by an exact search term. Example: \`\\"email@website.com\\"\`\\n  - \`-\` - to omit specific terms from results. Example: \`Added -User\`\\n  - \`()\` - to allow specifying precedence during a search. Example: \`(this + that) OR (person + place)\`\\n  - \`*\` - to allow prefix searching. Example \`*@other-website.com\`"
+    """
+    Filters entries based on the search term.
+    
+    Supported operators:
+      - \`|\` - to allow filtering by one term or another. Example: \`this | that\`
+      - \`+\` - to allow filtering by one term and another. Example: \`this + that\`
+      - \`"\` - to allow filtering by an exact search term. Example: \`"email@website.com"\`
+      - \`-\` - to omit specific terms from results. Example: \`Added -User\`
+      - \`()\` - to allow specifying precedence during a search. Example: \`(this + that) OR (person + place)\`
+      - \`*\` - to allow prefix searching. Example \`*@other-website.com\`
+    """
     search_term: queryInput_activityLog_search_term
-    "Return entries from the user(s) associated with the provided URIs"
+    """Return entries from the user(s) associated with the provided URIs"""
     actor: [URL]
-    "Order results by the specified field and direction. List of {field}:{direction} values."
+    """
+    Order results by the specified field and direction. List of {field}:{direction} values.
+    """
     sort: [queryInput_activityLog_sort_items] = [occurred_at_desc]
-    "Include entries that occurred after this time (sample time format: \\"2020-01-02T03:04:05.678Z\\"). This time should use the UTC timezone."
+    """
+    Include entries that occurred after this time (sample time format: "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.
+    """
     min_occurred_at: DateTime
-    "Include entries that occurred prior to this time (sample time format: \\"2020-01-02T03:04:05.678Z\\"). This time should use the UTC timezone."
+    """
+    Include entries that occurred prior to this time (sample time format: "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.
+    """
     max_occurred_at: DateTime
-    "The token to pass to get the next portion of the collection"
+    """The token to pass to get the next portion of the collection"""
     page_token: String
-    "The number of rows to return"
+    """The number of rows to return"""
     count: PositiveInt = 20
-    "The categories of the entries"
+    """The categories of the entries"""
     namespace: [String]
-    "The action(s) associated with the entries"
+    """The action(s) associated with the entries"""
     action: [String]
   ): activityLog_response @httpOperation(path: "/activity_log_entries", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"search_term\\":\\"search_term\\",\\"actor\\":\\"actor\\",\\"sort\\":\\"sort\\",\\"min_occurred_at\\":\\"min_occurred_at\\",\\"max_occurred_at\\":\\"max_occurred_at\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"namespace\\":\\"namespace\\",\\"action\\":\\"action\\"}", queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
 }
 
 union getInvitees_response @statusCodeTypeName(statusCode: 200, typeName: "getInvitees_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getInvitees_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-"Service response"
+"""Service response"""
 type getInvitees_200_response {
-  "The set of event invitees matching the criteria"
+  """The set of event invitees matching the criteria"""
   collection: [Invitee]!
   pagination: Pagination!
 }
 
-"An individual who has been invited to meet with a Calendly member"
+"""An individual who has been invited to meet with a Calendly member"""
 type Invitee {
-  "Canonical reference (unique identifier) for the invitee"
+  """Canonical reference (unique identifier) for the invitee"""
   uri: URL!
-  "The invitee’s email address"
+  """The invitee’s email address"""
   email: EmailAddress!
-  "The first name of the invitee who booked the event when the event type is configured to use separate fields for first name and last name. Null when event type is configured to use a single field for name."
+  """
+  The first name of the invitee who booked the event when the event type is configured to use separate fields for first name and last name. Null when event type is configured to use a single field for name.
+  """
   first_name: String!
-  "The last name of the invitee who booked the event when the event type is configured to use separate fields for first name and last name. Null when event type is configured to use a single field for name."
+  """
+  The last name of the invitee who booked the event when the event type is configured to use separate fields for first name and last name. Null when event type is configured to use a single field for name.
+  """
   last_name: String!
-  "The invitee’s name (in human-readable format)"
+  """The invitee’s name (in human-readable format)"""
   name: String!
   status: query_getInvitees_oneOf_0_collection_items_status!
-  "A collection of the invitee's responses to questions on the event booking confirmation form"
+  """
+  A collection of the invitee's responses to questions on the event booking confirmation form
+  """
   questions_and_answers: [Invitee_Question_and_Answer]!
-  "Time zone to use when displaying time to the invitee"
+  """Time zone to use when displaying time to the invitee"""
   timezone: String!
-  "A reference to the event"
+  """A reference to the event"""
   event: URL!
-  "The moment when the event was created (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the event was created (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   created_at: DateTime!
-  "The moment when the event was last updated (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the event was last updated (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   updated_at: DateTime!
   tracking: Invitee_Tracking!
-  "The phone number to use when sending text (SMS) reminders"
+  """The phone number to use when sending text (SMS) reminders"""
   text_reminder_number: String!
-  "Indicates if this invitee has rescheduled. If \`true\`, a reference to the new Invitee instance is provided in the \`new_invitee\` field."
+  """
+  Indicates if this invitee has rescheduled. If \`true\`, a reference to the new Invitee instance is provided in the \`new_invitee\` field.
+  """
   rescheduled: Boolean!
-  "Reference to old Invitee instance that got rescheduled"
+  """Reference to old Invitee instance that got rescheduled"""
   old_invitee: URL!
-  "Link to new invitee, after reschedule"
+  """Link to new invitee, after reschedule"""
   new_invitee: URL!
-  "Link to cancelling the event for the invitee"
+  """Link to cancelling the event for the invitee"""
   cancel_url: URL!
-  "Link to rescheduling the event for the invitee"
+  """Link to rescheduling the event for the invitee"""
   reschedule_url: URL!
-  "Reference to a routing form submission that redirected the invitee to a booking page."
+  """
+  Reference to a routing form submission that redirected the invitee to a booking page.
+  """
   routing_form_submission: URL!
   cancellation: Cancellation
   payment: query_getInvitees_oneOf_0_collection_items_payment!
@@ -266,52 +400,64 @@ type Invitee {
   reconfirmation: query_getInvitees_oneOf_0_collection_items_reconfirmation!
 }
 
-"A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt."
+"""
+A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
+"""
 scalar URL
 
-"A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address."
+"""
+A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+"""
 scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
-"Indicates if the invitee is \\"active\\" or \\"canceled\\""
+"""
+Indicates if the invitee is "active" or "canceled"
+"""
 enum query_getInvitees_oneOf_0_collection_items_status {
   active
   canceled
 }
 
-"A response to a question on a booking page form"
+"""A response to a question on a booking page form"""
 type Invitee_Question_and_Answer {
-  "A question on the invitee's booking form"
+  """A question on the invitee's booking form"""
   question: String!
-  "The invitee's answer to the question"
+  """The invitee's answer to the question"""
   answer: String!
-  "The position of the question in relation to others on the booking form"
+  """The position of the question in relation to others on the booking form"""
   position: Float!
 }
 
-"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
 scalar DateTime
 
-"The UTM and Salesforce tracking parameters associated with an Invitee"
+"""The UTM and Salesforce tracking parameters associated with an Invitee"""
 type Invitee_Tracking {
-  "The UTM parameter used to track a campaign"
+  """The UTM parameter used to track a campaign"""
   utm_campaign: String!
-  "The UTM parameter that identifies the source (platform where the traffic originates)"
+  """
+  The UTM parameter that identifies the source (platform where the traffic originates)
+  """
   utm_source: String!
-  "The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social media, affiliate or QR code)"
+  """
+  The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social media, affiliate or QR code)
+  """
   utm_medium: String!
-  "UTM content tracking parameter"
+  """UTM content tracking parameter"""
   utm_content: String!
-  "The UTM parameter used to track keywords"
+  """The UTM parameter used to track keywords"""
   utm_term: String!
-  "The Salesforce record unique identifier"
+  """The Salesforce record unique identifier"""
   salesforce_uuid: String!
 }
 
-"Provides data pertaining to the cancellation of the Event"
+"""Provides data pertaining to the cancellation of the Event"""
 type Cancellation {
-  "Name of the person whom canceled"
+  """Name of the person whom canceled"""
   canceled_by: String!
-  "Reason that the cancellation occurred"
+  """Reason that the cancellation occurred"""
   reason: String!
   canceler_type: query_getInvitees_oneOf_0_collection_items_cancellation_canceler_type!
 }
@@ -321,27 +467,27 @@ enum query_getInvitees_oneOf_0_collection_items_cancellation_canceler_type {
   invitee
 }
 
-"Invitee payment"
+"""Invitee payment"""
 type query_getInvitees_oneOf_0_collection_items_payment {
-  "Unique identifier for the payment"
+  """Unique identifier for the payment"""
   external_id: String!
   provider: query_getInvitees_oneOf_0_collection_items_payment_provider!
-  "The amount of the payment"
+  """The amount of the payment"""
   amount: Float!
   currency: query_getInvitees_oneOf_0_collection_items_payment_currency!
-  "Terms of the payment"
+  """Terms of the payment"""
   terms: String!
-  "Indicates whether the payment was successfully processed"
+  """Indicates whether the payment was successfully processed"""
   successful: Boolean!
 }
 
-"Payment provider"
+"""Payment provider"""
 enum query_getInvitees_oneOf_0_collection_items_payment_provider {
   stripe
   paypal
 }
 
-"The currency format that the payment is in."
+"""The currency format that the payment is in."""
 enum query_getInvitees_oneOf_0_collection_items_payment_currency {
   AUD
   CAD
@@ -350,36 +496,46 @@ enum query_getInvitees_oneOf_0_collection_items_payment_currency {
   USD
 }
 
-"Provides data pertaining to the associated no show for the Invitee"
+"""Provides data pertaining to the associated no show for the Invitee"""
 type query_getInvitees_oneOf_0_collection_items_no_show {
-  "Canonical reference (unique identifier) for the no show"
+  """Canonical reference (unique identifier) for the no show"""
   uri: String!
-  "The moment when the no show was created"
+  """The moment when the no show was created"""
   created_at: DateTime!
 }
 
-"Assuming reconfirmation is enabled for the event type, when reconfirmation is requested this object is present with a \`created_at\` that reflects when the reconfirmation notification was sent. Once the invitee has reconfirmed the \`confirmed_at\` attribute will change from \`null\` to a timestamp that reflects when they took action."
+"""
+Assuming reconfirmation is enabled for the event type, when reconfirmation is requested this object is present with a \`created_at\` that reflects when the reconfirmation notification was sent. Once the invitee has reconfirmed the \`confirmed_at\` attribute will change from \`null\` to a timestamp that reflects when they took action.
+"""
 type query_getInvitees_oneOf_0_collection_items_reconfirmation {
-  "When the reconfirmation was created."
+  """When the reconfirmation was created."""
   created_at: DateTime!
-  "When the Invitee confirmed their attendance."
+  """When the Invitee confirmed their attendance."""
   confirmed_at: DateTime!
 }
 
 type Pagination {
-  "The number of rows to return"
+  """The number of rows to return"""
   count: Float!
-  "URI to return the next page of an ordered list (\\"null\\" indicates no additional results are available)"
+  """
+  URI to return the next page of an ordered list ("null" indicates no additional results are available)
+  """
   next_page: URL!
-  "URI to return the previous page of an ordered list (\\"null\\" indicates no additional results are available)"
+  """
+  URI to return the previous page of an ordered list ("null" indicates no additional results are available)
+  """
   previous_page: URL!
-  "Token to return the next page of an ordered list (\\"null\\" indicates no additional results are available)"
+  """
+  Token to return the next page of an ordered list ("null" indicates no additional results are available)
+  """
   next_page_token: String!
-  "Token to return the previous page of an ordered list (\\"null\\" indicates no additional results are available)"
+  """
+  Token to return the previous page of an ordered list ("null" indicates no additional results are available)
+  """
   previous_page_token: String!
 }
 
-"Request is not valid"
+"""Request is not valid"""
 type INVALID_ARGUMENT_response {
   title: Invalid_Argument_const
   message: The_supplied_parameters_are_invalid__const
@@ -399,7 +555,7 @@ type query_getInvitees_oneOf_1_allOf_0_details_items {
   message: String!
 }
 
-"Cannot authenticate caller"
+"""Cannot authenticate caller"""
 type UNAUTHENTICATED_response {
   title: Unauthenticated_const
   message: query_getInvitees_oneOf_2_allOf_1_message
@@ -416,7 +572,7 @@ enum query_getInvitees_oneOf_2_allOf_1_message {
   The_access_token_was_revoked @enum(value: "\\"The access token was revoked\\"")
 }
 
-"Caller not authorized to perform this action"
+"""Caller not authorized to perform this action"""
 type PERMISSION_DENIED_response {
   title: Permission_Denied_const
   message: query_getInvitees_oneOf_3_allOf_1_message
@@ -439,7 +595,7 @@ enum query_getInvitees_oneOf_3_allOf_1_message {
   You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_ @enum(value: "\\"You cannot perform this action for an organization with SCIM enabled.\\"")
 }
 
-"Requested resource not found"
+"""Requested resource not found"""
 type NOT_FOUND_response {
   title: Resource_Not_Found_const
   message: The_server_could_not_find_the_requested_resource__const
@@ -454,7 +610,7 @@ enum The_server_could_not_find_the_requested_resource__const @typescript(type: "
   The_server_could_not_find_the_requested_resource_ @enum(value: "\\"The server could not find the requested resource.\\"")
 }
 
-"An error has occurred on the server"
+"""An error has occurred on the server"""
 type UNKNOWN_response {
   title: Internal_Server_Error_const
   message: The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request__const
@@ -469,63 +625,75 @@ enum The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfi
   The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request_ @enum(value: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"")
 }
 
-"Indicates if the invitee \\"canceled\\" or still \\"active\\""
+"""
+Indicates if the invitee "canceled" or still "active"
+"""
 enum queryInput_getInvitees_status {
   active
   canceled
 }
 
-"Floats that will have a value greater than 0."
+"""Floats that will have a value greater than 0."""
 scalar PositiveFloat
 
 union getScheduledEvents_response @statusCodeTypeName(statusCode: 200, typeName: "getScheduledEvents_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getScheduledEvents_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-"Service response"
+"""Service response"""
 type getScheduledEvents_200_response {
-  "The set of scheduled events matching the criteria"
+  """The set of scheduled events matching the criteria"""
   collection: [Event]!
   pagination: Pagination!
 }
 
-"Information about a scheduled meeting"
+"""Information about a scheduled meeting"""
 type Event {
-  "Canonical reference (unique identifier) for the resource"
+  """Canonical reference (unique identifier) for the resource"""
   uri: URL!
-  "The event name"
+  """The event name"""
   name: String!
   status: query_getScheduledEvents_oneOf_0_collection_items_status!
-  "The moment the event was scheduled to start in UTC time (e.g. \\"2020-01-02T03:04:05.678123Z\\")."
+  """
+  The moment the event was scheduled to start in UTC time (e.g. "2020-01-02T03:04:05.678123Z").
+  """
   start_time: DateTime!
-  "The moment the event was scheduled to end in UTC time (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment the event was scheduled to end in UTC time (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   end_time: DateTime!
-  "The event type associated with this event"
+  """The event type associated with this event"""
   event_type: URL!
   location: Location!
   invitees_counter: query_getScheduledEvents_oneOf_0_collection_items_invitees_counter!
-  "The moment when the event was created (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the event was created (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   created_at: DateTime!
-  "The moment when the event was last updated (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the event was last updated (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   updated_at: DateTime!
-  "Event membership list"
+  """Event membership list"""
   event_memberships: [query_getScheduledEvents_oneOf_0_collection_items_event_memberships_items]!
-  "Additional people added to an event by an invitee"
+  """Additional people added to an event by an invitee"""
   event_guests: [Guest]!
   cancellation: Cancellation
 }
 
-"Indicates if the event is \\"active\\" or \\"canceled\\""
+"""
+Indicates if the event is "active" or "canceled"
+"""
 enum query_getScheduledEvents_oneOf_0_collection_items_status {
   active
   canceled
 }
 
-"The polymorphic base type for an event location that Calendly supports"
+"""The polymorphic base type for an event location that Calendly supports"""
 union Location = In_Person_Meeting | Outbound_Call | Inbound_Call | Google_Conference | Zoom_Conference | GoToMeeting_Conference | Microsoft_Teams_Conference | Custom_Location | Invitee_Specified_Location | WebEx_Conference
 
-"Information about the physical (in-person) event location"
+"""Information about the physical (in-person) event location"""
 type In_Person_Meeting {
   type: physical_const!
-  "The physical location specified by the event host (publisher)"
+  """The physical location specified by the event host (publisher)"""
   location: String!
 }
 
@@ -533,10 +701,12 @@ enum physical_const @typescript(type: "\\"physical\\"") @example(value: "\\"phys
   physical @enum(value: "\\"physical\\"")
 }
 
-"Meeting publisher will call the Invitee"
+"""Meeting publisher will call the Invitee"""
 type Outbound_Call {
   type: outbound_call_const!
-  "The phone number the event host (publisher) will use to call the invitee"
+  """
+  The phone number the event host (publisher) will use to call the invitee
+  """
   location: String!
 }
 
@@ -544,10 +714,12 @@ enum outbound_call_const @typescript(type: "\\"outbound_call\\"") @example(value
   outbound_call @enum(value: "\\"outbound_call\\"")
 }
 
-"Invitee will call meeting publisher at the specified phone number"
+"""Invitee will call meeting publisher at the specified phone number"""
 type Inbound_Call {
   type: inbound_call_const!
-  "The phone number the invitee will use to call the event host (publisher)"
+  """
+  The phone number the invitee will use to call the event host (publisher)
+  """
   location: String!
 }
 
@@ -555,11 +727,13 @@ enum inbound_call_const @typescript(type: "\\"inbound_call\\"") @example(value: 
   inbound_call @enum(value: "\\"inbound_call\\"")
 }
 
-"Details about an Event that will take place using a Google Meet / Hangout conference"
+"""
+Details about an Event that will take place using a Google Meet / Hangout conference
+"""
 type Google_Conference {
   type: google_conference_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_3_status!
-  "Google conference meeting url"
+  """Google conference meeting url"""
   join_url: URL!
 }
 
@@ -567,7 +741,7 @@ enum google_conference_const @typescript(type: "\\"google_conference\\"") @examp
   google_conference @enum(value: "\\"google_conference\\"")
 }
 
-"Indicates the current status of the Google conference"
+"""Indicates the current status of the Google conference"""
 enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_3_status {
   initiated
   processing
@@ -575,11 +749,11 @@ enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_3_status {
   failed
 }
 
-"Meeting will take place in a Zoom conference"
+"""Meeting will take place in a Zoom conference"""
 type Zoom_Conference {
   type: zoom_conference_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_status!
-  "Zoom meeting url"
+  """Zoom meeting url"""
   join_url: URL!
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data!
 }
@@ -588,7 +762,7 @@ enum zoom_conference_const @typescript(type: "\\"zoom_conference\\"") @example(v
   zoom_conference @enum(value: "\\"zoom_conference\\"")
 }
 
-"Indicates the current status of the Zoom conference"
+"""Indicates the current status of the Zoom conference"""
 enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_status {
   initiated
   processing
@@ -596,13 +770,13 @@ enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_status {
   failed
 }
 
-"The conference metadata supplied by Zoom"
+"""The conference metadata supplied by Zoom"""
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data {
-  "The conference ID provided by Zoom"
+  """The conference ID provided by Zoom"""
   id: String
   settings: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_settings
   extra: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_extra
-  "Zoom meeting password"
+  """Zoom meeting password"""
   password: String
 }
 
@@ -611,9 +785,9 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_set
 }
 
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_settings_global_dial_in_numbers_items {
-  "Phone number"
+  """Phone number"""
   number: String
-  "Country code"
+  """Country code"""
   country: String
   type: String
   city: String
@@ -621,15 +795,17 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_set
 }
 
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_extra {
-  "Zoom International Dial-in Numbers URL"
+  """Zoom International Dial-in Numbers URL"""
   intl_numbers_url: URL
 }
 
-"Details about an Event that will take place using a GotoMeeting conference"
+"""
+Details about an Event that will take place using a GotoMeeting conference
+"""
 type GoToMeeting_Conference {
   type: gotomeeting_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_status!
-  "GoToMeeting conference meeting url"
+  """GoToMeeting conference meeting url"""
   join_url: URL!
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data!
 }
@@ -638,7 +814,7 @@ enum gotomeeting_const @typescript(type: "\\"gotomeeting\\"") @example(value: "\
   gotomeeting @enum(value: "\\"gotomeeting\\"")
 }
 
-"Indicates the current status of the GoToMeeting conference"
+"""Indicates the current status of the GoToMeeting conference"""
 enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_status {
   initiated
   processing
@@ -646,18 +822,18 @@ enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_status {
   failed
 }
 
-"The conference metadata supplied by GoToMeeting"
+"""The conference metadata supplied by GoToMeeting"""
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data {
-  "Canonical reference (unique identifier) for the GoToMeeting conference"
+  """Canonical reference (unique identifier) for the GoToMeeting conference"""
   uniqueMeetingId: Float
   conferenceCallInfo: String
 }
 
-"Meeting will take place in a Microsoft Teams conference"
+"""Meeting will take place in a Microsoft Teams conference"""
 type Microsoft_Teams_Conference {
   type: microsoft_teams_conference_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_status!
-  "Microsoft Teams meeting url"
+  """Microsoft Teams meeting url"""
   join_url: URL!
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data!
 }
@@ -666,7 +842,7 @@ enum microsoft_teams_conference_const @typescript(type: "\\"microsoft_teams_conf
   microsoft_teams_conference @enum(value: "\\"microsoft_teams_conference\\"")
 }
 
-"Indicates the current status of the Microsoft Teams conference"
+"""Indicates the current status of the Microsoft Teams conference"""
 enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_status {
   initiated
   processing
@@ -674,9 +850,9 @@ enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_status {
   failed
 }
 
-"The conference metadata supplied by Microsoft Teams"
+"""The conference metadata supplied by Microsoft Teams"""
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data {
-  "The conference ID provided by Microsoft Teams"
+  """The conference ID provided by Microsoft Teams"""
   id: String
   audioConferencing: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data_audioConferencing
 }
@@ -687,10 +863,10 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data_aud
   tollNumber: String
 }
 
-"Use this to describe an existing Calendly-supported event location."
+"""Use this to describe an existing Calendly-supported event location."""
 type Custom_Location {
   type: custom_const!
-  "The location description provided by the event host (publisher)"
+  """The location description provided by the event host (publisher)"""
   location: String!
 }
 
@@ -698,10 +874,10 @@ enum custom_const @typescript(type: "\\"custom\\"") @example(value: "\\"custom\\
   custom @enum(value: "\\"custom\\"")
 }
 
-"Information about an event location that’s specified by the invitee."
+"""Information about an event location that’s specified by the invitee."""
 type Invitee_Specified_Location {
   type: ask_invitee_const!
-  "The event location description provided by the invitee"
+  """The event location description provided by the invitee"""
   location: String!
 }
 
@@ -709,11 +885,11 @@ enum ask_invitee_const @typescript(type: "\\"ask_invitee\\"") @example(value: "\
   ask_invitee @enum(value: "\\"ask_invitee\\"")
 }
 
-"Details about an Event that will take place using a WebEx conference"
+"""Details about an Event that will take place using a WebEx conference"""
 type WebEx_Conference {
   type: webex_conference_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_status!
-  "WebEx conference meeting url"
+  """WebEx conference meeting url"""
   join_url: URL!
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data!
 }
@@ -722,7 +898,7 @@ enum webex_conference_const @typescript(type: "\\"webex_conference\\"") @example
   webex_conference @enum(value: "\\"webex_conference\\"")
 }
 
-"Indicates the current status of the WebEx conference"
+"""Indicates the current status of the WebEx conference"""
 enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_status {
   initiated
   processing
@@ -730,9 +906,9 @@ enum query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_status {
   failed
 }
 
-"The conference metadata supplied by GoToMeeting"
+"""The conference metadata supplied by GoToMeeting"""
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data {
-  "Canonical reference (unique identifier) for the WebEx conference"
+  """Canonical reference (unique identifier) for the WebEx conference"""
   id: String!
   telephony: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data_telephony!
   password: String!
@@ -749,27 +925,29 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data_tel
 }
 
 type query_getScheduledEvents_oneOf_0_collection_items_invitees_counter {
-  "Total invitees for an event, including invitees that have canceled"
+  """Total invitees for an event, including invitees that have canceled"""
   total: Float!
-  "Total invitees for an event that have not canceled"
+  """Total invitees for an event that have not canceled"""
   active: Float!
-  "Maximum number of active invitees that can book the event"
+  """Maximum number of active invitees that can book the event"""
   limit: Float!
 }
 
 type query_getScheduledEvents_oneOf_0_collection_items_event_memberships_items {
-  "Canonical reference (unique identifier) for the user"
+  """Canonical reference (unique identifier) for the user"""
   user: URL!
 }
 
-"An individual whom an invitee has invited to be a guest attendee to an event"
+"""
+An individual whom an invitee has invited to be a guest attendee to an event
+"""
 type Guest {
   email: EmailAddress!
   created_at: DateTime!
   updated_at: DateTime!
 }
 
-"Whether the scheduled event is \`active\` or \`canceled\`"
+"""Whether the scheduled event is \`active\` or \`canceled\`"""
 enum queryInput_getScheduledEvents_status {
   active
   canceled
@@ -777,62 +955,80 @@ enum queryInput_getScheduledEvents_status {
 
 union getEventTypes_response @statusCodeTypeName(statusCode: 200, typeName: "getEventTypes_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getEventTypes_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-"Service response"
+"""Service response"""
 type getEventTypes_200_response {
   collection: [Event_Type]!
   pagination: Pagination!
 }
 
-"A configuration for an Event"
+"""A configuration for an Event"""
 type Event_Type {
-  "Canonical reference (unique identifier) for the event type"
+  """Canonical reference (unique identifier) for the event type"""
   uri: URL!
-  "The event type name (in human-readable format)"
+  """The event type name (in human-readable format)"""
   name: String!
-  "Indicates if the event is active or not."
+  """Indicates if the event is active or not."""
   active: Boolean!
-  "The portion of the event type's URL that identifies a specific web page (in a human-readable format)"
+  """
+  The portion of the event type's URL that identifies a specific web page (in a human-readable format)
+  """
   slug: String!
-  "The URL of the user’s scheduling site where invitees book this event type"
+  """
+  The URL of the user’s scheduling site where invitees book this event type
+  """
   scheduling_url: URL!
-  "The length of sessions booked with this event type"
+  """The length of sessions booked with this event type"""
   duration: Float!
   kind: query_getEventTypes_oneOf_0_collection_items_kind!
   pooling_type: query_getEventTypes_oneOf_0_collection_items_pooling_type!
   type: query_getEventTypes_oneOf_0_collection_items_type!
   color: query_getEventTypes_oneOf_0_collection_items_color!
-  "The moment the event type was created (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment the event type was created (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   created_at: DateTime!
-  "The moment the event type was last updated (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment the event type was last updated (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   updated_at: DateTime!
-  "Contents of a note that may be associated with the event type"
+  """Contents of a note that may be associated with the event type"""
   internal_note: String!
-  "The event type's description (in non formatted text)"
+  """The event type's description (in non formatted text)"""
   description_plain: String!
-  "The event type's description (formatted with HTML)"
+  """The event type's description (formatted with HTML)"""
   description_html: String!
   profile: Profile!
-  "Indicates if the event type is hidden on the owner's main scheduling page"
+  """
+  Indicates if the event type is hidden on the owner's main scheduling page
+  """
   secret: Boolean!
   booking_method: query_getEventTypes_oneOf_0_collection_items_booking_method!
   custom_questions: [EventTypeCustomQuestion]!
-  "The moment the event type was deleted (e.g. \\"2020-01-02T03:04:05.678123Z\\"). Since event types can be deleted but their scheduled events remain it's useful to fetch a deleted event type when you still require event type data for a scheduled event."
+  """
+  The moment the event type was deleted (e.g. "2020-01-02T03:04:05.678123Z"). Since event types can be deleted but their scheduled events remain it's useful to fetch a deleted event type when you still require event type data for a scheduled event.
+  """
   deleted_at: DateTime!
 }
 
-"Indicates if the event type is \\"solo\\" (belongs to an individual user) or \\"group\\""
+"""
+Indicates if the event type is "solo" (belongs to an individual user) or "group"
+"""
 enum query_getEventTypes_oneOf_0_collection_items_kind {
   solo
   group
 }
 
-"Indicates if the event type is \\"round robin\\" (alternates between hosts) or \\"collective\\" (invitees pick a time when all participants are available) or \\"null\\" (the event type doesn’t consider the availability of a group participants)"
+"""
+Indicates if the event type is "round robin" (alternates between hosts) or "collective" (invitees pick a time when all participants are available) or "null" (the event type doesn’t consider the availability of a group participants)
+"""
 enum query_getEventTypes_oneOf_0_collection_items_pooling_type {
   round_robin
   collective
 }
 
-"Indicates if the event type is \\"AdhocEventType\\" (ad hoc event) or \\"StandardEventType\\" (standard event type)"
+"""
+Indicates if the event type is "AdhocEventType" (ad hoc event) or "StandardEventType" (standard event type)
+"""
 enum query_getEventTypes_oneOf_0_collection_items_type {
   StandardEventType
   AdhocEventType
@@ -840,44 +1036,62 @@ enum query_getEventTypes_oneOf_0_collection_items_type {
 
 scalar query_getEventTypes_oneOf_0_collection_items_color @regexp(pattern: "^#[a-f\\\\d]{6}$") @typescript(type: "string")
 
-"The publicly visible profile of a User or a Team that's associated with the Event Type (note: some Event Types don't have profiles)"
+"""
+The publicly visible profile of a User or a Team that's associated with the Event Type (note: some Event Types don't have profiles)
+"""
 type Profile {
   type: query_getEventTypes_oneOf_0_collection_items_profile_type!
-  "Human-readable name for the profile of the user that's associated with the event type"
+  """
+  Human-readable name for the profile of the user that's associated with the event type
+  """
   name: String!
-  "The unique reference to the user associated with the profile"
+  """The unique reference to the user associated with the profile"""
   owner: URL!
 }
 
-"Indicates if the profile belongs to a \\"user\\" (individual) or \\"team\\""
+"""
+Indicates if the profile belongs to a "user" (individual) or "team"
+"""
 enum query_getEventTypes_oneOf_0_collection_items_profile_type {
   User
   Team
 }
 
-"Indicates if the event type is for a poll or an instant booking"
+"""Indicates if the event type is for a poll or an instant booking"""
 enum query_getEventTypes_oneOf_0_collection_items_booking_method {
   instant
   poll
 }
 
 type EventTypeCustomQuestion {
-  "The custom question that the host created for the event type."
+  """The custom question that the host created for the event type."""
   name: String!
   type: query_getEventTypes_oneOf_0_collection_items_custom_questions_items_type!
-  "The numerical position of the question on the event booking page after the name and email address fields."
+  """
+  The numerical position of the question on the event booking page after the name and email address fields.
+  """
   position: Float!
-  "true if the question created by the host is turned ON and visible on the event booking page; false if turned OFF and invisible on the event booking page."
+  """
+  true if the question created by the host is turned ON and visible on the event booking page; false if turned OFF and invisible on the event booking page.
+  """
   enabled: Boolean!
-  "true if a response to the question created by the host is required for invitees to book the event type; false if not required."
+  """
+  true if a response to the question created by the host is required for invitees to book the event type; false if not required.
+  """
   required: Boolean!
-  "The invitee’s option(s) for single_select or multi_select type of responses."
+  """
+  The invitee’s option(s) for single_select or multi_select type of responses.
+  """
   answer_choices: [String]!
-  "true if the custom question lets invitees record a written response in addition to single-select or multiple-select type of responses; false if it doesn’t."
+  """
+  true if the custom question lets invitees record a written response in addition to single-select or multiple-select type of responses; false if it doesn’t.
+  """
   include_other: Boolean!
 }
 
-"The type of response that the invitee provides to the custom question; can be one or multiple lines of text, a phone number, or single- or multiple-select."
+"""
+The type of response that the invitee provides to the custom question; can be one or multiple lines of text, a phone number, or single- or multiple-select.
+"""
 enum query_getEventTypes_oneOf_0_collection_items_custom_questions_items_type {
   string
   text
@@ -888,38 +1102,46 @@ enum query_getEventTypes_oneOf_0_collection_items_custom_questions_items_type {
 
 union getUser_response @statusCodeTypeName(statusCode: 200, typeName: "getUser_200_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getUser_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-"Service response"
+"""Service response"""
 type getUser_200_response {
   resource: User!
 }
 
-"Information about the user."
+"""Information about the user."""
 type User {
-  "Canonical reference (unique identifier) for the user"
+  """Canonical reference (unique identifier) for the user"""
   uri: URL!
-  "The user's name (human-readable format)"
+  """The user's name (human-readable format)"""
   name: String!
-  "The portion of URL for the user's scheduling page (where invitees book sessions), rendered in a human-readable format"
+  """
+  The portion of URL for the user's scheduling page (where invitees book sessions), rendered in a human-readable format
+  """
   slug: String!
-  "The user's email address"
+  """The user's email address"""
   email: EmailAddress!
-  "The URL of the user's Calendly landing page (that lists all the user's event types)"
+  """
+  The URL of the user's Calendly landing page (that lists all the user's event types)
+  """
   scheduling_url: URL!
-  "The time zone to use when presenting time to the user"
+  """The time zone to use when presenting time to the user"""
   timezone: String!
-  "The URL of the user's avatar (image)"
+  """The URL of the user's avatar (image)"""
   avatar_url: URL!
-  "The moment when the user's record was created (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the user's record was created (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   created_at: DateTime!
-  "The moment when the user's record was last updated (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the user's record was last updated (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   updated_at: DateTime!
-  "A unique reference to the user's current organization"
+  """A unique reference to the user's current organization"""
   current_organization: URL!
 }
 
 union getMyUserAccount_response @statusCodeTypeName(statusCode: 200, typeName: "getMyUserAccount_200_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getMyUserAccount_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-"Service response"
+"""Service response"""
 type getMyUserAccount_200_response {
   resource: User!
 }
@@ -930,7 +1152,7 @@ type get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response {
   resource: Invitee!
 }
 
-"Error Object"
+"""Error Object"""
 type Error_Response {
   title: String!
   message: String!
@@ -956,33 +1178,47 @@ type get_organizations_uuid_invitations_200_response {
   pagination: Pagination!
 }
 
-"Organization Invitation object"
+"""Organization Invitation object"""
 type Organization_Invitation {
-  "Canonical reference (unique identifier) for the organization invitation"
+  """
+  Canonical reference (unique identifier) for the organization invitation
+  """
   uri: URL!
-  "Canonical reference (unique identifier) for the organization"
+  """Canonical reference (unique identifier) for the organization"""
   organization: URL!
-  "The email address of the person who was invited to join the organization"
+  """
+  The email address of the person who was invited to join the organization
+  """
   email: EmailAddress!
   status: query_get_organizations_uuid_invitations_oneOf_0_collection_items_status!
-  "The moment the invitation was created (e.g. “2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment the invitation was created (e.g. “2020-01-02T03:04:05.678123Z")
+  """
   created_at: DateTime!
-  "The moment the invitation was last updated (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment the invitation was last updated (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   updated_at: DateTime!
-  "The moment the invitation was last sent (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment the invitation was last sent (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   last_sent_at: DateTime!
-  "When the invitation is accepted, a reference to the user who accepted the invitation"
+  """
+  When the invitation is accepted, a reference to the user who accepted the invitation
+  """
   user: URL
 }
 
-"The status of the invitation (\\"pending\\", \\"accepted\\", or \\"declined\\")"
+"""The status of the invitation ("pending", "accepted", or "declined")"""
 enum query_get_organizations_uuid_invitations_oneOf_0_collection_items_status {
   pending
   accepted
   declined
 }
 
-"Indicates if the results should be filtered by status  (\\"pending\\", \\"accepted\\", or \\"declined\\")"
+"""
+Indicates if the results should be filtered by status  ("pending", "accepted", or "declined")
+"""
 enum queryInput_get_organizations_uuid_invitations_status {
   pending
   accepted
@@ -1002,50 +1238,62 @@ type get_organizations_uuid_memberships_200_response {
 }
 
 type Organization_Membership {
-  "Canonical reference (unique identifier) for the membership"
+  """Canonical reference (unique identifier) for the membership"""
   uri: URL!
   role: query_get_organizations_uuid_memberships_oneOf_0_resource_role!
   user: query_get_organizations_uuid_memberships_oneOf_0_resource_user!
-  "A unique reference to the organization"
+  """A unique reference to the organization"""
   organization: URL!
-  "The moment when the membership record was last updated (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the membership record was last updated (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   updated_at: DateTime!
-  "The moment when the membership record was created (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the membership record was created (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   created_at: DateTime!
 }
 
-"The user's role in the organization"
+"""The user's role in the organization"""
 enum query_get_organizations_uuid_memberships_oneOf_0_resource_role {
   user
   admin
   owner
 }
 
-"Information about the user."
+"""Information about the user."""
 type query_get_organizations_uuid_memberships_oneOf_0_resource_user {
-  "Canonical reference (unique identifier) for the user"
+  """Canonical reference (unique identifier) for the user"""
   uri: URL!
-  "The user's name (human-readable format)"
+  """The user's name (human-readable format)"""
   name: String!
-  "The portion of URL for the user's scheduling page (where invitees book sessions), rendered in a human-readable format"
+  """
+  The portion of URL for the user's scheduling page (where invitees book sessions), rendered in a human-readable format
+  """
   slug: String!
-  "The user's email address"
+  """The user's email address"""
   email: EmailAddress!
-  "The URL of the user's Calendly landing page (that lists all the user's event types)"
+  """
+  The URL of the user's Calendly landing page (that lists all the user's event types)
+  """
   scheduling_url: URL!
-  "The time zone to use when presenting time to the user"
+  """The time zone to use when presenting time to the user"""
   timezone: String!
-  "The URL of the user's avatar (image)"
+  """The URL of the user's avatar (image)"""
   avatar_url: URL!
-  "The moment when the user's record was created (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the user's record was created (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   created_at: DateTime!
-  "The moment when the user's record was last updated (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the user's record was last updated (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   updated_at: DateTime!
 }
 
 union get_organization_memberships_response @statusCodeTypeName(statusCode: 200, typeName: "get_organization_memberships_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "Error_Response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_organization_memberships_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
 
-"Service response"
+"""Service response"""
 type get_organization_memberships_200_response {
   collection: [Organization_Membership]!
   pagination: Pagination!
@@ -1058,31 +1306,39 @@ type get_webhooks_200_response {
   pagination: Pagination!
 }
 
-"Webhook Subscription Object"
+"""Webhook Subscription Object"""
 type Webhook_Subscription {
-  "Canonical reference (unique identifier) for the webhook"
+  """Canonical reference (unique identifier) for the webhook"""
   uri: URL!
-  "The callback URL to use when the event is triggered"
+  """The callback URL to use when the event is triggered"""
   callback_url: URL!
-  "The moment when the webhook subscription was created (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the webhook subscription was created (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   created_at: DateTime!
-  "The moment when the webhook subscription was last updated (e.g. \\"2020-01-02T03:04:05.678123Z\\")"
+  """
+  The moment when the webhook subscription was last updated (e.g. "2020-01-02T03:04:05.678123Z")
+  """
   updated_at: DateTime!
-  "The date and time the webhook subscription is retried"
+  """The date and time the webhook subscription is retried"""
   retry_started_at: DateTime!
   state: query_get_webhooks_oneOf_0_collection_items_state!
-  "A list of events to which the webhook is subscribed"
+  """A list of events to which the webhook is subscribed"""
   events: [query_get_webhooks_oneOf_0_collection_items_events_items]!
   scope: query_get_webhooks_oneOf_0_collection_items_scope!
-  "The URI of the organization that's associated with the webhook subscription"
+  """
+  The URI of the organization that's associated with the webhook subscription
+  """
   organization: URL!
-  "The URI of the user that's associated with the webhook subscription"
+  """The URI of the user that's associated with the webhook subscription"""
   user: URL!
-  "The URI of the user who created the webhook subscription"
+  """The URI of the user who created the webhook subscription"""
   creator: URL!
 }
 
-"Indicates if the webhook subscription is \\"active\\" or \\"disabled\\""
+"""
+Indicates if the webhook subscription is "active" or "disabled"
+"""
 enum query_get_webhooks_oneOf_0_collection_items_state {
   active
   disabled
@@ -1094,13 +1350,13 @@ enum query_get_webhooks_oneOf_0_collection_items_events_items {
   routing_form_submission_created @enum(value: "\\"routing_form_submission.created\\"")
 }
 
-"The scope of the webhook subscription"
+"""The scope of the webhook subscription"""
 enum query_get_webhooks_oneOf_0_collection_items_scope {
   user
   organization
 }
 
-"Filter the list by organization or user"
+"""Filter the list by organization or user"""
 enum queryInput_get_webhooks_scope {
   organization
   user
@@ -1118,13 +1374,13 @@ type getInviteeNoShow_200_response {
   resource: InviteeNoShow!
 }
 
-"Information about an invitees no show."
+"""Information about an invitees no show."""
 type InviteeNoShow {
-  "Canonical reference (unique identifier) for the no show"
+  """Canonical reference (unique identifier) for the no show"""
   uri: URL!
-  "Canonical reference (unique identifier) for the associated Invitee"
+  """Canonical reference (unique identifier) for the associated Invitee"""
   invitee: URL!
-  "The moment when the no show was created"
+  """The moment when the no show was created"""
   created_at: DateTime!
 }
 
@@ -1135,46 +1391,54 @@ type get_routing_forms_200_response {
   pagination: Pagination!
 }
 
-"Information about a routing form."
+"""Information about a routing form."""
 type Routing_Form {
-  "Canonical reference (unique identifier) for the routing form."
+  """Canonical reference (unique identifier) for the routing form."""
   uri: URL!
-  "The URI of the organization that's associated with the routing form."
+  """The URI of the organization that's associated with the routing form."""
   organization: URL!
-  "The routing form name (in human-readable format)."
+  """The routing form name (in human-readable format)."""
   name: String!
   status: query_get_routing_forms_oneOf_0_collection_items_status!
-  "An ordered collection of Routing Form non-deleted questions."
+  """An ordered collection of Routing Form non-deleted questions."""
   questions: [Routing_Form_Question]!
-  "The moment the routing form was created."
+  """The moment the routing form was created."""
   created_at: DateTime!
-  "The moment when the routing form was last updated."
+  """The moment when the routing form was last updated."""
   updated_at: DateTime!
 }
 
-"Indicates if the form is in \\"draft\\" or \\"published\\" status."
+"""Indicates if the form is in "draft" or "published" status."""
 enum query_get_routing_forms_oneOf_0_collection_items_status {
   draft
   published
 }
 
-"Routing form questions."
+"""Routing form questions."""
 type Routing_Form_Question {
-  "Unique identifier for the routing form question."
+  """Unique identifier for the routing form question."""
   uuid: UUID!
-  "Question name (in human-readable format)."
+  """Question name (in human-readable format)."""
   name: String!
   type: query_get_routing_forms_oneOf_0_collection_items_questions_items_type!
-  "true if an answer to the question is required for respondents to submit the routing form; false if not required."
+  """
+  true if an answer to the question is required for respondents to submit the routing form; false if not required.
+  """
   required: Boolean!
-  "The respondent’s option(s) for \\"select\\" or \\"radios\\" types of questions."
+  """
+  The respondent’s option(s) for "select" or "radios" types of questions.
+  """
   answer_choices: [String]!
 }
 
-"A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier."
+"""
+A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.
+"""
 scalar UUID
 
-"Question type: name, text input, email, phone, textarea input, dropdown list or radio button list."
+"""
+Question type: name, text input, email, phone, textarea input, dropdown list or radio button list.
+"""
 enum query_get_routing_forms_oneOf_0_collection_items_questions_items_type {
   name
   text
@@ -1198,58 +1462,68 @@ type get_routing_form_submissions_200_response {
   pagination: Pagination!
 }
 
-"Information about a Routing Form Submission."
+"""Information about a Routing Form Submission."""
 type Routing_Form_Submission {
-  "Canonical reference (unique identifier) for the routing form submission."
+  """
+  Canonical reference (unique identifier) for the routing form submission.
+  """
   uri: URL!
-  "The URI of the routing form that's associated with the submission."
+  """The URI of the routing form that's associated with the submission."""
   routing_form: URL!
-  "All Routing Form Submission questions with answers."
+  """All Routing Form Submission questions with answers."""
   questions_and_answers: [Routing_Form_Submission_Question_and_Answer]!
   tracking: Routing_Form_Submission_Tracking!
   result: Routing_Form_Submission_Result
-  "The reference to the Invitee resource when routing form submission results in a scheduled meeting."
+  """
+  The reference to the Invitee resource when routing form submission results in a scheduled meeting.
+  """
   submitter: URL!
   submitter_type: Invitee_const!
-  "The moment the routing form was submitted."
+  """The moment the routing form was submitted."""
   created_at: DateTime!
-  "The moment when the routing form submission was last updated."
+  """The moment when the routing form submission was last updated."""
   updated_at: DateTime!
 }
 
-"All Routing Form Submission questions with answers."
+"""All Routing Form Submission questions with answers."""
 type Routing_Form_Submission_Question_and_Answer {
-  "Unique identifier for the routing form question."
+  """Unique identifier for the routing form question."""
   question_uuid: UUID!
-  "Question name (in human-readable format)."
+  """Question name (in human-readable format)."""
   question: String!
-  "Answer provided by the respondent when the form was submitted."
+  """Answer provided by the respondent when the form was submitted."""
   answer: String
 }
 
-"The UTM and Salesforce tracking parameters associated with a Routing Form Submission."
+"""
+The UTM and Salesforce tracking parameters associated with a Routing Form Submission.
+"""
 type Routing_Form_Submission_Tracking {
-  "The UTM parameter used to track a campaign."
+  """The UTM parameter used to track a campaign."""
   utm_campaign: String!
-  "The UTM parameter that identifies the source (platform where the traffic originates)."
+  """
+  The UTM parameter that identifies the source (platform where the traffic originates).
+  """
   utm_source: String!
-  "The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social media, affiliate or QR code)."
+  """
+  The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social media, affiliate or QR code).
+  """
   utm_medium: String!
-  "UTM content tracking parameter."
+  """UTM content tracking parameter."""
   utm_content: String!
-  "The UTM parameter used to track keywords."
+  """The UTM parameter used to track keywords."""
   utm_term: String!
-  "The Salesforce record unique identifier."
+  """The Salesforce record unique identifier."""
   salesforce_uuid: String!
 }
 
-"The polymorphic base type for a Routing Form Submission result."
+"""The polymorphic base type for a Routing Form Submission result."""
 union Routing_Form_Submission_Result = Routing_Form_Submission_Event_Type_Result | Routing_Form_Submission_External_URL_Result | Routing_Form_Submission_Custom_Message_Result
 
-"Information about the event type Routing Form Submission result."
+"""Information about the event type Routing Form Submission result."""
 type Routing_Form_Submission_Event_Type_Result {
   type: event_type_const!
-  "A reference to the event type resource."
+  """A reference to the event type resource."""
   value: URL!
 }
 
@@ -1257,10 +1531,10 @@ enum event_type_const @typescript(type: "\\"event_type\\"") @example(value: "\\"
   event_type @enum(value: "\\"event_type\\"")
 }
 
-"Information about the external URL Routing Form Submission result."
+"""Information about the external URL Routing Form Submission result."""
 type Routing_Form_Submission_External_URL_Result {
   type: external_url_const!
-  "The external URL the respondent were redirected to."
+  """The external URL the respondent were redirected to."""
   value: URL!
 }
 
@@ -1268,7 +1542,7 @@ enum external_url_const @typescript(type: "\\"external_url\\"") @example(value: 
   external_url @enum(value: "\\"external_url\\"")
 }
 
-"Information about the custom message Routing Form Submission result."
+"""Information about the custom message Routing Form Submission result."""
 type Routing_Form_Submission_Custom_Message_Result {
   type: custom_message_const!
   value: query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_value!
@@ -1278,11 +1552,11 @@ enum custom_message_const @typescript(type: "\\"custom_message\\"") @example(val
   custom_message @enum(value: "\\"custom_message\\"")
 }
 
-"Contains an object with custom message headline and body."
+"""Contains an object with custom message headline and body."""
 type query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_value {
-  "Headline displayed when answers don't match any routes."
+  """Headline displayed when answers don't match any routes."""
   headline: String!
-  "Body text displayed when answers don't match any routes."
+  """Body text displayed when answers don't match any routes."""
   body: String!
 }
 
@@ -1298,42 +1572,52 @@ type get_routing_form_submissions_uuid_200_response {
 
 union getEventTypeAvailableTimes_response @statusCodeTypeName(statusCode: 200, typeName: "getEventTypeAvailableTimes_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getEventTypeAvailableTimes_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-"Service Response"
+"""Service Response"""
 type getEventTypeAvailableTimes_200_response {
-  "The set of available times for the event type matching the criteria"
+  """The set of available times for the event type matching the criteria"""
   collection: [Event_Type_Available_Time]!
 }
 
-"An available meeting time slot for the given event type"
+"""An available meeting time slot for the given event type"""
 type Event_Type_Available_Time {
-  "Indicates that the open time slot is \\"available\\""
+  """
+  Indicates that the open time slot is "available"
+  """
   status: String!
-  "Total remaining invitees for this available time. For Group Event Type, more than one invitee can book in this available time. For all other Event Types, only one invitee can book in this available time."
+  """
+  Total remaining invitees for this available time. For Group Event Type, more than one invitee can book in this available time. For all other Event Types, only one invitee can book in this available time.
+  """
   invitees_remaining: Float!
-  "The moment the event was scheduled to start in UTC time"
+  """The moment the event was scheduled to start in UTC time"""
   start_time: DateTime!
-  "The URL of the user’s scheduling site where invitees book this event type"
+  """
+  The URL of the user’s scheduling site where invitees book this event type
+  """
   scheduling_url: URL!
 }
 
 union activityLog_response @statusCodeTypeName(statusCode: 200, typeName: "activityLog_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = activityLog_200_response | INVALID_ARGUMENT_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-"Activity log response"
+"""Activity log response"""
 type activityLog_200_response {
-  "The set of activity log entries matching the criteria"
+  """The set of activity log entries matching the criteria"""
   collection: [Activity_Log_Entry]!
   pagination: Pagination!
-  "The date and time of the newest entry (format: \\"2020-01-02T03:04:05.678Z\\") in the collection array."
+  """
+  The date and time of the newest entry (format: "2020-01-02T03:04:05.678Z") in the collection array.
+  """
   last_event_time: DateTime
-  "Total number of records based on search criteria"
+  """Total number of records based on search criteria"""
   total_count: NonNegativeInt!
-  "If there are more search results than the total_count field indicates, pagination will continue to return results past the total_count field value."
+  """
+  If there are more search results than the total_count field indicates, pagination will continue to return results past the total_count field value.
+  """
   exceeds_max_total_count: Boolean!
 }
 
-"Object for a created activity log record"
+"""Object for a created activity log record"""
 type Activity_Log_Entry {
-  "The date and time of the entry (format: \\"2020-01-02T03:04:05.678Z\\")."
+  """The date and time of the entry (format: "2020-01-02T03:04:05.678Z")."""
   occurred_at: DateTime!
   actor: Activity_Log_Actor
   details: JSON!
@@ -1344,38 +1628,78 @@ type Activity_Log_Entry {
   organization: URL!
 }
 
-"The Calendly actor that took the action creating the activity log entry\\n\\nSpecific actors:\\n\\n<details>\\n<summary>Calendly System</summary>\\n\\nUsed when an action is performed by the Calendly system and not triggered directly by a user interaction.\\n\\nExample:\\n\`\`\`json\\n{\\n    \\"display_name\\": \\"Calendly System\\",\\n    \\"type\\": \\"System\\"\\n}\\n\`\`\`\\n\\n</details>\\n\\n<br />\\n\\n<details>\\n<summary>Calendly Support</summary>\\nUsed when an action is performed by Calendly support.\\n\\nExample:\\n\`\`\`json\\n{\\n  \\"display_name\\": \\"Calendly Support\\",\\n  \\"organization\\": {\\n    \\"uri\\": \\"https://api.calendly.com/organizations/AAAAAAAAAAAAAAAA\\"\\n  },\\n  \\"type\\": \\"User\\",\\n  \\"uri\\": \\"https://api.calendly.com/users/AAAAAAAAAAAAAAAA\\"\\n}\\n\`\`\`\\n</details>"
+"""
+The Calendly actor that took the action creating the activity log entry
+
+Specific actors:
+
+<details>
+<summary>Calendly System</summary>
+
+Used when an action is performed by the Calendly system and not triggered directly by a user interaction.
+
+Example:
+\`\`\`json
+{
+    "display_name": "Calendly System",
+    "type": "System"
+}
+\`\`\`
+
+</details>
+
+<br />
+
+<details>
+<summary>Calendly Support</summary>
+Used when an action is performed by Calendly support.
+
+Example:
+\`\`\`json
+{
+  "display_name": "Calendly Support",
+  "organization": {
+    "uri": "https://api.calendly.com/organizations/AAAAAAAAAAAAAAAA"
+  },
+  "type": "User",
+  "uri": "https://api.calendly.com/users/AAAAAAAAAAAAAAAA"
+}
+\`\`\`
+</details>
+"""
 type Activity_Log_Actor {
-  "Canonical reference (unique identifier) for the user"
+  """Canonical reference (unique identifier) for the user"""
   uri: URL
-  "The type of actor"
+  """The type of actor"""
   type: String!
   organization: query_activityLog_oneOf_0_collection_items_actor_organization
   group: query_activityLog_oneOf_0_collection_items_actor_group
-  "The user's name (human-readable format)"
+  """The user's name (human-readable format)"""
   display_name: String
-  "Username of the actor"
+  """Username of the actor"""
   alternative_identifier: EmailAddress
 }
 
 type query_activityLog_oneOf_0_collection_items_actor_organization {
-  "Canonical reference (unique identifier) for the organization"
+  """Canonical reference (unique identifier) for the organization"""
   uri: URL
-  "The actors' role in the organization"
+  """The actors' role in the organization"""
   role: String
 }
 
-"User group information about the actor"
+"""User group information about the actor"""
 type query_activityLog_oneOf_0_collection_items_actor_group {
-  "Canonical reference (unique identifier) for the user group"
+  """Canonical reference (unique identifier) for the user group"""
   uri: URL
-  "Name of the user group"
+  """Name of the user group"""
   name: String
-  "The actor's role in the user group"
+  """The actor's role in the user group"""
   role: String
 }
 
-"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 scalar query_activityLog_oneOf_0_collection_items_fully_qualified_name @regexp(pattern: "^[A-Za-z0-9\\\\-_]+\\\\.[A-Za-z0-9\\\\-_]+$") @typescript(type: "string")
@@ -1384,10 +1708,20 @@ scalar query_activityLog_oneOf_0_collection_items_namespace @regexp(pattern: "^[
 
 scalar query_activityLog_oneOf_0_collection_items_action @regexp(pattern: "^[A-Za-z0-9\\\\-_]+$") @typescript(type: "string")
 
-"Integers that will have a value of 0 or more."
+"""Integers that will have a value of 0 or more."""
 scalar NonNegativeInt
 
-"Filters entries based on the search term.\\n\\nSupported operators:\\n  - \`|\` - to allow filtering by one term or another. Example: \`this | that\`\\n  - \`+\` - to allow filtering by one term and another. Example: \`this + that\`\\n  - \`\\"\` - to allow filtering by an exact search term. Example: \`\\"email@website.com\\"\`\\n  - \`-\` - to omit specific terms from results. Example: \`Added -User\`\\n  - \`()\` - to allow specifying precedence during a search. Example: \`(this + that) OR (person + place)\`\\n  - \`*\` - to allow prefix searching. Example \`*@other-website.com\`"
+"""
+Filters entries based on the search term.
+
+Supported operators:
+  - \`|\` - to allow filtering by one term or another. Example: \`this | that\`
+  - \`+\` - to allow filtering by one term and another. Example: \`this + that\`
+  - \`"\` - to allow filtering by an exact search term. Example: \`"email@website.com"\`
+  - \`-\` - to omit specific terms from results. Example: \`Added -User\`
+  - \`()\` - to allow specifying precedence during a search. Example: \`(this + that) OR (person + place)\`
+  - \`*\` - to allow prefix searching. Example \`*@other-website.com\`
+"""
 scalar queryInput_activityLog_search_term @length(min: null, max: 300)
 
 enum queryInput_activityLog_sort_items {
@@ -1403,43 +1737,72 @@ enum queryInput_activityLog_sort_items {
   occurred_at_desc @enum(value: "\\"occurred_at:desc\\"")
 }
 
-"Integers that will have a value greater than 0."
+"""Integers that will have a value greater than 0."""
 scalar PositiveInt
 
 type Mutation {
-  "\\t\\nInvites a user to an organization."
+  """
+  	
+  Invites a user to an organization.
+  """
   post_organizations_uuid_invitations(
-    "The organization's unique identifier"
+    """The organization's unique identifier"""
     uuid: String!
     input: post_organizations_uuid_invitations_request_Input
   ): post_organizations_uuid_invitations_response @httpOperation(path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
-  "Use this to revoke an Organization Invitation to an organization. Once revoked, the invitation link that was sent to the invitee is no longer valid."
+  """
+  Use this to revoke an Organization Invitation to an organization. Once revoked, the invitation link that was sent to the invitee is no longer valid.
+  """
   revoke_users_organization_invitation(
-    "The organization’s unique identifier"
+    """The organization’s unique identifier"""
     org_uuid: String!
-    "The organization invitation's unique identifier"
+    """The organization invitation's unique identifier"""
     uuid: String!
   ): revoke_users_organization_invitation_response @httpOperation(path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
-  "Removes a user from an organization.\\n\\nNotes:\\n\\n* To remove users, the caller must have admin rights for the organization\\n\\n* An organization owner can’t be removed"
+  """
+  Removes a user from an organization.
+  
+  Notes:
+  
+  * To remove users, the caller must have admin rights for the organization
+  
+  * An organization owner can’t be removed
+  """
   delete_organizations_uuid_memberships(
-    "The organization membership's unique identifier"
+    """The organization membership's unique identifier"""
     uuid: String!
   ): delete_organizations_uuid_memberships_response @httpOperation(path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
-  "Create a Webhook Subscription for an Organization or User.\\n\\n* The \`organization\` subscription scope triggers the webhook for all subscribed events within the organization.\\n* The \`user\` subscription scope only triggers the webhook for subscribed events that belong to the specific user.\\n\\n| Event | Allowed Subscription Scopes |\\n| ----- | --------------------------- |\\n| <pre>invitee.created</pre> | \`organization\` \`user\` |\\n| <pre>invitee.canceled</pre> | \`organization\` \`user\` |\\n| <pre>routing_form_submission.created</pre> | \`organization\` <br /> <small>Create separate Webhook Subscriptions for events with different subscription scopes.</small> |"
+  """
+  Create a Webhook Subscription for an Organization or User.
+  
+  * The \`organization\` subscription scope triggers the webhook for all subscribed events within the organization.
+  * The \`user\` subscription scope only triggers the webhook for subscribed events that belong to the specific user.
+  
+  | Event | Allowed Subscription Scopes |
+  | ----- | --------------------------- |
+  | <pre>invitee.created</pre> | \`organization\` \`user\` |
+  | <pre>invitee.canceled</pre> | \`organization\` \`user\` |
+  | <pre>routing_form_submission.created</pre> | \`organization\` <br /> <small>Create separate Webhook Subscriptions for events with different subscription scopes.</small> |
+  """
   post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @httpOperation(path: "/webhook_subscriptions", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
-  "Delete a Webhook Subscription."
+  """Delete a Webhook Subscription."""
   delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
-  "Creates a single-use scheduling link."
+  """Creates a single-use scheduling link."""
   post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @httpOperation(path: "/scheduling_links", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
-  "<!-- theme: info -->\\n  > This endpoint requires an <strong>Enterprise</strong> subscription.\\n\\nTo submit a request to remove invitee data from all previously booked events in your organization, use this endpoint. Requests for data deletion can take up to 7 days to complete."
+  """
+  <!-- theme: info -->
+    > This endpoint requires an <strong>Enterprise</strong> subscription.
+  
+  To submit a request to remove invitee data from all previously booked events in your organization, use this endpoint. Requests for data deletion can take up to 7 days to complete.
+  """
   post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @httpOperation(path: "/data_compliance/deletion/invitees", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
-  "Undoes marking an Invitee as a No Show."
+  """Undoes marking an Invitee as a No Show."""
   deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @httpOperation(path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
-  "Marks an Invitee as a No Show."
+  """Marks an Invitee as a No Show."""
   postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @httpOperation(path: "/invitee_no_shows", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
-  "Cancels specified event."
+  """Cancels specified event."""
   post_scheduled_events_uuid_cancellation(
-    "The event's unique indentifier"
+    """The event's unique indentifier"""
     uuid: String!
     input: post_scheduled_events_uuid_cancellation_request_Input
   ): post_scheduled_events_uuid_cancellation_response @httpOperation(path: "/scheduled_events/{args.uuid}/cancellation", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
@@ -1464,7 +1827,7 @@ enum mutation_post_organizations_uuid_invitations_oneOf_3_message {
 }
 
 input post_organizations_uuid_invitations_request_Input @example(value: "{\\"value\\":{\\"email\\":\\"alice@example.com\\"}}") {
-  "The email of the user being invited"
+  """The email of the user being invited"""
   email: EmailAddress!
 }
 
@@ -1474,7 +1837,7 @@ type Void_container {
   Void: Void @resolveRoot
 }
 
-"Represents empty values"
+"""Represents empty values"""
 scalar Void
 
 union delete_organizations_uuid_memberships_response @statusCodeTypeName(statusCode: 204, typeName: "Void_container") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "Error_Response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = Void_container | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
@@ -1500,16 +1863,22 @@ enum Hook_with_this_url_already_exists_const @typescript(type: "\\"Hook with thi
 }
 
 input post_users_uuid_webhooks_request_Input @example(value: "{\\"value\\":{\\"url\\":\\"https://blah.foo/bar\\",\\"events\\":[\\"invitee.created\\",\\"invitee.canceled\\"],\\"organization\\":\\"https://api.calendly.com/organizations/AAAAAAAAAAAAAAAA\\",\\"user\\":\\"https://api.calendly.com/users/BBBBBBBBBBBBBBBB\\",\\"scope\\":\\"user\\",\\"signing_key\\":\\"5mEzn9C-I28UtwOjZJtFoob0sAAFZ95GbZkqj4y3i0I\\"}}") {
-  "The URL where you want to receive POST requests for events you are subscribed to."
+  """
+  The URL where you want to receive POST requests for events you are subscribed to.
+  """
   url: URL!
-  "List of user events to subscribe to."
+  """List of user events to subscribe to."""
   events: [mutationInput_post_users_uuid_webhooks_input_events_items]!
-  "The unique reference to the organization that the webhook will be tied to."
+  """
+  The unique reference to the organization that the webhook will be tied to.
+  """
   organization: URL!
-  "The unique reference to the user that the webhook will be tied to."
+  """The unique reference to the user that the webhook will be tied to."""
   user: URL
   scope: mutationInput_post_users_uuid_webhooks_input_scope!
-  "Optional secret key shared between your application and Calendly. See https://developer.calendly.com/api-docs/ZG9jOjM2MzE2MDM4-webhook-signatures for additional information."
+  """
+  Optional secret key shared between your application and Calendly. See https://developer.calendly.com/api-docs/ZG9jOjM2MzE2MDM4-webhook-signatures for additional information.
+  """
   signing_key: String
 }
 
@@ -1519,7 +1888,9 @@ enum mutationInput_post_users_uuid_webhooks_input_events_items {
   routing_form_submission_created @enum(value: "\\"routing_form_submission.created\\"")
 }
 
-"Indicates if the webhook subscription scope will be \\"organization\\" or \\"user\\""
+"""
+Indicates if the webhook subscription scope will be "organization" or "user"
+"""
 enum mutationInput_post_users_uuid_webhooks_input_scope {
   organization
   user
@@ -1534,9 +1905,11 @@ type post_scheduling_links_201_response {
 }
 
 type mutation_post_scheduling_links_oneOf_0_resource {
-  "Scheduling link url"
+  """Scheduling link url"""
   booking_url: URL!
-  "A link to the resource that owns this Scheduling Link (currently, this is always an Event Type)"
+  """
+  A link to the resource that owns this Scheduling Link (currently, this is always an Event Type)
+  """
   owner: URL
   owner_type: EventType_const
 }
@@ -1547,7 +1920,9 @@ enum EventType_const @typescript(type: "\\"EventType\\"") @example(value: "\\"Ev
 
 input post_scheduling_links_request_Input @example(value: "{\\"value\\":{\\"max_event_count\\":1,\\"owner\\":\\"https://api.calendly.com/event_types/012345678901234567890\\",\\"owner_type\\":\\"EventType\\"}}") {
   max_event_count: _1_const!
-  "A link to the resource that owns this Scheduling Link (currently, this is always an Event Type)"
+  """
+  A link to the resource that owns this Scheduling Link (currently, this is always an Event Type)
+  """
   owner: URL!
   owner_type: EventType_const!
 }
@@ -1596,11 +1971,11 @@ enum mutation_post_scheduled_events_uuid_cancellation_oneOf_3_message {
 }
 
 input post_scheduled_events_uuid_cancellation_request_Input {
-  "Reason for cancellation"
+  """Reason for cancellation"""
   reason: mutationInput_post_scheduled_events_uuid_cancellation_input_reason
 }
 
-"Reason for cancellation"
+"""Reason for cancellation"""
 scalar mutationInput_post_scheduled_events_uuid_cancellation_input_reason @length(min: null, max: 10000)
 
 scalar ObjMap
