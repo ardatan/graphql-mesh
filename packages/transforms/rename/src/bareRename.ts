@@ -95,14 +95,14 @@ export default class BareRename implements MeshTransform {
     }
   }
 
-  matchInMap(map: RenameMapObject, toMatch: string) {
+  matchInMap(map: RenameMapObject, toMatch: string): string {
     const mapKeyIsString = map.has(toMatch);
     const mapKeys = mapKeyIsString
       ? [toMatch]
       : [...map.keys()].filter(key => typeof key !== 'string' && key.test(toMatch));
     if (!mapKeys?.length) return null;
 
-    return mapKeys.reduce((newName: string, mapKey: string | RegExp) => {
+    return mapKeys.reduce<string>((newName: string, mapKey: string | RegExp) => {
       if (mapKeyIsString) {
         const str = map.get(mapKey);
         // avoid re-iterating over strings that have already been renamed
