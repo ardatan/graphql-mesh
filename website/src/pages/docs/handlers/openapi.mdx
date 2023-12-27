@@ -119,7 +119,7 @@ header in `Authorization-Header`. To introduce the logic needed to generate the 
 import { MeshContext } from '@graphql-mesh/runtime';
 import { fetch } from '@whatwg-node/fetch';
 
-export default function(url: string, options?: MeshFetchRequestInit, context?: any, info?: GraphQLResolveInfo) {
+export default function(url: string, options: RequestInit = {}, context?: MeshContext, info?: GraphQLResolveInfo) {
   // Set Authorization header dynamically to context value, or input cookie, or input header, or from context.headers
   options.headers['authorization'] =
     context.authorization || options.headers['authorization-cookie'] || options.headers['authorization-header']
