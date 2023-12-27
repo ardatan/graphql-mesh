@@ -119,15 +119,15 @@ header in `Authorization-Header`. To introduce the logic needed to generate the 
 import { MeshContext } from '@graphql-mesh/runtime';
 import { fetch } from '@whatwg-node/fetch';
 
-export default(url: string, init: RequestInit, context: MeshContext) {
-  // Set Authorization header dynamically to context value, or input cookie, or input header
-  init.headers['authorization'] =
-    context.authorization || init.headers['authorization-cookie'] || init.headers['authorization-header']
+export default function(url: string, options: RequestInit = {}, context?: MeshContext, info?: GraphQLResolveInfo) {
+  // Set Authorization header dynamically to context value, or input cookie, or input header, or from context.headers
+  options.headers['authorization'] =
+    context.authorization || options.headers['authorization-cookie'] || options.headers['authorization-header']
   // Clean up headers forwarded to the Rest API
-  delete init.headers['authorization-cookie']
-  delete init.headers['authorization-header']
+  delete options.headers['authorization-cookie']
+  delete options.headers['authorization-header']
   // Execute the fetch with the new headers
-  return fetch(url, args)
+  return fetch(url, options)
 }
 ```
 
