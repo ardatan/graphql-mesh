@@ -24,7 +24,7 @@ describe('Multiple Responses Swagger', () => {
       directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
       type Query @globalOptions(sourceName: "test", endpoint: "https://api.example.com/v1") {
-        "Optional extended description in Markdown."
+        """Optional extended description in Markdown."""
         foo_by_id: foo_by_id_response @httpOperation(path: "/{id}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json\\"}", httpMethod: GET)
       }
 
@@ -40,7 +40,7 @@ describe('Multiple Responses Swagger', () => {
       }
 
       type Mutation {
-        "Optional extended description in Markdown."
+        """Optional extended description in Markdown."""
         post: post_response @httpOperation(path: "/", operationSpecificHeaders: "{\\"Accept\\":\\"application/json\\"}", httpMethod: POST)
       }
 
@@ -50,7 +50,7 @@ describe('Multiple Responses Swagger', () => {
         Void: Void @resolveRoot
       }
 
-      "Represents empty values"
+      """Represents empty values"""
       scalar Void
 
       scalar ObjMap

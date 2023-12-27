@@ -11,7 +11,9 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
-"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
 directive @stream(
   """Stream when true or undefined."""
   if: Boolean! = true

@@ -15,7 +15,7 @@ type Query @globalOptions(sourceName: "test", endpoint: "https://openwhisk.ng.bl
 }
 
 type Mutation {
-  "Description of the action"
+  """Description of the action"""
   post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @httpOperation(path: "/test-action-2", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST, queryParamArgMap: "{\\"blocking\\":\\"blocking\\",\\"result\\":\\"result\\"}")
 }
 

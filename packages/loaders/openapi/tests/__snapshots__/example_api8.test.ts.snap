@@ -10,13 +10,13 @@ directive @globalOptions(sourceName: String, endpoint: String, operationHeaders:
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
 type Query @globalOptions(sourceName: "test", endpoint: "http://localhost:{context.port}/api") {
-  "Return a user."
+  """Return a user."""
   user: user @httpOperation(path: "/user", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
-"A user represents a natural person"
+"""A user represents a natural person"""
 type user {
-  "The legal name of a user"
+  """The legal name of a user"""
   name: String
 }
 

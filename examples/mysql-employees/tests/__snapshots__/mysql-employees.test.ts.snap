@@ -41,7 +41,7 @@ type Query {
   count_v_full_employees(where: v_full_employees_WhereInput): Int @mysqlCount(table: "v_full_employees")
 }
 
-"VIEW"
+"""VIEW"""
 type current_dept_emp {
   emp_no: Int!
   dept_no: String!
@@ -49,10 +49,12 @@ type current_dept_emp {
   to_date: Date
 }
 
-"A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
+"""
+A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
 scalar Date
 
-"VIEW"
+"""VIEW"""
 input current_dept_emp_WhereInput {
   emp_no: String
   dept_no: String
@@ -60,7 +62,7 @@ input current_dept_emp_WhereInput {
   to_date: String
 }
 
-"VIEW"
+"""VIEW"""
 input current_dept_emp_OrderByInput {
   emp_no: OrderBy
   dept_no: OrderBy
@@ -216,49 +218,49 @@ input titles_OrderByInput {
   to_date: OrderBy
 }
 
-"VIEW"
+"""VIEW"""
 type dept_emp_latest_date {
   emp_no: Int!
   from_date: Date
   to_date: Date
 }
 
-"VIEW"
+"""VIEW"""
 input dept_emp_latest_date_WhereInput {
   emp_no: String
   from_date: String
   to_date: String
 }
 
-"VIEW"
+"""VIEW"""
 input dept_emp_latest_date_OrderByInput {
   emp_no: OrderBy
   from_date: OrderBy
   to_date: OrderBy
 }
 
-"VIEW"
+"""VIEW"""
 type v_full_departments {
   dept_no: String!
   dept_name: String!
   manager: String
 }
 
-"VIEW"
+"""VIEW"""
 input v_full_departments_WhereInput {
   dept_no: String
   dept_name: String
   manager: String
 }
 
-"VIEW"
+"""VIEW"""
 input v_full_departments_OrderByInput {
   dept_no: OrderBy
   dept_name: OrderBy
   manager: OrderBy
 }
 
-"VIEW"
+"""VIEW"""
 type v_full_employees {
   emp_no: Int!
   first_name: String!
@@ -274,7 +276,7 @@ enum v_full_employees_gender {
   F
 }
 
-"VIEW"
+"""VIEW"""
 input v_full_employees_WhereInput {
   emp_no: String
   first_name: String
@@ -285,7 +287,7 @@ input v_full_employees_WhereInput {
   department: String
 }
 
-"VIEW"
+"""VIEW"""
 input v_full_employees_OrderByInput {
   emp_no: OrderBy
   first_name: OrderBy
@@ -329,7 +331,7 @@ type Mutation {
   delete_v_full_employees(where: v_full_employees_WhereInput): Boolean @mysqlDelete(table: "v_full_employees")
 }
 
-"VIEW"
+"""VIEW"""
 input current_dept_emp_InsertInput {
   emp_no: Int!
   dept_no: String!
@@ -337,7 +339,7 @@ input current_dept_emp_InsertInput {
   to_date: Date
 }
 
-"VIEW"
+"""VIEW"""
 input current_dept_emp_UpdateInput {
   emp_no: Int
   dept_no: String
@@ -369,14 +371,14 @@ input dept_emp_UpdateInput {
   to_date: Date
 }
 
-"VIEW"
+"""VIEW"""
 input dept_emp_latest_date_InsertInput {
   emp_no: Int!
   from_date: Date
   to_date: Date
 }
 
-"VIEW"
+"""VIEW"""
 input dept_emp_latest_date_UpdateInput {
   emp_no: Int
   from_date: Date
@@ -443,21 +445,21 @@ input titles_UpdateInput {
   to_date: Date
 }
 
-"VIEW"
+"""VIEW"""
 input v_full_departments_InsertInput {
   dept_no: String!
   dept_name: String!
   manager: String
 }
 
-"VIEW"
+"""VIEW"""
 input v_full_departments_UpdateInput {
   dept_no: String
   dept_name: String
   manager: String
 }
 
-"VIEW"
+"""VIEW"""
 input v_full_employees_InsertInput {
   emp_no: Int!
   first_name: String!
@@ -468,7 +470,7 @@ input v_full_employees_InsertInput {
   department: String
 }
 
-"VIEW"
+"""VIEW"""
 input v_full_employees_UpdateInput {
   emp_no: Int
   first_name: String

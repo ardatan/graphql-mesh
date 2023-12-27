@@ -12,7 +12,7 @@ type Query {
   placeholder: Void
 }
 
-"Represents NULL values"
+"""Represents NULL values"""
 scalar Void
 
 type Mutation {
@@ -28,7 +28,9 @@ input NumberConversion_NumberToWords_Input {
   ubiNum: BigInt
 }
 
-"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
 scalar BigInt
 
 type NumberConversion_NumberToDollarsResponse {
@@ -52,7 +54,7 @@ type Query {
   placeholder: Void
 }
 
-"Represents NULL values"
+"""Represents NULL values"""
 scalar Void
 
 type Mutation {

@@ -43,7 +43,7 @@ input mutationInput_addTodo_input_Input @example(value: "{\\"name\\":\\"TodoName
 }
 
 type Subscription {
-  "PubSub Topic: webhook:post:/webhooks/todo_added"
+  """PubSub Topic: webhook:post:/webhooks/todo_added"""
   todoAdded: subscription_todoAdded @pubsubOperation(pubsubTopic: "webhook:post:/webhooks/todo_added")
 }
 
