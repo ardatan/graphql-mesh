@@ -25,7 +25,7 @@ import {
   MySQLTableForeignDirective,
   MySQLUpdateDirective,
   TransportDirective,
-} from './directives';
+} from './directives.js';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import { MySQLContext, MySQLSSLOptions, TableFieldConfig } from './types';
 
