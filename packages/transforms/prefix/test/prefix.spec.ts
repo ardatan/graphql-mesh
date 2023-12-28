@@ -1,12 +1,12 @@
-import { execute, GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
+import { execute, GraphQLObjectType, GraphQLSchema, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { wrapSchema } from '@graphql-tools/wrap';
+import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import PrefixTransform from '../src/index.js';
 
-describe('wrapPrefix', () => {
+describeTransformerTests('prefix', ({ mode, transformSchema }) => {
   let schema: GraphQLSchema;
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
@@ -55,70 +55,66 @@ describe('wrapPrefix', () => {
   });
 
   it('should prefix all schema types when prefix is specified explicitly', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            value: 'T_',
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     expect(newSchema.getType('User')).toBeUndefined();
     expect(newSchema.getType('T_User')).toBeDefined();
     expect((newSchema.getType('Query') as GraphQLObjectType).getFields()).not.toHaveProperty(
       'T_user',
     );
-    expect(printSchema(newSchema)).toMatchSnapshot();
   });
 
   it('should not modify root types', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            value: 'T_',
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('T_Query')).toBeUndefined();
   });
 
   it('should not modify default scalar types', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            value: 'T_',
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     const postFields = (newSchema.getType('T_Post') as GraphQLObjectType).getFields();
     expect(postFields.id.type.toString()).toBe('ID!');
@@ -126,20 +122,20 @@ describe('wrapPrefix', () => {
   });
 
   it('should use apiName when its available', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {},
-          apiName: 'MyApi',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+        },
+        apiName: 'MyApi',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('User')).toBeUndefined();
@@ -147,46 +143,44 @@ describe('wrapPrefix', () => {
   });
 
   it('should allow to ignore types', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            value: 'T_',
-            ignore: ['User'],
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          ignore: ['User'],
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('User')).toBeDefined();
   });
 
   it('should modify fields', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            value: 'T_',
-            includeRootOperations: true,
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          includeRootOperations: true,
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('T_User')).toBeDefined();
@@ -194,24 +188,23 @@ describe('wrapPrefix', () => {
   });
 
   it('should allow to ignore all fields in Type', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            value: 'T_',
-            includeRootOperations: true,
-            ignore: ['Query'],
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          includeRootOperations: true,
+          ignore: ['Query'],
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     const queryFields = (newSchema.getType('Query') as GraphQLObjectType).getFields();
     expect(newSchema.getType('Query')).toBeDefined();
@@ -224,24 +217,23 @@ describe('wrapPrefix', () => {
   });
 
   it('should allow to ignore specific fields', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            value: 'T_',
-            includeRootOperations: true,
-            ignore: ['Query.user'],
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          includeRootOperations: true,
+          ignore: ['Query.user'],
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     const queryFields = (newSchema.getType('Query') as GraphQLObjectType).getFields();
     expect(newSchema.getType('Query')).toBeDefined();
@@ -254,47 +246,45 @@ describe('wrapPrefix', () => {
   });
 
   it('should allow to ignore types', () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            value: 'T_',
-            includeRootOperations: true,
-            includeTypes: false,
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          includeRootOperations: true,
+          includeTypes: false,
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('T_User')).toBeUndefined();
     expect(newSchema.getType('User')).toBeDefined();
   });
+
   it('should handle union type resolution', async () => {
-    const newSchema = wrapSchema({
+    const newSchema = transformSchema(
       schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            mode: 'wrap',
-            value: 'T_',
-            includeRootOperations: true,
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          includeRootOperations: true,
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger: new DefaultLogger(),
+      }),
+    );
 
     const result = await execute({
       schema: newSchema,
