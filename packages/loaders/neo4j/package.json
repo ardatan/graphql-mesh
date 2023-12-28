@@ -1,12 +1,7 @@
 {
-  "name": "@graphql-mesh/neo4j",
-  "version": "0.96.2",
+  "name": "@omnigraph/neo4j",
+  "version": "0.0.0",
   "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/handlers/neo4j"
-  },
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"
@@ -32,23 +27,24 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/store": "^0.96.2",
     "@graphql-mesh/types": "^0.96.2",
-    "@graphql-mesh/utils": "^0.96.2",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/neo4j": "^0.0.0"
+    "@graphql-tools/delegate": "^10.0.3",
+    "@graphql-tools/schema": "^10.0.2",
+    "@graphql-tools/utils": "^10.0.12",
+    "@neo4j/graphql": "^4.0.0",
+    "@neo4j/introspector": "^2.0.0",
+    "graphql-scalars": "^1.22.4",
+    "neo4j-driver": "^5.9.2"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
   },
   "sideEffects": false,
-  "buildOptions": {
-    "input": "./src/index.js"
-  },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   }
