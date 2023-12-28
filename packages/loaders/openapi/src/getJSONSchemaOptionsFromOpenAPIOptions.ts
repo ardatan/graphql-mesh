@@ -69,6 +69,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       headers: schemaHeadersFactory({ env: process.env }),
       importFn: defaultImportFn,
       logger,
+      fallbackFormat,
     });
   if (typeof source === 'string') {
     oasOrSwagger = (await dereferenceObject(
