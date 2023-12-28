@@ -49,6 +49,7 @@ export default class BareRename implements MeshTransform {
         to: { type: toTypeName, field: toFieldName, argument: toArgName },
         useRegExpForTypes,
         useRegExpForFields,
+        useRegExpForArguments,
       } = rename;
 
       const regExpFlags = rename.regExpFlags || undefined;
@@ -87,7 +88,7 @@ export default class BareRename implements MeshTransform {
         toArgName &&
         fromArgName !== toArgName
       ) {
-        const fromName = useRegExpForFields ? new RegExp(fromArgName, regExpFlags) : fromArgName;
+        const fromName = useRegExpForArguments ? new RegExp(fromArgName, regExpFlags) : fromArgName;
         const key = `${fromTypeName}.${fromFieldName}`;
         const typeMap = this.argsMap.get(key) || new Map();
         this.argsMap.set(key, typeMap.set(fromName, toArgName));
