@@ -1,4 +1,4 @@
-import { execute, GraphQLObjectType, GraphQLSchema, parse } from 'graphql';
+import { execute, GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
@@ -76,6 +76,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
     expect((newSchema.getType('Query') as GraphQLObjectType).getFields()).not.toHaveProperty(
       'T_user',
     );
+    expect(printSchema(newSchema)).toMatchSnapshot();
   });
 
   it('should not modify root types', () => {
