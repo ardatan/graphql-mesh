@@ -630,6 +630,41 @@ for (const MODE of MODES) {
       expect(fieldMap.profile.args.find(a => a.name === 'some_argument')).toBeDefined();
     });
 
+    it('should only affect specified matched field and matched argument', () => {
+      const newSchema = applyTransformation(
+        schema,
+        new RenameTransform({
+          config: {
+            mode: MODE,
+            renames: [
+              {
+                from: {
+                  type: 'Query',
+                  field: 'profile',
+                  argument: '(profile)_(id)',
+                },
+                to: {
+                  type: 'Query',
+                  field: 'profile',
+                  argument: '$1Id',
+                },
+                useRegExpForArguments: true,
+              },
+            ],
+          },
+        }),
+      );
+      const queryType = newSchema.getType('Query') as GraphQLObjectType;
+      const fieldMap = queryType.getFields();
+
+      expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
+      expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
+      expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
+
+      expect(fieldMap.profile.args.find(a => a.name === 'another_argument')).toBeDefined();
+      expect(fieldMap.profile.args.find(a => a.name === 'some_argument')).toBeDefined();
+    });
+
     it('should only affect specified match type and match field argument', () => {
       const newSchema = applyTransformation(
         schema,
