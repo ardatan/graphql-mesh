@@ -807,8 +807,66 @@ for (const MODE of MODES) {
       expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeUndefined();
     });
 
-    // TODO: remove skip when https://github.com/ardatan/graphql-mesh/issues/6410 has been resolved
-    it.skip('should be possible to rename scalars', () => {
+    it('should be possible to rename scalars', () => {
+      const schema = makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          scalar RandomInt
+
+          type SomeEntity {
+            id: RandomInt!
+            name: String!
+          }
+
+          type Query {
+            getSomeEntityById(id: RandomInt!): SomeEntity
+          }
+        `,
+        resolvers: {},
+      });
+
+      const newSchema = applyTransformation(
+        schema,
+        new RenameTransform({
+          config: {
+            mode: MODE,
+            renames: [
+              {
+                from: {
+                  argument: '(.*)',
+                  field: '(.*)',
+                  type: '(.*)',
+                },
+                to: {
+                  argument: 'MyPrefix_$1',
+                  field: 'MyPrefix_$1',
+                  type: 'MyPrefix_$1',
+                },
+                useRegExpForArguments: true,
+                useRegExpForFields: true,
+                useRegExpForTypes: true,
+              },
+            ],
+          },
+        }),
+      );
+
+      // Check types
+      expect(newSchema.getType('SomeEntity')).toBeUndefined();
+      expect(newSchema.getType('MyPrefix_SomeEntity')).toBeDefined();
+      expect(newSchema.getType('getSomeEntityById')).toBeUndefined();
+      expect(newSchema.getType('MyPrefix_RandomInt')).toBeDefined();
+      // Check fields
+      expect(
+        (newSchema.getType('MyPrefix_SomeEntity') as any)._fields.id.type.ofType.toString(),
+      ).toBe('MyPrefix_RandomInt');
+      // Check arguments
+      expect(
+        (newSchema.getQueryType() as any)._fields.getSomeEntityById.args[0].type.ofType.toString(),
+      ).toBe('MyPrefix_RandomInt');
+      expect(newSchema.getType('MyPrefix_RandomInt')).toBeDefined();
+    });
+
+    it('should be possible to rename default scalars', () => {
       const schema = makeExecutableSchema({
         typeDefs: /* GraphQL */ `
           scalar UUID
