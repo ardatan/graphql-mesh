@@ -55,7 +55,6 @@ export default class OpenAPIHandler implements MeshHandler {
         importFn: this.importFn,
         logger: this.logger,
         headers: this.config.schemaHeaders,
-        fallbackFormat: this.config.fallbackFormat,
       });
       return buildSchema(sdl, {
         assumeValidSDL: true,
