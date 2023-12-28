@@ -77,7 +77,7 @@ class ArgsMap {
 export default class BareRename implements MeshTransform {
   noWrap = true;
   typesMap: RenameMapObject;
-  typeThatCanRenameDefaults: (string | RegExp)[];
+  typesThatCanRenameDefaults: (string | RegExp)[];
   fieldsMap: Map<string, RenameMapObject>;
   argsMap: ArgsMap;
 
@@ -85,7 +85,7 @@ export default class BareRename implements MeshTransform {
     this.typesMap = new Map();
     this.fieldsMap = new Map();
     this.argsMap = new ArgsMap();
-    this.typeThatCanRenameDefaults = [];
+    this.typesThatCanRenameDefaults = [];
 
     for (const rename of config.renames) {
       const {
@@ -102,7 +102,7 @@ export default class BareRename implements MeshTransform {
       if (fromTypeName && toTypeName && fromTypeName !== toTypeName) {
         const typeKey = useRegExpForTypes ? new RegExp(fromTypeName, regExpFlags) : fromTypeName;
         this.typesMap.set(typeKey, toTypeName);
-        if (includeDefaults) this.typeThatCanRenameDefaults.push(typeKey);
+        if (includeDefaults) this.typesThatCanRenameDefaults.push(typeKey);
       }
       if (
         fromTypeName &&
@@ -158,7 +158,7 @@ export default class BareRename implements MeshTransform {
 
   renameType(type: any) {
     const typeName = type.toString();
-    const typeCanRenameDefaults = this.typeThatCanRenameDefaults.some(x =>
+    const typeCanRenameDefaults = this.typesThatCanRenameDefaults.some(x =>
       typeof x === 'string' ? x === typeName : x.test(typeName),
     );
     const newTypeName =
