@@ -17,7 +17,7 @@ const createTransformSchemaFunction =
       case 'bare':
         return transformer.transformSchema(schema, {} as any);
       default:
-        throw new Error(`Mode 'mode' is not supported!`);
+        throw new Error(`Mode '${mode}' is not supported!`);
     }
   };
 
