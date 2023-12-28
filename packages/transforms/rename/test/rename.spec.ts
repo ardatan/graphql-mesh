@@ -587,8 +587,7 @@ for (const MODE of MODES) {
       const queryType = newSchema.getType('Query') as GraphQLObjectType;
       const fieldMap = queryType.getFields();
 
-      // TODO: uncomment following line once #3778 is fixed
-      // expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
+      expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
       expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
       expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
 
@@ -623,8 +622,7 @@ for (const MODE of MODES) {
       const queryType = newSchema.getType('Query') as GraphQLObjectType;
       const fieldMap = queryType.getFields();
 
-      // TODO: uncomment following line once #3778 is fixed
-      // expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
+      expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
       expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
       expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
 
@@ -660,8 +658,7 @@ for (const MODE of MODES) {
       const queryType = newSchema.getType('Query') as GraphQLObjectType;
       const fieldMap = queryType.getFields();
 
-      // TODO: uncomment following line once #3778 is fixed
-      // expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
+      expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
       expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
       expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
 
@@ -698,8 +695,7 @@ for (const MODE of MODES) {
       const queryType = newSchema.getType('Query') as GraphQLObjectType;
       const fieldMap = queryType.getFields();
 
-      // TODO: uncomment following line once #3778 is fixed
-      // expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
+      expect(fieldMap.profile.args.find(a => a.name === 'role')).toBeDefined();
       expect(fieldMap.profile.args.find(a => a.name === 'profile_id')).toBeUndefined();
       expect(fieldMap.profile.args.find(a => a.name === 'profileId')).toBeDefined();
 
@@ -789,7 +785,7 @@ for (const MODE of MODES) {
       `);
 
       const newSchema = applyTransformation(
-        schemam,
+        schema,
         new RenameTransform({
           config: {
             mode: MODE,
