@@ -32,6 +32,7 @@ const defaultResolverComposer =
       originalFieldName ? { ...info, fieldName: originalFieldName } : info,
     );
 
+// Helper class to identity argument renames using regular expressions to resolve types and fields
 class ArgsMap {
   size: number = 0;
   entries: {
