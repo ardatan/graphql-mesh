@@ -21,6 +21,13 @@ const createTransformSchemaFunction =
     }
   };
 
+/**
+ * Creates test suites with the defined tests for each available mode.
+ * Available modes: 'wrap', 'bare'
+ *
+ * @param name Name of test suites
+ * @param testSuiteFactory Factory method that creates the test cases
+ */
 export function describeTransformerTests(
   name: string,
   testSuiteFactory: ({
