@@ -77,6 +77,7 @@ class ArgsMap {
 export default class BareRename implements MeshTransform {
   noWrap = true;
   typesMap: RenameMapObject;
+  typeThatCanRenameDefaults: (string | RegExp)[];
   fieldsMap: Map<string, RenameMapObject>;
   argsMap: ArgsMap;
 
@@ -84,6 +85,7 @@ export default class BareRename implements MeshTransform {
     this.typesMap = new Map();
     this.fieldsMap = new Map();
     this.argsMap = new ArgsMap();
+    this.typeThatCanRenameDefaults = [];
 
     for (const rename of config.renames) {
       const {
@@ -92,21 +94,15 @@ export default class BareRename implements MeshTransform {
         useRegExpForTypes,
         useRegExpForFields,
         useRegExpForArguments,
+        includeDefaults,
       } = rename;
 
       const regExpFlags = rename.regExpFlags || undefined;
 
-      if (
-        fromTypeName &&
-        !fromFieldName &&
-        toTypeName &&
-        !toFieldName &&
-        fromTypeName !== toTypeName
-      ) {
-        this.typesMap.set(
-          useRegExpForTypes ? new RegExp(fromTypeName, regExpFlags) : fromTypeName,
-          toTypeName,
-        );
+      if (fromTypeName && toTypeName && fromTypeName !== toTypeName) {
+        const typeKey = useRegExpForTypes ? new RegExp(fromTypeName, regExpFlags) : fromTypeName;
+        this.typesMap.set(typeKey, toTypeName);
+        if (includeDefaults) this.typeThatCanRenameDefaults.push(typeKey);
       }
       if (
         fromTypeName &&
@@ -161,9 +157,14 @@ export default class BareRename implements MeshTransform {
   }
 
   renameType(type: any) {
-    const newTypeName = ignoreList.includes(type.toString())
-      ? null
-      : this.matchInMap(this.typesMap, type.toString());
+    const typeName = type.toString();
+    const typeCanRenameDefaults = this.typeThatCanRenameDefaults.some(x =>
+      typeof x === 'string' ? x === typeName : x.test(typeName),
+    );
+    const newTypeName =
+      !typeCanRenameDefaults && ignoreList.includes(typeName)
+        ? null
+        : this.matchInMap(this.typesMap, typeName);
     return newTypeName ? renameType(type, newTypeName) : undefined;
   }
 
