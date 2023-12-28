@@ -3,8 +3,8 @@ import { Driver } from 'neo4j-driver';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { Executor, getDirective, getDocumentNodeFromSchema } from '@graphql-tools/utils';
-import { getDriverFromOpts } from './driver';
-import { getExecutableSchemaFromTypeDefsAndDriver } from './schema';
+import { getDriverFromOpts } from './driver.js';
+import { getExecutableSchemaFromTypeDefsAndDriver } from './schema.js';
 
 export interface Neo4JExecutorOpts {
   schema: GraphQLSchema;

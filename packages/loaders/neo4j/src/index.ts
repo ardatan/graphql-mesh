@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql';
-import { Neo4JAuthOpts } from './auth';
-import { getNeo4JExecutor } from './executor';
-import { loadGraphQLSchemaFromNeo4J, LoadGraphQLSchemaFromNeo4JOpts } from './schema';
+import { Neo4JAuthOpts } from './auth.js';
+import { getNeo4JExecutor } from './executor.js';
+import { loadGraphQLSchemaFromNeo4J, LoadGraphQLSchemaFromNeo4JOpts } from './schema.js';
 
 export function loadNeo4JSubgraph(name: string, opts: LoadGraphQLSchemaFromNeo4JOpts) {
   return () => ({
@@ -28,7 +28,7 @@ export function getSubgraphExecutor(
   });
 }
 
-export * from './schema';
-export * from './executor';
-export * from './driver';
-export * from './auth';
+export * from './schema.js';
+export * from './executor.js';
+export * from './driver.js';
+export * from './auth.js';

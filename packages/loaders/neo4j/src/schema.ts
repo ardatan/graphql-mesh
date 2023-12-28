@@ -6,10 +6,10 @@ import { mergeSchemas } from '@graphql-tools/schema';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
-import { Neo4JAuthOpts } from './auth';
-import { getDriverFromOpts } from './driver';
-import { getEventEmitterFromPubSub } from './eventEmitterForPubSub';
-import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill';
+import { Neo4JAuthOpts } from './auth.js';
+import { getDriverFromOpts } from './driver.js';
+import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
+import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
 
 function addIntrospectionDirective<
   TASTNode extends ASTNode & { directives?: readonly ConstDirectiveNode[] },
