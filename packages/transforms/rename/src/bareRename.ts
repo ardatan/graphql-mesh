@@ -32,16 +32,58 @@ const defaultResolverComposer =
       originalFieldName ? { ...info, fieldName: originalFieldName } : info,
     );
 
+// Helper class to identity argument renames using regular expressions to resolve types and fields
+class ArgsMap {
+  size: number = 0;
+  entries: {
+    fromType: string | RegExp;
+    fromField: string | RegExp;
+    fromArg: string | RegExp;
+    toArg: string;
+  }[] = [];
+
+  set(
+    fromType: string | RegExp,
+    fromField: string | RegExp,
+    fromArg: string | RegExp,
+    toArg: string,
+  ) {
+    this.entries.push({
+      fromType,
+      fromField,
+      fromArg,
+      toArg,
+    });
+    this.size = this.entries.length;
+  }
+
+  get(fromType: string, fromField: string): RenameMapObject {
+    const entriesForMatchingTypesAndFields = this.entries
+      .filter(x =>
+        typeof x.fromType === 'string' ? fromType === x.fromType : x.fromType.test(fromType),
+      )
+      .filter(x =>
+        typeof x.fromField === 'string' ? fromField === x.fromField : x.fromField.test(fromField),
+      );
+
+    const map = new Map<string | RegExp, string>();
+    for (const entry of entriesForMatchingTypesAndFields) {
+      map.set(entry.fromArg, entry.toArg);
+    }
+    return map;
+  }
+}
+
 export default class BareRename implements MeshTransform {
   noWrap = true;
   typesMap: RenameMapObject;
   fieldsMap: Map<string, RenameMapObject>;
-  argsMap: Map<string, RenameMapObject>;
+  argsMap: ArgsMap;
 
   constructor({ config }: { config: YamlConfig.RenameTransform }) {
     this.typesMap = new Map();
     this.fieldsMap = new Map();
-    this.argsMap = new Map();
+    this.argsMap = new ArgsMap();
 
     for (const rename of config.renames) {
       const {
@@ -49,6 +91,7 @@ export default class BareRename implements MeshTransform {
         to: { type: toTypeName, field: toFieldName, argument: toArgName },
         useRegExpForTypes,
         useRegExpForFields,
+        useRegExpForArguments,
       } = rename;
 
       const regExpFlags = rename.regExpFlags || undefined;
@@ -87,10 +130,13 @@ export default class BareRename implements MeshTransform {
         toArgName &&
         fromArgName !== toArgName
       ) {
-        const fromName = useRegExpForFields ? new RegExp(fromArgName, regExpFlags) : fromArgName;
-        const key = `${fromTypeName}.${fromFieldName}`;
-        const typeMap = this.argsMap.get(key) || new Map();
-        this.argsMap.set(key, typeMap.set(fromName, toArgName));
+        const fromName = useRegExpForArguments ? new RegExp(fromArgName, regExpFlags) : fromArgName;
+        this.argsMap.set(
+          useRegExpForTypes ? new RegExp(fromTypeName) : fromTypeName,
+          useRegExpForFields ? new RegExp(fromFieldName) : fromFieldName,
+          fromName,
+          toArgName,
+        );
       }
     }
   }
@@ -161,25 +207,21 @@ export default class BareRename implements MeshTransform {
           typeName: string,
         ) => {
           const typeRules = this.fieldsMap.get(typeName);
-          const fieldRules = this.argsMap.get(`${typeName}.${fieldName}`);
+          const fieldRules = this.argsMap.get(typeName, fieldName);
           const newFieldName = typeRules && this.matchInMap(typeRules, fieldName);
-          const argsMap =
-            fieldRules &&
-            Array.from(fieldRules.entries()).reduce(
-              (acc, [orName, newName]) => ({ ...acc, [newName]: orName }),
-              {},
-            );
           if (!newFieldName && !fieldRules) return undefined;
 
           // Rename rules for type might have been emptied by matchInMap, in which case we can cleanup
           if (!typeRules?.size) this.fieldsMap.delete(typeName);
 
+          const argsMap: { [key: string]: string } = {};
           if (fieldRules && fieldConfig.args) {
             fieldConfig.args = Object.entries(fieldConfig.args).reduce(
-              (args, [argName, argConfig]) => ({
-                ...args,
-                [this.matchInMap(fieldRules, argName) || argName]: argConfig,
-              }),
+              (args, [argName, argConfig]) => {
+                const newArgName = this.matchInMap(fieldRules, argName) || argName;
+                argsMap[newArgName] = argName; // store name mappings
+                return { ...args, [newArgName]: argConfig };
+              },
               {},
             );
           }
