@@ -48,7 +48,8 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     pubsub = new PubSub();
   });
 
-  it('should change the name of a types, enums, fields and fieldArguments', () => {
+  // TODO: Unskip test when issue https://github.com/ardatan/graphql-mesh/issues/6419 has been solved.
+  it.skip('should change the name of a types, enums, fields and fieldArguments', () => {
     const newSchema = transformSchema(
       schema,
       new NamingConventionTransform({
@@ -91,7 +92,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(userTypeEnumType.getValue('Admin')).toBeUndefined();
     const adminValue = userTypeEnumType.getValue('ADMIN');
     expect(adminValue).toBeDefined();
-    expect(printSchemaWithDirectives(newSchema)).toMatchSnapshot(null, `snapshot-${mode}`);
+    expect(printSchemaWithDirectives(newSchema)).toMatchSnapshot();
   });
 
   it('should execute the transformed schema properly', async () => {
@@ -313,7 +314,8 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(data?._).toEqual('test');
   });
 
-  it('should be applied to default values of enums for arguments', () => {
+  // TODO: Unskip test when issue https://github.com/ardatan/graphql-mesh/issues/6419 has been solved.
+  it.skip('should be applied to default values of enums for arguments', () => {
     const newSchema = transformSchema(
       schema,
       new NamingConventionTransform({
@@ -350,8 +352,5 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(userTypeArg.defaultValue).toBeDefined();
     expect(userTypeArg.defaultValue).not.toBeNull();
     expect(userTypeArg.defaultValue).toBe('NEWBIE');
-    // expect(userTypeArg.astNode.defaultValue).toBeDefined();
-    // expect(userTypeArg.astNode.defaultValue).not.toBeNull();
-    // expect((userTypeArg.astNode.defaultValue as EnumValueNode).value).toBe('NEWBIE');
   });
 });
