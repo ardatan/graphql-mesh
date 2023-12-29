@@ -10,6 +10,7 @@ import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import NamingConventionTransform from '../src/index.js';
 
@@ -90,6 +91,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(userTypeEnumType.getValue('Admin')).toBeUndefined();
     const adminValue = userTypeEnumType.getValue('ADMIN');
     expect(adminValue).toBeDefined();
+    expect(printSchemaWithDirectives(newSchema)).toMatchSnapshot(null, `snapshot-${mode}`);
   });
 
   it('should execute the transformed schema properly', async () => {
@@ -309,5 +311,47 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
       `),
     });
     expect(data?._).toEqual('test');
+  });
+
+  it('should be applied to default values of enums for arguments', () => {
+    const newSchema = transformSchema(
+      schema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          typeNames: 'pascalCase',
+          enumValues: 'upperCase',
+          fieldNames: 'camelCase',
+          fieldArgumentNames: 'snakeCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        logger: new DefaultLogger(),
+      }),
+    );
+
+    const userTypeEnum = newSchema.getType('UserType') as GraphQLEnumType;
+    expect(userTypeEnum).toBeDefined();
+    const enumTypeValues = userTypeEnum.getValues().map(x => x.name);
+    expect(enumTypeValues).toContain('ADMIN');
+    expect(enumTypeValues).toContain('MODERATOR');
+    expect(enumTypeValues).toContain('NEWBIE');
+
+    const query = newSchema.getType('Query') as GraphQLObjectType;
+    const fields = query.getFields();
+    const fieldUsersByType = fields.usersByType;
+    expect(fieldUsersByType).toBeDefined();
+    expect(fieldUsersByType.args).toBeDefined();
+    const userTypeArg = fieldUsersByType.args[0];
+    expect(userTypeArg).toBeDefined();
+    expect(userTypeArg.defaultValue).toBeDefined();
+    expect(userTypeArg.defaultValue).not.toBeNull();
+    expect(userTypeArg.defaultValue).toBe('NEWBIE');
+    // expect(userTypeArg.astNode.defaultValue).toBeDefined();
+    // expect(userTypeArg.astNode.defaultValue).not.toBeNull();
+    // expect((userTypeArg.astNode.defaultValue as EnumValueNode).value).toBe('NEWBIE');
   });
 });
