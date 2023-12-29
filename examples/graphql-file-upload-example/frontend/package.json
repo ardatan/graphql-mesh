@@ -12,7 +12,7 @@
     "@apollo/client": "3.8.8",
     "@testing-library/jest-dom": "6.1.6",
     "@testing-library/react": "14.1.2",
-    "@testing-library/user-event": "14.5.1",
+    "@testing-library/user-event": "14.5.2",
     "apollo-upload-client": "18.0.1",
     "graphql": "16.8.1",
     "react": "18.2.0",
