@@ -3532,7 +3532,7 @@
     micromatch "^4.0.4"
     tslib "^2.4.0"
 
-"@graphql-tools/schema@10.0.2", "@graphql-tools/schema@^10.0.0":
+"@graphql-tools/schema@10.0.2", "@graphql-tools/schema@^10.0.0", "@graphql-tools/schema@^10.0.2":
   version "10.0.2"
   resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-10.0.2.tgz#21bc2ee25a65fb4890d2e5f9f22ef1f733aa81da"
   integrity sha512-TbPsIZnWyDCLhgPGnDjt4hosiNU2mF/rNtSk5BVaXWnZqvKJ6gzJV4fcHcvhRIwtscDMW2/YTnK6dLVnk8pc4w==
@@ -5268,10 +5268,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.6.1.tgz#9ab8f811930d7af3e3d549183a50884f9eb83f36"
   integrity sha512-UY+FGM/2jjMkzQLn8pxcHGMaVLh9aEitG3zY2CiY7XHdLiz3bZOwa6oDxNqEMv7zZkV+cj5DOdz0cQ1BP5Hjgw==
 
-"@sinclair/typebox@0.32.3", "@sinclair/typebox@^0.32.0":
-  version "0.32.3"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.3.tgz#ccc2ae8b59f9a7e8e1f6aea0965ef8ee2c7796c8"
-  integrity sha512-o1OzDySkCSEobAEAVS1SGrzznes9KqPOC3arGfH5rQhOIeokLQYLKQmy68lr979BmPr43v4m9d85ttUSRpHdFA==
+"@sinclair/typebox@0.32.4", "@sinclair/typebox@^0.32.0":
+  version "0.32.4"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.4.tgz#94b8744215c1f54f38df9bd33626ef821ce66ca3"
+  integrity sha512-Q2Pex6H+HGuyxIGuFadkpqwtjZFXiVZlvy1rVX9XgAzUrDmUDEM69M2c4CkWUgMJ1NaFPvUf+cMBljY96GJVNQ==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
