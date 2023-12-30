@@ -201,7 +201,7 @@
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
   integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
 
-"@apollo/client@3.8.8", "@apollo/client@^3.7.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0":
+"@apollo/client@3.8.8", "@apollo/client@^3.8.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0":
   version "3.8.8"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.8.tgz#1a004b2e6de4af38668249a7d7790f6a3431e475"
   integrity sha512-omjd9ryGDkadZrKW6l5ktUAdS4SNaFOccYQ4ZST0HLW83y8kQaSZOCTNlpkoBUK8cv6qP8+AxOKwLm2ho8qQ+Q==
@@ -6033,12 +6033,12 @@
   dependencies:
     "@types/estree" "*"
 
-"@types/apollo-upload-client@17.0.5":
-  version "17.0.5"
-  resolved "https://registry.yarnpkg.com/@types/apollo-upload-client/-/apollo-upload-client-17.0.5.tgz#a03d69b5cb86c7396e466f8029b2fa0943a73cc9"
-  integrity sha512-rPKHaE4QNd06LNtBgz6hfntVO+pOQMS2yTcynrzBPg9+a/nbtJ2gus5KgzRp2rqfzmnKEc/sRGjLen/9Ot0Z2A==
+"@types/apollo-upload-client@18.0.0":
+  version "18.0.0"
+  resolved "https://registry.yarnpkg.com/@types/apollo-upload-client/-/apollo-upload-client-18.0.0.tgz#1f7e2ff0c0e6508bc1bd19b2340339c7abd117c3"
+  integrity sha512-cMgITNemktxasqvp6jiPj15dv84n3FTMvMoYBP1+xonDS+0l6JygIJrj2LJh85rShRzTOOkrElrAsCXXARa3KA==
   dependencies:
-    "@apollo/client" "^3.7.0"
+    "@apollo/client" "^3.8.0"
     "@types/extract-files" "*"
     graphql "14 - 16"
 

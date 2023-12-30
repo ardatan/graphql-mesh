@@ -21,7 +21,7 @@
     "web-vitals": "3.5.1"
   },
   "devDependencies": {
-    "@types/apollo-upload-client": "17.0.5",
+    "@types/apollo-upload-client": "18.0.0",
     "@types/jest": "29.5.11",
     "@types/node": "20.10.6",
     "@types/react": "18.2.46",
