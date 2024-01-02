@@ -1,5 +1,26 @@
 # @graphql-mesh/transform-rename
 
+## 0.96.3
+
+### Patch Changes
+
+- [#6411](https://github.com/ardatan/graphql-mesh/pull/6411)
+  [`64563c4`](https://github.com/ardatan/graphql-mesh/commit/64563c451cdfa2c8af4856323b2ac08381655331)
+  Thanks [@soerenuhrbach](https://github.com/soerenuhrbach)! - Fixed a bug where scalar types could
+  not be renamed when using the 'bare' mode
+
+- [#6400](https://github.com/ardatan/graphql-mesh/pull/6400)
+  [`77dc09b`](https://github.com/ardatan/graphql-mesh/commit/77dc09b0e890ce5efb6e72dac05e82547702e32e)
+  Thanks [@soerenuhrbach](https://github.com/soerenuhrbach)! - Fixed a bug that caused not all
+  rename rules to be applied to the single target in 'bare' mode
+
+- [#6407](https://github.com/ardatan/graphql-mesh/pull/6407)
+  [`f485345`](https://github.com/ardatan/graphql-mesh/commit/f4853459ba763d5325fbf2bb3417ef4109dc64d3)
+  Thanks [@soerenuhrbach](https://github.com/soerenuhrbach)! - Fixed issue that made argument
+  renaming impossible when using regular expressions in types and fields when using 'bare' mode. The
+  unit tests for bare and wrap mode have also been reworked to verify that both modes deliver the
+  same results.
+
 ## 0.96.2
 
 ### Patch Changes
