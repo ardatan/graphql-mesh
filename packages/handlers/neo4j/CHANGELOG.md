@@ -1,5 +1,46 @@
 # @graphql-mesh/neo4j
 
+## 0.96.3
+
+### Patch Changes
+
+- [#6414](https://github.com/ardatan/graphql-mesh/pull/6414)
+  [`209709c`](https://github.com/ardatan/graphql-mesh/commit/209709c04b6f219f2405603aee095744a2c92ad1)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@omnigraph/neo4j@^0.0.0` ↗︎](https://www.npmjs.com/package/@omnigraph/neo4j/v/0.0.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@neo4j/graphql@^4.0.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/4.0.0) (from
+    `dependencies`)
+  - Removed dependency
+    [`@neo4j/introspector@^2.0.0` ↗︎](https://www.npmjs.com/package/@neo4j/introspector/v/2.0.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`graphql-scalars@^1.22.4` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.22.4) (from
+    `dependencies`)
+  - Removed dependency
+    [`neo4j-driver@^5.9.2` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.9.2) (from
+    `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/cross-helpers@^0.4.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.1)
+    (from `peerDependencies`)
+  - Removed dependency
+    [`@graphql-tools/delegate@^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.0)
+    (from `peerDependencies`)
+  - Removed dependency
+    [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (from `peerDependencies`)
+
+- [#6414](https://github.com/ardatan/graphql-mesh/pull/6414)
+  [`209709c`](https://github.com/ardatan/graphql-mesh/commit/209709c04b6f219f2405603aee095744a2c92ad1)
+  Thanks [@ardatan](https://github.com/ardatan)! - New Neo4j Loader
+
+- Updated dependencies
+  [[`209709c`](https://github.com/ardatan/graphql-mesh/commit/209709c04b6f219f2405603aee095744a2c92ad1)]:
+  - @omnigraph/neo4j@0.0.1
+
 ## 0.96.2
 
 ### Patch Changes

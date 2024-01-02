@@ -1,5 +1,14 @@
 # @omnigraph/openapi
 
+## 0.97.4
+
+### Patch Changes
+
+- [#6413](https://github.com/ardatan/graphql-mesh/pull/6413)
+  [`9c5d9f5`](https://github.com/ardatan/graphql-mesh/commit/9c5d9f5909377a0500ea9998319a6c8766eef433)
+  Thanks [@soerenuhrbach](https://github.com/soerenuhrbach)! - Fallback format will now be used
+  correctly
+
 ## 0.97.3
 
 ### Patch Changes
