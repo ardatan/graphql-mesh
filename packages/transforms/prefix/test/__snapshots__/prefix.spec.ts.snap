@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`prefix (bare) should prefix all schema types when prefix is specified explicitly 1`] = `
+"type Query {
+  user: T_User!
+  posts: [T_Post!]!
+  node(id: ID!): T_Node
+}
+
+union T_Node = T_User | T_Post
+
+type T_User {
+  id: ID!
+}
+
+type T_Post {
+  id: ID!
+  title: String!
+}"
+`;
+
+exports[`prefix (wrap) should prefix all schema types when prefix is specified explicitly 1`] = `
+"type Query {
+  user: T_User!
+  posts: [T_Post!]!
+  node(id: ID!): T_Node
+}
+
+union T_Node = T_User | T_Post
+
+type T_User {
+  id: ID!
+}
+
+type T_Post {
+  id: ID!
+  title: String!
+}"
+`;
