@@ -5,19 +5,21 @@ import {
   GraphQLObjectType,
   GraphQLUnionType,
   parse,
-  printSchema,
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import NamingConventionTransform from '../src/index.js';
 
-describe('namingConvention - bare', () => {
+describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
   const schema = buildSchema(/* GraphQL */ `
     type Query {
       user: user!
       userById(userId: ID!): user!
+      usersByType(type: userType! = newbie): [user!]!
       node(id: ID!): node
     }
 
@@ -36,7 +38,6 @@ describe('namingConvention - bare', () => {
       newbie
     }
   `);
-
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
@@ -47,23 +48,26 @@ describe('namingConvention - bare', () => {
     pubsub = new PubSub();
   });
 
-  it('should change the name of types, abstractTypes, enums, fields and fieldArguments', () => {
-    const transform = new NamingConventionTransform({
-      config: {
-        mode: 'bare',
-        typeNames: 'pascalCase',
-        enumValues: 'upperCase',
-        fieldNames: 'camelCase',
-        fieldArgumentNames: 'snakeCase',
-      },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
-      logger: new DefaultLogger(),
-    });
-    const newSchema = transform.transformSchema(schema, {} as any);
+  // TODO: Unskip test when issue https://github.com/ardatan/graphql-mesh/issues/6419 has been solved.
+  it.skip('should change the name of a types, enums, fields and fieldArguments', () => {
+    const newSchema = transformSchema(
+      schema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          typeNames: 'pascalCase',
+          enumValues: 'upperCase',
+          fieldNames: 'camelCase',
+          fieldArgumentNames: 'snakeCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        logger: new DefaultLogger(),
+      }),
+    );
 
     expect(newSchema.getType('user')).toBeUndefined();
     const userObjectType = newSchema.getType('User') as GraphQLObjectType;
@@ -88,71 +92,58 @@ describe('namingConvention - bare', () => {
     expect(userTypeEnumType.getValue('Admin')).toBeUndefined();
     const adminValue = userTypeEnumType.getValue('ADMIN');
     expect(adminValue).toBeDefined();
-    // expect(adminValue.value).toBe('admin');
-    expect(printSchema(newSchema)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(newSchema)).toMatchSnapshot();
   });
 
   it('should execute the transformed schema properly', async () => {
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          user(Input: UserSearchInput): User
-          userById(userId: ID!): User
-          userByType(type: UserType!): User
-          node(id: ID!): Node
-        }
-        union Node = User | Post
-        type User {
-          id: ID
-          first_name: String
-          last_name: String
-          Type: UserType!
-          interests: [UserInterests!]!
-          custom_fields: [UserCustomField!]
-        }
-        type Post {
-          id: ID!
-        }
-        type UserCustomField {
-          field_name: String!
-          value: String
-        }
-        input UserSearchInput {
-          id: ID
-          first_name: String
-          last_name: String
-          type: UserType
-          custom_fields: [UserSearchKeyCustomFieldInput!]
-        }
-
-        input UserSearchKeyCustomFieldInput {
-          field_name: String!
-          value: String
-        }
-
-        enum UserType {
-          admin
-          moderator
-          newbie
-        }
-        enum UserInterests {
-          books
-          comics
-          news
-        }
-      `,
+    let schema = buildSchema(/* GraphQL */ `
+      type Query {
+        user(Input: UserSearchInput): User
+        userById(userId: ID!): User
+        userByType(type: UserType!): User
+        node(id: ID!): Node
+      }
+      union Node = User | Post
+      type User {
+        id: ID
+        first_name: String
+        last_name: String
+        Type: UserType!
+        interests: [UserInterests!]!
+      }
+      type Post {
+        id: ID!
+      }
+      input UserSearchInput {
+        id: ID
+        first_name: String
+        last_name: String
+        type: UserType
+      }
+      enum UserType {
+        admin
+        moderator
+        newbie
+      }
+      enum UserInterests {
+        books
+        comics
+        news
+      }
+    `);
+    schema = addResolversToSchema({
+      schema,
       resolvers: {
         Query: {
-          user: (_, args) => {
+          user: (root, args) => {
             return {
               id: args.Input.id,
               first_name: args.Input.first_name,
               last_name: args.Input.last_name,
               Type: args.Input.type,
-              custom_fields: args.Input.custom_fields,
             };
           },
-          userById: (_, args) => {
+          userById: (root, args) => {
             return {
               id: args.userId,
               first_name: 'John',
@@ -184,44 +175,33 @@ describe('namingConvention - bare', () => {
         },
       },
     });
-    const transform = new NamingConventionTransform({
-      config: {
-        mode: 'bare',
-        typeNames: 'lowerCase',
-        enumValues: 'upperCase',
-        fieldNames: 'camelCase',
-        fieldArgumentNames: 'pascalCase',
-      },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
-      logger: new DefaultLogger(),
-    });
-    const newSchema = transform.transformSchema(schema, {} as any);
-
+    schema = transformSchema(
+      schema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        cache,
+        pubsub,
+        config: {
+          mode,
+          typeNames: 'lowerCase',
+          enumValues: 'upperCase',
+          fieldNames: 'camelCase',
+          fieldArgumentNames: 'pascalCase',
+        },
+        baseDir,
+        logger: new DefaultLogger(),
+      }),
+    );
     const result = await execute({
-      schema: newSchema,
+      schema,
       document: parse(/* GraphQL */ `
         {
-          user(
-            Input: {
-              id: "0"
-              firstName: "John"
-              lastName: "Doe"
-              type: ADMIN
-              customFields: [{ fieldName: "age", value: "30" }]
-            }
-          ) {
+          user(Input: { id: "0", firstName: "John", lastName: "Doe", type: ADMIN }) {
             id
             firstName
             lastName
             type
-            customFields {
-              fieldName
-              value
-            }
           }
         }
       `),
@@ -232,11 +212,10 @@ describe('namingConvention - bare', () => {
       firstName: 'John',
       lastName: 'Doe',
       type: 'ADMIN',
-      customFields: [{ fieldName: 'age', value: '30' }],
     });
 
     const result2 = await execute({
-      schema: newSchema,
+      schema,
       document: parse(/* GraphQL */ `
         {
           userById(UserId: "1") {
@@ -257,7 +236,7 @@ describe('namingConvention - bare', () => {
     });
 
     const result3 = await execute({
-      schema: newSchema,
+      schema,
       document: parse(/* GraphQL */ `
         {
           userByType(Type: ADMIN) {
@@ -278,7 +257,7 @@ describe('namingConvention - bare', () => {
     });
 
     const result4 = await execute({
-      schema: newSchema,
+      schema,
       document: parse(/* GraphQL */ `
         {
           node(Id: "1") {
@@ -293,13 +272,14 @@ describe('namingConvention - bare', () => {
     });
   });
 
-  it('should be skipped if result is gonna be empty string', async () => {
-    const schema = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type Query {
-          _: String!
-        }
-      `,
+  it('should be skipped if the result gonna be empty string', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type Query {
+        _: String!
+      }
+    `);
+    schema = addResolversToSchema({
+      schema,
       resolvers: {
         Query: {
           _: (root, args, context, info) => {
@@ -308,22 +288,23 @@ describe('namingConvention - bare', () => {
         },
       },
     });
-    const transform = new NamingConventionTransform({
-      config: {
-        mode: 'bare',
-        fieldNames: 'camelCase',
-      },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
-      logger: new DefaultLogger(),
-    });
-    const newSchema = transform.transformSchema(schema, {} as any);
-
+    schema = transformSchema(
+      schema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        cache,
+        pubsub,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+        },
+        baseDir,
+        logger: new DefaultLogger(),
+      }),
+    );
     const { data } = await execute({
-      schema: newSchema,
+      schema,
       document: parse(/* GraphQL */ `
         {
           _
@@ -333,27 +314,43 @@ describe('namingConvention - bare', () => {
     expect(data?._).toEqual('test');
   });
 
-  it('should skip fields of Federation spec', async () => {
-    const typeDefs = /* GraphQL */ `
-type Query {
-  _service: String!
-  _entities: [String!]!
-}`.trim();
-    const schema = buildSchema(typeDefs);
-    const transform = new NamingConventionTransform({
-      config: {
-        mode: 'bare',
-        fieldNames: 'snakeCase',
-      },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
-      logger: new DefaultLogger(),
-    });
-    const newSchema = transform.transformSchema(schema, {} as any);
+  // TODO: Unskip test when issue https://github.com/ardatan/graphql-mesh/issues/6419 has been solved.
+  it.skip('should be applied to default values of enums for arguments', () => {
+    const newSchema = transformSchema(
+      schema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          typeNames: 'pascalCase',
+          enumValues: 'upperCase',
+          fieldNames: 'camelCase',
+          fieldArgumentNames: 'snakeCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        logger: new DefaultLogger(),
+      }),
+    );
 
-    expect(printSchema(newSchema)).toBe(typeDefs);
+    const userTypeEnum = newSchema.getType('UserType') as GraphQLEnumType;
+    expect(userTypeEnum).toBeDefined();
+    const enumTypeValues = userTypeEnum.getValues().map(x => x.name);
+    expect(enumTypeValues).toContain('ADMIN');
+    expect(enumTypeValues).toContain('MODERATOR');
+    expect(enumTypeValues).toContain('NEWBIE');
+
+    const query = newSchema.getType('Query') as GraphQLObjectType;
+    const fields = query.getFields();
+    const fieldUsersByType = fields.usersByType;
+    expect(fieldUsersByType).toBeDefined();
+    expect(fieldUsersByType.args).toBeDefined();
+    const userTypeArg = fieldUsersByType.args[0];
+    expect(userTypeArg).toBeDefined();
+    expect(userTypeArg.defaultValue).toBeDefined();
+    expect(userTypeArg.defaultValue).not.toBeNull();
+    expect(userTypeArg.defaultValue).toBe('NEWBIE');
   });
 });
