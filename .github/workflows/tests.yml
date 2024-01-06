@@ -176,7 +176,7 @@ jobs:
           https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
           -o /tmp/backup.sql'
       - name: Load Postgres Data
-        uses: tj-actions/pg-restore@v5.0
+        uses: tj-actions/pg-restore@v6.0
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
@@ -267,7 +267,7 @@ jobs:
           https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
           -o /tmp/backup.sql'
       - name: Load Postgres Data
-        uses: tj-actions/pg-restore@v5.0
+        uses: tj-actions/pg-restore@v6.0
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
