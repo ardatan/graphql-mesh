@@ -131,6 +131,18 @@ export function getInContextSDK(
             valuesFromResults?: (result: any, keys?: string[]) => any;
             autoSelectionSetWithDepth?: number;
           }) => {
+            if (
+              !rawSourceSubSchemaConfig.executor &&
+              !rawSourceSubSchemaConfig.transforms?.length &&
+              !argsFromKeys &&
+              !valuesFromResults &&
+              !key
+            ) {
+              const originalSchema = rawSourceSubSchemaConfig.schema;
+              const originalRootType = originalSchema.getType(rootType.name) as GraphQLObjectType;
+              const originalField = originalRootType.getFields()[fieldName];
+              return originalField.resolve(root, args, context, info);
+            }
             inContextSdkLogger.debug(`Called with`, {
               args,
               key,
