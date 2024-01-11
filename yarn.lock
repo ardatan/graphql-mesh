@@ -219,18 +219,18 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.5"
 
-"@apollo/composition@2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@apollo/composition/-/composition-2.6.2.tgz#ed4b7551f3ab9aa96440014140f52b8f2f820364"
-  integrity sha512-rbMRcnvEDtOT+e6OiKUY9virbhpIK9E8bQ6eGoakwCYz8bVXdBBPQdKuvhnvzNAe0LeOPMcsx3Pp9mPT9wz80g==
+"@apollo/composition@2.6.3":
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/@apollo/composition/-/composition-2.6.3.tgz#f8bc0eb6fc437c06dd65f083cf60eb2f7e01e01b"
+  integrity sha512-7Q6xITvZifAWXPzN1ZkqMss9mBZgCL1hdKmM117UhqOfYrZ331DdUaln4I07Ae7wjXEg0KUb7AElx/1x+gm6qg==
   dependencies:
-    "@apollo/federation-internals" "2.6.2"
-    "@apollo/query-graphs" "2.6.2"
+    "@apollo/federation-internals" "2.6.3"
+    "@apollo/query-graphs" "2.6.3"
 
-"@apollo/federation-internals@2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.6.2.tgz#fb20646ff0202ce3c7fab050a1f443d6cf0c981f"
-  integrity sha512-L5Ppl+FQ2+ETpJ8NCa7T8ifAjAX8K/4NW8N08d6TRUJu0M/8rvIL0CgX033Jno/+FVIFhNBbVN2kGoSKDl1YPQ==
+"@apollo/federation-internals@2.6.3":
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.6.3.tgz#88819096c942fc8a7fb649d0214d5f406a5380a8"
+  integrity sha512-Motm6p4C4t1lUXOq9kIVyP6jANSymiUgfwc0TYjeSehKRFq6qxv9L2gPSVFvyfm/gI+gLlDscDN63YtxpUzqhQ==
   dependencies:
     "@types/uuid" "^9.0.0"
     chalk "^4.1.0"
@@ -238,13 +238,13 @@
     uuid "^9.0.0"
 
 "@apollo/gateway@^2.4.1":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-2.6.2.tgz#43b4236720a1eb621ef7d726718f53b902a6ab0f"
-  integrity sha512-JkN9wRQBOBgR50gOPzNnjpb0GN8UnSJlcQZXdGphuV6ldpRYuh71FR96vGIAQo0673hAGsyAsXyZNRXdCROscQ==
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-2.6.3.tgz#71d1e73786c98470021e7bdaafc0cae4cf5b7ca6"
+  integrity sha512-/p1eyRPqWsoVH94/q3tqeLMk7q6CZ5pl7C8lLtANCx/2mYwmLlGcP4RNdKAFyd3K6zR7/VXNdfDIRWZ+AqCkEg==
   dependencies:
-    "@apollo/composition" "2.6.2"
-    "@apollo/federation-internals" "2.6.2"
-    "@apollo/query-planner" "2.6.2"
+    "@apollo/composition" "2.6.3"
+    "@apollo/federation-internals" "2.6.3"
+    "@apollo/query-planner" "2.6.3"
     "@apollo/server-gateway-interface" "^1.1.0"
     "@apollo/usage-reporting-protobuf" "^4.1.0"
     "@apollo/utils.createhash" "^2.0.0"
@@ -298,23 +298,23 @@
     "@types/long" "^4.0.0"
     long "^4.0.0"
 
-"@apollo/query-graphs@2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@apollo/query-graphs/-/query-graphs-2.6.2.tgz#e0fea1dfa112bda961cf836ed132aea607ca8eb5"
-  integrity sha512-1pQABsPS38Sqz1u3pW1WDmq/xJDWkdZGUsHNSAaSbdRAQMT5Lf9M9uzBUcNR5g+byvzKOc6nnxkh2W/tls5kBw==
+"@apollo/query-graphs@2.6.3":
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/@apollo/query-graphs/-/query-graphs-2.6.3.tgz#de3fa5a514a02b6b0413eb2daa56f92e30ff9d31"
+  integrity sha512-h+39kWnVq8GzhSyE2HGg4CKpzTDj1480EcLFuSk11QSN99uXjqwwciY5J83tlaSBONni0TvJ6Efctvp6ag0Xpw==
   dependencies:
-    "@apollo/federation-internals" "2.6.2"
+    "@apollo/federation-internals" "2.6.3"
     deep-equal "^2.0.5"
     ts-graphviz "^1.5.4"
     uuid "^9.0.0"
 
-"@apollo/query-planner@2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-2.6.2.tgz#96ee56286dd3f45cee57e3980c54ba248835aa62"
-  integrity sha512-vASt3+D+gzLZk+P0lFG7nE4QXAn5/IB1be39ywMvqzYPYSjHmJ5sCQluPka1qF581hcxaLJaH2GGT+7RQAeuSg==
+"@apollo/query-planner@2.6.3":
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-2.6.3.tgz#0a90191636d51da1e0f84458b7580fec6ba33d92"
+  integrity sha512-wH7VaIDPhbSs7/UrihvMHWBvfooIoH4WKpyBj50Syf7TOFWmrWWihB+Gf5pdR2Q14pKxM0QihIxGdXK3XABBag==
   dependencies:
-    "@apollo/federation-internals" "2.6.2"
-    "@apollo/query-graphs" "2.6.2"
+    "@apollo/federation-internals" "2.6.3"
+    "@apollo/query-graphs" "2.6.3"
     "@apollo/utils.keyvaluecache" "^2.1.0"
     chalk "^4.1.0"
     deep-equal "^2.0.5"
@@ -362,12 +362,12 @@
     whatwg-mimetype "^3.0.0"
 
 "@apollo/subgraph@^2.2.3", "@apollo/subgraph@^2.4.1":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.6.2.tgz#20d951dabf6a96e8e0891de0c2a19154a0a90b5f"
-  integrity sha512-TZXCq//fYv++gx8Tsngfa85fH6UGvpyz2xqGh9YIg2e3akeikRW77FRg0tfFXL9CwVmWLukav1hJGsipOklM1g==
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.6.3.tgz#72f498c7a803bc9753d93bfe99f13850620051e2"
+  integrity sha512-k4uDJ5QBzisWatxQ/4NJ7d56OJwgPMd0kL1lEXsVJYrfxZhlNd2YSnQrBjp4cmnTK4Z3mDFFoF2viXll7eR2WQ==
   dependencies:
     "@apollo/cache-control-types" "^1.0.2"
-    "@apollo/federation-internals" "2.6.2"
+    "@apollo/federation-internals" "2.6.3"
 
 "@apollo/usage-reporting-protobuf@^4.0.0", "@apollo/usage-reporting-protobuf@^4.1.0", "@apollo/usage-reporting-protobuf@^4.1.1":
   version "4.1.1"
@@ -5263,10 +5263,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.6.1.tgz#9ab8f811930d7af3e3d549183a50884f9eb83f36"
   integrity sha512-UY+FGM/2jjMkzQLn8pxcHGMaVLh9aEitG3zY2CiY7XHdLiz3bZOwa6oDxNqEMv7zZkV+cj5DOdz0cQ1BP5Hjgw==
 
-"@sinclair/typebox@0.32.6", "@sinclair/typebox@^0.32.0":
-  version "0.32.6"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.6.tgz#b3a7c5290ce6f713924f29ffad0bfdf0db4c1b6a"
-  integrity sha512-mgcPAfLZEL2B/hrF+vPDdwwZ1MR0UuALvz+tI2zx7IYHfREmua3C82XsYgkwxCCJKpO3ibTje4QrHYrOAHWhxA==
+"@sinclair/typebox@0.32.8", "@sinclair/typebox@^0.32.0":
+  version "0.32.8"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.8.tgz#9d1559d1dfe8e7f75004cbbb2037d9d0085fef44"
+  integrity sha512-ifqNG6GBr0QRao2Vy+2P2WzxkOnpGmHfZCFXWwuR/0elH4h79mGXN8mEYwnJ2qGEr7MGgfqvf8Njwj4dBGFMBA==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
@@ -6545,10 +6545,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@20.10.8", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
-  version "20.10.8"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.10.8.tgz#f1e223cbde9e25696661d167a5b93a9b2a5d57c7"
-  integrity sha512-f8nQs3cLxbAFc00vEU59yf9UyGUftkPaLGfvbVOIDdx2i1b8epBqj2aNGyP19fiyXWvlmZ7qC1XLjAzw/OKIeA==
+"@types/node@*", "@types/node@20.11.0", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
+  version "20.11.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.0.tgz#8e0b99e70c0c1ade1a86c4a282f7b7ef87c9552f"
+  integrity sha512-o9bjXmDNcF7GbM4CNQpmi+TutCgap/K3w1JyKgxAjqx41zp9qlIAVFi0IhCNsJcXolEqLWhbFbEeL0PvYm4pcQ==
   dependencies:
     undici-types "~5.26.4"
 
@@ -19943,9 +19943,9 @@ react-fast-compare@^3.0.1:
   integrity sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==
 
 react-icons@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-5.0.0.tgz#3a860fac02787984e4c11d9d05bec53226de0dc9"
-  integrity sha512-8gBBjYRrO14BU9RuMEVptG5aB1gwNPAAgsKOuPggx2hg332pTky/r8FidEJW95cL6IG2mYCEHaYuAxw74wLefw==
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-5.0.1.tgz#1694e11bfa2a2888cab47dcc30154ce90485feee"
+  integrity sha512-WqLZJ4bLzlhmsvme6iFdgO8gfZP17rfjYEJ2m9RsZjZ+cc4k1hTzknEz63YS1MeT50kVzoa1Nz36f4BEx+Wigw==
 
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
