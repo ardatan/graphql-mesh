@@ -5263,10 +5263,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.6.1.tgz#9ab8f811930d7af3e3d549183a50884f9eb83f36"
   integrity sha512-UY+FGM/2jjMkzQLn8pxcHGMaVLh9aEitG3zY2CiY7XHdLiz3bZOwa6oDxNqEMv7zZkV+cj5DOdz0cQ1BP5Hjgw==
 
-"@sinclair/typebox@0.32.5", "@sinclair/typebox@^0.32.0":
-  version "0.32.5"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.5.tgz#7f5995e2abc02be4e9fa38b58987b77e0bfe5ead"
-  integrity sha512-0M6FyxZwIEu/Ly6W+l7iYqiZQYJ8khLOJGzg+cxivNKRKqk9hctcuDC0UYI7B9vNgycExA8w40m4M3yDKW37RA==
+"@sinclair/typebox@0.32.6", "@sinclair/typebox@^0.32.0":
+  version "0.32.6"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.6.tgz#b3a7c5290ce6f713924f29ffad0bfdf0db4c1b6a"
+  integrity sha512-mgcPAfLZEL2B/hrF+vPDdwwZ1MR0UuALvz+tI2zx7IYHfREmua3C82XsYgkwxCCJKpO3ibTje4QrHYrOAHWhxA==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
@@ -11735,10 +11735,10 @@ fast-xml-parser@4.2.5:
   dependencies:
     strnum "^1.0.5"
 
-fast-xml-parser@4.3.2, fast-xml-parser@^4.2.1, fast-xml-parser@^4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.3.2.tgz#761e641260706d6e13251c4ef8e3f5694d4b0d79"
-  integrity sha512-rmrXUXwbJedoXkStenj1kkljNF7ugn5ZjR9FJcwmCfcCbtOMDghPajbc+Tck6vE6F5XsDmx+Pr2le9fw8+pXBg==
+fast-xml-parser@4.3.3, fast-xml-parser@^4.2.1, fast-xml-parser@^4.3.2:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.3.3.tgz#aeaf5778392329f17168c40c51bcbfec8ff965be"
+  integrity sha512-coV/D1MhrShMvU6D0I+VAK3umz6hUaxxhL0yp/9RjfiYUfAv14rDhGQL+PLForhMdr0wq3PiV07WtkkNjJjNHg==
   dependencies:
     strnum "^1.0.5"
 
