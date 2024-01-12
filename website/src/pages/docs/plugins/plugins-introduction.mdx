@@ -100,6 +100,12 @@ Mesh provides each plugin with unique hooks:
 
 These hooks have access to all remote execution parameters (root, args, context, info etc).
 
+Mesh plugins also support all [envelop hooks](https://the-guild.dev/graphql/envelop/v4/plugins/lifecycle)
+and a custom plugin can make use of a mix of envelop hooks and the mesh specific hooks.
+
+Unlike envelop hooks `onFetch` and `onDelegate` do not have a `extendContext` function, but the same can
+be achieved by modifying the context object that is accessible in all hooks.
+
 Example Mesh Envelop plugin therefore can look like this:
 
 ```ts
@@ -117,6 +123,12 @@ export default function customMeshPlugin(options: MeshPluginOptions<YourConfig>)
     }
   }
 }
+```
+
+To use a custom plugin that is in the same codebase:
+```yaml filename=".meshrc.yaml"
+plugins:
+  - ./path/to/plugin: # path to custom plugin instead of just plugin name
 ```
 
 Usage of plugin and Native Envelop hooks are described in
