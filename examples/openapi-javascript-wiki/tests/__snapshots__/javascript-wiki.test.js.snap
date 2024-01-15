@@ -8,26 +8,19 @@ exports[`JavaScript Wiki should generate correct schema: javascript-wiki-schema 
 
 directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
-directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
-
-directive @resolveRootField(field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
 directive @resolveRoot on FIELD_DEFINITION
 
+directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+
 directive @enum(value: String) on ENUM_VALUE
+
+directive @resolveRootField(field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
 type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/api/rest_v1") {
-  """
-  Gets availability of featured feed content for the apps by wiki domain.
-  
-  Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  
-  """
-  feed_availability: feed_availability_response @httpOperation(path: "/feed/availability", operationSpecificHeaders: "{\\"Accept\\":\\"application/json; charset=utf-8; profile=\\\\\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\\\\\", application/problem+json\\"}", httpMethod: GET)
   """
   Returns the previously-stored formula via \`/media/math/check/{type}\` for
   the given hash.
@@ -38,7 +31,7 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
   media_math_formula_by_hash(
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): problem @httpOperation(path: "/media/math/formula/{args.hash}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): media_math_formula_by_hash_response @httpOperation(path: "/media/math/formula/{args.hash}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
   Given a request hash, renders a TeX formula into its mathematic
   representation in the given format. When a request is issued to the
@@ -53,505 +46,174 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
     format: queryInput_media_math_render_by_format_by_hash_format!
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): problem @httpOperation(path: "/media/math/render/{args.format}/{args.hash}", operationSpecificHeaders: "{\\"Accept\\":\\"image/svg+xml, application/mathml+xml, image/png, application/problem+json\\"}", httpMethod: GET)
+  ): media_math_render_by_format_by_hash_response @httpOperation(path: "/media/math/render/{args.format}/{args.hash}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a Mediawiki project and a date range, returns a timeseries of absolute bytes
-  difference sums. You can filter by editors-type (all-editor-types, anonymous, group-bot,
-  name-bot, user) and page-type (all-page-types, content, non-content). You can choose
-  between daily and monthly granularity as well.
+  Given a Mediawiki article and a date range, returns a daily timeseries of its pageview
+  counts. You can also filter by access method and/or agent type.
   
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
+  - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
+  - Rate limit: 100 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
+  metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end(
     """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org. If you're interested in the aggregation of all projects, use
-    all-projects.
+    If you want to filter by project, use the domain of any Wikimedia project,
+    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
     """
     project: String!
-    editor_type: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
-    granularity: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
+    access: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access!
+    agent: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent!
+    """
+    'The title of any article in the specified project. Any spaces should be replaced
+    with underscores. It also should be URI-encoded, so that non-URI-safe characters like
+    %, / or ? are accepted. Example: Are_You_the_One%3F'.
+    """
+    article: String!
+    granularity: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD or YYYYMMDDHH format"""
     start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
+    """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
     end: String!
-  ): metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/bytes-difference/absolute/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/pageviews/per-article/{args.project}/{args.access}/{args.agent}/{args.article}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a Mediawiki project, a page-title prefixed with canonical namespace (for
-  instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
-  difference absolute sums. You can filter by editors-type (all-editor-types, anonymous,
-  group-bot, name-bot, user). You can choose between daily and monthly granularity as well.
+  Given a date range, returns a timeseries of pageview counts. You can filter by project,
+  access method and/or agent type. You can choose between daily and hourly granularity
+  as well.
   
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
+  - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
+  - Rate limit: 100 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end(
+  metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end(
     """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
+    If you want to filter by project, use the domain of any Wikimedia project,
+    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
+    If you are interested in all pageviews regardless of project, use all-projects.
     """
     project: String!
+    access: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access!
+    agent: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent!
+    granularity: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_granularity!
     """
-    The page-title to request absolute bytes-difference for. Should be prefixed with the
-    page canonical namespace.
+    The timestamp of the first hour/day/month to include, in YYYYMMDDHH format
     """
-    page_title: String!
-    editor_type: queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
-    granularity: queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
     start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
+    """
+    The timestamp of the last hour/day/month to include, in YYYYMMDDHH format
+    """
     end: String!
-  ): metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/bytes-difference/absolute/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/pageviews/aggregate/{args.project}/{args.access}/{args.agent}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a Mediawiki project and a date range, returns a timeseries of bytes difference net
-  sums. You can filter by editors-type (all-editor-types, anonymous, group-bot, name-bot,
-  user) and page-type (all-page-types, content or non-content). You can choose between
-  daily and monthly granularity as well.
+  Lists the 1000 most viewed articles for a given project and timespan (month or day).
+  You can filter by access method.
   
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
+  - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
+  - Rate limit: 100 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
+  metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day(
     """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org. If you're interested in the aggregation of all projects, use
-    all-projects.
+    If you want to filter by project, use the domain of any Wikimedia project,
+    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
     """
     project: String!
-    editor_type: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
-    granularity: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
-  ): metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/bytes-difference/net/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project, a page-title prefixed with canonical namespace (for
-  instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
-  difference net sums. You can filter by editors-type (all-editor-types, anonymous,
-  group-bot, name-bot, user). You can choose between daily and monthly granularity as well.
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end(
+    access: queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access!
     """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
-    """
-    project: String!
-    """
-    The page-title to request net bytes-difference for. Should be prefixed with the
-    page canonical namespace.
-    """
-    page_title: String!
-    editor_type: queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
-    granularity: queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
-  ): metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/bytes-difference/net/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project and a date range, returns a timeseries of its edited-pages counts.
-  You can filter by editor-type (all-editor-types, anonymous, group-bot, name-bot, user),
-  page-type (all-page-types, content or non-content) or activity-level (1..4-edits,
-  5..24-edits, 25..99-edits, 100..-edits). You can choose between daily and monthly
-  granularity as well.
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end(
-    """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off.  For projects like commons without language codes, use commons.wikimedia.
-    For projects like www.mediawiki.org, you can use that full string, or just use
-    mediawiki or mediawiki.org.
-    """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type!
-    activity_level: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level!
-    granularity: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
-  ): metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/edited-pages/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project and a date range, returns a timeseries of its new pages counts.
-  You can filter by editor type (all-editor-types, anonymous, group-bot, name-bot, user)
-  or page-type (all-page-types, content or non-content). You can choose between daily and
-  monthly granularity as well.
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
-    """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off.  For projects like commons without language codes, use commons.wikimedia.
-    For projects like www.mediawiki.org, you can use that full string, or just use
-    mediawiki or mediawiki.org. If you're interested in the aggregation of all
-    projects, use all-projects.
-    """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
-    granularity: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
-  ): metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/edited-pages/new/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
-  edited-pages by absolute bytes-difference. You can filter by editor-type (all-editor-types,
-  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or non-content).
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
-    """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
-    """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
-    """
-    The year of the date for which to retrieve top edited-pages, in YYYY format.
+    The year of the date for which to retrieve top articles, in YYYY format.
     """
     year: String!
     """
-    The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
+    The month of the date for which to retrieve top articles, in MM format. If you want
+    to get the top articles of a whole month, the day parameter should be all-days.
     """
     month: String!
-    """
-    The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
-    """
+    """The day of the date for which to retrieve top articles, in DD format."""
     day: String!
-  ): metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/edited-pages/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @httpOperation(path: "/metrics/pageviews/top/{args.project}/{args.access}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a Mediawiki project and a date (day or month), returns a timeseries of the top
-  100 edited-pages by edits count. You can filter by editor-type (all-editor-types,
-  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or
-  non-content).
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
+  Lists the pageviews to this project, split by country of origin for a given month.
+  Because of privacy reasons, pageviews are given in a bucketed format, and countries
+  with less than 100 views do not get reported.
+  Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 100 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
+  metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month(
     """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
+    If you want to filter by project, use the domain of any Wikimedia project,
+    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
     """
     project: String!
-    editor_type: queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    access: queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access!
     """
-    The year of the date for which to retrieve top edited-pages, in YYYY format.
+    The year of the date for which to retrieve top countries, in YYYY format.
     """
     year: String!
     """
-    The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
+    The month of the date for which to retrieve top countries, in MM format.
     """
     month: String!
-    """
-    The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
-    """
-    day: String!
-  ): metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/edited-pages/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @httpOperation(path: "/metrics/pageviews/top-by-country/{args.project}/{args.access}/{args.year}/{args.month}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
-  edited-pages by net bytes-difference. You can filter by editor-type (all-editor-types,
-  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or non-content).
+  Lists the 1000 most viewed articles for a given country and date, across all projects.
+  You can filter by access method.
+  Because of privacy reasons, pageview counts are given in a bounded format and are not reported for certain countries.
+  Furthermore, articles visited by 1000 unique individuals or fewer on the given date will be excluded from the returned data.
+  Also, views produced by agents categorized as bots or web crawlers will be excluded from all calculations.
   
   - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
+  - Rate limit: 100 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
+  metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day(
     """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
+    The ISO 3166-1 alpha-2 code of a country for which to retrieve top articles, like 'FR' or 'IN'.
     """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
-    """
-    The year of the date for which to retrieve top edited-pages, in YYYY format.
-    """
+    country: String!
+    access: queryInput_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_access!
+    """The year for which to retrieve top articles, in YYYY format."""
     year: String!
-    """
-    The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
-    """
+    """The month for which to retrieve top articles, in MM format."""
     month: String!
-    """
-    The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
-    """
+    """The day for which to retrieve top articles, in DD format."""
     day: String!
-  ): metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/edited-pages/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_response @httpOperation(path: "/metrics/pageviews/top-per-country/{args.country}/{args.access}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a Mediawiki project and a date range, returns a timeseries of its editors counts.
-  You can filter by editory-type (all-editor-types, anonymous, group-bot, name-bot, user),
-  page-type (all-page-types, content or non-content) or activity-level (1..4-edits,
-  5..24-edits, 25..99-edits or 100..-edits). You can choose between daily and monthly
-  granularity as well.
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end(
-    """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off.  For projects like commons without language codes, use commons.wikimedia.
-    For projects like www.mediawiki.org, you can use that full string, or just use
-    mediawiki or mediawiki.org.
-    """
-    project: String!
-    editor_type: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type!
-    activity_level: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level!
-    granularity: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
-  ): metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/editors/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
-  editors by absolute bytes-difference. You can filter by editor-type (all-editor-types,
-  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or non-content).
-  The user_text returned is either the mediawiki user_text if the user is registered, or
-  null if user is anonymous.
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
-    """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
-    """
-    project: String!
-    editor_type: queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
-    """
-    The year of the date for which to retrieve top editors, in YYYY format.
-    """
-    year: String!
-    """
-    The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
-    """
-    month: String!
-    """
-    The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
-    """
-    day: String!
-  ): metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/editors/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project and a date (day or month), returns a timeseries of the top
-  100 editors by edits count. You can filter by editor-type (all-editor-types,
-  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or
-  non-content). The user_text returned is either the mediawiki user_text if the user is
-  registered, or null if user is anonymous.
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
-    """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
-    """
-    project: String!
-    editor_type: queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
-    """
-    The year of the date for which to retrieve top editors, in YYYY format.
-    """
-    year: String!
-    """
-    The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
-    """
-    month: String!
-    """
-    The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
-    """
-    day: String!
-  ): metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/editors/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
-  editors by net bytes-difference. You can filter by editor-type (all-editor-types, anonymous,
-  group-bot, name-bot, user) or page-type (all-page-types, content or non-content). The
-  user_text returned is either the mediawiki user_text if the user is registered, or
-  "Anonymous Editor" if user is anonymous.
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
-    """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
-    """
-    project: String!
-    editor_type: queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
-    """
-    The year of the date for which to retrieve top editors, in YYYY format.
-    """
-    year: String!
-    """
-    The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
-    """
-    month: String!
-    """
-    The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
-    """
-    day: String!
-  ): metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/editors/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project and a date range, returns a timeseries of edits counts.
-  You can filter by editors-type (all-editor-types, anonymous, bot, registered) and
-  page-type (all-page-types, content or non-content). You can choose between daily and
-  monthly granularity as well.
-  
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
-    """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off.  For projects like commons without language codes, use commons.wikimedia.
-    For projects like www.mediawiki.org, you can use that full string, or just use
-    mediawiki or mediawiki.org. If you're interested in the aggregation of
-    all projects, use all-projects.
-    """
-    project: String!
-    editor_type: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
-    granularity: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
-  ): metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/edits/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Given a Mediawiki project, a page-title prefixed with its canonical namespace (for
-  instance 'User:Jimbo_Wales') and a date range, returns a timeseries of edit counts.
-  You can filter by editors-type (all-editor-types, anonymous, group-bot, name-bot, user).
+  Given a project and a date range, returns a timeseries of unique devices counts.
+  You need to specify a project, and can filter by accessed site (mobile or desktop).
   You can choose between daily and monthly granularity as well.
   
-  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 25 req/s
+  - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
+  - Rate limit: 100 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end(
+  metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end(
     """
-    The name of any Wikimedia project formatted like {language code}.{project name},
-    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
-    off. For projects like commons without language codes, use commons.wikimedia. For
-    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
-    or mediawiki.org.
+    If you want to filter by project, use the domain of any Wikimedia project,
+    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
+    For data grouped by project family, use all-[family]-projects
+    (for example: all-wikipedia-projects).
     """
     project: String!
-    """
-    The page-title to request edits for. It should be prefixed with canonical namespace.
-    Spaces will be converted to underscores.
-    """
-    page_title: String!
-    editor_type: queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
-    granularity: queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD format"""
+    access_site: queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site!
+    granularity: queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_granularity!
+    """The timestamp of the first day/month to include, in YYYYMMDD format"""
     start: String!
-    """The date of the last day to include, in YYYYMMDD format"""
+    """The timestamp of the last day/month to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/edits/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/unique-devices/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
   Given a project and a date range, returns a timeseries of pagecounts.
   You can filter by access site (mobile or desktop) and you can choose between monthly,
@@ -582,122 +244,389 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
     this value is exclusive.
     """
     end: String!
-  ): metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/legacy/pagecounts/aggregate/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/legacy/pagecounts/aggregate/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a date range, returns a timeseries of pageview counts. You can filter by project,
-  access method and/or agent type. You can choose between daily and hourly granularity
-  as well.
+  Given a Mediawiki project and a date range, returns a timeseries of its new pages counts.
+  You can filter by editor type (all-editor-types, anonymous, group-bot, name-bot, user)
+  or page-type (all-page-types, content or non-content). You can choose between daily and
+  monthly granularity as well.
   
-  - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
-  - Rate limit: 100 req/s
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end(
+  metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
     """
-    If you want to filter by project, use the domain of any Wikimedia project,
-    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
-    If you are interested in all pageviews regardless of project, use all-projects.
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off.  For projects like commons without language codes, use commons.wikimedia.
+    For projects like www.mediawiki.org, you can use that full string, or just use
+    mediawiki or mediawiki.org. For data from all projects, use all-projects. For
+    data grouped by project family, use all-[family]-projects (for example:
+    all-wikipedia-projects).
     """
     project: String!
-    access: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access!
-    agent: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent!
-    granularity: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_granularity!
-    """
-    The timestamp of the first hour/day/month to include, in YYYYMMDDHH format
-    """
+    editor_type: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
+    page_type: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
+    granularity: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
     start: String!
-    """
-    The timestamp of the last hour/day/month to include, in YYYYMMDDHH format
-    """
+    """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/pageviews/aggregate/{args.project}/{args.access}/{args.agent}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/edited-pages/new/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a Mediawiki article and a date range, returns a daily timeseries of its pageview
-  counts. You can also filter by access method and/or agent type.
+  Given a Mediawiki project and a date range, returns a timeseries of its edited-pages counts.
+  You can filter by editor-type (all-editor-types, anonymous, group-bot, name-bot, user),
+  page-type (all-page-types, content or non-content) or activity-level (1..4-edits,
+  5..24-edits, 25..99-edits, 100..-edits). You can choose between daily and monthly
+  granularity as well.
   
-  - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
-  - Rate limit: 100 req/s
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end(
+  metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end(
     """
-    If you want to filter by project, use the domain of any Wikimedia project,
-    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off.  For projects like commons without language codes, use commons.wikimedia.
+    For projects like www.mediawiki.org, you can use that full string, or just use
+    mediawiki or mediawiki.org.
     """
     project: String!
-    access: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access!
-    agent: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent!
-    """
-    'The title of any article in the specified project. Any spaces should be replaced
-    with underscores. It also should be URI-encoded, so that non-URI-safe characters like
-    %, / or ? are accepted. Example: Are_You_the_One%3F'.
-    """
-    article: String!
-    granularity: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_granularity!
-    """The date of the first day to include, in YYYYMMDD or YYYYMMDDHH format"""
+    editor_type: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type!
+    page_type: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type!
+    activity_level: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level!
+    granularity: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
     start: String!
-    """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
+    """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/pageviews/per-article/{args.project}/{args.access}/{args.agent}/{args.article}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/edited-pages/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Lists the pageviews to this project, split by country of origin for a given month.
-  Because of privacy reasons, pageviews are given in a bucketed format, and countries
-  with less than 100 views do not get reported.
-  Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
-  - Rate limit: 100 req/s
+  Given a Mediawiki project and a date (day or month), returns a timeseries of the top
+  100 edited-pages by edits count. You can filter by editor-type (all-editor-types,
+  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or
+  non-content).
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
   - License: Data accessible via this endpoint is available under the
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month(
+  metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
     """
-    If you want to filter by project, use the domain of any Wikimedia project,
-    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org. For data from all projects, use all-projects. For data grouped by
+    project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
     project: String!
-    access: queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access!
+    editor_type: queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
+    page_type: queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
     """
-    The year of the date for which to retrieve top countries, in YYYY format.
+    The year of the date for which to retrieve top edited-pages, in YYYY format.
     """
     year: String!
     """
-    The month of the date for which to retrieve top countries, in MM format.
+    The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
     """
     month: String!
-  ): metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @httpOperation(path: "/metrics/pageviews/top-by-country/{args.project}/{args.access}/{args.year}/{args.month}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Lists the 1000 most viewed articles for a given project and timespan (month or day).
-  You can filter by access method.
-  
-  - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
-  - Rate limit: 100 req/s
-  - License: Data accessible via this endpoint is available under the
-    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
-  
-  """
-  metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day(
     """
-    If you want to filter by project, use the domain of any Wikimedia project,
-    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
+    The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
-    project: String!
-    access: queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access!
-    """
-    The year of the date for which to retrieve top articles, in YYYY format.
-    """
-    year: String!
-    """
-    The month of the date for which to retrieve top articles, in MM format. If you want
-    to get the top articles of a whole month, the day parameter should be all-days.
-    """
-    month: String!
-    """The day of the date for which to retrieve top articles, in DD format."""
     day: String!
-  ): metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @httpOperation(path: "/metrics/pageviews/top/{args.project}/{args.access}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/edited-pages/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
+  edited-pages by net bytes-difference. You can filter by editor-type (all-editor-types,
+  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or non-content).
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org. For data from all projects, use all-projects. For data grouped by
+    project family, use all-[family]-projects (for example: all-wikipedia-projects).
+    """
+    project: String!
+    editor_type: queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
+    page_type: queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    """
+    The year of the date for which to retrieve top edited-pages, in YYYY format.
+    """
+    year: String!
+    """
+    The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
+    """
+    month: String!
+    """
+    The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
+    """
+    day: String!
+  ): metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/edited-pages/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
+  edited-pages by absolute bytes-difference. You can filter by editor-type (all-editor-types,
+  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or non-content).
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org. For data from all projects, use all-projects. For data grouped by
+    project family, use all-[family]-projects (for example: all-wikipedia-projects).
+    """
+    project: String!
+    editor_type: queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
+    page_type: queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    """
+    The year of the date for which to retrieve top edited-pages, in YYYY format.
+    """
+    year: String!
+    """
+    The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
+    """
+    month: String!
+    """
+    The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
+    """
+    day: String!
+  ): metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/edited-pages/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project and a date range, returns a timeseries of its editors counts.
+  You can filter by editory-type (all-editor-types, anonymous, group-bot, name-bot, user),
+  page-type (all-page-types, content or non-content) or activity-level (1..4-edits,
+  5..24-edits, 25..99-edits or 100..-edits). You can choose between daily and monthly
+  granularity as well.
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off.  For projects like commons without language codes, use commons.wikimedia.
+    For projects like www.mediawiki.org, you can use that full string, or just use
+    mediawiki or mediawiki.org.
+    """
+    project: String!
+    editor_type: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type!
+    page_type: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type!
+    activity_level: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level!
+    granularity: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
+    start: String!
+    """The date of the last day to include, in YYYYMMDD format"""
+    end: String!
+  ): metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/editors/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project and a date (day or month), returns a timeseries of the top
+  100 editors by edits count. You can filter by editor-type (all-editor-types,
+  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or
+  non-content). The user_text returned is either the mediawiki user_text if the user is
+  registered, or null if user is anonymous.
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org. For data from all projects, use all-projects. For data grouped by
+    project family, use all-[family]-projects (for example: all-wikipedia-projects).
+    """
+    project: String!
+    editor_type: queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
+    page_type: queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    """
+    The year of the date for which to retrieve top editors, in YYYY format.
+    """
+    year: String!
+    """
+    The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
+    """
+    month: String!
+    """
+    The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
+    """
+    day: String!
+  ): metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/editors/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
+  editors by net bytes-difference. You can filter by editor-type (all-editor-types, anonymous,
+  group-bot, name-bot, user) or page-type (all-page-types, content or non-content). The
+  user_text returned is either the mediawiki user_text if the user is registered, or
+  null if user is anonymous.
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org. For data from all projects, use all-projects. For data grouped by
+    project family, use all-[family]-projects (for example: all-wikipedia-projects).
+    """
+    project: String!
+    editor_type: queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
+    page_type: queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    """
+    The year of the date for which to retrieve top editors, in YYYY format.
+    """
+    year: String!
+    """
+    The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
+    """
+    month: String!
+    """
+    The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
+    """
+    day: String!
+  ): metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/editors/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
+  editors by absolute bytes-difference. You can filter by editor-type (all-editor-types,
+  anonymous, group-bot, name-bot, user) or page-type (all-page-types, content or non-content).
+  The user_text returned is either the mediawiki user_text if the user is registered, or
+  null if user is anonymous.
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org. For data from all projects, use all-projects. For data grouped by
+    project family, use all-[family]-projects (for example: all-wikipedia-projects).
+    """
+    project: String!
+    editor_type: queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
+    page_type: queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    """
+    The year of the date for which to retrieve top editors, in YYYY format.
+    """
+    year: String!
+    """
+    The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
+    """
+    month: String!
+    """
+    The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
+    """
+    day: String!
+  ): metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/editors/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project and a date range, returns a timeseries of edits counts.
+  You can filter by editors-type (all-editor-types, anonymous, bot, registered) and
+  page-type (all-page-types, content or non-content). You can choose between daily and
+  monthly granularity as well.
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off.  For projects like commons without language codes, use commons.wikimedia.
+    For projects like www.mediawiki.org, you can use that full string, or just use
+    mediawiki or mediawiki.org. For data from all projects, use all-projects. For data
+    grouped by project family, use all-[family]-projects (for example: all-wikipedia-projects).
+    """
+    project: String!
+    editor_type: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
+    page_type: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
+    granularity: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
+    start: String!
+    """The date of the last day to include, in YYYYMMDD format"""
+    end: String!
+  ): metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/edits/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project, a page-title prefixed with its canonical namespace (for
+  instance 'User:Jimbo_Wales') and a date range, returns a timeseries of edit counts.
+  You can filter by editors-type (all-editor-types, anonymous, group-bot, name-bot, user).
+  You can choose between daily and monthly granularity as well.
+  
+  Note: Due to performance of the data-serving backend, this endpoint limits the queryable
+  timespan to one year (whether in daily or monthly granularity).
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 5 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org.
+    """
+    project: String!
+    """
+    The page-title to request edits for. It should be prefixed with canonical namespace.
+    Spaces will be converted to underscores.
+    """
+    page_title: String!
+    editor_type: queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
+    granularity: queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
+    start: String!
+    """The date of the last day to include, in YYYYMMDD format"""
+    end: String!
+  ): metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/edits/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
   Given a Mediawiki project and a date range, returns a timeseries of its newly registered
   users counts. You can choose between daily and monthly granularity. The newly registered
@@ -715,8 +644,8 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
     for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
     off.  For projects like commons without language codes, use commons.wikimedia.
     For projects like www.mediawiki.org, you can use that full string, or just use
-    mediawiki or mediawiki.org. If you're interested in the aggregation of
-    all projects, use all.
+    mediawiki or mediawiki.org. For data from all projects, use all-projects. For data
+    grouped by project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
     project: String!
     granularity: queryInput_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_granularity!
@@ -724,11 +653,169 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/registered-users/new/{args.project}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/registered-users/new/{args.project}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
-  Given a project and a date range, returns a timeseries of unique devices counts.
-  You need to specify a project, and can filter by accessed site (mobile or desktop).
-  You can choose between daily and hourly granularity as well.
+  Given a Mediawiki project and a date range, returns a timeseries of bytes difference net
+  sums. You can filter by editors-type (all-editor-types, anonymous, group-bot, name-bot,
+  user) and page-type (all-page-types, content or non-content). You can choose between
+  daily and monthly granularity as well.
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org. For data from all projects, use all-projects. For data grouped by
+    project family, use all-[family]-projects (for example: all-wikipedia-projects).
+    """
+    project: String!
+    editor_type: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
+    page_type: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
+    granularity: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
+    start: String!
+    """The date of the last day to include, in YYYYMMDD format"""
+    end: String!
+  ): metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/bytes-difference/net/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project, a page-title prefixed with canonical namespace (for
+  instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
+  difference net sums. You can filter by editors-type (all-editor-types, anonymous,
+  group-bot, name-bot, user). You can choose between daily and monthly granularity as well.
+  
+  Note: Due to performance of the data-serving backend, this endpoint limits the queryable
+  timespan to one year (whether in daily or monthly granularity).
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org.
+    """
+    project: String!
+    """
+    The page-title to request net bytes-difference for. Should be prefixed with the
+    page canonical namespace.
+    """
+    page_title: String!
+    editor_type: queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
+    granularity: queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
+    start: String!
+    """The date of the last day to include, in YYYYMMDD format"""
+    end: String!
+  ): metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/bytes-difference/net/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project and a date range, returns a timeseries of absolute bytes
+  difference sums. You can filter by editors-type (all-editor-types, anonymous, group-bot,
+  name-bot, user) and page-type (all-page-types, content, non-content). You can choose
+  between daily and monthly granularity as well.
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org. For data from all projects, use all-projects. For data grouped by
+    project family, use all-[family]-projects (for example: all-wikipedia-projects).
+    """
+    project: String!
+    editor_type: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
+    page_type: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
+    granularity: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
+    start: String!
+    """The date of the last day to include, in YYYYMMDD format"""
+    end: String!
+  ): metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/bytes-difference/absolute/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Mediawiki project, a page-title prefixed with canonical namespace (for
+  instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
+  difference absolute sums. You can filter by editors-type (all-editor-types, anonymous,
+  group-bot, name-bot, user). You can choose between daily and monthly granularity as well.
+  
+  Note: Due to performance of the data-serving backend, this endpoint limits the queryable
+  timespan to one year (whether in daily or monthly granularity).
+  
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 25 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end(
+    """
+    The name of any Wikimedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. For projects like commons without language codes, use commons.wikimedia. For
+    projects like www.mediawiki.org, you can use that full string, or just use mediawiki
+    or mediawiki.org.
+    """
+    project: String!
+    """
+    The page-title to request absolute bytes-difference for. Should be prefixed with the
+    page canonical namespace.
+    """
+    page_title: String!
+    editor_type: queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
+    granularity: queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD format"""
+    start: String!
+    """The date of the last day to include, in YYYYMMDD format"""
+    end: String!
+  ): metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/bytes-difference/absolute/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a date range, returns a timeseries of mediarequest counts. You can filter by referer, media types and/or agent type. You can choose between daily and monthly granularity.
+  counts. The data can be filtered by agent type.
+  - Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  - Rate limit: 100 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end(
+    """
+    The place that the request was made from. It can be any Wikimedia project (e.g. de.wikipedia),
+    "all-referers", "internal", "external", "search-engine", "unknown" or "none".
+    """
+    referer: String!
+    media_type: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_media_type!
+    agent: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_agent!
+    granularity: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_granularity!
+    """
+    The timestamp of the first hour/day/month to include, in YYYYMMDD format
+    """
+    start: String!
+    """
+    The timestamp of the last hour/day/month to include, in YYYYMMDD format
+    """
+    end: String!
+  ): metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/mediarequests/aggregate/{args.referer}/{args.media_type}/{args.agent}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a file stored in upload.wikimedia.org (the file storage for all media in any wiki) and a date range,
+  returns a daily timeseries of its request counts. The data can be filtered by agent type.
   
   - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
   - Rate limit: 100 req/s
@@ -736,69 +823,76 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
     [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
   
   """
-  metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end(
+  metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end(
     """
-    If you want to filter by project, use the domain of any Wikimedia project,
-    for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
+    The place that the request was made from. It can be any Wikimedia project (e.g. de.wikipedia), "all-referers",
+    "internal", "external", "search-engine", "unknown" or "none".
+    """
+    referer: String!
+    agent: queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_agent!
+    """
+    The upload.wikimedia.org (the file storage for all media in any wiki) path to the file. It also should
+    be URI-encoded, so that non-URI-safe characters like %, / or ? are accepted.
+    Example: %2Fwiktionary%2Fte%2F4%2F40%2Fpeacocks.JPG
+    """
+    file_path: String!
+    granularity: queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_granularity!
+    """The date of the first day to include, in YYYYMMDD or YYYYMMDDHH format"""
+    start: String!
+    """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
+    end: String!
+  ): metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/mediarequests/per-file/{args.referer}/{args.agent}/{args.file_path}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Lists the 1000 most requested files for a given referer and timespan (month or day). You can filter by access method.
+  - Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable)
+  - Rate limit: 100 req/s
+  - License: Data accessible via this endpoint is available under the
+    [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).
+  
+  """
+  metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day(
+    """
+    The place that the request was made from. Non Wikimedia projects appear aggreggated under the classification "external".
+    It can be any Wikimedia project (e.g. de.wikipedia), "all-referers", "internal", "external", "search-engine", "unknown" or "none".
+    """
+    referer: String!
+    media_type: queryInput_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_media_type!
+    """The year of the date for which to retrieve top files, in YYYY format."""
+    year: String!
+    """
+    The month of the date for which to retrieve top files, in MM format. If you want
+    to get the top files of a whole month, the day parameter should be all-days.
+    """
+    month: String!
+    """The day of the date for which to retrieve top files, in DD format."""
+    day: String!
+  ): metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_response @httpOperation(path: "/metrics/mediarequests/top/{args.referer}/{args.media_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Given a Wikipedia project, an activity level, and a month, returns the upper bounds of
+  the editor counts, split by country of origin. Because of privacy reasons, editor counts
+  are given in a bounded format and are not reported for certain countries or for inactive
+  Wikipedias. Read more about privacy considerations
+  [here](https://wikitech.wikimedia.org/wiki/Analytics/Data_Lake/Edits/Geoeditors/Public#Privacy).
+  Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  
+  """
+  metrics_editors_by_country_by_project_by_activity_level_by_year_by_month(
+    """
+    The name of any Wikipedia project formatted like {language code}.{project name},
+    for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
+    off. Non-Wikipedia projects are not available for this endpoint.
     """
     project: String!
-    access_site: queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site!
-    granularity: queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_granularity!
-    """The timestamp of the first day/month to include, in YYYYMMDD format"""
-    start: String!
-    """The timestamp of the last day/month to include, in YYYYMMDD format"""
-    end: String!
-  ): metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @httpOperation(path: "/metrics/unique-devices/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Fetches the list of language pairs the back-end service can translate
-  
-  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
-  
-  """
-  transform_list_languagepairs: cx_languagepairs @httpOperation(path: "/transform/list/languagepairs/", operationSpecificHeaders: "{\\"Accept\\":\\"application/json\\"}", httpMethod: GET)
-  """
-  Fetches the list of tools that are available for the given pair of languages.
-  
-  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
-  
-  """
-  transform_list_pair_by_from_by_to(
-    """The source language code"""
-    from: String!
-    """The target language code"""
-    to: String!
-  ): transform_list_pair_by_from_by_to_response @httpOperation(path: "/transform/list/pair/{args.from}/{args.to}/", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Fetches the list of tools and all of the language pairs it can translate
-  
-  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
-  
-  """
-  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): transform_list_tool_by_tool_response @httpOperation(path: "/transform/list/tool/{args.tool}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Fetches the list of tools and all of the language pairs it can translate
-  
-  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
-  
-  """
-  transform_list_tool_by_tool_by_from(
-    tool: queryInput_transform_list_tool_by_tool_by_from_tool!
-    """The source language code"""
-    from: String!
-  ): transform_list_tool_by_tool_by_from_response @httpOperation(path: "/transform/list/tool/{args.tool}/{args.from}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
-  """
-  Fetches the list of tools and all of the language pairs it can translate
-  
-  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
-  
-  """
-  transform_list_tool_by_tool_by_from_by_to(
-    tool: queryInput_transform_list_tool_by_tool_by_from_by_to_tool!
-    """The source language code"""
-    from: String!
-    """The target language code"""
-    to: String!
-  ): transform_list_tool_by_tool_by_from_by_to_response @httpOperation(path: "/transform/list/tool/{args.tool}/{args.from}/{args.to}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+    activity_level: queryInput_metrics_editors_by_country_by_project_by_activity_level_by_year_by_month_activity_level!
+    """
+    The year of the date for which to retrieve editor counts, in YYYY format.
+    """
+    year: String!
+    """
+    The month of the date for which to retrieve editor counts, in MM format.
+    """
+    month: String!
+  ): JSON @httpOperation(path: "/metrics/editors/by-country/{args.project}/{args.activity_level}/{args.year}/{args.month}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -813,7 +907,7 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
     to_lang: String!
     """The word to lookup"""
     word: String!
-  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_response @httpOperation(path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_response @httpOperation(path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -829,46 +923,85 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
     """The word to lookup"""
     word: String!
     provider: queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider!
-  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @httpOperation(path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}/{args.provider}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: GET)
+  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @httpOperation(path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}/{args.provider}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Fetches the list of tools that are available for the given pair of languages.
+  
+  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
+  
+  """
+  transform_list_pair_by_from_by_to(
+    """The source language code"""
+    from: String!
+    """The target language code"""
+    to: String!
+  ): transform_list_pair_by_from_by_to_response @httpOperation(path: "/transform/list/pair/{args.from}/{args.to}/", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Fetches the list of tools and all of the language pairs it can translate
+  
+  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
+  
+  """
+  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): transform_list_tool_by_tool_response @httpOperation(path: "/transform/list/tool/{args.tool}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Fetches the list of tools and all of the language pairs it can translate
+  
+  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
+  
+  """
+  transform_list_tool_by_tool_by_from_by_to(
+    tool: queryInput_transform_list_tool_by_tool_by_from_by_to_tool!
+    """The source language code"""
+    from: String!
+    """The target language code"""
+    to: String!
+  ): transform_list_tool_by_tool_by_from_by_to_response @httpOperation(path: "/transform/list/tool/{args.tool}/{args.from}/{args.to}", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
+  """
+  Fetches the list of language pairs the back-end service can translate
+  
+  Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
+  
+  """
+  transform_list_languagepairs: cx_languagepairs @httpOperation(path: "/transform/list/languagepairs/", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  """
+  Gets availability of featured feed content for the apps by wiki domain.
+  
+  Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
+  
+  """
+  feed_availability: feed_availability_response @httpOperation(path: "/feed/availability", operationSpecificHeaders: "{\\"accept\\":\\"application/problem+json\\"}", httpMethod: GET)
   viewsInPastMonth(project: String!): BigInt!
 }
 
-union feed_availability_response @statusCodeTypeName(statusCode: 200, typeName: "availability") @statusCodeTypeName(statusCode: "default", typeName: "problem") = availability | problem
+union media_math_formula_by_hash_response @statusCodeTypeName(statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(statusCode: 404, typeName: "problem") @statusCodeTypeName(statusCode: "default", typeName: "problem") = JSON_container | problem
 
-type availability {
-  """
-  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
-  """
-  in_the_news: [String]!
-  """
-  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
-  """
-  most_read: [String]!
-  """
-  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
-  """
-  on_this_day: [String]!
-  """
-  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
-  """
-  picture_of_the_day: [String]!
-  """
-  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
-  """
-  todays_featured_article: [String]!
+type JSON_container {
+  JSON: JSON @resolveRoot
 }
 
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
 type problem {
-  detail: String
-  method: String
-  status: Int
-  title: String
   type: String!
+  title: String
+  detail: String
+  instance: String
+  status: Int
+  method: String
   uri: String
 }
 
 """A string that cannot be passed as an empty value"""
 scalar NonEmptyString
+
+union media_math_render_by_format_by_hash_response @statusCodeTypeName(statusCode: 200, typeName: "String_container") @statusCodeTypeName(statusCode: 404, typeName: "problem") @statusCodeTypeName(statusCode: "default", typeName: "problem") = String_container | problem
+
+type String_container {
+  String: String @resolveRoot
+}
 
 """The output format; can be svg or mml"""
 enum queryInput_media_math_render_by_format_by_hash_format {
@@ -877,23 +1010,20 @@ enum queryInput_media_math_render_by_format_by_hash_format {
   png
 }
 
-union metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "absolute_bytes_difference") @statusCodeTypeName(statusCode: "default", typeName: "problem") = absolute_bytes_difference | problem
+union metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "pageview_article") @statusCodeTypeName(statusCode: "default", typeName: "problem") = pageview_article | problem
 
-type absolute_bytes_difference {
-  items: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+type pageview_article {
+  items: [query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
-type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
+type query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_oneOf_0_items_items {
   project: String
-  results: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
-}
-
-type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  abs_bytes_diff: BigInt
+  access: String
+  article: String
+  agent: String
+  granularity: String
   timestamp: String
+  views: BigInt
 }
 
 """
@@ -902,108 +1032,275 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 """
-If you want to filter by editor-type, use one of anonymous, group-bot (registered
-accounts belonging to the bot group), name-bot (registered accounts not belonging to
-the bot group but having bot-like names) or user (registered account not in bot group
-nor having bot-like name). If you are interested in edits regardless of their
-editor-type, use all-editor-types.
+If you want to filter by access method, use one of desktop, mobile-app
+or mobile-web. If you are interested in pageviews regardless of access method,
+use all-access.
 """
-enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(value: "\\"all-editor-types\\"")
-  anonymous
-  group_bot @enum(value: "\\"group-bot\\"")
-  name_bot @enum(value: "\\"name-bot\\"")
+enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access {
+  all_access @enum(value: "\\"all-access\\"")
+  desktop
+  mobile_app @enum(value: "\\"mobile-app\\"")
+  mobile_web @enum(value: "\\"mobile-web\\"")
+}
+
+"""
+If you want to filter by agent type, use one of user, automated or spider. If you are
+interested in pageviews regardless of agent type, use all-agents.
+"""
+enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent {
+  all_agents @enum(value: "\\"all-agents\\"")
   user
+  spider
+  automated
 }
 
 """
-If you want to filter by page-type, use one of content (edits on pages in content
-namespaces) or non-content (edits on pages in non-content namespaces). If you are
-interested in edits regardless of their page-type, use all-page-types.
+The time unit for the response data. As of today, the only supported granularity for
+this endpoint is daily and monthly.
 """
-enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
-  all_page_types @enum(value: "\\"all-page-types\\"")
-  content
-  non_content @enum(value: "\\"non-content\\"")
-}
-
-"""
-Time unit for the response data. As of today, supported values are daily and monthly
-"""
-enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity {
+enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_granularity {
   daily
   monthly
 }
 
-union metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "absolute_bytes_difference_per_page") @statusCodeTypeName(statusCode: "default", typeName: "problem") = absolute_bytes_difference_per_page | problem
+union metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "pageview_project") @statusCodeTypeName(statusCode: "default", typeName: "problem") = pageview_project | problem
 
-type absolute_bytes_difference_per_page {
-  items: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+type pageview_project {
+  items: [query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
-type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_title: String @resolveRootField(field: "page-title")
+type query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items {
   project: String
-  results: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
-}
-
-type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  abs_bytes_diff: BigInt
+  access: String
+  agent: String
+  granularity: String
   timestamp: String
+  views: BigInt
 }
 
 """
-If you want to filter by editor-type, use one of anonymous, group-bot (registered
-accounts belonging to the bot group), name-bot (registered accounts not belonging to
-the bot group but having bot-like names) or user (registered account not in bot group
-nor having bot-like name). If you are interested in edits regardless of their
-editor-type, use all-editor-types.
+If you want to filter by access method, use one of desktop, mobile-app or mobile-web.
+If you are interested in pageviews regardless of access method, use all-access.
 """
-enum queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(value: "\\"all-editor-types\\"")
-  anonymous
-  group_bot @enum(value: "\\"group-bot\\"")
-  name_bot @enum(value: "\\"name-bot\\"")
+enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access {
+  all_access @enum(value: "\\"all-access\\"")
+  desktop
+  mobile_app @enum(value: "\\"mobile-app\\"")
+  mobile_web @enum(value: "\\"mobile-web\\"")
+}
+
+"""
+If you want to filter by agent type, use one of user, automated or spider. If you are interested
+in pageviews regardless of agent type, use all-agents.
+"""
+enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent {
+  all_agents @enum(value: "\\"all-agents\\"")
   user
+  spider
+  automated
 }
 
 """
-Time unit for the response data. As of today, supported values are daily and monthly
+The time unit for the response data. As of today, the supported granularities for this
+endpoint are hourly, daily, and monthly.
 """
-enum queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity {
+enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_granularity {
+  hourly
   daily
   monthly
 }
 
-union metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "net_bytes_difference") @statusCodeTypeName(statusCode: "default", typeName: "problem") = net_bytes_difference | problem
+union metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "pageview_tops") @statusCodeTypeName(statusCode: "default", typeName: "problem") = pageview_tops | problem
 
-type net_bytes_difference {
-  items: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+type pageview_tops {
+  items: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items]
 }
 
-type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
+type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items {
+  project: String
+  access: String
+  year: String
+  month: String
+  day: String
+  articles: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items]
+}
+
+type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items {
+  rank: Int
+  article: String
+  views: BigInt
+}
+
+"""
+If you want to filter by access method, use one of desktop, mobile-app or mobile-web.
+If you are interested in pageviews regardless of access method, use all-access.
+"""
+enum queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access {
+  all_access @enum(value: "\\"all-access\\"")
+  desktop
+  mobile_app @enum(value: "\\"mobile-app\\"")
+  mobile_web @enum(value: "\\"mobile-web\\"")
+}
+
+union metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @statusCodeTypeName(statusCode: 200, typeName: "by_country") @statusCodeTypeName(statusCode: "default", typeName: "problem") = by_country | problem
+
+type by_country {
+  items: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items]
+}
+
+type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items {
+  project: String
+  access: String
+  year: String
+  month: String
+  countries: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items_countries_items]
+}
+
+type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items_countries_items {
+  rank: Int
+  country: String
+  views: BigInt
+}
+
+"""
+If you want to filter by access method, use one of desktop, mobile-app or mobile-web.
+If you are interested in pageviews regardless of access method, use all-access.
+"""
+enum queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access {
+  all_access @enum(value: "\\"all-access\\"")
+  desktop
+  mobile_app @enum(value: "\\"mobile-app\\"")
+  mobile_web @enum(value: "\\"mobile-web\\"")
+}
+
+union metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "per_country") @statusCodeTypeName(statusCode: "default", typeName: "problem") = per_country | problem
+
+type per_country {
+  items: [query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items]
+}
+
+type query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items {
+  country: String
+  access: String
+  year: String
+  month: String
+  day: String
+  articles: [query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items]
+}
+
+type query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items {
+  rank: Int
+  article: String
+  project: String
+  views_ceil: BigInt
+}
+
+"""
+If you want to filter by access method, use one of desktop, mobile-app or mobile-web.
+If you are interested in pageviews regardless of access method, use all-access.
+"""
+enum queryInput_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_access {
+  all_access @enum(value: "\\"all-access\\"")
+  desktop
+  mobile_app @enum(value: "\\"mobile-app\\"")
+  mobile_web @enum(value: "\\"mobile-web\\"")
+}
+
+union metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "unique_devices") @statusCodeTypeName(statusCode: "default", typeName: "problem") = unique_devices | problem
+
+type unique_devices {
+  items: [query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items]
+}
+
+type query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items {
+  project: String
+  access_site: String @resolveRootField(field: "access-site")
   granularity: String
+  timestamp: String
+  devices: BigInt
+  offset: BigInt
+  underestimate: BigInt
+}
+
+"""
+If you want to filter by accessed site, use one of desktop-site or mobile-site.
+If you are interested in unique devices regardless of accessed site, use or all-sites.
+"""
+enum queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site {
+  all_sites @enum(value: "\\"all-sites\\"")
+  desktop_site @enum(value: "\\"desktop-site\\"")
+  mobile_site @enum(value: "\\"mobile-site\\"")
+}
+
+"""
+The time unit for the response data. As of today, the supported granularities
+for this endpoint are daily and monthly.
+"""
+enum queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_granularity {
+  daily
+  monthly
+}
+
+union metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "pagecounts_project") @statusCodeTypeName(statusCode: "default", typeName: "problem") = pagecounts_project | problem
+
+type pagecounts_project {
+  items: [query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items]
+}
+
+type query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items {
+  project: String
+  access_site: String @resolveRootField(field: "access-site")
+  granularity: String
+  timestamp: String
+  count: BigInt
+}
+
+"""
+If you want to filter by access site, use one of desktop-site or mobile-site. If you are interested in pagecounts regardless of access site use all-sites.
+"""
+enum queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site {
+  all_sites @enum(value: "\\"all-sites\\"")
+  desktop_site @enum(value: "\\"desktop-site\\"")
+  mobile_site @enum(value: "\\"mobile-site\\"")
+}
+
+"""
+The time unit for the response data. As of today, the supported granularities for
+this endpoint are hourly, daily and monthly.
+"""
+enum queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_granularity {
+  hourly
+  daily
+  monthly
+}
+
+union metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "new_pages") @statusCodeTypeName(statusCode: "default", typeName: "problem") = new_pages | problem
+
+type new_pages {
+  items: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+}
+
+type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
+  project: String
+  editor_type: String @resolveRootField(field: "editor-type")
   page_type: String @resolveRootField(field: "page-type")
-  project: String
-  results: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  granularity: String
+  results: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
 
-type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  net_bytes_diff: BigInt
+type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
   timestamp: String
+  new_pages: Int
 }
 
 """
 If you want to filter by editor-type, use one of anonymous, group-bot (registered
-accounts belonging to the bot group), name-bot (registered accounts not belonging to
-the bot group but having bot-like names) or user (registered account not in bot group
-nor having bot-like name). If you are interested in edits regardless of their
-editor-type, use all-editor-types.
+accounts belonging to the bot group), name-bot (registered accounts not belonging
+to the bot group but having bot-like names) or user (registered account not in bot
+group nor having bot-like name). If you are interested in edits regardless of
+their editor-type, use all-editor-types.
 """
-enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
+enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
   all_editor_types @enum(value: "\\"all-editor-types\\"")
   anonymous
   group_bot @enum(value: "\\"group-bot\\"")
@@ -1012,62 +1309,21 @@ enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type
 }
 
 """
-If you want to filter by page-type, use one of content (edits on pages in content
-namespaces) or non-content (edits on pages in non-content namespaces). If you are
-interested in edits regardless of their page-type, use all-page-types.
+If you want to filter by page-type, use one of content (new pages in content
+namespaces) or non-content (new pages in non-content namespaces). If you are
+interested in new-articles regardless of their page-type, use all-page-types.
 """
-enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
+enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
   all_page_types @enum(value: "\\"all-page-types\\"")
   content
   non_content @enum(value: "\\"non-content\\"")
 }
 
 """
-Time unit for the response data. As of today, supported values are daily and monthly
+The time unit for the response data. As of today, supported values are
+daily and monthly.
 """
-enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity {
-  daily
-  monthly
-}
-
-union metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "net_bytes_difference_per_page") @statusCodeTypeName(statusCode: "default", typeName: "problem") = net_bytes_difference_per_page | problem
-
-type net_bytes_difference_per_page {
-  items: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
-}
-
-type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_title: String @resolveRootField(field: "page-title")
-  project: String
-  results: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
-}
-
-type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  net_bytes_diff: BigInt
-  timestamp: String
-}
-
-"""
-If you want to filter by editor-type, use one of anonymous, group-bot (registered
-accounts belonging to the bot group), name-bot (registered accounts not belonging to
-the bot group but having bot-like names) or user (registered account not in bot group
-nor having bot-like name). If you are interested in edits regardless of their
-editor-type, use all-editor-types.
-"""
-enum queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(value: "\\"all-editor-types\\"")
-  anonymous
-  group_bot @enum(value: "\\"group-bot\\"")
-  name_bot @enum(value: "\\"name-bot\\"")
-  user
-}
-
-"""
-Time unit for the response data. As of today, supported values are daily and monthly
-"""
-enum queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity {
+enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity {
   daily
   monthly
 }
@@ -1079,17 +1335,17 @@ type edited_pages {
 }
 
 type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items {
-  activity_level: String @resolveRootField(field: "activity-level")
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
   project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  activity_level: String @resolveRootField(field: "activity-level")
+  granularity: String
   results: [query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
 
 type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  edited_pages: Int
   timestamp: String
+  edited_pages: Int
 }
 
 """
@@ -1140,111 +1396,6 @@ enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page
   monthly
 }
 
-union metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "new_pages") @statusCodeTypeName(statusCode: "default", typeName: "problem") = new_pages | problem
-
-type new_pages {
-  items: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
-}
-
-type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
-  project: String
-  results: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
-}
-
-type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  new_pages: Int
-  timestamp: String
-}
-
-"""
-If you want to filter by editor-type, use one of anonymous, group-bot (registered
-accounts belonging to the bot group), name-bot (registered accounts not belonging
-to the bot group but having bot-like names) or user (registered account not in bot
-group nor having bot-like name). If you are interested in edits regardless of
-their editor-type, use all-editor-types.
-"""
-enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(value: "\\"all-editor-types\\"")
-  anonymous
-  group_bot @enum(value: "\\"group-bot\\"")
-  name_bot @enum(value: "\\"name-bot\\"")
-  user
-}
-
-"""
-If you want to filter by page-type, use one of content (new pages in content
-namespaces) or non-content (new pages in non-content namespaces). If you are
-interested in new-articles regardless of their page-type, use all-page-types.
-"""
-enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
-  all_page_types @enum(value: "\\"all-page-types\\"")
-  content
-  non_content @enum(value: "\\"non-content\\"")
-}
-
-"""
-The time unit for the response data. As of today, supported values are
-daily and monthly.
-"""
-enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity {
-  daily
-  monthly
-}
-
-union metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "top_edited_pages_by_abs_bytes_diff") @statusCodeTypeName(statusCode: "default", typeName: "problem") = top_edited_pages_by_abs_bytes_diff | problem
-
-type top_edited_pages_by_abs_bytes_diff {
-  items: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
-}
-
-type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
-  project: String
-  results: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
-}
-
-type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
-  timestamp: String
-  top: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
-}
-
-type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
-  abs_bytes_diff: BigInt
-  page_title: String
-  rank: Int
-}
-
-"""
-If you want to filter by editor-type, use one of anonymous, group-bot (registered
-accounts belonging to the bot group), name-bot (registered accounts not belonging to
-the bot group but having bot-like names) or user (registered account not in bot group
-nor having bot-like name). If you are interested in edits regardless of their
-editor-type, use all-editor-types.
-"""
-enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
-  all_editor_types @enum(value: "\\"all-editor-types\\"")
-  anonymous
-  group_bot @enum(value: "\\"group-bot\\"")
-  name_bot @enum(value: "\\"name-bot\\"")
-  user
-}
-
-"""
-If you want to filter by page-type, use one of content (edits on pages in content
-namespaces) or non-content (edits on pages in non-content namespaces). If you are
-interested in edits regardless of their page-type, use all-page-types.
-"""
-enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
-  all_page_types @enum(value: "\\"all-page-types\\"")
-  content
-  non_content @enum(value: "\\"non-content\\"")
-}
-
 union metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "top_edited_pages_by_edits") @statusCodeTypeName(statusCode: "default", typeName: "problem") = top_edited_pages_by_edits | problem
 
 type top_edited_pages_by_edits {
@@ -1252,10 +1403,10 @@ type top_edited_pages_by_edits {
 }
 
 type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
   project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
   results: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
 
@@ -1265,9 +1416,9 @@ type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_t
 }
 
 type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
-  edits: BigInt
-  page_title: String
   rank: Int
+  page_title: String
+  edits: BigInt
 }
 
 """
@@ -1303,10 +1454,10 @@ type top_edited_pages_by_net_bytes_diff {
 }
 
 type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
   project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
   results: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
 
@@ -1316,9 +1467,9 @@ type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor
 }
 
 type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
-  net_bytes_diff: BigInt
-  page_title: String
   rank: Int
+  page_title: String
+  net_bytes_diff: BigInt
 }
 
 """
@@ -1347,6 +1498,57 @@ enum queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_e
   non_content @enum(value: "\\"non-content\\"")
 }
 
+union metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "top_edited_pages_by_abs_bytes_diff") @statusCodeTypeName(statusCode: "default", typeName: "problem") = top_edited_pages_by_abs_bytes_diff | problem
+
+type top_edited_pages_by_abs_bytes_diff {
+  items: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
+}
+
+type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
+  project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
+  results: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
+}
+
+type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
+  timestamp: String
+  top: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
+}
+
+type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
+  rank: Int
+  page_title: String
+  abs_bytes_diff: BigInt
+}
+
+"""
+If you want to filter by editor-type, use one of anonymous, group-bot (registered
+accounts belonging to the bot group), name-bot (registered accounts not belonging to
+the bot group but having bot-like names) or user (registered account not in bot group
+nor having bot-like name). If you are interested in edits regardless of their
+editor-type, use all-editor-types.
+"""
+enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
+  all_editor_types @enum(value: "\\"all-editor-types\\"")
+  anonymous
+  group_bot @enum(value: "\\"group-bot\\"")
+  name_bot @enum(value: "\\"name-bot\\"")
+  user
+}
+
+"""
+If you want to filter by page-type, use one of content (edits on pages in content
+namespaces) or non-content (edits on pages in non-content namespaces). If you are
+interested in edits regardless of their page-type, use all-page-types.
+"""
+enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
+  all_page_types @enum(value: "\\"all-page-types\\"")
+  content
+  non_content @enum(value: "\\"non-content\\"")
+}
+
 union metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "editors") @statusCodeTypeName(statusCode: "default", typeName: "problem") = editors | problem
 
 type editors {
@@ -1354,17 +1556,17 @@ type editors {
 }
 
 type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items {
-  activity_level: String @resolveRootField(field: "activity-level")
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
   project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  activity_level: String @resolveRootField(field: "activity-level")
+  granularity: String
   results: [query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
 
 type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  editors: Int
   timestamp: String
+  editors: Int
 }
 
 """
@@ -1415,57 +1617,6 @@ enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type
   monthly
 }
 
-union metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "top_editors_by_abs_bytes_diff") @statusCodeTypeName(statusCode: "default", typeName: "problem") = top_editors_by_abs_bytes_diff | problem
-
-type top_editors_by_abs_bytes_diff {
-  items: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
-}
-
-type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
-  project: String
-  results: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
-}
-
-type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
-  timestamp: String
-  top: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
-}
-
-type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
-  abs_bytes_diff: BigInt
-  rank: Int
-  user_text: String
-}
-
-"""
-If you want to filter by editor-type, use one of anonymous, group-bot (registered
-accounts belonging to the bot group), name-bot (registered accounts not belonging to
-the bot group but having bot-like names) or user (registered account not in bot group
-nor having bot-like name). If you are interested in edits regardless of their
-editor-type, use all-editor-types.
-"""
-enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
-  all_editor_types @enum(value: "\\"all-editor-types\\"")
-  anonymous
-  group_bot @enum(value: "\\"group-bot\\"")
-  name_bot @enum(value: "\\"name-bot\\"")
-  user
-}
-
-"""
-If you want to filter by page-type, use one of content (edits on pages in content
-namespaces) or non-content (edits on pages in non-content namespaces). If you are
-interested in edits regardless of their page-type, use all-page-types.
-"""
-enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
-  all_page_types @enum(value: "\\"all-page-types\\"")
-  content
-  non_content @enum(value: "\\"non-content\\"")
-}
-
 union metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "top_editors_by_edits") @statusCodeTypeName(statusCode: "default", typeName: "problem") = top_editors_by_edits | problem
 
 type top_editors_by_edits {
@@ -1473,10 +1624,10 @@ type top_editors_by_edits {
 }
 
 type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
   project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
   results: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
 
@@ -1486,9 +1637,9 @@ type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_b
 }
 
 type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
-  edits: BigInt
   rank: Int
   user_text: String
+  edits: BigInt
 }
 
 """
@@ -1524,10 +1675,10 @@ type top_editors_by_net_bytes_diff {
 }
 
 type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
   project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
   results: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
 
@@ -1537,9 +1688,9 @@ type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type
 }
 
 type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
-  net_bytes_diff: BigInt
   rank: Int
   user_text: String
+  net_bytes_diff: BigInt
 }
 
 """
@@ -1568,6 +1719,57 @@ enum queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor
   non_content @enum(value: "\\"non-content\\"")
 }
 
+union metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "top_editors_by_abs_bytes_diff") @statusCodeTypeName(statusCode: "default", typeName: "problem") = top_editors_by_abs_bytes_diff | problem
+
+type top_editors_by_abs_bytes_diff {
+  items: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
+}
+
+type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
+  project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
+  results: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
+}
+
+type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
+  timestamp: String
+  top: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
+}
+
+type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
+  rank: Int
+  user_text: String
+  abs_bytes_diff: BigInt
+}
+
+"""
+If you want to filter by editor-type, use one of anonymous, group-bot (registered
+accounts belonging to the bot group), name-bot (registered accounts not belonging to
+the bot group but having bot-like names) or user (registered account not in bot group
+nor having bot-like name). If you are interested in edits regardless of their
+editor-type, use all-editor-types.
+"""
+enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
+  all_editor_types @enum(value: "\\"all-editor-types\\"")
+  anonymous
+  group_bot @enum(value: "\\"group-bot\\"")
+  name_bot @enum(value: "\\"name-bot\\"")
+  user
+}
+
+"""
+If you want to filter by page-type, use one of content (edits on pages in content
+namespaces) or non-content (edits on pages in non-content namespaces). If you are
+interested in edits regardless of their page-type, use all-page-types.
+"""
+enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
+  all_page_types @enum(value: "\\"all-page-types\\"")
+  content
+  non_content @enum(value: "\\"non-content\\"")
+}
+
 union metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "edits") @statusCodeTypeName(statusCode: "default", typeName: "problem") = edits | problem
 
 type edits {
@@ -1575,16 +1777,16 @@ type edits {
 }
 
 type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(field: "editor-type")
-  granularity: String
-  page_type: String @resolveRootField(field: "page-type")
   project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
   results: [query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
 
 type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  edits: BigInt
   timestamp: String
+  edits: BigInt
 }
 
 """
@@ -1629,16 +1831,16 @@ type edits_per_page {
 }
 
 type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
+  project: String
+  page_title: String @resolveRootField(field: "page-title")
   editor_type: String @resolveRootField(field: "editor-type")
   granularity: String
-  page_title: String @resolveRootField(field: "page-title")
-  project: String
   results: [query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
 
 type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  edits: BigInt
   timestamp: String
+  edits: BigInt
 }
 
 """
@@ -1664,196 +1866,6 @@ enum queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_b
   monthly
 }
 
-union metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "pagecounts_project") @statusCodeTypeName(statusCode: "default", typeName: "problem") = pagecounts_project | problem
-
-type pagecounts_project {
-  items: [query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items]
-}
-
-type query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items {
-  access_site: String @resolveRootField(field: "access-site")
-  count: BigInt
-  granularity: String
-  project: String
-  timestamp: String
-}
-
-"""
-If you want to filter by access site, use one of desktop-site or mobile-site. If you are interested in pagecounts regardless of access site use all-sites.
-"""
-enum queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site {
-  all_sites @enum(value: "\\"all-sites\\"")
-  desktop_site @enum(value: "\\"desktop-site\\"")
-  mobile_site @enum(value: "\\"mobile-site\\"")
-}
-
-"""
-The time unit for the response data. As of today, the supported granularities for
-this endpoint are hourly, daily and monthly.
-"""
-enum queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_granularity {
-  hourly
-  daily
-  monthly
-}
-
-union metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "pageview_project") @statusCodeTypeName(statusCode: "default", typeName: "problem") = pageview_project | problem
-
-type pageview_project {
-  items: [query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items]
-}
-
-type query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items {
-  access: String
-  agent: String
-  granularity: String
-  project: String
-  timestamp: String
-  views: BigInt
-}
-
-"""
-If you want to filter by access method, use one of desktop, mobile-app or mobile-web.
-If you are interested in pageviews regardless of access method, use all-access.
-"""
-enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access {
-  all_access @enum(value: "\\"all-access\\"")
-  desktop
-  mobile_app @enum(value: "\\"mobile-app\\"")
-  mobile_web @enum(value: "\\"mobile-web\\"")
-}
-
-"""
-If you want to filter by agent type, use one of user or spider. If you are interested
-in pageviews regardless of agent type, use all-agents.
-"""
-enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent {
-  all_agents @enum(value: "\\"all-agents\\"")
-  user
-  spider
-}
-
-"""
-The time unit for the response data. As of today, the supported granularities for this
-endpoint are hourly, daily, and monthly.
-"""
-enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_granularity {
-  hourly
-  daily
-  monthly
-}
-
-union metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "pageview_article") @statusCodeTypeName(statusCode: "default", typeName: "problem") = pageview_article | problem
-
-type pageview_article {
-  items: [query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_oneOf_0_items_items]
-}
-
-type query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_oneOf_0_items_items {
-  access: String
-  agent: String
-  article: String
-  granularity: String
-  project: String
-  timestamp: String
-  views: BigInt
-}
-
-"""
-If you want to filter by access method, use one of desktop, mobile-app
-or mobile-web. If you are interested in pageviews regardless of access method,
-use all-access.
-"""
-enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access {
-  all_access @enum(value: "\\"all-access\\"")
-  desktop
-  mobile_app @enum(value: "\\"mobile-app\\"")
-  mobile_web @enum(value: "\\"mobile-web\\"")
-}
-
-"""
-If you want to filter by agent type, use one of user, bot or spider. If you are
-interested in pageviews regardless of agent type, use all-agents.
-"""
-enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent {
-  all_agents @enum(value: "\\"all-agents\\"")
-  user
-  spider
-  bot
-}
-
-"""
-The time unit for the response data. As of today, the only supported granularity for
-this endpoint is daily and monthly.
-"""
-enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_granularity {
-  daily
-  monthly
-}
-
-union metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @statusCodeTypeName(statusCode: 200, typeName: "by_country") @statusCodeTypeName(statusCode: "default", typeName: "problem") = by_country | problem
-
-type by_country {
-  items: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items]
-}
-
-type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items {
-  access: String
-  countries: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items_countries_items]
-  month: String
-  project: String
-  year: String
-}
-
-type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items_countries_items {
-  country: String
-  rank: Int
-  views: BigInt
-}
-
-"""
-If you want to filter by access method, use one of desktop, mobile-app or mobile-web.
-If you are interested in pageviews regardless of access method, use all-access.
-"""
-enum queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access {
-  all_access @enum(value: "\\"all-access\\"")
-  desktop
-  mobile_app @enum(value: "\\"mobile-app\\"")
-  mobile_web @enum(value: "\\"mobile-web\\"")
-}
-
-union metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "pageview_tops") @statusCodeTypeName(statusCode: "default", typeName: "problem") = pageview_tops | problem
-
-type pageview_tops {
-  items: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items]
-}
-
-type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items {
-  access: String
-  articles: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items]
-  day: String
-  month: String
-  project: String
-  year: String
-}
-
-type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items {
-  article: String
-  rank: Int
-  views: BigInt
-}
-
-"""
-If you want to filter by access method, use one of desktop, mobile-app or mobile-web.
-If you are interested in pageviews regardless of access method, use all-access.
-"""
-enum queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access {
-  all_access @enum(value: "\\"all-access\\"")
-  desktop
-  mobile_app @enum(value: "\\"mobile-app\\"")
-  mobile_web @enum(value: "\\"mobile-web\\"")
-}
-
 union metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "new_registered_users") @statusCodeTypeName(statusCode: "default", typeName: "problem") = new_registered_users | problem
 
 type new_registered_users {
@@ -1861,14 +1873,14 @@ type new_registered_users {
 }
 
 type query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items {
-  granularity: String
   project: String
+  granularity: String
   results: [query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
 
 type query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
-  new_registered_users: Int
   timestamp: String
+  new_registered_users: Int
 }
 
 """
@@ -1880,84 +1892,316 @@ enum queryInput_metrics_registered_users_new_by_project_by_granularity_by_start_
   monthly
 }
 
-union metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "unique_devices") @statusCodeTypeName(statusCode: "default", typeName: "problem") = unique_devices | problem
+union metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "net_bytes_difference") @statusCodeTypeName(statusCode: "default", typeName: "problem") = net_bytes_difference | problem
 
-type unique_devices {
-  items: [query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items]
+type net_bytes_difference {
+  items: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
-type query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items {
-  access_site: String @resolveRootField(field: "access-site")
-  devices: BigInt
-  granularity: String
+type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
   project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
+  results: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+}
+
+type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
   timestamp: String
+  net_bytes_diff: BigInt
 }
 
 """
-If you want to filter by accessed site, use one of desktop-site or mobile-site.
-If you are interested in unique devices regardless of accessed site, use or all-sites.
+If you want to filter by editor-type, use one of anonymous, group-bot (registered
+accounts belonging to the bot group), name-bot (registered accounts not belonging to
+the bot group but having bot-like names) or user (registered account not in bot group
+nor having bot-like name). If you are interested in edits regardless of their
+editor-type, use all-editor-types.
 """
-enum queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site {
-  all_sites @enum(value: "\\"all-sites\\"")
-  desktop_site @enum(value: "\\"desktop-site\\"")
-  mobile_site @enum(value: "\\"mobile-site\\"")
+enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
+  all_editor_types @enum(value: "\\"all-editor-types\\"")
+  anonymous
+  group_bot @enum(value: "\\"group-bot\\"")
+  name_bot @enum(value: "\\"name-bot\\"")
+  user
 }
 
 """
-The time unit for the response data. As of today, the supported granularities
-for this endpoint are daily and monthly.
+If you want to filter by page-type, use one of content (edits on pages in content
+namespaces) or non-content (edits on pages in non-content namespaces). If you are
+interested in edits regardless of their page-type, use all-page-types.
 """
-enum queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_granularity {
+enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
+  all_page_types @enum(value: "\\"all-page-types\\"")
+  content
+  non_content @enum(value: "\\"non-content\\"")
+}
+
+"""
+Time unit for the response data. As of today, supported values are daily and monthly
+"""
+enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity {
   daily
   monthly
 }
 
-type cx_languagepairs {
-  """the list of available source languages"""
-  source: [String]
-  """the list of available destination languages"""
-  target: [String]
+union metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "net_bytes_difference_per_page") @statusCodeTypeName(statusCode: "default", typeName: "problem") = net_bytes_difference_per_page | problem
+
+type net_bytes_difference_per_page {
+  items: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
-union transform_list_pair_by_from_by_to_response @statusCodeTypeName(statusCode: 200, typeName: "cx_list_tools") @statusCodeTypeName(statusCode: "default", typeName: "problem") = cx_list_tools | problem
-
-type cx_list_tools {
-  """the list of tools available for the given language pair"""
-  tools: [String]
+type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
+  project: String
+  page_title: String @resolveRootField(field: "page-title")
+  editor_type: String @resolveRootField(field: "editor-type")
+  granularity: String
+  results: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
 
-union transform_list_tool_by_tool_response @statusCodeTypeName(statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(statusCode: "default", typeName: "problem") = JSON_container | problem
-
-type JSON_container {
-  JSON: JSON @resolveRoot
+type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
+  timestamp: String
+  net_bytes_diff: BigInt
 }
 
 """
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+If you want to filter by editor-type, use one of anonymous, group-bot (registered
+accounts belonging to the bot group), name-bot (registered accounts not belonging to
+the bot group but having bot-like names) or user (registered account not in bot group
+nor having bot-like name). If you are interested in edits regardless of their
+editor-type, use all-editor-types.
 """
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
-"""The tool category to list tools and language pairs for"""
-enum queryInput_transform_list_tool_by_tool_tool {
-  mt
-  dictionary
+enum queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type {
+  all_editor_types @enum(value: "\\"all-editor-types\\"")
+  anonymous
+  group_bot @enum(value: "\\"group-bot\\"")
+  name_bot @enum(value: "\\"name-bot\\"")
+  user
 }
 
-union transform_list_tool_by_tool_by_from_response @statusCodeTypeName(statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(statusCode: "default", typeName: "problem") = JSON_container | problem
-
-"""The tool category to list tools and language pairs for"""
-enum queryInput_transform_list_tool_by_tool_by_from_tool {
-  mt
-  dictionary
+"""
+Time unit for the response data. As of today, supported values are daily and monthly
+"""
+enum queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity {
+  daily
+  monthly
 }
 
-union transform_list_tool_by_tool_by_from_by_to_response @statusCodeTypeName(statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(statusCode: "default", typeName: "problem") = JSON_container | problem
+union metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "absolute_bytes_difference") @statusCodeTypeName(statusCode: "default", typeName: "problem") = absolute_bytes_difference | problem
 
-"""The tool category to list tools and language pairs for"""
-enum queryInput_transform_list_tool_by_tool_by_from_by_to_tool {
-  mt
-  dictionary
+type absolute_bytes_difference {
+  items: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+}
+
+type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
+  project: String
+  editor_type: String @resolveRootField(field: "editor-type")
+  page_type: String @resolveRootField(field: "page-type")
+  granularity: String
+  results: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+}
+
+type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
+  timestamp: String
+  abs_bytes_diff: BigInt
+}
+
+"""
+If you want to filter by editor-type, use one of anonymous, group-bot (registered
+accounts belonging to the bot group), name-bot (registered accounts not belonging to
+the bot group but having bot-like names) or user (registered account not in bot group
+nor having bot-like name). If you are interested in edits regardless of their
+editor-type, use all-editor-types.
+"""
+enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
+  all_editor_types @enum(value: "\\"all-editor-types\\"")
+  anonymous
+  group_bot @enum(value: "\\"group-bot\\"")
+  name_bot @enum(value: "\\"name-bot\\"")
+  user
+}
+
+"""
+If you want to filter by page-type, use one of content (edits on pages in content
+namespaces) or non-content (edits on pages in non-content namespaces). If you are
+interested in edits regardless of their page-type, use all-page-types.
+"""
+enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
+  all_page_types @enum(value: "\\"all-page-types\\"")
+  content
+  non_content @enum(value: "\\"non-content\\"")
+}
+
+"""
+Time unit for the response data. As of today, supported values are daily and monthly
+"""
+enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity {
+  daily
+  monthly
+}
+
+union metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "absolute_bytes_difference_per_page") @statusCodeTypeName(statusCode: "default", typeName: "problem") = absolute_bytes_difference_per_page | problem
+
+type absolute_bytes_difference_per_page {
+  items: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+}
+
+type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
+  project: String
+  page_title: String @resolveRootField(field: "page-title")
+  editor_type: String @resolveRootField(field: "editor-type")
+  granularity: String
+  results: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+}
+
+type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
+  timestamp: String
+  abs_bytes_diff: BigInt
+}
+
+"""
+If you want to filter by editor-type, use one of anonymous, group-bot (registered
+accounts belonging to the bot group), name-bot (registered accounts not belonging to
+the bot group but having bot-like names) or user (registered account not in bot group
+nor having bot-like name). If you are interested in edits regardless of their
+editor-type, use all-editor-types.
+"""
+enum queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type {
+  all_editor_types @enum(value: "\\"all-editor-types\\"")
+  anonymous
+  group_bot @enum(value: "\\"group-bot\\"")
+  name_bot @enum(value: "\\"name-bot\\"")
+  user
+}
+
+"""
+Time unit for the response data. As of today, supported values are daily and monthly
+"""
+enum queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity {
+  daily
+  monthly
+}
+
+union metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "mediarequest_referer") @statusCodeTypeName(statusCode: "default", typeName: "problem") = mediarequest_referer | problem
+
+type mediarequest_referer {
+  items: [query_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items]
+}
+
+type query_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items {
+  referer: String
+  media_type: String
+  agent: String
+  granularity: String
+  timestamp: String
+  requests: BigInt
+}
+
+"""
+The media type that each file belongs to. It can be image, audio, video, document, or other. Use 'all-media-types if you want all.'
+"""
+enum queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_media_type {
+  all_media_types @enum(value: "\\"all-media-types\\"")
+  image
+  video
+  audio
+  document
+  other
+}
+
+"""
+If you want to filter by agent type, use one of user or spider. If you are interested
+in mediarequests regardless of agent type, use all-agents.
+"""
+enum queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_agent {
+  all_agents @enum(value: "\\"all-agents\\"")
+  user
+  spider
+}
+
+"""
+The time unit for the response data. As of today, the supported granularities for this
+endpoint are daily and monthly.
+"""
+enum queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_granularity {
+  daily
+  monthly
+}
+
+union metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_response @statusCodeTypeName(statusCode: 200, typeName: "mediarequest_file") @statusCodeTypeName(statusCode: "default", typeName: "problem") = mediarequest_file | problem
+
+type mediarequest_file {
+  items: [query_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_oneOf_0_items_items]
+}
+
+type query_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_oneOf_0_items_items {
+  referer: String
+  file_path: String
+  agent: String
+  granularity: String
+  timestamp: String
+  requests: BigInt
+}
+
+"""
+If you want to filter by agent type, use one of user or spider. If you are interested
+in media requests regardless of agent type, use all-agents.
+"""
+enum queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_agent {
+  all_agents @enum(value: "\\"all-agents\\"")
+  user
+  spider
+}
+
+"""
+The time unit for the response data. As of today, the only supported granularity for
+this endpoint is daily and monthly.
+"""
+enum queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_granularity {
+  daily
+  monthly
+}
+
+union metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_response @statusCodeTypeName(statusCode: 200, typeName: "mediarequest_tops") @statusCodeTypeName(statusCode: "default", typeName: "problem") = mediarequest_tops | problem
+
+type mediarequest_tops {
+  items: [query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items]
+}
+
+type query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items {
+  referer: String
+  media_type: String @resolveRootField(field: "media-type")
+  year: String
+  month: String
+  day: String
+  files: [query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items_files_items]
+}
+
+type query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items_files_items {
+  rank: Int
+  file_path: String
+  requests: BigInt
+}
+
+"""
+The media type that each file belongs to. It can be image, audio, video, document, or other. Use 'all-media-types if you want all.'
+"""
+enum queryInput_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_media_type {
+  all_media_types @enum(value: "\\"all-media-types\\"")
+  image
+  video
+  audio
+  document
+  other
+}
+
+"""
+Use either '5..99-edits' or '100..-edits' for activity level filtering.
+Counts for 0..4-edits are not available due to privacy reasons.
+"""
+enum queryInput_metrics_editors_by_country_by_project_by_activity_level_by_year_by_month_activity_level {
+  _5__99_edits @enum(value: "\\"5..99-edits\\"")
+  _100___edits @enum(value: "\\"100..-edits\\"")
 }
 
 union transform_word_from_by_from_lang_to_by_to_lang_by_word_response @statusCodeTypeName(statusCode: 200, typeName: "cx_dict") @statusCodeTypeName(statusCode: "default", typeName: "problem") = cx_dict | problem
@@ -1970,10 +2214,10 @@ type cx_dict {
 }
 
 type query_transform_word_from_by_from_lang_to_by_to_lang_by_word_oneOf_0_translations_items {
-  """extra information about the phrase"""
-  info: String
   """the translated phrase"""
   phrase: String
+  """extra information about the phrase"""
+  info: String
   """the source dictionary used for the translation"""
   sources: String
 }
@@ -1984,6 +2228,61 @@ union transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_respons
 enum queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider {
   JsonDict
   Dictd
+}
+
+union transform_list_pair_by_from_by_to_response @statusCodeTypeName(statusCode: 200, typeName: "cx_list_tools") @statusCodeTypeName(statusCode: "default", typeName: "problem") = cx_list_tools | problem
+
+type cx_list_tools {
+  """the list of tools available for the given language pair"""
+  tools: [String]
+}
+
+union transform_list_tool_by_tool_response @statusCodeTypeName(statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(statusCode: "default", typeName: "problem") = JSON_container | problem
+
+"""The tool category to list tools and language pairs for"""
+enum queryInput_transform_list_tool_by_tool_tool {
+  mt
+  dictionary
+}
+
+union transform_list_tool_by_tool_by_from_by_to_response @statusCodeTypeName(statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(statusCode: "default", typeName: "problem") = JSON_container | problem
+
+"""The tool category to list tools and language pairs for"""
+enum queryInput_transform_list_tool_by_tool_by_from_by_to_tool {
+  mt
+  dictionary
+}
+
+type cx_languagepairs {
+  """the list of available source languages"""
+  source: [String]
+  """the list of available destination languages"""
+  target: [String]
+}
+
+union feed_availability_response @statusCodeTypeName(statusCode: 200, typeName: "availability") @statusCodeTypeName(statusCode: "default", typeName: "problem") = availability | problem
+
+type availability {
+  """
+  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
+  """
+  todays_featured_article: [String]!
+  """
+  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
+  """
+  most_read: [String]!
+  """
+  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
+  """
+  picture_of_the_day: [String]!
+  """
+  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
+  """
+  in_the_news: [String]!
+  """
+  domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
+  """
+  on_this_day: [String]!
 }
 
 type Mutation {
@@ -1999,7 +2298,7 @@ type Mutation {
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!): problem @httpOperation(path: "/media/math/check/{args.type}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, input: post_media_math_check_by_type_request_Input): post_media_math_check_by_type_response @httpOperation(path: "/media/math/check/{args.type}", operationSpecificHeaders: "{\\"Content-Type\\":\\"multipart/form-data\\",\\"accept\\":\\"application/problem+json\\"}", httpMethod: POST)
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2012,7 +2311,8 @@ type Mutation {
     from_lang: String!
     """The target language code"""
     to_lang: String!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @httpOperation(path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/x-www-form-urlencoded\\",\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
+    input: post_transform_html_from_by_from_lang_to_by_to_lang_request_Input
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @httpOperation(path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/x-www-form-urlencoded\\",\\"accept\\":\\"application/problem+json\\"}", httpMethod: POST)
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2026,14 +2326,22 @@ type Mutation {
     """The target language code"""
     to_lang: String!
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @httpOperation(path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}/{args.provider}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/x-www-form-urlencoded\\",\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
+    input: post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_request_Input
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @httpOperation(path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}/{args.provider}", operationSpecificHeaders: "{\\"Content-Type\\":\\"multipart/form-data\\",\\"accept\\":\\"application/problem+json\\"}", httpMethod: POST)
 }
+
+union post_media_math_check_by_type_response @statusCodeTypeName(statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(statusCode: 400, typeName: "problem") @statusCodeTypeName(statusCode: "default", typeName: "problem") = JSON_container | problem
 
 """The input type of the given formula; can be tex or inline-tex"""
 enum mutationInput_post_media_math_check_by_type_type {
   tex
   inline_tex @enum(value: "\\"inline-tex\\"")
   chem
+}
+
+input post_media_math_check_by_type_request_Input {
+  """The formula to check"""
+  q: String!
 }
 
 union post_transform_html_from_by_from_lang_to_by_to_lang_response @statusCodeTypeName(statusCode: 200, typeName: "cx_mt") @statusCodeTypeName(statusCode: "default", typeName: "problem") = cx_mt | problem
@@ -2043,6 +2351,11 @@ type cx_mt {
   contents: String
 }
 
+input post_transform_html_from_by_from_lang_to_by_to_lang_request_Input {
+  """The HTML content to translate"""
+  html: String!
+}
+
 union post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @statusCodeTypeName(statusCode: 200, typeName: "cx_mt") @statusCodeTypeName(statusCode: "default", typeName: "problem") = cx_mt | problem
 
 """The machine translation provider id"""
@@ -2050,6 +2363,11 @@ enum mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provid
   Apertium
   Yandex
   Youdao
+}
+
+input post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_request_Input {
+  """The HTML content to translate"""
+  html: String!
 }
 
 scalar ObjMap
