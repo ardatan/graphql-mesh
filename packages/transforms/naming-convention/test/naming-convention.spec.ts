@@ -48,8 +48,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     pubsub = new PubSub();
   });
 
-  // TODO: Unskip test when issue https://github.com/ardatan/graphql-mesh/issues/6419 has been solved.
-  it.skip('should change the name of a types, enums, fields and fieldArguments', () => {
+  it('should change the name of a types, enums, fields and fieldArguments', () => {
     const newSchema = transformSchema(
       schema,
       new NamingConventionTransform({
@@ -314,8 +313,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(data?._).toEqual('test');
   });
 
-  // TODO: Unskip test when issue https://github.com/ardatan/graphql-mesh/issues/6419 has been solved.
-  it.skip('should be applied to default values of enums for arguments', () => {
+  it('should be applied to default values of enums for arguments', () => {
     const newSchema = transformSchema(
       schema,
       new NamingConventionTransform({

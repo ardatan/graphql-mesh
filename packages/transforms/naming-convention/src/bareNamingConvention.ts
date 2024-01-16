@@ -14,6 +14,7 @@ import {
   GraphQLUnionType,
   isEnumType,
   isInputObjectType,
+  Kind,
 } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
@@ -122,6 +123,21 @@ export default class NamingConventionTransform implements MeshTransform {
           }
 
           return undefined;
+        },
+      }),
+      ...(this.config.enumValues && {
+        [MapperKind.ARGUMENT]: config => {
+          const shouldRenameEnumDefaultValue =
+            this.config.enumValues &&
+            config.astNode?.defaultValue?.kind === Kind.ENUM &&
+            typeof config.defaultValue === 'string' &&
+            config.defaultValue;
+          if (shouldRenameEnumDefaultValue) {
+            const applyNamingConvention = NAMING_CONVENTIONS[this.config.enumValues];
+            config.defaultValue = applyNamingConvention(config.defaultValue as string);
+          }
+
+          return config;
         },
       }),
       ...(this.config.enumValues && {
