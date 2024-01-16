@@ -8,7 +8,7 @@ import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 describe('Location Weather', () => {
   jest.setTimeout(30000);
   let mesh: MeshInstance;
-  let meshHTTP: MeshHTTPHandler<any>;
+  let meshHTTP: ReturnType<typeof createMeshHTTPHandler>;
   beforeAll(async () => {
     const baseDir = join(__dirname, '..');
     const config = await findAndParseConfig({
@@ -44,6 +44,6 @@ describe('Location Weather', () => {
     // expect(typeof found.todayForecast?.minTemp).toBe('number');
   });
   afterAll(() => {
-    mesh.destroy();
+    mesh?.destroy();
   });
 });
