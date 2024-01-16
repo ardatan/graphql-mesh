@@ -90,7 +90,7 @@ type MaskedErrorsPluginConfig {
 }
 
 union AdditionalResolver =
-    String
+  | String
   | AdditionalStitchingResolverObject
   | AdditionalStitchingBatchResolverObject
   | AdditionalSubscriptionObject
