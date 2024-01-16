@@ -16,7 +16,7 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { isUrl, readFile, readUrl } from '@graphql-mesh/utils';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { buildHTTPExecutor, HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 
 export default class SupergraphHandler implements MeshHandler {
@@ -86,12 +86,26 @@ export default class SupergraphHandler implements MeshHandler {
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     this.fetchFn = fetchFn;
     const supergraphSdl = await this.getSupergraphSdl();
+    const operationHeadersFactory =
+      this.config.operationHeaders != null
+        ? getInterpolatedHeadersFactory(this.config.operationHeaders)
+        : undefined;
     const schema = getStitchedSchemaFromSupergraphSdl({
       supergraphSdl,
-      onExecutor({ endpoint }) {
-        return buildHTTPExecutor({ endpoint, fetch: fetchFn });
+      onExecutor: ({ endpoint }) => {
+        return buildHTTPExecutor({
+          endpoint,
+          fetch: fetchFn,
+          headers:
+            operationHeadersFactory &&
+            (execReq =>
+              operationHeadersFactory({
+                env: process.env,
+                context: execReq.context,
+              })),
+        } as HTTPExecutorOptions);
       },
-      batch: true,
+      batch: this.config.batch == null ? true : this.config.batch,
     });
     return {
       schema,

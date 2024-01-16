@@ -11,4 +11,8 @@ type SupergraphHandler @md {
   source: String!
 
   schemaHeaders: Any
+
+  operationHeaders: Any
+
+  batch: Boolean
 }

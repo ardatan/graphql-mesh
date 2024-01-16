@@ -1009,6 +1009,8 @@ export interface SupergraphHandler {
    */
   source: string;
   schemaHeaders?: any;
+  operationHeaders?: any;
+  batch?: boolean;
 }
 /**
  * Handler for OData
