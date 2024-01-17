@@ -44,7 +44,7 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
 
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
@@ -89,7 +89,7 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
 
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
@@ -162,7 +162,7 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
 
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key:
@@ -252,7 +252,7 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
 
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key:
