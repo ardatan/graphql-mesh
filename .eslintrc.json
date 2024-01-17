@@ -1,13 +1,13 @@
 {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.json",
   },
   "extends": [
     "eslint:recommended",
     "standard",
     "prettier",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
   ],
   "plugins": ["@typescript-eslint"],
   "rules": {
@@ -35,26 +35,26 @@
     "no-use-before-define": "off",
     "import/no-extraneous-dependencies": [
       "error",
-      { "devDependencies": ["**/*.test.ts", "**/*.spec.ts"] }
-    ]
+      { "devDependencies": ["**/*.test.ts", "**/*.spec.ts"] },
+    ],
   },
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
   },
   "overrides": [
     {
       "files": ["**/test/**/*.{ts,js}", "*.spec.ts"],
       "env": {
-        "jest": true
+        "jest": true,
       },
       "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
-      }
-    }
+        "@typescript-eslint/no-unused-vars": "off",
+      },
+    },
   ],
   "ignorePatterns": ["dist", "node_modules", "examples", "website", "scripts", ".bob"],
   "globals": {
-    "BigInt": true
-  }
+    "BigInt": true,
+  },
 }

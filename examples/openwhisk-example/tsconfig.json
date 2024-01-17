@@ -7,8 +7,8 @@
     "lib": ["esnext"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
   "files": ["src/index.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }

@@ -5,8 +5,8 @@
     "moduleResolution": "node",
     "lib": ["esnext"],
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
   },
   "files": [".mesh/index.d.ts", "additional-resolvers.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }
