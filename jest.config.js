@@ -1,10 +1,13 @@
 const { resolve } = require('path');
 const { pathsToModuleNameMapper } = require('ts-jest');
 const CI = !!process.env.CI;
+const { readFileSync } = require('fs');
+const JSON5 = require('json5');
 
 const ROOT_DIR = __dirname;
 const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
-const tsconfig = require(TSCONFIG);
+const tsconfigStr = readFileSync(TSCONFIG, 'utf8');
+const tsconfig = JSON5.parse(tsconfigStr);
 
 process.env.LC_ALL = 'en_US';
 
