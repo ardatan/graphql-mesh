@@ -39,9 +39,9 @@
       "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index"],
       "@graphql-mesh/*": ["packages/handlers/*/src/index"],
       "json-machete": ["packages/json-machete/src/index"],
-      "@omnigraph/*": ["packages/loaders/*/src/index"],
-    },
+      "@omnigraph/*": ["packages/loaders/*/src/index"]
+    }
   },
   "include": ["./declarations.d.ts", "packages"],
-  "exclude": ["**/node_modules", "**/dist"],
+  "exclude": ["**/node_modules", "**/dist"]
 }

@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "sourceMap": true,
     "jsx": "react",
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src"]
 }
