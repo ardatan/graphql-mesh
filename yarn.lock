@@ -201,10 +201,10 @@
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
   integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
 
-"@apollo/client@3.8.9", "@apollo/client@^3.8.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0":
-  version "3.8.9"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.9.tgz#0e4ac133eb04c63e618138c1ebf273d9f110a4d0"
-  integrity sha512-IcQDFEEPc9+PEQsxhxQvsoQ04BRarOzi/Ila5PcniRSDeKJWgY22dnp6+V1i1fWXRDVd1ybdvze4sFESDVQUCQ==
+"@apollo/client@3.8.10", "@apollo/client@^3.8.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0":
+  version "3.8.10"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.10.tgz#db6ee4378212d93c1f22b90a2aa474f6e9664b68"
+  integrity sha512-p/22RZ8ehHyvySnC20EHPPe0gdu8Xp6ZCiXOfdEe1ZORw5cUteD/TLc66tfKv8qu8NLIfbiWoa+6s70XnKvxqg==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     "@wry/equality" "^0.5.6"
@@ -2502,10 +2502,10 @@
   resolved "https://registry.yarnpkg.com/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20231218.0.tgz#85fc18f18f7c6593b427c58bf58224850f706d20"
   integrity sha512-oN5hz6TXUDB5YKUN5N3QWAv6cYz9JjTZ9g16HVyoegVFEL6/zXU3tV19MBX2IvlE11ab/mRogEv9KXVIrHfKmA==
 
-"@cloudflare/workers-types@4.20231218.0":
-  version "4.20231218.0"
-  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20231218.0.tgz#3deac906c68aa5c8d8cdefe828146215eed6804c"
-  integrity sha512-Vs1FKjfUjXYGbCsXzkl+ITp0Iyb6QiW6+vTERTNThC+v96T0IvPVAioH4tT20rXwoxAfxh380mAaxYtTrJUNVg==
+"@cloudflare/workers-types@4.20240117.0":
+  version "4.20240117.0"
+  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20240117.0.tgz#6cadb53017488ea4258dfd4fb589562d3b85a597"
+  integrity sha512-HQU8lJhaJVh8gQXFtVA7lZwd0hK1ckIFjRuxOXkVN2Z9t7DtzNbA2YTwBry5thKNgF5EwjN4THjHg5NUZzj05A==
 
 "@colors/colors@1.6.0":
   version "1.6.0"
@@ -2756,7 +2756,7 @@
     "@envelop/on-resolve" "^4.1.0"
     tslib "^2.5.0"
 
-"@envelop/on-resolve@^4.0.0", "@envelop/on-resolve@^4.1.0":
+"@envelop/on-resolve@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-4.1.0.tgz#c2eda17b127d6f41d8fb4b140a192629b0f08240"
   integrity sha512-2AXxf8jbBIepBUiY0KQtyCO6gnT7LKBEYdaARZBJ7ujy1+iQHQPORKvAwl51kIdD6v5x38eldZnm7A19jFimOg==
@@ -2769,12 +2769,12 @@
     "@envelop/extended-validation" "^4.0.0"
     tslib "^2.5.0"
 
-"@envelop/prometheus@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-9.0.0.tgz#73c5bd2e700b7feb88207272e6b1f4299572b71b"
-  integrity sha512-K1LL4qh7fWMYNhsXDzIF33SVXHtxAhg8GdWjl0E/NhizRtdguW7tShPtcMIL3U6sWPsoJR982LnV8nqjqYzYlA==
+"@envelop/prometheus@^9.2.0":
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-9.3.0.tgz#59ecba7243ce81453e172883313966fbce64e665"
+  integrity sha512-QiiuvvTpETc4YapEL5Kq05UrIG96pBUCM6+Sr6k47T+ONHBEAbuxB9nG+J8GdyAzr7s3lRUA9p1JpccAPPPWYg==
   dependencies:
-    "@envelop/on-resolve" "^4.0.0"
+    "@envelop/on-resolve" "^4.1.0"
     tslib "^2.5.0"
 
 "@envelop/response-cache@^6.1.1", "@envelop/response-cache@^6.1.2":
@@ -3709,11 +3709,11 @@
   integrity sha512-cD7+V19ipICnCZsUtLgOyZV9jcwtTiSFJOGYIZnUG25egUIzXfMmg+EWUZD1uGLKZBKbGWULn9ayc7UW52GSLg==
 
 "@graphql-yoga/plugin-prometheus@^3.0.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-3.1.1.tgz#1328259c211b2476094ff366d30ee2611993f1bc"
-  integrity sha512-5lmH3dIaWpcxDmWJgv6Z1iQ4mpoZie/wNQJM4okbGNWAb+LqlTdVtTWcobohmpoRZyI7JwR1/vHjJxWzWPI70g==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-3.1.2.tgz#dfca4b6ef41869da93d920b75f2d03ad7b9a6be2"
+  integrity sha512-Iy6jdorraYCRdnJyE0zShZLoRGoZ8JfXfFnQcOjC7Sh3nkvoxfQdWTOAkaApqcdT98CI2tWxL16dRb+NrRp66w==
   dependencies:
-    "@envelop/prometheus" "9.0.0"
+    "@envelop/prometheus" "^9.2.0"
 
 "@graphql-yoga/plugin-response-cache@^3.1.1":
   version "3.3.0"
@@ -5265,10 +5265,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.7.0.tgz#b5bc1e081428794f6a4d239707b359404be35ce2"
   integrity sha512-Jh4t/593gxs0lJZ/z3NnasKlplXT2f+4y/LZYuaKZW5KAaiVFL/fThhs+17EbUd53jUVJ0QudYCBGbN/psvaqg==
 
-"@sinclair/typebox@0.32.9", "@sinclair/typebox@^0.32.0":
-  version "0.32.9"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.9.tgz#025f05fa16aea3357f78cdcdbecbd6047de87673"
-  integrity sha512-6oeJJPTIb0y3cs713HmXmXSx3WRWgid74KICYL9blOhNFuAcAB18dDWfATgcgzynfpF5xDzHGxEVbDYYr6nvgg==
+"@sinclair/typebox@0.32.10", "@sinclair/typebox@^0.32.0":
+  version "0.32.10"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.10.tgz#346ee6b68242142a28e01d72b42521b43a005156"
+  integrity sha512-CZwwK09fdC/uKPD/cCJbNBLPQww3gYl5bYu86cqfziPXTVatUGU/o+vqu84gDGuIDoQRIvCB0Uj0MvcgsCsb8g==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
@@ -7026,10 +7026,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
-"@urql/core@4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@urql/core/-/core-4.2.2.tgz#c2b009373cb9084bbfa8ebc0177c854a76235b84"
-  integrity sha512-TP1kheq9bnrEdnVbJqh0g0ZY/wfdpPeAzjiiDK+Tm+Pbi0O1Xdu6+fUJ/wJo5QpHZzkIyya4/AecG63e6scFqQ==
+"@urql/core@4.2.3":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/@urql/core/-/core-4.2.3.tgz#f956e8a33c4bd055c0c5151491843dd46d737f0f"
+  integrity sha512-DJ9q9+lcs5JL8DcU2J3NqsgeXYJva+1+Qt8HU94kzTPqVOIRRA7ouvy4ksUfPY+B5G2PQ+vLh+JJGyZCNXv0cg==
   dependencies:
     "@0no-co/graphql.web" "^1.0.1"
     wonka "^6.3.2"
