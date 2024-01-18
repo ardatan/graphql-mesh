@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.96.3
+
+### Patch Changes
+
+- [`ac26793`](https://github.com/ardatan/graphql-mesh/commit/ac26793e59f76f0839b61a8030e0eefc7383e640)
+  Thanks [@ardatan](https://github.com/ardatan)! - `operationHeaders` in Supergraph Handler
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.96.3
+
 ## 0.96.2
 
 ### Patch Changes

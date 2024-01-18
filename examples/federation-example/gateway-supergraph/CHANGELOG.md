@@ -1,5 +1,14 @@
 # federation-supergraph-gateway
 
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ac26793`](https://github.com/ardatan/graphql-mesh/commit/ac26793e59f76f0839b61a8030e0eefc7383e640)]:
+  - @graphql-mesh/supergraph@0.1.3
+  - @graphql-mesh/cli@0.88.5
+
 ## 0.2.4
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.96.3
+
+### Patch Changes
+
+- [#6421](https://github.com/ardatan/graphql-mesh/pull/6421)
+  [`f7ea128`](https://github.com/ardatan/graphql-mesh/commit/f7ea12831e214744d0c130fcd76f94e029a196f4)
+  Thanks [@soerenuhrbach](https://github.com/soerenuhrbach)! - The enum naming convention will now
+  be applied to argument defaults of type enum when using bare mode
+
+- Updated dependencies
+  [[`ac26793`](https://github.com/ardatan/graphql-mesh/commit/ac26793e59f76f0839b61a8030e0eefc7383e640)]:
+  - @graphql-mesh/types@0.96.3
+  - @graphql-mesh/utils@0.96.3
+
 ## 0.96.2
 
 ### Patch Changes

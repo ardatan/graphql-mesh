@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/neo4j",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -27,7 +27,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.96.2",
+    "@graphql-mesh/types": "^0.96.3",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
