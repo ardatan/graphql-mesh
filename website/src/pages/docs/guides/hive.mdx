@@ -12,6 +12,38 @@ GraphQL Hive is a schema registry, monitoring and analytics tool for your GraphQ
 possible to integrate your GraphQL Mesh application to GraphQL Hive by using the dedicated plugins
 and transforms.
 
+## Consume Supergraph SDL from Hive CDN
+
+If you have a supergraph schema published to GraphQL Hive registry, you can consume it in your
+GraphQL Mesh gateway through Hive CDN;
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: Supergraph
+    handler:
+      supergraph:
+        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: SOME_TOKEN
+```
+
+## Polling the Hive CDN
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: Supergraph
+    handler:
+      supergraph:
+        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: SOME_TOKEN
+polling: 60_000 # Poll for the supergraph updates per 1 hour
+```
+
+<Callout>
+When you use Hive CDN, you don't have to rebuild Mesh artifacts and/or redeploy it. You can just restart it if you don't configure `polling`. If you configured it already, you don't even need to restart the server. GraphQL Mesh will pull the recent changes and update it automatically.
+</Callout>
+
 ## Track your Gateway
 
 You can connect your GraphQL Mesh gateway to GraphQL Hive registry to track changes on the unified
@@ -146,21 +178,6 @@ sources:
     transforms:
       - hive:
           token: '{env.MYOAS_HIVE_TOKEN}'
-```
-
-## Consume Supergraph SDL from Hive CDN
-
-If you have a supergraph schema published to GraphQL Hive registry, you can consume it in your
-GraphQL Mesh gateway through Hive CDN;
-
-```yaml filename=".meshrc.yaml"
-sources:
-  - name: Supergraph
-    handler:
-      supergraph:
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
-        schemaHeaders:
-          X-Hive-CDN-Key: SOME_TOKEN
 ```
 
 ## Config API Reference
