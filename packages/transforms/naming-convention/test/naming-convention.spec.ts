@@ -9,7 +9,7 @@ import {
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
-import { addResolversToSchema } from '@graphql-tools/schema';
+import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import NamingConventionTransform from '../src/index.js';
@@ -350,5 +350,65 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     expect(userTypeArg.defaultValue).toBeDefined();
     expect(userTypeArg.defaultValue).not.toBeNull();
     expect(userTypeArg.defaultValue).toBe('NEWBIE');
+  });
+
+  it('should resolves the data of a renamed fields correctly when arguments did not changed', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          Cart_GetCart(cartId: String!, expand: [String]): Cart
+        }
+
+        type Cart {
+          Id: String!
+          Amount: Int!
+        }
+      `,
+      resolvers: {
+        Query: {
+          Cart_GetCart: (_, args) => {
+            return {
+              Id: args.cartId,
+              Amount: 1234,
+            };
+          },
+        },
+        Cart: {
+          Id: root => root.Id,
+          Amount: root => root.Amount,
+        },
+      },
+    });
+    const newSchema = transformSchema(
+      schema,
+      new NamingConventionTransform({
+        apiName: '',
+        importFn,
+        config: {
+          mode,
+          fieldNames: 'camelCase',
+          fieldArgumentNames: 'camelCase',
+        },
+        cache,
+        pubsub,
+        baseDir,
+        logger: new DefaultLogger(),
+      }),
+    );
+    const { data }: any = await execute({
+      schema: newSchema,
+      document: parse(/* GraphQL */ `
+        {
+          cartGetCart(cartId: "asdf") {
+            id
+            amount
+          }
+        }
+      `),
+    });
+    expect(data.Cart_GetCart).not.toBeDefined();
+    expect(data.cartGetCart).toBeDefined();
+    expect(data.cartGetCart).not.toBeNull();
+    expect(data.cartGetCart.id).toBe('asdf');
   });
 });
