@@ -219,18 +219,18 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.5"
 
-"@apollo/composition@2.6.3":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@apollo/composition/-/composition-2.6.3.tgz#f8bc0eb6fc437c06dd65f083cf60eb2f7e01e01b"
-  integrity sha512-7Q6xITvZifAWXPzN1ZkqMss9mBZgCL1hdKmM117UhqOfYrZ331DdUaln4I07Ae7wjXEg0KUb7AElx/1x+gm6qg==
+"@apollo/composition@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@apollo/composition/-/composition-2.7.0.tgz#c4982caefaa661b2d9127deae561430ebb750e1b"
+  integrity sha512-PuXxGcYYWxyXRNybk/7vupJ6YIxTXlrha9ZJJ+a++Hp86+D09MgdWQz7upkHrkD7bHNL4Nq6y+X0ighJPtI2og==
   dependencies:
-    "@apollo/federation-internals" "2.6.3"
-    "@apollo/query-graphs" "2.6.3"
+    "@apollo/federation-internals" "2.7.0"
+    "@apollo/query-graphs" "2.7.0"
 
-"@apollo/federation-internals@2.6.3":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.6.3.tgz#88819096c942fc8a7fb649d0214d5f406a5380a8"
-  integrity sha512-Motm6p4C4t1lUXOq9kIVyP6jANSymiUgfwc0TYjeSehKRFq6qxv9L2gPSVFvyfm/gI+gLlDscDN63YtxpUzqhQ==
+"@apollo/federation-internals@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.7.0.tgz#f6db8f9bf3b65b33194c2d7bc320637c7b6c5bf2"
+  integrity sha512-NiTYMJQ3XnEH8HJxv3rEUGOdGrUr0ZUJcVOyzc3YJ5M9Lxx/AGgQe7mCsaFQOfofYyy9hoh2sHUDhB7ngsnh3Q==
   dependencies:
     "@types/uuid" "^9.0.0"
     chalk "^4.1.0"
@@ -238,13 +238,13 @@
     uuid "^9.0.0"
 
 "@apollo/gateway@^2.4.1":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-2.6.3.tgz#71d1e73786c98470021e7bdaafc0cae4cf5b7ca6"
-  integrity sha512-/p1eyRPqWsoVH94/q3tqeLMk7q6CZ5pl7C8lLtANCx/2mYwmLlGcP4RNdKAFyd3K6zR7/VXNdfDIRWZ+AqCkEg==
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-2.7.0.tgz#d11ea6792a6c4cf27567ccb5979dbd8cca7f8f50"
+  integrity sha512-28Ik1XX4hIiuM7lilUmVuhnF0DiOISzR18q8YU9MyKhzwodQ3tRxynHCaBczsxOXNigVZrbx1/Nxk6qkF9qivA==
   dependencies:
-    "@apollo/composition" "2.6.3"
-    "@apollo/federation-internals" "2.6.3"
-    "@apollo/query-planner" "2.6.3"
+    "@apollo/composition" "2.7.0"
+    "@apollo/federation-internals" "2.7.0"
+    "@apollo/query-planner" "2.7.0"
     "@apollo/server-gateway-interface" "^1.1.0"
     "@apollo/usage-reporting-protobuf" "^4.1.0"
     "@apollo/utils.createhash" "^2.0.0"
@@ -298,23 +298,23 @@
     "@types/long" "^4.0.0"
     long "^4.0.0"
 
-"@apollo/query-graphs@2.6.3":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@apollo/query-graphs/-/query-graphs-2.6.3.tgz#de3fa5a514a02b6b0413eb2daa56f92e30ff9d31"
-  integrity sha512-h+39kWnVq8GzhSyE2HGg4CKpzTDj1480EcLFuSk11QSN99uXjqwwciY5J83tlaSBONni0TvJ6Efctvp6ag0Xpw==
+"@apollo/query-graphs@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@apollo/query-graphs/-/query-graphs-2.7.0.tgz#9c2d91cdae8710b8db2f6a6c14a039832c6b9a80"
+  integrity sha512-9UeJ1bVlKspzQXtgvdWPTc8SI8O+firzG44gRpx1E44U/yK2TseQvR4vHvMONl6u28bYT/KVa/jxLZTEEQ1H/g==
   dependencies:
-    "@apollo/federation-internals" "2.6.3"
+    "@apollo/federation-internals" "2.7.0"
     deep-equal "^2.0.5"
     ts-graphviz "^1.5.4"
     uuid "^9.0.0"
 
-"@apollo/query-planner@2.6.3":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-2.6.3.tgz#0a90191636d51da1e0f84458b7580fec6ba33d92"
-  integrity sha512-wH7VaIDPhbSs7/UrihvMHWBvfooIoH4WKpyBj50Syf7TOFWmrWWihB+Gf5pdR2Q14pKxM0QihIxGdXK3XABBag==
+"@apollo/query-planner@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-2.7.0.tgz#34bef4dc6c5a0b2e5d56fefa1db7527eac6952a2"
+  integrity sha512-ki9dOE6FwSI3ZyH6g1kvvTf8V0C+rvKHuoIOhjaZQmrASPVVgYjF3gm6vXCgjDzz3joFI6iA05kwCkBxNESNPg==
   dependencies:
-    "@apollo/federation-internals" "2.6.3"
-    "@apollo/query-graphs" "2.6.3"
+    "@apollo/federation-internals" "2.7.0"
+    "@apollo/query-graphs" "2.7.0"
     "@apollo/utils.keyvaluecache" "^2.1.0"
     chalk "^4.1.0"
     deep-equal "^2.0.5"
@@ -362,12 +362,12 @@
     whatwg-mimetype "^3.0.0"
 
 "@apollo/subgraph@^2.2.3", "@apollo/subgraph@^2.4.1":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.6.3.tgz#72f498c7a803bc9753d93bfe99f13850620051e2"
-  integrity sha512-k4uDJ5QBzisWatxQ/4NJ7d56OJwgPMd0kL1lEXsVJYrfxZhlNd2YSnQrBjp4cmnTK4Z3mDFFoF2viXll7eR2WQ==
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.7.0.tgz#db5e3c19d93ddbaf77c552a91715ff99d8458035"
+  integrity sha512-6u/bDF7gorXdNNRIi03B5JlTZqP1lOerQ8F1WJ2af/Tydf80GXOBDyo841kmJWyGveYYdLqC0GMwaiuSy/Hubw==
   dependencies:
     "@apollo/cache-control-types" "^1.0.2"
-    "@apollo/federation-internals" "2.6.3"
+    "@apollo/federation-internals" "2.7.0"
 
 "@apollo/usage-reporting-protobuf@^4.0.0", "@apollo/usage-reporting-protobuf@^4.1.0", "@apollo/usage-reporting-protobuf@^4.1.1":
   version "4.1.1"
