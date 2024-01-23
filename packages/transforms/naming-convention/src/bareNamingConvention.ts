@@ -289,7 +289,7 @@ function argsFromArgMap(argMap: ArgsMap, args: any) {
   Object.keys(args).forEach(newArgName => {
     if (typeof newArgName !== 'string') return;
 
-    const argMapVal = argMap[newArgName];
+    const argMapVal = argMap[newArgName] ?? newArgName;
     const originalArgName = typeof argMapVal === 'string' ? argMapVal : argMapVal.originalName;
     const val = args[newArgName];
     if (Array.isArray(val) && typeof argMapVal !== 'string') {
