@@ -301,37 +301,35 @@ export function isList(type: GraphQLOutputType) {
   }
 }
 
-export function getGlobalResolvers(supergraph: GraphQLSchema) {
-  const globalResolvers = new Map<string, GlobalResolverConfig>();
-  supergraph.astNode.directives?.forEach(directiveNode => {
+export function getGlobalResolver(
+  supergraph: GraphQLSchema,
+  resolverName: string,
+  subgraphName: string,
+): GlobalResolverConfig | undefined {
+  for (const directiveNode of supergraph.astNode.directives ?? []) {
     if (directiveNode.name.value === 'resolver') {
-      let name: string;
-      let operation: string;
-      let kind: ResolverKind | undefined;
-      directiveNode.arguments?.forEach(arg => {
-        if (arg.value.kind !== Kind.STRING) {
-          throw new Error('Argument value should be a string');
+      const nameArg = directiveNode.arguments?.find(arg => arg.name.value === 'name');
+      const subgraphArg = directiveNode.arguments?.find(arg => arg.name.value === 'subgraph');
+      if (nameArg?.value.kind === Kind.STRING && subgraphArg?.value.kind === Kind.STRING) {
+        if (nameArg.value.value === resolverName && subgraphArg.value.value === subgraphName) {
+          const operationArg = directiveNode.arguments?.find(arg => arg.name.value === 'operation');
+          const kindArg = directiveNode.arguments?.find(arg => arg.name.value === 'kind');
+          if (operationArg?.value.kind === Kind.STRING) {
+            return {
+              name: resolverName,
+              operation: operationArg.value.value,
+              kind:
+                kindArg?.value.kind === Kind.STRING
+                  ? (kindArg.value.value as ResolverKind)
+                  : undefined,
+              subgraph: subgraphName,
+            };
+          }
         }
-        switch (arg.name.value) {
-          case 'name':
-            name = arg.value.value;
-            break;
-          case 'operation':
-            operation = arg.value.value;
-            break;
-          case 'kind':
-            kind = arg.value.value as ResolverKind;
-            break;
-        }
-      });
-      globalResolvers.set(name, {
-        name,
-        operation,
-        kind,
-      });
+      }
     }
-  });
-  return globalResolvers;
+  }
+  return undefined;
 }
 
 export function resolveResolverOperationStringAndKind(
@@ -341,7 +339,11 @@ export function resolveResolverOperationStringAndKind(
   let resolverOperationString: string;
   let resolverKind: ResolverKind;
   if ('name' in resolverDirective) {
-    const globalResolver = getGlobalResolvers(supergraph).get(resolverDirective.name);
+    const globalResolver = getGlobalResolver(
+      supergraph,
+      resolverDirective.name,
+      resolverDirective.subgraph,
+    );
     if (!globalResolver) {
       throw new Error(`No global resolver found for ${resolverDirective.name}`);
     }

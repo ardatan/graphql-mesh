@@ -50,6 +50,7 @@ export interface GlobalResolverConfig {
   name: string;
   operation: string;
   kind?: ResolverKind;
+  subgraph: string;
 }
 
 export interface RegularResolverConfig {

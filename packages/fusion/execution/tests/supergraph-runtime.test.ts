@@ -472,6 +472,85 @@ query MyFooFromA {
         ],
       });
     });
+
+    it('handles global resolvers', () => {
+      const operationInText = /* GraphQL */ `
+        query Test {
+          me {
+            id
+            name
+          }
+        }
+      `;
+
+      const supergraphInText = /* GraphQL */ `
+        schema
+          @resolver(
+            name: "userResolver"
+            operation: "query UserResolver($User_id: ID!) { user(id: $User_id) }"
+            subgraph: "B"
+            kind: FETCH
+          ) {
+          query: Query
+        }
+        type Query {
+          me: User! @resolver(subgraph: "A", operation: "query MeFromA { me }", kind: FETCH)
+        }
+
+        type User
+          @source(subgraph: "A")
+          @source(subgraph: "B")
+          @resolver(name: "userResolver", subgraph: "B")
+          @variable(name: "User_id", select: "id", subgraph: "A") {
+          id: ID! @source(subgraph: "A") @source(subgraph: "B")
+          name: String! @source(subgraph: "B")
+        }
+      `;
+
+      const supergraph = buildSchema(supergraphInText, {
+        assumeValid: true,
+        assumeValidSDL: true,
+      });
+
+      const operationDoc = parseAndCache(operationInText);
+
+      const plan = planOperation(supergraph, operationDoc, 'Test');
+
+      expect(
+        Object.fromEntries(
+          [...plan.resolverDependencyFieldMap.entries()].map(([key, value]) => [
+            key,
+            value.map(serializeResolverOperationNode),
+          ]),
+        ),
+      ).toEqual({
+        me: [
+          {
+            resolverDependencies: [
+              {
+                resolverOperationDocument: /* GraphQL */ `
+query UserResolver($__variable_0: ID!) {
+  __export: user(id: $__variable_0) {
+    name
+  }
+}
+                `.trim(),
+                subgraph: 'B',
+              },
+            ],
+            resolverOperationDocument: /* GraphQL */ `
+query MeFromA {
+  __export: me {
+    id
+    __variable_0: id
+  }
+}
+            `.trim(),
+            subgraph: 'A',
+          },
+        ],
+      });
+    });
   });
 });
 
