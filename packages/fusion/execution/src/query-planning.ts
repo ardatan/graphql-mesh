@@ -319,6 +319,7 @@ export function visitFieldNodeForTypeResolvers(
   };
 
   const resolverSelectionsBySubgraph: Record<string, FlattenedFieldNode[]> = {};
+  const variablesByResolverSelection = new WeakMap<FlattenedFieldNode, ResolverVariableConfig[]>();
 
   const resolverOperationNodes: ResolverOperationNode[] = [];
   const resolverDependencyFieldMap = new Map<string, ResolverOperationNode[]>();
@@ -527,6 +528,10 @@ export function visitFieldNodeForTypeResolvers(
       }
       resolverSelectionsBySubgraph[subgraph] ||= [];
       resolverSelectionsBySubgraph[subgraph].push(subFieldNode);
+      const variableDirectives = fieldDirectives
+        .filter(d => d.name === 'variable')
+        .map(d => d.args) as ResolverVariableConfig[];
+      variablesByResolverSelection.set(subFieldNode, variableDirectives);
     }
   }
 
@@ -541,6 +546,12 @@ export function visitFieldNodeForTypeResolvers(
     const variableDirectives = typeDirectives
       .filter(d => d.name === 'variable')
       .map(d => d.args) as ResolverVariableConfig[];
+    for (const resolverSelection of resolverSelections) {
+      const selectionVariables = variablesByResolverSelection.get(resolverSelection);
+      if (selectionVariables) {
+        variableDirectives.push(...selectionVariables);
+      }
+    }
     const {
       newFieldNode: newFieldNodeForSubgraph,
       resolverOperationDocument,

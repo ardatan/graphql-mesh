@@ -19,6 +19,7 @@ import { FlattenedFieldNode, FlattenedSelectionSet } from '../src/flattenSelecti
 import {
   createExecutablePlanForOperation,
   executeOperation,
+  executeOperationPlan,
   executeOperationWithPatches,
   planOperation,
   serializeExecutableOperationPlan,
@@ -616,6 +617,35 @@ describe('Execution', () => {
     },
   });
 
+  const eSchema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      type Foo {
+        id: ID!
+        computedFromBaz: String!
+      }
+
+      type Query {
+        fooWithComputedFromBaz(id: ID!, baz: String): Foo!
+      }
+    `,
+    resolvers: {
+      Query: {
+        fooWithComputedFromBaz: (_, { id, baz }) => ({
+          id,
+          baz,
+        }),
+      },
+      Foo: {
+        computedFromBaz: ({ id, baz }) => {
+          if (!baz) {
+            throw new Error('baz is required');
+          }
+          return `E_COMPUTED_FROM_BAZ_FOR_${id}_AND_${baz}`;
+        },
+      },
+    },
+  });
+
   const supergraphInText = /* GraphQL */ `
     type Foo
       @variable(name: "Foo_id", select: "id", subgraph: "A")
@@ -627,14 +657,25 @@ describe('Execution', () => {
         operation: "query FooFromD($Foo_id: [ID!]!) { foos(ids: $Foo_id) }"
         subgraph: "D"
         kind: BATCH
+      )
+      @resolver(
+        operation: "query FooFromE($Foo_id: ID!, $Foo_baz: String) { fooWithComputedFromBaz(id: $Foo_id, baz: $Foo_baz) }"
+        subgraph: "E"
       ) {
-      id: ID! @source(subgraph: "A") @source(subgraph: "B") @source(subgraph: "C")
+      id: ID!
+        @source(subgraph: "A")
+        @source(subgraph: "B")
+        @source(subgraph: "C")
+        @source(subgraph: "E")
       bar: String! @source(subgraph: "B")
       baz: String! @source(subgraph: "C")
       child: Foo @source(subgraph: "C")
       children: [Foo!]! @source(subgraph: "C")
       qux: String! @source(subgraph: "D")
       quux: String! @source(subgraph: "B", name: "corge")
+      computedFromBaz: String!
+        @source(subgraph: "E", name: "computedFromBaz")
+        @variable(name: "Foo_baz", select: "baz", subgraph: "C")
     }
 
     type Query {
@@ -644,6 +685,11 @@ describe('Execution', () => {
         @resolver(operation: "query FooFromB($id: ID!) { foo(id: $id) }", subgraph: "B")
       fooById(id: ID!): Foo!
         @resolver(operation: "query FooFromC($id: ID!) { foo(id: $id) }", subgraph: "C")
+      fooWithComputedFromBaz(id: ID!, bar: String, baz: String): Foo!
+        @resolver(
+          operation: "query FooFromE($id: ID!, $baz: String) { fooWithComputedFromBaz(id: $id, baz: $baz) }"
+          subgraph: "E"
+        )
     }
 
     type Subscription {
@@ -662,6 +708,7 @@ describe('Execution', () => {
   executorMap.set('B', createDefaultExecutor(bSchema));
   executorMap.set('C', createDefaultExecutor(cSchema));
   executorMap.set('D', createDefaultExecutor(dSchema));
+  executorMap.set('E', createDefaultExecutor(eSchema));
 
   function onExecute(subgraphName: string, document: DocumentNode, variables: Record<string, any>) {
     const executor = executorMap.get(subgraphName);
@@ -1172,31 +1219,73 @@ describe('Execution', () => {
       },
     });
   });
-  // // TODO: later
-  // it.skip('conditional variables', async () => {
-  //   const supergraph = buildSchema(/* GraphQL */ `
-  //     type Query {
-  //       product(id: ID!): Product!
-  //         @resolver(operation: "query ProductFromA($id: ID!) { product(id: $id) }", subgraph: "A")
-  //     }
+  it('plans a conditional variable', async () => {
+    const operationInText = /* GraphQL */ `
+      query Test {
+        fooById(id: 1) {
+          id
+          computedFromBaz
+        }
+      }
+    `;
+    const operationDoc = parseAndCache(operationInText);
 
-  //     type Product
-  //       @source(subgraph: "A")
-  //       @variable(name: "Product_id", select: "id", subgraph: "A")
-  //       @variable(name: "Product_id", select: "id", subgraph: "B")
-  //       @variable(name: "Product_entity", value: "{ id: $Product_id, weight: $Product_weight, price: $Product_price }", subgraph: "B")
-  //       @resolver(operation: "query ProductFromB($Product_entity: [Any!]!) { _entities(representations: $Product_entity) }", subgraph: "B", kind: BATCH) {
-  //       {
-  //       id: ID! @source(subgraph: "A") @source(subgraph: "B")
-  //       weight: Int! @source(subgraph: "A")
-  //       price: Int! @source(subgraph: "B")
-  //       shippingEstimate: Int!
-  //         @source(subgraph: "B")
-  //         @variable(name: "Product_weight", select: "weight", subgraph: "A")
-  //         @variable(name: "Product_price", select: "price", subgraph: "A")
-  //     }
-  //   `);
-  // });
+    const plan = createExecutablePlanForOperation({
+      supergraph,
+      document: operationDoc,
+    });
+
+    expect(serializeExecutableOperationPlan(plan)).toEqual({
+      resolverDependencyFieldMap: {
+        fooById: [
+          {
+            subgraph: 'C',
+            resolverOperationDocument:
+              'query FooFromC {\n' +
+              '  __export: foo(id: 1) {\n' +
+              '    id\n' +
+              '    __variable_1: id\n' +
+              '    __variable_2: baz\n' +
+              '  }\n' +
+              '}',
+            id: 0,
+            resolverDependencies: [
+              {
+                subgraph: 'E',
+                resolverOperationDocument:
+                  'query FooFromE($__variable_1: ID!, $__variable_2: String) {\n' +
+                  '  __export: fooWithComputedFromBaz(id: $__variable_1, baz: $__variable_2) {\n' +
+                  '    computedFromBaz\n' +
+                  '  }\n' +
+                  '}',
+                id: 1,
+              },
+            ],
+          },
+        ],
+      },
+      resolverOperationNodes: [],
+    });
+
+    const result = await executeOperationPlan({
+      executablePlan: plan,
+      onExecute,
+      context: {},
+    });
+
+    assertNonAsyncIterable(result);
+
+    expect(result).toEqual({
+      data: {
+        fooById: {
+          computedFromBaz: 'E_COMPUTED_FROM_BAZ_FOR_1_AND_C_BAZ_FOR_1',
+          id: '1',
+        },
+      },
+      errors: undefined,
+      extensions: undefined,
+    });
+  });
   it('plans subscriptions', async () => {
     const operationInText = /* GraphQL */ `
       subscription Test {
