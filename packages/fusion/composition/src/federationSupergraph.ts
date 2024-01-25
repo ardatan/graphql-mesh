@@ -301,16 +301,18 @@ export function convertFusionSupergraphFromFederationSupergraph(
   const fusionSupergraphDirectiveExtensions: any = (fusionSupergraphSchemaExtensions.directives ||=
     {});
   const fusionTransportDefs = (fusionSupergraphDirectiveExtensions.transport ||= []);
+  const fusionGlobalResolverDefs = (fusionSupergraphDirectiveExtensions.resolver ||= []);
   for (const [subgraph, location] of subgraphLocationMap.entries()) {
     fusionTransportDefs.push({
       subgraph,
       kind: 'http',
       location,
     });
+    fusionGlobalResolverDefs.push({
+      subgraph,
+      ...entityResolverDefinition,
+    });
   }
-
-  const fusionGlobalResolverDefs = (fusionSupergraphDirectiveExtensions.resolver ||= []);
-  fusionGlobalResolverDefs.push(entityResolverDefinition);
 
   return fusionSupergraphSchema;
 }

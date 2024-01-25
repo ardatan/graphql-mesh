@@ -20,25 +20,42 @@ import {
 import _ from 'lodash';
 import { DirectiveAnnotation } from '@graphql-tools/utils';
 import { FlattenedFieldNode, FlattenedSelectionSet } from './flattenSelections.js';
-import { ResolverConfig, ResolverVariableConfig } from './types.js';
+import {
+  GlobalResolverConfig,
+  RegularResolverConfig,
+  ResolverKind,
+  ResolverRefConfig,
+  ResolverVariableConfig,
+} from './types.js';
 
 // Resolution direction is from parentSubgraph to resolverDirective.subgraph
-export function createResolveNode(
+export function createResolveNode({
+  parentSubgraph,
+  fieldNode,
+  resolverOperationString,
+  resolverKind = 'FETCH',
+  variableDirectives,
+  resolverSelections,
+  resolverArguments,
+  ctx,
+}: {
   // Subgraph of which that the field node belongs to
-  parentSubgraph: string,
+  parentSubgraph: string;
   // Field Node that returns this type
-  fieldNode: FlattenedFieldNode,
-  // Resolver Directive that is used to resolve this type
-  resolverDirective: ResolverConfig,
+  fieldNode: FlattenedFieldNode;
+  // Resolver operation string
+  resolverOperationString: string;
+  // Resolver kind
+  resolverKind?: ResolverKind;
   // Variable directives that are used to resolve this type
-  variableDirectives: ResolverVariableConfig[],
+  variableDirectives: ResolverVariableConfig[];
   // Selections that are used to resolve this type
-  resolverSelections: FlattenedFieldNode[],
-  resolverArguments: FlattenedFieldNode['arguments'],
+  resolverSelections: FlattenedFieldNode[];
+  resolverArguments: FlattenedFieldNode['arguments'];
   // Visitor context
-  ctx: VisitorContext,
-) {
-  let resolverOperationDocument = parse(resolverDirective.operation, { noLocation: true });
+  ctx: VisitorContext;
+}) {
+  let resolverOperationDocument = parse(resolverOperationString, { noLocation: true });
 
   if (!fieldNode.selectionSet) {
     throw new Error('Object type should have a selectionSet');
@@ -127,9 +144,11 @@ export function createResolveNode(
         | undefined;
       newFieldSelectionSet.selections.push(...(varOpSelectionSet?.selections ?? []));
     }
+    // If it is a computed variable
+    else if (varDirective?.value) {
+    }
     // If select is not given, use the variable as the default value for the variable
-    else if (varDirective?.interpolate) {
-    } else {
+    else {
       const fieldArgumentNode = resolverArguments?.find(
         argument => argument.name.value === oldVarName,
       );
@@ -227,7 +246,7 @@ export function createResolveNode(
     newFieldNode,
     resolverOperationDocument,
     resolvedFieldPath: deepestFieldNodePath,
-    batch: resolverDirective.kind === 'BATCH',
+    batch: resolverKind === 'BATCH',
     defer: fieldNode.defer,
   };
 }
@@ -280,6 +299,64 @@ export function isList(type: GraphQLOutputType) {
   } else {
     return false;
   }
+}
+
+export function getGlobalResolver(
+  supergraph: GraphQLSchema,
+  resolverName: string,
+  subgraphName: string,
+): GlobalResolverConfig | undefined {
+  for (const directiveNode of supergraph.astNode.directives ?? []) {
+    if (directiveNode.name.value === 'resolver') {
+      const nameArg = directiveNode.arguments?.find(arg => arg.name.value === 'name');
+      const subgraphArg = directiveNode.arguments?.find(arg => arg.name.value === 'subgraph');
+      if (nameArg?.value.kind === Kind.STRING && subgraphArg?.value.kind === Kind.STRING) {
+        if (nameArg.value.value === resolverName && subgraphArg.value.value === subgraphName) {
+          const operationArg = directiveNode.arguments?.find(arg => arg.name.value === 'operation');
+          const kindArg = directiveNode.arguments?.find(arg => arg.name.value === 'kind');
+          if (operationArg?.value.kind === Kind.STRING) {
+            return {
+              name: resolverName,
+              operation: operationArg.value.value,
+              kind:
+                kindArg?.value.kind === Kind.STRING
+                  ? (kindArg.value.value as ResolverKind)
+                  : undefined,
+              subgraph: subgraphName,
+            };
+          }
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+export function resolveResolverOperationStringAndKind(
+  supergraph: GraphQLSchema,
+  resolverDirective: ResolverRefConfig | RegularResolverConfig,
+) {
+  let resolverOperationString: string;
+  let resolverKind: ResolverKind;
+  if ('name' in resolverDirective) {
+    const globalResolver = getGlobalResolver(
+      supergraph,
+      resolverDirective.name,
+      resolverDirective.subgraph,
+    );
+    if (!globalResolver) {
+      throw new Error(`No global resolver found for ${resolverDirective.name}`);
+    }
+    resolverOperationString = globalResolver.operation;
+    resolverKind = globalResolver.kind ?? 'FETCH';
+  } else {
+    resolverOperationString = resolverDirective.operation;
+    resolverKind = resolverDirective.kind ?? 'FETCH';
+  }
+  return {
+    resolverOperationString,
+    resolverKind,
+  };
 }
 
 export function visitFieldNodeForTypeResolvers(
@@ -424,28 +501,34 @@ export function visitFieldNodeForTypeResolvers(
     }
 
     // Handle field resolvers
-    const resolverDirective = fieldDirectives.find(d => d.name === 'resolver')
-      ?.args as ResolverConfig;
+    const resolverDirective = fieldDirectives.find(d => d.name === 'resolver')?.args as
+      | ResolverRefConfig
+      | RegularResolverConfig;
     if (resolverDirective) {
       const variableDirectives = fieldDirectives
         .filter(d => d.name === 'variable')
         .map(d => d.args) as ResolverVariableConfig[];
       const resolverSelections = subFieldNode.selectionSet?.selections ?? [];
+      const { resolverOperationString, resolverKind } = resolveResolverOperationStringAndKind(
+        supergraph,
+        resolverDirective,
+      );
       const {
         newFieldNode: newFieldNodeForSubgraph,
         resolverOperationDocument,
         resolvedFieldPath,
         batch,
         defer,
-      } = createResolveNode(
+      } = createResolveNode({
         parentSubgraph,
-        newFieldNode,
-        resolverDirective,
+        fieldNode: newFieldNode,
+        resolverOperationString,
+        resolverKind,
         variableDirectives,
         resolverSelections,
-        subFieldNode.arguments,
+        resolverArguments: subFieldNode.arguments,
         ctx,
-      );
+      });
       newFieldNode = newFieldNodeForSubgraph;
       const fieldResolveFieldDependencyMap = new Map<string, ResolverOperationNode[]>();
       const fieldSubgraph = resolverDirective.subgraph;
@@ -538,7 +621,7 @@ export function visitFieldNodeForTypeResolvers(
   for (const fieldSubgraph in resolverSelectionsBySubgraph) {
     const resolverDirective = typeDirectives.find(
       d => d.name === 'resolver' && d.args?.subgraph === fieldSubgraph,
-    )?.args as ResolverConfig;
+    )?.args as ResolverRefConfig | RegularResolverConfig;
     if (!resolverDirective) {
       throw new Error(`No resolver directive found for ${fieldSubgraph}`);
     }
@@ -552,20 +635,25 @@ export function visitFieldNodeForTypeResolvers(
         variableDirectives.push(...selectionVariables);
       }
     }
+    const { resolverOperationString, resolverKind } = resolveResolverOperationStringAndKind(
+      supergraph,
+      resolverDirective,
+    );
     const {
       newFieldNode: newFieldNodeForSubgraph,
       resolverOperationDocument,
       batch,
       defer,
-    } = createResolveNode(
+    } = createResolveNode({
       parentSubgraph,
-      newFieldNode,
-      resolverDirective,
+      fieldNode: newFieldNode,
+      resolverOperationString,
+      resolverKind,
       variableDirectives,
       resolverSelections,
-      newFieldNode.arguments,
+      resolverArguments: newFieldNode.arguments,
       ctx,
-    );
+    });
     newFieldNode = newFieldNodeForSubgraph;
     const resolverDependencyFieldMap = new Map<string, ResolverOperationNode[]>();
     resolverOperationNodes.push({
