@@ -53,29 +53,25 @@ describe('Query Planning', () => {
 
       const selections = operationAst!.selectionSet.selections as FlattenedFieldNode[];
 
-      const { newFieldNode, resolverOperationDocument } = createResolveNode(
-        'A',
-        selections[0],
-        {
-          operation: /* GraphQL */ `
-            query FooFromB($Foo_id: ID!) {
-              foo(id: $Foo_id)
-            }
-          `,
-          subgraph: 'B',
-          kind: 'FETCH',
-        },
-        [
+      const { newFieldNode, resolverOperationDocument } = createResolveNode({
+        parentSubgraph: 'A',
+        fieldNode: selections[0],
+        resolverOperationString: /* GraphQL */ `
+          query FooFromB($Foo_id: ID!) {
+            foo(id: $Foo_id)
+          }
+        `,
+        variableDirectives: [
           {
             name: 'Foo_id',
             select: 'id',
             subgraph: 'A',
           },
         ],
-        selections[0].selectionSet?.selections as FlattenedFieldNode[],
-        selections[0].arguments,
-        { currentVariableIndex: 0, rootVariableMap: new Map() },
-      );
+        resolverSelections: selections[0].selectionSet?.selections as FlattenedFieldNode[],
+        resolverArguments: selections[0].arguments,
+        ctx: { currentVariableIndex: 0, rootVariableMap: new Map() },
+      });
 
       expect(printCached(newFieldNode)).toBe('myFoo {\n  baz\n  __variable_0: id\n}');
       expect(printCached(resolverOperationDocument)).toBe(
@@ -113,29 +109,25 @@ query FooFromB($__variable_0: ID!) {
 
       const extraFieldSelection = myFooSelection.selectionSet!.selections[0] as FlattenedFieldNode;
 
-      const { newFieldNode, resolverOperationDocument } = createResolveNode(
-        'A',
-        myFooSelection,
-        {
-          operation: /* GraphQL */ `
-            query ExtraFieldFromC($Foo_id: ID!) {
-              extraFieldForFoo(id: $Foo_id)
-            }
-          `,
-          subgraph: 'B',
-          kind: 'FETCH',
-        },
-        [
+      const { newFieldNode, resolverOperationDocument } = createResolveNode({
+        parentSubgraph: 'A',
+        fieldNode: myFooSelection,
+        resolverOperationString: /* GraphQL */ `
+          query ExtraFieldFromC($Foo_id: ID!) {
+            extraFieldForFoo(id: $Foo_id)
+          }
+        `,
+        variableDirectives: [
           {
             name: 'Foo_id',
             select: 'id',
             subgraph: 'A',
           },
         ],
-        extraFieldSelection.selectionSet!.selections as FlattenedFieldNode[],
-        extraFieldSelection.arguments,
-        { currentVariableIndex: 0, rootVariableMap: new Map() },
-      );
+        resolverSelections: extraFieldSelection.selectionSet!.selections as FlattenedFieldNode[],
+        resolverArguments: extraFieldSelection.arguments,
+        ctx: { currentVariableIndex: 0, rootVariableMap: new Map() },
+      });
 
       expect(printCached(newFieldNode)).toBe(
         /* GraphQL */ `

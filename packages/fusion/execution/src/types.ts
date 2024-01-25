@@ -37,11 +37,23 @@ export interface ResolverVariableConfig {
   select?: string;
   value?: string;
   subgraph?: string;
-  interpolate?: string;
 }
 
-export interface ResolverConfig {
+export type ResolverConfig = ResolverRefConfig | GlobalResolverConfig | RegularResolverConfig;
+
+export interface ResolverRefConfig {
+  name: string;
+  subgraph: string;
+}
+
+export interface GlobalResolverConfig {
+  name: string;
   operation: string;
-  kind: ResolverKind;
+  kind?: ResolverKind;
+}
+
+export interface RegularResolverConfig {
+  operation: string;
+  kind?: ResolverKind;
   subgraph: string;
 }
