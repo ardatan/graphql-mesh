@@ -14,7 +14,7 @@ import {
   createExecutableResolverOperationNode,
   executeResolverOperationNode,
 } from '../src/execution.js';
-import { extractSubgraphFromSupergraph } from '../src/extractSubgraph.js';
+import { extractSubgraphFromFusiongraph } from '../src/extractSubgraph.js';
 import { FlattenedFieldNode, FlattenedSelectionSet } from '../src/flattenSelections.js';
 import {
   createExecutablePlanForOperation,
@@ -177,7 +177,7 @@ query ExtraFieldFromC($__variable_0: ID!) {
         ${typeDefInText}
       `;
 
-      const supergraph = buildSchema(schemaInText, {
+      const fusiongraph = buildSchema(schemaInText, {
         assumeValid: true,
         assumeValidSDL: true,
       });
@@ -194,13 +194,13 @@ query ExtraFieldFromC($__variable_0: ID!) {
 
       const selections = operationAst!.selectionSet.selections as FlattenedFieldNode[];
 
-      const type = supergraph.getType('Foo') as GraphQLObjectType;
+      const type = fusiongraph.getType('Foo') as GraphQLObjectType;
 
       const { newFieldNode, resolverOperationNodes } = visitFieldNodeForTypeResolvers(
         'A',
         selections[0],
         type,
-        supergraph,
+        fusiongraph,
         { currentVariableIndex: 0, rootVariableMap: new Map() },
       );
 
@@ -264,7 +264,7 @@ query FooFromC($__variable_1: ID!) {
         ${typeDefInText}
       `;
 
-      const supergraph = buildSchema(schemaInText, {
+      const fusiongraph = buildSchema(schemaInText, {
         assumeValid: true,
         assumeValidSDL: true,
       });
@@ -281,13 +281,13 @@ query FooFromC($__variable_1: ID!) {
 
       const selections = operationAst!.selectionSet.selections as FlattenedFieldNode[];
 
-      const type = supergraph.getType('Foo') as GraphQLObjectType;
+      const type = fusiongraph.getType('Foo') as GraphQLObjectType;
 
       const { newFieldNode, resolverOperationNodes } = visitFieldNodeForTypeResolvers(
         'A',
         selections[0],
         type,
-        supergraph,
+        fusiongraph,
         { currentVariableIndex: 0, rootVariableMap: new Map() },
       );
       /*
@@ -374,7 +374,7 @@ query FooFromB($__variable_2: ID!) {
         selectionSet,
       };
 
-      const supergraph = buildSchema(
+      const fusiongraph = buildSchema(
         /* GraphQL */ `
           type Query {
             myFoo: Foo! @resolver(operation: "query MyFooFromA { myFoo }", subgraph: "A")
@@ -394,8 +394,8 @@ query FooFromB($__variable_2: ID!) {
         visitFieldNodeForTypeResolvers(
           'DUMMY',
           fakeFieldNode,
-          supergraph.getQueryType()!,
-          supergraph,
+          fusiongraph.getQueryType()!,
+          fusiongraph,
           { currentVariableIndex: 0, rootVariableMap: new Map() },
         );
 
@@ -435,7 +435,7 @@ query MyFooFromA {
         }
       `;
 
-      const supergraphInText = /* GraphQL */ `
+      const fusiongraphInText = /* GraphQL */ `
         type Query {
           foo(id: ID!): Foo!
             @resolver(operation: "query FooFromA($id: ID!) { foo(id: $id) }", subgraph: "A")
@@ -446,14 +446,14 @@ query MyFooFromA {
         }
       `;
 
-      const supergraph = buildSchema(supergraphInText, {
+      const fusiongraph = buildSchema(fusiongraphInText, {
         assumeValid: true,
         assumeValidSDL: true,
       });
 
       const operationDoc = parseAndCache(operationInText);
 
-      const plan = planOperation(supergraph, operationDoc, 'Test');
+      const plan = planOperation(fusiongraph, operationDoc, 'Test');
 
       expect(
         Object.fromEntries(
@@ -483,7 +483,7 @@ query MyFooFromA {
         }
       `;
 
-      const supergraphInText = /* GraphQL */ `
+      const fusiongraphInText = /* GraphQL */ `
         schema
           @resolver(
             name: "userResolver"
@@ -507,14 +507,14 @@ query MyFooFromA {
         }
       `;
 
-      const supergraph = buildSchema(supergraphInText, {
+      const fusiongraph = buildSchema(fusiongraphInText, {
         assumeValid: true,
         assumeValidSDL: true,
       });
 
       const operationDoc = parseAndCache(operationInText);
 
-      const plan = planOperation(supergraph, operationDoc, 'Test');
+      const plan = planOperation(fusiongraph, operationDoc, 'Test');
 
       expect(
         Object.fromEntries(
@@ -717,7 +717,7 @@ describe('Execution', () => {
     },
   });
 
-  const supergraphInText = /* GraphQL */ `
+  const fusiongraphInText = /* GraphQL */ `
     type Foo
       @variable(name: "Foo_id", select: "id", subgraph: "A")
       @variable(name: "Foo_id", select: "id", subgraph: "B")
@@ -768,7 +768,7 @@ describe('Execution', () => {
     }
   `;
 
-  const supergraph = buildSchema(supergraphInText, {
+  const fusiongraph = buildSchema(fusiongraphInText, {
     assumeValid: true,
     assumeValidSDL: true,
   });
@@ -810,7 +810,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -843,7 +843,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -884,7 +884,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -976,7 +976,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1006,7 +1006,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1033,7 +1033,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1063,7 +1063,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1091,7 +1091,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1118,7 +1118,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1155,7 +1155,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1190,7 +1190,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1217,7 +1217,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1247,7 +1247,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
 
@@ -1275,7 +1275,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1302,7 +1302,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const plan = createExecutablePlanForOperation({
-      supergraph,
+      fusiongraph,
       document: operationDoc,
     });
 
@@ -1368,7 +1368,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const plan = createExecutablePlanForOperation({
-      supergraph,
+      fusiongraph,
       document: operationDoc,
     });
     expect(serializeExecutableOperationPlan(plan)).toMatchObject({
@@ -1436,7 +1436,7 @@ describe('Execution', () => {
     const operationDoc = parseAndCache(operationInText);
 
     const result = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDoc,
       operationName: 'Test',
@@ -1509,13 +1509,13 @@ describe('Execution', () => {
     const operationDocWithDefer = parseAndCache(operationInTextWithDefer);
     const operationDocWithoutDefer = parseAndCache(operationInTextWithoutDefer);
     const resultWithDefer = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDocWithDefer,
       operationName: 'Test',
     });
     const resultWithoutDefer = await executeOperation({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDocWithoutDefer,
       operationName: 'Test',
@@ -1530,7 +1530,7 @@ describe('Execution', () => {
     expect(collectedValues[collectedValues.length - 1]).toStrictEqual(resultWithoutDefer);
 
     const resultInDeferWay = await executeOperationWithPatches({
-      supergraph,
+      fusiongraph,
       onExecute,
       document: operationDocWithDefer,
       operationName: 'Test',
@@ -1547,7 +1547,7 @@ describe('Execution', () => {
 
 describe('extractSubgraph', () => {
   it('works', () => {
-    const supergraph = buildSchema(
+    const fusiongraph = buildSchema(
       /* GraphQL */ `
         type Query {
           foo: Foo! @source(subgraph: "A")
@@ -1566,7 +1566,7 @@ describe('extractSubgraph', () => {
       },
     );
 
-    const aSubgraph = extractSubgraphFromSupergraph('A', supergraph);
+    const aSubgraph = extractSubgraphFromFusiongraph('A', fusiongraph);
 
     expect(printSchemaWithDirectives(aSubgraph)).toBe(
       /* GraphQL */ `

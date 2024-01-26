@@ -9,10 +9,10 @@ import {
 } from 'graphql';
 import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
 
-export function extractSubgraphFromSupergraph(subgraph: string, supergraph: GraphQLSchema) {
-  const supergraphAst = getDocumentNodeFromSchema(supergraph);
+export function extractSubgraphFromFusiongraph(subgraph: string, fusiongraph: GraphQLSchema) {
+  const fusiongraphAst = getDocumentNodeFromSchema(fusiongraph);
   const filterNodeBySubgraph = createFilterNodeBySubgraph(subgraph);
-  const filteredAst = visit(supergraphAst, {
+  const filteredAst = visit(fusiongraphAst, {
     Directive(node) {
       const subgraphArgument = node.arguments?.find(argument => argument.name.value === 'subgraph');
       if (

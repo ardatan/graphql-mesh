@@ -25,7 +25,7 @@ import {
 } from './serialization.js';
 
 export function planOperation(
-  supergraph: GraphQLSchema,
+  fusiongraph: GraphQLSchema,
   document: DocumentNode,
   operationName?: string,
 ) {
@@ -78,7 +78,7 @@ export function planOperation(
     },
   };
 
-  const rootTypeMap = getRootTypeMap(supergraph);
+  const rootTypeMap = getRootTypeMap(fusiongraph);
   const operationType = operationAst.operation;
   const rootType = rootTypeMap.get(operationType);
   if (!rootType) {
@@ -95,7 +95,7 @@ export function planOperation(
     'ROOT',
     flattenedFakeFieldNode,
     rootType,
-    supergraph,
+    fusiongraph,
     {
       currentVariableIndex: 0,
       rootVariableMap,
@@ -127,53 +127,53 @@ export interface SerializableOperationPlan {
 }
 
 export function executeOperation({
-  supergraph,
+  fusiongraph,
   onExecute,
   document,
   operationName,
   variables = {},
   context = {},
 }: {
-  supergraph: GraphQLSchema;
+  fusiongraph: GraphQLSchema;
   onExecute: OnExecuteFn;
   document: DocumentNode;
   operationName?: string;
   variables?: Record<string, any>;
   context?: any;
 }) {
-  const executablePlan = createExecutablePlanForOperation({ supergraph, document, operationName });
+  const executablePlan = createExecutablePlanForOperation({ fusiongraph, document, operationName });
   return executeOperationPlan({ executablePlan, onExecute, variables, context });
 }
 
 export function executeOperationWithPatches({
-  supergraph,
+  fusiongraph,
   onExecute,
   document,
   operationName,
   variables = {},
   context = {},
 }: {
-  supergraph: GraphQLSchema;
+  fusiongraph: GraphQLSchema;
   onExecute: OnExecuteFn;
   document: DocumentNode;
   operationName?: string;
   variables?: Record<string, any>;
   context?: any;
 }) {
-  const executablePlan = createExecutablePlanForOperation({ supergraph, document, operationName });
+  const executablePlan = createExecutablePlanForOperation({ fusiongraph, document, operationName });
   return executeOperationPlanWithPatches({ executablePlan, onExecute, variables, context });
 }
 
 export function createExecutablePlanForOperation({
-  supergraph,
+  fusiongraph,
   document,
   operationName,
 }: {
-  supergraph: GraphQLSchema;
+  fusiongraph: GraphQLSchema;
   document: DocumentNode;
   operationName?: string;
 }): ExecutableOperationPlan {
-  const plan = planOperation(supergraph, document, operationName);
+  const plan = planOperation(fusiongraph, document, operationName);
   const executablePlan = createExecutableResolverOperationNodesWithDependencyMap(
     plan.resolverOperationNodes,
     plan.resolverDependencyFieldMap,
