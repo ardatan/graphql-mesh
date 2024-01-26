@@ -14,8 +14,10 @@ plugins:
       mocks:
         - apply: Query.greeting
 documents:
+  # Documents can be specified by filename or as a glob pattern
+  - ./src/**/*.graphql
+  # Or by inline definition
   - |
     query TypeName {
       __typename
     }
-  - ./src/**/*.graphql

@@ -61,4 +61,25 @@ describe('Hello World', () => {
     expect(result?.errors).toBeFalsy();
     expect(result.data).toEqual({ greeting: { hello: 'world' } });
   });
+
+  it('should not restrict to persisted queries only', async () => {
+    const response = await meshHttp.fetch('/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query HelloWorld {
+            greeting {
+              __typename
+            }
+          }
+        `,
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    const result = (await response.json()) as ExecutionResult;
+    expect(result?.errors).toBeFalsy();
+    expect(result.data).toEqual({ greeting: { __typename: 'query_greeting' } });
+  });
 });
