@@ -1,9 +1,10 @@
 {
-  "name": "persisted-operations",
-  "version": "0.7.5",
+  "name": "example-persisted-operations",
+  "version": "0.0.1",
   "license": "MIT",
   "private": true,
   "scripts": {
+    "build": "mesh build",
     "start": "mesh dev",
     "test": "mesh build && jest"
   },

@@ -23,7 +23,7 @@
   "packageManager": "yarn@1.22.21",
   "scripts": {
     "build": "bob build",
-    "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace example-fastify build",
+    "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace example-fastify build && yarn workspace example-persisted-operations build",
     "build:website": "cd website && yarn build",
     "ci:lint": "eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
     "clean": "rm -rf packages/**/dist packages/**/**/dist examples/**/node_modules/.bin/*mesh* .bob",
