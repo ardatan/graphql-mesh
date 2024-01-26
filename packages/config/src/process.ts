@@ -640,6 +640,7 @@ export async function processConfig(
         },
         skipDocumentValidation: true,
         allowArbitraryOperations: true,
+        ...config.persistedOperations,
       }),
     );
     if (options.generateCode) {
@@ -653,6 +654,7 @@ export async function processConfig(
         getPersistedOperation(key) {
           return documentHashMap[key];
         },
+        ...${JSON.stringify(config.persistedOperations ?? {}, null, 2)}
       }))`);
     }
   }

@@ -722,6 +722,44 @@
       },
       "required": ["name"]
     },
+    "PersistedOperationsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PersistedOperationsConfig",
+      "properties": {
+        "allowArbitraryOperations": {
+          "type": "boolean",
+          "description": "Whether to allow execution of arbitrary GraphQL operations aside from persisted operations."
+        },
+        "skipDocumentValidation": {
+          "type": "boolean",
+          "description": "Whether to skip validation of the persisted operation"
+        },
+        "customErrors": {
+          "$ref": "#/definitions/CustomPersistedQueryErrors",
+          "description": "Custom errors to be thrown"
+        }
+      }
+    },
+    "CustomPersistedQueryErrors": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "CustomPersistedQueryErrors",
+      "properties": {
+        "notFound": {
+          "type": "string",
+          "description": "Error to be thrown when the persisted operation is not found"
+        },
+        "persistedQueryOnly": {
+          "type": "string",
+          "description": "Error to be thrown when rejecting non-persisted operations"
+        },
+        "keyNotFound": {
+          "type": "string",
+          "description": "Error to be thrown when the extraction of the persisted operation id failed"
+        }
+      }
+    },
     "GraphQLHandlerMultipleHTTPConfiguration": {
       "additionalProperties": false,
       "type": "object",
@@ -4210,6 +4248,10 @@
       },
       "additionalItems": false,
       "description": "Provide a query or queries for GraphQL Playground, validation and SDK Generation\nThe value can be the file path, glob expression for the file paths or the SDL.\n(.js, .jsx, .graphql, .gql, .ts and .tsx files are supported."
+    },
+    "persistedOperations": {
+      "$ref": "#/definitions/PersistedOperationsConfig",
+      "description": "Configure persisted operations options"
     },
     "logger": {
       "anyOf": [
