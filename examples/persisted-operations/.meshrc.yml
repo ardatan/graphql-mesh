@@ -1,0 +1,22 @@
+sources:
+  - name: Hello World
+    handler:
+      jsonSchema:
+        operations:
+          - type: Query
+            field: greeting
+            method: GET
+            path: /
+            responseSample:
+              hello: world
+plugins:
+  - mock:
+      mocks:
+        - apply: Query.greeting
+documents:
+  - |
+    query HelloWorld {
+      greeting {
+        hello
+      }
+    }
