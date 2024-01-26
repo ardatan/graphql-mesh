@@ -22,7 +22,27 @@ describe('Hello World', () => {
 
   afterAll(() => mesh.destroy());
 
-  it('should give correct response for given hash', async () => {
+  it('should give correct response for inline persisted operation', async () => {
+    const response = await meshHttp.fetch('/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        extensions: {
+          persistedQuery: {
+            version: 1,
+            sha256Hash: 'ece829f774dcb3e1358987feb1f86832b39472406a3ef65dce6a2a740304148a',
+          },
+        },
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    const result = (await response.json()) as ExecutionResult;
+    expect(result?.errors).toBeFalsy();
+    expect(result.data).toEqual({ __typename: 'Query' });
+  });
+
+  it('should give correct response for file documents', async () => {
     const response = await meshHttp.fetch('/graphql', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -39,6 +59,6 @@ describe('Hello World', () => {
     expect(response.status).toBe(200);
     const result = (await response.json()) as ExecutionResult;
     expect(result?.errors).toBeFalsy();
-    expect(result).toMatchSnapshot();
+    expect(result.data).toEqual({ greeting: { hello: 'world' } });
   });
 });

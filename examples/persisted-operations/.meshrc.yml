@@ -15,8 +15,7 @@ plugins:
         - apply: Query.greeting
 documents:
   - |
-    query HelloWorld {
-      greeting {
-        hello
-      }
+    query TypeName {
+      __typename
     }
+  - ./src/**/*.graphql
