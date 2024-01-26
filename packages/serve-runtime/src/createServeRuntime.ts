@@ -41,27 +41,22 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
       ...config.http,
     });
     supergraphYogaPlugin = useExecutor(executor);
-  } else {
-    const supergraphSpec = 'spec' in config ? config.spec : 'fusion';
-
-    const supergraphConfig = 'supergraph' in config ? config.supergraph : './supergraph.graphql';
-    if (supergraphSpec === 'fusion') {
-      supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
-        getFusiongraph() {
-          return handleSupergraphConfig(supergraphConfig, serveContext);
-        },
-        transports: config.transports,
-        polling: config.polling,
-        additionalResolvers: config.additionalResolvers,
-        transportBaseContext: serveContext,
-      });
-    } else if (supergraphSpec === 'federation') {
-      supergraphYogaPlugin = useFederationSupergraph({
-        serveContext,
-        supergraphConfig,
-        transports: config.transports,
-      });
-    }
+  } else if ('fusiongraph' in config) {
+    supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
+      getFusiongraph() {
+        return handleSupergraphConfig(config.fusiongraph || './fusiongraph.graphql', serveContext);
+      },
+      transports: config.transports,
+      polling: config.polling,
+      additionalResolvers: config.additionalResolvers,
+      transportBaseContext: serveContext,
+    });
+  } else if ('supergraph' in config) {
+    supergraphYogaPlugin = useFederationSupergraph({
+      serveContext,
+      supergraphConfig: config.supergraph || './supergraph.graphql',
+      transports: config.transports,
+    });
   }
 
   const defaultFetchPlugin: MeshHTTPPlugin<TServerContext, {}> = {

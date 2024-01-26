@@ -50,21 +50,28 @@ type MeshHTTPHandlerConfigurationWithPubSub<TServerContext, TUserContext> = Omit
 };
 
 type MeshHTTPHandlerConfigurationWithSourceInput<TServerContext, TUserContext> =
+  | MeshHTTPHandlerConfigurationWithFusiongraph<TServerContext, TUserContext>
   | MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContext>
   | MeshHTTPHandlerConfigurationWithHttpEndpoint<TServerContext, TUserContext>;
+
+interface MeshHTTPHandlerConfigurationWithFusiongraph<TServerContext, TUserContext>
+  extends MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
+  /**
+   * Path to the GraphQL Fusion unified schema.
+   *
+   * @default ./fusiongraph.graphql
+   */
+  fusiongraph?: SupergraphConfig;
+}
 
 interface MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContext>
   extends MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
   /**
-   * Path to the Supergraph Schema
+   * Path to the Apollo Federation unified schema.
+   *
+   * @default ./supergraph.graphql
    */
   supergraph?: SupergraphConfig;
-  /**
-   * Supergraph spec
-   *
-   * @default 'fusion'
-   */
-  spec?: 'federation' | 'fusion';
 }
 
 interface MeshHTTPHandlerConfigurationWithHttpEndpoint<TServerContext, TUserContext>
