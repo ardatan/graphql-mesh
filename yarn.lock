@@ -5300,10 +5300,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.7.0.tgz#b5bc1e081428794f6a4d239707b359404be35ce2"
   integrity sha512-Jh4t/593gxs0lJZ/z3NnasKlplXT2f+4y/LZYuaKZW5KAaiVFL/fThhs+17EbUd53jUVJ0QudYCBGbN/psvaqg==
 
-"@sinclair/typebox@0.32.12", "@sinclair/typebox@^0.32.0":
-  version "0.32.12"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.12.tgz#6e0fef781f9ec6709d6c6c7e38984c8e7af3a1da"
-  integrity sha512-uKRQW9a+alkPwZMzQk6W8cCZC117kZJZ3GQx3Yn9unu2oWX09PxEsyMF7D9tuvoH8se1hIZqLRja+FtU7HKGhQ==
+"@sinclair/typebox@0.32.13", "@sinclair/typebox@^0.32.0":
+  version "0.32.13"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.13.tgz#1b9bf6de7319d17bfb6e34b9b5b2051ba6c71278"
+  integrity sha512-6gfhrgov2RWxPIlGyFcCVn1DejhmQvObIiBIx/Qx3FRnxlLS/RuoyDxK1hhhVU+S5+1Xmul32QALLErVfinyxw==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
@@ -6594,10 +6594,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@20.11.6", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
-  version "20.11.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.6.tgz#6adf4241460e28be53836529c033a41985f85b6e"
-  integrity sha512-+EOokTnksGVgip2PbYbr3xnR7kZigh4LbybAfBAw5BpnQ+FqBYUsvCEjYd70IXKlbohQ64mzEYmMtlWUY8q//Q==
+"@types/node@*", "@types/node@20.11.7", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
+  version "20.11.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.7.tgz#cb49aedd758c978c30806d0c38b520ed2a3df6e0"
+  integrity sha512-GPmeN1C3XAyV5uybAf4cMLWT9fDWcmQhZVtMFu7OR32WjrqGG+Wnk2V1d0bmtUyE/Zy1QJ9BxyiTih9z8Oks8A==
   dependencies:
     undici-types "~5.26.4"
 
