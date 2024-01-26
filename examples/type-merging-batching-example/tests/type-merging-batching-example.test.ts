@@ -6,7 +6,7 @@ import {
   createExecutablePlanForOperation,
   serializeExecutableOperationPlan,
 } from '@graphql-mesh/fusion-execution';
-import { getExecutorForSupergraph } from '@graphql-mesh/fusion-runtime';
+import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
 import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
 import { composeConfig } from '../mesh.config.js';
@@ -14,7 +14,7 @@ import { authorsYoga } from '../services/authors/yoga.js';
 import { booksYoga } from '../services/books/yoga.js';
 
 describe('Type Merging with Batching Example', () => {
-  let supergraph: GraphQLSchema;
+  let fusiongraph: GraphQLSchema;
   let executor: Executor;
   async function subgraphFetch(...args: Parameters<typeof fetch>) {
     const req = new Request(...args);
@@ -29,18 +29,18 @@ describe('Type Merging with Batching Example', () => {
     });
   }
   beforeAll(async () => {
-    supergraph = await getComposedSchemaFromConfig({
+    fusiongraph = await getComposedSchemaFromConfig({
       ...composeConfig,
       fetch: subgraphFetch,
     });
-    const { supergraphExecutor } = getExecutorForSupergraph({
-      supergraph,
+    const { fusiongraphExecutor } = getExecutorForFusiongraph({
+      fusiongraph,
       fetch: subgraphFetch,
     });
-    executor = supergraphExecutor;
+    executor = fusiongraphExecutor;
   });
   it('generates the schema correctly', () => {
-    expect(printSchemaWithDirectives(supergraph)).toMatchSnapshot('schema');
+    expect(printSchemaWithDirectives(fusiongraph)).toMatchSnapshot('schema');
   });
   const queryNames = readdirSync(join(__dirname, '../example-queries'));
   for (const queryName of queryNames) {
@@ -54,7 +54,7 @@ describe('Type Merging with Batching Example', () => {
     });
     it(`plans ${queryName} correctly`, async () => {
       const plan = createExecutablePlanForOperation({
-        supergraph,
+        fusiongraph,
         document,
       });
       const serializedPlan = serializeExecutableOperationPlan(plan);

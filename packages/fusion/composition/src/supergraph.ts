@@ -28,28 +28,24 @@ const entityResolverDefinition = {
 };
 
 const schemaBuildOpts = { noLocation: true, assumeValid: true, assumeValidSDL: true };
-export function convertFusionSupergraphFromFederationSupergraph(
+export function convertSupergraphToFusiongraph(
   federationSupergraph: DocumentNode | string | GraphQLSchema,
 ) {
-  let federationSupergraphSchema: GraphQLSchema;
+  let supergraphSchema: GraphQLSchema;
   if (isSchema(federationSupergraph)) {
-    federationSupergraphSchema = federationSupergraph;
+    supergraphSchema = federationSupergraph;
   } else if (isDocumentNode(federationSupergraph)) {
-    federationSupergraphSchema = buildASTSchema(federationSupergraph, schemaBuildOpts);
+    supergraphSchema = buildASTSchema(federationSupergraph, schemaBuildOpts);
   } else {
-    federationSupergraphSchema = buildSchema(federationSupergraph, schemaBuildOpts);
+    supergraphSchema = buildSchema(federationSupergraph, schemaBuildOpts);
   }
   const subgraphLocationMap = new Map<string, string>();
-  const joinGraphEnum = federationSupergraphSchema.getType('join__Graph');
+  const joinGraphEnum = supergraphSchema.getType('join__Graph');
   if (!isEnumType(joinGraphEnum)) {
     throw new Error('Expected join__Graph to be an enum');
   }
   for (const joinGraphEnumValue of joinGraphEnum.getValues()) {
-    const joinGraphDirective = getDirective(
-      federationSupergraphSchema,
-      joinGraphEnumValue,
-      'join__graph',
-    );
+    const joinGraphDirective = getDirective(supergraphSchema, joinGraphEnumValue, 'join__graph');
     if (!joinGraphDirective?.length) {
       throw new Error('Expected join__Graph to have a join__graph directive');
     }
@@ -58,20 +54,20 @@ export function convertFusionSupergraphFromFederationSupergraph(
   }
 
   const typeMap = new Map<string, GraphQLType>();
-  const rootTypeMap = getRootTypeMap(federationSupergraphSchema);
+  const rootTypeMap = getRootTypeMap(supergraphSchema);
   const operationByRootType = new Map<string, OperationTypeNode>();
   for (const [operationType, rootType] of rootTypeMap) {
     operationByRootType.set(rootType.name, operationType);
   }
 
-  const fusionSupergraphSchema = mapSchema(federationSupergraphSchema, {
+  const fusiongraphSchema = mapSchema(supergraphSchema, {
     [MapperKind.TYPE](type) {
       if (type.name.startsWith('link__') || type.name.startsWith('join__')) {
         return null;
       }
       const typeExtensions: any = (type.extensions ||= {});
       const typeDirectiveExtensions: any = (typeExtensions.directives ||= {});
-      const joinTypeDirectives = getDirective(federationSupergraphSchema, type, 'join__type');
+      const joinTypeDirectives = getDirective(supergraphSchema, type, 'join__type');
       const sourceDirectivesForFusion: any[] = (typeDirectiveExtensions.source ||= []);
       const variableDirectivesForFusion: any[] = (typeDirectiveExtensions.variable ||= []);
       const fieldMap: GraphQLFieldMap<any, any> = (type as any).getFields?.();
@@ -100,7 +96,7 @@ export function convertFusionSupergraphFromFederationSupergraph(
               }
               let availableSubgraphsForField: string[] = [];
               const joinFieldDirectives = getDirective(
-                federationSupergraphSchema,
+                supergraphSchema,
                 selectionFieldObject,
                 'join__field',
               );
@@ -154,11 +150,7 @@ export function convertFusionSupergraphFromFederationSupergraph(
       );
       const fieldExtensions: any = (fieldConfig.extensions ||= {});
       const fieldDirectiveExtensions: any = (fieldExtensions.directives ||= {});
-      const joinFieldDirectives = getDirective(
-        federationSupergraphSchema,
-        fieldConfig,
-        'join__field',
-      );
+      const joinFieldDirectives = getDirective(supergraphSchema, fieldConfig, 'join__field');
       const sourceDirectivesForFusion: any[] = (fieldDirectiveExtensions.source ||= []);
       const variableDirectivesForFusion: any[] = (fieldDirectiveExtensions.variable ||= []);
       // TODO: Pass this to type's representations
@@ -185,7 +177,7 @@ export function convertFusionSupergraphFromFederationSupergraph(
                 throw new Error(`Expected field ${selectionName} to exist on type ${typeName}`);
               }
               const joinFieldDirectives = getDirective(
-                federationSupergraphSchema,
+                supergraphSchema,
                 selectionFieldObject,
                 'join__field',
               );
@@ -273,7 +265,7 @@ export function convertFusionSupergraphFromFederationSupergraph(
       const enumValueExtensions: any = (enumValueConfig.extensions ||= {});
       const enumValueDirectiveExtensions: any = (enumValueExtensions.directives ||= {});
       const joinEnumValueDirectives = getDirective(
-        federationSupergraphSchema,
+        supergraphSchema,
         enumValueConfig,
         'join__enumValue',
       );
@@ -297,11 +289,10 @@ export function convertFusionSupergraphFromFederationSupergraph(
     },
   });
 
-  const fusionSupergraphSchemaExtensions: any = (fusionSupergraphSchema.extensions ||= {});
-  const fusionSupergraphDirectiveExtensions: any = (fusionSupergraphSchemaExtensions.directives ||=
-    {});
-  const fusionTransportDefs = (fusionSupergraphDirectiveExtensions.transport ||= []);
-  const fusionGlobalResolverDefs = (fusionSupergraphDirectiveExtensions.resolver ||= []);
+  const fusiongraphSchemaExtensions: any = (fusiongraphSchema.extensions ||= {});
+  const fusiongraphDirectiveExtensions: any = (fusiongraphSchemaExtensions.directives ||= {});
+  const fusionTransportDefs = (fusiongraphDirectiveExtensions.transport ||= []);
+  const fusionGlobalResolverDefs = (fusiongraphDirectiveExtensions.resolver ||= []);
   for (const [subgraph, location] of subgraphLocationMap.entries()) {
     fusionTransportDefs.push({
       subgraph,
@@ -314,5 +305,5 @@ export function convertFusionSupergraphFromFederationSupergraph(
     });
   }
 
-  return fusionSupergraphSchema;
+  return fusiongraphSchema;
 }

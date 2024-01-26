@@ -33,7 +33,7 @@ export async function getComposedSchemaFromConfig(
       };
     }),
   );
-  spinnies?.add('composition', { text: `Composing supergraph` });
+  spinnies?.add('composition', { text: `Composing fusiongraph` });
   let additionalTypeDefs: (DocumentNode | string)[] | undefined;
   if (meshComposeCLIConfig.additionalTypeDefs != null) {
     const result = await loadTypedefs(meshComposeCLIConfig.additionalTypeDefs, {
@@ -54,6 +54,6 @@ export async function getComposedSchemaFromConfig(
     }
     spinnies?.succeed('transforms', { text: `Applied transforms` });
   }
-  spinnies?.succeed('composition', { text: `Composed supergraph` });
+  spinnies?.succeed('composition', { text: `Composed fusiongraph` });
   return composedSchema;
 }

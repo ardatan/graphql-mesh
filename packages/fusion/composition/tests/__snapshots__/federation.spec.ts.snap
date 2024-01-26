@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Federation converts a Federation supergraph to a Fusion supergraph 1`] = `
+exports[`Federation converts a Supergraph to a Fusiongraph 1`] = `
 "schema @transport(subgraph: "accounts", kind: "http", location: "http://accounts:4001/graphql") @transport(subgraph: "inventory", kind: "http", location: "http://inventory:4002/graphql") @transport(subgraph: "products", kind: "http", location: "http://products:4003/graphql") @transport(subgraph: "reviews", kind: "http", location: "http://reviews:4004/graphql") @resolver(subgraph: "accounts", name: "federationEntity", operation: "query getFederationEntity($representations: [_Any!]!) { _entities(representations: $representations) }", kind: "BATCH") @resolver(subgraph: "inventory", name: "federationEntity", operation: "query getFederationEntity($representations: [_Any!]!) { _entities(representations: $representations) }", kind: "BATCH") @resolver(subgraph: "products", name: "federationEntity", operation: "query getFederationEntity($representations: [_Any!]!) { _entities(representations: $representations) }", kind: "BATCH") @resolver(subgraph: "reviews", name: "federationEntity", operation: "query getFederationEntity($representations: [_Any!]!) { _entities(representations: $representations) }", kind: "BATCH") {
   query: Query
 }

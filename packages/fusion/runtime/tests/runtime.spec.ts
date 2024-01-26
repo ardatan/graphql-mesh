@@ -3,7 +3,7 @@ import { createSchema, createYoga } from 'graphql-yoga';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
 import { createExecutablePlanForOperation } from '@graphql-mesh/fusion-execution';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { useSupergraph } from '../src';
+import { useFusiongraph } from '../src';
 
 jest.mock('@graphql-mesh/fusion-execution', () => {
   const actual = jest.requireActual('@graphql-mesh/fusion-execution');
@@ -13,7 +13,7 @@ jest.mock('@graphql-mesh/fusion-execution', () => {
   };
 });
 
-describe('useSupergraph', () => {
+describe('useFusiongraph', () => {
   const aSchema = createSchema({
     typeDefs: `
       type Query {
@@ -40,8 +40,8 @@ describe('useSupergraph', () => {
   });
   const yoga = createYoga({
     plugins: [
-      useSupergraph({
-        getSupergraph: () =>
+      useFusiongraph({
+        getFusiongraph: () =>
           composeSubgraphs([
             {
               name: 'a',

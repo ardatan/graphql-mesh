@@ -1,7 +1,7 @@
 import { DocumentNode, GraphQLSchema } from 'graphql';
 import { BatchingOptions, FetchAPI, Plugin, YogaServerOptions } from 'graphql-yoga';
 import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql';
-import { SupergraphPlugin, TransportsOption } from '@graphql-mesh/fusion-runtime';
+import { FusiongraphPlugin, TransportsOption } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@graphql-mesh/types';
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
@@ -13,7 +13,7 @@ export type MeshHTTPPlugin<TServerContext, TUserContext> = Plugin<
   TServerContext,
   TUserContext
 > &
-  SupergraphPlugin & {
+  FusiongraphPlugin & {
     onFetch?: OnFetchHook<TServerContext & TUserContext>;
   };
 
@@ -50,21 +50,28 @@ type MeshHTTPHandlerConfigurationWithPubSub<TServerContext, TUserContext> = Omit
 };
 
 type MeshHTTPHandlerConfigurationWithSourceInput<TServerContext, TUserContext> =
+  | MeshHTTPHandlerConfigurationWithFusiongraph<TServerContext, TUserContext>
   | MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContext>
   | MeshHTTPHandlerConfigurationWithHttpEndpoint<TServerContext, TUserContext>;
+
+interface MeshHTTPHandlerConfigurationWithFusiongraph<TServerContext, TUserContext>
+  extends MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
+  /**
+   * Path to the GraphQL Fusion unified schema.
+   *
+   * @default ./fusiongraph.graphql
+   */
+  fusiongraph?: SupergraphConfig;
+}
 
 interface MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContext>
   extends MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
   /**
-   * Path to the Supergraph Schema
+   * Path to the Apollo Federation unified schema.
+   *
+   * @default ./supergraph.graphql
    */
   supergraph?: SupergraphConfig;
-  /**
-   * Supergraph spec
-   *
-   * @default 'fusion'
-   */
-  spec?: 'federation' | 'fusion';
 }
 
 interface MeshHTTPHandlerConfigurationWithHttpEndpoint<TServerContext, TUserContext>

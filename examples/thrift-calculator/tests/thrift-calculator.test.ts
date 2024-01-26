@@ -2,23 +2,23 @@ import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { GraphQLSchema, parse } from 'graphql';
 import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
-import { getExecutorForSupergraph } from '@graphql-mesh/fusion-runtime';
+import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
 import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { composeConfig } from '../mesh.config';
 import thriftServer from '../src/main';
 
 describe('Thrift Calculator', () => {
-  let supergraph: GraphQLSchema;
+  let fusiongraph: GraphQLSchema;
   let executor: Executor;
   beforeAll(async () => {
-    supergraph = await getComposedSchemaFromConfig({
+    fusiongraph = await getComposedSchemaFromConfig({
       ...composeConfig,
       cwd: join(__dirname, '..'),
     });
-    ({ supergraphExecutor: executor } = getExecutorForSupergraph({ supergraph }));
+    ({ fusiongraphExecutor: executor } = getExecutorForFusiongraph({ fusiongraph }));
   });
   it('generates the schema correctly', () => {
-    expect(printSchemaWithDirectives(supergraph)).toMatchSnapshot('schema');
+    expect(printSchemaWithDirectives(fusiongraph)).toMatchSnapshot('schema');
   });
   const queryNames = readdirSync(join(__dirname, '../example-queries'));
   for (const queryName of queryNames) {
