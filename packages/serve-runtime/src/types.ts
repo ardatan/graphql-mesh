@@ -1,7 +1,7 @@
 import { DocumentNode, GraphQLSchema } from 'graphql';
 import { BatchingOptions, FetchAPI, Plugin, YogaServerOptions } from 'graphql-yoga';
 import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql';
-import { SupergraphPlugin, TransportsOption } from '@graphql-mesh/fusion-runtime';
+import { FusiongraphPlugin, TransportsOption } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@graphql-mesh/types';
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
@@ -13,7 +13,7 @@ export type MeshHTTPPlugin<TServerContext, TUserContext> = Plugin<
   TServerContext,
   TUserContext
 > &
-  SupergraphPlugin & {
+  FusiongraphPlugin & {
     onFetch?: OnFetchHook<TServerContext & TUserContext>;
   };
 

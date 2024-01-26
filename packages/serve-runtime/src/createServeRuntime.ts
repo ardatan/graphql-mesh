@@ -1,5 +1,5 @@
 import { createYoga, FetchAPI, YogaServerInstance, type Plugin } from 'graphql-yoga';
-import { useSupergraph } from '@graphql-mesh/fusion-runtime';
+import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -46,8 +46,8 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
 
     const supergraphConfig = 'supergraph' in config ? config.supergraph : './supergraph.graphql';
     if (supergraphSpec === 'fusion') {
-      supergraphYogaPlugin = useSupergraph<TServerContext, TUserContext>({
-        getSupergraph() {
+      supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
+        getFusiongraph() {
           return handleSupergraphConfig(supergraphConfig, serveContext);
         },
         transports: config.transports,

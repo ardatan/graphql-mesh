@@ -62,7 +62,7 @@ function getTransportDirectives(fusiongraph: GraphQLSchema) {
   return [];
 }
 
-export function getSubgraphTransportMapFromSupergraph(fusiongraph: GraphQLSchema) {
+export function getSubgraphTransportMapFromFusiongraph(fusiongraph: GraphQLSchema) {
   const subgraphTransportEntryMap: Record<string, TransportEntry> = {};
   const transportDirectives = getTransportDirectives(fusiongraph);
   for (const { kind, subgraph, location, headers, ...options } of transportDirectives) {
@@ -100,10 +100,10 @@ export type TransportsOption =
       transportKind: TTransportKind,
     ) => Promise<Transport<TTransportKind>> | Transport<TTransportKind>);
 
-interface GetExecutorForSupergraphOpts extends TransportBaseContext {
+interface GetExecutorForFusiongraphOpts extends TransportBaseContext {
   fusiongraph: GraphQLSchema;
   transports?: TransportsOption;
-  plugins?: SupergraphPlugin[];
+  plugins?: FusiongraphPlugin[];
 }
 
 export function defaultTransportsOption(transportKind: string) {
@@ -142,12 +142,12 @@ export function getTransportExecutor(
   return transport$.getSubgraphExecutor(transportContext);
 }
 
-export function getExecutorForSupergraph({
+export function getExecutorForFusiongraph({
   fusiongraph,
   transports = defaultTransportsOption,
   plugins,
   ...transportBaseContext
-}: GetExecutorForSupergraphOpts) {
+}: GetExecutorForFusiongraphOpts) {
   const onSubgraphExecuteHooks: OnSubgraphExecuteHook[] = [];
   if (plugins) {
     for (const plugin of plugins) {
@@ -156,7 +156,7 @@ export function getExecutorForSupergraph({
       }
     }
   }
-  const transportEntryMap = getSubgraphTransportMapFromSupergraph(fusiongraph);
+  const transportEntryMap = getSubgraphTransportMapFromFusiongraph(fusiongraph);
   const subgraphExecutorMap: Record<string, Executor> = {};
   const transportGetter = createTransportGetter(transports);
   function onSubgraphExecute(
@@ -291,8 +291,8 @@ export interface PlanCache {
   set(documentStr: string, plan: ExecutableOperationPlan): Promise<any> | any;
 }
 
-export interface YogaSupergraphPluginOptions<TServerContext, TUserContext> {
-  getSupergraph(
+export interface YogaFusiongraphPluginOptions<TServerContext, TUserContext> {
+  getFusiongraph(
     baseCtx: TransportBaseContext,
   ): GraphQLSchema | DocumentNode | string | Promise<GraphQLSchema | string | DocumentNode>;
   transports?: TransportsOption;
@@ -332,37 +332,43 @@ function getExecuteFnFromExecutor(executor: Executor): typeof execute {
   };
 }
 
-export function useSupergraph<TServerContext, TUserContext>({
-  getSupergraph,
+export function useFusiongraph<TServerContext, TUserContext>({
+  getFusiongraph,
   transports,
   additionalResolvers,
   polling,
   transportBaseContext,
-}: YogaSupergraphPluginOptions<TServerContext, TUserContext>): Plugin<
+}: YogaFusiongraphPluginOptions<TServerContext, TUserContext>): Plugin<
   {},
   TServerContext,
   TUserContext
-> & { invalidateSupergraph(): void } {
+> & {
+  invalidateFusiongraph(): void;
+  /** @deprecated Use invalidateFusiongraph instead. */
+  invalidateSupergraph(): void;
+} {
   let fusiongraph: GraphQLSchema;
-  let lastLoadedSupergraph: string | GraphQLSchema | DocumentNode;
+  let lastLoadedFusiongraph: string | GraphQLSchema | DocumentNode;
   let executeFn: typeof execute;
   let executor: Executor;
   let yoga: YogaServer<TServerContext, TUserContext>;
   // TODO: We need to figure this out in a better way
   let inContextSDK: any;
-  function handleLoadedSupergraph(loadedSupergraph: string | GraphQLSchema | DocumentNode) {
+  function handleLoadedFusiongraph(loadedFusiongraph: string | GraphQLSchema | DocumentNode) {
     // If the fusiongraph is the same, we don't need to do anything
-    if (lastLoadedSupergraph != null && lastLoadedSupergraph === loadedSupergraph) {
+    if (lastLoadedFusiongraph != null && lastLoadedFusiongraph === loadedFusiongraph) {
       return;
     }
-    lastLoadedSupergraph = loadedSupergraph;
-    fusiongraph = ensureSchema(loadedSupergraph);
-    const { fusiongraphExecutor, onSubgraphExecute, transportEntryMap } = getExecutorForSupergraph({
-      fusiongraph,
-      transports,
-      plugins: yoga.getEnveloped._plugins as SupergraphPlugin[],
-      ...transportBaseContext,
-    });
+    lastLoadedFusiongraph = loadedFusiongraph;
+    fusiongraph = ensureSchema(loadedFusiongraph);
+    const { fusiongraphExecutor, onSubgraphExecute, transportEntryMap } = getExecutorForFusiongraph(
+      {
+        fusiongraph,
+        transports,
+        plugins: yoga.getEnveloped._plugins as FusiongraphPlugin[],
+        ...transportBaseContext,
+      },
+    );
     executor = fusiongraphExecutor;
     if (additionalResolvers != null) {
       fusiongraph = stitchSchemas({
@@ -403,19 +409,19 @@ export function useSupergraph<TServerContext, TUserContext>({
       executeFn = getExecuteFnFromExecutor(executor);
     }
   }
-  function getAndSetSupergraph(): Promise<void> | void {
-    const fusiongraph$ = getSupergraph(transportBaseContext);
+  function getAndSetFusiongraph(): Promise<void> | void {
+    const fusiongraph$ = getFusiongraph(transportBaseContext);
     if (isPromise(fusiongraph$)) {
-      return fusiongraph$.then(handleLoadedSupergraph);
+      return fusiongraph$.then(handleLoadedFusiongraph);
     } else {
-      return handleLoadedSupergraph(fusiongraph$);
+      return handleLoadedFusiongraph(fusiongraph$);
     }
   }
   if (polling) {
-    setInterval(getAndSetSupergraph, polling);
+    setInterval(getAndSetFusiongraph, polling);
   }
 
-  let initialSupergraph$: Promise<void> | void;
+  let initialFusiongraph$: Promise<void> | void;
   let initiated = false;
   return {
     onYogaInit(payload) {
@@ -425,10 +431,10 @@ export function useSupergraph<TServerContext, TUserContext>({
       return {
         onRequestParseDone() {
           if (!initiated) {
-            initialSupergraph$ = getAndSetSupergraph();
+            initialFusiongraph$ = getAndSetFusiongraph();
           }
           initiated = true;
-          return initialSupergraph$;
+          return initialFusiongraph$;
         },
       };
     },
@@ -451,21 +457,24 @@ export function useSupergraph<TServerContext, TUserContext>({
         setSubscribeFn(executeFn);
       }
     },
+    invalidateFusiongraph() {
+      return getAndSetFusiongraph();
+    },
     invalidateSupergraph() {
-      return getAndSetSupergraph();
+      return getAndSetFusiongraph();
     },
   };
 }
 
-export interface SupergraphPlugin {
+export interface FusiongraphPlugin {
   onSubgraphExecute?: OnSubgraphExecuteHook;
 }
 
 export type OnSubgraphExecuteHook = (
-  payload: OnSupergraphExecutePayload,
+  payload: OnFusiongraphExecutePayload,
 ) => Promise<OnSubgraphExecuteDoneHook> | OnSubgraphExecuteDoneHook;
 
-export interface OnSupergraphExecutePayload {
+export interface OnFusiongraphExecutePayload {
   fusiongraph: GraphQLSchema;
   subgraphName: string;
   transportKind: string;

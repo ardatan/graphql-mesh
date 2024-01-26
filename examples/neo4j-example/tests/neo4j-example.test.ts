@@ -2,21 +2,21 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { GraphQLSchema, lexicographicSortSchema, parse } from 'graphql';
 import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
-import { getExecutorForSupergraph } from '@graphql-mesh/fusion-runtime';
+import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
 import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { composeConfig } from '../mesh.config';
 
 describe('Neo4j', () => {
-  let supergraph: GraphQLSchema;
+  let fusiongraph: GraphQLSchema;
   let executor: Executor;
   beforeAll(async () => {
-    supergraph = await getComposedSchemaFromConfig(composeConfig);
-    const { supergraphExecutor } = getExecutorForSupergraph({ supergraph });
-    executor = supergraphExecutor;
+    fusiongraph = await getComposedSchemaFromConfig(composeConfig);
+    const { fusiongraphExecutor } = getExecutorForFusiongraph({ fusiongraph });
+    executor = fusiongraphExecutor;
   });
   jest.setTimeout(120_000);
   it('should generate correct schema', () => {
-    expect(printSchemaWithDirectives(lexicographicSortSchema(supergraph))).toMatchSnapshot();
+    expect(printSchemaWithDirectives(lexicographicSortSchema(fusiongraph))).toMatchSnapshot();
   });
   it('should give correct response for the example query', async () => {
     const query = readFileSync(join(__dirname, '../example-query.graphql'), 'utf8');
