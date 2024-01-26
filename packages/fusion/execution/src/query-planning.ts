@@ -302,11 +302,11 @@ export function isList(type: GraphQLOutputType) {
 }
 
 export function getGlobalResolver(
-  supergraph: GraphQLSchema,
+  fusiongraph: GraphQLSchema,
   resolverName: string,
   subgraphName: string,
 ): GlobalResolverConfig | undefined {
-  for (const directiveNode of supergraph.astNode.directives ?? []) {
+  for (const directiveNode of fusiongraph.astNode.directives ?? []) {
     if (directiveNode.name.value === 'resolver') {
       const nameArg = directiveNode.arguments?.find(arg => arg.name.value === 'name');
       const subgraphArg = directiveNode.arguments?.find(arg => arg.name.value === 'subgraph');
@@ -333,14 +333,14 @@ export function getGlobalResolver(
 }
 
 export function resolveResolverOperationStringAndKind(
-  supergraph: GraphQLSchema,
+  fusiongraph: GraphQLSchema,
   resolverDirective: ResolverRefConfig | RegularResolverConfig,
 ) {
   let resolverOperationString: string;
   let resolverKind: ResolverKind;
   if ('name' in resolverDirective) {
     const globalResolver = getGlobalResolver(
-      supergraph,
+      fusiongraph,
       resolverDirective.name,
       resolverDirective.subgraph,
     );
@@ -366,8 +366,8 @@ export function visitFieldNodeForTypeResolvers(
   fieldNode: FlattenedFieldNode,
   // Type that is returned by the field node
   type: GraphQLObjectType,
-  // Supergraph Schema
-  supergraph: GraphQLSchema,
+  // Fusiongraph Schema
+  fusiongraph: GraphQLSchema,
   // Visitor context
   ctx: VisitorContext,
 ): {
@@ -446,7 +446,7 @@ export function visitFieldNodeForTypeResolvers(
           parentSubgraph,
           subFieldNode,
           namedFieldType,
-          supergraph,
+          fusiongraph,
           ctx,
         );
         subFieldNode = newSubFieldNode;
@@ -461,7 +461,7 @@ export function visitFieldNodeForTypeResolvers(
         }
       } else if (isAbstractType(namedFieldType)) {
         const subFieldResolverOperationNodes: ResolverOperationNode[] = [];
-        for (const possibleType of supergraph.getPossibleTypes(namedFieldType)) {
+        for (const possibleType of fusiongraph.getPossibleTypes(namedFieldType)) {
           const {
             newFieldNode: newSubFieldNode,
             resolverOperationNodes: subFieldResolverOperationNodesForPossibleType,
@@ -469,7 +469,7 @@ export function visitFieldNodeForTypeResolvers(
             parentSubgraph,
             subFieldNode,
             possibleType,
-            supergraph,
+            fusiongraph,
             ctx,
           );
           subFieldNode = newSubFieldNode;
@@ -510,7 +510,7 @@ export function visitFieldNodeForTypeResolvers(
         .map(d => d.args) as ResolverVariableConfig[];
       const resolverSelections = subFieldNode.selectionSet?.selections ?? [];
       const { resolverOperationString, resolverKind } = resolveResolverOperationStringAndKind(
-        supergraph,
+        fusiongraph,
         resolverDirective,
       );
       const {
@@ -558,7 +558,7 @@ export function visitFieldNodeForTypeResolvers(
           fieldSubgraph,
           resolverOperationResolvedFieldNode,
           namedFieldType,
-          supergraph,
+          fusiongraph,
           ctx,
         );
         resolverOperationResolvedFieldNode = newResolvedFieldNode;
@@ -579,7 +579,7 @@ export function visitFieldNodeForTypeResolvers(
         ) as FlattenedFieldNode;
         resolverOperationResolvedFieldNode.defer =
           defer || subFieldNode.defer || newFieldNode.defer;
-        for (const possibleType of supergraph.getPossibleTypes(namedFieldType)) {
+        for (const possibleType of fusiongraph.getPossibleTypes(namedFieldType)) {
           const {
             newFieldNode: newResolvedFieldNode,
             resolverOperationNodes: subFieldResolverOperationNodes,
@@ -588,7 +588,7 @@ export function visitFieldNodeForTypeResolvers(
             fieldSubgraph,
             resolverOperationResolvedFieldNode,
             possibleType,
-            supergraph,
+            fusiongraph,
             ctx,
           );
           resolverOperationResolvedFieldNode = newResolvedFieldNode;
@@ -636,7 +636,7 @@ export function visitFieldNodeForTypeResolvers(
       }
     }
     const { resolverOperationString, resolverKind } = resolveResolverOperationStringAndKind(
-      supergraph,
+      fusiongraph,
       resolverDirective,
     );
     const {
@@ -684,7 +684,7 @@ export function visitFieldNodeForTypeResolvers(
           fieldSubgraph,
           resolverSubFieldNode,
           namedSelectionType,
-          supergraph,
+          fusiongraph,
           ctx,
         );
         resolverSelections[resolverSelectionIndex] = newSubFieldNode;
@@ -701,7 +701,7 @@ export function visitFieldNodeForTypeResolvers(
         }
       } else if (isAbstractType(namedSelectionType)) {
         const subFieldResolverOperationNodes: ResolverOperationNode[] = [];
-        for (const possibleType of supergraph.getPossibleTypes(namedSelectionType)) {
+        for (const possibleType of fusiongraph.getPossibleTypes(namedSelectionType)) {
           const {
             newFieldNode: newSubFieldNode,
             resolverOperationNodes: subFieldResolverOperationNodes,
@@ -709,7 +709,7 @@ export function visitFieldNodeForTypeResolvers(
             fieldSubgraph,
             resolverSelections[resolverSelectionIndex],
             possibleType,
-            supergraph,
+            fusiongraph,
             ctx,
           );
           resolverSelections[resolverSelectionIndex] = newSubFieldNode;

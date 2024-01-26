@@ -1,5 +1,5 @@
 import { createYoga, FetchAPI, YogaServerInstance, type Plugin } from 'graphql-yoga';
-import { useSupergraph } from '@graphql-mesh/fusion-runtime';
+import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -41,27 +41,22 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
       ...config.http,
     });
     supergraphYogaPlugin = useExecutor(executor);
-  } else {
-    const supergraphSpec = 'spec' in config ? config.spec : 'fusion';
-
-    const supergraphConfig = 'supergraph' in config ? config.supergraph : './supergraph.graphql';
-    if (supergraphSpec === 'fusion') {
-      supergraphYogaPlugin = useSupergraph<TServerContext, TUserContext>({
-        getSupergraph() {
-          return handleSupergraphConfig(supergraphConfig, serveContext);
-        },
-        transports: config.transports,
-        polling: config.polling,
-        additionalResolvers: config.additionalResolvers,
-        transportBaseContext: serveContext,
-      });
-    } else if (supergraphSpec === 'federation') {
-      supergraphYogaPlugin = useFederationSupergraph({
-        serveContext,
-        supergraphConfig,
-        transports: config.transports,
-      });
-    }
+  } else if ('fusiongraph' in config) {
+    supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
+      getFusiongraph() {
+        return handleSupergraphConfig(config.fusiongraph || './fusiongraph.graphql', serveContext);
+      },
+      transports: config.transports,
+      polling: config.polling,
+      additionalResolvers: config.additionalResolvers,
+      transportBaseContext: serveContext,
+    });
+  } else if ('supergraph' in config) {
+    supergraphYogaPlugin = useFederationSupergraph({
+      serveContext,
+      supergraphConfig: config.supergraph || './supergraph.graphql',
+      transports: config.transports,
+    });
   }
 
   const defaultFetchPlugin: MeshHTTPPlugin<TServerContext, {}> = {
