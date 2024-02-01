@@ -5,8 +5,6 @@ import { MeshServeCLIConfig, useWebhooks } from '@graphql-mesh/serve-cli';
 import { PubSub } from '@graphql-mesh/utils';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
-const pubsub = new PubSub();
-
 export const composeConfig: MeshComposeCLIConfig = {
   subgraphs: [
     {

@@ -18,12 +18,12 @@ describe('OpenAPI Subscriptions', () => {
     meshServeRuntime = createServeRuntime({
       ...serveConfig,
       fetchAPI: {
-        fetch: ((...args) => appWrapper.app.fetch(...args)) as any,
+        fetch: (...args) => appWrapper.app.fetch(...args),
       },
       pubsub: new PubSub(),
-      supergraph: readFileSync(join(__dirname, '..', 'fusiongraph.graphql'), 'utf8'),
+      fusiongraph: readFileSync(join(__dirname, '..', 'fusiongraph.graphql'), 'utf8'),
     });
-    appWrapper = createApp(((...args) => meshServeRuntime.fetch(...args)) as any);
+    appWrapper = createApp((...args) => meshServeRuntime.fetch(...args));
   });
   afterAll(() => {
     appWrapper.dispose();

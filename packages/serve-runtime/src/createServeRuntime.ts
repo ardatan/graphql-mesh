@@ -6,7 +6,7 @@ import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj, wrapFetchWithHooks } from '@graphql-mesh/utils';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import { handleSupergraphConfig } from './handleSupergraphConfig.js';
+import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import {
   MeshHTTPPlugin,
   MeshHTTPHandlerConfiguration as MeshServeRuntimeConfiguration,
@@ -16,7 +16,7 @@ import { useFederationSupergraph } from './useFederationSupergraph.js';
 export function createServeRuntime<TServerContext, TUserContext = {}>(
   config: MeshServeRuntimeConfiguration<TServerContext, TUserContext>,
 ): YogaServerInstance<TServerContext, TUserContext> & { invalidateUnifiedGraph(): void } {
-  let fetchAPI: FetchAPI = config.fetchAPI;
+  let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
   let logger: Logger;
   let wrappedFetchFn: MeshFetch;
@@ -44,7 +44,10 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
   } else if ('fusiongraph' in config) {
     supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
       getFusiongraph() {
-        return handleSupergraphConfig(config.fusiongraph || './fusiongraph.graphql', serveContext);
+        return handleUnifiedGraphConfig(
+          config.fusiongraph || './fusiongraph.graphql',
+          serveContext,
+        );
       },
       transports: config.transports,
       polling: config.polling,

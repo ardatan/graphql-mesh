@@ -7,21 +7,21 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { composeConfig, serveConfig } from '../mesh.config';
 
 describe('JavaScript Wiki', () => {
-  let supergraph: GraphQLSchema;
+  let fusiongraph: GraphQLSchema;
   let runtime;
   beforeAll(async () => {
-    supergraph = await getComposedSchemaFromConfig({
+    fusiongraph = await getComposedSchemaFromConfig({
       ...composeConfig,
       cwd: join(__dirname, '..'),
     });
     runtime = createServeRuntime({
-      supergraph,
+      fusiongraph,
       maskedErrors: false,
       ...serveConfig,
     });
   });
   it('should generate correct schema', async () => {
-    expect(printSchemaWithDirectives(supergraph)).toMatchSnapshot('javascript-wiki-schema');
+    expect(printSchemaWithDirectives(fusiongraph)).toMatchSnapshot('javascript-wiki-schema');
   });
   it('should give correct response for viewsInPastMonth', async () => {
     const viewsInPastMonthQuery = await readFile(

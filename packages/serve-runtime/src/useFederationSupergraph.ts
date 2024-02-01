@@ -15,7 +15,7 @@ import {
   getDocumentNodeFromSchema,
   isPromise,
 } from '@graphql-tools/utils';
-import { handleSupergraphConfig } from './handleSupergraphConfig.js';
+import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import { MeshServeContext, UnifiedGraphConfig } from './types.js';
 
 export interface FederationSupergraphPluginOpts {
@@ -33,7 +33,7 @@ export function useFederationSupergraph({
   let supergraph: GraphQLSchema;
   // eslint-disable-next-line no-inner-declarations
   function getAndSetSupergraph(): Promise<void> | void {
-    const newSupergraph$ = handleSupergraphConfig(supergraphConfig, serveContext);
+    const newSupergraph$ = handleUnifiedGraphConfig(supergraphConfig, serveContext);
     function handleSupergraphSchema(newSupergraph: GraphQLSchema) {
       supergraph = getStitchedSchemaFromSupergraphSdl({
         supergraphSdl: getDocumentNodeFromSchema(newSupergraph),

@@ -112,7 +112,7 @@ interface MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
   /**
    * WHATWG compatible Fetch implementation
    */
-  fetchAPI?: FetchAPI;
+  fetchAPI?: Partial<FetchAPI>;
   /**
    * Logger
    */
