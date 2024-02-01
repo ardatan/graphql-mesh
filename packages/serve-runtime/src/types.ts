@@ -17,12 +17,12 @@ export type MeshHTTPPlugin<TServerContext, TUserContext> = Plugin<
     onFetch?: OnFetchHook<TServerContext & TUserContext>;
   };
 
-export type SupergraphConfig =
+export type UnifiedGraphConfig =
   | GraphQLSchema
   | DocumentNode
   | string
-  | (() => SupergraphConfig)
-  | Promise<SupergraphConfig>;
+  | (() => UnifiedGraphConfig)
+  | Promise<UnifiedGraphConfig>;
 
 export type MeshHTTPHandlerConfiguration<TServerContext, TUserContext> =
   | MeshHTTPHandlerConfigurationWithSourceInput<TServerContext, TUserContext>
@@ -61,7 +61,7 @@ interface MeshHTTPHandlerConfigurationWithFusiongraph<TServerContext, TUserConte
    *
    * @default ./fusiongraph.graphql
    */
-  fusiongraph?: SupergraphConfig;
+  fusiongraph?: UnifiedGraphConfig;
 }
 
 interface MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContext>
@@ -71,7 +71,7 @@ interface MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContex
    *
    * @default ./supergraph.graphql
    */
-  supergraph?: SupergraphConfig;
+  supergraph?: UnifiedGraphConfig;
 }
 
 interface MeshHTTPHandlerConfigurationWithHttpEndpoint<TServerContext, TUserContext>
@@ -112,7 +112,7 @@ interface MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
   /**
    * WHATWG compatible Fetch implementation
    */
-  fetchAPI?: FetchAPI;
+  fetchAPI?: Partial<FetchAPI>;
   /**
    * Logger
    */

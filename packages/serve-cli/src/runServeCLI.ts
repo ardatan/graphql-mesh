@@ -2,9 +2,8 @@
 import cluster from 'cluster';
 import { availableParallelism } from 'os';
 import { dirname, isAbsolute, join, relative } from 'path';
-import { GraphQLSchema } from 'graphql';
 import { App, SSLApp } from 'uWebSockets.js';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { GitLoader } from '@graphql-tools/git-loader';
@@ -36,15 +35,24 @@ export async function runServeCLI(
   });
 
   const meshServeCLIConfig = loadedConfig.serveConfig || {
-    supergraph: './supergraph.graphql',
+    fusiongraph: './fusiongraph.graphql',
   };
   workerLogger.info(`Loaded configuration from ${meshServeCLIConfigRelativePath}`);
 
-  const supergraphPath = !('http' in meshServeCLIConfig)
-    ? 'supergraph' in meshServeCLIConfig
-      ? meshServeCLIConfig.supergraph
-      : './supergraph.graphql'
-    : undefined;
+  let unifiedGraphPath: UnifiedGraphConfig;
+  let spec: 'federation' | 'fusion';
+
+  if ('fusiongraph' in meshServeCLIConfig) {
+    unifiedGraphPath = meshServeCLIConfig.fusiongraph;
+    spec = 'fusion';
+  } else if ('supergraph' in meshServeCLIConfig) {
+    unifiedGraphPath = meshServeCLIConfig.supergraph;
+    spec = 'federation';
+  } else if (!('http' in meshServeCLIConfig)) {
+    unifiedGraphPath = './fusiongraph.graphql';
+  }
+
+  const unifiedGraphName = spec === 'fusion' ? 'fusiongraph' : 'supergraph';
 
   if (cluster.isPrimary) {
     let forkNum: number;
@@ -60,42 +68,42 @@ export async function runServeCLI(
       forkNum = parseInt(process.env.FORK);
     }
 
-    if (typeof supergraphPath === 'string' && !supergraphPath.includes('://')) {
+    if (typeof unifiedGraphPath === 'string' && !unifiedGraphPath.includes('://')) {
       const parcelWatcher$ = import('@parcel/watcher');
       parcelWatcher$
         .catch(e => {
           httpHandler.logger.error(
-            `If you want to enable hot reloading on ${supergraphPath}, install "@parcel/watcher"`,
+            `If you want to enable hot reloading on ${unifiedGraphPath}, install "@parcel/watcher"`,
             e,
           );
         })
         .then(parcelWatcher => {
           if (parcelWatcher) {
-            const absoluteSupergraphPath = isAbsolute(supergraphPath)
-              ? supergraphPath
-              : join(process.cwd(), supergraphPath);
-            const supergraphDir = dirname(absoluteSupergraphPath);
+            const absoluteUnifiedGraphPath: string = isAbsolute(unifiedGraphPath as string)
+              ? (unifiedGraphPath as string)
+              : join(process.cwd(), unifiedGraphPath as string);
+            const unifiedGraphDir = dirname(absoluteUnifiedGraphPath);
             return parcelWatcher
-              .subscribe(supergraphDir, (err, events) => {
+              .subscribe(unifiedGraphDir, (err, events) => {
                 if (err) {
                   workerLogger.error(err);
                   return;
                 }
-                if (events.some(event => event.path === absoluteSupergraphPath)) {
-                  workerLogger.info(`Supergraph changed`);
+                if (events.some(event => event.path === absoluteUnifiedGraphPath)) {
+                  workerLogger.info(`${unifiedGraphName} changed`);
                   if (forkNum > 1) {
                     for (const workerId in cluster.workers) {
-                      cluster.workers[workerId].send('invalidateSupergraph');
+                      cluster.workers[workerId].send('invalidateUnifiedGraph');
                     }
                   } else {
-                    httpHandler.invalidateSupergraph();
+                    httpHandler.invalidateUnifiedGraph();
                   }
                 }
               })
               .then(subscription => {
                 registerTerminateHandler(eventName => {
                   workerLogger.info(
-                    `Closing watcher for ${absoluteSupergraphPath} for ${eventName}`,
+                    `Closing watcher for ${absoluteUnifiedGraphPath} for ${eventName}`,
                   );
                   return subscription.unsubscribe();
                 });
@@ -104,7 +112,7 @@ export async function runServeCLI(
           return null;
         })
         .catch(e => {
-          workerLogger.error(`Failed to watch ${supergraphPath}`, e);
+          workerLogger.error(`Failed to watch ${unifiedGraphPath}`, e);
         });
     }
 
@@ -131,27 +139,27 @@ export async function runServeCLI(
   const httpHandler = createServeRuntime({
     logging: workerLogger,
     ...meshServeCLIConfig,
-    supergraph(): Promise<GraphQLSchema> {
-      workerLogger.info(`Loading Supergraph from ${supergraphPath}`);
-      return loadSchema(supergraphPath, {
+    [unifiedGraphName]() {
+      workerLogger.info(`Loading ${unifiedGraphName} from ${unifiedGraphPath}`);
+      return loadSchema(unifiedGraphPath, {
         loaders: [new GraphQLFileLoader(), new UrlLoader(), new GithubLoader(), new GitLoader()],
         assumeValid: true,
         assumeValidSDL: true,
       })
         .then(supergraph => {
-          workerLogger.info(`Loaded Supergraph from ${supergraphPath}`);
+          workerLogger.info(`Loaded ${unifiedGraphName} from ${unifiedGraphPath}`);
           return supergraph;
         })
         .catch(e => {
-          workerLogger.error(`Failed to load Supergraph from ${supergraphPath}`, e);
+          workerLogger.error(`Failed to load Supergraph from ${unifiedGraphPath}`, e);
           throw e;
         });
     },
   });
   process.on('message', message => {
-    if (message === 'invalidateSupergraph') {
-      workerLogger.info(`Invalidating Supergraph`);
-      httpHandler.invalidateSupergraph();
+    if (message === 'invalidateUnifiedGraph') {
+      workerLogger.info(`Invalidating ${unifiedGraphName}`);
+      httpHandler.invalidateUnifiedGraph();
     }
   });
   const app = meshServeCLIConfig.sslCredentials ? SSLApp(meshServeCLIConfig.sslCredentials) : App();

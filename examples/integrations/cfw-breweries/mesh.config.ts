@@ -3,7 +3,7 @@ import type { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
 export const composeConfig: MeshComposeCLIConfig = {
-  target: './src/supergraph.graphql.ts',
+  target: './src/fusiongraph.graphql.ts',
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('OpenBreweryDB', {

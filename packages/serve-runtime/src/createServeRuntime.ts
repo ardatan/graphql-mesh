@@ -6,7 +6,7 @@ import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj, wrapFetchWithHooks } from '@graphql-mesh/utils';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import { handleSupergraphConfig } from './handleSupergraphConfig.js';
+import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import {
   MeshHTTPPlugin,
   MeshHTTPHandlerConfiguration as MeshServeRuntimeConfiguration,
@@ -15,8 +15,8 @@ import { useFederationSupergraph } from './useFederationSupergraph.js';
 
 export function createServeRuntime<TServerContext, TUserContext = {}>(
   config: MeshServeRuntimeConfiguration<TServerContext, TUserContext>,
-): YogaServerInstance<TServerContext, TUserContext> & { invalidateSupergraph(): void } {
-  let fetchAPI: FetchAPI = config.fetchAPI;
+): YogaServerInstance<TServerContext, TUserContext> & { invalidateUnifiedGraph(): void } {
+  let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
   let logger: Logger;
   let wrappedFetchFn: MeshFetch;
@@ -33,18 +33,21 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
   };
 
-  let supergraphYogaPlugin: Plugin<TServerContext> & { invalidateSupergraph: () => void };
+  let supergraphYogaPlugin: Plugin<TServerContext> & { invalidateUnifiedGraph: () => void };
 
   if ('http' in config) {
     const executor = buildHTTPExecutor({
       fetch: fetchAPI?.fetch,
       ...config.http,
     });
-    supergraphYogaPlugin = useExecutor(executor);
+    supergraphYogaPlugin = useExecutor(executor) as any;
   } else if ('fusiongraph' in config) {
     supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
       getFusiongraph() {
-        return handleSupergraphConfig(config.fusiongraph || './fusiongraph.graphql', serveContext);
+        return handleUnifiedGraphConfig(
+          config.fusiongraph || './fusiongraph.graphql',
+          serveContext,
+        );
       },
       transports: config.transports,
       polling: config.polling,
@@ -107,8 +110,8 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
   fetchAPI ||= yoga.fetchAPI;
   logger = yoga.logger as Logger;
 
-  Object.defineProperty(yoga, 'invalidateSupergraph', {
-    value: supergraphYogaPlugin.invalidateSupergraph,
+  Object.defineProperty(yoga, 'invalidateUnifiedGraph', {
+    value: supergraphYogaPlugin.invalidateUnifiedGraph,
     configurable: true,
   });
 

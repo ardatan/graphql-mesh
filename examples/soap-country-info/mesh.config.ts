@@ -15,8 +15,7 @@ export const composeConfig: MeshComposeCLIConfig = {
 };
 
 export const serveConfig: MeshServeCLIConfig = {
-  supergraph: './supergraph.graphql',
-  plugins: [
+  plugins: () => [
     useSnapshot({
       apply: ['http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso'],
       outputDir: './__snapshots__',

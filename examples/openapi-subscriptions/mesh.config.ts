@@ -14,6 +14,5 @@ export const composeConfig: MeshComposeCLIConfig = {
 };
 
 export const serveConfig: MeshServeCLIConfig = {
-  supergraph: './supergraph.graphql',
   plugins: ctx => [useWebhooks(ctx)],
 };
