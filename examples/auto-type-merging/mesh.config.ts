@@ -50,7 +50,7 @@ export const composeConfig: MeshComposeCLIConfig = {
 };
 
 export const serveConfig: MeshServeCLIConfig = {
-  supergraph: './supergraph.graphql',
+  fusiongraph: './fusiongraph.graphql',
   graphiql: {
     defaultQuery: /* GraphQL */ `
       query Test {

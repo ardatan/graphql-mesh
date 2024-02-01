@@ -343,9 +343,7 @@ export function useFusiongraph<TServerContext, TUserContext>({
   TServerContext,
   TUserContext
 > & {
-  invalidateFusiongraph(): void;
-  /** @deprecated Use invalidateFusiongraph instead. */
-  invalidateSupergraph(): void;
+  invalidateUnifiedGraph(): void;
 } {
   let fusiongraph: GraphQLSchema;
   let lastLoadedFusiongraph: string | GraphQLSchema | DocumentNode;
@@ -457,10 +455,7 @@ export function useFusiongraph<TServerContext, TUserContext>({
         setSubscribeFn(executeFn);
       }
     },
-    invalidateFusiongraph() {
-      return getAndSetFusiongraph();
-    },
-    invalidateSupergraph() {
+    invalidateUnifiedGraph() {
       return getAndSetFusiongraph();
     },
   };

@@ -2,10 +2,10 @@ import CFWorkerKVCache from '@graphql-mesh/cache-cfw-kv';
 import useResponseCache from '@graphql-mesh/plugin-response-cache';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import * as rest from '@omnigraph/json-schema';
-import supergraph from './supergraph.graphql';
+import fusiongraph from './fusiongraph.graphql';
 
 const meshHttp = createServeRuntime({
-  supergraph,
+  fusiongraph,
   transports: {
     rest,
   },

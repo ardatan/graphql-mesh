@@ -16,11 +16,11 @@ import {
   isPromise,
 } from '@graphql-tools/utils';
 import { handleSupergraphConfig } from './handleSupergraphConfig.js';
-import { MeshServeContext, SupergraphConfig } from './types.js';
+import { MeshServeContext, UnifiedGraphConfig } from './types.js';
 
 export interface FederationSupergraphPluginOpts {
   serveContext: MeshServeContext;
-  supergraphConfig: SupergraphConfig;
+  supergraphConfig: UnifiedGraphConfig;
   transports: TransportsOption;
 }
 
@@ -28,7 +28,7 @@ export function useFederationSupergraph({
   serveContext,
   supergraphConfig,
   transports = defaultTransportsOption,
-}: FederationSupergraphPluginOpts): Plugin & { invalidateSupergraph(): void } {
+}: FederationSupergraphPluginOpts): Plugin & { invalidateUnifiedGraph(): void } {
   const transportsGetter = createTransportGetter(transports);
   let supergraph: GraphQLSchema;
   // eslint-disable-next-line no-inner-declarations
@@ -105,7 +105,7 @@ export function useFederationSupergraph({
     onContextBuilding({ extendContext }) {
       extendContext(serveContext as any);
     },
-    invalidateSupergraph() {
+    invalidateUnifiedGraph() {
       return getAndSetSupergraph();
     },
   };

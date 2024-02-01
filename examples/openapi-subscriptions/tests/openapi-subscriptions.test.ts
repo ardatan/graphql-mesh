@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { ExecutionResult } from 'graphql';
-import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import { PubSub } from '@graphql-mesh/utils';
 import { createApp } from '../api/app';
 import { serveConfig } from '../mesh.config';
@@ -18,12 +18,12 @@ describe('OpenAPI Subscriptions', () => {
     meshServeRuntime = createServeRuntime({
       ...serveConfig,
       fetchAPI: {
-        fetch: (...args) => appWrapper.app.fetch(...args),
+        fetch: ((...args) => appWrapper.app.fetch(...args)) as any,
       },
       pubsub: new PubSub(),
-      supergraph: readFileSync(join(__dirname, '..', 'supergraph.graphql'), 'utf8'),
+      supergraph: readFileSync(join(__dirname, '..', 'fusiongraph.graphql'), 'utf8'),
     });
-    appWrapper = createApp((...args) => meshServeRuntime.fetch(...args));
+    appWrapper = createApp(((...args) => meshServeRuntime.fetch(...args)) as any);
   });
   afterAll(() => {
     appWrapper.dispose();
