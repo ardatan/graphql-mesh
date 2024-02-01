@@ -42,38 +42,38 @@ export async function runComposeCLI(
 
   const composedSchema = await getComposedSchemaFromConfig(meshComposeCLIConfig, spinnies);
 
-  spinnies.add('write', { text: `Writing supergraph` });
+  spinnies.add('write', { text: `Writing Fusiongraph` });
   const printedSupergraph = printSchemaWithDirectives(composedSchema);
 
-  const supergraphFileName = meshComposeCLIConfig.target || './supergraph.graphql';
-  const supergraphPath = isAbsolute(supergraphFileName)
-    ? join(process.cwd(), supergraphFileName)
-    : supergraphFileName;
+  const fusiongraphFileName = meshComposeCLIConfig.target || './fusiongraph.graphql';
+  const fusiongraphPath = isAbsolute(fusiongraphFileName)
+    ? join(process.cwd(), fusiongraphFileName)
+    : fusiongraphFileName;
 
   let writtenData: string;
-  if (supergraphPath.endsWith('.json')) {
+  if (fusiongraphPath.endsWith('.json')) {
     writtenData = JSON.stringify(parse(writtenData, { noLocation: true }), null, 2);
   } else if (
-    supergraphPath.endsWith('.graphql') ||
-    supergraphPath.endsWith('.gql') ||
-    supergraphPath.endsWith('.graphqls') ||
-    supergraphPath.endsWith('.gqls')
+    fusiongraphPath.endsWith('.graphql') ||
+    fusiongraphPath.endsWith('.gql') ||
+    fusiongraphPath.endsWith('.graphqls') ||
+    fusiongraphPath.endsWith('.gqls')
   ) {
     writtenData = printedSupergraph;
   } else if (
-    supergraphPath.endsWith('.ts') ||
-    supergraphPath.endsWith('.cts') ||
-    supergraphPath.endsWith('.mts') ||
-    supergraphPath.endsWith('.js') ||
-    supergraphPath.endsWith('.cjs') ||
-    supergraphPath.endsWith('.mjs')
+    fusiongraphPath.endsWith('.ts') ||
+    fusiongraphPath.endsWith('.cts') ||
+    fusiongraphPath.endsWith('.mts') ||
+    fusiongraphPath.endsWith('.js') ||
+    fusiongraphPath.endsWith('.cjs') ||
+    fusiongraphPath.endsWith('.mjs')
   ) {
     writtenData = `export default ${JSON.stringify(printedSupergraph)}`;
   } else {
-    console.error(`Unsupported file extension for ${supergraphPath}`);
+    console.error(`Unsupported file extension for ${fusiongraphPath}`);
     return processExit(1);
   }
-  await fsPromises.writeFile(supergraphPath, writtenData, 'utf8');
-  spinnies.succeed('write', { text: `Written supergraph to ${supergraphPath}` });
+  await fsPromises.writeFile(fusiongraphPath, writtenData, 'utf8');
+  spinnies.succeed('write', { text: `Written fusiongraph to ${fusiongraphPath}` });
   spinnies.succeed('main', { text: 'Finished Mesh Compose CLI' });
 }

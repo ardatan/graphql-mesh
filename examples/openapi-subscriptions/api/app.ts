@@ -1,7 +1,8 @@
 import { createRouter, Response } from 'fets';
 import urljoin from 'url-join';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
-export function createApp(fetch = globalThis.fetch) {
+export function createApp(fetch = defaultFetch) {
   const intervals = new Set<NodeJS.Timeout>();
 
   const app = createRouter().route({

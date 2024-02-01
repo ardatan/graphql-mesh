@@ -7,19 +7,19 @@ import { createApi } from '../api/app';
 import { composeConfig, serveConfig } from '../mesh.config';
 
 describe('JSON Schema Subscriptions', () => {
-  let supergraph: GraphQLSchema;
+  let fusiongraph: GraphQLSchema;
   let meshHttp: ReturnType<typeof createServeRuntime>;
   let api: ReturnType<typeof createApi>;
   let resetTodos = () => {};
   const cwd = join(__dirname, '..');
   beforeAll(async () => {
-    supergraph = await getComposedSchemaFromConfig({
+    fusiongraph = await getComposedSchemaFromConfig({
       ...composeConfig,
       cwd,
     });
     meshHttp = createServeRuntime<any>({
       ...serveConfig,
-      supergraph,
+      fusiongraph,
       fetchAPI: {
         fetch: (...args) => api.app.fetch(...args),
       },
@@ -30,7 +30,7 @@ describe('JSON Schema Subscriptions', () => {
     resetTodos();
   });
   it('should generate correct schema', async () => {
-    expect(printSchemaWithDirectives(supergraph)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(fusiongraph)).toMatchSnapshot();
   });
   it('subscriptions', async () => {
     expect.assertions(3);

@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - master
+      - fusion-spec
 
 jobs:
   dependencies:

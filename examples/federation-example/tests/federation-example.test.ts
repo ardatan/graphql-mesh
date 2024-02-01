@@ -479,7 +479,6 @@ describe('Federation Example', () => {
   }> = [];
   const meshHttp = createServeRuntime({
     supergraph: join(__dirname, '../gateway/supergraph.graphql'),
-    spec: 'federation',
   });
   beforeAll(async () => {
     servicesToStop = await Promise.all([
