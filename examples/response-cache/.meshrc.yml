@@ -1,0 +1,27 @@
+sources:
+  - name: Hello World
+    handler:
+      jsonSchema:
+        operations:
+          - type: Query
+            field: greeting
+            method: GET
+            path: /
+            responseSample:
+              hello: world
+          - type: Query
+            field: withTTL
+            method: GET
+            path: /
+            responseSample:
+              hello: world
+plugins:
+  - mock:
+      mocks:
+        - apply: Query.greeting
+  - responseCache:
+      ttl: 100
+      includeExtensionMetadata: true
+      ttlPerCoordinate:
+        - coordinate: Query.withTTL
+          ttl: 3600000
