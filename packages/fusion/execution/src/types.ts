@@ -37,6 +37,7 @@ export interface ResolverVariableConfig {
   select?: string;
   value?: string;
   subgraph?: string;
+  type?: string;
 }
 
 export type ResolverConfig = ResolverRefConfig | GlobalResolverConfig | RegularResolverConfig;

@@ -46,9 +46,13 @@ export function visitResolutionPath<T>(
         break;
       }
       case Kind.FRAGMENT_SPREAD: {
-        const fragment = fragments[selectionNode.name.value];
+        const fragmentName = selectionNode.name.value;
+        if (fragmentName === '__export') {
+          break;
+        }
+        const fragment = fragments[fragmentName];
         if (!fragment) {
-          throw new Error(`No fragment found with name ${selectionNode.name.value}`);
+          throw new Error(`No fragment found with name ${fragmentName}`);
         }
         fragment.selectionSet.selections.forEach(selection => {
           visitSelectionNode(selection, parentPath);
