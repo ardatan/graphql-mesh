@@ -3,12 +3,15 @@ import {
   DocumentNode,
   getOperationAST,
   GraphQLObjectType,
+  GraphQLScalarType,
   Kind,
   parse,
+  print,
+  valueFromASTUntyped,
 } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { inspect, isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { assertAsyncIterable, assertNonAsyncIterable } from '../../../testing/utils.js';
 import {
   createExecutableResolverOperationNode,
@@ -717,11 +720,44 @@ describe('Execution', () => {
     },
   });
 
+  const fSchema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      input FooObj {
+        id: ID!
+      }
+
+      type Foo {
+        id: ID!
+        grault: String!
+      }
+
+      type Query {
+        fooFromObj(obj: FooObj!): Foo!
+      }
+    `,
+    resolvers: {
+      Query: {
+        fooFromObj: (_, { obj }) => obj,
+      },
+      Foo: {
+        grault: obj => {
+          if (!obj.id) {
+            throw new Error(`id is required but got ${inspect(obj)}`);
+          }
+          return `F_GRAULT_FOR_${obj.id}`;
+        },
+      },
+    },
+  });
+
   const fusiongraphInText = /* GraphQL */ `
     type Foo
       @variable(name: "Foo_id", select: "id", subgraph: "A")
       @variable(name: "Foo_id", select: "id", subgraph: "B")
       @variable(name: "Foo_id", select: "id", subgraph: "C")
+      @variable(name: "Foo_id_obj", value: "{ id: $Foo_id }", subgraph: "A")
+      @variable(name: "Foo_id_obj", value: "{ id: $Foo_id }", subgraph: "B")
+      @variable(name: "Foo_id_obj", value: "{ id: $Foo_id }", subgraph: "C")
       @resolver(operation: "query FooFromB($Foo_id: ID!) { foo(id: $Foo_id) }", subgraph: "B")
       @resolver(operation: "query FooFromC($Foo_id: ID!) { foo(id: $Foo_id) }", subgraph: "C")
       @resolver(
@@ -732,6 +768,10 @@ describe('Execution', () => {
       @resolver(
         operation: "query FooFromE($Foo_id: ID!, $Foo_baz: String) { fooWithComputedFromBaz(id: $Foo_id, baz: $Foo_baz) }"
         subgraph: "E"
+      )
+      @resolver(
+        operation: "query FooFromF($Foo_id_obj: FooObj!) { fooFromObj(obj: $Foo_id_obj) }"
+        subgraph: "F"
       ) {
       id: ID!
         @source(subgraph: "A")
@@ -747,6 +787,7 @@ describe('Execution', () => {
       computedFromBaz: String!
         @source(subgraph: "E", name: "computedFromBaz")
         @variable(name: "Foo_baz", select: "baz", subgraph: "C")
+      grault: String! @source(subgraph: "F")
     }
 
     type Query {
@@ -780,6 +821,7 @@ describe('Execution', () => {
   executorMap.set('C', createDefaultExecutor(cSchema));
   executorMap.set('D', createDefaultExecutor(dSchema));
   executorMap.set('E', createDefaultExecutor(eSchema));
+  executorMap.set('F', createDefaultExecutor(fSchema));
 
   function onExecute(subgraphName: string, document: DocumentNode, variables: Record<string, any>) {
     const executor = executorMap.get(subgraphName);
@@ -1542,6 +1584,73 @@ describe('Execution', () => {
     }
 
     expect(collectedPatches).toMatchSnapshot('defer patches');
+  });
+  it('plans computed variables', async () => {
+    const operationInText = /* GraphQL */ `
+      query Test {
+        foo(id: 1) {
+          id
+          grault
+        }
+      }
+    `;
+
+    const operationDoc = parseAndCache(operationInText);
+
+    const plan = createExecutablePlanForOperation({
+      fusiongraph,
+      document: operationDoc,
+    });
+
+    expect(serializeExecutableOperationPlan(plan)).toEqual({
+      resolverOperationNodes: [],
+      resolverDependencyFieldMap: {
+        foo: [
+          {
+            subgraph: 'B',
+            resolverOperationDocument:
+              'query FooFromB {\n' +
+              '  __export: foo(id: 1) {\n' +
+              '    id\n' +
+              '    __variable_1: id\n' +
+              '  }\n' +
+              '}',
+            id: 0,
+            resolverDependencies: [
+              {
+                subgraph: 'F',
+                resolverOperationDocument:
+                  'query FooFromF($__variable_1: ID!) {\n' +
+                  '  __export: fooFromObj(obj: {id: $__variable_1}) {\n' +
+                  '    grault\n' +
+                  '  }\n' +
+                  '}',
+                id: 1,
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const result = await executeOperationPlan({
+      executablePlan: plan,
+      onExecute,
+      context: {},
+    });
+
+    assertNonAsyncIterable(result);
+
+    expect(result).toEqual({
+      data: {
+        foo: {
+          grault: 'F_GRAULT_FOR_1',
+          id: '1',
+        },
+      },
+      errors: undefined,
+      extensions: undefined,
+    });
   });
 });
 

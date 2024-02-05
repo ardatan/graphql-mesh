@@ -1,5 +1,6 @@
 import {
   ASTNode,
+  BREAK,
   DocumentNode,
   FieldNode,
   getNamedType,
@@ -11,9 +12,14 @@ import {
   isNonNullType,
   isObjectType,
   Kind,
+  NonNullTypeNode,
   OperationDefinitionNode,
   parse,
+  parseType,
+  parseValue,
+  print,
   valueFromASTUntyped,
+  ValueNode,
   VariableDefinitionNode,
   visit,
 } from 'graphql';
@@ -55,6 +61,9 @@ export function createResolveNode({
   // Visitor context
   ctx: VisitorContext;
 }) {
+  if (!parentSubgraph) {
+    console.log(new Error().stack);
+  }
   let resolverOperationDocument = parse(resolverOperationString, { noLocation: true });
 
   if (!fieldNode.selectionSet) {
@@ -63,16 +72,77 @@ export function createResolveNode({
 
   const deepestFieldNodePath: (string | number)[] = [];
 
+  const deepestNodeToHaveSelectionsPath: (string | number)[] = [];
+
   const requiredVariableNames = new Set<string>();
 
   const newVariableNameMap = new Map<string, string>();
 
   const resolverOperationPath: (string | number)[] = [];
 
+  const variableInnerValueMap = new Map<string, ValueNode>();
+
   resolverOperationDocument = visit(resolverOperationDocument, {
-    OperationDefinition(_, __, ___, path) {
+    OperationDefinition(node, __, ___, path) {
       resolverOperationPath.push(...path);
+      if (node.variableDefinitions != null) {
+        const newVariableDefinitions: VariableDefinitionNode[] = [];
+        for (const variableDefinition of node.variableDefinitions) {
+          const variableDirective = variableDirectives.find(
+            d => d.name === variableDefinition.variable.name.value,
+          );
+          if (variableDirective?.value) {
+            const varValue = parseValue(variableDirective.value, { noLocation: true });
+            const innerVariableNames = new Set<string>();
+            visit(varValue, {
+              Variable(node) {
+                innerVariableNames.add(node.name.value);
+              },
+            });
+            variableInnerValueMap.set(variableDefinition.variable.name.value, varValue);
+            const isRequired = variableDefinition.type.kind === Kind.NON_NULL_TYPE;
+            for (const requiredInnerVariableName of innerVariableNames) {
+              const innerVariableDirective = variableDirectives.find(
+                d => d.name === requiredInnerVariableName,
+              );
+              if (innerVariableDirective) {
+                let innerVarTypeVal = innerVariableDirective?.type;
+                if (!innerVarTypeVal) {
+                  console.warn(`No type found for variable ${requiredInnerVariableName}, using ID`);
+                  innerVarTypeVal = 'ID';
+                }
+                const innerVarType = parseType(innerVarTypeVal, { noLocation: true });
+                const innerVarTypeInAst = isRequired
+                  ? {
+                      kind: Kind.NON_NULL_TYPE,
+                      type: innerVarType,
+                    }
+                  : innerVarType;
+                newVariableDefinitions.push({
+                  kind: Kind.VARIABLE_DEFINITION,
+                  variable: {
+                    kind: Kind.VARIABLE,
+                    name: {
+                      kind: Kind.NAME,
+                      value: requiredInnerVariableName,
+                    },
+                  },
+                  type: innerVarTypeInAst as NonNullTypeNode,
+                });
+              }
+            }
+          } else {
+            newVariableDefinitions.push(variableDefinition);
+          }
+        }
+        return {
+          ...node,
+          variableDefinitions: newVariableDefinitions,
+        };
+      }
     },
+  });
+  resolverOperationDocument = visit(resolverOperationDocument, {
     VariableDefinition(node) {
       const newVariableName = `__variable_${ctx.currentVariableIndex++}`;
       newVariableNameMap.set(node.variable.name.value, newVariableName);
@@ -81,9 +151,15 @@ export function createResolveNode({
       }
     },
     Variable(node) {
+      const innerValue = variableInnerValueMap.get(node.name.value);
+      if (innerValue) {
+        return innerValue;
+      }
       const newVariableName = newVariableNameMap.get(node.name.value);
       if (!newVariableName) {
-        throw new Error(`No variable name found for ${node.name.value}`);
+        return {
+          kind: Kind.NULL,
+        };
       }
       return {
         ...node,
@@ -96,6 +172,19 @@ export function createResolveNode({
     Field(_node, _key, _parent, path) {
       if (path.length > deepestFieldNodePath.length) {
         deepestFieldNodePath.splice(0, deepestFieldNodePath.length, ...path);
+        deepestNodeToHaveSelectionsPath.splice(0, deepestFieldNodePath.length, ...path);
+      }
+    },
+  });
+
+  visit(resolverOperationDocument, {
+    FragmentSpread(node, key, parent, path) {
+      if (node.name.value === '__export') {
+        deepestNodeToHaveSelectionsPath.splice(
+          0,
+          deepestNodeToHaveSelectionsPath.length,
+          ...path.slice(0, -3),
+        );
       }
     },
   });
@@ -146,6 +235,7 @@ export function createResolveNode({
     }
     // If it is a computed variable
     else if (varDirective?.value) {
+      // Skip
     }
     // If select is not given, use the variable as the default value for the variable
     else {
@@ -216,7 +306,7 @@ export function createResolveNode({
       }
       if (!fieldArgumentNode && requiredVariableNames.has(oldVarName)) {
         throw new Error(
-          `Required variable ${oldVarName} does not select anything for either from field argument or type`,
+          `Required variable ${oldVarName} does not select anything for either from field argument or type for subgraph: ${parentSubgraph}`,
         );
       }
     }
@@ -236,6 +326,15 @@ export function createResolveNode({
       kind: Kind.NAME,
       value: '__export',
     },
+  });
+
+  const existingDeepestNodeForSelections = _.get(
+    resolverOperationDocument,
+    deepestNodeToHaveSelectionsPath,
+  ) as FlattenedFieldNode;
+
+  _.set(resolverOperationDocument, deepestNodeToHaveSelectionsPath, {
+    ...existingDeepestNodeForSelections,
     selectionSet: {
       kind: Kind.SELECTION_SET,
       selections: resolverSelections,

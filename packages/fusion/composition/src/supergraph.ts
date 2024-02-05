@@ -2,6 +2,7 @@ import {
   buildASTSchema,
   buildSchema,
   DocumentNode,
+  getNamedType,
   getOperationAST,
   GraphQLFieldMap,
   GraphQLSchema,
@@ -20,12 +21,6 @@ import {
   MapperKind,
   mapSchema,
 } from '@graphql-tools/utils';
-
-const entityResolverDefinition = {
-  name: 'federationEntity',
-  operation: `query getFederationEntity($representations: [_Any!]!) { _entities(representations: $representations) }`,
-  kind: 'BATCH',
-};
 
 const schemaBuildOpts = { noLocation: true, assumeValid: true, assumeValidSDL: true };
 export function convertSupergraphToFusiongraph(
@@ -114,6 +109,7 @@ export function convertSupergraphToFusiongraph(
                   name: varName,
                   select: print(selection),
                   subgraph: availableSubgraph,
+                  type: getNamedType(fieldMap[selectionName].type).toString(),
                 });
               }
               combinedVariableValues.add(`${selectionName}: $${varName}`);
@@ -122,11 +118,11 @@ export function convertSupergraphToFusiongraph(
           const mainVariable = {
             name: `representations`,
             subgraph: joinTypeDirective.graph,
-            value: `{ ${[...combinedVariableValues].join(', ')} }`,
+            value: `{ __typename: "${type.name}", ${[...combinedVariableValues].join(', ')} }`,
           };
           variableDirectivesForFusion.push(mainVariable);
           resolverDirectives.push({
-            name: 'federationEntity',
+            operation: `query get${type.name}($representations: [_Any!]!) { _entities(representations: $representations) { ... on ${type.name} { ...__export } } }`,
             subgraph: joinTypeDirective.graph,
           });
         }
@@ -187,6 +183,7 @@ export function convertSupergraphToFusiongraph(
                     name: varName,
                     select: print(selection),
                     subgraph: joinFieldDirective.graph,
+                    type: getNamedType(typeFieldMap[selectionName].type).toString(),
                   });
                 }
               }
@@ -224,7 +221,7 @@ export function convertSupergraphToFusiongraph(
           const operationString = `${operationType} ${operationName}${variableDefinitionsString} { ${fieldName}${rootFieldArgsString} }`;
           const resolverDirectives = (fieldDirectiveExtensions.resolver ||= []);
           resolverDirectives.push({
-            subgraph: joinFieldDirective.subgraph,
+            subgraph: joinFieldDirective.graph,
             operation: operationString,
           });
         }
@@ -292,16 +289,11 @@ export function convertSupergraphToFusiongraph(
   const fusiongraphSchemaExtensions: any = (fusiongraphSchema.extensions ||= {});
   const fusiongraphDirectiveExtensions: any = (fusiongraphSchemaExtensions.directives ||= {});
   const fusionTransportDefs = (fusiongraphDirectiveExtensions.transport ||= []);
-  const fusionGlobalResolverDefs = (fusiongraphDirectiveExtensions.resolver ||= []);
   for (const [subgraph, location] of subgraphLocationMap.entries()) {
     fusionTransportDefs.push({
       subgraph,
       kind: 'http',
       location,
-    });
-    fusionGlobalResolverDefs.push({
-      subgraph,
-      ...entityResolverDefinition,
     });
   }
 

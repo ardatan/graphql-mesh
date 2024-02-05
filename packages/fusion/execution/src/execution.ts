@@ -35,7 +35,14 @@ function deserializeGraphQLError(error: any) {
   if (error.name === 'GraphQLError') {
     return error;
   }
-  return createGraphQLError(error.message, error);
+  return createGraphQLError(error.message, {
+    nodes: error.nodes,
+    source: error.source,
+    positions: error.positions,
+    path: error.path,
+    originalError: error.originalError,
+    extensions: error.extensions,
+  });
 }
 
 export function createExecutableResolverOperationNode(
@@ -217,7 +224,11 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
       outputVariableMap: Map<string, any>;
     }) {
       if (depOpResult?.exported != null) {
-        Object.assign(obj, depOpResult.exported);
+        if (Array.isArray(depOpResult.exported)) {
+          Object.assign(obj, ...depOpResult.exported);
+        } else {
+          Object.assign(obj, depOpResult.exported);
+        }
         for (const [key, value] of depOpResult.outputVariableMap) {
           outputVariableMap.set(key, value);
         }
@@ -293,19 +304,19 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
               );
             }
           } else {
-            Object.assign(existingVal, ...fieldOpItemResults);
+            Object.assign(existingVal, ...fieldOpItemResults.flat(Infinity));
           }
         }
       } else {
         const existingVal = _.get(obj, fieldName);
         if (existingVal != null) {
-          Object.assign(existingVal, ...fieldOpResults);
-        } else {
+          Object.assign(existingVal, ...fieldOpResults.flat(Infinity));
+        } else if (fieldOpResults.length) {
           _.set(
             obj,
             fieldName,
             fieldOpResults.length > 1
-              ? (Object.assign as any)(...fieldOpResults)
+              ? (Object.assign as any)(...fieldOpResults.flat(Infinity))
               : fieldOpResults[0],
           );
         }
@@ -486,17 +497,20 @@ export function executeResolverOperationNode({
     }
     let depsResult$: PromiseLike<any> | any;
     if (Array.isArray(exported)) {
-      // TODO: Fix me
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleExportedListForBatching(exported);
       const depsAsyncIterables: AsyncIterable<any>[] = [];
       const depsResultPromises: PromiseLike<any>[] = [];
+      const exportedListForBatching$ = handleExportedListForBatching(exported);
+      if (isAsyncIterable(exportedListForBatching$)) {
+        depsAsyncIterables.push(exportedListForBatching$);
+      } else if (isPromise(exportedListForBatching$)) {
+        depsResultPromises.push(exportedListForBatching$);
+      }
       for (const exportedItem of exported) {
-        const depsResultItem = handleExportedItem(exportedItem);
-        if (isAsyncIterable(depsResultItem)) {
-          depsAsyncIterables.push(depsResultItem);
-        } else if (isPromise(depsResultItem)) {
-          depsResultPromises.push(depsResultItem);
+        const depsResultItem$ = handleExportedItem(exportedItem);
+        if (isAsyncIterable(depsResultItem$)) {
+          depsAsyncIterables.push(depsResultItem$);
+        } else if (isPromise(depsResultItem$)) {
+          depsResultPromises.push(depsResultItem$);
         }
       }
       if (depsAsyncIterables.length) {
