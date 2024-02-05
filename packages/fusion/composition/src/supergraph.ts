@@ -220,6 +220,7 @@ export function convertSupergraphToFusiongraph(
           const rootFieldArgsString = rootFieldArgs.length ? `(${rootFieldArgs.join(', ')})` : '';
           const operationString = `${operationType} ${operationName}${variableDefinitionsString} { ${fieldName}${rootFieldArgsString} }`;
           const resolverDirectives = (fieldDirectiveExtensions.resolver ||= []);
+          // TODO: Later use global resolvers to batch queries for different types
           resolverDirectives.push({
             subgraph: joinFieldDirective.graph,
             operation: operationString,
