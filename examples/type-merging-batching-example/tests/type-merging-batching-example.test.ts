@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
+import { inspect } from 'util';
 import { GraphQLSchema, parse } from 'graphql';
 import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
 import {
@@ -45,12 +46,12 @@ describe('Type Merging with Batching Example', () => {
   const queryNames = readdirSync(join(__dirname, '../example-queries'));
   for (const queryName of queryNames) {
     const query = readFileSync(join(__dirname, '../example-queries', queryName), 'utf8');
-    const document = parse(query);
+    const document = parse(query, { noLocation: true });
     it(`executes ${queryName} query`, async () => {
       const result = await executor({
         document,
       });
-      expect(result).toMatchSnapshot('result');
+      expect(result).toMatchSnapshot(`result-${queryName}`);
     });
     it(`plans ${queryName} correctly`, async () => {
       const plan = createExecutablePlanForOperation({
@@ -58,7 +59,7 @@ describe('Type Merging with Batching Example', () => {
         document,
       });
       const serializedPlan = serializeExecutableOperationPlan(plan);
-      expect(serializedPlan).toMatchSnapshot('plan');
+      expect(serializedPlan).toMatchSnapshot(`plan-${queryName}`);
     });
   }
 });

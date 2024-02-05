@@ -128,11 +128,16 @@ export function serializeExecutableResolverOperationNode(
     executableResolverOperationNode.batchedResolverDependencyFieldMap.size
   ) {
     serializedNode.resolverDependencyFieldMap = Object.fromEntries(
-      [
-        ...executableResolverOperationNode.resolverDependencyFieldMap.entries(),
-        ...executableResolverOperationNode.batchedResolverDependencyFieldMap.entries(),
-      ].map(([key, value]) => [key, value.map(serializeExecutableResolverOperationNode)]),
+      [...executableResolverOperationNode.resolverDependencyFieldMap.entries()].map(
+        ([key, value]) => [key, value.map(serializeExecutableResolverOperationNode)],
+      ),
     );
+    for (const [key, value] of executableResolverOperationNode.batchedResolverDependencyFieldMap) {
+      serializedNode.resolverDependencyFieldMap[key] ||= [];
+      serializedNode.resolverDependencyFieldMap[key].push(
+        ...value.map(serializeExecutableResolverOperationNode),
+      );
+    }
   }
 
   if (executableResolverOperationNode.batch) {

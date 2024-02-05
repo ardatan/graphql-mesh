@@ -180,7 +180,20 @@ exports[`Federation plans \`topProducts\` query 1`] = `
           {
             "id": 2,
             "resolverDependencyFieldMap": {
-              "reviews.author": [],
+              "reviews.author": [
+                {
+                  "id": 3,
+                  "resolverOperationDocument": "query getUser($__variable_5: ID!) {
+  __export: _entities(representations: {__typename: "User", id: $__variable_5}) {
+    ... on User {
+      username
+      name
+    }
+  }
+}",
+                  "subgraph": "accounts",
+                },
+              ],
             },
             "resolverOperationDocument": "query getProduct($__variable_4: String!) {
   __export: _entities(

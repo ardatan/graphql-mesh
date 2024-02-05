@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Type Merging with Batching Example executes Author.graphql query: result 1`] = `
+exports[`Type Merging with Batching Example executes Author.graphql query: result-Author.graphql 1`] = `
 {
   "data": {
     "author": {
@@ -23,7 +23,7 @@ exports[`Type Merging with Batching Example executes Author.graphql query: resul
 }
 `;
 
-exports[`Type Merging with Batching Example executes Authors.graphql query: result 1`] = `
+exports[`Type Merging with Batching Example executes Authors.graphql query: result-Authors.graphql 1`] = `
 {
   "data": {
     "authors": [
@@ -62,7 +62,7 @@ exports[`Type Merging with Batching Example executes Authors.graphql query: resu
 }
 `;
 
-exports[`Type Merging with Batching Example executes Book.graphql query: result 1`] = `
+exports[`Type Merging with Batching Example executes Book.graphql query: result-Book.graphql 1`] = `
 {
   "data": {
     "book": {
@@ -85,7 +85,7 @@ exports[`Type Merging with Batching Example executes Book.graphql query: result 
 }
 `;
 
-exports[`Type Merging with Batching Example executes Books.graphql query: result 1`] = `
+exports[`Type Merging with Batching Example executes Books.graphql query: result-Books.graphql 1`] = `
 {
   "data": {
     "books": [
@@ -142,7 +142,7 @@ type Book @source(subgraph: "books", name: "Book") @resolver(subgraph: "books", 
 }"
 `;
 
-exports[`Type Merging with Batching Example plans Author.graphql correctly: plan 1`] = `
+exports[`Type Merging with Batching Example plans Author.graphql correctly: plan-Author.graphql 1`] = `
 {
   "resolverDependencyFieldMap": {
     "author": [
@@ -193,7 +193,7 @@ exports[`Type Merging with Batching Example plans Author.graphql correctly: plan
 }
 `;
 
-exports[`Type Merging with Batching Example plans Authors.graphql correctly: plan 1`] = `
+exports[`Type Merging with Batching Example plans Authors.graphql correctly: plan-Authors.graphql 1`] = `
 {
   "resolverDependencyFieldMap": {
     "authors": [
@@ -243,7 +243,7 @@ exports[`Type Merging with Batching Example plans Authors.graphql correctly: pla
 }
 `;
 
-exports[`Type Merging with Batching Example plans Book.graphql correctly: plan 1`] = `
+exports[`Type Merging with Batching Example plans Book.graphql correctly: plan-Book.graphql 1`] = `
 {
   "resolverDependencyFieldMap": {
     "book": [
@@ -293,7 +293,7 @@ exports[`Type Merging with Batching Example plans Book.graphql correctly: plan 1
 }
 `;
 
-exports[`Type Merging with Batching Example plans Books.graphql correctly: plan 1`] = `
+exports[`Type Merging with Batching Example plans Books.graphql correctly: plan-Books.graphql 1`] = `
 {
   "resolverDependencyFieldMap": {
     "books": [
