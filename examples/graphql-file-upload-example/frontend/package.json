@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "3.9.2",
-    "@testing-library/jest-dom": "6.4.1",
+    "@testing-library/jest-dom": "6.4.2",
     "@testing-library/react": "14.2.1",
     "@testing-library/user-event": "14.5.2",
     "apollo-upload-client": "18.0.1",
@@ -24,7 +24,7 @@
     "@types/apollo-upload-client": "18.0.0",
     "@types/jest": "29.5.12",
     "@types/node": "20.11.16",
-    "@types/react": "18.2.52",
+    "@types/react": "18.2.53",
     "@types/react-dom": "18.2.18",
     "typescript": "5.3.3"
   },
