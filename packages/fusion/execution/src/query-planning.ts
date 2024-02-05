@@ -59,9 +59,6 @@ export function createResolveNode({
   // Visitor context
   ctx: VisitorContext;
 }) {
-  if (!parentSubgraph) {
-    console.log(new Error().stack);
-  }
   let resolverOperationDocument = parse(resolverOperationString, { noLocation: true });
 
   if (!fieldNode.selectionSet) {
