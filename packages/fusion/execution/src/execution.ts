@@ -225,7 +225,13 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
     }) {
       if (depOpResult?.exported != null) {
         if (Array.isArray(depOpResult.exported)) {
-          Object.assign(obj, ...depOpResult.exported);
+          if (Array.isArray(obj)) {
+            for (const index in depOpResult.exported) {
+              Object.assign(obj[index], depOpResult.exported[index]);
+            }
+          } else {
+            Object.assign(obj, ...depOpResult.exported);
+          }
         } else {
           Object.assign(obj, depOpResult.exported);
         }
