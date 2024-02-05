@@ -98,6 +98,55 @@ export function deserializeResolverOperationNodeExecutable(
 
 export function serializeExecutableResolverOperationNode(
   executableResolverOperationNode: ExecutableResolverOperationNode,
-) {
-  return serializeResolverOperationNode(executableResolverOperationNode);
+): SerializedResolverOperationNode {
+  const serializedNode: SerializedResolverOperationNode = {
+    subgraph: executableResolverOperationNode.subgraph,
+    resolverOperationDocument: printCached(
+      executableResolverOperationNode.resolverOperationDocument,
+    ),
+  };
+
+  if (executableResolverOperationNode.id != null) {
+    serializedNode.id = executableResolverOperationNode.id;
+  }
+
+  if (
+    executableResolverOperationNode.resolverDependencies.length ||
+    executableResolverOperationNode.batchedResolverDependencies.length
+  ) {
+    serializedNode.resolverDependencies = [
+      ...executableResolverOperationNode.resolverDependencies.map(
+        serializeExecutableResolverOperationNode,
+      ),
+      ...executableResolverOperationNode.batchedResolverDependencies.map(
+        serializeExecutableResolverOperationNode,
+      ),
+    ];
+  }
+  if (
+    executableResolverOperationNode.resolverDependencyFieldMap.size ||
+    executableResolverOperationNode.batchedResolverDependencyFieldMap.size
+  ) {
+    serializedNode.resolverDependencyFieldMap = Object.fromEntries(
+      [...executableResolverOperationNode.resolverDependencyFieldMap.entries()].map(
+        ([key, value]) => [key, value.map(serializeExecutableResolverOperationNode)],
+      ),
+    );
+    for (const [key, value] of executableResolverOperationNode.batchedResolverDependencyFieldMap) {
+      serializedNode.resolverDependencyFieldMap[key] ||= [];
+      serializedNode.resolverDependencyFieldMap[key].push(
+        ...value.map(serializeExecutableResolverOperationNode),
+      );
+    }
+  }
+
+  if (executableResolverOperationNode.batch) {
+    serializedNode.batch = true;
+  }
+
+  if (executableResolverOperationNode.defer) {
+    serializedNode.defer = true;
+  }
+
+  return serializedNode;
 }
