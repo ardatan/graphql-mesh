@@ -3,15 +3,17 @@ import { join } from 'path';
 import { GraphQLSchema, lexicographicSortSchema, parse } from 'graphql';
 import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
 import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
+import { PubSub } from '@graphql-mesh/utils';
 import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { composeConfig } from '../mesh.config';
 
 describe('Neo4j', () => {
   let fusiongraph: GraphQLSchema;
   let executor: Executor;
+  const pubsub = new PubSub();
   beforeAll(async () => {
     fusiongraph = await getComposedSchemaFromConfig(composeConfig);
-    const { fusiongraphExecutor } = getExecutorForFusiongraph({ fusiongraph });
+    const { fusiongraphExecutor } = getExecutorForFusiongraph({ fusiongraph, pubsub });
     executor = fusiongraphExecutor;
   });
   jest.setTimeout(120_000);
@@ -26,5 +28,8 @@ describe('Neo4j', () => {
       variables: {},
     });
     expect(res).toMatchSnapshot();
+  });
+  afterAll(() => {
+    pubsub.publish('destroy', undefined);
   });
 });
