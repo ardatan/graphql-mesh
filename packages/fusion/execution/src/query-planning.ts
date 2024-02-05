@@ -1,6 +1,5 @@
 import {
   ASTNode,
-  BREAK,
   DocumentNode,
   FieldNode,
   getNamedType,
@@ -17,7 +16,6 @@ import {
   parse,
   parseType,
   parseValue,
-  print,
   valueFromASTUntyped,
   ValueNode,
   VariableDefinitionNode,
@@ -140,6 +138,7 @@ export function createResolveNode({
           variableDefinitions: newVariableDefinitions,
         };
       }
+      return undefined;
     },
   });
   resolverOperationDocument = visit(resolverOperationDocument, {
