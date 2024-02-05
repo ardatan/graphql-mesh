@@ -2800,10 +2800,10 @@
     "@envelop/extended-validation" "^4.0.0"
     tslib "^2.5.0"
 
-"@envelop/prometheus@^9.2.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-9.3.0.tgz#59ecba7243ce81453e172883313966fbce64e665"
-  integrity sha512-QiiuvvTpETc4YapEL5Kq05UrIG96pBUCM6+Sr6k47T+ONHBEAbuxB9nG+J8GdyAzr7s3lRUA9p1JpccAPPPWYg==
+"@envelop/prometheus@^9.3.1":
+  version "9.3.1"
+  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-9.3.1.tgz#19133db5923715631b98568f764eb49d692ebf83"
+  integrity sha512-g90EexxTdba0ht1IXs7EG4lOZTsQVsgceX+pE/r6gc4LU/Pv7PEKK78AKPO9x7svA812VcSR+q8Ypu/2sanmOA==
   dependencies:
     "@envelop/on-resolve" "^4.1.0"
     tslib "^2.5.0"
@@ -3763,12 +3763,12 @@
   resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-persisted-operations/-/plugin-persisted-operations-3.1.1.tgz#4c63d21cafaf92d50e8a49eec4334c2b62d5964c"
   integrity sha512-cD7+V19ipICnCZsUtLgOyZV9jcwtTiSFJOGYIZnUG25egUIzXfMmg+EWUZD1uGLKZBKbGWULn9ayc7UW52GSLg==
 
-"@graphql-yoga/plugin-prometheus@^3.0.1":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-3.1.2.tgz#dfca4b6ef41869da93d920b75f2d03ad7b9a6be2"
-  integrity sha512-Iy6jdorraYCRdnJyE0zShZLoRGoZ8JfXfFnQcOjC7Sh3nkvoxfQdWTOAkaApqcdT98CI2tWxL16dRb+NrRp66w==
+"@graphql-yoga/plugin-prometheus@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-4.0.0.tgz#213100a1b1ad4f3b52880d287d87e502828d7ddb"
+  integrity sha512-FmAjfV3HczuQ6A2Bd02mCnRqH91IZ/xzCkj3YTHQ5vQw+8Vab7Q+YuQ/9hwwu7R+2/mBQkg9rbZz9/fdPkU8tA==
   dependencies:
-    "@envelop/prometheus" "^9.2.0"
+    "@envelop/prometheus" "^9.3.1"
 
 "@graphql-yoga/plugin-response-cache@^3.1.1":
   version "3.3.0"
