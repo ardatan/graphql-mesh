@@ -3,11 +3,8 @@ import {
   DocumentNode,
   getOperationAST,
   GraphQLObjectType,
-  GraphQLScalarType,
   Kind,
   parse,
-  print,
-  valueFromASTUntyped,
 } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -1437,6 +1434,7 @@ describe('Execution', () => {
         }
       `),
       resolverDependencies: [],
+      resolverPreDependencies: [],
       resolverDependencyFieldMap: new Map(),
     };
     const executableResolverOperationNode = createExecutableResolverOperationNode(
