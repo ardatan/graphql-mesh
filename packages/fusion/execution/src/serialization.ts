@@ -11,6 +11,7 @@ export interface SerializedResolverOperationNode {
   resolverOperationDocument: string;
   resolverDependencies?: SerializedResolverOperationNode[];
   resolverDependencyFieldMap?: Record<string, SerializedResolverOperationNode[]>;
+  resolverPreDependencies?: SerializedResolverOperationNode[];
   batch?: boolean;
   defer?: boolean;
 }
@@ -32,6 +33,13 @@ export function serializeResolverOperationNode(
       serializeResolverOperationNode,
     );
   }
+
+  if (resolverOperationNode.resolverPreDependencies.length) {
+    serializedNode.resolverPreDependencies = resolverOperationNode.resolverPreDependencies.map(
+      serializeResolverOperationNode,
+    );
+  }
+
   if (resolverOperationNode.resolverDependencyFieldMap.size) {
     serializedNode.resolverDependencyFieldMap = Object.fromEntries(
       [...resolverOperationNode.resolverDependencyFieldMap.entries()].map(([key, value]) => [
@@ -67,6 +75,13 @@ export function deserializeResolverOperationNode(
       serializedResolverOperationNode.resolverDependencies.map(deserializeResolverOperationNode);
   } else {
     resolverOperationNode.resolverDependencies = [];
+  }
+
+  if (serializedResolverOperationNode.resolverPreDependencies) {
+    resolverOperationNode.resolverPreDependencies =
+      serializedResolverOperationNode.resolverPreDependencies.map(deserializeResolverOperationNode);
+  } else {
+    resolverOperationNode.resolverPreDependencies = [];
   }
 
   if (serializedResolverOperationNode.resolverDependencyFieldMap) {
@@ -119,6 +134,20 @@ export function serializeExecutableResolverOperationNode(
         serializeExecutableResolverOperationNode,
       ),
       ...executableResolverOperationNode.batchedResolverDependencies.map(
+        serializeExecutableResolverOperationNode,
+      ),
+    ];
+  }
+
+  if (
+    executableResolverOperationNode.resolverPreDependencies.length ||
+    executableResolverOperationNode.batchedPreResolverDependencies.length
+  ) {
+    serializedNode.resolverPreDependencies = [
+      ...executableResolverOperationNode.resolverPreDependencies.map(
+        serializeExecutableResolverOperationNode,
+      ),
+      ...executableResolverOperationNode.batchedPreResolverDependencies.map(
         serializeExecutableResolverOperationNode,
       ),
     ];

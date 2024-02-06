@@ -1,6 +1,6 @@
-// eslint-disable-next-line import/no-nodejs-modules
+/* eslint-disable import/no-nodejs-modules */
+/* eslint-disable import/no-extraneous-dependencies */
 import { readFileSync } from 'fs';
-// eslint-disable-next-line import/no-nodejs-modules
 import { join } from 'path';
 import { ApolloServer } from 'apollo-server';
 import { buildSchema, parse } from 'graphql';
@@ -15,7 +15,7 @@ import { accountsServer } from '../../../../examples/federation-example/services
 import { inventoryServer } from '../../../../examples/federation-example/services/inventory/server';
 import { productsServer } from '../../../../examples/federation-example/services/products/server';
 import { reviewsServer } from '../../../../examples/federation-example/services/reviews/server';
-import { convertSupergraphToFusiongraph } from '../src/supergraph';
+import { convertSupergraphToFusiongraph } from '../src';
 
 const fragments = {
   Review: /* GraphQL */ `
@@ -69,9 +69,21 @@ const queries = {
         ...User
         reviews {
           ...Review
-          # product {
-          #   ...Product
-          # }
+          product {
+            ...Product
+            reviews {
+              ...Review
+              author {
+                ...User
+                reviews {
+                  ...Review
+                  product {
+                    ...Product
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

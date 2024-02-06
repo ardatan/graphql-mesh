@@ -1,4 +1,5 @@
 import { createYoga, FetchAPI, YogaServerInstance, type Plugin } from 'graphql-yoga';
+import { convertSupergraphToFusiongraph } from '@graphql-mesh/fusion-federation';
 import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
@@ -6,12 +7,12 @@ import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj, wrapFetchWithHooks } from '@graphql-mesh/utils';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { useExecutor } from '@graphql-tools/executor-yoga';
+import { isPromise } from '@graphql-tools/utils';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import {
   MeshHTTPPlugin,
   MeshHTTPHandlerConfiguration as MeshServeRuntimeConfiguration,
 } from './types';
-import { useFederationSupergraph } from './useFederationSupergraph.js';
 
 export function createServeRuntime<TServerContext, TUserContext = {}>(
   config: MeshServeRuntimeConfiguration<TServerContext, TUserContext>,
@@ -55,10 +56,21 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
       transportBaseContext: serveContext,
     });
   } else if ('supergraph' in config) {
-    supergraphYogaPlugin = useFederationSupergraph({
-      serveContext,
-      supergraphConfig: config.supergraph || './supergraph.graphql',
+    supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
+      getFusiongraph() {
+        const supergraph$ = handleUnifiedGraphConfig(
+          config.supergraph || './supergraph.graphql',
+          serveContext,
+        );
+        if (isPromise(supergraph$)) {
+          return supergraph$.then(supergraph => convertSupergraphToFusiongraph(supergraph));
+        }
+        return convertSupergraphToFusiongraph(supergraph$);
+      },
       transports: config.transports,
+      polling: config.polling,
+      additionalResolvers: config.additionalResolvers,
+      transportBaseContext: serveContext,
     });
   }
 

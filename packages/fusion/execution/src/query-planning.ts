@@ -77,6 +77,11 @@ export function createResolveNode({
 
   const variableInnerValueMap = new Map<string, ValueNode>();
 
+  const variablesFromDifferentSubgraph: {
+    variableDirective: ResolverVariableConfig;
+    newVariableName: string;
+  }[] = [];
+
   resolverOperationDocument = visit(resolverOperationDocument, {
     OperationDefinition(node, __, ___, path) {
       resolverOperationPath.push(...path);
@@ -197,13 +202,14 @@ export function createResolveNode({
     selectionSet: newFieldSelectionSet,
   };
 
-  const variableDirectivesForField = variableDirectives.filter(
-    d =>
-      (d.subgraph != null ? d.subgraph === parentSubgraph : true) && newVariableNameMap.has(d.name),
+  const variableDirectivesForField = variableDirectives.filter(d => newVariableNameMap.has(d.name));
+
+  const variableDirectivesForFieldForThisSubgraph = variableDirectivesForField.filter(d =>
+    d.subgraph != null ? d.subgraph === parentSubgraph : true,
   );
 
   for (const [oldVarName, newVarName] of newVariableNameMap) {
-    const varDirective = variableDirectivesForField.find(d => d.name === oldVarName);
+    const varDirective = variableDirectivesForFieldForThisSubgraph.find(d => d.name === oldVarName);
     if (varDirective?.select) {
       const varOp = parse(`{${varDirective.select}}`, { noLocation: true });
       const deepestFieldNodePathInVarOp: (string | number)[] = [];
@@ -301,9 +307,14 @@ export function createResolveNode({
         }
       }
       if (!fieldArgumentNode && requiredVariableNames.has(oldVarName)) {
-        throw new Error(
-          `Required variable ${oldVarName} does not select anything for either from field argument or type for subgraph: ${parentSubgraph}`,
+        // Required variable does not select anything or have a value for either from field argument or type for parent subgraph
+        const variableForDifferentSubgraph = variableDirectivesForField.find(
+          d => d.name === oldVarName,
         );
+        variablesFromDifferentSubgraph.push({
+          variableDirective: variableForDifferentSubgraph,
+          newVariableName: newVarName,
+        });
       }
     }
   }
@@ -341,6 +352,7 @@ export function createResolveNode({
     newFieldNode,
     resolverOperationDocument,
     resolvedFieldPath: deepestFieldNodePath,
+    variablesFromDifferentSubgraph,
     batch: resolverKind === 'BATCH',
     defer: fieldNode.defer,
   };
@@ -470,10 +482,6 @@ export function visitFieldNodeForTypeResolvers(
   resolverOperationNodes: ResolverOperationNode[];
   resolverDependencyFieldMap: Map<string, ResolverOperationNode[]>;
 } {
-  if (!fieldNode.selectionSet) {
-    throw new Error('Object type should have a selectionSet');
-  }
-
   const typeFieldMap = type.getFields();
 
   const typeDirectives = getDefDirectives(type);
@@ -634,6 +642,7 @@ export function visitFieldNodeForTypeResolvers(
           resolverOperationDocument,
           resolverDependencies: fieldResolverDependencies,
           resolverDependencyFieldMap: fieldResolveFieldDependencyMap,
+          resolverPreDependencies: [],
           batch,
           defer: defer || subFieldNode.defer || newFieldNode.defer,
         },
@@ -737,6 +746,7 @@ export function visitFieldNodeForTypeResolvers(
     const {
       newFieldNode: newFieldNodeForSubgraph,
       resolverOperationDocument,
+      variablesFromDifferentSubgraph,
       batch,
       defer,
     } = createResolveNode({
@@ -751,14 +761,79 @@ export function visitFieldNodeForTypeResolvers(
     });
     newFieldNode = newFieldNodeForSubgraph;
     const resolverDependencyFieldMap = new Map<string, ResolverOperationNode[]>();
+    const resolverPreDependencies: ResolverOperationNode[] = [];
     resolverOperationNodes.push({
       subgraph: fieldSubgraph,
       resolverOperationDocument,
       resolverDependencies: [],
+      resolverPreDependencies,
       resolverDependencyFieldMap,
       batch,
       defer: defer || newFieldNode.defer,
     });
+    // TODO: Test this more
+    for (const {
+      variableDirective: varDirectiveForDiffSubgraph,
+      newVariableName,
+    } of variablesFromDifferentSubgraph) {
+      if (varDirectiveForDiffSubgraph?.select) {
+        const varOp = parse(`{${varDirectiveForDiffSubgraph.select}}`, { noLocation: true });
+        const deepestFieldNodePathInVarOp: (string | number)[] = [];
+        visit(varOp, {
+          Field(_node, _key, _parent, path) {
+            if (path.length > deepestFieldNodePathInVarOp.length) {
+              deepestFieldNodePathInVarOp.splice(0, deepestFieldNodePathInVarOp.length, ...path);
+            }
+          },
+        });
+        const existingDeepestFieldNodeInVarOp = _.get(varOp, deepestFieldNodePathInVarOp) as
+          | FlattenedFieldNode
+          | undefined;
+        const deepestFieldNodeInVarOp = {
+          ...existingDeepestFieldNodeInVarOp,
+          alias: {
+            kind: Kind.NAME,
+            value: newVariableName,
+          },
+        } as FlattenedFieldNode;
+        _.set(varOp, deepestFieldNodePathInVarOp, deepestFieldNodeInVarOp);
+        const varOpSelectionSet = _.get(varOp, 'definitions.0.selectionSet') as
+          | FlattenedSelectionSet
+          | undefined;
+        const typeResolverForSubgraph = typeDirectives.find(
+          d => d.name === 'resolver' && d.args?.subgraph === varDirectiveForDiffSubgraph.subgraph,
+        );
+        const resolverKind: 'FETCH' | 'BATCH' = typeResolverForSubgraph?.args?.kind || 'FETCH';
+        const resolverOperationString: string = typeResolverForSubgraph?.args?.operation;
+        const {
+          resolverOperationDocument,
+          newFieldNode: newFieldNodeForVar,
+          batch,
+          defer,
+        } = createResolveNode({
+          parentSubgraph,
+          resolverSelections: varOpSelectionSet.selections,
+          resolverArguments: [],
+          fieldNode: newFieldNode,
+          resolverOperationString,
+          resolverKind,
+          variableDirectives: typeDirectives
+            .filter(d => d.name === 'variable')
+            .map(d => d.args) as ResolverVariableConfig[],
+          ctx,
+        });
+        newFieldNode = newFieldNodeForVar;
+        resolverPreDependencies.push({
+          subgraph: typeResolverForSubgraph.args.subgraph,
+          resolverOperationDocument,
+          resolverDependencies: [],
+          resolverPreDependencies: [],
+          resolverDependencyFieldMap: new Map(),
+          batch,
+          defer,
+        });
+      }
+    }
 
     for (const resolverSelectionIndex in resolverSelections) {
       const resolverSubFieldNode = resolverSelections[resolverSelectionIndex];
@@ -825,6 +900,7 @@ export function visitFieldNodeForTypeResolvers(
 export interface ResolverOperationNode {
   subgraph: string;
   resolverOperationDocument: DocumentNode;
+  resolverPreDependencies: ResolverOperationNode[];
   resolverDependencies: ResolverOperationNode[];
   resolverDependencyFieldMap: Map<string, ResolverOperationNode[]>;
   batch?: boolean;
