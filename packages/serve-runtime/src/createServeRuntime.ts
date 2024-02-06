@@ -62,6 +62,7 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
           config.supergraph || './supergraph.graphql',
           serveContext,
         );
+        serveContext.logger?.info?.(`Converting Federation Supergraph to Fusiongraph`);
         if (isPromise(supergraph$)) {
           return supergraph$.then(supergraph => convertSupergraphToFusiongraph(supergraph));
         }
