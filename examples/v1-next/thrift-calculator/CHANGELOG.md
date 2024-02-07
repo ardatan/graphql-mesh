@@ -1,5 +1,16 @@
 # thrift-calculator
 
+## 0.12.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211),
+  [`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)]:
+  - @omnigraph/thrift@0.0.3
+  - @graphql-mesh/compose-cli@0.0.1
+  - @graphql-mesh/serve-cli@0.0.1
+
 ## 0.12.2
 
 ### Patch Changes

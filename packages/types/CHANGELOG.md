@@ -1,5 +1,17 @@
 # @graphql-mesh/types
 
+## 0.96.4
+
+### Patch Changes
+
+- [#6505](https://github.com/ardatan/graphql-mesh/pull/6505)
+  [`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Allow to configure persisted operations
+  behaviour
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.96.4
+
 ## 0.96.3
 
 ### Patch Changes

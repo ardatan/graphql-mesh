@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.96.4
+
+### Patch Changes
+
+- [#6480](https://github.com/ardatan/graphql-mesh/pull/6480)
+  [`e94fb1c`](https://github.com/ardatan/graphql-mesh/commit/e94fb1c44c6fbd384908ba1bff77502ed38d1d58)
+  Thanks [@soerenuhrbach](https://github.com/soerenuhrbach)! - Fixed issue that caused fields to be
+  unresolvable after applying the naming convention in base mode, if the field has arguments that
+  were not affected by the naming convention
+
+- Updated dependencies
+  [[`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8)]:
+  - @graphql-mesh/types@0.96.4
+  - @graphql-mesh/utils@0.96.4
+
 ## 0.96.3
 
 ### Patch Changes

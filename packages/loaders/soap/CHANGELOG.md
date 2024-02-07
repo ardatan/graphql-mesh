@@ -1,5 +1,31 @@
 # @omnigraph/soap
 
+## 0.96.5
+
+### Patch Changes
+
+- [#6541](https://github.com/ardatan/graphql-mesh/pull/6541)
+  [`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^4.3.4` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/4.3.4) (from
+    `4.3.4`, in `dependencies`)
+  - Updated dependency
+    [`graphql-compose@^9.0.10` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.10) (from
+    `9.0.10`, in `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/transport-soap@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-soap/v/0.0.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@whatwg-node/fetch@^0.9.15` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.15)
+    (to `dependencies`)
+- Updated dependencies
+  [[`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8),
+  [`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)]:
+  - @graphql-mesh/types@0.96.4
+  - @graphql-mesh/transport-soap@0.0.1
+  - @graphql-mesh/utils@0.96.4
+
 ## 0.96.4
 
 ### Patch Changes
