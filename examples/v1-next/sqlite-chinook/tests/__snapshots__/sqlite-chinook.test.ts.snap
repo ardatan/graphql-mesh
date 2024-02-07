@@ -26,7 +26,7 @@ exports[`SQLite Chinook executes Albums.query.graphql query: Albums.query.graphq
 `;
 
 exports[`SQLite Chinook generates the schema correctly: schema 1`] = `
-"schema @transport(kind: "sqlite", subgraph: "chinook", location: "/home/runner/work/graphql-mesh/graphql-mesh/examples/sqlite-chinook/chinook.db", options: {type: "db"}) {
+"schema @transport(kind: "sqlite", subgraph: "chinook", location: "/home/runner/work/graphql-mesh/graphql-mesh/examples/v1-next/sqlite-chinook/chinook.db", options: {type: "db"}) {
   query: Query
   mutation: Mutation
 }

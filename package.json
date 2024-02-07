@@ -18,16 +18,23 @@
       "examples/federation-example/*",
       "examples/federation-example/services/*",
       "examples/graphql-file-upload-example/frontend",
+      "examples/hive-example/gateway",
+      "examples/hive-example/sources/*",
       "packages/loaders/*",
       "packages/transports/*",
-      "examples/hive-example/gateway",
-      "examples/hive-example/sources/*"
+      "examples/v1-next/*",
+      "examples/v1-next/integrations/*",
+      "examples/v1-next/federation-example/*",
+      "examples/v1-next/federation-example/services/*",
+      "examples/v1-next/graphql-file-upload-example/frontend",
+      "examples/v1-next/hive-example/gateway",
+      "examples/v1-next/hive-example/sources/*"
     ]
   },
   "packageManager": "yarn@1.22.21",
   "scripts": {
     "build": "bob build",
-    "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace example-fastify build && yarn workspace example-persisted-operations build",
+    "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace example-persisted-operations build",
     "build:website": "cd website && yarn build",
     "ci:lint": "eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
     "clean": "rm -rf packages/**/dist packages/**/**/dist examples/**/node_modules/.bin/*mesh* .bob",
