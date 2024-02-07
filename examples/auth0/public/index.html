@@ -1,0 +1,19 @@
+<!DOCTYPE html />
+<html>
+  <head>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.12/auth0-spa-js.production.js"></script>
+  </head>
+  <body>
+    <script>
+      createAuth0Client({
+        domain: '{account_name}.{region}.auth0.com',
+        client_id: '<client_id>',
+        audience: 'http://localhost:3000/graphql',
+      }).then(async auth0 => {
+        await auth0.loginWithPopup();
+        const accessToken = await auth0.getTokenSilently();
+        window.document.body.innerText = accessToken;
+      });
+    </script>
+  </body>
+</html>
