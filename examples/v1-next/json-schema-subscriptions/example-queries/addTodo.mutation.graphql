@@ -1,0 +1,7 @@
+mutation addTodo($name: String!, $content: String!) {
+  addTodo(input: { name: $name, content: $content }) {
+    id
+    name
+    content
+  }
+}

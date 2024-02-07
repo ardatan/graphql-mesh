@@ -1,0 +1,250 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SOAP Demo executes AddInteger.graphql query: AddInteger.graphql 1`] = `
+{
+  "data": {
+    "s0_SOAPDemo_SOAPDemoSoap_AddInteger": {
+      "AddIntegerResult": 5,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`SOAP Demo executes DivideInteger.graphql query: DivideInteger.graphql 1`] = `
+{
+  "data": {
+    "s0_SOAPDemo_SOAPDemoSoap_DivideInteger": {
+      "DivideIntegerResult": 5,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`SOAP Demo executes FindPerson.graphql query: FindPerson.graphql 1`] = `
+{
+  "data": {
+    "s0_SOAPDemo_SOAPDemoSoap_FindPerson": {
+      "FindPersonResult": {
+        "Age": 23,
+        "DOB": "2000-03-20",
+        "FavoriteColors": {
+          "FavoriteColorsItem": [
+            "Red",
+          ],
+        },
+        "Home": {
+          "City": "Pueblo",
+          "State": "AK",
+          "Street": "6977 First Street",
+          "Zip": "63163",
+        },
+        "Name": "Newton,Dave R.",
+        "Office": {
+          "City": "Washington",
+          "State": "MN",
+          "Street": "9984 Second Blvd",
+          "Zip": "42829",
+        },
+        "SSN": "384-10-6538",
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`SOAP Demo executes GetListByName.graphql query: GetListByName.graphql 1`] = `
+{
+  "data": {
+    "s0_SOAPDemo_SOAPDemoSoap_GetListByName": {
+      "GetListByNameResult": {
+        "PersonIdentification": [
+          {
+            "DOB": "2000-03-20",
+            "ID": "1",
+            "Name": "Newton,Dave R.",
+            "SSN": "384-10-6538",
+          },
+          {
+            "DOB": "2004-11-17",
+            "ID": "29",
+            "Name": "Newton,Mario B.",
+            "SSN": "538-68-5047",
+          },
+        ],
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`SOAP Demo generates the schema correctly: schema 1`] = `
+"schema @transport(kind: "soap", subgraph: "soap-demo") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String) on FIELD_DEFINITION
+
+type Query {
+  s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input = {}): s0_FindPersonResponse @soap(elementName: "FindPersonResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "query s0_SOAPDemo_SOAPDemoSoap_FindPerson($FindPerson: s0_FindPerson_Input = [object Object]) { s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: $FindPerson) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_FindPerson", type: "s0_FindPersonResponse")
+  s0_SOAPDemo_SOAPDemoSoap_GetByName(GetByName: s0_GetByName_Input = {}): s0_GetByNameResponse @soap(elementName: "GetByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "query s0_SOAPDemo_SOAPDemoSoap_GetByName($GetByName: s0_GetByName_Input = [object Object]) { s0_SOAPDemo_SOAPDemoSoap_GetByName(GetByName: $GetByName) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_GetByName", type: "s0_GetByNameResponse")
+  s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName(GetDataSetByName: s0_GetDataSetByName_Input = {}): s0_GetDataSetByNameResponse @soap(elementName: "GetDataSetByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "query s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName($GetDataSetByName: s0_GetDataSetByName_Input = [object Object]) { s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName(GetDataSetByName: $GetDataSetByName) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName", type: "s0_GetDataSetByNameResponse")
+  s0_SOAPDemo_SOAPDemoSoap_GetListByName(GetListByName: s0_GetListByName_Input = {}): s0_GetListByNameResponse @soap(elementName: "GetListByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "query s0_SOAPDemo_SOAPDemoSoap_GetListByName($GetListByName: s0_GetListByName_Input = [object Object]) { s0_SOAPDemo_SOAPDemoSoap_GetListByName(GetListByName: $GetListByName) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_GetListByName", type: "s0_GetListByNameResponse")
+  s0_SOAPDemo_SOAPDemoSoap_QueryByName(QueryByName: s0_QueryByName_Input = {}): s0_QueryByNameResponse @soap(elementName: "QueryByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "query s0_SOAPDemo_SOAPDemoSoap_QueryByName($QueryByName: s0_QueryByName_Input = [object Object]) { s0_SOAPDemo_SOAPDemoSoap_QueryByName(QueryByName: $QueryByName) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_QueryByName", type: "s0_QueryByNameResponse")
+}
+
+type s0_FindPersonResponse @source(subgraph: "soap-demo", name: "s0_FindPersonResponse") {
+  FindPersonResult: s0_Person! @source(subgraph: "soap-demo", name: "FindPersonResult", type: "s0_Person!")
+}
+
+type s0_Person @source(subgraph: "soap-demo", name: "s0_Person") {
+  Name: String! @source(subgraph: "soap-demo", name: "Name", type: "String!")
+  SSN: String! @source(subgraph: "soap-demo", name: "SSN", type: "String!")
+  DOB: Date! @source(subgraph: "soap-demo", name: "DOB", type: "Date!")
+  Home: s0_Address! @source(subgraph: "soap-demo", name: "Home", type: "s0_Address!")
+  Office: s0_Address! @source(subgraph: "soap-demo", name: "Office", type: "s0_Address!")
+  Spouse: s0_Person! @source(subgraph: "soap-demo", name: "Spouse", type: "s0_Person!")
+  FavoriteColors: s0_ArrayOfFavoriteColorsItemString! @source(subgraph: "soap-demo", name: "FavoriteColors", type: "s0_ArrayOfFavoriteColorsItemString!")
+  Age: BigInt! @source(subgraph: "soap-demo", name: "Age", type: "BigInt!")
+}
+
+"""
+A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date @source(subgraph: "soap-demo", name: "Date") @source(subgraph: "soap-demo", name: "Date")
+
+type s0_Address @source(subgraph: "soap-demo", name: "s0_Address") {
+  Street: String! @source(subgraph: "soap-demo", name: "Street", type: "String!")
+  City: String! @source(subgraph: "soap-demo", name: "City", type: "String!")
+  State: String! @source(subgraph: "soap-demo", name: "State", type: "String!")
+  Zip: String! @source(subgraph: "soap-demo", name: "Zip", type: "String!")
+}
+
+type s0_ArrayOfFavoriteColorsItemString @source(subgraph: "soap-demo", name: "s0_ArrayOfFavoriteColorsItemString") {
+  FavoriteColorsItem: [String]! @source(subgraph: "soap-demo", name: "FavoriteColorsItem", type: "[String]!")
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt @source(subgraph: "soap-demo", name: "BigInt") @source(subgraph: "soap-demo", name: "BigInt")
+
+input s0_FindPerson_Input @source(subgraph: "soap-demo", name: "s0_FindPerson_Input") {
+  id: String @source(subgraph: "soap-demo", name: "id", type: "String")
+}
+
+type s0_GetByNameResponse @source(subgraph: "soap-demo", name: "s0_GetByNameResponse") {
+  GetByNameResult: JSON! @source(subgraph: "soap-demo", name: "GetByNameResult", type: "JSON!")
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @source(subgraph: "soap-demo", name: "JSON") @source(subgraph: "soap-demo", name: "JSON")
+
+input s0_GetByName_Input @source(subgraph: "soap-demo", name: "s0_GetByName_Input") {
+  name: String @source(subgraph: "soap-demo", name: "name", type: "String")
+}
+
+type s0_GetDataSetByNameResponse @source(subgraph: "soap-demo", name: "s0_GetDataSetByNameResponse") {
+  GetDataSetByNameResult: s0_ByNameDataSet! @source(subgraph: "soap-demo", name: "GetDataSetByNameResult", type: "s0_ByNameDataSet!")
+}
+
+type s0_ByNameDataSet @source(subgraph: "soap-demo", name: "s0_ByNameDataSet") {
+  ByName: [ByNameDataSet_ByName]! @source(subgraph: "soap-demo", name: "ByName", type: "[ByNameDataSet_ByName]!")
+}
+
+type ByNameDataSet_ByName @source(subgraph: "soap-demo", name: "ByNameDataSet_ByName") {
+  ID: BigInt! @source(subgraph: "soap-demo", name: "ID", type: "BigInt!")
+  Name: String! @source(subgraph: "soap-demo", name: "Name", type: "String!")
+  DOB: Date! @source(subgraph: "soap-demo", name: "DOB", type: "Date!")
+  SSN: String! @source(subgraph: "soap-demo", name: "SSN", type: "String!")
+}
+
+input s0_GetDataSetByName_Input @source(subgraph: "soap-demo", name: "s0_GetDataSetByName_Input") {
+  name: String @source(subgraph: "soap-demo", name: "name", type: "String")
+}
+
+type s0_GetListByNameResponse @source(subgraph: "soap-demo", name: "s0_GetListByNameResponse") {
+  GetListByNameResult: s0_ArrayOfPersonIdentificationPersonIdentification! @source(subgraph: "soap-demo", name: "GetListByNameResult", type: "s0_ArrayOfPersonIdentificationPersonIdentification!")
+}
+
+type s0_ArrayOfPersonIdentificationPersonIdentification @source(subgraph: "soap-demo", name: "s0_ArrayOfPersonIdentificationPersonIdentification") {
+  PersonIdentification: [s0_PersonIdentification]! @source(subgraph: "soap-demo", name: "PersonIdentification", type: "[s0_PersonIdentification]!")
+}
+
+type s0_PersonIdentification @source(subgraph: "soap-demo", name: "s0_PersonIdentification") {
+  ID: String! @source(subgraph: "soap-demo", name: "ID", type: "String!")
+  Name: String! @source(subgraph: "soap-demo", name: "Name", type: "String!")
+  SSN: String! @source(subgraph: "soap-demo", name: "SSN", type: "String!")
+  DOB: Date! @source(subgraph: "soap-demo", name: "DOB", type: "Date!")
+}
+
+input s0_GetListByName_Input @source(subgraph: "soap-demo", name: "s0_GetListByName_Input") {
+  name: String @source(subgraph: "soap-demo", name: "name", type: "String")
+}
+
+type s0_QueryByNameResponse @source(subgraph: "soap-demo", name: "s0_QueryByNameResponse") {
+  QueryByNameResult: s0_QueryByName_DataSet! @source(subgraph: "soap-demo", name: "QueryByNameResult", type: "s0_QueryByName_DataSet!")
+}
+
+type s0_QueryByName_DataSet @source(subgraph: "soap-demo", name: "s0_QueryByName_DataSet") {
+  QueryByName: [QueryByName_DataSet_QueryByName]! @source(subgraph: "soap-demo", name: "QueryByName", type: "[QueryByName_DataSet_QueryByName]!")
+}
+
+type QueryByName_DataSet_QueryByName @source(subgraph: "soap-demo", name: "QueryByName_DataSet_QueryByName") {
+  ID: BigInt! @source(subgraph: "soap-demo", name: "ID", type: "BigInt!")
+  Name: String! @source(subgraph: "soap-demo", name: "Name", type: "String!")
+  DOB: Date! @source(subgraph: "soap-demo", name: "DOB", type: "Date!")
+  SSN: String! @source(subgraph: "soap-demo", name: "SSN", type: "String!")
+}
+
+input s0_QueryByName_Input @source(subgraph: "soap-demo", name: "s0_QueryByName_Input") {
+  name: String @source(subgraph: "soap-demo", name: "name", type: "String")
+}
+
+type Mutation {
+  s0_SOAPDemo_SOAPDemoSoap_AddInteger(AddInteger: s0_AddInteger_Input = {}): s0_AddIntegerResponse @soap(elementName: "AddIntegerResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "mutation mutations0_SOAPDemo_SOAPDemoSoap_AddInteger($AddInteger: s0_AddInteger_Input = [object Object]) { s0_SOAPDemo_SOAPDemoSoap_AddInteger(AddInteger: $AddInteger) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_AddInteger", type: "s0_AddIntegerResponse")
+  s0_SOAPDemo_SOAPDemoSoap_DivideInteger(DivideInteger: s0_DivideInteger_Input = {}): s0_DivideIntegerResponse @soap(elementName: "DivideIntegerResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "mutation mutations0_SOAPDemo_SOAPDemoSoap_DivideInteger($DivideInteger: s0_DivideInteger_Input = [object Object]) { s0_SOAPDemo_SOAPDemoSoap_DivideInteger(DivideInteger: $DivideInteger) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_DivideInteger", type: "s0_DivideIntegerResponse")
+  s0_SOAPDemo_SOAPDemoSoap_LookupCity(LookupCity: s0_LookupCity_Input = {}): s0_LookupCityResponse @soap(elementName: "LookupCityResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "mutation mutations0_SOAPDemo_SOAPDemoSoap_LookupCity($LookupCity: s0_LookupCity_Input = [object Object]) { s0_SOAPDemo_SOAPDemoSoap_LookupCity(LookupCity: $LookupCity) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_LookupCity", type: "s0_LookupCityResponse")
+  s0_SOAPDemo_SOAPDemoSoap_Mission(Mission: JSON = ""): s0_MissionResponse @soap(elementName: "MissionResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @resolver(subgraph: "soap-demo", operation: "mutation mutations0_SOAPDemo_SOAPDemoSoap_Mission($Mission: JSON) { s0_SOAPDemo_SOAPDemoSoap_Mission(Mission: $Mission) }") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_Mission", type: "s0_MissionResponse")
+}
+
+type s0_AddIntegerResponse @source(subgraph: "soap-demo", name: "s0_AddIntegerResponse") {
+  AddIntegerResult: BigInt! @source(subgraph: "soap-demo", name: "AddIntegerResult", type: "BigInt!")
+}
+
+input s0_AddInteger_Input @source(subgraph: "soap-demo", name: "s0_AddInteger_Input") {
+  Arg1: BigInt @source(subgraph: "soap-demo", name: "Arg1", type: "BigInt")
+  Arg2: BigInt @source(subgraph: "soap-demo", name: "Arg2", type: "BigInt")
+}
+
+type s0_DivideIntegerResponse @source(subgraph: "soap-demo", name: "s0_DivideIntegerResponse") {
+  DivideIntegerResult: BigInt! @source(subgraph: "soap-demo", name: "DivideIntegerResult", type: "BigInt!")
+}
+
+input s0_DivideInteger_Input @source(subgraph: "soap-demo", name: "s0_DivideInteger_Input") {
+  Arg1: BigInt @source(subgraph: "soap-demo", name: "Arg1", type: "BigInt")
+  Arg2: BigInt @source(subgraph: "soap-demo", name: "Arg2", type: "BigInt")
+}
+
+type s0_LookupCityResponse @source(subgraph: "soap-demo", name: "s0_LookupCityResponse") {
+  LookupCityResult: s0_Address! @source(subgraph: "soap-demo", name: "LookupCityResult", type: "s0_Address!")
+}
+
+input s0_LookupCity_Input @source(subgraph: "soap-demo", name: "s0_LookupCity_Input") {
+  zip: String @source(subgraph: "soap-demo", name: "zip", type: "String")
+}
+
+type s0_MissionResponse @source(subgraph: "soap-demo", name: "s0_MissionResponse") {
+  MissionResult: String! @source(subgraph: "soap-demo", name: "MissionResult", type: "String!")
+}"
+`;

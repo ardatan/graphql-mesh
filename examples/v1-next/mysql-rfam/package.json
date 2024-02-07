@@ -1,0 +1,20 @@
+{
+  "name": "@v1-next/mysql-rfam",
+  "version": "0.11.6",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
+  },
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "@omnigraph/mysql": "^0.0.2",
+    "graphql": "16.8.1",
+    "typescript": "5.3.3"
+  },
+  "devDependencies": {
+    "jest": "29.7.0"
+  }
+}

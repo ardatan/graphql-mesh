@@ -1,4 +1,4 @@
-import { DirectiveNode, GraphQLSchema, visit } from 'graphql';
+import { DefinitionNode, DirectiveNode, GraphQLSchema, parse, visit } from 'graphql';
 import { Driver } from 'neo4j-driver';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
@@ -55,6 +55,15 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Executo
     EnumValueDefinition: astVisitor,
     InputValueDefinition: astVisitor,
   });
+  (typeDefs.definitions as DefinitionNode[]).push(
+    ...parse(/* GraphQL */ `
+      directive @source(
+        subgraph: String
+        name: String
+        type: String
+      ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+    `).definitions,
+  );
   const executableSchema = await getExecutableSchemaFromTypeDefsAndDriver({
     driver,
     logger: opts.logger,

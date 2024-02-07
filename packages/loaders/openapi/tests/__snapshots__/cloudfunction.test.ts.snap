@@ -1,22 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`OpenAPI Loader: Cloudfunction should generate correct schema: cloudfunction-schema 1`] = `
-"schema {
+"schema @transport(subgraph: "test", kind: "rest", location: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions", headers: "{\\"Authorization\\":\\"Basic {args.usernamePassword|base64}\\"}") {
   query: Query
   mutation: Mutation
 }
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
-type Query @globalOptions(sourceName: "test", endpoint: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions", operationHeaders: "{\\"Authorization\\":\\"Basic {args.usernamePassword|base64}\\"}") {
+type Query {
   dummy: String
 }
 
 type Mutation {
   """Description of the action"""
-  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @httpOperation(path: "/test-action-2", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST, queryParamArgMap: "{\\"blocking\\":\\"blocking\\",\\"result\\":\\"result\\"}")
+  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @httpOperation(subgraph: "test", path: "/test-action-2", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST, queryParamArgMap: "{\\"blocking\\":\\"blocking\\",\\"result\\":\\"result\\"}")
 }
 
 type Response {

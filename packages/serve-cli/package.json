@@ -1,0 +1,83 @@
+{
+  "name": "@graphql-mesh/serve-cli",
+  "version": "0.0.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/serve-cli"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "bin": {
+    "mesh-serve": "dist/cjs/bin.js"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "@parcel/watcher": "^2.1.0",
+    "graphql": "*"
+  },
+  "peerDependenciesMeta": {
+    "@parcel/watcher": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@graphql-mesh/fusion-runtime": "^0.0.0",
+    "@graphql-mesh/serve-runtime": "^0.0.0",
+    "@graphql-tools/git-loader": "^8.0.3",
+    "@graphql-tools/github-loader": "^8.0.0",
+    "@graphql-tools/graphql-file-loader": "^8.0.0",
+    "@graphql-tools/load": "^8.0.0",
+    "@graphql-tools/url-loader": "^8.0.0",
+    "dotenv": "^16.3.1",
+    "json-bigint-patch": "^0.0.8",
+    "spinnies": "^0.5.1",
+    "ts-node": "^10.9.1",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
+  },
+  "optionalDependencies": {
+    "node-libcurl": "3.0.1-0"
+  },
+  "devDependencies": {
+    "@parcel/watcher": "^2.3.0",
+    "@types/spinnies": "^0.5.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "buildOptions": {
+    "bin": {
+      "mesh-compose": {
+        "input": "src/bin.ts"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}

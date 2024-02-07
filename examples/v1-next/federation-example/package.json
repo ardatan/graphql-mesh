@@ -1,0 +1,28 @@
+{
+  "name": "federation-example",
+  "version": "0.5.145",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "gateway",
+    "services/*"
+  ],
+  "scripts": {
+    "build-supergraph": "rover supergraph compose --config gateway/supergraph.yaml --output gateway/supergraph.graphql",
+    "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
+    "start-gateway": "cd gateway && npm start",
+    "start-gateway-delayed": "delay 1 && npm run start-gateway",
+    "start-service-accounts": "cd services/accounts && npm start",
+    "start-service-inventory": "cd services/inventory && npm start",
+    "start-service-products": "cd services/products && npm start",
+    "start-service-reviews": "cd services/reviews && npm start",
+    "start-services": "concurrently \"npm:start-service-*\"",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@apollo/rover": "^0.22.0",
+    "concurrently": "8.2.2",
+    "delay-cli": "2.0.0",
+    "jest": "29.7.0"
+  }
+}

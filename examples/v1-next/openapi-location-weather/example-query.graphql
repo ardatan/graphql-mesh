@@ -1,0 +1,11 @@
+query exampleQuery {
+  findCitiesUsingGET(namePrefix: "Istanbul") {
+    data {
+      name
+      todayForecast {
+        min_temp
+        max_temp
+      }
+    }
+  }
+}

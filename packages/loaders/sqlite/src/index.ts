@@ -34,10 +34,11 @@ export function loadSQLiteSubgraph(name: string, opts: GraphQLSQLiteLoaderOpts) 
   return ({ cwd }: { cwd: string }) => ({
     name,
     schema$: loadGraphQLSchemaFromOptions(opts).then(schema => {
-      schema.extensions = schema.extensions || {};
-      const directivesObj: any = schema.extensions.directives || {};
-      directivesObj.transport = {
+      const extensionsObj: any = (schema.extensions = schema.extensions || {});
+      extensionsObj.directives ||= {};
+      extensionsObj.directives.transport = {
         kind: 'sqlite',
+        subgraph: name,
         location: opts.infile || opts.db,
         options: {
           type: opts.infile != null ? 'infile' : 'db',
@@ -48,8 +49,8 @@ export function loadSQLiteSubgraph(name: string, opts: GraphQLSQLiteLoaderOpts) 
   });
 }
 
-interface ThriftTransportEntry {
-  kind: 'thrift';
+interface SqliteTransportEntry {
+  kind: 'sqlite';
   location: string;
   options: {
     type: 'infile' | 'db';
@@ -57,13 +58,16 @@ interface ThriftTransportEntry {
   cwd?: string;
 }
 
-export function getSubgraphExecutor(opts: ThriftTransportEntry) {
+export function getSubgraphExecutor(transportContext: {
+  transportEntry: SqliteTransportEntry;
+  cwd: string;
+}) {
   const loaderOpts: GraphQLSQLiteLoaderOpts = {};
-  if (opts.options.type === 'infile') {
-    loaderOpts.infile = opts.location;
+  if (transportContext.transportEntry.options.type === 'infile') {
+    loaderOpts.infile = transportContext.transportEntry.location;
   } else {
-    loaderOpts.db = opts.location;
+    loaderOpts.db = transportContext.transportEntry.location;
   }
-  loaderOpts.cwd = opts.cwd || process.cwd();
+  loaderOpts.cwd = transportContext.cwd;
   return loadGraphQLSchemaFromOptions(loaderOpts).then(schema => createDefaultExecutor(schema));
 }

@@ -21,7 +21,7 @@ import {
   SelectionSetParam,
   SelectionSetParamOrFactory,
 } from '@graphql-mesh/types';
-import { parseWithCache } from '@graphql-mesh/utils';
+import { iterateAsync, parseWithCache } from '@graphql-mesh/utils';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import {
   delegateToSchema,
@@ -37,7 +37,6 @@ import {
 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { MESH_API_CONTEXT_SYMBOL } from './constants.js';
-import { iterateAsync } from './utils.js';
 
 export function getInContextSDK(
   unifiedSchema: GraphQLSchema,
@@ -48,14 +47,14 @@ export function getInContextSDK(
   const inContextSDK: Record<string, any> = {};
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   for (const rawSource of rawSources) {
-    const rawSourceLogger = logger.child(`${rawSource.name}`);
+    const rawSourceLogger = logger?.child(`${rawSource.name}`);
 
     const rawSourceContext: any = {
       rawSource,
       [MESH_API_CONTEXT_SYMBOL]: true,
     };
     // TODO: Somehow rawSource reference got lost in somewhere
-    let rawSourceSubSchemaConfig: SubschemaConfig;
+    let rawSourceSubSchemaConfig: SubschemaConfig = rawSource;
     const stitchingInfo = unifiedSchema.extensions.stitchingInfo as StitchingInfo;
     if (stitchingInfo) {
       for (const [subschemaConfig, subschema] of stitchingInfo.subschemaMap) {
@@ -64,18 +63,16 @@ export function getInContextSDK(
           break;
         }
       }
-    } else {
-      rawSourceSubSchemaConfig = rawSource;
     }
     // If there is a single source, there is no unifiedSchema
-    const transformedSchema = sourceMap.get(rawSource);
+    const transformedSchema = sourceMap?.get(rawSource) || rawSource.schema;
     const rootTypes: Record<OperationTypeNode, GraphQLObjectType> = {
       query: transformedSchema.getQueryType(),
       mutation: transformedSchema.getMutationType(),
       subscription: transformedSchema.getSubscriptionType(),
     };
 
-    rawSourceLogger.debug(`Generating In Context SDK`);
+    rawSourceLogger?.debug(`Generating In Context SDK`);
     for (const operationType in rootTypes) {
       const rootType: GraphQLObjectType = rootTypes[operationType as OperationTypeNode];
       if (rootType) {
@@ -83,7 +80,7 @@ export function getInContextSDK(
         const rootTypeFieldMap = rootType.getFields();
         for (const fieldName in rootTypeFieldMap) {
           const rootTypeField = rootTypeFieldMap[fieldName];
-          const inContextSdkLogger = rawSourceLogger.child(
+          const inContextSdkLogger = rawSourceLogger?.child(
             `InContextSDK.${rootType.name}.${fieldName}`,
           );
           const namedReturnType = getNamedType(rootTypeField.type);
@@ -131,7 +128,7 @@ export function getInContextSDK(
             valuesFromResults?: (result: any, keys?: string[]) => any;
             autoSelectionSetWithDepth?: number;
           }) => {
-            inContextSdkLogger.debug(`Called with`, {
+            inContextSdkLogger?.debug(`Called with`, {
               args,
               key,
             });

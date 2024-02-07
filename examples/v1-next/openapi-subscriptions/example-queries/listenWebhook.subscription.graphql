@@ -1,0 +1,5 @@
+subscription listenWebhook($subscriptionId: String!) {
+  onData(subscriptionId: $subscriptionId) {
+    userData
+  }
+}

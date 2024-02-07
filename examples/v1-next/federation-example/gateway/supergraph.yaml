@@ -1,0 +1,17 @@
+subgraphs:
+  accounts:
+    routing_url: http://localhost:9880/graphql
+    schema:
+      file: ../services/accounts-subgraph/typeDefs.graphql
+  reviews:
+    routing_url: http://localhost:9874/graphql
+    schema:
+      file: ../services/reviews/typeDefs.graphql
+  products:
+    routing_url: http://localhost:9873/graphql
+    schema:
+      file: ../services/products/typeDefs.graphql
+  inventory:
+    routing_url: http://localhost:9872/graphql
+    schema:
+      file: ../services/inventory/typeDefs.graphql

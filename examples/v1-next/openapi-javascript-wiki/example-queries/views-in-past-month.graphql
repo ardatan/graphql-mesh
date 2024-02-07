@@ -1,0 +1,3 @@
+query viewsInPastMonth {
+  viewsInPastMonth(project: "en.wikipedia.org")
+}

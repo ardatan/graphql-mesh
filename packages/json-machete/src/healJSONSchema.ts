@@ -400,6 +400,14 @@ export async function healJSONSchema(
             subSchema.type = 'null';
             delete subSchema.const;
           }
+          if (subSchema.enum && subSchema.default != null) {
+            if (!subSchema.enum.includes(subSchema.default)) {
+              debugLogFn?.(
+                `${path} has an enum but the default value is not in the enum. Removing it.`,
+              );
+              delete subSchema.default;
+            }
+          }
           if (
             !subSchema.title &&
             !subSchema.$ref &&

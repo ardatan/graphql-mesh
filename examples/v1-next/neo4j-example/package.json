@@ -1,0 +1,20 @@
+{
+  "name": "@v1-next/neo4j-example",
+  "version": "0.13.6",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
+  },
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "@omnigraph/neo4j": "^0.0.1",
+    "graphql": "^16.8.1",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

@@ -1,13 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Neo4j should generate correct schema 1`] = `
-"schema @transport(kind: "neo4j", subgraph: "Neo4j", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}) {
+"schema @transport(kind: "neo4j", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}, subgraph: "Neo4j") {
   query: Query
   mutation: Mutation
   subscription: Subscription
 }
 
-directive @introspection on ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @introspection(subgraph: String) on ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+
+directive @relationship(direction: _RelationDirections, type: String) on FIELD_DEFINITION
+
+directive @relationshipProperties on OBJECT
+
+directive @transport(kind: String, location: String, options: Any, subgraph: String) on SCHEMA
 
 interface ActedInProperties @relationshipProperties @introspection {
   roles: [String]! @introspection
@@ -46,6 +52,8 @@ input ActedInPropertiesWhere {
   roles_NOT: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   roles_NOT_INCLUDES: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
+
+scalar Any
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
@@ -3548,6 +3556,11 @@ type UpdateMoviesMutationResponse {
 type UpdatePeopleMutationResponse {
   info: UpdateInfo!
   people: [Person!]!
+}
+
+enum _RelationDirections {
+  IN
+  OUT
 }"
 `;
 

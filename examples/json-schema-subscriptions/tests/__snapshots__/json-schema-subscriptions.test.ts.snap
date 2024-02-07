@@ -7,18 +7,18 @@ exports[`JSON Schema Subscriptions should generate correct schema 1`] = `
   subscription: Subscription
 }
 
-directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION
 
-directive @pubsubOperation(pubsubTopic: String) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
 directive @live on QUERY
 
-type Query @globalOptions(sourceName: "Example", endpoint: "http://localhost:4002", operationHeaders: "{\\"Content-Type\\":\\"application/json\\"}") {
-  todos: [query_todos_items] @httpOperation(path: "/todos", httpMethod: GET)
+type Query {
+  todos: [query_todos_items] @httpOperation(subgraph: "Example", path: "/todos", httpMethod: GET)
 }
 
 type query_todos_items {
@@ -28,26 +28,26 @@ type query_todos_items {
 }
 
 type Mutation {
-  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(path: "/todo", httpMethod: POST)
+  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(subgraph: "Example", path: "/todo", httpMethod: POST)
 }
 
-type mutation_addTodo @example(value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
+type mutation_addTodo @example(subgraph: "Example", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
   id: Int
   name: String
   content: String
 }
 
-input mutationInput_addTodo_input_Input @example(value: "{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
+input mutationInput_addTodo_input_Input @example(subgraph: "Example", value: "{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
   name: String
   content: String
 }
 
 type Subscription {
   """PubSub Topic: webhook:post:/webhooks/todo_added"""
-  todoAdded: subscription_todoAdded @pubsubOperation(pubsubTopic: "webhook:post:/webhooks/todo_added")
+  todoAdded: subscription_todoAdded @pubsubOperation(subgraph: "Example", pubsubTopic: "webhook:post:/webhooks/todo_added")
 }
 
-type subscription_todoAdded @example(value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
+type subscription_todoAdded @example(subgraph: "Example", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
   id: Int
   name: String
   content: String

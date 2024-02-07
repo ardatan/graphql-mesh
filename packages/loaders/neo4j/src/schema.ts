@@ -1,4 +1,4 @@
-import { ASTNode, ConstDirectiveNode, DocumentNode, parse, visit } from 'graphql';
+import { ASTNode, ConstDirectiveNode, DefinitionNode, DocumentNode, parse, visit } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import neo4j, { Driver } from 'neo4j-driver';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
@@ -11,21 +11,38 @@ import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
 
-function addIntrospectionDirective<
-  TASTNode extends ASTNode & { directives?: readonly ConstDirectiveNode[] },
->(node: TASTNode) {
-  return {
-    ...node,
-    directives: [
-      ...(node.directives || []),
-      {
-        kind: 'Directive',
-        name: {
-          kind: 'Name',
-          value: 'introspection',
-        },
-      },
-    ],
+function createAddIntrospectionDirective(subgraph: string) {
+  return function addIntrospectionDirective<
+    TASTNode extends ASTNode & { directives?: readonly ConstDirectiveNode[] },
+  >(node: TASTNode): TASTNode | void {
+    if (!node.directives?.some(directive => directive.name.value === 'introspection')) {
+      return {
+        ...node,
+        directives: [
+          ...(node.directives || []),
+          {
+            kind: 'Directive',
+            name: {
+              kind: 'Name',
+              value: 'introspection',
+              arguments: [
+                {
+                  kind: 'Argument',
+                  name: {
+                    kind: 'Name',
+                    value: 'subgraph',
+                  },
+                  value: {
+                    kind: 'StringValue',
+                    value: subgraph,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      };
+    }
   };
 }
 
@@ -42,16 +59,25 @@ export async function loadGraphQLSchemaFromNeo4J(
   subgraphName: string,
   { endpoint, auth, logger, pubsub, database = 'neo4j', driver }: LoadGraphQLSchemaFromNeo4JOpts,
 ) {
-  logger.info('Inferring the schema from the database: ', `"${database}"`);
+  logger?.info('Inferring the schema from the database: ', `"${database}"`);
+  let closeDriverAfter = false;
+  if (!driver) {
+    closeDriverAfter = !pubsub;
+    driver = getDriverFromOpts({
+      endpoint,
+      auth,
+      logger,
+    });
+  }
   polyfillStrReplaceAll();
-  let typeDefsStr = await toGraphQLTypeDefs(() =>
+  const typeDefsStr = await toGraphQLTypeDefs(() =>
     driver.session({
       database,
       defaultAccessMode: neo4j.session.READ,
     }),
   );
-  typeDefsStr += `\n directive @introspection on ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | OBJECT | INTERFACE | UNION | INPUT_OBJECT | SCALAR | ENUM \n`;
   let typeDefs = parse(typeDefsStr, { noLocation: true });
+  const addIntrospectionDirective = createAddIntrospectionDirective(subgraphName);
   typeDefs = visit(typeDefs, {
     EnumTypeDefinition: addIntrospectionDirective,
     ObjectTypeDefinition: addIntrospectionDirective,
@@ -64,15 +90,25 @@ export async function loadGraphQLSchemaFromNeo4J(
     EnumValueDefinition: addIntrospectionDirective,
     InputValueDefinition: addIntrospectionDirective,
   });
+  (typeDefs.definitions as DefinitionNode[]).push(
+    ...parse(
+      /* GraphQL */ `
+        directive @relationshipProperties on OBJECT
+        directive @relationship(type: String, direction: _RelationDirections) on FIELD_DEFINITION
+        enum _RelationDirections {
+          IN
+          OUT
+        }
+        directive @introspection(
+          subgraph: String
+        ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+      `,
+      {
+        noLocation: true,
+      },
+    ).definitions,
+  );
   revertStrReplaceAllPolyfill();
-
-  if (!driver) {
-    driver = getDriverFromOpts({
-      endpoint,
-      auth,
-      logger,
-    });
-  }
 
   const schema = await getExecutableSchemaFromTypeDefsAndDriver({
     driver,
@@ -80,6 +116,10 @@ export async function loadGraphQLSchemaFromNeo4J(
     pubsub,
     typeDefs,
   });
+
+  if (closeDriverAfter) {
+    await driver.close();
+  }
 
   const schemaExtensions: any = (schema.extensions ||= {});
   schemaExtensions.directives = schemaExtensions.directives || {};
@@ -94,7 +134,13 @@ export async function loadGraphQLSchemaFromNeo4J(
   };
   return mergeSchemas({
     schemas: [schema],
-    typeDefs,
+    typeDefs: [
+      typeDefs,
+      `
+        scalar Any
+        directive @transport(kind: String, subgraph: String, location: String, options: Any) on SCHEMA
+      `,
+    ],
     assumeValid: true,
     assumeValidSDL: true,
   });
