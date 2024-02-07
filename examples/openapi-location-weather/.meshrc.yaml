@@ -5,7 +5,7 @@ sources:
         source: https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/mashape.com/geodb/1.0.0/swagger.yaml
         ignoreErrorResponses: true
         operationHeaders:
-          'X-RapidAPI-Key': {env.GEODB_API_KEY}
+          'X-RapidAPI-Key': "{env.GEODB_API_KEY}"
     transforms:
       - rename:
           - from:
@@ -20,6 +20,8 @@ sources:
         ignoreErrorResponses: true
         queryParams:
           key: "{env.WEATHERBIT_API_KEY}"
+        operationHeaders:
+          'X-RapidAPI-Key': "{env.WEATHERBIT_API_KEY}"
     transforms:
       - rename:
           - from:
