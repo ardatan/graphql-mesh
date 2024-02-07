@@ -12891,6 +12891,18 @@ graphql-jit@0.8.2:
     lodash.merge "4.6.2"
     lodash.mergewith "4.6.2"
 
+graphql-jit@0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.4.tgz#53c2e43b90ec98ea0942f4062516de910fbff709"
+  integrity sha512-4KRrJ1ROy3Usgbl3eAoUMfdfZCRjkcw9cCGT7QwTUIHm9dPGaSaldxzGUttyjErU0rsYEb6WWyb6mMh5r6lEoQ==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.2.0"
+    fast-json-stringify "^5.7.0"
+    generate-function "^2.3.1"
+    lodash.memoize "^4.1.2"
+    lodash.merge "4.6.2"
+    lodash.mergewith "4.6.2"
+
 graphql-mobius@^0.1.13:
   version "0.1.13"
   resolved "https://registry.yarnpkg.com/graphql-mobius/-/graphql-mobius-0.1.13.tgz#4f635eacee63adbed076169efdc959220e2af76a"
