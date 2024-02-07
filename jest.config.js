@@ -17,6 +17,9 @@ if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/grpc-*/**');
   testMatch.push('!**/examples/sqlite-*/**');
   testMatch.push('!**/examples/mysql-*/**');
+  testMatch.push('!**/examples/v1-next/grpc-*/**');
+  testMatch.push('!**/examples/v1-next/sqlite-*/**');
+  testMatch.push('!**/examples/v1-next/mysql-*/**');
 }
 
 testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');
