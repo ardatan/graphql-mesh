@@ -35,6 +35,10 @@ type Query {
   """
   documents: [String!]
   """
+  Configure persisted operations options
+  """
+  persistedOperations: PersistedOperationsConfig
+  """
   Logger instance that matches `Console` interface of NodeJS
   """
   logger: Any
@@ -150,4 +154,35 @@ union PubSub = String | PubSubConfig
 type PubSubConfig {
   name: String!
   config: Any
+}
+
+type PersistedOperationsConfig {
+  """
+  Whether to allow execution of arbitrary GraphQL operations aside from persisted operations.
+  """
+  allowArbitraryOperations: Boolean
+  """
+  Whether to skip validation of the persisted operation
+  """
+  skipDocumentValidation: Boolean
+
+  """
+  Custom errors to be thrown
+  """
+  customErrors: CustomPersistedQueryErrors
+}
+
+type CustomPersistedQueryErrors {
+  """
+  Error to be thrown when the persisted operation is not found
+  """
+  notFound: String
+  """
+  Error to be thrown when rejecting non-persisted operations
+  """
+  persistedQueryOnly: String
+  """
+  Error to be thrown when the extraction of the persisted operation id failed
+  """
+  keyNotFound: String
 }

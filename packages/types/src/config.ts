@@ -49,6 +49,7 @@ export interface Config {
    * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
    */
   documents?: string[];
+  persistedOperations?: PersistedOperationsConfig;
   /**
    * Logger instance that matches `Console` interface of NodeJS
    */
@@ -1729,6 +1730,37 @@ export interface RedisConfig {
 export interface PubSubConfig {
   name: string;
   config?: any;
+}
+/**
+ * Configure persisted operations options
+ */
+export interface PersistedOperationsConfig {
+  /**
+   * Whether to allow execution of arbitrary GraphQL operations aside from persisted operations.
+   */
+  allowArbitraryOperations?: boolean;
+  /**
+   * Whether to skip validation of the persisted operation
+   */
+  skipDocumentValidation?: boolean;
+  customErrors?: CustomPersistedQueryErrors;
+}
+/**
+ * Custom errors to be thrown
+ */
+export interface CustomPersistedQueryErrors {
+  /**
+   * Error to be thrown when the persisted operation is not found
+   */
+  notFound?: string;
+  /**
+   * Error to be thrown when rejecting non-persisted operations
+   */
+  persistedQueryOnly?: string;
+  /**
+   * Error to be thrown when the extraction of the persisted operation id failed
+   */
+  keyNotFound?: string;
 }
 export interface Plugin {
   maskedErrors?: MaskedErrorsPluginConfig;

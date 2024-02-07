@@ -1,0 +1,26 @@
+sources:
+  - name: Hello World
+    handler:
+      jsonSchema:
+        operations:
+          - type: Query
+            field: greeting
+            method: GET
+            path: /
+            responseSample:
+              hello: world
+plugins:
+  - mock:
+      mocks:
+        - apply: Query.greeting
+documents:
+  # Documents can be specified by filename or as a glob pattern
+  - ./src/**/*.graphql
+  # Or by inline definition
+  - |
+    query TypeName {
+      __typename
+    }
+
+persistedOperations:
+  allowArbitraryOperations: true
