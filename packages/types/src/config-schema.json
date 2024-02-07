@@ -4291,7 +4291,7 @@
     },
     "additionalEnvelopPlugins": {
       "type": "string",
-      "description": "You can provide Envelop plugins"
+      "description": "Path to a JavaScript file with a default export of Envelop plugins"
     },
     "plugins": {
       "type": "array",

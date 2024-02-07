@@ -1,5 +1,5 @@
 import { DocumentNode, ExecutionResult } from 'graphql';
-import { envelop } from '@envelop/core';
+import { Plugin } from '@envelop/core';
 import {
   GraphQLOperation,
   KeyValueCache,
@@ -24,7 +24,7 @@ export type GetMeshOptions = {
   pubsub?: MeshPubSub;
   merger: MeshMerger;
   logger?: Logger;
-  additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
+  additionalEnvelopPlugins?: Plugin[];
   documents?: Source[];
   fetchFn?: MeshFetch;
 };
