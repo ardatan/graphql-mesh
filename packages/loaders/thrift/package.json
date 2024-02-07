@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/thrift",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -35,8 +35,8 @@
     "@creditkarma/thrift-server-core": "^1.0.4",
     "@graphql-mesh/cross-helpers": "^0.4.1",
     "@graphql-mesh/string-interpolation": "^0.5.3",
-    "@graphql-mesh/types": "^0.96.3",
-    "@graphql-mesh/utils": "^0.96.3",
+    "@graphql-mesh/types": "^0.96.4",
+    "@graphql-mesh/utils": "^0.96.4",
     "@graphql-tools/delegate": "^10.0.3",
     "@graphql-tools/utils": "^10.0.11",
     "graphql-scalars": "^1.22.4",

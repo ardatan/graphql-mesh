@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/compose-cli",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,12 +35,12 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.96.2",
+    "@graphql-mesh/types": "^0.96.4",
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/fusion-composition": "^0.0.0",
-    "@graphql-mesh/utils": "^0.96.2",
+    "@graphql-mesh/fusion-composition": "^0.0.1",
+    "@graphql-mesh/utils": "^0.96.4",
     "@graphql-tools/graphql-file-loader": "8.0.0",
     "@graphql-tools/load": "^8.0.1",
     "@graphql-tools/utils": "^10.0.8",

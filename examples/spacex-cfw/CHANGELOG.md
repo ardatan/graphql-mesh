@@ -1,5 +1,17 @@
 # spacex-cfw
 
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)]:
+  - @graphql-mesh/graphql@0.96.4
+  - @graphql-mesh/cli@0.88.6
+  - @graphql-mesh/cache-cfw-kv@0.96.4
+  - @graphql-mesh/plugin-rate-limit@0.96.5
+  - @graphql-mesh/plugin-response-cache@0.96.6
+
 ## 0.6.5
 
 ### Patch Changes
