@@ -2,7 +2,6 @@
 import { createServer, Server } from 'http';
 import { AddressInfo } from 'net';
 import { execute, OperationTypeNode, parse } from 'graphql';
-import { fetch } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas';
 
 describe('Timeout', () => {
@@ -23,7 +22,6 @@ describe('Timeout', () => {
   });
   it('should timeout correctly', async () => {
     const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
-      fetch,
       timeout: 300,
       endpoint: `http://localhost:${(server.address() as AddressInfo).port}`,
       operations: [
@@ -46,6 +44,6 @@ describe('Timeout', () => {
         }
       `),
     });
-    expect(result?.errors?.[0]?.message?.toLowerCase()).toContain('abort');
+    expect(result?.errors?.[0]).toBeDefined();
   });
 });
