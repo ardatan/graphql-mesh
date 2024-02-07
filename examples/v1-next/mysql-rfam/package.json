@@ -1,5 +1,5 @@
 {
-  "name": "mysql-rfam",
+  "name": "@v1-next/mysql-rfam",
   "version": "0.11.6",
   "license": "MIT",
   "private": true,

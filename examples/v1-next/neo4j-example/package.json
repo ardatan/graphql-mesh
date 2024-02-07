@@ -1,5 +1,5 @@
 {
-  "name": "neo4j-example",
+  "name": "@v1-next/neo4j-example",
   "version": "0.13.6",
   "license": "MIT",
   "private": true,

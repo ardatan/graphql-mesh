@@ -1,5 +1,5 @@
 {
-  "name": "example-fastify",
+  "name": "@v1-next/example-fastify",
   "version": "0.6.5",
   "private": true,
   "scripts": {

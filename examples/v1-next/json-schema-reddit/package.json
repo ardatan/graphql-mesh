@@ -1,5 +1,5 @@
 {
-  "name": "reddit-example",
+  "name": "@v1-next/reddit-example",
   "version": "0.7.4",
   "private": true,
   "scripts": {

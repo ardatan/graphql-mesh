@@ -1,5 +1,5 @@
 {
-  "name": "cloudflare-workers",
+  "name": "cfw-breweries",
   "version": "0.7.4",
   "private": true,
   "scripts": {

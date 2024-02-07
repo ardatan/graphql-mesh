@@ -1,5 +1,5 @@
 {
-  "name": "chinook",
+  "name": "sqlite-chinook",
   "version": "0.12.2",
   "license": "MIT",
   "private": true,

@@ -1,5 +1,5 @@
 {
-  "name": "auth0-example",
+  "name": "@v1-next/auth0-example",
   "version": "0.8.5",
   "license": "MIT",
   "private": true,

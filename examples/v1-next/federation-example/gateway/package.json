@@ -1,5 +1,5 @@
 {
-  "name": "federation-supergraph-gateway",
+  "name": "@v1-next/federation-supergraph-gateway",
   "version": "0.2.4",
   "license": "MIT",
   "private": true,

@@ -1,5 +1,5 @@
 {
-  "name": "mysql-employees",
+  "name": "@v1-next/mysql-employees",
   "version": "0.11.6",
   "license": "MIT",
   "private": true,

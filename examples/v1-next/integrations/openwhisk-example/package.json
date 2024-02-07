@@ -1,5 +1,5 @@
 {
-  "name": "openwhisk-example",
+  "name": "@v1-next/openwhisk-example",
   "version": "0.6.5",
   "description": "OpenWhisk Example for GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",

@@ -1,5 +1,5 @@
 {
-  "name": "thrift-calculator",
+  "name": "@v1-next/thrift-calculator",
   "version": "0.12.2",
   "license": "MIT",
   "private": true,

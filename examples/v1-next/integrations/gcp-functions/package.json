@@ -1,5 +1,5 @@
 {
-  "name": "example-gcp",
+  "name": "@v1-next/example-gcp",
   "version": "0.7.4",
   "private": true,
   "main": "dist/index.js",
