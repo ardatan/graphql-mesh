@@ -3,19 +3,18 @@ import { app } from '../src/app';
 import { upstream } from '../src/upstream';
 
 describe('fastify', () => {
-  beforeAll(async () => {
-    await app.listen({
-      port: 4000,
-    });
-    await upstream.listen({
-      port: 4001,
-    });
-  });
+  beforeAll(() =>
+    Promise.all([
+      app.listen({
+        port: 4000,
+      }),
+      upstream.listen({
+        port: 4001,
+      }),
+    ]),
+  );
 
-  afterAll(() => {
-    app.close();
-    upstream.close();
-  });
+  afterAll(() => Promise.all([app.close(), upstream.close()]));
 
   it('should work', async () => {
     const response = await fetch('http://localhost:4000/graphql', {
