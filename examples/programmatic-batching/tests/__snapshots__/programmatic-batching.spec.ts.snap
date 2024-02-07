@@ -6,9 +6,9 @@ exports[`Batching Example should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @globalOptions(endpoint: String, operationHeaders: ObjMap, queryParams: ObjMap, queryStringOptions: ObjMap, sourceName: String) on OBJECT
+directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: ObjMap, path: String, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
 
-directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, operationSpecificHeaders: ObjMap, path: String, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap) on FIELD_DEFINITION
+directive @transport(headers: ObjMap, kind: String, location: String, queryParams: ObjMap, queryStringOptions: ObjMap, subgraph: String) on OBJECT
 
 enum HTTPMethod {
   CONNECT
@@ -23,12 +23,12 @@ enum HTTPMethod {
 }
 
 type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(path: "/users_by_ids", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(subgraph: "ExampleAPI", path: "/users_by_ids", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
 }
 
 scalar ObjMap
 
-type Query @globalOptions(sourceName: "ExampleAPI", endpoint: "http://localhost:4001") {
+type Query {
   dummy: String
   user(id: Float!): User
 }

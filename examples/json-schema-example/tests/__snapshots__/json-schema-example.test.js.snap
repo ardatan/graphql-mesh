@@ -6,17 +6,17 @@ exports[`JSON Schema Example should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @enum(value: String) on ENUM_VALUE
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HttpMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HttpMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
-type Query @globalOptions(sourceName: "FakeAPI", endpoint: "https://not-existing-api.com/API") {
-  me: User @httpOperation(path: "/me", httpMethod: GET)
-  company(id: String!): Company @httpOperation(path: "/company/{args.id}", httpMethod: GET)
+type Query {
+  me: User @httpOperation(subgraph: "FakeAPI", path: "/me", httpMethod: GET)
+  company(id: String!): Company @httpOperation(subgraph: "FakeAPI", path: "/company/{args.id}", httpMethod: GET)
 }
 
 """Fake User Object"""
@@ -45,18 +45,18 @@ type Company {
 }
 
 enum CompanyType {
-  Public_Limited @enum(value: "\\"Public Limited\\"")
-  Private_Limited @enum(value: "\\"Private Limited\\"")
-  One_Person @enum(value: "\\"One Person\\"")
+  Public_Limited @enum(subgraph: "FakeAPI", value: "\\"Public Limited\\"")
+  Private_Limited @enum(subgraph: "FakeAPI", value: "\\"Private Limited\\"")
+  One_Person @enum(subgraph: "FakeAPI", value: "\\"One Person\\"")
 }
 
 type Mutation {
-  createUser(input: CreateUpdateUserInput): User @httpOperation(path: "/user", httpMethod: PUT)
-  updateUser(id: String!, input: CreateUpdateUserInput): User @httpOperation(path: "/user/{args.id}", httpMethod: POST)
-  deleteUser(id: String!): JSON @httpOperation(path: "/user/{args.id}", httpMethod: DELETE)
+  createUser(input: CreateUpdateUserInput): User @httpOperation(subgraph: "FakeAPI", path: "/user", httpMethod: PUT)
+  updateUser(id: String!, input: CreateUpdateUserInput): User @httpOperation(subgraph: "FakeAPI", path: "/user/{args.id}", httpMethod: POST)
+  deleteUser(id: String!): JSON @httpOperation(subgraph: "FakeAPI", path: "/user/{args.id}", httpMethod: DELETE)
 }
 
-input CreateUpdateUserInput @example(value: "{\\"firstName\\":\\"John\\",\\"lastName\\":\\"Doe\\",\\"jobTitle\\":\\"Software Developer\\"}") {
+input CreateUpdateUserInput @example(subgraph: "FakeAPI", value: "{\\"firstName\\":\\"John\\",\\"lastName\\":\\"Doe\\",\\"jobTitle\\":\\"Software Developer\\"}") {
   firstName: String
   lastName: String
   jobTitle: String

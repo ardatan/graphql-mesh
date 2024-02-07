@@ -9,8 +9,7 @@ export function projectResultBySelectionSet({
   selectionSet: SelectionSetNode;
   fragments?: Record<string, FragmentDefinitionNode>;
 }): any {
-  const { selections } = selectionSet;
-  if (!selections.length) {
+  if (!selectionSet?.selections?.length) {
     return result;
   }
   if (Array.isArray(result)) {
@@ -18,7 +17,7 @@ export function projectResultBySelectionSet({
   }
   if (typeof result === 'object' && result != null) {
     const projectedResult: any = {};
-    for (const selection of selections) {
+    for (const selection of selectionSet.selections) {
       switch (selection.kind) {
         case 'Field': {
           const originalFieldName = selection.name.value;
