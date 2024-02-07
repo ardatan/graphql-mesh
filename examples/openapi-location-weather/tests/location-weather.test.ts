@@ -37,6 +37,7 @@ describe('Location Weather', () => {
       }),
     });
     const result = await response.json();
+    expect(result?.errors?.[0]).toBeFalsy();
     expect(result?.data?.findCitiesUsingGET?.data?.length).toBeGreaterThan(0);
     const found = result.data.findCitiesUsingGET.data[0];
     expect(found.name).toBe('Istanbul');

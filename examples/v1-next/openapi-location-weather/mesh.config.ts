@@ -43,7 +43,7 @@ export const composeConfig: MeshComposeCLIConfig = {
           subgraph: "Weather"
           operation: """
           query getForecastDaily($latitude: Float!, $longitude: Float!) {
-            forecast_daily_by_lat_by_lon(lat: $latitude, lon: $longitude) {
+            forecast_daily(lat: $latitude, lon: $longitude) {
               data
             }
           }

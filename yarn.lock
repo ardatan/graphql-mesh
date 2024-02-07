@@ -5240,22 +5240,6 @@
     semver "^7.5.4"
     tar-fs "^2.1.1"
 
-"@omnigraph/mysql@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@omnigraph/mysql/-/mysql-0.0.1.tgz#abb94a2d22d47ad58eee0202b81b4d5af18927c7"
-  integrity sha512-O/mIlm6MtJSP5sSqQAcGPoAckZYvHZsn8C+5H5E9C9hb7hkZWhT02u7USHEduFNGPV8Qd1U2bSIbgHXEFyc8ZA==
-  dependencies:
-    "@graphql-mesh/cross-helpers" "^0.4.1"
-    "@graphql-mesh/string-interpolation" "^0.5.3"
-    "@graphql-mesh/utils" "^0.96.2"
-    "@graphql-tools/delegate" "^10.0.3"
-    "@graphql-tools/utils" "^10.0.12"
-    graphql-compose "^9.0.10"
-    graphql-fields "^2.0.3"
-    graphql-scalars "^1.22.4"
-    mysql "^2.18.1"
-    mysql-utilities "^1.1.4"
-
 "@omnigraph/neo4j@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@omnigraph/neo4j/-/neo4j-0.0.1.tgz#85bffe07357a9b4903a18c0b032bcf2a39fd2989"
@@ -13390,27 +13374,10 @@ graphql-ws@^5.12.1, graphql-ws@^5.14.0, graphql-ws@^5.6.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.14.3.tgz#fb1fba011a0ae9c4e86d831cae2ec27955168b9a"
   integrity sha512-F/i2xNIVbaEF2xWggID0X/UZQa2V8kqKDPO8hwmu53bVOcTL7uNkxnexeEgSCVxYBQUTUNEI8+e4LO1FOhKPKQ==
 
-graphql-yoga@5.1.1, graphql-yoga@^5.0.1:
+graphql-yoga@5.1.1, graphql-yoga@^5.0.1, graphql-yoga@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-5.1.1.tgz#e47f48217a4c7907290fdf164d9a4c7edb50e30b"
   integrity sha512-oak5nVKTHpqJgpA1aT3cJPOlCidrW7l6nbc5L6w07VdFul16ielGI2ZnQDAXO+qQih09/4WspD5x0SsSZH+hkg==
-  dependencies:
-    "@envelop/core" "^5.0.0"
-    "@graphql-tools/executor" "^1.0.0"
-    "@graphql-tools/schema" "^10.0.0"
-    "@graphql-tools/utils" "^10.0.0"
-    "@graphql-yoga/logger" "^2.0.0"
-    "@graphql-yoga/subscription" "^5.0.0"
-    "@whatwg-node/fetch" "^0.9.7"
-    "@whatwg-node/server" "^0.9.1"
-    dset "^3.1.1"
-    lru-cache "^10.0.0"
-    tslib "^2.5.2"
-
-graphql-yoga@^5.0.0:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-5.0.2.tgz#2c61b7c3ef1e09b5e844cdfd9d882d61d260bce3"
-  integrity sha512-+r0aZ5sBQaWTFEwmDdPR+XcsYaIIh40IA34F7rhnyY57KXgs18ZkCZ9NPvfi6XEuqkHEvc2PFox05c5NRSJ26g==
   dependencies:
     "@envelop/core" "^5.0.0"
     "@graphql-tools/executor" "^1.0.0"

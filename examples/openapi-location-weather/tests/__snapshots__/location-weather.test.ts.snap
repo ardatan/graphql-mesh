@@ -1411,7 +1411,7 @@ type Query {
     country: String
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -1431,7 +1431,7 @@ type Query {
   """
   bulk_files(
     """Your registered API key."""
-    key: String!
+    key: String
   ): JSON
 
   """Returns a Current Observation - given a lat, and a lon."""
@@ -1452,7 +1452,7 @@ type Query {
     include: queryInput_current_include
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_current_lang
 
     """Latitude component of location."""
@@ -1491,7 +1491,7 @@ type Query {
     country: String
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2125,7 +2125,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2157,7 +2157,7 @@ type Query {
     hours: Int
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2186,7 +2186,7 @@ type Query {
     days: Float
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_forecast_daily_lang
 
     """Latitude component of location."""
@@ -2208,7 +2208,7 @@ type Query {
   """
   forecast_energy(
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2239,7 +2239,7 @@ type Query {
     hours: Int
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_forecast_hourly_lang
 
     """Latitude component of location."""
@@ -2272,7 +2272,7 @@ type Query {
     country: String
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2534,7 +2534,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2564,7 +2564,7 @@ type Query {
     country: String
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2595,7 +2595,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_history_daily_lang
 
     """Latitude component of location."""
@@ -2623,7 +2623,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float!
@@ -2659,7 +2659,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_history_hourly_lang
 
     """Latitude component of location."""
@@ -2699,7 +2699,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_history_subhourly_lang
 
     """Latitude component of location."""
@@ -2728,7 +2728,7 @@ type Query {
     end_day: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float!
