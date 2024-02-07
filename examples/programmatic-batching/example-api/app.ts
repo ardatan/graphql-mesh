@@ -1,4 +1,5 @@
-import { createRouter, Response, Type } from 'fets';
+import { createRouter, Response } from 'fets';
+import { Type } from '@sinclair/typebox';
 
 export function createApp() {
   const users = [

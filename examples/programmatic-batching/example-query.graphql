@@ -3,7 +3,7 @@ fragment UserF on User {
   name
 }
 
-query UserById {
+{
   john: user(id: 1) {
     ...UserF
   }

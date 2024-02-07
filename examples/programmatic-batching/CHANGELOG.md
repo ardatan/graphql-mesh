@@ -1,4 +1,4 @@
-# batching-resolver-example
+# programmatic-batching-example
 
 ## 0.7.6
 

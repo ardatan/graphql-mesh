@@ -1,0 +1,25 @@
+query FindPerson {
+  s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: { id: "1" }) {
+    FindPersonResult {
+      Age
+      DOB
+      FavoriteColors {
+        FavoriteColorsItem
+      }
+      Home {
+        City
+        State
+        Street
+        Zip
+      }
+      Name
+      SSN
+      Office {
+        City
+        State
+        Street
+        Zip
+      }
+    }
+  }
+}
