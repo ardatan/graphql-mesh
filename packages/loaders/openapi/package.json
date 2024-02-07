@@ -42,7 +42,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.3",
     "@graphql-tools/delegate": "^10.0.3",
     "@omnigraph/json-schema": "^0.97.4",
-    "change-case": "^4.1.2",
+    "change-case": "^5.0.0",
     "json-machete": "^0.97.1",
     "openapi-types": "^12.1.0"
   },
