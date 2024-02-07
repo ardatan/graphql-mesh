@@ -1,0 +1,76 @@
+schema @transport(subgraph: "OpenBreweryDB", kind: "rest", location: "http://localhost:3001") {
+  query: Query
+}
+
+directive @example(
+  subgraph: String
+  value: ObjMap
+) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+
+directive @httpOperation(
+  subgraph: String
+  path: String
+  operationSpecificHeaders: ObjMap
+  httpMethod: HTTPMethod
+  isBinary: Boolean
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
+  jsonApiFields: Boolean
+) on FIELD_DEFINITION
+
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: ObjMap
+  queryStringOptions: ObjMap
+  queryParams: ObjMap
+) on OBJECT
+
+type Query {
+  secret: query_secret
+    @httpOperation(subgraph: "OpenBreweryDB", path: "/", httpMethod: POST)
+    @resolver(subgraph: "OpenBreweryDB", operation: "query secret { secret }")
+    @source(subgraph: "OpenBreweryDB", name: "secret", type: "query_secret")
+  """
+  The authentication information of the request.
+  """
+  authInfo: AuthenticationInfo
+}
+
+type query_secret
+  @example(
+    subgraph: "OpenBreweryDB"
+    value: "\"{\\\"code\\\":\\\"MY_SECRET\\\",\\\"timestamp\\\":0}\""
+  )
+  @source(subgraph: "OpenBreweryDB", name: "query_secret") {
+  code: String @source(subgraph: "OpenBreweryDB", name: "code", type: "String")
+  timestamp: Int @source(subgraph: "OpenBreweryDB", name: "timestamp", type: "Int")
+}
+
+scalar ObjMap
+  @source(subgraph: "OpenBreweryDB", name: "ObjMap")
+  @source(subgraph: "OpenBreweryDB", name: "ObjMap")
+
+enum HTTPMethod @source(subgraph: "OpenBreweryDB", name: "HTTPMethod") {
+  GET @source(subgraph: "OpenBreweryDB", name: "GET")
+  HEAD @source(subgraph: "OpenBreweryDB", name: "HEAD")
+  POST @source(subgraph: "OpenBreweryDB", name: "POST")
+  PUT @source(subgraph: "OpenBreweryDB", name: "PUT")
+  DELETE @source(subgraph: "OpenBreweryDB", name: "DELETE")
+  CONNECT @source(subgraph: "OpenBreweryDB", name: "CONNECT")
+  OPTIONS @source(subgraph: "OpenBreweryDB", name: "OPTIONS")
+  TRACE @source(subgraph: "OpenBreweryDB", name: "TRACE")
+  PATCH @source(subgraph: "OpenBreweryDB", name: "PATCH")
+}
+
+"""
+Describes the authentication object as provided by Auth0.
+"""
+type AuthenticationInfo {
+  """
+  String that uniquely identifies an authenticated user.
+  """
+  sub: String!
+}

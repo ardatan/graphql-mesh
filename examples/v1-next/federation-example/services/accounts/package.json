@@ -1,0 +1,16 @@
+{
+  "name": "accounts-subgraph",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@apollo/subgraph": "2.6.2",
+    "apollo-server": "3.13.0",
+    "graphql": "16.8.1",
+    "ts-node": "10.9.2",
+    "typescript": "5.3.3"
+  }
+}

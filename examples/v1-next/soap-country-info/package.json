@@ -1,0 +1,16 @@
+{
+  "name": "country-info-example",
+  "version": "0.11.6",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
+  },
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "@omnigraph/soap": "^0.96.3",
+    "graphql": "^16.8.1"
+  }
+}

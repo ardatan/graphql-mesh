@@ -1,0 +1,22 @@
+{
+  "name": "type-merging-batching-example",
+  "version": "0.6.6",
+  "private": true,
+  "scripts": {
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "start": "concurrently \"yarn start-services\" \"yarn start-gateway\"",
+    "start-authors": "ts-node services/authors/index.ts",
+    "start-books": "ts-node services/books/index.ts",
+    "start-gateway": "node ../../packages/serve-cli/dist/cjs/bin.js",
+    "start-services": "concurrently \"yarn start-authors\" \"yarn start-books\""
+  },
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "concurrently": "8.2.2",
+    "graphql": "^16.8.1",
+    "graphql-yoga": "^5.0.1",
+    "ts-node": "^0.9.1",
+    "typescript": "^5.3.2"
+  }
+}

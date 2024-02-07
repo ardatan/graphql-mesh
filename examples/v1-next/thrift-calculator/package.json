@@ -1,0 +1,30 @@
+{
+  "name": "thrift-calculator",
+  "version": "0.12.2",
+  "license": "MIT",
+  "private": true,
+  "main": "build/main.js",
+  "scripts": {
+    "build:mesh": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "codegen": "thrift-typescript --target thrift-server --sourceDir ./src --outDir ./src/codegen",
+    "start": "concurrently \"npm run start:thrift\" \"npm run start:mesh\"",
+    "start:mesh": "node ../../packages/serve-cli/dist/cjs/bin.js",
+    "start:thrift": "ts-node src/main.ts"
+  },
+  "dependencies": {
+    "@creditkarma/thrift-server-core": "1.0.4",
+    "@creditkarma/thrift-server-express": "1.0.4",
+    "@creditkarma/thrift-typescript": "3.7.6",
+    "@graphql-mesh/compose-cli": "0.0.0",
+    "@graphql-mesh/serve-cli": "0.0.0",
+    "@omnigraph/thrift": "0.0.2",
+    "express": "4.18.2",
+    "graphql": "16.8.1",
+    "thrift": "0.19.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.3.3"
+  },
+  "devDependencies": {
+    "concurrently": "8.2.2"
+  }
+}

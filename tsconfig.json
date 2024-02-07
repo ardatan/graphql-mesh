@@ -37,6 +37,11 @@
       "@graphql-mesh/plugin-*": ["packages/plugins/*/src/index"],
       "@graphql-mesh/cross-helpers": ["packages/cross-helpers/index"],
       "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index"],
+      "@graphql-mesh/fusion-*": ["packages/fusion/*/src/index"],
+      "@graphql-mesh/compose-cli": ["packages/compose-cli/src/index"],
+      "@graphql-mesh/serve-cli": ["packages/serve-cli/src/index"],
+      "@graphql-mesh/serve-runtime": ["packages/serve-runtime/src/index"],
+      "@graphql-mesh/transport-*": ["packages/transports/*/src/index"],
       "@graphql-mesh/*": ["packages/handlers/*/src/index"],
       "json-machete": ["packages/json-machete/src/index"],
       "@omnigraph/*": ["packages/loaders/*/src/index"]

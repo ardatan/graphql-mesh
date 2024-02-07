@@ -1,6 +1,7 @@
 import { X2jOptions } from 'fast-xml-parser';
 
 export interface SoapAnnotations {
+  subgraph: string;
   elementName: string;
   bindingNamespace: string;
   endpoint: string;

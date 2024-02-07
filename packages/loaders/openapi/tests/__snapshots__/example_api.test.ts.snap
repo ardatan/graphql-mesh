@@ -1,104 +1,104 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`example_api should generate the schema correctly 1`] = `
-"schema {
+"schema @transport(subgraph: "example_api", kind: "rest", location: "http://localhost:3000/api") {
   query: Query
   mutation: Mutation
 }
 
-directive @enum(value: String) on ENUM_VALUE
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
-directive @resolveRootField(field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
-
-directive @linkResolver(linkResolverMap: ObjMap) on FIELD_DEFINITION
+directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFINITION
 
 directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
 
-type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost:3000/api") {
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+type Query {
   """Return a list of users."""
   getUsers(
     """Limit of the number of users to return."""
     limit: Int!
-  ): [user] @httpOperation(path: "/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"limit\\":\\"limit\\"}")
+  ): [user] @httpOperation(subgraph: "example_api", path: "/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"limit\\":\\"limit\\"}")
   """Returns a user from the system."""
   getUserByUsername(
     """Identifier of a user."""
     username: String!
     """any user input"""
     input: String
-  ): user @httpOperation(path: "/users/{args.username}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"input\\":\\"input\\"}") @linkResolver(linkResolverMap: "{\\"employerCompany\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$response.body#/employerId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCompanyById\\"},\\"friends\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$request.path.username}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserFriends\\"}}")
+  ): user @httpOperation(subgraph: "example_api", path: "/users/{args.username}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"input\\":\\"input\\"}") @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"employerCompany\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$response.body#/employerId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCompanyById\\"},\\"friends\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$request.path.username}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserFriends\\"}}")
   """Returns a car to test nesting of sub operations"""
   getUserCar(
     """Identifier of a user."""
     username: String!
-  ): car @httpOperation(path: "/users/{args.username}/car", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): car @httpOperation(subgraph: "example_api", path: "/users/{args.username}/car", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns a user's friends to test pagination"""
   getUserFriends(
     """Identifier of a user."""
     username: String!
-  ): [user] @httpOperation(path: "/users/{args.username}/friends", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [user] @httpOperation(subgraph: "example_api", path: "/users/{args.username}/friends", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns all company assets"""
-  getAllAssets(companyId: String!): [query_getAllAssets_items] @httpOperation(path: "/assets/{args.companyId}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getAllAssets(companyId: String!): [query_getAllAssets_items] @httpOperation(subgraph: "example_api", path: "/assets/{args.companyId}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns information about all employee cars"""
-  getAllCars: [car] @httpOperation(path: "/cars", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getAllCars: [car] @httpOperation(subgraph: "example_api", path: "/cars", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns the profile of a company with the given ID."""
-  getCompanyById(id: String!): company @httpOperation(path: "/companies/{args.id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"ceoUser\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/ceoUsername}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"}}")
+  getCompanyById(id: String!): company @httpOperation(subgraph: "example_api", path: "/companies/{args.id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"ceoUser\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/ceoUsername}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"}}")
   """Used to test cookies."""
-  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String @httpOperation(path: "/cookie", operationSpecificHeaders: "{\\"cookie\\":\\"cookie_type={args.cookie_type}; cookie_size={args.cookie_size};\\",\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
+  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String @httpOperation(subgraph: "example_api", path: "/cookie", operationSpecificHeaders: "{\\"cookie\\":\\"cookie_type={args.cookie_type}; cookie_size={args.cookie_size};\\",\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
   """
   Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.
   """
-  getNearestCoffeeMachine(lat: Float, long: Float): coordinates @httpOperation(path: "/coffeeLocation", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"lat\\":\\"lat\\",\\"long\\":\\"long\\"}")
+  getNearestCoffeeMachine(lat: Float, long: Float): coordinates @httpOperation(subgraph: "example_api", path: "/coffeeLocation", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"lat\\":\\"lat\\",\\"long\\":\\"long\\"}")
   """Used to test link parameters with variables"""
-  getCopier(query: String): getCopier_200_response @httpOperation(path: "/copier", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"query\\":\\"query\\"}") @linkResolver(linkResolverMap: "{\\"basicLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$request.query.query}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"constantLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"variableLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"everythingLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"}}")
+  getCopier(query: String): getCopier_200_response @httpOperation(subgraph: "example_api", path: "/copier", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"query\\":\\"query\\"}") @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"basicLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$request.query.query}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"constantLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"variableLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"everythingLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"}}")
   """Used to test generation of object types with matching schema."""
-  getNumberOfCleanDesks: String @httpOperation(path: "/cleanDesks", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
+  getNumberOfCleanDesks: String @httpOperation(subgraph: "example_api", path: "/cleanDesks", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
   """Used to test generation of object types with matching schema."""
-  getNumberOfDirtyDesks: String @httpOperation(path: "/dirtyDesks", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
+  getNumberOfDirtyDesks: String @httpOperation(subgraph: "example_api", path: "/dirtyDesks", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
   """Used to test empty responses"""
-  getBonuses: Void @httpOperation(path: "/bonuses", httpMethod: GET)
+  getBonuses: Void @httpOperation(subgraph: "example_api", path: "/bonuses", httpMethod: GET)
   """Used to test query parameters with form style and explode"""
-  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @httpOperation(path: "/offices", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"parameters\\":\\"parameters\\"}", queryStringOptionsByParam: "{\\"parameters\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
+  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @httpOperation(subgraph: "example_api", path: "/offices", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"parameters\\":\\"parameters\\"}", queryStringOptionsByParam: "{\\"parameters\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
   """Return an office."""
   getOffice(
     """Office ID"""
     id: Int!
-  ): office @httpOperation(path: "/offices/{args.id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"owner\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/employeeId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"},\\"company\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$response.body#/employerId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCompanyById\\"}}")
+  ): office @httpOperation(subgraph: "example_api", path: "/offices/{args.id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"owner\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/employeeId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"},\\"company\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$response.body#/employerId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCompanyById\\"}}")
   """Return a list of papers. Endpoint to test 2XX status code."""
-  getPapers: [paper] @httpOperation(path: "/papers", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getPapers: [paper] @httpOperation(subgraph: "example_api", path: "/papers", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Another endpoint to test unsanitized parameters and data."""
-  get_product_with_id(product_id: String!, product_tag: String!): product_with_id @httpOperation(path: "/products/{args.product_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"product-tag\\":\\"product_tag\\"}") @linkResolver(linkResolverMap: "{\\"reviews\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$request.path.product-id}\\",\\"product_tag\\":\\"{root.$request.query.product-tag}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getProductReviews\\"},\\"reviewsWithOperationRef\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$request.path.product-id}\\",\\"product_tag\\":\\"{root.$request.query.product-tag}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getProductReviews\\"}}")
+  get_product_with_id(product_id: String!, product_tag: String!): product_with_id @httpOperation(subgraph: "example_api", path: "/products/{args.product_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"product-tag\\":\\"product_tag\\"}") @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"reviews\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$request.path.product-id}\\",\\"product_tag\\":\\"{root.$request.query.product-tag}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getProductReviews\\"},\\"reviewsWithOperationRef\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$request.path.product-id}\\",\\"product_tag\\":\\"{root.$request.query.product-tag}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getProductReviews\\"}}")
   """Obtain reviews for a product."""
-  getProductReviews(id: String!, product_tag: String! = "sport"): [query_getProductReviews_items] @httpOperation(path: "/products/{args.id}/reviews", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"product-tag\\":\\"product_tag\\"}")
+  getProductReviews(id: String!, product_tag: String! = "sport"): [query_getProductReviews_items] @httpOperation(subgraph: "example_api", path: "/products/{args.id}/reviews", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"product-tag\\":\\"product_tag\\"}")
   """An endpoint to test authentication."""
-  get_patent_with_id(patent_id: String!): patent_with_id @httpOperation(path: "/patents/{args.patent_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"inventor\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/inventorId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"}}")
+  get_patent_with_id(patent_id: String!): patent_with_id @httpOperation(subgraph: "example_api", path: "/patents/{args.patent_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"inventor\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/inventorId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"}}")
   """Another endpoint to test authentication."""
-  get_project_with_id(project_id: Int!): project_with_id @httpOperation(path: "/projects/{args.project_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"projectLead\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/leadId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"},\\"patent\\":{\\"linkObjArgs\\":{\\"patent_id\\":\\"{root.$response.body#/patentId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"get_patent_with_id\\"}}")
+  get_project_with_id(project_id: Int!): project_with_id @httpOperation(subgraph: "example_api", path: "/projects/{args.project_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"projectLead\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/leadId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"},\\"patent\\":{\\"linkObjArgs\\":{\\"patent_id\\":\\"{root.$response.body#/patentId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"get_patent_with_id\\"}}")
   """Used to test link parameters with variables"""
-  getScanner(query: String): getScanner_200_response @httpOperation(path: "/scanner", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"query\\":\\"query\\"}") @linkResolver(linkResolverMap: "{\\"basicLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$request.query.query}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"constantLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"variableLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"everythingLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"}}")
+  getScanner(query: String): getScanner_200_response @httpOperation(subgraph: "example_api", path: "/scanner", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"query\\":\\"query\\"}") @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"basicLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$request.query.query}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"constantLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"variableLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"everythingLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"}}")
   """Endpoint to test sending of headers."""
-  getSnack(snack_type: queryInput_getSnack_snack_type! = soda, snack_size: queryInput_getSnack_snack_size! = small): String @httpOperation(path: "/snack", operationSpecificHeaders: "{\\"snack_type\\":\\"{args.snack_type:soda}\\",\\"snack_size\\":\\"{args.snack_size:small}\\",\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
+  getSnack(snack_type: queryInput_getSnack_snack_type! = soda, snack_size: queryInput_getSnack_snack_size! = small): String @httpOperation(subgraph: "example_api", path: "/snack", operationSpecificHeaders: "{\\"snack_type\\":\\"{args.snack_type:soda}\\",\\"snack_size\\":\\"{args.snack_size:small}\\",\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
   """Endpoint to test sending of options."""
-  get_Status(globalquery: String!, limit: Int!): String @httpOperation(path: "/status", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET, queryParamArgMap: "{\\"globalquery\\":\\"globalquery\\",\\"limit\\":\\"limit\\"}")
+  get_Status(globalquery: String!, limit: Int!): String @httpOperation(subgraph: "example_api", path: "/status", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET, queryParamArgMap: "{\\"globalquery\\":\\"globalquery\\",\\"limit\\":\\"limit\\"}")
   """Used to test OAuth token being present in header."""
-  getSecure: String @httpOperation(path: "/secure", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
+  getSecure: String @httpOperation(subgraph: "example_api", path: "/secure", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
   """Returns the (contents of a) trashcan from a specific office"""
-  getAllTrashCans: [trashcan] @httpOperation(path: "/trashcans", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getAllTrashCans: [trashcan] @httpOperation(subgraph: "example_api", path: "/trashcans", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns the (contents of a) trashcan from a specific owner"""
   getOfficeTrashCan(
     """Identifier of a user."""
     username: String!
-  ): trashcan @httpOperation(path: "/trashcans/{args.username}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): trashcan @httpOperation(subgraph: "example_api", path: "/trashcans/{args.username}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """It could be anything!"""
-  mystery: mystery_200_response @httpOperation(path: "/mystery", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  mystery: mystery_200_response @httpOperation(subgraph: "example_api", path: "/mystery", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns an arbitrary JSON object"""
-  random: JSON @httpOperation(path: "/random", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  random: JSON @httpOperation(subgraph: "example_api", path: "/random", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
 """A user represents a natural person"""
@@ -116,9 +116,9 @@ type user {
   status: query_getUsers_items_status
   nomenclature: query_getUsers_items_nomenclature
   """Allows to fetch the user's employer company."""
-  employerCompany: company @link(defaultRootType: "Query", defaultField: "getUserByUsername")
+  employerCompany: company @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
   """Allows to fetch the user's friends."""
-  friends: [user] @link(defaultRootType: "Query", defaultField: "getUserByUsername")
+  friends: [user] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
 }
 
 """The legal address of a user"""
@@ -161,7 +161,7 @@ type company {
   """The offices of a company"""
   offices: [address]
   """Allows to fetch the company's CEO user."""
-  ceoUser: user @link(defaultRootType: "Query", defaultField: "getCompanyById")
+  ceoUser: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCompanyById")
 }
 
 """
@@ -197,9 +197,9 @@ enum query_getUserCar_kind {
 
 """The rating of the car."""
 enum query_getUserCar_rating {
-  _100 @enum(value: "100")
-  _101 @enum(value: "101")
-  _200 @enum(value: "200")
+  _100 @enum(subgraph: "example_api", value: "100")
+  _101 @enum(subgraph: "example_api", value: "101")
+  _200 @enum(subgraph: "example_api", value: "200")
 }
 
 union query_getAllAssets_items = car | user | trashcan
@@ -210,15 +210,15 @@ type trashcan {
 }
 
 enum queryInput_getCookie_cookie_type {
-  chocolate_chip @enum(value: "\\"chocolate chip\\"")
-  oatmeal_raisin @enum(value: "\\"oatmeal raisin\\"")
+  chocolate_chip @enum(subgraph: "example_api", value: "\\"chocolate chip\\"")
+  oatmeal_raisin @enum(subgraph: "example_api", value: "\\"oatmeal raisin\\"")
   sugar
 }
 
 enum queryInput_getCookie_cookie_size {
-  bite_sized @enum(value: "\\"bite-sized\\"")
+  bite_sized @enum(subgraph: "example_api", value: "\\"bite-sized\\"")
   regular
-  mega_sized @enum(value: "\\"mega-sized\\"")
+  mega_sized @enum(subgraph: "example_api", value: "\\"mega-sized\\"")
 }
 
 type coordinates {
@@ -229,13 +229,13 @@ type coordinates {
 type getCopier_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @link(defaultRootType: "Query", defaultField: "getCopier")
+  basicLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @link(defaultRootType: "Query", defaultField: "getCopier")
+  constantLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @link(defaultRootType: "Query", defaultField: "getCopier")
+  variableLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @link(defaultRootType: "Query", defaultField: "getCopier")
+  everythingLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
 }
 
 """Represents empty values"""
@@ -246,13 +246,13 @@ type office {
   """The owner ID of the office"""
   employeeId: String
   """The room number of the office"""
-  room_number: Int @resolveRootField(field: "room number")
+  room_number: Int @resolveRootField(subgraph: "example_api", field: "room number")
   """The identifier of the company a user works for"""
   employerId: String
   """Allows to fetch the user who invented a product."""
-  owner: user @link(defaultRootType: "Query", defaultField: "getOffice")
+  owner: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getOffice")
   """Allows to fetch the user's employer company."""
-  company: company @link(defaultRootType: "Query", defaultField: "getOffice")
+  company: company @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getOffice")
 }
 
 input queryInput_returnAllOffices_parameters_Input {
@@ -271,15 +271,15 @@ type paper {
 """A product"""
 type product_with_id {
   """The name of the product"""
-  product_name: String @resolveRootField(field: "product-name")
+  product_name: String @resolveRootField(subgraph: "example_api", field: "product-name")
   """The id of the product"""
-  product_id: String @resolveRootField(field: "product-id")
+  product_id: String @resolveRootField(subgraph: "example_api", field: "product-id")
   """A tag associated with the product"""
-  product_tag: String @resolveRootField(field: "product-tag")
+  product_tag: String @resolveRootField(subgraph: "example_api", field: "product-tag")
   """Obtain reviews for a product."""
-  reviews: [query_getProductReviews_items] @link(defaultRootType: "Query", defaultField: "get_product_with_id")
+  reviews: [query_getProductReviews_items] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
   """Obtain reviews for a product."""
-  reviewsWithOperationRef: [query_getProductReviews_items] @link(defaultRootType: "Query", defaultField: "get_product_with_id")
+  reviewsWithOperationRef: [query_getProductReviews_items] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
 }
 
 type query_getProductReviews_items {
@@ -295,42 +295,42 @@ scalar BigInt
 """A patent"""
 type patent_with_id {
   """The id of the patent"""
-  patent_id: String! @resolveRootField(field: "patent-id")
+  patent_id: String! @resolveRootField(subgraph: "example_api", field: "patent-id")
   """The id of the inventor"""
-  inventor_id: String @resolveRootField(field: "inventor-id")
-  patent_name: JSON! @resolveRootField(field: "patent-name")
+  inventor_id: String @resolveRootField(subgraph: "example_api", field: "inventor-id")
+  patent_name: JSON! @resolveRootField(subgraph: "example_api", field: "patent-name")
   """Allows to fetch the user who invented a product."""
-  inventor: user @link(defaultRootType: "Query", defaultField: "get_patent_with_id")
+  inventor: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_patent_with_id")
 }
 
 """A project"""
 type project_with_id {
   """The id of the project"""
-  project_id: Int @resolveRootField(field: "project-id")
+  project_id: Int @resolveRootField(subgraph: "example_api", field: "project-id")
   """The id of the lead"""
-  lead_id: String @resolveRootField(field: "lead-id")
+  lead_id: String @resolveRootField(subgraph: "example_api", field: "lead-id")
   """Whether the project is active"""
   active: Boolean
   """The patent associated with a project if applicable"""
   patentId: String
   """Allows to fetch the user leading a project."""
-  ProjectLead: user @link(defaultRootType: "Mutation", defaultField: "post_project_with_id")
+  ProjectLead: user @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "post_project_with_id")
   """Allows to fetch the user leading a project."""
-  projectLead: user @link(defaultRootType: "Query", defaultField: "get_project_with_id")
+  projectLead: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_project_with_id")
   """Allows to fetch a patent."""
-  patent: patent_with_id @link(defaultRootType: "Query", defaultField: "get_project_with_id")
+  patent: patent_with_id @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_project_with_id")
 }
 
 type getScanner_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @link(defaultRootType: "Query", defaultField: "getScanner")
+  basicLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @link(defaultRootType: "Query", defaultField: "getScanner")
+  constantLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @link(defaultRootType: "Query", defaultField: "getScanner")
+  variableLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @link(defaultRootType: "Query", defaultField: "getScanner")
+  everythingLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
 }
 
 enum queryInput_getSnack_snack_type {
@@ -355,25 +355,25 @@ type query_mystery_oneOf_1 {
 
 type Mutation {
   """Create a new user in the system."""
-  postUser(input: user_Input): user @httpOperation(path: "/users", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  postUser(input: user_Input): user @httpOperation(subgraph: "example_api", path: "/users", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """
   Create a new paper in the system. Endpoint to test non-application/json request and response bodies.
   """
-  postPaper(input: String): String @httpOperation(path: "/papers", operationSpecificHeaders: "{\\"Content-Type\\":\\"text/plain\\",\\"accept\\":\\"text/plain\\"}", httpMethod: POST)
+  postPaper(input: String): String @httpOperation(subgraph: "example_api", path: "/papers", operationSpecificHeaders: "{\\"Content-Type\\":\\"text/plain\\",\\"accept\\":\\"text/plain\\"}", httpMethod: POST)
   """Endpoint to test unsanitized parameters and data."""
-  post_product_with_id(input: product_with_id_Input): product_with_id @httpOperation(path: "/products", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  post_product_with_id(input: product_with_id_Input): product_with_id @httpOperation(subgraph: "example_api", path: "/products", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """An endpoint to test authenticated POST requests."""
-  post_project_with_id(input: project_with_id_Input): project_with_id @httpOperation(path: "/projects", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST) @linkResolver(linkResolverMap: "{\\"ProjectLead\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/leadId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"}}")
+  post_project_with_id(input: project_with_id_Input): project_with_id @httpOperation(subgraph: "example_api", path: "/projects", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"ProjectLead\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/leadId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"}}")
   """Used to test link parameters with variables"""
-  postScanner(path: String!, query: String, input: String): postScanner_200_response @httpOperation(path: "/scanner/{args.path}", operationSpecificHeaders: "{\\"Content-Type\\":\\"text/plain\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST, queryParamArgMap: "{\\"query\\":\\"query\\"}") @linkResolver(linkResolverMap: "{\\"basicLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$request.query.query}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"constantLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"variableLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"everythingLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"everythingLink2\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.body}_{root.$request.query.query}_{root.$request.path.path}_{root.$request.header.accept}_{root.$response.body#/body}_{root.$response.query.query}_{root.$response.path.path}_{root.$response.header.connection}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"}}")
+  postScanner(path: String!, query: String, input: String): postScanner_200_response @httpOperation(subgraph: "example_api", path: "/scanner/{args.path}", operationSpecificHeaders: "{\\"Content-Type\\":\\"text/plain\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST, queryParamArgMap: "{\\"query\\":\\"query\\"}") @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"basicLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$request.query.query}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"constantLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"variableLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"everythingLink\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"},\\"everythingLink2\\":{\\"linkObjArgs\\":{\\"query\\":\\"{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.body}_{root.$request.query.query}_{root.$request.path.path}_{root.$request.header.accept}_{root.$response.body#/body}_{root.$response.query.query}_{root.$response.path.path}_{root.$response.header.connection}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCopier\\"}}")
   """Endpoint to test placeholder objects to wrap response objects."""
-  post_status(globalquery: String!, input: post_status_request_Input): String @httpOperation(path: "/status", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"text/plain\\"}", httpMethod: POST, queryParamArgMap: "{\\"globalquery\\":\\"globalquery\\"}")
+  post_status(globalquery: String!, input: post_status_request_Input): String @httpOperation(subgraph: "example_api", path: "/status", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"text/plain\\"}", httpMethod: POST, queryParamArgMap: "{\\"globalquery\\":\\"globalquery\\"}")
   """Add new contents to the trashcan of a specific owner"""
   postOfficeTrashCan(
     """Identifier of a user."""
     username: String!
     input: JSON
-  ): trashcan @httpOperation(path: "/trashcans/{args.username}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  ): trashcan @httpOperation(subgraph: "example_api", path: "/trashcans/{args.username}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
 }
 
 """A user represents a natural person"""
@@ -416,19 +416,19 @@ input familyObject_Input {
 """A product"""
 input product_with_id_Input {
   """The name of the product"""
-  product_name: String @resolveRootField(field: "product-name")
+  product_name: String @resolveRootField(subgraph: "example_api", field: "product-name")
   """The id of the product"""
-  product_id: String @resolveRootField(field: "product-id")
+  product_id: String @resolveRootField(subgraph: "example_api", field: "product-id")
   """A tag associated with the product"""
-  product_tag: String @resolveRootField(field: "product-tag")
+  product_tag: String @resolveRootField(subgraph: "example_api", field: "product-tag")
 }
 
 """A project"""
 input project_with_id_Input {
   """The id of the project"""
-  project_id: Int @resolveRootField(field: "project-id")
+  project_id: Int @resolveRootField(subgraph: "example_api", field: "project-id")
   """The id of the lead"""
-  lead_id: String @resolveRootField(field: "lead-id")
+  lead_id: String @resolveRootField(subgraph: "example_api", field: "lead-id")
   """Whether the project is active"""
   active: Boolean
   """The patent associated with a project if applicable"""
@@ -438,15 +438,15 @@ input project_with_id_Input {
 type postScanner_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @link(defaultRootType: "Mutation", defaultField: "postScanner")
+  basicLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @link(defaultRootType: "Mutation", defaultField: "postScanner")
+  constantLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @link(defaultRootType: "Mutation", defaultField: "postScanner")
+  variableLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @link(defaultRootType: "Mutation", defaultField: "postScanner")
+  everythingLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
   """Used to test link parameters with variables"""
-  everythingLink2: getCopier_200_response @link(defaultRootType: "Mutation", defaultField: "postScanner")
+  everythingLink2: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
 }
 
 input post_status_request_Input {

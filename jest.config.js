@@ -1,8 +1,8 @@
 const { resolve } = require('path');
 const { pathsToModuleNameMapper } = require('ts-jest');
+const JSON5 = require('json5');
 const CI = !!process.env.CI;
 const { readFileSync } = require('fs');
-const JSON5 = require('json5');
 
 const ROOT_DIR = __dirname;
 const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
@@ -37,6 +37,7 @@ if (process.version.startsWith('v21.')) {
   console.warn('Skipping SQLite Chinook tests because Node v21 is not supported yet');
   testMatch.push('!**/examples/sqlite-chinook/**');
 }
+const ESM_PACKAGES = ['prettier'];
 
 module.exports = {
   testEnvironment: 'node',
@@ -50,6 +51,7 @@ module.exports = {
       prefix: `${ROOT_DIR}/`,
     }),
     'formdata-node': '<rootDir>/node_modules/formdata-node/lib/cjs/index.js',
+    prettier: '<rootDir>/node_modules/prettier/index.mjs',
   },
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
@@ -59,6 +61,7 @@ module.exports = {
     '^.+\\.ts?$': 'babel-jest',
     '^.+\\.js$': 'babel-jest',
   },
+  transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
   resolver: 'bob-the-bundler/jest-resolver',
   testMatch,
 };

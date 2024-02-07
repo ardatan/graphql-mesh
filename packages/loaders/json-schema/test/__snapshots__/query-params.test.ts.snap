@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Query Params queryParamsSample with invalid param names: queryParamsSample 1`] = `
-"schema {
+"schema @transport(subgraph: "test", kind: "rest", location: "http://localhost:3000") {
   query: Query
 }
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
-type Query @globalOptions(sourceName: "test", endpoint: "http://localhost:3000") {
-  test(foo_bar: String): JSON @httpOperation(path: "/test", httpMethod: GET, queryParamArgMap: "{\\"foo:bar\\":\\"foo_bar\\"}")
+type Query {
+  test(foo_bar: String): JSON @httpOperation(subgraph: "test", path: "/test", httpMethod: GET, queryParamArgMap: "{\\"foo:bar\\":\\"foo_bar\\"}")
 }
 
 """

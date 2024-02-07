@@ -9,10 +9,7 @@ import {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import {
-  getExecutableThriftSchema,
-  loadNonExecutableGraphQLSchemaFromIDL,
-} from '@omnigraph/thrift';
+import { getThriftExecutor, loadNonExecutableGraphQLSchemaFromIDL } from '@omnigraph/thrift';
 
 export default class ThriftHandler implements MeshHandler {
   private config: YamlConfig.ThriftHandler;
@@ -48,7 +45,7 @@ export default class ThriftHandler implements MeshHandler {
   }
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
-    const nonExecutableSchema = await this.sdl.getWithSet(() =>
+    const schema = await this.sdl.getWithSet(() =>
       loadNonExecutableGraphQLSchemaFromIDL({
         subgraphName: this.subgraphName,
         source: this.config.idl,
@@ -63,7 +60,8 @@ export default class ThriftHandler implements MeshHandler {
     );
 
     return {
-      schema: getExecutableThriftSchema(nonExecutableSchema),
+      schema,
+      executor: getThriftExecutor(schema),
     };
   }
 }

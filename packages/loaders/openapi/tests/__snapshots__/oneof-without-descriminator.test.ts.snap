@@ -1,46 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`oneOf without discriminator should generate correct schema: discriminator-mapping 1`] = `
-"schema {
+"schema @transport(subgraph: "test", kind: "rest") {
   query: Query
   mutation: Mutation
 }
 
 directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
-directive @enum(value: String) on ENUM_VALUE
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @typescript(type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
-directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @resolveRoot on FIELD_DEFINITION
+directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
-type Query @globalOptions(sourceName: "test") {
+type Query {
   dummy: String
 }
 
 type Mutation {
-  test_endpoint(input: TestType_Input): TestType @httpOperation(path: "/test", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  test_endpoint(input: TestType_Input): TestType @httpOperation(subgraph: "test", path: "/test", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
 }
 
 union TestType = A_const_container | mutation_test_endpoint_oneOf_1
 
 type A_const_container {
-  A_const: A_const @resolveRoot
+  A_const: A_const @resolveRoot(subgraph: "test")
 }
 
-enum A_const @typescript(type: "\\"A\\"") @example(value: "\\"A\\"") {
-  A @enum(value: "\\"A\\"")
+enum A_const @typescript(subgraph: "test", type: "\\"A\\"") @example(subgraph: "test", value: "\\"A\\"") {
+  A @enum(subgraph: "test", value: "\\"A\\"")
 }
 
 type mutation_test_endpoint_oneOf_1 {
   B: String
-  additionalProperties: JSON @resolveRoot
+  additionalProperties: JSON @resolveRoot(subgraph: "test")
 }
 
 """
@@ -48,7 +48,7 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-input TestType_Input @oneOf {
+input TestType_Input @oneOf(subgraph: "test") {
   A_const: A_const
   mutation_test_endpoint_oneOf_1_Input: mutation_test_endpoint_oneOf_1_Input
 }

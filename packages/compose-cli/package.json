@@ -1,0 +1,71 @@
+{
+  "name": "@graphql-mesh/compose-cli",
+  "version": "0.0.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/compose-cli"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "bin": {
+    "mesh-compose": "dist/cjs/bin.js"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "@graphql-mesh/types": "^0.96.2",
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-mesh/fusion-composition": "^0.0.0",
+    "@graphql-mesh/utils": "^0.96.2",
+    "@graphql-tools/graphql-file-loader": "8.0.0",
+    "@graphql-tools/load": "^8.0.1",
+    "@graphql-tools/utils": "^10.0.8",
+    "@whatwg-node/fetch": "^0.9.14",
+    "dotenv": "^16.3.1",
+    "spinnies": "^0.5.1",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/spinnies": "^0.5.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "buildOptions": {
+    "bin": {
+      "mesh-compose": {
+        "input": "src/bin.ts"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}

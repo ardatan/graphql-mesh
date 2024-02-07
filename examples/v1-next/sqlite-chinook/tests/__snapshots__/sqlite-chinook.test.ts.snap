@@ -1,0 +1,424 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SQLite Chinook executes Albums.query.graphql query: Albums.query.graphql 1`] = `
+{
+  "data": {
+    "albums": [
+      {
+        "albumId": 1,
+        "artist": {
+          "name": "AC/DC",
+        },
+        "title": "For Those About To Rock We Salute You",
+      },
+      {
+        "albumId": 2,
+        "artist": {
+          "name": "Accept",
+        },
+        "title": "Balls to the Wall",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`SQLite Chinook generates the schema correctly: schema 1`] = `
+"schema @transport(kind: "sqlite", subgraph: "chinook", location: "/home/runner/work/graphql-mesh/graphql-mesh/examples/v1-next/sqlite-chinook/chinook.db", options: {type: "db"}) {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  albums(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Album] @resolver(subgraph: "chinook", operation: "query albums($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { albums(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "albums", type: "[Album]")
+  album(
+    albumId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Album @resolver(subgraph: "chinook", operation: "query album($albumId: Int, $where: SequelizeJSON) { album(albumId: $albumId, where: $where) }") @source(subgraph: "chinook", name: "album", type: "Album")
+  artists(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Artist] @resolver(subgraph: "chinook", operation: "query artists($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { artists(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "artists", type: "[Artist]")
+  artist(
+    artistId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Artist @resolver(subgraph: "chinook", operation: "query artist($artistId: Int, $where: SequelizeJSON) { artist(artistId: $artistId, where: $where) }") @source(subgraph: "chinook", name: "artist", type: "Artist")
+  customers(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Customer] @resolver(subgraph: "chinook", operation: "query customers($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { customers(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "customers", type: "[Customer]")
+  customer(
+    customerId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Customer @resolver(subgraph: "chinook", operation: "query customer($customerId: Int, $where: SequelizeJSON) { customer(customerId: $customerId, where: $where) }") @source(subgraph: "chinook", name: "customer", type: "Customer")
+  employees(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Employee] @resolver(subgraph: "chinook", operation: "query employees($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { employees(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "employees", type: "[Employee]")
+  employee(
+    employeeId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Employee @resolver(subgraph: "chinook", operation: "query employee($employeeId: Int, $where: SequelizeJSON) { employee(employeeId: $employeeId, where: $where) }") @source(subgraph: "chinook", name: "employee", type: "Employee")
+  genres(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Genre] @resolver(subgraph: "chinook", operation: "query genres($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { genres(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "genres", type: "[Genre]")
+  genre(
+    genreId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Genre @resolver(subgraph: "chinook", operation: "query genre($genreId: Int, $where: SequelizeJSON) { genre(genreId: $genreId, where: $where) }") @source(subgraph: "chinook", name: "genre", type: "Genre")
+  invoices(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Invoice] @resolver(subgraph: "chinook", operation: "query invoices($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { invoices(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "invoices", type: "[Invoice]")
+  invoice(
+    invoiceId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Invoice @resolver(subgraph: "chinook", operation: "query invoice($invoiceId: Int, $where: SequelizeJSON) { invoice(invoiceId: $invoiceId, where: $where) }") @source(subgraph: "chinook", name: "invoice", type: "Invoice")
+  invoiceItems(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem] @resolver(subgraph: "chinook", operation: "query invoiceItems($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { invoiceItems(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "invoiceItems", type: "[InvoiceItem]")
+  invoiceItem(
+    invoiceLineId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): InvoiceItem @resolver(subgraph: "chinook", operation: "query invoiceItem($invoiceLineId: Int, $where: SequelizeJSON) { invoiceItem(invoiceLineId: $invoiceLineId, where: $where) }") @source(subgraph: "chinook", name: "invoiceItem", type: "InvoiceItem")
+  mediaTypes(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [MediaType] @resolver(subgraph: "chinook", operation: "query mediaTypes($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { mediaTypes(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "mediaTypes", type: "[MediaType]")
+  mediaType(
+    mediaTypeId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): MediaType @resolver(subgraph: "chinook", operation: "query mediaType($mediaTypeId: Int, $where: SequelizeJSON) { mediaType(mediaTypeId: $mediaTypeId, where: $where) }") @source(subgraph: "chinook", name: "mediaType", type: "MediaType")
+  playlists(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Playlist] @resolver(subgraph: "chinook", operation: "query playlists($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { playlists(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "playlists", type: "[Playlist]")
+  playlist(
+    playlistId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Playlist @resolver(subgraph: "chinook", operation: "query playlist($playlistId: Int, $where: SequelizeJSON) { playlist(playlistId: $playlistId, where: $where) }") @source(subgraph: "chinook", name: "playlist", type: "Playlist")
+  tracks(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Track] @resolver(subgraph: "chinook", operation: "query tracks($limit: Int, $order: String, $where: SequelizeJSON, $offset: Int) { tracks(limit: $limit, order: $order, where: $where, offset: $offset) }") @source(subgraph: "chinook", name: "tracks", type: "[Track]")
+  track(
+    trackId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Track @resolver(subgraph: "chinook", operation: "query track($trackId: Int, $where: SequelizeJSON) { track(trackId: $trackId, where: $where) }") @source(subgraph: "chinook", name: "track", type: "Track")
+}
+
+type Album @source(subgraph: "chinook", name: "Album") @resolver(subgraph: "chinook", operation: "query AlbumsByAlbumIds($Album_albumId: Int) { albums(limit: $Album_albumId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query AlbumsByTitles($Album_title: String) { albums(order: $Album_title) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query AlbumsByArtistIds($Album_artistId: Int) { albums(limit: $Album_artistId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query AlbumByAlbumId($Album_albumId: Int) { album(albumId: $Album_albumId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query AlbumByArtistId($Album_artistId: Int) { album(albumId: $Album_artistId) }", kind: "FETCH") @variable(subgraph: "chinook", name: "Album_albumId", select: "albumId") @variable(subgraph: "chinook", name: "Album_title", select: "title") @variable(subgraph: "chinook", name: "Album_artistId", select: "artistId") {
+  albumId: Int! @source(subgraph: "chinook", name: "albumId", type: "Int!")
+  title: String! @source(subgraph: "chinook", name: "title", type: "String!")
+  artistId: Int! @source(subgraph: "chinook", name: "artistId", type: "Int!")
+  tracks(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Track] @source(subgraph: "chinook", name: "tracks", type: "[Track]")
+  artist: Artist @source(subgraph: "chinook", name: "artist", type: "Artist")
+}
+
+type Track @source(subgraph: "chinook", name: "Track") @resolver(subgraph: "chinook", operation: "query TracksByTrackIds($Track_trackId: Int) { tracks(limit: $Track_trackId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TracksByNames($Track_name: String) { tracks(order: $Track_name) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TracksByAlbumIds($Track_albumId: Int) { tracks(limit: $Track_albumId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TracksByMediaTypeIds($Track_mediaTypeId: Int) { tracks(limit: $Track_mediaTypeId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TracksByGenreIds($Track_genreId: Int) { tracks(limit: $Track_genreId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TracksByComposers($Track_composer: String) { tracks(order: $Track_composer) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TracksByMillisecondss($Track_milliseconds: Int) { tracks(limit: $Track_milliseconds) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TracksByBytess($Track_bytes: Int) { tracks(limit: $Track_bytes) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TracksByUnitPrices($Track_unitPrice: String) { tracks(order: $Track_unitPrice) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query TrackByTrackId($Track_trackId: Int) { track(trackId: $Track_trackId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query TrackByAlbumId($Track_albumId: Int) { track(trackId: $Track_albumId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query TrackByMediaTypeId($Track_mediaTypeId: Int) { track(trackId: $Track_mediaTypeId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query TrackByGenreId($Track_genreId: Int) { track(trackId: $Track_genreId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query TrackByMilliseconds($Track_milliseconds: Int) { track(trackId: $Track_milliseconds) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query TrackByBytes($Track_bytes: Int) { track(trackId: $Track_bytes) }", kind: "FETCH") @variable(subgraph: "chinook", name: "Track_trackId", select: "trackId") @variable(subgraph: "chinook", name: "Track_name", select: "name") @variable(subgraph: "chinook", name: "Track_albumId", select: "albumId") @variable(subgraph: "chinook", name: "Track_mediaTypeId", select: "mediaTypeId") @variable(subgraph: "chinook", name: "Track_genreId", select: "genreId") @variable(subgraph: "chinook", name: "Track_composer", select: "composer") @variable(subgraph: "chinook", name: "Track_milliseconds", select: "milliseconds") @variable(subgraph: "chinook", name: "Track_bytes", select: "bytes") @variable(subgraph: "chinook", name: "Track_unitPrice", select: "unitPrice") {
+  trackId: Int! @source(subgraph: "chinook", name: "trackId", type: "Int!")
+  name: String! @source(subgraph: "chinook", name: "name", type: "String!")
+  albumId: Int @source(subgraph: "chinook", name: "albumId", type: "Int")
+  mediaTypeId: Int! @source(subgraph: "chinook", name: "mediaTypeId", type: "Int!")
+  genreId: Int @source(subgraph: "chinook", name: "genreId", type: "Int")
+  composer: String @source(subgraph: "chinook", name: "composer", type: "String")
+  milliseconds: Int! @source(subgraph: "chinook", name: "milliseconds", type: "Int!")
+  bytes: Int @source(subgraph: "chinook", name: "bytes", type: "Int")
+  unitPrice: String! @source(subgraph: "chinook", name: "unitPrice", type: "String!")
+  invoiceItems(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem] @source(subgraph: "chinook", name: "invoiceItems", type: "[InvoiceItem]")
+  mediaType: MediaType @source(subgraph: "chinook", name: "mediaType", type: "MediaType")
+  genre: Genre @source(subgraph: "chinook", name: "genre", type: "Genre")
+  album: Album @source(subgraph: "chinook", name: "album", type: "Album")
+  playlists: [Playlist] @source(subgraph: "chinook", name: "playlists", type: "[Playlist]")
+}
+
+type InvoiceItem @source(subgraph: "chinook", name: "InvoiceItem") @resolver(subgraph: "chinook", operation: "query InvoiceItemsByInvoiceLineIds($InvoiceItem_invoiceLineId: Int) { invoiceItems(limit: $InvoiceItem_invoiceLineId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoiceItemsByInvoiceIds($InvoiceItem_invoiceId: Int) { invoiceItems(limit: $InvoiceItem_invoiceId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoiceItemsByTrackIds($InvoiceItem_trackId: Int) { invoiceItems(limit: $InvoiceItem_trackId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoiceItemsByUnitPrices($InvoiceItem_unitPrice: String) { invoiceItems(order: $InvoiceItem_unitPrice) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoiceItemsByQuantitys($InvoiceItem_quantity: Int) { invoiceItems(limit: $InvoiceItem_quantity) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoiceItemByInvoiceLineId($InvoiceItem_invoiceLineId: Int) { invoiceItem(invoiceLineId: $InvoiceItem_invoiceLineId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query InvoiceItemByInvoiceId($InvoiceItem_invoiceId: Int) { invoiceItem(invoiceLineId: $InvoiceItem_invoiceId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query InvoiceItemByTrackId($InvoiceItem_trackId: Int) { invoiceItem(invoiceLineId: $InvoiceItem_trackId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query InvoiceItemByQuantity($InvoiceItem_quantity: Int) { invoiceItem(invoiceLineId: $InvoiceItem_quantity) }", kind: "FETCH") @variable(subgraph: "chinook", name: "InvoiceItem_invoiceLineId", select: "invoiceLineId") @variable(subgraph: "chinook", name: "InvoiceItem_invoiceId", select: "invoiceId") @variable(subgraph: "chinook", name: "InvoiceItem_trackId", select: "trackId") @variable(subgraph: "chinook", name: "InvoiceItem_unitPrice", select: "unitPrice") @variable(subgraph: "chinook", name: "InvoiceItem_quantity", select: "quantity") {
+  invoiceLineId: Int! @source(subgraph: "chinook", name: "invoiceLineId", type: "Int!")
+  invoiceId: Int! @source(subgraph: "chinook", name: "invoiceId", type: "Int!")
+  trackId: Int! @source(subgraph: "chinook", name: "trackId", type: "Int!")
+  unitPrice: String! @source(subgraph: "chinook", name: "unitPrice", type: "String!")
+  quantity: Int! @source(subgraph: "chinook", name: "quantity", type: "Int!")
+  track: Track @source(subgraph: "chinook", name: "track", type: "Track")
+  invoice: Invoice @source(subgraph: "chinook", name: "invoice", type: "Invoice")
+}
+
+type Invoice @source(subgraph: "chinook", name: "Invoice") @resolver(subgraph: "chinook", operation: "query InvoicesByInvoiceIds($Invoice_invoiceId: Int) { invoices(limit: $Invoice_invoiceId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoicesByCustomerIds($Invoice_customerId: Int) { invoices(limit: $Invoice_customerId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoicesByInvoiceDates($Invoice_invoiceDate: String) { invoices(order: $Invoice_invoiceDate) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoicesByBillingAddresss($Invoice_billingAddress: String) { invoices(order: $Invoice_billingAddress) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoicesByBillingCitys($Invoice_billingCity: String) { invoices(order: $Invoice_billingCity) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoicesByBillingStates($Invoice_billingState: String) { invoices(order: $Invoice_billingState) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoicesByBillingCountrys($Invoice_billingCountry: String) { invoices(order: $Invoice_billingCountry) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoicesByBillingPostalCodes($Invoice_billingPostalCode: String) { invoices(order: $Invoice_billingPostalCode) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoicesByTotals($Invoice_total: String) { invoices(order: $Invoice_total) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query InvoiceByInvoiceId($Invoice_invoiceId: Int) { invoice(invoiceId: $Invoice_invoiceId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query InvoiceByCustomerId($Invoice_customerId: Int) { invoice(invoiceId: $Invoice_customerId) }", kind: "FETCH") @variable(subgraph: "chinook", name: "Invoice_invoiceId", select: "invoiceId") @variable(subgraph: "chinook", name: "Invoice_customerId", select: "customerId") @variable(subgraph: "chinook", name: "Invoice_invoiceDate", select: "invoiceDate") @variable(subgraph: "chinook", name: "Invoice_billingAddress", select: "billingAddress") @variable(subgraph: "chinook", name: "Invoice_billingCity", select: "billingCity") @variable(subgraph: "chinook", name: "Invoice_billingState", select: "billingState") @variable(subgraph: "chinook", name: "Invoice_billingCountry", select: "billingCountry") @variable(subgraph: "chinook", name: "Invoice_billingPostalCode", select: "billingPostalCode") @variable(subgraph: "chinook", name: "Invoice_total", select: "total") {
+  invoiceId: Int! @source(subgraph: "chinook", name: "invoiceId", type: "Int!")
+  customerId: Int! @source(subgraph: "chinook", name: "customerId", type: "Int!")
+  invoiceDate: String! @source(subgraph: "chinook", name: "invoiceDate", type: "String!")
+  billingAddress: String @source(subgraph: "chinook", name: "billingAddress", type: "String")
+  billingCity: String @source(subgraph: "chinook", name: "billingCity", type: "String")
+  billingState: String @source(subgraph: "chinook", name: "billingState", type: "String")
+  billingCountry: String @source(subgraph: "chinook", name: "billingCountry", type: "String")
+  billingPostalCode: String @source(subgraph: "chinook", name: "billingPostalCode", type: "String")
+  total: String! @source(subgraph: "chinook", name: "total", type: "String!")
+  invoiceItems(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem] @source(subgraph: "chinook", name: "invoiceItems", type: "[InvoiceItem]")
+  customer: Customer @source(subgraph: "chinook", name: "customer", type: "Customer")
+}
+
+"""The \`JSON\` scalar type represents raw JSON as values."""
+scalar SequelizeJSON @source(subgraph: "chinook", name: "SequelizeJSON") @source(subgraph: "chinook", name: "SequelizeJSON")
+
+type Customer @source(subgraph: "chinook", name: "Customer") @resolver(subgraph: "chinook", operation: "query CustomersByCustomerIds($Customer_customerId: Int) { customers(limit: $Customer_customerId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByFirstNames($Customer_firstName: String) { customers(order: $Customer_firstName) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByLastNames($Customer_lastName: String) { customers(order: $Customer_lastName) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByCompanys($Customer_company: String) { customers(order: $Customer_company) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByAddresss($Customer_address: String) { customers(order: $Customer_address) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByCitys($Customer_city: String) { customers(order: $Customer_city) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByStates($Customer_state: String) { customers(order: $Customer_state) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByCountrys($Customer_country: String) { customers(order: $Customer_country) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByPostalCodes($Customer_postalCode: String) { customers(order: $Customer_postalCode) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByPhones($Customer_phone: String) { customers(order: $Customer_phone) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByFaxs($Customer_fax: String) { customers(order: $Customer_fax) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersByEmails($Customer_email: String) { customers(order: $Customer_email) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomersBySupportRepIds($Customer_supportRepId: Int) { customers(limit: $Customer_supportRepId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query CustomerByCustomerId($Customer_customerId: Int) { customer(customerId: $Customer_customerId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query CustomerBySupportRepId($Customer_supportRepId: Int) { customer(customerId: $Customer_supportRepId) }", kind: "FETCH") @variable(subgraph: "chinook", name: "Customer_customerId", select: "customerId") @variable(subgraph: "chinook", name: "Customer_firstName", select: "firstName") @variable(subgraph: "chinook", name: "Customer_lastName", select: "lastName") @variable(subgraph: "chinook", name: "Customer_company", select: "company") @variable(subgraph: "chinook", name: "Customer_address", select: "address") @variable(subgraph: "chinook", name: "Customer_city", select: "city") @variable(subgraph: "chinook", name: "Customer_state", select: "state") @variable(subgraph: "chinook", name: "Customer_country", select: "country") @variable(subgraph: "chinook", name: "Customer_postalCode", select: "postalCode") @variable(subgraph: "chinook", name: "Customer_phone", select: "phone") @variable(subgraph: "chinook", name: "Customer_fax", select: "fax") @variable(subgraph: "chinook", name: "Customer_email", select: "email") @variable(subgraph: "chinook", name: "Customer_supportRepId", select: "supportRepId") {
+  customerId: Int! @source(subgraph: "chinook", name: "customerId", type: "Int!")
+  firstName: String! @source(subgraph: "chinook", name: "firstName", type: "String!")
+  lastName: String! @source(subgraph: "chinook", name: "lastName", type: "String!")
+  company: String @source(subgraph: "chinook", name: "company", type: "String")
+  address: String @source(subgraph: "chinook", name: "address", type: "String")
+  city: String @source(subgraph: "chinook", name: "city", type: "String")
+  state: String @source(subgraph: "chinook", name: "state", type: "String")
+  country: String @source(subgraph: "chinook", name: "country", type: "String")
+  postalCode: String @source(subgraph: "chinook", name: "postalCode", type: "String")
+  phone: String @source(subgraph: "chinook", name: "phone", type: "String")
+  fax: String @source(subgraph: "chinook", name: "fax", type: "String")
+  email: String! @source(subgraph: "chinook", name: "email", type: "String!")
+  supportRepId: Int @source(subgraph: "chinook", name: "supportRepId", type: "Int")
+  invoices(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Invoice] @source(subgraph: "chinook", name: "invoices", type: "[Invoice]")
+  employee: Employee @source(subgraph: "chinook", name: "employee", type: "Employee")
+}
+
+type Employee @source(subgraph: "chinook", name: "Employee") @resolver(subgraph: "chinook", operation: "query EmployeesByEmployeeIds($Employee_employeeId: Int) { employees(limit: $Employee_employeeId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByLastNames($Employee_lastName: String) { employees(order: $Employee_lastName) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByFirstNames($Employee_firstName: String) { employees(order: $Employee_firstName) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByTitles($Employee_title: String) { employees(order: $Employee_title) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByReportsTos($Employee_reportsTo: Int) { employees(limit: $Employee_reportsTo) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByBirthDates($Employee_birthDate: String) { employees(order: $Employee_birthDate) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByHireDates($Employee_hireDate: String) { employees(order: $Employee_hireDate) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByAddresss($Employee_address: String) { employees(order: $Employee_address) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByCitys($Employee_city: String) { employees(order: $Employee_city) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByStates($Employee_state: String) { employees(order: $Employee_state) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByCountrys($Employee_country: String) { employees(order: $Employee_country) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByPostalCodes($Employee_postalCode: String) { employees(order: $Employee_postalCode) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByPhones($Employee_phone: String) { employees(order: $Employee_phone) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByFaxs($Employee_fax: String) { employees(order: $Employee_fax) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeesByEmails($Employee_email: String) { employees(order: $Employee_email) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query EmployeeByEmployeeId($Employee_employeeId: Int) { employee(employeeId: $Employee_employeeId) }", kind: "FETCH") @resolver(subgraph: "chinook", operation: "query EmployeeByReportsTo($Employee_reportsTo: Int) { employee(employeeId: $Employee_reportsTo) }", kind: "FETCH") @variable(subgraph: "chinook", name: "Employee_employeeId", select: "employeeId") @variable(subgraph: "chinook", name: "Employee_lastName", select: "lastName") @variable(subgraph: "chinook", name: "Employee_firstName", select: "firstName") @variable(subgraph: "chinook", name: "Employee_title", select: "title") @variable(subgraph: "chinook", name: "Employee_reportsTo", select: "reportsTo") @variable(subgraph: "chinook", name: "Employee_birthDate", select: "birthDate") @variable(subgraph: "chinook", name: "Employee_hireDate", select: "hireDate") @variable(subgraph: "chinook", name: "Employee_address", select: "address") @variable(subgraph: "chinook", name: "Employee_city", select: "city") @variable(subgraph: "chinook", name: "Employee_state", select: "state") @variable(subgraph: "chinook", name: "Employee_country", select: "country") @variable(subgraph: "chinook", name: "Employee_postalCode", select: "postalCode") @variable(subgraph: "chinook", name: "Employee_phone", select: "phone") @variable(subgraph: "chinook", name: "Employee_fax", select: "fax") @variable(subgraph: "chinook", name: "Employee_email", select: "email") {
+  employeeId: Int! @source(subgraph: "chinook", name: "employeeId", type: "Int!")
+  lastName: String! @source(subgraph: "chinook", name: "lastName", type: "String!")
+  firstName: String! @source(subgraph: "chinook", name: "firstName", type: "String!")
+  title: String @source(subgraph: "chinook", name: "title", type: "String")
+  reportsTo: Int @source(subgraph: "chinook", name: "reportsTo", type: "Int")
+  birthDate: String @source(subgraph: "chinook", name: "birthDate", type: "String")
+  hireDate: String @source(subgraph: "chinook", name: "hireDate", type: "String")
+  address: String @source(subgraph: "chinook", name: "address", type: "String")
+  city: String @source(subgraph: "chinook", name: "city", type: "String")
+  state: String @source(subgraph: "chinook", name: "state", type: "String")
+  country: String @source(subgraph: "chinook", name: "country", type: "String")
+  postalCode: String @source(subgraph: "chinook", name: "postalCode", type: "String")
+  phone: String @source(subgraph: "chinook", name: "phone", type: "String")
+  fax: String @source(subgraph: "chinook", name: "fax", type: "String")
+  email: String @source(subgraph: "chinook", name: "email", type: "String")
+  customers(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Customer] @source(subgraph: "chinook", name: "customers", type: "[Customer]")
+  employees(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Employee] @source(subgraph: "chinook", name: "employees", type: "[Employee]")
+  employee: Employee @source(subgraph: "chinook", name: "employee", type: "Employee")
+}
+
+type MediaType @source(subgraph: "chinook", name: "MediaType") @resolver(subgraph: "chinook", operation: "query MediaTypesByMediaTypeIds($MediaType_mediaTypeId: Int) { mediaTypes(limit: $MediaType_mediaTypeId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query MediaTypesByNames($MediaType_name: String) { mediaTypes(order: $MediaType_name) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query MediaTypeByMediaTypeId($MediaType_mediaTypeId: Int) { mediaType(mediaTypeId: $MediaType_mediaTypeId) }", kind: "FETCH") @variable(subgraph: "chinook", name: "MediaType_mediaTypeId", select: "mediaTypeId") @variable(subgraph: "chinook", name: "MediaType_name", select: "name") {
+  mediaTypeId: Int! @source(subgraph: "chinook", name: "mediaTypeId", type: "Int!")
+  name: String @source(subgraph: "chinook", name: "name", type: "String")
+  tracks(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Track] @source(subgraph: "chinook", name: "tracks", type: "[Track]")
+}
+
+type Genre @source(subgraph: "chinook", name: "Genre") @resolver(subgraph: "chinook", operation: "query GenresByGenreIds($Genre_genreId: Int) { genres(limit: $Genre_genreId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query GenresByNames($Genre_name: String) { genres(order: $Genre_name) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query GenreByGenreId($Genre_genreId: Int) { genre(genreId: $Genre_genreId) }", kind: "FETCH") @variable(subgraph: "chinook", name: "Genre_genreId", select: "genreId") @variable(subgraph: "chinook", name: "Genre_name", select: "name") {
+  genreId: Int! @source(subgraph: "chinook", name: "genreId", type: "Int!")
+  name: String @source(subgraph: "chinook", name: "name", type: "String")
+  tracks(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Track] @source(subgraph: "chinook", name: "tracks", type: "[Track]")
+}
+
+type Playlist @source(subgraph: "chinook", name: "Playlist") @resolver(subgraph: "chinook", operation: "query PlaylistsByPlaylistIds($Playlist_playlistId: Int) { playlists(limit: $Playlist_playlistId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query PlaylistsByNames($Playlist_name: String) { playlists(order: $Playlist_name) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query PlaylistByPlaylistId($Playlist_playlistId: Int) { playlist(playlistId: $Playlist_playlistId) }", kind: "FETCH") @variable(subgraph: "chinook", name: "Playlist_playlistId", select: "playlistId") @variable(subgraph: "chinook", name: "Playlist_name", select: "name") {
+  playlistId: Int! @source(subgraph: "chinook", name: "playlistId", type: "Int!")
+  name: String @source(subgraph: "chinook", name: "name", type: "String")
+  tracks: [Track] @source(subgraph: "chinook", name: "tracks", type: "[Track]")
+}
+
+type Artist @source(subgraph: "chinook", name: "Artist") @resolver(subgraph: "chinook", operation: "query ArtistsByArtistIds($Artist_artistId: Int) { artists(limit: $Artist_artistId) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query ArtistsByNames($Artist_name: String) { artists(order: $Artist_name) }", kind: "BATCH") @resolver(subgraph: "chinook", operation: "query ArtistByArtistId($Artist_artistId: Int) { artist(artistId: $Artist_artistId) }", kind: "FETCH") @variable(subgraph: "chinook", name: "Artist_artistId", select: "artistId") @variable(subgraph: "chinook", name: "Artist_name", select: "name") {
+  artistId: Int! @source(subgraph: "chinook", name: "artistId", type: "Int!")
+  name: String @source(subgraph: "chinook", name: "name", type: "String")
+  albums(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Album] @source(subgraph: "chinook", name: "albums", type: "[Album]")
+}
+
+type Mutation {
+  createAlbum(title: String!, artistId: Int!): Album @resolver(subgraph: "chinook", operation: "mutation mutationcreateAlbum($title: String!, $artistId: Int!) { createAlbum(title: $title, artistId: $artistId) }") @source(subgraph: "chinook", name: "createAlbum", type: "Album")
+  updateAlbum(albumId: Int, title: String, artistId: Int): Album @resolver(subgraph: "chinook", operation: "mutation mutationupdateAlbum($albumId: Int, $title: String, $artistId: Int) { updateAlbum(albumId: $albumId, title: $title, artistId: $artistId) }") @source(subgraph: "chinook", name: "updateAlbum", type: "Album")
+  deleteAlbum(albumId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteAlbum($albumId: Int!) { deleteAlbum(albumId: $albumId) }") @source(subgraph: "chinook", name: "deleteAlbum", type: "GenericResponse")
+  createArtist(name: String): Artist @resolver(subgraph: "chinook", operation: "mutation mutationcreateArtist($name: String) { createArtist(name: $name) }") @source(subgraph: "chinook", name: "createArtist", type: "Artist")
+  updateArtist(artistId: Int, name: String): Artist @resolver(subgraph: "chinook", operation: "mutation mutationupdateArtist($artistId: Int, $name: String) { updateArtist(artistId: $artistId, name: $name) }") @source(subgraph: "chinook", name: "updateArtist", type: "Artist")
+  deleteArtist(artistId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteArtist($artistId: Int!) { deleteArtist(artistId: $artistId) }") @source(subgraph: "chinook", name: "deleteArtist", type: "GenericResponse")
+  createCustomer(firstName: String!, lastName: String!, company: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String!, supportRepId: Int): Customer @resolver(subgraph: "chinook", operation: "mutation mutationcreateCustomer($firstName: String!, $lastName: String!, $company: String, $address: String, $city: String, $state: String, $country: String, $postalCode: String, $phone: String, $fax: String, $email: String!, $supportRepId: Int) { createCustomer(firstName: $firstName, lastName: $lastName, company: $company, address: $address, city: $city, state: $state, country: $country, postalCode: $postalCode, phone: $phone, fax: $fax, email: $email, supportRepId: $supportRepId) }") @source(subgraph: "chinook", name: "createCustomer", type: "Customer")
+  updateCustomer(customerId: Int, firstName: String, lastName: String, company: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String, supportRepId: Int): Customer @resolver(subgraph: "chinook", operation: "mutation mutationupdateCustomer($customerId: Int, $firstName: String, $lastName: String, $company: String, $address: String, $city: String, $state: String, $country: String, $postalCode: String, $phone: String, $fax: String, $email: String, $supportRepId: Int) { updateCustomer(customerId: $customerId, firstName: $firstName, lastName: $lastName, company: $company, address: $address, city: $city, state: $state, country: $country, postalCode: $postalCode, phone: $phone, fax: $fax, email: $email, supportRepId: $supportRepId) }") @source(subgraph: "chinook", name: "updateCustomer", type: "Customer")
+  deleteCustomer(customerId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteCustomer($customerId: Int!) { deleteCustomer(customerId: $customerId) }") @source(subgraph: "chinook", name: "deleteCustomer", type: "GenericResponse")
+  createEmployee(lastName: String!, firstName: String!, title: String, reportsTo: Int, birthDate: String, hireDate: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String): Employee @resolver(subgraph: "chinook", operation: "mutation mutationcreateEmployee($lastName: String!, $firstName: String!, $title: String, $reportsTo: Int, $birthDate: String, $hireDate: String, $address: String, $city: String, $state: String, $country: String, $postalCode: String, $phone: String, $fax: String, $email: String) { createEmployee(lastName: $lastName, firstName: $firstName, title: $title, reportsTo: $reportsTo, birthDate: $birthDate, hireDate: $hireDate, address: $address, city: $city, state: $state, country: $country, postalCode: $postalCode, phone: $phone, fax: $fax, email: $email) }") @source(subgraph: "chinook", name: "createEmployee", type: "Employee")
+  updateEmployee(employeeId: Int, lastName: String, firstName: String, title: String, reportsTo: Int, birthDate: String, hireDate: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String): Employee @resolver(subgraph: "chinook", operation: "mutation mutationupdateEmployee($employeeId: Int, $lastName: String, $firstName: String, $title: String, $reportsTo: Int, $birthDate: String, $hireDate: String, $address: String, $city: String, $state: String, $country: String, $postalCode: String, $phone: String, $fax: String, $email: String) { updateEmployee(employeeId: $employeeId, lastName: $lastName, firstName: $firstName, title: $title, reportsTo: $reportsTo, birthDate: $birthDate, hireDate: $hireDate, address: $address, city: $city, state: $state, country: $country, postalCode: $postalCode, phone: $phone, fax: $fax, email: $email) }") @source(subgraph: "chinook", name: "updateEmployee", type: "Employee")
+  deleteEmployee(employeeId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteEmployee($employeeId: Int!) { deleteEmployee(employeeId: $employeeId) }") @source(subgraph: "chinook", name: "deleteEmployee", type: "GenericResponse")
+  createGenre(name: String): Genre @resolver(subgraph: "chinook", operation: "mutation mutationcreateGenre($name: String) { createGenre(name: $name) }") @source(subgraph: "chinook", name: "createGenre", type: "Genre")
+  updateGenre(genreId: Int, name: String): Genre @resolver(subgraph: "chinook", operation: "mutation mutationupdateGenre($genreId: Int, $name: String) { updateGenre(genreId: $genreId, name: $name) }") @source(subgraph: "chinook", name: "updateGenre", type: "Genre")
+  deleteGenre(genreId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteGenre($genreId: Int!) { deleteGenre(genreId: $genreId) }") @source(subgraph: "chinook", name: "deleteGenre", type: "GenericResponse")
+  createInvoice(customerId: Int!, invoiceDate: String!, billingAddress: String, billingCity: String, billingState: String, billingCountry: String, billingPostalCode: String, total: String!): Invoice @resolver(subgraph: "chinook", operation: "mutation mutationcreateInvoice($customerId: Int!, $invoiceDate: String!, $billingAddress: String, $billingCity: String, $billingState: String, $billingCountry: String, $billingPostalCode: String, $total: String!) { createInvoice(customerId: $customerId, invoiceDate: $invoiceDate, billingAddress: $billingAddress, billingCity: $billingCity, billingState: $billingState, billingCountry: $billingCountry, billingPostalCode: $billingPostalCode, total: $total) }") @source(subgraph: "chinook", name: "createInvoice", type: "Invoice")
+  updateInvoice(invoiceId: Int, customerId: Int, invoiceDate: String, billingAddress: String, billingCity: String, billingState: String, billingCountry: String, billingPostalCode: String, total: String): Invoice @resolver(subgraph: "chinook", operation: "mutation mutationupdateInvoice($invoiceId: Int, $customerId: Int, $invoiceDate: String, $billingAddress: String, $billingCity: String, $billingState: String, $billingCountry: String, $billingPostalCode: String, $total: String) { updateInvoice(invoiceId: $invoiceId, customerId: $customerId, invoiceDate: $invoiceDate, billingAddress: $billingAddress, billingCity: $billingCity, billingState: $billingState, billingCountry: $billingCountry, billingPostalCode: $billingPostalCode, total: $total) }") @source(subgraph: "chinook", name: "updateInvoice", type: "Invoice")
+  deleteInvoice(invoiceId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteInvoice($invoiceId: Int!) { deleteInvoice(invoiceId: $invoiceId) }") @source(subgraph: "chinook", name: "deleteInvoice", type: "GenericResponse")
+  createInvoiceItem(invoiceId: Int!, trackId: Int!, unitPrice: String!, quantity: Int!): InvoiceItem @resolver(subgraph: "chinook", operation: "mutation mutationcreateInvoiceItem($invoiceId: Int!, $trackId: Int!, $unitPrice: String!, $quantity: Int!) { createInvoiceItem(invoiceId: $invoiceId, trackId: $trackId, unitPrice: $unitPrice, quantity: $quantity) }") @source(subgraph: "chinook", name: "createInvoiceItem", type: "InvoiceItem")
+  updateInvoiceItem(invoiceLineId: Int, invoiceId: Int, trackId: Int, unitPrice: String, quantity: Int): InvoiceItem @resolver(subgraph: "chinook", operation: "mutation mutationupdateInvoiceItem($invoiceLineId: Int, $invoiceId: Int, $trackId: Int, $unitPrice: String, $quantity: Int) { updateInvoiceItem(invoiceLineId: $invoiceLineId, invoiceId: $invoiceId, trackId: $trackId, unitPrice: $unitPrice, quantity: $quantity) }") @source(subgraph: "chinook", name: "updateInvoiceItem", type: "InvoiceItem")
+  deleteInvoiceItem(invoiceLineId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteInvoiceItem($invoiceLineId: Int!) { deleteInvoiceItem(invoiceLineId: $invoiceLineId) }") @source(subgraph: "chinook", name: "deleteInvoiceItem", type: "GenericResponse")
+  createMediaType(name: String): MediaType @resolver(subgraph: "chinook", operation: "mutation mutationcreateMediaType($name: String) { createMediaType(name: $name) }") @source(subgraph: "chinook", name: "createMediaType", type: "MediaType")
+  updateMediaType(mediaTypeId: Int, name: String): MediaType @resolver(subgraph: "chinook", operation: "mutation mutationupdateMediaType($mediaTypeId: Int, $name: String) { updateMediaType(mediaTypeId: $mediaTypeId, name: $name) }") @source(subgraph: "chinook", name: "updateMediaType", type: "MediaType")
+  deleteMediaType(mediaTypeId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteMediaType($mediaTypeId: Int!) { deleteMediaType(mediaTypeId: $mediaTypeId) }") @source(subgraph: "chinook", name: "deleteMediaType", type: "GenericResponse")
+  createPlaylist(name: String): Playlist @resolver(subgraph: "chinook", operation: "mutation mutationcreatePlaylist($name: String) { createPlaylist(name: $name) }") @source(subgraph: "chinook", name: "createPlaylist", type: "Playlist")
+  updatePlaylist(playlistId: Int, name: String): Playlist @resolver(subgraph: "chinook", operation: "mutation mutationupdatePlaylist($playlistId: Int, $name: String) { updatePlaylist(playlistId: $playlistId, name: $name) }") @source(subgraph: "chinook", name: "updatePlaylist", type: "Playlist")
+  deletePlaylist(playlistId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeletePlaylist($playlistId: Int!) { deletePlaylist(playlistId: $playlistId) }") @source(subgraph: "chinook", name: "deletePlaylist", type: "GenericResponse")
+  addPlaylistToTrack(playlistId: Int!, trackId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationaddPlaylistToTrack($playlistId: Int!, $trackId: Int!) { addPlaylistToTrack(playlistId: $playlistId, trackId: $trackId) }") @source(subgraph: "chinook", name: "addPlaylistToTrack", type: "GenericResponse")
+  removePlaylistFromTrack(playlistId: Int!, trackId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationremovePlaylistFromTrack($playlistId: Int!, $trackId: Int!) { removePlaylistFromTrack(playlistId: $playlistId, trackId: $trackId) }") @source(subgraph: "chinook", name: "removePlaylistFromTrack", type: "GenericResponse")
+  createTrack(name: String!, albumId: Int, mediaTypeId: Int!, genreId: Int, composer: String, milliseconds: Int!, bytes: Int, unitPrice: String!): Track @resolver(subgraph: "chinook", operation: "mutation mutationcreateTrack($name: String!, $albumId: Int, $mediaTypeId: Int!, $genreId: Int, $composer: String, $milliseconds: Int!, $bytes: Int, $unitPrice: String!) { createTrack(name: $name, albumId: $albumId, mediaTypeId: $mediaTypeId, genreId: $genreId, composer: $composer, milliseconds: $milliseconds, bytes: $bytes, unitPrice: $unitPrice) }") @source(subgraph: "chinook", name: "createTrack", type: "Track")
+  updateTrack(trackId: Int, name: String, albumId: Int, mediaTypeId: Int, genreId: Int, composer: String, milliseconds: Int, bytes: Int, unitPrice: String): Track @resolver(subgraph: "chinook", operation: "mutation mutationupdateTrack($trackId: Int, $name: String, $albumId: Int, $mediaTypeId: Int, $genreId: Int, $composer: String, $milliseconds: Int, $bytes: Int, $unitPrice: String) { updateTrack(trackId: $trackId, name: $name, albumId: $albumId, mediaTypeId: $mediaTypeId, genreId: $genreId, composer: $composer, milliseconds: $milliseconds, bytes: $bytes, unitPrice: $unitPrice) }") @source(subgraph: "chinook", name: "updateTrack", type: "Track")
+  deleteTrack(trackId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationdeleteTrack($trackId: Int!) { deleteTrack(trackId: $trackId) }") @source(subgraph: "chinook", name: "deleteTrack", type: "GenericResponse")
+  addTrackToPlaylist(trackId: Int!, playlistId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationaddTrackToPlaylist($trackId: Int!, $playlistId: Int!) { addTrackToPlaylist(trackId: $trackId, playlistId: $playlistId) }") @source(subgraph: "chinook", name: "addTrackToPlaylist", type: "GenericResponse")
+  removeTrackFromPlaylist(trackId: Int!, playlistId: Int!): GenericResponse @resolver(subgraph: "chinook", operation: "mutation mutationremoveTrackFromPlaylist($trackId: Int!, $playlistId: Int!) { removeTrackFromPlaylist(trackId: $trackId, playlistId: $playlistId) }") @source(subgraph: "chinook", name: "removeTrackFromPlaylist", type: "GenericResponse")
+}
+
+type GenericResponse @source(subgraph: "chinook", name: "GenericResponse") {
+  success: Boolean @source(subgraph: "chinook", name: "success", type: "Boolean")
+}"
+`;
