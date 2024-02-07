@@ -2765,14 +2765,14 @@
     "@types/lodash" "^4.14.136"
     lodash "^4.17.15"
 
-"@creditkarma/thrift-server-express@1.0.4":
+"@creditkarma/thrift-server-express@1.0.4", "@creditkarma/thrift-server-express@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-express/-/thrift-server-express-1.0.4.tgz#ae557e80e6c204cb0cccde981d859a7f245984bd"
   integrity sha512-sbiIZsYnrQEyqjC6969XxZH11rftEtbjoHUrWRl6eePNiPwVF71YF+1u2mvwEAlfOsaCzbHFbp3h2xjNftqqNA==
   dependencies:
     zipkin "^0.15.0"
 
-"@creditkarma/thrift-typescript@3.7.6":
+"@creditkarma/thrift-typescript@3.7.6", "@creditkarma/thrift-typescript@^3.7.6":
   version "3.7.6"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-typescript/-/thrift-typescript-3.7.6.tgz#3b83f125b3d6c40428726f3b1c180908aef46e35"
   integrity sha512-v/9Bi3YqExw8bOHA1F/087zru14qExO1e4rdV/+hjYOnUk0HX3zmi6giu/QR9c9QK+5bxekZd4pUxgX7HWwvwQ==
@@ -5239,25 +5239,6 @@
     log-chopper "^1.0.2"
     semver "^7.5.4"
     tar-fs "^2.1.1"
-
-"@omnigraph/json-schema@0.97.3":
-  version "0.97.3"
-  resolved "https://registry.yarnpkg.com/@omnigraph/json-schema/-/json-schema-0.97.3.tgz#9c99c91d57528898337f3ee45d384035937ba9e2"
-  integrity sha512-aCLjQuOR7xMF+yp5Iw5/4hofPT+vdY1OCqPl8h2UE/mIzhoyYcXGILR2XLAARnsQVoO6b5e4Q82BJ9jiFfEg+g==
-  dependencies:
-    "@graphql-mesh/string-interpolation" "0.5.3"
-    "@json-schema-tools/meta-schema" "1.7.0"
-    "@whatwg-node/fetch" "^0.9.0"
-    ajv "8.12.0"
-    ajv-formats "2.1.1"
-    dset "3.1.3"
-    graphql-compose "9.0.10"
-    graphql-scalars "^1.22.4"
-    json-machete "0.97.1"
-    pascal-case "3.1.2"
-    qs "6.11.2"
-    to-json-schema "0.2.5"
-    url-join "4.0.1"
 
 "@omnigraph/mysql@^0.0.1":
   version "0.0.1"
@@ -12216,7 +12197,7 @@ express-graphql@^0.9.0:
     http-errors "^1.7.3"
     raw-body "^2.4.1"
 
-express@4.18.2, express@^4.16.4, express@^4.17.1, express@^4.17.3:
+express@4.18.2, express@^4.16.4, express@^4.17.1, express@^4.17.3, express@^4.18.2:
   version "4.18.2"
   resolved "https://registry.yarnpkg.com/express/-/express-4.18.2.tgz#3fabe08296e930c796c19e3c516979386ba9fd59"
   integrity sha512-5/PsL6iGPdfQ/lKM1UuielYgv3BUoJfz1aUwU9vHZ+J7gyvwdQXFEBIEIaxeGf0GIcreATNyBExtalisDbuMqQ==
@@ -23378,7 +23359,7 @@ ts-node-dev@2.0.0:
     ts-node "^10.4.0"
     tsconfig "^7.0.0"
 
-ts-node@10.9.2, ts-node@^10.4.0, ts-node@^10.9.1:
+ts-node@10.9.2, ts-node@^10.4.0, ts-node@^10.9.1, ts-node@^10.9.2:
   version "10.9.2"
   resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.9.2.tgz#70f021c9e185bccdca820e26dc413805c101c71f"
   integrity sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==

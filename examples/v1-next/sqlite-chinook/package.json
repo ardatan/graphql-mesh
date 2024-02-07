@@ -8,12 +8,9 @@
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "0.0.0",
-    "@graphql-mesh/serve-cli": "0.0.0",
-    "@omnigraph/sqlite": "0.0.3",
-    "graphql": "16.8.1"
-  },
-  "resolutions": {
-    "graphql": "16.8.1"
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "@omnigraph/sqlite": "^0.0.3",
+    "graphql": "^16.8.1"
   }
 }
