@@ -12409,7 +12409,7 @@ fast-xml-parser@^4.2.1, fast-xml-parser@^4.3.2, fast-xml-parser@^4.3.4:
   dependencies:
     strnum "^1.0.5"
 
-fastify@^4.26.0:
+fastify@4.26.0, fastify@^4.26.0:
   version "4.26.0"
   resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.26.0.tgz#d32ad76e31bfc451230abfa2f3834c107573776f"
   integrity sha512-Fq/7ziWKc6pYLYLIlCRaqJqEVTIZ5tZYfcW/mDK2AQ9v/sqjGFpj0On0/7hU50kbPVjLO4de+larPA1WwPZSfw==

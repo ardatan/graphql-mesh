@@ -1,5 +1,5 @@
 {
-  "name": "openapi-subscriptions",
+  "name": "@v1-next/openapi-subscriptions",
   "version": "0.7.6",
   "private": true,
   "scripts": {

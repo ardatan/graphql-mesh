@@ -1,5 +1,5 @@
 {
-  "name": "inventory",
+  "name": "@v1-next/inventory",
   "version": "0.0.14",
   "license": "MIT",
   "private": true,
