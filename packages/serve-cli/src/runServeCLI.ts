@@ -71,10 +71,9 @@ export async function runServeCLI(
     if (typeof unifiedGraphPath === 'string' && !unifiedGraphPath.includes('://')) {
       const parcelWatcher$ = import('@parcel/watcher');
       parcelWatcher$
-        .catch(e => {
-          httpHandler.logger.error(
+        .catch(() => {
+          httpHandler.logger.warn(
             `If you want to enable hot reloading on ${unifiedGraphPath}, install "@parcel/watcher"`,
-            e,
           );
         })
         .then(parcelWatcher => {
