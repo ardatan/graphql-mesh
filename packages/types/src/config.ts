@@ -63,7 +63,7 @@ export interface Config {
    */
   skipSSLValidation?: boolean;
   /**
-   * You can provide Envelop plugins
+   * Path to a JavaScript file with a default export of Envelop plugins
    */
   additionalEnvelopPlugins?: string;
   plugins?: Plugin[];

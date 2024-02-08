@@ -73,7 +73,7 @@ import { useDepthLimit } from '@envelop/depth-limit'
 import { useSentry } from '@envelop/sentry'
 import { MeshPlugin } from '@graphql-mesh/types'
 
-const plugins: MeshPlugin = [
+const plugins: MeshPlugin<any>[] = [
   useDepthLimit({
     maxDepth: 10
   }),

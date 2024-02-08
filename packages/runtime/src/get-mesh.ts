@@ -162,7 +162,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         setFetchFn(fetchFn);
       },
     },
-    ...(additionalEnvelopPlugins as MeshPlugin<any>[]),
+    ...additionalEnvelopPlugins,
   ];
   const wrappedFetchFn: MeshFetch = wrapFetchWithPlugins(initialPluginList);
   await Promise.allSettled(
