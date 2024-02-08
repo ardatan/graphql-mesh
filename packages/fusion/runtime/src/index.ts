@@ -107,12 +107,12 @@ interface GetExecutorForFusiongraphOpts extends TransportBaseContext {
 }
 
 export function defaultTransportsOption(transportKind: string) {
-  return import(`@graphql-mesh/transport-${transportKind}`)
-    .catch(() => import(`@omnigraph/${transportKind}`))
-    .catch(err => {
-      console.error(err);
-      throw new Error(`No transport found for ${transportKind}`);
-    });
+  return import(`@graphql-mesh/transport-${transportKind}`).catch(err => {
+    console.error(err);
+    throw new Error(
+      `No transport found for ${transportKind}. Please install @graphql-mesh/transport-${transportKind}`,
+    );
+  });
 }
 
 export function createTransportGetter(transports: TransportsOption) {
