@@ -1,7 +1,12 @@
 {
-  "name": "@omnigraph/thrift",
-  "version": "0.0.3",
+  "name": "@graphql-mesh/transport-thrift",
+  "version": "0.0.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transports/thrift"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"
@@ -27,17 +32,17 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@creditkarma/thrift-parser": "^2.0.0",
+    "@creditkarma/thrift-client": "^1.0.4",
     "@creditkarma/thrift-server-core": "^1.0.4",
-    "@graphql-mesh/cross-helpers": "^0.4.1",
-    "@graphql-mesh/transport-thrift": "^0.0.0",
-    "@graphql-mesh/types": "^0.96.4",
+    "@graphql-mesh/string-interpolation": "^0.5.3",
+    "@graphql-mesh/transport-common": "^0.0.1",
     "@graphql-mesh/utils": "^0.96.4",
-    "graphql-scalars": "^1.22.4",
-    "thrift": "^0.19.0"
+    "@graphql-tools/utils": "^10.0.13",
+    "pascal-case": "^3.1.2"
   },
   "publishConfig": {
     "access": "public",
