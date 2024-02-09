@@ -29,7 +29,7 @@ const schemas: Record<string, string> = {
   Orbit: 'https://app.orbit.love/api-docs/v1/swagger.json',
   StackExchange:
     'https://raw.githubusercontent.com/grokify/api-specs/master/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml',
-  YouTrack: 'https://graphqlmeshdemo.youtrack.cloud/api/openapi.json',
+  YouTrack: 'youtrack.json',
 };
 
 describe('Schemas', () => {
