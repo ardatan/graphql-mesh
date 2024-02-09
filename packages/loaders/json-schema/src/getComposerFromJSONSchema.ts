@@ -1483,28 +1483,12 @@ export function getComposerFromJSONSchema({
               }
             }
             (output as ObjectTypeComposer).addFields(fieldMap);
-            // TODO: Improve this later
-            for (const requiredFieldName of subSchemaAndTypeComposers.required || []) {
-              const sanitizedFieldName = sanitizeNameForGraphQL(requiredFieldName);
-              const fieldType = (output as ObjectTypeComposer).getFieldType(sanitizedFieldName);
-              if (!isNonNullType(fieldType)) {
-                (output as ObjectTypeComposer).makeFieldNonNull(requiredFieldName);
-              }
-            }
           }
           let input = subSchemaAndTypeComposers.input;
           if (Object.keys(inputFieldMap).length === 0) {
             input = schemaComposer.getAnyTC(GraphQLJSON);
           } else if (input != null && 'addFields' in input) {
             (input as InputTypeComposer).addFields(inputFieldMap);
-            // TODO: Improve this later
-            for (const requiredFieldName of subSchemaAndTypeComposers.required || []) {
-              const sanitizedFieldName = sanitizeNameForGraphQL(requiredFieldName);
-              const fieldType = (input as InputTypeComposer).getFieldType(sanitizedFieldName);
-              if (!isNonNullType(fieldType)) {
-                (input as InputTypeComposer).makeFieldNonNull(requiredFieldName);
-              }
-            }
           }
 
           if (isList) {
