@@ -4772,7 +4772,7 @@
   resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-1.11.0.tgz#eb590b7bb959884dd358216a9ed5a76c3dd76be0"
   integrity sha512-EnH2ucXzetchlWvtsaYFZcx44i9bk/b4hFyvZV79QyGcgL2uDIPPlJ+k1O6pQanJIHy41OfkOwJW6WCWauTyow==
 
-"@neo4j/graphql@^4.0.0":
+"@neo4j/graphql@^4.4.5":
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.4.5.tgz#fff919d7225e676310b1410306b9f42643f9fe47"
   integrity sha512-/EEHdve8DOffQLoU1fzuhboOsjV9bYMEJBeTjcuJR7bELXhvW8nM7cpyZPMwSpHfCSR9jnvPHzrZ2j3EmJpD+g==
@@ -17678,7 +17678,7 @@ neo4j-driver-core@5.17.0:
   resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.17.0.tgz#0111a2de713a24b93ece9387480bd48cf9c4eb77"
   integrity sha512-SP1B8D4C5zl5OYZvlPJmXvoqLTigqyPWv6mMD+Wjdn6k1vM3CYwO2FD4KPzBKKGTY61YNC9syw1qZpfpm5xPuQ==
 
-neo4j-driver@^5.9.2:
+neo4j-driver@^5.17.0, neo4j-driver@^5.9.2:
   version "5.17.0"
   resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.17.0.tgz#0cb410edb3a97fff8be1aea981012b1a0618efbc"
   integrity sha512-DVMqr8dbfmkMOOhgNjx4LQDMIrKKPrIwnIyJcAECzed5iM0zzL0joG9vP4cBWrH985PVShFZiHReEwiD9Hya9g==
@@ -23052,7 +23052,6 @@ typical@^5.2.0:
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.41.0"
-  uid "105d9ec47126cb82e4a6f3a08aa2ac78b4bb14f1"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/105d9ec47126cb82e4a6f3a08aa2ac78b4bb14f1"
 
 ua-parser-js@^1.0.35:

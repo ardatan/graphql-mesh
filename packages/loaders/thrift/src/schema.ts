@@ -26,9 +26,14 @@ import {
 } from '@creditkarma/thrift-parser';
 import { IMethodAnnotations, IThriftAnnotations, TType } from '@creditkarma/thrift-server-core';
 import { path } from '@graphql-mesh/cross-helpers';
+import {
+  GraphQLThriftAnnotations,
+  StructTypeVal,
+  TypeMap,
+  TypeVal,
+} from '@graphql-mesh/transport-thrift';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
-import { GraphQLThriftAnnotations, StructTypeVal, TypeMap, TypeVal } from './types.js';
 
 export interface GraphQLThriftLoaderOptions {
   subgraphName: string;

@@ -1,14 +1,13 @@
-import { ASTNode, ConstDirectiveNode, DefinitionNode, DocumentNode, parse, visit } from 'graphql';
-import { GraphQLBigInt } from 'graphql-scalars';
+import { ASTNode, ConstDirectiveNode, DefinitionNode, parse, visit } from 'graphql';
 import neo4j, { Driver } from 'neo4j-driver';
+import {
+  getDriverFromOpts,
+  getExecutableSchemaFromTypeDefsAndDriver,
+  Neo4JAuthOpts,
+} from '@graphql-mesh/transport-neo4j';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { mergeSchemas } from '@graphql-tools/schema';
-import { Neo4jGraphQL } from '@neo4j/graphql';
-import { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
-import { Neo4JAuthOpts } from './auth.js';
-import { getDriverFromOpts } from './driver.js';
-import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
 
 function createAddIntrospectionDirective(subgraph: string) {
@@ -144,47 +143,4 @@ export async function loadGraphQLSchemaFromNeo4J(
     assumeValid: true,
     assumeValidSDL: true,
   });
-}
-
-interface GetExecutableSchemaFromTypeDefs {
-  driver: Driver;
-  logger?: Logger;
-  pubsub?: MeshPubSub;
-  typeDefs?: string | DocumentNode;
-}
-
-export function getExecutableSchemaFromTypeDefsAndDriver({
-  driver,
-  logger,
-  pubsub,
-  typeDefs,
-}: GetExecutableSchemaFromTypeDefs) {
-  let features: Neo4jFeaturesSettings;
-  if (pubsub) {
-    features = {
-      subscriptions: {
-        events: getEventEmitterFromPubSub(pubsub),
-        publish: eventMeta => pubsub.publish(eventMeta.event, eventMeta),
-        close: () => {},
-      },
-    };
-    const id = pubsub.subscribe('destroy', async () => {
-      pubsub.unsubscribe(id);
-      logger?.debug('Closing Neo4j');
-      await driver.close();
-      logger?.debug('Neo4j closed');
-    });
-  }
-  const neo4jGraphQL = new Neo4jGraphQL({
-    typeDefs,
-    driver,
-    validate: false,
-    debug: !!process.env.DEBUG,
-    resolvers: {
-      BigInt: GraphQLBigInt,
-    },
-    features,
-  });
-
-  return neo4jGraphQL.getSchema();
 }

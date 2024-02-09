@@ -1,10 +1,13 @@
-import { DefinitionNode, DirectiveNode, GraphQLSchema, parse, visit } from 'graphql';
+import { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema, parse, visit } from 'graphql';
+import { GraphQLBigInt } from 'graphql-scalars';
 import { Driver } from 'neo4j-driver';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { Executor, getDirective, getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { Neo4jGraphQL } from '@neo4j/graphql';
+import { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types';
 import { getDriverFromOpts } from './driver.js';
-import { getExecutableSchemaFromTypeDefsAndDriver } from './schema.js';
+import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
 
 export interface Neo4JExecutorOpts {
   schema: GraphQLSchema;
@@ -84,4 +87,47 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Executo
       },
     });
   };
+}
+
+interface GetExecutableSchemaFromTypeDefs {
+  driver: Driver;
+  logger?: Logger;
+  pubsub?: MeshPubSub;
+  typeDefs?: string | DocumentNode;
+}
+
+export function getExecutableSchemaFromTypeDefsAndDriver({
+  driver,
+  logger,
+  pubsub,
+  typeDefs,
+}: GetExecutableSchemaFromTypeDefs) {
+  let features: Neo4jFeaturesSettings;
+  if (pubsub) {
+    features = {
+      subscriptions: {
+        events: getEventEmitterFromPubSub(pubsub),
+        publish: eventMeta => pubsub.publish(eventMeta.event, eventMeta),
+        close: () => {},
+      },
+    };
+    const id = pubsub.subscribe('destroy', async () => {
+      pubsub.unsubscribe(id);
+      logger?.debug('Closing Neo4j');
+      await driver.close();
+      logger?.debug('Neo4j closed');
+    });
+  }
+  const neo4jGraphQL = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    validate: false,
+    debug: !!process.env.DEBUG,
+    resolvers: {
+      BigInt: GraphQLBigInt,
+    },
+    features,
+  });
+
+  return neo4jGraphQL.getSchema();
 }
