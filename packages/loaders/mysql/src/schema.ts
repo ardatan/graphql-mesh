@@ -17,7 +17,9 @@ import {
 import { Connection, createConnection, DatabaseTable, TableField, TableForeign } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { fs, process, util } from '@graphql-mesh/cross-helpers';
+import { MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { getConnectionOptsFromEndpointUri } from '../../../transports/mysql/src/parseEndpointUri.js';
 import {
   MySQLDeleteDirective,
   MySQLInsertDirective,
@@ -26,8 +28,7 @@ import {
   MySQLUpdateDirective,
   TransportDirective,
 } from './directives.js';
-import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
-import { MySQLContext, MySQLSSLOptions, TableFieldConfig } from './types';
+import { TableFieldConfig } from './types';
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;
@@ -57,7 +58,7 @@ export async function loadGraphQLSchemaFromMySQL(
   const getDatabaseTables = util.promisify(
     introspectionConnection.databaseTables.bind(introspectionConnection),
   );
-  const schemaComposer = new SchemaComposer<MySQLContext>();
+  const schemaComposer = new SchemaComposer();
   schemaComposer.add(GraphQLBigInt);
   schemaComposer.add(GraphQLJSON);
   schemaComposer.add(GraphQLDate);
@@ -189,7 +190,7 @@ async function handleTableName({
 }: {
   tableName: string;
   tables: Record<string, DatabaseTable>;
-  schemaComposer: SchemaComposer<MySQLContext>;
+  schemaComposer: SchemaComposer;
   introspectionConnection: Connection;
   autoIncrementedColumns: Record<string, string>;
   tableFieldsConfig?: TableFieldConfig[];
@@ -394,7 +395,7 @@ async function handleFieldName({
 }: {
   fields: Record<string, TableField>;
   primaryKeys: Set<string>;
-  schemaComposer: SchemaComposer<MySQLContext>;
+  schemaComposer: SchemaComposer;
   tableName: string;
   fieldName: string;
   autoIncrementedColumns: Record<string, string>;
@@ -484,7 +485,7 @@ async function handleTableForeignName({
 }: {
   foreignName: string;
   tableForeigns: Record<string, TableForeign>;
-  schemaComposer: SchemaComposer<MySQLContext>;
+  schemaComposer: SchemaComposer;
   tableTC: ObjectTypeComposer<any, any>;
   fieldNames: string[];
   tableName: string;

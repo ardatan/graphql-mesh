@@ -1,6 +1,6 @@
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MySQLSSLOptions } from './types';
+import { MySQLSSLOptions } from './types.js';
 
 export function getConnectionOptsFromEndpointUri(endpointUri: string) {
   endpointUri = stringInterpolator.parse(endpointUri, {

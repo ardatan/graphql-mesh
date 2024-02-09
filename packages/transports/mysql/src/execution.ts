@@ -7,7 +7,7 @@ import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { Executor, getDirective, getDirectives, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
-import { MySQLContext } from './types';
+import { MySQLContext } from './types.js';
 
 function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
   const fieldMap: Record<string, any> = graphqlFields(info);
@@ -23,7 +23,12 @@ export interface GetMySQLExecutorOpts {
   logger: Logger;
 }
 
-export function getMySQLExecutor({ subgraph, pool, pubsub }: GetMySQLExecutorOpts): Executor {
+export function getMySQLExecutor({
+  subgraph,
+  pool,
+  pubsub,
+  logger,
+}: GetMySQLExecutorOpts): Executor {
   subgraph = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig, fieldName) {
       const directives = getDirectives(subgraph, fieldConfig);
@@ -205,7 +210,7 @@ export function getMySQLExecutor({ subgraph, pool, pubsub }: GetMySQLExecutorOpt
       });
     });
   } else {
-    console.warn(
+    logger?.warn(
       `FIXME: No pubsub provided for mysql executor, so the connection pool will never be closed`,
     );
   }

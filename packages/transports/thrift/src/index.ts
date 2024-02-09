@@ -7,3 +7,5 @@ export const getSubgraphExecutor: TransportExecutorFactoryFn<'thrift', never> =
   };
 
 export { getThriftExecutor };
+
+export * from './types';
