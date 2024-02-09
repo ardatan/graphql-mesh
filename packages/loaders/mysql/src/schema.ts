@@ -17,9 +17,8 @@ import {
 import { Connection, createConnection, DatabaseTable, TableField, TableForeign } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { fs, process, util } from '@graphql-mesh/cross-helpers';
-import { MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
+import { getConnectionOptsFromEndpointUri, MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { getConnectionOptsFromEndpointUri } from '../../../transports/mysql/src/parseEndpointUri.js';
 import {
   MySQLDeleteDirective,
   MySQLInsertDirective,
