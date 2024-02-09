@@ -8,15 +8,6 @@ import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import { IResolvers } from '@graphql-tools/utils';
 import { CORSPluginOptions } from '@whatwg-node/server';
 
-export type MeshHTTPPlugin<TServerContext, TUserContext> = Plugin<
-  {},
-  TServerContext,
-  TUserContext
-> &
-  FusiongraphPlugin & {
-    onFetch?: OnFetchHook<TServerContext & TUserContext>;
-  };
-
 export type UnifiedGraphConfig =
   | GraphQLSchema
   | DocumentNode
@@ -24,38 +15,27 @@ export type UnifiedGraphConfig =
   | (() => UnifiedGraphConfig)
   | Promise<UnifiedGraphConfig>;
 
-export type MeshHTTPHandlerConfiguration<TServerContext, TUserContext> =
-  | MeshHTTPHandlerConfigurationWithSourceInput<TServerContext, TUserContext>
-  | MeshHTTPHandlerConfigurationWithCache<TServerContext, TUserContext>
-  | MeshHTTPHandlerConfigurationWithPubSub<TServerContext, TUserContext>;
+export type MeshServeConfig<TContext extends Record<string, any> = {}> =
+  | MeshServeConfigWithSourceInput<TContext>
+  | MeshServeConfigWithCache<TContext>
+  | MeshServeConfigWithPubSub<TContext>;
 
-type MeshHTTPHandlerConfigurationWithCache<TServerContext, TUserContext> = Omit<
-  MeshHTTPHandlerConfigurationWithSourceInput<TServerContext, TUserContext>,
-  'plugins'
-> & {
-  cache: KeyValueCache;
-  plugins?(
-    serveContext: MeshServeContext & { cache: KeyValueCache },
-  ): MeshHTTPPlugin<TServerContext, TUserContext>[];
-};
+type MeshServeConfigWithCache<TContext extends Record<string, any>> =
+  MeshServeConfigWithSourceInput<TContext & { cache: KeyValueCache }> & {
+    cache: KeyValueCache;
+  };
 
-type MeshHTTPHandlerConfigurationWithPubSub<TServerContext, TUserContext> = Omit<
-  MeshHTTPHandlerConfigurationWithSourceInput<TServerContext, TUserContext>,
-  'plugins'
-> & {
-  pubsub: MeshPubSub;
-  plugins?(
-    serveContext: MeshServeContext & { pubsub: MeshPubSub },
-  ): MeshHTTPPlugin<TServerContext, TUserContext>[];
-};
+type MeshServeConfigWithPubSub<TContext extends Record<string, any>> =
+  MeshServeConfigWithSourceInput<TContext & { pubsub: MeshPubSub }> & {
+    pubsub: MeshPubSub;
+  };
 
-type MeshHTTPHandlerConfigurationWithSourceInput<TServerContext, TUserContext> =
-  | MeshHTTPHandlerConfigurationWithFusiongraph<TServerContext, TUserContext>
-  | MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContext>
-  | MeshHTTPHandlerConfigurationWithHttpEndpoint<TServerContext, TUserContext>;
+type MeshServeConfigWithSourceInput<TContext> =
+  | MeshServeConfigWithFusiongraph<TContext>
+  | MeshServeConfigWithSupergraph<TContext>
+  | MeshServeConfigWithHttpEndpoint<TContext>;
 
-interface MeshHTTPHandlerConfigurationWithFusiongraph<TServerContext, TUserContext>
-  extends MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
+interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeBaseConfig<TContext> {
   /**
    * Path to the GraphQL Fusion unified schema.
    *
@@ -64,8 +44,7 @@ interface MeshHTTPHandlerConfigurationWithFusiongraph<TServerContext, TUserConte
   fusiongraph?: UnifiedGraphConfig;
 }
 
-interface MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContext>
-  extends MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
+interface MeshServeConfigWithSupergraph<TContext> extends MeshServeBaseConfig<TContext> {
   /**
    * Path to the Apollo Federation unified schema.
    *
@@ -74,12 +53,11 @@ interface MeshHTTPHandlerConfigurationWithSupergraph<TServerContext, TUserContex
   supergraph?: UnifiedGraphConfig;
 }
 
-interface MeshHTTPHandlerConfigurationWithHttpEndpoint<TServerContext, TUserContext>
-  extends MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
+interface MeshServeConfigWithHttpEndpoint<TContext> extends MeshServeBaseConfig<TContext> {
   http: HTTPExecutorOptions;
 }
 
-interface MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
+interface MeshServeBaseConfig<TContext extends Record<string, any>> {
   /**
    * Headers to be sent to the Supergraph Schema endpoint
    */
@@ -88,21 +66,20 @@ interface MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
    * Polling interval in milliseconds
    */
   polling?: number;
-
   /**
    * Plugins
    */
-  plugins?(serveContext: MeshServeContext): MeshHTTPPlugin<TServerContext, TUserContext>[];
+  plugins?(context: MeshServeContext & TContext): MeshServePlugin<MeshServeContext & TContext>[];
   /**
    * Configuration for CORS
    */
-  cors?: CORSPluginOptions<TServerContext>;
+  cors?: CORSPluginOptions<MeshServeContext & TContext>;
   /**
    * Show GraphiQL
    */
-  graphiql?: GraphiQLOptionsOrFactory<TServerContext>;
+  graphiql?: GraphiQLOptionsOrFactory<MeshServeContext & TContext>;
   /**
-   *  Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
+   * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
    */
   batching?: BatchingOptions;
   /**
@@ -116,11 +93,11 @@ interface MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
   /**
    * Logger
    */
-  logging?: YogaServerOptions<TServerContext, TUserContext>['logging'] | Logger;
+  logging?: YogaServerOptions<MeshServeContext & TContext, unknown>['logging'] | Logger;
   /**
    * Additional Resolvers
    */
-  additionalResolvers?: IResolvers<unknown, TServerContext & TUserContext>;
+  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
   /**
    * Endpoint
    */
@@ -128,8 +105,13 @@ interface MeshHTTPHandlerBaseConfiguration<TServerContext, TUserContext> {
   /**
    * Masked errors
    */
-  maskedErrors?: YogaServerOptions<TServerContext, TUserContext>['maskedErrors'];
+  maskedErrors?: YogaServerOptions<MeshServeContext & TContext, unknown>['maskedErrors'];
 }
+
+export type MeshServePlugin<
+  TContext extends Record<string, any> = MeshServeContext,
+  TPluginContext extends Record<string, any> = {},
+> = Plugin<TPluginContext, TContext> & FusiongraphPlugin & { onFetch?: OnFetchHook<TContext> };
 
 export interface MeshServeContext {
   fetch: MeshFetch;

@@ -9,14 +9,11 @@ import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import { isPromise } from '@graphql-tools/utils';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
-import {
-  MeshHTTPPlugin,
-  MeshHTTPHandlerConfiguration as MeshServeRuntimeConfiguration,
-} from './types';
+import { MeshServeConfig, MeshServeContext, MeshServePlugin } from './types';
 
-export function createServeRuntime<TServerContext, TUserContext = {}>(
-  config: MeshServeRuntimeConfiguration<TServerContext, TUserContext>,
-): YogaServerInstance<TServerContext, TUserContext> & { invalidateUnifiedGraph(): void } {
+export function createServeRuntime(
+  config: MeshServeConfig,
+): YogaServerInstance<MeshServeContext, unknown> & { invalidateUnifiedGraph(): void } {
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
   let logger: Logger;
@@ -34,7 +31,7 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
   };
 
-  let supergraphYogaPlugin: Plugin<TServerContext> & { invalidateUnifiedGraph: () => void };
+  let supergraphYogaPlugin: Plugin & { invalidateUnifiedGraph: () => void };
 
   if ('http' in config) {
     const executor = buildHTTPExecutor({
@@ -43,7 +40,7 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
     });
     supergraphYogaPlugin = useExecutor(executor) as any;
   } else if ('fusiongraph' in config) {
-    supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
+    supergraphYogaPlugin = useFusiongraph({
       getFusiongraph() {
         return handleUnifiedGraphConfig(
           config.fusiongraph || './fusiongraph.graphql',
@@ -56,7 +53,7 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
       transportBaseContext: serveContext,
     });
   } else if ('supergraph' in config) {
-    supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
+    supergraphYogaPlugin = useFusiongraph({
       getFusiongraph() {
         const supergraph$ = handleUnifiedGraphConfig(
           config.supergraph || './supergraph.graphql',
@@ -75,14 +72,14 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
     });
   }
 
-  const defaultFetchPlugin: MeshHTTPPlugin<TServerContext, {}> = {
+  const defaultFetchPlugin: MeshServePlugin = {
     onFetch({ setFetchFn }) {
       setFetchFn(fetchAPI.fetch);
     },
     onYogaInit({ yoga }) {
-      const onFetchHooks: OnFetchHook<TServerContext>[] = [];
+      const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
 
-      for (const plugin of yoga.getEnveloped._plugins as MeshHTTPPlugin<TServerContext, {}>[]) {
+      for (const plugin of yoga.getEnveloped._plugins as MeshServePlugin[]) {
         if (plugin.onFetch) {
           onFetchHooks.push(plugin.onFetch);
         }
@@ -92,7 +89,7 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
     },
   };
 
-  const yoga = createYoga<TServerContext>({
+  const yoga = createYoga({
     fetchAPI: config.fetchAPI,
     logging: config.logging == null ? new DefaultLogger() : config.logging,
     plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(serveContext) || [])],

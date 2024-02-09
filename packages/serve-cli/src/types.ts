@@ -1,12 +1,12 @@
 import type { AppOptions, HttpRequest, HttpResponse } from 'uWebSockets.js';
-import type { MeshHTTPHandlerConfiguration } from '@graphql-mesh/serve-runtime';
+import type { MeshServeConfig } from '@graphql-mesh/serve-runtime';
 
-export interface MeshServeCLIServerContext {
+export interface MeshServeCLIContext {
   req: HttpRequest;
   res: HttpResponse;
 }
 
-export type MeshServeCLIConfig = MeshHTTPHandlerConfiguration<MeshServeCLIServerContext, {}> & {
+export type MeshServeCLIConfig = MeshServeConfig<MeshServeCLIContext> & {
   /**
    * Port to listen on (default: `4000`)
    */
