@@ -2,9 +2,7 @@
 import { MeshFetch } from '@graphql-mesh/types';
 import { MeshServePlugin } from './types';
 
-export function useCustomFetch<TServerContext, TUserContext>(
-  fetch: MeshFetch,
-): MeshServePlugin<TServerContext, TUserContext> {
+export function useCustomFetch(fetch: MeshFetch): MeshServePlugin {
   return {
     onFetch({ setFetchFn }) {
       setFetchFn(fetch);
