@@ -51,7 +51,7 @@ type Query {
   """
   skipSSLValidation: Boolean
   """
-  You can provide Envelop plugins
+  Path to a JavaScript file with a default export of Envelop plugins
   """
   additionalEnvelopPlugins: String
   plugins: [Plugin]
