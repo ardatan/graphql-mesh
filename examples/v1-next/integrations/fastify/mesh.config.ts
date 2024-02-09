@@ -6,7 +6,7 @@ export const composeConfig: MeshComposeCLIConfig = {
     {
       sourceHandler: loadOpenAPISubgraph('Pets', {
         source: './swagger/pets.json',
-        endpoint: 'http://localhost:4001',
+        endpoint: `http://localhost:{context.headers['x-upstream-port']:4001}`,
       }),
     },
   ],

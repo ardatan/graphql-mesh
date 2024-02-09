@@ -1,4 +1,9 @@
-schema @transport(subgraph: "Pets", kind: "rest", location: "http://localhost:4001") {
+schema
+  @transport(
+    subgraph: "Pets"
+    kind: "rest"
+    location: "http://localhost:{context.headers['x-upstream-port']:4001}"
+  ) {
   query: Query
 }
 
