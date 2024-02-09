@@ -1,5 +1,5 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import loadGraphQLSchemaFromThriftIDL from '../src/index.js';
+import { loadNonExecutableGraphQLSchemaFromIDL } from '../src/index.js';
 
 describe('thrift', () => {
   const schemas: Record<
@@ -26,10 +26,10 @@ describe('thrift', () => {
       serviceName: 'Recursive',
     },
   };
-  for (const schemaName in schemas) {
+  Object.entries(schemas).forEach(([schemaName, schemaObj]) => {
     it(schemaName, async () => {
-      const schemaObj = schemas[schemaName];
-      const schema = await loadGraphQLSchemaFromThriftIDL(schemaName, {
+      const schema = await loadNonExecutableGraphQLSchemaFromIDL({
+        subgraphName: schemaName,
         source: `./fixtures/${schemaObj.idl}`,
         baseDir: __dirname,
         endpoint: `http://localhost:4000${schemaObj.path}`,
@@ -40,5 +40,5 @@ describe('thrift', () => {
       });
       expect(printSchemaWithDirectives(schema)).toMatchSnapshot(`${schemaName}-schema`);
     });
-  }
+  });
 });
