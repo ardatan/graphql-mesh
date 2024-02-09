@@ -1406,4 +1406,23 @@ ${printType(GraphQLString)}
     });
     expect((output as UnionTypeComposer).getType().toString()).toBe('[String]');
   });
+  it('should handle objects with required but nullable fields as optional fields in GraphQL', async () => {
+    const schema: JSONSchema = {
+      title: 'Required Optional Test',
+      type: 'object',
+      required: ['bar'],
+      properties: {
+        bar: {
+          type: 'string',
+          nullable: true,
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema,
+      logger,
+    });
+    expect((output as ObjectTypeComposer).getField('bar').type.getTypeName()).toEqual('String');
+  });
 });
