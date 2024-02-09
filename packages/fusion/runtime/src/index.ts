@@ -291,7 +291,7 @@ export interface PlanCache {
   set(documentStr: string, plan: ExecutableOperationPlan): Promise<any> | any;
 }
 
-export interface YogaFusiongraphPluginOptions<TContext> {
+export interface FusiongraphPluginOptions<TContext> {
   getFusiongraph(
     baseCtx: TransportBaseContext,
   ): GraphQLSchema | DocumentNode | string | Promise<GraphQLSchema | string | DocumentNode>;
@@ -336,7 +336,7 @@ export function useFusiongraph<TContext>({
   additionalResolvers,
   polling,
   transportBaseContext,
-}: YogaFusiongraphPluginOptions<TContext>): Plugin<{}, TContext> & {
+}: FusiongraphPluginOptions<TContext>): Plugin<{}, TContext> & {
   invalidateUnifiedGraph(): void;
 } {
   let fusiongraph: GraphQLSchema;
