@@ -12,6 +12,7 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 
 const modelQueryOperations = [
   'findById',
@@ -62,7 +63,7 @@ export default class MongooseHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     if (this.config.connectionString) {
-      connect(this.config.connectionString, {
+      connect(stringInterpolator.parse(this.config.connectionString, { env: process.env }) ?? this.config.connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         logger: {
