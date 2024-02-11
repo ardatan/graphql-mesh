@@ -70,7 +70,7 @@ export function processDirectives(
       (type.extensions as any).examples = examples;
     }
     if (isScalarType(type)) {
-      processScalarType(schema, type);
+      processScalarType(type);
     }
     if (isInterfaceType(type)) {
       const directiveAnnotations = getDirectives(schema, type);
