@@ -31,7 +31,7 @@ import {
   GraphQLURL,
 } from 'graphql-scalars';
 import { JSONSchemaObject } from 'json-machete';
-import { processDirectives } from '@graphql-mesh/transport-rest';
+import { processDirectives, processScalarType } from '@graphql-mesh/transport-rest';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -47,8 +47,7 @@ describe('getComposerFromJSONSchema', () => {
     expect(result.input.getType()).toBe(GraphQLJSON);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLJSON);
   });
-  // TODO: Enable it later
-  it.skip('should generate a new scalar type that validates the value against the given pattern in string schema', async () => {
+  it('should generate a new scalar type that validates the value against the given pattern in string schema', async () => {
     const pattern = '^\\d{10}$';
     const title = 'ExampleRegEx';
     const inputSchema: JSONSchema = {
@@ -64,11 +63,12 @@ describe('getComposerFromJSONSchema', () => {
     // Scalar types are both input and output types
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as ScalarTypeComposer;
-    expect(isScalarType(outputComposer.getType())).toBeTruthy();
-    expect(outputComposer.getTypeName()).toBe(title);
-    const serializeFn = outputComposer.getSerialize();
-    expect(() => serializeFn('not-valid-phone-number')).toThrow();
-    expect(serializeFn('1231231234')).toBe('1231231234');
+    const scalarType = outputComposer.getType();
+    expect(scalarType).toBeTruthy();
+    expect(scalarType.name).toBe(title);
+    const executableScalarType = processScalarType(scalarType);
+    expect(() => executableScalarType.serialize('not-valid-phone-number')).toThrow();
+    expect(executableScalarType.serialize('1231231234')).toBe('1231231234');
   });
   it('should generate a new scalar type that validates the value against the given const in string schema', async () => {
     const constStr = 'FOO';
@@ -664,8 +664,7 @@ type ExampleAnyOf {
     expect(() => serializeFn('')).toThrow();
     expect(serializeFn('aa')).toBe('aa');
   });
-  // TODO: Enable later
-  it.skip('should generate scalar types for maxLength definition', async () => {
+  it('should generate scalar types for maxLength definition', async () => {
     const title = 'Max2String';
     const inputSchema: JSONSchema = {
       title,
@@ -679,13 +678,13 @@ type ExampleAnyOf {
     });
     const inputComposer = result.input as ScalarTypeComposer;
     expect(inputComposer).toBe(result.output);
-    expect(inputComposer.getTypeName()).toBe(title);
-    const scalarType = inputComposer.getType();
+    let scalarType = inputComposer.getType();
+    expect(scalarType.name).toBe(title);
+    scalarType = processScalarType(scalarType);
     expect(() => scalarType.serialize('aaa')).toThrow();
     expect(scalarType.serialize('a')).toBe('a');
   });
-  // TODO: Enable later
-  it.skip('should generate scalar types for both minLength and maxLength definition', async () => {
+  it('should generate scalar types for both minLength and maxLength definition', async () => {
     const title = 'NonEmptyString';
     const inputSchema: JSONSchema = {
       title,
@@ -701,10 +700,10 @@ type ExampleAnyOf {
     const inputComposer = result.input as ScalarTypeComposer;
     expect(inputComposer).toBe(result.output);
     expect(inputComposer.getTypeName()).toBe(title);
-    const serializeFn = inputComposer.getSerialize();
-    expect(() => serializeFn('aaa')).toThrow();
-    expect(() => serializeFn('')).toThrow();
-    expect(serializeFn('a')).toBe('a');
+    const scalarType = processScalarType(inputComposer.getType());
+    expect(() => scalarType.serialize('aaa')).toThrow();
+    expect(() => scalarType.serialize('')).toThrow();
+    expect(scalarType.serialize('a')).toBe('a');
   });
   it('should return DateTime scalar for date-time format', async () => {
     const inputSchema: JSONSchema = {
@@ -1405,5 +1404,24 @@ ${printType(GraphQLString)}
       logger,
     });
     expect((output as UnionTypeComposer).getType().toString()).toBe('[String]');
+  });
+  it('should handle objects with required but nullable fields as optional fields in GraphQL', async () => {
+    const schema: JSONSchema = {
+      title: 'Required Optional Test',
+      type: 'object',
+      required: ['bar'],
+      properties: {
+        bar: {
+          type: 'string',
+          nullable: true,
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema,
+      logger,
+    });
+    expect((output as ObjectTypeComposer).getField('bar').type.getTypeName()).toEqual('String');
   });
 });

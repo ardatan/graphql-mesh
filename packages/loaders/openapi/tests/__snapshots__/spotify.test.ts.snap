@@ -1317,9 +1317,9 @@ type ImageObject {
   """The source URL of the image."""
   url: String!
   """The image height in pixels."""
-  height: Int!
+  height: Int
   """The image width in pixels."""
-  width: Int!
+  width: Int
 }
 
 """The precision with which \`release_date\` value is known."""
@@ -1429,11 +1429,11 @@ type PagingSimplifiedTrackObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SimplifiedTrackObject]
@@ -1559,11 +1559,11 @@ type PagingSimplifiedAlbumObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SimplifiedAlbumObject]
@@ -1765,11 +1765,11 @@ type PagingSimplifiedEpisodeObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SimplifiedEpisodeObject]
@@ -2060,11 +2060,11 @@ type PagingSimplifiedChapterObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SimplifiedChapterObject]
@@ -2162,11 +2162,11 @@ type PagingSimplifiedAudiobookObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SimplifiedAudiobookObject]
@@ -2308,11 +2308,11 @@ type PagingTrackObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [TrackObject]
@@ -2328,11 +2328,11 @@ type PagingArtistObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [ArtistObject]
@@ -2349,11 +2349,11 @@ type PagingPlaylistObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SimplifiedPlaylistObject]
@@ -2441,11 +2441,11 @@ type PagingSimplifiedShowObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SimplifiedShowObject]
@@ -2564,11 +2564,11 @@ type PagingPlaylistTrackObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [PlaylistTrackObject]
@@ -2622,11 +2622,11 @@ type PagingSavedAlbumObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SavedAlbumObject]
@@ -2654,11 +2654,11 @@ type PagingSavedTrackObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SavedTrackObject]
@@ -2685,11 +2685,11 @@ type PagingSavedEpisodeObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SavedEpisodeObject]
@@ -2715,11 +2715,11 @@ type PagingSavedShowObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [SavedShowObject]
@@ -2746,11 +2746,11 @@ type PagingArtistOrTrackObject_response {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: [query_get_users_top_artists_and_tracks_allOf_1_items_items]
@@ -2806,11 +2806,11 @@ type PagingObject {
   """
   limit: Int!
   """URL to the next page of items. ( \`null\` if none)"""
-  next: URL!
+  next: URL
   """The offset of the items returned (as set in the query or by default)"""
   offset: Int!
   """URL to the previous page of items. ( \`null\` if none)"""
-  previous: URL!
+  previous: URL
   """The total number of items available to return."""
   total: Int!
   items: JSON!

@@ -1,12 +1,12 @@
-import { GraphQLScalarType, GraphQLSchema } from 'graphql';
+import { GraphQLScalarType } from 'graphql';
 import { resolvers as scalarResolvers } from 'graphql-scalars';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
-import { getDirectives } from '@graphql-tools/utils';
 import { processLengthAnnotations } from './length.js';
 import { processRegExpAnnotations } from './regexp.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
+import { getDirectiveAnnotations } from './utils.js';
 
-export function processScalarType(schema: GraphQLSchema, type: GraphQLScalarType) {
+export function processScalarType(type: GraphQLScalarType) {
   if (type.name in scalarResolvers) {
     const actualScalar = scalarResolvers[type.name];
     addExecutionLogicToScalar(type, actualScalar);
@@ -14,7 +14,7 @@ export function processScalarType(schema: GraphQLSchema, type: GraphQLScalarType
   if (type.name === 'ObjMap') {
     addExecutionLogicToScalar(type, ObjMapScalar);
   }
-  const directiveAnnotations = getDirectives(schema, type);
+  const directiveAnnotations = getDirectiveAnnotations(type);
   for (const directiveAnnotation of directiveAnnotations) {
     switch (directiveAnnotation.name) {
       case 'length':
@@ -28,6 +28,7 @@ export function processScalarType(schema: GraphQLSchema, type: GraphQLScalarType
         break;
     }
   }
+  return type;
 }
 
 export function addExecutionLogicToScalar(

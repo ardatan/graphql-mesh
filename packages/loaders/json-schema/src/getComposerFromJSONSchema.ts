@@ -1344,6 +1344,9 @@ export function getComposerFromJSONSchema({
                 },
                 // Make sure you get the right property
                 directives: fieldDirectives,
+                extensions: {
+                  nullable: subSchemaAndTypeComposers.properties?.[propertyName]?.nullable,
+                },
                 description:
                   subSchemaAndTypeComposers.properties[propertyName].description ||
                   subSchemaAndTypeComposers.properties[propertyName].output?.description,
@@ -1380,6 +1383,9 @@ export function getComposerFromJSONSchema({
                     nullable = true;
                   }
                   return !nullable ? typeComposers.input?.getTypeNonNull() : typeComposers.input;
+                },
+                extensions: {
+                  nullable: subSchemaAndTypeComposers.properties?.[propertyName]?.nullable,
                 },
                 directives,
                 description:
@@ -1486,8 +1492,8 @@ export function getComposerFromJSONSchema({
             // TODO: Improve this later
             for (const requiredFieldName of subSchemaAndTypeComposers.required || []) {
               const sanitizedFieldName = sanitizeNameForGraphQL(requiredFieldName);
-              const fieldType = (output as ObjectTypeComposer).getFieldType(sanitizedFieldName);
-              if (!isNonNullType(fieldType)) {
+              const fieldObj = (output as ObjectTypeComposer).getField(sanitizedFieldName);
+              if (!isNonNullType(fieldObj.type.getType()) && !fieldObj.extensions?.nullable) {
                 (output as ObjectTypeComposer).makeFieldNonNull(requiredFieldName);
               }
             }
@@ -1500,8 +1506,8 @@ export function getComposerFromJSONSchema({
             // TODO: Improve this later
             for (const requiredFieldName of subSchemaAndTypeComposers.required || []) {
               const sanitizedFieldName = sanitizeNameForGraphQL(requiredFieldName);
-              const fieldType = (input as InputTypeComposer).getFieldType(sanitizedFieldName);
-              if (!isNonNullType(fieldType)) {
+              const field = (input as InputTypeComposer).getField(sanitizedFieldName);
+              if (!isNonNullType(field.type.getType()) && !field.extensions?.nullable) {
                 (input as InputTypeComposer).makeFieldNonNull(requiredFieldName);
               }
             }

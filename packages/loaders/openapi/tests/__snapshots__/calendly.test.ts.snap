@@ -351,11 +351,11 @@ type Invitee {
   """
   The first name of the invitee who booked the event when the event type is configured to use separate fields for first name and last name. Null when event type is configured to use a single field for name.
   """
-  first_name: String!
+  first_name: String
   """
   The last name of the invitee who booked the event when the event type is configured to use separate fields for first name and last name. Null when event type is configured to use a single field for name.
   """
-  last_name: String!
+  last_name: String
   """The invitee’s name (in human-readable format)"""
   name: String!
   status: query_getInvitees_oneOf_0_collection_items_status!
@@ -364,7 +364,7 @@ type Invitee {
   """
   questions_and_answers: [Invitee_Question_and_Answer]!
   """Time zone to use when displaying time to the invitee"""
-  timezone: String!
+  timezone: String
   """A reference to the event"""
   event: URL!
   """
@@ -377,15 +377,15 @@ type Invitee {
   updated_at: DateTime!
   tracking: Invitee_Tracking!
   """The phone number to use when sending text (SMS) reminders"""
-  text_reminder_number: String!
+  text_reminder_number: String
   """
   Indicates if this invitee has rescheduled. If \`true\`, a reference to the new Invitee instance is provided in the \`new_invitee\` field.
   """
   rescheduled: Boolean!
   """Reference to old Invitee instance that got rescheduled"""
-  old_invitee: URL!
+  old_invitee: URL
   """Link to new invitee, after reschedule"""
-  new_invitee: URL!
+  new_invitee: URL
   """Link to cancelling the event for the invitee"""
   cancel_url: URL!
   """Link to rescheduling the event for the invitee"""
@@ -393,11 +393,11 @@ type Invitee {
   """
   Reference to a routing form submission that redirected the invitee to a booking page.
   """
-  routing_form_submission: URL!
+  routing_form_submission: URL
   cancellation: Cancellation
-  payment: query_getInvitees_oneOf_0_collection_items_payment!
-  no_show: query_getInvitees_oneOf_0_collection_items_no_show!
-  reconfirmation: query_getInvitees_oneOf_0_collection_items_reconfirmation!
+  payment: query_getInvitees_oneOf_0_collection_items_payment
+  no_show: query_getInvitees_oneOf_0_collection_items_no_show
+  reconfirmation: query_getInvitees_oneOf_0_collection_items_reconfirmation
 }
 
 """
@@ -436,21 +436,21 @@ scalar DateTime
 """The UTM and Salesforce tracking parameters associated with an Invitee"""
 type Invitee_Tracking {
   """The UTM parameter used to track a campaign"""
-  utm_campaign: String!
+  utm_campaign: String
   """
   The UTM parameter that identifies the source (platform where the traffic originates)
   """
-  utm_source: String!
+  utm_source: String
   """
   The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social media, affiliate or QR code)
   """
-  utm_medium: String!
+  utm_medium: String
   """UTM content tracking parameter"""
-  utm_content: String!
+  utm_content: String
   """The UTM parameter used to track keywords"""
-  utm_term: String!
+  utm_term: String
   """The Salesforce record unique identifier"""
-  salesforce_uuid: String!
+  salesforce_uuid: String
 }
 
 """Provides data pertaining to the cancellation of the Event"""
@@ -458,7 +458,7 @@ type Cancellation {
   """Name of the person whom canceled"""
   canceled_by: String!
   """Reason that the cancellation occurred"""
-  reason: String!
+  reason: String
   canceler_type: query_getInvitees_oneOf_0_collection_items_cancellation_canceler_type!
 }
 
@@ -476,7 +476,7 @@ type query_getInvitees_oneOf_0_collection_items_payment {
   amount: Float!
   currency: query_getInvitees_oneOf_0_collection_items_payment_currency!
   """Terms of the payment"""
-  terms: String!
+  terms: String
   """Indicates whether the payment was successfully processed"""
   successful: Boolean!
 }
@@ -511,7 +511,7 @@ type query_getInvitees_oneOf_0_collection_items_reconfirmation {
   """When the reconfirmation was created."""
   created_at: DateTime!
   """When the Invitee confirmed their attendance."""
-  confirmed_at: DateTime!
+  confirmed_at: DateTime
 }
 
 type Pagination {
@@ -520,19 +520,19 @@ type Pagination {
   """
   URI to return the next page of an ordered list ("null" indicates no additional results are available)
   """
-  next_page: URL!
+  next_page: URL
   """
   URI to return the previous page of an ordered list ("null" indicates no additional results are available)
   """
-  previous_page: URL!
+  previous_page: URL
   """
   Token to return the next page of an ordered list ("null" indicates no additional results are available)
   """
-  next_page_token: String!
+  next_page_token: String
   """
   Token to return the previous page of an ordered list ("null" indicates no additional results are available)
   """
-  previous_page_token: String!
+  previous_page_token: String
 }
 
 """Request is not valid"""
@@ -650,7 +650,7 @@ type Event {
   """Canonical reference (unique identifier) for the resource"""
   uri: URL!
   """The event name"""
-  name: String!
+  name: String
   status: query_getScheduledEvents_oneOf_0_collection_items_status!
   """
   The moment the event was scheduled to start in UTC time (e.g. "2020-01-02T03:04:05.678123Z").
@@ -662,7 +662,7 @@ type Event {
   end_time: DateTime!
   """The event type associated with this event"""
   event_type: URL!
-  location: Location!
+  location: Location
   invitees_counter: query_getScheduledEvents_oneOf_0_collection_items_invitees_counter!
   """
   The moment when the event was created (e.g. "2020-01-02T03:04:05.678123Z")
@@ -707,7 +707,7 @@ type Outbound_Call {
   """
   The phone number the event host (publisher) will use to call the invitee
   """
-  location: String!
+  location: String
 }
 
 enum outbound_call_const @typescript(subgraph: "calendly", type: "\\"outbound_call\\"") @example(subgraph: "calendly", value: "\\"outbound_call\\"") {
@@ -734,7 +734,7 @@ type Google_Conference {
   type: google_conference_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_3_status!
   """Google conference meeting url"""
-  join_url: URL!
+  join_url: URL
 }
 
 enum google_conference_const @typescript(subgraph: "calendly", type: "\\"google_conference\\"") @example(subgraph: "calendly", value: "\\"google_conference\\"") {
@@ -754,8 +754,8 @@ type Zoom_Conference {
   type: zoom_conference_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_status!
   """Zoom meeting url"""
-  join_url: URL!
-  data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data!
+  join_url: URL
+  data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data
 }
 
 enum zoom_conference_const @typescript(subgraph: "calendly", type: "\\"zoom_conference\\"") @example(subgraph: "calendly", value: "\\"zoom_conference\\"") {
@@ -806,8 +806,8 @@ type GoToMeeting_Conference {
   type: gotomeeting_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_status!
   """GoToMeeting conference meeting url"""
-  join_url: URL!
-  data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data!
+  join_url: URL
+  data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data
 }
 
 enum gotomeeting_const @typescript(subgraph: "calendly", type: "\\"gotomeeting\\"") @example(subgraph: "calendly", value: "\\"gotomeeting\\"") {
@@ -834,8 +834,8 @@ type Microsoft_Teams_Conference {
   type: microsoft_teams_conference_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_status!
   """Microsoft Teams meeting url"""
-  join_url: URL!
-  data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data!
+  join_url: URL
+  data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data
 }
 
 enum microsoft_teams_conference_const @typescript(subgraph: "calendly", type: "\\"microsoft_teams_conference\\"") @example(subgraph: "calendly", value: "\\"microsoft_teams_conference\\"") {
@@ -867,7 +867,7 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data_aud
 type Custom_Location {
   type: custom_const!
   """The location description provided by the event host (publisher)"""
-  location: String!
+  location: String
 }
 
 enum custom_const @typescript(subgraph: "calendly", type: "\\"custom\\"") @example(subgraph: "calendly", value: "\\"custom\\"") {
@@ -890,8 +890,8 @@ type WebEx_Conference {
   type: webex_conference_const!
   status: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_status!
   """WebEx conference meeting url"""
-  join_url: URL!
-  data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data!
+  join_url: URL
+  data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data
 }
 
 enum webex_conference_const @typescript(subgraph: "calendly", type: "\\"webex_conference\\"") @example(subgraph: "calendly", value: "\\"webex_conference\\"") {
@@ -966,13 +966,13 @@ type Event_Type {
   """Canonical reference (unique identifier) for the event type"""
   uri: URL!
   """The event type name (in human-readable format)"""
-  name: String!
+  name: String
   """Indicates if the event is active or not."""
   active: Boolean!
   """
   The portion of the event type's URL that identifies a specific web page (in a human-readable format)
   """
-  slug: String!
+  slug: String
   """
   The URL of the user’s scheduling site where invitees book this event type
   """
@@ -980,7 +980,7 @@ type Event_Type {
   """The length of sessions booked with this event type"""
   duration: Float!
   kind: query_getEventTypes_oneOf_0_collection_items_kind!
-  pooling_type: query_getEventTypes_oneOf_0_collection_items_pooling_type!
+  pooling_type: query_getEventTypes_oneOf_0_collection_items_pooling_type
   type: query_getEventTypes_oneOf_0_collection_items_type!
   color: query_getEventTypes_oneOf_0_collection_items_color!
   """
@@ -992,12 +992,12 @@ type Event_Type {
   """
   updated_at: DateTime!
   """Contents of a note that may be associated with the event type"""
-  internal_note: String!
+  internal_note: String
   """The event type's description (in non formatted text)"""
-  description_plain: String!
+  description_plain: String
   """The event type's description (formatted with HTML)"""
-  description_html: String!
-  profile: Profile!
+  description_html: String
+  profile: Profile
   """
   Indicates if the event type is hidden on the owner's main scheduling page
   """
@@ -1007,7 +1007,7 @@ type Event_Type {
   """
   The moment the event type was deleted (e.g. "2020-01-02T03:04:05.678123Z"). Since event types can be deleted but their scheduled events remain it's useful to fetch a deleted event type when you still require event type data for a scheduled event.
   """
-  deleted_at: DateTime!
+  deleted_at: DateTime
 }
 
 """
@@ -1126,7 +1126,7 @@ type User {
   """The time zone to use when presenting time to the user"""
   timezone: String!
   """The URL of the user's avatar (image)"""
-  avatar_url: URL!
+  avatar_url: URL
   """
   The moment when the user's record was created (e.g. "2020-01-02T03:04:05.678123Z")
   """
@@ -1202,7 +1202,7 @@ type Organization_Invitation {
   """
   The moment the invitation was last sent (e.g. "2020-01-02T03:04:05.678123Z")
   """
-  last_sent_at: DateTime!
+  last_sent_at: DateTime
   """
   When the invitation is accepted, a reference to the user who accepted the invitation
   """
@@ -1280,7 +1280,7 @@ type query_get_organizations_uuid_memberships_oneOf_0_resource_user {
   """The time zone to use when presenting time to the user"""
   timezone: String!
   """The URL of the user's avatar (image)"""
-  avatar_url: URL!
+  avatar_url: URL
   """
   The moment when the user's record was created (e.g. "2020-01-02T03:04:05.678123Z")
   """
@@ -1321,7 +1321,7 @@ type Webhook_Subscription {
   """
   updated_at: DateTime!
   """The date and time the webhook subscription is retried"""
-  retry_started_at: DateTime!
+  retry_started_at: DateTime
   state: query_get_webhooks_oneOf_0_collection_items_state!
   """A list of events to which the webhook is subscribed"""
   events: [query_get_webhooks_oneOf_0_collection_items_events_items]!
@@ -1331,9 +1331,9 @@ type Webhook_Subscription {
   """
   organization: URL!
   """The URI of the user that's associated with the webhook subscription"""
-  user: URL!
+  user: URL
   """The URI of the user who created the webhook subscription"""
-  creator: URL!
+  creator: URL
 }
 
 """
@@ -1428,7 +1428,7 @@ type Routing_Form_Question {
   """
   The respondent’s option(s) for "select" or "radios" types of questions.
   """
-  answer_choices: [String]!
+  answer_choices: [String]
 }
 
 """
@@ -1477,8 +1477,8 @@ type Routing_Form_Submission {
   """
   The reference to the Invitee resource when routing form submission results in a scheduled meeting.
   """
-  submitter: URL!
-  submitter_type: Invitee_const!
+  submitter: URL
+  submitter_type: Invitee_const
   """The moment the routing form was submitted."""
   created_at: DateTime!
   """The moment when the routing form submission was last updated."""
@@ -1488,7 +1488,7 @@ type Routing_Form_Submission {
 """All Routing Form Submission questions with answers."""
 type Routing_Form_Submission_Question_and_Answer {
   """Unique identifier for the routing form question."""
-  question_uuid: UUID!
+  question_uuid: UUID
   """Question name (in human-readable format)."""
   question: String!
   """Answer provided by the respondent when the form was submitted."""
@@ -1500,21 +1500,21 @@ The UTM and Salesforce tracking parameters associated with a Routing Form Submis
 """
 type Routing_Form_Submission_Tracking {
   """The UTM parameter used to track a campaign."""
-  utm_campaign: String!
+  utm_campaign: String
   """
   The UTM parameter that identifies the source (platform where the traffic originates).
   """
-  utm_source: String!
+  utm_source: String
   """
   The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social media, affiliate or QR code).
   """
-  utm_medium: String!
+  utm_medium: String
   """UTM content tracking parameter."""
-  utm_content: String!
+  utm_content: String
   """The UTM parameter used to track keywords."""
-  utm_term: String!
+  utm_term: String
   """The Salesforce record unique identifier."""
-  salesforce_uuid: String!
+  salesforce_uuid: String
 }
 
 """The polymorphic base type for a Routing Form Submission result."""
