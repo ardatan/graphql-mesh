@@ -46,10 +46,10 @@ export default class SupergraphHandler implements MeshHandler {
 
   private async getSupergraphSdl(): Promise<DocumentNode> {
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
-    if (isUrl(this.config.source)) {
-      const interpolatedSource = stringInterpolator.parse(this.config.source, {
-        env: process.env,
-      });
+    const interpolatedSource = stringInterpolator.parse(this.config.source, {
+      env: process.env,
+    });
+    if (isUrl(interpolatedSource)) {
       const res = await readUrl<DocumentNode | string>(interpolatedSource, {
         headers: schemaHeadersFactory({
           env: process.env,
@@ -66,9 +66,6 @@ export default class SupergraphHandler implements MeshHandler {
       return res;
     }
     return this.supergraphSdl.getWithSet(async () => {
-      const interpolatedSource = stringInterpolator.parse(this.config.source, {
-        env: process.env,
-      });
       const sdlOrIntrospection = await readFile<string | DocumentNode>(interpolatedSource, {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
