@@ -17884,10 +17884,10 @@ node-int64@^0.4.0:
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
   integrity sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==
 
-node-libcurl@3.0.1-0:
-  version "3.0.1-0"
-  resolved "https://registry.yarnpkg.com/node-libcurl/-/node-libcurl-3.0.1-0.tgz#5373a35922e9b7605930f182910f71295606c80c"
-  integrity sha512-USGwYGX1AtyF7ckCm7bxwCjwQopksSqgeoYDP/vyUoFmB1or8V70NcVRpSGhDLoMyxiEHeCA+h1NSRdXPO0WQg==
+node-libcurl@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/node-libcurl/-/node-libcurl-4.0.0.tgz#57568c3f7c08a76e822994d2b674d4dd56752127"
+  integrity sha512-v+u+OgSq6ldvf8MrdjieAy/mv8WeTN94nrTomh62zhItF2HH0Ckin/QEqs8+35DWyYrE5nBM2480UtWVXktzbQ==
   dependencies:
     "@mapbox/node-pre-gyp" "1.0.11"
     env-paths "2.2.0"
