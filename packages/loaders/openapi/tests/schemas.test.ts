@@ -10,7 +10,7 @@ const schemas: Record<string, string> = {
   IBMLanguageTranslator: 'ibm_language_translator.json',
   InfiniteRecursion: 'infinite-recursion.yml',
   Kubernetes: 'kubernetes.json',
-  Stripe: 'https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json',
+  Stripe: 'stripe.json',
   Toto: 'toto.yml',
   Jira: 'jira.json',
   WeatherUnderground: 'weather_underground.json',
