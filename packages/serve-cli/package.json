@@ -61,7 +61,7 @@
     "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "optionalDependencies": {
-    "node-libcurl": "4.0.0"
+    "node-libcurl": "^4.0.0"
   },
   "devDependencies": {
     "@parcel/watcher": "^2.3.0",

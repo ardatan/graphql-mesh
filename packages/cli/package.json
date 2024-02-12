@@ -75,7 +75,7 @@
     "yargs": "^17.7.1"
   },
   "optionalDependencies": {
-    "node-libcurl": "4.0.0"
+    "node-libcurl": "^4.0.0"
   },
   "devDependencies": {
     "@types/lodash.get": "4.4.9",
