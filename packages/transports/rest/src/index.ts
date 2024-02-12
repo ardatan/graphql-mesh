@@ -21,3 +21,4 @@ export const getSubgraphExecutor: TransportExecutorFactoryFn<'rest', RESTTranspo
   };
 
 export { processDirectives, ProcessDirectiveArgs } from './directives/process.js';
+export { processScalarType } from './directives/scalars.js';
