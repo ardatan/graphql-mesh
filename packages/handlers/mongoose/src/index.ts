@@ -2,6 +2,7 @@ import { specifiedDirectives } from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import { connect, ConnectOptions, disconnect, Document, Model } from 'mongoose';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
   ImportFn,
   Logger,
@@ -62,29 +63,12 @@ export default class MongooseHandler implements MeshHandler {
 
   async getMeshSource(): Promise<MeshSource> {
     if (this.config.connectionString) {
-      connect(this.config.connectionString, {
+      const interpolatedConnectionString = stringInterpolator.parse(this.config.connectionString, {
+        env: process.env,
+      });
+      connect(interpolatedConnectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        logger: {
-          className: this.name,
-          debug: this.logger.debug.bind(this.logger),
-          info: this.logger.info.bind(this.logger),
-          warn: this.logger.warn.bind(this.logger),
-          error: this.logger.error.bind(this.logger),
-          isDebug() {
-            return true;
-          },
-          isError() {
-            return true;
-          },
-          isInfo() {
-            return true;
-          },
-          isWarn() {
-            return true;
-          },
-        },
-        loggerLevel: 'debug',
       } as ConnectOptions).catch(e => this.logger.error(e));
 
       const id = this.pubsub.subscribe('destroy', () => {
