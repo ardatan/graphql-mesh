@@ -30,8 +30,8 @@ export interface MeshServeContext {
 }
 
 export type MeshServePlugin<
-  TContext extends Record<string, any> = MeshServeContext,
   TPluginContext extends Record<string, any> = any,
+  TContext extends Record<string, any> = MeshServeContext,
 > = Plugin<TPluginContext, TContext> & FusiongraphPlugin & { onFetch?: OnFetchHook<TContext> };
 
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -68,7 +68,9 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Plugins
    */
-  plugins?(context: MeshServeContext & TContext): MeshServePlugin<MeshServeContext & TContext>[];
+  plugins?(
+    context: MeshServeContext & TContext,
+  ): MeshServePlugin<any, MeshServeContext & TContext>[];
   /**
    * Configuration for CORS
    */
