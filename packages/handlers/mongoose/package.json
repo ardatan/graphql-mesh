@@ -39,10 +39,11 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "graphql-compose": "9.0.10",
-    "graphql-compose-connection": "8.2.1",
-    "graphql-compose-mongoose": "10.0.0",
-    "graphql-compose-pagination": "8.3.0"
+    "@graphql-mesh/string-interpolation": "^0.5.3",
+    "graphql-compose": "^9.0.10",
+    "graphql-compose-connection": "^8.2.1",
+    "graphql-compose-mongoose": "^10.0.0",
+    "graphql-compose-pagination": "^8.3.0"
   },
   "devDependencies": {
     "mongoose": "8.1.1"

@@ -21,6 +21,7 @@ import {
   memoize1,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
+import { isGraphQLJitCompatible } from './utils.js';
 
 enum IntrospectionQueryType {
   FEDERATION = 'FEDERATION',
@@ -95,7 +96,11 @@ function getExecuteFn(subschema: Subschema) {
     };
     let executor = subschema.executor;
     if (executor == null) {
-      if (isStream || operationAST.operation === 'subscription') {
+      if (
+        !isGraphQLJitCompatible(subschema.schema) ||
+        isStream ||
+        operationAST.operation === 'subscription'
+      ) {
         executor = createDefaultExecutor(subschema.schema);
       } else {
         executor = function subschemaExecutor(request: ExecutionRequest): any {

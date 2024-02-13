@@ -43,7 +43,6 @@ export default class MongooseHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
   private logger: Logger;
-  private name: string;
 
   constructor({
     name,
@@ -53,7 +52,6 @@ export default class MongooseHandler implements MeshHandler {
     importFn,
     logger,
   }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
-    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
