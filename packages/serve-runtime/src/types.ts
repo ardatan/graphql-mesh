@@ -93,11 +93,11 @@ interface MeshServeBaseConfig<TContext extends Record<string, any>> {
   /**
    * Logger
    */
-  logging?: YogaServerOptions<MeshServeContext & TContext, unknown>['logging'] | Logger;
+  logging?: YogaServerOptions<MeshServeContext & TContext, any>['logging'] | Logger;
   /**
    * Additional Resolvers
    */
-  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
+  additionalResolvers?: IResolvers<any, MeshServeContext & TContext>;
   /**
    * Endpoint
    */
@@ -105,12 +105,12 @@ interface MeshServeBaseConfig<TContext extends Record<string, any>> {
   /**
    * Masked errors
    */
-  maskedErrors?: YogaServerOptions<MeshServeContext & TContext, unknown>['maskedErrors'];
+  maskedErrors?: YogaServerOptions<MeshServeContext & TContext, any>['maskedErrors'];
 }
 
 export type MeshServePlugin<
   TContext extends Record<string, any> = MeshServeContext,
-  TPluginContext extends Record<string, any> = {},
+  TPluginContext extends Record<string, any> = any,
 > = Plugin<TPluginContext, TContext> & FusiongraphPlugin & { onFetch?: OnFetchHook<TContext> };
 
 export interface MeshServeContext {
