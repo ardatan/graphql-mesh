@@ -3311,9 +3311,16 @@
           },
           "additionalItems": false
         },
+        "composeDirective": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
         "version": {
           "type": "string",
-          "description": "Version of the federation spec\nDefault: v2.0"
+          "description": "Version of the federation spec\nDefault: v2.3"
         }
       }
     },
@@ -3347,6 +3354,9 @@
           "type": "boolean"
         },
         "extends": {
+          "type": "boolean"
+        },
+        "interfaceObject": {
           "type": "boolean"
         },
         "fields": {

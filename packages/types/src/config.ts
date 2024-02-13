@@ -1177,9 +1177,10 @@ export interface ExtendTransform {
 }
 export interface FederationTransform {
   types?: FederationTransformType[];
+  composeDirective?: string[];
   /**
    * Version of the federation spec
-   * Default: v2.0
+   * Default: v2.3
    */
   version?: string;
 }
@@ -1191,6 +1192,7 @@ export interface FederationObjectConfig {
   key?: FederationObjectKeyConfig[];
   shareable?: boolean;
   extends?: boolean;
+  interfaceObject?: boolean;
   fields?: FederationField[];
   /**
    * Any of: String, ResolveReferenceObject

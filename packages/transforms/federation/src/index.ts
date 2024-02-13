@@ -56,6 +56,7 @@ export default class FederationTransform implements MeshTransform {
 
   transformSchema(schema: GraphQLSchema, rawSource: SubschemaConfig) {
     rawSource.merge = {};
+    let usesKeyDirective = false;
     if (this.config?.types) {
       const queryType = schema.getQueryType();
       const queryTypeFields = queryType.getFields();
@@ -73,6 +74,9 @@ export default class FederationTransform implements MeshTransform {
         }
         if (type.config?.extends) {
           typeDirectivesObj.extends = type.config.extends;
+        }
+        if (type.config?.interfaceObject) {
+          typeDirectivesObj.interfaceObject = type.config.interfaceObject;
         }
         const typeFieldObjs = typeObj.getFields();
         if (type.config?.fields) {
@@ -97,6 +101,7 @@ export default class FederationTransform implements MeshTransform {
         // If a field is a key field, it should be GraphQLID
 
         if (type.config?.key) {
+          usesKeyDirective = true;
           let selectionSetContent = '';
           for (const keyField of type.config.key) {
             selectionSetContent += '\n';
@@ -203,19 +208,23 @@ export default class FederationTransform implements MeshTransform {
     );
 
     directivesObj.link = {
-      url: 'https://specs.apollo.dev/federation/' + (this.config.version || 'v2.0'),
+      url: 'https://specs.apollo.dev/federation/' + (this.config.version || 'v2.3'),
       import: filteredDirectives
         .filter(({ name }) => name !== 'link')
         .map(dirName => `@${dirName.name}`),
     };
+    if (usesKeyDirective) {
+      directivesObj.link.import.push('@key');
+    }
 
     if (existingDirectives.length === filteredDirectives.length) {
       return schemaWithUnionType;
     }
 
+    const includedDirectives = [...federationDirectives, ...(this.config.composeDirective || [])];
     return mapSchema(schemaWithUnionType, {
       [MapperKind.DIRECTIVE]: directive => {
-        if (federationDirectives.includes(directive.name)) {
+        if (includedDirectives.includes(directive.name)) {
           return directive;
         }
         return null;
@@ -226,14 +235,14 @@ export default class FederationTransform implements MeshTransform {
           astNode: type.astNode && {
             ...type.astNode,
             directives: type.astNode.directives?.filter(directive =>
-              federationDirectives.includes(directive.name.value),
+              includedDirectives.includes(directive.name.value),
             ),
           },
           extensions: {
             ...type.extensions,
             directives: Object.fromEntries(
               Object.entries(type.extensions?.directives || {}).filter(([key]) =>
-                federationDirectives.includes(key),
+                includedDirectives.includes(key),
               ),
             ),
           },
@@ -245,14 +254,14 @@ export default class FederationTransform implements MeshTransform {
           astNode: type.astNode && {
             ...type.astNode,
             directives: type.astNode.directives?.filter(directive =>
-              federationDirectives.includes(directive.name.value),
+              includedDirectives.includes(directive.name.value),
             ),
           },
           extensions: {
             ...type.extensions,
             directives: Object.fromEntries(
               Object.entries(type.extensions?.directives || {}).filter(([key]) =>
-                federationDirectives.includes(key),
+                includedDirectives.includes(key),
               ),
             ),
           },
@@ -264,14 +273,14 @@ export default class FederationTransform implements MeshTransform {
           astNode: fieldConfig.astNode && {
             ...fieldConfig.astNode,
             directives: fieldConfig.astNode.directives?.filter(directive =>
-              federationDirectives.includes(directive.name.value),
+              includedDirectives.includes(directive.name.value),
             ),
           },
           extensions: {
             ...fieldConfig.extensions,
             directives: Object.fromEntries(
               Object.entries(fieldConfig.extensions?.directives || {}).filter(([key]) =>
-                federationDirectives.includes(key),
+                includedDirectives.includes(key),
               ),
             ),
           },
