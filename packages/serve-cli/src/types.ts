@@ -26,3 +26,10 @@ export type MeshServeCLIConfig = MeshServeConfig<MeshServeCLIContext> & {
    */
   browser?: string | boolean;
 };
+
+/**
+ * Type helper for defining the config.
+ */
+export function defineConfig(config: MeshServeCLIConfig) {
+  return config;
+}

@@ -28,3 +28,10 @@ export interface LoaderContext {
   cwd: string;
   logger: Logger;
 }
+
+/**
+ * Type helper for defining the config.
+ */
+export function defineConfig(config: MeshComposeCLIConfig) {
+  return config;
+}
