@@ -16,48 +16,47 @@ export type UnifiedGraphConfig =
   | Promise<UnifiedGraphConfig>;
 
 export type MeshServeConfig<TContext extends Record<string, any> = {}> =
-  | MeshServeConfigWithSourceInput<TContext>
-  | MeshServeConfigWithCache<TContext>
-  | MeshServeConfigWithPubSub<TContext>;
-
-type MeshServeConfigWithCache<TContext extends Record<string, any>> =
-  MeshServeConfigWithSourceInput<TContext & { cache: KeyValueCache }> & {
-    cache: KeyValueCache;
-  };
-
-type MeshServeConfigWithPubSub<TContext extends Record<string, any>> =
-  MeshServeConfigWithSourceInput<TContext & { pubsub: MeshPubSub }> & {
-    pubsub: MeshPubSub;
-  };
-
-type MeshServeConfigWithSourceInput<TContext> =
   | MeshServeConfigWithFusiongraph<TContext>
   | MeshServeConfigWithSupergraph<TContext>
   | MeshServeConfigWithHttpEndpoint<TContext>;
 
-interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeBaseConfig<TContext> {
+export interface MeshServeContext {
+  fetch: MeshFetch;
+  logger: Logger;
+  cwd: string;
+  // TODO: change context if these are implemented
+  pubsub?: MeshPubSub;
+  cache?: KeyValueCache;
+}
+
+export type MeshServePlugin<
+  TContext extends Record<string, any> = MeshServeContext,
+  TPluginContext extends Record<string, any> = any,
+> = Plugin<TPluginContext, TContext> & FusiongraphPlugin & { onFetch?: OnFetchHook<TContext> };
+
+interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
    * Path to the GraphQL Fusion unified schema.
    *
    * @default ./fusiongraph.graphql
    */
-  fusiongraph?: UnifiedGraphConfig;
+  fusiongraph: UnifiedGraphConfig;
 }
 
-interface MeshServeConfigWithSupergraph<TContext> extends MeshServeBaseConfig<TContext> {
+interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
    * Path to the Apollo Federation unified schema.
    *
    * @default ./supergraph.graphql
    */
-  supergraph?: UnifiedGraphConfig;
+  supergraph: UnifiedGraphConfig;
 }
 
-interface MeshServeConfigWithHttpEndpoint<TContext> extends MeshServeBaseConfig<TContext> {
+interface MeshServeConfigWithHttpEndpoint<TContext> extends MeshServeConfigWithoutSource<TContext> {
   http: HTTPExecutorOptions;
 }
 
-interface MeshServeBaseConfig<TContext extends Record<string, any>> {
+interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Headers to be sent to the Supergraph Schema endpoint
    */
@@ -106,17 +105,7 @@ interface MeshServeBaseConfig<TContext extends Record<string, any>> {
    * Masked errors
    */
   maskedErrors?: YogaServerOptions<MeshServeContext & TContext, any>['maskedErrors'];
-}
-
-export type MeshServePlugin<
-  TContext extends Record<string, any> = MeshServeContext,
-  TPluginContext extends Record<string, any> = any,
-> = Plugin<TPluginContext, TContext> & FusiongraphPlugin & { onFetch?: OnFetchHook<TContext> };
-
-export interface MeshServeContext {
-  fetch: MeshFetch;
-  logger: Logger;
-  cwd: string;
-  pubsub?: MeshPubSub;
+  // TODO: change context if these are implemented
   cache?: KeyValueCache;
+  pubsub?: MeshPubSub;
 }
