@@ -97,7 +97,8 @@ function getExecuteFn(subschema: Subschema) {
     let executor = subschema.executor;
     if (executor == null) {
       if (
-        (!isGraphQLJitCompatible(subschema.schema) && isStream) ||
+        !isGraphQLJitCompatible(subschema.schema) ||
+        isStream ||
         operationAST.operation === 'subscription'
       ) {
         executor = createDefaultExecutor(subschema.schema);
