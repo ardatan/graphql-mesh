@@ -1,5 +1,20 @@
 # @graphql-mesh/transport-rest
 
+## 0.0.2
+
+### Patch Changes
+
+- [#6563](https://github.com/ardatan/graphql-mesh/pull/6563)
+  [`2138dea`](https://github.com/ardatan/graphql-mesh/commit/2138dea53c28fafe92fa1dc4243e3329d401d064)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle nullable required fields as nullable in
+  GraphQL
+
+- Updated dependencies
+  [[`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/types@0.96.5
+  - @graphql-mesh/transport-common@0.0.2
+  - @graphql-mesh/utils@0.96.5
+
 ## 0.0.1
 
 ### Patch Changes

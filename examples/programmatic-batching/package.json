@@ -1,6 +1,6 @@
 {
   "name": "programmatic-batching-example",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.88.6",
-    "@graphql-mesh/openapi": "0.98.0",
+    "@graphql-mesh/cli": "0.88.7",
+    "@graphql-mesh/openapi": "0.98.1",
     "@sinclair/typebox": "0.32.13",
     "fets": "0.7.1",
     "graphql": "16.8.1"

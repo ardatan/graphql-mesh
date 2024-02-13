@@ -1,5 +1,23 @@
 # @graphql-mesh/runtime
 
+## 0.97.6
+
+### Patch Changes
+
+- [#6566](https://github.com/ardatan/graphql-mesh/pull/6566)
+  [`89d8dd6`](https://github.com/ardatan/graphql-mesh/commit/89d8dd6dde4b74a9c3edb3438ef23f2498d94276)
+  Thanks [@ardatan](https://github.com/ardatan)! - Compatibility with the environments and schemas
+  do not support GraphQL JIT
+
+- [#6553](https://github.com/ardatan/graphql-mesh/pull/6553)
+  [`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Correct additional envelop plugins docs
+
+- Updated dependencies
+  [[`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/types@0.96.5
+  - @graphql-mesh/utils@0.96.5
+
 ## 0.97.5
 
 ### Patch Changes

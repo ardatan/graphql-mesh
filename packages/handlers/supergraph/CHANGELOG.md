@@ -1,5 +1,18 @@
 # @graphql-mesh/supergraph
 
+## 0.1.5
+
+### Patch Changes
+
+- [`0a700e3`](https://github.com/ardatan/graphql-mesh/commit/0a700e304706645a2e72d87df8b57773287a38b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix URL handling
+
+- Updated dependencies
+  [[`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/types@0.96.5
+  - @graphql-mesh/store@0.96.5
+  - @graphql-mesh/utils@0.96.5
+
 ## 0.1.4
 
 ### Patch Changes

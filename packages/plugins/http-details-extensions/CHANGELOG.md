@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-http-details-extensions
 
+## 0.96.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/types@0.96.5
+  - @graphql-mesh/utils@0.96.5
+
 ## 0.96.4
 
 ### Patch Changes

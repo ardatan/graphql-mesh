@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.96.5
+
+### Patch Changes
+
+- [#6553](https://github.com/ardatan/graphql-mesh/pull/6553)
+  [`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Correct additional envelop plugins docs
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.96.5
+
 ## 0.96.4
 
 ### Patch Changes
