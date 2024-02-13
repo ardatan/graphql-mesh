@@ -35,8 +35,10 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "^0.4.1",
     "@graphql-mesh/fusion-federation": "^0.0.1",
     "@graphql-mesh/fusion-runtime": "^0.0.2",
+    "@graphql-mesh/utils": "^0.96.5",
     "@graphql-tools/delegate": "^10.0.3",
     "@graphql-tools/executor-http": "^1.0.6",
     "@graphql-tools/executor-yoga": "^2.0.3",
