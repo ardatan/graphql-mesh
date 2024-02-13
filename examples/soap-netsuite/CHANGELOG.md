@@ -1,5 +1,14 @@
 # soap-netsuite
 
+## 0.6.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2e67aa0`](https://github.com/ardatan/graphql-mesh/commit/2e67aa0f37f2d438d5d7b766d45afb8d126556ee)]:
+  - @graphql-mesh/cli@0.88.7
+  - @graphql-mesh/soap@0.96.6
+
 ## 0.6.7
 
 ### Patch Changes

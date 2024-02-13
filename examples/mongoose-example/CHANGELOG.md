@@ -1,5 +1,16 @@
 # mongoose-example
 
+## 0.11.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`89d8dd6`](https://github.com/ardatan/graphql-mesh/commit/89d8dd6dde4b74a9c3edb3438ef23f2498d94276),
+  [`2e67aa0`](https://github.com/ardatan/graphql-mesh/commit/2e67aa0f37f2d438d5d7b766d45afb8d126556ee),
+  [`ee9f830`](https://github.com/ardatan/graphql-mesh/commit/ee9f830234406d5012d6be38f04d20691e8f9b83)]:
+  - @graphql-mesh/mongoose@0.96.6
+  - @graphql-mesh/cli@0.88.7
+
 ## 0.11.7
 
 ### Patch Changes

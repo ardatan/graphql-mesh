@@ -1,5 +1,22 @@
 # thrift-calculator
 
+## 0.13.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57dd00b`](https://github.com/ardatan/graphql-mesh/commit/57dd00bf0e9e6bd4c2526aa5d6d609d18e9cd176),
+  [`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908),
+  [`7c18a3f`](https://github.com/ardatan/graphql-mesh/commit/7c18a3f9163f5156758b8cdf0292b28a3bb6046b),
+  [`57dd00b`](https://github.com/ardatan/graphql-mesh/commit/57dd00bf0e9e6bd4c2526aa5d6d609d18e9cd176),
+  [`2e67aa0`](https://github.com/ardatan/graphql-mesh/commit/2e67aa0f37f2d438d5d7b766d45afb8d126556ee),
+  [`7c18a3f`](https://github.com/ardatan/graphql-mesh/commit/7c18a3f9163f5156758b8cdf0292b28a3bb6046b),
+  [`4841da9`](https://github.com/ardatan/graphql-mesh/commit/4841da96096d7f5c41b417fd9114dbad420f4677),
+  [`c6535b6`](https://github.com/ardatan/graphql-mesh/commit/c6535b6ba772eeda498710ca1234779a27b6647b)]:
+  - @graphql-mesh/serve-cli@0.1.0
+  - @omnigraph/thrift@0.0.4
+  - @graphql-mesh/compose-cli@0.0.2
+
 ## 0.12.3
 
 ### Patch Changes

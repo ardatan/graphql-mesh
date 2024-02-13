@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.97.2",
+  "version": "0.97.3",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,15 +33,15 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.1",
-    "@graphql-mesh/store": "^0.96.4",
-    "@graphql-mesh/types": "^0.96.4",
-    "@graphql-mesh/utils": "^0.96.4",
+    "@graphql-mesh/store": "^0.96.5",
+    "@graphql-mesh/types": "^0.96.5",
+    "@graphql-mesh/utils": "^0.96.5",
     "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/thrift": "^0.0.3"
+    "@omnigraph/thrift": "^0.0.4"
   },
   "devDependencies": {
     "@types/thrift": "0.10.17",

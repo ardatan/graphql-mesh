@@ -1,14 +1,14 @@
 {
   "name": "example-fastify",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "private": true,
   "scripts": {
     "build": "mesh build",
     "start": "ts-node-dev src/index.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.88.6",
-    "@graphql-mesh/graphql": "0.96.4",
+    "@graphql-mesh/cli": "0.88.7",
+    "@graphql-mesh/graphql": "0.96.5",
     "fastify": "4.26.0",
     "graphql": "16.8.1",
     "ts-node": "10.9.2",
