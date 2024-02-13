@@ -21,7 +21,7 @@ import {
   memoize1,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
-import { isGraphQLJitCompatible } from './utils';
+import { isGraphQLJitCompatible } from './utils.js';
 
 enum IntrospectionQueryType {
   FEDERATION = 'FEDERATION',
