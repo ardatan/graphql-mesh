@@ -17,7 +17,7 @@ export function createServeRuntime(config: MeshServeConfig) {
   let logger: Logger;
   let wrappedFetchFn: MeshFetch;
 
-  const serveContext = {
+  const configContext = {
     get fetch() {
       return wrappedFetchFn;
     },
@@ -42,22 +42,22 @@ export function createServeRuntime(config: MeshServeConfig) {
       getFusiongraph() {
         return handleUnifiedGraphConfig(
           config.fusiongraph || './fusiongraph.graphql',
-          serveContext,
+          configContext,
         );
       },
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
-      transportBaseContext: serveContext,
+      transportBaseContext: configContext,
     });
   } else if ('supergraph' in config) {
     supergraphYogaPlugin = useFusiongraph({
       getFusiongraph() {
         const supergraph$ = handleUnifiedGraphConfig(
           config.supergraph || './supergraph.graphql',
-          serveContext,
+          configContext,
         );
-        serveContext.logger?.info?.(`Converting Federation Supergraph to Fusiongraph`);
+        configContext.logger?.info?.(`Converting Federation Supergraph to Fusiongraph`);
         if (isPromise(supergraph$)) {
           return supergraph$.then(supergraph => convertSupergraphToFusiongraph(supergraph));
         }
@@ -66,7 +66,7 @@ export function createServeRuntime(config: MeshServeConfig) {
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
-      transportBaseContext: serveContext,
+      transportBaseContext: configContext,
     });
   }
 
@@ -90,26 +90,20 @@ export function createServeRuntime(config: MeshServeConfig) {
   const yoga = createYoga<unknown, MeshServeContext>({
     fetchAPI: config.fetchAPI,
     logging: config.logging == null ? new DefaultLogger() : config.logging,
-    plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(serveContext) || [])],
-    context({ request, req, connectionParams }: any) {
-      // Maybe Node-like environment
-      if (req?.headers) {
-        return {
-          ...serveContext,
-          headers: getHeadersObj(req.headers),
-          connectionParams,
-        };
-      }
-      // Fetch environment
-      if (request?.headers) {
-        return {
-          ...serveContext,
-          headers: getHeadersObj(request.headers),
-          connectionParams,
-        };
-      }
-      return serveContext;
-    },
+    plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(configContext) || [])],
+    context: ({ request, req, connectionParams }: any) => ({
+      ...configContext,
+      headers:
+        // Maybe Node-like environment
+        req?.headers
+          ? getHeadersObj(req.headers)
+          : // Fetch environment
+            request?.headers
+            ? getHeadersObj(request.headers)
+            : // Unknown environment
+              {},
+      connectionParams,
+    }),
     cors: config.cors,
     graphiql: config.graphiql,
     batching: config.batching,

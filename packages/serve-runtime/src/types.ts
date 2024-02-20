@@ -1,5 +1,11 @@
 import { DocumentNode, GraphQLSchema } from 'graphql';
-import { BatchingOptions, FetchAPI, Plugin, YogaServerOptions } from 'graphql-yoga';
+import {
+  BatchingOptions,
+  FetchAPI,
+  Plugin,
+  YogaInitialContext,
+  YogaServerOptions,
+} from 'graphql-yoga';
 import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql';
 import { FusiongraphPlugin, TransportsOption } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -20,26 +26,31 @@ export type MeshServeConfig<TContext extends Record<string, any> = Record<string
   | MeshServeConfigWithSupergraph<TContext>
   | MeshServeConfigWithHttpEndpoint<TContext>;
 
-export interface MeshServeContext {
+export interface MeshServeConfigContext {
   fetch: MeshFetch;
   logger: Logger;
   cwd: string;
   // TODO: change context if these are implemented
   pubsub?: MeshPubSub;
   cache?: KeyValueCache;
+}
+
+export interface MeshServeContext extends MeshServeConfigContext {
   // TODO: should we split context into buildtime and runtime?
-  headers?: Record<string, string>;
+  headers: Record<string, string>;
   /**
    * Runtime context available within WebSocket connections.
    */
-  connectionParams?: Record<string, string>;
+  connectionParams: Record<string, string>;
 }
 
 export type MeshServePlugin<
   TPluginContext extends Record<string, any> = Record<string, any>,
   TContext extends Record<string, any> = MeshServeContext,
 > = Plugin<Partial<TPluginContext> & TContext> &
-  FusiongraphPlugin & { onFetch?: OnFetchHook<Partial<TPluginContext> & TContext> };
+  FusiongraphPlugin & {
+    onFetch?: OnFetchHook<Partial<TPluginContext> & YogaInitialContext & TContext>;
+  };
 
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
@@ -76,7 +87,7 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
    * Plugins
    */
   plugins?(
-    context: MeshServeContext & TContext,
+    context: MeshServeConfigContext,
   ): MeshServePlugin<unknown, MeshServeContext & TContext>[];
   /**
    * Configuration for CORS

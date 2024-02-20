@@ -2,7 +2,7 @@
 import { buildASTSchema, buildSchema, DocumentNode, GraphQLSchema, isSchema } from 'graphql';
 import { defaultImportFn, isUrl, readFileOrUrl } from '@graphql-mesh/utils';
 import { isDocumentNode, isPromise, isValidPath } from '@graphql-tools/utils';
-import { MeshServeContext } from './types';
+import { MeshServeConfigContext } from './types';
 
 export type UnifiedGraphConfig =
   | GraphQLSchema
@@ -13,13 +13,13 @@ export type UnifiedGraphConfig =
 
 export function handleUnifiedGraphConfig(
   unifiedGraphConfig: UnifiedGraphConfig,
-  serveContext: MeshServeContext,
+  configContext: MeshServeConfigContext,
 ): Promise<GraphQLSchema> | GraphQLSchema {
   if (isPromise(unifiedGraphConfig)) {
-    return unifiedGraphConfig.then(newConfig => handleUnifiedGraphConfig(newConfig, serveContext));
+    return unifiedGraphConfig.then(newConfig => handleUnifiedGraphConfig(newConfig, configContext));
   }
   if (typeof unifiedGraphConfig === 'function') {
-    return handleUnifiedGraphConfig(unifiedGraphConfig(), serveContext);
+    return handleUnifiedGraphConfig(unifiedGraphConfig(), configContext);
   }
   if (isSchema(unifiedGraphConfig)) {
     return unifiedGraphConfig;
@@ -27,16 +27,16 @@ export function handleUnifiedGraphConfig(
   if (typeof unifiedGraphConfig === 'string') {
     if (isValidPath(unifiedGraphConfig) || isUrl(unifiedGraphConfig)) {
       const sdl$ = readFileOrUrl<string>(unifiedGraphConfig, {
-        fetch: serveContext.fetch,
-        cwd: serveContext.cwd,
-        logger: serveContext.logger,
+        fetch: configContext.fetch,
+        cwd: configContext.cwd,
+        logger: configContext.logger,
         allowUnknownExtensions: true,
         importFn: defaultImportFn,
       });
       if (isPromise(sdl$)) {
-        return sdl$.then(sdl => handleUnifiedGraphConfig(sdl, serveContext));
+        return sdl$.then(sdl => handleUnifiedGraphConfig(sdl, configContext));
       }
-      return handleUnifiedGraphConfig(sdl$, serveContext);
+      return handleUnifiedGraphConfig(sdl$, configContext);
     }
     try {
       return buildSchema(unifiedGraphConfig, {
@@ -44,7 +44,7 @@ export function handleUnifiedGraphConfig(
         assumeValidSDL: true,
       });
     } catch (e) {
-      serveContext.logger.error(`Failed to load Supergraph from ${unifiedGraphConfig}`);
+      configContext.logger.error(`Failed to load Supergraph from ${unifiedGraphConfig}`);
       throw e;
     }
   }
