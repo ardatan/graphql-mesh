@@ -3131,36 +3131,36 @@
     tslib "~2.4.0"
 
 "@graphql-codegen/typescript-operations@^4.0.0":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-4.1.2.tgz#a0f455ae19e16961e5870420ca7515bbe51b5568"
-  integrity sha512-CtCWK+gW7hS+Ely3lohr8CL1HVLswQzMcaUk3k1sxdWCWKTNq7abMsWa31rTVwRCJ+WNEkM/7S8sIBTpEG683A==
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-4.1.3.tgz#730ba21fb0f20f451e090983512c0b4153ec0acb"
+  integrity sha512-Goga2ISgicr/PLgK2NH5kwyQFctoGKpV+nv4Dr9II0xjHuuNvC6cqA66y/p8zKx6eS9p2GV87/IafqxV8r6K5Q==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^5.0.3"
-    "@graphql-codegen/typescript" "^4.0.4"
-    "@graphql-codegen/visitor-plugin-common" "4.1.2"
+    "@graphql-codegen/typescript" "^4.0.5"
+    "@graphql-codegen/visitor-plugin-common" "5.0.0"
     auto-bind "~4.0.0"
     tslib "~2.6.0"
 
 "@graphql-codegen/typescript-resolvers@^4.0.0":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-4.0.4.tgz#d204ccbf66918b0713c232392e7c02fdf165aa45"
-  integrity sha512-o1FEbvoTgF32n2YL8dJmtRYlIjKy16hyQz+co5Mj9yR9c1CtWrvjnlB7WeTAVJRhasqYloXXfLXb+efhMkUl9A==
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-resolvers/-/typescript-resolvers-4.0.5.tgz#9d60b7f3b7123ed93ece94ffacaab49c10f7ea7b"
+  integrity sha512-So6UvQRpOvyZz3YkGANY7+QqNj90LeSkV81Feak8x+JdBzrtzNUoPbxnVNCTOw2v7sbv8w18JZKs+++WVV5Ptg==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^5.0.3"
-    "@graphql-codegen/typescript" "^4.0.4"
-    "@graphql-codegen/visitor-plugin-common" "4.1.2"
+    "@graphql-codegen/typescript" "^4.0.5"
+    "@graphql-codegen/visitor-plugin-common" "5.0.0"
     "@graphql-tools/utils" "^10.0.0"
     auto-bind "~4.0.0"
     tslib "~2.6.0"
 
-"@graphql-codegen/typescript@^4.0.0", "@graphql-codegen/typescript@^4.0.4":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-4.0.4.tgz#e791c61f675ae454951ea077b0ae519ae352cc3e"
-  integrity sha512-x79CKLfP9UQCX+/I78qxQlMs2Mmq3pF1lKafZo7lAno0f/fvJ+qWUduzdgjRNz+YL+5blGeWcC0pWEDxniO7hw==
+"@graphql-codegen/typescript@^4.0.0", "@graphql-codegen/typescript@^4.0.5":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-4.0.5.tgz#dc9849a8c8a8d0bbcf9f7cb2af8ee77943e00874"
+  integrity sha512-PCS6LovGhyNfnmZ2AJ8rN5wGUhysWNsFwCPrZccuwBVCCvcet8/GNKStY5cHiDqG0B5Q+6g8OXVbffhxkkytLA==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^5.0.3"
     "@graphql-codegen/schema-ast" "^4.0.2"
-    "@graphql-codegen/visitor-plugin-common" "4.1.2"
+    "@graphql-codegen/visitor-plugin-common" "5.0.0"
     auto-bind "~4.0.0"
     tslib "~2.6.0"
 
