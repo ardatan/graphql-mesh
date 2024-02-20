@@ -15,7 +15,7 @@ export type UnifiedGraphConfig =
   | (() => UnifiedGraphConfig)
   | Promise<UnifiedGraphConfig>;
 
-export type MeshServeConfig<TContext extends Record<string, any> = {}> =
+export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithFusiongraph<TContext>
   | MeshServeConfigWithSupergraph<TContext>
   | MeshServeConfigWithHttpEndpoint<TContext>;
