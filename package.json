@@ -31,7 +31,7 @@
       "examples/v1-next/hive-example/sources/*"
     ]
   },
-  "packageManager": "yarn@1.22.21",
+  "packageManager": "yarn@4.1.0",
   "scripts": {
     "build": "bob build",
     "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace @v1-next/example-fastify compose && yarn workspace example-fastify build && yarn workspace example-persisted-operations build",
@@ -71,6 +71,7 @@
     "@typescript-eslint/parser": "7.0.2",
     "babel-jest": "29.7.0",
     "bob-the-bundler": "7.0.1",
+    "cross-env": "^7.0.3",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-config-standard": "17.1.0",

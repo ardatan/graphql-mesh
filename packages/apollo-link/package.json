@@ -38,7 +38,6 @@
     "graphql": "^15.2.0 || ^16.0.0",
     "tslib": "^2.4.0"
   },
-  "dependencies": {},
   "devDependencies": {
     "@apollo/client": "3.9.5"
   },

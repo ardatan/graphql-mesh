@@ -39,7 +39,6 @@
     "tslib": "^2.4.0",
     "wonka": "^6.3.1"
   },
-  "dependencies": {},
   "devDependencies": {
     "@urql/core": "4.2.3",
     "wonka": "6.3.4"
