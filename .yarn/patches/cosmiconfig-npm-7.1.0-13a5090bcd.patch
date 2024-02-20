@@ -1,22 +1,22 @@
 diff --git a/dist/loaders.js b/dist/loaders.js
-index 43126af..08b915c 100644
+index 43126afcd4ba9a450647ef924cd25b2f10980bcf..08b915cecc7ee5241276512df2766ee6e6a848a9 100644
 --- a/dist/loaders.js
 +++ b/dist/loaders.js
 @@ -1,29 +1,21 @@
 -"use strict";
 +'use strict';
-
+ 
 -Object.defineProperty(exports, "__esModule", {
 -  value: true
 +Object.defineProperty(exports, '__esModule', {
 +  value: true,
  });
  exports.loaders = void 0;
-
+ 
  /* eslint-disable @typescript-eslint/no-require-imports */
 -let importFresh;
 +const importFresh = require('import-fresh');
-
+ 
  const loadJs = function loadJs(filepath) {
 -  if (importFresh === undefined) {
 -    importFresh = require('import-fresh');
@@ -25,10 +25,10 @@ index 43126af..08b915c 100644
    const result = importFresh(filepath);
    return result;
  };
-
+ 
 -let parseJson;
 +const parseJson = require('parse-json');
-
+ 
  const loadJson = function loadJson(filepath, content) {
 -  if (parseJson === undefined) {
 -    parseJson = require('parse-json');
@@ -40,10 +40,10 @@ index 43126af..08b915c 100644
 @@ -33,16 +25,12 @@ const loadJson = function loadJson(filepath, content) {
    }
  };
-
+ 
 -let yaml;
 +const yaml = require('yaml');
-
+ 
  const loadYaml = function loadYaml(filepath, content) {
 -  if (yaml === undefined) {
 -    yaml = require('yaml');
