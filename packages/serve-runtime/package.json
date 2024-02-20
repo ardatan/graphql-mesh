@@ -35,6 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@envelop/core": "^5.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.1",
     "@graphql-mesh/fusion-federation": "^0.0.1",
     "@graphql-mesh/fusion-runtime": "^0.0.2",

@@ -2,11 +2,12 @@ import { DocumentNode, GraphQLSchema } from 'graphql';
 import {
   BatchingOptions,
   FetchAPI,
-  Plugin,
   YogaInitialContext,
+  Plugin as YogaPlugin,
   YogaServerOptions,
 } from 'graphql-yoga';
 import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql';
+import { Plugin as EnvelopPlugin } from '@envelop/core';
 import { FusiongraphPlugin, TransportsOption } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@graphql-mesh/types';
@@ -47,7 +48,7 @@ export interface MeshServeContext extends MeshServeConfigContext {
 export type MeshServePlugin<
   TPluginContext extends Record<string, any> = Record<string, any>,
   TContext extends Record<string, any> = Record<string, any>,
-> = Plugin<Partial<TPluginContext> & MeshServeContext & TContext> &
+> = YogaPlugin<Partial<TPluginContext> & MeshServeContext & TContext> &
   FusiongraphPlugin & {
     onFetch?: OnFetchHook<
       Partial<TPluginContext> & YogaInitialContext & MeshServeContext & TContext
@@ -88,9 +89,20 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Plugins
    */
-  plugins?(context: MeshServeConfigContext): (
+  plugins?(
+    context: MeshServeConfigContext,
+  ): // TODO: we want to accept yoga and envelop and mesh plugins with different contexts in strict environments. more elegant solution?
+  (
+    | EnvelopPlugin
+    | EnvelopPlugin<MeshServeContext>
+    | EnvelopPlugin<MeshServeContext & TContext>
+    //
+    | YogaPlugin
+    | YogaPlugin<MeshServeContext>
+    | YogaPlugin<MeshServeContext & TContext>
+    //
+    | MeshServePlugin
     | MeshServePlugin<unknown, MeshServeContext>
-    // TODO: we want to accept plugins for serve only and plugins with extended contexts (like cli plugins)
     | MeshServePlugin<unknown, MeshServeContext & TContext>
   )[];
   /**
