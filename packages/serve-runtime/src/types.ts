@@ -46,10 +46,12 @@ export interface MeshServeContext extends MeshServeConfigContext {
 
 export type MeshServePlugin<
   TPluginContext extends Record<string, any> = Record<string, any>,
-  TContext extends Record<string, any> = MeshServeContext,
-> = Plugin<Partial<TPluginContext> & TContext> &
+  TContext extends Record<string, any> = Record<string, any>,
+> = Plugin<Partial<TPluginContext> & MeshServeContext & TContext> &
   FusiongraphPlugin & {
-    onFetch?: OnFetchHook<Partial<TPluginContext> & YogaInitialContext & TContext>;
+    onFetch?: OnFetchHook<
+      Partial<TPluginContext> & YogaInitialContext & MeshServeContext & TContext
+    >;
   };
 
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -86,9 +88,11 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Plugins
    */
-  plugins?(
-    context: MeshServeConfigContext,
-  ): MeshServePlugin<unknown, MeshServeContext & TContext>[];
+  plugins?(context: MeshServeConfigContext): (
+    | MeshServePlugin<unknown, MeshServeContext>
+    // TODO: we want to accept plugins for serve only and plugins with extended contexts (like cli plugins)
+    | MeshServePlugin<unknown, MeshServeContext & TContext>
+  )[];
   /**
    * Configuration for CORS
    */
