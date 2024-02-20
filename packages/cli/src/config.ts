@@ -83,7 +83,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   }
 
   const config = results.config;
-  validateConfig(config, results.filepath, initialLoggerPrefix);
+  validateConfig(config, results.filepath, initialLoggerPrefix, restOptions.throwOnInvalidConfig);
   return processConfig(config, { dir, initialLoggerPrefix, importFn, ...restOptions });
 }
 
