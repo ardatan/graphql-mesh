@@ -46,7 +46,7 @@
     "graphql-compose-pagination": "^8.3.0"
   },
   "devDependencies": {
-    "mongoose": "8.1.1"
+    "mongoose": "8.1.3"
   },
   "publishConfig": {
     "access": "public",
