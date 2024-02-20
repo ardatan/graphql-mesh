@@ -19,8 +19,8 @@ export type UnifiedGraphConfig =
   | GraphQLSchema
   | DocumentNode
   | string
-  | (() => UnifiedGraphConfig)
-  | Promise<UnifiedGraphConfig>;
+  | Promise<UnifiedGraphConfig>
+  | (() => UnifiedGraphConfig | Promise<UnifiedGraphConfig>);
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithFusiongraph<TContext>
