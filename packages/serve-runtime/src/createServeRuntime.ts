@@ -11,9 +11,7 @@ import { isPromise } from '@graphql-tools/utils';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import { MeshServeConfig, MeshServeContext, MeshServePlugin } from './types';
 
-export function createServeRuntime(
-  config: MeshServeConfig,
-): YogaServerInstance<MeshServeContext, unknown> & { invalidateUnifiedGraph(): void } {
+export function createServeRuntime(config: MeshServeConfig) {
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
   let logger: Logger;
@@ -89,7 +87,7 @@ export function createServeRuntime(
     },
   };
 
-  const yoga = createYoga({
+  const yoga = createYoga<unknown, MeshServeContext>({
     fetchAPI: config.fetchAPI,
     logging: config.logging == null ? new DefaultLogger() : config.logging,
     plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(serveContext) || [])],
@@ -97,6 +95,7 @@ export function createServeRuntime(
       // Maybe Node-like environment
       if (req?.headers) {
         return {
+          ...serveContext,
           headers: getHeadersObj(req.headers),
           connectionParams,
         };
@@ -104,11 +103,12 @@ export function createServeRuntime(
       // Fetch environment
       if (request?.headers) {
         return {
+          ...serveContext,
           headers: getHeadersObj(request.headers),
           connectionParams,
         };
       }
-      return undefined;
+      return serveContext;
     },
     cors: config.cors,
     graphiql: config.graphiql,
@@ -125,5 +125,5 @@ export function createServeRuntime(
     configurable: true,
   });
 
-  return yoga as any;
+  return yoga as YogaServerInstance<unknown, MeshServeContext> & { invalidateUnifiedGraph(): void };
 }

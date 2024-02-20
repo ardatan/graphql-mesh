@@ -27,12 +27,19 @@ export interface MeshServeContext {
   // TODO: change context if these are implemented
   pubsub?: MeshPubSub;
   cache?: KeyValueCache;
+  // TODO: should we split context into buildtime and runtime?
+  headers?: Record<string, string>;
+  /**
+   * Runtime context available within WebSocket connections.
+   */
+  connectionParams?: Record<string, string>;
 }
 
 export type MeshServePlugin<
-  TPluginContext extends Record<string, any> = any,
+  TPluginContext extends Record<string, any> = Record<string, any>,
   TContext extends Record<string, any> = MeshServeContext,
-> = Plugin<TPluginContext, TContext> & FusiongraphPlugin & { onFetch?: OnFetchHook<TContext> };
+> = Plugin<Partial<TPluginContext> & TContext> &
+  FusiongraphPlugin & { onFetch?: OnFetchHook<Partial<TPluginContext> & TContext> };
 
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
@@ -70,15 +77,15 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
    */
   plugins?(
     context: MeshServeContext & TContext,
-  ): MeshServePlugin<any, MeshServeContext & TContext>[];
+  ): MeshServePlugin<unknown, MeshServeContext & TContext>[];
   /**
    * Configuration for CORS
    */
-  cors?: CORSPluginOptions<MeshServeContext & TContext>;
+  cors?: CORSPluginOptions<unknown>;
   /**
    * Show GraphiQL
    */
-  graphiql?: GraphiQLOptionsOrFactory<MeshServeContext & TContext>;
+  graphiql?: GraphiQLOptionsOrFactory<unknown>;
   /**
    * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
    */
@@ -94,11 +101,11 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Logger
    */
-  logging?: YogaServerOptions<MeshServeContext & TContext, any>['logging'] | Logger;
+  logging?: YogaServerOptions<unknown, MeshServeContext & TContext>['logging'] | Logger;
   /**
    * Additional Resolvers
    */
-  additionalResolvers?: IResolvers<any, MeshServeContext & TContext>;
+  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
   /**
    * Endpoint
    */
@@ -106,7 +113,7 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Masked errors
    */
-  maskedErrors?: YogaServerOptions<MeshServeContext & TContext, any>['maskedErrors'];
+  maskedErrors?: YogaServerOptions<MeshServeContext & TContext, unknown>['maskedErrors'];
   // TODO: change context if these are implemented
   cache?: KeyValueCache;
   pubsub?: MeshPubSub;
