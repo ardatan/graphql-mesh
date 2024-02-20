@@ -89,7 +89,7 @@
     "typescript": "5.3.3"
   },
   "resolutions": {
-    "@changesets/assemble-release-plan": "5.2.3",
+    "@changesets/assemble-release-plan": "6.0.0",
     "esbuild": "0.20.1",
     "graphql": "16.8.1",
     "tslib": "2.6.2",
