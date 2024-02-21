@@ -4766,7 +4766,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.96.5"
     "@graphql-tools/delegate": "npm:^10.0.3"
     "@graphql-tools/stitch": "npm:^9.0.3"
-    "@graphql-tools/utils": "npm:^10.0.8"
+    "@graphql-tools/utils": "npm:10.1.0-alpha-20240221144004-2f9b20705f30cf4b71a4d566007d6fae6d1f95e9"
     graphql-yoga: "npm:^5.1.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -6550,6 +6550,20 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/dccae335426de66d42a49421764ed20b788f2efc7a900013b6907e66e0375b59e797263c6522357031b3dd56805b3ed80b33beb82f23fd2ccffd161fefbaa8ea
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/utils@npm:10.1.0-alpha-20240221144004-2f9b20705f30cf4b71a4d566007d6fae6d1f95e9":
+  version: 10.1.0-alpha-20240221144004-2f9b20705f30cf4b71a4d566007d6fae6d1f95e9
+  resolution: "@graphql-tools/utils@npm:10.1.0-alpha-20240221144004-2f9b20705f30cf4b71a4d566007d6fae6d1f95e9"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    cross-inspect: "npm:1.0.0"
+    dset: "npm:^3.1.2"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/6ceaf80de4f9d8cd0700ef2b320a6faf2bf91bbb15136274327c790bc1b610ce2e54b90286b45cf0918a26443ebaa2e75a712467b3047d1d0299144dbe60c4d6
   languageName: node
   linkType: hard
 

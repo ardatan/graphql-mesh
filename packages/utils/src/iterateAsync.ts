@@ -1,12 +1,12 @@
-import { isPromise } from '@graphql-tools/utils';
+import { isPromise, type MaybePromise } from '@graphql-tools/utils';
 
 export function iterateAsync<TInput, TOutput>(
   iterable: Iterable<TInput>,
-  callback: (input: TInput) => Promise<TOutput> | TOutput,
+  callback: (input: TInput) => MaybePromise<TOutput>,
   results?: TOutput[],
-): Promise<void> | void {
+): MaybePromise<void> {
   const iterator = iterable[Symbol.iterator]();
-  function iterate(): Promise<void> | void {
+  function iterate(): MaybePromise<void> {
     const { done: endOfIterator, value } = iterator.next();
     if (endOfIterator) {
       return;
