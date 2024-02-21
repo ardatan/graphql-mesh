@@ -28,7 +28,6 @@ export interface MeshServeConfigContext {
   fetch: MeshFetch;
   logger: Logger;
   cwd: string;
-  // TODO: change context if these are implemented
   pubsub?: MeshPubSub;
   cache?: KeyValueCache;
 }
@@ -67,6 +66,10 @@ interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithou
    * Additional GraphQL schema resolvers.
    */
   additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
+  /**
+   * Implement custom executors for transports.
+   */
+  transports?: TransportsOption;
 }
 
 interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -82,6 +85,10 @@ interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithout
    * Additional GraphQL schema resolvers.
    */
   additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
+  /**
+   * Implement custom executors for transports.
+   */
+  transports?: TransportsOption;
 }
 
 interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -121,10 +128,6 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
    */
   batching?: BatchingOptions;
   /**
-   * Implement custom executors for transports.
-   */
-  transports?: TransportsOption;
-  /**
    * WHATWG compatible Fetch implementation.
    */
   fetchAPI?: Partial<FetchAPI>;
@@ -148,7 +151,6 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
    * @default true
    */
   maskedErrors?: boolean | Partial<YogaMaskedErrorOpts>;
-  // TODO: change context if these are implemented
   cache?: KeyValueCache;
   pubsub?: MeshPubSub;
 }
