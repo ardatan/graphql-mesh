@@ -1,0 +1,53 @@
+{
+  "name": "@graphql-mesh/merger-bare",
+  "version": "0.96.5",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/legacy/mergers/bare"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "@graphql-mesh/types": "^0.96.5",
+    "@graphql-mesh/utils": "^0.96.5",
+    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
+    "graphql": "*",
+    "tslib": "^2.4.0"
+  },
+  "dependencies": {
+    "@graphql-mesh/merger-stitching": "0.96.5",
+    "@graphql-tools/schema": "10.0.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}
