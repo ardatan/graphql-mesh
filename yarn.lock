@@ -3180,22 +3180,6 @@
     parse-filepath "^1.0.2"
     tslib "~2.4.0"
 
-"@graphql-codegen/visitor-plugin-common@4.1.2":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/visitor-plugin-common/-/visitor-plugin-common-4.1.2.tgz#674c5d5813f6c00dd65e1ee148a62536879e65e2"
-  integrity sha512-yk7iEAL1kYZ2Gi/pvVjdsZhul5WsYEM4Zcgh2Ev15VicMdJmPHsMhNUsZWyVJV0CaQCYpNOFlGD/11Ea3pn4GA==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "^5.0.3"
-    "@graphql-tools/optimize" "^2.0.0"
-    "@graphql-tools/relay-operation-optimizer" "^7.0.0"
-    "@graphql-tools/utils" "^10.0.0"
-    auto-bind "~4.0.0"
-    change-case-all "1.0.15"
-    dependency-graph "^0.11.0"
-    graphql-tag "^2.11.0"
-    parse-filepath "^1.0.2"
-    tslib "~2.6.0"
-
 "@graphql-codegen/visitor-plugin-common@5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/visitor-plugin-common/-/visitor-plugin-common-5.0.0.tgz#23258c52277a8be206c2d69aadf9738dd780f1c0"
@@ -3755,6 +3739,16 @@
   version "10.0.13"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.0.13.tgz#d0ab7a4dd02a8405f5ef62dd140b7579ba69f8cb"
   integrity sha512-fMILwGr5Dm2zefNItjQ6C2rauigklv69LIwppccICuGTnGaOp3DspLt/6Lxj72cbg5d9z60Sr+Egco3CJKLsNg==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    cross-inspect "1.0.0"
+    dset "^3.1.2"
+    tslib "^2.4.0"
+
+"@graphql-tools/utils@10.1.0-alpha-20240221144004-2f9b20705f30cf4b71a4d566007d6fae6d1f95e9":
+  version "10.1.0-alpha-20240221144004-2f9b20705f30cf4b71a4d566007d6fae6d1f95e9"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.1.0-alpha-20240221144004-2f9b20705f30cf4b71a4d566007d6fae6d1f95e9.tgz#7a4e981f9e1bb9e4e70a4fdca45a4fc853e1d813"
+  integrity sha512-7b5LaJyUU8UU8P26XwkgO8IDb89hg7cj6qsW7H4l8bF0M2NK4KzGXyWe4i2JR1cE/cT8647wZdbiNZtIik+uzA==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     cross-inspect "1.0.0"
@@ -23085,7 +23079,6 @@ typical@^5.2.0:
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.42.0"
-  uid f40213ec0a97d0d8721d9d32d92d6eb6ddcd22e7
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/f40213ec0a97d0d8721d9d32d92d6eb6ddcd22e7"
 
 ua-parser-js@^1.0.35:
