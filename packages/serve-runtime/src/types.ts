@@ -1,9 +1,11 @@
 import {
   BatchingOptions,
   FetchAPI,
+  LogLevel,
   YogaInitialContext,
+  YogaLogger,
+  YogaMaskedErrorOpts,
   Plugin as YogaPlugin,
-  YogaServerOptions,
 } from 'graphql-yoga';
 import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql';
 import { Plugin as EnvelopPlugin } from '@envelop/core';
@@ -57,6 +59,14 @@ interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithou
    * Path to the GraphQL Fusion unified schema.
    */
   fusiongraph: UnifiedGraphConfig;
+  /**
+   * Polling interval in milliseconds.
+   */
+  polling?: number;
+  /**
+   * Additional GraphQL schema resolvers.
+   */
+  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
 }
 
 interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -64,6 +74,14 @@ interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithout
    * Path to the Apollo Federation unified schema.
    */
   supergraph: UnifiedGraphConfig;
+  /**
+   * Polling interval in milliseconds.
+   */
+  polling?: number;
+  /**
+   * Additional GraphQL schema resolvers.
+   */
+  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
 }
 
 interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -75,16 +93,9 @@ interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSourc
 
 interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
-   * Polling interval in milliseconds
+   * Mesh plugins that are compatible with GraphQL Yoga, envelop and Mesh.
    */
-  polling?: number;
-  /**
-   * Plugins
-   */
-  plugins?(
-    context: MeshServeConfigContext,
-  ): // TODO: we want to accept yoga and envelop and mesh plugins with different contexts in strict environments. more elegant solution?
-  (
+  plugins?(context: MeshServeConfigContext): (
     | EnvelopPlugin
     | EnvelopPlugin<MeshServeContext>
     | EnvelopPlugin<MeshServeContext & TContext>
@@ -98,41 +109,45 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
     | MeshServePlugin<unknown, MeshServeContext & TContext>
   )[];
   /**
-   * Configuration for CORS
+   * Enable, disable or configure CORS.
    */
   cors?: CORSPluginOptions<unknown>;
   /**
-   * Show GraphiQL
+   * Show, hide or configure GraphiQL.
    */
   graphiql?: GraphiQLOptionsOrFactory<unknown>;
   /**
-   * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
+   * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md).
    */
   batching?: BatchingOptions;
   /**
-   * Imported transports
+   * Implement custom executors for transports.
    */
   transports?: TransportsOption;
   /**
-   * WHATWG compatible Fetch implementation
+   * WHATWG compatible Fetch implementation.
    */
   fetchAPI?: Partial<FetchAPI>;
   /**
-   * Logger
+   * Enable, disable or implement a custom logger for logging.
+   *
+   * @default true
    */
-  logging?: YogaServerOptions<unknown, MeshServeContext & TContext>['logging'] | Logger;
-  /**
-   * Additional Resolvers
-   */
-  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
+  logging?: boolean | YogaLogger | LogLevel | undefined;
   /**
    * Endpoint of the GraphQL API.
    */
   graphqlEndpoint?: string;
   /**
-   * Masked errors
+   * Configure error masking for more control over the exposed errors.
+   *
+   * Throwing `EnvelopError` or `GraphQLError`s within your GraphQL resolvers exposes the full error to the client through a well-formatted GraphQL response.
+   *
+   * @see https://the-guild.dev/graphql/yoga-server/docs/features/error-masking
+   *
+   * @default true
    */
-  maskedErrors?: YogaServerOptions<MeshServeContext & TContext, unknown>['maskedErrors'];
+  maskedErrors?: boolean | Partial<YogaMaskedErrorOpts>;
   // TODO: change context if these are implemented
   cache?: KeyValueCache;
   pubsub?: MeshPubSub;
