@@ -1,5 +1,5 @@
-import type { MeshServeCLIConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig } from '@graphql-mesh/serve-cli';
 
-export const serveConfig: MeshServeCLIConfig = {
+export const serveConfig = defineConfig({
   supergraph: './supergraph.graphql',
-};
+});

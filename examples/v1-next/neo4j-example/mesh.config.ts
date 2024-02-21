@@ -1,7 +1,7 @@
-import type { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadNeo4JSubgraph } from '@omnigraph/neo4j';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadNeo4JSubgraph('Movies', {
@@ -15,4 +15,4 @@ export const composeConfig: MeshComposeCLIConfig = {
       }),
     },
   ],
-};
+});

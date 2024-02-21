@@ -1,8 +1,8 @@
 import { join } from 'path';
-import { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadSQLiteSubgraph } from '@omnigraph/sqlite';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadSQLiteSubgraph('chinook', {
@@ -10,4 +10,4 @@ export const composeConfig: MeshComposeCLIConfig = {
       }),
     },
   ],
-};
+});

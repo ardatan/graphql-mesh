@@ -1,7 +1,7 @@
-import type { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadThriftSubgraph } from '@omnigraph/thrift';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadThriftSubgraph('calculator', {
@@ -11,4 +11,4 @@ export const composeConfig: MeshComposeCLIConfig = {
       }),
     },
   ],
-};
+});

@@ -1,8 +1,8 @@
 import { OperationTypeNode } from 'graphql';
-import { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('Reddit', {
@@ -31,4 +31,4 @@ export const composeConfig: MeshComposeCLIConfig = {
       }),
     },
   ],
-};
+});

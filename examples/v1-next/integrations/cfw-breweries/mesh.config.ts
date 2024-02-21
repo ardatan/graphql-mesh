@@ -1,8 +1,8 @@
 import { OperationTypeNode } from 'graphql';
-import type { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineConfig({
   target: './src/fusiongraph.graphql.ts',
   subgraphs: [
     {
@@ -21,4 +21,4 @@ export const composeConfig: MeshComposeCLIConfig = {
       }),
     },
   ],
-};
+});

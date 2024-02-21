@@ -1,7 +1,7 @@
-import { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadSOAPSubgraph } from '@omnigraph/soap';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadSOAPSubgraph('soap-demo', {
@@ -9,4 +9,4 @@ export const composeConfig: MeshComposeCLIConfig = {
       }),
     },
   ],
-};
+});

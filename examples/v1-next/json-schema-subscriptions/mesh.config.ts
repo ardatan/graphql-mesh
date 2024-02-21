@@ -1,11 +1,11 @@
 import { OperationTypeNode } from 'graphql';
-import { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import useMeshLiveQuery from '@graphql-mesh/plugin-live-query';
-import { MeshServeCLIConfig, useWebhooks } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineServeConfig, useWebhooks } from '@graphql-mesh/serve-cli';
 import { PubSub } from '@graphql-mesh/utils';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('Example', {
@@ -42,9 +42,10 @@ export const composeConfig: MeshComposeCLIConfig = {
   additionalTypeDefs: /* GraphQL */ `
     directive @live on QUERY
   `,
-};
+});
 
-export const serveConfig: MeshServeCLIConfig = {
+export const serveConfig = defineServeConfig({
+  fusiongraph: './fusiongraph.graphql',
   pubsub: new PubSub(),
   plugins: ctx => [
     useWebhooks(ctx),
@@ -58,4 +59,4 @@ export const serveConfig: MeshServeCLIConfig = {
       ],
     }),
   ],
-};
+});

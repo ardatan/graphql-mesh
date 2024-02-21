@@ -1,15 +1,11 @@
 import {
   createRenameFieldTransform,
   createRenameTypeTransform,
+  defineConfig,
   loadGraphQLHTTPSubgraph,
-  MeshComposeCLIConfig,
 } from '@graphql-mesh/compose-cli';
 
-/**
- * The configuration to build a supergraph
- */
-
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('authors', {
@@ -42,4 +38,4 @@ export const composeConfig: MeshComposeCLIConfig = {
         )
     }
   `,
-};
+});
