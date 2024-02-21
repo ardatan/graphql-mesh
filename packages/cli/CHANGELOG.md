@@ -1,5 +1,13 @@
 # @graphql-mesh/cli
 
+## 0.88.8
+
+### Patch Changes
+
+- [#6572](https://github.com/ardatan/graphql-mesh/pull/6572)
+  [`74f2042`](https://github.com/ardatan/graphql-mesh/commit/74f20429bb725696315c937d6055cf99b6d2c30e)
+  Thanks [@bwobst](https://github.com/bwobst)! - Fix for honoring the --throwOnInvalidConfig flag
+
 ## 0.88.7
 
 ### Patch Changes
