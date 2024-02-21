@@ -1,12 +1,12 @@
 import { OperationTypeNode } from 'graphql';
 import { useAuth0 } from '@envelop/auth0';
-import type { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import useOperationFieldPermissions from '@graphql-mesh/plugin-operation-field-permissions';
-import type { MeshServeCLIConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { useStaticFiles } from '@graphql-mesh/serve-runtime';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('OpenBreweryDB', {
@@ -44,11 +44,11 @@ export const composeConfig: MeshComposeCLIConfig = {
       authInfo: AuthenticationInfo
     }
   `,
-};
+});
 
-export const serveConfig: MeshServeCLIConfig = {
+export const serveConfig = defineServeConfig({
+  fusiongraph: './fusiongraphq.graphql',
   plugins: ctx => [
-    // @ts-expect-error Fix this
     useAuth0({
       ...ctx,
       domain: '{account_name}.{region}.auth0.com',
@@ -67,7 +67,7 @@ export const serveConfig: MeshServeCLIConfig = {
       ],
     }),
     useStaticFiles({
-      ...ctx,
+      baseDir: ctx.cwd,
       staticFiles: 'public',
     }),
   ],
@@ -78,4 +78,4 @@ export const serveConfig: MeshServeCLIConfig = {
       },
     },
   },
-};
+});

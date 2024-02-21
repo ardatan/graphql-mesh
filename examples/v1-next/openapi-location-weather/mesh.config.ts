@@ -1,10 +1,13 @@
 import LocalforageCache from '@graphql-mesh/cache-localforage';
-import { createRenameTypeTransform, type MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import {
+  createRenameTypeTransform,
+  defineConfig as defineComposeConfig,
+} from '@graphql-mesh/compose-cli';
 import useResponseCache from '@graphql-mesh/plugin-response-cache';
-import { MeshServeCLIConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Cities', {
@@ -64,20 +67,27 @@ export const composeConfig: MeshComposeCLIConfig = {
         )
     }
   `,
-};
+});
 
-export const serveConfig: MeshServeCLIConfig = {
+export const serveConfig = defineServeConfig({
   cache: new LocalforageCache(),
-  plugins: ctx => [
-    useResponseCache({
-      ...ctx,
-      ttlPerCoordinate: [
-        // Geo data doesn't change frequently, so we can cache it forever
-        { coordinate: 'Query.findCitiesUsingGET', ttl: 0 },
-        // Forcast data might change, so we can cache it for 1 hour only
-        { coordinate: 'PopulatedPlaceSummary.dailyForecast', ttl: 3600 },
-        { coordinate: 'PopulatedPlaceSummary.todayForecast', ttl: 3600 },
-      ],
-    }),
-  ],
-};
+  plugins: ctx => {
+    const { cache } = ctx;
+    if (!cache) {
+      throw new Error('Mesh cache not available');
+    }
+    return [
+      useResponseCache({
+        ...ctx,
+        cache,
+        ttlPerCoordinate: [
+          // Geo data doesn't change frequently, so we can cache it forever
+          { coordinate: 'Query.findCitiesUsingGET', ttl: 0 },
+          // Forcast data might change, so we can cache it for 1 hour only
+          { coordinate: 'PopulatedPlaceSummary.dailyForecast', ttl: 3600 },
+          { coordinate: 'PopulatedPlaceSummary.todayForecast', ttl: 3600 },
+        ],
+      }),
+    ];
+  },
+});

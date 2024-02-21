@@ -1,9 +1,9 @@
-import { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import useSnapshot from '@graphql-mesh/plugin-snapshot';
-import { MeshServeCLIConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadSOAPSubgraph } from '@omnigraph/soap';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadSOAPSubgraph('CountryInfo', {
@@ -12,13 +12,14 @@ export const composeConfig: MeshComposeCLIConfig = {
       }),
     },
   ],
-};
+});
 
-export const serveConfig: MeshServeCLIConfig = {
+export const serveConfig = defineServeConfig({
+  fusiongraph: './fusiongraph.graphql',
   plugins: () => [
     useSnapshot({
       apply: ['http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso'],
       outputDir: './__snapshots__',
     }),
   ],
-};
+});

@@ -1,9 +1,9 @@
-import type { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
-import type { MeshServeCLIConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 import { resolvers as additionalResolvers } from './additional-resolvers';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Wiki', {
@@ -18,8 +18,9 @@ export const composeConfig: MeshComposeCLIConfig = {
       viewsInPastMonth(project: String!): BigInt!
     }
   `,
-};
+});
 
-export const serveConfig: MeshServeCLIConfig = {
+export const serveConfig = defineServeConfig({
+  supergraph: './supergraph.graphql',
   additionalResolvers,
-};
+});

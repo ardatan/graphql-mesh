@@ -9,20 +9,15 @@ import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import { isPromise } from '@graphql-tools/utils';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
-import {
-  MeshHTTPPlugin,
-  MeshHTTPHandlerConfiguration as MeshServeRuntimeConfiguration,
-} from './types';
+import { MeshServeConfig, MeshServeContext, MeshServePlugin } from './types';
 
-export function createServeRuntime<TServerContext, TUserContext = {}>(
-  config: MeshServeRuntimeConfiguration<TServerContext, TUserContext>,
-): YogaServerInstance<TServerContext, TUserContext> & { invalidateUnifiedGraph(): void } {
+export function createServeRuntime(config: MeshServeConfig) {
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
   let logger: Logger;
   let wrappedFetchFn: MeshFetch;
 
-  const serveContext = {
+  const configContext = {
     get fetch() {
       return wrappedFetchFn;
     },
@@ -34,35 +29,21 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
   };
 
-  let supergraphYogaPlugin: Plugin<TServerContext> & { invalidateUnifiedGraph: () => void };
+  let supergraphYogaPlugin: Plugin & { invalidateUnifiedGraph: () => void };
 
-  if ('http' in config) {
-    const executor = buildHTTPExecutor({
-      fetch: fetchAPI?.fetch,
-      ...config.http,
-    });
-    supergraphYogaPlugin = useExecutor(executor) as any;
-  } else if ('fusiongraph' in config) {
-    supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
-      getFusiongraph() {
-        return handleUnifiedGraphConfig(
-          config.fusiongraph || './fusiongraph.graphql',
-          serveContext,
-        );
-      },
+  if ('fusiongraph' in config) {
+    supergraphYogaPlugin = useFusiongraph({
+      getFusiongraph: () => handleUnifiedGraphConfig(config.fusiongraph, configContext),
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
-      transportBaseContext: serveContext,
+      transportBaseContext: configContext,
     });
   } else if ('supergraph' in config) {
-    supergraphYogaPlugin = useFusiongraph<TServerContext, TUserContext>({
+    supergraphYogaPlugin = useFusiongraph({
       getFusiongraph() {
-        const supergraph$ = handleUnifiedGraphConfig(
-          config.supergraph || './supergraph.graphql',
-          serveContext,
-        );
-        serveContext.logger?.info?.(`Converting Federation Supergraph to Fusiongraph`);
+        const supergraph$ = handleUnifiedGraphConfig(config.supergraph, configContext);
+        configContext.logger?.info?.(`Converting Federation Supergraph to Fusiongraph`);
         if (isPromise(supergraph$)) {
           return supergraph$.then(supergraph => convertSupergraphToFusiongraph(supergraph));
         }
@@ -71,18 +52,24 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
-      transportBaseContext: serveContext,
+      transportBaseContext: configContext,
     });
+  } else if ('proxy' in config) {
+    const executor = buildHTTPExecutor({
+      fetch: fetchAPI?.fetch,
+      ...config.proxy,
+    });
+    supergraphYogaPlugin = useExecutor(executor) as any;
   }
 
-  const defaultFetchPlugin: MeshHTTPPlugin<TServerContext, {}> = {
+  const defaultFetchPlugin: MeshServePlugin = {
     onFetch({ setFetchFn }) {
       setFetchFn(fetchAPI.fetch);
     },
     onYogaInit({ yoga }) {
-      const onFetchHooks: OnFetchHook<TServerContext>[] = [];
+      const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
 
-      for (const plugin of yoga.getEnveloped._plugins as MeshHTTPPlugin<TServerContext, {}>[]) {
+      for (const plugin of yoga.getEnveloped._plugins as MeshServePlugin[]) {
         if (plugin.onFetch) {
           onFetchHooks.push(plugin.onFetch);
         }
@@ -92,27 +79,23 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
     },
   };
 
-  const yoga = createYoga<TServerContext>({
+  const yoga = createYoga<unknown, MeshServeContext>({
     fetchAPI: config.fetchAPI,
     logging: config.logging == null ? new DefaultLogger() : config.logging,
-    plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(serveContext) || [])],
-    context({ request, req, connectionParams }: any) {
-      // Maybe Node-like environment
-      if (req?.headers) {
-        return {
-          headers: getHeadersObj(req.headers),
-          connectionParams,
-        };
-      }
-      // Fetch environment
-      if (request?.headers) {
-        return {
-          headers: getHeadersObj(request.headers),
-          connectionParams,
-        };
-      }
-      return undefined;
-    },
+    plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(configContext) || [])],
+    context: ({ request, req, connectionParams }: any) => ({
+      ...configContext,
+      headers:
+        // Maybe Node-like environment
+        req?.headers
+          ? getHeadersObj(req.headers)
+          : // Fetch environment
+            request?.headers
+            ? getHeadersObj(request.headers)
+            : // Unknown environment
+              {},
+      connectionParams,
+    }),
     cors: config.cors,
     graphiql: config.graphiql,
     batching: config.batching,
@@ -128,5 +111,5 @@ export function createServeRuntime<TServerContext, TUserContext = {}>(
     configurable: true,
   });
 
-  return yoga as any;
+  return yoga as YogaServerInstance<unknown, MeshServeContext> & { invalidateUnifiedGraph(): void };
 }

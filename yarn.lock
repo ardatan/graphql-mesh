@@ -23085,7 +23085,6 @@ typical@^5.2.0:
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.42.0"
-  uid f40213ec0a97d0d8721d9d32d92d6eb6ddcd22e7
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/f40213ec0a97d0d8721d9d32d92d6eb6ddcd22e7"
 
 ua-parser-js@^1.0.35:

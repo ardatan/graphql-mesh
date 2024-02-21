@@ -3,14 +3,14 @@ import {
   createFilterTransform,
   createNamingConventionTransform,
   createPrefixTransform,
+  defineConfig as defineComposeConfig,
   loadGraphQLHTTPSubgraph,
-  MeshComposeCLIConfig,
 } from '@graphql-mesh/compose-cli';
 /**
  * The configuration to serve the supergraph
  */
 
-import { MeshServeCLIConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
@@ -18,7 +18,7 @@ import { loadOpenAPISubgraph } from '@omnigraph/openapi';
  * The configuration to build a supergraph
  */
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('petstore', {
@@ -47,9 +47,9 @@ export const composeConfig: MeshComposeCLIConfig = {
       ],
     },
   ],
-};
+});
 
-export const serveConfig: MeshServeCLIConfig = {
+export const serveConfig = defineServeConfig({
   fusiongraph: './fusiongraph.graphql',
   graphiql: {
     defaultQuery: /* GraphQL */ `
@@ -63,5 +63,5 @@ export const serveConfig: MeshServeCLIConfig = {
       }
     `,
   },
-  plugins: ctx => [useDeferStream(ctx)],
-};
+  plugins: () => [useDeferStream()],
+});

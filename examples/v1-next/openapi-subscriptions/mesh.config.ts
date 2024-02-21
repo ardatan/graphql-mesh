@@ -1,8 +1,8 @@
-import { MeshComposeCLIConfig } from '@graphql-mesh/compose-cli';
-import { MeshServeCLIConfig, useWebhooks } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineServeConfig, useWebhooks } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
-export const composeConfig: MeshComposeCLIConfig = {
+export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('OpenAPICallbackExample', {
@@ -11,8 +11,9 @@ export const composeConfig: MeshComposeCLIConfig = {
       }),
     },
   ],
-};
+});
 
-export const serveConfig: MeshServeCLIConfig = {
+export const serveConfig = defineServeConfig({
+  fusiongraph: 'fusiongraph.graphql',
   plugins: ctx => [useWebhooks(ctx)],
-};
+});

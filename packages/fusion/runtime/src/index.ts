@@ -291,16 +291,14 @@ export interface PlanCache {
   set(documentStr: string, plan: ExecutableOperationPlan): Promise<any> | any;
 }
 
-export interface YogaFusiongraphPluginOptions<TServerContext, TUserContext> {
+export interface FusiongraphPluginOptions<TContext> {
   getFusiongraph(
     baseCtx: TransportBaseContext,
   ): GraphQLSchema | DocumentNode | string | Promise<GraphQLSchema | string | DocumentNode>;
   transports?: TransportsOption;
   planCache?: PlanCache;
   polling?: number;
-  additionalResolvers?:
-    | IResolvers<unknown, TServerContext & TUserContext>
-    | IResolvers<unknown, TServerContext & TUserContext>[];
+  additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
   transportBaseContext?: TransportBaseContext;
 }
 
@@ -332,24 +330,20 @@ function getExecuteFnFromExecutor(executor: Executor): typeof execute {
   };
 }
 
-export function useFusiongraph<TServerContext, TUserContext>({
+export function useFusiongraph<TContext>({
   getFusiongraph,
   transports,
   additionalResolvers,
   polling,
   transportBaseContext,
-}: YogaFusiongraphPluginOptions<TServerContext, TUserContext>): Plugin<
-  {},
-  TServerContext,
-  TUserContext
-> & {
+}: FusiongraphPluginOptions<TContext>): Plugin<{}, TContext> & {
   invalidateUnifiedGraph(): void;
 } {
   let fusiongraph: GraphQLSchema;
   let lastLoadedFusiongraph: string | GraphQLSchema | DocumentNode;
   let executeFn: typeof execute;
   let executor: Executor;
-  let yoga: YogaServer<TServerContext, TUserContext>;
+  let yoga: YogaServer<TContext, unknown>;
   // TODO: We need to figure this out in a better way
   let inContextSDK: any;
   function handleLoadedFusiongraph(loadedFusiongraph: string | GraphQLSchema | DocumentNode) {
