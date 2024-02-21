@@ -4,57 +4,58 @@ import { defaultImportFn, isUrl, readFileOrUrl } from '@graphql-mesh/utils';
 import { isDocumentNode, isPromise, isValidPath } from '@graphql-tools/utils';
 import { MeshServeConfigContext } from './types';
 
+export type UnifiedGraphSchema = GraphQLSchema | DocumentNode | string;
+
 export type UnifiedGraphConfig =
-  | GraphQLSchema
-  | DocumentNode
-  | string
-  | (() => UnifiedGraphConfig)
-  | Promise<UnifiedGraphConfig>;
+  | UnifiedGraphSchema
+  | Promise<UnifiedGraphSchema>
+  | (() => UnifiedGraphSchema | Promise<UnifiedGraphSchema>);
 
 export function handleUnifiedGraphConfig(
-  unifiedGraphConfig: UnifiedGraphConfig,
+  config: UnifiedGraphConfig,
   configContext: MeshServeConfigContext,
 ): Promise<GraphQLSchema> | GraphQLSchema {
-  if (isPromise(unifiedGraphConfig)) {
-    return unifiedGraphConfig.then(newConfig => handleUnifiedGraphConfig(newConfig, configContext));
+  const config$ = typeof config === 'function' ? config() : config;
+  if (isPromise(config$)) {
+    return config$.then(schema => handleUnifiedGraphConfig(schema, configContext));
   }
-  if (typeof unifiedGraphConfig === 'function') {
-    return handleUnifiedGraphConfig(unifiedGraphConfig(), configContext);
+  return handleUnifiedGraphConfig(config$, configContext);
+}
+
+export function handleUnifiedGraphSchema(
+  schema: UnifiedGraphSchema,
+  configContext: MeshServeConfigContext,
+): Promise<GraphQLSchema> | GraphQLSchema {
+  if (isSchema(schema)) {
+    return schema;
   }
-  if (isSchema(unifiedGraphConfig)) {
-    return unifiedGraphConfig;
+  if (isDocumentNode(schema)) {
+    return buildASTSchema(schema, {
+      assumeValid: true,
+      assumeValidSDL: true,
+    });
   }
-  if (typeof unifiedGraphConfig === 'string') {
-    if (isValidPath(unifiedGraphConfig) || isUrl(unifiedGraphConfig)) {
-      const sdl$ = readFileOrUrl<string>(unifiedGraphConfig, {
+  if (typeof schema === 'string') {
+    if (isValidPath(schema) || isUrl(schema)) {
+      return readFileOrUrl<string>(schema, {
         fetch: configContext.fetch,
         cwd: configContext.cwd,
         logger: configContext.logger,
         allowUnknownExtensions: true,
         importFn: defaultImportFn,
-      });
-      if (isPromise(sdl$)) {
-        return sdl$.then(sdl => handleUnifiedGraphConfig(sdl, configContext));
-      }
-      return handleUnifiedGraphConfig(sdl$, configContext);
+      }).then(sdl => handleUnifiedGraphSchema(sdl, configContext));
     }
     try {
-      return buildSchema(unifiedGraphConfig, {
+      return buildSchema(schema, {
         assumeValid: true,
         assumeValidSDL: true,
       });
     } catch (e) {
-      configContext.logger.error(`Failed to load Supergraph from ${unifiedGraphConfig}`);
+      configContext.logger.error(`Failed to build UnifiedGraphSchema from "${schema}"`);
       throw e;
     }
   }
-  if (isDocumentNode(unifiedGraphConfig)) {
-    return buildASTSchema(unifiedGraphConfig, {
-      assumeValid: true,
-      assumeValidSDL: true,
-    });
-  }
   throw new Error(
-    `Invalid Supergraph config: ${unifiedGraphConfig}. It can be an SDL string, a GraphQLSchema, a DocumentNode or a function that returns any of these`,
+    `Invalid UnifiedGraphSchema "${schema}". It can be an SDL string, an instance of GraphQLSchema or DocumentNode, or a function that returns/resolves any of these.`,
   );
 }

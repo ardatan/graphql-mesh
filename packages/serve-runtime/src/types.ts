@@ -1,4 +1,3 @@
-import { DocumentNode, GraphQLSchema } from 'graphql';
 import {
   BatchingOptions,
   FetchAPI,
@@ -14,18 +13,14 @@ import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@grap
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import { IResolvers } from '@graphql-tools/utils';
 import { CORSPluginOptions } from '@whatwg-node/server';
+import { UnifiedGraphConfig } from './handleUnifiedGraphConfig';
 
-export type UnifiedGraphConfig =
-  | GraphQLSchema
-  | DocumentNode
-  | string
-  | Promise<UnifiedGraphConfig>
-  | (() => UnifiedGraphConfig | Promise<UnifiedGraphConfig>);
+export { UnifiedGraphConfig };
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithFusiongraph<TContext>
   | MeshServeConfigWithSupergraph<TContext>
-  | MeshServeConfigWithHttpEndpoint<TContext>;
+  | MeshServeConfigWithProxy<TContext>;
 
 export interface MeshServeConfigContext {
   fetch: MeshFetch;
@@ -37,7 +32,9 @@ export interface MeshServeConfigContext {
 }
 
 export interface MeshServeContext extends MeshServeConfigContext {
-  // TODO: should we split context into buildtime and runtime?
+  /**
+   * Environment agnostic HTTP headers provided with the request.
+   */
   headers: Record<string, string>;
   /**
    * Runtime context available within WebSocket connections.
@@ -58,8 +55,6 @@ export type MeshServePlugin<
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
    * Path to the GraphQL Fusion unified schema.
-   *
-   * @default ./fusiongraph.graphql
    */
   fusiongraph: UnifiedGraphConfig;
 }
@@ -67,21 +62,18 @@ interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithou
 interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
    * Path to the Apollo Federation unified schema.
-   *
-   * @default ./supergraph.graphql
    */
   supergraph: UnifiedGraphConfig;
 }
 
-interface MeshServeConfigWithHttpEndpoint<TContext> extends MeshServeConfigWithoutSource<TContext> {
-  http: HTTPExecutorOptions;
+interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
+  /**
+   * HTTP executor to proxy all incoming requests to another HTTP endpoint.
+   */
+  proxy: HTTPExecutorOptions;
 }
 
 interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
-  /**
-   * Headers to be sent to the Supergraph Schema endpoint
-   */
-  schemaHeaders?: Record<string, string>;
   /**
    * Polling interval in milliseconds
    */
@@ -134,7 +126,7 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
    */
   additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
   /**
-   * Endpoint
+   * Endpoint of the GraphQL API.
    */
   graphqlEndpoint?: string;
   /**

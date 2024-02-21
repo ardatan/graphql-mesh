@@ -31,20 +31,9 @@ export function createServeRuntime(config: MeshServeConfig) {
 
   let supergraphYogaPlugin: Plugin & { invalidateUnifiedGraph: () => void };
 
-  if ('http' in config) {
-    const executor = buildHTTPExecutor({
-      fetch: fetchAPI?.fetch,
-      ...config.http,
-    });
-    supergraphYogaPlugin = useExecutor(executor) as any;
-  } else if ('fusiongraph' in config) {
+  if ('fusiongraph' in config) {
     supergraphYogaPlugin = useFusiongraph({
-      getFusiongraph() {
-        return handleUnifiedGraphConfig(
-          config.fusiongraph || './fusiongraph.graphql',
-          configContext,
-        );
-      },
+      getFusiongraph: () => handleUnifiedGraphConfig(config.fusiongraph, configContext),
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
@@ -53,10 +42,7 @@ export function createServeRuntime(config: MeshServeConfig) {
   } else if ('supergraph' in config) {
     supergraphYogaPlugin = useFusiongraph({
       getFusiongraph() {
-        const supergraph$ = handleUnifiedGraphConfig(
-          config.supergraph || './supergraph.graphql',
-          configContext,
-        );
+        const supergraph$ = handleUnifiedGraphConfig(config.supergraph, configContext);
         configContext.logger?.info?.(`Converting Federation Supergraph to Fusiongraph`);
         if (isPromise(supergraph$)) {
           return supergraph$.then(supergraph => convertSupergraphToFusiongraph(supergraph));
@@ -68,6 +54,12 @@ export function createServeRuntime(config: MeshServeConfig) {
       additionalResolvers: config.additionalResolvers,
       transportBaseContext: configContext,
     });
+  } else if ('proxy' in config) {
+    const executor = buildHTTPExecutor({
+      fetch: fetchAPI?.fetch,
+      ...config.proxy,
+    });
+    supergraphYogaPlugin = useExecutor(executor) as any;
   }
 
   const defaultFetchPlugin: MeshServePlugin = {

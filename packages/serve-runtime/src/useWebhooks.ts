@@ -4,7 +4,7 @@ import { Logger, MeshPubSub } from '@graphql-mesh/types';
 
 // TODO: Use Yoga PubSub later
 export interface MeshWebhooksPluginOptions {
-  pubsub: MeshPubSub;
+  pubsub?: MeshPubSub;
   logger: Logger;
 }
 export function useWebhooks({ pubsub, logger }: MeshWebhooksPluginOptions): Plugin {
