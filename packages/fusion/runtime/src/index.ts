@@ -9,7 +9,7 @@ import {
   isSchema,
   valueFromASTUntyped,
 } from 'graphql';
-import type { Plugin, PromiseOrValue, YogaServer } from 'graphql-yoga';
+import type { Plugin, YogaServer } from 'graphql-yoga';
 import {
   createExecutablePlanForOperation,
   ExecutableOperationPlan,
@@ -26,7 +26,7 @@ import {
   TransportExecutorFactoryOpts,
 } from '@graphql-mesh/transport-common';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
+import { iterateAsync } from '@graphql-mesh/utils';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import {
   ExecutionRequest,
@@ -34,10 +34,9 @@ import {
   getDirective,
   IResolvers,
   isAsyncIterable,
+  isPromise,
   mapAsyncIterator,
   memoize2of4,
-  type Maybe,
-  type MaybePromise,
 } from '@graphql-tools/utils';
 
 export { Transport, TransportEntry, TransportExecutorFactoryFn, TransportExecutorFactoryOpts };
@@ -134,10 +133,13 @@ export function createTransportGetter(transports: TransportsOption) {
 export function getTransportExecutor(
   transportGetter: ReturnType<typeof createTransportGetter>,
   transportContext: TransportExecutorFactoryOpts,
-): MaybePromise<Executor> {
+): Executor | Promise<Executor> {
   transportContext.logger?.info(`Loading transport ${transportContext.transportEntry?.kind}`);
   const transport$ = transportGetter(transportContext.transportEntry?.kind);
-  return mapMaybePromise(transport$, transport => transport.getSubgraphExecutor(transportContext));
+  if (isPromise(transport$)) {
+    return transport$.then(transport => transport.getSubgraphExecutor(transportContext));
+  }
+  return transport$.getSubgraphExecutor(transportContext);
 }
 
 export function getExecutorForFusiongraph({
@@ -193,10 +195,7 @@ export function getExecutorForFusiongraph({
             function handleOnSubgraphExecuteHooksResult() {
               if (onSubgraphExecuteDoneHooks.length) {
                 // eslint-disable-next-line no-inner-declarations
-                function handleExecutorResWithHooks(
-                  currentResult: ExecutionResult | AsyncIterable<ExecutionResult>,
-                ) {
-                  const executeDoneResults: OnSubgraphExecuteDoneResult[] = [];
+                function handleExecutorResWithHooks(currentResult: ExecutionResult) {
                   const onSubgraphExecuteDoneHooksRes$ = iterateAsync(
                     onSubgraphExecuteDoneHooks,
                     onSubgraphExecuteDoneHook =>
@@ -206,63 +205,27 @@ export function getExecutorForFusiongraph({
                           currentResult = newResult;
                         },
                       }),
-                    executeDoneResults,
                   );
-                  function handleExecuteDoneResults(
-                    result: AsyncIterable<ExecutionResult> | ExecutionResult,
-                  ) {
-                    if (!isAsyncIterable(result)) {
-                      return result;
-                    }
-
-                    if (executeDoneResults.length === 0) {
-                      return result;
-                    }
-
-                    const onNextHooks: OnSubgraphExecuteDoneResultOnNext[] = [];
-                    const onEndHooks: OnSubgraphExecuteDoneResultOnEnd[] = [];
-                    for (const executeDoneResult of executeDoneResults) {
-                      if (executeDoneResult.onNext) {
-                        onNextHooks.push(executeDoneResult.onNext);
-                      }
-                      if (executeDoneResult.onEnd) {
-                        onEndHooks.push(executeDoneResult.onEnd);
-                      }
-                    }
-
-                    return mapAsyncIterator(
-                      result[Symbol.asyncIterator](),
-                      currentResult => {
-                        if (onNextHooks.length === 0) {
-                          return currentResult;
-                        }
-                        const $ = iterateAsync(onNextHooks, onNext =>
-                          onNext({
-                            result: currentResult,
-                            setResult: res => {
-                              currentResult = res;
-                            },
-                          }),
-                        );
-                        return mapMaybePromise($, () => currentResult);
-                      },
-                      undefined,
-                      () =>
-                        onEndHooks.length === 0
-                          ? undefined
-                          : iterateAsync(onEndHooks, onEnd => onEnd()),
-                    );
+                  if (isPromise(onSubgraphExecuteDoneHooksRes$)) {
+                    return onSubgraphExecuteDoneHooksRes$.then(() => currentResult);
                   }
-                  return mapMaybePromise(onSubgraphExecuteDoneHooksRes$, () =>
-                    handleExecuteDoneResults(currentResult),
-                  );
+                  return currentResult;
                 }
                 const executorRes$ = currentExecutor(subgraphExecReq);
-                return mapMaybePromise(executorRes$, handleExecutorResWithHooks);
+                if (isPromise(executorRes$)) {
+                  return executorRes$.then(handleExecutorResWithHooks);
+                }
+                if (isAsyncIterable(executorRes$)) {
+                  return mapAsyncIterator(executorRes$ as any, handleExecutorResWithHooks);
+                }
+                return handleExecutorResWithHooks(executorRes$);
               }
               return currentExecutor(subgraphExecReq);
             }
-            return mapMaybePromise(onSubgraphExecuteHooksRes$, handleOnSubgraphExecuteHooksResult);
+            if (isPromise(onSubgraphExecuteHooksRes$)) {
+              return onSubgraphExecuteHooksRes$.then(handleOnSubgraphExecuteHooksResult);
+            }
+            return handleOnSubgraphExecuteHooksResult();
           };
         }
         return currentExecutor;
@@ -282,11 +245,16 @@ export function getExecutorForFusiongraph({
               }
             : { getSubgraph, transportEntry, subgraphName },
         );
-        return mapMaybePromise(executor$, executor_ => {
-          executor = wrapExecutorWithHooks(executor_) as Executor;
-          subgraphExecutorMap[subgraphName] = executor;
-          return executor(subgraphExecReq);
-        });
+        if (isPromise(executor$)) {
+          return executor$.then(executor_ => {
+            executor = wrapExecutorWithHooks(executor_) as Executor;
+            subgraphExecutorMap[subgraphName] = executor;
+            return executor(subgraphExecReq);
+          });
+        }
+        executor = wrapExecutorWithHooks(executor$) as Executor;
+        subgraphExecutorMap[subgraphName] = executor;
+        return executor(subgraphExecReq);
       };
     }
     return executor({ document, variables, context });
@@ -439,15 +407,19 @@ export function useFusiongraph<TServerContext, TUserContext>({
       executeFn = getExecuteFnFromExecutor(executor);
     }
   }
-  function getAndSetFusiongraph(): PromiseOrValue<void> {
+  function getAndSetFusiongraph(): Promise<void> | void {
     const fusiongraph$ = getFusiongraph(transportBaseContext);
-    return mapMaybePromise(fusiongraph$, handleLoadedFusiongraph) as PromiseOrValue<void>;
+    if (isPromise(fusiongraph$)) {
+      return fusiongraph$.then(handleLoadedFusiongraph);
+    } else {
+      return handleLoadedFusiongraph(fusiongraph$);
+    }
   }
   if (polling) {
     setInterval(getAndSetFusiongraph, polling);
   }
 
-  let initialFusiongraph$: PromiseOrValue<void>;
+  let initialFusiongraph$: Promise<void> | void;
   let initiated = false;
   return {
     onYogaInit(payload) {
@@ -510,26 +482,10 @@ export interface OnFusiongraphExecutePayload {
 }
 
 export interface OnSubgraphExecuteDonePayload {
-  result: AsyncIterable<ExecutionResult> | ExecutionResult;
-  setResult(result: AsyncIterable<ExecutionResult> | ExecutionResult): void;
-}
-
-export type OnSubgraphExecuteDoneHook = (
-  payload: OnSubgraphExecuteDonePayload,
-) => MaybePromise<Maybe<OnSubgraphExecuteDoneResult>>;
-
-export type OnSubgraphExecuteDoneResultOnNext = (
-  payload: OnSubgraphExecuteDoneOnNextPayload,
-) => MaybePromise<void>;
-
-export interface OnSubgraphExecuteDoneOnNextPayload {
   result: ExecutionResult;
   setResult(result: ExecutionResult): void;
 }
 
-export type OnSubgraphExecuteDoneResultOnEnd = () => MaybePromise<void>;
-
-export type OnSubgraphExecuteDoneResult = {
-  onNext?: OnSubgraphExecuteDoneResultOnNext;
-  onEnd?: OnSubgraphExecuteDoneResultOnEnd;
-};
+export type OnSubgraphExecuteDoneHook = (
+  payload: OnSubgraphExecuteDonePayload,
+) => Promise<void> | void;
