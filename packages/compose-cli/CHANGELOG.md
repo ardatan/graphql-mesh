@@ -1,5 +1,13 @@
 # @graphql-mesh/compose-cli
 
+## 0.1.0
+
+### Minor Changes
+
+- [`7b494d9`](https://github.com/ardatan/graphql-mesh/commit/7b494d981862034f256225e2c9a5c43a403ff79d)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Improve typings and other accompanying
+  improvements
+
 ## 0.0.2
 
 ### Patch Changes

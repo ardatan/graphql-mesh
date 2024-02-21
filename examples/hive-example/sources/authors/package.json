@@ -1,6 +1,6 @@
 {
   "name": "authors-service",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Authors Service",
   "private": true,
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@graphql-hive/cli": "0.33.0",
-    "@graphql-mesh/cli": "0.88.7",
+    "@graphql-mesh/cli": "0.88.8",
     "@graphql-mesh/openapi": "0.98.1",
     "graphql": "16.8.1"
   }

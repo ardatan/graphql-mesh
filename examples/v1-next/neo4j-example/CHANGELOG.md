@@ -1,5 +1,16 @@
 # neo4j-example
 
+## 0.15.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f265dda`](https://github.com/ardatan/graphql-mesh/commit/f265dda8d62dc5f345d69f60c8a3a09f0e6a0451),
+  [`44d40ff`](https://github.com/ardatan/graphql-mesh/commit/44d40fff17877a52e63c6f644635ea53eb9deadb),
+  [`7b494d9`](https://github.com/ardatan/graphql-mesh/commit/7b494d981862034f256225e2c9a5c43a403ff79d)]:
+  - @graphql-mesh/serve-cli@0.2.0
+  - @graphql-mesh/compose-cli@0.1.0
+
 ## 0.14.0
 
 ### Patch Changes
