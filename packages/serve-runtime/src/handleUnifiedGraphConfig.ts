@@ -17,9 +17,9 @@ export function handleUnifiedGraphConfig(
 ): Promise<GraphQLSchema> | GraphQLSchema {
   const config$ = typeof config === 'function' ? config() : config;
   if (isPromise(config$)) {
-    return config$.then(schema => handleUnifiedGraphConfig(schema, configContext));
+    return config$.then(schema => handleUnifiedGraphSchema(schema, configContext));
   }
-  return handleUnifiedGraphConfig(config$, configContext);
+  return handleUnifiedGraphSchema(config$, configContext);
 }
 
 export function handleUnifiedGraphSchema(
