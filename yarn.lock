@@ -5609,6 +5609,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.3"
     "@graphql-tools/schema": "npm:10.0.2"
     "@graphql-tools/wrap": "npm:10.0.1"
+    minimatch: "npm:^9.0.0"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.1
     "@graphql-mesh/types": ^0.96.5

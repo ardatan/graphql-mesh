@@ -40,7 +40,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "^0.5.3"
+    "@graphql-mesh/string-interpolation": "^0.5.3",
+    "minimatch": "^9.0.0"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.96.5",
