@@ -4766,7 +4766,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.96.5"
     "@graphql-tools/delegate": "npm:^10.0.3"
     "@graphql-tools/stitch": "npm:^9.0.3"
-    "@graphql-tools/utils": "npm:^10.0.8"
+    "@graphql-tools/utils": "npm:^10.1.0"
     graphql-yoga: "npm:^5.1.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -6539,7 +6539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.1.0":
+"@graphql-tools/utils@npm:10.1.0, @graphql-tools/utils@npm:^10.1.0":
   version: 10.1.0
   resolution: "@graphql-tools/utils@npm:10.1.0"
   dependencies:

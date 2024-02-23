@@ -32,7 +32,7 @@ export function createServeRuntime(config: MeshServeConfig) {
   let supergraphYogaPlugin: Plugin & { invalidateUnifiedGraph: () => void };
 
   if ('fusiongraph' in config) {
-    supergraphYogaPlugin = useFusiongraph<unknown>({
+    supergraphYogaPlugin = useFusiongraph({
       getFusiongraph: () => handleUnifiedGraphConfig(config.fusiongraph, configContext),
       transports: config.transports,
       polling: config.polling,
@@ -40,7 +40,7 @@ export function createServeRuntime(config: MeshServeConfig) {
       transportBaseContext: configContext,
     });
   } else if ('supergraph' in config) {
-    supergraphYogaPlugin = useFusiongraph<unknown>({
+    supergraphYogaPlugin = useFusiongraph({
       getFusiongraph() {
         const supergraph$ = handleUnifiedGraphConfig(config.supergraph, configContext);
         configContext.logger?.info?.(`Converting Federation Supergraph to Fusiongraph`);
