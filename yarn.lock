@@ -4759,10 +4759,10 @@
     semver "^7.5.4"
     typescript-memoize "^1.1.1"
 
-"@neo4j/introspector@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/introspector/-/introspector-2.0.0.tgz#7b4310da7e21d910044b354891ac3b575a372dae"
-  integrity sha512-uJT8IDzHzQTSDKN/YGDv4pcbc92g1YOczWSGQY1KKyWqhwf69bpuLmu7nF+S96PvyRkrL6gXKVLuXmAnsB9aTQ==
+"@neo4j/introspector@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/introspector/-/introspector-3.0.0.tgz#5220f99a633208316d316c7f518b4c3a8cc0c88a"
+  integrity sha512-F72KWXXBEDp70u7q/q3HZkDVIsLFJ0rosYOhkv6JUOA22cpgTW6aR703PZ7fYw+HpV18Uh9ebHGXdYbbKXnReg==
   dependencies:
     camelcase "^6.3.0"
     debug "^4.3.4"
