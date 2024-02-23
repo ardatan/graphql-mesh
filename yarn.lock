@@ -3121,6 +3121,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@changesets/assemble-release-plan@patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch":
+  version: 5.2.3
+  resolution: "@changesets/assemble-release-plan@patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch::version=5.2.3&hash=5aef74"
+  dependencies:
+    "@babel/runtime": "npm:^7.20.1"
+    "@changesets/errors": "npm:^0.1.4"
+    "@changesets/get-dependents-graph": "npm:^1.3.5"
+    "@changesets/types": "npm:^5.2.1"
+    "@manypkg/get-packages": "npm:^1.1.3"
+    semver: "npm:^5.4.1"
+  checksum: 10c0/cd32be67f19eeb0f68856b876c591196ec9b0f75c90427cb851867aa6994ad011e880ddb7ab17355068fc831823a973d889810cc774d1a2af66ad9a99d59f249
+  languageName: node
+  linkType: hard
+
 "@changesets/changelog-git@npm:^0.2.0":
   version: 0.2.0
   resolution: "@changesets/changelog-git@npm:0.2.0"
