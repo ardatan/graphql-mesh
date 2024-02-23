@@ -1,7 +1,7 @@
-diff --git a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
-index 3a37c62..6f0e2a4 100644
---- a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
-+++ b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.dev.js
+diff --git a/dist/assemble-release-plan.cjs.dev.js b/dist/assemble-release-plan.cjs.dev.js
+index 3a37c62c975518f975c22e1b4b3974d9b325a5da..6f0e2a47086cf09fc5bf853571bef78927eed4a3 100644
+--- a/dist/assemble-release-plan.cjs.dev.js
++++ b/dist/assemble-release-plan.cjs.dev.js
 @@ -75,7 +75,7 @@ function incrementVersion(release, preInfo) {
      // because semver.inc with prereleases is confusing and this seems easier
  
@@ -135,10 +135,10 @@ index 3a37c62..6f0e2a4 100644
      }
    }
  
-diff --git a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
-index f3beb31..42d1290 100644
---- a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
-+++ b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.js
+diff --git a/dist/assemble-release-plan.cjs.js b/dist/assemble-release-plan.cjs.js
+index f3beb3187f56b512830d4b4ed2724fcdeca8b7d4..42d129091a4a77599e1c6b14ccd5bd8596fbd6c3 100644
+--- a/dist/assemble-release-plan.cjs.js
++++ b/dist/assemble-release-plan.cjs.js
 @@ -1,7 +1,7 @@
  'use strict';
  
@@ -151,10 +151,10 @@ index f3beb31..42d1290 100644
    module.exports = require("./assemble-release-plan.cjs.dev.js");
 -}
 +// }
-diff --git a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.prod.js b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.prod.js
-index 87b4c10..a0b45c2 100644
---- a/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.prod.js
-+++ b/node_modules/@changesets/assemble-release-plan/dist/assemble-release-plan.cjs.prod.js
+diff --git a/dist/assemble-release-plan.cjs.prod.js b/dist/assemble-release-plan.cjs.prod.js
+index 87b4c104bf3fa53ba498ced6f81eda0ed4c86436..80a63646dc93d097a73acc68213ec87579a78a97 100644
+--- a/dist/assemble-release-plan.cjs.prod.js
++++ b/dist/assemble-release-plan.cjs.prod.js
 @@ -130,7 +130,7 @@ function getDependencyVersionRanges(dependentPkgJSON, dependencyRelease) {
  }
  

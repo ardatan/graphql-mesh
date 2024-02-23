@@ -19,6 +19,8 @@ jobs:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
     with:
       script: yarn prettier:check && yarn ci:lint
+      packageManager: yarn
+      packageManagerVersion: modern
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
@@ -42,6 +44,7 @@ jobs:
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -87,6 +90,7 @@ jobs:
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -160,6 +164,7 @@ jobs:
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -250,6 +255,7 @@ jobs:
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -303,6 +309,7 @@ jobs:
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
       - name: Build
         run: yarn build
       - name: Node.js integrity check
