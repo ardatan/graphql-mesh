@@ -18,6 +18,8 @@ import {
 } from '@graphql-mesh/fusion-execution';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getInContextSDK } from '@graphql-mesh/runtime';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type { MeshServeContext } from '@graphql-mesh/serve-runtime';
 import {
   Transport,
   TransportBaseContext,
@@ -25,7 +27,6 @@ import {
   TransportExecutorFactoryFn,
   TransportExecutorFactoryOpts,
 } from '@graphql-mesh/transport-common';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import {
@@ -330,7 +331,9 @@ export interface FusiongraphPluginOptions<TContext> {
   transports?: TransportsOption;
   planCache?: PlanCache;
   polling?: number;
-  additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
+  additionalResolvers?:
+    | IResolvers<unknown, MeshServeContext & TContext>
+    | IResolvers<unknown, MeshServeContext & TContext>[];
   transportBaseContext?: TransportBaseContext;
 }
 
