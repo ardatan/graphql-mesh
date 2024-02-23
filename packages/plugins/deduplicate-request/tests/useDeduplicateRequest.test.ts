@@ -1,4 +1,4 @@
-import { wrapFetchWithPlugins } from '../../../runtime/src/get-mesh.js';
+import { wrapFetchWithPlugins } from '../../../legacy/runtime/src/get-mesh.js';
 import useDeduplicateRequest from '../src/index.js';
 
 const modules = ['node-fetch', 'undici', '@whatwg-node/fetch'];

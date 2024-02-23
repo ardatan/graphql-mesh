@@ -9,7 +9,7 @@ import {
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { inspect, isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
-import { assertAsyncIterable, assertNonAsyncIterable } from '../../../testing/utils.js';
+import { assertAsyncIterable, assertNonAsyncIterable } from '../../../legacy/testing/utils.js';
 import {
   createExecutableResolverOperationNode,
   executeResolverOperationNode,

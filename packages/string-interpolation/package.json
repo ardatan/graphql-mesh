@@ -5,7 +5,7 @@
   "description": "Dynamic string manipulation",
   "repository": {
     "type": "git",
-    "url": "Urigo/graphql-mesh",
+    "url": "ardatan/graphql-mesh",
     "directory": "packages/string-interpolation"
   },
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",

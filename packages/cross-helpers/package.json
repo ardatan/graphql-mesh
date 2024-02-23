@@ -4,7 +4,7 @@
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "repository": {
     "type": "git",
-    "url": "Urigo/graphql-mesh",
+    "url": "ardatan/graphql-mesh",
     "directory": "packages/cross-helpers"
   },
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
