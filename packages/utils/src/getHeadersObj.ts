@@ -28,7 +28,7 @@ export function getHeadersObj(
         return headers.has(name.toString().toLowerCase());
       },
       ownKeys(_target) {
-        return [...headers.keys()];
+        return [...new Set(headers.keys())];
       },
       set(_target, name, value) {
         headers.set(name.toString().toLowerCase(), value);
