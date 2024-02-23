@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-sqlite",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/sqlite": "^0.0.5"
+    "@omnigraph/sqlite": "^0.0.6"
   },
   "publishConfig": {
     "access": "public",

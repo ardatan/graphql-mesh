@@ -1,5 +1,21 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.1.1
+
+### Patch Changes
+
+- [#6583](https://github.com/ardatan/graphql-mesh/pull/6583)
+  [`b7c3631`](https://github.com/ardatan/graphql-mesh/commit/b7c3631bd58779c1910705fd7f2b39545bc071dd)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.1.0)
+    (from `^10.0.8`, in `dependencies`)
+- Updated dependencies
+  [[`0f274ef`](https://github.com/ardatan/graphql-mesh/commit/0f274ef8177068da65e50e08607998d0ed63e8b9)]:
+  - @graphql-mesh/utils@0.96.6
+  - @graphql-mesh/runtime@0.97.7
+  - @graphql-mesh/transport-common@0.0.3
+
 ## 0.1.0
 
 ### Minor Changes

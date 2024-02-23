@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-soap
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.96.6
+  - @graphql-mesh/transport-common@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes

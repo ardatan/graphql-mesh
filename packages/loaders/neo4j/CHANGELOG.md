@@ -1,5 +1,20 @@
 # @omnigraph/neo4j
 
+## 0.0.5
+
+### Patch Changes
+
+- [#6581](https://github.com/ardatan/graphql-mesh/pull/6581)
+  [`893c814`](https://github.com/ardatan/graphql-mesh/commit/893c814659f347a59a029bce3a437fb5ca79b23c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/introspector@^3.0.0` ↗︎](https://www.npmjs.com/package/@neo4j/introspector/v/3.0.0)
+    (from `^2.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`893c814`](https://github.com/ardatan/graphql-mesh/commit/893c814659f347a59a029bce3a437fb5ca79b23c)]:
+  - @graphql-mesh/transport-neo4j@0.0.2
+  - @graphql-mesh/types@0.96.6
+
 ## 0.0.4
 
 ### Patch Changes

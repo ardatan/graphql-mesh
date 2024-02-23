@@ -1,6 +1,6 @@
 {
   "name": "auto-type-merging-example",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,8 +9,8 @@
     "start:vaccine": "yarn ts-node vaccination/index.ts"
   },
   "devDependencies": {
-    "@graphql-mesh/compose-cli": "^0.1.0",
-    "@graphql-mesh/serve-cli": "^0.2.0",
+    "@graphql-mesh/compose-cli": "^0.1.1",
+    "@graphql-mesh/serve-cli": "^0.2.1",
     "@graphql-yoga/plugin-defer-stream": "^3.1.1",
     "graphql": "^16.8.1",
     "graphql-yoga": "^5.1.1",

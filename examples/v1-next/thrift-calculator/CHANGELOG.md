@@ -1,5 +1,14 @@
 # thrift-calculator
 
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.1.1
+  - @omnigraph/thrift@0.0.5
+  - @graphql-mesh/serve-cli@0.2.1
+
 ## 0.14.0
 
 ### Patch Changes

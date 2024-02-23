@@ -1,6 +1,6 @@
 {
   "name": "books-service",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Books Service",
   "private": true,
   "scripts": {
@@ -15,8 +15,8 @@
   },
   "devDependencies": {
     "@graphql-hive/cli": "0.33.1",
-    "@graphql-mesh/cli": "0.88.8",
-    "@graphql-mesh/openapi": "0.98.1",
+    "@graphql-mesh/cli": "0.88.9",
+    "@graphql-mesh/openapi": "0.98.2",
     "graphql": "16.8.1"
   }
 }
