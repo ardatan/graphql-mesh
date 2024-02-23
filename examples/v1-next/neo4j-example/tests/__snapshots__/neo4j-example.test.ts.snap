@@ -14,7 +14,12 @@ directive @relationshipProperties on OBJECT
 
 directive @transport(kind: String, location: String, options: Any, subgraph: String) on SCHEMA
 
-interface ActedInProperties @relationshipProperties @introspection @source(subgraph: "Movies", name: "ActedInProperties") {
+"""
+The edge properties for the following fields:
+* Movie.peopleActedIn
+* Person.actedInMovies
+"""
+type ActedInProperties @relationshipProperties @introspection @source(subgraph: "Movies", name: "ActedInProperties") {
   roles: [String]! @introspection @source(subgraph: "Movies", name: "roles", type: "[String]!")
 }
 
@@ -49,14 +54,7 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 """
 scalar BigInt @source(subgraph: "Movies", name: "BigInt") @source(subgraph: "Movies", name: "BigInt")
 
-type BigIntAggregateSelectionNonNullable @source(subgraph: "Movies", name: "BigIntAggregateSelectionNonNullable") {
-  average: BigInt! @source(subgraph: "Movies", name: "average", type: "BigInt!")
-  max: BigInt! @source(subgraph: "Movies", name: "max", type: "BigInt!")
-  min: BigInt! @source(subgraph: "Movies", name: "min", type: "BigInt!")
-  sum: BigInt! @source(subgraph: "Movies", name: "sum", type: "BigInt!")
-}
-
-type BigIntAggregateSelectionNullable @source(subgraph: "Movies", name: "BigIntAggregateSelectionNullable") {
+type BigIntAggregateSelection @source(subgraph: "Movies", name: "BigIntAggregateSelection") {
   average: BigInt @source(subgraph: "Movies", name: "average", type: "BigInt")
   max: BigInt @source(subgraph: "Movies", name: "max", type: "BigInt")
   min: BigInt @source(subgraph: "Movies", name: "min", type: "BigInt")
@@ -115,10 +113,10 @@ type Movie @introspection @source(subgraph: "Movies", name: "Movie") {
 
 type MovieAggregateSelection @source(subgraph: "Movies", name: "MovieAggregateSelection") {
   count: Int! @source(subgraph: "Movies", name: "count", type: "Int!")
-  released: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelectionNonNullable!")
-  tagline: StringAggregateSelectionNullable! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelectionNullable!")
-  title: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelectionNonNullable!")
-  votes: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelectionNonNullable!")
+  released: BigIntAggregateSelection! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelection!")
+  tagline: StringAggregateSelection! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelection!")
+  title: StringAggregateSelection! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelection!")
+  votes: BigIntAggregateSelection! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelection!")
 }
 
 input MovieConnectInput @source(subgraph: "Movies", name: "MovieConnectInput") {
@@ -304,10 +302,10 @@ input MoviePeopleActedInNodeAggregationWhereInput @source(subgraph: "Movies", na
   name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "name_SHORTEST_LTE", type: "Int")
 }
 
-type MoviePeopleActedInRelationship implements ActedInProperties @source(subgraph: "Movies", name: "MoviePeopleActedInRelationship") {
+type MoviePeopleActedInRelationship @source(subgraph: "Movies", name: "MoviePeopleActedInRelationship") {
   cursor: String! @source(subgraph: "Movies", name: "cursor", type: "String!")
   node: Person! @source(subgraph: "Movies", name: "node", type: "Person!")
-  roles: [String]! @introspection @source(subgraph: "Movies", name: "roles", type: "[String]!")
+  properties: ActedInProperties! @source(subgraph: "Movies", name: "properties", type: "ActedInProperties!")
 }
 
 input MoviePeopleActedInUpdateConnectionInput @source(subgraph: "Movies", name: "MoviePeopleActedInUpdateConnectionInput") {
@@ -617,7 +615,7 @@ input MoviePeopleReviewedAggregateInput @source(subgraph: "Movies", name: "Movie
   count_GTE: Int @source(subgraph: "Movies", name: "count_GTE", type: "Int")
   count_LT: Int @source(subgraph: "Movies", name: "count_LT", type: "Int")
   count_LTE: Int @source(subgraph: "Movies", name: "count_LTE", type: "Int")
-  edge: MoviePeopleReviewedEdgeAggregationWhereInput @source(subgraph: "Movies", name: "edge", type: "MoviePeopleReviewedEdgeAggregationWhereInput")
+  edge: ReviewedPropertiesAggregationWhereInput @source(subgraph: "Movies", name: "edge", type: "ReviewedPropertiesAggregationWhereInput")
   node: MoviePeopleReviewedNodeAggregationWhereInput @source(subgraph: "Movies", name: "node", type: "MoviePeopleReviewedNodeAggregationWhereInput")
 }
 
@@ -665,72 +663,6 @@ input MoviePeopleReviewedDeleteFieldInput @source(subgraph: "Movies", name: "Mov
 input MoviePeopleReviewedDisconnectFieldInput @source(subgraph: "Movies", name: "MoviePeopleReviewedDisconnectFieldInput") {
   disconnect: PersonDisconnectInput @source(subgraph: "Movies", name: "disconnect", type: "PersonDisconnectInput")
   where: MoviePeopleReviewedConnectionWhere @source(subgraph: "Movies", name: "where", type: "MoviePeopleReviewedConnectionWhere")
-}
-
-input MoviePeopleReviewedEdgeAggregationWhereInput @source(subgraph: "Movies", name: "MoviePeopleReviewedEdgeAggregationWhereInput") {
-  AND: [MoviePeopleReviewedEdgeAggregationWhereInput!] @source(subgraph: "Movies", name: "AND", type: "[MoviePeopleReviewedEdgeAggregationWhereInput!]")
-  NOT: MoviePeopleReviewedEdgeAggregationWhereInput @source(subgraph: "Movies", name: "NOT", type: "MoviePeopleReviewedEdgeAggregationWhereInput")
-  OR: [MoviePeopleReviewedEdgeAggregationWhereInput!] @source(subgraph: "Movies", name: "OR", type: "[MoviePeopleReviewedEdgeAggregationWhereInput!]")
-  rating_AVERAGE_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_EQUAL", type: "BigInt")
-  rating_AVERAGE_GT: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_GT", type: "BigInt")
-  rating_AVERAGE_GTE: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_GTE", type: "BigInt")
-  rating_AVERAGE_LT: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_LT", type: "BigInt")
-  rating_AVERAGE_LTE: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_LTE", type: "BigInt")
-  rating_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_EQUAL", type: "BigInt")
-  rating_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_GT", type: "BigInt")
-  rating_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_GTE", type: "BigInt")
-  rating_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_LT", type: "BigInt")
-  rating_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_LTE", type: "BigInt")
-  rating_MAX_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_MAX_EQUAL", type: "BigInt")
-  rating_MAX_GT: BigInt @source(subgraph: "Movies", name: "rating_MAX_GT", type: "BigInt")
-  rating_MAX_GTE: BigInt @source(subgraph: "Movies", name: "rating_MAX_GTE", type: "BigInt")
-  rating_MAX_LT: BigInt @source(subgraph: "Movies", name: "rating_MAX_LT", type: "BigInt")
-  rating_MAX_LTE: BigInt @source(subgraph: "Movies", name: "rating_MAX_LTE", type: "BigInt")
-  rating_MIN_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_MIN_EQUAL", type: "BigInt")
-  rating_MIN_GT: BigInt @source(subgraph: "Movies", name: "rating_MIN_GT", type: "BigInt")
-  rating_MIN_GTE: BigInt @source(subgraph: "Movies", name: "rating_MIN_GTE", type: "BigInt")
-  rating_MIN_LT: BigInt @source(subgraph: "Movies", name: "rating_MIN_LT", type: "BigInt")
-  rating_MIN_LTE: BigInt @source(subgraph: "Movies", name: "rating_MIN_LTE", type: "BigInt")
-  rating_SUM_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_SUM_EQUAL", type: "BigInt")
-  rating_SUM_GT: BigInt @source(subgraph: "Movies", name: "rating_SUM_GT", type: "BigInt")
-  rating_SUM_GTE: BigInt @source(subgraph: "Movies", name: "rating_SUM_GTE", type: "BigInt")
-  rating_SUM_LT: BigInt @source(subgraph: "Movies", name: "rating_SUM_LT", type: "BigInt")
-  rating_SUM_LTE: BigInt @source(subgraph: "Movies", name: "rating_SUM_LTE", type: "BigInt")
-  summary_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_EQUAL", type: "Float")
-  summary_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_GT", type: "Float")
-  summary_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_GTE", type: "Float")
-  summary_AVERAGE_LENGTH_EQUAL: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_EQUAL", type: "Float")
-  summary_AVERAGE_LENGTH_GT: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_GT", type: "Float")
-  summary_AVERAGE_LENGTH_GTE: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_GTE", type: "Float")
-  summary_AVERAGE_LENGTH_LT: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_LT", type: "Float")
-  summary_AVERAGE_LENGTH_LTE: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_LTE", type: "Float")
-  summary_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_LT", type: "Float")
-  summary_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_LTE", type: "Float")
-  summary_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_EQUAL", type: "String")
-  summary_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_GT", type: "Int")
-  summary_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_GTE", type: "Int")
-  summary_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_EQUAL", type: "Int")
-  summary_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_GT", type: "Int")
-  summary_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_GTE", type: "Int")
-  summary_LONGEST_LENGTH_EQUAL: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_EQUAL", type: "Int")
-  summary_LONGEST_LENGTH_GT: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_GT", type: "Int")
-  summary_LONGEST_LENGTH_GTE: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_GTE", type: "Int")
-  summary_LONGEST_LENGTH_LT: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_LT", type: "Int")
-  summary_LONGEST_LENGTH_LTE: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_LTE", type: "Int")
-  summary_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_LT", type: "Int")
-  summary_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_LTE", type: "Int")
-  summary_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_LT", type: "Int")
-  summary_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_LTE", type: "Int")
-  summary_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_EQUAL", type: "Int")
-  summary_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_GT", type: "Int")
-  summary_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_GTE", type: "Int")
-  summary_SHORTEST_LENGTH_EQUAL: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_EQUAL", type: "Int")
-  summary_SHORTEST_LENGTH_GT: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_GT", type: "Int")
-  summary_SHORTEST_LENGTH_GTE: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_GTE", type: "Int")
-  summary_SHORTEST_LENGTH_LT: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_LT", type: "Int")
-  summary_SHORTEST_LENGTH_LTE: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_LTE", type: "Int")
-  summary_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_LT", type: "Int")
-  summary_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_LTE", type: "Int")
 }
 
 input MoviePeopleReviewedFieldInput @source(subgraph: "Movies", name: "MoviePeopleReviewedFieldInput") {
@@ -804,11 +736,10 @@ input MoviePeopleReviewedNodeAggregationWhereInput @source(subgraph: "Movies", n
   name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "name_SHORTEST_LTE", type: "Int")
 }
 
-type MoviePeopleReviewedRelationship implements ReviewedProperties @source(subgraph: "Movies", name: "MoviePeopleReviewedRelationship") {
+type MoviePeopleReviewedRelationship @source(subgraph: "Movies", name: "MoviePeopleReviewedRelationship") {
   cursor: String! @source(subgraph: "Movies", name: "cursor", type: "String!")
   node: Person! @source(subgraph: "Movies", name: "node", type: "Person!")
-  rating: BigInt! @introspection @source(subgraph: "Movies", name: "rating", type: "BigInt!")
-  summary: String! @introspection @source(subgraph: "Movies", name: "summary", type: "String!")
+  properties: ReviewedProperties! @source(subgraph: "Movies", name: "properties", type: "ReviewedProperties!")
 }
 
 input MoviePeopleReviewedUpdateConnectionInput @source(subgraph: "Movies", name: "MoviePeopleReviewedUpdateConnectionInput") {
@@ -973,8 +904,8 @@ type MoviePersonPeopleActedInAggregationSelection @source(subgraph: "Movies", na
 }
 
 type MoviePersonPeopleActedInNodeAggregateSelection @source(subgraph: "Movies", name: "MoviePersonPeopleActedInNodeAggregateSelection") {
-  born: BigIntAggregateSelectionNullable! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelectionNullable!")
-  name: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelectionNonNullable!")
+  born: BigIntAggregateSelection! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelection!")
+  name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
 type MoviePersonPeopleDirectedAggregationSelection @source(subgraph: "Movies", name: "MoviePersonPeopleDirectedAggregationSelection") {
@@ -983,8 +914,8 @@ type MoviePersonPeopleDirectedAggregationSelection @source(subgraph: "Movies", n
 }
 
 type MoviePersonPeopleDirectedNodeAggregateSelection @source(subgraph: "Movies", name: "MoviePersonPeopleDirectedNodeAggregateSelection") {
-  born: BigIntAggregateSelectionNullable! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelectionNullable!")
-  name: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelectionNonNullable!")
+  born: BigIntAggregateSelection! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelection!")
+  name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
 type MoviePersonPeopleProducedAggregationSelection @source(subgraph: "Movies", name: "MoviePersonPeopleProducedAggregationSelection") {
@@ -993,8 +924,8 @@ type MoviePersonPeopleProducedAggregationSelection @source(subgraph: "Movies", n
 }
 
 type MoviePersonPeopleProducedNodeAggregateSelection @source(subgraph: "Movies", name: "MoviePersonPeopleProducedNodeAggregateSelection") {
-  born: BigIntAggregateSelectionNullable! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelectionNullable!")
-  name: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelectionNonNullable!")
+  born: BigIntAggregateSelection! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelection!")
+  name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
 type MoviePersonPeopleReviewedAggregationSelection @source(subgraph: "Movies", name: "MoviePersonPeopleReviewedAggregationSelection") {
@@ -1004,13 +935,13 @@ type MoviePersonPeopleReviewedAggregationSelection @source(subgraph: "Movies", n
 }
 
 type MoviePersonPeopleReviewedEdgeAggregateSelection @source(subgraph: "Movies", name: "MoviePersonPeopleReviewedEdgeAggregateSelection") {
-  rating: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "rating", type: "BigIntAggregateSelectionNonNullable!")
-  summary: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "summary", type: "StringAggregateSelectionNonNullable!")
+  rating: BigIntAggregateSelection! @source(subgraph: "Movies", name: "rating", type: "BigIntAggregateSelection!")
+  summary: StringAggregateSelection! @source(subgraph: "Movies", name: "summary", type: "StringAggregateSelection!")
 }
 
 type MoviePersonPeopleReviewedNodeAggregateSelection @source(subgraph: "Movies", name: "MoviePersonPeopleReviewedNodeAggregateSelection") {
-  born: BigIntAggregateSelectionNullable! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelectionNullable!")
-  name: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelectionNonNullable!")
+  born: BigIntAggregateSelection! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelection!")
+  name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
 type MoviePersonPeopleWroteAggregationSelection @source(subgraph: "Movies", name: "MoviePersonPeopleWroteAggregationSelection") {
@@ -1019,8 +950,8 @@ type MoviePersonPeopleWroteAggregationSelection @source(subgraph: "Movies", name
 }
 
 type MoviePersonPeopleWroteNodeAggregateSelection @source(subgraph: "Movies", name: "MoviePersonPeopleWroteNodeAggregateSelection") {
-  born: BigIntAggregateSelectionNullable! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelectionNullable!")
-  name: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelectionNonNullable!")
+  born: BigIntAggregateSelection! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelection!")
+  name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
 input MovieRelationInput @source(subgraph: "Movies", name: "MovieRelationInput") {
@@ -1488,10 +1419,10 @@ input PersonActedInMoviesNodeAggregationWhereInput @source(subgraph: "Movies", n
   votes_SUM_LTE: BigInt @source(subgraph: "Movies", name: "votes_SUM_LTE", type: "BigInt")
 }
 
-type PersonActedInMoviesRelationship implements ActedInProperties @source(subgraph: "Movies", name: "PersonActedInMoviesRelationship") {
+type PersonActedInMoviesRelationship @source(subgraph: "Movies", name: "PersonActedInMoviesRelationship") {
   cursor: String! @source(subgraph: "Movies", name: "cursor", type: "String!")
   node: Movie! @source(subgraph: "Movies", name: "node", type: "Movie!")
-  roles: [String]! @introspection @source(subgraph: "Movies", name: "roles", type: "[String]!")
+  properties: ActedInProperties! @source(subgraph: "Movies", name: "properties", type: "ActedInProperties!")
 }
 
 input PersonActedInMoviesUpdateConnectionInput @source(subgraph: "Movies", name: "PersonActedInMoviesUpdateConnectionInput") {
@@ -1509,9 +1440,9 @@ input PersonActedInMoviesUpdateFieldInput @source(subgraph: "Movies", name: "Per
 }
 
 type PersonAggregateSelection @source(subgraph: "Movies", name: "PersonAggregateSelection") {
-  born: BigIntAggregateSelectionNullable! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelectionNullable!")
+  born: BigIntAggregateSelection! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelection!")
   count: Int! @source(subgraph: "Movies", name: "count", type: "Int!")
-  name: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelectionNonNullable!")
+  name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
 input PersonConnectInput @source(subgraph: "Movies", name: "PersonConnectInput") {
@@ -1915,10 +1846,10 @@ type PersonMovieActedInMoviesAggregationSelection @source(subgraph: "Movies", na
 }
 
 type PersonMovieActedInMoviesNodeAggregateSelection @source(subgraph: "Movies", name: "PersonMovieActedInMoviesNodeAggregateSelection") {
-  released: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelectionNonNullable!")
-  tagline: StringAggregateSelectionNullable! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelectionNullable!")
-  title: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelectionNonNullable!")
-  votes: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelectionNonNullable!")
+  released: BigIntAggregateSelection! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelection!")
+  tagline: StringAggregateSelection! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelection!")
+  title: StringAggregateSelection! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelection!")
+  votes: BigIntAggregateSelection! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelection!")
 }
 
 type PersonMovieDirectedMoviesAggregationSelection @source(subgraph: "Movies", name: "PersonMovieDirectedMoviesAggregationSelection") {
@@ -1927,10 +1858,10 @@ type PersonMovieDirectedMoviesAggregationSelection @source(subgraph: "Movies", n
 }
 
 type PersonMovieDirectedMoviesNodeAggregateSelection @source(subgraph: "Movies", name: "PersonMovieDirectedMoviesNodeAggregateSelection") {
-  released: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelectionNonNullable!")
-  tagline: StringAggregateSelectionNullable! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelectionNullable!")
-  title: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelectionNonNullable!")
-  votes: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelectionNonNullable!")
+  released: BigIntAggregateSelection! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelection!")
+  tagline: StringAggregateSelection! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelection!")
+  title: StringAggregateSelection! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelection!")
+  votes: BigIntAggregateSelection! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelection!")
 }
 
 type PersonMovieProducedMoviesAggregationSelection @source(subgraph: "Movies", name: "PersonMovieProducedMoviesAggregationSelection") {
@@ -1939,10 +1870,10 @@ type PersonMovieProducedMoviesAggregationSelection @source(subgraph: "Movies", n
 }
 
 type PersonMovieProducedMoviesNodeAggregateSelection @source(subgraph: "Movies", name: "PersonMovieProducedMoviesNodeAggregateSelection") {
-  released: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelectionNonNullable!")
-  tagline: StringAggregateSelectionNullable! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelectionNullable!")
-  title: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelectionNonNullable!")
-  votes: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelectionNonNullable!")
+  released: BigIntAggregateSelection! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelection!")
+  tagline: StringAggregateSelection! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelection!")
+  title: StringAggregateSelection! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelection!")
+  votes: BigIntAggregateSelection! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelection!")
 }
 
 type PersonMovieReviewedMoviesAggregationSelection @source(subgraph: "Movies", name: "PersonMovieReviewedMoviesAggregationSelection") {
@@ -1952,15 +1883,15 @@ type PersonMovieReviewedMoviesAggregationSelection @source(subgraph: "Movies", n
 }
 
 type PersonMovieReviewedMoviesEdgeAggregateSelection @source(subgraph: "Movies", name: "PersonMovieReviewedMoviesEdgeAggregateSelection") {
-  rating: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "rating", type: "BigIntAggregateSelectionNonNullable!")
-  summary: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "summary", type: "StringAggregateSelectionNonNullable!")
+  rating: BigIntAggregateSelection! @source(subgraph: "Movies", name: "rating", type: "BigIntAggregateSelection!")
+  summary: StringAggregateSelection! @source(subgraph: "Movies", name: "summary", type: "StringAggregateSelection!")
 }
 
 type PersonMovieReviewedMoviesNodeAggregateSelection @source(subgraph: "Movies", name: "PersonMovieReviewedMoviesNodeAggregateSelection") {
-  released: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelectionNonNullable!")
-  tagline: StringAggregateSelectionNullable! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelectionNullable!")
-  title: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelectionNonNullable!")
-  votes: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelectionNonNullable!")
+  released: BigIntAggregateSelection! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelection!")
+  tagline: StringAggregateSelection! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelection!")
+  title: StringAggregateSelection! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelection!")
+  votes: BigIntAggregateSelection! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelection!")
 }
 
 type PersonMovieWroteMoviesAggregationSelection @source(subgraph: "Movies", name: "PersonMovieWroteMoviesAggregationSelection") {
@@ -1969,10 +1900,10 @@ type PersonMovieWroteMoviesAggregationSelection @source(subgraph: "Movies", name
 }
 
 type PersonMovieWroteMoviesNodeAggregateSelection @source(subgraph: "Movies", name: "PersonMovieWroteMoviesNodeAggregateSelection") {
-  released: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelectionNonNullable!")
-  tagline: StringAggregateSelectionNullable! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelectionNullable!")
-  title: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelectionNonNullable!")
-  votes: BigIntAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelectionNonNullable!")
+  released: BigIntAggregateSelection! @source(subgraph: "Movies", name: "released", type: "BigIntAggregateSelection!")
+  tagline: StringAggregateSelection! @source(subgraph: "Movies", name: "tagline", type: "StringAggregateSelection!")
+  title: StringAggregateSelection! @source(subgraph: "Movies", name: "title", type: "StringAggregateSelection!")
+  votes: BigIntAggregateSelection! @source(subgraph: "Movies", name: "votes", type: "BigIntAggregateSelection!")
 }
 
 input PersonOptions @source(subgraph: "Movies", name: "PersonOptions") {
@@ -2132,8 +2063,8 @@ type PersonPersonFollowsPeopleAggregationSelection @source(subgraph: "Movies", n
 }
 
 type PersonPersonFollowsPeopleNodeAggregateSelection @source(subgraph: "Movies", name: "PersonPersonFollowsPeopleNodeAggregateSelection") {
-  born: BigIntAggregateSelectionNullable! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelectionNullable!")
-  name: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelectionNonNullable!")
+  born: BigIntAggregateSelection! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelection!")
+  name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
 type PersonPersonPeopleFollowsAggregationSelection @source(subgraph: "Movies", name: "PersonPersonPeopleFollowsAggregationSelection") {
@@ -2142,8 +2073,8 @@ type PersonPersonPeopleFollowsAggregationSelection @source(subgraph: "Movies", n
 }
 
 type PersonPersonPeopleFollowsNodeAggregateSelection @source(subgraph: "Movies", name: "PersonPersonPeopleFollowsNodeAggregateSelection") {
-  born: BigIntAggregateSelectionNullable! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelectionNullable!")
-  name: StringAggregateSelectionNonNullable! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelectionNonNullable!")
+  born: BigIntAggregateSelection! @source(subgraph: "Movies", name: "born", type: "BigIntAggregateSelection!")
+  name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
 input PersonProducedMoviesAggregateInput @source(subgraph: "Movies", name: "PersonProducedMoviesAggregateInput") {
@@ -2367,7 +2298,7 @@ input PersonReviewedMoviesAggregateInput @source(subgraph: "Movies", name: "Pers
   count_GTE: Int @source(subgraph: "Movies", name: "count_GTE", type: "Int")
   count_LT: Int @source(subgraph: "Movies", name: "count_LT", type: "Int")
   count_LTE: Int @source(subgraph: "Movies", name: "count_LTE", type: "Int")
-  edge: PersonReviewedMoviesEdgeAggregationWhereInput @source(subgraph: "Movies", name: "edge", type: "PersonReviewedMoviesEdgeAggregationWhereInput")
+  edge: ReviewedPropertiesAggregationWhereInput @source(subgraph: "Movies", name: "edge", type: "ReviewedPropertiesAggregationWhereInput")
   node: PersonReviewedMoviesNodeAggregationWhereInput @source(subgraph: "Movies", name: "node", type: "PersonReviewedMoviesNodeAggregationWhereInput")
 }
 
@@ -2415,72 +2346,6 @@ input PersonReviewedMoviesDeleteFieldInput @source(subgraph: "Movies", name: "Pe
 input PersonReviewedMoviesDisconnectFieldInput @source(subgraph: "Movies", name: "PersonReviewedMoviesDisconnectFieldInput") {
   disconnect: MovieDisconnectInput @source(subgraph: "Movies", name: "disconnect", type: "MovieDisconnectInput")
   where: PersonReviewedMoviesConnectionWhere @source(subgraph: "Movies", name: "where", type: "PersonReviewedMoviesConnectionWhere")
-}
-
-input PersonReviewedMoviesEdgeAggregationWhereInput @source(subgraph: "Movies", name: "PersonReviewedMoviesEdgeAggregationWhereInput") {
-  AND: [PersonReviewedMoviesEdgeAggregationWhereInput!] @source(subgraph: "Movies", name: "AND", type: "[PersonReviewedMoviesEdgeAggregationWhereInput!]")
-  NOT: PersonReviewedMoviesEdgeAggregationWhereInput @source(subgraph: "Movies", name: "NOT", type: "PersonReviewedMoviesEdgeAggregationWhereInput")
-  OR: [PersonReviewedMoviesEdgeAggregationWhereInput!] @source(subgraph: "Movies", name: "OR", type: "[PersonReviewedMoviesEdgeAggregationWhereInput!]")
-  rating_AVERAGE_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_EQUAL", type: "BigInt")
-  rating_AVERAGE_GT: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_GT", type: "BigInt")
-  rating_AVERAGE_GTE: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_GTE", type: "BigInt")
-  rating_AVERAGE_LT: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_LT", type: "BigInt")
-  rating_AVERAGE_LTE: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_LTE", type: "BigInt")
-  rating_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_EQUAL", type: "BigInt")
-  rating_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_GT", type: "BigInt")
-  rating_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_GTE", type: "BigInt")
-  rating_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_LT", type: "BigInt")
-  rating_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_LTE", type: "BigInt")
-  rating_MAX_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_MAX_EQUAL", type: "BigInt")
-  rating_MAX_GT: BigInt @source(subgraph: "Movies", name: "rating_MAX_GT", type: "BigInt")
-  rating_MAX_GTE: BigInt @source(subgraph: "Movies", name: "rating_MAX_GTE", type: "BigInt")
-  rating_MAX_LT: BigInt @source(subgraph: "Movies", name: "rating_MAX_LT", type: "BigInt")
-  rating_MAX_LTE: BigInt @source(subgraph: "Movies", name: "rating_MAX_LTE", type: "BigInt")
-  rating_MIN_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_MIN_EQUAL", type: "BigInt")
-  rating_MIN_GT: BigInt @source(subgraph: "Movies", name: "rating_MIN_GT", type: "BigInt")
-  rating_MIN_GTE: BigInt @source(subgraph: "Movies", name: "rating_MIN_GTE", type: "BigInt")
-  rating_MIN_LT: BigInt @source(subgraph: "Movies", name: "rating_MIN_LT", type: "BigInt")
-  rating_MIN_LTE: BigInt @source(subgraph: "Movies", name: "rating_MIN_LTE", type: "BigInt")
-  rating_SUM_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_SUM_EQUAL", type: "BigInt")
-  rating_SUM_GT: BigInt @source(subgraph: "Movies", name: "rating_SUM_GT", type: "BigInt")
-  rating_SUM_GTE: BigInt @source(subgraph: "Movies", name: "rating_SUM_GTE", type: "BigInt")
-  rating_SUM_LT: BigInt @source(subgraph: "Movies", name: "rating_SUM_LT", type: "BigInt")
-  rating_SUM_LTE: BigInt @source(subgraph: "Movies", name: "rating_SUM_LTE", type: "BigInt")
-  summary_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_EQUAL", type: "Float")
-  summary_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_GT", type: "Float")
-  summary_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_GTE", type: "Float")
-  summary_AVERAGE_LENGTH_EQUAL: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_EQUAL", type: "Float")
-  summary_AVERAGE_LENGTH_GT: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_GT", type: "Float")
-  summary_AVERAGE_LENGTH_GTE: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_GTE", type: "Float")
-  summary_AVERAGE_LENGTH_LT: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_LT", type: "Float")
-  summary_AVERAGE_LENGTH_LTE: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_LTE", type: "Float")
-  summary_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_LT", type: "Float")
-  summary_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_LTE", type: "Float")
-  summary_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_EQUAL", type: "String")
-  summary_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_GT", type: "Int")
-  summary_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_GTE", type: "Int")
-  summary_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_EQUAL", type: "Int")
-  summary_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_GT", type: "Int")
-  summary_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_GTE", type: "Int")
-  summary_LONGEST_LENGTH_EQUAL: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_EQUAL", type: "Int")
-  summary_LONGEST_LENGTH_GT: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_GT", type: "Int")
-  summary_LONGEST_LENGTH_GTE: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_GTE", type: "Int")
-  summary_LONGEST_LENGTH_LT: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_LT", type: "Int")
-  summary_LONGEST_LENGTH_LTE: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_LTE", type: "Int")
-  summary_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_LT", type: "Int")
-  summary_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_LTE", type: "Int")
-  summary_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_LT", type: "Int")
-  summary_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_LTE", type: "Int")
-  summary_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_EQUAL", type: "Int")
-  summary_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_GT", type: "Int")
-  summary_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_GTE", type: "Int")
-  summary_SHORTEST_LENGTH_EQUAL: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_EQUAL", type: "Int")
-  summary_SHORTEST_LENGTH_GT: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_GT", type: "Int")
-  summary_SHORTEST_LENGTH_GTE: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_GTE", type: "Int")
-  summary_SHORTEST_LENGTH_LT: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_LT", type: "Int")
-  summary_SHORTEST_LENGTH_LTE: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_LTE", type: "Int")
-  summary_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_LT", type: "Int")
-  summary_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_LTE", type: "Int")
 }
 
 input PersonReviewedMoviesFieldInput @source(subgraph: "Movies", name: "PersonReviewedMoviesFieldInput") {
@@ -2614,11 +2479,10 @@ input PersonReviewedMoviesNodeAggregationWhereInput @source(subgraph: "Movies", 
   votes_SUM_LTE: BigInt @source(subgraph: "Movies", name: "votes_SUM_LTE", type: "BigInt")
 }
 
-type PersonReviewedMoviesRelationship implements ReviewedProperties @source(subgraph: "Movies", name: "PersonReviewedMoviesRelationship") {
+type PersonReviewedMoviesRelationship @source(subgraph: "Movies", name: "PersonReviewedMoviesRelationship") {
   cursor: String! @source(subgraph: "Movies", name: "cursor", type: "String!")
   node: Movie! @source(subgraph: "Movies", name: "node", type: "Movie!")
-  rating: BigInt! @introspection @source(subgraph: "Movies", name: "rating", type: "BigInt!")
-  summary: String! @introspection @source(subgraph: "Movies", name: "summary", type: "String!")
+  properties: ReviewedProperties! @source(subgraph: "Movies", name: "properties", type: "ReviewedProperties!")
 }
 
 input PersonReviewedMoviesUpdateConnectionInput @source(subgraph: "Movies", name: "PersonReviewedMoviesUpdateConnectionInput") {
@@ -3095,9 +2959,80 @@ type Query {
   peopleConnection(after: String, first: Int, sort: [PersonSort], where: PersonWhere): PeopleConnection! @resolver(subgraph: "Movies", operation: "query peopleConnection($first: Int, $after: String, $where: PersonWhere, $sort: [PersonSort]) { peopleConnection(first: $first, after: $after, where: $where, sort: $sort) }") @source(subgraph: "Movies", name: "peopleConnection", type: "PeopleConnection!")
 }
 
-interface ReviewedProperties @relationshipProperties @introspection @source(subgraph: "Movies", name: "ReviewedProperties") {
+"""
+The edge properties for the following fields:
+* Movie.peopleReviewed
+* Person.reviewedMovies
+"""
+type ReviewedProperties @relationshipProperties @introspection @source(subgraph: "Movies", name: "ReviewedProperties") {
   rating: BigInt! @introspection @source(subgraph: "Movies", name: "rating", type: "BigInt!")
   summary: String! @introspection @source(subgraph: "Movies", name: "summary", type: "String!")
+}
+
+input ReviewedPropertiesAggregationWhereInput @source(subgraph: "Movies", name: "ReviewedPropertiesAggregationWhereInput") {
+  AND: [ReviewedPropertiesAggregationWhereInput!] @source(subgraph: "Movies", name: "AND", type: "[ReviewedPropertiesAggregationWhereInput!]")
+  NOT: ReviewedPropertiesAggregationWhereInput @source(subgraph: "Movies", name: "NOT", type: "ReviewedPropertiesAggregationWhereInput")
+  OR: [ReviewedPropertiesAggregationWhereInput!] @source(subgraph: "Movies", name: "OR", type: "[ReviewedPropertiesAggregationWhereInput!]")
+  rating_AVERAGE_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_EQUAL", type: "BigInt")
+  rating_AVERAGE_GT: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_GT", type: "BigInt")
+  rating_AVERAGE_GTE: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_GTE", type: "BigInt")
+  rating_AVERAGE_LT: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_LT", type: "BigInt")
+  rating_AVERAGE_LTE: BigInt @source(subgraph: "Movies", name: "rating_AVERAGE_LTE", type: "BigInt")
+  rating_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_EQUAL", type: "BigInt")
+  rating_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_GT", type: "BigInt")
+  rating_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_GTE", type: "BigInt")
+  rating_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_LT", type: "BigInt")
+  rating_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "rating_LTE", type: "BigInt")
+  rating_MAX_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_MAX_EQUAL", type: "BigInt")
+  rating_MAX_GT: BigInt @source(subgraph: "Movies", name: "rating_MAX_GT", type: "BigInt")
+  rating_MAX_GTE: BigInt @source(subgraph: "Movies", name: "rating_MAX_GTE", type: "BigInt")
+  rating_MAX_LT: BigInt @source(subgraph: "Movies", name: "rating_MAX_LT", type: "BigInt")
+  rating_MAX_LTE: BigInt @source(subgraph: "Movies", name: "rating_MAX_LTE", type: "BigInt")
+  rating_MIN_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_MIN_EQUAL", type: "BigInt")
+  rating_MIN_GT: BigInt @source(subgraph: "Movies", name: "rating_MIN_GT", type: "BigInt")
+  rating_MIN_GTE: BigInt @source(subgraph: "Movies", name: "rating_MIN_GTE", type: "BigInt")
+  rating_MIN_LT: BigInt @source(subgraph: "Movies", name: "rating_MIN_LT", type: "BigInt")
+  rating_MIN_LTE: BigInt @source(subgraph: "Movies", name: "rating_MIN_LTE", type: "BigInt")
+  rating_SUM_EQUAL: BigInt @source(subgraph: "Movies", name: "rating_SUM_EQUAL", type: "BigInt")
+  rating_SUM_GT: BigInt @source(subgraph: "Movies", name: "rating_SUM_GT", type: "BigInt")
+  rating_SUM_GTE: BigInt @source(subgraph: "Movies", name: "rating_SUM_GTE", type: "BigInt")
+  rating_SUM_LT: BigInt @source(subgraph: "Movies", name: "rating_SUM_LT", type: "BigInt")
+  rating_SUM_LTE: BigInt @source(subgraph: "Movies", name: "rating_SUM_LTE", type: "BigInt")
+  summary_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_EQUAL", type: "Float")
+  summary_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_GT", type: "Float")
+  summary_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_GTE", type: "Float")
+  summary_AVERAGE_LENGTH_EQUAL: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_EQUAL", type: "Float")
+  summary_AVERAGE_LENGTH_GT: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_GT", type: "Float")
+  summary_AVERAGE_LENGTH_GTE: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_GTE", type: "Float")
+  summary_AVERAGE_LENGTH_LT: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_LT", type: "Float")
+  summary_AVERAGE_LENGTH_LTE: Float @source(subgraph: "Movies", name: "summary_AVERAGE_LENGTH_LTE", type: "Float")
+  summary_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_LT", type: "Float")
+  summary_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_AVERAGE_LTE", type: "Float")
+  summary_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_EQUAL", type: "String")
+  summary_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_GT", type: "Int")
+  summary_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_GTE", type: "Int")
+  summary_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_EQUAL", type: "Int")
+  summary_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_GT", type: "Int")
+  summary_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_GTE", type: "Int")
+  summary_LONGEST_LENGTH_EQUAL: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_EQUAL", type: "Int")
+  summary_LONGEST_LENGTH_GT: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_GT", type: "Int")
+  summary_LONGEST_LENGTH_GTE: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_GTE", type: "Int")
+  summary_LONGEST_LENGTH_LT: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_LT", type: "Int")
+  summary_LONGEST_LENGTH_LTE: Int @source(subgraph: "Movies", name: "summary_LONGEST_LENGTH_LTE", type: "Int")
+  summary_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_LT", type: "Int")
+  summary_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_LONGEST_LTE", type: "Int")
+  summary_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_LT", type: "Int")
+  summary_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.") @source(subgraph: "Movies", name: "summary_LTE", type: "Int")
+  summary_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_EQUAL", type: "Int")
+  summary_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_GT", type: "Int")
+  summary_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_GTE", type: "Int")
+  summary_SHORTEST_LENGTH_EQUAL: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_EQUAL", type: "Int")
+  summary_SHORTEST_LENGTH_GT: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_GT", type: "Int")
+  summary_SHORTEST_LENGTH_GTE: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_GTE", type: "Int")
+  summary_SHORTEST_LENGTH_LT: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_LT", type: "Int")
+  summary_SHORTEST_LENGTH_LTE: Int @source(subgraph: "Movies", name: "summary_SHORTEST_LENGTH_LTE", type: "Int")
+  summary_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_LT", type: "Int")
+  summary_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") @source(subgraph: "Movies", name: "summary_SHORTEST_LTE", type: "Int")
 }
 
 input ReviewedPropertiesCreateInput @source(subgraph: "Movies", name: "ReviewedPropertiesCreateInput") {
@@ -3149,12 +3084,7 @@ enum SortDirection @source(subgraph: "Movies", name: "SortDirection") {
   DESC @source(subgraph: "Movies", name: "DESC")
 }
 
-type StringAggregateSelectionNonNullable @source(subgraph: "Movies", name: "StringAggregateSelectionNonNullable") {
-  longest: String! @source(subgraph: "Movies", name: "longest", type: "String!")
-  shortest: String! @source(subgraph: "Movies", name: "shortest", type: "String!")
-}
-
-type StringAggregateSelectionNullable @source(subgraph: "Movies", name: "StringAggregateSelectionNullable") {
+type StringAggregateSelection @source(subgraph: "Movies", name: "StringAggregateSelection") {
   longest: String @source(subgraph: "Movies", name: "longest", type: "String")
   shortest: String @source(subgraph: "Movies", name: "shortest", type: "String")
 }
