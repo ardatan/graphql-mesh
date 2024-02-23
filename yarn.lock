@@ -4580,7 +4580,7 @@ __metadata:
     "@types/yargs": "npm:17.0.32"
     ajv: "npm:^8.12.0"
     change-case: "npm:^4.1.2"
-    cosmiconfig: "patch:cosmiconfig@npm%3A7.1.0#~/.yarn/patches/cosmiconfig-npm-7.1.0-13a5090bcd.patch"
+    cosmiconfig: "npm:^9.0.0"
     dotenv: "npm:^16.0.3"
     graphql-import-node: "npm:^0.0.5"
     graphql-ws: "npm:^5.12.1"
@@ -15050,6 +15050,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cosmiconfig@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "cosmiconfig@npm:9.0.0"
+  dependencies:
+    env-paths: "npm:^2.2.1"
+    import-fresh: "npm:^3.3.0"
+    js-yaml: "npm:^4.1.0"
+    parse-json: "npm:^5.2.0"
+  peerDependencies:
+    typescript: ">=4.9.5"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/1c1703be4f02a250b1d6ca3267e408ce16abfe8364193891afc94c2d5c060b69611fdc8d97af74b7e6d5d1aac0ab2fb94d6b079573146bc2d756c2484ce5f0ee
+  languageName: node
+  linkType: hard
+
 "cosmiconfig@patch:cosmiconfig@npm%3A7.1.0#~/.yarn/patches/cosmiconfig-npm-7.1.0-13a5090bcd.patch":
   version: 7.1.0
   resolution: "cosmiconfig@patch:cosmiconfig@npm%3A7.1.0#~/.yarn/patches/cosmiconfig-npm-7.1.0-13a5090bcd.patch::version=7.1.0&hash=d5afe4"
@@ -16914,7 +16931,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"env-paths@npm:^2.2.0":
+"env-paths@npm:^2.2.0, env-paths@npm:^2.2.1":
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
   checksum: 10c0/285325677bf00e30845e330eec32894f5105529db97496ee3f598478e50f008c5352a41a30e5e72ec9de8a542b5a570b85699cd63bd2bc646dbcb9f311d83bc4
@@ -20700,7 +20717,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-fresh@npm:^3.2.1":
+"import-fresh@npm:^3.2.1, import-fresh@npm:^3.3.0":
   version: 3.3.0
   resolution: "import-fresh@npm:3.3.0"
   dependencies:
