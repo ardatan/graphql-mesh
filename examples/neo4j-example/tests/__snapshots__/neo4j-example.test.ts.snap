@@ -1179,11 +1179,11 @@ input MovieSubscriptionWhere {
   released: BigInt
   released_GT: BigInt
   released_GTE: BigInt
-  released_IN: [BigInt]
+  released_IN: [BigInt!]
   released_LT: BigInt
   released_LTE: BigInt
   released_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
-  released_NOT_IN: [BigInt] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  released_NOT_IN: [BigInt!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   tagline: String
   tagline_CONTAINS: String
   tagline_ENDS_WITH: String
@@ -1197,21 +1197,21 @@ input MovieSubscriptionWhere {
   title: String
   title_CONTAINS: String
   title_ENDS_WITH: String
-  title_IN: [String]
+  title_IN: [String!]
   title_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   title_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   title_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
-  title_NOT_IN: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_IN: [String!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   title_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   title_STARTS_WITH: String
   votes: BigInt
   votes_GT: BigInt
   votes_GTE: BigInt
-  votes_IN: [BigInt]
+  votes_IN: [BigInt!]
   votes_LT: BigInt
   votes_LTE: BigInt
   votes_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
-  votes_NOT_IN: [BigInt] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  votes_NOT_IN: [BigInt!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input MovieUpdateInput {
@@ -2960,11 +2960,11 @@ input PersonSubscriptionWhere {
   name: String
   name_CONTAINS: String
   name_ENDS_WITH: String
-  name_IN: [String]
+  name_IN: [String!]
   name_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   name_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   name_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
-  name_NOT_IN: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_IN: [String!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   name_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   name_STARTS_WITH: String
 }
@@ -3458,19 +3458,19 @@ input ReviewedPropertiesSubscriptionWhere {
   rating: BigInt
   rating_GT: BigInt
   rating_GTE: BigInt
-  rating_IN: [BigInt]
+  rating_IN: [BigInt!]
   rating_LT: BigInt
   rating_LTE: BigInt
   rating_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
-  rating_NOT_IN: [BigInt] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  rating_NOT_IN: [BigInt!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary: String
   summary_CONTAINS: String
   summary_ENDS_WITH: String
-  summary_IN: [String]
+  summary_IN: [String!]
   summary_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
-  summary_NOT_IN: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_IN: [String!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary_STARTS_WITH: String
 }
