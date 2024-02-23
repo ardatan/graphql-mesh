@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.96.6
+
+### Patch Changes
+
+- [`0f274ef`](https://github.com/ardatan/graphql-mesh/commit/0f274ef8177068da65e50e08607998d0ed63e8b9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Prevent `ownKeys` trap to return the same keys
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.96.6
+
 ## 0.96.5
 
 ### Patch Changes

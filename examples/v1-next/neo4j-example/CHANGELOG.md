@@ -1,5 +1,15 @@
 # neo4j-example
 
+## 0.15.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`893c814`](https://github.com/ardatan/graphql-mesh/commit/893c814659f347a59a029bce3a437fb5ca79b23c)]:
+  - @omnigraph/neo4j@0.0.5
+  - @graphql-mesh/compose-cli@0.1.1
+  - @graphql-mesh/serve-cli@0.2.1
+
 ## 0.15.0
 
 ### Patch Changes

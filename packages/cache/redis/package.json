@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.96.5",
+  "version": "0.96.6",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,8 +33,8 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.1",
-    "@graphql-mesh/types": "^0.96.5",
-    "@graphql-mesh/utils": "^0.96.5",
+    "@graphql-mesh/types": "^0.96.6",
+    "@graphql-mesh/utils": "^0.96.6",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
