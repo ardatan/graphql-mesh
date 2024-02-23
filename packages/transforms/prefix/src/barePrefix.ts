@@ -52,7 +52,9 @@ export default class BarePrefix implements MeshTransform {
           const existingResolver = type.resolveType;
           type.resolveType = async (data, context, info, abstractType) => {
             const typeName = await existingResolver(data, context, info, abstractType);
-            return this.prefix + typeName;
+            // an extended type might already implement the resolver of a previously
+            // transformed type, hence prefix would have already been applied
+            return typeName.startsWith(this.prefix) ? typeName : this.prefix + typeName;
           };
           const currentName = type.name;
           return renameType(type, this.prefix + currentName) as GraphQLAbstractType;
