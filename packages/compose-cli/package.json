@@ -41,7 +41,7 @@
   "dependencies": {
     "@graphql-mesh/fusion-composition": "^0.0.1",
     "@graphql-mesh/utils": "^0.96.6",
-    "@graphql-tools/graphql-file-loader": "8.0.0",
+    "@graphql-tools/graphql-file-loader": "8.0.1",
     "@graphql-tools/load": "^8.0.1",
     "@graphql-tools/utils": "^10.0.8",
     "@whatwg-node/fetch": "^0.9.14",
