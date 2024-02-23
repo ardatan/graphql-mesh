@@ -89,8 +89,6 @@
   "resolutions": {
     "@changesets/assemble-release-plan": "5.2.3",
     "@changesets/assemble-release-plan@npm:^6.0.0": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
-    "cosmiconfig@npm:^6.0.0": "patch:cosmiconfig@npm%3A7.1.0#~/.yarn/patches/cosmiconfig-npm-7.1.0-13a5090bcd.patch",
-    "cosmiconfig@npm:^7.0.0": "patch:cosmiconfig@npm%3A7.1.0#~/.yarn/patches/cosmiconfig-npm-7.1.0-13a5090bcd.patch",
     "esbuild": "0.20.1",
     "graphql": "16.8.1",
     "tslib": "2.6.2",
