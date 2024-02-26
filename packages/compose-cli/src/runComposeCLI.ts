@@ -20,7 +20,8 @@ export async function runComposeCLI(
   processExit = (exitCode: number) => process.exit(exitCode),
 ): Promise<void | never> {
   spinnies.add('main', { text: 'Starting Mesh Compose CLI' });
-  const meshComposeCLIConfigFileName = process.env.MESH_DEV_CONFIG_FILE_NAME || 'mesh.config.ts';
+  const meshComposeCLIConfigFileName =
+    process.env.MESH_COMPOSE_CONFIG_FILE_NAME || 'mesh.config.ts';
   const meshComposeCLIConfigFilePath =
     process.env.MESH_DEV_CONFIG_FILE_PATH || join(process.cwd(), meshComposeCLIConfigFileName);
   spinnies.add('config', {
