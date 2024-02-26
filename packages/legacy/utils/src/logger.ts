@@ -35,7 +35,7 @@ export class DefaultLogger implements Logger {
             return (
               arg.slice(0, 100) +
               '...' +
-              '<Error message is too long. Enable DEBUG=1 to see the full message.>'
+              '<Message is too long. Enable DEBUG=1 to see the full message.>'
             );
           }
           return arg;
