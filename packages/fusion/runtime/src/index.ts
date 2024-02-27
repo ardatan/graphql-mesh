@@ -167,7 +167,7 @@ export function getExecutorForFusiongraph({
     let executor: Executor = subgraphExecutorMap[subgraphName];
     if (executor == null) {
       transportBaseContext?.logger?.info(`Initializing executor for subgraph ${subgraphName}`);
-      const transportEntry = transportEntryMap[subgraphName];
+      let transportEntry = transportEntryMap[subgraphName];
       // eslint-disable-next-line no-inner-declarations
       function wrapExecutorWithHooks(currentExecutor: Executor) {
         if (onSubgraphExecuteHooks.length) {
@@ -180,7 +180,13 @@ export function getExecutorForFusiongraph({
                   fusiongraph,
                   subgraphName,
                   transportEntry,
+                  setTransportEntry(newTransportEntry) {
+                    transportEntry = newTransportEntry;
+                  },
                   executionRequest: subgraphExecReq,
+                  setExecutionRequest(newExecutionRequest) {
+                    subgraphExecReq = newExecutionRequest;
+                  },
                   executor: currentExecutor,
                   setExecutor(newExecutor) {
                     currentExecutor = newExecutor;
@@ -495,7 +501,9 @@ export interface OnFusiongraphExecutePayload {
   fusiongraph: GraphQLSchema;
   subgraphName: string;
   transportEntry: TransportEntry;
+  setTransportEntry(transportEntry: TransportEntry): void;
   executionRequest: ExecutionRequest;
+  setExecutionRequest(executionRequest: ExecutionRequest): void;
   executor: Executor;
   setExecutor(executor: Executor): void;
 }
