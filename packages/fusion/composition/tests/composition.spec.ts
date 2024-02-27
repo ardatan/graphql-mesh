@@ -17,6 +17,12 @@ describe('Composition', () => {
     type Query {
       foo(id: ID!): Foo!
       foos(ids: [ID!]!): [Foo!]!
+      foosByFilter(where: FooFilter!): [Foo!]!
+    }
+
+    input FooFilter {
+      id: ID
+      id_in: [ID!]
     }
 
     type Foo {

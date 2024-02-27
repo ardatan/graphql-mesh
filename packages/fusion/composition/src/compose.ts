@@ -3,11 +3,13 @@ import {
   GraphQLField,
   GraphQLNamedType,
   GraphQLSchema,
+  isInputObjectType,
   isObjectType,
   isSpecifiedScalarType,
   OperationTypeNode,
 } from 'graphql';
 import { pascalCase } from 'pascal-case';
+import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { mergeSchemas, MergeSchemasConfig } from '@graphql-tools/schema';
 import { asArray, getRootTypeMap, getRootTypes, MapperKind, mapSchema } from '@graphql-tools/utils';
@@ -240,13 +242,12 @@ function addAnnotationsForSemanticConventions({
       for (const fieldName in fieldMap) {
         const objectField = fieldMap[fieldName];
         const queryField = queryFields[queryFieldName];
-        const arg = queryField.args.find(
-          arg => getNamedType(arg.type) === getNamedType(objectField.type),
-        );
+        const objectFieldType = getNamedType(objectField.type);
+        const arg = queryField.args.find(arg => getNamedType(arg.type) === objectFieldType);
         const queryFieldTypeName = getNamedType(queryField.type).name;
         const queryFieldNameSnakeCase = snakeCase(queryFieldName);
         const varName = `${type.name}_${fieldName}`;
-        if (arg && queryFieldTypeName === type.name) {
+        if (queryFieldTypeName === type.name) {
           // eslint-disable-next-line no-inner-declarations
           function addVariablesForOtherSubgraphs() {
             directives.variable ||= [];
@@ -279,41 +280,82 @@ function addAnnotationsForSemanticConventions({
               }
             }
           }
-          switch (queryFieldNameSnakeCase) {
-            case snakeCase(type.name):
-            case snakeCase(`get_${type.name}_by_${fieldName}`):
-            case snakeCase(`${type.name}_by_${fieldName}`): {
-              const operationName = pascalCase(`${type.name}_by_${fieldName}`);
-              const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
-              const resolverAnnotation: ResolverAnnotation = {
-                subgraph: subgraphName,
-                operation: `query ${operationName}($${varName}: ${arg.type}) { ${originalFieldName}(${arg.name}: $${varName}) }`,
-                kind: 'FETCH',
-              };
-              directives.resolver ||= [];
-              directives.resolver.push(resolverAnnotation);
-              addVariablesForOtherSubgraphs();
-              break;
+          const pluralTypeName = pluralize(type.name);
+          if (arg) {
+            switch (queryFieldNameSnakeCase) {
+              case snakeCase(type.name):
+              case snakeCase(`get_${type.name}_by_${fieldName}`):
+              case snakeCase(`${type.name}_by_${fieldName}`): {
+                const operationName = pascalCase(`${type.name}_by_${fieldName}`);
+                const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
+                const resolverAnnotation: ResolverAnnotation = {
+                  subgraph: subgraphName,
+                  operation: `query ${operationName}($${varName}: ${arg.type}) { ${originalFieldName}(${arg.name}: $${varName}) }`,
+                  kind: 'FETCH',
+                };
+                directives.resolver ||= [];
+                directives.resolver.push(resolverAnnotation);
+                addVariablesForOtherSubgraphs();
+                break;
+              }
+              case snakeCase(pluralTypeName):
+              case snakeCase(`get_${pluralTypeName}_by_${fieldName}`):
+              case snakeCase(`${pluralTypeName}_by_${fieldName}`):
+              case snakeCase(`get_${pluralTypeName}_by_${fieldName}s`):
+              case snakeCase(`${pluralTypeName}_by_${fieldName}s`): {
+                const operationName = pascalCase(`${pluralTypeName}_by_${fieldName}s`);
+                const originalFieldName =
+                  getOriginalFieldNameForSubgraph(queryField, subgraphName) || queryFieldName;
+                const resolverAnnotation: ResolverAnnotation = {
+                  subgraph: subgraphName,
+                  operation: `query ${operationName}($${varName}: ${arg.type}) { ${originalFieldName}(${arg.name}: $${varName}) }`,
+                  kind: 'BATCH',
+                };
+                directives.resolver ||= [];
+                directives.resolver.push(resolverAnnotation);
+                directives.variable ||= [];
+                addVariablesForOtherSubgraphs();
+                break;
+              }
             }
-            case snakeCase(`${type.name}s`):
-            case snakeCase(`get_${type.name}s_by_${fieldName}`):
-            case snakeCase(`${type.name}s_by_${fieldName}`):
-            case snakeCase(`get_${type.name}s_by_${fieldName}s`):
-            case snakeCase(`${type.name}s_by_${fieldName}s`): {
-              const operationName = pascalCase(`${type.name}s_by_${fieldName}s`);
-              const originalFieldName =
-                getOriginalFieldNameForSubgraph(queryField, subgraphName) || queryFieldName;
-              const resolverAnnotation: ResolverAnnotation = {
-                subgraph: subgraphName,
-                operation: `query ${operationName}($${varName}: ${arg.type}) { ${originalFieldName}(${arg.name}: $${varName}) }`,
-                kind: 'BATCH',
-              };
-              directives.resolver ||= [];
-              directives.resolver.push(resolverAnnotation);
-              directives.variable ||= [];
-              addVariablesForOtherSubgraphs();
-              break;
-            }
+          }
+          /** For the schemas with filter in `where` argument */
+          const whereArg = queryField.args.find(arg => arg.name === 'where');
+          const whereArgType = whereArg && getNamedType(whereArg.type);
+          const whereArgTypeFields = isInputObjectType(whereArgType) && whereArgType.getFields();
+          const regularFieldInWhereArg = whereArgTypeFields?.[fieldName];
+          const regularFieldTypeName =
+            regularFieldInWhereArg && getNamedType(regularFieldInWhereArg.type)?.name;
+          const batchFieldInWhereArg = whereArgTypeFields?.[`${fieldName}_in`];
+          const batchFieldTypeName =
+            batchFieldInWhereArg && getNamedType(batchFieldInWhereArg.type)?.name;
+          const objectFieldTypeName = objectFieldType.name;
+          if (regularFieldTypeName === objectFieldTypeName) {
+            const operationName = pascalCase(`get_${queryFieldTypeName}_by_${fieldName}`);
+            const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
+            const resolverAnnotation: ResolverAnnotation = {
+              subgraph: subgraphName,
+              operation: `query ${operationName}($${varName}: ${objectFieldTypeName}!) { ${originalFieldName}(where: { ${fieldName}: $${varName}) } }`,
+              kind: 'FETCH',
+            };
+            directives.resolver ||= [];
+            directives.resolver.push(resolverAnnotation);
+            directives.variable ||= [];
+            addVariablesForOtherSubgraphs();
+          }
+          if (batchFieldTypeName === objectFieldTypeName) {
+            const pluralFieldName = pluralize(fieldName);
+            const operationName = pascalCase(`get_${pluralTypeName}_by_${pluralFieldName}`);
+            const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
+            const resolverAnnotation: ResolverAnnotation = {
+              subgraph: subgraphName,
+              operation: `query ${operationName}($${varName}: [${objectFieldTypeName}!]!) { ${originalFieldName}(where: { ${fieldName}_in: $${varName} }) }`,
+              kind: 'BATCH',
+            };
+            directives.resolver ||= [];
+            directives.resolver.push(resolverAnnotation);
+            directives.variable ||= [];
+            addVariablesForOtherSubgraphs();
           }
         }
       }

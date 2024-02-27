@@ -2,11 +2,11 @@ import {
   buildClientSchema,
   buildSchema,
   getIntrospectionQuery,
-  GraphQLSchema,
-  IntrospectionQuery,
+  type GraphQLSchema,
+  type IntrospectionQuery,
 } from 'graphql';
-import { ExecutionResult } from '@graphql-tools/utils';
-import { LoaderContext } from './types';
+import type { ExecutionResult } from '@graphql-tools/utils';
+import type { LoaderContext, MeshComposeCLISourceHandlerDef } from './types.js';
 
 export interface GraphQLSubgraphLoaderHTTPConfiguration {
   /**
@@ -97,7 +97,7 @@ export function loadGraphQLHTTPSubgraph(
 
     transportKind = 'http',
   }: GraphQLSubgraphLoaderHTTPConfiguration,
-) {
+): MeshComposeCLISourceHandlerDef {
   return (ctx: LoaderContext) => {
     let schema$: Promise<GraphQLSchema>;
     function handleFetchedSchema(schema: GraphQLSchema) {
