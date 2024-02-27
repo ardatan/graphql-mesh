@@ -136,8 +136,8 @@ export function getTransportExecutor(
   transportGetter: ReturnType<typeof createTransportGetter>,
   transportContext: TransportExecutorFactoryOpts,
 ): MaybePromise<Executor> {
-  transportContext.logger?.info(`Loading transport ${transportContext.transportEntry.kind}`);
-  const transport$ = transportGetter(transportContext.transportEntry.kind);
+  transportContext.logger?.info(`Loading transport ${transportContext.transportEntry?.kind}`);
+  const transport$ = transportGetter(transportContext.transportEntry?.kind);
   return mapMaybePromise(transport$, transport => transport.getSubgraphExecutor(transportContext));
 }
 
