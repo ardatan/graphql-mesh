@@ -11014,14 +11014,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.59":
-  version: 18.2.59
-  resolution: "@types/react@npm:18.2.59"
+"@types/react@npm:18.2.60":
+  version: 18.2.60
+  resolution: "@types/react@npm:18.2.60"
   dependencies:
     "@types/prop-types": "npm:*"
     "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/adbac5d78d755ce0f05fc91917b49344e127aaadf0515fa28dd19e3050514eeae6988ab04610fe403a6d7eb58b8dee7816c019d960373dfa22b008f842d7eaf8
+  checksum: 10c0/e1d8763259c75ebcdf241dbbbfb7e8f606a8abdc98b1acf1a23e741681ebb20e82b490402a32ce10b81ce7e51f00f8009a162a72136333613b4f247549a3ab8d
   languageName: node
   linkType: hard
 
@@ -18955,7 +18955,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.20"
-    "@types/react": "npm:18.2.59"
+    "@types/react": "npm:18.2.60"
     "@types/react-dom": "npm:18.2.19"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
@@ -26212,7 +26212,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.98.7"
     "@graphql-mesh/openapi": "npm:0.98.2"
     "@graphql-mesh/runtime": "npm:0.97.7"
-    "@types/react": "npm:18.2.59"
+    "@types/react": "npm:18.2.60"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.1.0"
@@ -26230,7 +26230,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.98.7"
     "@graphql-mesh/openapi": "npm:0.98.2"
     "@graphql-mesh/runtime": "npm:0.97.7"
-    "@types/react": "npm:18.2.59"
+    "@types/react": "npm:18.2.60"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.1.0"
@@ -26980,7 +26980,7 @@ __metadata:
   resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.88.9"
-    "@types/react": "npm:18.2.59"
+    "@types/react": "npm:18.2.60"
     "@types/react-dom": "npm:18.2.19"
     "@vitejs/plugin-react": "npm:4.2.1"
     graphql: "npm:16.8.1"
@@ -34822,7 +34822,7 @@ __metadata:
     "@theguild/components": "npm:^6.0.1"
     "@theguild/tailwind-config": "npm:0.3.2"
     "@types/node": "npm:20.11.20"
-    "@types/react": "npm:18.2.59"
+    "@types/react": "npm:18.2.60"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.1.0"
     next: "npm:^14.0.0"
