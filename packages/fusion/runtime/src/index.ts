@@ -182,7 +182,7 @@ export function getExecutorForFusiongraph({
                   transportEntry,
                   executionRequest: subgraphExecReq,
                   executor: currentExecutor,
-                  setExecutor(newExecutor: Executor) {
+                  setExecutor(newExecutor) {
                     currentExecutor = newExecutor;
                   },
                 }),
