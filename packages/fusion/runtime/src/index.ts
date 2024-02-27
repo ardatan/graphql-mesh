@@ -492,7 +492,7 @@ export interface FusiongraphPlugin {
 
 export type OnSubgraphExecuteHook = (
   payload: OnFusiongraphExecutePayload,
-) => Promise<Maybe<OnSubgraphExecuteDoneHook>> | Maybe<OnSubgraphExecuteDoneHook>;
+) => Promise<Maybe<OnSubgraphExecuteDoneHook | void>> | Maybe<OnSubgraphExecuteDoneHook | void>;
 
 export interface OnFusiongraphExecutePayload {
   fusiongraph: GraphQLSchema;
@@ -513,7 +513,7 @@ export interface OnSubgraphExecuteDonePayload {
 
 export type OnSubgraphExecuteDoneHook = (
   payload: OnSubgraphExecuteDonePayload,
-) => MaybePromise<Maybe<OnSubgraphExecuteDoneResult>>;
+) => MaybePromise<Maybe<OnSubgraphExecuteDoneResult | void>>;
 
 export type OnSubgraphExecuteDoneResultOnNext = (
   payload: OnSubgraphExecuteDoneOnNextPayload,
