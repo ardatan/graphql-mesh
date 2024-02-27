@@ -319,43 +319,45 @@ function addAnnotationsForSemanticConventions({
               }
             }
           }
-          /** For the schemas with filter in `where` argument */
-          const whereArg = queryField.args.find(arg => arg.name === 'where');
-          const whereArgType = whereArg && getNamedType(whereArg.type);
-          const whereArgTypeFields = isInputObjectType(whereArgType) && whereArgType.getFields();
-          const regularFieldInWhereArg = whereArgTypeFields?.[fieldName];
-          const regularFieldTypeName =
-            regularFieldInWhereArg && getNamedType(regularFieldInWhereArg.type)?.name;
-          const batchFieldInWhereArg = whereArgTypeFields?.[`${fieldName}_in`];
-          const batchFieldTypeName =
-            batchFieldInWhereArg && getNamedType(batchFieldInWhereArg.type)?.name;
-          const objectFieldTypeName = objectFieldType.name;
-          if (regularFieldTypeName === objectFieldTypeName) {
-            const operationName = pascalCase(`get_${queryFieldTypeName}_by_${fieldName}`);
-            const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
-            const resolverAnnotation: ResolverAnnotation = {
-              subgraph: subgraphName,
-              operation: `query ${operationName}($${varName}: ${objectFieldTypeName}!) { ${originalFieldName}(where: { ${fieldName}: $${varName}) } }`,
-              kind: 'FETCH',
-            };
-            directives.resolver ||= [];
-            directives.resolver.push(resolverAnnotation);
-            directives.variable ||= [];
-            addVariablesForOtherSubgraphs();
-          }
-          if (batchFieldTypeName === objectFieldTypeName) {
-            const pluralFieldName = pluralize(fieldName);
-            const operationName = pascalCase(`get_${pluralTypeName}_by_${pluralFieldName}`);
-            const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
-            const resolverAnnotation: ResolverAnnotation = {
-              subgraph: subgraphName,
-              operation: `query ${operationName}($${varName}: [${objectFieldTypeName}!]!) { ${originalFieldName}(where: { ${fieldName}_in: $${varName} }) }`,
-              kind: 'BATCH',
-            };
-            directives.resolver ||= [];
-            directives.resolver.push(resolverAnnotation);
-            directives.variable ||= [];
-            addVariablesForOtherSubgraphs();
+          if (fieldName === 'id') {
+            /** For the schemas with filter in `where` argument */
+            const whereArg = queryField.args.find(arg => arg.name === 'where');
+            const whereArgType = whereArg && getNamedType(whereArg.type);
+            const whereArgTypeFields = isInputObjectType(whereArgType) && whereArgType.getFields();
+            const regularFieldInWhereArg = whereArgTypeFields?.[fieldName];
+            const regularFieldTypeName =
+              regularFieldInWhereArg && getNamedType(regularFieldInWhereArg.type)?.name;
+            const batchFieldInWhereArg = whereArgTypeFields?.[`${fieldName}_in`];
+            const batchFieldTypeName =
+              batchFieldInWhereArg && getNamedType(batchFieldInWhereArg.type)?.name;
+            const objectFieldTypeName = objectFieldType.name;
+            if (regularFieldTypeName === objectFieldTypeName) {
+              const operationName = pascalCase(`get_${queryFieldTypeName}_by_${fieldName}`);
+              const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
+              const resolverAnnotation: ResolverAnnotation = {
+                subgraph: subgraphName,
+                operation: `query ${operationName}($${varName}: ${objectFieldTypeName}!) { ${originalFieldName}(where: { ${fieldName}: $${varName}) } }`,
+                kind: 'FETCH',
+              };
+              directives.resolver ||= [];
+              directives.resolver.push(resolverAnnotation);
+              directives.variable ||= [];
+              addVariablesForOtherSubgraphs();
+            }
+            if (batchFieldTypeName === objectFieldTypeName) {
+              const pluralFieldName = pluralize(fieldName);
+              const operationName = pascalCase(`get_${pluralTypeName}_by_${pluralFieldName}`);
+              const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
+              const resolverAnnotation: ResolverAnnotation = {
+                subgraph: subgraphName,
+                operation: `query ${operationName}($${varName}: [${objectFieldTypeName}!]!) { ${originalFieldName}(where: { ${fieldName}_in: $${varName} }) }`,
+                kind: 'BATCH',
+              };
+              directives.resolver ||= [];
+              directives.resolver.push(resolverAnnotation);
+              directives.variable ||= [];
+              addVariablesForOtherSubgraphs();
+            }
           }
         }
       }
