@@ -17,6 +17,9 @@ export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>
           setFetchFn,
           url,
           options,
+          setOptions(newOptions) {
+            options = newOptions;
+          },
           context,
           info,
         }),

@@ -173,6 +173,7 @@ export type MeshFetchRequestInit = Omit<RequestInit, 'headers'> & {
 export interface OnFetchHookPayload<TContext> {
   url: string;
   options: MeshFetchRequestInit;
+  setOptions(options: MeshFetchRequestInit): void;
   context: TContext;
   info: GraphQLResolveInfo;
   fetchFn: MeshFetch;
