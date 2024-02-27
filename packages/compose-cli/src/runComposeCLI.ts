@@ -16,16 +16,29 @@ export const spinnies = new Spinnies({
   spinner: { interval: 80, frames: ['/', '|', '\\', '--'] },
 });
 
-export async function runComposeCLI(
-  processExit = (exitCode: number) => process.exit(exitCode),
-): Promise<void | never> {
-  spinnies.add('main', { text: 'Starting Mesh Compose CLI' });
+export interface RunComposeCLIOpts {
+  defaultConfigFileName?: string;
+  defaultConfigFilePath?: string;
+  productName?: string;
+  processExit?: (exitCode: number) => void;
+}
+
+const defaultProcessExit = (exitCode: number) => process.exit(exitCode);
+
+export async function runComposeCLI({
+  defaultConfigFileName = 'mesh.config.ts',
+  defaultConfigFilePath = process.cwd(),
+  productName = 'Mesh Compose CLI',
+  processExit = defaultProcessExit,
+}: RunComposeCLIOpts = {}): Promise<void | never> {
+  spinnies.add('main', { text: 'Starting ' + productName });
   const meshComposeCLIConfigFileName =
-    process.env.MESH_COMPOSE_CONFIG_FILE_NAME || 'mesh.config.ts';
+    process.env.MESH_COMPOSE_CONFIG_FILE_NAME || defaultConfigFileName;
   const meshComposeCLIConfigFilePath =
-    process.env.MESH_DEV_CONFIG_FILE_PATH || join(process.cwd(), meshComposeCLIConfigFileName);
+    process.env.MESH_COMPOSE_CONFIG_FILE_PATH ||
+    join(defaultConfigFilePath, meshComposeCLIConfigFileName);
   spinnies.add('config', {
-    text: `Loading Mesh Compose CLI Config from ${meshComposeCLIConfigFilePath}`,
+    text: `Loading ${productName} Config from ${meshComposeCLIConfigFilePath}`,
   });
   const loadedConfig: { composeConfig: MeshComposeCLIConfig } = await import(
     meshComposeCLIConfigFilePath
@@ -33,12 +46,12 @@ export async function runComposeCLI(
   const meshComposeCLIConfig = loadedConfig.composeConfig;
   if (!meshComposeCLIConfig) {
     spinnies.fail('config', {
-      text: `Mesh Compose CLI Config was not found in ${meshComposeCLIConfigFilePath}`,
+      text: `${productName} Config was not found in ${meshComposeCLIConfigFilePath}`,
     });
     return processExit(1);
   }
   spinnies.succeed('config', {
-    text: `Loaded Mesh Compose CLI Config from ${meshComposeCLIConfigFilePath}`,
+    text: `Loaded ${productName} Config from ${meshComposeCLIConfigFilePath}`,
   });
 
   const composedSchema = await getComposedSchemaFromConfig(meshComposeCLIConfig, spinnies);
@@ -76,5 +89,5 @@ export async function runComposeCLI(
   }
   await fsPromises.writeFile(fusiongraphPath, writtenData, 'utf8');
   spinnies.succeed('write', { text: `Written fusiongraph to ${fusiongraphPath}` });
-  spinnies.succeed('main', { text: 'Finished Mesh Compose CLI' });
+  spinnies.succeed('main', { text: 'Finished ' + productName });
 }

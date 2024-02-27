@@ -31,6 +31,7 @@ export interface GraphQLSubgraphLoaderHTTPConfiguration {
   operationHeaders?: {
     [k: string]: any;
   };
+
   /**
    * Request Credentials if your environment supports it.
    * [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
@@ -38,10 +39,12 @@ export interface GraphQLSubgraphLoaderHTTPConfiguration {
    * @default "same-origin" (Allowed values: omit, include)
    */
   credentials?: 'omit' | 'include';
+
   /**
    * Retry attempts if fails
    */
   retry?: number;
+
   /**
    * Timeout in milliseconds
    */
@@ -54,16 +57,25 @@ export interface GraphQLSubgraphLoaderHTTPConfiguration {
    * You can separately give schema introspection or SDL
    */
   source?: string;
+
   /**
    * JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
    */
   schemaHeaders?: any;
+
   /**
    * Subgraph spec
    *
    * @default false
    */
   spec?: 'federation' | 'stitching' | 'fusion' | false;
+
+  /**
+   * Transport kind
+   *
+   * @default 'http'
+   */
+  transportKind?: 'http';
 }
 
 export function loadGraphQLHTTPSubgraph(
@@ -82,6 +94,8 @@ export function loadGraphQLHTTPSubgraph(
     schemaHeaders,
 
     spec = false,
+
+    transportKind = 'http',
   }: GraphQLSubgraphLoaderHTTPConfiguration,
 ) {
   return (ctx: LoaderContext) => {
@@ -89,7 +103,7 @@ export function loadGraphQLHTTPSubgraph(
     function handleFetchedSchema(schema: GraphQLSchema) {
       return addAnnotations(
         {
-          kind: 'http',
+          kind: transportKind,
           subgraph: subgraphName,
           location: endpoint,
           headers: operationHeaders,
@@ -120,7 +134,7 @@ export function loadGraphQLHTTPSubgraph(
         .then(schema =>
           addAnnotations(
             {
-              kind: 'http',
+              kind: transportKind,
               subgraph: subgraphName,
               location: endpoint,
               headers: operationHeaders,

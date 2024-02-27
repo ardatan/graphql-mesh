@@ -13,16 +13,32 @@ import { loadSchema } from '@graphql-tools/load';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import { MeshServeCLIConfig } from './types';
 
-export async function runServeCLI(
-  processExit = (exitCode: number) => process.exit(exitCode),
-): Promise<void | never> {
-  const prefix = cluster.worker?.id ? `🕸️  Mesh Worker#${cluster.worker.id}` : `🕸️  Mesh`;
+interface RunServeCLIOpts {
+  defaultConfigFileName?: string;
+  defaultConfigFilePath?: string;
+  productName?: string;
+  processExit?: (exitCode: number) => void;
+}
+
+const defaultProcessExit = (exitCode: number) => process.exit(exitCode);
+
+export async function runServeCLI({
+  processExit = defaultProcessExit,
+  defaultConfigFileName = 'mesh.config.ts',
+  defaultConfigFilePath = process.cwd(),
+  productName = 'Mesh',
+}: RunServeCLIOpts = {}): Promise<void | never> {
+  const prefix = cluster.worker?.id
+    ? `🕸️  ${productName} Worker#${cluster.worker.id}`
+    : `🕸️  ${productName}`;
   const workerLogger = new DefaultLogger(prefix);
   workerLogger.info(`Starting`);
 
-  const meshServeCLIConfigFileName = process.env.MESH_SERVE_CONFIG_FILE_NAME || 'mesh.config.ts';
+  const meshServeCLIConfigFileName =
+    process.env.MESH_SERVE_CONFIG_FILE_NAME || defaultConfigFileName;
   const meshServeCLIConfigFilePath =
-    process.env.MESH_SERVE_CONFIG_FILE_PATH || join(process.cwd(), meshServeCLIConfigFileName);
+    process.env.MESH_SERVE_CONFIG_FILE_PATH ||
+    join(defaultConfigFilePath, meshServeCLIConfigFileName);
 
   const meshServeCLIConfigRelativePath = relative(process.cwd(), meshServeCLIConfigFilePath);
 
@@ -116,18 +132,18 @@ export async function runServeCLI(
     }
 
     if (forkNum > 1) {
-      workerLogger.info(`Forking ${forkNum} Mesh Workers`);
+      workerLogger.info(`Forking ${forkNum} ${productName} Workers`);
       for (let i = 0; i < forkNum; i++) {
-        workerLogger.info(`Forking Mesh Worker #${i}`);
+        workerLogger.info(`Forking ${productName} Worker #${i}`);
         const worker = cluster.fork();
         registerTerminateHandler(eventName => {
-          workerLogger.info(`Closing Mesh Worker #${i} for ${eventName}`);
+          workerLogger.info(`Closing ${productName} Worker #${i} for ${eventName}`);
           worker.kill(eventName);
-          workerLogger.info(`Closed Mesh Worker #${i} for ${eventName}`);
+          workerLogger.info(`Closed ${productName} Worker #${i} for ${eventName}`);
         });
-        workerLogger.info(`Forked Mesh Worker #${i}`);
+        workerLogger.info(`Forked ${productName} Worker #${i}`);
       }
-      workerLogger.info(`Forked ${forkNum} Mesh Workers`);
+      workerLogger.info(`Forked ${forkNum} ${productName} Workers`);
 
       return;
     }
