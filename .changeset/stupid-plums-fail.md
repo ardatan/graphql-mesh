@@ -2,4 +2,4 @@
 "@graphql-mesh/fusion-runtime": minor
 ---
 
-Change transportEntry and executionRequest in onSubgraphExecute hook
+Change executionRequest in onSubgraphExecute hook and use one transportKind argument instead of spreading it
