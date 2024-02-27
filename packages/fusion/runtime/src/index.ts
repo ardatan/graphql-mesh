@@ -179,13 +179,13 @@ export function getExecutorForFusiongraph({
                 onSubgraphExecuteHook({
                   fusiongraph,
                   subgraphName,
-                  transportKind: transportEntry?.kind,
-                  transportLocation: transportEntry?.location,
-                  transportHeaders: transportEntry?.headers,
-                  transportOptions: transportEntry?.options,
+                  transportEntry,
                   executionRequest: subgraphExecReq,
+                  setExecutionRequest(newExecutionRequest) {
+                    subgraphExecReq = newExecutionRequest;
+                  },
                   executor: currentExecutor,
-                  setExecutor(newExecutor: Executor) {
+                  setExecutor(newExecutor) {
                     currentExecutor = newExecutor;
                   },
                 }),
@@ -497,11 +497,9 @@ export type OnSubgraphExecuteHook = (
 export interface OnFusiongraphExecutePayload {
   fusiongraph: GraphQLSchema;
   subgraphName: string;
-  transportKind: string;
-  transportLocation: string;
-  transportHeaders: Record<string, string>;
-  transportOptions: any;
+  transportEntry?: TransportEntry;
   executionRequest: ExecutionRequest;
+  setExecutionRequest(executionRequest: ExecutionRequest): void;
   executor: Executor;
   setExecutor(executor: Executor): void;
 }
