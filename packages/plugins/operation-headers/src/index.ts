@@ -14,7 +14,7 @@ export type OperationHeadersFactory = (
 
 export function useOperationHeaders(factoryFn: OperationHeadersFactory): MeshServePlugin {
   return {
-    onFetch({ url, options, context }) {
+    onFetch({ url, options, context, setOptions }) {
       const existingHeaders = getHeadersObj(options.headers || {});
       const newHeaders$ = factoryFn({
         url,
@@ -22,10 +22,13 @@ export function useOperationHeaders(factoryFn: OperationHeadersFactory): MeshSer
         context,
       });
       return mapMaybePromise(newHeaders$, newHeaders => {
-        options.headers = {
-          ...existingHeaders,
-          ...newHeaders,
-        };
+        setOptions({
+          ...options,
+          headers: {
+            ...existingHeaders,
+            ...newHeaders,
+          },
+        });
       });
     },
   };
