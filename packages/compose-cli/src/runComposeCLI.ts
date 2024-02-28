@@ -19,6 +19,7 @@ export const spinnies = new Spinnies({
 export interface RunComposeCLIOpts {
   defaultConfigFileName?: string;
   defaultConfigFilePath?: string;
+  defaultFusiongraphFileName?: string;
   productName?: string;
   processExit?: (exitCode: number) => void;
 }
@@ -28,6 +29,7 @@ const defaultProcessExit = (exitCode: number) => process.exit(exitCode);
 export async function runComposeCLI({
   defaultConfigFileName = 'mesh.config.ts',
   defaultConfigFilePath = process.cwd(),
+  defaultFusiongraphFileName = 'fusiongraph.graphql',
   productName = 'Mesh Compose CLI',
   processExit = defaultProcessExit,
 }: RunComposeCLIOpts = {}): Promise<void | never> {
@@ -59,7 +61,7 @@ export async function runComposeCLI({
   spinnies.add('write', { text: `Writing Fusiongraph` });
   const printedSupergraph = printSchemaWithDirectives(composedSchema);
 
-  const fusiongraphFileName = meshComposeCLIConfig.target || './fusiongraph.graphql';
+  const fusiongraphFileName = meshComposeCLIConfig.target || defaultFusiongraphFileName;
   const fusiongraphPath = isAbsolute(fusiongraphFileName)
     ? join(process.cwd(), fusiongraphFileName)
     : fusiongraphFileName;

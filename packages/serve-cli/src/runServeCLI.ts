@@ -17,6 +17,7 @@ interface RunServeCLIOpts {
   defaultConfigFileName?: string;
   defaultConfigFilePath?: string;
   productName?: string;
+  defaultConfig?: MeshServeCLIConfig;
   processExit?: (exitCode: number) => void;
 }
 
@@ -26,6 +27,9 @@ export async function runServeCLI({
   processExit = defaultProcessExit,
   defaultConfigFileName = 'mesh.config.ts',
   defaultConfigFilePath = process.cwd(),
+  defaultConfig = {
+    fusiongraph: './fusiongraph.graphql',
+  },
   productName = 'Mesh',
 }: RunServeCLIOpts = {}): Promise<void | never> {
   const prefix = cluster.worker?.id
@@ -50,9 +54,7 @@ export async function runServeCLI({
     return processExit(1);
   });
 
-  const meshServeCLIConfig = loadedConfig.serveConfig || {
-    fusiongraph: './fusiongraph.graphql',
-  };
+  const meshServeCLIConfig = loadedConfig.serveConfig || defaultConfig;
   workerLogger.info(`Loaded configuration from ${meshServeCLIConfigRelativePath}`);
 
   let unifiedGraphPath: UnifiedGraphConfig;
