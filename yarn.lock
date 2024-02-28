@@ -5143,8 +5143,6 @@ __metadata:
 "@graphql-mesh/plugin-operation-headers@workspace:packages/plugins/operation-headers":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-operation-headers@workspace:packages/plugins/operation-headers"
-  dependencies:
-    "@graphql-mesh/runtime": "npm:^0.97.7"
   peerDependencies:
     "@graphql-mesh/serve-runtime": ^0.1.1
     "@graphql-mesh/types": ^0.96.6
@@ -5291,31 +5289,6 @@ __metadata:
     tslib: ^2.4.0
   languageName: unknown
   linkType: soft
-
-"@graphql-mesh/runtime@npm:^0.97.7":
-  version: 0.97.7
-  resolution: "@graphql-mesh/runtime@npm:0.97.7"
-  dependencies:
-    "@envelop/core": "npm:^5.0.0"
-    "@envelop/extended-validation": "npm:^4.0.0"
-    "@envelop/graphql-jit": "npm:^8.0.0"
-    "@graphql-mesh/string-interpolation": "npm:^0.5.3"
-    "@graphql-tools/batch-delegate": "npm:^9.0.0"
-    "@graphql-tools/delegate": "npm:^10.0.0"
-    "@graphql-tools/executor": "npm:^1.2.0"
-    "@graphql-tools/wrap": "npm:^10.0.0"
-    "@whatwg-node/fetch": "npm:^0.9.0"
-    graphql-jit: "npm:0.8.2"
-  peerDependencies:
-    "@graphql-mesh/cross-helpers": ^0.4.1
-    "@graphql-mesh/types": ^0.96.6
-    "@graphql-mesh/utils": ^0.96.6
-    "@graphql-tools/utils": ^9.2.1 || ^10.0.0
-    graphql: "*"
-    tslib: ^2.4.0
-  checksum: 10c0/90077b54df05fd93ab5d4df9b493b875d93d95ea18a71efb3c011601bf7ca2273867111031263effb0a8fa6626ad0d8b80cbf520c5cd2ddbd045f08471de67fe
-  languageName: node
-  linkType: hard
 
 "@graphql-mesh/serve-cli@npm:^0.3.0, @graphql-mesh/serve-cli@workspace:packages/serve-cli":
   version: 0.0.0-use.local
