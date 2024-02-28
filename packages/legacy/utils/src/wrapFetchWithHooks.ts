@@ -16,7 +16,13 @@ export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>
           fetchFn,
           setFetchFn,
           url,
+          setURL(newUrl) {
+            url = String(newUrl);
+          },
           options,
+          setOptions(newOptions) {
+            options = newOptions;
+          },
           context,
           info,
         }),
