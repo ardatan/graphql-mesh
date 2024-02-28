@@ -1,5 +1,27 @@
 # @graphql-mesh/compose-cli
 
+## 0.2.0
+
+### Patch Changes
+
+- [#6592](https://github.com/ardatan/graphql-mesh/pull/6592)
+  [`ef370cf`](https://github.com/ardatan/graphql-mesh/commit/ef370cf676ab812a89627b5320c8d9ad383894a8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/graphql-file-loader@8.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.1)
+    (from `8.0.0`, in `dependencies`)
+
+- [`fd25b34`](https://github.com/ardatan/graphql-mesh/commit/fd25b347407251cbe702d20508561964058d9230)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Config file name env var should be
+  MESH_COMPOSE_CONFIG_FILE_NAME
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a),
+  [`70b05a2`](https://github.com/ardatan/graphql-mesh/commit/70b05a20a948b5ebed5306c14710c8839225cdad)]:
+  - @graphql-mesh/types@0.97.0
+  - @graphql-mesh/utils@0.97.0
+
 ## 0.1.1
 
 ### Patch Changes

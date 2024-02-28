@@ -1,5 +1,13 @@
 # json-schema-file-upload
 
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.0
+  - @graphql-mesh/json-schema@0.99.0
+
 ## 0.8.3
 
 ### Patch Changes

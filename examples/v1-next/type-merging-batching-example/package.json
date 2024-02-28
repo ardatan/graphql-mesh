@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/type-merging-batching-example",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
@@ -11,8 +11,8 @@
     "start-services": "concurrently \"yarn start-authors\" \"yarn start-books\""
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.1.1",
-    "@graphql-mesh/serve-cli": "^0.2.1",
+    "@graphql-mesh/compose-cli": "^0.2.0",
+    "@graphql-mesh/serve-cli": "^0.3.0",
     "concurrently": "8.2.2",
     "graphql": "^16.8.1",
     "graphql-yoga": "^5.0.1",
