@@ -11,7 +11,7 @@ import {
   SubschemaConfig,
   Transform,
 } from '@graphql-tools/delegate';
-import { Executor, IResolvers } from '@graphql-tools/utils';
+import { Executor, IResolvers, MaybePromise } from '@graphql-tools/utils';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import * as YamlConfig from './config.js';
 
@@ -186,11 +186,11 @@ export interface OnFetchHookDonePayload {
   setResponse: (response: Response) => void;
 }
 
-export type OnFetchHookDone = (payload: OnFetchHookDonePayload) => PromiseOrValue<void>;
+export type OnFetchHookDone = (payload: OnFetchHookDonePayload) => MaybePromise<void>;
 
 export type OnFetchHook<TContext> = (
   payload: OnFetchHookPayload<TContext>,
-) => PromiseOrValue<void | OnFetchHookDone>;
+) => MaybePromise<void | OnFetchHookDone>;
 
 export type RawSourceOutput = {
   name: string;
