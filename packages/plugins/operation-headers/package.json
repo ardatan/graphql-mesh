@@ -38,6 +38,9 @@
     "graphql": "*",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "@graphql-mesh/runtime": "^0.97.7"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

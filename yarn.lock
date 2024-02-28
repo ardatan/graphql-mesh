@@ -5143,6 +5143,8 @@ __metadata:
 "@graphql-mesh/plugin-operation-headers@workspace:packages/plugins/operation-headers":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-operation-headers@workspace:packages/plugins/operation-headers"
+  dependencies:
+    "@graphql-mesh/runtime": "npm:^0.97.7"
   peerDependencies:
     "@graphql-mesh/serve-runtime": ^0.1.1
     "@graphql-mesh/types": ^0.96.6
