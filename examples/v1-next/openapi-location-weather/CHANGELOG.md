@@ -1,5 +1,18 @@
 # typescript-location-weather-example
 
+## 0.16.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ef370cf`](https://github.com/ardatan/graphql-mesh/commit/ef370cf676ab812a89627b5320c8d9ad383894a8),
+  [`fd25b34`](https://github.com/ardatan/graphql-mesh/commit/fd25b347407251cbe702d20508561964058d9230)]:
+  - @graphql-mesh/compose-cli@0.2.0
+  - @graphql-mesh/cache-localforage@0.97.0
+  - @omnigraph/openapi@0.99.0
+  - @graphql-mesh/plugin-response-cache@0.97.0
+  - @graphql-mesh/serve-cli@0.3.0
+
 ## 0.15.1
 
 ### Patch Changes

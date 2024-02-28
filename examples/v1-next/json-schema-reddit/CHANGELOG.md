@@ -1,5 +1,16 @@
 # reddit-example
 
+## 0.11.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ef370cf`](https://github.com/ardatan/graphql-mesh/commit/ef370cf676ab812a89627b5320c8d9ad383894a8),
+  [`fd25b34`](https://github.com/ardatan/graphql-mesh/commit/fd25b347407251cbe702d20508561964058d9230)]:
+  - @graphql-mesh/compose-cli@0.2.0
+  - @omnigraph/json-schema@0.99.0
+  - @graphql-mesh/serve-cli@0.3.0
+
 ## 0.10.1
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-transfer-schema
 
+## 0.97.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a),
+  [`70b05a2`](https://github.com/ardatan/graphql-mesh/commit/70b05a20a948b5ebed5306c14710c8839225cdad)]:
+  - @graphql-mesh/types@0.97.0
+  - @graphql-mesh/utils@0.97.0
+
 ## 0.96.6
 
 ### Patch Changes

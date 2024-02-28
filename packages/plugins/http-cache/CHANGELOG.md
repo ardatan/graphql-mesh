@@ -1,5 +1,19 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.97.0
+
+### Patch Changes
+
+- [#6594](https://github.com/ardatan/graphql-mesh/pull/6594)
+  [`78aa043`](https://github.com/ardatan/graphql-mesh/commit/78aa04325690686be25a6c3211a0e4da6fb8984c)
+  Thanks [@FGoessler](https://github.com/FGoessler)! - Fix hanging issue when ttl is 0
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a),
+  [`70b05a2`](https://github.com/ardatan/graphql-mesh/commit/70b05a20a948b5ebed5306c14710c8839225cdad)]:
+  - @graphql-mesh/types@0.97.0
+  - @graphql-mesh/utils@0.97.0
+
 ## 0.96.6
 
 ### Patch Changes

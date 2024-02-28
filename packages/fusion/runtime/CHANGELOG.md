@@ -1,5 +1,27 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.2.0
+
+### Minor Changes
+
+- [#6605](https://github.com/ardatan/graphql-mesh/pull/6605)
+  [`662a36a`](https://github.com/ardatan/graphql-mesh/commit/662a36ac5135cc8153f62ab1c18497032f21cb6f)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Change executionRequest in onSubgraphExecute
+  hook and use one transportKind argument instead of spreading it
+
+### Patch Changes
+
+- [#6598](https://github.com/ardatan/graphql-mesh/pull/6598)
+  [`35b9cab`](https://github.com/ardatan/graphql-mesh/commit/35b9cab1d6c50fd6165879dc6cc8e5cb03dd2eef)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - onSubgraphExecute hook can return nothing
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a),
+  [`70b05a2`](https://github.com/ardatan/graphql-mesh/commit/70b05a20a948b5ebed5306c14710c8839225cdad)]:
+  - @graphql-mesh/utils@0.97.0
+  - @graphql-mesh/runtime@0.98.0
+  - @graphql-mesh/transport-common@0.1.0
+
 ## 0.1.1
 
 ### Patch Changes

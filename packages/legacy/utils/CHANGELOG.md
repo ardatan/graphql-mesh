@@ -1,5 +1,22 @@
 # @graphql-mesh/utils
 
+## 0.97.0
+
+### Minor Changes
+
+- [#6608](https://github.com/ardatan/graphql-mesh/pull/6608)
+  [`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - setURL and setOptions in onFetch hook
+
+### Patch Changes
+
+- [`70b05a2`](https://github.com/ardatan/graphql-mesh/commit/70b05a20a948b5ebed5306c14710c8839225cdad)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Fix message too long notice text
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a)]:
+  - @graphql-mesh/types@0.97.0
+
 ## 0.96.6
 
 ### Patch Changes
