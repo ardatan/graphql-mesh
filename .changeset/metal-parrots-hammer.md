@@ -3,4 +3,4 @@
 "@graphql-mesh/utils": minor
 ---
 
-setOptions in onFetch hook
+setURL and setOptions in onFetch hook
