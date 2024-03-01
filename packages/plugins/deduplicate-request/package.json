@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@whatwg-node/fetch": "0.9.16"
+    "@whatwg-node/fetch": "0.9.17"
   },
   "publishConfig": {
     "access": "public",
