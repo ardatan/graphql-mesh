@@ -18250,7 +18250,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.0"
     "@graphql-mesh/graphql": "npm:0.97.0"
-    fastify: "npm:4.26.1"
+    fastify: "npm:4.26.2"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -18655,9 +18655,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify@npm:4.26.1, fastify@npm:^4.26.0":
-  version: 4.26.1
-  resolution: "fastify@npm:4.26.1"
+"fastify@npm:4.26.2, fastify@npm:^4.26.0":
+  version: 4.26.2
+  resolution: "fastify@npm:4.26.2"
   dependencies:
     "@fastify/ajv-compiler": "npm:^3.5.0"
     "@fastify/error": "npm:^3.4.0"
@@ -18675,7 +18675,7 @@ __metadata:
     secure-json-parse: "npm:^2.7.0"
     semver: "npm:^7.5.4"
     toad-cache: "npm:^3.3.0"
-  checksum: 10c0/742ac1da203c04ac323f72eb901b04718a548906abd3e63e16111f5e0fdb3ef52f5d1cd7be4bc355455e34ac13d2d4f0bdd43e85e5b610cd0dd7a39b066bc4a7
+  checksum: 10c0/6b05f2dbe7032909f5916e481645af9ab534e6cbd8d97ba4dfbc383c0bca565f90fccc528c5b6b61f225044c39ea79255fc824f0bb4702354e0991bbdbc57894
   languageName: node
   linkType: hard
 
@@ -34107,12 +34107,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:6.6.2":
-  version: 6.6.2
-  resolution: "undici@npm:6.6.2"
+"undici@npm:6.7.0":
+  version: 6.7.0
+  resolution: "undici@npm:6.7.0"
   dependencies:
     "@fastify/busboy": "npm:^2.0.0"
-  checksum: 10c0/c8c8a436059b13603f67ed4d917b4ba6d9ef282ac55c932c4790ee1a1c8cad1369da3c11b6e0b9df5a95ed1849cb98fa2f2310f6d0f9331dd359286c912497d2
+  checksum: 10c0/929e7e78e1baf1a93085d83401784077f365dc27e7e7606c444c7ad95a6da7d029d873300c74ef91b5de0d9a0747a031f6bdbf799436c18e4964301f36da1bf6
   languageName: node
   linkType: hard
 
