@@ -6064,7 +6064,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/urql-exchange@workspace:packages/legacy/urql"
   dependencies:
-    "@urql/core": "npm:4.2.3"
+    "@urql/core": "npm:4.3.0"
     wonka: "npm:6.3.4"
   peerDependencies:
     "@graphql-mesh/runtime": ^0.98.0
@@ -11756,13 +11756,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@urql/core@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@urql/core@npm:4.2.3"
+"@urql/core@npm:4.3.0":
+  version: 4.3.0
+  resolution: "@urql/core@npm:4.3.0"
   dependencies:
     "@0no-co/graphql.web": "npm:^1.0.1"
     wonka: "npm:^6.3.2"
-  checksum: 10c0/2e2e5f94365c5513c6eb8d996d0b60211ca5ef122bfb7e77a192f63f8f469689ead2b232b835ce47f8127d7c9a5c8083548cac05f3b4be4f01f723dbfb575da0
+  checksum: 10c0/25a50cd11f27abca36ba07a93a393a3b0343d8d0957bf7fef4ddcc49d7582c751bb0c86f26c4f5e9342409237b92da569cfc90745a34539dfe8b5ebc426e112a
   languageName: node
   linkType: hard
 
