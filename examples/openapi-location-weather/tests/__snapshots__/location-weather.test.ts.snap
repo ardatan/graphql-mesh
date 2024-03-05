@@ -35,7 +35,7 @@ type AQCurrentGroup {
 
   """Country Abbreviation"""
   country_code: String
-  data: [AQCurrent]
+  data: [AQCurrent!]
 
   """Latitude"""
   lat: Float
@@ -85,7 +85,7 @@ type AQHourly {
 
   """Country Abbreviation"""
   country_code: String
-  data: [AQHour]
+  data: [AQHour!]
 
   """Latitude"""
   lat: Float
@@ -113,9 +113,9 @@ type CitiesError {
 
 """A list of countries"""
 type Countries_Response {
-  data: [Country_Summary]
-  errors: [CitiesError]
-  links: [Link]
+  data: [Country_Summary!]
+  errors: [CitiesError!]
+  links: [Link!]
   metadata: Metadata
 }
 
@@ -128,7 +128,7 @@ type Country_Details {
   code: String
 
   """A list of supported ISO-4217 currency codes"""
-  currencyCodes: [String]
+  currencyCodes: [String!]
 
   """The country flag image"""
   flagImageUri: String
@@ -170,7 +170,7 @@ type Country_Region_Details {
 """Country region details response"""
 type Country_Region_Response {
   data: Country_Region_Details
-  errors: [CitiesError]
+  errors: [CitiesError!]
 }
 
 """Minimal country region info"""
@@ -194,16 +194,16 @@ type Country_Region_Summary {
 """A list of country regions"""
 type Country_Regions_Response {
   """A list of RegionSummaries"""
-  data: [Country_Region_Summary]
-  errors: [CitiesError]
-  links: [Link]
+  data: [Country_Region_Summary!]
+  errors: [CitiesError!]
+  links: [Link!]
   metadata: Metadata
 }
 
 """Country details response"""
 type Country_Response {
   data: Country_Details
-  errors: [CitiesError]
+  errors: [CitiesError!]
 }
 
 """Minimal country info"""
@@ -212,7 +212,7 @@ type Country_Summary {
   code: String
 
   """A list of supported ISO-4217 currency codes"""
-  currencyCodes: [String]
+  currencyCodes: [String!]
 
   """The country name (varies by languageCode)"""
   name: String
@@ -223,9 +223,9 @@ type Country_Summary {
 
 """A list of currencies"""
 type Currencies_Response {
-  data: [Currency]
-  errors: [CitiesError]
-  links: [Link]
+  data: [Currency!]
+  errors: [CitiesError!]
+  links: [Link!]
   metadata: Metadata
 }
 
@@ -235,7 +235,7 @@ type Currency {
   code: String
 
   """A list of ISO-3166 country codes of countries supporting this currency"""
-  countryCodes: [String]
+  countryCodes: [String!]
 
   """The currency symbol"""
   symbol: String
@@ -312,7 +312,7 @@ type CurrentObs {
   solar_rad: Float
 
   """List of data sources used in response"""
-  sources: [String]
+  sources: [String!]
 
   """State abbreviation"""
   state_code: String
@@ -358,7 +358,7 @@ type CurrentObs {
 type CurrentObsGroup {
   """Count of found observations"""
   count: Int
-  data: [CurrentObs]
+  data: [CurrentObs!]
 }
 
 """Represents date values"""
@@ -373,7 +373,7 @@ scalar DateTime
 type Date_Time_Response {
   """The date-time in ISO-6801 format: yyyyMMdd'T'HHmmssZ"""
   data: DateTime
-  errors: [CitiesError]
+  errors: [CitiesError!]
 }
 
 """A decimal distance (in miles or kilometers)"""
@@ -382,7 +382,7 @@ type Distance_Response {
   The distance in units as set by the distanceUnit param (defaults to miles)
   """
   data: Float
-  errors: [CitiesError]
+  errors: [CitiesError!]
 }
 
 type EnergyObs {
@@ -420,7 +420,7 @@ type EnergyObs {
   snow: Float
 
   """List of data sources used in response"""
-  sources: [String]
+  sources: [String!]
 
   """State abbreviation"""
   state_code: String
@@ -458,7 +458,7 @@ type EnergyObs {
 type EnergyObsGroup {
   """Count of found observations"""
   count: Int
-  data: [EnergyObs]
+  data: [EnergyObs!]
 
   """End Date"""
   end_date: Int
@@ -473,7 +473,7 @@ type EnergyObsGroupForecast {
 
   """Country abbreviation"""
   country_code: String
-  data: [EnergyObsSeries]
+  data: [EnergyObsSeries!]
 
   """Latitude"""
   lat: Float
@@ -562,7 +562,7 @@ type FCMinutely {
 
   """Country Abbreviation"""
   country_code: String
-  data: [FCMinutelyOb]
+  data: [FCMinutelyOb!]
 
   """Latitude"""
   lat: Float
@@ -694,7 +694,7 @@ type Forecast {
 }
 
 type ForecastAG {
-  data: [HistoryAGObj]
+  data: [HistoryAGObj!]
 
   """Latitude"""
   lat: Float
@@ -709,7 +709,7 @@ type ForecastDay {
 
   """Country Abbreviation"""
   country_code: String
-  data: [Forecast]
+  data: [Forecast!]
 
   """Latitude"""
   lat: Float
@@ -814,7 +814,7 @@ type ForecastHourly {
 
   """Country Abbreviation"""
   country_code: String
-  data: [ForecastHour]
+  data: [ForecastHour!]
 
   """Latitude"""
   lat: Float
@@ -847,7 +847,7 @@ type History {
 
   """Country abbreviation"""
   country_code: String
-  data: [HistoryObj]
+  data: [HistoryObj!]
 
   """Latitude"""
   lat: Float
@@ -856,7 +856,7 @@ type History {
   lon: Float
 
   """List of data sources used in response"""
-  sources: [String]
+  sources: [String!]
 
   """State abbreviation"""
   state_code: String
@@ -866,7 +866,7 @@ type History {
 }
 
 type HistoryAG {
-  data: [HistoryAGObj]
+  data: [HistoryAGObj!]
 
   """Latitude"""
   lat: Float
@@ -979,7 +979,7 @@ type HistoryDay {
 
   """Country abbreviation"""
   country_code: String
-  data: [HistoryDayObj]
+  data: [HistoryDayObj!]
 
   """Latitude"""
   lat: Float
@@ -988,7 +988,7 @@ type HistoryDay {
   lon: Float
 
   """List of data sources used in response"""
-  sources: [String]
+  sources: [String!]
 
   """State abbreviation"""
   state_code: String
@@ -1176,7 +1176,7 @@ type HistorySubhourly {
 
   """Country abbreviation"""
   country_code: String
-  data: [HistoryObj]
+  data: [HistoryObj!]
 
   """Latitude"""
   lat: Float
@@ -1185,7 +1185,7 @@ type HistorySubhourly {
   lon: Float
 
   """List of data sources used in response"""
-  sources: [String]
+  sources: [String!]
 
   """State abbreviation"""
   state_code: String
@@ -1207,9 +1207,9 @@ type Language {
 
 """A list of languages supported by the system"""
 type Languages_Response {
-  data: [Language]
-  errors: [CitiesError]
-  links: [Link]
+  data: [Language!]
+  errors: [CitiesError!]
+  links: [Link!]
   metadata: Metadata
 }
 
@@ -1227,9 +1227,9 @@ type Locale {
 
 """A list of locales"""
 type Locales_Response {
-  data: [Locale]
-  errors: [CitiesError]
-  links: [Link]
+  data: [Locale!]
+  errors: [CitiesError!]
+  links: [Link!]
   metadata: Metadata
 }
 
@@ -1243,10 +1243,10 @@ type Metadata {
 }
 
 type Normals {
-  data: [NormalsObj]
+  data: [NormalsObj!]
 
   """List of data sources used in response"""
-  sources: [String]
+  sources: [String!]
 
   """Local IANA time zone"""
   timezone: String
@@ -1383,14 +1383,14 @@ type Populated_Place_Details {
 """Populated-place details response"""
 type Populated_Place_Response {
   data: Populated_Place_Details
-  errors: [CitiesError]
+  errors: [CitiesError!]
 }
 
 """A list of populated places"""
 type Populated_Places_Response {
-  data: [PopulatedPlaceSummary]
-  errors: [CitiesError]
-  links: [Link]
+  data: [PopulatedPlaceSummary!]
+  errors: [CitiesError!]
+  links: [Link!]
   metadata: Metadata
 }
 
@@ -2752,7 +2752,7 @@ scalar ResolveToSourceArgs
 type Time_Response {
   """The time in ISO-8601 format: HHmmss.SSSZ"""
   data: String
-  errors: [CitiesError]
+  errors: [CitiesError!]
 }
 
 """A time-zone"""
@@ -2769,7 +2769,7 @@ type Time_Zone {
 
 """A time-zone"""
 type Time_Zone_Response {
-  errors: [CitiesError]
+  errors: [CitiesError!]
 
   """The time-zone id"""
   id: String
@@ -2783,9 +2783,9 @@ type Time_Zone_Response {
 
 """A list of time-zones"""
 type Time_Zones_Response {
-  data: [Time_Zone]
-  errors: [CitiesError]
-  links: [Link]
+  data: [Time_Zone!]
+  errors: [CitiesError!]
+  links: [Link!]
   metadata: Metadata
 }
 
@@ -2795,7 +2795,7 @@ A field whose value conforms to the standard URL format as specified in RFC3986:
 scalar URL
 
 type WeatherAlert {
-  alerts: [WeatherAlertGroup]
+  alerts: [WeatherAlertGroup!]
 
   """Latitude"""
   lat: Float
@@ -2805,7 +2805,7 @@ type WeatherAlert {
 }
 
 type WeatherAlertGroup {
-  alerts: [String]
+  alerts: [String!]
 
   """Full description of weather alert"""
   description: String
