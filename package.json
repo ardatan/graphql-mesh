@@ -32,7 +32,7 @@
       "examples/v1-next/hive-example/sources/*"
     ]
   },
-  "packageManager": "yarn@4.1.0",
+  "packageManager": "yarn@4.1.1",
   "scripts": {
     "build": "yarn prebuild && bob build && yarn postbuild",
     "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace @v1-next/example-fastify compose && yarn workspace example-fastify build && yarn workspace example-persisted-operations build",
