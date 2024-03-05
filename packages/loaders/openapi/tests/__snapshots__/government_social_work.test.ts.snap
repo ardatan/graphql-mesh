@@ -31,7 +31,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getAssessmentTypes_response] @httpOperation(subgraph: "example_api", path: "/assessment_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getAssessmentTypes_response!] @httpOperation(subgraph: "example_api", path: "/assessment_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Gets case details for a given case id"""
   getCase(
     """to support API localization"""
@@ -44,7 +44,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """Case Id"""
     caseId: String!
-  ): [getCase_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [getCase_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Gets profile date for the case worker"""
   getWorkersProfile(
     """to support API localization"""
@@ -61,7 +61,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getWorkersProfile_response] @httpOperation(subgraph: "example_api", path: "/social_worker/{args.userName}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getWorkersProfile_response!] @httpOperation(subgraph: "example_api", path: "/social_worker/{args.userName}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Gets All \`Case\` objects for a social worker"""
   getWorkersCases(
     """to support API localization"""
@@ -78,7 +78,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getWorkersCases_response] @httpOperation(subgraph: "example_api", path: "/social_worker/{args.userName}/cases", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getWorkersCases_response!] @httpOperation(subgraph: "example_api", path: "/social_worker/{args.userName}/cases", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Gets the assigned \`Family\` objects for a social worker"""
   getWorkersFamilies(
     """to support API localization"""
@@ -95,7 +95,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getWorkersFamilies_response] @httpOperation(subgraph: "example_api", path: "/social_worker/{args.userName}/families", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getWorkersFamilies_response!] @httpOperation(subgraph: "example_api", path: "/social_worker/{args.userName}/families", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """
   Gets a specific case visit data for a given case id/case visit id combination
   """
@@ -112,7 +112,7 @@ type Query {
     caseId: String!
     """Visit Id"""
     visitId: String!
-  ): [getCaseVisit_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_visit/{args.visitId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [getCaseVisit_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_visit/{args.visitId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Gets a specific family's data"""
   getFamily(
     """to support API localization"""
@@ -125,7 +125,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """FamilyId to find family data"""
     familyId: String!
-  ): [getFamily_response] @httpOperation(subgraph: "example_api", path: "/family/{args.familyId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [getFamily_response!] @httpOperation(subgraph: "example_api", path: "/family/{args.familyId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Gets a specific client data"""
   getClient(
     """to support API localization"""
@@ -138,7 +138,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """ClientId to find Client"""
     clientId: String!
-  ): [getClient_response] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [getClient_response!] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Gets all persons"""
   getPersons(
     """to support API localization"""
@@ -153,7 +153,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getPersons_response] @httpOperation(subgraph: "example_api", path: "/persons", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getPersons_response!] @httpOperation(subgraph: "example_api", path: "/persons", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """
   Gets client's contacts  - not marked as "Deleted" - with their email/phone information
   """
@@ -172,7 +172,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getClientContacts_response] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}/client_contacts", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getClientContacts_response!] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}/client_contacts", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Gets client's schools information"""
   getClientSchools(
     """to support API localization"""
@@ -189,7 +189,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getClientSchools_response] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}/client_schools", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getClientSchools_response!] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}/client_schools", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """
   Gets client's physicians information  - not marked as "Deleted"
   """
@@ -208,7 +208,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getClientPhysicians_response] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}/client_physicians", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getClientPhysicians_response!] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}/client_physicians", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Gets all experts"""
   getExperts(
     """to support API localization"""
@@ -223,7 +223,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getExperts_response] @httpOperation(subgraph: "example_api", path: "/experts", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getExperts_response!] @httpOperation(subgraph: "example_api", path: "/experts", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """
   Gets a specific file for a given file id or return all files if no specific file id is given
   """
@@ -238,7 +238,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """File Id"""
     fileId: String!
-  ): [getFile_response] @httpOperation(subgraph: "example_api", path: "/file/{args.fileId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [getFile_response!] @httpOperation(subgraph: "example_api", path: "/file/{args.fileId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Gets a specific file for a given manual id"""
   getManual(
     """to support API localization"""
@@ -251,7 +251,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """Manual Id"""
     manualId: String!
-  ): [getManual_response] @httpOperation(subgraph: "example_api", path: "/manual/{args.manualId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [getManual_response!] @httpOperation(subgraph: "example_api", path: "/manual/{args.manualId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   Gets all media files of the mediaType  - not marked as "Deleted"
   """
@@ -266,7 +266,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     """Case Id"""
     caseId: String!
-  ): [getMedia_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/media_files", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [getMedia_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/media_files", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   Retrieves past assessments - not marked as "Deleted" - for a case; if a worker id is specified in the query then retrieves only those assessments  - not marked as "Deleted" - for this case and for this worked id
   """
@@ -285,7 +285,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getCaseAssessments_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_assessments", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getCaseAssessments_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_assessments", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """
   This api sends along the case assessment data to the backend analytics engine which sends back recommendations to the app
   """
@@ -309,8 +309,8 @@ type Query {
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
     """Assessment data"""
-    input: [CaseAssessment_Input]
-  ): [getRecommendations_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/caseAssessment/{args.caseAssessmentId}/assessmentType/{args.assessmentTypeId}/recommendations", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+    input: [CaseAssessment_Input!]
+  ): [getRecommendations_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/caseAssessment/{args.caseAssessmentId}/assessmentType/{args.assessmentTypeId}/recommendations", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Retrieves a list of available case note types"""
   getCaseNoteTypes(
     """to support API localization"""
@@ -327,7 +327,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getCaseNoteTypes_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_note_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getCaseNoteTypes_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_note_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Retrieves past notes  - not marked as "Deleted" - for a case"""
   getCaseNotes(
     """to support API localization"""
@@ -344,7 +344,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getCaseNotes_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_notes", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getCaseNotes_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_notes", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """
   Gets all the client relationships  - not marked as "Deleted" - for the given client
   """
@@ -363,7 +363,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getRelationships_response] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}/client_relationships", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getRelationships_response!] @httpOperation(subgraph: "example_api", path: "/client/{args.clientId}/client_relationships", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Gets all the client relationship types"""
   getRelationshipTypes(
     """to support API localization"""
@@ -378,7 +378,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getRelationshipTypes_response] @httpOperation(subgraph: "example_api", path: "/client_relationship_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getRelationshipTypes_response!] @httpOperation(subgraph: "example_api", path: "/client_relationship_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   """Gets all score categories"""
   getScoreCategories(
     """to support API localization"""
@@ -393,15 +393,15 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getScoreCategories_response] @httpOperation(subgraph: "example_api", path: "/score_categories", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
+  ): [getScoreCategories_response!] @httpOperation(subgraph: "example_api", path: "/score_categories", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
 }
 
 union getAssessmentTypes_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getAssessmentTypes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getAssessmentTypes_200_response | Error
 
 type getAssessmentTypes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [AssessmentTypeMaster]
+  errors: [Error!]
+  data: [AssessmentTypeMaster!]
   pagination: Pagination
 }
 
@@ -437,7 +437,7 @@ type AssessmentTypeMaster {
   """Unique Assessment Type Id"""
   assessmentTypeId: String
   assessmentTypeDesc: String
-  factorsTemplate: [AssessmentFactorsTemplate]
+  factorsTemplate: [AssessmentFactorsTemplate!]
 }
 
 """Assessment Factor Name."""
@@ -445,7 +445,7 @@ type AssessmentFactorsTemplate {
   """Unique Assessment Factor Id."""
   factorId: String
   factorName: String
-  factorQuestionsTemplate: [AssessmentFactorQuestionTemplate]
+  factorQuestionsTemplate: [AssessmentFactorQuestionTemplate!]
 }
 
 """Assessment Factor Questions."""
@@ -481,8 +481,8 @@ union getCase_response @statusCodeTypeName(subgraph: "example_api", statusCode: 
 
 type getCase_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Case]
+  errors: [Error!]
+  data: [Case!]
 }
 
 """Client Case Narrative."""
@@ -502,14 +502,14 @@ type Case {
   title: String
   """Type of Case."""
   type: String
-  visits: [CaseVisit]
+  visits: [CaseVisit!]
   """array of assigbed case workers' ids"""
-  worker: [String]
-  media: [String]
-  caseAssessment: [String]
+  worker: [String!]
+  media: [String!]
+  caseAssessment: [String!]
   """client's id for this case"""
   client: String
-  notes: [String]
+  notes: [String!]
 }
 
 """Date of Client Visit."""
@@ -534,16 +534,16 @@ union getWorkersProfile_response @statusCodeTypeName(subgraph: "example_api", st
 
 type getWorkersProfile_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [SocialWorker]
+  errors: [Error!]
+  data: [SocialWorker!]
   pagination: Pagination
 }
 
 """Social Workers Assigned to Clients."""
 type SocialWorker {
   userName: String
-  case: [Case]
-  family: [Family]
+  case: [Case!]
+  family: [Family!]
 }
 
 """Family data"""
@@ -552,7 +552,7 @@ type Family {
   familyId: String
   """Family name"""
   familyName: String
-  client: [Client]
+  client: [Client!]
 }
 
 """Client profile data"""
@@ -560,13 +560,13 @@ type Client {
   """Client Unique Id (auto generated)"""
   clientId: String
   person: Person
-  contact: [String]
-  physician: [String]
-  school: [String]
-  case: [Case]
+  contact: [String!]
+  physician: [String!]
+  school: [String!]
+  case: [Case!]
   """client's family id"""
   family: String
-  participants: [ClientRelationship]
+  participants: [ClientRelationship!]
 }
 
 """Person profile data"""
@@ -687,8 +687,8 @@ union getWorkersCases_response @statusCodeTypeName(subgraph: "example_api", stat
 
 type getWorkersCases_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Case]
+  errors: [Error!]
+  data: [Case!]
   pagination: Pagination
 }
 
@@ -696,8 +696,8 @@ union getWorkersFamilies_response @statusCodeTypeName(subgraph: "example_api", s
 
 type getWorkersFamilies_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Family]
+  errors: [Error!]
+  data: [Family!]
   pagination: Pagination
 }
 
@@ -705,32 +705,32 @@ union getCaseVisit_response @statusCodeTypeName(subgraph: "example_api", statusC
 
 type getCaseVisit_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [CaseVisit]
+  errors: [Error!]
+  data: [CaseVisit!]
 }
 
 union getFamily_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getFamily_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getFamily_200_response | Error
 
 type getFamily_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Family]
+  errors: [Error!]
+  data: [Family!]
 }
 
 union getClient_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getClient_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClient_200_response | Error
 
 type getClient_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Client]
+  errors: [Error!]
+  data: [Client!]
 }
 
 union getPersons_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getPersons_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getPersons_200_response | Error
 
 type getPersons_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Person]
+  errors: [Error!]
+  data: [Person!]
   pagination: Pagination
 }
 
@@ -738,8 +738,8 @@ union getClientContacts_response @statusCodeTypeName(subgraph: "example_api", st
 
 type getClientContacts_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [ClientContact]
+  errors: [Error!]
+  data: [ClientContact!]
   pagination: Pagination
 }
 
@@ -769,8 +769,8 @@ union getClientSchools_response @statusCodeTypeName(subgraph: "example_api", sta
 
 type getClientSchools_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [ClientSchool]
+  errors: [Error!]
+  data: [ClientSchool!]
   pagination: Pagination
 }
 
@@ -796,8 +796,8 @@ union getClientPhysicians_response @statusCodeTypeName(subgraph: "example_api", 
 
 type getClientPhysicians_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [ClientPhysician]
+  errors: [Error!]
+  data: [ClientPhysician!]
   pagination: Pagination
 }
 
@@ -826,8 +826,8 @@ union getExperts_response @statusCodeTypeName(subgraph: "example_api", statusCod
 
 type getExperts_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Expert]
+  errors: [Error!]
+  data: [Expert!]
   pagination: Pagination
 }
 
@@ -855,16 +855,16 @@ union getFile_response @statusCodeTypeName(subgraph: "example_api", statusCode: 
 
 type getFile_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [File_]
+  errors: [Error!]
+  data: [File_!]
 }
 
 union getManual_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getManual_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getManual_200_response | Error
 
 type getManual_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Manual]
+  errors: [Error!]
+  data: [Manual!]
 }
 
 """Manual Entity."""
@@ -881,8 +881,8 @@ union getMedia_response @statusCodeTypeName(subgraph: "example_api", statusCode:
 
 type getMedia_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Media]
+  errors: [Error!]
+  data: [Media!]
 }
 
 """Media Entity."""
@@ -897,7 +897,7 @@ type Media {
   file: File_
   mediaType: MediaTypeName
   """tagged client's client id"""
-  taggedClients: [String]
+  taggedClients: [String!]
 }
 
 """Status"""
@@ -915,8 +915,8 @@ union getCaseAssessments_response @statusCodeTypeName(subgraph: "example_api", s
 
 type getCaseAssessments_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [CaseAssessment]
+  errors: [Error!]
+  data: [CaseAssessment!]
   pagination: Pagination
 }
 
@@ -933,9 +933,9 @@ type CaseAssessment {
   worker: String
   """case id"""
   case: String
-  assessmentType: [AssessmentType]
+  assessmentType: [AssessmentType!]
   """tagged client's client id"""
-  taggedClients: [String]
+  taggedClients: [String!]
 }
 
 """Case assesement status"""
@@ -949,8 +949,8 @@ type AssessmentType {
   """Unique Assessment Type Id"""
   assessmentTypeId: String
   assessmentTypeDesc: String
-  factors: [AssessmentFactors]
-  recommendation: [Recommendation]
+  factors: [AssessmentFactors!]
+  recommendation: [Recommendation!]
 }
 
 """Assessment Factor Name."""
@@ -959,7 +959,7 @@ type AssessmentFactors {
   factorId: String
   factorName: String
   riskSCore: String
-  factorQuestions: [AssessmentFactorQuestion]
+  factorQuestions: [AssessmentFactorQuestion!]
 }
 
 """Assessment Factor Questions."""
@@ -991,8 +991,8 @@ union getRecommendations_response @statusCodeTypeName(subgraph: "example_api", s
 
 type getRecommendations_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [CaseAssessment]
+  errors: [Error!]
+  data: [CaseAssessment!]
   pagination: Pagination
 }
 
@@ -1009,9 +1009,9 @@ input CaseAssessment_Input {
   worker: String
   """case id"""
   case: String
-  assessmentType: [AssessmentType_Input]
+  assessmentType: [AssessmentType_Input!]
   """tagged client's client id"""
-  taggedClients: [String]
+  taggedClients: [String!]
 }
 
 """Assessment Type"""
@@ -1019,8 +1019,8 @@ input AssessmentType_Input {
   """Unique Assessment Type Id"""
   assessmentTypeId: String
   assessmentTypeDesc: String
-  factors: [AssessmentFactors_Input]
-  recommendation: [Recommendation_Input]
+  factors: [AssessmentFactors_Input!]
+  recommendation: [Recommendation_Input!]
 }
 
 """Assessment Factor Name."""
@@ -1029,7 +1029,7 @@ input AssessmentFactors_Input {
   factorId: String
   factorName: String
   riskSCore: String
-  factorQuestions: [AssessmentFactorQuestion_Input]
+  factorQuestions: [AssessmentFactorQuestion_Input!]
 }
 
 """Assessment Factor Questions."""
@@ -1055,8 +1055,8 @@ union getCaseNoteTypes_response @statusCodeTypeName(subgraph: "example_api", sta
 
 type getCaseNoteTypes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [NotesType]
+  errors: [Error!]
+  data: [NotesType!]
   pagination: Pagination
 }
 
@@ -1069,8 +1069,8 @@ union getCaseNotes_response @statusCodeTypeName(subgraph: "example_api", statusC
 
 type getCaseNotes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [Notes]
+  errors: [Error!]
+  data: [Notes!]
   pagination: Pagination
 }
 
@@ -1080,7 +1080,7 @@ type Notes {
   date: String
   note: String
   """tagged client's client id"""
-  taggedClients: [String]
+  taggedClients: [String!]
   """case id of the case where this notes belongs"""
   case: String
   notesType: NotesType
@@ -1096,8 +1096,8 @@ union getRelationships_response @statusCodeTypeName(subgraph: "example_api", sta
 
 type getRelationships_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [ClientRelationship]
+  errors: [Error!]
+  data: [ClientRelationship!]
   pagination: Pagination
 }
 
@@ -1105,8 +1105,8 @@ union getRelationshipTypes_response @statusCodeTypeName(subgraph: "example_api",
 
 type getRelationshipTypes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [ClientRelationshipType]
+  errors: [Error!]
+  data: [ClientRelationshipType!]
   pagination: Pagination
 }
 
@@ -1114,8 +1114,8 @@ union getScoreCategories_response @statusCodeTypeName(subgraph: "example_api", s
 
 type getScoreCategories_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
-  data: [ScoreCategories]
+  errors: [Error!]
+  data: [ScoreCategories!]
   pagination: Pagination
 }
 
@@ -1142,8 +1142,8 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """Case Id"""
     caseId: String!
-    input: [CaseVisit_Input]
-  ): [addVisit_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_visit", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [CaseVisit_Input!]
+  ): [addVisit_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_visit", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """
   Add a new client record to store the person details of a client participant
   """
@@ -1156,8 +1156,8 @@ type Mutation {
     User_Agent: String! = "iPad"
     """1.1.0"""
     Api_Version: String! = "1.1.0"
-    input: [Person_Input]
-  ): [addPerson_response] @httpOperation(subgraph: "example_api", path: "/person", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [Person_Input!]
+  ): [addPerson_response!] @httpOperation(subgraph: "example_api", path: "/person", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """Update person data"""
   updatePerson(
     """to support API localization"""
@@ -1170,8 +1170,8 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """personId to find Person"""
     personId: String!
-    input: [Person_Input]
-  ): [updatePerson_response] @httpOperation(subgraph: "example_api", path: "/person/{args.personId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [Person_Input!]
+  ): [updatePerson_response!] @httpOperation(subgraph: "example_api", path: "/person/{args.personId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """Updates a specific client data"""
   updateClient(
     """to support API localization"""
@@ -1182,8 +1182,8 @@ type Mutation {
     User_Agent: String! = "iPad"
     """1.1.0"""
     Api_Version: String! = "1.1.0"
-    input: [Client_Input]
-  ): [updateClient_response] @httpOperation(subgraph: "example_api", path: "/client", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [Client_Input!]
+  ): [updateClient_response!] @httpOperation(subgraph: "example_api", path: "/client", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """Add a new client relationship with relationshipId=clientId"""
   addClientRelationship(
     """to support API localization"""
@@ -1196,8 +1196,8 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """ClientId to find Client"""
     clientId: String!
-    input: [ClientRelationship_Input]
-  ): [addClientRelationship_response] @httpOperation(subgraph: "example_api", path: "/client_relationship/{args.clientId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [ClientRelationship_Input!]
+  ): [addClientRelationship_response!] @httpOperation(subgraph: "example_api", path: "/client_relationship/{args.clientId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """Sets a specific client relationship as "deleted"  or do other updates"""
   deleteClientRelationship(
     """to support API localization"""
@@ -1208,8 +1208,8 @@ type Mutation {
     User_Agent: String! = "iPad"
     """1.1.0"""
     Api_Version: String! = "1.1.0"
-    input: [ClientRelationship_Input]
-  ): [deleteClientRelationship_response] @httpOperation(subgraph: "example_api", path: "/client_relationship", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [ClientRelationship_Input!]
+  ): [deleteClientRelationship_response!] @httpOperation(subgraph: "example_api", path: "/client_relationship", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """Add a new client contact with phone/email for a client id"""
   addClientContact(
     """to support API localization"""
@@ -1220,8 +1220,8 @@ type Mutation {
     User_Agent: String! = "iPad"
     """1.1.0"""
     Api_Version: String! = "1.1.0"
-    input: [ClientContact_Input]
-  ): [addClientContact_response] @httpOperation(subgraph: "example_api", path: "/client_contact", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [ClientContact_Input!]
+  ): [addClientContact_response!] @httpOperation(subgraph: "example_api", path: "/client_contact", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """Update/delete client contact for a client id"""
   updateClientContact(
     """to support API localization"""
@@ -1234,8 +1234,8 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """Client's contact's id"""
     contactId: String!
-    input: [ClientContact_Input]
-  ): [updateClientContact_response] @httpOperation(subgraph: "example_api", path: "/client_contact/{args.contactId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [ClientContact_Input!]
+  ): [updateClientContact_response!] @httpOperation(subgraph: "example_api", path: "/client_contact/{args.contactId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """Add a new client school detail for a client id"""
   addClientSchool(
     """to support API localization"""
@@ -1246,8 +1246,8 @@ type Mutation {
     User_Agent: String! = "iPad"
     """1.1.0"""
     Api_Version: String! = "1.1.0"
-    input: [ClientSchool_Input]
-  ): [addClientSchool_response] @httpOperation(subgraph: "example_api", path: "/client_school", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [ClientSchool_Input!]
+  ): [addClientSchool_response!] @httpOperation(subgraph: "example_api", path: "/client_school", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """Update/delete client school"""
   updateClientSchool(
     """to support API localization"""
@@ -1260,8 +1260,8 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """Client's school's id"""
     schoolId: String!
-    input: [ClientSchool_Input]
-  ): [updateClientSchool_response] @httpOperation(subgraph: "example_api", path: "/client_school/{args.schoolId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [ClientSchool_Input!]
+  ): [updateClientSchool_response!] @httpOperation(subgraph: "example_api", path: "/client_school/{args.schoolId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """Add a new client physician for a client id"""
   addClientPhysician(
     """to support API localization"""
@@ -1273,8 +1273,8 @@ type Mutation {
     """1.1.0"""
     Api_Version: String! = "1.1.0"
     """Physician data"""
-    input: [ClientPhysician_Input]
-  ): [addClientPhysician_response] @httpOperation(subgraph: "example_api", path: "/client_physician", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [ClientPhysician_Input!]
+  ): [addClientPhysician_response!] @httpOperation(subgraph: "example_api", path: "/client_physician", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """Update/delete client physician for a client id"""
   updateClientPhysician(
     """to support API localization"""
@@ -1288,8 +1288,8 @@ type Mutation {
     """Client's physician's id"""
     physicianId: String!
     """Physician data"""
-    input: [ClientPhysician_Input]
-  ): [updateClientPhysician_response] @httpOperation(subgraph: "example_api", path: "/client_physician/{args.physicianId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [ClientPhysician_Input!]
+  ): [updateClientPhysician_response!] @httpOperation(subgraph: "example_api", path: "/client_physician/{args.physicianId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """
   Gets a specific file for a given file id or return all files if no specific file id is given
   """
@@ -1305,8 +1305,8 @@ type Mutation {
     """File Id"""
     fileId: String!
     """File content"""
-    input: [File_Input]
-  ): [updateFile_response] @httpOperation(subgraph: "example_api", path: "/file/{args.fileId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [File_Input!]
+  ): [updateFile_response!] @httpOperation(subgraph: "example_api", path: "/file/{args.fileId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """
   Gets a specific file for a given file id or return all files if no specific file id is given
   """
@@ -1320,8 +1320,8 @@ type Mutation {
     """1.1.0"""
     Api_Version: String! = "1.1.0"
     """File content"""
-    input: [File_Input]
-  ): [putFile_response] @httpOperation(subgraph: "example_api", path: "/file", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [File_Input!]
+  ): [putFile_response!] @httpOperation(subgraph: "example_api", path: "/file", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """Adds a new Media file to a case [video, audio, picture, etc]"""
   addMedia(
     """to support API localization"""
@@ -1334,8 +1334,8 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """Case Id"""
     caseId: String!
-    input: [Media_Input]
-  ): [addMedia_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/media_file", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [Media_Input!]
+  ): [addMedia_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/media_file", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """
   Sets a specific assessment for a case as "deleted" or update tagged participants
   """
@@ -1352,8 +1352,8 @@ type Mutation {
     caseId: String!
     """Media Id"""
     mediaId: String!
-    input: [Media_Input]
-  ): [deleteMedia_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/media/{args.mediaId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [Media_Input!]
+  ): [deleteMedia_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/media/{args.mediaId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """Adds a case notes record for a case"""
   addCaseNotes(
     """to support API localization"""
@@ -1366,8 +1366,8 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     """Case Id"""
     caseId: String!
-    input: [Notes_Input]
-  ): [addCaseNotes_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_note", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [Notes_Input!]
+  ): [addCaseNotes_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_note", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """Sets a specific case note as "deleted" or update tagged participants"""
   deleteCaseNote(
     """to support API localization"""
@@ -1382,8 +1382,8 @@ type Mutation {
     caseId: String!
     """Case Note Id"""
     noteId: String!
-    input: [Notes_Input]
-  ): [deleteCaseNote_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_note/{args.noteId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [Notes_Input!]
+  ): [deleteCaseNote_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_note/{args.noteId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   """
   Adds a new assessment record for a case - along with recommedndations elected by the user
   """
@@ -1399,8 +1399,8 @@ type Mutation {
     """Case Id"""
     caseId: String!
     """Assessment data"""
-    input: [CaseAssessment_Input]
-  ): [addCaseAssessment_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_assessment", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [CaseAssessment_Input!]
+  ): [addCaseAssessment_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_assessment", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """
   Sets a specific assessment for a case as "deleted"
   """
@@ -1418,15 +1418,15 @@ type Mutation {
     """Case Assessment Id"""
     caseAssessmentId: String!
     """Assessment data"""
-    input: [CaseAssessment_Input]
-  ): [deleteCaseAssessment_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_assessment/{args.caseAssessmentId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
+    input: [CaseAssessment_Input!]
+  ): [deleteCaseAssessment_response!] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_assessment/{args.caseAssessmentId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
 }
 
 union addVisit_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addVisit_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addVisit_200_response | Error
 
 type addVisit_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: CaseVisit
 }
 
@@ -1452,7 +1452,7 @@ union addPerson_response @statusCodeTypeName(subgraph: "example_api", statusCode
 
 type addPerson_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: Person
 }
 
@@ -1524,7 +1524,7 @@ union updatePerson_response @statusCodeTypeName(subgraph: "example_api", statusC
 
 type updatePerson_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Success"""
   data: Boolean
 }
@@ -1533,7 +1533,7 @@ union updateClient_response @statusCodeTypeName(subgraph: "example_api", statusC
 
 type updateClient_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Update Success"""
   data: Boolean
 }
@@ -1543,13 +1543,13 @@ input Client_Input {
   """Client Unique Id (auto generated)"""
   clientId: String
   person: Person_Input
-  contact: [String]
-  physician: [String]
-  school: [String]
-  case: [Case_Input]
+  contact: [String!]
+  physician: [String!]
+  school: [String!]
+  case: [Case_Input!]
   """client's family id"""
   family: String
-  participants: [ClientRelationship_Input]
+  participants: [ClientRelationship_Input!]
 }
 
 """Client Case Narrative."""
@@ -1569,14 +1569,14 @@ input Case_Input {
   title: String
   """Type of Case."""
   type: String
-  visits: [CaseVisit_Input]
+  visits: [CaseVisit_Input!]
   """array of assigbed case workers' ids"""
-  worker: [String]
-  media: [String]
-  caseAssessment: [String]
+  worker: [String!]
+  media: [String!]
+  caseAssessment: [String!]
   """client's id for this case"""
   client: String
-  notes: [String]
+  notes: [String!]
 }
 
 """Client relationship data"""
@@ -1615,7 +1615,7 @@ union addClientRelationship_response @statusCodeTypeName(subgraph: "example_api"
 
 type addClientRelationship_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: ClientRelationship
 }
 
@@ -1623,7 +1623,7 @@ union deleteClientRelationship_response @statusCodeTypeName(subgraph: "example_a
 
 type deleteClientRelationship_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Delete Success"""
   data: Boolean
 }
@@ -1632,7 +1632,7 @@ union addClientContact_response @statusCodeTypeName(subgraph: "example_api", sta
 
 type addClientContact_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: ClientContact
 }
 
@@ -1650,7 +1650,7 @@ union updateClientContact_response @statusCodeTypeName(subgraph: "example_api", 
 
 type updateClientContact_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Client contact update successful"""
   data: Boolean
 }
@@ -1659,7 +1659,7 @@ union addClientSchool_response @statusCodeTypeName(subgraph: "example_api", stat
 
 type addClientSchool_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: ClientSchool
 }
 
@@ -1679,7 +1679,7 @@ union updateClientSchool_response @statusCodeTypeName(subgraph: "example_api", s
 
 type updateClientSchool_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Client school update successful"""
   data: Boolean
 }
@@ -1688,7 +1688,7 @@ union addClientPhysician_response @statusCodeTypeName(subgraph: "example_api", s
 
 type addClientPhysician_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: ClientPhysician
 }
 
@@ -1711,7 +1711,7 @@ union updateClientPhysician_response @statusCodeTypeName(subgraph: "example_api"
 
 type updateClientPhysician_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Client physician update successful"""
   data: Boolean
 }
@@ -1720,7 +1720,7 @@ union updateFile_response @statusCodeTypeName(subgraph: "example_api", statusCod
 
 type updateFile_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: File_
 }
 
@@ -1728,7 +1728,7 @@ union putFile_response @statusCodeTypeName(subgraph: "example_api", statusCode: 
 
 type putFile_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: File_
 }
 
@@ -1736,7 +1736,7 @@ union addMedia_response @statusCodeTypeName(subgraph: "example_api", statusCode:
 
 type addMedia_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: Media
 }
 
@@ -1752,7 +1752,7 @@ input Media_Input {
   file: File_Input
   mediaType: MediaTypeName_Input
   """tagged client's client id"""
-  taggedClients: [String]
+  taggedClients: [String!]
 }
 
 input MediaTypeName_Input {
@@ -1764,7 +1764,7 @@ union deleteMedia_response @statusCodeTypeName(subgraph: "example_api", statusCo
 
 type deleteMedia_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Delete Success"""
   data: Boolean
 }
@@ -1773,7 +1773,7 @@ union addCaseNotes_response @statusCodeTypeName(subgraph: "example_api", statusC
 
 type addCaseNotes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: Notes
 }
 
@@ -1783,7 +1783,7 @@ input Notes_Input {
   date: String
   note: String
   """tagged client's client id"""
-  taggedClients: [String]
+  taggedClients: [String!]
   """case id of the case where this notes belongs"""
   case: String
   notesType: NotesType_Input
@@ -1798,7 +1798,7 @@ union deleteCaseNote_response @statusCodeTypeName(subgraph: "example_api", statu
 
 type deleteCaseNote_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Delete Success"""
   data: Boolean
 }
@@ -1807,7 +1807,7 @@ union addCaseAssessment_response @statusCodeTypeName(subgraph: "example_api", st
 
 type addCaseAssessment_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   data: CaseAssessment
 }
 
@@ -1815,7 +1815,7 @@ union deleteCaseAssessment_response @statusCodeTypeName(subgraph: "example_api",
 
 type deleteCaseAssessment_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
-  errors: [Error]
+  errors: [Error!]
   """Delete Success"""
   data: Boolean
 }

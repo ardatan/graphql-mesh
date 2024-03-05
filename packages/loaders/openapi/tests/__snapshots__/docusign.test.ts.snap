@@ -2178,8 +2178,8 @@ type Services {
   buildSHA: String
   """Reserved: TBD"""
   buildVersion: String
-  linkedSites: [String]
-  serviceVersions: [serviceVersion]
+  linkedSites: [String!]
+  serviceVersions: [serviceVersion!]
 }
 
 type serviceVersion {
@@ -2190,7 +2190,7 @@ type serviceVersion {
 
 """API resource information"""
 type Resources {
-  resources: [nameValue]
+  resources: [nameValue!]
 }
 
 type nameValue {
@@ -2294,7 +2294,7 @@ type Accounts {
 """Defines a billing charge response object."""
 type billingChargeResponse {
   """Reserved: TBD"""
-  billingChargeItems: [billingCharge]
+  billingChargeItems: [billingCharge!]
 }
 
 """Contains information about a billing charge."""
@@ -2337,13 +2337,13 @@ type billingCharge {
   chargeType: String
   """Reserved: TBD"""
   chargeUnitOfMeasure: String
-  discounts: [billingDiscount]
+  discounts: [billingDiscount!]
   firstEffectiveDate: String
   includedQuantity: String
   """Reserved: TBD"""
   incrementalQuantity: String
   lastEffectiveDate: String
-  prices: [billingPrice]
+  prices: [billingPrice!]
   """Reserved: TBD"""
   unitPrice: String
   usedQuantity: String
@@ -2367,7 +2367,7 @@ type billingPrice {
 """Defines a billing invoice response object."""
 type billingInvoicesResponse {
   """Reserved: TBD"""
-  billingInvoices: [Invoices]
+  billingInvoices: [Invoices!]
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
@@ -2389,7 +2389,7 @@ type Invoices {
   """Reserved: TBD"""
   invoiceId: String
   """Reserved: TBD"""
-  invoiceItems: [billingInvoiceItem]
+  invoiceItems: [billingInvoiceItem!]
   """Reserved: TBD"""
   invoiceNumber: String
   """
@@ -2417,7 +2417,7 @@ type billingInvoiceItem {
 
 type billingInvoicesSummary {
   """Reserved: TBD"""
-  billingInvoices: [Invoices]
+  billingInvoices: [Invoices!]
   pastDueBalance: String
   paymentAllowed: String
 }
@@ -2425,7 +2425,7 @@ type billingInvoicesSummary {
 """Defines a billing payments response object."""
 type billingPaymentsResponse {
   """Reserved: TBD"""
-  billingPayments: [Payments]
+  billingPayments: [Payments!]
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
@@ -2463,7 +2463,7 @@ type BillingPlans {
   creditCardInformation: creditCardInformation
   paymentProcessorInformation: paymentProcessorInformation
   referralInformation: referralInformation
-  successorPlans: [billingPlan]
+  successorPlans: [billingPlan!]
 }
 
 """Contains information about an account address."""
@@ -2495,14 +2495,14 @@ type accountAddress {
   """The state or province associated with the address."""
   state: String
   """Contains an array of countries supported by the billing plan."""
-  supportedCountries: [country]
+  supportedCountries: [country!]
 }
 
 type country {
   isoCode: String
   name: String
   provinceValidated: String
-  provinces: [province]
+  provinces: [province!]
 }
 
 type province {
@@ -2513,7 +2513,7 @@ type province {
 """Contains information about an account billing plan."""
 type accountBillingPlan {
   """Reserved:"""
-  addOns: [addOn]
+  addOns: [addOn!]
   """Reserved: TBD"""
   canCancelRenewal: String
   """
@@ -2555,7 +2555,7 @@ type accountBillingPlan {
   * name - The name of the feature set.
   * seatFee - An incremental seat cost for seat-based plans (when isEnabled=true).
   """
-  planFeatureSets: [featureSet]
+  planFeatureSets: [featureSet!]
   """The DocuSign Plan ID for the account."""
   planId: String
   """The name of the Billing Plan."""
@@ -2573,7 +2573,7 @@ type accountBillingPlan {
   
   Values are: BeginSeatCount, EndSeatCount, and SeatDiscountPercent.
   """
-  seatDiscounts: [seatDiscount]
+  seatDiscounts: [seatDiscount!]
   """The support incident fee charged for each support incident."""
   supportIncidentFee: String
   """The support plan fee charged for this plan."""
@@ -2595,7 +2595,7 @@ type featureSet {
   """
   A complex type that contains alternate currency values that are configured for this plan feature set.
   """
-  currencyFeatureSetPrices: [currencyFeatureSetPrice]
+  currencyFeatureSetPrices: [currencyFeatureSetPrice!]
   envelopeFee: String
   """A unique ID for the feature set."""
   featureSetId: String
@@ -2722,11 +2722,11 @@ type referralInformation {
 """Contains information about a billing plan."""
 type billingPlan {
   """Reserved: TBD"""
-  appStoreProducts: [appStoreProduct]
+  appStoreProducts: [appStoreProduct!]
   """
   Contains the currencyCode and currencySymbol for the alternate currency values for envelopeFee, fixedFee, and seatFee that are configured for this plan feature set.
   """
-  currencyPlanPrices: [currencyPlanPrice]
+  currencyPlanPrices: [currencyPlanPrice!]
   """
   When set to **true**, then customer support is provided as part of the account plan.
   """
@@ -2746,12 +2746,12 @@ type billingPlan {
   """
   planClassification: String
   """A complex type that sets the feature sets for the account."""
-  planFeatureSets: [featureSet]
+  planFeatureSets: [featureSet!]
   """The DocuSign Plan ID for the account."""
   planId: String
   """The name of the Billing Plan."""
   planName: String
-  seatDiscounts: [seatDiscount]
+  seatDiscounts: [seatDiscount!]
   """The support incident fee charged for each support incident."""
   supportIncidentFee: String
   """The support plan fee charged for this plan."""
@@ -2780,13 +2780,13 @@ type currencyPlanPrice {
 
 type creditCardTypes {
   """An array containing supported credit card types."""
-  cardTypes: [String]
+  cardTypes: [String!]
 }
 
 """Brand management for accounts"""
 type AccountBrands {
   """The list of brands."""
-  brands: [brand]
+  brands: [brand!]
   """
   The brand seen by envelope recipients when a brand is not explicitly set.
   """
@@ -2802,14 +2802,14 @@ type brand {
   brandId: String
   """The name of the brand."""
   brandName: String
-  colors: [nameValue]
-  emailContent: [brandEmailContent]
+  colors: [nameValue!]
+  emailContent: [brandEmailContent!]
   errorDetails: errorDetails
   isOverridingCompanyName: String
   isSendingDefault: String
   isSigningDefault: String
-  landingPages: [nameValue]
-  links: [brandLink]
+  landingPages: [nameValue!]
+  links: [brandLink!]
   logos: brandLogos
   resources: brandResourceUrls
 }
@@ -2847,7 +2847,7 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type brandResourcesList {
-  resourcesContentTypes: [brandResources]
+  resourcesContentTypes: [brandResources!]
 }
 
 type brandResources {
@@ -2855,7 +2855,7 @@ type brandResources {
   createdDate: String
   modifiedByUserInfo: userInfo
   modifiedDate: String
-  modifiedTemplates: [String]
+  modifiedTemplates: [String!]
   resourcesContentType: String
   resourcesContentUri: String
 }
@@ -2879,7 +2879,7 @@ type userInfo {
 """Bulk envelopes"""
 type BulkEnvelopes {
   """Reserved: TBD"""
-  bulkEnvelopeStatuses: [bulkEnvelopeStatus]
+  bulkEnvelopeStatuses: [bulkEnvelopeStatus!]
   """The last position in the result set."""
   endPosition: String
   """
@@ -2908,7 +2908,7 @@ type bulkEnvelopeStatus {
   """The number of items returned in this response."""
   batchSize: String
   """Reserved: TBD"""
-  bulkEnvelopes: [bulkEnvelope]
+  bulkEnvelopes: [bulkEnvelope!]
   """Reserved: TBD"""
   bulkEnvelopesBatchUri: String
   """The last position in the result set."""
@@ -2968,7 +2968,7 @@ type bulkEnvelope {
 type ChunkedUploads {
   checksum: String
   chunkedUploadId: String
-  chunkedUploadParts: [chunkedUploadPart]
+  chunkedUploadParts: [chunkedUploadPart!]
   chunkedUploadUri: String
   committed: String
   expirationDateTime: String
@@ -2985,7 +2985,7 @@ type chunkedUploadPart {
 
 type connectConfigResults {
   """Array of Connect Configurations"""
-  configurations: [ConnectConfigurations]
+  configurations: [ConnectConfigurations!]
   """Record count."""
   totalRecords: String
 }
@@ -3080,11 +3080,11 @@ type ConnectEvents {
   """
   An array of containing failure information from the Connect failure log.
   """
-  failures: [connectLog]
+  failures: [connectLog!]
   """
   A complex type containing Connect log information. It is divided into two sections, one for regular logs and one for Connect failures.
   """
-  logs: [connectLog]
+  logs: [connectLog!]
   """Record count."""
   totalRecords: String
   """Type of the user. Valid values: type_owner, type_participant."""
@@ -3103,7 +3103,7 @@ type connectLog {
   
   This is only included in the response if the query additional_info=true is used.
   """
-  connectDebugLog: [connectDebugLog]
+  connectDebugLog: [connectDebugLog!]
   """
   The identifier for the Connect configuration that failed. If an account has multiple Connect configurations, this value is used to look up the Connect configuration for the failed post.
   """
@@ -3168,7 +3168,7 @@ type integratedUserInfoList {
   The total number of items in the search's result set. It will always be greater than or equal to the value of the \`resultSetSize\` field.
   """
   totalSetSize: String
-  users: [userInfo]
+  users: [userInfo!]
 }
 
 """Account consumer disclosures"""
@@ -3270,7 +3270,7 @@ type settingsMetadata {
   When set to **true**, indicates that this module is enabled on the account.
   """
   is21CFRPart11: String
-  options: [String]
+  options: [String!]
   rights: String
   uiHint: String
   uiOrder: String
@@ -3278,7 +3278,7 @@ type settingsMetadata {
 }
 
 type contactGetResponse {
-  contacts: [Contacts]
+  contacts: [Contacts!]
   """The last position in the result set."""
   endPosition: String
   """
@@ -3302,9 +3302,9 @@ type contactGetResponse {
 type Contacts {
   """The unique identifier of a person in the contacts address book."""
   contactId: String
-  contactPhoneNumbers: [contactPhoneNumber]
+  contactPhoneNumbers: [contactPhoneNumber!]
   contactUri: String
-  emails: [String]
+  emails: [String!]
   errorDetails: errorDetails
   name: String
   organization: String
@@ -3327,9 +3327,9 @@ type contactPhoneNumber {
 """Custom Fields"""
 type AccountCustomFields {
   """An array of list custom fields."""
-  listCustomFields: [listCustomField]
+  listCustomFields: [listCustomField!]
   """An array of text custom fields."""
-  textCustomFields: [textCustomField]
+  textCustomFields: [textCustomField!]
 }
 
 type listCustomField {
@@ -3340,7 +3340,7 @@ type listCustomField {
   errorDetails: errorDetails
   """An ID used to specify a custom field."""
   fieldId: String
-  listItems: [String]
+  listItems: [String!]
   """The name of the custom field."""
   name: String
   """When set to **true**, the signer is required to fill out this tab"""
@@ -3378,9 +3378,9 @@ type envelopesInformation {
   """The last position in the result set."""
   endPosition: String
   """Array of envelope statuses and transaction Ids in the result set."""
-  envelopeTransactionStatuses: [envelopeTransactionStatus]
+  envelopeTransactionStatuses: [envelopeTransactionStatus!]
   """Set of envelope information"""
-  envelopes: [Envelopes]
+  envelopes: [Envelopes!]
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
@@ -3565,7 +3565,7 @@ type EnvelopeEmailSettings {
   """
   A list of email addresses that receive a copy of all email communications for an envelope. You can use this for archiving purposes.
   """
-  bccEmailAddresses: [bccEmailAddress]
+  bccEmailAddresses: [bccEmailAddress!]
   replyEmailAddressOverride: String
   replyEmailNameOverride: String
 }
@@ -3680,29 +3680,29 @@ type EnvelopeRecipients {
   """
   A complex type defining the management and access rights of a recipient assigned assigned as an agent on the document.
   """
-  agents: [agent]
+  agents: [agent!]
   """
   A complex type containing information about recipients who should receive a copy of the envelope, but does not need to sign it.
   """
-  carbonCopies: [carbonCopy]
+  carbonCopies: [carbonCopy!]
   """
   A complex type containing information on a recipient the must receive the completed documents for the envelope to be completed, but the recipient does not need to sign, initial, date, or add information to any of the documents.
   """
-  certifiedDeliveries: [certifiedDelivery]
+  certifiedDeliveries: [certifiedDelivery!]
   currentRoutingOrder: String
   """
   A complex type defining the management and access rights of a recipient assigned assigned as an editor on the document.
   """
-  editors: [editor]
+  editors: [editor!]
   errorDetails: errorDetails
   """
   Specifies a signer that is in the same physical location as a DocuSign user who will act as a Signing Host for the transaction. The recipient added is the Signing Host and new separate Signer Name field appears after Sign in person is selected.
   """
-  inPersonSigners: [inPersonSigner]
+  inPersonSigners: [inPersonSigner!]
   """
   Identifies a recipient that can, but is not required to, add name and email information for recipients at the same or subsequent level in the routing order (until subsequent Agents, Editors or Intermediaries recipient types are added).
   """
-  intermediaries: [intermediary]
+  intermediaries: [intermediary!]
   """
   The list of recipient event statuses that will trigger Connect to send updates to the url. It can be a two-part list with:
   
@@ -3711,7 +3711,7 @@ type EnvelopeRecipients {
   """
   recipientCount: String
   """A complex type containing information about the Signer recipient."""
-  signers: [signer]
+  signers: [signer!]
 }
 
 """Contains information about agent recipients."""
@@ -3743,7 +3743,7 @@ type agent {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -3752,7 +3752,7 @@ type agent {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -3781,7 +3781,7 @@ type agent {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -3809,7 +3809,7 @@ type agent {
   note: String
   phoneAuthentication: recipientPhoneAuthentication
   """Reserved:"""
-  recipientAttachments: [recipientAttachment]
+  recipientAttachments: [recipientAttachment!]
   recipientAuthenticationStatus: authenticationStatus
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -3844,12 +3844,12 @@ type agent {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo]
+  signingGroupUsers: [userInfo!]
   smsAuthentication: recipientSMSAuthentication
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication]
+  socialAuthentications: [socialAuthentication!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -4030,7 +4030,7 @@ type recipientPhoneAuthentication {
   """
   An Array containing a list of phone numbers the recipient may use for SMS text authentication.
   """
-  senderProvidedNumbers: [String]
+  senderProvidedNumbers: [String!]
   """Reserved."""
   validateRecipProvidedNumber: String
 }
@@ -4088,7 +4088,7 @@ Contains the name/value pair information for the SAML assertion attributes:
 Your account must be set up to use SSO to use this.
 """
 type recipientSAMLAuthentication {
-  samlAssertionAttributes: [samlAssertionAttribute]
+  samlAssertionAttributes: [samlAssertionAttribute!]
 }
 
 type samlAssertionAttribute {
@@ -4107,7 +4107,7 @@ type recipientSMSAuthentication {
   """
   An Array containing a list of phone numbers the recipient may use for SMS text authentication.
   """
-  senderProvidedNumbers: [String]
+  senderProvidedNumbers: [String!]
 }
 
 type socialAuthentication {
@@ -4143,7 +4143,7 @@ type carbonCopy {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -4152,7 +4152,7 @@ type carbonCopy {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -4181,7 +4181,7 @@ type carbonCopy {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -4214,7 +4214,7 @@ type carbonCopy {
   note: String
   phoneAuthentication: recipientPhoneAuthentication
   """Reserved:"""
-  recipientAttachments: [recipientAttachment]
+  recipientAttachments: [recipientAttachment!]
   recipientAuthenticationStatus: authenticationStatus
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -4249,12 +4249,12 @@ type carbonCopy {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo]
+  signingGroupUsers: [userInfo!]
   smsAuthentication: recipientSMSAuthentication
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication]
+  socialAuthentications: [socialAuthentication!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -4305,7 +4305,7 @@ type certifiedDelivery {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -4314,7 +4314,7 @@ type certifiedDelivery {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
   email: String
   emailNotification: recipientEmailNotification
   emailRecipientPostSigningURL: String
@@ -4338,7 +4338,7 @@ type certifiedDelivery {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -4366,7 +4366,7 @@ type certifiedDelivery {
   note: String
   phoneAuthentication: recipientPhoneAuthentication
   """Reserved:"""
-  recipientAttachments: [recipientAttachment]
+  recipientAttachments: [recipientAttachment!]
   recipientAuthenticationStatus: authenticationStatus
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -4401,12 +4401,12 @@ type certifiedDelivery {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo]
+  signingGroupUsers: [userInfo!]
   smsAuthentication: recipientSMSAuthentication
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication]
+  socialAuthentications: [socialAuthentication!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -4457,7 +4457,7 @@ type editor {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -4466,7 +4466,7 @@ type editor {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -4522,7 +4522,7 @@ type editor {
   note: String
   phoneAuthentication: recipientPhoneAuthentication
   """Reserved:"""
-  recipientAttachments: [recipientAttachment]
+  recipientAttachments: [recipientAttachment!]
   recipientAuthenticationStatus: authenticationStatus
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -4557,12 +4557,12 @@ type editor {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo]
+  signingGroupUsers: [userInfo!]
   smsAuthentication: recipientSMSAuthentication
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication]
+  socialAuthentications: [socialAuthentication!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -4630,7 +4630,7 @@ type inPersonSigner {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -4645,7 +4645,7 @@ type inPersonSigner {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
   """
   The signer's email address in an eNotary flow.
   
@@ -4729,7 +4729,7 @@ type inPersonSigner {
   note: String
   phoneAuthentication: recipientPhoneAuthentication
   """Reserved:"""
-  recipientAttachments: [recipientAttachment]
+  recipientAttachments: [recipientAttachment!]
   recipientAuthenticationStatus: authenticationStatus
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -4739,7 +4739,7 @@ type inPersonSigner {
   """
   The default signature provider is the DocuSign Electronic signature system. This parameter is used to specify one or more Standards Based Signature (digital signature) providers for the signer to use. [More information](../../../../guide/appendix/standards_based_signatures.html)
   """
-  recipientSignatureProviders: [recipientSignatureProvider]
+  recipientSignatureProviders: [recipientSignatureProvider!]
   recipientSuppliesTabs: String
   """
   When set to **true**, the recipient is required to use the specified ID check method (including Phone and SMS authentication) to validate their identity.
@@ -4806,12 +4806,12 @@ type inPersonSigner {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo]
+  signingGroupUsers: [userInfo!]
   smsAuthentication: recipientSMSAuthentication
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication]
+  socialAuthentications: [socialAuthentication!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -4874,7 +4874,7 @@ type notaryHost {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -4883,7 +4883,7 @@ type notaryHost {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
   """
   The notary's email address.
   
@@ -4937,7 +4937,7 @@ type notaryHost {
   note: String
   phoneAuthentication: recipientPhoneAuthentication
   """Reserved:"""
-  recipientAttachments: [recipientAttachment]
+  recipientAttachments: [recipientAttachment!]
   recipientAuthenticationStatus: authenticationStatus
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -4963,7 +4963,7 @@ type notaryHost {
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication]
+  socialAuthentications: [socialAuthentication!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -4987,7 +4987,7 @@ type notaryHost {
 }
 
 type propertyMetadata {
-  options: [String]
+  options: [String!]
   rights: String
 }
 
@@ -5044,49 +5044,49 @@ type EnvelopeRecipientTabs {
   information is shown on the document for the approval, but it is
   recorded as a signature in the envelope history.
   """
-  approveTabs: [approve]
+  approveTabs: [approve!]
   """
   Specifies a tag on the document in a location where the recipient can select an option.
   """
-  checkboxTabs: [checkbox]
+  checkboxTabs: [checkbox!]
   """
   Specifies a tag on the document where you want the recipient's company name to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  companyTabs: [company]
+  companyTabs: [company!]
   """
   Specifies a tab on the document where the date the document was signed will automatically appear.
   """
-  dateSignedTabs: [dateSigned]
+  dateSignedTabs: [dateSigned!]
   """
   Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. 
   
   If you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.
   """
-  dateTabs: [date]
+  dateTabs: [date!]
   """
   Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.
   """
-  declineTabs: [decline]
+  declineTabs: [decline!]
   """
   Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.
   """
-  emailAddressTabs: [emailAddress]
+  emailAddressTabs: [emailAddress!]
   """
   Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  emailTabs: [email]
+  emailTabs: [email!]
   """
   Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.
   """
-  envelopeIdTabs: [envelopeId]
+  envelopeIdTabs: [envelopeId!]
   """
   Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.
   """
-  firstNameTabs: [firstName]
+  firstNameTabs: [firstName!]
   """
   A list of formula tabs.
   
@@ -5113,70 +5113,70 @@ type EnvelopeRecipientTabs {
   [calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields
   [paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures
   """
-  formulaTabs: [formulaTab]
+  formulaTabs: [formulaTab!]
   """
   Specifies a tag on the document where you want the recipient's name to appear.
   """
-  fullNameTabs: [fullName]
+  fullNameTabs: [fullName!]
   """
   Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.
   """
-  initialHereTabs: [initialHere]
+  initialHereTabs: [initialHere!]
   """
   Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.
   """
-  lastNameTabs: [lastName]
+  lastNameTabs: [lastName!]
   """
   Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.
   """
-  listTabs: [list]
+  listTabs: [list!]
   """
   Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.
   """
-  noteTabs: [note]
+  noteTabs: [note!]
   """
   Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  numberTabs: [number]
+  numberTabs: [number!]
   """
   Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.
   """
-  radioGroupTabs: [radioGroup]
+  radioGroupTabs: [radioGroup!]
   """
   A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The "optional" parameter sets if the signature is required or optional.
   """
-  signHereTabs: [signHere]
+  signHereTabs: [signHere!]
   """
   Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.
   """
-  signerAttachmentTabs: [signerAttachment]
+  signerAttachmentTabs: [signerAttachment!]
   """
   Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  ssnTabs: [ssn]
+  ssnTabs: [ssn!]
   """
   Specifies a that that is an adaptable field that allows the recipient to enter different text information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  textTabs: [text]
+  textTabs: [text!]
   """
   Specifies a tag on the document where you want the recipient's title to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  titleTabs: [title]
-  viewTabs: [view]
+  titleTabs: [title!]
+  viewTabs: [view!]
   """
   Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  zipTabs: [zip]
+  zipTabs: [zip!]
 }
 
 """
@@ -7003,7 +7003,7 @@ type paymentDetails {
   are returned as metadata
   to the payment gateway.
   """
-  lineItems: [paymentLineItem]
+  lineItems: [paymentLineItem!]
   """
   This read-only property describes the status of a payment.
   
@@ -7576,7 +7576,7 @@ type list {
   Maximum Length of listItems:  2048 characters.
   Maximum Length of items in the list: 100 characters.
   """
-  listItems: [listItem]
+  listItems: [listItem!]
   """
   When set to **true**, the signer cannot change the data of the custom tab.
   """
@@ -8057,7 +8057,7 @@ type radioGroup {
   """
   Specifies the locations and status for radio buttons that are grouped together.
   """
-  radios: [radio]
+  radios: [radio!]
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
   """
@@ -9309,7 +9309,7 @@ type intermediary {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -9318,7 +9318,7 @@ type intermediary {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -9347,7 +9347,7 @@ type intermediary {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -9375,7 +9375,7 @@ type intermediary {
   note: String
   phoneAuthentication: recipientPhoneAuthentication
   """Reserved:"""
-  recipientAttachments: [recipientAttachment]
+  recipientAttachments: [recipientAttachment!]
   recipientAuthenticationStatus: authenticationStatus
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -9410,12 +9410,12 @@ type intermediary {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo]
+  signingGroupUsers: [userInfo!]
   smsAuthentication: recipientSMSAuthentication
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication]
+  socialAuthentications: [socialAuthentication!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -9477,7 +9477,7 @@ type signer {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -9490,7 +9490,7 @@ type signer {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -9519,7 +9519,7 @@ type signer {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -9553,7 +9553,7 @@ type signer {
   note: String
   phoneAuthentication: recipientPhoneAuthentication
   """Reserved:"""
-  recipientAttachments: [recipientAttachment]
+  recipientAttachments: [recipientAttachment!]
   recipientAuthenticationStatus: authenticationStatus
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -9563,7 +9563,7 @@ type signer {
   """
   The default signature provider is the DocuSign Electronic signature system. This parameter is used to specify one or more Standards Based Signature (digital signature) providers for the signer to use. [More information](../../../../guide/appendix/standards_based_signatures.html)
   """
-  recipientSignatureProviders: [recipientSignatureProvider]
+  recipientSignatureProviders: [recipientSignatureProvider!]
   recipientSuppliesTabs: String
   """
   When set to **true**, the recipient is required to use the specified ID check method (including Phone and SMS authentication) to validate their identity.
@@ -9612,12 +9612,12 @@ type signer {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo]
+  signingGroupUsers: [userInfo!]
   smsAuthentication: recipientSMSAuthentication
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication]
+  socialAuthentications: [socialAuthentication!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -9642,7 +9642,7 @@ type signer {
 }
 
 type envelopeAttachmentsResult {
-  attachments: [EnvelopeAttachments]
+  attachments: [EnvelopeAttachments!]
 }
 
 type EnvelopeAttachments {
@@ -9656,30 +9656,30 @@ type EnvelopeAttachments {
 
 type envelopeAuditEventResponse {
   """Reserved: TBD"""
-  auditEvents: [envelopeAuditEvent]
+  auditEvents: [envelopeAuditEvent!]
 }
 
 type envelopeAuditEvent {
-  eventFields: [nameValue]
+  eventFields: [nameValue!]
 }
 
 type customFieldsEnvelope {
   """An array of list custom fields."""
-  listCustomFields: [listCustomField]
+  listCustomFields: [listCustomField!]
   """An array of text custom fields."""
-  textCustomFields: [textCustomField]
+  textCustomFields: [textCustomField!]
 }
 
 """Envelope documents"""
 type EnvelopeDocuments {
-  envelopeDocuments: [envelopeDocument]
+  envelopeDocuments: [envelopeDocument!]
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
 }
 
 type envelopeDocument {
   attachmentTabId: String
-  availableDocumentTypes: [signatureType]
+  availableDocumentTypes: [signatureType!]
   containsPdfFormFields: String
   """
   This string sets the display and behavior properties of
@@ -9700,7 +9700,7 @@ type envelopeDocument {
     but is the default value for all other documents.
   """
   display: String
-  documentFields: [nameValue]
+  documentFields: [nameValue!]
   documentGroup: String
   """
   Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.
@@ -9762,7 +9762,7 @@ type EnvelopeDocumentFields {
   
   *IMPORTANT*: If you are using xml, the name/value pair is contained in a nameValue element.
   """
-  documentFields: [nameValue]
+  documentFields: [nameValue!]
 }
 
 type pageImages {
@@ -9772,7 +9772,7 @@ type pageImages {
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
   nextUri: String
-  pages: [page]
+  pages: [page!]
   """
   The URI for the prior chunk of records based on the search request. It is \`null\` if this is the first set of results for the search.
   """
@@ -9811,49 +9811,49 @@ type EnvelopeDocumentTabs {
   information is shown on the document for the approval, but it is
   recorded as a signature in the envelope history.
   """
-  approveTabs: [approve]
+  approveTabs: [approve!]
   """
   Specifies a tag on the document in a location where the recipient can select an option.
   """
-  checkboxTabs: [checkbox]
+  checkboxTabs: [checkbox!]
   """
   Specifies a tag on the document where you want the recipient's company name to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  companyTabs: [company]
+  companyTabs: [company!]
   """
   Specifies a tab on the document where the date the document was signed will automatically appear.
   """
-  dateSignedTabs: [dateSigned]
+  dateSignedTabs: [dateSigned!]
   """
   Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. 
   
   If you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.
   """
-  dateTabs: [date]
+  dateTabs: [date!]
   """
   Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.
   """
-  declineTabs: [decline]
+  declineTabs: [decline!]
   """
   Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.
   """
-  emailAddressTabs: [emailAddress]
+  emailAddressTabs: [emailAddress!]
   """
   Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  emailTabs: [email]
+  emailTabs: [email!]
   """
   Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.
   """
-  envelopeIdTabs: [envelopeId]
+  envelopeIdTabs: [envelopeId!]
   """
   Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.
   """
-  firstNameTabs: [firstName]
+  firstNameTabs: [firstName!]
   """
   A list of formula tabs.
   
@@ -9880,75 +9880,75 @@ type EnvelopeDocumentTabs {
   [calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields
   [paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures
   """
-  formulaTabs: [formulaTab]
+  formulaTabs: [formulaTab!]
   """
   Specifies a tag on the document where you want the recipient's name to appear.
   """
-  fullNameTabs: [fullName]
+  fullNameTabs: [fullName!]
   """
   Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.
   """
-  initialHereTabs: [initialHere]
+  initialHereTabs: [initialHere!]
   """
   Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.
   """
-  lastNameTabs: [lastName]
+  lastNameTabs: [lastName!]
   """
   Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.
   """
-  listTabs: [list]
+  listTabs: [list!]
   """
   Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.
   """
-  noteTabs: [note]
+  noteTabs: [note!]
   """
   Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  numberTabs: [number]
+  numberTabs: [number!]
   """
   Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.
   """
-  radioGroupTabs: [radioGroup]
+  radioGroupTabs: [radioGroup!]
   """
   A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The "optional" parameter sets if the signature is required or optional.
   """
-  signHereTabs: [signHere]
+  signHereTabs: [signHere!]
   """
   Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.
   """
-  signerAttachmentTabs: [signerAttachment]
+  signerAttachmentTabs: [signerAttachment!]
   """
   Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  ssnTabs: [ssn]
+  ssnTabs: [ssn!]
   """
   Specifies a that that is an adaptable field that allows the recipient to enter different text information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  textTabs: [text]
+  textTabs: [text!]
   """
   Specifies a tag on the document where you want the recipient's title to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  titleTabs: [title]
-  viewTabs: [view]
+  titleTabs: [title!]
+  viewTabs: [view!]
   """
   Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  zipTabs: [zip]
+  zipTabs: [zip!]
 }
 
 """Envelope templates"""
 type EnvelopeTemplates {
-  templates: [templateSummary]
+  templates: [templateSummary!]
 }
 
 type templateSummary {
@@ -9983,8 +9983,8 @@ type EnvelopeFormData {
   emailSubject: String
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
-  formData: [nameValue]
-  recipientFormData: [recipientFormData]
+  formData: [nameValue!]
+  recipientFormData: [recipientFormData!]
   """The date and time the envelope was sent."""
   sentDateTime: String
   """
@@ -10000,7 +10000,7 @@ type recipientFormData {
   declinedTime: String
   deliveredTime: String
   email: String
-  formData: [nameValue]
+  formData: [nameValue!]
   name: String
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -10015,7 +10015,7 @@ type EnvelopeBulkRecipients {
   """
   A complex type containing information about the bulk recipients in the response.
   """
-  bulkRecipients: [bulkRecipient]
+  bulkRecipients: [bulkRecipient!]
   """The last position in the result set."""
   endPosition: String
   """
@@ -10054,7 +10054,7 @@ type bulkRecipient {
   """
   email: String
   """Array or errors."""
-  errorDetails: [errorDetails]
+  errorDetails: [errorDetails!]
   """
   Specifies the authentication check used for the signer. If blank then no authentication check is required for the signer. Only one value can be used in this field.
   
@@ -10088,7 +10088,7 @@ type bulkRecipient {
   If \`usersupplied\` is used, the signer supplies his or her own telephone number.
   """
   phoneNumber: String
-  recipientSignatureProviderInfo: [bulkRecipientSignatureProvider]
+  recipientSignatureProviderInfo: [bulkRecipientSignatureProvider!]
   rowNumber: String
   """
   Specifies values used to populate recipient tabs with information. This allows each bulk recipient signer to have different values for their associated tabs. Any number of \`tabLabel\` columns can be added to the bulk recipient file.
@@ -10099,7 +10099,7 @@ type bulkRecipient {
   
   Note that this option cannot be used for tabs that do not have data or that are automatically populated data such as Signature, Full Name, Email Address, Company, Title, and Date Signed tabs.
   """
-  tabLabels: [bulkRecipientTabLabel]
+  tabLabels: [bulkRecipientTabLabel!]
 }
 
 type bulkRecipientSignatureProvider {
@@ -10209,7 +10209,7 @@ type EnvelopeConsumerDisclosures {
 }
 
 type EnvelopeDocumentVisibility {
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
 }
 
 """Users' signatures"""
@@ -10266,7 +10266,7 @@ type dateStampProperties {
 """Folder management"""
 type Folders {
   """A collection of folder objects returned in a response."""
-  folders: [folder]
+  folders: [folder!]
 }
 
 type folder {
@@ -10275,7 +10275,7 @@ type folder {
   """The ID of the folder being accessed."""
   folderId: String
   """A collection of folder objects returned in a response."""
-  folders: [folder]
+  folders: [folder!]
   name: String
   ownerEmail: String
   ownerUserId: String
@@ -10321,7 +10321,7 @@ type folderItemsResponse {
   """The last position in the result set."""
   endPosition: String
   """A list of the envelopes in the specified folder or folders."""
-  folderItems: [folderItem]
+  folderItems: [folderItem!]
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
@@ -10348,7 +10348,7 @@ type folderItem {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [customField_v2]
+  customFields: [customField_v2!]
   """A sender-defined description of the line item."""
   description: String
   """The envelope ID of the envelope status that failed to post."""
@@ -10417,7 +10417,7 @@ type Groups {
   """
   A collection group objects containing information about the groups returned.
   """
-  groups: [group]
+  groups: [group!]
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
@@ -10446,13 +10446,13 @@ type group {
   groupType: String
   """The ID of the permission profile associated with the group."""
   permissionProfileId: String
-  users: [userInfo]
+  users: [userInfo!]
 }
 
 """Brand management for groups"""
 type GroupBrands {
   """The list of brands."""
-  brands: [brand]
+  brands: [brand!]
   """
   The brand seen by envelope recipients when a brand is not explicitly set.
   """
@@ -10481,11 +10481,11 @@ type GroupUsers {
   The total number of items in the search's result set. It will always be greater than or equal to the value of the \`resultSetSize\` field.
   """
   totalSetSize: String
-  users: [userInfo]
+  users: [userInfo!]
 }
 
 type paymentGatewayAccountsInfo {
-  paymentGatewayAccounts: [PaymentGatewayAccounts]
+  paymentGatewayAccounts: [PaymentGatewayAccounts!]
 }
 
 type PaymentGatewayAccounts {
@@ -10496,7 +10496,7 @@ type PaymentGatewayAccounts {
 
 type permissionProfileInformation {
   """A complex type containing a collection of permission profiles."""
-  permissionProfiles: [AccountPermissionProfiles]
+  permissionProfiles: [AccountPermissionProfiles!]
 }
 
 type AccountPermissionProfiles {
@@ -10506,7 +10506,7 @@ type AccountPermissionProfiles {
   permissionProfileName: String
   settings: accountRoleSettings
   userCount: String
-  users: [Users]
+  users: [Users!]
 }
 
 type accountRoleSettings {
@@ -10586,7 +10586,7 @@ type Users {
   """Indicates the date and time the item was created."""
   createdDateTime: String
   """The name/value pair information for the user custom setting."""
-  customSettings: [nameValue]
+  customSettings: [nameValue!]
   email: String
   """
   Specifies whether the user is enabled for updates from DocuSign Connect. Valid values: true or false.
@@ -10609,7 +10609,7 @@ type Users {
   * permissionProfileId - The ID of the permission profile associated with the group.
   * groupType - The group type.
   """
-  groupList: [group]
+  groupList: [group!]
   homeAddress: addressInformation_v2
   """
   Contains the URI for an endpoint that you can use to retrieve the initials image.
@@ -10670,7 +10670,7 @@ type Users {
   """
   The name/value pair information for user settings. These determine the actions that a user can take in the account. The \`[ML:userSettings]\` are listed and described below.
   """
-  userSettings: [nameValue]
+  userSettings: [nameValue!]
   userStatus: String
   userType: String
   workAddress: addressInformation_v2
@@ -10745,7 +10745,7 @@ type powerFormsResponse {
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
   nextUri: String
-  powerForms: [PowerForms]
+  powerForms: [PowerForms!]
   """
   The URI for the prior chunk of records based on the search request. It is \`null\` if this is the first set of results for the search.
   """
@@ -10775,7 +10775,7 @@ type PowerForms {
   See [ML:Template Email Subject Merge Fields] for information about adding merge field information to the email subject.
   """
   emailSubject: String
-  envelopes: [Envelopes]
+  envelopes: [Envelopes!]
   errorDetails: errorDetails
   instructions: String
   isActive: String
@@ -10788,7 +10788,7 @@ type PowerForms {
   powerFormId: String
   powerFormUrl: String
   """An array of powerform recipients."""
-  recipients: [powerFormRecipient]
+  recipients: [powerFormRecipient!]
   senderName: String
   senderUserId: String
   signingMode: String
@@ -10843,7 +10843,7 @@ type powerFormSendersResponse {
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
   nextUri: String
-  powerFormSenders: [userInfo]
+  powerFormSenders: [userInfo!]
   """
   The URI for the prior chunk of records based on the search request. It is \`null\` if this is the first set of results for the search.
   """
@@ -10859,19 +10859,19 @@ type powerFormSendersResponse {
 }
 
 type powerFormsFormDataResponse {
-  envelopes: [PowerFormData]
+  envelopes: [PowerFormData!]
 }
 
 type PowerFormData {
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
   """An array of powerform recipients."""
-  recipients: [powerFormFormDataRecipient]
+  recipients: [powerFormFormDataRecipient!]
 }
 
 type powerFormFormDataRecipient {
   email: String
-  formData: [nameValue]
+  formData: [nameValue!]
   name: String
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -10882,7 +10882,7 @@ type powerFormFormDataRecipient {
 type recipientNamesResponse {
   """Indicates whether email address is used by more than one user."""
   multipleUsers: String
-  recipientNames: [String]
+  recipientNames: [String!]
   reservedRecipientEmail: String
 }
 
@@ -10890,7 +10890,7 @@ type folderItemResponse {
   """The last position in the result set."""
   endPosition: String
   """A list of the envelopes in the specified folder or folders."""
-  folderItems: [folderItem_v2]
+  folderItems: [folderItem_v2!]
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
@@ -10963,7 +10963,7 @@ type accountSettingsInformation {
   
   [accountsettings]: /esign/restapi/Accounts/Accounts/create/#account-settings
   """
-  accountSettings: [nameValue]
+  accountSettings: [nameValue!]
 }
 
 type ENoteConfigurations {
@@ -11008,7 +11008,7 @@ type accountPasswordLockoutDurationMinutes {
 }
 
 type accountPasswordLockoutDurationType {
-  options: [String]
+  options: [String!]
 }
 
 type accountPasswordMinimumPasswordAgeDays {
@@ -11022,7 +11022,7 @@ type accountMinimumPasswordLength {
 }
 
 type accountPasswordStrengthType {
-  options: [accountPasswordStrengthTypeOption]
+  options: [accountPasswordStrengthTypeOption!]
 }
 
 type accountPasswordStrengthTypeOption {
@@ -11101,7 +11101,7 @@ type accountSharedAccess {
   """
   A complex type containing the shared access information to an envelope for the users specified in the request.
   """
-  sharedAccess: [memberSharedItems]
+  sharedAccess: [memberSharedItems!]
   """Starting position of the current result set."""
   startPosition: String
   """
@@ -11111,9 +11111,9 @@ type accountSharedAccess {
 }
 
 type memberSharedItems {
-  envelopes: [sharedItem]
+  envelopes: [sharedItem!]
   errorDetails: errorDetails
-  templates: [templateSharedItem]
+  templates: [templateSharedItem!]
   user: userInfo
 }
 
@@ -11129,8 +11129,8 @@ type templateSharedItem {
   owner: userInfo
   """When set to **true**, this custom tab is shared."""
   shared: String
-  sharedGroups: [memberGroupSharedItem]
-  sharedUsers: [userSharedItem]
+  sharedGroups: [memberGroupSharedItem!]
+  sharedUsers: [userSharedItem!]
   """
   The unique identifier of the template. If this is not provided, DocuSign will generate a value.
   """
@@ -11154,7 +11154,7 @@ type userSharedItem {
 
 """Account SBS Signature Providers"""
 type AccountSignatureProviders {
-  signatureProviders: [accountSignatureProvider]
+  signatureProviders: [accountSignatureProvider!]
 }
 
 type accountSignatureProvider {
@@ -11166,8 +11166,8 @@ type accountSignatureProvider {
   The name of an Electronic or Standards Based Signature (digital signature) provider for the signer to use. [The current provider list.](../../../../guide/appendix/standards_based_signatures.html#signature-provider-options)
   """
   signatureProviderName: String
-  signatureProviderOptionsMetadata: [accountSignatureProviderOption]
-  signatureProviderRequiredOptions: [signatureProviderRequiredOption]
+  signatureProviderOptionsMetadata: [accountSignatureProviderOption!]
+  signatureProviderRequiredOptions: [signatureProviderRequiredOption!]
 }
 
 type accountSignatureProviderOption {
@@ -11177,7 +11177,7 @@ type accountSignatureProviderOption {
 }
 
 type signatureProviderRequiredOption {
-  requiredSignatureProviderOptionIds: [String]
+  requiredSignatureProviderOptionIds: [String!]
   signerType: String
 }
 
@@ -11185,7 +11185,7 @@ type signingGroupInformation {
   """
   A collection group objects containing information about the groups returned.
   """
-  groups: [SigningGroups]
+  groups: [SigningGroups!]
 }
 
 """Signing groups"""
@@ -11205,7 +11205,7 @@ type SigningGroups {
   When set to **true** and the feature is enabled in the sender's account, the signing recipient is required to draw signatures and initials at each signature/initial tab ( instead of adopting a signature/initial style or only drawing a signature/initial once).
   """
   signingGroupId: String
-  users: [signingGroupUser]
+  users: [signingGroupUser!]
 }
 
 type signingGroupUser {
@@ -11221,15 +11221,15 @@ type signingGroupUser {
 
 """Signing groups' users"""
 type SigningGroupUsers {
-  users: [signingGroupUser]
+  users: [signingGroupUser!]
 }
 
 type supportedLanguages {
-  languages: [nameValue]
+  languages: [nameValue!]
 }
 
 type tabMetadataList {
-  tabs: [CustomTabs]
+  tabs: [CustomTabs!]
 }
 
 """Custom tabs"""
@@ -11330,7 +11330,7 @@ type CustomTabs {
   """
   If the tab is a list, this represents the values that are possible for the tab.
   """
-  items: [String]
+  items: [String!]
   """
   The UTC DateTime this object was last modified. This is in ISO8601 format.
   """
@@ -11382,9 +11382,9 @@ type envelopeTemplateResults {
   """The last position in the result set."""
   endPosition: String
   """The list of requested templates."""
-  envelopeTemplates: [envelopeTemplateResult]
+  envelopeTemplates: [envelopeTemplateResult!]
   """A collection of folder objects returned in a response."""
-  folders: [folder]
+  folders: [folder!]
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
@@ -11448,7 +11448,7 @@ type envelopeTemplateResult {
   """A sender-defined description of the line item."""
   description: String
   """Complex element contains the details on the documents in the envelope."""
-  documents: [document]
+  documents: [document!]
   documentsCombinedUri: String
   """
   Contains a URI for an endpoint that you can use to retrieve the documents.
@@ -11593,7 +11593,7 @@ type document {
   The document's bytes. This field can be used to include a base64 version of the document bytes within an envelope definition instead of sending the document using a multi-part HTTP request. The maximum document size is smaller if this field is used due to the overhead of the base64 encoding.
   """
   documentBase64: String
-  documentFields: [nameValue]
+  documentFields: [nameValue!]
   documentGroup: String
   """
   Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.
@@ -11625,7 +11625,7 @@ type document {
   * width - The width of the matchbox. 
   * height - The height of the matchbox.
   """
-  matchBoxes: [matchBox]
+  matchBoxes: [matchBox!]
   name: String
   """
   An optional value that sets the direction order used to sort the item list. 
@@ -11742,7 +11742,7 @@ type Templates {
   """Reserved: For DocuSign use only."""
   deliveredDateTime: String
   """Complex element contains the details on the documents in the envelope."""
-  documents: [document]
+  documents: [document!]
   documentsCombinedUri: String
   """
   Contains a URI for an endpoint that you can use to retrieve the documents.
@@ -11899,14 +11899,14 @@ type envelopeTemplateDefinition {
 """Template custom fields"""
 type TemplateCustomFields {
   """An array of list custom fields."""
-  listCustomFields: [listCustomField]
+  listCustomFields: [listCustomField!]
   """An array of text custom fields."""
-  textCustomFields: [textCustomField]
+  textCustomFields: [textCustomField!]
 }
 
 """Template documents"""
 type TemplateDocuments {
-  templateDocuments: [envelopeDocument]
+  templateDocuments: [envelopeDocument!]
   """
   The unique identifier of the template. If this is not provided, DocuSign will generate a value.
   """
@@ -11923,7 +11923,7 @@ type TemplateDocumentFields {
   
   *IMPORTANT*: If you are using xml, the name/value pair is contained in a nameValue element.
   """
-  documentFields: [nameValue]
+  documentFields: [nameValue!]
 }
 
 type TemplateDocumentTabs {
@@ -11935,49 +11935,49 @@ type TemplateDocumentTabs {
   information is shown on the document for the approval, but it is
   recorded as a signature in the envelope history.
   """
-  approveTabs: [approve]
+  approveTabs: [approve!]
   """
   Specifies a tag on the document in a location where the recipient can select an option.
   """
-  checkboxTabs: [checkbox]
+  checkboxTabs: [checkbox!]
   """
   Specifies a tag on the document where you want the recipient's company name to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  companyTabs: [company]
+  companyTabs: [company!]
   """
   Specifies a tab on the document where the date the document was signed will automatically appear.
   """
-  dateSignedTabs: [dateSigned]
+  dateSignedTabs: [dateSigned!]
   """
   Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. 
   
   If you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.
   """
-  dateTabs: [date]
+  dateTabs: [date!]
   """
   Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.
   """
-  declineTabs: [decline]
+  declineTabs: [decline!]
   """
   Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.
   """
-  emailAddressTabs: [emailAddress]
+  emailAddressTabs: [emailAddress!]
   """
   Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  emailTabs: [email]
+  emailTabs: [email!]
   """
   Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.
   """
-  envelopeIdTabs: [envelopeId]
+  envelopeIdTabs: [envelopeId!]
   """
   Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.
   """
-  firstNameTabs: [firstName]
+  firstNameTabs: [firstName!]
   """
   A list of formula tabs.
   
@@ -12004,70 +12004,70 @@ type TemplateDocumentTabs {
   [calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields
   [paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures
   """
-  formulaTabs: [formulaTab]
+  formulaTabs: [formulaTab!]
   """
   Specifies a tag on the document where you want the recipient's name to appear.
   """
-  fullNameTabs: [fullName]
+  fullNameTabs: [fullName!]
   """
   Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.
   """
-  initialHereTabs: [initialHere]
+  initialHereTabs: [initialHere!]
   """
   Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.
   """
-  lastNameTabs: [lastName]
+  lastNameTabs: [lastName!]
   """
   Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.
   """
-  listTabs: [list]
+  listTabs: [list!]
   """
   Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.
   """
-  noteTabs: [note]
+  noteTabs: [note!]
   """
   Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  numberTabs: [number]
+  numberTabs: [number!]
   """
   Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.
   """
-  radioGroupTabs: [radioGroup]
+  radioGroupTabs: [radioGroup!]
   """
   A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The "optional" parameter sets if the signature is required or optional.
   """
-  signHereTabs: [signHere]
+  signHereTabs: [signHere!]
   """
   Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.
   """
-  signerAttachmentTabs: [signerAttachment]
+  signerAttachmentTabs: [signerAttachment!]
   """
   Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  ssnTabs: [ssn]
+  ssnTabs: [ssn!]
   """
   Specifies a that that is an adaptable field that allows the recipient to enter different text information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  textTabs: [text]
+  textTabs: [text!]
   """
   Specifies a tag on the document where you want the recipient's title to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  titleTabs: [title]
-  viewTabs: [view]
+  titleTabs: [title!]
+  viewTabs: [view!]
   """
   Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  zipTabs: [zip]
+  zipTabs: [zip!]
 }
 
 """Template locks"""
@@ -12109,29 +12109,29 @@ type TemplateRecipients {
   """
   A complex type defining the management and access rights of a recipient assigned assigned as an agent on the document.
   """
-  agents: [agent]
+  agents: [agent!]
   """
   A complex type containing information about recipients who should receive a copy of the envelope, but does not need to sign it.
   """
-  carbonCopies: [carbonCopy]
+  carbonCopies: [carbonCopy!]
   """
   A complex type containing information on a recipient the must receive the completed documents for the envelope to be completed, but the recipient does not need to sign, initial, date, or add information to any of the documents.
   """
-  certifiedDeliveries: [certifiedDelivery]
+  certifiedDeliveries: [certifiedDelivery!]
   currentRoutingOrder: String
   """
   A complex type defining the management and access rights of a recipient assigned assigned as an editor on the document.
   """
-  editors: [editor]
+  editors: [editor!]
   errorDetails: errorDetails
   """
   Specifies a signer that is in the same physical location as a DocuSign user who will act as a Signing Host for the transaction. The recipient added is the Signing Host and new separate Signer Name field appears after Sign in person is selected.
   """
-  inPersonSigners: [inPersonSigner]
+  inPersonSigners: [inPersonSigner!]
   """
   Identifies a recipient that can, but is not required to, add name and email information for recipients at the same or subsequent level in the routing order (until subsequent Agents, Editors or Intermediaries recipient types are added).
   """
-  intermediaries: [intermediary]
+  intermediaries: [intermediary!]
   """
   The list of recipient event statuses that will trigger Connect to send updates to the url. It can be a two-part list with:
   
@@ -12140,7 +12140,7 @@ type TemplateRecipients {
   """
   recipientCount: String
   """A complex type containing information about the Signer recipient."""
-  signers: [signer]
+  signers: [signer!]
 }
 
 """Template bulk recipients"""
@@ -12148,7 +12148,7 @@ type TemplateBulkRecipients {
   """
   A complex type containing information about the bulk recipients in the response.
   """
-  bulkRecipients: [bulkRecipient]
+  bulkRecipients: [bulkRecipient!]
   """The last position in the result set."""
   endPosition: String
   """
@@ -12179,49 +12179,49 @@ type TemplateRecipientTabs {
   information is shown on the document for the approval, but it is
   recorded as a signature in the envelope history.
   """
-  approveTabs: [approve]
+  approveTabs: [approve!]
   """
   Specifies a tag on the document in a location where the recipient can select an option.
   """
-  checkboxTabs: [checkbox]
+  checkboxTabs: [checkbox!]
   """
   Specifies a tag on the document where you want the recipient's company name to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  companyTabs: [company]
+  companyTabs: [company!]
   """
   Specifies a tab on the document where the date the document was signed will automatically appear.
   """
-  dateSignedTabs: [dateSigned]
+  dateSignedTabs: [dateSigned!]
   """
   Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. 
   
   If you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.
   """
-  dateTabs: [date]
+  dateTabs: [date!]
   """
   Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.
   """
-  declineTabs: [decline]
+  declineTabs: [decline!]
   """
   Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.
   """
-  emailAddressTabs: [emailAddress]
+  emailAddressTabs: [emailAddress!]
   """
   Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  emailTabs: [email]
+  emailTabs: [email!]
   """
   Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.
   """
-  envelopeIdTabs: [envelopeId]
+  envelopeIdTabs: [envelopeId!]
   """
   Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.
   """
-  firstNameTabs: [firstName]
+  firstNameTabs: [firstName!]
   """
   A list of formula tabs.
   
@@ -12248,75 +12248,75 @@ type TemplateRecipientTabs {
   [calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields
   [paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures
   """
-  formulaTabs: [formulaTab]
+  formulaTabs: [formulaTab!]
   """
   Specifies a tag on the document where you want the recipient's name to appear.
   """
-  fullNameTabs: [fullName]
+  fullNameTabs: [fullName!]
   """
   Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.
   """
-  initialHereTabs: [initialHere]
+  initialHereTabs: [initialHere!]
   """
   Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.
   """
-  lastNameTabs: [lastName]
+  lastNameTabs: [lastName!]
   """
   Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.
   """
-  listTabs: [list]
+  listTabs: [list!]
   """
   Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.
   """
-  noteTabs: [note]
+  noteTabs: [note!]
   """
   Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  numberTabs: [number]
+  numberTabs: [number!]
   """
   Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.
   """
-  radioGroupTabs: [radioGroup]
+  radioGroupTabs: [radioGroup!]
   """
   A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The "optional" parameter sets if the signature is required or optional.
   """
-  signHereTabs: [signHere]
+  signHereTabs: [signHere!]
   """
   Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.
   """
-  signerAttachmentTabs: [signerAttachment]
+  signerAttachmentTabs: [signerAttachment!]
   """
   Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  ssnTabs: [ssn]
+  ssnTabs: [ssn!]
   """
   Specifies a that that is an adaptable field that allows the recipient to enter different text information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  textTabs: [text]
+  textTabs: [text!]
   """
   Specifies a tag on the document where you want the recipient's title to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  titleTabs: [title]
-  viewTabs: [view]
+  titleTabs: [title!]
+  viewTabs: [view!]
   """
   Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  zipTabs: [zip]
+  zipTabs: [zip!]
 }
 
 type fileTypeList {
   """A collection of file types."""
-  fileTypes: [fileType]
+  fileTypes: [fileType!]
 }
 
 type fileType {
@@ -12344,13 +12344,13 @@ type userInformationList {
   The total number of items in the search's result set. It will always be greater than or equal to the value of the \`resultSetSize\` field.
   """
   totalSetSize: String
-  users: [Users]
+  users: [Users!]
 }
 
 """Cloud storage providers"""
 type CloudStorageProviders {
   """An Array containing the storage providers associated with the user."""
-  storageProviders: [cloudStorageProvider]
+  storageProviders: [cloudStorageProvider!]
 }
 
 type cloudStorageProvider {
@@ -12377,7 +12377,7 @@ type CloudStorage {
   endPosition: String
   errorDetails: externalDocServiceErrorDetails
   id: String
-  items: [externalFile]
+  items: [externalFile!]
   name: String
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
@@ -12420,7 +12420,7 @@ type externalFile {
 """Users' custom settings"""
 type UserCustomSettings {
   """The name/value pair information for the user custom setting."""
-  customSettings: [nameValue]
+  customSettings: [nameValue!]
 }
 
 """Users' profiles"""
@@ -12431,7 +12431,7 @@ type UserProfiles {
   
   Indicates the authentication methods used by the user.
   """
-  authenticationMethods: [authenticationMethod]
+  authenticationMethods: [authenticationMethod!]
   """The name of the user's Company."""
   companyName: String
   """
@@ -12495,7 +12495,7 @@ type userSettingsInformation {
   accountManagementGranular: userAccountManagementGranularInformation
   senderEmailNotifications: senderEmailNotifications
   signerEmailNotifications: signerEmailNotifications
-  userSettings: [nameValue]
+  userSettings: [nameValue!]
 }
 
 type senderEmailNotifications {
@@ -12582,14 +12582,14 @@ type signerEmailNotifications {
 }
 
 type userSignaturesInformation {
-  userSignatures: [UserSignatures]
+  userSignatures: [UserSignatures!]
 }
 
 type userSocialIdResult {
   """
   Contains properties that map a DocuSign user to a social account (Facebook, Yahoo, etc.)
   """
-  socialAccountInformation: [UserSocialAccountLogins]
+  socialAccountInformation: [UserSocialAccountLogins!]
   """
   The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.
   """
@@ -12647,7 +12647,7 @@ type workspaceList {
   """
   totalSetSize: String
   """A list of workspaces."""
-  workspaces: [Workspaces]
+  workspaces: [Workspaces!]
 }
 
 type Workspaces {
@@ -12724,8 +12724,8 @@ type workspaceFolderContents {
   """The last position in the result set."""
   endPosition: String
   folder: WorkspaceItems
-  items: [WorkspaceItems]
-  parentFolders: [WorkspaceItems]
+  items: [WorkspaceItems!]
+  parentFolders: [WorkspaceItems!]
   """The number of results returned in this response."""
   resultSetSize: String
   """Starting position of the current result set."""
@@ -12796,13 +12796,13 @@ type workspaceUserAuthorization {
 """Defines a billing plans response object."""
 type billingPlansResponse {
   """Reserved: TBD"""
-  billingPlans: [billingPlan]
+  billingPlans: [billingPlan!]
 }
 
 """Defines a billing plan response object."""
 type billingPlanResponse {
   billingPlan: billingPlan
-  successorPlans: [billingPlan]
+  successorPlans: [billingPlan!]
 }
 
 type userPasswordRules {
@@ -12816,7 +12816,7 @@ type userPasswordRules {
 """Contains information about mutiple API request logs."""
 type apiRequestLogsResult {
   """Reserved: TBD"""
-  apiRequestLogs: [apiRequestLog]
+  apiRequestLogs: [apiRequestLog!]
 }
 
 """Contains API request log information."""
@@ -12852,7 +12852,7 @@ type Authentication {
   """
   apiPassword: String
   """The list of accounts that authenticating user is a member of."""
-  loginAccounts: [loginAccount]
+  loginAccounts: [loginAccount!]
 }
 
 type loginAccount {
@@ -12873,11 +12873,11 @@ type loginAccount {
   """
   A list of settings on the acccount that indicate what features are available.
   """
-  loginAccountSettings: [nameValue]
+  loginAccountSettings: [nameValue!]
   """
   A list of user-level settings that indicate what user-specific features are available.
   """
-  loginUserSettings: [nameValue]
+  loginUserSettings: [nameValue!]
   """The name associated with the account."""
   name: String
   """An optional descirption of the site that hosts the account."""
@@ -15649,7 +15649,7 @@ input newAccountDefinition_Input {
   
   [accountsettings]: /esign/restapi/Accounts/Accounts/create/#account-settings
   """
-  accountSettings: [nameValue_Input]
+  accountSettings: [nameValue_Input!]
   addressInformation: accountAddress_Input
   creditCardInformation: creditCardInformation_Input
   """
@@ -15739,14 +15739,14 @@ input accountAddress_Input {
   """The state or province associated with the address."""
   state: String
   """Contains an array of countries supported by the billing plan."""
-  supportedCountries: [country_Input]
+  supportedCountries: [country_Input!]
 }
 
 input country_Input {
   isoCode: String
   name: String
   provinceValidated: String
-  provinces: [province_Input]
+  provinces: [province_Input!]
 }
 
 input province_Input {
@@ -15778,7 +15778,7 @@ input Users_Input {
   """Indicates the date and time the item was created."""
   createdDateTime: String
   """The name/value pair information for the user custom setting."""
-  customSettings: [nameValue_Input]
+  customSettings: [nameValue_Input!]
   email: String
   """
   Specifies whether the user is enabled for updates from DocuSign Connect. Valid values: true or false.
@@ -15801,7 +15801,7 @@ input Users_Input {
   * permissionProfileId - The ID of the permission profile associated with the group.
   * groupType - The group type.
   """
-  groupList: [group_Input]
+  groupList: [group_Input!]
   homeAddress: addressInformation_v2_Input
   """
   Contains the URI for an endpoint that you can use to retrieve the initials image.
@@ -15862,7 +15862,7 @@ input Users_Input {
   """
   The name/value pair information for user settings. These determine the actions that a user can take in the account. The \`[ML:userSettings]\` are listed and described below.
   """
-  userSettings: [nameValue_Input]
+  userSettings: [nameValue_Input!]
   userStatus: String
   userType: String
   workAddress: addressInformation_v2_Input
@@ -15884,7 +15884,7 @@ input settingsMetadata_Input {
   When set to **true**, indicates that this module is enabled on the account.
   """
   is21CFRPart11: String
-  options: [String]
+  options: [String!]
   rights: String
   uiHint: String
   uiOrder: String
@@ -15931,7 +15931,7 @@ input group_Input {
   groupType: String
   """The ID of the permission profile associated with the group."""
   permissionProfileId: String
-  users: [userInfo_Input]
+  users: [userInfo_Input!]
 }
 
 input userInfo_Input {
@@ -15976,16 +15976,16 @@ An object used to identify the features and attributes of the account being crea
 """
 input planInformation_Input {
   """Reserved:"""
-  addOns: [addOn_Input]
+  addOns: [addOn_Input!]
   """Specifies the ISO currency code for the account."""
   currencyCode: String
   """Reserved for DocuSign use only."""
   freeTrialDaysOverride: String
   """A complex type that sets the feature sets for the account."""
-  planFeatureSets: [featureSet_Input]
+  planFeatureSets: [featureSet_Input!]
   """The DocuSign Plan ID for the account."""
   planId: String
-  recipientDomains: [recipientDomain_Input]
+  recipientDomains: [recipientDomain_Input!]
 }
 
 """Contains information about add ons."""
@@ -16003,7 +16003,7 @@ input featureSet_Input {
   """
   A complex type that contains alternate currency values that are configured for this plan feature set.
   """
-  currencyFeatureSetPrices: [currencyFeatureSetPrice_Input]
+  currencyFeatureSetPrices: [currencyFeatureSetPrice_Input!]
   envelopeFee: String
   """A unique ID for the feature set."""
   featureSetId: String
@@ -16102,7 +16102,7 @@ input UserSocialAccountLogins_Input {
 """Defines an billing payment response object."""
 type billingPaymentResponse {
   """Reserved: TBD"""
-  billingPayments: [billingPayment]
+  billingPayments: [billingPayment!]
 }
 
 """Contains information on a billing plan."""
@@ -16198,7 +16198,7 @@ input purchasedEnvelopesInformation_Input {
 
 input brandsRequest_Input {
   """The list of brands."""
-  brands: [brandRequest_Input]
+  brands: [brandRequest_Input!]
 }
 
 input brandRequest_Input {
@@ -16213,14 +16213,14 @@ input brand_Input {
   brandId: String
   """The name of the brand."""
   brandName: String
-  colors: [nameValue_Input]
-  emailContent: [brandEmailContent_Input]
+  colors: [nameValue_Input!]
+  emailContent: [brandEmailContent_Input!]
   errorDetails: errorDetails_Input
   isOverridingCompanyName: String
   isSendingDefault: String
   isSigningDefault: String
-  landingPages: [nameValue_Input]
-  links: [brandLink_Input]
+  landingPages: [nameValue_Input!]
+  links: [brandLink_Input!]
   logos: brandLogos_Input
   resources: brandResourceUrls_Input
 }
@@ -16256,7 +16256,7 @@ type captiveRecipientInformation {
   """
   A complex type containing information about one or more captive recipients.
   """
-  captiveRecipients: [captiveRecipient]
+  captiveRecipients: [captiveRecipient!]
 }
 
 type captiveRecipient {
@@ -16281,7 +16281,7 @@ input captiveRecipientInformation_Input {
   """
   A complex type containing information about one or more captive recipients.
   """
-  captiveRecipients: [captiveRecipient_Input]
+  captiveRecipients: [captiveRecipient_Input!]
 }
 
 input captiveRecipient_Input {
@@ -16393,7 +16393,7 @@ input ConnectConfigurations_Input {
 }
 
 type connectFailureResults {
-  retryQueue: [connectFailureResult]
+  retryQueue: [connectFailureResult!]
 }
 
 type connectFailureResult {
@@ -16414,7 +16414,7 @@ type connectFailureResult {
 }
 
 input connectFailureFilter_Input {
-  envelopeIds: [String]
+  envelopeIds: [String!]
   synchronous: String
 }
 
@@ -16513,19 +16513,19 @@ input EnvelopeConsumerDisclosures_Input {
 }
 
 type contactUpdateResponse {
-  contacts: [Contacts]
+  contacts: [Contacts!]
 }
 
 input contactModRequest_Input {
-  contacts: [Contacts_Input]
+  contacts: [Contacts_Input!]
 }
 
 input Contacts_Input {
   """The unique identifier of a person in the contacts address book."""
   contactId: String
-  contactPhoneNumbers: [contactPhoneNumber_Input]
+  contactPhoneNumbers: [contactPhoneNumber_Input!]
   contactUri: String
-  emails: [String]
+  emails: [String!]
   errorDetails: errorDetails_Input
   name: String
   organization: String
@@ -16550,7 +16550,7 @@ input customField_Input {
   errorDetails: errorDetails_Input
   """An ID used to specify a custom field."""
   fieldId: String
-  listItems: [String]
+  listItems: [String!]
   name: String
   """When set to **true**, the signer is required to fill out this tab"""
   required: String
@@ -16610,7 +16610,7 @@ input envelopeDefinition_Input {
   When set to **true**, the envelope is queued for processing and the value of the \`status\` property is set to 'Processing'. Additionally, get status calls return 'Processing' until completed.
   """
   asynchronous: String
-  attachments: [attachment_Input]
+  attachments: [attachment_Input!]
   attachmentsUri: String
   """
   Specifies the Authoritative copy feature. If set to true the Authoritative copy feature is enabled.
@@ -16632,7 +16632,7 @@ input envelopeDefinition_Input {
   """
   A complex type that can be added to create envelopes from a combination of DocuSign templates and PDF forms. The basic envelope remains the same, while the Composite Template adds new document and template overlays into the envelope. There can be any number of Composite Template structures in the envelope.
   """
-  compositeTemplates: [compositeTemplate_Input]
+  compositeTemplates: [compositeTemplate_Input!]
   """Indicates the date and time the item was created."""
   createdDateTime: String
   customFields: AccountCustomFields_Input
@@ -16647,7 +16647,7 @@ input envelopeDefinition_Input {
   """Reserved: For DocuSign use only."""
   deliveredDateTime: String
   """Complex element contains the details on the documents in the envelope."""
-  documents: [document_Input]
+  documents: [document_Input!]
   documentsCombinedUri: String
   """
   Contains a URI for an endpoint that you can use to retrieve the documents.
@@ -16754,7 +16754,7 @@ input envelopeDefinition_Input {
   * emailNotification - This is an optional complex element that has a role specific emailSubject, emailBody, and language. It follows the same format as the emailNotification node for Recipients.
   * tabs - This allows the tab values to be specified for matching to tabs in the template.
   """
-  templateRoles: [templateRole_Input]
+  templateRoles: [templateRole_Input!]
   """
   Contains a URI for an endpoint which you can use to retrieve the templates.
   """
@@ -16796,12 +16796,12 @@ input compositeTemplate_Input {
   """
   Zero or more inline templates and their position in the overlay. If supplied, they are overlaid into the envelope in the order of their Sequence value.
   """
-  inlineTemplates: [inlineTemplate_Input]
+  inlineTemplates: [inlineTemplate_Input!]
   pdfMetaDataTemplateSequence: String
   """
   0 or more server-side templates and their position in the overlay. If supplied, they are overlaid into the envelope in the order of their Sequence value
   """
-  serverTemplates: [serverTemplate_Input]
+  serverTemplates: [serverTemplate_Input!]
 }
 
 input document_Input {
@@ -16830,7 +16830,7 @@ input document_Input {
   The document's bytes. This field can be used to include a base64 version of the document bytes within an envelope definition instead of sending the document using a multi-part HTTP request. The maximum document size is smaller if this field is used due to the overhead of the base64 encoding.
   """
   documentBase64: String
-  documentFields: [nameValue_Input]
+  documentFields: [nameValue_Input!]
   documentGroup: String
   """
   Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.
@@ -16862,7 +16862,7 @@ input document_Input {
   * width - The width of the matchbox. 
   * height - The height of the matchbox.
   """
-  matchBoxes: [matchBox_Input]
+  matchBoxes: [matchBox_Input!]
   name: String
   """
   An optional value that sets the direction order used to sort the item list. 
@@ -16938,7 +16938,7 @@ input matchBox_Input {
 input inlineTemplate_Input {
   customFields: AccountCustomFields_Input
   """Complex element contains the details on the documents in the envelope."""
-  documents: [document_Input]
+  documents: [document_Input!]
   envelope: Envelopes_Input
   recipients: EnvelopeRecipients_Input
   """Specifies the order in which templates are overlaid."""
@@ -16948,9 +16948,9 @@ input inlineTemplate_Input {
 """Custom Fields"""
 input AccountCustomFields_Input {
   """An array of list custom fields."""
-  listCustomFields: [listCustomField_Input]
+  listCustomFields: [listCustomField_Input!]
   """An array of text custom fields."""
-  textCustomFields: [textCustomField_Input]
+  textCustomFields: [textCustomField_Input!]
 }
 
 input listCustomField_Input {
@@ -16961,7 +16961,7 @@ input listCustomField_Input {
   errorDetails: errorDetails_Input
   """An ID used to specify a custom field."""
   fieldId: String
-  listItems: [String]
+  listItems: [String!]
   """The name of the custom field."""
   name: String
   """When set to **true**, the signer is required to fill out this tab"""
@@ -17143,7 +17143,7 @@ input EnvelopeEmailSettings_Input {
   """
   A list of email addresses that receive a copy of all email communications for an envelope. You can use this for archiving purposes.
   """
-  bccEmailAddresses: [bccEmailAddress_Input]
+  bccEmailAddresses: [bccEmailAddress_Input!]
   replyEmailAddressOverride: String
   replyEmailNameOverride: String
 }
@@ -17258,29 +17258,29 @@ input EnvelopeRecipients_Input {
   """
   A complex type defining the management and access rights of a recipient assigned assigned as an agent on the document.
   """
-  agents: [agent_Input]
+  agents: [agent_Input!]
   """
   A complex type containing information about recipients who should receive a copy of the envelope, but does not need to sign it.
   """
-  carbonCopies: [carbonCopy_Input]
+  carbonCopies: [carbonCopy_Input!]
   """
   A complex type containing information on a recipient the must receive the completed documents for the envelope to be completed, but the recipient does not need to sign, initial, date, or add information to any of the documents.
   """
-  certifiedDeliveries: [certifiedDelivery_Input]
+  certifiedDeliveries: [certifiedDelivery_Input!]
   currentRoutingOrder: String
   """
   A complex type defining the management and access rights of a recipient assigned assigned as an editor on the document.
   """
-  editors: [editor_Input]
+  editors: [editor_Input!]
   errorDetails: errorDetails_Input
   """
   Specifies a signer that is in the same physical location as a DocuSign user who will act as a Signing Host for the transaction. The recipient added is the Signing Host and new separate Signer Name field appears after Sign in person is selected.
   """
-  inPersonSigners: [inPersonSigner_Input]
+  inPersonSigners: [inPersonSigner_Input!]
   """
   Identifies a recipient that can, but is not required to, add name and email information for recipients at the same or subsequent level in the routing order (until subsequent Agents, Editors or Intermediaries recipient types are added).
   """
-  intermediaries: [intermediary_Input]
+  intermediaries: [intermediary_Input!]
   """
   The list of recipient event statuses that will trigger Connect to send updates to the url. It can be a two-part list with:
   
@@ -17289,7 +17289,7 @@ input EnvelopeRecipients_Input {
   """
   recipientCount: String
   """A complex type containing information about the Signer recipient."""
-  signers: [signer_Input]
+  signers: [signer_Input!]
 }
 
 """Contains information about agent recipients."""
@@ -17321,7 +17321,7 @@ input agent_Input {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -17330,7 +17330,7 @@ input agent_Input {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -17359,7 +17359,7 @@ input agent_Input {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -17387,7 +17387,7 @@ input agent_Input {
   note: String
   phoneAuthentication: recipientPhoneAuthentication_Input
   """Reserved:"""
-  recipientAttachments: [recipientAttachment_Input]
+  recipientAttachments: [recipientAttachment_Input!]
   recipientAuthenticationStatus: authenticationStatus_Input
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -17422,12 +17422,12 @@ input agent_Input {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo_Input]
+  signingGroupUsers: [userInfo_Input!]
   smsAuthentication: recipientSMSAuthentication_Input
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication_Input]
+  socialAuthentications: [socialAuthentication_Input!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -17608,7 +17608,7 @@ input recipientPhoneAuthentication_Input {
   """
   An Array containing a list of phone numbers the recipient may use for SMS text authentication.
   """
-  senderProvidedNumbers: [String]
+  senderProvidedNumbers: [String!]
   """Reserved."""
   validateRecipProvidedNumber: String
 }
@@ -17666,7 +17666,7 @@ Contains the name/value pair information for the SAML assertion attributes:
 Your account must be set up to use SSO to use this.
 """
 input recipientSAMLAuthentication_Input {
-  samlAssertionAttributes: [samlAssertionAttribute_Input]
+  samlAssertionAttributes: [samlAssertionAttribute_Input!]
 }
 
 input samlAssertionAttribute_Input {
@@ -17685,7 +17685,7 @@ input recipientSMSAuthentication_Input {
   """
   An Array containing a list of phone numbers the recipient may use for SMS text authentication.
   """
-  senderProvidedNumbers: [String]
+  senderProvidedNumbers: [String!]
 }
 
 input socialAuthentication_Input {
@@ -17721,7 +17721,7 @@ input carbonCopy_Input {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -17730,7 +17730,7 @@ input carbonCopy_Input {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -17759,7 +17759,7 @@ input carbonCopy_Input {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -17792,7 +17792,7 @@ input carbonCopy_Input {
   note: String
   phoneAuthentication: recipientPhoneAuthentication_Input
   """Reserved:"""
-  recipientAttachments: [recipientAttachment_Input]
+  recipientAttachments: [recipientAttachment_Input!]
   recipientAuthenticationStatus: authenticationStatus_Input
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -17827,12 +17827,12 @@ input carbonCopy_Input {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo_Input]
+  signingGroupUsers: [userInfo_Input!]
   smsAuthentication: recipientSMSAuthentication_Input
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication_Input]
+  socialAuthentications: [socialAuthentication_Input!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -17883,7 +17883,7 @@ input certifiedDelivery_Input {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -17892,7 +17892,7 @@ input certifiedDelivery_Input {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
   email: String
   emailNotification: recipientEmailNotification_Input
   emailRecipientPostSigningURL: String
@@ -17916,7 +17916,7 @@ input certifiedDelivery_Input {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -17944,7 +17944,7 @@ input certifiedDelivery_Input {
   note: String
   phoneAuthentication: recipientPhoneAuthentication_Input
   """Reserved:"""
-  recipientAttachments: [recipientAttachment_Input]
+  recipientAttachments: [recipientAttachment_Input!]
   recipientAuthenticationStatus: authenticationStatus_Input
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -17979,12 +17979,12 @@ input certifiedDelivery_Input {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo_Input]
+  signingGroupUsers: [userInfo_Input!]
   smsAuthentication: recipientSMSAuthentication_Input
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication_Input]
+  socialAuthentications: [socialAuthentication_Input!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -18035,7 +18035,7 @@ input editor_Input {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -18044,7 +18044,7 @@ input editor_Input {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -18100,7 +18100,7 @@ input editor_Input {
   note: String
   phoneAuthentication: recipientPhoneAuthentication_Input
   """Reserved:"""
-  recipientAttachments: [recipientAttachment_Input]
+  recipientAttachments: [recipientAttachment_Input!]
   recipientAuthenticationStatus: authenticationStatus_Input
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -18135,12 +18135,12 @@ input editor_Input {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo_Input]
+  signingGroupUsers: [userInfo_Input!]
   smsAuthentication: recipientSMSAuthentication_Input
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication_Input]
+  socialAuthentications: [socialAuthentication_Input!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -18208,7 +18208,7 @@ input inPersonSigner_Input {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -18223,7 +18223,7 @@ input inPersonSigner_Input {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
   """
   The signer's email address in an eNotary flow.
   
@@ -18307,7 +18307,7 @@ input inPersonSigner_Input {
   note: String
   phoneAuthentication: recipientPhoneAuthentication_Input
   """Reserved:"""
-  recipientAttachments: [recipientAttachment_Input]
+  recipientAttachments: [recipientAttachment_Input!]
   recipientAuthenticationStatus: authenticationStatus_Input
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -18317,7 +18317,7 @@ input inPersonSigner_Input {
   """
   The default signature provider is the DocuSign Electronic signature system. This parameter is used to specify one or more Standards Based Signature (digital signature) providers for the signer to use. [More information](../../../../guide/appendix/standards_based_signatures.html)
   """
-  recipientSignatureProviders: [recipientSignatureProvider_Input]
+  recipientSignatureProviders: [recipientSignatureProvider_Input!]
   recipientSuppliesTabs: String
   """
   When set to **true**, the recipient is required to use the specified ID check method (including Phone and SMS authentication) to validate their identity.
@@ -18384,12 +18384,12 @@ input inPersonSigner_Input {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo_Input]
+  signingGroupUsers: [userInfo_Input!]
   smsAuthentication: recipientSMSAuthentication_Input
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication_Input]
+  socialAuthentications: [socialAuthentication_Input!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -18452,7 +18452,7 @@ input notaryHost_Input {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -18461,7 +18461,7 @@ input notaryHost_Input {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
   """
   The notary's email address.
   
@@ -18515,7 +18515,7 @@ input notaryHost_Input {
   note: String
   phoneAuthentication: recipientPhoneAuthentication_Input
   """Reserved:"""
-  recipientAttachments: [recipientAttachment_Input]
+  recipientAttachments: [recipientAttachment_Input!]
   recipientAuthenticationStatus: authenticationStatus_Input
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -18541,7 +18541,7 @@ input notaryHost_Input {
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication_Input]
+  socialAuthentications: [socialAuthentication_Input!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -18565,7 +18565,7 @@ input notaryHost_Input {
 }
 
 input propertyMetadata_Input {
-  options: [String]
+  options: [String!]
   rights: String
 }
 
@@ -18622,49 +18622,49 @@ input EnvelopeRecipientTabs_Input {
   information is shown on the document for the approval, but it is
   recorded as a signature in the envelope history.
   """
-  approveTabs: [approve_Input]
+  approveTabs: [approve_Input!]
   """
   Specifies a tag on the document in a location where the recipient can select an option.
   """
-  checkboxTabs: [checkbox_Input]
+  checkboxTabs: [checkbox_Input!]
   """
   Specifies a tag on the document where you want the recipient's company name to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  companyTabs: [company_Input]
+  companyTabs: [company_Input!]
   """
   Specifies a tab on the document where the date the document was signed will automatically appear.
   """
-  dateSignedTabs: [dateSigned_Input]
+  dateSignedTabs: [dateSigned_Input!]
   """
   Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. 
   
   If you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.
   """
-  dateTabs: [date_Input]
+  dateTabs: [date_Input!]
   """
   Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.
   """
-  declineTabs: [decline_Input]
+  declineTabs: [decline_Input!]
   """
   Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.
   """
-  emailAddressTabs: [emailAddress_Input]
+  emailAddressTabs: [emailAddress_Input!]
   """
   Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  emailTabs: [email_Input]
+  emailTabs: [email_Input!]
   """
   Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.
   """
-  envelopeIdTabs: [envelopeId_Input]
+  envelopeIdTabs: [envelopeId_Input!]
   """
   Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.
   """
-  firstNameTabs: [firstName_Input]
+  firstNameTabs: [firstName_Input!]
   """
   A list of formula tabs.
   
@@ -18691,70 +18691,70 @@ input EnvelopeRecipientTabs_Input {
   [calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields
   [paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures
   """
-  formulaTabs: [formulaTab_Input]
+  formulaTabs: [formulaTab_Input!]
   """
   Specifies a tag on the document where you want the recipient's name to appear.
   """
-  fullNameTabs: [fullName_Input]
+  fullNameTabs: [fullName_Input!]
   """
   Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.
   """
-  initialHereTabs: [initialHere_Input]
+  initialHereTabs: [initialHere_Input!]
   """
   Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.
   """
-  lastNameTabs: [lastName_Input]
+  lastNameTabs: [lastName_Input!]
   """
   Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.
   """
-  listTabs: [list_Input]
+  listTabs: [list_Input!]
   """
   Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.
   """
-  noteTabs: [note_Input]
+  noteTabs: [note_Input!]
   """
   Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  numberTabs: [number_Input]
+  numberTabs: [number_Input!]
   """
   Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.
   """
-  radioGroupTabs: [radioGroup_Input]
+  radioGroupTabs: [radioGroup_Input!]
   """
   A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The "optional" parameter sets if the signature is required or optional.
   """
-  signHereTabs: [signHere_Input]
+  signHereTabs: [signHere_Input!]
   """
   Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.
   """
-  signerAttachmentTabs: [signerAttachment_Input]
+  signerAttachmentTabs: [signerAttachment_Input!]
   """
   Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  ssnTabs: [ssn_Input]
+  ssnTabs: [ssn_Input!]
   """
   Specifies a that that is an adaptable field that allows the recipient to enter different text information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  textTabs: [text_Input]
+  textTabs: [text_Input!]
   """
   Specifies a tag on the document where you want the recipient's title to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  titleTabs: [title_Input]
-  viewTabs: [view_Input]
+  titleTabs: [title_Input!]
+  viewTabs: [view_Input!]
   """
   Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  zipTabs: [zip_Input]
+  zipTabs: [zip_Input!]
 }
 
 """
@@ -20581,7 +20581,7 @@ input paymentDetails_Input {
   are returned as metadata
   to the payment gateway.
   """
-  lineItems: [paymentLineItem_Input]
+  lineItems: [paymentLineItem_Input!]
   """
   This read-only property describes the status of a payment.
   
@@ -21154,7 +21154,7 @@ input list_Input {
   Maximum Length of listItems:  2048 characters.
   Maximum Length of items in the list: 100 characters.
   """
-  listItems: [listItem_Input]
+  listItems: [listItem_Input!]
   """
   When set to **true**, the signer cannot change the data of the custom tab.
   """
@@ -21635,7 +21635,7 @@ input radioGroup_Input {
   """
   Specifies the locations and status for radio buttons that are grouped together.
   """
-  radios: [radio_Input]
+  radios: [radio_Input!]
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
   """
@@ -22887,7 +22887,7 @@ input intermediary_Input {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -22896,7 +22896,7 @@ input intermediary_Input {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -22925,7 +22925,7 @@ input intermediary_Input {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -22953,7 +22953,7 @@ input intermediary_Input {
   note: String
   phoneAuthentication: recipientPhoneAuthentication_Input
   """Reserved:"""
-  recipientAttachments: [recipientAttachment_Input]
+  recipientAttachments: [recipientAttachment_Input!]
   recipientAuthenticationStatus: authenticationStatus_Input
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -22988,12 +22988,12 @@ input intermediary_Input {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo_Input]
+  signingGroupUsers: [userInfo_Input!]
   smsAuthentication: recipientSMSAuthentication_Input
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication_Input]
+  socialAuthentications: [socialAuthentication_Input!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -23055,7 +23055,7 @@ input signer_Input {
   """
   An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.
   """
-  customFields: [String]
+  customFields: [String!]
   """The date and time the recipient declined the document."""
   declinedDateTime: String
   """The reason the recipient declined the document."""
@@ -23068,7 +23068,7 @@ input signer_Input {
   deliveredDateTime: String
   """Reserved: For DocuSign use only."""
   deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
   """
   Email id of the recipient. Notification of the document to sign is sent to this email id. 
   
@@ -23097,7 +23097,7 @@ input signer_Input {
   
   When enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.
   """
-  excludedDocuments: [String]
+  excludedDocuments: [String!]
   """Reserved:"""
   faxNumber: String
   """
@@ -23131,7 +23131,7 @@ input signer_Input {
   note: String
   phoneAuthentication: recipientPhoneAuthentication_Input
   """Reserved:"""
-  recipientAttachments: [recipientAttachment_Input]
+  recipientAttachments: [recipientAttachment_Input!]
   recipientAuthenticationStatus: authenticationStatus_Input
   """
   Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.
@@ -23141,7 +23141,7 @@ input signer_Input {
   """
   The default signature provider is the DocuSign Electronic signature system. This parameter is used to specify one or more Standards Based Signature (digital signature) providers for the signer to use. [More information](../../../../guide/appendix/standards_based_signatures.html)
   """
-  recipientSignatureProviders: [recipientSignatureProvider_Input]
+  recipientSignatureProviders: [recipientSignatureProvider_Input!]
   recipientSuppliesTabs: String
   """
   When set to **true**, the recipient is required to use the specified ID check method (including Phone and SMS authentication) to validate their identity.
@@ -23190,12 +23190,12 @@ input signer_Input {
   """
   A complex type that contains information about users in the signing group.
   """
-  signingGroupUsers: [userInfo_Input]
+  signingGroupUsers: [userInfo_Input!]
   smsAuthentication: recipientSMSAuthentication_Input
   """
   Lists the social ID type that can be used for recipient authentication.
   """
-  socialAuthentications: [socialAuthentication_Input]
+  socialAuthentications: [socialAuthentication_Input!]
   """
   Indicates the envelope status. Valid values are:
   
@@ -23234,7 +23234,7 @@ input eventNotification_Input {
   
   To receive notifications, you must include either an \`envelopeEvents\` node or a \`recipientEvents\` node. You do not need to specify both.
   """
-  envelopeEvents: [envelopeEvent_Input]
+  envelopeEvents: [envelopeEvent_Input!]
   """
   When set to **true**, the Connect Service includes the Certificate of Completion with completed envelopes.
   """
@@ -23272,7 +23272,7 @@ input eventNotification_Input {
   
   To receive notifications, you must include either an \`envelopeEvents\` node or a \`recipientEvents\` node. You do not need to specify both.
   """
-  recipientEvents: [recipientEvent_Input]
+  recipientEvents: [recipientEvent_Input!]
   """
   When set to **true**, the DocuSign Connect service checks that the message was received and retries on failures.
   """
@@ -23369,7 +23369,7 @@ input templateRole_Input {
   """
   The default signature provider is the DocuSign Electronic signature system. This parameter is used to specify one or more Standards Based Signature (digital signature) providers for the signer to use. [More information](../../../../guide/appendix/standards_based_signatures.html)
   """
-  recipientSignatureProviders: [recipientSignatureProvider_Input]
+  recipientSignatureProviders: [recipientSignatureProvider_Input!]
   """
   Optional element. Specifies the role name associated with the recipient.<br/><br/>This is required when working with template recipients.
   """
@@ -23384,11 +23384,11 @@ input templateRole_Input {
 }
 
 input envelopeIdsRequest_Input {
-  envelopeIds: [String]
+  envelopeIds: [String!]
   """
   A list of transaction Id's used to determining the status of envelopes sent asynchronously. See **transactionId** property on envelopes.
   """
-  transactionIds: [String]
+  transactionIds: [String!]
 }
 
 type envelopeUpdateSummary {
@@ -23396,11 +23396,11 @@ type envelopeUpdateSummary {
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
   errorDetails: errorDetails
-  listCustomFieldUpdateResults: [listCustomField]
+  listCustomFieldUpdateResults: [listCustomField!]
   lockInformation: EnvelopeLocks
-  recipientUpdateResults: [recipientUpdateResponse]
+  recipientUpdateResults: [recipientUpdateResponse!]
   tabUpdateResults: EnvelopeRecipientTabs
-  textCustomFieldUpdateResults: [textCustomField]
+  textCustomFieldUpdateResults: [textCustomField!]
 }
 
 type recipientUpdateResponse {
@@ -23413,23 +23413,23 @@ type recipientUpdateResponse {
 }
 
 input envelopeAttachmentsRequest_Input {
-  attachments: [attachment_Input]
+  attachments: [attachment_Input!]
 }
 
 """Envelope custom fields"""
 type EnvelopeCustomFields {
   """An array of list custom fields."""
-  listCustomFields: [listCustomField]
+  listCustomFields: [listCustomField!]
   """An array of text custom fields."""
-  textCustomFields: [textCustomField]
+  textCustomFields: [textCustomField!]
 }
 
 """Envelope custom fields"""
 input EnvelopeCustomFields_Input {
   """An array of list custom fields."""
-  listCustomFields: [listCustomField_Input]
+  listCustomFields: [listCustomField_Input!]
   """An array of text custom fields."""
-  textCustomFields: [textCustomField_Input]
+  textCustomFields: [textCustomField_Input!]
 }
 
 """Envelope document fields"""
@@ -23442,7 +23442,7 @@ input EnvelopeDocumentFields_Input {
   
   *IMPORTANT*: If you are using xml, the name/value pair is contained in a nameValue element.
   """
-  documentFields: [nameValue_Input]
+  documentFields: [nameValue_Input!]
 }
 
 input pageRequest_Input {
@@ -23454,7 +23454,7 @@ input pageRequest_Input {
 }
 
 type documentTemplateList {
-  documentTemplates: [documentTemplate]
+  documentTemplates: [documentTemplate!]
 }
 
 type documentTemplate {
@@ -23472,7 +23472,7 @@ type documentTemplate {
 }
 
 input documentTemplateList_Input {
-  documentTemplates: [documentTemplate_Input]
+  documentTemplates: [documentTemplate_Input!]
 }
 
 input documentTemplate_Input {
@@ -23521,11 +23521,11 @@ input envelopeNotificationRequest_Input {
 }
 
 type recipientsUpdateSummary {
-  recipientUpdateResults: [recipientUpdateResponse]
+  recipientUpdateResults: [recipientUpdateResponse!]
 }
 
 input EnvelopeDocumentVisibility_Input {
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
 }
 
 type bulkRecipientsUpdateResponse {
@@ -23536,7 +23536,7 @@ type bulkRecipientsSummaryResponse {
   """
   A complex type containing information about the bulk recipients in the response.
   """
-  bulkRecipients: [bulkRecipient]
+  bulkRecipients: [bulkRecipient!]
   """The number of items returned in this response."""
   bulkRecipientsCount: String
   """
@@ -23544,14 +23544,14 @@ type bulkRecipientsSummaryResponse {
   """
   bulkRecipientsUri: String
   """Array or errors."""
-  errorDetails: [errorDetails]
+  errorDetails: [errorDetails!]
 }
 
 input bulkRecipientsRequest_Input {
   """
   A complex type containing information about the bulk recipients in the request.
   """
-  bulkRecipients: [bulkRecipient_Input]
+  bulkRecipients: [bulkRecipient_Input!]
 }
 
 input bulkRecipient_Input {
@@ -23572,7 +23572,7 @@ input bulkRecipient_Input {
   """
   email: String
   """Array or errors."""
-  errorDetails: [errorDetails_Input]
+  errorDetails: [errorDetails_Input!]
   """
   Specifies the authentication check used for the signer. If blank then no authentication check is required for the signer. Only one value can be used in this field.
   
@@ -23606,7 +23606,7 @@ input bulkRecipient_Input {
   If \`usersupplied\` is used, the signer supplies his or her own telephone number.
   """
   phoneNumber: String
-  recipientSignatureProviderInfo: [bulkRecipientSignatureProvider_Input]
+  recipientSignatureProviderInfo: [bulkRecipientSignatureProvider_Input!]
   rowNumber: String
   """
   Specifies values used to populate recipient tabs with information. This allows each bulk recipient signer to have different values for their associated tabs. Any number of \`tabLabel\` columns can be added to the bulk recipient file.
@@ -23617,7 +23617,7 @@ input bulkRecipient_Input {
   
   Note that this option cannot be used for tabs that do not have data or that are automatically populated data such as Signature, Full Name, Email Address, Company, Title, and Date Signed tabs.
   """
-  tabLabels: [bulkRecipientTabLabel_Input]
+  tabLabels: [bulkRecipientTabLabel_Input!]
 }
 
 input bulkRecipientSignatureProvider_Input {
@@ -23787,7 +23787,7 @@ input recipientViewRequest_Input {
 }
 
 input foldersRequest_Input {
-  envelopeIds: [String]
+  envelopeIds: [String!]
   """The folder ID the envelope is being moved from."""
   fromFolderId: String
 }
@@ -23799,7 +23799,7 @@ input Groups_Input {
   """
   A collection group objects containing information about the groups returned.
   """
-  groups: [group_Input]
+  groups: [group_Input!]
   """
   The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.
   """
@@ -23819,7 +23819,7 @@ input Groups_Input {
 }
 
 input userInfoList_Input {
-  users: [userInfo_Input]
+  users: [userInfo_Input!]
 }
 
 input AccountPermissionProfiles_Input {
@@ -23829,7 +23829,7 @@ input AccountPermissionProfiles_Input {
   permissionProfileName: String
   settings: accountRoleSettings_Input
   userCount: String
-  users: [Users_Input]
+  users: [Users_Input!]
 }
 
 input accountRoleSettings_Input {
@@ -23900,7 +23900,7 @@ input accountRoleSettings_Input {
 }
 
 input powerFormsRequest_Input {
-  powerForms: [PowerForms_Input]
+  powerForms: [PowerForms_Input!]
 }
 
 input PowerForms_Input {
@@ -23918,7 +23918,7 @@ input PowerForms_Input {
   See [ML:Template Email Subject Merge Fields] for information about adding merge field information to the email subject.
   """
   emailSubject: String
-  envelopes: [Envelopes_Input]
+  envelopes: [Envelopes_Input!]
   errorDetails: errorDetails_Input
   instructions: String
   isActive: String
@@ -23931,7 +23931,7 @@ input PowerForms_Input {
   powerFormId: String
   powerFormUrl: String
   """An array of powerform recipients."""
-  recipients: [powerFormRecipient_Input]
+  recipients: [powerFormRecipient_Input!]
   senderName: String
   senderUserId: String
   signingMode: String
@@ -23991,7 +23991,7 @@ input accountSettingsInformation_Input {
   
   [accountsettings]: /esign/restapi/Accounts/Accounts/create/#account-settings
   """
-  accountSettings: [nameValue_Input]
+  accountSettings: [nameValue_Input!]
 }
 
 input ENoteConfigurations_Input {
@@ -24036,7 +24036,7 @@ input accountPasswordLockoutDurationMinutes_Input {
 }
 
 input accountPasswordLockoutDurationType_Input {
-  options: [String]
+  options: [String!]
 }
 
 input accountPasswordMinimumPasswordAgeDays_Input {
@@ -24050,7 +24050,7 @@ input accountMinimumPasswordLength_Input {
 }
 
 input accountPasswordStrengthType_Input {
-  options: [accountPasswordStrengthTypeOption_Input]
+  options: [accountPasswordStrengthTypeOption_Input!]
 }
 
 input accountPasswordStrengthTypeOption_Input {
@@ -24129,7 +24129,7 @@ input accountSharedAccess_Input {
   """
   A complex type containing the shared access information to an envelope for the users specified in the request.
   """
-  sharedAccess: [memberSharedItems_Input]
+  sharedAccess: [memberSharedItems_Input!]
   """Starting position of the current result set."""
   startPosition: String
   """
@@ -24139,9 +24139,9 @@ input accountSharedAccess_Input {
 }
 
 input memberSharedItems_Input {
-  envelopes: [sharedItem_Input]
+  envelopes: [sharedItem_Input!]
   errorDetails: errorDetails_Input
-  templates: [templateSharedItem_Input]
+  templates: [templateSharedItem_Input!]
   user: userInfo_Input
 }
 
@@ -24157,8 +24157,8 @@ input templateSharedItem_Input {
   owner: userInfo_Input
   """When set to **true**, this custom tab is shared."""
   shared: String
-  sharedGroups: [memberGroupSharedItem_Input]
-  sharedUsers: [userSharedItem_Input]
+  sharedGroups: [memberGroupSharedItem_Input!]
+  sharedUsers: [userSharedItem_Input!]
   """
   The unique identifier of the template. If this is not provided, DocuSign will generate a value.
   """
@@ -24184,7 +24184,7 @@ input signingGroupInformation_Input {
   """
   A collection group objects containing information about the groups returned.
   """
-  groups: [SigningGroups_Input]
+  groups: [SigningGroups_Input!]
 }
 
 """Signing groups"""
@@ -24204,7 +24204,7 @@ input SigningGroups_Input {
   When set to **true** and the feature is enabled in the sender's account, the signing recipient is required to draw signatures and initials at each signature/initial tab ( instead of adopting a signature/initial style or only drawing a signature/initial once).
   """
   signingGroupId: String
-  users: [signingGroupUser_Input]
+  users: [signingGroupUser_Input!]
 }
 
 input signingGroupUser_Input {
@@ -24220,7 +24220,7 @@ input signingGroupUser_Input {
 
 """Signing groups' users"""
 input SigningGroupUsers_Input {
-  users: [signingGroupUser_Input]
+  users: [signingGroupUser_Input!]
 }
 
 """Custom tabs"""
@@ -24321,7 +24321,7 @@ input CustomTabs_Input {
   """
   If the tab is a list, this represents the values that are possible for the tab.
   """
-  items: [String]
+  items: [String!]
   """
   The UTC DateTime this object was last modified. This is in ISO8601 format.
   """
@@ -24413,7 +24413,7 @@ input Templates_Input {
   """Reserved: For DocuSign use only."""
   deliveredDateTime: String
   """Complex element contains the details on the documents in the envelope."""
-  documents: [document_Input]
+  documents: [document_Input!]
   documentsCombinedUri: String
   """
   Contains a URI for an endpoint that you can use to retrieve the documents.
@@ -24572,18 +24572,18 @@ type templateUpdateSummary {
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
   errorDetails: errorDetails
-  listCustomFieldUpdateResults: [listCustomField]
+  listCustomFieldUpdateResults: [listCustomField!]
   lockInformation: EnvelopeLocks
-  recipientUpdateResults: [recipientUpdateResponse]
+  recipientUpdateResults: [recipientUpdateResponse!]
   tabUpdateResults: EnvelopeRecipientTabs
-  textCustomFieldUpdateResults: [textCustomField]
+  textCustomFieldUpdateResults: [textCustomField!]
 }
 
 input templateCustomFields_Input {
   """An array of list custom fields."""
-  listCustomFields: [listCustomField_Input]
+  listCustomFields: [listCustomField_Input!]
   """An array of text custom fields."""
-  textCustomFields: [textCustomField_Input]
+  textCustomFields: [textCustomField_Input!]
 }
 
 """Template document fields"""
@@ -24596,7 +24596,7 @@ input TemplateDocumentFields_Input {
   
   *IMPORTANT*: If you are using xml, the name/value pair is contained in a nameValue element.
   """
-  documentFields: [nameValue_Input]
+  documentFields: [nameValue_Input!]
 }
 
 input templateNotificationRequest_Input {
@@ -24613,26 +24613,26 @@ input templateRecipients_Input {
   """
   A complex type defining the management and access rights of a recipient assigned assigned as an agent on the document.
   """
-  agents: [agent_Input]
+  agents: [agent_Input!]
   """
   A complex type containing information about recipients who should receive a copy of the envelope, but does not need to sign it.
   """
-  carbonCopies: [carbonCopy_Input]
+  carbonCopies: [carbonCopy_Input!]
   """
   A complex type containing information on a recipient the must receive the completed documents for the envelope to be completed, but the recipient does not need to sign, initial, date, or add information to any of the documents.
   """
-  certifiedDeliveries: [certifiedDelivery_Input]
+  certifiedDeliveries: [certifiedDelivery_Input!]
   currentRoutingOrder: String
-  editors: [editor_Input]
+  editors: [editor_Input!]
   errorDetails: errorDetails_Input
   """
   Specifies a signer that is in the same physical location as a DocuSign user who will act as a Signing Host for the transaction. The recipient added is the Signing Host and new separate Signer Name field appears after Sign in person is selected.
   """
-  inPersonSigners: [inPersonSigner_Input]
+  inPersonSigners: [inPersonSigner_Input!]
   """
   Identifies a recipient that can, but is not required to, add name and email information for recipients at the same or subsequent level in the routing order (until subsequent Agents, Editors or Intermediaries recipient types are added).
   """
-  intermediaries: [intermediary_Input]
+  intermediaries: [intermediary_Input!]
   """
   The list of recipient event statuses that will trigger Connect to send updates to the url. It can be a two-part list with:
   
@@ -24641,15 +24641,15 @@ input templateRecipients_Input {
   """
   recipientCount: String
   """A complex type containing information about the Signer recipient."""
-  signers: [signer_Input]
+  signers: [signer_Input!]
 }
 
 type TemplateDocumentVisibility {
-  documentVisibility: [documentVisibility]
+  documentVisibility: [documentVisibility!]
 }
 
 input TemplateDocumentVisibility_Input {
-  documentVisibility: [documentVisibility_Input]
+  documentVisibility: [documentVisibility_Input!]
 }
 
 input templateTabs_Input {
@@ -24661,49 +24661,49 @@ input templateTabs_Input {
   information is shown on the document for the approval, but it is
   recorded as a signature in the envelope history.
   """
-  approveTabs: [approve_Input]
+  approveTabs: [approve_Input!]
   """
   Specifies a tag on the document in a location where the recipient can select an option.
   """
-  checkboxTabs: [checkbox_Input]
+  checkboxTabs: [checkbox_Input!]
   """
   Specifies a tag on the document where you want the recipient's company name to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  companyTabs: [company_Input]
+  companyTabs: [company_Input!]
   """
   Specifies a tab on the document where the date the document was signed will automatically appear.
   """
-  dateSignedTabs: [dateSigned_Input]
+  dateSignedTabs: [dateSigned_Input!]
   """
   Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. 
   
   If you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.
   """
-  dateTabs: [date_Input]
+  dateTabs: [date_Input!]
   """
   Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.
   """
-  declineTabs: [decline_Input]
+  declineTabs: [decline_Input!]
   """
   Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.
   """
-  emailAddressTabs: [emailAddress_Input]
+  emailAddressTabs: [emailAddress_Input!]
   """
   Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  emailTabs: [email_Input]
+  emailTabs: [email_Input!]
   """
   Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.
   """
-  envelopeIdTabs: [envelopeId_Input]
+  envelopeIdTabs: [envelopeId_Input!]
   """
   Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.
   """
-  firstNameTabs: [firstName_Input]
+  firstNameTabs: [firstName_Input!]
   """
   A list of formula tabs.
   
@@ -24730,70 +24730,70 @@ input templateTabs_Input {
   [calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields
   [paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures
   """
-  formulaTabs: [formulaTab_Input]
+  formulaTabs: [formulaTab_Input!]
   """
   Specifies a tag on the document where you want the recipient's name to appear.
   """
-  fullNameTabs: [fullName_Input]
+  fullNameTabs: [fullName_Input!]
   """
   Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.
   """
-  initialHereTabs: [initialHere_Input]
+  initialHereTabs: [initialHere_Input!]
   """
   Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.
   """
-  lastNameTabs: [lastName_Input]
+  lastNameTabs: [lastName_Input!]
   """
   Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.
   """
-  listTabs: [list_Input]
+  listTabs: [list_Input!]
   """
   Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.
   """
-  noteTabs: [note_Input]
+  noteTabs: [note_Input!]
   """
   Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  numberTabs: [number_Input]
+  numberTabs: [number_Input!]
   """
   Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.
   """
-  radioGroupTabs: [radioGroup_Input]
+  radioGroupTabs: [radioGroup_Input!]
   """
   A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The "optional" parameter sets if the signature is required or optional.
   """
-  signHereTabs: [signHere_Input]
+  signHereTabs: [signHere_Input!]
   """
   Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.
   """
-  signerAttachmentTabs: [signerAttachment_Input]
+  signerAttachmentTabs: [signerAttachment_Input!]
   """
   Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  ssnTabs: [ssn_Input]
+  ssnTabs: [ssn_Input!]
   """
   Specifies a that that is an adaptable field that allows the recipient to enter different text information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  textTabs: [text_Input]
+  textTabs: [text_Input!]
   """
   Specifies a tag on the document where you want the recipient's title to appear.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  titleTabs: [title_Input]
-  viewTabs: [view_Input]
+  titleTabs: [title_Input!]
+  viewTabs: [view_Input!]
   """
   Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.
   
   When getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.
   """
-  zipTabs: [zip_Input]
+  zipTabs: [zip_Input!]
 }
 
 """Embedding template views"""
@@ -24803,7 +24803,7 @@ type TemplateViews {
 }
 
 type newUsersSummary {
-  newUsers: [newUser]
+  newUsers: [newUser!]
 }
 
 type newUser {
@@ -24825,7 +24825,7 @@ type newUser {
 }
 
 input newUsersDefinition_Input {
-  newUsers: [Users_Input]
+  newUsers: [Users_Input!]
 }
 
 input userInformationList_Input {
@@ -24847,13 +24847,13 @@ input userInformationList_Input {
   The total number of items in the search's result set. It will always be greater than or equal to the value of the \`resultSetSize\` field.
   """
   totalSetSize: String
-  users: [Users_Input]
+  users: [Users_Input!]
 }
 
 """Cloud storage providers"""
 input CloudStorageProviders_Input {
   """An Array containing the storage providers associated with the user."""
-  storageProviders: [cloudStorageProvider_Input]
+  storageProviders: [cloudStorageProvider_Input!]
 }
 
 input cloudStorageProvider_Input {
@@ -24877,7 +24877,7 @@ input cloudStorageProvider_Input {
 """Users' custom settings"""
 input UserCustomSettings_Input {
   """The name/value pair information for the user custom setting."""
-  customSettings: [nameValue_Input]
+  customSettings: [nameValue_Input!]
 }
 
 """Users' profiles"""
@@ -24888,7 +24888,7 @@ input UserProfiles_Input {
   
   Indicates the authentication methods used by the user.
   """
-  authenticationMethods: [authenticationMethod_Input]
+  authenticationMethods: [authenticationMethod_Input!]
   """The name of the user's Company."""
   companyName: String
   """
@@ -24952,7 +24952,7 @@ input userSettingsInformation_Input {
   accountManagementGranular: userAccountManagementGranularInformation_Input
   senderEmailNotifications: senderEmailNotifications_Input
   signerEmailNotifications: signerEmailNotifications_Input
-  userSettings: [nameValue_Input]
+  userSettings: [nameValue_Input!]
 }
 
 input senderEmailNotifications_Input {
@@ -25039,7 +25039,7 @@ input signerEmailNotifications_Input {
 }
 
 input userSignaturesInformation_Input {
-  userSignatures: [UserSignatures_Input]
+  userSignatures: [UserSignatures_Input!]
 }
 
 """Users' signatures"""
@@ -25207,7 +25207,7 @@ input workspaceUser_Input {
 
 """Provides properties that describe the items contained in a workspace."""
 input workspaceItemList_Input {
-  items: [WorkspaceItems_Input]
+  items: [WorkspaceItems_Input!]
 }
 
 input WorkspaceItems_Input {
@@ -25288,7 +25288,7 @@ input userPasswordInformation_Input {
 type oauthAccess {
   """Access token information."""
   access_token: String
-  data: [nameValue]
+  data: [nameValue!]
   expires_in: String
   refresh_token: String
   """Must be set to "api"."""

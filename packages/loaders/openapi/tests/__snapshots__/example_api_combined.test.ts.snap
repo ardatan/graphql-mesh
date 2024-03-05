@@ -13,7 +13,7 @@ directive @transport(subgraph: String, kind: String, location: String, headers: 
 
 type Query {
   """Returns information about all employee cars"""
-  getAllCars: [query_getAllCars_items] @httpOperation(subgraph: "example_api_combined", path: "/cars", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getAllCars: [query_getAllCars_items!] @httpOperation(subgraph: "example_api_combined", path: "/cars", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
 type query_getAllCars_items {

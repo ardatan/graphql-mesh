@@ -51,11 +51,11 @@ input consequence_Input {
 }
 
 input consequenceParams_Input {
-  facetFilters: [facetFilters_Input]
+  facetFilters: [facetFilters_Input!]
 }
 
 input facetFilters_Input @oneOf(subgraph: "algolia-nested-one-of") {
-  String_list: [String]
+  String_list: String
   String: String
 }
 

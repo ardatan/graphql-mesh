@@ -5351,9 +5351,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-operation-headers@workspace:packages/plugins/operation-headers"
   peerDependencies:
-    "@graphql-mesh/serve-runtime": ^0.1.1
-    "@graphql-mesh/types": ^0.96.6
-    "@graphql-mesh/utils": ^0.96.6
+    "@graphql-mesh/serve-runtime": ^0.2.0
+    "@graphql-mesh/types": ^0.97.0
+    "@graphql-mesh/utils": ^0.97.0
     graphql: "*"
     tslib: ^2.4.0
   languageName: unknown

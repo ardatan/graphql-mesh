@@ -35,7 +35,7 @@ type Query {
   """
   query_task_multi_results(
     """List of Query Task IDs"""
-    query_task_ids: [String]!
+    query_task_ids: [String!]!
   ): JSON @httpOperation(subgraph: "test", path: "/query_tasks/multi_results", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"query_task_ids\\":\\"query_task_ids\\"}", queryStringOptionsByParam: "{\\"query_task_ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
   """
   ### Get Query Task details
@@ -298,7 +298,7 @@ type Query {
     last_run_end: String
     """(Admin only) (Optional) Filter for all owners."""
     all_owners: Boolean
-  ): [Alert] @httpOperation(subgraph: "test", path: "/alerts/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"group_by\\":\\"group_by\\",\\"fields\\":\\"fields\\",\\"disabled\\":\\"disabled\\",\\"frequency\\":\\"frequency\\",\\"condition_met\\":\\"condition_met\\",\\"last_run_start\\":\\"last_run_start\\",\\"last_run_end\\":\\"last_run_end\\",\\"all_owners\\":\\"all_owners\\"}")
+  ): [Alert!] @httpOperation(subgraph: "test", path: "/alerts/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"group_by\\":\\"group_by\\",\\"fields\\":\\"fields\\",\\"disabled\\":\\"disabled\\",\\"frequency\\":\\"frequency\\",\\"condition_met\\":\\"condition_met\\",\\"last_run_start\\":\\"last_run_start\\",\\"last_run_end\\":\\"last_run_end\\",\\"all_owners\\":\\"all_owners\\"}")
   """
   ### Get an alert by a given alert ID
   
@@ -320,7 +320,7 @@ type Query {
     (Optional) Number of results to skip before returning any (used with \`limit\`).
     """
     offset: BigInt
-  ): [AlertNotifications] @httpOperation(subgraph: "test", path: "/alert_notifications", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
+  ): [AlertNotifications!] @httpOperation(subgraph: "test", path: "/alert_notifications", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
   """
   Get the maximum configured size of the entire artifact store, and the currently used storage in bytes.
   
@@ -350,7 +350,7 @@ type Query {
     limit: BigInt
     """Number of results to skip before returning any. (used with limit)"""
     offset: BigInt
-  ): [ArtifactNamespace] @httpOperation(subgraph: "test", path: "/artifact/namespaces", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
+  ): [ArtifactNamespace!] @httpOperation(subgraph: "test", path: "/artifact/namespaces", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
   """
   ### Return the value of an artifact
   
@@ -408,7 +408,7 @@ type Query {
     limit: BigInt
     """Number of results to skip before returning any. (used with limit)"""
     offset: BigInt
-  ): [Artifact] @httpOperation(subgraph: "test", path: "/artifact/{args.namespace}/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"key\\":\\"key\\",\\"user_ids\\":\\"user_ids\\",\\"min_size\\":\\"min_size\\",\\"max_size\\":\\"max_size\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
+  ): [Artifact!] @httpOperation(subgraph: "test", path: "/artifact/{args.namespace}/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"key\\":\\"key\\",\\"user_ids\\":\\"user_ids\\",\\"min_size\\":\\"min_size\\",\\"max_size\\":\\"max_size\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
   """
   ### Get one or more artifacts
   
@@ -431,7 +431,7 @@ type Query {
     limit: BigInt
     """Number of results to skip before returning any. (used with limit)"""
     offset: BigInt
-  ): [Artifact] @httpOperation(subgraph: "test", path: "/artifact/{args.namespace}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"key\\":\\"key\\",\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
+  ): [Artifact!] @httpOperation(subgraph: "test", path: "/artifact/{args.namespace}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"key\\":\\"key\\",\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
   """
   Get the current Cloud Storage Configuration.
   
@@ -452,7 +452,7 @@ type Query {
   all_color_collections(
     """Requested fields."""
     fields: String
-  ): [ColorCollection] @httpOperation(subgraph: "test", path: "/color_collections", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [ColorCollection!] @httpOperation(subgraph: "test", path: "/color_collections", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get an array of all existing **Custom** Color Collections
   Get a **single** color collection by id with [ColorCollection](#!/ColorCollection/color_collection)
@@ -466,7 +466,7 @@ type Query {
   color_collections_custom(
     """Requested fields."""
     fields: String
-  ): [ColorCollection] @httpOperation(subgraph: "test", path: "/color_collections/custom", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [ColorCollection!] @httpOperation(subgraph: "test", path: "/color_collections/custom", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get an array of all existing **Standard** Color Collections
   Get a **single** color collection by id with [ColorCollection](#!/ColorCollection/color_collection)
@@ -480,7 +480,7 @@ type Query {
   color_collections_standard(
     """Requested fields."""
     fields: String
-  ): [ColorCollection] @httpOperation(subgraph: "test", path: "/color_collections/standard", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [ColorCollection!] @httpOperation(subgraph: "test", path: "/color_collections/standard", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get the default color collection
   
@@ -569,7 +569,7 @@ type Query {
     fields: String
     """Combine given search criteria in a boolean OR expression"""
     filter_or: Boolean
-  ): [ContentFavorite] @httpOperation(subgraph: "test", path: "/content_favorite/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\",\\"user_id\\":\\"user_id\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"dashboard_id\\":\\"dashboard_id\\",\\"look_id\\":\\"look_id\\",\\"board_id\\":\\"board_id\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"fields\\":\\"fields\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [ContentFavorite!] @httpOperation(subgraph: "test", path: "/content_favorite/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\",\\"user_id\\":\\"user_id\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"dashboard_id\\":\\"dashboard_id\\",\\"look_id\\":\\"look_id\\",\\"board_id\\":\\"board_id\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"fields\\":\\"fields\\",\\"filter_or\\":\\"filter_or\\"}")
   """### Get favorite content by its id"""
   content_favorite(
     """Id of favorite content"""
@@ -586,7 +586,7 @@ type Query {
     parent_id: String!
     """Requested fields."""
     fields: String
-  ): [ContentMeta] @httpOperation(subgraph: "test", path: "/content_metadata", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"parent_id\\":\\"parent_id\\",\\"fields\\":\\"fields\\"}")
+  ): [ContentMeta!] @httpOperation(subgraph: "test", path: "/content_metadata", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"parent_id\\":\\"parent_id\\",\\"fields\\":\\"fields\\"}")
   """
   ### Get information about an individual content metadata record.
   
@@ -606,7 +606,7 @@ type Query {
     content_metadata_id: String!
     """Requested fields."""
     fields: String
-  ): [ContentMetaGroupUser] @httpOperation(subgraph: "test", path: "/content_metadata_access", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"content_metadata_id\\":\\"content_metadata_id\\",\\"fields\\":\\"fields\\"}")
+  ): [ContentMetaGroupUser!] @httpOperation(subgraph: "test", path: "/content_metadata_access", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"content_metadata_id\\":\\"content_metadata_id\\",\\"fields\\":\\"fields\\"}")
   """
   ### Search across looks, dashboards, and lookml dashboards. The terms field will be matched against the
   title and description of the content and the closest results are returned. Content that has been frequently
@@ -638,7 +638,7 @@ type Query {
     page: BigInt
     """Results per page."""
     per_page: BigInt
-  ): [ContentSearch] @httpOperation(subgraph: "test", path: "/content/{args.terms}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"types\\":\\"types\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\"}")
+  ): [ContentSearch!] @httpOperation(subgraph: "test", path: "/content/{args.terms}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"types\\":\\"types\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\"}")
   """
   ### Get an image representing the contents of a dashboard or look.
   
@@ -732,7 +732,7 @@ type Query {
     sorts: String
     """Combine given search criteria in a boolean OR expression"""
     filter_or: Boolean
-  ): [ContentView] @httpOperation(subgraph: "test", path: "/content_view/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"view_count\\":\\"view_count\\",\\"group_id\\":\\"group_id\\",\\"look_id\\":\\"look_id\\",\\"dashboard_id\\":\\"dashboard_id\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"start_of_week_date\\":\\"start_of_week_date\\",\\"all_time\\":\\"all_time\\",\\"user_id\\":\\"user_id\\",\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [ContentView!] @httpOperation(subgraph: "test", path: "/content_view/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"view_count\\":\\"view_count\\",\\"group_id\\":\\"group_id\\",\\"look_id\\":\\"look_id\\",\\"dashboard_id\\":\\"dashboard_id\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"start_of_week_date\\":\\"start_of_week_date\\",\\"all_time\\":\\"all_time\\",\\"user_id\\":\\"user_id\\",\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Search email credentials
   
@@ -780,7 +780,7 @@ type Query {
     emails: String
     """Combine given search criteria in a boolean OR expression."""
     filter_or: Boolean
-  ): [CredentialsEmailSearch] @httpOperation(subgraph: "test", path: "/credentials_email/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"email\\":\\"email\\",\\"emails\\":\\"emails\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [CredentialsEmailSearch!] @httpOperation(subgraph: "test", path: "/credentials_email/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"email\\":\\"email\\",\\"emails\\":\\"emails\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Get the current status and content of custom welcome emails
   
@@ -799,7 +799,7 @@ type Query {
   all_dashboards(
     """Requested fields."""
     fields: String
-  ): [DashboardBase] @httpOperation(subgraph: "test", path: "/dashboards", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [DashboardBase!] @httpOperation(subgraph: "test", path: "/dashboards", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Search Dashboards
   
@@ -882,7 +882,7 @@ type Query {
     sorts: String
     """Combine given search criteria in a boolean OR expression"""
     filter_or: Boolean
-  ): [Dashboard] @httpOperation(subgraph: "test", path: "/dashboards/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\",\\"slug\\":\\"slug\\",\\"title\\":\\"title\\",\\"description\\":\\"description\\",\\"content_favorite_id\\":\\"content_favorite_id\\",\\"folder_id\\":\\"folder_id\\",\\"deleted\\":\\"deleted\\",\\"user_id\\":\\"user_id\\",\\"view_count\\":\\"view_count\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"curate\\":\\"curate\\",\\"last_viewed_at\\":\\"last_viewed_at\\",\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [Dashboard!] @httpOperation(subgraph: "test", path: "/dashboards/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\",\\"slug\\":\\"slug\\",\\"title\\":\\"title\\",\\"description\\":\\"description\\",\\"content_favorite_id\\":\\"content_favorite_id\\",\\"folder_id\\":\\"folder_id\\",\\"deleted\\":\\"deleted\\",\\"user_id\\":\\"user_id\\",\\"view_count\\":\\"view_count\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"curate\\":\\"curate\\",\\"last_viewed_at\\":\\"last_viewed_at\\",\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Get information about a dashboard
   
@@ -966,7 +966,7 @@ type Query {
     Fields to sort by. Sortable fields: [:look_id, :dashboard_id, :deleted, :title]
     """
     sorts: String
-  ): [DashboardElement] @httpOperation(subgraph: "test", path: "/dashboard_elements/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"dashboard_id\\":\\"dashboard_id\\",\\"look_id\\":\\"look_id\\",\\"title\\":\\"title\\",\\"deleted\\":\\"deleted\\",\\"fields\\":\\"fields\\",\\"filter_or\\":\\"filter_or\\",\\"sorts\\":\\"sorts\\"}")
+  ): [DashboardElement!] @httpOperation(subgraph: "test", path: "/dashboard_elements/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"dashboard_id\\":\\"dashboard_id\\",\\"look_id\\":\\"look_id\\",\\"title\\":\\"title\\",\\"deleted\\":\\"deleted\\",\\"fields\\":\\"fields\\",\\"filter_or\\":\\"filter_or\\",\\"sorts\\":\\"sorts\\"}")
   """### Get information about the dashboard element with a specific id."""
   dashboard_element(
     """Id of dashboard element"""
@@ -982,7 +982,7 @@ type Query {
     dashboard_id: String!
     """Requested fields."""
     fields: String
-  ): [DashboardElement] @httpOperation(subgraph: "test", path: "/dashboards/{args.dashboard_id}/dashboard_elements", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [DashboardElement!] @httpOperation(subgraph: "test", path: "/dashboards/{args.dashboard_id}/dashboard_elements", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """### Get information about the dashboard filters with a specific id."""
   dashboard_filter(
     """Id of dashboard filters"""
@@ -998,7 +998,7 @@ type Query {
     dashboard_id: String!
     """Requested fields."""
     fields: String
-  ): [DashboardFilter] @httpOperation(subgraph: "test", path: "/dashboards/{args.dashboard_id}/dashboard_filters", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [DashboardFilter!] @httpOperation(subgraph: "test", path: "/dashboards/{args.dashboard_id}/dashboard_filters", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """### Get information about the dashboard elements with a specific id."""
   dashboard_layout_component(
     """Id of dashboard layout component"""
@@ -1014,7 +1014,7 @@ type Query {
     dashboard_layout_id: String!
     """Requested fields."""
     fields: String
-  ): [DashboardLayoutComponent] @httpOperation(subgraph: "test", path: "/dashboard_layouts/{args.dashboard_layout_id}/dashboard_layout_components", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [DashboardLayoutComponent!] @httpOperation(subgraph: "test", path: "/dashboard_layouts/{args.dashboard_layout_id}/dashboard_layout_components", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """### Get information about the dashboard layouts with a specific id."""
   dashboard_layout(
     """Id of dashboard layouts"""
@@ -1030,12 +1030,12 @@ type Query {
     dashboard_id: String!
     """Requested fields."""
     fields: String
-  ): [DashboardLayout] @httpOperation(subgraph: "test", path: "/dashboards/{args.dashboard_id}/dashboard_layouts", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [DashboardLayout!] @httpOperation(subgraph: "test", path: "/dashboards/{args.dashboard_id}/dashboard_layouts", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about all datagroups.
   
   """
-  all_datagroups: [Datagroup] @httpOperation(subgraph: "test", path: "/datagroups", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  all_datagroups: [Datagroup!] @httpOperation(subgraph: "test", path: "/datagroups", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Get information about a datagroup.
   
@@ -1051,7 +1051,7 @@ type Query {
   all_connections(
     """Requested fields."""
     fields: String
-  ): [DBConnection] @httpOperation(subgraph: "test", path: "/connections", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [DBConnection!] @httpOperation(subgraph: "test", path: "/connections", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about a connection.
   
@@ -1128,7 +1128,7 @@ type Query {
   all_dialect_infos(
     """Requested fields."""
     fields: String
-  ): [DialectInfo] @httpOperation(subgraph: "test", path: "/dialect_info", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [DialectInfo!] @httpOperation(subgraph: "test", path: "/dialect_info", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Retrieve the value for whether or not digest emails is enabled
   
@@ -1154,7 +1154,7 @@ type Query {
     name: String
     """Application Client ID"""
     client_id: String
-  ): [ExternalOauthApplication] @httpOperation(subgraph: "test", path: "/external_oauth_applications", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"name\\":\\"name\\",\\"client_id\\":\\"client_id\\"}")
+  ): [ExternalOauthApplication!] @httpOperation(subgraph: "test", path: "/external_oauth_applications", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"name\\":\\"name\\",\\"client_id\\":\\"client_id\\"}")
   """
   ### Get All Git Branches
   
@@ -1164,7 +1164,7 @@ type Query {
   all_git_branches(
     """Project Id"""
     project_id: String!
-  ): [GitBranch] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/git_branches", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [GitBranch!] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/git_branches", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Get the Current Git Branch
   
@@ -1213,12 +1213,12 @@ type Query {
     """Fields to sort by."""
     sorts: String
     """Optional of ids to get specific groups."""
-    ids: [String]
+    ids: [String!]
     """Id of content metadata to which groups must have access."""
     content_metadata_id: String
     """Select only groups that either can/cannot be given access to content."""
     can_add_to_content_metadata: Boolean
-  ): [Group] @httpOperation(subgraph: "test", path: "/groups", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"ids\\":\\"ids\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"can_add_to_content_metadata\\":\\"can_add_to_content_metadata\\"}", queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [Group!] @httpOperation(subgraph: "test", path: "/groups", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"ids\\":\\"ids\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"can_add_to_content_metadata\\":\\"can_add_to_content_metadata\\"}", queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
   """
   ### Search groups
   
@@ -1268,7 +1268,7 @@ type Query {
     externally_managed: Boolean
     """Match group externally_orphaned."""
     externally_orphaned: Boolean
-  ): [Group] @httpOperation(subgraph: "test", path: "/groups/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"external_group_id\\":\\"external_group_id\\",\\"externally_managed\\":\\"externally_managed\\",\\"externally_orphaned\\":\\"externally_orphaned\\"}")
+  ): [Group!] @httpOperation(subgraph: "test", path: "/groups/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"external_group_id\\":\\"external_group_id\\",\\"externally_managed\\":\\"externally_managed\\",\\"externally_orphaned\\":\\"externally_orphaned\\"}")
   """
   ### Search groups include roles
   
@@ -1318,7 +1318,7 @@ type Query {
     externally_managed: Boolean
     """Match group externally_orphaned."""
     externally_orphaned: Boolean
-  ): [GroupSearch] @httpOperation(subgraph: "test", path: "/groups/search/with_roles", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"external_group_id\\":\\"external_group_id\\",\\"externally_managed\\":\\"externally_managed\\",\\"externally_orphaned\\":\\"externally_orphaned\\"}")
+  ): [GroupSearch!] @httpOperation(subgraph: "test", path: "/groups/search/with_roles", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"external_group_id\\":\\"external_group_id\\",\\"externally_managed\\":\\"externally_managed\\",\\"externally_orphaned\\":\\"externally_orphaned\\"}")
   """
   ### Search groups include hierarchy
   
@@ -1369,7 +1369,7 @@ type Query {
     externally_managed: Boolean
     """Match group externally_orphaned."""
     externally_orphaned: Boolean
-  ): [GroupHierarchy] @httpOperation(subgraph: "test", path: "/groups/search/with_hierarchy", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"external_group_id\\":\\"external_group_id\\",\\"externally_managed\\":\\"externally_managed\\",\\"externally_orphaned\\":\\"externally_orphaned\\"}")
+  ): [GroupHierarchy!] @httpOperation(subgraph: "test", path: "/groups/search/with_hierarchy", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"external_group_id\\":\\"external_group_id\\",\\"externally_managed\\":\\"externally_managed\\",\\"externally_orphaned\\":\\"externally_orphaned\\"}")
   """
   ### Get information about a group.
   
@@ -1389,7 +1389,7 @@ type Query {
     group_id: String!
     """Requested fields."""
     fields: String
-  ): [Group] @httpOperation(subgraph: "test", path: "/groups/{args.group_id}/groups", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Group!] @httpOperation(subgraph: "test", path: "/groups/{args.group_id}/groups", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about all the users directly included in a group.
   
@@ -1417,7 +1417,7 @@ type Query {
     offset: BigInt
     """Fields to sort by."""
     sorts: String
-  ): [User] @httpOperation(subgraph: "test", path: "/groups/{args.group_id}/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\"}")
+  ): [User!] @httpOperation(subgraph: "test", path: "/groups/{args.group_id}/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\"}")
   """
   ### Get information about all boards.
   
@@ -1425,7 +1425,7 @@ type Query {
   all_boards(
     """Requested fields."""
     fields: String
-  ): [Board] @httpOperation(subgraph: "test", path: "/boards", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Board!] @httpOperation(subgraph: "test", path: "/boards", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Search Boards
   
@@ -1487,7 +1487,7 @@ type Query {
     filter_or: Boolean
     """Filter results based on permission, either show (default) or update"""
     permission: String
-  ): [Board] @httpOperation(subgraph: "test", path: "/boards/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"title\\":\\"title\\",\\"created_at\\":\\"created_at\\",\\"first_name\\":\\"first_name\\",\\"last_name\\":\\"last_name\\",\\"fields\\":\\"fields\\",\\"favorited\\":\\"favorited\\",\\"creator_id\\":\\"creator_id\\",\\"sorts\\":\\"sorts\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\",\\"filter_or\\":\\"filter_or\\",\\"permission\\":\\"permission\\"}")
+  ): [Board!] @httpOperation(subgraph: "test", path: "/boards/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"title\\":\\"title\\",\\"created_at\\":\\"created_at\\",\\"first_name\\":\\"first_name\\",\\"last_name\\":\\"last_name\\",\\"fields\\":\\"fields\\",\\"favorited\\":\\"favorited\\",\\"creator_id\\":\\"creator_id\\",\\"sorts\\":\\"sorts\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\",\\"filter_or\\":\\"filter_or\\",\\"permission\\":\\"permission\\"}")
   """
   ### Get information about a board.
   
@@ -1509,7 +1509,7 @@ type Query {
     sorts: String
     """Filter to a specific board section"""
     board_section_id: String
-  ): [BoardItem] @httpOperation(subgraph: "test", path: "/board_items", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"sorts\\":\\"sorts\\",\\"board_section_id\\":\\"board_section_id\\"}")
+  ): [BoardItem!] @httpOperation(subgraph: "test", path: "/board_items", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"sorts\\":\\"sorts\\",\\"board_section_id\\":\\"board_section_id\\"}")
   """
   ### Get information about a board item.
   
@@ -1527,7 +1527,7 @@ type Query {
   all_primary_homepage_sections(
     """Requested fields."""
     fields: String
-  ): [HomepageSection] @httpOperation(subgraph: "test", path: "/primary_homepage_sections", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [HomepageSection!] @httpOperation(subgraph: "test", path: "/primary_homepage_sections", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about all board sections.
   
@@ -1537,7 +1537,7 @@ type Query {
     fields: String
     """Fields to sort by."""
     sorts: String
-  ): [BoardSection] @httpOperation(subgraph: "test", path: "/board_sections", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"sorts\\":\\"sorts\\"}")
+  ): [BoardSection!] @httpOperation(subgraph: "test", path: "/board_sections", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"sorts\\":\\"sorts\\"}")
   """
   ### Get information about a board section.
   
@@ -1555,7 +1555,7 @@ type Query {
   all_integration_hubs(
     """Requested fields."""
     fields: String
-  ): [IntegrationHub] @httpOperation(subgraph: "test", path: "/integration_hubs", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [IntegrationHub!] @httpOperation(subgraph: "test", path: "/integration_hubs", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about a Integration Hub.
   
@@ -1575,7 +1575,7 @@ type Query {
     fields: String
     """Filter to a specific provider"""
     integration_hub_id: String
-  ): [Integration] @httpOperation(subgraph: "test", path: "/integrations", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"integration_hub_id\\":\\"integration_hub_id\\"}")
+  ): [Integration!] @httpOperation(subgraph: "test", path: "/integrations", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"integration_hub_id\\":\\"integration_hub_id\\"}")
   """
   ### Get information about a Integration.
   
@@ -1624,7 +1624,7 @@ type Query {
   Calls to this endpoint may be denied by [Looker (Google Cloud core)](https://cloud.google.com/looker/docs/r/looker-core/overview).
   
   """
-  all_legacy_features: [LegacyFeature] @httpOperation(subgraph: "test", path: "/legacy_features", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  all_legacy_features: [LegacyFeature!] @httpOperation(subgraph: "test", path: "/legacy_features", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Get information about the legacy feature with a specific id.
   
@@ -1639,7 +1639,7 @@ type Query {
   ### Get a list of locales that Looker supports.
   
   """
-  all_locales: [Locale] @httpOperation(subgraph: "test", path: "/locales", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  all_locales: [Locale!] @httpOperation(subgraph: "test", path: "/locales", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Get information about all active Looks
   
@@ -1653,7 +1653,7 @@ type Query {
   all_looks(
     """Requested fields."""
     fields: String
-  ): [Look] @httpOperation(subgraph: "test", path: "/looks", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Look!] @httpOperation(subgraph: "test", path: "/looks", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Search Looks
   
@@ -1731,7 +1731,7 @@ type Query {
     sorts: String
     """Combine given search criteria in a boolean OR expression"""
     filter_or: Boolean
-  ): [Look] @httpOperation(subgraph: "test", path: "/looks/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\",\\"title\\":\\"title\\",\\"description\\":\\"description\\",\\"content_favorite_id\\":\\"content_favorite_id\\",\\"folder_id\\":\\"folder_id\\",\\"user_id\\":\\"user_id\\",\\"view_count\\":\\"view_count\\",\\"deleted\\":\\"deleted\\",\\"query_id\\":\\"query_id\\",\\"curate\\":\\"curate\\",\\"last_viewed_at\\":\\"last_viewed_at\\",\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [Look!] @httpOperation(subgraph: "test", path: "/looks/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\",\\"title\\":\\"title\\",\\"description\\":\\"description\\",\\"content_favorite_id\\":\\"content_favorite_id\\",\\"folder_id\\":\\"folder_id\\",\\"user_id\\":\\"user_id\\",\\"view_count\\":\\"view_count\\",\\"deleted\\":\\"deleted\\",\\"query_id\\":\\"query_id\\",\\"curate\\":\\"curate\\",\\"last_viewed_at\\":\\"last_viewed_at\\",\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Get a Look.
   
@@ -1813,7 +1813,7 @@ type Query {
     Number of results to skip before returning any. (Defaults to 0 if not set when limit is used)
     """
     offset: BigInt
-  ): [LookmlModel] @httpOperation(subgraph: "test", path: "/lookml_models", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
+  ): [LookmlModel!] @httpOperation(subgraph: "test", path: "/lookml_models", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\"}")
   """
   ### Get information about a lookml model.
   
@@ -1905,7 +1905,7 @@ type Query {
   connection_databases(
     """Name of connection"""
     connection_name: String!
-  ): [String] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/databases", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [String!] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/databases", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Retrieve metadata features for this connection
   
@@ -1935,7 +1935,7 @@ type Query {
     cache: Boolean
     """Requested fields."""
     fields: String
-  ): [Schema] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/schemas", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"database\\":\\"database\\",\\"cache\\":\\"cache\\",\\"fields\\":\\"fields\\"}")
+  ): [Schema!] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/schemas", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"database\\":\\"database\\",\\"cache\\":\\"cache\\",\\"fields\\":\\"fields\\"}")
   """
   ### Get the list of tables for a schema
   
@@ -1960,7 +1960,7 @@ type Query {
     table_filter: String
     """Optional. Return tables up to the table_limit"""
     table_limit: BigInt
-  ): [SchemaTables] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/tables", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"database\\":\\"database\\",\\"schema_name\\":\\"schema_name\\",\\"cache\\":\\"cache\\",\\"fields\\":\\"fields\\",\\"table_filter\\":\\"table_filter\\",\\"table_limit\\":\\"table_limit\\"}")
+  ): [SchemaTables!] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/tables", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"database\\":\\"database\\",\\"schema_name\\":\\"schema_name\\",\\"cache\\":\\"cache\\",\\"fields\\":\\"fields\\",\\"table_filter\\":\\"table_filter\\",\\"table_limit\\":\\"table_limit\\"}")
   """
   ### Get the columns (and therefore also the tables) in a specific schema
   
@@ -1983,7 +1983,7 @@ type Query {
     table_names: String
     """Requested fields."""
     fields: String
-  ): [SchemaColumns] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/columns", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"database\\":\\"database\\",\\"schema_name\\":\\"schema_name\\",\\"cache\\":\\"cache\\",\\"table_limit\\":\\"table_limit\\",\\"table_names\\":\\"table_names\\",\\"fields\\":\\"fields\\"}")
+  ): [SchemaColumns!] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/columns", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"database\\":\\"database\\",\\"schema_name\\":\\"schema_name\\",\\"cache\\":\\"cache\\",\\"table_limit\\":\\"table_limit\\",\\"table_names\\":\\"table_names\\",\\"fields\\":\\"fields\\"}")
   """
   ### Search a connection for columns matching the specified name
   
@@ -1997,7 +1997,7 @@ type Query {
     column_name: String
     """Requested fields."""
     fields: String
-  ): [ColumnSearch] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/search_columns", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"column_name\\":\\"column_name\\",\\"fields\\":\\"fields\\"}")
+  ): [ColumnSearch!] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/search_columns", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"column_name\\":\\"column_name\\",\\"fields\\":\\"fields\\"}")
   """
   ### Get all mobile settings.
   
@@ -2048,7 +2048,7 @@ type Query {
     built_in: Boolean
     """Combine given search criteria in a boolean OR expression."""
     filter_or: Boolean
-  ): [ModelSet] @httpOperation(subgraph: "test", path: "/model_sets/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"all_access\\":\\"all_access\\",\\"built_in\\":\\"built_in\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [ModelSet!] @httpOperation(subgraph: "test", path: "/model_sets/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"all_access\\":\\"all_access\\",\\"built_in\\":\\"built_in\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Get information about the model set with a specific id.
   
@@ -2066,7 +2066,7 @@ type Query {
   all_model_sets(
     """Requested fields."""
     fields: String
-  ): [ModelSet] @httpOperation(subgraph: "test", path: "/model_sets", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [ModelSet!] @httpOperation(subgraph: "test", path: "/model_sets", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### List All OAuth Client Apps
   
@@ -2080,7 +2080,7 @@ type Query {
   all_oauth_client_apps(
     """Requested fields."""
     fields: String
-  ): [OauthClientApp] @httpOperation(subgraph: "test", path: "/oauth_client_apps", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [OauthClientApp!] @httpOperation(subgraph: "test", path: "/oauth_client_apps", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get Oauth Client App
   
@@ -2132,7 +2132,7 @@ type Query {
   ### Get all supported permissions.
   
   """
-  all_permissions: [Permission] @httpOperation(subgraph: "test", path: "/permissions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  all_permissions: [Permission!] @httpOperation(subgraph: "test", path: "/permissions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Search permission sets
   Returns all permission set records that match the given search criteria.
@@ -2178,7 +2178,7 @@ type Query {
     built_in: Boolean
     """Combine given search criteria in a boolean OR expression."""
     filter_or: Boolean
-  ): [PermissionSet] @httpOperation(subgraph: "test", path: "/permission_sets/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"all_access\\":\\"all_access\\",\\"built_in\\":\\"built_in\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [PermissionSet!] @httpOperation(subgraph: "test", path: "/permission_sets/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"all_access\\":\\"all_access\\",\\"built_in\\":\\"built_in\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Get information about the permission set with a specific id.
   
@@ -2196,7 +2196,7 @@ type Query {
   all_permission_sets(
     """Requested fields."""
     fields: String
-  ): [PermissionSet] @httpOperation(subgraph: "test", path: "/permission_sets", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [PermissionSet!] @httpOperation(subgraph: "test", path: "/permission_sets", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get All Projects
   
@@ -2206,7 +2206,7 @@ type Query {
   all_projects(
     """Requested fields"""
     fields: String
-  ): [Project] @httpOperation(subgraph: "test", path: "/projects", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Project!] @httpOperation(subgraph: "test", path: "/projects", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get A Project
   
@@ -2283,7 +2283,7 @@ type Query {
     project_id: String!
     """Requested fields"""
     fields: String
-  ): [ProjectFile] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/files", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [ProjectFile!] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/files", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get Project File Info
   
@@ -2318,7 +2318,7 @@ type Query {
     (Optional: leave blank for root project) The remote url for remote dependency to test.
     """
     remote_url: String
-  ): [GitConnectionTest] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/git_connection_tests", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"remote_url\\":\\"remote_url\\"}")
+  ): [GitConnectionTest!] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/git_connection_tests", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"remote_url\\":\\"remote_url\\"}")
   """
   ### Run a git connection test
   
@@ -2356,7 +2356,7 @@ type Query {
     project_id: String!
     """File Id"""
     file_id: String
-  ): [LookmlTest] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/lookml_tests", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"file_id\\":\\"file_id\\"}")
+  ): [LookmlTest!] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/lookml_tests", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"file_id\\":\\"file_id\\"}")
   """
   ### Run LookML Tests
   
@@ -2372,7 +2372,7 @@ type Query {
     test: String
     """Model Name"""
     model: String
-  ): [LookmlTestResult] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/lookml_tests/run", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"file_id\\":\\"file_id\\",\\"test\\":\\"test\\",\\"model\\":\\"model\\"}")
+  ): [LookmlTestResult!] @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/lookml_tests/run", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"file_id\\":\\"file_id\\",\\"test\\":\\"test\\",\\"model\\":\\"model\\"}")
   """
   ### Get information about a render task.
   
@@ -2421,7 +2421,7 @@ type Query {
   get_all_repository_credentials(
     """Root Project Id"""
     root_project_id: String!
-  ): [RepositoryCredential] @httpOperation(subgraph: "test", path: "/projects/{args.root_project_id}/credentials", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [RepositoryCredential!] @httpOperation(subgraph: "test", path: "/projects/{args.root_project_id}/credentials", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Get information about all roles.
   
@@ -2430,8 +2430,8 @@ type Query {
     """Requested fields."""
     fields: String
     """Optional list of ids to get specific roles."""
-    ids: [String]
-  ): [Role] @httpOperation(subgraph: "test", path: "/roles", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"ids\\":\\"ids\\"}", queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+    ids: [String!]
+  ): [Role!] @httpOperation(subgraph: "test", path: "/roles", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"ids\\":\\"ids\\"}", queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
   """
   ### Search roles
   
@@ -2477,7 +2477,7 @@ type Query {
     built_in: Boolean
     """Combine given search criteria in a boolean OR expression."""
     filter_or: Boolean
-  ): [Role] @httpOperation(subgraph: "test", path: "/roles/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"built_in\\":\\"built_in\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [Role!] @httpOperation(subgraph: "test", path: "/roles/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"built_in\\":\\"built_in\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Search roles include user count
   
@@ -2524,7 +2524,7 @@ type Query {
     built_in: Boolean
     """Combine given search criteria in a boolean OR expression."""
     filter_or: Boolean
-  ): [RoleSearch] @httpOperation(subgraph: "test", path: "/roles/search/with_user_count", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"built_in\\":\\"built_in\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [RoleSearch!] @httpOperation(subgraph: "test", path: "/roles/search/with_user_count", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"built_in\\":\\"built_in\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Get information about the role with a specific id.
   
@@ -2542,7 +2542,7 @@ type Query {
     role_id: String!
     """Requested fields."""
     fields: String
-  ): [Group] @httpOperation(subgraph: "test", path: "/roles/{args.role_id}/groups", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Group!] @httpOperation(subgraph: "test", path: "/roles/{args.role_id}/groups", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about all the users with the role that has a specific id.
   
@@ -2556,12 +2556,12 @@ type Query {
     Get only users associated directly with the role: exclude those only associated through groups.
     """
     direct_association_only: Boolean
-  ): [User] @httpOperation(subgraph: "test", path: "/roles/{args.role_id}/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"direct_association_only\\":\\"direct_association_only\\"}")
+  ): [User!] @httpOperation(subgraph: "test", path: "/roles/{args.role_id}/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"direct_association_only\\":\\"direct_association_only\\"}")
   """
   Get information about all running queries.
   
   """
-  all_running_queries: [RunningQueries] @httpOperation(subgraph: "test", path: "/running_queries", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  all_running_queries: [RunningQueries!] @httpOperation(subgraph: "test", path: "/running_queries", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Get the SAML configuration.
   
@@ -2601,7 +2601,7 @@ type Query {
     space_id: String!
     """Requested fields."""
     fields: String
-  ): [ScheduledPlan] @httpOperation(subgraph: "test", path: "/scheduled_plans/space/{args.space_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [ScheduledPlan!] @httpOperation(subgraph: "test", path: "/scheduled_plans/space/{args.space_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get Information About a Scheduled Plan
   
@@ -2643,7 +2643,7 @@ type Query {
     Return scheduled plans belonging to all users (caller needs see_schedules permission)
     """
     all_users: Boolean
-  ): [ScheduledPlan] @httpOperation(subgraph: "test", path: "/scheduled_plans", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user_id\\":\\"user_id\\",\\"fields\\":\\"fields\\",\\"all_users\\":\\"all_users\\"}")
+  ): [ScheduledPlan!] @httpOperation(subgraph: "test", path: "/scheduled_plans", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user_id\\":\\"user_id\\",\\"fields\\":\\"fields\\",\\"all_users\\":\\"all_users\\"}")
   """
   ### Get Scheduled Plans for a Look
   
@@ -2669,7 +2669,7 @@ type Query {
     fields: String
     """Return scheduled plans belonging to all users for the look"""
     all_users: Boolean
-  ): [ScheduledPlan] @httpOperation(subgraph: "test", path: "/scheduled_plans/look/{args.look_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user_id\\":\\"user_id\\",\\"fields\\":\\"fields\\",\\"all_users\\":\\"all_users\\"}")
+  ): [ScheduledPlan!] @httpOperation(subgraph: "test", path: "/scheduled_plans/look/{args.look_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user_id\\":\\"user_id\\",\\"fields\\":\\"fields\\",\\"all_users\\":\\"all_users\\"}")
   """
   ### Get Scheduled Plans for a Dashboard
   
@@ -2695,7 +2695,7 @@ type Query {
     all_users: Boolean
     """Requested fields."""
     fields: String
-  ): [ScheduledPlan] @httpOperation(subgraph: "test", path: "/scheduled_plans/dashboard/{args.dashboard_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user_id\\":\\"user_id\\",\\"all_users\\":\\"all_users\\",\\"fields\\":\\"fields\\"}")
+  ): [ScheduledPlan!] @httpOperation(subgraph: "test", path: "/scheduled_plans/dashboard/{args.dashboard_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user_id\\":\\"user_id\\",\\"all_users\\":\\"all_users\\",\\"fields\\":\\"fields\\"}")
   """
   ### Get Scheduled Plans for a LookML Dashboard
   
@@ -2721,7 +2721,7 @@ type Query {
     fields: String
     """Return scheduled plans belonging to all users for the dashboard"""
     all_users: Boolean
-  ): [ScheduledPlan] @httpOperation(subgraph: "test", path: "/scheduled_plans/lookml_dashboard/{args.lookml_dashboard_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user_id\\":\\"user_id\\",\\"fields\\":\\"fields\\",\\"all_users\\":\\"all_users\\"}")
+  ): [ScheduledPlan!] @httpOperation(subgraph: "test", path: "/scheduled_plans/lookml_dashboard/{args.lookml_dashboard_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user_id\\":\\"user_id\\",\\"fields\\":\\"fields\\",\\"all_users\\":\\"all_users\\"}")
   """
   ### Get session config.
   
@@ -2800,7 +2800,7 @@ type Query {
     filter_or: Boolean
     """Match is shared root"""
     is_shared_root: Boolean
-  ): [Folder] @httpOperation(subgraph: "test", path: "/folders/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"name\\":\\"name\\",\\"id\\":\\"id\\",\\"parent_id\\":\\"parent_id\\",\\"creator_id\\":\\"creator_id\\",\\"filter_or\\":\\"filter_or\\",\\"is_shared_root\\":\\"is_shared_root\\"}")
+  ): [Folder!] @httpOperation(subgraph: "test", path: "/folders/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"name\\":\\"name\\",\\"id\\":\\"id\\",\\"parent_id\\":\\"parent_id\\",\\"creator_id\\":\\"creator_id\\",\\"filter_or\\":\\"filter_or\\",\\"is_shared_root\\":\\"is_shared_root\\"}")
   """### Get information about the folder with a specific id."""
   folder(
     """Id of folder"""
@@ -2821,7 +2821,7 @@ type Query {
   all_folders(
     """Requested fields."""
     fields: String
-  ): [Folder] @httpOperation(subgraph: "test", path: "/folders", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Folder!] @httpOperation(subgraph: "test", path: "/folders", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """### Get the children of a folder."""
   folder_children(
     """Id of folder"""
@@ -2846,7 +2846,7 @@ type Query {
     offset: BigInt
     """Fields to sort by."""
     sorts: String
-  ): [Folder] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/children", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\"}")
+  ): [Folder!] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/children", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\"}")
   """### Search the children of a folder"""
   folder_children_search(
     """Id of folder"""
@@ -2857,7 +2857,7 @@ type Query {
     sorts: String
     """Match folder name."""
     name: String
-  ): [Folder] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/children/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"sorts\\":\\"sorts\\",\\"name\\":\\"name\\"}")
+  ): [Folder!] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/children/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"sorts\\":\\"sorts\\",\\"name\\":\\"name\\"}")
   """### Get the parent of a folder"""
   folder_parent(
     """Id of folder"""
@@ -2871,7 +2871,7 @@ type Query {
     folder_id: String!
     """Requested fields."""
     fields: String
-  ): [Folder] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/ancestors", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Folder!] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/ancestors", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get all looks in a folder.
   In API 3.x, this will return all looks in a folder, including looks in the trash.
@@ -2883,14 +2883,14 @@ type Query {
     folder_id: String!
     """Requested fields."""
     fields: String
-  ): [LookWithQuery] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/looks", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [LookWithQuery!] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/looks", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """### Get the dashboards in a folder"""
   folder_dashboards(
     """Id of folder"""
     folder_id: String!
     """Requested fields."""
     fields: String
-  ): [Dashboard] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/dashboards", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Dashboard!] @httpOperation(subgraph: "test", path: "/folders/{args.folder_id}/dashboards", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """Get a SQL Runner query."""
   sql_query(
     """slug of query"""
@@ -2907,7 +2907,7 @@ type Query {
   get_support_access_allowlist_entries(
     """Requested fields."""
     fields: String
-  ): [SupportAccessAllowlistEntry] @httpOperation(subgraph: "test", path: "/support_access/allowlist", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [SupportAccessAllowlistEntry!] @httpOperation(subgraph: "test", path: "/support_access/allowlist", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Support Access Status
   
@@ -2931,7 +2931,7 @@ type Query {
   all_themes(
     """Requested fields."""
     fields: String
-  ): [Theme] @httpOperation(subgraph: "test", path: "/themes", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Theme!] @httpOperation(subgraph: "test", path: "/themes", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Search all themes for matching criteria.
   
@@ -2993,7 +2993,7 @@ type Query {
     fields: String
     """Combine given search criteria in a boolean OR expression"""
     filter_or: Boolean
-  ): [Theme] @httpOperation(subgraph: "test", path: "/themes/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"begin_at\\":\\"begin_at\\",\\"end_at\\":\\"end_at\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"fields\\":\\"fields\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [Theme!] @httpOperation(subgraph: "test", path: "/themes/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\",\\"name\\":\\"name\\",\\"begin_at\\":\\"begin_at\\",\\"end_at\\":\\"end_at\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"fields\\":\\"fields\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Get the default theme
   
@@ -3033,7 +3033,7 @@ type Query {
     ts: DateTime
     """Requested fields."""
     fields: String
-  ): [Theme] @httpOperation(subgraph: "test", path: "/themes/active", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"name\\":\\"name\\",\\"ts\\":\\"ts\\",\\"fields\\":\\"fields\\"}")
+  ): [Theme!] @httpOperation(subgraph: "test", path: "/themes/active", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"name\\":\\"name\\",\\"ts\\":\\"ts\\",\\"fields\\":\\"fields\\"}")
   """
   ### Get the named theme if it's active. Otherwise, return the default theme
   
@@ -3071,7 +3071,7 @@ type Query {
   ### Get a list of timezones that Looker supports (e.g. useful for scheduling tasks).
   
   """
-  all_timezones: [Timezone] @httpOperation(subgraph: "test", path: "/timezones", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  all_timezones: [Timezone!] @httpOperation(subgraph: "test", path: "/timezones", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Get information about all SSH Servers.
   
@@ -3079,7 +3079,7 @@ type Query {
   all_ssh_servers(
     """Requested fields."""
     fields: String
-  ): [SshServer] @httpOperation(subgraph: "test", path: "/ssh_servers", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [SshServer!] @httpOperation(subgraph: "test", path: "/ssh_servers", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about an SSH Server.
   
@@ -3103,7 +3103,7 @@ type Query {
   all_ssh_tunnels(
     """Requested fields."""
     fields: String
-  ): [SshTunnel] @httpOperation(subgraph: "test", path: "/ssh_tunnels", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [SshTunnel!] @httpOperation(subgraph: "test", path: "/ssh_tunnels", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about an SSH Tunnel.
   
@@ -3136,7 +3136,7 @@ type Query {
     fields: String
     """Fields to order the results by. Sortable fields include: name, label"""
     sorts: String
-  ): [UserAttribute] @httpOperation(subgraph: "test", path: "/user_attributes", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"sorts\\":\\"sorts\\"}")
+  ): [UserAttribute!] @httpOperation(subgraph: "test", path: "/user_attributes", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"sorts\\":\\"sorts\\"}")
   """
   ### Get information about a user attribute.
   
@@ -3162,7 +3162,7 @@ type Query {
     user_attribute_id: String!
     """Requested fields."""
     fields: String
-  ): [UserAttributeGroupValue] @httpOperation(subgraph: "test", path: "/user_attributes/{args.user_attribute_id}/group_values", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [UserAttributeGroupValue!] @httpOperation(subgraph: "test", path: "/user_attributes/{args.user_attribute_id}/group_values", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get currently locked-out users.
   
@@ -3170,7 +3170,7 @@ type Query {
   all_user_login_lockouts(
     """Include only these fields in the response"""
     fields: String
-  ): [UserLoginLockout] @httpOperation(subgraph: "test", path: "/user_login_lockouts", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [UserLoginLockout!] @httpOperation(subgraph: "test", path: "/user_login_lockouts", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Search currently locked-out users.
   
@@ -3206,7 +3206,7 @@ type Query {
     remote_id: String
     """Combine given search criteria in a boolean OR expression"""
     filter_or: Boolean
-  ): [UserLoginLockout] @httpOperation(subgraph: "test", path: "/user_login_lockouts/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"auth_type\\":\\"auth_type\\",\\"full_name\\":\\"full_name\\",\\"email\\":\\"email\\",\\"remote_id\\":\\"remote_id\\",\\"filter_or\\":\\"filter_or\\"}")
+  ): [UserLoginLockout!] @httpOperation(subgraph: "test", path: "/user_login_lockouts/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"auth_type\\":\\"auth_type\\",\\"full_name\\":\\"full_name\\",\\"email\\":\\"email\\",\\"remote_id\\":\\"remote_id\\",\\"filter_or\\":\\"filter_or\\"}")
   """
   ### Get information about the current user; i.e. the user account currently calling the API.
   
@@ -3241,8 +3241,8 @@ type Query {
     """Fields to sort by."""
     sorts: String
     """Optional list of ids to get specific users."""
-    ids: [String]
-  ): [User] @httpOperation(subgraph: "test", path: "/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"ids\\":\\"ids\\"}", queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+    ids: [String!]
+  ): [User!] @httpOperation(subgraph: "test", path: "/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"ids\\":\\"ids\\"}", queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
   """
   ### Search users
   
@@ -3318,7 +3318,7 @@ type Query {
     content_metadata_id: String
     """Search for users who are direct members of this group"""
     group_id: String
-  ): [User] @httpOperation(subgraph: "test", path: "/users/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"first_name\\":\\"first_name\\",\\"last_name\\":\\"last_name\\",\\"verified_looker_employee\\":\\"verified_looker_employee\\",\\"embed_user\\":\\"embed_user\\",\\"email\\":\\"email\\",\\"is_disabled\\":\\"is_disabled\\",\\"filter_or\\":\\"filter_or\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"group_id\\":\\"group_id\\"}")
+  ): [User!] @httpOperation(subgraph: "test", path: "/users/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"first_name\\":\\"first_name\\",\\"last_name\\":\\"last_name\\",\\"verified_looker_employee\\":\\"verified_looker_employee\\",\\"embed_user\\":\\"embed_user\\",\\"email\\":\\"email\\",\\"is_disabled\\":\\"is_disabled\\",\\"filter_or\\":\\"filter_or\\",\\"content_metadata_id\\":\\"content_metadata_id\\",\\"group_id\\":\\"group_id\\"}")
   """
   ### Search for user accounts by name
   
@@ -3363,7 +3363,7 @@ type Query {
     email: String
     """Include or exclude disabled accounts in the results"""
     is_disabled: Boolean
-  ): [User] @httpOperation(subgraph: "test", path: "/users/search/names/{args.pattern}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"first_name\\":\\"first_name\\",\\"last_name\\":\\"last_name\\",\\"verified_looker_employee\\":\\"verified_looker_employee\\",\\"email\\":\\"email\\",\\"is_disabled\\":\\"is_disabled\\"}")
+  ): [User!] @httpOperation(subgraph: "test", path: "/users/search/names/{args.pattern}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"page\\":\\"page\\",\\"per_page\\":\\"per_page\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"first_name\\":\\"first_name\\",\\"last_name\\":\\"last_name\\",\\"verified_looker_employee\\":\\"verified_looker_employee\\",\\"email\\":\\"email\\",\\"is_disabled\\":\\"is_disabled\\"}")
   """
   ### Get information about the user with a specific id.
   
@@ -3508,7 +3508,7 @@ type Query {
     user_id: String!
     """Requested fields."""
     fields: String
-  ): [CredentialsApi3] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/credentials_api3", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [CredentialsApi3!] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/credentials_api3", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Embed login information for the specified user.
   
@@ -3532,7 +3532,7 @@ type Query {
     user_id: String!
     """Requested fields."""
     fields: String
-  ): [CredentialsEmbed] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/credentials_embed", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [CredentialsEmbed!] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/credentials_embed", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Looker Openid login information for the specified user. Used by Looker Analysts.
   
@@ -3567,7 +3567,7 @@ type Query {
     user_id: String!
     """Requested fields."""
     fields: String
-  ): [Session] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/sessions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): [Session!] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/sessions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get information about roles of a given user
   
@@ -3581,7 +3581,7 @@ type Query {
     Get only roles associated directly with the user: exclude those only associated through groups.
     """
     direct_association_only: Boolean
-  ): [Role] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/roles", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"direct_association_only\\":\\"direct_association_only\\"}")
+  ): [Role!] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/roles", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"direct_association_only\\":\\"direct_association_only\\"}")
   """
   ### Get user attribute values for a given user.
   
@@ -3609,7 +3609,7 @@ type Query {
     """
     Specific user attributes to request. Omit or leave blank to request all user attributes.
     """
-    user_attribute_ids: [String]
+    user_attribute_ids: [String!]
     """
     If true, returns all values in the search path instead of just the first value found. Useful for debugging group precedence.
     """
@@ -3618,7 +3618,7 @@ type Query {
     If true, returns an empty record for each requested attribute that has no user, group, or default value.
     """
     include_unset: Boolean
-  ): [UserAttributeWithValue] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/attribute_values", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"user_attribute_ids\\":\\"user_attribute_ids\\",\\"all_values\\":\\"all_values\\",\\"include_unset\\":\\"include_unset\\"}", queryStringOptionsByParam: "{\\"user_attribute_ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [UserAttributeWithValue!] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/attribute_values", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"user_attribute_ids\\":\\"user_attribute_ids\\",\\"all_values\\":\\"all_values\\",\\"include_unset\\":\\"include_unset\\"}", queryStringOptionsByParam: "{\\"user_attribute_ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
   """
   ### Get a vector image representing the contents of a dashboard or look.
   
@@ -3673,7 +3673,7 @@ type Query {
   Returns all workspaces available to the calling user.
   
   """
-  all_workspaces: [Workspace] @httpOperation(subgraph: "test", path: "/workspaces", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  all_workspaces: [Workspace!] @httpOperation(subgraph: "test", path: "/workspaces", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   ### Get A Workspace
   
@@ -3767,11 +3767,11 @@ type Query_ {
   """Explore Name"""
   view: String!
   """Fields"""
-  fields: [String]
+  fields: [String!]
   """Pivots"""
-  pivots: [String]
+  pivots: [String!]
   """Fill Fields"""
-  fill_fields: [String]
+  fill_fields: [String!]
   """Filters"""
   filters: JSON
   """Filter Expression"""
@@ -3779,7 +3779,7 @@ type Query_ {
   """
   Sorting for the query results. Use the format \`["view.field", ...]\` to sort on fields in ascending order. Use the format \`["view.field desc", ...]\` to sort on fields in descending order. Use \`["__UNSORTED__"]\` (2 underscores before and after) to disable sorting entirely. Empty sorts \`[]\` will trigger a default sort.
   """
-  sorts: [String]
+  sorts: [String!]
   """Limit"""
   limit: String
   """Column Limit"""
@@ -3789,7 +3789,7 @@ type Query_ {
   """Raw Total"""
   row_total: String
   """Fields on which to run subtotals"""
-  subtotals: [String]
+  subtotals: [String!]
   """
   Visualization configuration properties. These properties are typically opaque and differ based on the type of visualization used. There is no specified set of allowed keys. The values can be any type supported by JSON. A "type" key with a string value is often present, and is used by Looker to determine which visualization to present. Visualizations ignore unknown vis_config properties.
   """
@@ -3829,7 +3829,7 @@ type Alert {
   """
   Filters coming from the dashboard that are applied. Example \`[{ "filter_title": "Name", "field_name": "distribution_centers.name", "filter_value": "Los Angeles CA" }]\`
   """
-  applied_dashboard_filters: [AlertAppliedDashboardFilter]
+  applied_dashboard_filters: [AlertAppliedDashboardFilter!]
   comparison_type: mutation_update_alert_field_comparison_type!
   """
   Vixie-Style crontab specification when to run. At minumum, it has to be longer than 15 minute intervals
@@ -3856,7 +3856,7 @@ type Alert {
   """
   Array of destinations to send alerts to. Must be the same type of destination. Example \`[{ "destination_type": "EMAIL", "email_address": "test@test.com" }]\`
   """
-  destinations: [AlertDestination]
+  destinations: [AlertDestination!]
   field: AlertField!
   """Whether or not the user follows this alert."""
   followed: Boolean!
@@ -3957,7 +3957,7 @@ type AlertField {
   """
   (Optional / Advance Use) List of fields filter. This further restricts the alert to certain dashboard element's field values. This can be used on top of dashboard filters \`applied_dashboard_filters\`. To keep thing simple, it's suggested to just use dashboard filters. Example: \`{ 'title': '12 Number on Hand', 'name': 'inventory_items.number_on_hand', 'filter': [{ 'field_name': 'inventory_items.id', 'field_value': 12, 'filter_value': null }] }\`
   """
-  filter: [AlertFieldFilter]
+  filter: [AlertFieldFilter!]
 }
 
 type AlertFieldFilter {
@@ -4089,11 +4089,11 @@ type ColorCollection {
   """Label of color collection"""
   label: String!
   """Array of categorical palette definitions"""
-  categoricalPalettes: [DiscretePalette]!
+  categoricalPalettes: [DiscretePalette!]!
   """Array of discrete palette definitions"""
-  sequentialPalettes: [ContinuousPalette]!
+  sequentialPalettes: [ContinuousPalette!]!
   """Array of diverging palette definitions"""
-  divergingPalettes: [ContinuousPalette]!
+  divergingPalettes: [ContinuousPalette!]!
 }
 
 type DiscretePalette {
@@ -4104,7 +4104,7 @@ type DiscretePalette {
   """Type of palette"""
   type: String!
   """Array of colors in the palette"""
-  colors: [String]!
+  colors: [String!]!
 }
 
 type ContinuousPalette {
@@ -4115,7 +4115,7 @@ type ContinuousPalette {
   """Type of palette"""
   type: String!
   """Array of ColorStops in the palette"""
-  stops: [ColorStop]!
+  stops: [ColorStop!]!
 }
 
 type ColorStop {
@@ -4310,7 +4310,7 @@ type ContentSearch {
 
 type ContentValidation {
   """A list of content errors"""
-  content_with_errors: [ContentValidatorError]
+  content_with_errors: [ContentValidatorError!]
   """Duration of content validation in seconds"""
   computation_time: Float
   """The number of looks validated"""
@@ -4337,7 +4337,7 @@ type ContentValidatorError {
   lookml_dashboard: ContentValidationLookMLDashboard
   lookml_dashboard_element: ContentValidationLookMLDashboardElement
   """A list of errors found for this piece of content"""
-  errors: [ContentValidationError]
+  errors: [ContentValidationError!]
   """An id unique to this piece of content for this validation run"""
   id: String!
 }
@@ -4611,11 +4611,11 @@ type Dashboard {
   """
   crossfilter_enabled: Boolean!
   """Elements"""
-  dashboard_elements: [DashboardElement]
+  dashboard_elements: [DashboardElement!]
   """Filters"""
-  dashboard_filters: [DashboardFilter]
+  dashboard_filters: [DashboardFilter!]
   """Layouts"""
-  dashboard_layouts: [DashboardLayout]
+  dashboard_layouts: [DashboardLayout!]
   """Whether or not a dashboard is 'soft' deleted."""
   deleted: Boolean!
   """Time that the Dashboard was 'soft' deleted."""
@@ -4811,9 +4811,9 @@ type ResultMakerWithIdVisConfigAndDynamicFields {
   """JSON string of dynamic field information."""
   dynamic_fields: String
   """array of items that can be filtered and information about them."""
-  filterables: [ResultMakerFilterables]
+  filterables: [ResultMakerFilterables!]
   """Sorts of the constituent Look, Query, or Merge Query"""
-  sorts: [String]
+  sorts: [String!]
   """ID of merge result if this is a merge_result."""
   merge_result_id: String
   """Total of the constituent Look, Query, or Merge Query"""
@@ -4835,7 +4835,7 @@ type ResultMakerFilterables {
   """The name of the filterable thing (Query or Merged Results)."""
   name: String
   """array of dashboard_filter_name: and field: objects."""
-  listen: [ResultMakerFilterablesListen]
+  listen: [ResultMakerFilterablesListen!]
 }
 
 type ResultMakerFilterablesListen {
@@ -4873,7 +4873,7 @@ type DashboardFilter {
   """Display order of this filter relative to other filters"""
   row: BigInt
   """Array of listeners for faceted filters"""
-  listens_to_filters: [String]
+  listens_to_filters: [String!]
   """
   Whether the filter allows multiple filter values (deprecated in the latest version of dashboards)
   """
@@ -4906,7 +4906,7 @@ type DashboardLayout {
   """Title extracted from the dashboard this layout represents."""
   dashboard_title: String
   """Components"""
-  dashboard_layout_components: [DashboardLayoutComponent]
+  dashboard_layout_components: [DashboardLayoutComponent!]
 }
 
 type DashboardLayoutComponent {
@@ -5005,7 +5005,7 @@ type DBConnection {
   name: String!
   dialect: Dialect
   """SQL Runner snippets for this connection"""
-  snippets: [Snippet]!
+  snippets: [Snippet!]!
   """True if PDTs are enabled on this connection"""
   pdts_enabled: Boolean!
   """
@@ -5069,7 +5069,7 @@ type DBConnection {
   """
   user_db_credentials: Boolean
   """Fields whose values map to user attribute names"""
-  user_attribute_fields: [String]
+  user_attribute_fields: [String!]
   """
   Cron string specifying when maintenance such as PDT trigger checks and drops should be performed
   """
@@ -5135,7 +5135,7 @@ type Dialect {
   """
   Array of names of the tests that can be run on a connection using this dialect
   """
-  connection_tests: [String]!
+  connection_tests: [String!]!
   """Is supported with the inducer (i.e. generate from sql)"""
   supports_inducer: Boolean!
   """
@@ -5276,7 +5276,7 @@ type DigestEmails {
 
 type EgressIpAddresses {
   """Egress IP addresses"""
-  egress_ip_addresses: [String]
+  egress_ip_addresses: [String!]
 }
 
 type ExternalOauthApplication {
@@ -5382,7 +5382,7 @@ type GroupSearch {
   """Number of users included in this group"""
   user_count: BigInt
   """Roles assigned to group"""
-  roles: [Role]
+  roles: [Role!]
 }
 
 type Role {
@@ -5413,7 +5413,7 @@ type PermissionSet {
   id: String!
   """Name of PermissionSet"""
   name: String
-  permissions: [String]
+  permissions: [String!]
   """Link to get this item"""
   url: UriReference
 }
@@ -5425,7 +5425,7 @@ type ModelSet {
   built_in: Boolean!
   """Unique Id"""
   id: String!
-  models: [String]
+  models: [String!]
   """Name of ModelSet"""
   name: String
   """Link to get this item"""
@@ -5452,9 +5452,9 @@ type GroupHierarchy {
   """Number of users included in this group"""
   user_count: BigInt
   """IDs of parents of this group"""
-  parent_group_ids: [String]
+  parent_group_ids: [String!]
   """Role IDs assigned to group"""
-  role_ids: [String]
+  role_ids: [String!]
 }
 
 type User {
@@ -5465,10 +5465,10 @@ type User {
   """URL for the avatar image (may be generic), does not specify size"""
   avatar_url_without_sizing: UriReference
   """API credentials"""
-  credentials_api3: [CredentialsApi3]
+  credentials_api3: [CredentialsApi3!]
   credentials_email: CredentialsEmail
   """Embed credentials"""
-  credentials_embed: [CredentialsEmbed]
+  credentials_embed: [CredentialsEmbed!]
   credentials_google: CredentialsGoogle
   credentials_ldap: CredentialsLDAP
   credentials_looker_openid: CredentialsLookerOpenid
@@ -5488,7 +5488,7 @@ type User {
   """First name"""
   first_name: String
   """Array of ids of the groups for this user"""
-  group_ids: [String]
+  group_ids: [String!]
   """ID string for user's home folder"""
   home_folder_id: String
   """Unique Id"""
@@ -5504,7 +5504,7 @@ type User {
   """
   Array of strings representing the Looker versions that this user has used (this only goes back as far as '3.54.0')
   """
-  looker_versions: [String]
+  looker_versions: [String!]
   """
   User's dev workspace has been checked for presence of applicable production projects
   """
@@ -5514,9 +5514,9 @@ type User {
   """User is identified as an employee of Looker"""
   presumed_looker_employee: Boolean!
   """Array of ids of the roles for this user"""
-  role_ids: [String]
+  role_ids: [String!]
   """Active sessions"""
-  sessions: [Session]
+  sessions: [Session!]
   """
   Per user dictionary of undocumented state information owned by the Looker UI.
   """
@@ -5779,11 +5779,11 @@ type Board {
   """Description of the board"""
   description: String
   """Sections of the board"""
-  board_sections: [BoardSection]
+  board_sections: [BoardSection!]
   """Unique Id"""
   id: String!
   """ids of the board sections in the order they should be displayed"""
-  section_order: [String]
+  section_order: [String!]
   """Title of the board"""
   title: String
   """Date of last board update"""
@@ -5806,15 +5806,15 @@ type BoardSection {
   """Id reference to parent board"""
   board_id: String
   """Items in the board section"""
-  board_items: [BoardItem]
+  board_items: [BoardItem!]
   """Unique Id"""
   id: String!
   """ids of the board items in the order they should be displayed"""
-  item_order: [String]
+  item_order: [String!]
   """
   ids of the homepage items the user can see in the order they should be displayed
   """
-  visible_item_order: [String]
+  visible_item_order: [String!]
   """Name of row"""
   title: String
   """Time at which this section was last updated."""
@@ -5900,13 +5900,13 @@ type HomepageSection {
   """Id reference to parent homepage"""
   homepage_id: String
   """Items in the homepage section"""
-  homepage_items: [HomepageItem]
+  homepage_items: [HomepageItem!]
   """Unique Id"""
   id: String!
   """Is this a header section (has no items)"""
   is_header: Boolean!
   """ids of the homepage items in the order they should be displayed"""
-  item_order: [String]
+  item_order: [String!]
   """Name of row"""
   title: String
   """Time at which this section was last updated."""
@@ -5916,7 +5916,7 @@ type HomepageSection {
   """
   ids of the homepage items the user can see in the order they should be displayed
   """
-  visible_item_order: [String]
+  visible_item_order: [String!]
 }
 
 type HomepageItem {
@@ -6033,27 +6033,27 @@ type Integration {
   """Whether the integration is available to users."""
   enabled: Boolean!
   """Array of params for the integration."""
-  params: [IntegrationParam]!
+  params: [IntegrationParam!]!
   """
   A list of data formats the integration supports. If unspecified, the default is all data formats. Valid values are: "txt", "csv", "inline_json", "json", "json_label", "json_detail", "json_detail_lite_stream", "xlsx", "html", "wysiwyg_pdf", "assembled_pdf", "wysiwyg_png", "csv_zip".
   """
-  supported_formats: [String]!
+  supported_formats: [String!]!
   """
   A list of action types the integration supports. Valid values are: "cell", "query", "dashboard", "none".
   """
-  supported_action_types: [String]!
+  supported_action_types: [String!]!
   """
   A list of formatting options the integration supports. If unspecified, defaults to all formats. Valid values are: "formatted", "unformatted".
   """
-  supported_formattings: [String]!
+  supported_formattings: [String!]!
   """
   A list of visualization formatting options the integration supports. If unspecified, defaults to all formats. Valid values are: "apply", "noapply".
   """
-  supported_visualization_formattings: [String]!
+  supported_visualization_formattings: [String!]!
   """
   A list of all the download mechanisms the integration supports. The order of values is not significant: Looker will select the most appropriate supported download mechanism for a given query. The integration must ensure it can handle any of the mechanisms it claims to support. If unspecified, this defaults to all download setting values. Valid values are: "push", "url".
   """
-  supported_download_settings: [String]!
+  supported_download_settings: [String!]!
   """URL to an icon for the integration."""
   icon_url: String
   """Whether the integration uses oauth."""
@@ -6061,7 +6061,7 @@ type Integration {
   """
   A list of descriptions of required fields that this integration is compatible with. If there are multiple entries in this list, the integration requires more than one field. If unspecified, no fields will be required.
   """
-  required_fields: [IntegrationRequiredField]!
+  required_fields: [IntegrationRequiredField!]!
   """Link to privacy policy for destination"""
   privacy_link: String
   """
@@ -6069,7 +6069,7 @@ type Integration {
   """
   delegate_oauth: Boolean
   """Whether the integration is available to users."""
-  installed_delegate_oauth_targets: [String]!
+  installed_delegate_oauth_targets: [String!]!
 }
 
 type IntegrationParam {
@@ -6113,11 +6113,11 @@ type IntegrationRequiredField {
   """
   If present, supercedes 'tag' and matches a field that has any of the provided tags.
   """
-  any_tag: [String]
+  any_tag: [String!]
   """
   If present, supercedes 'tag' and matches a field that has all of the provided tags.
   """
-  all_tags: [String]
+  all_tags: [String!]
 }
 
 type InternalHelpResourcesContent {
@@ -6168,19 +6168,19 @@ type LDAPConfig {
   """
   (Write-Only)  Array of ids of groups that will be applied to new users the first time they login via LDAP
   """
-  default_new_user_group_ids: [String]
+  default_new_user_group_ids: [String!]
   """
   (Read-only) Groups that will be applied to new users the first time they login via LDAP
   """
-  default_new_user_groups: [Group]
+  default_new_user_groups: [Group!]
   """
   (Write-Only)  Array of ids of roles that will be applied to new users the first time they login via LDAP
   """
-  default_new_user_role_ids: [String]
+  default_new_user_role_ids: [String!]
   """
   (Read-only) Roles that will be applied to new users the first time they login via LDAP
   """
-  default_new_user_roles: [Role]
+  default_new_user_roles: [Role!]
   """Enable/Disable LDAP authentication for the server"""
   enabled: Boolean!
   """
@@ -6188,7 +6188,7 @@ type LDAPConfig {
   """
   force_no_page: Boolean!
   """(Read-only) Array of mappings between LDAP Groups and Looker Roles"""
-  groups: [LDAPGroupRead]
+  groups: [LDAPGroupRead!]
   """Base dn for finding groups in LDAP searches"""
   groups_base_dn: String
   """
@@ -6210,7 +6210,7 @@ type LDAPConfig {
   """
   (Read/Write) Array of mappings between LDAP Groups and arrays of Looker Role ids
   """
-  groups_with_role_ids: [LDAPGroupWrite]
+  groups_with_role_ids: [LDAPGroupWrite!]
   """
   (Read-only) Has the password been set for the LDAP account used to access the LDAP server
   """
@@ -6240,11 +6240,11 @@ type LDAPConfig {
   """
   (Read-only) Array of mappings between LDAP User Attributes and Looker User Attributes
   """
-  user_attributes: [LDAPUserAttributeRead]
+  user_attributes: [LDAPUserAttributeRead!]
   """
   (Read/Write) Array of mappings between LDAP User Attributes and arrays of Looker User Attribute ids
   """
-  user_attributes_with_ids: [LDAPUserAttributeWrite]
+  user_attributes_with_ids: [LDAPUserAttributeWrite!]
   """Distinguished name of LDAP node used as the base for user searches"""
   user_bind_base_dn: String
   """
@@ -6283,7 +6283,7 @@ type LDAPGroupRead {
   """Name of group in LDAP"""
   name: String
   """Looker Roles"""
-  roles: [Role]
+  roles: [Role!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -6298,7 +6298,7 @@ type LDAPGroupWrite {
   """Name of group in LDAP"""
   name: String
   """Looker Role Ids"""
-  role_ids: [String]
+  role_ids: [String!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -6309,7 +6309,7 @@ type LDAPUserAttributeRead {
   """Required to be in LDAP assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attributes"""
-  user_attributes: [UserAttribute]
+  user_attributes: [UserAttribute!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -6353,7 +6353,7 @@ type LDAPUserAttributeWrite {
   """Required to be in LDAP assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attribute Ids"""
-  user_attribute_ids: [String]
+  user_attribute_ids: [String!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -6463,9 +6463,9 @@ type LookmlModel {
   """Operations the current user is able to perform on this object"""
   can: JSON!
   """Array of names of connections this model is allowed to use"""
-  allowed_db_connection_names: [String]
+  allowed_db_connection_names: [String!]
   """Array of explores (if has_content)"""
-  explores: [LookmlModelNavExplore]
+  explores: [LookmlModelNavExplore!]
   """Does this model declaration have have lookml content?"""
   has_content: Boolean!
   """UI-friendly name for this model"""
@@ -6503,7 +6503,7 @@ type LookmlModelExplore {
   """Explore title"""
   title: String
   """Scopes"""
-  scopes: [String]
+  scopes: [String!]
   """Can Total"""
   can_total: Boolean!
   """Can Develop LookML"""
@@ -6531,7 +6531,7 @@ type LookmlModelExplore {
   """
   null_sort_treatment: String
   """List of model source files"""
-  files: [String]
+  files: [String!]
   """Primary source_file file"""
   source_file: String
   """Name of project"""
@@ -6547,38 +6547,38 @@ type LookmlModelExplore {
   """
   sql_table_name: String
   """(DEPRECATED) Array of access filter field names"""
-  access_filter_fields: [String] @deprecated(reason: "deprecated")
+  access_filter_fields: [String!] @deprecated(reason: "deprecated")
   """Access filters"""
-  access_filters: [LookmlModelExploreAccessFilter]
+  access_filters: [LookmlModelExploreAccessFilter!]
   """Aliases"""
-  aliases: [LookmlModelExploreAlias]
+  aliases: [LookmlModelExploreAlias!]
   """Always filter"""
-  always_filter: [LookmlModelExploreAlwaysFilter]
+  always_filter: [LookmlModelExploreAlwaysFilter!]
   """Conditionally filter"""
-  conditionally_filter: [LookmlModelExploreConditionallyFilter]
+  conditionally_filter: [LookmlModelExploreConditionallyFilter!]
   """Array of index fields"""
-  index_fields: [String]
+  index_fields: [String!]
   """Sets"""
-  sets: [LookmlModelExploreSet]
+  sets: [LookmlModelExploreSet!]
   """
   An array of arbitrary string tags provided in the model for this explore.
   """
-  tags: [String]
+  tags: [String!]
   """Errors"""
-  errors: [LookmlModelExploreError]
+  errors: [LookmlModelExploreError!]
   fields: LookmlModelExploreFieldset
   """Views joined into this explore"""
-  joins: [LookmlModelExploreJoins]
+  joins: [LookmlModelExploreJoins!]
   """Label used to group explores in the navigation menus"""
   group_label: String
   """
   An array of items describing which custom measure types are supported for creating a custom measure 'based_on' each possible dimension type.
   """
-  supported_measure_types: [LookmlModelExploreSupportedMeasureType]!
+  supported_measure_types: [LookmlModelExploreSupportedMeasureType!]!
   """
   An array of joins that will always be included in the SQL for this explore, even if the user has not selected a field from the joined view.
   """
-  always_join: [String]
+  always_join: [String!]
 }
 
 type LookmlModelExploreAccessFilter {
@@ -6613,7 +6613,7 @@ type LookmlModelExploreSet {
   """Name"""
   name: String
   """Value set"""
-  value: [String]
+  value: [String!]
 }
 
 type LookmlModelExploreError {
@@ -6629,13 +6629,13 @@ type LookmlModelExploreError {
 
 type LookmlModelExploreFieldset {
   """Array of dimensions"""
-  dimensions: [LookmlModelExploreField]
+  dimensions: [LookmlModelExploreField!]
   """Array of measures"""
-  measures: [LookmlModelExploreField]
+  measures: [LookmlModelExploreField!]
   """Array of filters"""
-  filters: [LookmlModelExploreField]
+  filters: [LookmlModelExploreField!]
   """Array of parameters"""
-  parameters: [LookmlModelExploreField]
+  parameters: [LookmlModelExploreField!]
 }
 
 type LookmlModelExploreField {
@@ -6656,7 +6656,7 @@ type LookmlModelExploreField {
   """
   An array enumerating all the possible values that this field can contain. When null, there is no limit to the set of possible values this field can contain.
   """
-  enumerations: [LookmlModelExploreFieldEnumeration]
+  enumerations: [LookmlModelExploreFieldEnumeration!]
   """
   An error message indicating a problem with the definition of this field. If there are no errors, this will be null.
   """
@@ -6737,9 +6737,9 @@ type LookmlModelExploreField {
   """
   An array of conditions and values that make up a SQL Case expression, as defined in the LookML model. The SQL syntax shown here is a representation intended for auditability, and is not neccessarily an exact match for what will ultimately be run in the database. It may contain special LookML syntax or annotations that are not valid SQL. This will be null if the current user does not have the see_lookml permission for the field's model.
   """
-  sql_case: [LookmlModelExploreFieldSqlCase]
+  sql_case: [LookmlModelExploreFieldSqlCase!]
   """Array of filter conditions defined for the measure in LookML."""
-  filters: [LookmlModelExploreFieldMeasureFilters]
+  filters: [LookmlModelExploreFieldMeasureFilters!]
   """The name of the dimension to base suggest queries from."""
   suggest_dimension: String!
   """The name of the explore to base suggest queries from."""
@@ -6749,17 +6749,17 @@ type LookmlModelExploreField {
   """
   If available, a list of suggestions for this field. For most fields, a suggest query is a more appropriate way to get an up-to-date list of suggestions. Or use enumerations to list all the possible values.
   """
-  suggestions: [String]
+  suggestions: [String!]
   """
   An array of arbitrary string tags provided in the model for this field.
   """
-  tags: [String]!
+  tags: [String!]!
   """The LookML type of the field."""
   type: String!
   """
   An array of user attribute types that are allowed to be used in filters on this field. Valid values are: "advanced_filter_string", "advanced_filter_number", "advanced_filter_datetime", "string", "number", "datetime", "relative_url", "yesno", "zipcode".
   """
-  user_attribute_filter_types: [String]!
+  user_attribute_filter_types: [String!]!
   """
   If specified, the LookML value format string for formatting values of this field.
   """
@@ -6911,9 +6911,9 @@ type LookmlModelExploreJoins {
   """Name of this join (and name of the view to join)"""
   name: String
   """Fields referenced by the join"""
-  dependent_fields: [String]
+  dependent_fields: [String!]
   """Fields of the joined view to pull into this explore"""
-  fields: [String]
+  fields: [String!]
   """
   Name of the dimension in this explore whose value is in the primary key of the joined view
   """
@@ -6925,7 +6925,7 @@ type LookmlModelExploreJoins {
   """many_to_one, one_to_one, one_to_many, many_to_many"""
   relationship: String
   """Names of joins that must always be included in SQL queries"""
-  required_joins: [String]
+  required_joins: [String!]
   """SQL expression that produces a foreign key"""
   sql_foreign_key: String
   """SQL ON expression describing the join condition"""
@@ -6940,7 +6940,7 @@ type LookmlModelExploreJoins {
 
 type LookmlModelExploreSupportedMeasureType {
   dimension_type: String
-  measure_types: [String]
+  measure_types: [String!]
 }
 
 type MergeQuery {
@@ -6953,13 +6953,13 @@ type MergeQuery {
   """Unique Id"""
   id: String!
   """Pivots"""
-  pivots: [String]
+  pivots: [String!]
   """Unique to get results"""
   result_maker_id: String
   """Sorts"""
-  sorts: [String]
+  sorts: [String!]
   """Source Queries defining the results to be merged."""
-  source_queries: [MergeQuerySourceQuery]
+  source_queries: [MergeQuerySourceQuery!]
   """Total"""
   total: Boolean!
   """Visualization Config"""
@@ -6970,7 +6970,7 @@ type MergeQuerySourceQuery {
   """
   An array defining which fields of the source query are mapped onto fields of the merge query
   """
-  merge_fields: [MergeFields]
+  merge_fields: [MergeFields!]
   """Display name"""
   name: String
   """Id of the query to merge"""
@@ -6986,7 +6986,7 @@ type MergeFields {
 
 type ModelFieldSuggestions {
   """List of suggestions"""
-  suggestions: [String]!
+  suggestions: [String!]!
   """Error message"""
   error: String
   """True if result came from the cache"""
@@ -7001,7 +7001,7 @@ type Model {
   connection: String
   name: String!
   """Array of named value formats"""
-  value_formats: [ModelNamedValueFormats]
+  value_formats: [ModelNamedValueFormats!]
 }
 
 type ModelNamedValueFormats {
@@ -7059,7 +7059,7 @@ type SchemaTables {
   """True if this is the default schema"""
   is_default: Boolean!
   """Tables for this schema"""
-  tables: [SchemaTable]!
+  tables: [SchemaTable!]!
   """True if the table limit was hit while retrieving tables in this schema"""
   table_limit_hit: Boolean!
 }
@@ -7076,7 +7076,7 @@ type SchemaTable {
   """External reference???"""
   external: String
   """SQL Runner snippets for connection"""
-  snippets: [Snippet]!
+  snippets: [Snippet!]!
 }
 
 type SchemaColumns {
@@ -7087,7 +7087,7 @@ type SchemaColumns {
   """Name of schema"""
   schema_name: String
   """Columns for this schema"""
-  columns: [SchemaColumn]!
+  columns: [SchemaColumn!]!
 }
 
 type SchemaColumn {
@@ -7108,7 +7108,7 @@ type SchemaColumn {
   """Column data size"""
   column_size: BigInt
   """SQL Runner snippets for this connection"""
-  snippets: [Snippet]!
+  snippets: [Snippet!]!
 }
 
 type ColumnSearch {
@@ -7130,7 +7130,7 @@ type MobileSettings {
   """Specifies whether mobile access for this instance is enabled."""
   mobile_app_integration: Boolean!
   """Specifies feature flag and state relevant to mobile."""
-  mobile_feature_flags: [MobileFeatureFlags]
+  mobile_feature_flags: [MobileFeatureFlags!]
 }
 
 type MobileFeatureFlags {
@@ -7166,7 +7166,7 @@ type OauthClientApp {
   """
   tokens_invalid_before: DateTime!
   """All users who have been activated to use this app"""
-  activated_users: [UserPublic]!
+  activated_users: [UserPublic!]!
 }
 
 type UserPublic {
@@ -7206,23 +7206,23 @@ type OIDCConfig {
   """
   (Write-Only) Array of ids of groups that will be applied to new users the first time they login via OIDC
   """
-  default_new_user_group_ids: [String]
+  default_new_user_group_ids: [String!]
   """
   (Read-only) Groups that will be applied to new users the first time they login via OIDC
   """
-  default_new_user_groups: [Group]
+  default_new_user_groups: [Group!]
   """
   (Write-Only) Array of ids of roles that will be applied to new users the first time they login via OIDC
   """
-  default_new_user_role_ids: [String]
+  default_new_user_role_ids: [String!]
   """
   (Read-only) Roles that will be applied to new users the first time they login via OIDC
   """
-  default_new_user_roles: [Role]
+  default_new_user_roles: [Role!]
   """Enable/Disable OIDC authentication for the server"""
   enabled: Boolean!
   """(Read-only) Array of mappings between OIDC Groups and Looker Roles"""
-  groups: [OIDCGroupRead]
+  groups: [OIDCGroupRead!]
   """
   Name of user record attributes used to indicate groups. Used when 'groups_finder_type' is set to 'grouped_attribute_values'
   """
@@ -7230,7 +7230,7 @@ type OIDCConfig {
   """
   (Read/Write) Array of mappings between OIDC Groups and arrays of Looker Role ids
   """
-  groups_with_role_ids: [OIDCGroupWrite]
+  groups_with_role_ids: [OIDCGroupWrite!]
   """Relying Party Identifier (provided by OpenID Provider)"""
   identifier: String
   """OpenID Provider Issuer"""
@@ -7244,7 +7244,7 @@ type OIDCConfig {
   """
   new_user_migration_types: String
   """Array of scopes to request."""
-  scopes: [String]
+  scopes: [String!]
   """(Write-Only) Relying Party Secret (provided by OpenID Provider)"""
   secret: String
   """Set user roles in Looker based on groups from OIDC"""
@@ -7264,11 +7264,11 @@ type OIDCConfig {
   """
   (Read-only) Array of mappings between OIDC User Attributes and Looker User Attributes
   """
-  user_attributes: [OIDCUserAttributeRead]
+  user_attributes: [OIDCUserAttributeRead!]
   """
   (Read/Write) Array of mappings between OIDC User Attributes and arrays of Looker User Attribute ids
   """
-  user_attributes_with_ids: [OIDCUserAttributeWrite]
+  user_attributes_with_ids: [OIDCUserAttributeWrite!]
   """OpenID Provider User Information Url"""
   userinfo_endpoint: UriReference
   """
@@ -7293,7 +7293,7 @@ type OIDCGroupRead {
   """Name of group in OIDC"""
   name: String
   """Looker Roles"""
-  roles: [Role]
+  roles: [Role!]
 }
 
 type OIDCGroupWrite {
@@ -7306,7 +7306,7 @@ type OIDCGroupWrite {
   """Name of group in OIDC"""
   name: String
   """Looker Role Ids"""
-  role_ids: [String]
+  role_ids: [String!]
 }
 
 type OIDCUserAttributeRead {
@@ -7315,7 +7315,7 @@ type OIDCUserAttributeRead {
   """Required to be in OIDC assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attributes"""
-  user_attributes: [UserAttribute]
+  user_attributes: [UserAttribute!]
 }
 
 type OIDCUserAttributeWrite {
@@ -7324,7 +7324,7 @@ type OIDCUserAttributeWrite {
   """Required to be in OIDC assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attribute Ids"""
-  user_attribute_ids: [String]
+  user_attribute_ids: [String!]
 }
 
 type PasswordConfig {
@@ -7433,7 +7433,7 @@ type Manifest {
   """Manifest project name"""
   name: String
   """Imports for a project"""
-  imports: [ImportedProject]
+  imports: [ImportedProject!]
   localization_settings: LocalizationSettings
 }
 
@@ -7459,11 +7459,11 @@ union project_validation_results_response @statusCodeTypeName(subgraph: "test", 
 
 type ProjectValidationCache {
   """A list of project errors"""
-  errors: [ProjectError]
+  errors: [ProjectError!]
   """A hash value computed from the project's current state"""
   project_digest: String
   """A list of models which were not fully validated"""
-  models_not_validated: [ModelsNotValidated]
+  models_not_validated: [ModelsNotValidated!]
   """Duration of project validation in seconds"""
   computation_time: Float
   """
@@ -7634,9 +7634,9 @@ type LookmlTestResult {
   """Number of assertions passed in this test"""
   assertions_failed: BigInt!
   """A list of any errors encountered by the test."""
-  errors: [ProjectError]
+  errors: [ProjectError!]
   """A list of any warnings encountered by the test."""
-  warnings: [ProjectError]
+  warnings: [ProjectError!]
   """True if this test passsed without errors."""
   success: Boolean!
 }
@@ -7809,7 +7809,7 @@ type DBConnectionBase {
   name: String!
   dialect: Dialect
   """SQL Runner snippets for this connection"""
-  snippets: [Snippet]!
+  snippets: [Snippet!]!
   """True if PDTs are enabled on this connection"""
   pdts_enabled: Boolean!
 }
@@ -7858,19 +7858,19 @@ type SamlConfig {
   """
   (Read-only) Roles that will be applied to new users the first time they login via Saml
   """
-  default_new_user_roles: [Role]
+  default_new_user_roles: [Role!]
   """
   (Read-only) Groups that will be applied to new users the first time they login via Saml
   """
-  default_new_user_groups: [Group]
+  default_new_user_groups: [Group!]
   """
   (Write-Only) Array of ids of roles that will be applied to new users the first time they login via Saml
   """
-  default_new_user_role_ids: [String]
+  default_new_user_role_ids: [String!]
   """
   (Write-Only) Array of ids of groups that will be applied to new users the first time they login via Saml
   """
-  default_new_user_group_ids: [String]
+  default_new_user_group_ids: [String!]
   """Set user roles in Looker based on groups from Saml"""
   set_roles_from_groups: Boolean!
   """
@@ -7878,11 +7878,11 @@ type SamlConfig {
   """
   groups_attribute: String
   """(Read-only) Array of mappings between Saml Groups and Looker Roles"""
-  groups: [SamlGroupRead]
+  groups: [SamlGroupRead!]
   """
   (Read/Write) Array of mappings between Saml Groups and arrays of Looker Role ids
   """
-  groups_with_role_ids: [SamlGroupWrite]
+  groups_with_role_ids: [SamlGroupWrite!]
   """
   Users will not be allowed to login at all unless a role for them is found in Saml if set to true
   """
@@ -7890,11 +7890,11 @@ type SamlConfig {
   """
   (Read-only) Array of mappings between Saml User Attributes and Looker User Attributes
   """
-  user_attributes: [SamlUserAttributeRead]
+  user_attributes: [SamlUserAttributeRead!]
   """
   (Read/Write) Array of mappings between Saml User Attributes and arrays of Looker User Attribute ids
   """
-  user_attributes_with_ids: [SamlUserAttributeWrite]
+  user_attributes_with_ids: [SamlUserAttributeWrite!]
   """
   Identifier for a strategy for how Looker will find groups in the SAML response. One of ['grouped_attribute_values', 'individual_attributes']
   """
@@ -7929,7 +7929,7 @@ type SamlGroupRead {
   """Name of group in Saml"""
   name: String
   """Looker Roles"""
-  roles: [Role]
+  roles: [Role!]
   """Link to saml config"""
   url: UriReference
 }
@@ -7944,7 +7944,7 @@ type SamlGroupWrite {
   """Name of group in Saml"""
   name: String
   """Looker Role Ids"""
-  role_ids: [String]
+  role_ids: [String!]
   """Link to saml config"""
   url: UriReference
 }
@@ -7955,7 +7955,7 @@ type SamlUserAttributeRead {
   """Required to be in Saml assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attributes"""
-  user_attributes: [UserAttribute]
+  user_attributes: [UserAttribute!]
   """Link to saml config"""
   url: UriReference
 }
@@ -7966,7 +7966,7 @@ type SamlUserAttributeWrite {
   """Required to be in Saml assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attribute Ids"""
-  user_attribute_ids: [String]
+  user_attribute_ids: [String!]
   """Link to saml config"""
   url: UriReference
 }
@@ -8013,7 +8013,7 @@ type ScheduledPlan {
   """Query id"""
   query_id: String
   """Scheduled plan destinations"""
-  scheduled_plan_destination: [ScheduledPlanDestination]
+  scheduled_plan_destination: [ScheduledPlanDestination!]
   """
   Whether the plan in question should only be run once (usually for testing)
   """
@@ -8156,7 +8156,7 @@ type Setting {
   """
   An array of Email Domain Allowlist of type string for Scheduled Content
   """
-  email_domain_allowlist: [String]!
+  email_domain_allowlist: [String!]!
   """Toggle cookieless embed setting"""
   embed_cookieless_v2: Boolean!
 }
@@ -8204,7 +8204,7 @@ type SmtpStatus {
   """Total number of nodes in cluster"""
   node_count: BigInt
   """array of each node's status containing is_valid, message, hostname"""
-  node_status: [SmtpNodeStatus]
+  node_status: [SmtpNodeStatus!]
 }
 
 type SmtpNodeStatus {
@@ -8252,9 +8252,9 @@ type Folder {
   """Operations the current user is able to perform on this object"""
   can: JSON!
   """Dashboards"""
-  dashboards: [DashboardBase]
+  dashboards: [DashboardBase!]
   """Looks"""
-  looks: [LookWithDashboards]
+  looks: [LookWithDashboards!]
 }
 
 type LookWithDashboards {
@@ -8317,7 +8317,7 @@ type LookWithDashboards {
   """Number of times viewed in the Looker web UI"""
   view_count: BigInt
   """Dashboards"""
-  dashboards: [DashboardBase]
+  dashboards: [DashboardBase!]
 }
 
 type SupportAccessAllowlistEntry {
@@ -8547,7 +8547,7 @@ type ApiVersion {
   looker_release_version: String!
   current_version: ApiVersionElement
   """Array of versions supported by this Looker instance"""
-  supported_versions: [ApiVersionElement]!
+  supported_versions: [ApiVersionElement!]!
   """API server base url"""
   api_server_url: String!
   """Web server base url"""
@@ -8612,7 +8612,7 @@ type Workspace {
   """
   id: String!
   """The local state of each project in the workspace"""
-  projects: [Project]
+  projects: [Project!]
 }
 
 type Mutation {
@@ -8995,8 +8995,8 @@ type Mutation {
     Comma-delimited names of fields to return in responses. Omit for all fields
     """
     fields: String
-    input: [UpdateArtifact_Input]
-  ): [Artifact] @httpOperation(subgraph: "test", path: "/artifacts/{args.namespace}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+    input: [UpdateArtifact_Input!]
+  ): [Artifact!] @httpOperation(subgraph: "test", path: "/artifacts/{args.namespace}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   Update the current Cloud Storage Configuration.
   
@@ -9177,7 +9177,7 @@ type Mutation {
     """
     raw_locale: Boolean
     input: Dashboard_Input
-  ): [BigInt] @httpOperation(subgraph: "test", path: "/dashboards/{args.lookml_dashboard_id}/sync", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH, queryParamArgMap: "{\\"raw_locale\\":\\"raw_locale\\"}")
+  ): [BigInt!] @httpOperation(subgraph: "test", path: "/dashboards/{args.lookml_dashboard_id}/sync", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH, queryParamArgMap: "{\\"raw_locale\\":\\"raw_locale\\"}")
   """
   ### Delete the dashboard with the specified id
   
@@ -9398,8 +9398,8 @@ type Mutation {
     """Name of connection"""
     connection_name: String!
     """Array of names of tests to run"""
-    tests: [String]
-  ): [DBConnectionTestResult] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/test", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: PUT, queryParamArgMap: "{\\"tests\\":\\"tests\\"}", queryStringOptionsByParam: "{\\"tests\\":{\\"arrayFormat\\":\\"comma\\"}}")
+    tests: [String!]
+  ): [DBConnectionTestResult!] @httpOperation(subgraph: "test", path: "/connections/{args.connection_name}/test", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: PUT, queryParamArgMap: "{\\"tests\\":\\"tests\\"}", queryStringOptionsByParam: "{\\"tests\\":{\\"arrayFormat\\":\\"comma\\"}}")
   """
   ### Test a connection configuration.
   
@@ -9413,9 +9413,9 @@ type Mutation {
   """
   test_connection_config(
     """Array of names of tests to run"""
-    tests: [String]
+    tests: [String!]
     input: DBConnection_Input
-  ): [DBConnectionTestResult] @httpOperation(subgraph: "test", path: "/connections/test", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT, queryParamArgMap: "{\\"tests\\":\\"tests\\"}", queryStringOptionsByParam: "{\\"tests\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [DBConnectionTestResult!] @httpOperation(subgraph: "test", path: "/connections/test", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT, queryParamArgMap: "{\\"tests\\":\\"tests\\"}", queryStringOptionsByParam: "{\\"tests\\":{\\"arrayFormat\\":\\"comma\\"}}")
   """
         ### Generate Lockfile for All LookML Dependencies
   
@@ -10665,8 +10665,8 @@ type Mutation {
   set_role_groups(
     """id of role"""
     role_id: String!
-    input: [String]
-  ): [Group] @httpOperation(subgraph: "test", path: "/roles/{args.role_id}/groups", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT)
+    input: [String!]
+  ): [Group!] @httpOperation(subgraph: "test", path: "/roles/{args.role_id}/groups", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT)
   """
   ### Set all the users of the role with a specific id.
   
@@ -10674,8 +10674,8 @@ type Mutation {
   set_role_users(
     """id of role"""
     role_id: String!
-    input: [String]
-  ): [User] @httpOperation(subgraph: "test", path: "/roles/{args.role_id}/users", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT)
+    input: [String!]
+  ): [User!] @httpOperation(subgraph: "test", path: "/roles/{args.role_id}/users", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT)
   """
   Kill a query with a specific query_task_id.
   
@@ -11072,7 +11072,7 @@ type Mutation {
   Calls to this endpoint may be denied by [Looker (Google Cloud core)](https://cloud.google.com/looker/docs/r/looker-core/overview).
   
   """
-  add_support_access_allowlist_entries(input: SupportAccessAddEntries_Input): [SupportAccessAllowlistEntry] @httpOperation(subgraph: "test", path: "/support_access/allowlist", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  add_support_access_allowlist_entries(input: SupportAccessAddEntries_Input): [SupportAccessAllowlistEntry!] @httpOperation(subgraph: "test", path: "/support_access/allowlist", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """
   ### Delete Support Access Allowlist User
   
@@ -11290,8 +11290,8 @@ type Mutation {
   set_user_attribute_group_values(
     """Id of user attribute"""
     user_attribute_id: String!
-    input: [UserAttributeGroupValue_Input]
-  ): [UserAttributeGroupValue] @httpOperation(subgraph: "test", path: "/user_attributes/{args.user_attribute_id}/group_values", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+    input: [UserAttributeGroupValue_Input!]
+  ): [UserAttributeGroupValue!] @httpOperation(subgraph: "test", path: "/user_attributes/{args.user_attribute_id}/group_values", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   """
   ### Removes login lockout for the associated user.
   
@@ -11504,8 +11504,8 @@ type Mutation {
     user_id: String!
     """Requested fields."""
     fields: String
-    input: [String]
-  ): [Role] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/roles", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+    input: [String!]
+  ): [Role!] @httpOperation(subgraph: "test", path: "/users/{args.user_id}/roles", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Store a custom value for a user attribute in a user's account settings.
   
@@ -11624,11 +11624,11 @@ input Query__Input {
   """Explore Name"""
   view: String!
   """Fields"""
-  fields: [String]
+  fields: [String!]
   """Pivots"""
-  pivots: [String]
+  pivots: [String!]
   """Fill Fields"""
-  fill_fields: [String]
+  fill_fields: [String!]
   """Filters"""
   filters: JSON
   """Filter Expression"""
@@ -11636,7 +11636,7 @@ input Query__Input {
   """
   Sorting for the query results. Use the format \`["view.field", ...]\` to sort on fields in ascending order. Use the format \`["view.field desc", ...]\` to sort on fields in descending order. Use \`["__UNSORTED__"]\` (2 underscores before and after) to disable sorting entirely. Empty sorts \`[]\` will trigger a default sort.
   """
-  sorts: [String]
+  sorts: [String!]
   """Limit"""
   limit: String
   """Column Limit"""
@@ -11646,7 +11646,7 @@ input Query__Input {
   """Raw Total"""
   row_total: String
   """Fields on which to run subtotals"""
-  subtotals: [String]
+  subtotals: [String!]
   """
   Visualization configuration properties. These properties are typically opaque and differ based on the type of visualization used. There is no specified set of allowed keys. The values can be any type supported by JSON. A "type" key with a string value is often present, and is used by Looker to determine which visualization to present. Visualizations ignore unknown vis_config properties.
   """
@@ -11705,7 +11705,7 @@ input Alert_Input {
   """
   Filters coming from the dashboard that are applied. Example \`[{ "filter_title": "Name", "field_name": "distribution_centers.name", "filter_value": "Los Angeles CA" }]\`
   """
-  applied_dashboard_filters: [AlertAppliedDashboardFilter_Input]
+  applied_dashboard_filters: [AlertAppliedDashboardFilter_Input!]
   comparison_type: mutation_update_alert_field_comparison_type!
   """
   Vixie-Style crontab specification when to run. At minumum, it has to be longer than 15 minute intervals
@@ -11732,7 +11732,7 @@ input Alert_Input {
   """
   Array of destinations to send alerts to. Must be the same type of destination. Example \`[{ "destination_type": "EMAIL", "email_address": "test@test.com" }]\`
   """
-  destinations: [AlertDestination_Input]
+  destinations: [AlertDestination_Input!]
   field: AlertField_Input!
   """Whether or not the user follows this alert."""
   followed: Boolean
@@ -11811,7 +11811,7 @@ input AlertField_Input {
   """
   (Optional / Advance Use) List of fields filter. This further restricts the alert to certain dashboard element's field values. This can be used on top of dashboard filters \`applied_dashboard_filters\`. To keep thing simple, it's suggested to just use dashboard filters. Example: \`{ 'title': '12 Number on Hand', 'name': 'inventory_items.number_on_hand', 'filter': [{ 'field_name': 'inventory_items.id', 'field_value': 12, 'filter_value': null }] }\`
   """
-  filter: [AlertFieldFilter_Input]
+  filter: [AlertFieldFilter_Input!]
 }
 
 input AlertFieldFilter_Input {
@@ -11872,11 +11872,11 @@ input ColorCollection_Input {
   """Label of color collection"""
   label: String!
   """Array of categorical palette definitions"""
-  categoricalPalettes: [DiscretePalette_Input]!
+  categoricalPalettes: [DiscretePalette_Input!]!
   """Array of discrete palette definitions"""
-  sequentialPalettes: [ContinuousPalette_Input]!
+  sequentialPalettes: [ContinuousPalette_Input!]!
   """Array of diverging palette definitions"""
-  divergingPalettes: [ContinuousPalette_Input]!
+  divergingPalettes: [ContinuousPalette_Input!]!
 }
 
 input DiscretePalette_Input {
@@ -11887,7 +11887,7 @@ input DiscretePalette_Input {
   """Type of palette"""
   type: String!
   """Array of colors in the palette"""
-  colors: [String]!
+  colors: [String!]!
 }
 
 input ContinuousPalette_Input {
@@ -11898,7 +11898,7 @@ input ContinuousPalette_Input {
   """Type of palette"""
   type: String!
   """Array of ColorStops in the palette"""
-  stops: [ColorStop_Input]!
+  stops: [ColorStop_Input!]!
 }
 
 input ColorStop_Input {
@@ -12147,11 +12147,11 @@ input Dashboard_Input {
   """
   crossfilter_enabled: Boolean!
   """Elements"""
-  dashboard_elements: [DashboardElement_Input]
+  dashboard_elements: [DashboardElement_Input!]
   """Filters"""
-  dashboard_filters: [DashboardFilter_Input]
+  dashboard_filters: [DashboardFilter_Input!]
   """Layouts"""
-  dashboard_layouts: [DashboardLayout_Input]
+  dashboard_layouts: [DashboardLayout_Input!]
   """Whether or not a dashboard is 'soft' deleted."""
   deleted: Boolean!
   """Time that the Dashboard was 'soft' deleted."""
@@ -12347,9 +12347,9 @@ input ResultMakerWithIdVisConfigAndDynamicFields_Input {
   """JSON string of dynamic field information."""
   dynamic_fields: String
   """array of items that can be filtered and information about them."""
-  filterables: [ResultMakerFilterables_Input]
+  filterables: [ResultMakerFilterables_Input!]
   """Sorts of the constituent Look, Query, or Merge Query"""
-  sorts: [String]
+  sorts: [String!]
   """ID of merge result if this is a merge_result."""
   merge_result_id: String
   """Total of the constituent Look, Query, or Merge Query"""
@@ -12371,7 +12371,7 @@ input ResultMakerFilterables_Input {
   """The name of the filterable thing (Query or Merged Results)."""
   name: String
   """array of dashboard_filter_name: and field: objects."""
-  listen: [ResultMakerFilterablesListen_Input]
+  listen: [ResultMakerFilterablesListen_Input!]
 }
 
 input ResultMakerFilterablesListen_Input {
@@ -12409,7 +12409,7 @@ input DashboardFilter_Input {
   """Display order of this filter relative to other filters"""
   row: BigInt
   """Array of listeners for faceted filters"""
-  listens_to_filters: [String]
+  listens_to_filters: [String!]
   """
   Whether the filter allows multiple filter values (deprecated in the latest version of dashboards)
   """
@@ -12442,7 +12442,7 @@ input DashboardLayout_Input {
   """Title extracted from the dashboard this layout represents."""
   dashboard_title: String
   """Components"""
-  dashboard_layout_components: [DashboardLayoutComponent_Input]
+  dashboard_layout_components: [DashboardLayoutComponent_Input!]
 }
 
 input DashboardLayoutComponent_Input {
@@ -12522,7 +12522,7 @@ input CreateDashboardFilter_Input {
   """Display order of this filter relative to other filters"""
   row: BigInt
   """Array of listeners for faceted filters"""
-  listens_to_filters: [String]
+  listens_to_filters: [String!]
   """
   Whether the filter allows multiple filter values (deprecated in the latest version of dashboards)
   """
@@ -12557,7 +12557,7 @@ type ValidationError {
   """Error details"""
   message: String
   """Error detail array"""
-  errors: [ValidationErrorDetail]
+  errors: [ValidationErrorDetail!]
   """Documentation link"""
   documentation_url: UriReference
 }
@@ -12585,7 +12585,7 @@ input DataActionRequest_Input {
 type DataActionForm {
   state: DataActionUserState
   """Array of form fields."""
-  fields: [DataActionFormField]
+  fields: [DataActionFormField!]
 }
 
 type DataActionUserState {
@@ -12615,7 +12615,7 @@ type DataActionFormField {
   """
   required: Boolean!
   """If the form type is 'select', a list of options to be selected from."""
-  options: [DataActionFormSelectOption]
+  options: [DataActionFormSelectOption!]
 }
 
 type DataActionFormSelectOption {
@@ -12661,7 +12661,7 @@ input DBConnection_Input {
   name: String!
   dialect: Dialect_Input
   """SQL Runner snippets for this connection"""
-  snippets: [Snippet_Input]
+  snippets: [Snippet_Input!]
   """True if PDTs are enabled on this connection"""
   pdts_enabled: Boolean
   """
@@ -12725,7 +12725,7 @@ input DBConnection_Input {
   """
   user_db_credentials: Boolean
   """Fields whose values map to user attribute names"""
-  user_attribute_fields: [String]
+  user_attribute_fields: [String!]
   """
   Cron string specifying when maintenance such as PDT trigger checks and drops should be performed
   """
@@ -12791,7 +12791,7 @@ input Dialect_Input {
   """
   Array of names of the tests that can be run on a connection using this dialect
   """
-  connection_tests: [String]
+  connection_tests: [String!]
   """Is supported with the inducer (i.e. generate from sql)"""
   supports_inducer: Boolean
   """
@@ -12956,11 +12956,11 @@ input EmbedSsoParams_Input {
   """
   List of Looker permission names to grant to the embed user. Requested permissions will be filtered to permissions allowed for embed sessions.
   """
-  permissions: [String]
+  permissions: [String!]
   """List of model names that the embed user may access"""
-  models: [String]
+  models: [String!]
   """List of Looker group ids in which to enroll the embed user"""
-  group_ids: [String]
+  group_ids: [String!]
   """
   A unique value identifying an embed-exclusive group. Multiple embed users using the same \`external_group_id\` value will be able to share Looker content with each other. Content and embed users associated with the \`external_group_id\` will not be accessible to normal Looker users or embed users not associated with this \`external_group_id\`.
   """
@@ -13039,11 +13039,11 @@ input EmbedCookielessSessionAcquire_Input {
   """
   List of Looker permission names to grant to the embed user. Requested permissions will be filtered to permissions allowed for embed sessions.
   """
-  permissions: [String]
+  permissions: [String!]
   """List of model names that the embed user may access"""
-  models: [String]
+  models: [String!]
   """List of Looker group ids in which to enroll the embed user"""
-  group_ids: [String]
+  group_ids: [String!]
   """
   A unique value identifying an embed-exclusive group. Multiple embed users using the same \`external_group_id\` value will be able to share Looker content with each other. Content and embed users associated with the \`external_group_id\` will not be accessible to normal Looker users or embed users not associated with this \`external_group_id\`.
   """
@@ -13232,11 +13232,11 @@ input Board_Input {
   """Description of the board"""
   description: String
   """Sections of the board"""
-  board_sections: [BoardSection_Input]
+  board_sections: [BoardSection_Input!]
   """Unique Id"""
   id: String
   """ids of the board sections in the order they should be displayed"""
-  section_order: [String]
+  section_order: [String!]
   """Title of the board"""
   title: String
   """Date of last board update"""
@@ -13259,15 +13259,15 @@ input BoardSection_Input {
   """Id reference to parent board"""
   board_id: String
   """Items in the board section"""
-  board_items: [BoardItem_Input]
+  board_items: [BoardItem_Input!]
   """Unique Id"""
   id: String
   """ids of the board items in the order they should be displayed"""
-  item_order: [String]
+  item_order: [String!]
   """
   ids of the homepage items the user can see in the order they should be displayed
   """
-  visible_item_order: [String]
+  visible_item_order: [String!]
   """Name of row"""
   title: String
   """Time at which this section was last updated."""
@@ -13386,27 +13386,27 @@ input Integration_Input {
   """Whether the integration is available to users."""
   enabled: Boolean!
   """Array of params for the integration."""
-  params: [IntegrationParam_Input]!
+  params: [IntegrationParam_Input!]!
   """
   A list of data formats the integration supports. If unspecified, the default is all data formats. Valid values are: "txt", "csv", "inline_json", "json", "json_label", "json_detail", "json_detail_lite_stream", "xlsx", "html", "wysiwyg_pdf", "assembled_pdf", "wysiwyg_png", "csv_zip".
   """
-  supported_formats: [String]
+  supported_formats: [String!]
   """
   A list of action types the integration supports. Valid values are: "cell", "query", "dashboard", "none".
   """
-  supported_action_types: [String]
+  supported_action_types: [String!]
   """
   A list of formatting options the integration supports. If unspecified, defaults to all formats. Valid values are: "formatted", "unformatted".
   """
-  supported_formattings: [String]
+  supported_formattings: [String!]
   """
   A list of visualization formatting options the integration supports. If unspecified, defaults to all formats. Valid values are: "apply", "noapply".
   """
-  supported_visualization_formattings: [String]
+  supported_visualization_formattings: [String!]
   """
   A list of all the download mechanisms the integration supports. The order of values is not significant: Looker will select the most appropriate supported download mechanism for a given query. The integration must ensure it can handle any of the mechanisms it claims to support. If unspecified, this defaults to all download setting values. Valid values are: "push", "url".
   """
-  supported_download_settings: [String]
+  supported_download_settings: [String!]
   """URL to an icon for the integration."""
   icon_url: String
   """Whether the integration uses oauth."""
@@ -13414,7 +13414,7 @@ input Integration_Input {
   """
   A list of descriptions of required fields that this integration is compatible with. If there are multiple entries in this list, the integration requires more than one field. If unspecified, no fields will be required.
   """
-  required_fields: [IntegrationRequiredField_Input]
+  required_fields: [IntegrationRequiredField_Input!]
   """Link to privacy policy for destination"""
   privacy_link: String
   """
@@ -13422,7 +13422,7 @@ input Integration_Input {
   """
   delegate_oauth: Boolean
   """Whether the integration is available to users."""
-  installed_delegate_oauth_targets: [String]!
+  installed_delegate_oauth_targets: [String!]!
 }
 
 input IntegrationParam_Input {
@@ -13466,11 +13466,11 @@ input IntegrationRequiredField_Input {
   """
   If present, supercedes 'tag' and matches a field that has any of the provided tags.
   """
-  any_tag: [String]
+  any_tag: [String!]
   """
   If present, supercedes 'tag' and matches a field that has all of the provided tags.
   """
-  all_tags: [String]
+  all_tags: [String!]
 }
 
 type IntegrationTestResult {
@@ -13479,7 +13479,7 @@ type IntegrationTestResult {
   """A message representing the results of the test."""
   message: String
   """An array of connection test result for delegate oauth actions."""
-  delegate_oauth_result: [DelegateOauthTest]
+  delegate_oauth_result: [DelegateOauthTest!]
 }
 
 type DelegateOauthTest {
@@ -13543,19 +13543,19 @@ input LDAPConfig_Input {
   """
   (Write-Only)  Array of ids of groups that will be applied to new users the first time they login via LDAP
   """
-  default_new_user_group_ids: [String]
+  default_new_user_group_ids: [String!]
   """
   (Read-only) Groups that will be applied to new users the first time they login via LDAP
   """
-  default_new_user_groups: [Group_Input]
+  default_new_user_groups: [Group_Input!]
   """
   (Write-Only)  Array of ids of roles that will be applied to new users the first time they login via LDAP
   """
-  default_new_user_role_ids: [String]
+  default_new_user_role_ids: [String!]
   """
   (Read-only) Roles that will be applied to new users the first time they login via LDAP
   """
-  default_new_user_roles: [Role_Input]
+  default_new_user_roles: [Role_Input!]
   """Enable/Disable LDAP authentication for the server"""
   enabled: Boolean!
   """
@@ -13563,7 +13563,7 @@ input LDAPConfig_Input {
   """
   force_no_page: Boolean!
   """(Read-only) Array of mappings between LDAP Groups and Looker Roles"""
-  groups: [LDAPGroupRead_Input]
+  groups: [LDAPGroupRead_Input!]
   """Base dn for finding groups in LDAP searches"""
   groups_base_dn: String
   """
@@ -13585,7 +13585,7 @@ input LDAPConfig_Input {
   """
   (Read/Write) Array of mappings between LDAP Groups and arrays of Looker Role ids
   """
-  groups_with_role_ids: [LDAPGroupWrite_Input]
+  groups_with_role_ids: [LDAPGroupWrite_Input!]
   """
   (Read-only) Has the password been set for the LDAP account used to access the LDAP server
   """
@@ -13615,11 +13615,11 @@ input LDAPConfig_Input {
   """
   (Read-only) Array of mappings between LDAP User Attributes and Looker User Attributes
   """
-  user_attributes: [LDAPUserAttributeRead_Input]
+  user_attributes: [LDAPUserAttributeRead_Input!]
   """
   (Read/Write) Array of mappings between LDAP User Attributes and arrays of Looker User Attribute ids
   """
-  user_attributes_with_ids: [LDAPUserAttributeWrite_Input]
+  user_attributes_with_ids: [LDAPUserAttributeWrite_Input!]
   """Distinguished name of LDAP node used as the base for user searches"""
   user_bind_base_dn: String
   """
@@ -13676,7 +13676,7 @@ input PermissionSet_Input {
   id: String
   """Name of PermissionSet"""
   name: String
-  permissions: [String]
+  permissions: [String!]
   """Link to get this item"""
   url: UriReference
 }
@@ -13688,7 +13688,7 @@ input ModelSet_Input {
   built_in: Boolean
   """Unique Id"""
   id: String
-  models: [String]
+  models: [String!]
   """Name of ModelSet"""
   name: String
   """Link to get this item"""
@@ -13705,7 +13705,7 @@ input LDAPGroupRead_Input {
   """Name of group in LDAP"""
   name: String
   """Looker Roles"""
-  roles: [Role_Input]
+  roles: [Role_Input!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -13720,7 +13720,7 @@ input LDAPGroupWrite_Input {
   """Name of group in LDAP"""
   name: String
   """Looker Role Ids"""
-  role_ids: [String]
+  role_ids: [String!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -13731,7 +13731,7 @@ input LDAPUserAttributeRead_Input {
   """Required to be in LDAP assertion for login to be allowed to succeed"""
   required: Boolean
   """Looker User Attributes"""
-  user_attributes: [UserAttribute_Input]
+  user_attributes: [UserAttribute_Input!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -13775,7 +13775,7 @@ input LDAPUserAttributeWrite_Input {
   """Required to be in LDAP assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attribute Ids"""
-  user_attribute_ids: [String]
+  user_attribute_ids: [String!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -13784,7 +13784,7 @@ type LDAPConfigTestResult {
   """Additional details for error cases"""
   details: String
   """Array of issues/considerations about the result"""
-  issues: [LDAPConfigTestIssue]
+  issues: [LDAPConfigTestIssue!]
   """Short human readable test about the result"""
   message: String
   """Test status code: always 'success' or 'error'"""
@@ -13805,7 +13805,7 @@ type LDAPConfigTestIssue {
 
 type LDAPUser {
   """Array of user's email addresses and aliases for use in migration"""
-  all_emails: [String]
+  all_emails: [String!]
   """Dictionary of user's attributes (name/value)"""
   attributes: JSON
   """Primary email address"""
@@ -13813,7 +13813,7 @@ type LDAPUser {
   """First name"""
   first_name: String
   """Array of user's groups (group names only)"""
-  groups: [String]
+  groups: [String!]
   """Last Name"""
   last_name: String
   """LDAP's distinguished name for the user record"""
@@ -13821,7 +13821,7 @@ type LDAPUser {
   """LDAP's Unique ID for the user"""
   ldap_id: String
   """Array of user's roles (role names only)"""
-  roles: [String]
+  roles: [String!]
   """Link to ldap config"""
   url: UriReference
 }
@@ -13865,9 +13865,9 @@ input LookmlModel_Input {
   """Operations the current user is able to perform on this object"""
   can: JSON
   """Array of names of connections this model is allowed to use"""
-  allowed_db_connection_names: [String]
+  allowed_db_connection_names: [String!]
   """Array of explores (if has_content)"""
-  explores: [LookmlModelNavExplore_Input]
+  explores: [LookmlModelNavExplore_Input!]
   """Does this model declaration have have lookml content?"""
   has_content: Boolean
   """UI-friendly name for this model"""
@@ -13903,13 +13903,13 @@ input MergeQuery_Input {
   """Unique Id"""
   id: String
   """Pivots"""
-  pivots: [String]
+  pivots: [String!]
   """Unique to get results"""
   result_maker_id: String
   """Sorts"""
-  sorts: [String]
+  sorts: [String!]
   """Source Queries defining the results to be merged."""
-  source_queries: [MergeQuerySourceQuery_Input]
+  source_queries: [MergeQuerySourceQuery_Input!]
   """Total"""
   total: Boolean!
   """Visualization Config"""
@@ -13920,7 +13920,7 @@ input MergeQuerySourceQuery_Input {
   """
   An array defining which fields of the source query are mapped onto fields of the merge query
   """
-  merge_fields: [MergeFields_Input]
+  merge_fields: [MergeFields_Input!]
   """Display name"""
   name: String
   """Id of the query to merge"""
@@ -13998,7 +13998,7 @@ input OauthClientApp_Input {
   """
   tokens_invalid_before: DateTime
   """All users who have been activated to use this app"""
-  activated_users: [UserPublic_Input]
+  activated_users: [UserPublic_Input!]
 }
 
 input UserPublic_Input {
@@ -14040,23 +14040,23 @@ input OIDCConfig_Input {
   """
   (Write-Only) Array of ids of groups that will be applied to new users the first time they login via OIDC
   """
-  default_new_user_group_ids: [String]
+  default_new_user_group_ids: [String!]
   """
   (Read-only) Groups that will be applied to new users the first time they login via OIDC
   """
-  default_new_user_groups: [Group_Input]
+  default_new_user_groups: [Group_Input!]
   """
   (Write-Only) Array of ids of roles that will be applied to new users the first time they login via OIDC
   """
-  default_new_user_role_ids: [String]
+  default_new_user_role_ids: [String!]
   """
   (Read-only) Roles that will be applied to new users the first time they login via OIDC
   """
-  default_new_user_roles: [Role_Input]
+  default_new_user_roles: [Role_Input!]
   """Enable/Disable OIDC authentication for the server"""
   enabled: Boolean!
   """(Read-only) Array of mappings between OIDC Groups and Looker Roles"""
-  groups: [OIDCGroupRead_Input]
+  groups: [OIDCGroupRead_Input!]
   """
   Name of user record attributes used to indicate groups. Used when 'groups_finder_type' is set to 'grouped_attribute_values'
   """
@@ -14064,7 +14064,7 @@ input OIDCConfig_Input {
   """
   (Read/Write) Array of mappings between OIDC Groups and arrays of Looker Role ids
   """
-  groups_with_role_ids: [OIDCGroupWrite_Input]
+  groups_with_role_ids: [OIDCGroupWrite_Input!]
   """Relying Party Identifier (provided by OpenID Provider)"""
   identifier: String
   """OpenID Provider Issuer"""
@@ -14078,7 +14078,7 @@ input OIDCConfig_Input {
   """
   new_user_migration_types: String
   """Array of scopes to request."""
-  scopes: [String]
+  scopes: [String!]
   """(Write-Only) Relying Party Secret (provided by OpenID Provider)"""
   secret: String
   """Set user roles in Looker based on groups from OIDC"""
@@ -14098,11 +14098,11 @@ input OIDCConfig_Input {
   """
   (Read-only) Array of mappings between OIDC User Attributes and Looker User Attributes
   """
-  user_attributes: [OIDCUserAttributeRead_Input]
+  user_attributes: [OIDCUserAttributeRead_Input!]
   """
   (Read/Write) Array of mappings between OIDC User Attributes and arrays of Looker User Attribute ids
   """
-  user_attributes_with_ids: [OIDCUserAttributeWrite_Input]
+  user_attributes_with_ids: [OIDCUserAttributeWrite_Input!]
   """OpenID Provider User Information Url"""
   userinfo_endpoint: UriReference
   """
@@ -14127,7 +14127,7 @@ input OIDCGroupRead_Input {
   """Name of group in OIDC"""
   name: String
   """Looker Roles"""
-  roles: [Role_Input]
+  roles: [Role_Input!]
 }
 
 input OIDCGroupWrite_Input {
@@ -14140,7 +14140,7 @@ input OIDCGroupWrite_Input {
   """Name of group in OIDC"""
   name: String
   """Looker Role Ids"""
-  role_ids: [String]
+  role_ids: [String!]
 }
 
 input OIDCUserAttributeRead_Input {
@@ -14149,7 +14149,7 @@ input OIDCUserAttributeRead_Input {
   """Required to be in OIDC assertion for login to be allowed to succeed"""
   required: Boolean
   """Looker User Attributes"""
-  user_attributes: [UserAttribute_Input]
+  user_attributes: [UserAttribute_Input!]
 }
 
 input OIDCUserAttributeWrite_Input {
@@ -14158,7 +14158,7 @@ input OIDCUserAttributeWrite_Input {
   """Required to be in OIDC assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attribute Ids"""
-  user_attribute_ids: [String]
+  user_attribute_ids: [String!]
 }
 
 input PasswordConfig_Input {
@@ -14250,11 +14250,11 @@ input Project_Input {
 
 type ProjectValidation {
   """A list of project errors"""
-  errors: [ProjectError]
+  errors: [ProjectError!]
   """A hash value computed from the project's current state"""
   project_digest: String
   """A list of models which were not fully validated"""
-  models_not_validated: [ModelsNotValidated]
+  models_not_validated: [ModelsNotValidated!]
   """Duration of project validation in seconds"""
   computation_time: Float
 }
@@ -14331,19 +14331,19 @@ input SamlConfig_Input {
   """
   (Read-only) Roles that will be applied to new users the first time they login via Saml
   """
-  default_new_user_roles: [Role_Input]
+  default_new_user_roles: [Role_Input!]
   """
   (Read-only) Groups that will be applied to new users the first time they login via Saml
   """
-  default_new_user_groups: [Group_Input]
+  default_new_user_groups: [Group_Input!]
   """
   (Write-Only) Array of ids of roles that will be applied to new users the first time they login via Saml
   """
-  default_new_user_role_ids: [String]
+  default_new_user_role_ids: [String!]
   """
   (Write-Only) Array of ids of groups that will be applied to new users the first time they login via Saml
   """
-  default_new_user_group_ids: [String]
+  default_new_user_group_ids: [String!]
   """Set user roles in Looker based on groups from Saml"""
   set_roles_from_groups: Boolean!
   """
@@ -14351,11 +14351,11 @@ input SamlConfig_Input {
   """
   groups_attribute: String
   """(Read-only) Array of mappings between Saml Groups and Looker Roles"""
-  groups: [SamlGroupRead_Input]
+  groups: [SamlGroupRead_Input!]
   """
   (Read/Write) Array of mappings between Saml Groups and arrays of Looker Role ids
   """
-  groups_with_role_ids: [SamlGroupWrite_Input]
+  groups_with_role_ids: [SamlGroupWrite_Input!]
   """
   Users will not be allowed to login at all unless a role for them is found in Saml if set to true
   """
@@ -14363,11 +14363,11 @@ input SamlConfig_Input {
   """
   (Read-only) Array of mappings between Saml User Attributes and Looker User Attributes
   """
-  user_attributes: [SamlUserAttributeRead_Input]
+  user_attributes: [SamlUserAttributeRead_Input!]
   """
   (Read/Write) Array of mappings between Saml User Attributes and arrays of Looker User Attribute ids
   """
-  user_attributes_with_ids: [SamlUserAttributeWrite_Input]
+  user_attributes_with_ids: [SamlUserAttributeWrite_Input!]
   """
   Identifier for a strategy for how Looker will find groups in the SAML response. One of ['grouped_attribute_values', 'individual_attributes']
   """
@@ -14402,7 +14402,7 @@ input SamlGroupRead_Input {
   """Name of group in Saml"""
   name: String
   """Looker Roles"""
-  roles: [Role_Input]
+  roles: [Role_Input!]
   """Link to saml config"""
   url: UriReference
 }
@@ -14417,7 +14417,7 @@ input SamlGroupWrite_Input {
   """Name of group in Saml"""
   name: String
   """Looker Role Ids"""
-  role_ids: [String]
+  role_ids: [String!]
   """Link to saml config"""
   url: UriReference
 }
@@ -14428,7 +14428,7 @@ input SamlUserAttributeRead_Input {
   """Required to be in Saml assertion for login to be allowed to succeed"""
   required: Boolean
   """Looker User Attributes"""
-  user_attributes: [UserAttribute_Input]
+  user_attributes: [UserAttribute_Input!]
   """Link to saml config"""
   url: UriReference
 }
@@ -14439,7 +14439,7 @@ input SamlUserAttributeWrite_Input {
   """Required to be in Saml assertion for login to be allowed to succeed"""
   required: Boolean!
   """Looker User Attribute Ids"""
-  user_attribute_ids: [String]
+  user_attribute_ids: [String!]
   """Link to saml config"""
   url: UriReference
 }
@@ -14497,7 +14497,7 @@ input ScheduledPlan_Input {
   """Query id"""
   query_id: String
   """Scheduled plan destinations"""
-  scheduled_plan_destination: [ScheduledPlanDestination_Input]
+  scheduled_plan_destination: [ScheduledPlanDestination_Input!]
   """
   Whether the plan in question should only be run once (usually for testing)
   """
@@ -14622,7 +14622,7 @@ input WriteScheduledPlan_Input {
   """Query id"""
   query_id: String
   """Scheduled plan destinations"""
-  scheduled_plan_destination: [ScheduledPlanDestination_Input]
+  scheduled_plan_destination: [ScheduledPlanDestination_Input!]
   """
   Whether the plan in question should only be run once (usually for testing)
   """
@@ -14713,7 +14713,7 @@ input Setting_Input {
   """
   An array of Email Domain Allowlist of type string for Scheduled Content
   """
-  email_domain_allowlist: [String]!
+  email_domain_allowlist: [String!]!
   """Toggle cookieless embed setting"""
   embed_cookieless_v2: Boolean!
 }
@@ -14811,7 +14811,7 @@ input SqlQueryCreate_Input {
 
 input SupportAccessAddEntries_Input {
   """An array of emails to add to the Allowlist"""
-  emails: [String]
+  emails: [String!]
   """Reason for adding emails to the Allowlist"""
   reason: String
 }
@@ -14948,10 +14948,10 @@ input User_Input {
   """URL for the avatar image (may be generic), does not specify size"""
   avatar_url_without_sizing: UriReference
   """API credentials"""
-  credentials_api3: [CredentialsApi3_Input]
+  credentials_api3: [CredentialsApi3_Input!]
   credentials_email: CredentialsEmail_Input
   """Embed credentials"""
-  credentials_embed: [CredentialsEmbed_Input]
+  credentials_embed: [CredentialsEmbed_Input!]
   credentials_google: CredentialsGoogle_Input
   credentials_ldap: CredentialsLDAP_Input
   credentials_looker_openid: CredentialsLookerOpenid_Input
@@ -14971,7 +14971,7 @@ input User_Input {
   """First name"""
   first_name: String
   """Array of ids of the groups for this user"""
-  group_ids: [String]
+  group_ids: [String!]
   """ID string for user's home folder"""
   home_folder_id: String
   """Unique Id"""
@@ -14987,7 +14987,7 @@ input User_Input {
   """
   Array of strings representing the Looker versions that this user has used (this only goes back as far as '3.54.0')
   """
-  looker_versions: [String]
+  looker_versions: [String!]
   """
   User's dev workspace has been checked for presence of applicable production projects
   """
@@ -14997,9 +14997,9 @@ input User_Input {
   """User is identified as an employee of Looker"""
   presumed_looker_employee: Boolean
   """Array of ids of the roles for this user"""
-  role_ids: [String]
+  role_ids: [String!]
   """Active sessions"""
-  sessions: [Session_Input]
+  sessions: [Session_Input!]
   """
   Per user dictionary of undocumented state information owned by the Looker UI.
   """
