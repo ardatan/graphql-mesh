@@ -516,7 +516,42 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:4.10.0, @apollo/server@npm:^4.0.0":
+"@apollo/server@npm:4.10.1":
+  version: 4.10.1
+  resolution: "@apollo/server@npm:4.10.1"
+  dependencies:
+    "@apollo/cache-control-types": "npm:^1.0.3"
+    "@apollo/server-gateway-interface": "npm:^1.1.1"
+    "@apollo/usage-reporting-protobuf": "npm:^4.1.1"
+    "@apollo/utils.createhash": "npm:^2.0.0"
+    "@apollo/utils.fetcher": "npm:^2.0.0"
+    "@apollo/utils.isnodelike": "npm:^2.0.0"
+    "@apollo/utils.keyvaluecache": "npm:^2.1.0"
+    "@apollo/utils.logger": "npm:^2.0.0"
+    "@apollo/utils.usagereporting": "npm:^2.1.0"
+    "@apollo/utils.withrequired": "npm:^2.0.0"
+    "@graphql-tools/schema": "npm:^9.0.0"
+    "@josephg/resolvable": "npm:^1.0.0"
+    "@types/express": "npm:^4.17.13"
+    "@types/express-serve-static-core": "npm:^4.17.30"
+    "@types/node-fetch": "npm:^2.6.1"
+    async-retry: "npm:^1.2.1"
+    cors: "npm:^2.8.5"
+    express: "npm:^4.17.1"
+    loglevel: "npm:^1.6.8"
+    lru-cache: "npm:^7.10.1"
+    negotiator: "npm:^0.6.3"
+    node-abort-controller: "npm:^3.1.1"
+    node-fetch: "npm:^2.6.7"
+    uuid: "npm:^9.0.0"
+    whatwg-mimetype: "npm:^3.0.0"
+  peerDependencies:
+    graphql: ^16.6.0
+  checksum: 10c0/6a9ab267f8e38e4a7149c5079eda1236dceabd217f241e99beafb8090f233802fc89853e61c7e0740d6f0a648da14590381270a5894891ef7618b81e8c2c4850
+  languageName: node
+  linkType: hard
+
+"@apollo/server@npm:^4.0.0":
   version: 4.10.0
   resolution: "@apollo/server@npm:4.10.0"
   dependencies:
@@ -6082,7 +6117,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/utils@workspace:packages/legacy/utils"
   dependencies:
-    "@apollo/server": "npm:4.10.0"
+    "@apollo/server": "npm:4.10.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.3"
     "@graphql-tools/delegate": "npm:^10.0.0"
     "@types/js-yaml": "npm:4.0.9"
@@ -11201,7 +11236,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.2.19, @types/react-dom@npm:^18.0.0":
+"@types/react-dom@npm:18.2.20":
+  version: 18.2.20
+  resolution: "@types/react-dom@npm:18.2.20"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10c0/d352fb9c4fbb773f1db1e463b0228dfb0dc0a670a742983ae840d77f54ad9d4ac38084b23c975487fc37814f44425fc6d1adafbb432a7c48957669c124b5f8df
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^18.0.0":
   version: 18.2.19
   resolution: "@types/react-dom@npm:18.2.19"
   dependencies:
@@ -11811,7 +11855,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.97.0"
     "@graphql-mesh/serve-runtime": "npm:^0.2.0"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.30.1"
+    wrangler: "npm:3.31.0"
   languageName: unknown
   linkType: soft
 
@@ -14382,7 +14426,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.2.0"
     "@omnigraph/json-schema": "npm:^0.99.0"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.30.1"
+    wrangler: "npm:3.31.0"
   languageName: unknown
   linkType: soft
 
@@ -14829,7 +14873,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.99.0"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.0"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.30.1"
+    wrangler: "npm:3.31.0"
   languageName: unknown
   linkType: soft
 
@@ -19206,7 +19250,7 @@ __metadata:
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.24"
     "@types/react": "npm:18.2.63"
-    "@types/react-dom": "npm:18.2.19"
+    "@types/react-dom": "npm:18.2.20"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
     react: "npm:18.2.0"
@@ -25737,9 +25781,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20240223.0":
-  version: 3.20240223.0
-  resolution: "miniflare@npm:3.20240223.0"
+"miniflare@npm:3.20240223.1":
+  version: 3.20240223.1
+  resolution: "miniflare@npm:3.20240223.1"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
@@ -25755,7 +25799,7 @@ __metadata:
     zod: "npm:^3.20.6"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/1817c48cef313d1bbcf07cfbff4a80354597d8b21e90d5ad39bf426a776db00d4c16c16386f7d0fe14fc27e3bc6aea93d85fc241ea1ab95f86ed3f31fb52de1d
+  checksum: 10c0/b71cebd617495ecac3674ed1b2732fe729a7206556dde3e924075a357d6442980e6d95bbbcdb1f1f4f773958efd07c3d60b1726cbb2d4f2380deeb34aa35125b
   languageName: node
   linkType: hard
 
@@ -27222,7 +27266,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.0"
     "@types/react": "npm:18.2.63"
-    "@types/react-dom": "npm:18.2.19"
+    "@types/react-dom": "npm:18.2.20"
     "@vitejs/plugin-react": "npm:4.2.1"
     graphql: "npm:16.8.1"
     react: "npm:18.2.0"
@@ -32098,7 +32142,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.97.0"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.0"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.30.1"
+    wrangler: "npm:3.31.0"
   languageName: unknown
   linkType: soft
 
@@ -35608,9 +35652,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.30.1":
-  version: 3.30.1
-  resolution: "wrangler@npm:3.30.1"
+"wrangler@npm:3.31.0":
+  version: 3.31.0
+  resolution: "wrangler@npm:3.31.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.1"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35619,7 +35663,7 @@ __metadata:
     chokidar: "npm:^3.5.3"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20240223.0"
+    miniflare: "npm:3.20240223.1"
     nanoid: "npm:^3.3.3"
     path-to-regexp: "npm:^6.2.0"
     resolve: "npm:^1.22.8"
@@ -35638,7 +35682,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/f85d4e56228ed7156b2fb6f999268c1f25ce2b989b26a5661768735c3fc5d59fec03836e50758249d75581635ffd65a9ca80e1a2c83e87dd523aa747793bbdac
+  checksum: 10c0/22974a7359ffba0628f04094448c829f3d6f963d3ff83efb05a277c803cdda09220a4b08ba397673688366019b30914012cc5870b4be531e161696ce6611a8dd
   languageName: node
   linkType: hard
 
