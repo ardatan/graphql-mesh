@@ -54,8 +54,12 @@
     "@graphql-tools/utils": "^10.0.10",
     "change-case": "^4.1.2",
     "pascal-case": "^3.0.0",
+    "pluralize": "^8.0.0",
     "snake-case": "^3.0.0",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/pluralize": "^0.0.33"
   },
   "publishConfig": {
     "directory": "dist",

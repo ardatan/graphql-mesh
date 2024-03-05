@@ -103,7 +103,7 @@ export type TransportsOption =
     ) => Promise<Transport<TTransportKind>> | Transport<TTransportKind>);
 
 interface GetExecutorForFusiongraphOpts extends TransportBaseContext {
-  fusiongraph: GraphQLSchema;
+  fusiongraph: GraphQLSchema | DocumentNode | string;
   transports?: TransportsOption;
   plugins?: FusiongraphPlugin[];
 }
@@ -142,11 +142,12 @@ export function getTransportExecutor(
 }
 
 export function getExecutorForFusiongraph({
-  fusiongraph,
+  fusiongraph: fusiongraphInput,
   transports = defaultTransportsOption,
   plugins,
   ...transportBaseContext
 }: GetExecutorForFusiongraphOpts) {
+  const fusiongraph = ensureSchema(fusiongraphInput);
   const onSubgraphExecuteHooks: OnSubgraphExecuteHook[] = [];
   if (plugins) {
     for (const plugin of plugins) {
