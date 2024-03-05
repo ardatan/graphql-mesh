@@ -18,7 +18,7 @@ directive @transport(subgraph: String, kind: String, location: String, headers: 
 directive @live on QUERY
 
 type Query {
-  todos: [query_todos_items] @httpOperation(subgraph: "Example", path: "/todos", httpMethod: GET)
+  todos: [query_todos_items!] @httpOperation(subgraph: "Example", path: "/todos", httpMethod: GET)
 }
 
 type query_todos_items {
