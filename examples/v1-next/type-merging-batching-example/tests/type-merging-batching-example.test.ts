@@ -1,6 +1,5 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { inspect } from 'util';
 import { GraphQLSchema, parse } from 'graphql';
 import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
 import {
@@ -8,6 +7,7 @@ import {
   serializeExecutableOperationPlan,
 } from '@graphql-mesh/fusion-execution';
 import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
+import * as HTTPTransport from '@graphql-mesh/transport-http';
 import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
 import { composeConfig } from '../mesh.config.js';
@@ -37,6 +37,7 @@ describe('Type Merging with Batching Example', () => {
     const { fusiongraphExecutor } = getExecutorForFusiongraph({
       fusiongraph,
       fetch: subgraphFetch,
+      transports: { http: HTTPTransport },
     });
     executor = fusiongraphExecutor;
   });
