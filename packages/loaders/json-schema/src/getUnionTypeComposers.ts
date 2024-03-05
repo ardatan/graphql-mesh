@@ -64,11 +64,11 @@ export function getUnionTypeComposers({
   let isOutputPlural = false;
   typeComposersList.forEach(typeComposers => {
     let { input, output } = typeComposers;
-    while (output.ofType) {
+    while ((output as any).ofType) {
       if (!isOutputPlural) {
         isOutputPlural = output instanceof ListComposer;
       }
-      output = output.ofType;
+      output = (output as any).ofType;
     }
     if (isSomeInputTypeComposer(output)) {
       outputTypeComposers.push(getContainerTC(subgraphName, schemaComposer, output));
@@ -77,11 +77,11 @@ export function getUnionTypeComposers({
     }
     if (input) {
       let isInputPlural = false;
-      while (input.ofType) {
+      while ((input as any).ofType) {
         if (!isInputPlural) {
           isInputPlural = input instanceof ListComposer;
         }
-        input = input.ofType;
+        input = (input as any).ofType;
       }
       const inputTypeName = input.getTypeName();
       const fieldName = isInputPlural ? inputTypeName + '_list' : inputTypeName;
@@ -111,8 +111,10 @@ export function getUnionTypeComposers({
     const statusCodeOneOfIndexMapEntries = Object.entries(statusCodeOneOfIndexMap || {});
     for (const outputTypeComposerIndex in outputTypeComposers) {
       let outputTypeComposer = outputTypeComposers[outputTypeComposerIndex];
-      while (outputTypeComposer.ofType) {
-        outputTypeComposer = outputTypeComposer.ofType;
+      while ((outputTypeComposer as any).ofType) {
+        outputTypeComposer = (outputTypeComposer as any).ofType as
+          | ObjectTypeComposer
+          | UnionTypeComposer;
       }
       const statusCode = statusCodeOneOfIndexMapEntries.find(
         ([statusCode, index]) => index.toString() === outputTypeComposerIndex.toString(),

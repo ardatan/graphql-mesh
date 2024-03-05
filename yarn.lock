@@ -4846,7 +4846,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.97.0"
     "@graphql-tools/graphql-file-loader": "npm:8.0.1"
     "@graphql-tools/load": "npm:^8.0.1"
-    "@graphql-tools/utils": "npm:^10.0.8"
+    "@graphql-tools/utils": "npm:^10.1.0"
     "@types/spinnies": "npm:^0.5.3"
     "@whatwg-node/fetch": "npm:^0.9.14"
     dotenv: "npm:^16.3.1"
