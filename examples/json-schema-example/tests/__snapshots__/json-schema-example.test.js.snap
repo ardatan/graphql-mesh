@@ -26,7 +26,7 @@ type User {
   jobTitle: String
   companyId: String
   birthDate: Date
-  foos: [Foo]
+  foos: [Foo!]
   company: Company
 }
 

@@ -39,11 +39,11 @@ type User {
 }
 
 input UsersByIdRequest_Input {
-  ids: [Float]!
+  ids: [Float!]!
 }
 
 type UsersByIdResponse {
-  results: [User]!
+  results: [User!]!
 }"
 `;
 

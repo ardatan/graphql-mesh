@@ -372,7 +372,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`ids=18yVqkdbdRvS24c0Ilj2ci,1HGw3J3NxZO1TP1BTtVhpZ\`. Maximum: 50 IDs.
     """
     ids: String!
-  ): [Boolean] @httpOperation(subgraph: "test", path: "/me/audiobooks/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
+  ): [Boolean!] @httpOperation(subgraph: "test", path: "/me/audiobooks/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
   """
   Get Spotify catalog information for a single chapter.<br />
   **Note: Chapters are only available for the US, UK, Ireland, New Zealand and Australia markets.**
@@ -478,7 +478,7 @@ type Query {
     from all the specified item types. For example: \`q=abacab&type=album,track\` returns
     both albums and tracks matching "abacab".
     """
-    type: [queryInput_search_type_items]!
+    type: [queryInput_search_type_items!]!
     """
     An [ISO 3166-1 alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
       If a country code is specified, only content that is available in that market will be returned.<br/>
@@ -633,7 +633,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the albums. Maximum: 20 IDs.
     """
     ids: String!
-  ): [Boolean] @httpOperation(subgraph: "test", path: "/me/albums/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
+  ): [Boolean!] @httpOperation(subgraph: "test", path: "/me/albums/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
   """
   Get a list of the songs saved in the current Spotify user's 'Your Music' library.
   
@@ -666,7 +666,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`ids=4iV5W9uYEdYUVa79Axb7Rh,1301WleyT98MSxVHPZCA6M\`. Maximum: 50 IDs.
     """
     ids: String!
-  ): [Boolean] @httpOperation(subgraph: "test", path: "/me/tracks/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
+  ): [Boolean!] @httpOperation(subgraph: "test", path: "/me/tracks/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
   """
   Get a list of the episodes saved in the current Spotify user's library.<br/>
   This API endpoint is in __beta__ and could change without warning. Please share any feedback that you have, or issues that you discover, in our [developer community forum](https://community.spotify.com/t5/Spotify-for-Developers/bd-p/Spotify_Developer).
@@ -701,7 +701,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the episodes. Maximum: 50 IDs.
     """
     ids: String!
-  ): [Boolean] @httpOperation(subgraph: "test", path: "/me/episodes/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
+  ): [Boolean!] @httpOperation(subgraph: "test", path: "/me/episodes/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
   """
   Get a list of shows saved in the current Spotify user's library. Optional parameters can be used to limit the number of shows returned.
   
@@ -725,7 +725,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the shows. Maximum: 50 IDs.
     """
     ids: String!
-  ): [Boolean] @httpOperation(subgraph: "test", path: "/me/shows/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
+  ): [Boolean!] @httpOperation(subgraph: "test", path: "/me/shows/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
   """
   Get the current user's top artists or tracks based on calculated affinity.
   
@@ -874,7 +874,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the playlist.
     """
     playlist_id: String!
-  ): [ImageObject] @httpOperation(subgraph: "test", path: "/playlists/{args.playlist_id}/images", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [ImageObject!] @httpOperation(subgraph: "test", path: "/playlists/{args.playlist_id}/images", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """
   Get a list of new album releases featured in Spotify (shown, for example, on a Spotify player’s “Browse” tab).
   
@@ -916,7 +916,7 @@ type Query {
     A comma-separated list of the artist or the user [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) to check. For example: \`ids=74ASZWbe4lXaubB36ztrGX,08td7MxkoHQkXnWAYD8d6Q\`. A maximum of 50 IDs can be sent in one request.
     """
     ids: String!
-  ): [Boolean] @httpOperation(subgraph: "test", path: "/me/following/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"type\\":\\"type\\",\\"ids\\":\\"ids\\"}")
+  ): [Boolean!] @httpOperation(subgraph: "test", path: "/me/following/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"type\\":\\"type\\",\\"ids\\":\\"ids\\"}")
   """
   Check to see if one or more Spotify users are following a specified playlist.
   
@@ -930,7 +930,7 @@ type Query {
     A comma-separated list of [Spotify User IDs](/documentation/web-api/concepts/spotify-uris-ids) ; the ids of the users that you want to check to see if they follow the playlist. Maximum: 5 ids.
     """
     ids: String!
-  ): [Boolean] @httpOperation(subgraph: "test", path: "/playlists/{args.playlist_id}/followers/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
+  ): [Boolean!] @httpOperation(subgraph: "test", path: "/playlists/{args.playlist_id}/followers/contains", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"ids\\":\\"ids\\"}")
   """
   Get audio features for multiple tracks based on their Spotify IDs.
   
@@ -1256,7 +1256,7 @@ type AlbumObject {
   """
   The markets in which the album is available: [ISO 3166-1 alpha-2 country codes](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). _**NOTE**: an album is considered available in a market when at least 1 of its tracks is available in that market._
   """
-  available_markets: [String]!
+  available_markets: [String!]!
   external_urls: ExternalUrlObject!
   """A link to the Web API endpoint providing full details of the album."""
   href: String!
@@ -1265,7 +1265,7 @@ type AlbumObject {
   """
   id: String!
   """The cover art for the album in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """
   The name of the album. In case of an album takedown, the value may be an empty string.
   """
@@ -1280,12 +1280,12 @@ type AlbumObject {
   """
   uri: URL!
   """The copyright statements of the album."""
-  copyrights: [CopyrightObject]
+  copyrights: [CopyrightObject!]
   external_ids: ExternalIdObject
   """
   A list of the genres the album is associated with. If not yet classified, the array is empty.
   """
-  genres: [String]
+  genres: [String!]
   """The label associated with the album."""
   label: String
   """
@@ -1295,7 +1295,7 @@ type AlbumObject {
   """
   The artists of the album. Each artist object includes a link in \`href\` to more detailed information about the artist.
   """
-  artists: [ArtistObject]
+  artists: [ArtistObject!]
   tracks: PagingSimplifiedTrackObject
 }
 
@@ -1383,7 +1383,7 @@ type ArtistObject {
   """
   A list of the genres the artist is associated with. If not yet classified, the array is empty.
   """
-  genres: [String]
+  genres: [String!]
   """A link to the Web API endpoint providing full details of the artist."""
   href: String
   """
@@ -1391,7 +1391,7 @@ type ArtistObject {
   """
   id: String
   """Images of the artist in various sizes, widest first."""
-  images: [ImageObject]
+  images: [ImageObject!]
   """The name of the artist."""
   name: String
   """
@@ -1436,18 +1436,18 @@ type PagingSimplifiedTrackObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SimplifiedTrackObject]
+  items: [SimplifiedTrackObject!]
 }
 
 type SimplifiedTrackObject {
   """
   The artists who performed the track. Each artist object includes a link in \`href\` to more detailed information about the artist.
   """
-  artists: [SimplifiedArtistObject]
+  artists: [SimplifiedArtistObject!]
   """
   A list of the countries in which the track can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code.
   """
-  available_markets: [String]
+  available_markets: [String!]
   """
   The disc number (usually \`1\` unless the album consists of more than one disc).
   """
@@ -1537,7 +1537,7 @@ type TrackRestrictionObject {
 
 """A set of albums"""
 type ManyAlbums_response {
-  albums: [AlbumObject]!
+  albums: [AlbumObject!]!
 }
 
 """Integers that will have a value of 0 or more."""
@@ -1545,7 +1545,7 @@ scalar NonNegativeInt
 
 """A set of artists"""
 type ManyArtists_response {
-  artists: [ArtistObject]!
+  artists: [ArtistObject!]!
 }
 
 """Pages of albums"""
@@ -1566,7 +1566,7 @@ type PagingSimplifiedAlbumObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SimplifiedAlbumObject]
+  items: [SimplifiedAlbumObject!]
 }
 
 type SimplifiedAlbumObject {
@@ -1576,7 +1576,7 @@ type SimplifiedAlbumObject {
   """
   The markets in which the album is available: [ISO 3166-1 alpha-2 country codes](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). _**NOTE**: an album is considered available in a market when at least 1 of its tracks is available in that market._
   """
-  available_markets: [String]!
+  available_markets: [String!]!
   external_urls: ExternalUrlObject!
   """A link to the Web API endpoint providing full details of the album."""
   href: String!
@@ -1585,7 +1585,7 @@ type SimplifiedAlbumObject {
   """
   id: String!
   """The cover art for the album in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """
   The name of the album. In case of an album takedown, the value may be an empty string.
   """
@@ -1600,12 +1600,12 @@ type SimplifiedAlbumObject {
   """
   uri: URL!
   """The copyright statements of the album."""
-  copyrights: [CopyrightObject]
+  copyrights: [CopyrightObject!]
   external_ids: ExternalIdObject
   """
   A list of the genres the album is associated with. If not yet classified, the array is empty.
   """
-  genres: [String]
+  genres: [String!]
   """The label associated with the album."""
   label: String
   """
@@ -1616,7 +1616,7 @@ type SimplifiedAlbumObject {
   """
   The artists of the album. Each artist object includes a link in \`href\` to more detailed information about the artist.
   """
-  artists: [SimplifiedArtistObject]!
+  artists: [SimplifiedArtistObject!]!
 }
 
 """
@@ -1631,7 +1631,7 @@ enum query_get_an_artists_albums_allOf_1_items_items_allOf_1_album_group {
 
 """A set of tracks"""
 type ManyTracks_response {
-  tracks: [TrackObject]!
+  tracks: [TrackObject!]!
 }
 
 """A track"""
@@ -1640,11 +1640,11 @@ type TrackObject {
   """
   The artists who performed the track. Each artist object includes a link in \`href\` to more detailed information about the artist.
   """
-  artists: [ArtistObject]
+  artists: [ArtistObject!]
   """
   A list of the countries in which the track can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code.
   """
-  available_markets: [String]
+  available_markets: [String!]
   """
   The disc number (usually \`1\` unless the album consists of more than one disc).
   """
@@ -1704,9 +1704,9 @@ type ShowObject {
   """
   A list of the countries in which the show can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code.
   """
-  available_markets: [String]!
+  available_markets: [String!]!
   """The copyright statements of the show."""
-  copyrights: [CopyrightObject]!
+  copyrights: [CopyrightObject!]!
   """
   A description of the show. HTML tags are stripped away from this field, use \`html_description\` field in case HTML tags are needed.
   """
@@ -1725,7 +1725,7 @@ type ShowObject {
   """
   id: String!
   """The cover art for the show in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """
   True if all of the shows episodes are hosted outside of Spotify's CDN. This field might be \`null\` in some cases.
   """
@@ -1733,7 +1733,7 @@ type ShowObject {
   """
   A list of the languages used in the show, identified by their [ISO 639](https://en.wikipedia.org/wiki/ISO_639) code.
   """
-  languages: [String]!
+  languages: [String!]!
   """The media type of the show."""
   media_type: String!
   """The name of the episode."""
@@ -1772,7 +1772,7 @@ type PagingSimplifiedEpisodeObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SimplifiedEpisodeObject]
+  items: [SimplifiedEpisodeObject!]
 }
 
 type SimplifiedEpisodeObject {
@@ -1800,7 +1800,7 @@ type SimplifiedEpisodeObject {
   """
   id: String!
   """The cover art for the episode in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """True if the episode is hosted outside of Spotify's CDN."""
   is_externally_hosted: Boolean!
   """True if the episode is playable in the given market. Otherwise false."""
@@ -1812,7 +1812,7 @@ type SimplifiedEpisodeObject {
   """
   A list of the languages used in the episode, identified by their [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639) code.
   """
-  languages: [String]!
+  languages: [String!]!
   """The name of the episode."""
   name: String!
   """
@@ -1866,16 +1866,16 @@ type EpisodeRestrictionObject {
 
 """A set of shows"""
 type ManySimplifiedShows_response {
-  shows: [SimplifiedShowObject]!
+  shows: [SimplifiedShowObject!]!
 }
 
 type SimplifiedShowObject {
   """
   A list of the countries in which the show can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code.
   """
-  available_markets: [String]!
+  available_markets: [String!]!
   """The copyright statements of the show."""
-  copyrights: [CopyrightObject]!
+  copyrights: [CopyrightObject!]!
   """
   A description of the show. HTML tags are stripped away from this field, use \`html_description\` field in case HTML tags are needed.
   """
@@ -1894,7 +1894,7 @@ type SimplifiedShowObject {
   """
   id: String!
   """The cover art for the show in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """
   True if all of the shows episodes are hosted outside of Spotify's CDN. This field might be \`null\` in some cases.
   """
@@ -1902,7 +1902,7 @@ type SimplifiedShowObject {
   """
   A list of the languages used in the show, identified by their [ISO 639](https://en.wikipedia.org/wiki/ISO_639) code.
   """
-  languages: [String]!
+  languages: [String!]!
   """The media type of the show."""
   media_type: String!
   """The name of the episode."""
@@ -1945,7 +1945,7 @@ type EpisodeObject {
   """
   id: String!
   """The cover art for the episode in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """True if the episode is hosted outside of Spotify's CDN."""
   is_externally_hosted: Boolean!
   """True if the episode is playable in the given market. Otherwise false."""
@@ -1957,7 +1957,7 @@ type EpisodeObject {
   """
   A list of the languages used in the episode, identified by their [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639) code.
   """
-  languages: [String]!
+  languages: [String!]!
   """The name of the episode."""
   name: String!
   """
@@ -1977,19 +1977,19 @@ type EpisodeObject {
 
 """A set of episodes"""
 type ManyEpisodes_response {
-  episodes: [EpisodeObject]!
+  episodes: [EpisodeObject!]!
 }
 
 """An Audiobook"""
 type AudiobookObject {
   """The author(s) for the audiobook."""
-  authors: [AuthorObject]!
+  authors: [AuthorObject!]!
   """
   A list of the countries in which the audiobook can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code.
   """
-  available_markets: [String]!
+  available_markets: [String!]!
   """The copyright statements of the audiobook."""
-  copyrights: [CopyrightObject]!
+  copyrights: [CopyrightObject!]!
   """
   A description of the audiobook. HTML tags are stripped away from this field, use \`html_description\` field in case HTML tags are needed.
   """
@@ -2012,17 +2012,17 @@ type AudiobookObject {
   """
   id: String!
   """The cover art for the audiobook in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """
   A list of the languages used in the audiobook, identified by their [ISO 639](https://en.wikipedia.org/wiki/ISO_639) code.
   """
-  languages: [String]!
+  languages: [String!]!
   """The media type of the audiobook."""
   media_type: String!
   """The name of the audiobook."""
   name: String!
   """The narrator(s) for the audiobook."""
-  narrators: [NarratorObject]!
+  narrators: [NarratorObject!]!
   """The publisher of the audiobook."""
   publisher: String!
   type: audiobook_const!
@@ -2067,7 +2067,7 @@ type PagingSimplifiedChapterObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SimplifiedChapterObject]
+  items: [SimplifiedChapterObject!]
 }
 
 type SimplifiedChapterObject {
@@ -2078,7 +2078,7 @@ type SimplifiedChapterObject {
   """
   A list of the countries in which the chapter can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code.
   """
-  available_markets: [String]
+  available_markets: [String!]
   """The number of the chapter"""
   chapter_number: Int!
   """
@@ -2101,13 +2101,13 @@ type SimplifiedChapterObject {
   """
   id: String!
   """The cover art for the episode in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """True if the episode is playable in the given market. Otherwise false."""
   is_playable: Boolean!
   """
   A list of the languages used in the episode, identified by their [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639) code.
   """
-  languages: [String]!
+  languages: [String!]!
   """The name of the episode."""
   name: String!
   """
@@ -2148,7 +2148,7 @@ type ChapterRestrictionObject {
 
 """A set of audiobooks"""
 type ManyAudiobooks_response {
-  audiobooks: [AudiobookObject]!
+  audiobooks: [AudiobookObject!]!
 }
 
 """Pages of audiobooks"""
@@ -2169,18 +2169,18 @@ type PagingSimplifiedAudiobookObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SimplifiedAudiobookObject]
+  items: [SimplifiedAudiobookObject!]
 }
 
 type SimplifiedAudiobookObject {
   """The author(s) for the audiobook."""
-  authors: [AuthorObject]!
+  authors: [AuthorObject!]!
   """
   A list of the countries in which the audiobook can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code.
   """
-  available_markets: [String]!
+  available_markets: [String!]!
   """The copyright statements of the audiobook."""
-  copyrights: [CopyrightObject]!
+  copyrights: [CopyrightObject!]!
   """
   A description of the audiobook. HTML tags are stripped away from this field, use \`html_description\` field in case HTML tags are needed.
   """
@@ -2203,17 +2203,17 @@ type SimplifiedAudiobookObject {
   """
   id: String!
   """The cover art for the audiobook in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """
   A list of the languages used in the audiobook, identified by their [ISO 639](https://en.wikipedia.org/wiki/ISO_639) code.
   """
-  languages: [String]!
+  languages: [String!]!
   """The media type of the audiobook."""
   media_type: String!
   """The name of the audiobook."""
   name: String!
   """The narrator(s) for the audiobook."""
-  narrators: [NarratorObject]!
+  narrators: [NarratorObject!]!
   """The publisher of the audiobook."""
   publisher: String!
   type: audiobook_const!
@@ -2235,7 +2235,7 @@ type ChapterObject {
   """
   A list of the countries in which the chapter can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code.
   """
-  available_markets: [String]
+  available_markets: [String!]
   """The number of the chapter"""
   chapter_number: Int!
   """
@@ -2258,13 +2258,13 @@ type ChapterObject {
   """
   id: String!
   """The cover art for the episode in various sizes, widest first."""
-  images: [ImageObject]!
+  images: [ImageObject!]!
   """True if the episode is playable in the given market. Otherwise false."""
   is_playable: Boolean!
   """
   A list of the languages used in the episode, identified by their [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639) code.
   """
-  languages: [String]!
+  languages: [String!]!
   """The name of the episode."""
   name: String!
   """
@@ -2284,7 +2284,7 @@ type ChapterObject {
 
 """A set of chapters"""
 type ManyChapters_response {
-  chapters: [ChapterObject]!
+  chapters: [ChapterObject!]!
 }
 
 """Search response"""
@@ -2315,7 +2315,7 @@ type PagingTrackObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [TrackObject]
+  items: [TrackObject!]
 }
 
 type PagingArtistObject {
@@ -2335,7 +2335,7 @@ type PagingArtistObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [ArtistObject]
+  items: [ArtistObject!]
 }
 
 """A paged set of playlists"""
@@ -2356,7 +2356,7 @@ type PagingPlaylistObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SimplifiedPlaylistObject]
+  items: [SimplifiedPlaylistObject!]
 }
 
 type SimplifiedPlaylistObject {
@@ -2376,7 +2376,7 @@ type SimplifiedPlaylistObject {
   """
   Images for the playlist. The array may be empty or contain up to three images. The images are returned by size in descending order. See [Working with Playlists](/documentation/web-api/concepts/playlists). _**Note**: If returned, the source URL for the image (\`url\`) is temporary and will expire in less than a day._
   """
-  images: [ImageObject]
+  images: [ImageObject!]
   """The name of the playlist."""
   name: String
   owner: PlaylistOwnerObject
@@ -2448,7 +2448,7 @@ type PagingSimplifiedShowObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SimplifiedShowObject]
+  items: [SimplifiedShowObject!]
 }
 
 enum queryInput_search_type_items {
@@ -2487,7 +2487,7 @@ type PrivateUserObject {
   """
   id: String
   """The user's profile image."""
-  images: [ImageObject]
+  images: [ImageObject!]
   """
   The user's Spotify subscription level: "premium", "free", etc. (The subscription level "open" can be considered the same as "free".) _This field is only available when the current user has granted access to the [user-read-private](/documentation/web-api/concepts/scopes/#list-of-scopes) scope._
   """
@@ -2530,7 +2530,7 @@ type PlaylistObject {
   """
   Images for the playlist. The array may be empty or contain up to three images. The images are returned by size in descending order. See [Working with Playlists](/documentation/web-api/concepts/playlists). _**Note**: If returned, the source URL for the image (\`url\`) is temporary and will expire in less than a day._
   """
-  images: [ImageObject]
+  images: [ImageObject!]
   """The name of the playlist."""
   name: String
   owner: PlaylistOwnerObject
@@ -2571,7 +2571,7 @@ type PagingPlaylistTrackObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [PlaylistTrackObject]
+  items: [PlaylistTrackObject!]
 }
 
 type PlaylistTrackObject {
@@ -2629,7 +2629,7 @@ type PagingSavedAlbumObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SavedAlbumObject]
+  items: [SavedAlbumObject!]
 }
 
 type SavedAlbumObject {
@@ -2661,7 +2661,7 @@ type PagingSavedTrackObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SavedTrackObject]
+  items: [SavedTrackObject!]
 }
 
 type SavedTrackObject {
@@ -2692,7 +2692,7 @@ type PagingSavedEpisodeObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SavedEpisodeObject]
+  items: [SavedEpisodeObject!]
 }
 
 type SavedEpisodeObject {
@@ -2722,7 +2722,7 @@ type PagingSavedShowObject {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [SavedShowObject]
+  items: [SavedShowObject!]
 }
 
 type SavedShowObject {
@@ -2753,7 +2753,7 @@ type PagingArtistOrTrackObject_response {
   previous: URL
   """The total number of items available to return."""
   total: Int!
-  items: [query_get_users_top_artists_and_tracks_allOf_1_items_items]
+  items: [query_get_users_top_artists_and_tracks_allOf_1_items_items!]
 }
 
 union query_get_users_top_artists_and_tracks_allOf_1_items_items @discriminator(subgraph: "test", field: "type") = ArtistObject | TrackObject
@@ -2777,7 +2777,7 @@ type PublicUserObject {
   """
   id: String
   """The user's profile image."""
-  images: [ImageObject]
+  images: [ImageObject!]
   type: user_const
   """
   The [Spotify URI](/documentation/web-api/concepts/spotify-uris-ids) for this user.
@@ -2821,7 +2821,7 @@ type CategoryObject {
   """A link to the Web API endpoint returning full details of the category."""
   href: String!
   """The category icon, in various sizes."""
-  icons: [ImageObject]!
+  icons: [ImageObject!]!
   """
   The [Spotify category ID](/documentation/web-api/concepts/spotify-uris-ids) of the category.
   """
@@ -2854,7 +2854,7 @@ type CursorPagingSimplifiedArtistObject {
   cursors: CursorObject
   """The total number of items available to return."""
   total: Int
-  items: [ArtistObject]
+  items: [ArtistObject!]
 }
 
 type CursorObject {
@@ -2876,7 +2876,7 @@ enum queryInput_check_current_user_follows_type {
 
 """A set of audio features"""
 type ManyAudioFeatures_response {
-  audio_features: [AudioFeaturesObject]!
+  audio_features: [AudioFeaturesObject!]!
 }
 
 """Audio features for one track"""
@@ -2958,23 +2958,23 @@ type AudioAnalysisObject {
   """
   The time intervals of the bars throughout the track. A bar (or measure) is a segment of time defined as a given number of beats.
   """
-  bars: [TimeIntervalObject]
+  bars: [TimeIntervalObject!]
   """
   The time intervals of beats throughout the track. A beat is the basic time unit of a piece of music; for example, each tick of a metronome. Beats are typically multiples of tatums.
   """
-  beats: [TimeIntervalObject]
+  beats: [TimeIntervalObject!]
   """
   Sections are defined by large variations in rhythm or timbre, e.g. chorus, verse, bridge, guitar solo, etc. Each section contains its own descriptions of tempo, key, mode, time_signature, and loudness.
   """
-  sections: [SectionObject]
+  sections: [SectionObject!]
   """
   Each segment contains a roughly conisistent sound throughout its duration.
   """
-  segments: [SegmentObject]
+  segments: [SegmentObject!]
   """
   A tatum represents the lowest regular pulse train that a listener intuitively infers from the timing of perceived musical events (segments).
   """
-  tatums: [TimeIntervalObject]
+  tatums: [TimeIntervalObject!]
 }
 
 type query_get_audio_analysis_meta {
@@ -3184,7 +3184,7 @@ type SegmentObject {
   As can be seen below, the 12 vector indices are a combination of low-power spectrum values at their respective pitch frequencies.
   ![pitch vector](https://developer.spotify.com/assets/audio/Pitch_vector.png)
   """
-  pitches: [NonNegativeFloat]
+  pitches: [NonNegativeFloat!]
   """
   Timbre is the quality of a musical note or sound that distinguishes different types of musical instruments, or voices. It is a complex notion also referred to as sound color, texture, or tone quality, and is derived from the shape of a segment’s spectro-temporal surface, independently of pitch and loudness. The timbre feature is a vector that includes 12 unbounded values roughly centered around 0. Those values are high level abstractions of the spectral surface, ordered by degree of importance.
   
@@ -3193,17 +3193,17 @@ type SegmentObject {
   
   The actual timbre of the segment is best described as a linear combination of these 12 basis functions weighted by the coefficient values: timbre = c1 x b1 + c2 x b2 + ... + c12 x b12, where c1 to c12 represent the 12 coefficients and b1 to b12 the 12 basis functions as displayed below. Timbre vectors are best used in comparison with each other.
   """
-  timbre: [Float]
+  timbre: [Float!]
 }
 
 """A set of recommendations"""
 type RecommendationsObject {
   """An array of recommendation seed objects."""
-  seeds: [RecommendationSeedObject]!
+  seeds: [RecommendationSeedObject!]!
   """
   An array of track object (simplified) ordered according to the parameters supplied.
   """
-  tracks: [TrackObject]!
+  tracks: [TrackObject!]!
 }
 
 type RecommendationSeedObject {
@@ -3231,7 +3231,7 @@ type RecommendationSeedObject {
 
 """A set of genres"""
 type ManyGenres_response {
-  genres: [String]!
+  genres: [String!]!
 }
 
 union get_information_about_the_users_current_playback_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "CurrentlyPlayingContextObject") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = CurrentlyPlayingContextObject | Void_container
@@ -3326,7 +3326,7 @@ scalar Void
 
 """A set of devices"""
 type ManyDevices_response {
-  devices: [DeviceObject]!
+  devices: [DeviceObject!]!
 }
 
 """A paged set of tracks"""
@@ -3344,7 +3344,7 @@ type CursorPagingPlayHistoryObject {
   cursors: CursorObject
   """The total number of items available to return."""
   total: Int
-  items: [PlayHistoryObject]
+  items: [PlayHistoryObject!]
 }
 
 type PlayHistoryObject {
@@ -3358,7 +3358,7 @@ type PlayHistoryObject {
 type QueueObject {
   currently_playing: query_get_queue_currently_playing
   """The tracks or episodes in the queue. Can be empty."""
-  queue: [query_get_queue_queue_items]
+  queue: [query_get_queue_queue_items!]
 }
 
 """The currently playing track or episode. Can be \`null\`."""
@@ -3367,7 +3367,7 @@ union query_get_queue_currently_playing @discriminator(subgraph: "test", field: 
 union query_get_queue_queue_items @discriminator(subgraph: "test", field: "type") = TrackObject | EpisodeObject
 
 type get_available_markets_200_response {
-  markets: [String]
+  markets: [String!]
 }
 
 type Mutation {
@@ -3773,7 +3773,7 @@ input add_tracks_to_playlist_request_Input {
   """
   A JSON array of the [Spotify URIs](/documentation/web-api/concepts/spotify-uris-ids) to add. For example: \`{"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh","spotify:track:1301WleyT98MSxVHPZCA6M", "spotify:episode:512ojhOuo1ktJprKbVcKyQ"]}\`<br/>A maximum of 100 items can be added in one request. _**Note**: if the \`uris\` parameter is present in the query string, any URIs listed here in the body will be ignored._
   """
-  uris: [String]
+  uris: [String!]
   """
   The position to insert the items, a zero-based index. For example, to insert the items in the first position: \`position=0\` ; to insert the items in the third position: \`position=2\`. If omitted, the items will be appended to the playlist. Items are added in the order they appear in the uris array. For example: \`{"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh","spotify:track:1301WleyT98MSxVHPZCA6M"], "position": 3}\`
   """
@@ -3781,7 +3781,7 @@ input add_tracks_to_playlist_request_Input {
 }
 
 input reorder_or_replace_playlists_tracks_request_Input {
-  uris: [String]
+  uris: [String!]
   """The position of the first item to be reordered."""
   range_start: Int
   """
@@ -3801,7 +3801,7 @@ input remove_tracks_playlist_request_Input {
   An array of objects containing [Spotify URIs](/documentation/web-api/concepts/spotify-uris-ids) of the tracks or episodes to remove.
   For example: \`{ "tracks": [{ "uri": "spotify:track:4iV5W9uYEdYUVa79Axb7Rh" },{ "uri": "spotify:track:1301WleyT98MSxVHPZCA6M" }] }\`. A maximum of 100 objects can be sent at once.
   """
-  tracks: [mutationInput_remove_tracks_playlist_input_tracks_items_Input]!
+  tracks: [mutationInput_remove_tracks_playlist_input_tracks_items_Input!]!
   """
   The playlist's snapshot ID against which you want to make the changes.
   The API will validate that the specified items exist and in the specified positions and make the changes,
@@ -3819,21 +3819,21 @@ input save_albums_user_request_Input {
   """
   A JSON array of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`["4iV5W9uYEdYUVa79Axb7Rh", "1301WleyT98MSxVHPZCA6M"]\`<br/>A maximum of 50 items can be specified in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._
   """
-  ids: [String]
+  ids: [String!]
 }
 
 input remove_albums_user_request_Input {
   """
   A JSON array of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`["4iV5W9uYEdYUVa79Axb7Rh", "1301WleyT98MSxVHPZCA6M"]\`<br/>A maximum of 50 items can be specified in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._
   """
-  ids: [String]
+  ids: [String!]
 }
 
 input save_tracks_user_request_Input {
   """
   A JSON array of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`["4iV5W9uYEdYUVa79Axb7Rh", "1301WleyT98MSxVHPZCA6M"]\`<br/>A maximum of 50 items can be specified in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._
   """
-  ids: [String]
+  ids: [String!]
   uris: JSON!
 }
 
@@ -3841,14 +3841,14 @@ input remove_tracks_user_request_Input {
   """
   A JSON array of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`["4iV5W9uYEdYUVa79Axb7Rh", "1301WleyT98MSxVHPZCA6M"]\`<br/>A maximum of 50 items can be specified in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._
   """
-  ids: [String]
+  ids: [String!]
 }
 
 input save_episodes_user_request_Input {
   """
   A JSON array of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). <br/>A maximum of 50 items can be specified in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._
   """
-  ids: [String]
+  ids: [String!]
   uris: JSON!
 }
 
@@ -3856,7 +3856,7 @@ input remove_episodes_user_request_Input {
   """
   A JSON array of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). <br/>A maximum of 50 items can be specified in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._
   """
-  ids: [String]
+  ids: [String!]
 }
 
 input create_playlist_request_Input {
@@ -3896,7 +3896,7 @@ input follow_artists_users_request_Input {
   A JSON array of the artist or user [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids).
   For example: \`{ids:["74ASZWbe4lXaubB36ztrGX", "08td7MxkoHQkXnWAYD8d6Q"]}\`. A maximum of 50 IDs can be sent in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._
   """
-  ids: [String]!
+  ids: [String!]!
 }
 
 """The ID type: either \`artist\` or \`user\`."""
@@ -3909,14 +3909,14 @@ input unfollow_artists_users_request_Input {
   """
   A JSON array of the artist or user [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`{ids:["74ASZWbe4lXaubB36ztrGX", "08td7MxkoHQkXnWAYD8d6Q"]}\`. A maximum of 50 IDs can be sent in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._
   """
-  ids: [String]
+  ids: [String!]
 }
 
 input transfer_a_users_playback_request_Input {
   """
   A JSON array containing the ID of the device on which playback should be started/transferred.<br/>For example:\`{device_ids:["74ASZWbe4lXaubB36ztrGX"]}\`<br/>_**Note**: Although an array is accepted, only a single device_id is currently supported. Supplying more than one will return \`400 Bad Request\`_
   """
-  device_ids: [String]!
+  device_ids: [String!]!
   """
   **true**: ensure playback happens on new device.<br/>**false** or not provided: keep the current playback state.
   """
@@ -3934,7 +3934,7 @@ input start_a_users_playback_request_Input {
   Optional. A JSON array of the Spotify track URIs to play.
   For example: \`{"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"]}\`
   """
-  uris: [String]
+  uris: [String!]
   """
   Optional. Indicates from where in the context playback should start. Only available when context_uri corresponds to an album or playlist object
   "position" is zero based and can’t be negative. Example: \`"offset": {"position": 5}\`

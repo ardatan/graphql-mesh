@@ -233,18 +233,18 @@ export function getComposerFromJSONSchema({
             // These are filled after enter
             get input() {
               const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
-              return typeComposers.input.getTypePlural();
+              return typeComposers.input.NonNull.List;
             },
             get output() {
               const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
-              return typeComposers.output.getTypePlural();
+              return typeComposers.output.NonNull.List;
             },
             ...subSchema,
           };
         }
         if (subSchema.contains) {
           // Scalars cannot be in union type
-          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).getTypePlural();
+          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).NonNull.List;
           return {
             input: typeComposer,
             output: typeComposer,
@@ -263,7 +263,7 @@ export function getComposerFromJSONSchema({
           //   subSchema,
           //   validateWithJSONSchema,
           // }).getTypePlural();
-          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).getTypePlural();
+          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).NonNull.List;
           return {
             input: typeComposer,
             output: typeComposer,
@@ -894,11 +894,9 @@ export function getComposerFromJSONSchema({
             logger,
           });
           return {
-            input: input.getTypePlural(),
+            input: input.NonNull.List,
             output:
-              output instanceof ListComposer
-                ? output
-                : (output as ObjectTypeComposer).getTypePlural(),
+              output instanceof ListComposer ? output : (output as ObjectTypeComposer).NonNull.List,
             nullable: subSchemaAndTypeComposers.nullable,
             default: subSchemaAndTypeComposers.default,
             readOnly: subSchemaAndTypeComposers.readOnly,
@@ -928,13 +926,17 @@ export function getComposerFromJSONSchema({
         for (const maybeTypeComposers of subSchemaAndTypeComposers.allOf as any) {
           let { input: inputTypeComposer, output: outputTypeComposer } = maybeTypeComposers;
 
-          if (inputTypeComposer instanceof ListComposer) {
-            isList = true;
+          while (inputTypeComposer.ofType) {
+            if (inputTypeComposer instanceof ListComposer) {
+              isList = true;
+            }
             inputTypeComposer = inputTypeComposer.ofType;
           }
 
-          if (outputTypeComposer instanceof ListComposer) {
-            isList = true;
+          while (outputTypeComposer.ofType) {
+            if (outputTypeComposer instanceof ListComposer) {
+              isList = true;
+            }
             outputTypeComposer = outputTypeComposer.ofType;
           }
 
@@ -1106,12 +1108,16 @@ export function getComposerFromJSONSchema({
         let ableToUseGraphQLInputObjectType = true;
         for (const typeComposers of subSchemaAndTypeComposers.anyOf as any) {
           let { input: inputTypeComposer, output: outputTypeComposer } = typeComposers;
-          if (
-            inputTypeComposer instanceof ListComposer ||
-            outputTypeComposer instanceof ListComposer
-          ) {
-            isList = true;
+          while (inputTypeComposer.ofType) {
+            if (inputTypeComposer instanceof ListComposer) {
+              isList = true;
+            }
             inputTypeComposer = inputTypeComposer.ofType;
+          }
+          while (outputTypeComposer.ofType) {
+            if (outputTypeComposer instanceof ListComposer) {
+              isList = true;
+            }
             outputTypeComposer = outputTypeComposer.ofType;
           }
           if (

@@ -47,7 +47,7 @@ type Mutation {
 }
 
 type UsersByIdResponse @source(subgraph: "ExampleAPI", name: "UsersByIdResponse") {
-  results: [User]! @source(subgraph: "ExampleAPI", name: "results", type: "[User]!")
+  results: [User!]! @source(subgraph: "ExampleAPI", name: "results", type: "[User!]!")
 }
 
 type User @source(subgraph: "ExampleAPI", name: "User") {
@@ -56,7 +56,7 @@ type User @source(subgraph: "ExampleAPI", name: "User") {
 }
 
 input UsersByIdRequest_Input @source(subgraph: "ExampleAPI", name: "UsersByIdRequest_Input") {
-  ids: [Float]! @source(subgraph: "ExampleAPI", name: "ids", type: "[Float]!")
+  ids: [Float!]! @source(subgraph: "ExampleAPI", name: "ids", type: "[Float!]!")
 }
 
 scalar ObjMap @source(subgraph: "ExampleAPI", name: "ObjMap") @source(subgraph: "ExampleAPI", name: "ObjMap")

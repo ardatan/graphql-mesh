@@ -15,7 +15,7 @@ directive @transport(headers: ObjMap, kind: String, location: String, queryParam
 """Desc Api Population"""
 type ApiPopulation {
   _response: ResponseMetadata
-  records: [Result]
+  records: [Result!]
 }
 
 """"""
