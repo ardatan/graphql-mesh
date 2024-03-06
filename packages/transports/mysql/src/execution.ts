@@ -1,7 +1,7 @@
 import { getNamedType, GraphQLResolveInfo, GraphQLSchema, isObjectType } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { createPool, type Pool } from 'mysql';
-import { upgrade } from 'mysql-utilities';
+import { introspection, upgrade } from 'mysql-utilities';
 import { util } from '@graphql-mesh/cross-helpers';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
@@ -195,6 +195,7 @@ export function getMySQLExecutor({
     trace: !!isDebug,
   });
   pool.on('connection', connection => {
+    introspection(connection);
     upgrade(connection);
   });
 
