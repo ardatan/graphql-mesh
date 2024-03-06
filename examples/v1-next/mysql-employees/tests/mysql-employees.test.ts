@@ -31,6 +31,7 @@ describe('MySQL Employees', () => {
     const res = await executor({
       document: parsedDoc,
       variables: {},
+      context: {},
     });
     expect(res).toMatchSnapshot('example-query.graphql-query-result');
   });
