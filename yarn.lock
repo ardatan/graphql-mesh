@@ -27250,16 +27250,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"openapi-orbit@workspace:examples/openapi-orbit":
-  version: 0.0.0-use.local
-  resolution: "openapi-orbit@workspace:examples/openapi-orbit"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.89.1"
-    "@graphql-mesh/openapi": "npm:0.99.1"
-    graphql: "npm:16.8.1"
-  languageName: unknown
-  linkType: soft
-
 "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit":
   version: 0.0.0-use.local
   resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
