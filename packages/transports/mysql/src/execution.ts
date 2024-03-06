@@ -212,6 +212,7 @@ export function getMySQLExecutor({
     try {
       return await defaultExecutor(executionRequest);
     } finally {
+      mysqlConnectionByContext.delete(executionRequest.context);
       mysqlConnection.release();
     }
   };
