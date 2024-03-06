@@ -1,7 +1,9 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { parse } from 'graphql';
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 
-const typeDefs = gql`
+const typeDefs = parse(/* GraphQL */ `
   type Review @key(fields: "id") {
     id: ID!
     body: String
@@ -19,7 +21,7 @@ const typeDefs = gql`
     upc: String! @external
     reviews: [Review]
   }
-`;
+`);
 
 const resolvers = {
   Review: {
@@ -56,7 +58,7 @@ const server = new ApolloServer({
 });
 
 export const reviewsServer = () =>
-  server.listen({ port: 9874 }).then(({ url }) => {
+  startStandaloneServer(server, { listen: { port: 9874 } }).then(({ url }) => {
     if (!process.env.CI) {
       console.log(`🚀 Server ready at ${url}`);
     }
