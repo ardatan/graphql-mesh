@@ -1,6 +1,6 @@
 import { getNamedType, GraphQLResolveInfo, GraphQLSchema, isObjectType } from 'graphql';
 import graphqlFields from 'graphql-fields';
-import { createPool, type Pool } from 'mysql';
+import { createPool, PoolConnection, type Pool } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { util } from '@graphql-mesh/cross-helpers';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
@@ -78,15 +78,14 @@ export function getMySQLExecutor({
                   }
                 }
               }
+              const mysqlConnection = mysqlConnectionByContext.get(context);
               if (limit.length) {
                 const selectLimit$ = util.promisify(
-                  context.mysqlConnection.selectLimit.bind(context.mysqlConnection),
+                  mysqlConnection.selectLimit.bind(mysqlConnection),
                 );
                 return selectLimit$(table, fields, limit, where, args?.orderBy);
               } else {
-                const select$ = util.promisify(
-                  context.mysqlConnection.select.bind(context.mysqlConnection),
-                );
+                const select$ = util.promisify(mysqlConnection.select.bind(mysqlConnection));
                 return select$(table, fields, where, args?.orderBy);
               }
             };
@@ -100,9 +99,8 @@ export function getMySQLExecutor({
               context: MySQLContext,
               info,
             ) {
-              const count$ = util.promisify(
-                context.mysqlConnection.count.bind(context.mysqlConnection),
-              );
+              const mysqlConnection = mysqlConnectionByContext.get(context);
+              const count$ = util.promisify(mysqlConnection.count.bind(mysqlConnection));
               return count$(table, args.where);
             };
             break;
@@ -115,12 +113,9 @@ export function getMySQLExecutor({
               context: MySQLContext,
               info,
             ) {
-              const select$ = util.promisify(
-                context.mysqlConnection.select.bind(context.mysqlConnection),
-              );
-              const insert$ = util.promisify(
-                context.mysqlConnection.insert.bind(context.mysqlConnection),
-              );
+              const mysqlConnection = mysqlConnectionByContext.get(context);
+              const select$ = util.promisify(mysqlConnection.select.bind(mysqlConnection));
+              const insert$ = util.promisify(mysqlConnection.insert.bind(mysqlConnection));
               const input = args[table];
               const { recordId } = await insert$(table, input);
               const fields = getFieldsFromResolveInfo(info);
@@ -141,14 +136,11 @@ export function getMySQLExecutor({
               context: MySQLContext,
               info,
             ) {
-              const update$ = util.promisify(
-                context.mysqlConnection.update.bind(context.mysqlConnection),
-              );
+              const mysqlConnection = mysqlConnectionByContext.get(context);
+              const update$ = util.promisify(mysqlConnection.update.bind(mysqlConnection));
               await update$(table, args[table], args.where);
               const fields = getFieldsFromResolveInfo(info);
-              const select$ = util.promisify(
-                context.mysqlConnection.select.bind(context.mysqlConnection),
-              );
+              const select$ = util.promisify(mysqlConnection.select.bind(mysqlConnection));
               const result = await select$(table, fields, args.where, {});
               return result[0];
             };
@@ -162,9 +154,8 @@ export function getMySQLExecutor({
               context: MySQLContext,
               info,
             ) {
-              const delete$ = util.promisify(
-                context.mysqlConnection.delete.bind(context.mysqlConnection),
-              );
+              const mysqlConnection = mysqlConnectionByContext.get(context);
+              const delete$ = util.promisify(mysqlConnection.delete.bind(mysqlConnection));
               const res = await delete$(table, args.where);
               return !!res.affectedRows;
             };
@@ -217,17 +208,13 @@ export function getMySQLExecutor({
   }
   return async function mysqlExecutor(executionRequest) {
     const mysqlConnection = await getConnection$();
-    const mysqlContext = {
-      mysqlConnection,
-      ...executionRequest.context,
-    };
+    mysqlConnectionByContext.set(executionRequest.context, mysqlConnection);
     try {
-      return await defaultExecutor({
-        ...executionRequest,
-        context: mysqlContext,
-      });
+      return await defaultExecutor(executionRequest);
     } finally {
       mysqlConnection.release();
     }
   };
 }
+
+const mysqlConnectionByContext = new WeakMap<any, PoolConnection>();
