@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { inspect } from 'node:util';
-import { ApolloServer } from 'apollo-server';
 import { parse } from 'graphql';
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 
 const typeDefs = parse(readFileSync(join(__dirname, './typeDefs.graphql'), 'utf8'));
@@ -37,7 +38,7 @@ const server = new ApolloServer({
 });
 
 export const inventoryServer = () =>
-  server.listen({ port: 9872 }).then(({ url }) => {
+  startStandaloneServer(server, { listen: { port: 9872 } }).then(({ url }) => {
     if (!process.env.CI) {
       console.log(`🚀 Server ready at ${url}`);
     }
