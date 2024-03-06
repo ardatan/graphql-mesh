@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/soap-demo",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,9 +8,9 @@
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.2.0",
-    "@graphql-mesh/serve-cli": "^0.3.0",
-    "@omnigraph/soap": "^0.97.0",
+    "@graphql-mesh/compose-cli": "^0.2.1",
+    "@graphql-mesh/serve-cli": "^0.3.1",
+    "@omnigraph/soap": "^0.97.1",
     "graphql": "16.8.1"
   }
 }

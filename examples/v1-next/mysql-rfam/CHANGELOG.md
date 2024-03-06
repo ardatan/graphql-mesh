@@ -1,5 +1,15 @@
 # mysql-rfam
 
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`915b8f8`](https://github.com/ardatan/graphql-mesh/commit/915b8f8e56edc22515ca99e396f1c9d3b4e904b9)]:
+  - @graphql-mesh/compose-cli@0.2.1
+  - @graphql-mesh/serve-cli@0.3.1
+  - @omnigraph/mysql@0.1.1
+
 ## 0.14.0
 
 ### Patch Changes

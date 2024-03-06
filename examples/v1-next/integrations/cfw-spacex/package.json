@@ -1,16 +1,16 @@
 {
   "name": "@v1-next/cfw-spacex",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "scripts": {
     "start": "wrangler dev"
   },
   "dependencies": {
     "@envelop/depth-limit": "^4.0.0",
-    "@graphql-mesh/cache-cfw-kv": "^0.97.0",
-    "@graphql-mesh/plugin-rate-limit": "^0.97.0",
-    "@graphql-mesh/plugin-response-cache": "^0.97.0",
-    "@graphql-mesh/serve-runtime": "^0.2.0",
+    "@graphql-mesh/cache-cfw-kv": "^0.97.1",
+    "@graphql-mesh/plugin-rate-limit": "^0.97.1",
+    "@graphql-mesh/plugin-response-cache": "^0.97.1",
+    "@graphql-mesh/serve-runtime": "^0.2.1",
     "graphql": "16.8.1"
   },
   "devDependencies": {

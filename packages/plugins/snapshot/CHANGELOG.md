@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-snapshot
 
+## 0.97.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dbaf72c`](https://github.com/ardatan/graphql-mesh/commit/dbaf72c4520f64524dce14b798019639c4d57020)]:
+  - @graphql-mesh/types@0.97.1
+  - @graphql-mesh/utils@0.97.1
+
 ## 0.97.0
 
 ### Patch Changes
