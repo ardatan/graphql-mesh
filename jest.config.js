@@ -11,7 +11,7 @@ const tsconfig = JSON5.parse(tsconfigStr);
 
 process.env.LC_ALL = 'en_US';
 
-const testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
+const testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)', '!**/.mesh/**'];
 
 if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/grpc-*/**');

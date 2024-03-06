@@ -25,7 +25,7 @@ type Query {
 union searchCollection_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "SearchResult") @statusCodeTypeName(subgraph: "example_api", statusCode: 400, typeName: "ApiResponse") @statusCodeTypeName(subgraph: "example_api", statusCode: 404, typeName: "ApiResponse") = SearchResult | ApiResponse
 
 type SearchResult {
-  facet_counts: [FacetCounts]
+  facet_counts: [FacetCounts!]
   """The number of documents found"""
   found: Int
   """The number of milliseconds the search took"""
@@ -36,14 +36,14 @@ type SearchResult {
   search_cutoff: Boolean
   """The search result page number"""
   page: Int
-  grouped_hits: [SearchGroupedHit]
+  grouped_hits: [SearchGroupedHit!]
   """The documents that matched the search query"""
-  hits: [SearchResultHit]
+  hits: [SearchResultHit!]
   request_params: query_searchCollection_oneOf_0_request_params
 }
 
 type FacetCounts {
-  counts: [query_searchCollection_oneOf_0_facet_counts_items_counts_items]
+  counts: [query_searchCollection_oneOf_0_facet_counts_items_counts_items!]
   field_name: String
   stats: query_searchCollection_oneOf_0_facet_counts_items_stats
 }
@@ -63,14 +63,14 @@ type query_searchCollection_oneOf_0_facet_counts_items_stats {
 }
 
 type SearchGroupedHit {
-  group_key: [String]!
+  group_key: [String!]!
   """The documents that matched the search query"""
-  hits: [SearchResultHit]!
+  hits: [SearchResultHit!]!
 }
 
 type SearchResultHit {
   """Contains highlighted portions of the search fields"""
-  highlights: [SearchHighlight]
+  highlights: [SearchHighlight!]
   """Can be any key-value pair"""
   document: JSON
   text_match: BigInt
@@ -83,12 +83,12 @@ type SearchHighlight {
   """Present only for (non-array) string fields"""
   snippet: String
   """Present only for (array) string[] fields"""
-  snippets: [String]
+  snippets: [String!]
   """
   The indices property will be present only for string[] fields and will contain the corresponding indices of the snippets in the search field
   """
-  indices: [Int]
-  matched_tokens: [JSON]
+  indices: [Int!]
+  matched_tokens: [JSON!]
 }
 
 """

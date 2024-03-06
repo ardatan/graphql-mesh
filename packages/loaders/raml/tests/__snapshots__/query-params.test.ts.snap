@@ -14,7 +14,7 @@ type Query {
   listOfProducts(
     """Get approved products"""
     isApproved: Boolean = true
-  ): [Product] @httpOperation(subgraph: "query-params", path: "/listOfProducts", httpMethod: GET, queryParamArgMap: "{\\"isApproved\\":\\"isApproved\\"}")
+  ): [Product!] @httpOperation(subgraph: "query-params", path: "/listOfProducts", httpMethod: GET, queryParamArgMap: "{\\"isApproved\\":\\"isApproved\\"}")
 }
 
 type Product {

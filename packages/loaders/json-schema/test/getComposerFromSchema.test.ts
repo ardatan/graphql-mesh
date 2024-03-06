@@ -204,7 +204,7 @@ union User = Writer | Admin
 type Writer {
   id: String
   name: String
-  posts: [Post]
+  posts: [Post!]
 }
 
 ${printType(GraphQLString)}
@@ -218,7 +218,7 @@ type Post {
 type Admin {
   id: String
   name: String
-  permissions: [AdminPermission]
+  permissions: [AdminPermission!]
 }
 
 enum AdminPermission {
@@ -808,9 +808,9 @@ type ExampleAnyOf {
       logger,
     });
     expect(isListType(result.input.getType())).toBeTruthy();
-    expect((result.input as ListComposer).ofType.getType()).toBe(GraphQLString);
+    expect((result.input as ListComposer).getUnwrappedTC().getType()).toBe(GraphQLString);
     expect(isListType((result.output as ListComposer).getType())).toBeTruthy();
-    expect((result.output as ListComposer).ofType.getType()).toBe(GraphQLString);
+    expect((result.output as ListComposer).getUnwrappedTC().getType()).toBe(GraphQLString);
   });
   it('should return generic JSON type for array definitions with contains', async () => {
     const title = 'ExampleArray';
@@ -829,8 +829,8 @@ type ExampleAnyOf {
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as ListComposer;
     expect(isListType(outputComposer.getType())).toBeTruthy();
-    expect(isScalarType(outputComposer.ofType.getType())).toBeTruthy();
-    expect(outputComposer.ofType.getTypeName()).toBe('JSON');
+    expect(isScalarType(outputComposer.getUnwrappedTC().getType())).toBeTruthy();
+    expect(outputComposer.getUnwrappedTC().getTypeName()).toBe('JSON');
   });
   // This is not valid and should be healed first
   it.skip('should return union type inside a list type if array definition has items as an array', async () => {

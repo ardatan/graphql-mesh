@@ -30,7 +30,7 @@ export function getContainerTC(
   schemaComposer: SchemaComposer,
   output: ComposeInputType,
 ) {
-  const containerTypeName = `${output.getTypeName()}_container`;
+  const containerTypeName = `${output.getTypeName().split('!').join('')}_container`;
   schemaComposer.addDirective(ResolveRootDirective);
   return schemaComposer.getOrCreateOTC(containerTypeName, otc =>
     otc.addFields({
@@ -64,9 +64,11 @@ export function getUnionTypeComposers({
   let isOutputPlural = false;
   typeComposersList.forEach(typeComposers => {
     let { input, output } = typeComposers;
-    if (output instanceof ListComposer) {
-      output = output.getUnwrappedTC() as ObjectTypeComposer | UnionTypeComposer;
-      isOutputPlural = true;
+    while ((output as any).ofType) {
+      if (!isOutputPlural) {
+        isOutputPlural = output instanceof ListComposer;
+      }
+      output = (output as any).ofType;
     }
     if (isSomeInputTypeComposer(output)) {
       outputTypeComposers.push(getContainerTC(subgraphName, schemaComposer, output));
@@ -74,11 +76,16 @@ export function getUnionTypeComposers({
       outputTypeComposers.push(output);
     }
     if (input) {
-      const inputTypeName =
-        input instanceof ListComposer
-          ? input.getUnwrappedTC().getTypeName() + '_list'
-          : input.getTypeName();
-      unionInputFields[inputTypeName] = {
+      let isInputPlural = false;
+      while ((input as any).ofType) {
+        if (!isInputPlural) {
+          isInputPlural = input instanceof ListComposer;
+        }
+        input = (input as any).ofType;
+      }
+      const inputTypeName = input.getTypeName();
+      const fieldName = isInputPlural ? inputTypeName + '_list' : inputTypeName;
+      unionInputFields[fieldName] = {
         type: input,
       };
     }
@@ -103,7 +110,12 @@ export function getUnionTypeComposers({
     ).getExtension('statusCodeOneOfIndexMap');
     const statusCodeOneOfIndexMapEntries = Object.entries(statusCodeOneOfIndexMap || {});
     for (const outputTypeComposerIndex in outputTypeComposers) {
-      const outputTypeComposer = outputTypeComposers[outputTypeComposerIndex];
+      let outputTypeComposer = outputTypeComposers[outputTypeComposerIndex];
+      while ((outputTypeComposer as any).ofType) {
+        outputTypeComposer = (outputTypeComposer as any).ofType as
+          | ObjectTypeComposer
+          | UnionTypeComposer;
+      }
       const statusCode = statusCodeOneOfIndexMapEntries.find(
         ([statusCode, index]) => index.toString() === outputTypeComposerIndex.toString(),
       )?.[0];

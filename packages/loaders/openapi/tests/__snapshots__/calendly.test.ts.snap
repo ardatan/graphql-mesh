@@ -309,11 +309,11 @@ type Query {
     """
     search_term: queryInput_activityLog_search_term
     """Return entries from the user(s) associated with the provided URIs"""
-    actor: [URL]
+    actor: [URL!]
     """
     Order results by the specified field and direction. List of {field}:{direction} values.
     """
-    sort: [queryInput_activityLog_sort_items] = [occurred_at_desc]
+    sort: [queryInput_activityLog_sort_items!] = [occurred_at_desc]
     """
     Include entries that occurred after this time (sample time format: "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.
     """
@@ -327,9 +327,9 @@ type Query {
     """The number of rows to return"""
     count: PositiveInt = 20
     """The categories of the entries"""
-    namespace: [String]
+    namespace: [String!]
     """The action(s) associated with the entries"""
-    action: [String]
+    action: [String!]
   ): activityLog_response @httpOperation(subgraph: "calendly", path: "/activity_log_entries", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"search_term\\":\\"search_term\\",\\"actor\\":\\"actor\\",\\"sort\\":\\"sort\\",\\"min_occurred_at\\":\\"min_occurred_at\\",\\"max_occurred_at\\":\\"max_occurred_at\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"namespace\\":\\"namespace\\",\\"action\\":\\"action\\"}", queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
 }
 
@@ -338,7 +338,7 @@ union getInvitees_response @statusCodeTypeName(subgraph: "calendly", statusCode:
 """Service response"""
 type getInvitees_200_response {
   """The set of event invitees matching the criteria"""
-  collection: [Invitee]!
+  collection: [Invitee!]!
   pagination: Pagination!
 }
 
@@ -362,7 +362,7 @@ type Invitee {
   """
   A collection of the invitee's responses to questions on the event booking confirmation form
   """
-  questions_and_answers: [Invitee_Question_and_Answer]!
+  questions_and_answers: [Invitee_Question_and_Answer!]!
   """Time zone to use when displaying time to the invitee"""
   timezone: String
   """A reference to the event"""
@@ -539,7 +539,7 @@ type Pagination {
 type INVALID_ARGUMENT_response {
   title: Invalid_Argument_const
   message: The_supplied_parameters_are_invalid__const
-  details: [query_getInvitees_oneOf_1_allOf_0_details_items]
+  details: [query_getInvitees_oneOf_1_allOf_0_details_items!]
 }
 
 enum Invalid_Argument_const @typescript(subgraph: "calendly", type: "\\"Invalid Argument\\"") @example(subgraph: "calendly", value: "\\"Invalid Argument\\"") {
@@ -559,7 +559,7 @@ type query_getInvitees_oneOf_1_allOf_0_details_items {
 type UNAUTHENTICATED_response {
   title: Unauthenticated_const
   message: query_getInvitees_oneOf_2_allOf_1_message
-  details: [query_getInvitees_oneOf_1_allOf_0_details_items]
+  details: [query_getInvitees_oneOf_1_allOf_0_details_items!]
 }
 
 enum Unauthenticated_const @typescript(subgraph: "calendly", type: "\\"Unauthenticated\\"") @example(subgraph: "calendly", value: "\\"Unauthenticated\\"") {
@@ -576,7 +576,7 @@ enum query_getInvitees_oneOf_2_allOf_1_message {
 type PERMISSION_DENIED_response {
   title: Permission_Denied_const
   message: query_getInvitees_oneOf_3_allOf_1_message
-  details: [query_getInvitees_oneOf_1_allOf_0_details_items]
+  details: [query_getInvitees_oneOf_1_allOf_0_details_items!]
 }
 
 enum Permission_Denied_const @typescript(subgraph: "calendly", type: "\\"Permission Denied\\"") @example(subgraph: "calendly", value: "\\"Permission Denied\\"") {
@@ -599,7 +599,7 @@ enum query_getInvitees_oneOf_3_allOf_1_message {
 type NOT_FOUND_response {
   title: Resource_Not_Found_const
   message: The_server_could_not_find_the_requested_resource__const
-  details: [query_getInvitees_oneOf_1_allOf_0_details_items]
+  details: [query_getInvitees_oneOf_1_allOf_0_details_items!]
 }
 
 enum Resource_Not_Found_const @typescript(subgraph: "calendly", type: "\\"Resource Not Found\\"") @example(subgraph: "calendly", value: "\\"Resource Not Found\\"") {
@@ -614,7 +614,7 @@ enum The_server_could_not_find_the_requested_resource__const @typescript(subgrap
 type UNKNOWN_response {
   title: Internal_Server_Error_const
   message: The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request__const
-  details: [query_getInvitees_oneOf_1_allOf_0_details_items]
+  details: [query_getInvitees_oneOf_1_allOf_0_details_items!]
 }
 
 enum Internal_Server_Error_const @typescript(subgraph: "calendly", type: "\\"Internal Server Error\\"") @example(subgraph: "calendly", value: "\\"Internal Server Error\\"") {
@@ -641,7 +641,7 @@ union getScheduledEvents_response @statusCodeTypeName(subgraph: "calendly", stat
 """Service response"""
 type getScheduledEvents_200_response {
   """The set of scheduled events matching the criteria"""
-  collection: [Event]!
+  collection: [Event!]!
   pagination: Pagination!
 }
 
@@ -673,9 +673,9 @@ type Event {
   """
   updated_at: DateTime!
   """Event membership list"""
-  event_memberships: [query_getScheduledEvents_oneOf_0_collection_items_event_memberships_items]!
+  event_memberships: [query_getScheduledEvents_oneOf_0_collection_items_event_memberships_items!]!
   """Additional people added to an event by an invitee"""
-  event_guests: [Guest]!
+  event_guests: [Guest!]!
   cancellation: Cancellation
 }
 
@@ -781,7 +781,7 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data {
 }
 
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_settings {
-  global_dial_in_numbers: [query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_settings_global_dial_in_numbers_items]
+  global_dial_in_numbers: [query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_settings_global_dial_in_numbers_items!]
 }
 
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_settings_global_dial_in_numbers_items {
@@ -915,7 +915,7 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data {
 }
 
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data_telephony {
-  callInNumbers: [query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data_telephony_callInNumbers_items]!
+  callInNumbers: [query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data_telephony_callInNumbers_items!]!
 }
 
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data_telephony_callInNumbers_items {
@@ -957,7 +957,7 @@ union getEventTypes_response @statusCodeTypeName(subgraph: "calendly", statusCod
 
 """Service response"""
 type getEventTypes_200_response {
-  collection: [Event_Type]!
+  collection: [Event_Type!]!
   pagination: Pagination!
 }
 
@@ -1003,7 +1003,7 @@ type Event_Type {
   """
   secret: Boolean!
   booking_method: query_getEventTypes_oneOf_0_collection_items_booking_method!
-  custom_questions: [EventTypeCustomQuestion]!
+  custom_questions: [EventTypeCustomQuestion!]!
   """
   The moment the event type was deleted (e.g. "2020-01-02T03:04:05.678123Z"). Since event types can be deleted but their scheduled events remain it's useful to fetch a deleted event type when you still require event type data for a scheduled event.
   """
@@ -1082,7 +1082,7 @@ type EventTypeCustomQuestion {
   """
   The invitee’s option(s) for single_select or multi_select type of responses.
   """
-  answer_choices: [String]!
+  answer_choices: [String!]!
   """
   true if the custom question lets invitees record a written response in addition to single-select or multiple-select type of responses; false if it doesn’t.
   """
@@ -1156,7 +1156,7 @@ type get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response {
 type Error_Response {
   title: String!
   message: String!
-  details: [query_getInvitees_oneOf_1_allOf_0_details_items]
+  details: [query_getInvitees_oneOf_1_allOf_0_details_items!]
 }
 
 union get_scheduled_events_uuid_response @statusCodeTypeName(subgraph: "calendly", statusCode: 200, typeName: "get_scheduled_events_uuid_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 500, typeName: "UNKNOWN_response") = get_scheduled_events_uuid_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
@@ -1174,7 +1174,7 @@ type get_event_types_uuid_200_response {
 union get_organizations_uuid_invitations_response @statusCodeTypeName(subgraph: "calendly", statusCode: 200, typeName: "get_organizations_uuid_invitations_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 500, typeName: "UNKNOWN_response") = get_organizations_uuid_invitations_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_organizations_uuid_invitations_200_response {
-  collection: [Organization_Invitation]!
+  collection: [Organization_Invitation!]!
   pagination: Pagination!
 }
 
@@ -1295,14 +1295,14 @@ union get_organization_memberships_response @statusCodeTypeName(subgraph: "calen
 
 """Service response"""
 type get_organization_memberships_200_response {
-  collection: [Organization_Membership]!
+  collection: [Organization_Membership!]!
   pagination: Pagination!
 }
 
 union get_webhooks_response @statusCodeTypeName(subgraph: "calendly", statusCode: 200, typeName: "get_webhooks_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 404, typeName: "NOT_FOUND_response") = get_webhooks_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response
 
 type get_webhooks_200_response {
-  collection: [Webhook_Subscription]!
+  collection: [Webhook_Subscription!]!
   pagination: Pagination!
 }
 
@@ -1324,7 +1324,7 @@ type Webhook_Subscription {
   retry_started_at: DateTime
   state: query_get_webhooks_oneOf_0_collection_items_state!
   """A list of events to which the webhook is subscribed"""
-  events: [query_get_webhooks_oneOf_0_collection_items_events_items]!
+  events: [query_get_webhooks_oneOf_0_collection_items_events_items!]!
   scope: query_get_webhooks_oneOf_0_collection_items_scope!
   """
   The URI of the organization that's associated with the webhook subscription
@@ -1387,7 +1387,7 @@ type InviteeNoShow {
 union get_routing_forms_response @statusCodeTypeName(subgraph: "calendly", statusCode: 200, typeName: "get_routing_forms_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 500, typeName: "UNKNOWN_response") = get_routing_forms_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_routing_forms_200_response {
-  collection: [Routing_Form]!
+  collection: [Routing_Form!]!
   pagination: Pagination!
 }
 
@@ -1401,7 +1401,7 @@ type Routing_Form {
   name: String!
   status: query_get_routing_forms_oneOf_0_collection_items_status!
   """An ordered collection of Routing Form non-deleted questions."""
-  questions: [Routing_Form_Question]!
+  questions: [Routing_Form_Question!]!
   """The moment the routing form was created."""
   created_at: DateTime!
   """The moment when the routing form was last updated."""
@@ -1428,7 +1428,7 @@ type Routing_Form_Question {
   """
   The respondent’s option(s) for "select" or "radios" types of questions.
   """
-  answer_choices: [String]
+  answer_choices: [String!]
 }
 
 """
@@ -1458,7 +1458,7 @@ type get_routing_forms_uuid_200_response {
 union get_routing_form_submissions_response @statusCodeTypeName(subgraph: "calendly", statusCode: 200, typeName: "get_routing_form_submissions_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 500, typeName: "UNKNOWN_response") = get_routing_form_submissions_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_routing_form_submissions_200_response {
-  collection: [Routing_Form_Submission]!
+  collection: [Routing_Form_Submission!]!
   pagination: Pagination!
 }
 
@@ -1471,7 +1471,7 @@ type Routing_Form_Submission {
   """The URI of the routing form that's associated with the submission."""
   routing_form: URL!
   """All Routing Form Submission questions with answers."""
-  questions_and_answers: [Routing_Form_Submission_Question_and_Answer]!
+  questions_and_answers: [Routing_Form_Submission_Question_and_Answer!]!
   tracking: Routing_Form_Submission_Tracking!
   result: Routing_Form_Submission_Result
   """
@@ -1575,7 +1575,7 @@ union getEventTypeAvailableTimes_response @statusCodeTypeName(subgraph: "calendl
 """Service Response"""
 type getEventTypeAvailableTimes_200_response {
   """The set of available times for the event type matching the criteria"""
-  collection: [Event_Type_Available_Time]!
+  collection: [Event_Type_Available_Time!]!
 }
 
 """An available meeting time slot for the given event type"""
@@ -1601,7 +1601,7 @@ union activityLog_response @statusCodeTypeName(subgraph: "calendly", statusCode:
 """Activity log response"""
 type activityLog_200_response {
   """The set of activity log entries matching the criteria"""
-  collection: [Activity_Log_Entry]!
+  collection: [Activity_Log_Entry!]!
   pagination: Pagination!
   """
   The date and time of the newest entry (format: "2020-01-02T03:04:05.678Z") in the collection array.
@@ -1851,7 +1851,7 @@ type post_users_uuid_webhooks_201_response {
 type post_users_uuid_webhooks_409_response {
   title: Already_Exists_const
   message: Hook_with_this_url_already_exists_const
-  details: [query_getInvitees_oneOf_1_allOf_0_details_items]
+  details: [query_getInvitees_oneOf_1_allOf_0_details_items!]
 }
 
 enum Already_Exists_const @typescript(subgraph: "calendly", type: "\\"Already Exists\\"") @example(subgraph: "calendly", value: "\\"Already Exists\\"") {
@@ -1868,7 +1868,7 @@ input post_users_uuid_webhooks_request_Input @example(subgraph: "calendly", valu
   """
   url: URL!
   """List of user events to subscribe to."""
-  events: [mutationInput_post_users_uuid_webhooks_input_events_items]!
+  events: [mutationInput_post_users_uuid_webhooks_input_events_items!]!
   """
   The unique reference to the organization that the webhook will be tied to.
   """
@@ -1938,7 +1938,7 @@ type JSON_container {
 }
 
 input post_data_compliance_deletion_invitees_request_Input @example(subgraph: "calendly", value: "{\\"value\\":{\\"emails\\":[\\"test@example.com\\"]}}") {
-  emails: [EmailAddress]!
+  emails: [EmailAddress!]!
 }
 
 union deleteInviteeNoShow_response @statusCodeTypeName(subgraph: "calendly", statusCode: 204, typeName: "Void_container") @statusCodeTypeName(subgraph: "calendly", statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 500, typeName: "UNKNOWN_response") = Void_container | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response

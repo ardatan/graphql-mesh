@@ -1013,7 +1013,7 @@ enum queryInput_media_math_render_by_format_by_hash_format {
 union metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "pageview_article") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = pageview_article | problem
 
 type pageview_article {
-  items: [query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1066,7 +1066,7 @@ enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_a
 union metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "pageview_project") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = pageview_project | problem
 
 type pageview_project {
-  items: [query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1113,7 +1113,7 @@ enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_gra
 union metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "pageview_tops") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = pageview_tops | problem
 
 type pageview_tops {
-  items: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items {
@@ -1122,7 +1122,7 @@ type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_on
   year: String
   month: String
   day: String
-  articles: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items]
+  articles: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items!]
 }
 
 type query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items {
@@ -1145,7 +1145,7 @@ enum queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_d
 union metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "by_country") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = by_country | problem
 
 type by_country {
-  items: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items]
+  items: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items!]
 }
 
 type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items {
@@ -1153,7 +1153,7 @@ type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_mont
   access: String
   year: String
   month: String
-  countries: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items_countries_items]
+  countries: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items_countries_items!]
 }
 
 type query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items_countries_items {
@@ -1176,7 +1176,7 @@ enum queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by
 union metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "per_country") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = per_country | problem
 
 type per_country {
-  items: [query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items {
@@ -1185,7 +1185,7 @@ type query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_mon
   year: String
   month: String
   day: String
-  articles: [query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items]
+  articles: [query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items!]
 }
 
 type query_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_oneOf_0_items_items_articles_items {
@@ -1209,7 +1209,7 @@ enum queryInput_metrics_pageviews_top_per_country_by_country_by_access_by_year_b
 union metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "unique_devices") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = unique_devices | problem
 
 type unique_devices {
-  items: [query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1244,7 +1244,7 @@ enum queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_
 union metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "pagecounts_project") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = pagecounts_project | problem
 
 type pagecounts_project {
-  items: [query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1277,7 +1277,7 @@ enum queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by
 union metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "new_pages") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = new_pages | problem
 
 type new_pages {
-  items: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1285,7 +1285,7 @@ type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_gr
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -1331,7 +1331,7 @@ enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_
 union metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "edited_pages") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = edited_pages | problem
 
 type edited_pages {
-  items: [query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1340,7 +1340,7 @@ type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   activity_level: String @resolveRootField(subgraph: "Wiki", field: "activity-level")
   granularity: String
-  results: [query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -1399,7 +1399,7 @@ enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page
 union metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "top_edited_pages_by_edits") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_edited_pages_by_edits | problem
 
 type top_edited_pages_by_edits {
-  items: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
@@ -1407,12 +1407,12 @@ type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_t
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
+  results: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
   timestamp: String
-  top: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
+  top: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items!]
 }
 
 type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
@@ -1450,7 +1450,7 @@ enum queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_p
 union metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "top_edited_pages_by_net_bytes_diff") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_edited_pages_by_net_bytes_diff | problem
 
 type top_edited_pages_by_net_bytes_diff {
-  items: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
@@ -1458,12 +1458,12 @@ type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
+  results: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
   timestamp: String
-  top: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
+  top: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items!]
 }
 
 type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
@@ -1501,7 +1501,7 @@ enum queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_e
 union metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "top_edited_pages_by_abs_bytes_diff") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_edited_pages_by_abs_bytes_diff | problem
 
 type top_edited_pages_by_abs_bytes_diff {
-  items: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
@@ -1509,12 +1509,12 @@ type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_e
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
+  results: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
   timestamp: String
-  top: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
+  top: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items!]
 }
 
 type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
@@ -1552,7 +1552,7 @@ enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project
 union metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "editors") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = editors | problem
 
 type editors {
-  items: [query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1561,7 +1561,7 @@ type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_a
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   activity_level: String @resolveRootField(subgraph: "Wiki", field: "activity-level")
   granularity: String
-  results: [query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -1620,7 +1620,7 @@ enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type
 union metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "top_editors_by_edits") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_editors_by_edits | problem
 
 type top_editors_by_edits {
-  items: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
@@ -1628,12 +1628,12 @@ type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_b
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
+  results: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
   timestamp: String
-  top: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
+  top: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items!]
 }
 
 type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
@@ -1671,7 +1671,7 @@ enum queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_t
 union metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "top_editors_by_net_bytes_diff") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_editors_by_net_bytes_diff | problem
 
 type top_editors_by_net_bytes_diff {
-  items: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
@@ -1679,12 +1679,12 @@ type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
+  results: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
   timestamp: String
-  top: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
+  top: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items!]
 }
 
 type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
@@ -1722,7 +1722,7 @@ enum queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor
 union metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "top_editors_by_abs_bytes_diff") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_editors_by_abs_bytes_diff | problem
 
 type top_editors_by_abs_bytes_diff {
-  items: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
@@ -1730,12 +1730,12 @@ type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
+  results: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items {
   timestamp: String
-  top: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items]
+  top: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items!]
 }
 
 type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items_top_items {
@@ -1773,7 +1773,7 @@ enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_e
 union metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "edits") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = edits | problem
 
 type edits {
-  items: [query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1781,7 +1781,7 @@ type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_gra
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -1827,7 +1827,7 @@ enum queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_b
 union metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "edits_per_page") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = edits_per_page | problem
 
 type edits_per_page {
-  items: [query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1835,7 +1835,7 @@ type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_gra
   page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   granularity: String
-  results: [query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -1869,13 +1869,13 @@ enum queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_b
 union metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "new_registered_users") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = new_registered_users | problem
 
 type new_registered_users {
-  items: [query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items {
   project: String
   granularity: String
-  results: [query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -1895,7 +1895,7 @@ enum queryInput_metrics_registered_users_new_by_project_by_granularity_by_start_
 union metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "net_bytes_difference") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = net_bytes_difference | problem
 
 type net_bytes_difference {
-  items: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1903,7 +1903,7 @@ type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_p
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -1948,7 +1948,7 @@ enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type
 union metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "net_bytes_difference_per_page") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = net_bytes_difference_per_page | problem
 
 type net_bytes_difference_per_page {
-  items: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1956,7 +1956,7 @@ type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_edi
   page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   granularity: String
-  results: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -1990,7 +1990,7 @@ enum queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_b
 union metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "absolute_bytes_difference") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = absolute_bytes_difference | problem
 
 type absolute_bytes_difference {
-  items: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -1998,7 +1998,7 @@ type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
   granularity: String
-  results: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -2043,7 +2043,7 @@ enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor
 union metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "absolute_bytes_difference_per_page") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = absolute_bytes_difference_per_page | problem
 
 type absolute_bytes_difference_per_page {
-  items: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -2051,7 +2051,7 @@ type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_b
   page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
   editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
   granularity: String
-  results: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
+  results: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items!]
 }
 
 type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items {
@@ -2085,7 +2085,7 @@ enum queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_ti
 union metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "mediarequest_referer") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = mediarequest_referer | problem
 
 type mediarequest_referer {
-  items: [query_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -2131,7 +2131,7 @@ enum queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agen
 union metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "mediarequest_file") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = mediarequest_file | problem
 
 type mediarequest_file {
-  items: [query_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_oneOf_0_items_items]
+  items: [query_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_oneOf_0_items_items!]
 }
 
 type query_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_oneOf_0_items_items {
@@ -2165,7 +2165,7 @@ enum queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_
 union metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "mediarequest_tops") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = mediarequest_tops | problem
 
 type mediarequest_tops {
-  items: [query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items]
+  items: [query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items!]
 }
 
 type query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items {
@@ -2174,7 +2174,7 @@ type query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_b
   year: String
   month: String
   day: String
-  files: [query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items_files_items]
+  files: [query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items_files_items!]
 }
 
 type query_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_oneOf_0_items_items_files_items {
@@ -2210,7 +2210,7 @@ type cx_dict {
   """the original word to look up"""
   source: String
   """the translations found"""
-  translations: [query_transform_word_from_by_from_lang_to_by_to_lang_by_word_oneOf_0_translations_items]
+  translations: [query_transform_word_from_by_from_lang_to_by_to_lang_by_word_oneOf_0_translations_items!]
 }
 
 type query_transform_word_from_by_from_lang_to_by_to_lang_by_word_oneOf_0_translations_items {
@@ -2234,7 +2234,7 @@ union transform_list_pair_by_from_by_to_response @statusCodeTypeName(subgraph: "
 
 type cx_list_tools {
   """the list of tools available for the given language pair"""
-  tools: [String]
+  tools: [String!]
 }
 
 union transform_list_tool_by_tool_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = JSON_container | problem
@@ -2255,9 +2255,9 @@ enum queryInput_transform_list_tool_by_tool_by_from_by_to_tool {
 
 type cx_languagepairs {
   """the list of available source languages"""
-  source: [String]
+  source: [String!]
   """the list of available destination languages"""
-  target: [String]
+  target: [String!]
 }
 
 union feed_availability_response @statusCodeTypeName(subgraph: "Wiki", statusCode: 200, typeName: "availability") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = availability | problem
@@ -2266,23 +2266,23 @@ type availability {
   """
   domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
   """
-  todays_featured_article: [String]!
+  todays_featured_article: [String!]!
   """
   domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
   """
-  most_read: [String]!
+  most_read: [String!]!
   """
   domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
   """
-  picture_of_the_day: [String]!
+  picture_of_the_day: [String!]!
   """
   domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
   """
-  in_the_news: [String]!
+  in_the_news: [String!]!
   """
   domains for wikis with this feature enabled, or [ '*.<project>.org' ] for all wikis in a project
   """
-  on_this_day: [String]!
+  on_this_day: [String!]!
 }
 
 type Mutation {

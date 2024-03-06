@@ -25,7 +25,7 @@ type Query {
   getUsers(
     """Limit of the number of users to return."""
     limit: Int!
-  ): [user] @httpOperation(subgraph: "example_api", path: "/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"limit\\":\\"limit\\"}")
+  ): [user!] @httpOperation(subgraph: "example_api", path: "/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"limit\\":\\"limit\\"}")
   """Returns a user from the system."""
   getUserByUsername(
     """Identifier of a user."""
@@ -42,11 +42,11 @@ type Query {
   getUserFriends(
     """Identifier of a user."""
     username: String!
-  ): [user] @httpOperation(subgraph: "example_api", path: "/users/{args.username}/friends", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): [user!] @httpOperation(subgraph: "example_api", path: "/users/{args.username}/friends", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns all company assets"""
-  getAllAssets(companyId: String!): [query_getAllAssets_items] @httpOperation(subgraph: "example_api", path: "/assets/{args.companyId}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getAllAssets(companyId: String!): [query_getAllAssets_items!] @httpOperation(subgraph: "example_api", path: "/assets/{args.companyId}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns information about all employee cars"""
-  getAllCars: [car] @httpOperation(subgraph: "example_api", path: "/cars", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getAllCars: [car!] @httpOperation(subgraph: "example_api", path: "/cars", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns the profile of a company with the given ID."""
   getCompanyById(id: String!): company @httpOperation(subgraph: "example_api", path: "/companies/{args.id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"ceoUser\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/ceoUsername}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"}}")
   """Used to test cookies."""
@@ -64,18 +64,18 @@ type Query {
   """Used to test empty responses"""
   getBonuses: Void @httpOperation(subgraph: "example_api", path: "/bonuses", httpMethod: GET)
   """Used to test query parameters with form style and explode"""
-  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @httpOperation(subgraph: "example_api", path: "/offices", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"parameters\\":\\"parameters\\"}", queryStringOptionsByParam: "{\\"parameters\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
+  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office!] @httpOperation(subgraph: "example_api", path: "/offices", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"parameters\\":\\"parameters\\"}", queryStringOptionsByParam: "{\\"parameters\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
   """Return an office."""
   getOffice(
     """Office ID"""
     id: Int!
   ): office @httpOperation(subgraph: "example_api", path: "/offices/{args.id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"owner\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/employeeId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"},\\"company\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$response.body#/employerId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCompanyById\\"}}")
   """Return a list of papers. Endpoint to test 2XX status code."""
-  getPapers: [paper] @httpOperation(subgraph: "example_api", path: "/papers", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getPapers: [paper!] @httpOperation(subgraph: "example_api", path: "/papers", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Another endpoint to test unsanitized parameters and data."""
   get_product_with_id(product_id: String!, product_tag: String!): product_with_id @httpOperation(subgraph: "example_api", path: "/products/{args.product_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"product-tag\\":\\"product_tag\\"}") @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"reviews\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$request.path.product-id}\\",\\"product_tag\\":\\"{root.$request.query.product-tag}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getProductReviews\\"},\\"reviewsWithOperationRef\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$request.path.product-id}\\",\\"product_tag\\":\\"{root.$request.query.product-tag}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getProductReviews\\"}}")
   """Obtain reviews for a product."""
-  getProductReviews(id: String!, product_tag: String! = "sport"): [query_getProductReviews_items] @httpOperation(subgraph: "example_api", path: "/products/{args.id}/reviews", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"product-tag\\":\\"product_tag\\"}")
+  getProductReviews(id: String!, product_tag: String! = "sport"): [query_getProductReviews_items!] @httpOperation(subgraph: "example_api", path: "/products/{args.id}/reviews", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"product-tag\\":\\"product_tag\\"}")
   """An endpoint to test authentication."""
   get_patent_with_id(patent_id: String!): patent_with_id @httpOperation(subgraph: "example_api", path: "/patents/{args.patent_id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"inventor\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$response.body#/inventorId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserByUsername\\"}}")
   """Another endpoint to test authentication."""
@@ -89,7 +89,7 @@ type Query {
   """Used to test OAuth token being present in header."""
   getSecure: String @httpOperation(subgraph: "example_api", path: "/secure", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
   """Returns the (contents of a) trashcan from a specific office"""
-  getAllTrashCans: [trashcan] @httpOperation(subgraph: "example_api", path: "/trashcans", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getAllTrashCans: [trashcan!] @httpOperation(subgraph: "example_api", path: "/trashcans", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   """Returns the (contents of a) trashcan from a specific owner"""
   getOfficeTrashCan(
     """Identifier of a user."""
@@ -112,13 +112,13 @@ type user {
   """The identifier of the company a user works for"""
   employerId: String!
   """The hobbies of this user"""
-  hobbies: [String]!
+  hobbies: [String!]!
   status: query_getUsers_items_status
   nomenclature: query_getUsers_items_nomenclature
   """Allows to fetch the user's employer company."""
   employerCompany: company @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
   """Allows to fetch the user's friends."""
-  friends: [user] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
+  friends: [user!] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
 }
 
 """The legal address of a user"""
@@ -159,7 +159,7 @@ type company {
   """The identifier of the user who is CEO of the company"""
   ceoUsername: String
   """The offices of a company"""
-  offices: [address]
+  offices: [address!]
   """Allows to fetch the company's CEO user."""
   ceoUser: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCompanyById")
 }
@@ -206,7 +206,7 @@ union query_getAllAssets_items = car | user | trashcan
 
 type trashcan {
   brand: JSON
-  contents: [JSON]
+  contents: [JSON!]
 }
 
 enum queryInput_getCookie_cookie_type {
@@ -277,9 +277,9 @@ type product_with_id {
   """A tag associated with the product"""
   product_tag: String @resolveRootField(subgraph: "example_api", field: "product-tag")
   """Obtain reviews for a product."""
-  reviews: [query_getProductReviews_items] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
+  reviews: [query_getProductReviews_items!] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
   """Obtain reviews for a product."""
-  reviewsWithOperationRef: [query_getProductReviews_items] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
+  reviewsWithOperationRef: [query_getProductReviews_items!] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
 }
 
 type query_getProductReviews_items {
@@ -387,7 +387,7 @@ input user_Input {
   """The identifier of the company a user works for"""
   employerId: String!
   """The hobbies of this user"""
-  hobbies: [String]!
+  hobbies: [String!]!
   status: query_getUsers_items_status
   nomenclature: query_getUsers_items_nomenclature_Input
 }
