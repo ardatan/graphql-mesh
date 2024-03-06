@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.97.1
+
+### Patch Changes
+
+- [#6610](https://github.com/ardatan/graphql-mesh/pull/6610)
+  [`dbaf72c`](https://github.com/ardatan/graphql-mesh/commit/dbaf72c4520f64524dce14b798019639c4d57020)
+  Thanks [@ardatan](https://github.com/ardatan)! - New Plugin: Operation Headers
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.97.1
+
 ## 0.97.0
 
 ### Minor Changes

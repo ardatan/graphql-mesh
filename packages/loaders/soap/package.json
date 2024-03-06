@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/soap",
-  "version": "0.97.0",
+  "version": "0.97.1",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -27,15 +27,15 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.97.0",
-    "@graphql-mesh/utils": "^0.97.0",
+    "@graphql-mesh/types": "^0.97.1",
+    "@graphql-mesh/utils": "^0.97.1",
     "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.1",
     "@graphql-mesh/string-interpolation": "^0.5.3",
-    "@graphql-mesh/transport-soap": "^0.1.0",
+    "@graphql-mesh/transport-soap": "^0.1.1",
     "@whatwg-node/fetch": "^0.9.15",
     "fast-xml-parser": "^4.3.4",
     "graphql-compose": "^9.0.10",

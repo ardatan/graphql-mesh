@@ -1,5 +1,12 @@
 # @graphql-mesh/apollo-link
 
+## 0.98.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.98.1
+
 ## 0.98.0
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # thrift-calculator
 
+## 0.13.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.1
+  - @graphql-mesh/thrift@0.98.1
+
 ## 0.13.0
 
 ### Patch Changes

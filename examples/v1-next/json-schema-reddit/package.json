@@ -1,15 +1,15 @@
 {
   "name": "@v1-next/reddit-example",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "private": true,
   "scripts": {
     "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.2.0",
-    "@graphql-mesh/serve-cli": "^0.3.0",
-    "@omnigraph/json-schema": "^0.99.0",
+    "@graphql-mesh/compose-cli": "^0.2.1",
+    "@graphql-mesh/serve-cli": "^0.3.1",
+    "@omnigraph/json-schema": "^0.99.1",
     "graphql": "16.8.1"
   }
 }
