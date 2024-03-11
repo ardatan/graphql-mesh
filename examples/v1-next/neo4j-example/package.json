@@ -12,7 +12,7 @@
     "@graphql-mesh/serve-cli": "^0.3.1",
     "@omnigraph/neo4j": "^0.1.1",
     "graphql": "^16.8.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   },
   "devDependencies": {
     "jest": "^29.7.0"

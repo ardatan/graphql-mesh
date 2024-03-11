@@ -18,6 +18,6 @@
     "@types/node": "20.11.25",
     "concurrently": "8.2.2",
     "ts-node": "^10.9.2",
-    "typescript": "5.3.3"
+    "typescript": "^5.4.2"
   }
 }
