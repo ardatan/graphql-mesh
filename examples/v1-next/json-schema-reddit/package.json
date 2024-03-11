@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/reddit-example",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "private": true,
   "scripts": {
     "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
@@ -9,7 +9,7 @@
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.2.1",
     "@graphql-mesh/serve-cli": "^0.3.1",
-    "@omnigraph/json-schema": "^0.99.1",
+    "@omnigraph/json-schema": "^0.99.2",
     "graphql": "16.8.1"
   }
 }

@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-mysql
 
+## 0.1.2
+
+### Patch Changes
+
+- [`4b3b2bb`](https://github.com/ardatan/graphql-mesh/commit/4b3b2bbac3f29daa1d69261ed18580d99d2fbad1)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add introspection properties to the MySQL
+  connection object
+
 ## 0.1.1
 
 ### Patch Changes

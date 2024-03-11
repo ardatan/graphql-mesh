@@ -1,5 +1,13 @@
 # reddit-example
 
+## 0.11.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9667954`](https://github.com/ardatan/graphql-mesh/commit/96679547598ccdaf765335b13b937248df662d77)]:
+  - @omnigraph/json-schema@0.99.2
+
 ## 0.11.1
 
 ### Patch Changes

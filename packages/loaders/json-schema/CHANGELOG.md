@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.99.2
+
+### Patch Changes
+
+- [#6645](https://github.com/ardatan/graphql-mesh/pull/6645)
+  [`9667954`](https://github.com/ardatan/graphql-mesh/commit/96679547598ccdaf765335b13b937248df662d77)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`qs@6.12.0` ↗︎](https://www.npmjs.com/package/qs/v/6.12.0) (from `6.11.2`,
+    in `dependencies`)
+- Updated dependencies
+  [[`9667954`](https://github.com/ardatan/graphql-mesh/commit/96679547598ccdaf765335b13b937248df662d77)]:
+  - @graphql-mesh/transport-rest@0.1.2
+
 ## 0.99.1
 
 ### Patch Changes
