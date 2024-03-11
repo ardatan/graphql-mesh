@@ -2,8 +2,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { ApolloServer } from 'apollo-server';
 import { buildSchema, parse } from 'graphql';
+import { ApolloServer } from '@apollo/server';
 import {
   createExecutablePlanForOperation,
   executeOperation,
@@ -113,6 +113,14 @@ describe('Federation', () => {
       expect(serializedPlan).toMatchSnapshot();
     });
   });
+  function handleExecutionResultFromApollo(
+    apolloResult: Awaited<ReturnType<ApolloServer['executeOperation']>>,
+  ) {
+    if (apolloResult.body.kind === 'single') {
+      return apolloResult.body.singleResult;
+    }
+    throw new Error('Not implemented');
+  }
   describe('execution', () => {
     let accountsServerInstance: ApolloServer;
     let inventoryServerInstance: ApolloServer;
@@ -121,13 +129,21 @@ describe('Federation', () => {
     const onExecute = (async (subgraphName, query, variables) => {
       switch (subgraphName) {
         case 'accounts':
-          return accountsServerInstance.executeOperation({ query, variables });
+          return accountsServerInstance
+            .executeOperation({ query, variables })
+            .then(handleExecutionResultFromApollo);
         case 'inventory':
-          return inventoryServerInstance.executeOperation({ query, variables });
+          return inventoryServerInstance
+            .executeOperation({ query, variables })
+            .then(handleExecutionResultFromApollo);
         case 'products':
-          return productsServerInstance.executeOperation({ query, variables });
+          return productsServerInstance
+            .executeOperation({ query, variables })
+            .then(handleExecutionResultFromApollo);
         case 'reviews':
-          return reviewsServerInstance.executeOperation({ query, variables });
+          return reviewsServerInstance
+            .executeOperation({ query, variables })
+            .then(handleExecutionResultFromApollo);
       }
       return null;
     }) as OnExecuteFn;
