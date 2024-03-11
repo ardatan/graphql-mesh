@@ -634,7 +634,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server-gateway-interface@npm:^1.0.3, @apollo/server-gateway-interface@npm:^1.1.0, @apollo/server-gateway-interface@npm:^1.1.1":
+"@apollo/server-gateway-interface@npm:^1.1.0, @apollo/server-gateway-interface@npm:^1.1.1":
   version: 1.1.1
   resolution: "@apollo/server-gateway-interface@npm:1.1.1"
   dependencies:
@@ -645,41 +645,6 @@ __metadata:
   peerDependencies:
     graphql: 14.x || 15.x || 16.x
   checksum: 10c0/2787b2954028f5aff55846df98b3967f38f40df4c5e4c9df0da56ac16d4323ba0aeabd76d4b134fedc9f6fe7d63e6fd9e9a133eb5d209408eac34c0e25cbe7dd
-  languageName: node
-  linkType: hard
-
-"@apollo/server@npm:4.0.0":
-  version: 4.0.0
-  resolution: "@apollo/server@npm:4.0.0"
-  dependencies:
-    "@apollo/cache-control-types": "npm:^1.0.2"
-    "@apollo/server-gateway-interface": "npm:^1.0.3"
-    "@apollo/usage-reporting-protobuf": "npm:^4.0.0"
-    "@apollo/utils.createhash": "npm:^1.1.0"
-    "@apollo/utils.fetcher": "npm:^1.0.0"
-    "@apollo/utils.isnodelike": "npm:^1.1.0"
-    "@apollo/utils.keyvaluecache": "npm:^1.0.1"
-    "@apollo/utils.logger": "npm:^1.0.0"
-    "@apollo/utils.usagereporting": "npm:^1.0.0"
-    "@apollo/utils.withrequired": "npm:^1.0.0"
-    "@graphql-tools/schema": "npm:^9.0.0"
-    "@josephg/resolvable": "npm:^1.0.0"
-    "@types/express": "npm:^4.17.13"
-    "@types/express-serve-static-core": "npm:^4.17.30"
-    "@types/node-fetch": "npm:^2.6.1"
-    async-retry: "npm:^1.2.1"
-    body-parser: "npm:^1.20.0"
-    cors: "npm:^2.8.5"
-    express: "npm:^4.17.1"
-    loglevel: "npm:^1.6.8"
-    lru-cache: "npm:^7.10.1"
-    negotiator: "npm:^0.6.3"
-    node-fetch: "npm:^2.6.7"
-    uuid: "npm:^9.0.0"
-    whatwg-mimetype: "npm:^3.0.0"
-  peerDependencies:
-    graphql: ^16.6.0
-  checksum: 10c0/a27db0256cff975fa21a120443a7e0fac9a200ff99f6f30123ef69799dab8e62a866fa29421c16e62797dd0d85e84a83fce7b444f204cd2d821bfd2c13bd7c7c
   languageName: node
   linkType: hard
 
@@ -715,6 +680,42 @@ __metadata:
   peerDependencies:
     graphql: ^16.6.0
   checksum: 10c0/6a9ab267f8e38e4a7149c5079eda1236dceabd217f241e99beafb8090f233802fc89853e61c7e0740d6f0a648da14590381270a5894891ef7618b81e8c2c4850
+  languageName: node
+  linkType: hard
+
+"@apollo/server@npm:4.9.3":
+  version: 4.9.3
+  resolution: "@apollo/server@npm:4.9.3"
+  dependencies:
+    "@apollo/cache-control-types": "npm:^1.0.3"
+    "@apollo/server-gateway-interface": "npm:^1.1.1"
+    "@apollo/usage-reporting-protobuf": "npm:^4.1.1"
+    "@apollo/utils.createhash": "npm:^2.0.0"
+    "@apollo/utils.fetcher": "npm:^2.0.0"
+    "@apollo/utils.isnodelike": "npm:^2.0.0"
+    "@apollo/utils.keyvaluecache": "npm:^2.1.0"
+    "@apollo/utils.logger": "npm:^2.0.0"
+    "@apollo/utils.usagereporting": "npm:^2.1.0"
+    "@apollo/utils.withrequired": "npm:^2.0.0"
+    "@graphql-tools/schema": "npm:^9.0.0"
+    "@josephg/resolvable": "npm:^1.0.0"
+    "@types/express": "npm:^4.17.13"
+    "@types/express-serve-static-core": "npm:^4.17.30"
+    "@types/node-fetch": "npm:^2.6.1"
+    async-retry: "npm:^1.2.1"
+    body-parser: "npm:^1.20.0"
+    cors: "npm:^2.8.5"
+    express: "npm:^4.17.1"
+    loglevel: "npm:^1.6.8"
+    lru-cache: "npm:^7.10.1"
+    negotiator: "npm:^0.6.3"
+    node-abort-controller: "npm:^3.1.1"
+    node-fetch: "npm:^2.6.7"
+    uuid: "npm:^9.0.0"
+    whatwg-mimetype: "npm:^3.0.0"
+  peerDependencies:
+    graphql: ^16.6.0
+  checksum: 10c0/983412052c8584b623637a49e526d3ac6e1a80aa74b47180503e89b3ca0345207864fe5dd632ddab649057ccc253a63032f3b189d45db15f6b6b0b50d07570ec
   languageName: node
   linkType: hard
 
@@ -774,16 +775,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/utils.createhash@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@apollo/utils.createhash@npm:1.1.0"
-  dependencies:
-    "@apollo/utils.isnodelike": "npm:^1.1.0"
-    sha.js: "npm:^2.4.11"
-  checksum: 10c0/67b80b1a03182c00b601c1c60134fe369efa9f527a06a2923af71c56e55619d2c15cd069191f7fab052404e12aa4efb62f262ccac0bd85c1f1260dfdd479bdf5
-  languageName: node
-  linkType: hard
-
 "@apollo/utils.createhash@npm:^2.0.0":
   version: 2.0.1
   resolution: "@apollo/utils.createhash@npm:2.0.1"
@@ -812,24 +803,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/utils.fetcher@npm:^1.0.0":
-  version: 1.1.1
-  resolution: "@apollo/utils.fetcher@npm:1.1.1"
-  checksum: 10c0/9d7799e908e9f91358d001bc278be83f11037a4820231a67293cdad645e068b2b7039558ef84124bd6e2ce85b79b91825fbbc3f05cc0e5e02a376bb5f98b2825
-  languageName: node
-  linkType: hard
-
 "@apollo/utils.fetcher@npm:^2.0.0":
   version: 2.0.1
   resolution: "@apollo/utils.fetcher@npm:2.0.1"
   checksum: 10c0/6634468a8f65e32935de65ca1729fae1434d53b6bf48b1b3097a47241f7b802643aa5b2c76cd0e1a67fd17ddd0bb3e58b4290f6b2121535f69e891125c372e8e
-  languageName: node
-  linkType: hard
-
-"@apollo/utils.isnodelike@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@apollo/utils.isnodelike@npm:1.1.0"
-  checksum: 10c0/d30f1b79541716990e5a0b000102da54ce0dbd57adb6d1a2225e21172b0132dcbaf3bde8f6317efa109aa5b41b7250ecbbb9f091d0b8bbb26f3a4fdf6386726f
   languageName: node
   linkType: hard
 
@@ -979,13 +956,6 @@ __metadata:
   peerDependencies:
     graphql: 14.x || 15.x || 16.x
   checksum: 10c0/5c2b06a14c5094d0ee8eab7ff78449da1efff3bb4c82ef311b2bb90190437c6c59f2783702a428775f394f12455a53a9723e625e53e18e47b423df8cb9eb26d8
-  languageName: node
-  linkType: hard
-
-"@apollo/utils.withrequired@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "@apollo/utils.withrequired@npm:1.0.1"
-  checksum: 10c0/4226bee464a632ba10ccc1fd134d0d985fc7fd7569c355fdc60c818979e412e9a3d1f520f375c03473357a3ce93c4851734c1ff4bb2d58ee828647c8864aa5f2
   languageName: node
   linkType: hard
 
@@ -11958,7 +11928,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@v1-next/accounts-subgraph@workspace:examples/v1-next/federation-example/services/accounts"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
@@ -12047,7 +12017,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@v1-next/inventory@workspace:examples/v1-next/federation-example/services/inventory"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
@@ -12167,7 +12137,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@v1-next/products@workspace:examples/v1-next/federation-example/services/products"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
@@ -12190,7 +12160,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@v1-next/reviews@workspace:examples/v1-next/federation-example/services/reviews"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
@@ -12584,7 +12554,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
@@ -12596,7 +12566,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "accounts@workspace:examples/federation-example/services/accounts"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
     typescript: "npm:5.3.3"
@@ -19052,7 +19022,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "federation-handler-example@workspace:examples/federation-example"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     apollo-server-caching: "npm:3.3.0"
     concurrently: "npm:8.2.2"
     delay-cli: "npm:2.0.0"
@@ -21493,7 +21463,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "inventory@workspace:examples/federation-example/services/inventory"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
@@ -29847,7 +29817,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "products@workspace:examples/federation-example/services/products"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
@@ -31302,7 +31272,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "reviews@workspace:examples/federation-example/services/reviews"
   dependencies:
-    "@apollo/server": "npm:4.0.0"
+    "@apollo/server": "npm:4.9.3"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:10.9.2"
