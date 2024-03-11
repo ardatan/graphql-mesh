@@ -4706,7 +4706,7 @@ __metadata:
     open: "npm:^7.4.2"
     pascal-case: "npm:^3.1.2"
     rimraf: "npm:^5.0.0"
-    ts-node: "npm:^10.9.1"
+    ts-node: "npm:^10.9.2"
     tsconfig-paths: "npm:^4.2.0"
     tslib: "npm:^2.4.0"
     typescript: "npm:^5.0.4"
@@ -4738,7 +4738,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.9.14"
     dotenv: "npm:^16.3.1"
     spinnies: "npm:^0.5.1"
-    ts-node: "npm:^10.9.1"
+    ts-node: "npm:^10.9.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.97.1
     graphql: "*"
@@ -5405,7 +5405,7 @@ __metadata:
     json-bigint-patch: "npm:^0.0.8"
     node-libcurl: "npm:^4.0.0"
     spinnies: "npm:^0.5.1"
-    ts-node: "npm:^10.9.1"
+    ts-node: "npm:^10.9.2"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
@@ -11674,8 +11674,8 @@ __metadata:
     "@apollo/server": "npm:4.10.1"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11727,9 +11727,9 @@ __metadata:
     "@omnigraph/openapi": "npm:^0.99.1"
     fastify: "npm:^4.26.0"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11763,8 +11763,8 @@ __metadata:
     "@apollo/server": "npm:4.10.1"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11776,7 +11776,7 @@ __metadata:
     "@graphql-mesh/openapi": "npm:0.99.1"
     graphql: "npm:16.8.1"
     moment: "npm:2.30.1"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11792,9 +11792,9 @@ __metadata:
     concurrently: "npm:8.2.2"
     fets: "npm:^0.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11820,7 +11820,7 @@ __metadata:
     "@omnigraph/mysql": "npm:^0.1.1"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11847,9 +11847,9 @@ __metadata:
     concurrently: "npm:8.2.2"
     fets: "npm:^0.7.0"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11872,7 +11872,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.2.1"
     esbuild: "npm:^0.20.0"
     graphql: "npm:16.8.1"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11883,8 +11883,8 @@ __metadata:
     "@apollo/server": "npm:4.10.1"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11906,8 +11906,8 @@ __metadata:
     "@apollo/server": "npm:4.10.1"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -11950,7 +11950,7 @@ __metadata:
     concurrently: "npm:8.2.2"
     graphql: "npm:^16.8.1"
     graphql-yoga: "npm:^5.0.1"
-    ts-node: "npm:^10.0.0"
+    ts-node: "npm:^10.9.2"
     typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
@@ -12300,8 +12300,8 @@ __metadata:
     "@apollo/server": "npm:4.10.1"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -12311,8 +12311,8 @@ __metadata:
   dependencies:
     "@apollo/server": "npm:4.10.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -13200,8 +13200,8 @@ __metadata:
     "@graphql-mesh/openapi": "npm:0.99.1"
     fets: "npm:^0.7.0"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -13221,7 +13221,7 @@ __metadata:
     "@graphql-yoga/plugin-defer-stream": "npm:^3.1.1"
     graphql: "npm:^16.8.1"
     graphql-yoga: "npm:^5.1.1"
-    ts-node: "npm:^10.9.1"
+    ts-node: "npm:^10.9.2"
   languageName: unknown
   linkType: soft
 
@@ -13640,7 +13640,7 @@ __metadata:
     fets: "npm:^0.7.1"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
   languageName: unknown
   linkType: soft
 
@@ -13829,8 +13829,8 @@ __metadata:
     "@graphql-mesh/openapi": "npm:0.99.1"
     fets: "npm:^0.7.0"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -18187,9 +18187,9 @@ __metadata:
     "@graphql-mesh/graphql": "npm:0.97.1"
     fastify: "npm:4.26.2"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -18202,7 +18202,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.99.1"
     "@types/node": "npm:20.11.25"
     graphql: "npm:16.8.1"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -18710,8 +18710,8 @@ __metadata:
     concurrently: "npm:8.2.2"
     delay-cli: "npm:2.0.0"
     jest: "npm:29.7.0"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -19138,7 +19138,7 @@ __metadata:
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
     react-scripts: "npm:5.0.1"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
     web-vitals: "npm:3.5.2"
   languageName: unknown
   linkType: soft
@@ -19848,8 +19848,8 @@ __metadata:
     jest: "npm:29.7.0"
     sharp: "npm:0.33.2"
     ts-jest: "npm:29.1.2"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -19912,7 +19912,7 @@ __metadata:
     lint-staged: "npm:15.2.2"
     prettier: "npm:3.2.5"
     ts-jest: "npm:29.1.2"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -20079,8 +20079,8 @@ __metadata:
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
     ts-jest: "npm:29.1.2"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -20108,8 +20108,8 @@ __metadata:
     google-protobuf: "npm:3.21.2"
     graphql: "npm:16.8.1"
     grpc-node-server-reflection: "npm:1.0.2"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -20471,8 +20471,8 @@ __metadata:
     "@graphql-mesh/plugin-mock": "npm:0.97.1"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -21156,8 +21156,8 @@ __metadata:
     "@apollo/server": "npm:4.10.1"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -21991,7 +21991,7 @@ __metadata:
     "@graphql-mesh/openapi": "npm:0.99.1"
     graphql: "npm:16.8.1"
     moment: "npm:2.30.1"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -23232,8 +23232,8 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.99.1"
     "@types/unzip-stream": "npm:0.3.4"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
     unzip-stream: "npm:0.3.1"
   languageName: unknown
   linkType: soft
@@ -23248,8 +23248,8 @@ __metadata:
     concurrently: "npm:8.2.2"
     fets: "npm:0.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -23297,9 +23297,9 @@ __metadata:
     concurrently: "npm:8.2.2"
     fets: "npm:0.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -26461,7 +26461,7 @@ __metadata:
     next: "npm:14.1.3"
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -26479,7 +26479,7 @@ __metadata:
     next: "npm:14.1.3"
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -27085,7 +27085,7 @@ __metadata:
     "@graphql-mesh/odata": "npm:0.97.1"
     "@graphql-mesh/runtime": "npm:0.98.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
   languageName: unknown
   linkType: soft
 
@@ -27219,7 +27219,7 @@ __metadata:
     graphql: "npm:16.8.1"
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
     vite: "npm:5.1.6"
   languageName: unknown
   linkType: soft
@@ -27254,9 +27254,9 @@ __metadata:
     concurrently: "npm:8.2.2"
     fets: "npm:^0.7.0"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -27296,7 +27296,7 @@ __metadata:
     "@graphql-mesh/graphql": "npm:0.97.1"
     esbuild: "npm:0.20.1"
     graphql: "npm:16.8.1"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -29306,8 +29306,8 @@ __metadata:
     "@types/node": "npm:20.11.25"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -29508,8 +29508,8 @@ __metadata:
     "@apollo/server": "npm:4.10.1"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -29524,7 +29524,7 @@ __metadata:
     fets: "npm:0.7.1"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
-    ts-node: "npm:10.9.2"
+    ts-node: "npm:^10.9.2"
   languageName: unknown
   linkType: soft
 
@@ -30936,8 +30936,8 @@ __metadata:
     "@apollo/server": "npm:4.10.1"
     "@apollo/subgraph": "npm:2.7.1"
     graphql: "npm:16.8.1"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -33245,8 +33245,8 @@ __metadata:
     express: "npm:4.18.3"
     graphql: "npm:16.8.1"
     thrift: "npm:0.19.0"
-    ts-node: "npm:10.9.2"
-    typescript: "npm:5.3.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -33631,7 +33631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:10.9.2, ts-node@npm:^10.0.0, ts-node@npm:^10.4.0, ts-node@npm:^10.9.1, ts-node@npm:^10.9.2":
+"ts-node@npm:^10.4.0, ts-node@npm:^10.9.1, ts-node@npm:^10.9.2":
   version: 10.9.2
   resolution: "ts-node@npm:10.9.2"
   dependencies:
@@ -34011,17 +34011,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.3.3":
-  version: 5.3.3
-  resolution: "typescript@npm:5.3.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/e33cef99d82573624fc0f854a2980322714986bc35b9cb4d1ce736ed182aeab78e2cb32b385efa493b2a976ef52c53e20d6c6918312353a91850e2b76f1ea44f
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^5.0.4, typescript@npm:^5.3.2, typescript@npm:^5.3.3":
+"typescript@npm:5.4.2, typescript@npm:^5.0.4, typescript@npm:^5.3.2, typescript@npm:^5.3.3":
   version: 5.4.2
   resolution: "typescript@npm:5.4.2"
   bin:
@@ -34041,17 +34031,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>":
-  version: 5.3.3
-  resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/1d0a5f4ce496c42caa9a30e659c467c5686eae15d54b027ee7866744952547f1be1262f2d40de911618c242b510029d51d43ff605dba8fb740ec85ca2d3f9500
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.0.4#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.0.4#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
   version: 5.4.2
   resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=5adc0c"
   bin:
@@ -35103,7 +35083,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-icons: "npm:^5.0.0"
     tailwindcss: "npm:3.4.1"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
