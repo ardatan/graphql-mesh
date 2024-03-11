@@ -12428,12 +12428,12 @@ __metadata:
   linkType: hard
 
 "@whatwg-node/server@npm:^0.9.0, @whatwg-node/server@npm:^0.9.1, @whatwg-node/server@npm:^0.9.15, @whatwg-node/server@npm:^0.9.16":
-  version: 0.9.26
-  resolution: "@whatwg-node/server@npm:0.9.26"
+  version: 0.9.28
+  resolution: "@whatwg-node/server@npm:0.9.28"
   dependencies:
     "@whatwg-node/fetch": "npm:^0.9.17"
     tslib: "npm:^2.3.1"
-  checksum: 10c0/f043a798d41523715ccbb15df1bdff53fa06394d065d7ddfa15a9ae40634d9e52591088343c5a0c79ce85e24051b51118e36ef4a311d7cf8711d70fb3ea21d7f
+  checksum: 10c0/952be6cd7c3c1cb6c93e3391677a1622f24ecef91a02074930ced39374af20ef47863afddb54444f402d38cc6d19c3813ee1327f2e5a43365e49fadac9c7bd75
   languageName: node
   linkType: hard
 
