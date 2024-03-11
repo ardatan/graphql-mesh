@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/example-fastify",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "private": true,
   "scripts": {
     "compose": "node ../../../../packages/compose-cli/dist/cjs/bin.js",
@@ -9,7 +9,7 @@
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.2.1",
     "@graphql-mesh/serve-runtime": "^0.2.1",
-    "@omnigraph/openapi": "^0.99.1",
+    "@omnigraph/openapi": "^0.99.2",
     "fastify": "^4.26.0",
     "graphql": "16.8.1",
     "ts-node": "^10.9.2",

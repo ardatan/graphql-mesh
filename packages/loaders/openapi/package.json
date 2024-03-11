@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/openapi",
-  "version": "0.99.1",
+  "version": "0.99.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,7 +41,7 @@
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.3",
     "@graphql-tools/delegate": "^10.0.3",
-    "@omnigraph/json-schema": "^0.99.1",
+    "@omnigraph/json-schema": "^0.99.2",
     "change-case": "^4.1.2",
     "json-machete": "^0.97.1",
     "openapi-types": "^12.1.0"
