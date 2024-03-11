@@ -9,7 +9,7 @@
     "test": "react-scripts test"
   },
   "dependencies": {
-    "@apollo/client": "3.9.5",
+    "@apollo/client": "3.9.6",
     "@testing-library/jest-dom": "6.4.2",
     "@testing-library/react": "14.2.1",
     "@testing-library/user-event": "14.5.2",
@@ -23,9 +23,9 @@
   "devDependencies": {
     "@types/apollo-upload-client": "18.0.0",
     "@types/jest": "29.5.12",
-    "@types/node": "20.11.24",
-    "@types/react": "18.2.63",
-    "@types/react-dom": "18.2.20",
+    "@types/node": "20.11.25",
+    "@types/react": "18.2.64",
+    "@types/react-dom": "18.2.21",
     "typescript": "5.3.3"
   },
   "browserslist": {
