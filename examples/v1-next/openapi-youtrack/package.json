@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/openapi-youtrack",
-  "version": "0.16.2",
+  "version": "0.16.3",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.2.1",
-    "@graphql-mesh/serve-cli": "^0.3.1",
+    "@graphql-mesh/serve-cli": "^0.3.2",
     "@omnigraph/openapi": "^0.99.2",
     "graphql": "^16.8.1"
   }
