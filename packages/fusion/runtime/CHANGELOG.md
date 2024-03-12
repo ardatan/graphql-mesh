@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ccb80d8`](https://github.com/ardatan/graphql-mesh/commit/ccb80d829602662f22eca32d3141d47c6855b8f6)]:
+  - @graphql-mesh/fusion-execution@0.0.2
+
 ## 0.2.1
 
 ### Patch Changes
