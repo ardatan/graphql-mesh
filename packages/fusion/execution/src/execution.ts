@@ -306,7 +306,14 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
       if (isAsyncIterable(fieldOpResult$)) {
         fieldOpAsyncIterables.push(mapAsyncIterator(fieldOpResult$, handleFieldOpResult));
       } else if (isPromise(fieldOpResult$)) {
-        fieldOpPromises.push(fieldOpResult$.then(handleFieldOpResult as any));
+        fieldOpPromises.push(
+          fieldOpResult$.then(fieldOpResult => {
+            if (isAsyncIterable(fieldOpResult)) {
+              return mapAsyncIterator(fieldOpResult, handleFieldOpResult as any);
+            }
+            return handleFieldOpResult(fieldOpResult as any);
+          }),
+        );
       } else {
         handleFieldOpResult(fieldOpResult$);
       }
@@ -373,7 +380,16 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
       const mergedIterable = Repeater.merge([...fieldOpPromises, ...fieldOpAsyncIterables]);
       asyncIterables.push(mapAsyncIterator(mergedIterable, handleFieldOpResults));
     } else if (fieldOpPromises.length) {
-      dependencyPromises.push(Promise.all(fieldOpPromises).then(handleFieldOpResults));
+      dependencyPromises.push(
+        Promise.all(fieldOpPromises).then(fieldOpPromiseResults => {
+          const asyncIterablesInResults = fieldOpPromiseResults.filter(isAsyncIterable);
+          if (asyncIterablesInResults.length) {
+            const mergedIterable = Repeater.merge(asyncIterablesInResults);
+            return mapAsyncIterator(mergedIterable, handleFieldOpResults);
+          }
+          return handleFieldOpResults();
+        }),
+      );
     } else {
       handleFieldOpResults();
     }
@@ -390,7 +406,14 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
     return mapAsyncIterator(mergedIterable, handleDependencyPromises);
   }
   if (dependencyPromises.length) {
-    return Promise.all(dependencyPromises).then(handleDependencyPromises);
+    return Promise.all(dependencyPromises).then(dependencyPromiseResults => {
+      const asyncIterablesInResults = dependencyPromiseResults.filter(isAsyncIterable);
+      if (asyncIterablesInResults.length) {
+        const mergedIterable = Repeater.merge(asyncIterablesInResults);
+        return mapAsyncIterator(mergedIterable, handleDependencyPromises);
+      }
+      return handleDependencyPromises();
+    });
   }
   return handleDependencyPromises();
 }
@@ -627,7 +650,12 @@ export function executeResolverOperationNode({
     }
 
     if (isPromise(result$)) {
-      return result$.then(handleResult);
+      return result$.then(result => {
+        if (isAsyncIterable(result)) {
+          return mapAsyncIterator(result as AsyncIterableIterator<any>, handleResult as any);
+        }
+        return handleResult(result);
+      });
     }
 
     return handleResult(result$);

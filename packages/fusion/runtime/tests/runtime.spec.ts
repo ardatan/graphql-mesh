@@ -38,6 +38,28 @@ describe('useFusiongraph', () => {
       },
     },
   });
+  const cSchema = createSchema({
+    typeDefs: `
+      type Query {
+        c: String
+      }
+      type Subscription {
+        c: String
+      }
+    `,
+    resolvers: {
+      Query: {
+        c: () => 'c',
+      },
+      Subscription: {
+        c: {
+          async *subscribe() {
+            yield { c: 'c' };
+          },
+        },
+      },
+    },
+  });
   const yoga = createYoga({
     plugins: [
       useFusiongraph({
@@ -51,6 +73,10 @@ describe('useFusiongraph', () => {
               name: 'b',
               schema: bSchema,
             },
+            {
+              name: 'c',
+              schema: cSchema,
+            },
           ]),
         transports() {
           return {
@@ -60,6 +86,11 @@ describe('useFusiongraph', () => {
                   return createDefaultExecutor(aSchema);
                 case 'b':
                   return createDefaultExecutor(bSchema);
+                case 'c':
+                  // Returns Promise<AsyncIterableIterator<ExecutionResult>>
+                  return async function (args) {
+                    return createDefaultExecutor(cSchema)(args);
+                  };
               }
               throw new Error(`Unknown subgraph: ${subgraphName}`);
             },
@@ -100,4 +131,28 @@ describe('useFusiongraph', () => {
       },
     });
   }
+  it('works with executors that return Promise<AsyncIterableIterator<ExecutionResult>>', async () => {
+    expect.assertions(1);
+    const res = await yoga.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+      },
+      body: JSON.stringify({
+        query: `
+          subscription {
+            c
+          }
+        `,
+      }),
+    });
+    const chunks: Uint8Array[] = [];
+    // eslint-disable-next-line no-unreachable-loop
+    for await (const chunk of res.body) {
+      chunks.push(chunk);
+    }
+    const resText = Buffer.concat(chunks).toString('utf-8');
+    expect(resText).toMatch(/{"c":"c"}/);
+  });
 });

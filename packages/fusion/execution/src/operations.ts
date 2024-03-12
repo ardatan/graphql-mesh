@@ -295,7 +295,12 @@ export function executeOperationPlan({
     errors,
   });
   if (isPromise(res$)) {
-    return res$.then(res => prepareExecutionResult(res, errors, executablePlan));
+    return res$.then(res => {
+      if (isAsyncIterable(res)) {
+        return mapAsyncIterator(res, res => prepareExecutionResult(res, errors, executablePlan));
+      }
+      return prepareExecutionResult(res, errors, executablePlan);
+    });
   }
   if (isAsyncIterable(res$)) {
     return mapAsyncIterator(res$, res => prepareExecutionResult(res, errors, executablePlan));
