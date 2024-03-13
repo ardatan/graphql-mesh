@@ -1,5 +1,15 @@
 # json-schema-subscriptions
 
+## 0.12.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.2.2
+  - @omnigraph/json-schema@0.99.3
+  - @graphql-mesh/plugin-live-query@0.97.2
+  - @graphql-mesh/serve-cli@0.3.3
+
 ## 0.12.3
 
 ### Patch Changes

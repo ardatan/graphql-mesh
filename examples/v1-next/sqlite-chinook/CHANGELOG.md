@@ -1,5 +1,14 @@
 # chinook
 
+## 0.15.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.2.2
+  - @omnigraph/sqlite@0.1.2
+  - @graphql-mesh/serve-cli@0.3.3
+
 ## 0.15.2
 
 ### Patch Changes

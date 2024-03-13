@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-thrift
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.97.2
+  - @graphql-mesh/transport-common@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
