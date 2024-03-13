@@ -2643,7 +2643,7 @@
             }
           ]
         },
-        "fetch": {
+        "fetchMetrics": {
           "description": "Any of: Boolean, String",
           "anyOf": [
             {
@@ -2678,8 +2678,15 @@
           "type": "boolean"
         },
         "endpoint": {
-          "type": "string",
-          "description": "The path to the metrics endpoint\ndefault: `/metrics`"
+          "description": "The path to the metrics endpoint\ndefault: `/metrics` (Any of: Boolean, String)",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
       }
     },

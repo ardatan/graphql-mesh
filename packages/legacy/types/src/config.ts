@@ -2154,9 +2154,9 @@ export interface PrometheusConfig {
   httpResponseHeaders?: boolean;
   /**
    * The path to the metrics endpoint
-   * default: `/metrics`
+   * default: `/metrics` (Any of: Boolean, String)
    */
-  endpoint?: string;
+  endpoint?: boolean | string;
 }
 /**
  * RateLimit plugin

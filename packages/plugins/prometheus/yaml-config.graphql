@@ -37,7 +37,7 @@ type PrometheusConfig @md {
   The path to the metrics endpoint
   default: `/metrics`
   """
-  endpoint: String
+  endpoint: BooleanOrString
 }
 
 union BooleanOrString = Boolean | String
