@@ -40,7 +40,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-yoga/plugin-prometheus": "^4.0.0"
+    "@graphql-mesh/serve-runtime": "^0.2.2",
+    "@graphql-yoga/plugin-prometheus": "^4.1.0"
   },
   "devDependencies": {
     "prom-client": "15.1.0"

@@ -3968,9 +3968,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/prometheus@npm:^9.3.1":
-  version: 9.3.1
-  resolution: "@envelop/prometheus@npm:9.3.1"
+"@envelop/prometheus@npm:^9.4.0":
+  version: 9.4.0
+  resolution: "@envelop/prometheus@npm:9.4.0"
   dependencies:
     "@envelop/on-resolve": "npm:^4.1.0"
     tslib: "npm:^2.5.0"
@@ -3978,7 +3978,7 @@ __metadata:
     "@envelop/core": ^5.0.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     prom-client: ^15.0.0
-  checksum: 10c0/f6e9c1af8508c2e8625d94ffc6fd6eaa0c707a89557146cf10fbbbcf6c3557f77dbd5a81fd7d5ba3ee1de98784611c1e3cb85b79547235f9446df1c04a42b511
+  checksum: 10c0/7aab79cc9327ec4a98e0732088ce7df2bc63ed4b17eab4942debfbd934cd2ba3fc609e072eb4c2bd921bb41f3d5fe843ad0f6092cfcf8c671efd5346f3db6815
   languageName: node
   linkType: hard
 
@@ -5252,7 +5252,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-prometheus@workspace:packages/plugins/prometheus"
   dependencies:
-    "@graphql-yoga/plugin-prometheus": "npm:^4.0.0"
+    "@graphql-yoga/plugin-prometheus": "npm:^4.1.0"
     prom-client: "npm:15.1.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.97.1
@@ -6755,16 +6755,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-prometheus@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@graphql-yoga/plugin-prometheus@npm:4.0.0"
+"@graphql-yoga/plugin-prometheus@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@graphql-yoga/plugin-prometheus@npm:4.1.0"
   dependencies:
-    "@envelop/prometheus": "npm:^9.3.1"
+    "@envelop/prometheus": "npm:^9.4.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.1.1
+    graphql-yoga: ^5.2.0
     prom-client: ^15.0.0
-  checksum: 10c0/a25d7cda198e2b583e153e614bed84dda8d4c58e6887fff29be949d90927de000a92cf9089711ddf0df6183e5f433511e2dda13d58c60a021b4ae2cc8a884225
+  checksum: 10c0/cad20974ae1df8cc0490e38bee833b463ae7dfe5cf6b8f5541413f4c8c0fd8ae5d37e1ce310e814c208a5c87038fddfbd67485d27e7c0aca98f0f2245ab4136d
   languageName: node
   linkType: hard
 

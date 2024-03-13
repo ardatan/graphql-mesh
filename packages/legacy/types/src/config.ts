@@ -2134,6 +2134,12 @@ export interface PrometheusConfig {
    * Any of: Boolean, String
    */
   delegation?: boolean | string;
+  delegationArgs?: boolean;
+  delegationKey?: boolean;
+  /**
+   * Any of: Boolean, String
+   */
+  subgraphExecute?: boolean | string;
   /**
    * Any of: Boolean, String
    */

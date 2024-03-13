@@ -19,6 +19,11 @@ type PrometheusConfig @md {
   # Mesh specific flags
 
   delegation: BooleanOrString
+  delegationArgs: Boolean
+  delegationKey: Boolean
+
+  subgraphExecute: BooleanOrString
+
   fetch: BooleanOrString
   fetchRequestHeaders: Boolean
   fetchResponseHeaders: Boolean

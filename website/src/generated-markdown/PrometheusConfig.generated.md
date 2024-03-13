@@ -31,6 +31,11 @@
 * `delegation` -  One of: 
   * `Boolean`
   * `String`
+* `delegationArgs` (type: `Boolean`)
+* `delegationKey` (type: `Boolean`)
+* `subgraphExecute` -  One of: 
+  * `Boolean`
+  * `String`
 * `fetch` -  One of: 
   * `Boolean`
   * `String`

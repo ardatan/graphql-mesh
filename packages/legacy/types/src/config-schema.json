@@ -2626,6 +2626,23 @@
             }
           ]
         },
+        "delegationArgs": {
+          "type": "boolean"
+        },
+        "delegationKey": {
+          "type": "boolean"
+        },
+        "subgraphExecute": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
         "fetch": {
           "description": "Any of: Boolean, String",
           "anyOf": [
