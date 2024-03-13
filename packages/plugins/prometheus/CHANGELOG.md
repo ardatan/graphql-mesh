@@ -1,5 +1,20 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.98.0
+
+### Minor Changes
+
+- [`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Track Fusion subgraphs
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/utils@0.97.2
+  - @graphql-mesh/serve-runtime@0.2.3
+
 ## 0.97.1
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.97.2
+
+### Patch Changes
+
+- [`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Track Fusion subgraphs
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.97.2
+
 ## 0.97.1
 
 ### Patch Changes
