@@ -1,5 +1,14 @@
 # reddit-example
 
+## 0.11.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.2.3
+  - @omnigraph/json-schema@0.99.4
+  - @graphql-mesh/serve-cli@0.3.4
+
 ## 0.11.4
 
 ### Patch Changes

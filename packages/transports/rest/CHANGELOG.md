@@ -1,5 +1,15 @@
 # @graphql-mesh/transport-rest
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/utils@0.97.3
+  - @graphql-mesh/transport-common@0.1.3
+
 ## 0.1.3
 
 ### Patch Changes

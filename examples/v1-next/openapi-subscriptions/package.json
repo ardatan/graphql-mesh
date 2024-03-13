@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/openapi-subscriptions",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "private": true,
   "scripts": {
     "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
@@ -9,8 +9,8 @@
     "start:api": "ts-node-dev api/index.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.89.2",
-    "@graphql-mesh/openapi": "0.99.3",
+    "@graphql-mesh/cli": "0.89.3",
+    "@graphql-mesh/openapi": "0.99.4",
     "@whatwg-node/fetch": "^0.9.0",
     "concurrently": "8.2.2",
     "fets": "^0.7.0",

@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/json-schema-subscriptions",
-  "version": "0.12.4",
+  "version": "0.12.5",
   "private": true,
   "scripts": {
     "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
@@ -9,10 +9,10 @@
     "start:mesh": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.2.2",
-    "@graphql-mesh/plugin-live-query": "^0.97.2",
-    "@graphql-mesh/serve-cli": "^0.3.3",
-    "@omnigraph/json-schema": "^0.99.3",
+    "@graphql-mesh/compose-cli": "^0.2.3",
+    "@graphql-mesh/plugin-live-query": "^0.97.3",
+    "@graphql-mesh/serve-cli": "^0.3.4",
+    "@omnigraph/json-schema": "^0.99.4",
     "@whatwg-node/fetch": "^0.9.0",
     "fets": "^0.7.1",
     "graphql": "16.8.1"

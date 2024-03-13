@@ -1,5 +1,14 @@
 # neo4j-example
 
+## 0.16.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.2.3
+  - @omnigraph/neo4j@0.1.3
+  - @graphql-mesh/serve-cli@0.3.4
+
 ## 0.16.3
 
 ### Patch Changes

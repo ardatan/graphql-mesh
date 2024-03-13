@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.97.3
+
+### Patch Changes
+
+- [`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fixes on Prometheus plugin
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.97.3
+
 ## 0.97.2
 
 ### Patch Changes

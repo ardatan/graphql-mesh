@@ -1,5 +1,14 @@
 # @v1-next/soap-demo
 
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.2.3
+  - @omnigraph/soap@0.97.3
+  - @graphql-mesh/serve-cli@0.3.4
+
 ## 0.9.3
 
 ### Patch Changes

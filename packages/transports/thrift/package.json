@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-thrift",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "repository": {
     "type": "git",
@@ -39,8 +39,8 @@
     "@creditkarma/thrift-client": "^1.0.4",
     "@creditkarma/thrift-server-core": "^1.0.4",
     "@graphql-mesh/string-interpolation": "^0.5.3",
-    "@graphql-mesh/transport-common": "^0.1.2",
-    "@graphql-mesh/utils": "^0.97.2",
+    "@graphql-mesh/transport-common": "^0.1.3",
+    "@graphql-mesh/utils": "^0.97.3",
     "@graphql-tools/utils": "^10.0.13",
     "pascal-case": "^3.1.2"
   },

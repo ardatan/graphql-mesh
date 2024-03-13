@@ -1,5 +1,16 @@
 # typescript-location-weather-example
 
+## 0.16.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-localforage@0.97.3
+  - @graphql-mesh/compose-cli@0.2.3
+  - @omnigraph/openapi@0.99.4
+  - @graphql-mesh/plugin-response-cache@0.97.3
+  - @graphql-mesh/serve-cli@0.3.4
+
 ## 0.16.4
 
 ### Patch Changes
