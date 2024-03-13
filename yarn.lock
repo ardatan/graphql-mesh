@@ -34134,10 +34134,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:6.7.1":
-  version: 6.7.1
-  resolution: "undici@npm:6.7.1"
-  checksum: 10c0/bd72f2642060b96258e3907a718e380ae524f6d3cb6a173e439d5305b0b12a8cd17f856fd2faf48d978e10a93cbb678823a27460e517dcf51eabf3c9d56a5a2b
+"undici@npm:6.8.0":
+  version: 6.8.0
+  resolution: "undici@npm:6.8.0"
+  checksum: 10c0/aa3dfb71e4fbd80a2d7aaefb4e4ffadc2e68bd132e94efbc37161ad2dc4b49955404e05554484fd52bbfab22863aca4475b8fc8e74059e7f57ee81f8ed21c748
   languageName: node
   linkType: hard
 
