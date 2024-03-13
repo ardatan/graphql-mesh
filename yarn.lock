@@ -5252,6 +5252,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-prometheus@workspace:packages/plugins/prometheus"
   dependencies:
+    "@graphql-mesh/serve-runtime": "npm:^0.2.2"
     "@graphql-yoga/plugin-prometheus": "npm:^4.1.0"
     prom-client: "npm:15.1.0"
   peerDependencies:

@@ -24,7 +24,7 @@ type PrometheusConfig @md {
 
   subgraphExecute: BooleanOrString
 
-  fetch: BooleanOrString
+  fetchMetrics: BooleanOrString
   fetchRequestHeaders: Boolean
   fetchResponseHeaders: Boolean
 

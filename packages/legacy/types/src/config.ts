@@ -2143,7 +2143,7 @@ export interface PrometheusConfig {
   /**
    * Any of: Boolean, String
    */
-  fetch?: boolean | string;
+  fetchMetrics?: boolean | string;
   fetchRequestHeaders?: boolean;
   fetchResponseHeaders?: boolean;
   /**

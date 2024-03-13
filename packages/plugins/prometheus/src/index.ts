@@ -1,5 +1,5 @@
 import { isAsyncIterable, type Plugin as YogaPlugin } from 'graphql-yoga';
-import { register as defaultRegistry, Histogram, Registry } from 'prom-client';
+import { Counter, register as defaultRegistry, Histogram, Registry } from 'prom-client';
 import { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { ImportFn, Logger, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import {
@@ -14,34 +14,43 @@ export default function useMeshPrometheus(
     logger?: Logger;
     baseDir?: string;
     importFn?: ImportFn;
+    registry?: Registry | string;
   },
 ): MeshPlugin<any> & YogaPlugin & MeshServePlugin {
   let registry: Registry;
   if (pluginOptions.registry) {
-    const registry$ = loadFromModuleExportExpression<Registry>(pluginOptions.registry, {
-      cwd: pluginOptions.baseDir || globalThis.process?.cwd(),
-      importFn: pluginOptions.importFn || defaultImportFn,
-      defaultExportName: 'default',
-    });
-    const registryProxy = Proxy.revocable(defaultRegistry, {
-      get(target, prop, receiver) {
-        if (typeof (target as any)[prop] === 'function') {
-          return function (...args: any[]) {
-            return registry$.then(registry => (registry as any)[prop](...args));
-          };
-        }
-        return Reflect.get(target, prop, receiver);
-      },
-    });
-    registry = registryProxy.proxy;
-    registry$.then(() => registryProxy.revoke()).catch(e => pluginOptions.logger.error(e));
+    if (typeof pluginOptions.registry === 'string') {
+      const registry$ = loadFromModuleExportExpression<Registry>(pluginOptions.registry, {
+        cwd: pluginOptions.baseDir || globalThis.process?.cwd(),
+        importFn: pluginOptions.importFn || defaultImportFn,
+        defaultExportName: 'default',
+      });
+      const registryProxy = Proxy.revocable(defaultRegistry, {
+        get(target, prop, receiver) {
+          if (typeof (target as any)[prop] === 'function') {
+            return function (...args: any[]) {
+              return registry$.then(registry => (registry as any)[prop](...args));
+            };
+          }
+          return Reflect.get(target, prop, receiver);
+        },
+      });
+      registry = registryProxy.proxy;
+      registry$.then(() => registryProxy.revoke()).catch(e => pluginOptions.logger.error(e));
+    } else {
+      registry = pluginOptions.registry;
+    }
+  } else {
+    registry = defaultRegistry;
   }
 
   let fetchHistogram: Histogram | undefined;
 
-  if (pluginOptions.fetch) {
+  if (pluginOptions.fetchMetrics) {
     const name =
-      typeof pluginOptions.fetch === 'string' ? pluginOptions.fetch : 'graphql_mesh_fetch_duration';
+      typeof pluginOptions.fetchMetrics === 'string'
+        ? pluginOptions.fetchMetrics
+        : 'graphql_mesh_fetch_duration';
     const labelNames = ['url', 'method', 'statusCode', 'statusText'];
     if (pluginOptions.fetchRequestHeaders) {
       labelNames.push('requestHeaders');
@@ -80,8 +89,9 @@ export default function useMeshPrometheus(
   }
 
   let subgraphExecuteHistogram: Histogram | undefined;
+  let subgraphExecuteErrorCounter: Counter | undefined;
 
-  if (pluginOptions.subgraphExecute) {
+  if (pluginOptions.subgraphExecute !== false) {
     const name =
       typeof pluginOptions.subgraphExecute === 'string'
         ? pluginOptions.subgraphExecute
@@ -90,6 +100,12 @@ export default function useMeshPrometheus(
     subgraphExecuteHistogram = new Histogram({
       name,
       help: 'Time spent on subgraph execution',
+      labelNames: subgraphExecuteLabelNames,
+      registers: [registry],
+    });
+    subgraphExecuteErrorCounter = new Counter({
+      name: `graphql_mesh_subgraph_execute_errors`,
+      help: 'Number of errors on subgraph execution',
       labelNames: subgraphExecuteLabelNames,
       registers: [registry],
     });
@@ -130,6 +146,13 @@ export default function useMeshPrometheus(
         return ({ result }) => {
           if (isAsyncIterable(result)) {
             return {
+              onNext({ result }) {
+                if (result.errors) {
+                  result.errors.forEach(() => {
+                    subgraphExecuteErrorCounter?.inc({ subgraphName });
+                  });
+                }
+              },
               onEnd: () => {
                 const end = Date.now();
                 const duration = end - start;
@@ -141,6 +164,11 @@ export default function useMeshPrometheus(
                 );
               },
             };
+          }
+          if (result.errors) {
+            result.errors.forEach(() => {
+              subgraphExecuteErrorCounter?.inc({ subgraphName });
+            });
           }
           const end = Date.now();
           const duration = end - start;
