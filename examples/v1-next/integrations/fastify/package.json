@@ -1,15 +1,15 @@
 {
   "name": "@v1-next/example-fastify",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "private": true,
   "scripts": {
     "compose": "node ../../../../packages/compose-cli/dist/cjs/bin.js",
     "start": "ts-node-dev src/index.ts"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.2.2",
-    "@graphql-mesh/serve-runtime": "^0.2.3",
-    "@omnigraph/openapi": "^0.99.3",
+    "@graphql-mesh/compose-cli": "^0.2.3",
+    "@graphql-mesh/serve-runtime": "^0.2.4",
+    "@omnigraph/openapi": "^0.99.4",
     "fastify": "^4.26.0",
     "graphql": "16.8.1",
     "ts-node": "^10.9.2",

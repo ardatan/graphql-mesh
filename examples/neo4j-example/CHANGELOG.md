@@ -1,5 +1,14 @@
 # neo4j-example
 
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-file@0.97.3
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/neo4j@0.97.3
+
 ## 0.14.2
 
 ### Patch Changes

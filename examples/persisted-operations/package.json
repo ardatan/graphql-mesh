@@ -1,6 +1,6 @@
 {
   "name": "example-persisted-operations",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,9 +9,9 @@
     "test": "mesh build && jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.89.2",
-    "@graphql-mesh/json-schema": "0.99.3",
-    "@graphql-mesh/plugin-mock": "0.97.2",
+    "@graphql-mesh/cli": "0.89.3",
+    "@graphql-mesh/json-schema": "0.99.4",
+    "@graphql-mesh/plugin-mock": "0.97.3",
     "@graphql-yoga/plugin-sofa": "3.2.0",
     "graphql": "16.8.1"
   },
