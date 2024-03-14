@@ -1,17 +1,22 @@
 import { createHive, HivePluginOptions, useYogaHive } from '@graphql-hive/client';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { registerTerminateHandler } from '@graphql-mesh/utils';
+import { Logger, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
+import { PubSub, registerTerminateHandler } from '@graphql-mesh/utils';
 
 export default function useMeshHive(
-  pluginOptions: MeshPluginOptions<YamlConfig.HivePlugin>,
+  pluginOptions: YamlConfig.HivePlugin & {
+    logger?: Logger;
+    pubsub?: PubSub;
+  },
   // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
   const enabled =
     pluginOptions != null && 'enabled' in pluginOptions
-      ? // eslint-disable-next-line no-new-func
-        new Function(`return ${pluginOptions.enabled}`)()
+      ? typeof pluginOptions.enabled === 'string'
+        ? // eslint-disable-next-line no-new-func
+          new Function(`return ${pluginOptions.enabled}`)()
+        : pluginOptions.enabled
       : true;
 
   if (!enabled) {
@@ -35,18 +40,22 @@ export default function useMeshHive(
       processVariables: pluginOptions.usage.processVariables,
     };
     if (pluginOptions.usage?.clientInfo) {
-      usage.clientInfo = function (context) {
-        return {
-          name: stringInterpolator.parse(pluginOptions.usage.clientInfo.name, {
-            context,
-            env: process.env,
-          }),
-          version: stringInterpolator.parse(pluginOptions.usage.clientInfo.version, {
-            context,
-            env: process.env,
-          }),
+      if (typeof pluginOptions.usage.clientInfo === 'function') {
+        usage.clientInfo = pluginOptions.usage.clientInfo;
+      } else {
+        usage.clientInfo = function (context) {
+          return {
+            name: stringInterpolator.parse(pluginOptions.usage.clientInfo.name, {
+              context,
+              env: process.env,
+            }),
+            version: stringInterpolator.parse(pluginOptions.usage.clientInfo.version, {
+              context,
+              env: process.env,
+            }),
+          };
         };
-      };
+      }
     }
   }
   let reporting: HivePluginOptions['reporting'];
@@ -65,12 +74,13 @@ export default function useMeshHive(
   let agent: HivePluginOptions['agent'];
   if (pluginOptions.agent) {
     agent = {
+      name: pluginOptions.agent.name,
       timeout: pluginOptions.agent.timeout,
       maxRetries: pluginOptions.agent.maxRetries,
       minTimeout: pluginOptions.agent.minTimeout,
       sendInterval: pluginOptions.agent.sendInterval,
       maxSize: pluginOptions.agent.maxSize,
-      logger: pluginOptions.logger,
+      logger: pluginOptions.agent?.logger || pluginOptions.logger,
     };
   }
   let selfHosting: HivePluginOptions['selfHosting'];
@@ -99,7 +109,7 @@ export default function useMeshHive(
   function onTerminate() {
     return hiveClient
       .dispose()
-      .catch(e => pluginOptions.logger.error(`Hive client failed to dispose`, e));
+      .catch(e => pluginOptions.logger?.error(`Hive client failed to dispose`, e));
   }
   const id: number = pluginOptions.pubsub.subscribe('destroy', () =>
     onTerminate().finally(() => pluginOptions.pubsub.unsubscribe(id)),

@@ -2001,20 +2001,15 @@
       "title": "HivePlugin",
       "properties": {
         "enabled": {
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null` (Any of: Boolean, String)",
           "anyOf": [
             {
-              "type": "object",
-              "additionalProperties": true
+              "type": "boolean"
             },
             {
               "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
             }
-          ],
-          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`"
+          ]
         },
         "token": {
           "type": "string",
@@ -2044,6 +2039,24 @@
       "type": "object",
       "title": "HiveAgentOptions",
       "properties": {
+        "name": {
+          "type": "string"
+        },
+        "logger": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
         "timeout": {
           "type": "integer",
           "description": "30s by default"
@@ -2098,6 +2111,21 @@
         "processVariables": {
           "type": "boolean",
           "description": "(Experimental) Enables collecting Input fields usage based on the variables passed to the operation.\nDefault: false"
+        },
+        "sampler": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         }
       }
     },

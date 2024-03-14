@@ -1,8 +1,12 @@
 
-* `enabled` (type: `Any`) - If this expression is truthy, mocking would be enabled
-You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`
+* `enabled` -  - If this expression is truthy, mocking would be enabled
+You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null` One of: 
+  * `Boolean`
+  * `String`
 * `token` (type: `String`, required) - Access Token
 * `agent` (type: `Object`) - Agent Options: 
+  * `name` (type: `String`)
+  * `logger` (type: `Any`)
   * `timeout` (type: `Int`) - 30s by default
   * `maxRetries` (type: `Int`) - 5 by default
   * `minTimeout` (type: `Int`) - 200 by default
@@ -27,6 +31,7 @@ Default: no ttl
 Default: 1.0
   * `processVariables` (type: `Boolean`) - (Experimental) Enables collecting Input fields usage based on the variables passed to the operation.
 Default: false
+  * `sampler` (type: `Any`)
 * `reporting` (type: `Object`) - Schema reporting: 
   * `author` (type: `String`, required) - Author of current version of the schema
   * `commit` (type: `String`, required) - Commit SHA hash (or any identifier) related to the schema version

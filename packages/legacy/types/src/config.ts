@@ -1786,9 +1786,9 @@ export interface MaskedErrorsPluginConfig {
 export interface HivePlugin {
   /**
    * If this expression is truthy, mocking would be enabled
-   * You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`
+   * You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null` (Any of: Boolean, String)
    */
-  enabled?: any;
+  enabled?: boolean | string;
   /**
    * Access Token
    */
@@ -1802,6 +1802,8 @@ export interface HivePlugin {
  * Agent Options
  */
 export interface HiveAgentOptions {
+  name?: string;
+  logger?: any;
   /**
    * 30s by default
    */
@@ -1856,6 +1858,7 @@ export interface HiveUsageOptions {
    * Default: false
    */
   processVariables?: boolean;
+  sampler?: any;
 }
 /**
  * Extract client info from GraphQL Context
