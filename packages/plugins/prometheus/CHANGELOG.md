@@ -1,5 +1,23 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.98.2
+
+### Patch Changes
+
+- [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Terminate handler registry
+
+- [`3d59e68`](https://github.com/ardatan/graphql-mesh/commit/3d59e68ba7f220c10ccc9731e0c96faaae603034)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add `operationType` to metrics
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/types@0.97.4
+  - @graphql-mesh/serve-runtime@0.2.5
+
 ## 0.98.1
 
 ### Patch Changes

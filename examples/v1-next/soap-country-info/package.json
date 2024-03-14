@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/country-info-example",
-  "version": "0.14.4",
+  "version": "0.14.5",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,9 +8,9 @@
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.2.3",
-    "@graphql-mesh/serve-cli": "^0.3.4",
-    "@omnigraph/soap": "^0.97.3",
+    "@graphql-mesh/compose-cli": "^0.2.4",
+    "@graphql-mesh/serve-cli": "^0.3.5",
+    "@omnigraph/soap": "^0.97.4",
     "graphql": "^16.8.1"
   }
 }
