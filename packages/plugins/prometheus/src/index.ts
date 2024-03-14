@@ -96,7 +96,7 @@ export default function useMeshPrometheus(
       typeof pluginOptions.subgraphExecute === 'string'
         ? pluginOptions.subgraphExecute
         : 'graphql_mesh_subgraph_execute_duration';
-    const subgraphExecuteLabelNames = ['subgraphName'];
+    const subgraphExecuteLabelNames = ['subgraphName', 'operationType'];
     subgraphExecuteHistogram = new Histogram({
       name,
       help: 'Time spent on subgraph execution',
@@ -140,7 +140,7 @@ export default function useMeshPrometheus(
       }
       return undefined;
     },
-    onSubgraphExecute({ subgraphName }) {
+    onSubgraphExecute({ subgraphName, executionRequest: { operationType = 'query' } }) {
       if (subgraphExecuteHistogram) {
         const start = Date.now();
         return ({ result }) => {
@@ -149,7 +149,7 @@ export default function useMeshPrometheus(
               onNext({ result }) {
                 if (result.errors) {
                   result.errors.forEach(() => {
-                    subgraphExecuteErrorCounter?.inc({ subgraphName });
+                    subgraphExecuteErrorCounter?.inc({ subgraphName, operationType });
                   });
                 }
               },
@@ -159,6 +159,7 @@ export default function useMeshPrometheus(
                 subgraphExecuteHistogram.observe(
                   {
                     subgraphName,
+                    operationType,
                   },
                   duration,
                 );
@@ -167,7 +168,7 @@ export default function useMeshPrometheus(
           }
           if (result.errors) {
             result.errors.forEach(() => {
-              subgraphExecuteErrorCounter?.inc({ subgraphName });
+              subgraphExecuteErrorCounter?.inc({ subgraphName, operationType });
             });
           }
           const end = Date.now();
@@ -175,6 +176,7 @@ export default function useMeshPrometheus(
           subgraphExecuteHistogram.observe(
             {
               subgraphName,
+              operationType,
             },
             duration,
           );

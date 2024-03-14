@@ -64,6 +64,7 @@ describe('Prometheus', () => {
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_duration');
     expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('operationType="query"');
   });
   it('should track subgraph request errors', async () => {
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
@@ -87,5 +88,6 @@ describe('Prometheus', () => {
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_errors');
     expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('operationType="query"');
   });
 });
