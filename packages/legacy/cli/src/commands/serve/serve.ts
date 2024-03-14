@@ -11,9 +11,9 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
+import { registerTerminateHandler } from '@graphql-mesh/utils';
 import { handleFatalError } from '../../handleFatalError.js';
 import { GraphQLMeshCLIParams } from '../../index.js';
-import { registerTerminateHandler } from '../../terminateHandler.js';
 
 function portSelectorFn(sources: [number, number, number], logger: Logger) {
   const port = sources.find(source => Boolean(source)) || 4000;

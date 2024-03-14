@@ -8,13 +8,19 @@ import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { getMesh, GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { Logger, YamlConfig } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, pathExists, rmdirs, writeFile } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  DefaultLogger,
+  pathExists,
+  registerTerminateHandler,
+  rmdirs,
+  writeFile,
+} from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
-import { registerTerminateHandler } from './terminateHandler.js';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
 

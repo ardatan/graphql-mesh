@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { createSchema } from 'graphql-yoga';
 import { register as registry } from 'prom-client';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';

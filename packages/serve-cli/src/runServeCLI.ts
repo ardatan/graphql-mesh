@@ -5,7 +5,7 @@ import { dirname, isAbsolute, join, relative } from 'path';
 import { App, SSLApp } from 'uWebSockets.js';
 import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { DefaultLogger, registerTerminateHandler } from '@graphql-mesh/utils';
 import { GitLoader } from '@graphql-tools/git-loader';
 import { GithubLoader } from '@graphql-tools/github-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -195,24 +195,4 @@ export async function runServeCLI({
       processExit(1);
     }
   });
-}
-
-const terminateEvents = ['SIGINT', 'SIGTERM'] as const;
-type TerminateEvents = (typeof terminateEvents)[number];
-type TerminateHandler = (eventName: TerminateEvents) => void;
-const terminateHandlers = new Set<TerminateHandler>();
-for (const eventName of terminateEvents) {
-  process.once(eventName, () => {
-    for (const handler of terminateHandlers) {
-      handler(eventName);
-      terminateHandlers.delete(handler);
-    }
-  });
-}
-
-function registerTerminateHandler(callback: TerminateHandler) {
-  terminateHandlers.add(callback);
-  return () => {
-    terminateHandlers.delete(callback);
-  };
 }
