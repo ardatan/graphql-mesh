@@ -1,5 +1,15 @@
 # @graphql-mesh/serve-runtime
 
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/fusion-runtime@0.2.5
+
 ## 0.2.4
 
 ### Patch Changes

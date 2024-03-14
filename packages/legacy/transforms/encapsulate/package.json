@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-encapsulate",
-  "version": "0.97.3",
+  "version": "0.97.4",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.97.3",
-    "@graphql-mesh/utils": "^0.97.3",
+    "@graphql-mesh/types": "^0.97.4",
+    "@graphql-mesh/utils": "^0.97.4",
     "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.4.0"

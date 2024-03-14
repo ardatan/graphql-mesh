@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.97.4
+
+### Patch Changes
+
+- [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update types in Hive plugin
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.97.4
+
 ## 0.97.3
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # example-fastify
 
+## 0.9.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.2.4
+  - @omnigraph/openapi@0.99.5
+  - @graphql-mesh/serve-runtime@0.2.5
+
 ## 0.9.5
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @graphql-mesh/transport-mysql
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/types@0.97.4
+  - @graphql-mesh/transport-common@0.1.4
+
 ## 0.1.4
 
 ### Patch Changes

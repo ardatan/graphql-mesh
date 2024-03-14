@@ -1,5 +1,16 @@
 # json-schema-example
 
+## 0.14.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/json-schema@0.99.5
+  - @graphql-mesh/transform-naming-convention@0.97.4
+  - @graphql-mesh/plugin-mock@0.97.4
+
 ## 0.14.4
 
 ### Patch Changes
