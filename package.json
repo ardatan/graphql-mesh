@@ -65,7 +65,7 @@
     "@changesets/cli": "2.27.1",
     "@theguild/prettier-config": "2.0.5",
     "@types/jest": "29.5.12",
-    "@types/node": "20.11.27",
+    "@types/node": "20.11.28",
     "@typescript-eslint/eslint-plugin": "7.2.0",
     "@typescript-eslint/parser": "7.2.0",
     "babel-jest": "29.7.0",
@@ -90,10 +90,10 @@
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "es5-ext": "0.10.64",
-    "esbuild": "0.20.1",
+    "esbuild": "0.20.2",
     "graphql": "16.8.1",
     "tslib": "2.6.2",
-    "undici": "6.8.0",
+    "undici": "6.9.0",
     "uuid": "7.0.3"
   },
   "lint-staged": {
