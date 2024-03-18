@@ -1,5 +1,12 @@
 # example-gcp
 
+## 0.10.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.2.6
+
 ## 0.10.6
 
 ### Patch Changes
