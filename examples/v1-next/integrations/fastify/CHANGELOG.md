@@ -1,5 +1,12 @@
 # example-fastify
 
+## 0.9.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.2.6
+
 ## 0.9.6
 
 ### Patch Changes

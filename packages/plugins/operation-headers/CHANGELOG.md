@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-operation-headers
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.2.6
+
 ## 0.0.5
 
 ### Patch Changes
