@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-hive
 
+## 0.97.5
+
+### Patch Changes
+
+- [#6675](https://github.com/ardatan/graphql-mesh/pull/6675)
+  [`800a7fc`](https://github.com/ardatan/graphql-mesh/commit/800a7fc788435b57aa1cf3bb619cd8cb7366f394)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/client@^0.29.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.29.0)
+    (from `^0.28.0`, in `dependencies`)
+
+- [`e9d97e3`](https://github.com/ardatan/graphql-mesh/commit/e9d97e38f6b2765fd3c7acd6d4a1f1c2531c264e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Enable autoDispose for Hive client instances
+
 ## 0.97.4
 
 ### Patch Changes
