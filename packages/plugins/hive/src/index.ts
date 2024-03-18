@@ -2,7 +2,7 @@ import { createHive, HivePluginOptions, useYogaHive } from '@graphql-hive/client
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { Logger, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { PubSub, registerTerminateHandler } from '@graphql-mesh/utils';
+import { PubSub } from '@graphql-mesh/utils';
 
 export default function useMeshHive(
   pluginOptions: YamlConfig.HivePlugin & {
@@ -105,6 +105,7 @@ export default function useMeshHive(
     usage,
     reporting,
     selfHosting,
+    autoDispose: ['SIGINT', 'SIGTERM'],
   });
   function onTerminate() {
     return hiveClient
@@ -114,7 +115,6 @@ export default function useMeshHive(
   const id: number = pluginOptions.pubsub.subscribe('destroy', () =>
     onTerminate().finally(() => pluginOptions.pubsub.unsubscribe(id)),
   );
-  registerTerminateHandler(onTerminate);
 
   return {
     onPluginInit({ addPlugin }) {
