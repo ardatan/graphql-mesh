@@ -1,6 +1,6 @@
 import { inspect } from 'node:util';
 import { parse } from 'graphql';
-import { ApolloServer } from '@apollo/server/';
+import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 

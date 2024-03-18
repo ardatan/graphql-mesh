@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es6",
     "rootDir": "./",
     "esModuleInterop": true
-  }
+  },
+  "files": ["tests/federation-example.test.ts"]
 }

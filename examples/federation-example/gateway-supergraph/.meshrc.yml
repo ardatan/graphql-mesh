@@ -4,8 +4,8 @@ sources:
       supergraph:
         source: ./supergraph.graphql
 
-documents:
-  - example-query.graphql
+# documents:
+#  - example-query.graphql
 
 serve:
   playground: true

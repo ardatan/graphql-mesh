@@ -11,12 +11,15 @@
     "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
     "start-gateway": "mesh dev --dir gateway",
     "start-gateway-delayed": "delay 1 && npm run start-gateway",
+    "start-gateway-supergraph": "mesh dev --dir gateway-supergraph",
+    "start-gateway-supergraph-delayed": "delay 1 && npm run start-gateway-supergraph",
     "start-service-accounts": "ts-node services/accounts/index.ts",
     "start-service-accounts-subgraph": "ts-node services/accounts-subgraph/index.ts",
     "start-service-inventory": "ts-node services/inventory/index.ts",
     "start-service-products": "ts-node services/products/index.ts",
     "start-service-reviews": "ts-node services/reviews/index.ts",
     "start-services": "concurrently \"npm:start-service-*\"",
+    "start-supergraph": "concurrently \"npm:start-services npm:start-gateway-supergraph-delayed\"",
     "test": "jest"
   },
   "devDependencies": {
