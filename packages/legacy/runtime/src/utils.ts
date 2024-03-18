@@ -8,7 +8,7 @@ export const isStreamOperation = memoize1(function isStreamOperation(astNode: AS
   }
   const documentStr = getDocumentString(astNode);
   let isStream = false;
-  if (documentStr.includes('@stream')) {
+  if (!documentStr || documentStr.includes('@stream')) {
     visit(astNode, {
       Field: {
         enter(node): typeof BREAK {
