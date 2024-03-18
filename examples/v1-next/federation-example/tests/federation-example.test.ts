@@ -481,15 +481,19 @@ describe('Federation Example', () => {
     supergraph: join(__dirname, '../gateway/supergraph.graphql'),
   });
   beforeAll(async () => {
-    servicesToStop = await Promise.all([
-      accountsServer(),
-      inventoryServer(),
-      productsServer(),
-      reviewsServer(),
-    ]);
+    try {
+      servicesToStop = await Promise.all([
+        accountsServer(),
+        inventoryServer(),
+        productsServer(),
+        reviewsServer(),
+      ]);
+    } catch (e) {
+      console.error(e);
+    }
   });
   afterAll(async () => {
-    await Promise.all(servicesToStop.map(service => service.stop()));
+    await Promise.all(servicesToStop?.map(service => service.stop()));
   });
   it('should give correct response for example queries', async () => {
     const response = await meshHttp.fetch('/graphql', {
