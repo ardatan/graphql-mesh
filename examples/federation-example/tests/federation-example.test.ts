@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { ApolloServer, BaseContext } from '@apollo/server';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { accountsSubgraphServer } from '../services/accounts-subgraph/server';
@@ -474,9 +475,7 @@ writeFileSync(join(problematicModulePath, './flat.js'), emptyModuleContent);
 writeFileSync(join(problematicModulePath, './flat-map.js'), emptyModuleContent);
 
 describe('Federation Example', () => {
-  let servicesToStop: Array<{
-    stop: () => Promise<void>;
-  }> = [];
+  let servicesToStop: Array<ApolloServer<BaseContext>> = [];
   beforeAll(async () => {
     servicesToStop = await Promise.all([
       accountsServer(),
