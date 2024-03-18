@@ -493,7 +493,7 @@ describe('Federation Example', () => {
     }
   });
   afterAll(async () => {
-    await Promise.all(servicesToStop?.map(service => service.stop()));
+    await Promise.all(servicesToStop.map(service => service.stop()));
   });
   it('should give correct response for example queries', async () => {
     const response = await meshHttp.fetch('/graphql', {
