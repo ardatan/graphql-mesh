@@ -10,7 +10,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.89.5",
     "@graphql-mesh/openapi": "0.99.5",
-    "@sinclair/typebox": "0.32.15",
+    "@sinclair/typebox": "0.32.16",
     "fets": "0.7.2",
     "graphql": "16.8.1"
   },
