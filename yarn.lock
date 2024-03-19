@@ -7067,8 +7067,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^1.1.12":
-  version: 1.1.24
-  resolution: "@graphql-tools/federation@npm:1.1.24"
+  version: 1.1.25
+  resolution: "@graphql-tools/federation@npm:1.1.25"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0"
     "@graphql-tools/delegate": "npm:^10.0.4"
@@ -7085,7 +7085,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/017d89a1cb2d4d1e6942571bd29616731c0a63843fc572e84a01fc96f73f8ca178fdd64fef881c3063b366c492617dfdf78fd40db7edc5a9acf5d25a9e414bc3
+  checksum: 10c0/ff395887a4652a29a395d996a7c7cc4b7c6fd09aca7da4ecb43d9c9d62bdac0a19266bd349be97568ecd57ebdb41423b77014565c3ed2b36bfc2b1b4c0d107f3
   languageName: node
   linkType: hard
 
@@ -11847,7 +11847,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.11.29, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6":
+"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6":
+  version: 20.11.30
+  resolution: "@types/node@npm:20.11.30"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/867cfaf969c6d8850d8d7304e7ab739898a50ecb1395b61ff2335644f5f48d7a46fbc4a14cee967aed65ec134b61a746edae70d1f32f11321ccf29165e3bc4e6
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.11.29":
   version: 20.11.29
   resolution: "@types/node@npm:20.11.29"
   dependencies:
