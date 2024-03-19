@@ -1,6 +1,6 @@
 {
   "name": "sqlite-chinook",
-  "version": "0.15.6",
+  "version": "0.15.7",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.2.4",
-    "@graphql-mesh/serve-cli": "^0.3.6",
+    "@graphql-mesh/serve-cli": "^0.3.7",
     "@omnigraph/sqlite": "^0.1.4",
     "graphql": "^16.8.1"
   }

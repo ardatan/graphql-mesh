@@ -1,5 +1,12 @@
 # @graphql-mesh/serve-cli
 
+## 0.3.7
+
+### Patch Changes
+
+- [`e6e19d6`](https://github.com/ardatan/graphql-mesh/commit/e6e19d6e73161e3719405138d8d0f853d5c805d9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support code files as fusiongraph input
+
 ## 0.3.6
 
 ### Patch Changes
