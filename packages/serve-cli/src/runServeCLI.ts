@@ -6,6 +6,7 @@ import { App, SSLApp } from 'uWebSockets.js';
 import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DefaultLogger, registerTerminateHandler } from '@graphql-mesh/utils';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GitLoader } from '@graphql-tools/git-loader';
 import { GithubLoader } from '@graphql-tools/github-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -159,7 +160,13 @@ export async function runServeCLI({
     [unifiedGraphName]() {
       workerLogger.info(`Loading ${unifiedGraphName} from ${unifiedGraphPath}`);
       return loadSchema(unifiedGraphPath, {
-        loaders: [new GraphQLFileLoader(), new UrlLoader(), new GithubLoader(), new GitLoader()],
+        loaders: [
+          new GraphQLFileLoader(),
+          new UrlLoader(),
+          new CodeFileLoader(),
+          new GithubLoader(),
+          new GitLoader(),
+        ],
         assumeValid: true,
         assumeValidSDL: true,
       })
