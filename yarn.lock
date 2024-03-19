@@ -6157,8 +6157,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^1.1.12":
-  version: 1.1.23
-  resolution: "@graphql-tools/federation@npm:1.1.23"
+  version: 1.1.24
+  resolution: "@graphql-tools/federation@npm:1.1.24"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0"
     "@graphql-tools/delegate": "npm:^10.0.4"
@@ -6175,7 +6175,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/ada9bd4f63ecdc37e7e19492598725d257b9016f06aef5a24d5d84813a25aa0d0ac40a6b9f6f5b290aefbd31bd1ee56ffab2119925b53268f48194fb36a83e83
+  checksum: 10c0/017d89a1cb2d4d1e6942571bd29616731c0a63843fc572e84a01fc96f73f8ca178fdd64fef881c3063b366c492617dfdf78fd40db7edc5a9acf5d25a9e414bc3
   languageName: node
   linkType: hard
 
