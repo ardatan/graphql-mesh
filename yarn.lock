@@ -11847,21 +11847,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6":
+"@types/node@npm:*, @types/node@npm:20.11.30, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6":
   version: 20.11.30
   resolution: "@types/node@npm:20.11.30"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/867cfaf969c6d8850d8d7304e7ab739898a50ecb1395b61ff2335644f5f48d7a46fbc4a14cee967aed65ec134b61a746edae70d1f32f11321ccf29165e3bc4e6
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:20.11.29":
-  version: 20.11.29
-  resolution: "@types/node@npm:20.11.29"
-  dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: 10c0/b839bad64b2d0e2b4a2d09a53c019ac06c732ac66ea88f3a86a9d2f28a789caf8fd56b888f577183459733abfa1b77e4bf6986cde18b2ec63e1939427aa0d387
   languageName: node
   linkType: hard
 
@@ -19166,7 +19157,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.3.0"
     "@graphql-mesh/cli": "npm:0.89.5"
     "@graphql-mesh/json-schema": "npm:0.99.5"
-    "@types/node": "npm:20.11.29"
+    "@types/node": "npm:20.11.30"
     graphql: "npm:16.8.1"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -20096,7 +20087,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.11.29"
+    "@types/node": "npm:20.11.30"
     "@types/react": "npm:18.2.67"
     "@types/react-dom": "npm:18.2.22"
     apollo-upload-client: "npm:18.0.1"
@@ -20874,7 +20865,7 @@ __metadata:
     "@changesets/cli": "npm:2.27.1"
     "@theguild/prettier-config": "npm:2.0.5"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.11.29"
+    "@types/node": "npm:20.11.30"
     "@typescript-eslint/eslint-plugin": "npm:7.3.1"
     "@typescript-eslint/parser": "npm:7.3.1"
     babel-jest: "npm:29.7.0"
@@ -24226,7 +24217,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.5"
     "@graphql-mesh/json-schema": "npm:0.99.5"
-    "@types/node": "npm:20.11.29"
+    "@types/node": "npm:20.11.30"
     concurrently: "npm:8.2.2"
     fets: "npm:0.7.2"
     graphql: "npm:16.8.1"
@@ -30285,7 +30276,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.97.4"
     "@graphql-mesh/runtime": "npm:0.98.5"
     "@graphql-mesh/transform-prefix": "npm:0.97.4"
-    "@types/node": "npm:20.11.29"
+    "@types/node": "npm:20.11.30"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
@@ -36055,7 +36046,7 @@ __metadata:
     "@theguild/algolia": "npm:2.1.0"
     "@theguild/components": "npm:^6.0.1"
     "@theguild/tailwind-config": "npm:0.3.2"
-    "@types/node": "npm:20.11.29"
+    "@types/node": "npm:20.11.30"
     "@types/react": "npm:18.2.67"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.1.3"
