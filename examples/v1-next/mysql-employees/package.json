@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/mysql-employees",
-  "version": "0.14.7",
+  "version": "0.14.8",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.2.4",
-    "@graphql-mesh/serve-cli": "^0.3.7",
+    "@graphql-mesh/serve-cli": "^0.3.8",
     "@omnigraph/mysql": "^0.1.4",
     "graphql": "^16.8.1",
     "typescript": "^5.4.2"
