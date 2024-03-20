@@ -11085,7 +11085,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/components@npm:^6.0.1":
+"@theguild/components@npm:^6.3.0":
   version: 6.3.0
   resolution: "@theguild/components@npm:6.3.0"
   dependencies:
@@ -36103,7 +36103,7 @@ __metadata:
   resolution: "website@workspace:website"
   dependencies:
     "@theguild/algolia": "npm:2.1.0"
-    "@theguild/components": "npm:^6.0.1"
+    "@theguild/components": "npm:^6.3.0"
     "@theguild/tailwind-config": "npm:0.3.2"
     "@types/node": "npm:20.11.30"
     "@types/react": "npm:18.2.67"
