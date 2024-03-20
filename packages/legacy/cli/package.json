@@ -79,7 +79,7 @@
   },
   "devDependencies": {
     "@types/lodash.get": "4.4.9",
-    "@types/mkdirp": "1.0.2",
+    "@types/mkdirp": "2.0.0",
     "@types/rimraf": "3.0.2",
     "@types/ws": "8.5.10",
     "@types/yargs": "17.0.32"

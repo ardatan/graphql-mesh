@@ -5598,7 +5598,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.97.4"
     "@graphql-tools/utils": "npm:^10.0.1"
     "@types/lodash.get": "npm:4.4.9"
-    "@types/mkdirp": "npm:1.0.2"
+    "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:3.0.2"
     "@types/ws": "npm:8.5.10"
     "@types/yargs": "npm:17.0.32"
@@ -5838,7 +5838,7 @@ __metadata:
   resolution: "@graphql-mesh/http@workspace:packages/legacy/http"
   dependencies:
     "@types/lodash.get": "npm:4.4.9"
-    "@types/mkdirp": "npm:1.0.2"
+    "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:3.0.2"
     "@types/ws": "npm:8.5.10"
     "@types/yargs": "npm:17.0.32"
@@ -11776,12 +11776,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mkdirp@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@types/mkdirp@npm:1.0.2"
+"@types/mkdirp@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@types/mkdirp@npm:2.0.0"
   dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/9d619ab25a321c99d5cdb6f36cbbd9682a3c8b817c99e281703ab1d7254021964227872b23adc4c08a8f9c917d20f226ddb31d56e2253cc1ce9f11e39ac13b31
+    mkdirp: "npm:*"
+  checksum: 10c0/4ffc9905d84ec76b256f706fb4b4eedd0f63f260c0b3d3c7b13172582d046dfd0db661f314e8e15e1fb81d8b7ae5507a38dcf4a4f425c945d113694d6bb5c3a9
   languageName: node
   linkType: hard
 
@@ -26917,21 +26917,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mkdirp@npm:*, mkdirp@npm:3.0.1, mkdirp@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "mkdirp@npm:3.0.1"
+  bin:
+    mkdirp: dist/cjs/src/bin.js
+  checksum: 10c0/9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
+  languageName: node
+  linkType: hard
+
 "mkdirp@npm:1.0.3":
   version: 1.0.3
   resolution: "mkdirp@npm:1.0.3"
   bin:
     mkdirp: bin/cmd.js
   checksum: 10c0/5ed91cf65fe1ab3a2a6f752c58dea70984912940ba549b586481edb6de87254df94f6776faf1f80e5e76f4cf0f92da984740a67b847054642c3050cc0a8d88a1
-  languageName: node
-  linkType: hard
-
-"mkdirp@npm:3.0.1, mkdirp@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "mkdirp@npm:3.0.1"
-  bin:
-    mkdirp: dist/cjs/src/bin.js
-  checksum: 10c0/9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
   languageName: node
   linkType: hard
 
