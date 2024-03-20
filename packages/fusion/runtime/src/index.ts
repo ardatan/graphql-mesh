@@ -28,7 +28,7 @@ import {
   TransportExecutorFactoryOpts,
 } from '@graphql-mesh/transport-common';
 import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
-import { stitchSchemas } from '@graphql-tools/stitch';
+import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import {
   ExecutionRequest,
   Executor,
@@ -430,6 +430,19 @@ export function useFusiongraph<TContext>({
             executor,
           },
         ],
+        resolverValidationOptions: {
+          requireResolversForAllFields: 'ignore',
+          requireResolversForArgs: 'ignore',
+          requireResolversForNonScalar: 'ignore',
+          requireResolversForResolveType: 'ignore',
+          requireResolversToMatchSchema: 'ignore',
+        },
+        typeMergingOptions: {
+          validationSettings: {
+            validationLevel: ValidationLevel.Off,
+          },
+        },
+        mergeDirectives: true,
         resolvers: additionalResolvers,
       });
       const subgraphsForInContextSdk: {
