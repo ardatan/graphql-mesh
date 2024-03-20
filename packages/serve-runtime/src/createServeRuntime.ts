@@ -1,3 +1,4 @@
+import { GraphQLSchema } from 'graphql';
 import { createYoga, FetchAPI, YogaServerInstance, type Plugin } from 'graphql-yoga';
 import { convertSupergraphToFusiongraph } from '@graphql-mesh/fusion-federation';
 import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
@@ -55,7 +56,16 @@ export function createServeRuntime(config: MeshServeConfig) {
       transportBaseContext: configContext,
     });
   } else if ('proxy' in config) {
-    supergraphYogaPlugin = useExecutor(getProxyExecutor(config, configContext)) as any;
+    let schema: GraphQLSchema;
+    const executorPlugin = useExecutor(getProxyExecutor(config, configContext, () => schema));
+    supergraphYogaPlugin = {
+      onSchemaChange: payload => {
+        schema = payload.schema;
+      },
+      ...executorPlugin,
+      invalidateUnifiedGraph: () =>
+        (executorPlugin.invalidateSupergraph || (executorPlugin as any).invalidateUnifiedGraph)(),
+    };
   }
 
   const defaultFetchPlugin: MeshServePlugin = {

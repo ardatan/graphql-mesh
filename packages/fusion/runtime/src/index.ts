@@ -142,13 +142,13 @@ export function getTransportExecutor(
 }
 
 export function getOnSubgraphExecute({
-  fusiongraph,
+  getFusiongraph,
   plugins,
   transports,
   transportBaseContext,
   transportEntryMap,
 }: {
-  fusiongraph?: GraphQLSchema;
+  getFusiongraph: () => GraphQLSchema;
   plugins?: FusiongraphPlugin[];
   transports?: TransportsOption;
   transportBaseContext?: TransportBaseContext;
@@ -183,7 +183,9 @@ export function getOnSubgraphExecute({
               onSubgraphExecuteHooks,
               onSubgraphExecuteHook =>
                 onSubgraphExecuteHook({
-                  fusiongraph,
+                  get fusiongraph() {
+                    return getFusiongraph();
+                  },
                   subgraphName,
                   transportEntry,
                   executionRequest: subgraphExecReq,
@@ -276,7 +278,7 @@ export function getOnSubgraphExecute({
       }
       executor = function lazyExecutor(subgraphExecReq: ExecutionRequest) {
         function getSubgraph() {
-          return extractSubgraphFromFusiongraph(subgraphName, fusiongraph);
+          return extractSubgraphFromFusiongraph(subgraphName, getFusiongraph());
         }
         const executor$ = getTransportExecutor(
           transportGetter,
@@ -311,7 +313,9 @@ export function getExecutorForFusiongraph({
   const fusiongraph = ensureSchema(fusiongraphInput);
   const transportEntryMap = getSubgraphTransportMapFromFusiongraph(fusiongraph);
   const onSubgraphExecute = getOnSubgraphExecute({
-    fusiongraph,
+    getFusiongraph() {
+      return fusiongraph;
+    },
     plugins,
     transports,
     transportBaseContext,

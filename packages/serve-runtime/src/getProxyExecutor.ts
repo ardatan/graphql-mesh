@@ -1,3 +1,4 @@
+import { GraphQLSchema } from 'graphql';
 import {
   defaultTransportsOption,
   getOnSubgraphExecute,
@@ -9,10 +10,13 @@ import { MeshServeConfigWithProxy } from './types';
 export function getProxyExecutor<TContext>(
   config: MeshServeConfigWithProxy<TContext>,
   configContext: TContext,
+  getSchema?: () => GraphQLSchema,
 ): Executor {
   const fakeTransportEntryMap: Record<string, TransportEntry> = {};
   let subgraphName: string;
   const onSubgraphExecute = getOnSubgraphExecute({
+    plugins: config.plugins?.(configContext as any) as any,
+    getFusiongraph: getSchema,
     transports() {
       if (typeof config.transport === 'object') {
         return config.transport;
