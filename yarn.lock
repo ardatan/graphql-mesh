@@ -5644,7 +5644,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.0.1"
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
-    "@types/rimraf": "npm:3.0.2"
+    "@types/rimraf": "npm:4.0.5"
     "@types/ws": "npm:8.5.10"
     "@types/yargs": "npm:17.0.32"
     ajv: "npm:^8.12.0"
@@ -5884,7 +5884,7 @@ __metadata:
   dependencies:
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
-    "@types/rimraf": "npm:3.0.2"
+    "@types/rimraf": "npm:4.0.5"
     "@types/ws": "npm:8.5.10"
     "@types/yargs": "npm:17.0.32"
     "@whatwg-node/server": "npm:^0.9.0"
@@ -11507,16 +11507,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/glob@npm:*":
-  version: 8.1.0
-  resolution: "@types/glob@npm:8.1.0"
-  dependencies:
-    "@types/minimatch": "npm:^5.1.2"
-    "@types/node": "npm:*"
-  checksum: 10c0/ded07aa0d7a1caf3c47b85e262be82989ccd7933b4a14712b79c82fd45a239249811d9fc3a135b3e9457afa163e74a297033d7245b0dc63cd3d032f3906b053f
-  languageName: node
-  linkType: hard
-
 "@types/google-protobuf@npm:^3.7.2":
   version: 3.15.12
   resolution: "@types/google-protobuf@npm:3.15.12"
@@ -11807,7 +11797,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/minimatch@npm:5.1.2, @types/minimatch@npm:^5.1.2":
+"@types/minimatch@npm:5.1.2":
   version: 5.1.2
   resolution: "@types/minimatch@npm:5.1.2"
   checksum: 10c0/83cf1c11748891b714e129de0585af4c55dd4c2cafb1f1d5233d79246e5e1e19d1b5ad9e8db449667b3ffa2b6c80125c429dbee1054e9efb45758dbc4e118562
@@ -12062,13 +12052,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/rimraf@npm:3.0.2":
-  version: 3.0.2
-  resolution: "@types/rimraf@npm:3.0.2"
+"@types/rimraf@npm:4.0.5":
+  version: 4.0.5
+  resolution: "@types/rimraf@npm:4.0.5"
   dependencies:
-    "@types/glob": "npm:*"
-    "@types/node": "npm:*"
-  checksum: 10c0/08beaf5d5ac6d6ecb76df74e3f873453feab079b5993f7cdd00bf2789bc2dea6917d5d24e75a5346fe201f396fa8a6eccb1291f97695997e34733f9663228a86
+    rimraf: "npm:*"
+  checksum: 10c0/b4c17f5931ab7f7610c68aba58024717eecd11d16057b51d3f21a4180d36d1f5fea207503cba8a13749d61a1ac43d1bb795662f8b3638ad2501216017d232bf6
   languageName: node
   linkType: hard
 
@@ -31984,7 +31973,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:5.0.5, rimraf@npm:^5.0.0":
+"rimraf@npm:*, rimraf@npm:5.0.5, rimraf@npm:^5.0.0":
   version: 5.0.5
   resolution: "rimraf@npm:5.0.5"
   dependencies:
