@@ -29,7 +29,7 @@ exports[`SOAP Demo executes FindPerson.graphql query: FindPerson.graphql 1`] = `
   "data": {
     "s0_SOAPDemo_SOAPDemoSoap_FindPerson": {
       "FindPersonResult": {
-        "Age": 23,
+        "Age": 24,
         "DOB": "2000-03-20",
         "FavoriteColors": {
           "FavoriteColorsItem": [
