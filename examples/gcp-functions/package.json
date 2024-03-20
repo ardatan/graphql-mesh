@@ -1,6 +1,6 @@
 {
   "name": "example-gcp",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "private": true,
   "main": "dist/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@google-cloud/functions-framework": "3.3.0",
-    "@graphql-mesh/cli": "0.89.5",
+    "@graphql-mesh/cli": "0.89.6",
     "@graphql-mesh/json-schema": "0.99.5",
     "@types/node": "20.11.30",
     "graphql": "16.8.1",

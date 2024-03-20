@@ -1,5 +1,12 @@
 # @graphql-mesh/merger-stitching
 
+## 0.97.5
+
+### Patch Changes
+
+- [`722fbb7`](https://github.com/ardatan/graphql-mesh/commit/722fbb76976428ffd4b09c513538cd757da43470)
+  Thanks [@ardatan](https://github.com/ardatan)! - Disable validation for additional resolvers
+
 ## 0.97.4
 
 ### Patch Changes

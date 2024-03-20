@@ -1,5 +1,14 @@
 # @graphql-mesh/config
 
+## 0.99.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`722fbb7`](https://github.com/ardatan/graphql-mesh/commit/722fbb76976428ffd4b09c513538cd757da43470)]:
+  - @graphql-mesh/merger-stitching@0.97.5
+  - @graphql-mesh/merger-bare@0.97.5
+
 ## 0.99.5
 
 ### Patch Changes
