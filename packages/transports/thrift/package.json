@@ -42,7 +42,7 @@
     "@graphql-mesh/transport-common": "^0.1.4",
     "@graphql-mesh/utils": "^0.97.4",
     "@graphql-tools/utils": "^10.0.13",
-    "pascal-case": "^3.1.2"
+    "pascal-case": "^4.0.0"
   },
   "publishConfig": {
     "access": "public",
