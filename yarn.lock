@@ -28245,7 +28245,7 @@ __metadata:
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.2.0"
+    vite: "npm:5.2.1"
   languageName: unknown
   linkType: soft
 
@@ -35801,9 +35801,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.2.0":
-  version: 5.2.0
-  resolution: "vite@npm:5.2.0"
+"vite@npm:5.2.1":
+  version: 5.2.1
+  resolution: "vite@npm:5.2.1"
   dependencies:
     esbuild: "npm:^0.20.1"
     fsevents: "npm:~2.3.3"
@@ -35837,7 +35837,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/c2f68481afca49db1c615d8af480422977584905ed8c0eb89340c73bebba5499c3d1487bd4f883024f562675d8dfbb65db8e97f2605da02802ef6d76c490244e
+  checksum: 10c0/2817e80f081ca3ffa1f88f5e15b36f980a7ae80e2711c0e930d8de4a4ef207ad127f187abb2e74e8326cf62ebd344965fda886030ca06d757da36c0c9c354e8d
   languageName: node
   linkType: hard
 
