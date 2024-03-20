@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-operation-headers
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1639001`](https://github.com/ardatan/graphql-mesh/commit/16390018bd54946fbfbd2bfb8eb3ba7682966a12)]:
+  - @graphql-mesh/serve-runtime@0.2.7
+
 ## 0.0.6
 
 ### Patch Changes
