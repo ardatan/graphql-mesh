@@ -5624,7 +5624,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/cli@npm:0.89.5, @graphql-mesh/cli@workspace:packages/legacy/cli":
+"@graphql-mesh/cli@npm:0.89.6, @graphql-mesh/cli@workspace:packages/legacy/cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cli@workspace:packages/legacy/cli"
   dependencies:
@@ -5634,7 +5634,7 @@ __metadata:
     "@graphql-codegen/typescript-generic-sdk": "npm:^3.1.0"
     "@graphql-codegen/typescript-operations": "npm:^4.0.0"
     "@graphql-codegen/typescript-resolvers": "npm:^4.0.0"
-    "@graphql-mesh/config": "npm:^0.99.5"
+    "@graphql-mesh/config": "npm:^0.99.6"
     "@graphql-mesh/cross-helpers": "npm:^0.4.1"
     "@graphql-mesh/http": "npm:^0.98.5"
     "@graphql-mesh/runtime": "npm:^0.98.5"
@@ -5701,14 +5701,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/config@npm:0.99.5, @graphql-mesh/config@npm:^0.99.5, @graphql-mesh/config@workspace:packages/legacy/config":
+"@graphql-mesh/config@npm:0.99.6, @graphql-mesh/config@npm:^0.99.6, @graphql-mesh/config@workspace:packages/legacy/config":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/config@workspace:packages/legacy/config"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
     "@graphql-mesh/cache-localforage": "npm:^0.97.4"
-    "@graphql-mesh/merger-bare": "npm:^0.97.4"
-    "@graphql-mesh/merger-stitching": "npm:^0.97.4"
+    "@graphql-mesh/merger-bare": "npm:^0.97.5"
+    "@graphql-mesh/merger-stitching": "npm:^0.97.5"
     "@graphql-tools/code-file-loader": "npm:^8.0.0"
     "@graphql-tools/graphql-file-loader": "npm:^8.0.0"
     "@graphql-tools/load": "npm:^8.0.0"
@@ -5733,8 +5733,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/container@workspace:packages/legacy/container"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
-    "@graphql-mesh/config": "npm:0.99.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
+    "@graphql-mesh/config": "npm:0.99.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     "@graphql-mesh/grpc": "npm:0.98.4"
     "@graphql-mesh/json-schema": "npm:0.99.5"
@@ -5918,11 +5918,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/merger-bare@npm:^0.97.4, @graphql-mesh/merger-bare@workspace:packages/legacy/mergers/bare":
+"@graphql-mesh/merger-bare@npm:^0.97.5, @graphql-mesh/merger-bare@workspace:packages/legacy/mergers/bare":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/merger-bare@workspace:packages/legacy/mergers/bare"
   dependencies:
-    "@graphql-mesh/merger-stitching": "npm:0.97.4"
+    "@graphql-mesh/merger-stitching": "npm:0.97.5"
     "@graphql-tools/schema": "npm:10.0.3"
   peerDependencies:
     "@graphql-mesh/types": ^0.97.4
@@ -5951,7 +5951,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/merger-stitching@npm:0.97.4, @graphql-mesh/merger-stitching@npm:^0.97.4, @graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching":
+"@graphql-mesh/merger-stitching@npm:0.97.5, @graphql-mesh/merger-stitching@npm:^0.97.5, @graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching"
   dependencies:
@@ -9328,7 +9328,7 @@ __metadata:
     "@graphql-mesh/transport-rest": "npm:^0.1.5"
     "@graphql-tools/delegate": "npm:^10.0.3"
     "@json-schema-tools/meta-schema": "npm:1.7.0"
-    "@types/qs": "npm:6.9.13"
+    "@types/qs": "npm:6.9.14"
     "@types/to-json-schema": "npm:0.2.4"
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.9.0"
@@ -11993,10 +11993,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:6.9.13":
-  version: 6.9.13
-  resolution: "@types/qs@npm:6.9.13"
-  checksum: 10c0/0e2dbfb6ee13657cd87742f92c94f1b7a70901452fce477fb9391928165766623581a3229b34fde3e832afbedee509de98984124f38b513ba072d6e193ea06cd
+"@types/qs@npm:6.9.14":
+  version: 6.9.14
+  resolution: "@types/qs@npm:6.9.14"
+  checksum: 10c0/11ad1eb7f6d7c216002789959d88acc7c43f72854fa4335f01de0df41b4c4024668dace8a37ba12270314345ede0ec6b07f93053a45e7bd4cd7318a3dcf0b6b8
   languageName: node
   linkType: hard
 
@@ -12738,7 +12738,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@v1-next/javascript-wiki@workspace:examples/v1-next/openapi-javascript-wiki"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     graphql: "npm:16.8.1"
     moment: "npm:2.30.1"
@@ -12807,7 +12807,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@v1-next/openapi-subscriptions@workspace:examples/v1-next/openapi-subscriptions"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     "@whatwg-node/fetch": "npm:^0.9.0"
     concurrently: "npm:8.2.2"
@@ -14140,7 +14140,7 @@ __metadata:
   resolution: "auth0-example@workspace:examples/auth0"
   dependencies:
     "@envelop/auth0": "npm:6.0.0"
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@graphql-mesh/plugin-operation-field-permissions": "npm:0.97.4"
     graphql: "npm:16.8.1"
@@ -14153,7 +14153,7 @@ __metadata:
   resolution: "authors-service@workspace:examples/hive-example/sources/authors"
   dependencies:
     "@graphql-hive/cli": "npm:0.34.0"
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     fets: "npm:^0.7.0"
     graphql: "npm:16.8.1"
@@ -14805,7 +14805,7 @@ __metadata:
   resolution: "books-service@workspace:examples/hive-example/sources/books"
   dependencies:
     "@graphql-hive/cli": "npm:0.34.0"
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     fets: "npm:^0.7.0"
     graphql: "npm:16.8.1"
@@ -15448,7 +15448,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "chinook@workspace:examples/sqlite-chinook"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/tuql": "npm:0.98.4"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -15692,7 +15692,7 @@ __metadata:
   resolution: "cloudflare-workers@workspace:examples/cloudflare-workers"
   dependencies:
     "@graphql-mesh/cache-cfw-kv": "npm:0.97.4"
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.4"
     graphql: "npm:16.8.1"
@@ -16248,7 +16248,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "country-info-example@workspace:examples/soap-country-info"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/plugin-snapshot": "npm:0.97.4"
     "@graphql-mesh/soap": "npm:0.97.4"
     graphql: "npm:16.8.1"
@@ -16259,7 +16259,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "covid-mesh@workspace:examples/json-schema-covid"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     graphql: "npm:16.8.1"
@@ -19181,7 +19181,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-fastify@workspace:examples/fastify"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     fastify: "npm:4.26.2"
     graphql: "npm:16.8.1"
@@ -19196,7 +19196,7 @@ __metadata:
   resolution: "example-gcp@workspace:examples/gcp-functions"
   dependencies:
     "@google-cloud/functions-framework": "npm:3.3.0"
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@types/node": "npm:20.11.30"
     graphql: "npm:16.8.1"
@@ -19208,7 +19208,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-persisted-operations@workspace:examples/persisted-operations"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@graphql-mesh/plugin-mock": "npm:0.97.4"
     "@graphql-yoga/plugin-sofa": "npm:3.2.0"
@@ -19692,7 +19692,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "federation-gateway@workspace:examples/federation-example/gateway"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     "@graphql-mesh/transform-federation": "npm:0.97.4"
     graphql: "npm:16.8.1"
@@ -19717,7 +19717,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "federation-supergraph-gateway@workspace:examples/federation-example/gateway-supergraph"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/supergraph": "npm:0.2.4"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -20324,7 +20324,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "gateway-example@workspace:examples/hive-example/gateway"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     "@graphql-mesh/plugin-hive": "npm:0.97.5"
     "@graphql-mesh/transform-hive": "npm:0.97.5"
@@ -20838,7 +20838,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "graphql-file-upload-example@workspace:examples/graphql-file-upload-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     concurrently: "npm:8.2.2"
     graphql: "npm:16.8.1"
@@ -21084,7 +21084,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "grpc-example@workspace:examples/grpc-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/grpc": "npm:0.98.4"
     "@graphql-mesh/transform-naming-convention": "npm:0.97.4"
     "@grpc/grpc-js": "npm:1.10.3"
@@ -21114,7 +21114,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "grpc-reflection-example@workspace:examples/grpc-reflection-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/grpc": "npm:0.98.4"
     "@graphql-mesh/transform-naming-convention": "npm:0.97.4"
     "@grpc/grpc-js": "npm:1.10.3"
@@ -21445,7 +21445,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hasura-openbrewery-geodb@workspace:examples/hasura-openbrewery-geodb"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -21481,7 +21481,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hello-world-esm@workspace:examples/hello-world-esm"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@graphql-mesh/plugin-mock": "npm:0.97.4"
     graphql: "npm:16.8.1"
@@ -23002,7 +23002,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "javascript-wiki@workspace:examples/openapi-javascript-wiki"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     graphql: "npm:16.8.1"
     moment: "npm:2.30.1"
@@ -24230,7 +24230,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "json-schema-example@workspace:examples/json-schema-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@graphql-mesh/plugin-mock": "npm:0.97.4"
     "@graphql-mesh/transform-naming-convention": "npm:0.97.4"
@@ -24243,7 +24243,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "json-schema-fhir@workspace:examples/json-schema-fhir"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@types/unzip-stream": "npm:0.3.4"
     graphql: "npm:16.8.1"
@@ -24257,7 +24257,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "json-schema-file-upload@workspace:examples/json-schema-file-upload"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@types/node": "npm:20.11.30"
     concurrently: "npm:8.2.2"
@@ -24272,7 +24272,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "json-schema-hello-world@workspace:examples/hello-world"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@graphql-mesh/plugin-mock": "npm:0.97.4"
     "@graphql-yoga/plugin-sofa": "npm:3.2.0"
@@ -24305,7 +24305,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "json-schema-subscriptions@workspace:examples/json-schema-subscriptions"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
     "@graphql-mesh/plugin-live-query": "npm:0.97.4"
     "@whatwg-node/fetch": "npm:^0.9.0"
@@ -27054,7 +27054,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mongoose-example@workspace:examples/mongoose-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/mongoose": "npm:0.97.4"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
@@ -27167,7 +27167,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mysql-employees@workspace:examples/mysql-employees"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/mysql": "npm:0.97.4"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -27177,7 +27177,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mysql-rfam@workspace:examples/mysql-rfam"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/mysql": "npm:0.97.4"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
@@ -27325,7 +27325,7 @@ __metadata:
   resolution: "neo4j-example@workspace:examples/neo4j-example"
   dependencies:
     "@graphql-mesh/cache-file": "npm:0.97.4"
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/neo4j": "npm:0.97.4"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -27466,8 +27466,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nextjs-apollo-example@workspace:examples/nextjs-apollo-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
-    "@graphql-mesh/config": "npm:0.99.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
+    "@graphql-mesh/config": "npm:0.99.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     "@graphql-mesh/runtime": "npm:0.98.5"
     "@types/react": "npm:18.2.67"
@@ -27484,8 +27484,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nextjs-sdk-example@workspace:examples/nextjs-sdk-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
-    "@graphql-mesh/config": "npm:0.99.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
+    "@graphql-mesh/config": "npm:0.99.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     "@graphql-mesh/runtime": "npm:0.98.5"
     "@types/react": "npm:18.2.67"
@@ -28084,7 +28084,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "odata-microsoft-graph-example@workspace:examples/odata-microsoft"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/odata": "npm:0.97.4"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.1"
@@ -28095,8 +28095,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "odata-msgraph-programmatic-ts@workspace:examples/odata-msgraph-programmatic-ts"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
-    "@graphql-mesh/config": "npm:0.99.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
+    "@graphql-mesh/config": "npm:0.99.6"
     "@graphql-mesh/odata": "npm:0.97.4"
     "@graphql-mesh/runtime": "npm:0.98.5"
     graphql: "npm:16.8.1"
@@ -28108,8 +28108,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "odata-msgraph-programmatic@workspace:examples/odata-msgraph-programmatic"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
-    "@graphql-mesh/config": "npm:0.99.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
+    "@graphql-mesh/config": "npm:0.99.6"
     "@graphql-mesh/odata": "npm:0.97.4"
     "@graphql-mesh/runtime": "npm:0.98.5"
     graphql: "npm:16.8.1"
@@ -28120,7 +28120,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "odata-trippin-example@workspace:examples/odata-trippin"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/odata": "npm:0.97.4"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -28217,7 +28217,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openapi-meilisearch@workspace:examples/openapi-meilisearch"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -28227,7 +28227,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@types/react": "npm:18.2.67"
     "@types/react-dom": "npm:18.2.22"
     "@vitejs/plugin-react": "npm:4.2.1"
@@ -28243,7 +28243,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openapi-stackexchange@workspace:examples/openapi-stackexchange"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -28253,7 +28253,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openapi-stripe@workspace:examples/openapi-stripe"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     graphql: "npm:16.8.1"
   languageName: unknown
@@ -28263,7 +28263,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openapi-subscriptions@workspace:examples/openapi-subscriptions"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     "@whatwg-node/fetch": "npm:^0.9.0"
     concurrently: "npm:8.2.2"
@@ -28286,7 +28286,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openapi-youtrack@workspace:examples/openapi-youtrack"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     "@graphql-mesh/transform-resolvers-composition": "npm:0.97.4"
     graphql: "npm:16.8.1"
@@ -28307,7 +28307,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openwhisk-example@workspace:examples/openwhisk-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     esbuild: "npm:0.20.2"
     graphql: "npm:16.8.1"
@@ -30323,8 +30323,8 @@ __metadata:
   resolution: "postgres-geodb-example@workspace:examples/postgres-geodb"
   dependencies:
     "@graphql-mesh/cache-file": "npm:0.97.4"
-    "@graphql-mesh/cli": "npm:0.89.5"
-    "@graphql-mesh/config": "npm:0.99.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
+    "@graphql-mesh/config": "npm:0.99.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     "@graphql-mesh/postgraphile": "npm:0.97.4"
     "@graphql-mesh/runtime": "npm:0.98.5"
@@ -30543,7 +30543,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "programmatic-batching-example@workspace:examples/programmatic-batching"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     "@sinclair/typebox": "npm:0.32.17"
     concurrently: "npm:8.2.2"
@@ -31273,7 +31273,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "reddit-example@workspace:examples/reddit-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/json-schema": "npm:0.99.5"
   languageName: unknown
   linkType: soft
@@ -32907,7 +32907,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "soap-demo@workspace:examples/soap-demo"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/soap": "npm:0.97.4"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.1"
@@ -32918,7 +32918,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "soap-netsuite@workspace:examples/soap-netsuite"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/soap": "npm:0.97.4"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.1"
@@ -33113,7 +33113,7 @@ __metadata:
   dependencies:
     "@envelop/depth-limit": "npm:4.0.0"
     "@graphql-mesh/cache-cfw-kv": "npm:0.97.4"
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     "@graphql-mesh/plugin-rate-limit": "npm:0.97.4"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.4"
@@ -34273,7 +34273,7 @@ __metadata:
     "@creditkarma/thrift-server-core": "npm:1.0.4"
     "@creditkarma/thrift-server-express": "npm:1.0.4"
     "@creditkarma/thrift-typescript": "npm:3.7.6"
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/thrift": "npm:0.98.4"
     concurrently: "npm:8.2.2"
     express: "npm:4.19.0"
@@ -34931,7 +34931,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "type-merging-batching-example@workspace:examples/type-merging-batching-example"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/graphql": "npm:0.97.4"
     "@graphql-mesh/transform-rename": "npm:0.97.4"
     "@graphql-mesh/transform-type-merging": "npm:0.97.4"
@@ -35018,7 +35018,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "typescript-location-weather-example@workspace:examples/openapi-location-weather"
   dependencies:
-    "@graphql-mesh/cli": "npm:0.89.5"
+    "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.4"
     "@graphql-mesh/runtime": "npm:0.98.5"
