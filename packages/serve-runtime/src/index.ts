@@ -4,3 +4,4 @@ export * from './useWebhooks.js';
 export * from './useCustomFetch.js';
 export * from './inferResolvers.js';
 export * from './useStaticFiles.js';
+export * from './getProxyExecutor.js';

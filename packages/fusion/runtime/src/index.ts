@@ -141,13 +141,19 @@ export function getTransportExecutor(
   return mapMaybePromise(transport$, transport => transport.getSubgraphExecutor(transportContext));
 }
 
-export function getExecutorForFusiongraph({
-  fusiongraph: fusiongraphInput,
-  transports = defaultTransportsOption,
+export function getOnSubgraphExecute({
+  fusiongraph,
   plugins,
-  ...transportBaseContext
-}: GetExecutorForFusiongraphOpts) {
-  const fusiongraph = ensureSchema(fusiongraphInput);
+  transports,
+  transportBaseContext,
+  transportEntryMap,
+}: {
+  fusiongraph?: GraphQLSchema;
+  plugins?: FusiongraphPlugin[];
+  transports?: TransportsOption;
+  transportBaseContext?: TransportBaseContext;
+  transportEntryMap?: Record<string, TransportEntry>;
+}) {
   const onSubgraphExecuteHooks: OnSubgraphExecuteHook[] = [];
   if (plugins) {
     for (const plugin of plugins) {
@@ -156,7 +162,6 @@ export function getExecutorForFusiongraph({
       }
     }
   }
-  const transportEntryMap = getSubgraphTransportMapFromFusiongraph(fusiongraph);
   const subgraphExecutorMap: Record<string, Executor> = {};
   const transportGetter = createTransportGetter(transports);
   function onSubgraphExecute(
@@ -293,6 +298,25 @@ export function getExecutorForFusiongraph({
     }
     return executor({ document, variables, context });
   }
+
+  return onSubgraphExecute;
+}
+
+export function getExecutorForFusiongraph({
+  fusiongraph: fusiongraphInput,
+  transports = defaultTransportsOption,
+  plugins,
+  ...transportBaseContext
+}: GetExecutorForFusiongraphOpts) {
+  const fusiongraph = ensureSchema(fusiongraphInput);
+  const transportEntryMap = getSubgraphTransportMapFromFusiongraph(fusiongraph);
+  const onSubgraphExecute = getOnSubgraphExecute({
+    fusiongraph,
+    plugins,
+    transports,
+    transportBaseContext,
+    transportEntryMap,
+  });
   function fusiongraphExecutor(execReq: ExecutionRequest) {
     if (execReq.operationName === 'IntrospectionQuery') {
       return {

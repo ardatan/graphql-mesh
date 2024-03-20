@@ -20924,6 +20924,7 @@ __metadata:
     husky: "npm:9.0.11"
     jest: "npm:29.7.0"
     lint-staged: "npm:15.2.2"
+    minimatch: "npm:9.0.3"
     prettier: "npm:3.2.5"
     ts-jest: "npm:29.1.2"
     typescript: "npm:^5.4.2"

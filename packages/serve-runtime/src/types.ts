@@ -9,7 +9,7 @@ import {
 } from 'graphql-yoga';
 import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql';
 import { Plugin as EnvelopPlugin } from '@envelop/core';
-import { FusiongraphPlugin, TransportsOption } from '@graphql-mesh/fusion-runtime';
+import { FusiongraphPlugin, Transport, TransportsOption } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@graphql-mesh/types';
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
@@ -91,11 +91,16 @@ interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithout
   transports?: TransportsOption;
 }
 
-interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
+export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
   proxy: HTTPExecutorOptions;
+
+  transport?:
+    | Transport<'http'>
+    | Promise<Transport<'http'>>
+    | (() => Transport<'http'> | Promise<Transport<'http'>>);
 }
 
 interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {

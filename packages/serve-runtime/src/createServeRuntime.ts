@@ -5,9 +5,9 @@ import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
 import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DefaultLogger, getHeadersObj, wrapFetchWithHooks } from '@graphql-mesh/utils';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import { isPromise } from '@graphql-tools/utils';
+import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import { MeshServeConfig, MeshServeContext, MeshServePlugin } from './types';
 
@@ -55,11 +55,7 @@ export function createServeRuntime(config: MeshServeConfig) {
       transportBaseContext: configContext,
     });
   } else if ('proxy' in config) {
-    const executor = buildHTTPExecutor({
-      fetch: fetchAPI?.fetch,
-      ...config.proxy,
-    });
-    supergraphYogaPlugin = useExecutor(executor) as any;
+    supergraphYogaPlugin = useExecutor(getProxyExecutor(config, configContext)) as any;
   }
 
   const defaultFetchPlugin: MeshServePlugin = {
