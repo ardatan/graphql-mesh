@@ -7134,8 +7134,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor@npm:^1.2.0, @graphql-tools/executor@npm:^1.2.1, @graphql-tools/executor@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "@graphql-tools/executor@npm:1.2.2"
+  version: 1.2.3
+  resolution: "@graphql-tools/executor@npm:1.2.3"
   dependencies:
     "@graphql-tools/utils": "npm:^10.1.1"
     "@graphql-typed-document-node/core": "npm:3.2.0"
@@ -7144,7 +7144,7 @@ __metadata:
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/e657c665df06594f276a2abf9dad4075334bc9da43ed08f72dbc23adc6996d0157812011edc1795d8e5d022dcbe219003cdd7cbc3cbd17f63baa64b93c718da7
+  checksum: 10c0/890a9774e8e5d6fbaba299ae3e4bbf0ca238bcdfa1be711cd1ad2b2d40dc576c5d2e4ae35c4d4e193c5b68612f128a9d30bcd6da2907276ddbfb27a6cd15803a
   languageName: node
   linkType: hard
 
@@ -9012,8 +9012,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^5.0.0":
-  version: 5.2.0
-  resolution: "@neo4j/graphql@npm:5.2.0"
+  version: 5.3.0
+  resolution: "@neo4j/graphql@npm:5.3.0"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -9034,7 +9034,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/c1e43bca7cc60192a64470b2a45280afc3af934df6061f76f965a89de860752164db281f28757be2036d50b4edc797fb7b31f01c200d50e1b2f2ec28738637a8
+  checksum: 10c0/77c990464f0cd9cfeae3362582a218f0a5a12cca8b4b56973c22609b539658d2447473083c9243a26dc9552c8cc05419add5172831c213fe39446da170a1ba74
   languageName: node
   linkType: hard
 
@@ -10270,10 +10270,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.17":
-  version: 0.32.17
-  resolution: "@sinclair/typebox@npm:0.32.17"
-  checksum: 10c0/a49040652466862e4a5b8643311fba14c17e74123c99c55b5e0f0ab6df2ead110168f9a662ee8c873808579125778ffe81a81444d6dc0110c9bea3cd42df0476
+"@sinclair/typebox@npm:0.32.18":
+  version: 0.32.18
+  resolution: "@sinclair/typebox@npm:0.32.18"
+  checksum: 10c0/46a32221e45251b894b3fe6ed9bbcb60170260ba3c08497d0ed8cc102db800add940f236afe94ff1e6c1032c8418302af8944a8447ba0ec08c28922dd7f0cacc
   languageName: node
   linkType: hard
 
@@ -30595,7 +30595,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.6"
     "@graphql-mesh/openapi": "npm:0.99.5"
-    "@sinclair/typebox": "npm:0.32.17"
+    "@sinclair/typebox": "npm:0.32.18"
     concurrently: "npm:8.2.2"
     fets: "npm:0.7.2"
     graphql: "npm:16.8.1"
@@ -35200,10 +35200,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:6.9.0":
-  version: 6.9.0
-  resolution: "undici@npm:6.9.0"
-  checksum: 10c0/1d2e65ff901c5a6694c7c6c10a0526fff7949ae18efbd5e16e51ee29ac53e36bb7eda50c4f942b6de046eb4d4d0e5d7536cb48f45ae5235a6a83ac21de171a5d
+"undici@npm:6.10.1":
+  version: 6.10.1
+  resolution: "undici@npm:6.10.1"
+  checksum: 10c0/c4cbb7ad30680cf4cb83895051ec8adb068b81e60755081f008c6d070b46d475d14ee52145b7577a24f2f59d475fad2ac6f2761b7f890cc5df2b14ca7250a8e3
   languageName: node
   linkType: hard
 
