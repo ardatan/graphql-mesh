@@ -3,6 +3,7 @@ query ExampleMeQuery {
     firstName
     lastName
     jobTitle
+    code
     company {
       name
       type

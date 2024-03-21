@@ -27,6 +27,7 @@ type User {
   companyId: String
   birthDate: Date
   foos: [Foo]
+  code: QueryMeCode
   company: Company
 }
 
@@ -35,6 +36,13 @@ scalar Date
 
 type Foo {
   id: String
+}
+
+enum QueryMeCode {
+  _10 @enum(subgraph: "FakeAPI", value: "10")
+  _11 @enum(subgraph: "FakeAPI", value: "11")
+  _20 @enum(subgraph: "FakeAPI", value: "20")
+  _30 @enum(subgraph: "FakeAPI", value: "30")
 }
 
 """Fake Company"""

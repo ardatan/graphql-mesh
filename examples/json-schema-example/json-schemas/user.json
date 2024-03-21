@@ -26,6 +26,10 @@
           "items": {
             "$ref": "user.json#/definitions/Foo"
           }
+        },
+        "code": {
+          "type": "number",
+          "enum": [10, 11, 20, 30]
         }
       }
     },

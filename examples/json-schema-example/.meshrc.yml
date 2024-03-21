@@ -69,9 +69,14 @@ plugins:
           faker: '{{name.jobTitle}}'
         - apply: Company.name
           faker: '{{company.companyName}}'
+        - apply: User.code
+          custom: ./user-mocks#code
 
 documents:
   - example-query.graphql
+
+codegen:
+  ignoreEnumValuesFromSchema: false
 
 serve:
   playground: true
