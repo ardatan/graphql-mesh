@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { defineConfig, Giscus, PRODUCTS, useTheme } from '@theguild/components';
 
 export default defineConfig({
-  description: PRODUCTS.MESH.title,
+  description: 'GraphQL gateway framework',
   docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website',
   logo: PRODUCTS.MESH.logo({ className: 'w-9' }),
   main: function Main({ children }) {
