@@ -1,5 +1,12 @@
 # federation-supergraph-gateway
 
+## 0.5.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.9
+
 ## 0.5.8
 
 ### Patch Changes

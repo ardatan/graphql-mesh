@@ -1,6 +1,6 @@
 {
   "name": "batching-resolver-example",
-  "version": "0.11.9",
+  "version": "0.11.10",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.2.4",
-    "@graphql-mesh/serve-cli": "^0.3.8",
+    "@graphql-mesh/serve-cli": "^0.3.9",
     "@omnigraph/openapi": "^0.99.5",
     "fets": "^0.7.1",
     "graphql": "16.8.1"

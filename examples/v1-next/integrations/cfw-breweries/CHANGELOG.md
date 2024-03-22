@@ -1,5 +1,13 @@
 # cloudflare-workers
 
+## 0.10.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f293329`](https://github.com/ardatan/graphql-mesh/commit/f2933295532d0760bb731e055dd2bd6e9cb2a63b)]:
+  - @graphql-mesh/serve-runtime@0.2.8
+
 ## 0.10.8
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/serve-runtime
 
+## 0.2.8
+
+### Patch Changes
+
+- [`f293329`](https://github.com/ardatan/graphql-mesh/commit/f2933295532d0760bb731e055dd2bd6e9cb2a63b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improve proxy execution
+
+- Updated dependencies
+  [[`f293329`](https://github.com/ardatan/graphql-mesh/commit/f2933295532d0760bb731e055dd2bd6e9cb2a63b)]:
+  - @graphql-mesh/fusion-runtime@0.2.8
+
 ## 0.2.7
 
 ### Patch Changes
