@@ -1,13 +1,13 @@
 {
   "name": "@v1-next/federation-supergraph-gateway",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "node ../../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/serve-cli": "^0.3.9",
+    "@graphql-mesh/serve-cli": "^0.3.10",
     "graphql": "16.8.1"
   }
 }

@@ -1,5 +1,13 @@
 # type-merging-batching-example
 
+## 0.9.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.2.5
+  - @graphql-mesh/serve-cli@0.3.10
+
 ## 0.9.9
 
 ### Patch Changes
