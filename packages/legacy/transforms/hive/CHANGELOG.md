@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-hive
 
+## 0.97.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+
 ## 0.97.5
 
 ### Patch Changes

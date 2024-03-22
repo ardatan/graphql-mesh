@@ -1,5 +1,14 @@
 # example-gcp
 
+## 0.10.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.2.5
+  - @omnigraph/json-schema@0.99.6
+  - @graphql-mesh/serve-runtime@0.2.9
+
 ## 0.10.9
 
 ### Patch Changes

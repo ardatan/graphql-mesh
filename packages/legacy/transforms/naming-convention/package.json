@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-naming-convention",
-  "version": "0.97.4",
+  "version": "0.97.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.97.4",
-    "@graphql-mesh/utils": "^0.97.4",
+    "@graphql-mesh/types": "^0.97.5",
+    "@graphql-mesh/utils": "^0.97.5",
     "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.5.0"
@@ -47,7 +47,7 @@
     "upper-case": "^2.0.2"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "^0.97.4",
+    "@graphql-mesh/cache-localforage": "^0.97.5",
     "@graphql-tools/schema": "10.0.3"
   },
   "publishConfig": {
