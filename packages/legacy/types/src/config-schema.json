@@ -3177,9 +3177,85 @@
         },
         "batch": {
           "type": "boolean"
+        },
+        "subgraphs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubgraphConfiguration"
+          },
+          "additionalItems": false
         }
       },
       "required": ["source"]
+    },
+    "SubgraphConfiguration": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SubgraphConfiguration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the subgraph you want to configure"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "A url or file path to your remote GraphQL endpoint.\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
+        },
+        "useGETForQueries": {
+          "type": "boolean",
+          "description": "Use HTTP GET for Query operations"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST"],
+          "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
+        },
+        "credentials": {
+          "type": "string",
+          "enum": ["omit", "include"],
+          "description": "Request Credentials if your environment supports it.\n[See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)\n\n@default \"same-origin\" (Allowed values: omit, include)"
+        },
+        "webSocketImpl": {
+          "type": "string",
+          "description": "Path to a custom W3 Compatible WebSocket Implementation"
+        },
+        "source": {
+          "type": "string",
+          "description": "Path to the introspection\nYou can separately give schema introspection or SDL"
+        },
+        "subscriptionsProtocol": {
+          "type": "string",
+          "enum": ["SSE", "WS", "LEGACY_WS"],
+          "description": "SSE - Server Sent Events\nWS - New graphql-ws\nLEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)"
+        },
+        "subscriptionsEndpoint": {
+          "type": "string",
+          "description": "URL to your endpoint serving all subscription queries for this source"
+        },
+        "retry": {
+          "type": "integer",
+          "description": "Retry attempts if fails"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout in milliseconds"
+        },
+        "batch": {
+          "type": "boolean",
+          "description": "Enable/Disable automatic query batching"
+        },
+        "connectionParams": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.\nMore information about the WebSocket `connectionParams`:\n  - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams\n  - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient"
+        }
+      },
+      "required": ["name"]
     },
     "ThriftHandler": {
       "additionalProperties": false,

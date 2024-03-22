@@ -3,6 +3,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
+  ResolverData,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
 import {
@@ -81,6 +82,7 @@ export default class SupergraphHandler implements MeshHandler {
   }
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    const subgraphConfigs = this.config.subgraphs || [];
     this.fetchFn = fetchFn;
     const supergraphSdl = await this.getSupergraphSdl();
     const operationHeadersFactory =
@@ -89,17 +91,38 @@ export default class SupergraphHandler implements MeshHandler {
         : undefined;
     const schema = getStitchedSchemaFromSupergraphSdl({
       supergraphSdl,
-      onExecutor: ({ endpoint }) => {
+      onExecutor: ({ subgraphName, endpoint }) => {
+        const subgraphConfiguration: YamlConfig.SubgraphConfiguration = subgraphConfigs.find(
+          subgraphConfig => subgraphConfig.name === subgraphName,
+        ) || {
+          name: subgraphName,
+        };
         return buildHTTPExecutor({
           endpoint,
+          ...(subgraphConfiguration as any),
           fetch: fetchFn,
-          headers:
-            operationHeadersFactory &&
-            (execReq =>
-              operationHeadersFactory({
-                env: process.env,
-                context: execReq.context,
-              })),
+          headers(executorRequest) {
+            const subgraphConfiguration = subgraphConfigs.find(
+              subgraphConfig => subgraphConfig.name === subgraphName,
+            );
+            const headers = {};
+            const resolverData: ResolverData = {
+              root: executorRequest.rootValue,
+              env: process.env,
+              context: executorRequest.context,
+              info: executorRequest.info,
+              args: executorRequest.variables,
+            };
+            if (subgraphConfiguration?.operationHeaders) {
+              const headersFactory = getInterpolatedHeadersFactory(
+                subgraphConfiguration.operationHeaders,
+              );
+              Object.assign(headers, headersFactory(resolverData));
+            }
+            if (operationHeadersFactory) {
+              Object.assign(headers, operationHeadersFactory(resolverData));
+            }
+          },
         } as HTTPExecutorOptions);
       },
       batch: this.config.batch == null ? true : this.config.batch,

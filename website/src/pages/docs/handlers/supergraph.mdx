@@ -22,6 +22,42 @@ sources:
           myTokenHeader: MY_TOKEN_VALUE
 ```
 
+### Configuring subgraphs within the supergraph
+
+You can also configure subgraphs within the supergraph by providing the subgraph name in order to
+change the endpoint and headers for each subgraph.
+
+```yaml
+sources:
+  - name: Supergraph
+    handler:
+      supergraph:
+        source: http://some-source.com/supergraph.graphql
+        subgraphs:
+          accounts:
+            endpoint: http://localhost:9871/graphql
+            operationHeaders:
+              Authorization: "Bearer {context.headers['x-accounts-token']}"
+          reviews:
+            endpoint: http://localhost:9872/graphql
+            operationHeaders:
+              Authorization: "Bearer {context.headers['x-accounts-token']}"
+          products:
+            endpoint: http://localhost:9873/graphql
+            operationHeaders:
+              Authorization: "Bearer {context.headers['x-accounts-token']}"
+          inventory:
+            endpoint: http://localhost:9874/graphql
+            operationHeaders:
+              Authorization: "Bearer {context.headers['x-accounts-token']}"
+```
+
+### Config API Reference
+
+import API from '../../../generated-markdown/SoapHandler.generated.md'
+
+<API />
+
 ## Using Mesh to build the supergraph
 
 You can provide the existing subgraphs within GraphQL Mesh, or you can use

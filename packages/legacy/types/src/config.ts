@@ -1012,6 +1012,80 @@ export interface SupergraphHandler {
   schemaHeaders?: any;
   operationHeaders?: any;
   batch?: boolean;
+  subgraphs?: SubgraphConfiguration[];
+}
+export interface SubgraphConfiguration {
+  /**
+   * The name of the subgraph you want to configure
+   */
+  name: string;
+  /**
+   * A url or file path to your remote GraphQL endpoint.
+   * If you provide a path to a code file(js or ts),
+   * other options will be ignored and the schema exported from the file will be used directly.
+   */
+  endpoint?: string;
+  /**
+   * JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
+   */
+  operationHeaders?: {
+    [k: string]: any;
+  };
+  /**
+   * Use HTTP GET for Query operations
+   */
+  useGETForQueries?: boolean;
+  /**
+   * HTTP method used for GraphQL operations (Allowed values: GET, POST)
+   */
+  method?: 'GET' | 'POST';
+  /**
+   * Request Credentials if your environment supports it.
+   * [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
+   *
+   * @default "same-origin" (Allowed values: omit, include)
+   */
+  credentials?: 'omit' | 'include';
+  /**
+   * Path to a custom W3 Compatible WebSocket Implementation
+   */
+  webSocketImpl?: string;
+  /**
+   * Path to the introspection
+   * You can separately give schema introspection or SDL
+   */
+  source?: string;
+  /**
+   * SSE - Server Sent Events
+   * WS - New graphql-ws
+   * LEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)
+   */
+  subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
+  /**
+   * URL to your endpoint serving all subscription queries for this source
+   */
+  subscriptionsEndpoint?: string;
+  /**
+   * Retry attempts if fails
+   */
+  retry?: number;
+  /**
+   * Timeout in milliseconds
+   */
+  timeout?: number;
+  /**
+   * Enable/Disable automatic query batching
+   */
+  batch?: boolean;
+  /**
+   * JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.
+   * More information about the WebSocket `connectionParams`:
+   *   - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams
+   *   - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient
+   */
+  connectionParams?: {
+    [k: string]: any;
+  };
 }
 /**
  * Handler for OData
