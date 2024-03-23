@@ -6956,8 +6956,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor@npm:^1.2.0, @graphql-tools/executor@npm:^1.2.1, @graphql-tools/executor@npm:^1.2.2":
-  version: 1.2.3
-  resolution: "@graphql-tools/executor@npm:1.2.3"
+  version: 1.2.4
+  resolution: "@graphql-tools/executor@npm:1.2.4"
   dependencies:
     "@graphql-tools/utils": "npm:^10.1.1"
     "@graphql-typed-document-node/core": "npm:3.2.0"
@@ -6966,7 +6966,7 @@ __metadata:
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/890a9774e8e5d6fbaba299ae3e4bbf0ca238bcdfa1be711cd1ad2b2d40dc576c5d2e4ae35c4d4e193c5b68612f128a9d30bcd6da2907276ddbfb27a6cd15803a
+  checksum: 10c0/03df758b70fe7824c207f92544112ecf4b5b3fe31396981d551fd3e8644b53aec9d59303bd9548ff4eb0474f4cd10cbd2ea2b0fa3655a3ba5587db0bcb06826d
   languageName: node
   linkType: hard
 
