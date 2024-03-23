@@ -23,7 +23,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@apollo/server": "4.10.1",
+    "@apollo/server": "4.10.2",
     "apollo-server-caching": "3.3.0",
     "concurrently": "8.2.2",
     "delay-cli": "2.0.0",
