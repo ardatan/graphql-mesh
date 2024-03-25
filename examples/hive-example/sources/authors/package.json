@@ -9,7 +9,7 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "fets": "^0.7.0",
+    "fets": "^0.8.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   },

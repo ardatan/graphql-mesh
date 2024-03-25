@@ -12,7 +12,7 @@
     "@graphql-mesh/compose-cli": "^0.2.5",
     "@graphql-mesh/serve-cli": "^0.3.10",
     "@omnigraph/openapi": "^0.99.6",
-    "fets": "^0.7.1",
+    "fets": "^0.8.0",
     "graphql": "16.8.1"
   },
   "devDependencies": {
