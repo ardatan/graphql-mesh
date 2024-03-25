@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import { defineConfig, Giscus, PRODUCTS, useTheme } from '@theguild/components';
 
 export default defineConfig({
-  description: 'GraphQL gateway framework',
+  description: 'GraphQL Gateway Framework and anything-to-GraphQL',
   docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website',
-  logo: PRODUCTS.MESH.logo({ className: 'w-9' }),
+  logo: PRODUCTS.MESH.logo({ className: 'w-8' }),
   main: function Main({ children }) {
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
@@ -30,5 +30,5 @@ export default defineConfig({
       </>
     );
   },
-  websiteName: 'MESH',
+  websiteName: 'GraphQL-Mesh',
 });
