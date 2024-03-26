@@ -370,17 +370,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/rover@npm:^0.22.0":
-  version: 0.22.0
-  resolution: "@apollo/rover@npm:0.22.0"
+"@apollo/rover@npm:^0.23.0":
+  version: 0.23.0
+  resolution: "@apollo/rover@npm:0.23.0"
   dependencies:
+    axios: "npm:^1.6.5"
     axios-proxy-builder: "npm:^0.1.1"
-    binary-install: "npm:^1.0.6"
     console.table: "npm:^0.10.0"
     detect-libc: "npm:^2.0.0"
+    tar: "npm:^6.2.0"
   bin:
     rover: run.js
-  checksum: 10c0/b4d50c89aa5e8c10a81a258ff4a2b3ceb556b1b1f4eccf9618698d645e10a8d50ce87ca5248a847e4d6c82219163076c030dc50bcfde8a7551693413edaa9ad9
+  checksum: 10c0/8ff23cd3f41444f9086a479fc3708b2dd3a7b35cbd253a1328c1c0a01043767fafe725f4e020c595e133e2c04646674e33799fce1b32670fb52c0f48b1a8b900
   languageName: node
   linkType: hard
 
@@ -13032,16 +13033,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.26.1":
-  version: 0.26.1
-  resolution: "axios@npm:0.26.1"
-  dependencies:
-    follow-redirects: "npm:^1.14.8"
-  checksum: 10c0/77ad7f1e6ca04fcd3fa8af1795b09d8b7c005b71a31f28d99ba40cda0bdcc12a4627801d7fac5efa62b9f667a8402bd54c669039694373bc8d44f6be611f785c
-  languageName: node
-  linkType: hard
-
-"axios@npm:^1.6.0, axios@npm:^1.6.1":
+"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.6.5":
   version: 1.6.8
   resolution: "axios@npm:1.6.8"
   dependencies:
@@ -13433,17 +13425,6 @@ __metadata:
   version: 2.3.0
   resolution: "binary-extensions@npm:2.3.0"
   checksum: 10c0/75a59cafc10fb12a11d510e77110c6c7ae3f4ca22463d52487709ca7f18f69d886aa387557cc9864fbdb10153d0bdb4caacabf11541f55e89ed6e18d12ece2b5
-  languageName: node
-  linkType: hard
-
-"binary-install@npm:^1.0.6":
-  version: 1.1.0
-  resolution: "binary-install@npm:1.1.0"
-  dependencies:
-    axios: "npm:^0.26.1"
-    rimraf: "npm:^3.0.2"
-    tar: "npm:^6.1.11"
-  checksum: 10c0/c0c94a81262c037a1a84f12ff9acfe667b7938b126e764b0f066d5be128d21e0bb8ac5700f4d89f8f7b860b660882deddeaca300dea0ff218d94676999a133a1
   languageName: node
   linkType: hard
 
@@ -18425,7 +18406,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "federation-example@workspace:examples/v1-next/federation-example"
   dependencies:
-    "@apollo/rover": "npm:^0.22.0"
+    "@apollo/rover": "npm:^0.23.0"
     concurrently: "npm:8.2.2"
     delay-cli: "npm:2.0.0"
     jest: "npm:29.7.0"
@@ -18726,7 +18707,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.14.8, follow-redirects@npm:^1.15.6":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.15.6":
   version: 1.15.6
   resolution: "follow-redirects@npm:1.15.6"
   peerDependenciesMeta:
@@ -32824,7 +32805,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^6.1.11, tar@npm:^6.1.2":
+"tar@npm:^6.1.11, tar@npm:^6.1.2, tar@npm:^6.2.0":
   version: 6.2.1
   resolution: "tar@npm:6.2.1"
   dependencies:
