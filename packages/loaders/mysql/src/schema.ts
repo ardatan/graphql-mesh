@@ -99,7 +99,7 @@ export async function loadGraphQLSchemaFromMySQL(
     }),
   );
   const endConnection$ = util.promisify(introspectionConnection.end.bind(introspectionConnection));
-  await endConnection$(undefined);
+  await endConnection$(undefined, undefined);
   const schema = schemaComposer.buildSchema();
   const extensions: any = (schema.extensions ||= {});
   extensions.directives ||= {};

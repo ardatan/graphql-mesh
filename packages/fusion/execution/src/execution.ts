@@ -275,7 +275,15 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
         mapAsyncIterator(depOpResult$ as AsyncIterableIterator<any>, handleDepOpResult),
       );
     } else if (isPromise(depOpResult$)) {
-      dependencyPromises.push(depOpResult$.then(handleDepOpResult));
+      dependencyPromises.push(
+        depOpResult$.then(res => {
+          if (isAsyncIterable(res)) {
+            return mapAsyncIterator(res as AsyncIterableIterator<any>, handleDepOpResult);
+          } else {
+            return handleDepOpResult(res);
+          }
+        }),
+      );
     } else {
       handleDepOpResult(depOpResult$);
     }
@@ -642,17 +650,17 @@ export function executeResolverOperationNode({
         } catch (e) {
           return stop(e);
         }
-      });
+      }) as AsyncIterableIterator<any>;
     }
 
     if (isAsyncIterable(result$)) {
-      return mapAsyncIterator(result$ as AsyncIterableIterator<any>, handleResult as any);
+      return mapAsyncIterator(result$ as AsyncIterableIterator<any>, handleResult);
     }
 
     if (isPromise(result$)) {
       return result$.then(result => {
         if (isAsyncIterable(result)) {
-          return mapAsyncIterator(result as AsyncIterableIterator<any>, handleResult as any);
+          return mapAsyncIterator(result as AsyncIterableIterator<any>, handleResult);
         }
         return handleResult(result);
       });
@@ -682,7 +690,14 @@ export function executeResolverOperationNode({
       errors,
     });
     if (isPromise(preDepResult$)) {
-      preDepPromises.push(preDepResult$.then(handlePreDepResultItem));
+      preDepPromises.push(
+        preDepResult$.then(res => {
+          if (isAsyncIterable(res)) {
+            throw new Error('AsyncIterable not supported for preDepResult');
+          }
+          return handlePreDepResultItem(res);
+        }),
+      );
     } else if (isAsyncIterable(preDepResult$)) {
       throw new Error('AsyncIterable not supported for preDepResult');
     } else {

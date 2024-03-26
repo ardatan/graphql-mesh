@@ -24,7 +24,7 @@
     "strictNullChecks": false, // TODO: fix
     "strictPropertyInitialization": false, // TODO: fix (goes together with strictNullChecks)
     "strictBindCallApply": true,
-    "strictFunctionTypes": false, // TODO: fix
+    "strictFunctionTypes": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "useUnknownInCatchVariables": false, // TODO: fix

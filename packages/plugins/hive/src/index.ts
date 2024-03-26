@@ -118,7 +118,10 @@ export default function useMeshHive(
 
   return {
     onPluginInit({ addPlugin }) {
-      addPlugin(useYogaHive(hiveClient));
+      addPlugin(
+        // TODO: fix useYogaHive typings to inherit the context
+        useYogaHive(hiveClient) as any,
+      );
     },
   };
 }

@@ -4,6 +4,7 @@ import {
   FetchAPI,
   isAsyncIterable,
   useReadinessCheck,
+  YogaInitialContext,
   YogaServerInstance,
   type Plugin,
 } from 'graphql-yoga';
@@ -17,15 +18,22 @@ import { useExecutor } from '@graphql-tools/executor-yoga';
 import { isPromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
-import { MeshServeConfig, MeshServeContext, MeshServePlugin } from './types';
+import {
+  MeshServeConfig,
+  MeshServeConfigContext,
+  MeshServeContext,
+  MeshServePlugin,
+} from './types';
 
-export function createServeRuntime(config: MeshServeConfig) {
+export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
+  config: MeshServeConfig<MeshServeConfigContext & TContext>,
+) {
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
   let logger: Logger;
   let wrappedFetchFn: MeshFetch;
 
-  const configContext = {
+  const configContext: MeshServeConfigContext = {
     get fetch() {
       return wrappedFetchFn;
     },
@@ -37,7 +45,9 @@ export function createServeRuntime(config: MeshServeConfig) {
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
   };
 
-  let supergraphYogaPlugin: Plugin & { invalidateUnifiedGraph: () => void };
+  let supergraphYogaPlugin: Plugin<MeshServeConfigContext & TContext> & {
+    invalidateUnifiedGraph: () => void;
+  };
 
   if ('fusiongraph' in config) {
     supergraphYogaPlugin = useFusiongraph({
@@ -67,11 +77,17 @@ export function createServeRuntime(config: MeshServeConfig) {
   } else if ('proxy' in config) {
     let schema: GraphQLSchema;
     const proxyExecutor = getProxyExecutor(config, configContext, () => schema);
-    const executorPlugin = useExecutor(proxyExecutor);
+    // TODO: fix useExecutor typings to inherit the context
+    const executorPlugin = useExecutor(proxyExecutor) as unknown as Plugin<
+      MeshServeConfigContext & TContext
+    > & {
+      invalidateSupergraph: () => void;
+    };
     supergraphYogaPlugin = {
       onPluginInit({ addPlugin }) {
         addPlugin(executorPlugin);
         addPlugin(
+          // TODO: fix useReadinessCheck typings to inherit the context
           useReadinessCheck({
             endpoint: config.readinessCheckEndpoint || '/readiness',
             check() {
@@ -88,7 +104,7 @@ export function createServeRuntime(config: MeshServeConfig) {
               }
               return false;
             },
-          }),
+          }) as any,
         );
       },
       onSchemaChange: payload => {
@@ -104,9 +120,9 @@ export function createServeRuntime(config: MeshServeConfig) {
       setFetchFn(fetchAPI.fetch);
     },
     onYogaInit({ yoga }) {
-      const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
+      const onFetchHooks: OnFetchHook<YogaInitialContext & MeshServeContext>[] = [];
 
-      for (const plugin of yoga.getEnveloped._plugins as MeshServePlugin[]) {
+      for (const plugin of yoga.getEnveloped._plugins as unknown as MeshServePlugin[]) {
         if (plugin.onFetch) {
           onFetchHooks.push(plugin.onFetch);
         }
