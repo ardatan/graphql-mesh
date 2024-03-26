@@ -1074,10 +1074,6 @@ export interface SubgraphConfiguration {
    */
   timeout?: number;
   /**
-   * Enable/Disable automatic query batching
-   */
-  batch?: boolean;
-  /**
    * JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.
    * More information about the WebSocket `connectionParams`:
    *   - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams

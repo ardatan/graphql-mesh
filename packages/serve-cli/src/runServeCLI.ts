@@ -6,12 +6,6 @@ import { App, SSLApp } from 'uWebSockets.js';
 import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DefaultLogger, registerTerminateHandler } from '@graphql-mesh/utils';
-import { CodeFileLoader } from '@graphql-tools/code-file-loader';
-import { GitLoader } from '@graphql-tools/git-loader';
-import { GithubLoader } from '@graphql-tools/github-loader';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadSchema } from '@graphql-tools/load';
-import { UrlLoader } from '@graphql-tools/url-loader';
 import { MeshServeCLIConfig } from './types';
 
 interface RunServeCLIOpts {
@@ -70,6 +64,32 @@ export async function runServeCLI({
   } else if (!('http' in meshServeCLIConfig)) {
     unifiedGraphPath = './fusiongraph.graphql';
   }
+
+  let loadingMessage: string;
+  switch (spec) {
+    case 'fusion':
+      if (typeof unifiedGraphPath === 'string') {
+        loadingMessage = `Loading Fusiongraph from ${unifiedGraphPath}`;
+      } else {
+        loadingMessage = `Loading Fusiongraph`;
+      }
+      break;
+    case 'federation':
+      if (typeof unifiedGraphPath === 'string') {
+        loadingMessage = `Loading Supergraph from ${unifiedGraphPath}`;
+      } else {
+        loadingMessage = `Loading Supergraph`;
+      }
+      break;
+    default:
+      if (typeof unifiedGraphPath === 'string') {
+        loadingMessage = `Loading schema from ${unifiedGraphPath}`;
+      } else {
+        loadingMessage = `Loading schema`;
+      }
+  }
+
+  workerLogger.info(loadingMessage);
 
   const unifiedGraphName = spec === 'fusion' ? 'fusiongraph' : 'supergraph';
 
@@ -157,28 +177,6 @@ export async function runServeCLI({
   const httpHandler = createServeRuntime({
     logging: workerLogger,
     ...meshServeCLIConfig,
-    [unifiedGraphName]() {
-      workerLogger.info(`Loading ${unifiedGraphName} from ${unifiedGraphPath}`);
-      return loadSchema(unifiedGraphPath, {
-        loaders: [
-          new GraphQLFileLoader(),
-          new UrlLoader(),
-          new CodeFileLoader(),
-          new GithubLoader(),
-          new GitLoader(),
-        ],
-        assumeValid: true,
-        assumeValidSDL: true,
-      })
-        .then(supergraph => {
-          workerLogger.info(`Loaded ${unifiedGraphName} from ${unifiedGraphPath}`);
-          return supergraph;
-        })
-        .catch(e => {
-          workerLogger.error(`Failed to load Supergraph from ${unifiedGraphPath}`, e);
-          throw e;
-        });
-    },
   });
   process.on('message', message => {
     if (message === 'invalidateUnifiedGraph') {

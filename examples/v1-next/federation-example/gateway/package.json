@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node ../../../packages/serve-cli/dist/cjs/bin.js"
+    "start": "node ../../../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
     "@graphql-mesh/serve-cli": "^0.3.10",
