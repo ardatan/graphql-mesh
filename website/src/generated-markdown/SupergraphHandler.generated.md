@@ -26,7 +26,6 @@ LEGACY_WS - Legacy subscriptions-transport-ws
   * `subscriptionsEndpoint` (type: `String`) - URL to your endpoint serving all subscription queries for this source
   * `retry` (type: `Int`) - Retry attempts if fails
   * `timeout` (type: `Int`) - Timeout in milliseconds
-  * `batch` (type: `Boolean`) - Enable/Disable automatic query batching
   * `connectionParams` (type: `JSON`) - JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.
 More information about the WebSocket `connectionParams`:
   - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams

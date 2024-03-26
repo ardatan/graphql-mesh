@@ -5167,12 +5167,6 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.2.9"
     "@graphql-mesh/types": "npm:^0.97.5"
     "@graphql-mesh/utils": "npm:^0.97.5"
-    "@graphql-tools/code-file-loader": "npm:^8.1.1"
-    "@graphql-tools/git-loader": "npm:^8.0.3"
-    "@graphql-tools/github-loader": "npm:^8.0.0"
-    "@graphql-tools/graphql-file-loader": "npm:^8.0.0"
-    "@graphql-tools/load": "npm:^8.0.0"
-    "@graphql-tools/url-loader": "npm:^8.0.0"
     "@parcel/watcher": "npm:^2.3.0"
     "@types/spinnies": "npm:^0.5.3"
     dotenv: "npm:^16.3.1"
@@ -5793,7 +5787,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/code-file-loader@npm:8.1.1, @graphql-tools/code-file-loader@npm:^8.0.0, @graphql-tools/code-file-loader@npm:^8.1.1, @graphql-tools/code-file-loader@npm:~8.1.0":
+"@graphql-tools/code-file-loader@npm:8.1.1, @graphql-tools/code-file-loader@npm:^8.0.0, @graphql-tools/code-file-loader@npm:~8.1.0":
   version: 8.1.1
   resolution: "@graphql-tools/code-file-loader@npm:8.1.1"
   dependencies:
@@ -5952,39 +5946,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/git-loader@npm:^8.0.3":
-  version: 8.0.5
-  resolution: "@graphql-tools/git-loader@npm:8.0.5"
-  dependencies:
-    "@graphql-tools/graphql-tag-pluck": "npm:8.3.0"
-    "@graphql-tools/utils": "npm:^10.0.13"
-    is-glob: "npm:4.0.3"
-    micromatch: "npm:^4.0.4"
-    tslib: "npm:^2.4.0"
-    unixify: "npm:^1.0.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/cef82269561ee24593e952dac608042874ef74da8e9495b9fc0901eb6578b0f94fac640fe3a9b8abccd1020e013b4580fda5c779a15a5eb45c52af5bf6c0ffcf
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/github-loader@npm:^8.0.0":
-  version: 8.0.1
-  resolution: "@graphql-tools/github-loader@npm:8.0.1"
-  dependencies:
-    "@ardatan/sync-fetch": "npm:^0.0.1"
-    "@graphql-tools/executor-http": "npm:^1.0.9"
-    "@graphql-tools/graphql-tag-pluck": "npm:^8.0.0"
-    "@graphql-tools/utils": "npm:^10.0.13"
-    "@whatwg-node/fetch": "npm:^0.9.0"
-    tslib: "npm:^2.4.0"
-    value-or-promise: "npm:^1.0.12"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/83787b69d696e69c618993fa9fe73fec82daab849173a1b96a538c33c4988b14f506a4604712882c30f537d0aa81eabf21ce30effda369c7d1763d8f14adf711
-  languageName: node
-  linkType: hard
-
 "@graphql-tools/graphql-file-loader@npm:6.1.0":
   version: 6.1.0
   resolution: "@graphql-tools/graphql-file-loader@npm:6.1.0"
@@ -6014,7 +5975,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/graphql-tag-pluck@npm:8.3.0, @graphql-tools/graphql-tag-pluck@npm:^8.0.0":
+"@graphql-tools/graphql-tag-pluck@npm:8.3.0":
   version: 8.3.0
   resolution: "@graphql-tools/graphql-tag-pluck@npm:8.3.0"
   dependencies:
@@ -21266,7 +21227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-glob@npm:4.0.3, is-glob@npm:^4.0.0, is-glob@npm:^4.0.1, is-glob@npm:^4.0.3, is-glob@npm:~4.0.1":
+"is-glob@npm:^4.0.0, is-glob@npm:^4.0.1, is-glob@npm:^4.0.3, is-glob@npm:~4.0.1":
   version: 4.0.3
   resolution: "is-glob@npm:4.0.3"
   dependencies:
