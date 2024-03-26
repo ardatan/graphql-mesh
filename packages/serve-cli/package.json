@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/serve-cli",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "type": "module",
   "repository": {
     "type": "git",

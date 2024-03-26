@@ -1,5 +1,36 @@
 # @graphql-mesh/serve-cli
 
+## 0.3.11
+
+### Patch Changes
+
+- [#6740](https://github.com/ardatan/graphql-mesh/pull/6740)
+  [`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Removed dependency
+    [`@graphql-tools/code-file-loader@^8.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/8.1.1)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/git-loader@^8.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/git-loader/v/8.0.3)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/github-loader@^8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/github-loader/v/8.0.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/graphql-file-loader@^8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/load@^8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/url-loader@^8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/8.0.0)
+    (from `dependencies`)
+
+- [#6740](https://github.com/ardatan/graphql-mesh/pull/6740)
+  [`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix schema loading
+
 ## 0.3.10
 
 ### Patch Changes
