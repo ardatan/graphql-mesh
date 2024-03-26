@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-hive/client": "^0.29.0",
+    "@graphql-hive/client": "^0.30.0",
     "@graphql-mesh/string-interpolation": "0.5.3",
     "@graphql-mesh/utils": "^0.97.5"
   },
