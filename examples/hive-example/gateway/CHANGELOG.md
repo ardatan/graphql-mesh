@@ -1,5 +1,15 @@
 # gateway-example
 
+## 0.9.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`674c720`](https://github.com/ardatan/graphql-mesh/commit/674c720a87565ac8c313c27b17bf0846ee689193),
+  [`674c720`](https://github.com/ardatan/graphql-mesh/commit/674c720a87565ac8c313c27b17bf0846ee689193)]:
+  - @graphql-mesh/plugin-hive@0.97.7
+  - @graphql-mesh/transform-hive@0.97.7
+
 ## 0.9.9
 
 ### Patch Changes

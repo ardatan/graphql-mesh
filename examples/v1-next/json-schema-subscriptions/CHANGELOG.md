@@ -1,5 +1,14 @@
 # json-schema-subscriptions
 
+## 0.12.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd),
+  [`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd)]:
+  - @graphql-mesh/serve-cli@0.3.11
+
 ## 0.12.11
 
 ### Patch Changes
