@@ -4312,13 +4312,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/client@npm:^0.29.0":
-  version: 0.29.0
-  resolution: "@graphql-hive/client@npm:0.29.0"
+"@graphql-hive/client@npm:^0.30.0":
+  version: 0.30.0
+  resolution: "@graphql-hive/client@npm:0.30.0"
   dependencies:
     "@apollo/server": "npm:^4.0.0"
     "@envelop/types": "npm:^5.0.0"
-    "@graphql-hive/core": "npm:^0.2.3"
+    "@graphql-hive/core": "npm:^0.2.4"
     "@graphql-tools/utils": "npm:^10.0.0"
     async-retry: "npm:1.3.3"
     axios: "npm:^1.6.0"
@@ -4330,11 +4330,11 @@ __metadata:
       optional: true
     "@envelop/types":
       optional: true
-  checksum: 10c0/5684e8644c5f699f364049f36f11bf4515c5b9afc30ed28f076a0de1679a48ccfc990acfadcf701d479817aa311bbd63b3a660b0129dbc6c9e758ba4136a7c31
+  checksum: 10c0/036dce0715f9cb0c878ed8ef0ac86ca744b2c7db7c5808b6bbb8decf5ead5d2e38bb0b392d2b197e971353277688bd8c6a1088075421194782e7c02fb431f03c
   languageName: node
   linkType: hard
 
-"@graphql-hive/core@npm:0.2.3, @graphql-hive/core@npm:^0.2.3":
+"@graphql-hive/core@npm:0.2.3":
   version: 0.2.3
   resolution: "@graphql-hive/core@npm:0.2.3"
   dependencies:
@@ -4342,6 +4342,17 @@ __metadata:
   peerDependencies:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 10c0/ab79969fb17b4a89e0004b3c21ea7f11351648e5638297865276c979d48a8fbc411936595cdc7b0d65397b5f7191ce8d9c9a542027aba011d5b10f64962db49b
+  languageName: node
+  linkType: hard
+
+"@graphql-hive/core@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "@graphql-hive/core@npm:0.2.4"
+  dependencies:
+    lodash.sortby: "npm:4.7.0"
+  peerDependencies:
+    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/e3e57c670866a3f590c83fbc75f26682d749a3ebf3ef17f0f0ac109c9601157c1506a751dfc1976e93c8fc85e6489f038679a84f1b8e9e85b410fa93d0ab0e04
   languageName: node
   linkType: hard
 
@@ -4894,7 +4905,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
-    "@graphql-hive/client": "npm:^0.29.0"
+    "@graphql-hive/client": "npm:^0.30.0"
     "@graphql-mesh/string-interpolation": "npm:0.5.3"
     "@graphql-mesh/utils": "npm:^0.97.5"
   peerDependencies:
@@ -5393,7 +5404,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive"
   dependencies:
-    "@graphql-hive/client": "npm:^0.29.0"
+    "@graphql-hive/client": "npm:^0.30.0"
     "@graphql-mesh/string-interpolation": "npm:^0.5.3"
     "@graphql-tools/delegate": "npm:^10.0.0"
   peerDependencies:
@@ -10850,14 +10861,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.70":
-  version: 18.2.70
-  resolution: "@types/react@npm:18.2.70"
+"@types/react@npm:18.2.71":
+  version: 18.2.71
+  resolution: "@types/react@npm:18.2.71"
   dependencies:
     "@types/prop-types": "npm:*"
     "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/2107b1fa8963cabe33d981cf1c0e3b7534c9d12b98c1046cd9f7975851690a0780db011f6a1d637ae4e612ef00c94ebdbe76a9e2f9e0f3baa6aad3213932af41
+  checksum: 10c0/0b2fc05a33aa83f09880c1172f6112450fa507ea56a168521172161e057277a8a474ff2fae02fa4910ce74853d7b5cff560586f912a0c9d8102cfd316bdb1b19
   languageName: node
   linkType: hard
 
@@ -18918,7 +18929,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.30"
-    "@types/react": "npm:18.2.70"
+    "@types/react": "npm:18.2.71"
     "@types/react-dom": "npm:18.2.22"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
@@ -26252,7 +26263,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.99.7"
     "@graphql-mesh/openapi": "npm:0.99.6"
     "@graphql-mesh/runtime": "npm:0.98.6"
-    "@types/react": "npm:18.2.70"
+    "@types/react": "npm:18.2.71"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.1.4"
@@ -26270,7 +26281,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.99.7"
     "@graphql-mesh/openapi": "npm:0.99.6"
     "@graphql-mesh/runtime": "npm:0.98.6"
-    "@types/react": "npm:18.2.70"
+    "@types/react": "npm:18.2.71"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.1.4"
@@ -27012,7 +27023,7 @@ __metadata:
   resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.7"
-    "@types/react": "npm:18.2.70"
+    "@types/react": "npm:18.2.71"
     "@types/react-dom": "npm:18.2.22"
     "@vitejs/plugin-react": "npm:4.2.1"
     graphql: "npm:16.8.1"
@@ -34853,7 +34864,7 @@ __metadata:
     "@theguild/components": "npm:^6.4.0"
     "@theguild/tailwind-config": "npm:0.3.2"
     "@types/node": "npm:20.11.30"
-    "@types/react": "npm:18.2.70"
+    "@types/react": "npm:18.2.71"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.1.4"
     next: "npm:^14.1.4"
