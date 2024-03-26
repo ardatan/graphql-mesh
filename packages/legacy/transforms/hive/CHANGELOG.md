@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-hive
 
+## 0.97.8
+
+### Patch Changes
+
+- [#6743](https://github.com/ardatan/graphql-mesh/pull/6743)
+  [`5250baf`](https://github.com/ardatan/graphql-mesh/commit/5250baf5405b8d42b2cd54c1680e371b7d28d04e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support selfHosting options
+
 ## 0.97.7
 
 ### Patch Changes
