@@ -43,6 +43,7 @@
     "fix-bin": "node scripts/fix-bin.js",
     "generate-config-schema": "yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/src/generated-markdown && yarn postgenerate-config-schema",
     "lint": "eslint --ext .ts \"./packages/**/src/**/*.ts\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "postbuild": "yarn copy-config-schema && yarn fix-bin",
     "postgenerate-config-schema": "node scripts/create-config-schema-ts.js && npx prettier --write ./packages/legacy/types/src",
     "postinstall": "husky install",
