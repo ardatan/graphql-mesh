@@ -9,7 +9,7 @@ import {
   isSchema,
   valueFromASTUntyped,
 } from 'graphql';
-import type { Plugin, PromiseOrValue, YogaServer } from 'graphql-yoga';
+import { useReadinessCheck, type Plugin, type PromiseOrValue, type YogaServer } from 'graphql-yoga';
 import {
   createExecutablePlanForOperation,
   ExecutableOperationPlan,
@@ -35,6 +35,7 @@ import {
   getDirective,
   IResolvers,
   isAsyncIterable,
+  isPromise,
   mapAsyncIterator,
   memoize2of4,
   type Maybe,
@@ -364,6 +365,7 @@ export interface FusiongraphPluginOptions<TContext> {
     | IResolvers<unknown, MeshServeContext & TContext>
     | IResolvers<unknown, MeshServeContext & TContext>[];
   transportBaseContext?: TransportBaseContext;
+  readinessCheckEndpoint?: string;
 }
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
@@ -400,6 +402,7 @@ export function useFusiongraph<TContext>({
   additionalResolvers,
   polling,
   transportBaseContext,
+  readinessCheckEndpoint,
 }: FusiongraphPluginOptions<TContext>): Plugin<{}, TContext> & {
   invalidateUnifiedGraph(): void;
 } {
@@ -491,6 +494,25 @@ export function useFusiongraph<TContext>({
   return {
     onYogaInit(payload) {
       yoga = payload.yoga;
+    },
+    onPluginInit({ addPlugin }) {
+      if (readinessCheckEndpoint) {
+        addPlugin(
+          useReadinessCheck({
+            endpoint: readinessCheckEndpoint,
+            check() {
+              if (!initiated) {
+                initialFusiongraph$ = getAndSetFusiongraph();
+              }
+              initiated = true;
+              if (isPromise(initialFusiongraph$)) {
+                return initialFusiongraph$.then(() => !!fusiongraph);
+              }
+              return !!fusiongraph;
+            },
+          }),
+        );
+      }
     },
     onRequestParse() {
       return {

@@ -1,5 +1,12 @@
-import { GraphQLSchema } from 'graphql';
-import { createYoga, FetchAPI, YogaServerInstance, type Plugin } from 'graphql-yoga';
+import { GraphQLSchema, parse } from 'graphql';
+import {
+  createYoga,
+  FetchAPI,
+  isAsyncIterable,
+  useReadinessCheck,
+  YogaServerInstance,
+  type Plugin,
+} from 'graphql-yoga';
 import { convertSupergraphToFusiongraph } from '@graphql-mesh/fusion-federation';
 import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -39,6 +46,7 @@ export function createServeRuntime(config: MeshServeConfig) {
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
       transportBaseContext: configContext,
+      readinessCheckEndpoint: config.readinessCheckEndpoint || '/readiness',
     });
   } else if ('supergraph' in config) {
     supergraphYogaPlugin = useFusiongraph({
@@ -54,11 +62,34 @@ export function createServeRuntime(config: MeshServeConfig) {
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
       transportBaseContext: configContext,
+      readinessCheckEndpoint: config.readinessCheckEndpoint || '/readiness',
     });
   } else if ('proxy' in config) {
     let schema: GraphQLSchema;
-    const executorPlugin = useExecutor(getProxyExecutor(config, configContext, () => schema));
+    const proxyExecutor = getProxyExecutor(config, configContext, () => schema);
+    const executorPlugin = useExecutor(proxyExecutor);
     supergraphYogaPlugin = {
+      onPluginInit({ addPlugin }) {
+        addPlugin(
+          useReadinessCheck({
+            endpoint: config.readinessCheckEndpoint || '/readiness',
+            check() {
+              const res$ = proxyExecutor({
+                document: parse(`query { __typename }`),
+              });
+              if (isPromise(res$)) {
+                return res$.then(
+                  res => !isAsyncIterable(res) && !!res.data?.__typename,
+                ) as Promise<any>;
+              }
+              if (!isAsyncIterable(res$)) {
+                return !!res$.data?.__typename;
+              }
+              return false;
+            },
+          }),
+        );
+      },
       onSchemaChange: payload => {
         schema = payload.schema;
       },
@@ -107,6 +138,7 @@ export function createServeRuntime(config: MeshServeConfig) {
     batching: config.batching,
     graphqlEndpoint: config.graphqlEndpoint,
     maskedErrors: config.maskedErrors,
+    healthCheckEndpoint: config.healthCheckEndpoint || '/healthcheck',
   });
 
   fetchAPI ||= yoga.fetchAPI;
