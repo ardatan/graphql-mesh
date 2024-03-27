@@ -33,6 +33,17 @@ describe('Serve Runtime', () => {
     beforeEach(() => {
       upstreamIsUp = true;
     });
+    describe('health check', () => {
+      it('succeed if the upstream API is up', async () => {
+        const res = await proxyAPI.fetch('http://localhost:4000/healthcheck');
+        expect(res.status).toBe(200);
+      });
+      it('succeed even if the upstream API is down', async () => {
+        upstreamIsUp = false;
+        const res = await proxyAPI.fetch('http://localhost:4000/healthcheck');
+        expect(res.status).toBe(200);
+      });
+    });
     it('health check', async () => {
       const res = await proxyAPI.fetch('http://localhost:4000/healthcheck');
       expect(res.status).toBe(200);
