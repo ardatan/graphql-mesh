@@ -1,5 +1,13 @@
 # @graphql-mesh/serve-cli
 
+## 0.3.13
+
+### Patch Changes
+
+- [#6751](https://github.com/ardatan/graphql-mesh/pull/6751)
+  [`e100dcc`](https://github.com/ardatan/graphql-mesh/commit/e100dcc43efeebe81085389cee8bb6a6039268be)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better defaults for hostname
+
 ## 0.3.12
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # thrift-calculator
 
+## 0.15.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e100dcc`](https://github.com/ardatan/graphql-mesh/commit/e100dcc43efeebe81085389cee8bb6a6039268be)]:
+  - @graphql-mesh/serve-cli@0.3.13
+
 ## 0.15.12
 
 ### Patch Changes
