@@ -70,6 +70,7 @@ export function createServeRuntime(config: MeshServeConfig) {
     const executorPlugin = useExecutor(proxyExecutor);
     supergraphYogaPlugin = {
       onPluginInit({ addPlugin }) {
+        addPlugin(executorPlugin);
         addPlugin(
           useReadinessCheck({
             endpoint: config.readinessCheckEndpoint || '/readiness',
@@ -93,7 +94,6 @@ export function createServeRuntime(config: MeshServeConfig) {
       onSchemaChange: payload => {
         schema = payload.schema;
       },
-      ...executorPlugin,
       invalidateUnifiedGraph: () =>
         (executorPlugin.invalidateSupergraph || (executorPlugin as any).invalidateUnifiedGraph)(),
     };

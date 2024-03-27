@@ -21,7 +21,7 @@ describe('Serve Runtime', () => {
     let upstreamIsUp = true;
     const proxyAPI = createServeRuntime({
       proxy: {
-        endpoint: 'http://localhost:4000',
+        endpoint: 'http://localhost:4000/graphql',
         fetch(info, init, ...args) {
           if (!upstreamIsUp) {
             return Response.error();
