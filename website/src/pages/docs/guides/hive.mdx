@@ -37,12 +37,12 @@ sources:
         source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_TOKEN
-polling: 60_000 # Poll for the supergraph updates per 1 hour
+pollingInterval: 60_000 # Poll for the supergraph updates per 1 hour
 ```
 
 <Callout>
   When you use Hive CDN, you don't have to rebuild Mesh artifacts and/or redeploy it. You can just
-  restart it if you don't configure `polling`. If you configured it already, you don't even need to
+  restart it if you don't configure `pollingInterval`. If you configured it already, you don't even need to
   restart the server. GraphQL Mesh will pull the recent changes and update it automatically.
 </Callout>
 
