@@ -10823,13 +10823,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.72":
-  version: 18.2.72
-  resolution: "@types/react@npm:18.2.72"
+"@types/react@npm:18.2.73":
+  version: 18.2.73
+  resolution: "@types/react@npm:18.2.73"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/fe8a17a4067ab9d432ab1034967a8b2a773125e47ae84ee00e428a8b6c48912ab22d244ae6128663b119a38716a642bc5be019fcd2b3b2f4ab3c9b0200a6cc2d
+  checksum: 10c0/b6645ab3c20efa41cfccf58ce0be45419517a0ba4594e323dd400342fb1c1f9589d169cf9bfa85b5b0605e9097fe9de7734b6d0c533f5b9bc32aaadb624537a4
   languageName: node
   linkType: hard
 
@@ -11475,7 +11475,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.97.5"
     "@graphql-mesh/serve-runtime": "npm:^0.2.10"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.38.0"
+    wrangler: "npm:3.39.0"
   languageName: unknown
   linkType: soft
 
@@ -13980,7 +13980,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.2.10"
     "@omnigraph/json-schema": "npm:^0.99.6"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.38.0"
+    wrangler: "npm:3.39.0"
   languageName: unknown
   linkType: soft
 
@@ -14427,7 +14427,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.99.6"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.5"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.38.0"
+    wrangler: "npm:3.39.0"
   languageName: unknown
   linkType: soft
 
@@ -18870,7 +18870,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.30"
-    "@types/react": "npm:18.2.72"
+    "@types/react": "npm:18.2.73"
     "@types/react-dom": "npm:18.2.22"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
@@ -19773,11 +19773,11 @@ __metadata:
   linkType: hard
 
 "graphql-ws@npm:^5.12.1, graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.6.2":
-  version: 5.15.0
-  resolution: "graphql-ws@npm:5.15.0"
+  version: 5.16.0
+  resolution: "graphql-ws@npm:5.16.0"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10c0/4fcd93ed75261681b1def8cd96d1db0fc650586b145325b3fc134ab9c27ed48fbedad3e8261e3f3df65758a332d0420b8c60e13abb1ee8329ef624e312b61ccc
+  checksum: 10c0/5e538c3460ca997a1634bd0f64236d8d7aa6ac75c58aba549b49953faf0dd2497f4fa43eedb0bc82cfff50426c7ce47682a670d2571fd7f3af5dcf00911c9e1b
   languageName: node
   linkType: hard
 
@@ -26204,7 +26204,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.99.7"
     "@graphql-mesh/openapi": "npm:0.99.6"
     "@graphql-mesh/runtime": "npm:0.98.6"
-    "@types/react": "npm:18.2.72"
+    "@types/react": "npm:18.2.73"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.1.4"
@@ -26222,7 +26222,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.99.7"
     "@graphql-mesh/openapi": "npm:0.99.6"
     "@graphql-mesh/runtime": "npm:0.98.6"
-    "@types/react": "npm:18.2.72"
+    "@types/react": "npm:18.2.73"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.1.4"
@@ -26964,7 +26964,7 @@ __metadata:
   resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.7"
-    "@types/react": "npm:18.2.72"
+    "@types/react": "npm:18.2.73"
     "@types/react-dom": "npm:18.2.22"
     "@vitejs/plugin-react": "npm:4.2.1"
     graphql: "npm:16.8.1"
@@ -31812,7 +31812,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.97.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.5"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.38.0"
+    wrangler: "npm:3.39.0"
   languageName: unknown
   linkType: soft
 
@@ -34838,7 +34838,7 @@ __metadata:
     "@theguild/components": "npm:^6.4.0"
     "@theguild/tailwind-config": "npm:0.3.2"
     "@types/node": "npm:20.11.30"
-    "@types/react": "npm:18.2.72"
+    "@types/react": "npm:18.2.73"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.1.4"
     next: "npm:^14.1.4"
@@ -35371,9 +35371,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.38.0":
-  version: 3.38.0
-  resolution: "wrangler@npm:3.38.0"
+"wrangler@npm:3.39.0":
+  version: 3.39.0
+  resolution: "wrangler@npm:3.39.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.1"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35401,7 +35401,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/a8888ed2baa217e8f390474b32c3e2103b351783de8c3320bfd367d20cecd13b3f490ce2d3e4c314681e0d6cdca61e0795f357061a7f7a9bdc27f622e191975d
+  checksum: 10c0/666a180d08e72373c0515aa22dc2f8920b09d4671aead31b476cb537826a774c7905c37eb9e3bf2e3592d4fca9aa550eb985befcc4773b355ee719fff9221b2e
   languageName: node
   linkType: hard
 
