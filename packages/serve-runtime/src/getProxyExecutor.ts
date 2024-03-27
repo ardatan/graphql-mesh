@@ -13,7 +13,7 @@ export function getProxyExecutor<TContext>(
   getSchema?: () => GraphQLSchema,
 ): Executor {
   const fakeTransportEntryMap: Record<string, TransportEntry> = {};
-  let subgraphName: string;
+  let subgraphName: string = 'upstream';
   const onSubgraphExecute = getOnSubgraphExecute({
     plugins: config.plugins?.(configContext as any) as any,
     getFusiongraph: getSchema,
@@ -43,7 +43,7 @@ export function getProxyExecutor<TContext>(
     }),
     transportBaseContext: configContext,
   });
-  return function (executionRequest) {
+  return function proxyExecutor(executionRequest) {
     return onSubgraphExecute(
       subgraphName,
       executionRequest.document,

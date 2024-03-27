@@ -158,4 +158,12 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   maskedErrors?: boolean | Partial<YogaMaskedErrorOpts>;
   cache?: KeyValueCache;
   pubsub?: MeshPubSub;
+  /**
+   * Health check endpoint
+   */
+  healthCheckEndpoint?: string;
+  /**
+   * Readiness check endpoint
+   */
+  readinessCheckEndpoint?: string;
 }
