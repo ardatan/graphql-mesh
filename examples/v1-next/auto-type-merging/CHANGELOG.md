@@ -1,5 +1,7 @@
 # auto-type-merging-example
 
+## 0.3.12
+
 ## 0.3.11
 
 ## 0.3.10
