@@ -1,6 +1,6 @@
 /* eslint-disable import/no-nodejs-modules */
 import cluster from 'cluster';
-import { availableParallelism } from 'os';
+import { availableParallelism, platform, release } from 'os';
 import { dirname, isAbsolute, join, relative } from 'path';
 import { App, SSLApp } from 'uWebSockets.js';
 import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
@@ -173,7 +173,13 @@ export async function runServeCLI({
   }
 
   const port = meshServeCLIConfig.port || 4000;
-  const host = meshServeCLIConfig.host || 'localhost';
+  const host =
+    meshServeCLIConfig.host ||
+    platform() === 'win32' ||
+    // is WSL?
+    release().toLowerCase().includes('microsoft')
+      ? '127.0.0.1'
+      : '0.0.0.0';
   const httpHandler = createServeRuntime({
     logging: workerLogger,
     ...meshServeCLIConfig,
