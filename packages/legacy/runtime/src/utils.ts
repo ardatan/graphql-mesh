@@ -57,6 +57,7 @@ export const isGraphQLJitCompatible = memoize1(function isGraphQLJitCompatible(
             }
           }
         }
+        return true;
       }
       visitInputType(type);
       return type;
