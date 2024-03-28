@@ -1,6 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Supergraphs a.graphql: schema @transport(subgraph: "DEMO_FEATURES", kind: "http", location: "http://graphql-demo-features-service/graphql") @transport(subgraph: "NODE_RESOLVER", kind: "http", location: "http://graphql-node-resolver/graphql") {
+exports[`Supergraphs pb example query: example-query-result 1`] = `
+{
+  "data": {
+    "demoFeatures": {
+      "edges": [
+        {
+          "node": {
+            "description": "Demo_feature_description",
+            "id": "demo",
+            "name": "Demo_feature",
+            "publicId": "demo_public_id",
+          },
+        },
+      ],
+    },
+    "demoMe": {
+      "role": "USER",
+      "spaceId": "demo_space",
+      "userId": "demo_user",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`Supergraphs pb fusiongraph: fusiongraph 1`] = `
+"schema @transport(subgraph: "DEMO_FEATURES", kind: "http", location: "http://graphql-demo-features-service/graphql") @transport(subgraph: "NODE_RESOLVER", kind: "http", location: "http://graphql-node-resolver/graphql") {
   query: Query
   mutation: Mutation
 }
@@ -195,4 +222,5 @@ enum core__Purpose @source(name: "core__Purpose", subgraph: "DEMO_FEATURES") @so
   \`SECURITY\` features provide metadata necessary to securely resolve fields.
   """
   SECURITY
-} 1`] = `"a.graphql"`;
+}"
+`;
