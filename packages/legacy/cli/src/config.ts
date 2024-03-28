@@ -1,12 +1,9 @@
-import ajv from 'ajv';
+import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, loadYaml } from '@graphql-mesh/utils';
-
-// necessary fix because Ajv is commonjs
-const Ajv = ajv.default;
 
 export function validateConfig(
   config: any,

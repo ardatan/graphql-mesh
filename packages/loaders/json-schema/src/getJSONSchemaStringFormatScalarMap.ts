@@ -1,10 +1,7 @@
-import ajv from 'ajv';
+import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { GraphQLScalarType, Kind } from 'graphql';
 import { pascalCase } from 'pascal-case';
-
-// necessary fix because Ajv is commonjs
-const Ajv = ajv.default;
 
 const JSONSchemaStringFormats = [
   'date',
