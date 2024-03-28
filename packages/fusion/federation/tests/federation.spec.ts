@@ -11,11 +11,11 @@ import {
   serializeExecutableOperationPlan,
 } from '@graphql-mesh/fusion-execution';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { accountsServer } from '../../../../examples/v1-next/federation-example/services/accounts/server';
-import { inventoryServer } from '../../../../examples/v1-next/federation-example/services/inventory/server';
-import { productsServer } from '../../../../examples/v1-next/federation-example/services/products/server';
-import { reviewsServer } from '../../../../examples/v1-next/federation-example/services/reviews/server';
-import { convertSupergraphToFusiongraph } from '../src';
+import { accountsServer } from '../../../../examples/v1-next/federation-example/services/accounts/server.js';
+import { inventoryServer } from '../../../../examples/v1-next/federation-example/services/inventory/server.js';
+import { productsServer } from '../../../../examples/v1-next/federation-example/services/products/server.js';
+import { reviewsServer } from '../../../../examples/v1-next/federation-example/services/reviews/server.js';
+import { convertSupergraphToFusiongraph } from '../src/index.js';
 
 const fragments = {
   Review: /* GraphQL */ `

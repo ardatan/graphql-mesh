@@ -1,4 +1,4 @@
-import { getInterpolatedHeadersFactory } from '../src/resolver-data-factory';
+import { getInterpolatedHeadersFactory } from '../src/resolver-data-factory.js';
 
 describe('getInterpolatedHeadersFactory', () => {
   const headers = {

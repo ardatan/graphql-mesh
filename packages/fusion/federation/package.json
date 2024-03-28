@@ -53,6 +53,9 @@
     "@graphql-tools/utils": "^10.0.10",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "@apollo/server": "4.10.2"
+  },
   "publishConfig": {
     "directory": "dist",
     "access": "public"

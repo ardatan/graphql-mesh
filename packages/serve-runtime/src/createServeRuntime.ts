@@ -1,3 +1,4 @@
+import type { IncomingMessage } from 'node:http';
 import { GraphQLSchema, parse } from 'graphql';
 import {
   createYoga,
@@ -17,15 +18,22 @@ import { useExecutor } from '@graphql-tools/executor-yoga';
 import { isPromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
-import { MeshServeConfig, MeshServeContext, MeshServePlugin } from './types';
+import {
+  MeshServeConfig,
+  MeshServeConfigContext,
+  MeshServeContext,
+  MeshServePlugin,
+} from './types.js';
 
-export function createServeRuntime(config: MeshServeConfig) {
+export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
+  config: MeshServeConfig<TContext>,
+) {
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
   let logger: Logger;
   let wrappedFetchFn: MeshFetch;
 
-  const configContext = {
+  const configContext: MeshServeConfigContext = {
     get fetch() {
       return wrappedFetchFn;
     },
@@ -37,7 +45,9 @@ export function createServeRuntime(config: MeshServeConfig) {
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
   };
 
-  let supergraphYogaPlugin: Plugin & { invalidateUnifiedGraph: () => void };
+  let supergraphYogaPlugin: Plugin<MeshServeContext & TContext> & {
+    invalidateUnifiedGraph: () => void;
+  };
 
   if ('fusiongraph' in config) {
     supergraphYogaPlugin = useFusiongraph({
@@ -67,11 +77,17 @@ export function createServeRuntime(config: MeshServeConfig) {
   } else if ('proxy' in config) {
     let schema: GraphQLSchema;
     const proxyExecutor = getProxyExecutor(config, configContext, () => schema);
-    const executorPlugin = useExecutor(proxyExecutor);
+    // TODO: fix useExecutor typings to inherit the context
+    const executorPlugin = useExecutor(proxyExecutor) as unknown as Plugin<
+      MeshServeContext & TContext
+    > & {
+      invalidateSupergraph: () => void;
+    };
     supergraphYogaPlugin = {
       onPluginInit({ addPlugin }) {
         addPlugin(executorPlugin);
         addPlugin(
+          // TODO: fix useReadinessCheck typings to inherit the context
           useReadinessCheck({
             endpoint: config.readinessCheckEndpoint || '/readiness',
             check() {
@@ -88,7 +104,7 @@ export function createServeRuntime(config: MeshServeConfig) {
               }
               return false;
             },
-          }),
+          }) as any,
         );
       },
       onSchemaChange: payload => {
@@ -106,7 +122,7 @@ export function createServeRuntime(config: MeshServeConfig) {
     onYogaInit({ yoga }) {
       const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
 
-      for (const plugin of yoga.getEnveloped._plugins as MeshServePlugin[]) {
+      for (const plugin of yoga.getEnveloped._plugins as unknown as MeshServePlugin[]) {
         if (plugin.onFetch) {
           onFetchHooks.push(plugin.onFetch);
         }
@@ -120,19 +136,28 @@ export function createServeRuntime(config: MeshServeConfig) {
     fetchAPI: config.fetchAPI,
     logging: config.logging == null ? new DefaultLogger() : config.logging,
     plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(configContext) || [])],
-    context: ({ request, req, connectionParams }: any) => ({
-      ...configContext,
-      headers:
-        // Maybe Node-like environment
-        req?.headers
-          ? getHeadersObj(req.headers)
-          : // Fetch environment
-            request?.headers
-            ? getHeadersObj(request.headers)
-            : // Unknown environment
-              {},
-      connectionParams,
-    }),
+    context: ({ request, params, ...rest }) => {
+      // TODO: I dont like this cast, but it's necessary
+      const { req, connectionParams } = rest as {
+        req?: IncomingMessage;
+        connectionParams?: Record<string, string>;
+      };
+      return {
+        ...configContext,
+        request,
+        params,
+        headers:
+          // Maybe Node-like environment
+          req?.headers
+            ? getHeadersObj(req.headers)
+            : // Fetch environment
+              request?.headers
+              ? getHeadersObj(request.headers)
+              : // Unknown environment
+                {},
+        connectionParams,
+      };
+    },
     cors: config.cors,
     graphiql: config.graphiql,
     batching: config.batching,

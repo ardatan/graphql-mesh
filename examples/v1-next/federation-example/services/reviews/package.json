@@ -1,5 +1,6 @@
 {
   "name": "@v1-next/reviews",
+  "type": "module",
   "version": "0.0.14",
   "license": "MIT",
   "private": true,

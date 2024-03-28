@@ -25,24 +25,24 @@ const typeDefs = parse(/* GraphQL */ `
 
 const resolvers = {
   Review: {
-    author(review) {
+    author(review: any) {
       return { __typename: 'User', id: review.authorID };
     },
   },
   User: {
-    reviews(user) {
+    reviews(user: any) {
       return reviews.filter(review => review.authorID === user.id);
     },
-    numberOfReviews(user) {
+    numberOfReviews(user: any) {
       return reviews.filter(review => review.authorID === user.id).length;
     },
-    username(user) {
+    username(user: any) {
       const found = usernames.find(username => username.id === user.id);
       return found ? found.username : null;
     },
   },
   Product: {
-    reviews(product) {
+    reviews(product: any) {
       return reviews.filter(review => review.product.upc === product.upc);
     },
   },

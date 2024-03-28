@@ -16,6 +16,7 @@ describe('OpanAPI: nested objects', () => {
       source: './fixtures/nested_object.json',
       cwd: __dirname,
       queryStringOptions: {
+        // @ts-expect-error TODO: this is for what?
         allowDots: true,
       },
     });

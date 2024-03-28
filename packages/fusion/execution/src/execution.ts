@@ -7,6 +7,7 @@ import {
   isAsyncIterable,
   isPromise,
   mapAsyncIterator,
+  MaybePromise,
   relocatedError,
 } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
@@ -271,11 +272,17 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
       }
     }
     if (isAsyncIterable(depOpResult$)) {
-      asyncIterables.push(
-        mapAsyncIterator(depOpResult$ as AsyncIterableIterator<any>, handleDepOpResult),
-      );
+      asyncIterables.push(mapAsyncIterator(depOpResult$, handleDepOpResult));
     } else if (isPromise(depOpResult$)) {
-      dependencyPromises.push(depOpResult$.then(handleDepOpResult));
+      dependencyPromises.push(
+        depOpResult$.then(res => {
+          if (isAsyncIterable(res)) {
+            return mapAsyncIterator(res, handleDepOpResult);
+          } else {
+            return handleDepOpResult(res);
+          }
+        }),
+      );
     } else {
       handleDepOpResult(depOpResult$);
     }
@@ -309,7 +316,10 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
         fieldOpPromises.push(
           fieldOpResult$.then(fieldOpResult => {
             if (isAsyncIterable(fieldOpResult)) {
-              return mapAsyncIterator(fieldOpResult, handleFieldOpResult as any);
+              return mapAsyncIterator(
+                fieldOpResult as AsyncIterableIterator<any>,
+                handleFieldOpResult,
+              );
             }
             return handleFieldOpResult(fieldOpResult as any);
           }),
@@ -418,6 +428,7 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
   return handleDependencyPromises();
 }
 
+// TODO: drop all `any`s
 export function executeResolverOperationNode({
   resolverOperationNode,
   inputVariableMap,
@@ -432,7 +443,18 @@ export function executeResolverOperationNode({
   context: any;
   path: string[];
   errors: GraphQLError[];
-}) {
+}): MaybePromise<
+  | {
+      exported: any[];
+      listed?: boolean;
+      outputVariableMap: Map<any, any>;
+    }
+  | AsyncIterableIterator<{
+      exported: any[];
+      listed?: boolean;
+      outputVariableMap: Map<any, any>;
+    }>
+> {
   const variablesForOperation: Record<string, any> = {};
   const inputVarMapWithPreDeps = new Map<string, any>(inputVariableMap);
 
@@ -464,9 +486,7 @@ export function executeResolverOperationNode({
             }
           }
           if (isAsyncIterable(itemResult$)) {
-            asyncIterables.push(
-              mapAsyncIterator(itemResult$ as AsyncIterableIterator<any>, handleItemResult),
-            );
+            asyncIterables.push(mapAsyncIterator(itemResult$, handleItemResult));
           } else if (isPromise(itemResult$)) {
             promises.push(itemResult$.then(handleItemResult));
           } else {
@@ -646,16 +666,16 @@ export function executeResolverOperationNode({
     }
 
     if (isAsyncIterable(result$)) {
-      return mapAsyncIterator(result$ as AsyncIterableIterator<any>, handleResult as any);
+      return mapAsyncIterator(result$ as any, handleResult) as any;
     }
 
     if (isPromise(result$)) {
       return result$.then(result => {
         if (isAsyncIterable(result)) {
-          return mapAsyncIterator(result as AsyncIterableIterator<any>, handleResult as any);
+          return mapAsyncIterator(result as any, handleResult);
         }
         return handleResult(result);
-      });
+      }) as any;
     }
 
     return handleResult(result$);
@@ -682,7 +702,14 @@ export function executeResolverOperationNode({
       errors,
     });
     if (isPromise(preDepResult$)) {
-      preDepPromises.push(preDepResult$.then(handlePreDepResultItem));
+      preDepPromises.push(
+        preDepResult$.then(res => {
+          if (isAsyncIterable(res)) {
+            throw new Error('AsyncIterable not supported for preDepResult');
+          }
+          return handlePreDepResultItem(res);
+        }),
+      );
     } else if (isAsyncIterable(preDepResult$)) {
       throw new Error('AsyncIterable not supported for preDepResult');
     } else {

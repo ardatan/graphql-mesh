@@ -1,7 +1,7 @@
 import { execute, OperationTypeNode, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
-import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas';
+import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
 describe('Query Params', () => {
   it('queryParamsSample with invalid param names', async () => {

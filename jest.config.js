@@ -60,9 +60,7 @@ module.exports = {
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
   extensionsToTreatAsEsm: ['.ts'],
   transform: {
-    '^.+\\.mjs?$': 'babel-jest',
-    '^.+\\.ts?$': 'babel-jest',
-    '^.+\\.js$': 'babel-jest',
+    '^.+\\.m?(t|j)s?$': 'babel-jest',
   },
   transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
   resolver: 'bob-the-bundler/jest-resolver',
