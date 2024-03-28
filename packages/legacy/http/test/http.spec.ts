@@ -1,6 +1,6 @@
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { MeshInstance } from '@graphql-mesh/runtime';
-import { getTestMesh } from '../../testing/getTestMesh.mjs';
+import { getTestMesh } from '../../testing/getTestMesh.js';
 
 describe('http', () => {
   let mesh: MeshInstance;
