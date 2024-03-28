@@ -5,3 +5,4 @@ export * from './useCustomFetch.js';
 export * from './inferResolvers.js';
 export * from './useStaticFiles.js';
 export * from './getProxyExecutor.js';
+export * from './useForwardHeaders.js';
