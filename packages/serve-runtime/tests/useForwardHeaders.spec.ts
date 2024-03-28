@@ -1,13 +1,10 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import { createSchema, createYoga } from 'graphql-yoga';
-import { OnParamsHook } from 'graphql-yoga/typings/plugins/types';
-import { MeshFetch } from '@graphql-mesh/types';
+import { createSchema, createYoga, Plugin } from 'graphql-yoga';
 import { createServeRuntime } from '../src/createServeRuntime';
 import { useForwardHeaders } from '../src/useForwardHeaders';
 
 describe('useForwardHeaders', () => {
   const requestTrackerPlugin = {
-    onParams: jest.fn((() => {}) as OnParamsHook),
+    onParams: jest.fn((() => {}) as Plugin['onParams']),
   };
   const upstream = createYoga({
     schema: createSchema({
@@ -83,7 +80,8 @@ describe('useForwardHeaders', () => {
         },
       },
       fetchAPI: {
-        fetch: upstream.fetch as MeshFetch,
+        // TODO: Fix the type mismatch
+        fetch: upstream.fetch as any,
       },
       plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
     });
