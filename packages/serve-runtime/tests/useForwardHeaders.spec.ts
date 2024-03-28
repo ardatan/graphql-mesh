@@ -26,11 +26,7 @@ describe('useForwardHeaders', () => {
       endpoint: 'https://example.com/graphql',
       fetch: upstream.fetch,
     },
-    plugins: () => [
-      useForwardHeaders({
-        headerNames: ['x-my-header', 'x-my-other'],
-      }),
-    ],
+    plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
   });
 
   it('forwards headers', async () => {
