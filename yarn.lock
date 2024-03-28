@@ -5921,8 +5921,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor@npm:^1.2.0, @graphql-tools/executor@npm:^1.2.1, @graphql-tools/executor@npm:^1.2.2":
-  version: 1.2.4
-  resolution: "@graphql-tools/executor@npm:1.2.4"
+  version: 1.2.5
+  resolution: "@graphql-tools/executor@npm:1.2.5"
   dependencies:
     "@graphql-tools/utils": "npm:^10.1.1"
     "@graphql-typed-document-node/core": "npm:3.2.0"
@@ -5931,7 +5931,7 @@ __metadata:
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/03df758b70fe7824c207f92544112ecf4b5b3fe31396981d551fd3e8644b53aec9d59303bd9548ff4eb0474f4cd10cbd2ea2b0fa3655a3ba5587db0bcb06826d
+  checksum: 10c0/148d2ff9d83d0d0f66a577dbb49678b6d1ce1ba0ab6c67a7770449b62376b88165076b0209b5e1a55bd3a6e7ef09870657682b922d728673b4182220c48da071
   languageName: node
   linkType: hard
 
@@ -6571,9 +6571,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/proto-loader@npm:0.7.11, @grpc/proto-loader@npm:^0.7.10, @grpc/proto-loader@npm:^0.7.5, @grpc/proto-loader@npm:^0.7.8":
-  version: 0.7.11
-  resolution: "@grpc/proto-loader@npm:0.7.11"
+"@grpc/proto-loader@npm:0.7.12, @grpc/proto-loader@npm:^0.7.10, @grpc/proto-loader@npm:^0.7.5, @grpc/proto-loader@npm:^0.7.8":
+  version: 0.7.12
+  resolution: "@grpc/proto-loader@npm:0.7.12"
   dependencies:
     lodash.camelcase: "npm:^4.3.0"
     long: "npm:^5.0.0"
@@ -6581,7 +6581,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     proto-loader-gen-types: build/bin/proto-loader-gen-types.js
-  checksum: 10c0/334ce025e40aa1a4310c752df3ed3a5cf6df4e122917adc435ddaf6c2f8db9cf66feee2cf57cfca4e7e0499558787daa3f410d3924e872ea69ab7a8fdf46358a
+  checksum: 10c0/d026236f309e24fd5b840b9aefca49eb4002f270821e8194d0b622013c421b54e04df5f6b8f0797121a1e1141811a4ef088120690aea1e873701d277cd5b47fa
   languageName: node
   linkType: hard
 
@@ -10803,7 +10803,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.2.22, @types/react-dom@npm:^18.0.0":
+"@types/react-dom@npm:18.2.23":
+  version: 18.2.23
+  resolution: "@types/react-dom@npm:18.2.23"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10c0/9348e93558aa67b4b237bd0eab62e72e85f3e17a1c45fde04d874476269730f7c671b3d62390c4fca588da2a026e90cc74148abc349dbfd4ee5535a82ccdf38e
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^18.0.0":
   version: 18.2.22
   resolution: "@types/react-dom@npm:18.2.22"
   dependencies:
@@ -18871,7 +18880,7 @@ __metadata:
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.30"
     "@types/react": "npm:18.2.73"
-    "@types/react-dom": "npm:18.2.22"
+    "@types/react-dom": "npm:18.2.23"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
     react: "npm:18.2.0"
@@ -19829,7 +19838,7 @@ __metadata:
     "@graphql-mesh/grpc": "npm:0.98.5"
     "@graphql-mesh/transform-naming-convention": "npm:0.97.5"
     "@grpc/grpc-js": "npm:1.10.4"
-    "@grpc/proto-loader": "npm:0.7.11"
+    "@grpc/proto-loader": "npm:0.7.12"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.2"
     graphql: "npm:16.8.1"
@@ -19859,7 +19868,7 @@ __metadata:
     "@graphql-mesh/grpc": "npm:0.98.5"
     "@graphql-mesh/transform-naming-convention": "npm:0.97.5"
     "@grpc/grpc-js": "npm:1.10.4"
-    "@grpc/proto-loader": "npm:0.7.11"
+    "@grpc/proto-loader": "npm:0.7.12"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.2"
     graphql: "npm:16.8.1"
@@ -26965,7 +26974,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.7"
     "@types/react": "npm:18.2.73"
-    "@types/react-dom": "npm:18.2.22"
+    "@types/react-dom": "npm:18.2.23"
     "@vitejs/plugin-react": "npm:4.2.1"
     graphql: "npm:16.8.1"
     react: "npm:18.2.0"
