@@ -1,6 +1,16 @@
 {
-  "extends": ["@tsconfig/recommended/tsconfig.json", "@tsconfig/node16/tsconfig.json"],
+  // until https://github.com/TypeStrong/ts-node/pull/1958 is released
+  // "extends": ["@tsconfig/recommended/tsconfig.json", "@tsconfig/node16/tsconfig.json"],
   "compilerOptions": {
+    // part of @tsconfig/recommended
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    // part of @tsconfig/node16
+    "lib": ["es2021"],
+    //
+
     "outDir": "dist",
 
     "baseUrl": ".",
