@@ -3,7 +3,7 @@ import { createSchema, createYoga } from 'graphql-yoga';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
 import { createExecutablePlanForOperation } from '@graphql-mesh/fusion-execution';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { useFusiongraph } from '../src';
+import { useFusiongraph } from '../src/index.js';
 
 jest.mock('@graphql-mesh/fusion-execution', () => {
   const actual = jest.requireActual('@graphql-mesh/fusion-execution');

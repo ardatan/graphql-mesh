@@ -114,10 +114,11 @@ export default function useMeshPrometheus(
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
+        // TODO: fix usePrometheus typings to inherit the context
         usePrometheus({
           ...pluginOptions,
           registry,
-        }),
+        }) as any,
       );
     },
     onDelegate({ sourceName, typeName, fieldName, args, key }) {

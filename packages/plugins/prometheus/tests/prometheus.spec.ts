@@ -4,7 +4,7 @@ import { register as registry } from 'prom-client';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import { createDefaultExecutor } from '@graphql-mesh/transport-common';
-import usePrometheus from '../src';
+import usePrometheus from '../src/index.js';
 
 describe('Prometheus', () => {
   const subgraphSchema = createSchema({

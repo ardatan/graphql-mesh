@@ -1,5 +1,6 @@
 {
   "name": "@v1-next/accounts-subgraph",
+  "type": "module",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,

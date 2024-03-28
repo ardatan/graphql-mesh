@@ -23,8 +23,8 @@ const defaultResolverComposer =
       // map renamed arguments to their original value
       argsMap
         ? Object.keys(args).reduce(
-            (acc, key: string) => ({ ...acc, [argsMap[key] || key]: args[key] }),
-            {},
+            (acc, key) => ({ ...acc, [argsMap[String(key)] || String(key)]: args[key] }),
+            {} as Record<string, any>,
           )
         : args,
       context,

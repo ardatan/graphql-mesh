@@ -5,7 +5,7 @@ import { parse } from 'graphql';
 import Spinnies from 'spinnies';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { getComposedSchemaFromConfig } from './getComposedSchemaFromConfig.js';
-import { MeshComposeCLIConfig } from './types';
+import { MeshComposeCLIConfig } from './types.js';
 
 export const spinnies = new Spinnies({
   color: 'white',

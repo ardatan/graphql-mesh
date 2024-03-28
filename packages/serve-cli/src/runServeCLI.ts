@@ -6,7 +6,7 @@ import { App, SSLApp } from 'uWebSockets.js';
 import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DefaultLogger, registerTerminateHandler } from '@graphql-mesh/utils';
-import { MeshServeCLIConfig } from './types';
+import { MeshServeCLIConfig } from './types.js';
 
 interface RunServeCLIOpts {
   defaultConfigFileName?: string;

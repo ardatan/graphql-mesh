@@ -9,7 +9,7 @@ const typeDefs = parse(readFileSync(join(__dirname, './typeDefs.graphql'), 'utf8
 
 const resolvers = {
   User: {
-    __resolveReference(object, context) {
+    __resolveReference(object: any, _context: any) {
       return {
         ...object,
         ...users.find(user => user.id === object.id),
@@ -17,13 +17,13 @@ const resolvers = {
     },
   },
   Query: {
-    me(_root, _args, context) {
+    me(_root: any, _args: any, _context: any) {
       return users[0];
     },
-    users(_root, _args, context) {
+    users(_root: any, _args: any, _context: any) {
       return users;
     },
-    user(_root, args, context) {
+    user(_root: any, args: any, _context: any) {
       return users.find(user => user.id === args.id);
     },
   },

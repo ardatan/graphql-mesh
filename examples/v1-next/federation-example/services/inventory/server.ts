@@ -10,13 +10,13 @@ const typeDefs = parse(readFileSync(join(__dirname, './typeDefs.graphql'), 'utf8
 
 const resolvers = {
   Product: {
-    __resolveReference(object) {
+    __resolveReference(object: any) {
       return {
         ...object,
         ...inventory.find(product => product.upc === object.upc),
       };
     },
-    shippingEstimate(object) {
+    shippingEstimate(object: any) {
       if (object.price == null || object.weight == null) {
         throw new Error(`${inspect(object)} doesn't have required fields; "price" and "weight".`);
       }

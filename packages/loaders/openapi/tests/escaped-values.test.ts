@@ -1,7 +1,7 @@
 import { createRouter, Response } from 'fets';
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { loadGraphQLSchemaFromOpenAPI } from '../src';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/index.js';
 
 describe('Escaped Values', () => {
   const router = createRouter({

@@ -1,5 +1,5 @@
 import { GraphQLScalarType, OperationTypeNode } from 'graphql';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { IStringifyOptions } from 'qs';
 import { ResolverData } from '@graphql-mesh/string-interpolation';

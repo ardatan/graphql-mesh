@@ -361,9 +361,7 @@ export interface FusiongraphPluginOptions<TContext> {
   transports?: TransportsOption;
   planCache?: PlanCache;
   polling?: number;
-  additionalResolvers?:
-    | IResolvers<unknown, MeshServeContext & TContext>
-    | IResolvers<unknown, MeshServeContext & TContext>[];
+  additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
   transportBaseContext?: TransportBaseContext;
   readinessCheckEndpoint?: string;
 }
@@ -396,21 +394,21 @@ function getExecuteFnFromExecutor(executor: Executor): typeof execute {
   };
 }
 
-export function useFusiongraph<TContext>({
+export function useFusiongraph<TContext extends Record<string, any> = Record<string, any>>({
   getFusiongraph,
   transports,
   additionalResolvers,
   polling,
   transportBaseContext,
   readinessCheckEndpoint,
-}: FusiongraphPluginOptions<TContext>): Plugin<{}, TContext> & {
+}: FusiongraphPluginOptions<TContext>): Plugin<TContext> & {
   invalidateUnifiedGraph(): void;
 } {
   let fusiongraph: GraphQLSchema;
   let lastLoadedFusiongraph: string | GraphQLSchema | DocumentNode;
   let executeFn: typeof execute;
   let executor: Executor;
-  let yoga: YogaServer<TContext, unknown>;
+  let yoga: YogaServer<unknown, TContext>;
   // TODO: We need to figure this out in a better way
   let inContextSDK: any;
   function handleLoadedFusiongraph(loadedFusiongraph: string | GraphQLSchema | DocumentNode) {
@@ -498,6 +496,7 @@ export function useFusiongraph<TContext>({
     onPluginInit({ addPlugin }) {
       if (readinessCheckEndpoint) {
         addPlugin(
+          // TODO: fix useReadinessCheck typings to inherit the context
           useReadinessCheck({
             endpoint: readinessCheckEndpoint,
             check() {
@@ -510,7 +509,7 @@ export function useFusiongraph<TContext>({
               }
               return !!fusiongraph;
             },
-          }),
+          }) as any,
         );
       }
     },

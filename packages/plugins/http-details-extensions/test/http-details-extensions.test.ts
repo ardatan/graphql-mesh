@@ -1,7 +1,7 @@
 import { OnExecuteHookResult } from '@envelop/core';
 import { Response } from '@whatwg-node/fetch';
 import { wrapFetchWithPlugins } from '../../../legacy/runtime/src/get-mesh.js';
-import useIncludeHttpDetailsInExtensions from '../src/index';
+import useIncludeHttpDetailsInExtensions from '../src/index.js';
 
 describe('HTTP Details Extensions', () => {
   it('should respect boolean `if`', () => {

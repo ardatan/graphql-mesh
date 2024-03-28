@@ -7,7 +7,7 @@ function isHeaders(headers: any): headers is Headers {
 }
 
 export function getHeadersObj(
-  headers: Headers | Record<string, string> | Map<string, string>,
+  headers: Headers | Record<string, string | string[]> | Map<string, string>,
 ): Record<string, string> {
   if (headers == null || !isHeaders(headers)) {
     return headers as any;

@@ -9,7 +9,7 @@ const typeDefs = parse(readFileSync(join(__dirname, './typeDefs.graphql'), 'utf8
 
 const resolvers = {
   Product: {
-    __resolveReference(object) {
+    __resolveReference(object: any) {
       return {
         ...object,
         ...products.find(product => product.upc === object.upc),
@@ -17,7 +17,7 @@ const resolvers = {
     },
   },
   Query: {
-    topProducts(_, args) {
+    topProducts(_: any, args: any) {
       return products.slice(0, args.first);
     },
   },

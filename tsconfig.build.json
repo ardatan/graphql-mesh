@@ -1,5 +1,9 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "importHelpers": true,
+    "declaration": true
+  },
   "exclude": [
     "**/node_modules",
     "**/dist",

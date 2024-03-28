@@ -5,7 +5,7 @@ import { parse } from 'graphql';
 import { MeshFetch } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
-import { createExecutorFromSchemaAST, SOAPLoader } from '../src';
+import { createExecutorFromSchemaAST, SOAPLoader } from '../src/index.js';
 
 const { readFile } = promises;
 

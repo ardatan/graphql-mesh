@@ -1,4 +1,4 @@
-import { Plugin } from '@envelop/core';
+import { Plugin } from 'graphql-yoga';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';

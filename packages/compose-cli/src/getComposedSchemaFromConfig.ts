@@ -4,7 +4,7 @@ import { DefaultLogger } from '@graphql-mesh/utils';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { LoaderContext, MeshComposeCLIConfig } from './types';
+import { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 export async function getComposedSchemaFromConfig(
   meshComposeCLIConfig: MeshComposeCLIConfig,

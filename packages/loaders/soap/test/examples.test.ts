@@ -13,6 +13,7 @@ describe('Examples', () => {
   examples.forEach(example => {
     it(`should generate schema for ${example}`, async () => {
       const soapLoader = new SOAPLoader({
+        subgraphName: example,
         fetch,
       });
       const example1Wsdl = await readFile(

@@ -217,10 +217,16 @@ export function useSubschema(subschema: Subschema): Plugin {
       setSchema(subschema.transformedSchema);
     },
     onExecute({ setExecuteFn }) {
-      setExecuteFn(executeFn);
+      setExecuteFn(
+        // @ts-expect-error the typed execution args dont match regular execution types
+        executeFn,
+      );
     },
     onSubscribe({ setSubscribeFn }) {
-      setSubscribeFn(executeFn);
+      setSubscribeFn(
+        // @ts-expect-error the typed execution args dont match regular execution types
+        executeFn,
+      );
     },
   };
 

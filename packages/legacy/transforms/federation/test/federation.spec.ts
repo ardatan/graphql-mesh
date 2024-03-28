@@ -3,7 +3,7 @@ import { buildSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import FederationTransform from '../src/index';
+import FederationTransform from '../src/index.js';
 
 describe('transform-federation', () => {
   const apiName = 'test';

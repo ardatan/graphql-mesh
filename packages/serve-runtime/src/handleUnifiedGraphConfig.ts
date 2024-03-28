@@ -2,7 +2,7 @@
 import { buildASTSchema, buildSchema, DocumentNode, GraphQLSchema, isSchema } from 'graphql';
 import { defaultImportFn, isUrl, readFileOrUrl } from '@graphql-mesh/utils';
 import { isDocumentNode, isPromise, isValidPath } from '@graphql-tools/utils';
-import { MeshServeConfigContext } from './types';
+import { MeshServeConfigContext } from './types.js';
 
 export type UnifiedGraphSchema = GraphQLSchema | DocumentNode | string;
 
