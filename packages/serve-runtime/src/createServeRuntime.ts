@@ -1,10 +1,10 @@
+import type { IncomingMessage } from 'node:http';
 import { GraphQLSchema, parse } from 'graphql';
 import {
   createYoga,
   FetchAPI,
   isAsyncIterable,
   useReadinessCheck,
-  YogaInitialContext,
   YogaServerInstance,
   type Plugin,
 } from 'graphql-yoga';
@@ -26,7 +26,7 @@ import {
 } from './types.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
-  config: MeshServeConfig<MeshServeConfigContext & TContext>,
+  config: MeshServeConfig<TContext>,
 ) {
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
@@ -45,7 +45,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
   };
 
-  let supergraphYogaPlugin: Plugin<MeshServeConfigContext & TContext> & {
+  let supergraphYogaPlugin: Plugin<MeshServeContext & TContext> & {
     invalidateUnifiedGraph: () => void;
   };
 
@@ -79,7 +79,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     const proxyExecutor = getProxyExecutor(config, configContext, () => schema);
     // TODO: fix useExecutor typings to inherit the context
     const executorPlugin = useExecutor(proxyExecutor) as unknown as Plugin<
-      MeshServeConfigContext & TContext
+      MeshServeContext & TContext
     > & {
       invalidateSupergraph: () => void;
     };
@@ -120,7 +120,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       setFetchFn(fetchAPI.fetch);
     },
     onYogaInit({ yoga }) {
-      const onFetchHooks: OnFetchHook<YogaInitialContext & MeshServeContext>[] = [];
+      const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
 
       for (const plugin of yoga.getEnveloped._plugins as unknown as MeshServePlugin[]) {
         if (plugin.onFetch) {
@@ -136,19 +136,28 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     fetchAPI: config.fetchAPI,
     logging: config.logging == null ? new DefaultLogger() : config.logging,
     plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(configContext) || [])],
-    context: ({ request, req, connectionParams }: any) => ({
-      ...configContext,
-      headers:
-        // Maybe Node-like environment
-        req?.headers
-          ? getHeadersObj(req.headers)
-          : // Fetch environment
-            request?.headers
-            ? getHeadersObj(request.headers)
-            : // Unknown environment
-              {},
-      connectionParams,
-    }),
+    context: ({ request, params, ...rest }) => {
+      // TODO: I dont like this cast, but it's necessary
+      const { req, connectionParams } = rest as {
+        req?: IncomingMessage;
+        connectionParams?: Record<string, string>;
+      };
+      return {
+        ...configContext,
+        request,
+        params,
+        headers:
+          // Maybe Node-like environment
+          req?.headers
+            ? getHeadersObj(req.headers)
+            : // Fetch environment
+              request?.headers
+              ? getHeadersObj(request.headers)
+              : // Unknown environment
+                {},
+        connectionParams,
+      };
+    },
     cors: config.cors,
     graphiql: config.graphiql,
     batching: config.batching,

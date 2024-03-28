@@ -32,7 +32,7 @@ export interface MeshServeConfigContext {
   cache?: KeyValueCache;
 }
 
-export interface MeshServeContext extends MeshServeConfigContext {
+export interface MeshServeContext extends MeshServeConfigContext, YogaInitialContext {
   /**
    * Environment agnostic HTTP headers provided with the request.
    */
@@ -48,9 +48,7 @@ export type MeshServePlugin<
   TContext extends Record<string, any> = Record<string, any>,
 > = YogaPlugin<Partial<TPluginContext> & MeshServeContext & TContext> &
   FusiongraphPlugin & {
-    onFetch?: OnFetchHook<
-      Partial<TPluginContext> & YogaInitialContext & MeshServeContext & TContext
-    >;
+    onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   };
 
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -127,7 +125,7 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Show, hide or configure GraphiQL.
    */
-  graphiql?: YogaServerOptions<unknown, TContext>['graphiql'];
+  graphiql?: YogaServerOptions<unknown, MeshServeContext & TContext>['graphiql'];
   /**
    * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md).
    */

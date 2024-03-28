@@ -361,9 +361,7 @@ export interface FusiongraphPluginOptions<TContext> {
   transports?: TransportsOption;
   planCache?: PlanCache;
   polling?: number;
-  additionalResolvers?:
-    | IResolvers<unknown, MeshServeContext & TContext>
-    | IResolvers<unknown, MeshServeContext & TContext>[];
+  additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
   transportBaseContext?: TransportBaseContext;
   readinessCheckEndpoint?: string;
 }
