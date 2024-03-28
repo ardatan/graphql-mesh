@@ -11,7 +11,7 @@ const tsconfig = JSON5.parse(tsconfigStr);
 
 process.env.LC_ALL = 'en_US';
 
-const testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
+let testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
 
 if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/grpc-*/**');
@@ -40,6 +40,12 @@ testMatch.push(
 if (process.version.startsWith('v21.')) {
   console.warn('Skipping SQLite Chinook tests because Node v21 is not supported yet');
   testMatch.push('!**/examples/sqlite-chinook/**');
+}
+
+if (process.env.E2E_TEST) {
+  testMatch = ['**/e2e/**/?(*.)+(spec|test).[jt]s?(x)'];
+} else {
+  testMatch.push('!**/e2e/**/?(*.)+(spec|test).[jt]s?(x)');
 }
 
 module.exports = {
