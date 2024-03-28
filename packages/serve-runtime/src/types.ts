@@ -25,10 +25,22 @@ export type MeshServeConfig<TContext extends Record<string, any> = Record<string
   | MeshServeConfigWithProxy<TContext>;
 
 export interface MeshServeConfigContext {
+  /**
+   * WHATWG compatible Fetch implementation.
+   */
   fetch: MeshFetch;
   logger: Logger;
+  /**
+   * Current working directory.
+   */
   cwd: string;
+  /**
+   * Event bus for pub/sub.
+   */
   pubsub?: MeshPubSub;
+  /**
+   * Cache Storage
+   */
   cache?: KeyValueCache;
 }
 
