@@ -2,7 +2,7 @@ import { parse } from 'graphql';
 import { ApolloClient, FetchResult, InMemoryCache } from '@apollo/client/core';
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
-import { getTestMesh } from '../../testing/getTestMesh.js';
+import { getTestMesh } from '../../testing/getTestMesh.mjs';
 import { MeshApolloLink } from '../src/index.js';
 
 describe('GraphApolloLink', () => {

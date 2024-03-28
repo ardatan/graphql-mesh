@@ -11,7 +11,8 @@ export interface Config {
   /**
    * Codegen Configuration
    */
-  codegen?: any;
+  codegen?:
+    | any;
   require?: string[];
   /**
    * Defines the list of your external data sources for your API mesh
@@ -24,7 +25,8 @@ export interface Config {
   /**
    * Additional type definitions, or type definitions overrides you wish to add to the schema mesh
    */
-  additionalTypeDefs?: any;
+  additionalTypeDefs?:
+    | any;
   /**
    * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject, AdditionalSubscriptionObject)
    */
@@ -53,11 +55,13 @@ export interface Config {
   /**
    * Logger instance that matches `Console` interface of NodeJS
    */
-  logger?: any;
+  logger?:
+    | any;
   /**
    * Path to a custom W3 Compatible Fetch Implementation
    */
-  customFetch?: any;
+  customFetch?:
+    | any;
   /**
    * Allow connections to an SSL endpoint without certificates
    */
@@ -126,7 +130,8 @@ export interface ServeConfig {
  * Configuration for CORS
  */
 export interface CorsConfig {
-  origin?: any;
+  origin?:
+    | any;
   allowedHeaders?: string[];
   exposedHeaders?: string[];
   credentials?: boolean;
@@ -202,7 +207,8 @@ export interface GraphQLHandlerHTTPConfiguration {
   /**
    * JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
    */
-  schemaHeaders?: any;
+  schemaHeaders?:
+    | any;
   /**
    * JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
    */
@@ -216,14 +222,14 @@ export interface GraphQLHandlerHTTPConfiguration {
   /**
    * HTTP method used for GraphQL operations (Allowed values: GET, POST)
    */
-  method?: 'GET' | 'POST';
+  method?: "GET" | "POST";
   /**
    * Request Credentials if your environment supports it.
    * [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
    *
    * @default "same-origin" (Allowed values: omit, include)
    */
-  credentials?: 'omit' | 'include';
+  credentials?: "omit" | "include";
   /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
@@ -238,7 +244,7 @@ export interface GraphQLHandlerHTTPConfiguration {
    * WS - New graphql-ws
    * LEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)
    */
-  subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
+  subscriptionsProtocol?: "SSE" | "WS" | "LEGACY_WS";
   /**
    * URL to your endpoint serving all subscription queries for this source
    */
@@ -271,7 +277,8 @@ export interface GraphQLHandlerCodeFirstConfiguration {
    * If you provide a path to a code file(js or ts),
    * other options will be ignored and the schema exported from the file will be used directly.
    */
-  source: any;
+  source:
+    | any;
 }
 export interface GraphQLHandlerMultipleHTTPConfiguration {
   /**
@@ -281,7 +288,7 @@ export interface GraphQLHandlerMultipleHTTPConfiguration {
   /**
    * Handling strategy (default: fallback) (Allowed values: fallback, race, highestValue)
    */
-  strategy?: 'fallback' | 'race' | 'highestValue';
+  strategy?: "fallback" | "race" | "highestValue";
   strategyConfig?: GraphQLHandlerhighestValueStrategyConfig;
 }
 /**
@@ -363,7 +370,8 @@ export interface JsonSchemaHandler {
    */
   operations?: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
   ignoreErrorResponses?: boolean;
-  queryParams?: any;
+  queryParams?:
+    | any;
   queryStringOptions?: QueryStringOptions;
   /**
    * Timeout for the HTTP request in milliseconds
@@ -385,16 +393,18 @@ export interface JsonSchemaHTTPOperation {
   /**
    * Type field is set the opertion type: Query, Mutation or Subscription. (Allowed values: Query, Mutation, Subscription)
    */
-  type: 'Query' | 'Mutation' | 'Subscription';
+  type: "Query" | "Mutation" | "Subscription";
   /**
    * Your chance to provide request schema name.
    */
-  requestSchema?: any;
+  requestSchema?:
+    | any;
   /**
    * The path definition of the JSON Schema sample.
    * Example: "./jsons/questions.response.json".
    */
-  requestSample?: any;
+  requestSample?:
+    | any;
   /**
    * Inset any name for the type of the request body.
    */
@@ -403,15 +413,18 @@ export interface JsonSchemaHTTPOperation {
    * This body will be merged with the request body sent with
    * the underlying HTTP request
    */
-  requestBaseBody?: any;
+  requestBaseBody?:
+    | any;
   /**
    * Yay! Now you can provide the response schema name.
    */
-  responseSchema?: any;
+  responseSchema?:
+    | any;
   /**
    * Did you use Sample? Provide the response sample path.
    */
-  responseSample?: any;
+  responseSample?:
+    | any;
   /**
    * Inset any name for the type of the response body.
    */
@@ -427,7 +440,8 @@ export interface JsonSchemaHTTPOperation {
    *     responseTypeName: MyError
    * ```
    */
-  responseByStatusCode?: any;
+  responseByStatusCode?:
+    | any;
   /**
    * Expose response details done to the upstream API
    * When you enable this, you will see a new field in the response type;
@@ -473,7 +487,7 @@ export interface JsonSchemaHTTPOperation {
   /**
    * Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
    */
-  method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
+  method?: "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH";
   headers?: {
     [k: string]: any;
   };
@@ -494,17 +508,22 @@ export interface JsonSchemaPubSubOperation {
   /**
    * Allowed values: Query, Mutation, Subscription
    */
-  type: 'Query' | 'Mutation' | 'Subscription';
-  requestSchema?: any;
-  requestSample?: any;
+  type: "Query" | "Mutation" | "Subscription";
+  requestSchema?:
+    | any;
+  requestSample?:
+    | any;
   requestTypeName?: string;
   /**
    * This body will be merged with the request body sent with
    * the underlying HTTP request
    */
-  requestBaseBody?: any;
-  responseSchema?: any;
-  responseSample?: any;
+  requestBaseBody?:
+    | any;
+  responseSchema?:
+    | any;
+  responseSample?:
+    | any;
   responseTypeName?: string;
   argTypeMap?: {
     [k: string]: any;
@@ -528,7 +547,7 @@ export interface QueryStringOptions {
    *
    * Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse. (Allowed values: indices, brackets, repeat, comma)
    */
-  arrayFormat?: 'indices' | 'brackets' | 'repeat' | 'comma';
+  arrayFormat?: "indices" | "brackets" | "repeat" | "comma";
   /**
    * Even if there is a single item in an array, this option treats them as arrays
    * (default: false)
@@ -767,7 +786,8 @@ export interface MySQLHandler {
    * Use existing `Pool` instance
    * Format: modulePath#exportName
    */
-  pool?: any;
+  pool?:
+    | any;
   /**
    * Use specific tables for your schema
    */
@@ -850,7 +870,7 @@ export interface ODataHandler {
   /**
    * Enable batching (Allowed values: multipart, json)
    */
-  batch?: 'multipart' | 'json';
+  batch?: "multipart" | "json";
   /**
    * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
    */
@@ -867,7 +887,7 @@ export interface OpenapiHandler {
   /**
    * Format of the files referenced from the source file, for cases content type isn't detected automatically (Allowed values: json, yaml, js, ts)
    */
-  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
+  fallbackFormat?: "json" | "yaml" | "js" | "ts";
   /**
    * Specifies the URL on which all paths will be based on.
    * Overrides the server object in the OAS.
@@ -910,7 +930,7 @@ export interface OASSelectQueryOrMutationFieldConfig {
   /**
    * Allowed values: query, mutation, Query, Mutation
    */
-  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  type: "query" | "mutation" | "Query" | "Mutation";
   fieldName: string;
 }
 /**
@@ -928,7 +948,8 @@ export interface PostGraphileHandler {
   /**
    * Connection Pool instance or settings or you can provide the path of a code file that exports any of those
    */
-  pool?: any;
+  pool?:
+    | any;
   /**
    * Extra Postgraphile Plugins to append
    */
@@ -956,7 +977,8 @@ export interface PostGraphileHandler {
   /**
    * A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.
    */
-  contextOptions?: any;
+  contextOptions?:
+    | any;
 }
 export interface RAMLHandler {
   source: string;
@@ -969,7 +991,8 @@ export interface RAMLHandler {
   };
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
-  queryParams?: any;
+  queryParams?:
+    | any;
   /**
    * Timeout for the HTTP request in milliseconds
    */
@@ -979,7 +1002,7 @@ export interface RAMLSelectQueryOrMutationFieldConfig {
   /**
    * Allowed values: query, mutation, Query, Mutation
    */
-  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  type: "query" | "mutation" | "Query" | "Mutation";
   fieldName: string;
 }
 /**
@@ -994,7 +1017,8 @@ export interface SoapHandler {
    * JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
    * You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
    */
-  schemaHeaders?: any;
+  schemaHeaders?:
+    | any;
   /**
    * JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
    */
@@ -1009,8 +1033,10 @@ export interface SupergraphHandler {
    * other options will be ignored and the schema exported from the file will be used directly.
    */
   source: string;
-  schemaHeaders?: any;
-  operationHeaders?: any;
+  schemaHeaders?:
+    | any;
+  operationHeaders?:
+    | any;
   batch?: boolean;
   subgraphs?: SubgraphConfiguration[];
 }
@@ -1038,14 +1064,14 @@ export interface SubgraphConfiguration {
   /**
    * HTTP method used for GraphQL operations (Allowed values: GET, POST)
    */
-  method?: 'GET' | 'POST';
+  method?: "GET" | "POST";
   /**
    * Request Credentials if your environment supports it.
    * [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
    *
    * @default "same-origin" (Allowed values: omit, include)
    */
-  credentials?: 'omit' | 'include';
+  credentials?: "omit" | "include";
   /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
@@ -1060,7 +1086,7 @@ export interface SubgraphConfiguration {
    * WS - New graphql-ws
    * LEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)
    */
-  subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
+  subscriptionsProtocol?: "SSE" | "WS" | "LEGACY_WS";
   /**
    * URL to your endpoint serving all subscription queries for this source
    */
@@ -1106,7 +1132,7 @@ export interface ThriftHandler {
   /**
    * Name of the Thrift protocol type to use. Defaults to 'binary'. (Allowed values: binary, compact, json)
    */
-  protocol?: 'binary' | 'compact' | 'json';
+  protocol?: "binary" | "compact" | "json";
   /**
    * The name of your service. Used for logging.
    */
@@ -1152,7 +1178,9 @@ export interface Transform {
   /**
    * Transformer to filter (white/black list) GraphQL types, fields and arguments (Any of: FilterSchemaTransform, Any)
    */
-  filterSchema?: FilterSchemaTransform | any;
+  filterSchema?:
+    | FilterSchemaTransform
+    | any;
   /**
    * Transformer to hoist GraphQL fields
    */
@@ -1167,12 +1195,16 @@ export interface Transform {
   /**
    * Transformer to rename GraphQL types and fields (Any of: RenameTransform, Any)
    */
-  rename?: RenameTransform | any;
+  rename?:
+    | RenameTransform
+    | any;
   replaceField?: ReplaceFieldTransformConfig;
   /**
    * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
-  resolversComposition?: ResolversCompositionTransform | any;
+  resolversComposition?:
+    | ResolversCompositionTransform
+    | any;
   transferSchema?: TransferSchemaTransformConfig;
   typeMerging?: TypeMergingConfig;
   [k: string]: any;
@@ -1242,8 +1274,10 @@ export interface EncapsulateTransformApplyTo {
   subscription?: boolean;
 }
 export interface ExtendTransform {
-  typeDefs?: any;
-  resolvers?: any;
+  typeDefs?:
+    | any;
+  resolvers?:
+    | any;
 }
 export interface FederationTransform {
   types?: FederationTransformType[];
@@ -1314,7 +1348,7 @@ export interface FilterSchemaTransform {
   /**
    * Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
    */
-  mode?: 'bare' | 'wrap';
+  mode?: "bare" | "wrap";
   /**
    * Array of filter rules
    */
@@ -1364,75 +1398,75 @@ export interface NamingConventionTransformConfig {
   /**
    * Specify to apply naming-convention transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
    */
-  mode?: 'bare' | 'wrap';
+  mode?: "bare" | "wrap";
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   typeNames?:
-    | 'camelCase'
-    | 'capitalCase'
-    | 'constantCase'
-    | 'dotCase'
-    | 'headerCase'
-    | 'noCase'
-    | 'paramCase'
-    | 'pascalCase'
-    | 'pathCase'
-    | 'sentenceCase'
-    | 'snakeCase'
-    | 'upperCase'
-    | 'lowerCase';
+    | "camelCase"
+    | "capitalCase"
+    | "constantCase"
+    | "dotCase"
+    | "headerCase"
+    | "noCase"
+    | "paramCase"
+    | "pascalCase"
+    | "pathCase"
+    | "sentenceCase"
+    | "snakeCase"
+    | "upperCase"
+    | "lowerCase";
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   fieldNames?:
-    | 'camelCase'
-    | 'capitalCase'
-    | 'constantCase'
-    | 'dotCase'
-    | 'headerCase'
-    | 'noCase'
-    | 'paramCase'
-    | 'pascalCase'
-    | 'pathCase'
-    | 'sentenceCase'
-    | 'snakeCase'
-    | 'upperCase'
-    | 'lowerCase';
+    | "camelCase"
+    | "capitalCase"
+    | "constantCase"
+    | "dotCase"
+    | "headerCase"
+    | "noCase"
+    | "paramCase"
+    | "pascalCase"
+    | "pathCase"
+    | "sentenceCase"
+    | "snakeCase"
+    | "upperCase"
+    | "lowerCase";
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   enumValues?:
-    | 'camelCase'
-    | 'capitalCase'
-    | 'constantCase'
-    | 'dotCase'
-    | 'headerCase'
-    | 'noCase'
-    | 'paramCase'
-    | 'pascalCase'
-    | 'pathCase'
-    | 'sentenceCase'
-    | 'snakeCase'
-    | 'upperCase'
-    | 'lowerCase';
+    | "camelCase"
+    | "capitalCase"
+    | "constantCase"
+    | "dotCase"
+    | "headerCase"
+    | "noCase"
+    | "paramCase"
+    | "pascalCase"
+    | "pathCase"
+    | "sentenceCase"
+    | "snakeCase"
+    | "upperCase"
+    | "lowerCase";
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   fieldArgumentNames?:
-    | 'camelCase'
-    | 'capitalCase'
-    | 'constantCase'
-    | 'dotCase'
-    | 'headerCase'
-    | 'noCase'
-    | 'paramCase'
-    | 'pascalCase'
-    | 'pathCase'
-    | 'sentenceCase'
-    | 'snakeCase'
-    | 'upperCase'
-    | 'lowerCase';
+    | "camelCase"
+    | "capitalCase"
+    | "constantCase"
+    | "dotCase"
+    | "headerCase"
+    | "noCase"
+    | "paramCase"
+    | "pascalCase"
+    | "pathCase"
+    | "sentenceCase"
+    | "snakeCase"
+    | "upperCase"
+    | "lowerCase";
 }
 /**
  * Prefix transform
@@ -1441,7 +1475,7 @@ export interface PrefixTransformConfig {
   /**
    * Specify to apply prefix transform to bare schema or by wrapping original schema (Allowed values: bare, wrap)
    */
-  mode?: 'bare' | 'wrap';
+  mode?: "bare" | "wrap";
   /**
    * The prefix to apply to the schema types. By default it's the API name.
    */
@@ -1510,7 +1544,7 @@ export interface RenameTransform {
   /**
    * Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
    */
-  mode?: 'bare' | 'wrap';
+  mode?: "bare" | "wrap";
   /**
    * Array of rename rules
    */
@@ -1559,7 +1593,8 @@ export interface ReplaceFieldTransformConfig {
   /**
    * Additional type definition to used to replace field types
    */
-  typeDefs?: any;
+  typeDefs?:
+    | any;
   /**
    * Array of rules to replace fields
    */
@@ -1571,8 +1606,9 @@ export interface ReplaceFieldTransformObject {
   /**
    * Allowed values: config, hoistValue
    */
-  scope?: 'config' | 'hoistValue';
-  composer?: any;
+  scope?: "config" | "hoistValue";
+  composer?:
+    | any;
   name?: string;
 }
 export interface ReplaceFieldConfig {
@@ -1587,7 +1623,7 @@ export interface ResolversCompositionTransform {
   /**
    * Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
    */
-  mode?: 'bare' | 'wrap';
+  mode?: "bare" | "wrap";
   /**
    * Array of resolver/composer to apply
    */
@@ -1603,7 +1639,8 @@ export interface ResolversCompositionTransformObject {
    * Path to the composer function
    * Example: ./src/auth.js#authComposer
    */
-  composer: any;
+  composer:
+    | any;
 }
 /**
  * Transformer to transfer (move or copy) GraphQL parts of GraphQL schema across Types and Fields
@@ -1620,7 +1657,7 @@ export interface TransferSchemaTransformObject {
   /**
    * Allowed values: move, copy
    */
-  action?: 'move' | 'copy';
+  action?: "move" | "copy";
 }
 /**
  * [Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration
@@ -1639,7 +1676,8 @@ export interface TypeMergingConfig {
   /**
    * The path to a code file that has additional type merging configuration
    */
-  additionalConfiguration?: any;
+  additionalConfiguration?:
+    | any;
 }
 export interface MergedTypeConfig {
   /**
@@ -1778,7 +1816,7 @@ export interface LocalforageConfig {
   /**
    * Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE
    */
-  driver?: ('WEBSQL' | 'INDEXEDDB' | 'LOCALSTORAGE')[];
+  driver?: ("WEBSQL" | "INDEXEDDB" | "LOCALSTORAGE")[];
   name?: string;
   version?: number;
   size?: number;
@@ -1799,7 +1837,8 @@ export interface RedisConfig {
 }
 export interface PubSubConfig {
   name: string;
-  config?: any;
+  config?:
+    | any;
 }
 /**
  * Configure persisted operations options
@@ -1834,8 +1873,10 @@ export interface CustomPersistedQueryErrors {
 }
 export interface Plugin {
   maskedErrors?: MaskedErrorsPluginConfig;
-  immediateIntrospection?: any;
-  deduplicateRequest?: any;
+  immediateIntrospection?:
+    | any;
+  deduplicateRequest?:
+    | any;
   hive?: HivePlugin;
   httpCache?: HTTPCachePlugin;
   httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
@@ -1873,7 +1914,8 @@ export interface HivePlugin {
  */
 export interface HiveAgentOptions {
   name?: string;
-  logger?: any;
+  logger?:
+    | any;
   /**
    * 30s by default
    */
@@ -1928,7 +1970,8 @@ export interface HiveUsageOptions {
    * Default: false
    */
   processVariables?: boolean;
-  sampler?: any;
+  sampler?:
+    | any;
 }
 /**
  * Extract client info from GraphQL Context
@@ -2006,7 +2049,8 @@ export interface URLPatternObj {
   baseURL?: string;
 }
 export interface HTTPDetailsExtensionsConfig {
-  if?: any;
+  if?:
+    | any;
 }
 export interface LiveQueryConfig {
   /**
@@ -2073,7 +2117,8 @@ export interface MockingConfig {
   /**
    * The path to the code runs before the store is attached to the schema
    */
-  initializeStore?: any;
+  initializeStore?:
+    | any;
 }
 export interface MockingFieldConfig {
   /**
@@ -2368,7 +2413,7 @@ export interface StatsdClientConfiguration {
   /**
    * Allowed values: tcp, udp, uds, stream
    */
-  protocol?: 'tcp' | 'udp' | 'uds' | 'stream';
+  protocol?: "tcp" | "udp" | "uds" | "stream";
   sampleRate?: number;
   suffix?: string;
   telegraf?: boolean;

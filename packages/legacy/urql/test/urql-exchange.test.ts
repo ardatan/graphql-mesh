@@ -2,7 +2,7 @@ import { pipe, toObservable } from 'wonka';
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
 import { Client, createClient, OperationResult } from '@urql/core';
-import { getTestMesh } from '../../testing/getTestMesh.js';
+import { getTestMesh } from '../../testing/getTestMesh.mjs';
 import { meshExchange } from '../src/index.js';
 
 describe('Mesh Exchange', () => {
