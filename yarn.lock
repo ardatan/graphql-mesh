@@ -4636,6 +4636,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-federation@workspace:packages/fusion/federation"
   dependencies:
+    "@apollo/server": "npm:4.10.2"
     "@graphql-tools/utils": "npm:^10.0.10"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -10013,6 +10014,27 @@ __metadata:
   version: 1.0.4
   resolution: "@tsconfig/node16@npm:1.0.4"
   checksum: 10c0/05f8f2734e266fb1839eb1d57290df1664fe2aa3b0fdd685a9035806daa635f7519bf6d5d9b33f6e69dd545b8c46bd6e2b5c79acb2b1f146e885f7f11a42a5bb
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node20@npm:^20.1.4":
+  version: 20.1.4
+  resolution: "@tsconfig/node20@npm:20.1.4"
+  checksum: 10c0/239cd6abaceaaffc758e7a9dd3748ec1acfdabd6de28a9a16a3824c21f17ad69a16184870298460345d2fb6f3663d092c21d5b764bef669a179658b4a7eac739
+  languageName: node
+  linkType: hard
+
+"@tsconfig/recommended@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "@tsconfig/recommended@npm:1.0.5"
+  checksum: 10c0/74bfcf83a4e580e7195ef19cfae4f092bc86cc7efc7fc595214dd5671bd76999864f1265054e01ea7ad34227f374ed5e754c3d1895e05717c24c58d29eb32d95
+  languageName: node
+  linkType: hard
+
+"@tsconfig/strictest@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@tsconfig/strictest@npm:2.0.5"
+  checksum: 10c0/cfc86da2d57f7b4b0827701b132c37a4974284e5c40649656c0e474866dfd8a69f57c6718230d8a8139967e2a95438586b8224c13ab0ff9d3a43eda771c50cc4
   languageName: node
   linkType: hard
 
@@ -19647,6 +19669,9 @@ __metadata:
     "@changesets/changelog-github": "npm:0.5.0"
     "@changesets/cli": "npm:2.27.1"
     "@theguild/prettier-config": "npm:2.0.6"
+    "@tsconfig/node20": "npm:^20.1.4"
+    "@tsconfig/recommended": "npm:^1.0.5"
+    "@tsconfig/strictest": "npm:^2.0.5"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.11.30"
     "@typescript-eslint/eslint-plugin": "npm:7.4.0"

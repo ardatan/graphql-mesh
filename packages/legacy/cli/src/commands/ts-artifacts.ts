@@ -13,7 +13,7 @@ import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import { pathExists, printWithCache, writeFile, writeJSON } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { GraphQLMeshCLIParams } from '..';
+import { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
 
 const unifiedContextIdentifier = 'MeshContext';

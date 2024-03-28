@@ -2,7 +2,7 @@ import { createSchema, createYoga } from 'graphql-yoga';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { Response } from '@whatwg-node/server';
-import { createServeRuntime } from '../src/createServeRuntime';
+import { createServeRuntime } from '../src/createServeRuntime.js';
 
 describe('Serve Runtime', () => {
   describe('Health and Readiness checks', () => {

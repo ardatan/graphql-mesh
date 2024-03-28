@@ -23,7 +23,7 @@ import {
   MeshServeConfigContext,
   MeshServeContext,
   MeshServePlugin,
-} from './types';
+} from './types.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<MeshServeConfigContext & TContext>,

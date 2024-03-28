@@ -1,7 +1,6 @@
 import { join } from 'path';
 import { Response } from 'fets';
-import { GraphQLSchema } from 'graphql';
-import { execute, parse } from 'graphql/index';
+import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 

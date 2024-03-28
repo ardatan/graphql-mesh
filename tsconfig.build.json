@@ -1,5 +1,11 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "importHelpers": true,
+    "sourceMap": true,
+    "declaration": true
+  },
   "exclude": [
     "**/node_modules",
     "**/dist",

@@ -1,58 +1,40 @@
 {
+  "extends": ["@tsconfig/recommended/tsconfig.json", "@tsconfig/node20/tsconfig.json"],
   "compilerOptions": {
-    "outDir": "dist",
+    "noEmit": true,
+
     "baseUrl": ".",
-
-    "target": "es2021",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "lib": ["esnext"],
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "declaration": true,
-
-    "alwaysStrict": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
-
     "allowJs": true,
 
+    "noImplicitAny": false, // TODO: fix
+    "useUnknownInCatchVariables": false, // TODO: fix
     "strictNullChecks": false, // TODO: fix
     "strictPropertyInitialization": false, // TODO: fix (goes together with strictNullChecks)
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "useUnknownInCatchVariables": false, // TODO: fix
 
     "paths": {
-      "@graphql-mesh/cli": ["packages/legacy/cli/src/index"],
-      "@graphql-mesh/runtime": ["packages/legacy/runtime/src/index"],
-      "@graphql-mesh/config": ["packages/legacy/config/src/index"],
-      "@graphql-mesh/types": ["packages/legacy/types/src/index"],
-      "@graphql-mesh/utils": ["packages/legacy/utils/src/index"],
-      "@graphql-mesh/store": ["packages/legacy/store/src/index"],
-      "@graphql-mesh/http": ["packages/legacy/http/src/index"],
-      "@graphql-mesh/cache-*": ["packages/cache/*/src/index"],
-      "@graphql-mesh/transform-*": ["packages/legacy/transforms/*/src/index"],
-      "@graphql-mesh/merger-*": ["packages/legacy/mergers/*/src/index"],
-      "@graphql-mesh/plugin-*": ["packages/plugins/*/src/index"],
-      "@graphql-mesh/cross-helpers": ["packages/cross-helpers/index"],
-      "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index"],
-      "@graphql-mesh/fusion-*": ["packages/fusion/*/src/index"],
-      "@graphql-mesh/compose-cli": ["packages/compose-cli/src/index"],
-      "@graphql-mesh/serve-cli": ["packages/serve-cli/src/index"],
-      "@graphql-mesh/serve-runtime": ["packages/serve-runtime/src/index"],
-      "@graphql-mesh/transport-*": ["packages/transports/*/src/index"],
-      "@graphql-mesh/*": ["packages/legacy/handlers/*/src/index"],
-      "json-machete": ["packages/json-machete/src/index"],
-      "@omnigraph/*": ["packages/loaders/*/src/index"]
+      "@graphql-mesh/cli": ["packages/legacy/cli/src/index.ts"],
+      "@graphql-mesh/runtime": ["packages/legacy/runtime/src/index.ts"],
+      "@graphql-mesh/config": ["packages/legacy/config/src/index.ts"],
+      "@graphql-mesh/types": ["packages/legacy/types/src/index.ts"],
+      "@graphql-mesh/utils": ["packages/legacy/utils/src/index.ts"],
+      "@graphql-mesh/store": ["packages/legacy/store/src/index.ts"],
+      "@graphql-mesh/http": ["packages/legacy/http/src/index.ts"],
+      "@graphql-mesh/cache-*": ["packages/cache/*/src/index.ts"],
+      "@graphql-mesh/transform-*": ["packages/legacy/transforms/*/src/index.ts"],
+      "@graphql-mesh/merger-*": ["packages/legacy/mergers/*/src/index.ts"],
+      "@graphql-mesh/plugin-*": ["packages/plugins/*/src/index.ts"],
+      "@graphql-mesh/cross-helpers": ["packages/cross-helpers/index.d.ts"],
+      "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index.ts"],
+      "@graphql-mesh/fusion-*": ["packages/fusion/*/src/index.ts"],
+      "@graphql-mesh/compose-cli": ["packages/compose-cli/src/index.ts"],
+      "@graphql-mesh/serve-cli": ["packages/serve-cli/src/index.ts"],
+      "@graphql-mesh/serve-runtime": ["packages/serve-runtime/src/index.ts"],
+      "@graphql-mesh/transport-*": ["packages/transports/*/src/index.ts"],
+      "@graphql-mesh/*": ["packages/legacy/handlers/*/src/index.ts"],
+      "json-machete": ["packages/json-machete/src/index.ts"],
+      "@omnigraph/*": ["packages/loaders/*/src/index.ts"]
     }
   },
-  "include": ["./declarations.d.ts", "packages"],
+  "include": ["declarations.d.ts", "packages"],
   "exclude": ["**/node_modules", "**/dist"]
 }

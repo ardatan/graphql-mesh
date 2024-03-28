@@ -13,7 +13,6 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
     this.localforage = LocalForage.createInstance({
       name: config?.name || 'graphql-mesh-cache',
       storeName: config?.storeName || 'graphql-mesh-cache-store',
-      // @ts-expect-error - Weird error
       driver: driverNames.map(driverName => LocalForage[driverName] ?? driverName),
       size: config?.size,
       version: config?.version,

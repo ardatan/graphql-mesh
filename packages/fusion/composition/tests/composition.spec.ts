@@ -1,6 +1,10 @@
 import { buildSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { composeSubgraphs, createRenameFieldTransform, createRenameTypeTransform } from '../src';
+import {
+  composeSubgraphs,
+  createRenameFieldTransform,
+  createRenameTypeTransform,
+} from '../src/index.js';
 
 describe('Composition', () => {
   const aSchema = buildSchema(/* GraphQL */ `

@@ -317,7 +317,10 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
         fieldOpPromises.push(
           fieldOpResult$.then(fieldOpResult => {
             if (isAsyncIterable(fieldOpResult)) {
-              return mapAsyncIterator(fieldOpResult, handleFieldOpResult as any);
+              return mapAsyncIterator(
+                fieldOpResult as AsyncIterableIterator<any>,
+                handleFieldOpResult,
+              );
             }
             return handleFieldOpResult(fieldOpResult as any);
           }),

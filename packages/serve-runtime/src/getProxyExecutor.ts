@@ -5,7 +5,7 @@ import {
   TransportEntry,
 } from '@graphql-mesh/fusion-runtime';
 import { Executor } from '@graphql-tools/utils';
-import { MeshServeConfigContext, MeshServeConfigWithProxy } from './types';
+import { MeshServeConfigContext, MeshServeConfigWithProxy } from './types.js';
 
 export function getProxyExecutor<TContext>(
   config: MeshServeConfigWithProxy<TContext>,

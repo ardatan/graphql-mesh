@@ -6,8 +6,8 @@ import {
   YogaLogger,
   YogaMaskedErrorOpts,
   Plugin as YogaPlugin,
+  YogaServerOptions,
 } from 'graphql-yoga';
-import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql';
 import { Plugin as EnvelopPlugin } from '@envelop/core';
 import { FusiongraphPlugin, Transport, TransportsOption } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -15,7 +15,7 @@ import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@grap
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import { IResolvers } from '@graphql-tools/utils';
 import { CORSPluginOptions } from '@whatwg-node/server';
-import { UnifiedGraphConfig } from './handleUnifiedGraphConfig';
+import { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
 export { UnifiedGraphConfig };
 
@@ -127,7 +127,7 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Show, hide or configure GraphiQL.
    */
-  graphiql?: GraphiQLOptionsOrFactory<unknown>;
+  graphiql?: YogaServerOptions<unknown, TContext>['graphiql'];
   /**
    * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md).
    */

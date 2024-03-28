@@ -5,9 +5,12 @@ import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { Executor, getDirective, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
-import { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
+
+// TODO: Neo4jFeaturesSettings cannot be imported because of exports field in neo4j package.json
+// import type { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types/index.js';
+type Neo4jFeaturesSettings = any;
 
 export interface Neo4JExecutorOpts {
   schema: GraphQLSchema;

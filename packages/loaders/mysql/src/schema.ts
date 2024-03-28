@@ -27,7 +27,7 @@ import {
   MySQLUpdateDirective,
   TransportDirective,
 } from './directives.js';
-import { TableFieldConfig } from './types';
+import { TableFieldConfig } from './types.js';
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;
