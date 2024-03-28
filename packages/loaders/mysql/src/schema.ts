@@ -14,7 +14,14 @@ import {
   GraphQLUnsignedFloat,
   GraphQLUnsignedInt,
 } from 'graphql-scalars';
-import { Connection, createConnection, DatabaseTable, TableField, TableForeign } from 'mysql';
+import {
+  Connection,
+  createConnection,
+  DatabaseTable,
+  MysqlError,
+  TableField,
+  TableForeign,
+} from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { fs, process, util } from '@graphql-mesh/cross-helpers';
 import { getConnectionOptsFromEndpointUri, MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
@@ -98,8 +105,12 @@ export async function loadGraphQLSchemaFromMySQL(
       });
     }),
   );
-  const endConnection$ = util.promisify(introspectionConnection.end.bind(introspectionConnection));
-  await endConnection$(undefined, undefined);
+  const endConnection$ = util.promisify<
+    // we need to define the generic because introspectionConnection.end is overloaded
+    (err?: MysqlError) => void
+  >(introspectionConnection.end.bind(introspectionConnection));
+  await endConnection$(undefined);
+
   const schema = schemaComposer.buildSchema();
   const extensions: any = (schema.extensions ||= {});
   extensions.directives ||= {};
