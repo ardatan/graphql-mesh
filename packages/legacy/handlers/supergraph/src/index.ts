@@ -1,8 +1,9 @@
-import { DocumentNode, parse } from 'graphql';
+import { DocumentNode, EnumTypeDefinitionNode, parse } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
+  getInterpolatedStringFactory,
   ResolverData,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
@@ -89,22 +90,46 @@ export default class SupergraphHandler implements MeshHandler {
       this.config.operationHeaders != null
         ? getInterpolatedHeadersFactory(this.config.operationHeaders)
         : undefined;
+    const joingraphEnum = supergraphSdl.definitions.find(
+      def => def.kind === 'EnumTypeDefinition' && def.name.value === 'join__Graph',
+    ) as EnumTypeDefinitionNode;
+    const subgraphNameIdMap = new Map<string, string>();
+    if (joingraphEnum) {
+      joingraphEnum.values?.forEach(value => {
+        value.directives?.forEach(directive => {
+          if (directive.name.value === 'join__graph') {
+            const nameArg = directive.arguments?.find(arg => arg.name.value === 'name');
+            if (nameArg?.value?.kind === 'StringValue') {
+              subgraphNameIdMap.set(value.name.value, nameArg.value.value);
+            }
+          }
+        });
+      });
+    }
     const schema = getStitchedSchemaFromSupergraphSdl({
       supergraphSdl,
-      onExecutor: ({ subgraphName, endpoint }) => {
+      onExecutor: ({ subgraphName, endpoint: nonInterpolatedEndpoint }) => {
+        const subgraphRealName = subgraphNameIdMap.get(subgraphName);
         const subgraphConfiguration: YamlConfig.SubgraphConfiguration = subgraphConfigs.find(
-          subgraphConfig => subgraphConfig.name === subgraphName,
+          subgraphConfig => subgraphConfig.name === subgraphRealName,
         ) || {
           name: subgraphName,
         };
+        nonInterpolatedEndpoint = subgraphConfiguration.endpoint || nonInterpolatedEndpoint;
+        const endpointFactory = getInterpolatedStringFactory(nonInterpolatedEndpoint);
         return buildHTTPExecutor({
-          endpoint,
           ...(subgraphConfiguration as any),
-          fetch: fetchFn,
+          endpoint: nonInterpolatedEndpoint,
+          fetch(url: string, init: any, context: any, info: any) {
+            const endpoint = endpointFactory({
+              env: process.env,
+              context,
+              info,
+            });
+            url = url.replace(nonInterpolatedEndpoint, endpoint);
+            return fetchFn(url, init, context, info);
+          },
           headers(executorRequest) {
-            const subgraphConfiguration = subgraphConfigs.find(
-              subgraphConfig => subgraphConfig.name === subgraphName,
-            );
             const headers = {};
             const resolverData: ResolverData = {
               root: executorRequest.rootValue,
@@ -122,6 +147,7 @@ export default class SupergraphHandler implements MeshHandler {
             if (operationHeadersFactory) {
               Object.assign(headers, operationHeadersFactory(resolverData));
             }
+            return headers;
           },
         } as HTTPExecutorOptions);
       },

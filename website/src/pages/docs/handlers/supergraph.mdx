@@ -34,22 +34,14 @@ sources:
       supergraph:
         source: http://some-source.com/supergraph.graphql
         subgraphs:
-          accounts:
+          - name: accounts
             endpoint: http://localhost:9871/graphql
-            operationHeaders:
+            operationHeaders: # You can use context variables here
               Authorization: "Bearer {context.headers['x-accounts-token']}"
-          reviews:
-            endpoint: http://localhost:9872/graphql
+          - name: reviews
+            endpoint: '{env.REVIEWS_ENDPOINT:https://default-reviews.com/graphql}'
             operationHeaders:
-              Authorization: "Bearer {context.headers['x-accounts-token']}"
-          products:
-            endpoint: http://localhost:9873/graphql
-            operationHeaders:
-              Authorization: "Bearer {context.headers['x-accounts-token']}"
-          inventory:
-            endpoint: http://localhost:9874/graphql
-            operationHeaders:
-              Authorization: "Bearer {context.headers['x-accounts-token']}"
+              Authorization: "Bearer {context.headers['x-reviews-token']}"
 ```
 
 ### Config API Reference

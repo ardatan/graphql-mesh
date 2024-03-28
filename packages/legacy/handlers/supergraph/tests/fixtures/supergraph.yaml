@@ -1,0 +1,9 @@
+subgraphs:
+  authors:
+    routing_url: http://authors/graphql
+    schema:
+      file: ./service-author/typeDefs.graphql
+  books:
+    routing_url: http://books/graphql
+    schema:
+      file: ./service-book/typeDefs.graphql
