@@ -30,6 +30,126 @@ type Query {
 scalar ResolveToSourceArgs"
 `;
 
+exports[`Type Merging and Batching Example should give correct response for example queries with JIT: Author.graphql-query-result 1`] = `
+{
+  "data": {
+    "author": {
+      "books": [
+        {
+          "author": {
+            "id": "1",
+            "name": "Jane Doe",
+          },
+          "id": "0",
+          "title": "Lorem Ipsum",
+        },
+      ],
+      "id": "1",
+      "name": "Jane Doe",
+    },
+  },
+  "extensions": {
+    "jit": true,
+  },
+  "stringify": [Function],
+}
+`;
+
+exports[`Type Merging and Batching Example should give correct response for example queries with JIT: Authors.graphql-query-result 1`] = `
+{
+  "data": {
+    "authors": [
+      {
+        "books": [
+          {
+            "author": {
+              "id": "0",
+              "name": "John Doe",
+            },
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      {
+        "books": [
+          {
+            "author": {
+              "id": "1",
+              "name": "Jane Doe",
+            },
+            "id": "0",
+            "title": "Lorem Ipsum",
+          },
+        ],
+        "id": "1",
+        "name": "Jane Doe",
+      },
+    ],
+  },
+  "extensions": {
+    "jit": true,
+  },
+  "stringify": [Function],
+}
+`;
+
+exports[`Type Merging and Batching Example should give correct response for example queries with JIT: Book.graphql-query-result 1`] = `
+{
+  "data": {
+    "book": {
+      "author": {
+        "books": [
+          {
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      "id": "1",
+      "title": "Dolor Sit Amet",
+    },
+  },
+  "extensions": {
+    "jit": true,
+  },
+  "stringify": [Function],
+}
+`;
+
+exports[`Type Merging and Batching Example should give correct response for example queries with JIT: Books.graphql-query-result 1`] = `
+{
+  "data": {
+    "books": [
+      {
+        "author": {
+          "id": "1",
+          "name": "Jane Doe",
+        },
+        "id": "0",
+        "title": "Lorem Ipsum",
+      },
+      {
+        "author": {
+          "id": "0",
+          "name": "John Doe",
+        },
+        "id": "1",
+        "title": "Dolor Sit Amet",
+      },
+    ],
+  },
+  "extensions": {
+    "jit": true,
+  },
+  "stringify": [Function],
+}
+`;
+
 exports[`Type Merging and Batching Example should give correct response for example queries: Author.graphql-query-result 1`] = `
 {
   "data": {
@@ -48,7 +168,6 @@ exports[`Type Merging and Batching Example should give correct response for exam
       "name": "Jane Doe",
     },
   },
-  "stringify": [Function],
 }
 `;
 
@@ -86,7 +205,6 @@ exports[`Type Merging and Batching Example should give correct response for exam
       },
     ],
   },
-  "stringify": [Function],
 }
 `;
 
@@ -108,7 +226,6 @@ exports[`Type Merging and Batching Example should give correct response for exam
       "title": "Dolor Sit Amet",
     },
   },
-  "stringify": [Function],
 }
 `;
 
@@ -134,6 +251,5 @@ exports[`Type Merging and Batching Example should give correct response for exam
       },
     ],
   },
-  "stringify": [Function],
 }
 `;

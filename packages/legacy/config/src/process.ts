@@ -688,6 +688,7 @@ export async function processConfig(
     ];
     },
     fetchFn,
+    jitEnabled: ${config.jitEnabled ?? false},
   };
 }`);
   }
@@ -707,5 +708,6 @@ export async function processConfig(
     importCodes,
     codes,
     fetchFn,
+    jitEnabled: config.jitEnabled ?? false,
   };
 }

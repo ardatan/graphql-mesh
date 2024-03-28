@@ -48,7 +48,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
-import { isGraphQLJitCompatible, isStreamOperation } from './utils.js';
+import { isStreamOperation } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -116,6 +116,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     additionalTypeDefs = [],
     transforms = [],
     fetchFn = defaultFetchFn,
+    jitEnabled = false,
   } = options;
 
   const getMeshLogger = logger.child('GetMesh');
@@ -265,21 +266,40 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       specifiedRules,
     }),
     ...(subschema
-      ? [useSubschema(new Subschema(unifiedSubschema))]
+      ? [useSubschema(new Subschema(unifiedSubschema), jitEnabled)]
       : [
           useSchema(unifiedSubschema.schema),
-          useGraphQlJit(
-            {
-              // TODO: Disable for now
-              customJSONSerializer: false,
-              disableLeafSerialization: true,
-            },
-            {
-              enableIf(args) {
-                return isGraphQLJitCompatible(args.schema) && !isStreamOperation(args.document);
-              },
-            },
-          ),
+          ...(jitEnabled
+            ? [
+                useGraphQlJit(
+                  {
+                    // TODO: Disable for now
+                    customJSONSerializer: false,
+                    disableLeafSerialization: true,
+                  },
+                  {
+                    enableIf(args) {
+                      return jitEnabled && !isStreamOperation(args.document);
+                    },
+                  },
+                ),
+                {
+                  onExecute() {
+                    if (process.env.DEBUG) {
+                      return {
+                        onExecuteDone({ result }) {
+                          if (!isAsyncIterable(result)) {
+                            result.extensions = result.extensions || {};
+                            result.extensions.jit = true;
+                          }
+                        },
+                      };
+                    }
+                    return undefined;
+                  },
+                } satisfies Plugin,
+              ]
+            : []),
         ]),
     useExtendContext(() => {
       if (!inContextSDK) {

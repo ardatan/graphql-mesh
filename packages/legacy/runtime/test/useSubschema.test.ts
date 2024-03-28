@@ -67,6 +67,7 @@ describe('useSubschema', () => {
         ]),
       ],
     }),
+    false,
   );
   const getEnveloped = envelop({
     plugins: [

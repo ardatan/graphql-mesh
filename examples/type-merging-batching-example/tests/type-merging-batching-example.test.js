@@ -7,24 +7,42 @@ const { loadDocuments } = require('@graphql-tools/load');
 const { GraphQLFileLoader } = require('@graphql-tools/graphql-file-loader');
 const { printSchemaWithDirectives } = require('@graphql-tools/utils');
 
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
 jest.setTimeout(30000);
 
 describe('Type Merging and Batching Example', () => {
+  let config;
+  let mesh;
+  const debugVar = globalThis.process?.env?.DEBUG;
+  beforeAll(async () => {
+    globalThis.process.env.DEBUG = '1';
+    config = await findAndParseConfig({
+      dir: join(__dirname, '..'),
+    });
+    mesh = await getMesh(config);
+  });
+  afterAll(() => {
+    globalThis.process.env.DEBUG = debugVar;
+    mesh?.destroy?.();
+  });
   it('should generate correct schema', async () => {
-    const { schema } = await mesh$;
-    expect(printSchemaWithDirectives(lexicographicSortSchema(schema))).toMatchSnapshot();
+    expect(printSchemaWithDirectives(lexicographicSortSchema(mesh.schema))).toMatchSnapshot();
   });
   it('should give correct response for example queries', async () => {
-    const { documents } = await config$;
-    const { execute } = await mesh$;
-    for (const source of documents) {
-      const result = await execute(source.document);
+    for (const source of config.documents) {
+      const result = await mesh.execute(source.document);
+      expect(result.extensions?.jit).toBeUndefined();
       expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
     }
   });
-  afterAll(() => mesh$.then(mesh => mesh.destroy()));
+  it('should give correct response for example queries with JIT', async () => {
+    mesh = await getMesh({
+      ...config,
+      jitEnabled: true,
+    });
+    for (const source of config.documents) {
+      const result = await mesh.execute(source.document);
+      expect(result.extensions?.jit).toBe(true);
+      expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
+    }
+  });
 });

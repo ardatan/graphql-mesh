@@ -27,6 +27,7 @@ export type GetMeshOptions = {
   additionalEnvelopPlugins?: Plugin[];
   documents?: Source[];
   fetchFn?: MeshFetch;
+  jitEnabled?: boolean;
 };
 
 export type MeshResolvedSource = {

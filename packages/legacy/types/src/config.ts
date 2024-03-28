@@ -71,6 +71,10 @@ export interface Config {
    * If you are using a CDN for a source (e.g. Federation Supergraph), this will be the polling interval in milliseconds for the CDN without a downtime
    */
   pollingInterval?: number;
+  /**
+   * Enable GraphQL JIT (Just In Time) compilation
+   */
+  jitEnabled?: boolean;
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.

@@ -1,0 +1,21 @@
+---
+description: Enabling Just-In-Time (JIT) Compilation to improve the performance
+---
+
+# Just-In-Time Compilation
+
+GraphQL JIT is technique in the GraphQL execution that improves the performance of GraphQL Mesh by
+compiling the operations. by compiling to JS, V8 is able to create optimized code which yields much
+better performance. graphql-jit leverages this behaviour of V8 optimization by compiling the queries
+into functions to significantly improve performance
+[See benchmarks](https://github.com/zalando-incubator/graphql-jit?tab=readme-ov-file#benchmarks)
+
+## Usage
+
+In order to enable JIT compilation, you need to add `jitEnabled` flag to your configuration:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  # ...
+jitEnabled: true
+```

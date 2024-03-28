@@ -21,7 +21,6 @@ import {
   memoize1,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
-import { isGraphQLJitCompatible } from './utils.js';
 
 enum IntrospectionQueryType {
   FEDERATION = 'FEDERATION',
@@ -54,7 +53,7 @@ const getIntrospectionOperationType = memoize1(function getIntrospectionOperatio
   return introspectionQueryType;
 });
 
-function getExecuteFn(subschema: Subschema) {
+function getExecuteFn(subschema: Subschema, jitEnabled: boolean) {
   const compiledQueryCache = new WeakMap<DocumentNode, CompiledQuery>();
   const transformedDocumentNodeCache = new WeakMap<DocumentNode, DocumentNode>();
   return function subschemaExecute(args: TypedExecutionArgs<any>): any {
@@ -96,11 +95,7 @@ function getExecuteFn(subschema: Subschema) {
     };
     let executor = subschema.executor;
     if (executor == null) {
-      if (
-        !isGraphQLJitCompatible(subschema.schema) ||
-        isStream ||
-        operationAST.operation === 'subscription'
-      ) {
+      if (!jitEnabled || isStream || operationAST.operation === 'subscription') {
         executor = createDefaultExecutor(subschema.schema);
       } else {
         executor = function subschemaExecutor(request: ExecutionRequest): any {
@@ -145,10 +140,18 @@ function getExecuteFn(subschema: Subschema) {
           if (isPromise(result$)) {
             return result$.then(result => {
               result.stringify = compiledQuery.stringify;
+              if (process.env.DEBUG) {
+                result.extensions = result.extensions || {};
+                result.extensions.jit = true;
+              }
               return result;
             });
           }
           result$.stringify = compiledQuery.stringify;
+          if (process.env.DEBUG) {
+            result$.extensions = result$.extensions || {};
+            result$.extensions.jit = true;
+          }
           return result$;
         };
       }
@@ -201,8 +204,8 @@ function getExecuteFn(subschema: Subschema) {
 }
 
 // Creates an envelop plugin to execute a subschema inside Envelop
-export function useSubschema(subschema: Subschema): Plugin {
-  const executeFn = getExecuteFn(subschema);
+export function useSubschema(subschema: Subschema, jitEnabled: boolean): Plugin {
+  const executeFn = getExecuteFn(subschema, jitEnabled);
 
   const plugin: Plugin = {
     onPluginInit({ setSchema }) {
