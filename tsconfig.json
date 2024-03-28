@@ -1,5 +1,5 @@
 {
-  "extends": ["@tsconfig/recommended/tsconfig.json", "@tsconfig/node20/tsconfig.json"],
+  "extends": ["@tsconfig/recommended/tsconfig.json", "@tsconfig/node16/tsconfig.json"],
   "compilerOptions": {
     "noEmit": true,
 

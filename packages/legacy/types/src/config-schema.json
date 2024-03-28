@@ -29,9 +29,7 @@
           "description": "The name of the Workers KV namespace to use for caching.\n\nMake sure you have configured the following namespace described in [here](https://developers.cloudflare.com/workers/wrangler/cli-wrangler/commands/#kv)."
         }
       },
-      "required": [
-        "namespace"
-      ]
+      "required": ["namespace"]
     },
     "FileCacheConfig": {
       "additionalProperties": false,
@@ -52,11 +50,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": [
-              "WEBSQL",
-              "INDEXEDDB",
-              "LOCALSTORAGE"
-            ],
+            "enum": ["WEBSQL", "INDEXEDDB", "LOCALSTORAGE"],
             "description": "Allowed values: WEBSQL, INDEXEDDB, LOCALSTORAGE"
           },
           "additionalItems": false,
@@ -238,10 +232,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "key",
-        "cert"
-      ]
+      "required": ["key", "cert"]
     },
     "SDKConfig": {
       "additionalProperties": false,
@@ -286,10 +277,7 @@
           "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
         }
       },
-      "required": [
-        "name",
-        "handler"
-      ]
+      "required": ["name", "handler"]
     },
     "Transform": {
       "additionalProperties": true,
@@ -706,11 +694,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "targetTypeName",
-        "targetFieldName",
-        "pubsubTopic"
-      ]
+      "required": ["targetTypeName", "targetFieldName", "pubsubTopic"]
     },
     "PubSubConfig": {
       "additionalProperties": false,
@@ -736,9 +720,7 @@
           ]
         }
       },
-      "required": [
-        "name"
-      ]
+      "required": ["name"]
     },
     "PersistedOperationsConfig": {
       "additionalProperties": false,
@@ -793,11 +775,7 @@
         },
         "strategy": {
           "type": "string",
-          "enum": [
-            "fallback",
-            "race",
-            "highestValue"
-          ],
+          "enum": ["fallback", "race", "highestValue"],
           "description": "Handling strategy (default: fallback) (Allowed values: fallback, race, highestValue)"
         },
         "strategyConfig": {
@@ -805,9 +783,7 @@
           "description": "Handling strategy configuration"
         }
       },
-      "required": [
-        "sources"
-      ]
+      "required": ["sources"]
     },
     "GraphQLHandlerhighestValueStrategyConfig": {
       "additionalProperties": false,
@@ -821,10 +797,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "selectionSet",
-        "value"
-      ]
+      "required": ["selectionSet", "value"]
     },
     "GraphQLHandlerCodeFirstConfiguration": {
       "additionalProperties": false,
@@ -848,9 +821,7 @@
           "description": "A file path to your GraphQL Schema\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
         }
       },
-      "required": [
-        "source"
-      ]
+      "required": ["source"]
     },
     "GraphQLHandlerHTTPConfiguration": {
       "additionalProperties": false,
@@ -888,18 +859,12 @@
         },
         "method": {
           "type": "string",
-          "enum": [
-            "GET",
-            "POST"
-          ],
+          "enum": ["GET", "POST"],
           "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
         },
         "credentials": {
           "type": "string",
-          "enum": [
-            "omit",
-            "include"
-          ],
+          "enum": ["omit", "include"],
           "description": "Request Credentials if your environment supports it.\n[See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)\n\n@default \"same-origin\" (Allowed values: omit, include)"
         },
         "webSocketImpl": {
@@ -912,11 +877,7 @@
         },
         "subscriptionsProtocol": {
           "type": "string",
-          "enum": [
-            "SSE",
-            "WS",
-            "LEGACY_WS"
-          ],
+          "enum": ["SSE", "WS", "LEGACY_WS"],
           "description": "SSE - Server Sent Events\nWS - New graphql-ws\nLEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)"
         },
         "subscriptionsEndpoint": {
@@ -941,9 +902,7 @@
           "description": "JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.\nMore information about the WebSocket `connectionParams`:\n  - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams\n  - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient"
         }
       },
-      "required": [
-        "endpoint"
-      ]
+      "required": ["endpoint"]
     },
     "GrpcHandler": {
       "additionalProperties": false,
@@ -995,9 +954,7 @@
           "properties": {}
         }
       },
-      "required": [
-        "endpoint"
-      ]
+      "required": ["endpoint"]
     },
     "LoadOptions": {
       "additionalProperties": false,
@@ -1028,9 +985,7 @@
           "$ref": "#/definitions/LoadOptions"
         }
       },
-      "required": [
-        "file"
-      ]
+      "required": ["file"]
     },
     "GrpcCredentialsSsl": {
       "additionalProperties": false,
@@ -1059,12 +1014,7 @@
         },
         "arrayFormat": {
           "type": "string",
-          "enum": [
-            "indices",
-            "brackets",
-            "repeat",
-            "comma"
-          ],
+          "enum": ["indices", "brackets", "repeat", "comma"],
           "description": "You can configure how to format arrays in the query strings.\n\nNote: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse. (Allowed values: indices, brackets, repeat, comma)"
         },
         "commaRoundTrip": {
@@ -1150,11 +1100,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "Query",
-            "Mutation",
-            "Subscription"
-          ],
+          "enum": ["Query", "Mutation", "Subscription"],
           "description": "Type field is set the opertion type: Query, Mutation or Subscription. (Allowed values: Query, Mutation, Subscription)"
         },
         "requestSchema": {
@@ -1280,17 +1226,7 @@
         },
         "method": {
           "type": "string",
-          "enum": [
-            "GET",
-            "HEAD",
-            "POST",
-            "PUT",
-            "DELETE",
-            "CONNECT",
-            "OPTIONS",
-            "TRACE",
-            "PATCH"
-          ],
+          "enum": ["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"],
           "description": "Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH"
         },
         "headers": {
@@ -1306,11 +1242,7 @@
           "description": "If true, `@deprecated` will be added to the field definition"
         }
       },
-      "required": [
-        "field",
-        "type",
-        "path"
-      ]
+      "required": ["field", "type", "path"]
     },
     "JsonSchemaPubSubOperation": {
       "additionalProperties": false,
@@ -1325,11 +1257,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "Query",
-            "Mutation",
-            "Subscription"
-          ],
+          "enum": ["Query", "Mutation", "Subscription"],
           "description": "Allowed values: Query, Mutation, Subscription"
         },
         "requestSchema": {
@@ -1426,11 +1354,7 @@
           "description": "If true, `@deprecated` will be added to the field definition"
         }
       },
-      "required": [
-        "field",
-        "type",
-        "pubsubTopic"
-      ]
+      "required": ["field", "type", "pubsubTopic"]
     },
     "MongooseHandler": {
       "additionalProperties": false,
@@ -1471,10 +1395,7 @@
           "$ref": "#/definitions/ComposeWithMongooseOpts"
         }
       },
-      "required": [
-        "name",
-        "path"
-      ]
+      "required": ["name", "path"]
     },
     "ComposeWithMongooseOpts": {
       "additionalProperties": false,
@@ -1922,10 +1843,7 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "table",
-        "fields"
-      ]
+      "required": ["table", "fields"]
     },
     "MySQLSSLOptions": {
       "additionalProperties": false,
@@ -1972,11 +1890,7 @@
           "description": "Specifies database name"
         }
       },
-      "required": [
-        "endpoint",
-        "username",
-        "password"
-      ]
+      "required": ["endpoint", "username", "password"]
     },
     "ODataHandler": {
       "additionalProperties": false,
@@ -2003,10 +1917,7 @@
         },
         "batch": {
           "type": "string",
-          "enum": [
-            "multipart",
-            "json"
-          ],
+          "enum": ["multipart", "json"],
           "description": "Enable batching (Allowed values: multipart, json)"
         },
         "expandNavProps": {
@@ -2014,9 +1925,7 @@
           "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
         }
       },
-      "required": [
-        "endpoint"
-      ]
+      "required": ["endpoint"]
     },
     "OpenapiHandler": {
       "additionalProperties": false,
@@ -2029,12 +1938,7 @@
         },
         "fallbackFormat": {
           "type": "string",
-          "enum": [
-            "json",
-            "yaml",
-            "js",
-            "ts"
-          ],
+          "enum": ["json", "yaml", "js", "ts"],
           "description": "Format of the files referenced from the source file, for cases content type isn't detected automatically (Allowed values: json, yaml, js, ts)"
         },
         "endpoint": {
@@ -2073,9 +1977,7 @@
           "description": "Timeout for the HTTP request in milliseconds"
         }
       },
-      "required": [
-        "source"
-      ]
+      "required": ["source"]
     },
     "OASSelectQueryOrMutationFieldConfig": {
       "additionalProperties": false,
@@ -2084,22 +1986,14 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": [
-            "query",
-            "mutation",
-            "Query",
-            "Mutation"
-          ],
+          "enum": ["query", "mutation", "Query", "Mutation"],
           "description": "Allowed values: query, mutation, Query, Mutation"
         },
         "fieldName": {
           "type": "string"
         }
       },
-      "required": [
-        "type",
-        "fieldName"
-      ]
+      "required": ["type", "fieldName"]
     },
     "HivePlugin": {
       "additionalProperties": false,
@@ -2138,9 +2032,7 @@
           "description": "Options for self-hosting\n[See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)"
         }
       },
-      "required": [
-        "token"
-      ]
+      "required": ["token"]
     },
     "HiveAgentOptions": {
       "additionalProperties": false,
@@ -2272,10 +2164,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "author",
-        "commit"
-      ]
+      "required": ["author", "commit"]
     },
     "HiveSelfHostingOptions": {
       "additionalProperties": false,
@@ -2295,10 +2184,7 @@
           "description": "Point to your own instance of GraphQL Hive Usage API\n\nUsed by usage reporting."
         }
       },
-      "required": [
-        "graphqlEndpoint",
-        "applicationUrl"
-      ]
+      "required": ["graphqlEndpoint", "applicationUrl"]
     },
     "HTTPCachePlugin": {
       "additionalProperties": false,
@@ -2447,10 +2333,7 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "field",
-        "invalidate"
-      ]
+      "required": ["field", "invalidate"]
     },
     "LiveQueryIndexBy": {
       "additionalProperties": false,
@@ -2468,10 +2351,7 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "field",
-        "args"
-      ]
+      "required": ["field", "args"]
     },
     "MockingConfig": {
       "additionalProperties": false,
@@ -2550,9 +2430,7 @@
           "description": "Update the data on the mock store"
         }
       },
-      "required": [
-        "apply"
-      ]
+      "required": ["apply"]
     },
     "GetFromMockStoreConfig": {
       "additionalProperties": false,
@@ -2853,9 +2731,7 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "config"
-      ]
+      "required": ["config"]
     },
     "ResponseCacheConfig": {
       "additionalProperties": false,
@@ -2928,10 +2804,7 @@
           "type": "number"
         }
       },
-      "required": [
-        "coordinate",
-        "ttl"
-      ]
+      "required": ["coordinate", "ttl"]
     },
     "SnapshotPluginConfig": {
       "additionalProperties": false,
@@ -2962,10 +2835,7 @@
           "description": "Path to the directory of the generated snapshot files"
         }
       },
-      "required": [
-        "apply",
-        "outputDir"
-      ]
+      "required": ["apply", "outputDir"]
     },
     "StatsdPlugin": {
       "additionalProperties": false,
@@ -3030,12 +2900,7 @@
         },
         "protocol": {
           "type": "string",
-          "enum": [
-            "tcp",
-            "udp",
-            "uds",
-            "stream"
-          ],
+          "enum": ["tcp", "udp", "uds", "stream"],
           "description": "Allowed values: tcp, udp, uds, stream"
         },
         "sampleRate": {
@@ -3082,9 +2947,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "buffer"
-      ]
+      "required": ["buffer"]
     },
     "PostGraphileHandler": {
       "additionalProperties": false,
@@ -3222,9 +3085,7 @@
           "description": "Timeout for the HTTP request in milliseconds"
         }
       },
-      "required": [
-        "source"
-      ]
+      "required": ["source"]
     },
     "RAMLSelectQueryOrMutationFieldConfig": {
       "additionalProperties": false,
@@ -3233,22 +3094,14 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": [
-            "query",
-            "mutation",
-            "Query",
-            "Mutation"
-          ],
+          "enum": ["query", "mutation", "Query", "Mutation"],
           "description": "Allowed values: query, mutation, Query, Mutation"
         },
         "fieldName": {
           "type": "string"
         }
       },
-      "required": [
-        "type",
-        "fieldName"
-      ]
+      "required": ["type", "fieldName"]
     },
     "SoapHandler": {
       "additionalProperties": false,
@@ -3281,9 +3134,7 @@
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
         }
       },
-      "required": [
-        "source"
-      ]
+      "required": ["source"]
     },
     "SupergraphHandler": {
       "additionalProperties": false,
@@ -3335,9 +3186,7 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "source"
-      ]
+      "required": ["source"]
     },
     "SubgraphConfiguration": {
       "additionalProperties": false,
@@ -3363,18 +3212,12 @@
         },
         "method": {
           "type": "string",
-          "enum": [
-            "GET",
-            "POST"
-          ],
+          "enum": ["GET", "POST"],
           "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
         },
         "credentials": {
           "type": "string",
-          "enum": [
-            "omit",
-            "include"
-          ],
+          "enum": ["omit", "include"],
           "description": "Request Credentials if your environment supports it.\n[See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)\n\n@default \"same-origin\" (Allowed values: omit, include)"
         },
         "webSocketImpl": {
@@ -3387,11 +3230,7 @@
         },
         "subscriptionsProtocol": {
           "type": "string",
-          "enum": [
-            "SSE",
-            "WS",
-            "LEGACY_WS"
-          ],
+          "enum": ["SSE", "WS", "LEGACY_WS"],
           "description": "SSE - Server Sent Events\nWS - New graphql-ws\nLEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)"
         },
         "subscriptionsEndpoint": {
@@ -3412,9 +3251,7 @@
           "description": "JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.\nMore information about the WebSocket `connectionParams`:\n  - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams\n  - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient"
         }
       },
-      "required": [
-        "name"
-      ]
+      "required": ["name"]
     },
     "ThriftHandler": {
       "additionalProperties": false,
@@ -3439,11 +3276,7 @@
         },
         "protocol": {
           "type": "string",
-          "enum": [
-            "binary",
-            "compact",
-            "json"
-          ],
+          "enum": ["binary", "compact", "json"],
           "description": "Name of the Thrift protocol type to use. Defaults to 'binary'. (Allowed values: binary, compact, json)"
         },
         "serviceName": {
@@ -3465,12 +3298,7 @@
           "description": "Path to IDL file"
         }
       },
-      "required": [
-        "hostName",
-        "port",
-        "serviceName",
-        "idl"
-      ]
+      "required": ["hostName", "port", "serviceName", "idl"]
     },
     "CacheTransformConfig": {
       "additionalProperties": false,
@@ -3490,9 +3318,7 @@
           "description": "Invalidation rules"
         }
       },
-      "required": [
-        "field"
-      ]
+      "required": ["field"]
     },
     "CacheInvalidateConfig": {
       "additionalProperties": false,
@@ -3527,9 +3353,7 @@
           "description": "Cache key to invalidate on successful resolver (no error), see `cacheKey` for list of available options in this field."
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": ["operation"]
     },
     "EncapsulateTransformObject": {
       "additionalProperties": false,
@@ -3629,9 +3453,7 @@
           "$ref": "#/definitions/FederationObjectConfig"
         }
       },
-      "required": [
-        "name"
-      ]
+      "required": ["name"]
     },
     "FederationObjectConfig": {
       "additionalProperties": false,
@@ -3696,9 +3518,7 @@
           "description": "You need configure the arguments for that field;\n```yaml\nargs:\n  someArg: \"{root.someKeyValue}\"\n```"
         }
       },
-      "required": [
-        "queryFieldName"
-      ]
+      "required": ["queryFieldName"]
     },
     "FederationField": {
       "additionalProperties": false,
@@ -3712,10 +3532,7 @@
           "$ref": "#/definitions/FederationFieldConfig"
         }
       },
-      "required": [
-        "name",
-        "config"
-      ]
+      "required": ["name", "config"]
     },
     "FederationFieldConfig": {
       "additionalProperties": false,
@@ -3789,10 +3606,7 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": [
-            "bare",
-            "wrap"
-          ],
+          "enum": ["bare", "wrap"],
           "description": "Specify to apply filter-schema transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
         },
         "filters": {
@@ -3812,9 +3626,7 @@
           "description": "Filter deprecated fields"
         }
       },
-      "required": [
-        "filters"
-      ]
+      "required": ["filters"]
     },
     "HoistFieldTransformConfig": {
       "additionalProperties": false,
@@ -3853,11 +3665,7 @@
           "description": "Defines if args in path are filtered (default = false)"
         }
       },
-      "required": [
-        "typeName",
-        "pathConfig",
-        "newFieldName"
-      ]
+      "required": ["typeName", "pathConfig", "newFieldName"]
     },
     "HoistFieldTransformFieldPathConfigObject": {
       "additionalProperties": false,
@@ -3877,10 +3685,7 @@
           "description": "Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;"
         }
       },
-      "required": [
-        "fieldName",
-        "filterArgs"
-      ]
+      "required": ["fieldName", "filterArgs"]
     },
     "NamingConventionTransformConfig": {
       "additionalProperties": false,
@@ -3889,10 +3694,7 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": [
-            "bare",
-            "wrap"
-          ],
+          "enum": ["bare", "wrap"],
           "description": "Specify to apply naming-convention transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
         },
         "typeNames": {
@@ -3980,10 +3782,7 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": [
-            "bare",
-            "wrap"
-          ],
+          "enum": ["bare", "wrap"],
           "description": "Specify to apply prefix transform to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
         },
         "value": {
@@ -4065,13 +3864,7 @@
           "description": "The identifier expression that determines the identity of the request (e.g. `{context.req.socket.remoteAddress}`)"
         }
       },
-      "required": [
-        "type",
-        "field",
-        "max",
-        "ttl",
-        "identifier"
-      ]
+      "required": ["type", "field", "max", "ttl", "identifier"]
     },
     "RenameTransform": {
       "additionalProperties": false,
@@ -4080,10 +3873,7 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": [
-            "bare",
-            "wrap"
-          ],
+          "enum": ["bare", "wrap"],
           "description": "Specify to apply rename transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
         },
         "renames": {
@@ -4095,9 +3885,7 @@
           "description": "Array of rename rules"
         }
       },
-      "required": [
-        "renames"
-      ]
+      "required": ["renames"]
     },
     "RenameTransformObject": {
       "additionalProperties": false,
@@ -4131,10 +3919,7 @@
           "description": "Flag to indicate whether certain default types (built-ins, scalars and other types specified an exclusion list) should be renamed or not.\n\n@default: false"
         }
       },
-      "required": [
-        "from",
-        "to"
-      ]
+      "required": ["from", "to"]
     },
     "RenameConfig": {
       "additionalProperties": false,
@@ -4182,9 +3967,7 @@
           "description": "Array of rules to replace fields"
         }
       },
-      "required": [
-        "replacements"
-      ]
+      "required": ["replacements"]
     },
     "ReplaceFieldTransformObject": {
       "additionalProperties": false,
@@ -4199,10 +3982,7 @@
         },
         "scope": {
           "type": "string",
-          "enum": [
-            "config",
-            "hoistValue"
-          ],
+          "enum": ["config", "hoistValue"],
           "description": "Allowed values: config, hoistValue"
         },
         "composer": {
@@ -4224,10 +4004,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "from",
-        "to"
-      ]
+      "required": ["from", "to"]
     },
     "ReplaceFieldConfig": {
       "additionalProperties": false,
@@ -4241,10 +4018,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "type",
-        "field"
-      ]
+      "required": ["type", "field"]
     },
     "ResolversCompositionTransform": {
       "additionalProperties": false,
@@ -4253,10 +4027,7 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": [
-            "bare",
-            "wrap"
-          ],
+          "enum": ["bare", "wrap"],
           "description": "Specify to apply resolvers-composition transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
         },
         "compositions": {
@@ -4268,9 +4039,7 @@
           "description": "Array of resolver/composer to apply"
         }
       },
-      "required": [
-        "compositions"
-      ]
+      "required": ["compositions"]
     },
     "ResolversCompositionTransformObject": {
       "additionalProperties": false,
@@ -4298,10 +4067,7 @@
           "description": "Path to the composer function\nExample: ./src/auth.js#authComposer"
         }
       },
-      "required": [
-        "resolver",
-        "composer"
-      ]
+      "required": ["resolver", "composer"]
     },
     "TransferSchemaTransformConfig": {
       "additionalProperties": false,
@@ -4317,9 +4083,7 @@
           "description": "Array of rules to transfer fields or args"
         }
       },
-      "required": [
-        "transfers"
-      ]
+      "required": ["transfers"]
     },
     "TransferSchemaTransformObject": {
       "additionalProperties": false,
@@ -4334,17 +4098,11 @@
         },
         "action": {
           "type": "string",
-          "enum": [
-            "move",
-            "copy"
-          ],
+          "enum": ["move", "copy"],
           "description": "Allowed values: move, copy"
         }
       },
-      "required": [
-        "from",
-        "to"
-      ]
+      "required": ["from", "to"]
     },
     "TypeMergingConfig": {
       "additionalProperties": false,
@@ -4417,9 +4175,7 @@
           "description": "Advanced use only; This argument specifies a string expression that allows more customization of the input arguments. Rules for evaluation of this argument are as follows:\n  - basic object parsing of the input key: `\"arg1: $key.arg1, arg2: $key.arg2\"`\n  - any expression enclosed by double brackets will be evaluated once for each of the requested keys, and then sent as a list: `\"input: { keys: [[$key]] }\"`\n  - selections from the key can be referenced by using the $ sign and dot notation: `\"upcs: [[$key.upc]]\"`, so that `$key.upc` refers to the `upc` field of the key."
         }
       },
-      "required": [
-        "queryFieldName"
-      ]
+      "required": ["queryFieldName"]
     },
     "MergedTypeConfig": {
       "additionalProperties": false,
@@ -4456,9 +4212,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "selectionSet"
-      ]
+      "required": ["selectionSet"]
     },
     "MergedTypeField": {
       "additionalProperties": false,
@@ -4473,9 +4227,7 @@
           "description": "specifies a selection of fields required from other services to compute the value of this field.\nThese additional fields are only selected when the computed field is requested.\nAnalogous to [computed field](https://www.graphql-tools.com/docs/stitch-type-merging#computed-fields) in merged type configuration.\nComputed field dependencies must be sent into the subservice using an [object key](https://www.graphql-tools.com/docs/stitch-directives-sdl#object-keys)."
         }
       },
-      "required": [
-        "fieldName"
-      ]
+      "required": ["fieldName"]
     },
     "ComputedAnnotation": {
       "additionalProperties": false,
@@ -4486,9 +4238,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "selectionSet"
-      ]
+      "required": ["selectionSet"]
     },
     "TuqlHandler": {
       "additionalProperties": false,
@@ -4509,9 +4259,7 @@
   "title": "Config",
   "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "required": [
-    "sources"
-  ],
+  "required": ["sources"],
   "properties": {
     "serve": {
       "$ref": "#/definitions/ServeConfig",
