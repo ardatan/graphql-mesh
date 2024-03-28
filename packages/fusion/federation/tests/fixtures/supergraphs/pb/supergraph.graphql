@@ -1,0 +1,267 @@
+schema
+  @core(feature: "https://specs.apollo.dev/core/v0.2")
+  @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
+  @core(feature: "https://specs.apollo.dev/tag/v0.1") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
+
+directive @join__field(
+  graph: join__Graph
+  provides: join__FieldSet
+  requires: join__FieldSet
+) on FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__owner(graph: join__Graph!) on INTERFACE | OBJECT
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on INTERFACE | OBJECT
+
+directive @tag(name: String!) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION
+
+type DemoAuthInfo {
+  role: String!
+  spaceId: ID!
+  userId: ID!
+}
+
+input DemoCreateAndLinkInput {
+  description: String
+  name: String!
+  noteId: ID!
+}
+
+union DemoCreateAndLinkPayload = DemoCreateAndLinkSuccess
+
+type DemoCreateAndLinkSuccess {
+  feature: DemoFeature!
+}
+
+input DemoCreateFeatureInput {
+  description: String
+  name: String!
+}
+
+union DemoCreateFeaturePayload = DemoCreateFeatureSuccess
+
+type DemoCreateFeatureSuccess {
+  feature: DemoFeature!
+}
+
+input DemoDeleteFeatureInput {
+  id: ID!
+}
+
+union DemoDeleteFeaturePayload = DemoDeleteFeatureSuccess
+
+type DemoDeleteFeatureSuccess {
+  feature: DemoFeature!
+}
+
+type DemoFeature implements Node
+  @join__owner(graph: DEMO_FEATURES)
+  @join__type(graph: DEMO_FEATURES, key: "id") {
+  description: String @join__field(graph: DEMO_FEATURES)
+  id: ID! @join__field(graph: DEMO_FEATURES)
+  name: String! @join__field(graph: DEMO_FEATURES) @tag(name: "public")
+  publicId: ID @join__field(graph: DEMO_FEATURES)
+}
+
+type DemoFeatureAlreadyHasPublicIdError implements Error {
+  message: String!
+}
+
+type DemoFeatureAlreadyPrivateError implements Error {
+  message: String!
+}
+
+type DemoFeatureConnection {
+  edges: [DemoFeatureEdge] @tag(name: "public")
+  pageInfo: PageInfo!
+}
+
+type DemoFeatureEdge {
+  cursor: String!
+  node: DemoFeature @tag(name: "public")
+}
+
+input DemoFeatureFilter {
+  ids: [ID!]
+}
+
+type DemoFeatureHasNoPublicIdError implements Error {
+  message: String!
+}
+
+type DemoFeatureNotPublicError implements Error {
+  message: String! @tag(name: "public")
+}
+
+input DemoMakeFeaturePrivateInput {
+  id: ID!
+}
+
+union DemoMakeFeaturePrivatePayload = DemoFeatureAlreadyPrivateError | DemoMakeFeaturePrivateSuccess
+
+type DemoMakeFeaturePrivateSuccess {
+  feature: DemoFeature!
+}
+
+input DemoMakeFeaturePublicInput {
+  id: ID!
+}
+
+union DemoMakeFeaturePublicPayload =
+  | DemoFeatureAlreadyHasPublicIdError
+  | DemoMakeFeaturePublicSuccess
+
+type DemoMakeFeaturePublicSuccess {
+  feature: DemoFeature!
+}
+
+union DemoPublicFeaturePayload = DemoFeatureNotPublicError | DemoPublicFeatureSuccess
+
+type DemoPublicFeatureSuccess {
+  feature: DemoFeature! @tag(name: "public")
+}
+
+input DemoRegenFeaturePublicIdInput {
+  id: ID!
+}
+
+union DemoRegenFeaturePublicIdPayload =
+  | DemoFeatureHasNoPublicIdError
+  | DemoRegenFeaturePublicIdSuccess
+
+type DemoRegenFeaturePublicIdSuccess {
+  feature: DemoFeature!
+}
+
+input DemoUpdateFeatureInput {
+  description: String
+  id: ID!
+  name: String!
+}
+
+union DemoUpdateFeaturePayload = DemoUpdateFeatureSuccess
+
+type DemoUpdateFeatureSuccess {
+  feature: DemoFeature!
+}
+
+interface Error {
+  message: String!
+}
+
+type Mutation {
+  """
+  This is a distributed mutation, does something in two services
+  The communication between the services is in Kafka
+  """
+  demoCreateAndLink(input: DemoCreateAndLinkInput!): DemoCreateAndLinkPayload!
+    @join__field(graph: DEMO_FEATURES)
+  demoCreateFeature(input: DemoCreateFeatureInput!): DemoCreateFeaturePayload!
+    @join__field(graph: DEMO_FEATURES)
+  demoDeleteFeature(input: DemoDeleteFeatureInput!): DemoDeleteFeaturePayload!
+    @join__field(graph: DEMO_FEATURES)
+
+  """
+  Provides the ability to delete the public ID of a feature that was previously made public
+  """
+  demoMakeFeaturePrivate(input: DemoMakeFeaturePrivateInput!): DemoMakeFeaturePrivatePayload!
+    @join__field(graph: DEMO_FEATURES)
+
+  """
+  Takes a feature ID that has no public ID yet and generates one for it
+  Returns the generated public ID of the feature
+  """
+  demoMakeFeaturePublic(input: DemoMakeFeaturePublicInput!): DemoMakeFeaturePublicPayload!
+    @join__field(graph: DEMO_FEATURES)
+
+  """
+  Provides the ability to change the public ID of a feature that was previously made public
+  """
+  demoRegenFeaturePublicId(input: DemoRegenFeaturePublicIdInput!): DemoRegenFeaturePublicIdPayload!
+    @join__field(graph: DEMO_FEATURES)
+  demoUpdateFeature(input: DemoUpdateFeatureInput!): DemoUpdateFeaturePayload!
+    @join__field(graph: DEMO_FEATURES)
+}
+
+interface Node {
+  id: ID!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type Query {
+  """
+  Returns a feature based on its public id
+  """
+  demoFeaturePublic(publicId: ID!): DemoPublicFeaturePayload!
+    @join__field(graph: DEMO_FEATURES)
+    @tag(name: "public")
+
+  """
+  Returns all the features to users with any roles
+  """
+  demoFeatures(
+    after: String
+    before: String
+    filter: DemoFeatureFilter
+    first: Int
+    last: Int
+  ): DemoFeatureConnection! @join__field(graph: DEMO_FEATURES)
+
+  """
+  Returns all the features only to users with admin role
+  """
+  demoFeaturesAdmin(
+    after: String
+    before: String
+    filter: DemoFeatureFilter
+    first: Int
+    last: Int
+  ): DemoFeatureConnection! @join__field(graph: DEMO_FEATURES)
+
+  """
+  Returns all the features only to users with maker or admin role
+  """
+  demoFeaturesMakerAndAdmin(
+    after: String
+    before: String
+    filter: DemoFeatureFilter
+    first: Int
+    last: Int
+  ): DemoFeatureConnection! @join__field(graph: DEMO_FEATURES)
+  demoMe: DemoAuthInfo! @join__field(graph: DEMO_FEATURES)
+  node(id: ID!): Node @join__field(graph: NODE_RESOLVER)
+  nodes(ids: [ID!]!): [Node]! @join__field(graph: NODE_RESOLVER)
+}
+
+enum core__Purpose {
+  """
+  `EXECUTION` features provide metadata necessary to for operation execution.
+  """
+  EXECUTION
+
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+}
+
+scalar join__FieldSet
+
+enum join__Graph {
+  DEMO_FEATURES
+    @join__graph(name: "demo-features", url: "http://graphql-demo-features-service/graphql")
+  NODE_RESOLVER @join__graph(name: "node-resolver", url: "http://graphql-node-resolver/graphql")
+}

@@ -127,6 +127,14 @@ export function convertSupergraphToFusiongraph(
           });
         }
       }
+      if (!joinTypeDirectives?.length) {
+        subgraphLocationMap.forEach((_location, subgraph) => {
+          sourceDirectivesForFusion.push({
+            name: type.name,
+            subgraph,
+          });
+        });
+      }
       typeMap.set(type.name, type);
       return type;
     },

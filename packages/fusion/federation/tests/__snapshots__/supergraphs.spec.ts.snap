@@ -1,0 +1,226 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Supergraphs pb example query: example-query-result 1`] = `
+{
+  "data": {
+    "demoFeatures": {
+      "edges": [
+        {
+          "node": {
+            "description": "Demo_feature_description",
+            "id": "demo",
+            "name": "Demo_feature",
+            "publicId": "demo_public_id",
+          },
+        },
+      ],
+    },
+    "demoMe": {
+      "role": "USER",
+      "spaceId": "demo_space",
+      "userId": "demo_user",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`Supergraphs pb fusiongraph: fusiongraph 1`] = `
+"schema @transport(subgraph: "DEMO_FEATURES", kind: "http", location: "http://graphql-demo-features-service/graphql") @transport(subgraph: "NODE_RESOLVER", kind: "http", location: "http://graphql-node-resolver/graphql") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
+
+directive @tag(name: String!) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION
+
+type DemoAuthInfo @source(name: "DemoAuthInfo", subgraph: "DEMO_FEATURES") @source(name: "DemoAuthInfo", subgraph: "NODE_RESOLVER") {
+  role: String! @source(subgraph: "DEMO_FEATURES", name: "role") @source(subgraph: "NODE_RESOLVER", name: "role")
+  spaceId: ID! @source(subgraph: "DEMO_FEATURES", name: "spaceId") @source(subgraph: "NODE_RESOLVER", name: "spaceId")
+  userId: ID! @source(subgraph: "DEMO_FEATURES", name: "userId") @source(subgraph: "NODE_RESOLVER", name: "userId")
+}
+
+input DemoCreateAndLinkInput @source(name: "DemoCreateAndLinkInput", subgraph: "DEMO_FEATURES") @source(name: "DemoCreateAndLinkInput", subgraph: "NODE_RESOLVER") {
+  description: String @source(subgraph: "DEMO_FEATURES", name: "description") @source(subgraph: "NODE_RESOLVER", name: "description")
+  name: String! @source(subgraph: "DEMO_FEATURES", name: "name") @source(subgraph: "NODE_RESOLVER", name: "name")
+  noteId: ID! @source(subgraph: "DEMO_FEATURES", name: "noteId") @source(subgraph: "NODE_RESOLVER", name: "noteId")
+}
+
+union DemoCreateAndLinkPayload @source(name: "DemoCreateAndLinkPayload", subgraph: "DEMO_FEATURES") @source(name: "DemoCreateAndLinkPayload", subgraph: "NODE_RESOLVER") = DemoCreateAndLinkSuccess
+
+type DemoCreateAndLinkSuccess @source(name: "DemoCreateAndLinkSuccess", subgraph: "DEMO_FEATURES") @source(name: "DemoCreateAndLinkSuccess", subgraph: "NODE_RESOLVER") {
+  feature: DemoFeature! @source(subgraph: "DEMO_FEATURES", name: "feature") @source(subgraph: "NODE_RESOLVER", name: "feature")
+}
+
+input DemoCreateFeatureInput @source(name: "DemoCreateFeatureInput", subgraph: "DEMO_FEATURES") @source(name: "DemoCreateFeatureInput", subgraph: "NODE_RESOLVER") {
+  description: String @source(subgraph: "DEMO_FEATURES", name: "description") @source(subgraph: "NODE_RESOLVER", name: "description")
+  name: String! @source(subgraph: "DEMO_FEATURES", name: "name") @source(subgraph: "NODE_RESOLVER", name: "name")
+}
+
+union DemoCreateFeaturePayload @source(name: "DemoCreateFeaturePayload", subgraph: "DEMO_FEATURES") @source(name: "DemoCreateFeaturePayload", subgraph: "NODE_RESOLVER") = DemoCreateFeatureSuccess
+
+type DemoCreateFeatureSuccess @source(name: "DemoCreateFeatureSuccess", subgraph: "DEMO_FEATURES") @source(name: "DemoCreateFeatureSuccess", subgraph: "NODE_RESOLVER") {
+  feature: DemoFeature! @source(subgraph: "DEMO_FEATURES", name: "feature") @source(subgraph: "NODE_RESOLVER", name: "feature")
+}
+
+input DemoDeleteFeatureInput @source(name: "DemoDeleteFeatureInput", subgraph: "DEMO_FEATURES") @source(name: "DemoDeleteFeatureInput", subgraph: "NODE_RESOLVER") {
+  id: ID! @source(subgraph: "DEMO_FEATURES", name: "id") @source(subgraph: "NODE_RESOLVER", name: "id")
+}
+
+union DemoDeleteFeaturePayload @source(name: "DemoDeleteFeaturePayload", subgraph: "DEMO_FEATURES") @source(name: "DemoDeleteFeaturePayload", subgraph: "NODE_RESOLVER") = DemoDeleteFeatureSuccess
+
+type DemoDeleteFeatureSuccess @source(name: "DemoDeleteFeatureSuccess", subgraph: "DEMO_FEATURES") @source(name: "DemoDeleteFeatureSuccess", subgraph: "NODE_RESOLVER") {
+  feature: DemoFeature! @source(subgraph: "DEMO_FEATURES", name: "feature") @source(subgraph: "NODE_RESOLVER", name: "feature")
+}
+
+type DemoFeature implements Node @source(name: "DemoFeature", subgraph: "DEMO_FEATURES") @variable(name: "DemoFeature_key_id", select: "id", subgraph: "DEMO_FEATURES", type: "ID") @variable(name: "representations", subgraph: "DEMO_FEATURES", value: "{ __typename: \\"DemoFeature\\", id: $DemoFeature_key_id }") @resolver(operation: "query getDemoFeature($representations: [_Any!]!) { _entities(representations: $representations) { ... on DemoFeature { ...__export } } }", subgraph: "DEMO_FEATURES") {
+  description: String @source(subgraph: "DEMO_FEATURES", name: "description")
+  id: ID! @source(subgraph: "DEMO_FEATURES", name: "id")
+  name: String! @source(subgraph: "DEMO_FEATURES", name: "name")
+  publicId: ID @source(subgraph: "DEMO_FEATURES", name: "publicId")
+}
+
+type DemoFeatureAlreadyHasPublicIdError implements Error @source(name: "DemoFeatureAlreadyHasPublicIdError", subgraph: "DEMO_FEATURES") @source(name: "DemoFeatureAlreadyHasPublicIdError", subgraph: "NODE_RESOLVER") {
+  message: String! @source(subgraph: "DEMO_FEATURES", name: "message") @source(subgraph: "NODE_RESOLVER", name: "message")
+}
+
+type DemoFeatureAlreadyPrivateError implements Error @source(name: "DemoFeatureAlreadyPrivateError", subgraph: "DEMO_FEATURES") @source(name: "DemoFeatureAlreadyPrivateError", subgraph: "NODE_RESOLVER") {
+  message: String! @source(subgraph: "DEMO_FEATURES", name: "message") @source(subgraph: "NODE_RESOLVER", name: "message")
+}
+
+type DemoFeatureConnection @source(name: "DemoFeatureConnection", subgraph: "DEMO_FEATURES") @source(name: "DemoFeatureConnection", subgraph: "NODE_RESOLVER") {
+  edges: [DemoFeatureEdge] @source(subgraph: "DEMO_FEATURES", name: "edges") @source(subgraph: "NODE_RESOLVER", name: "edges")
+  pageInfo: PageInfo! @source(subgraph: "DEMO_FEATURES", name: "pageInfo") @source(subgraph: "NODE_RESOLVER", name: "pageInfo")
+}
+
+type DemoFeatureEdge @source(name: "DemoFeatureEdge", subgraph: "DEMO_FEATURES") @source(name: "DemoFeatureEdge", subgraph: "NODE_RESOLVER") {
+  cursor: String! @source(subgraph: "DEMO_FEATURES", name: "cursor") @source(subgraph: "NODE_RESOLVER", name: "cursor")
+  node: DemoFeature @source(subgraph: "DEMO_FEATURES", name: "node") @source(subgraph: "NODE_RESOLVER", name: "node")
+}
+
+input DemoFeatureFilter @source(name: "DemoFeatureFilter", subgraph: "DEMO_FEATURES") @source(name: "DemoFeatureFilter", subgraph: "NODE_RESOLVER") {
+  ids: [ID!] @source(subgraph: "DEMO_FEATURES", name: "ids") @source(subgraph: "NODE_RESOLVER", name: "ids")
+}
+
+type DemoFeatureHasNoPublicIdError implements Error @source(name: "DemoFeatureHasNoPublicIdError", subgraph: "DEMO_FEATURES") @source(name: "DemoFeatureHasNoPublicIdError", subgraph: "NODE_RESOLVER") {
+  message: String! @source(subgraph: "DEMO_FEATURES", name: "message") @source(subgraph: "NODE_RESOLVER", name: "message")
+}
+
+type DemoFeatureNotPublicError implements Error @source(name: "DemoFeatureNotPublicError", subgraph: "DEMO_FEATURES") @source(name: "DemoFeatureNotPublicError", subgraph: "NODE_RESOLVER") {
+  message: String! @source(subgraph: "DEMO_FEATURES", name: "message") @source(subgraph: "NODE_RESOLVER", name: "message")
+}
+
+input DemoMakeFeaturePrivateInput @source(name: "DemoMakeFeaturePrivateInput", subgraph: "DEMO_FEATURES") @source(name: "DemoMakeFeaturePrivateInput", subgraph: "NODE_RESOLVER") {
+  id: ID! @source(subgraph: "DEMO_FEATURES", name: "id") @source(subgraph: "NODE_RESOLVER", name: "id")
+}
+
+union DemoMakeFeaturePrivatePayload @source(name: "DemoMakeFeaturePrivatePayload", subgraph: "DEMO_FEATURES") @source(name: "DemoMakeFeaturePrivatePayload", subgraph: "NODE_RESOLVER") = DemoFeatureAlreadyPrivateError | DemoMakeFeaturePrivateSuccess
+
+type DemoMakeFeaturePrivateSuccess @source(name: "DemoMakeFeaturePrivateSuccess", subgraph: "DEMO_FEATURES") @source(name: "DemoMakeFeaturePrivateSuccess", subgraph: "NODE_RESOLVER") {
+  feature: DemoFeature! @source(subgraph: "DEMO_FEATURES", name: "feature") @source(subgraph: "NODE_RESOLVER", name: "feature")
+}
+
+input DemoMakeFeaturePublicInput @source(name: "DemoMakeFeaturePublicInput", subgraph: "DEMO_FEATURES") @source(name: "DemoMakeFeaturePublicInput", subgraph: "NODE_RESOLVER") {
+  id: ID! @source(subgraph: "DEMO_FEATURES", name: "id") @source(subgraph: "NODE_RESOLVER", name: "id")
+}
+
+union DemoMakeFeaturePublicPayload @source(name: "DemoMakeFeaturePublicPayload", subgraph: "DEMO_FEATURES") @source(name: "DemoMakeFeaturePublicPayload", subgraph: "NODE_RESOLVER") = DemoFeatureAlreadyHasPublicIdError | DemoMakeFeaturePublicSuccess
+
+type DemoMakeFeaturePublicSuccess @source(name: "DemoMakeFeaturePublicSuccess", subgraph: "DEMO_FEATURES") @source(name: "DemoMakeFeaturePublicSuccess", subgraph: "NODE_RESOLVER") {
+  feature: DemoFeature! @source(subgraph: "DEMO_FEATURES", name: "feature") @source(subgraph: "NODE_RESOLVER", name: "feature")
+}
+
+union DemoPublicFeaturePayload @source(name: "DemoPublicFeaturePayload", subgraph: "DEMO_FEATURES") @source(name: "DemoPublicFeaturePayload", subgraph: "NODE_RESOLVER") = DemoFeatureNotPublicError | DemoPublicFeatureSuccess
+
+type DemoPublicFeatureSuccess @source(name: "DemoPublicFeatureSuccess", subgraph: "DEMO_FEATURES") @source(name: "DemoPublicFeatureSuccess", subgraph: "NODE_RESOLVER") {
+  feature: DemoFeature! @source(subgraph: "DEMO_FEATURES", name: "feature") @source(subgraph: "NODE_RESOLVER", name: "feature")
+}
+
+input DemoRegenFeaturePublicIdInput @source(name: "DemoRegenFeaturePublicIdInput", subgraph: "DEMO_FEATURES") @source(name: "DemoRegenFeaturePublicIdInput", subgraph: "NODE_RESOLVER") {
+  id: ID! @source(subgraph: "DEMO_FEATURES", name: "id") @source(subgraph: "NODE_RESOLVER", name: "id")
+}
+
+union DemoRegenFeaturePublicIdPayload @source(name: "DemoRegenFeaturePublicIdPayload", subgraph: "DEMO_FEATURES") @source(name: "DemoRegenFeaturePublicIdPayload", subgraph: "NODE_RESOLVER") = DemoFeatureHasNoPublicIdError | DemoRegenFeaturePublicIdSuccess
+
+type DemoRegenFeaturePublicIdSuccess @source(name: "DemoRegenFeaturePublicIdSuccess", subgraph: "DEMO_FEATURES") @source(name: "DemoRegenFeaturePublicIdSuccess", subgraph: "NODE_RESOLVER") {
+  feature: DemoFeature! @source(subgraph: "DEMO_FEATURES", name: "feature") @source(subgraph: "NODE_RESOLVER", name: "feature")
+}
+
+input DemoUpdateFeatureInput @source(name: "DemoUpdateFeatureInput", subgraph: "DEMO_FEATURES") @source(name: "DemoUpdateFeatureInput", subgraph: "NODE_RESOLVER") {
+  description: String @source(subgraph: "DEMO_FEATURES", name: "description") @source(subgraph: "NODE_RESOLVER", name: "description")
+  id: ID! @source(subgraph: "DEMO_FEATURES", name: "id") @source(subgraph: "NODE_RESOLVER", name: "id")
+  name: String! @source(subgraph: "DEMO_FEATURES", name: "name") @source(subgraph: "NODE_RESOLVER", name: "name")
+}
+
+union DemoUpdateFeaturePayload @source(name: "DemoUpdateFeaturePayload", subgraph: "DEMO_FEATURES") @source(name: "DemoUpdateFeaturePayload", subgraph: "NODE_RESOLVER") = DemoUpdateFeatureSuccess
+
+type DemoUpdateFeatureSuccess @source(name: "DemoUpdateFeatureSuccess", subgraph: "DEMO_FEATURES") @source(name: "DemoUpdateFeatureSuccess", subgraph: "NODE_RESOLVER") {
+  feature: DemoFeature! @source(subgraph: "DEMO_FEATURES", name: "feature") @source(subgraph: "NODE_RESOLVER", name: "feature")
+}
+
+interface Error @source(name: "Error", subgraph: "DEMO_FEATURES") @source(name: "Error", subgraph: "NODE_RESOLVER") {
+  message: String! @source(subgraph: "DEMO_FEATURES", name: "message") @source(subgraph: "NODE_RESOLVER", name: "message")
+}
+
+type Mutation @source(name: "Mutation", subgraph: "DEMO_FEATURES") @source(name: "Mutation", subgraph: "NODE_RESOLVER") {
+  """
+  This is a distributed mutation, does something in two services
+  The communication between the services is in Kafka
+  """
+  demoCreateAndLink(input: DemoCreateAndLinkInput!): DemoCreateAndLinkPayload! @source(subgraph: "DEMO_FEATURES", name: "demoCreateAndLink") @resolver(subgraph: "DEMO_FEATURES", operation: "mutation mutationdemoCreateAndLink($input: DemoCreateAndLinkInput!) { demoCreateAndLink(input: $input) }")
+  demoCreateFeature(input: DemoCreateFeatureInput!): DemoCreateFeaturePayload! @source(subgraph: "DEMO_FEATURES", name: "demoCreateFeature") @resolver(subgraph: "DEMO_FEATURES", operation: "mutation mutationdemoCreateFeature($input: DemoCreateFeatureInput!) { demoCreateFeature(input: $input) }")
+  demoDeleteFeature(input: DemoDeleteFeatureInput!): DemoDeleteFeaturePayload! @source(subgraph: "DEMO_FEATURES", name: "demoDeleteFeature") @resolver(subgraph: "DEMO_FEATURES", operation: "mutation mutationdemoDeleteFeature($input: DemoDeleteFeatureInput!) { demoDeleteFeature(input: $input) }")
+  """
+  Provides the ability to delete the public ID of a feature that was previously made public
+  """
+  demoMakeFeaturePrivate(input: DemoMakeFeaturePrivateInput!): DemoMakeFeaturePrivatePayload! @source(subgraph: "DEMO_FEATURES", name: "demoMakeFeaturePrivate") @resolver(subgraph: "DEMO_FEATURES", operation: "mutation mutationdemoMakeFeaturePrivate($input: DemoMakeFeaturePrivateInput!) { demoMakeFeaturePrivate(input: $input) }")
+  """
+  Takes a feature ID that has no public ID yet and generates one for it
+  Returns the generated public ID of the feature
+  """
+  demoMakeFeaturePublic(input: DemoMakeFeaturePublicInput!): DemoMakeFeaturePublicPayload! @source(subgraph: "DEMO_FEATURES", name: "demoMakeFeaturePublic") @resolver(subgraph: "DEMO_FEATURES", operation: "mutation mutationdemoMakeFeaturePublic($input: DemoMakeFeaturePublicInput!) { demoMakeFeaturePublic(input: $input) }")
+  """
+  Provides the ability to change the public ID of a feature that was previously made public
+  """
+  demoRegenFeaturePublicId(input: DemoRegenFeaturePublicIdInput!): DemoRegenFeaturePublicIdPayload! @source(subgraph: "DEMO_FEATURES", name: "demoRegenFeaturePublicId") @resolver(subgraph: "DEMO_FEATURES", operation: "mutation mutationdemoRegenFeaturePublicId($input: DemoRegenFeaturePublicIdInput!) { demoRegenFeaturePublicId(input: $input) }")
+  demoUpdateFeature(input: DemoUpdateFeatureInput!): DemoUpdateFeaturePayload! @source(subgraph: "DEMO_FEATURES", name: "demoUpdateFeature") @resolver(subgraph: "DEMO_FEATURES", operation: "mutation mutationdemoUpdateFeature($input: DemoUpdateFeatureInput!) { demoUpdateFeature(input: $input) }")
+}
+
+interface Node @source(name: "Node", subgraph: "DEMO_FEATURES") @source(name: "Node", subgraph: "NODE_RESOLVER") {
+  id: ID! @source(subgraph: "DEMO_FEATURES", name: "id") @source(subgraph: "NODE_RESOLVER", name: "id")
+}
+
+type PageInfo @source(name: "PageInfo", subgraph: "DEMO_FEATURES") @source(name: "PageInfo", subgraph: "NODE_RESOLVER") {
+  endCursor: String @source(subgraph: "DEMO_FEATURES", name: "endCursor") @source(subgraph: "NODE_RESOLVER", name: "endCursor")
+  hasNextPage: Boolean! @source(subgraph: "DEMO_FEATURES", name: "hasNextPage") @source(subgraph: "NODE_RESOLVER", name: "hasNextPage")
+  hasPreviousPage: Boolean! @source(subgraph: "DEMO_FEATURES", name: "hasPreviousPage") @source(subgraph: "NODE_RESOLVER", name: "hasPreviousPage")
+  startCursor: String @source(subgraph: "DEMO_FEATURES", name: "startCursor") @source(subgraph: "NODE_RESOLVER", name: "startCursor")
+}
+
+type Query @source(name: "Query", subgraph: "DEMO_FEATURES") @source(name: "Query", subgraph: "NODE_RESOLVER") {
+  """Returns a feature based on its public id"""
+  demoFeaturePublic(publicId: ID!): DemoPublicFeaturePayload! @source(subgraph: "DEMO_FEATURES", name: "demoFeaturePublic") @resolver(subgraph: "DEMO_FEATURES", operation: "query demoFeaturePublic($publicId: ID!) { demoFeaturePublic(publicId: $publicId) }")
+  """Returns all the features to users with any roles"""
+  demoFeatures(after: String, before: String, filter: DemoFeatureFilter, first: Int, last: Int): DemoFeatureConnection! @source(subgraph: "DEMO_FEATURES", name: "demoFeatures") @resolver(subgraph: "DEMO_FEATURES", operation: "query demoFeatures($after: String, $before: String, $filter: DemoFeatureFilter, $first: Int, $last: Int) { demoFeatures(after: $after, before: $before, filter: $filter, first: $first, last: $last) }")
+  """Returns all the features only to users with admin role"""
+  demoFeaturesAdmin(after: String, before: String, filter: DemoFeatureFilter, first: Int, last: Int): DemoFeatureConnection! @source(subgraph: "DEMO_FEATURES", name: "demoFeaturesAdmin") @resolver(subgraph: "DEMO_FEATURES", operation: "query demoFeaturesAdmin($after: String, $before: String, $filter: DemoFeatureFilter, $first: Int, $last: Int) { demoFeaturesAdmin(after: $after, before: $before, filter: $filter, first: $first, last: $last) }")
+  """Returns all the features only to users with maker or admin role"""
+  demoFeaturesMakerAndAdmin(after: String, before: String, filter: DemoFeatureFilter, first: Int, last: Int): DemoFeatureConnection! @source(subgraph: "DEMO_FEATURES", name: "demoFeaturesMakerAndAdmin") @resolver(subgraph: "DEMO_FEATURES", operation: "query demoFeaturesMakerAndAdmin($after: String, $before: String, $filter: DemoFeatureFilter, $first: Int, $last: Int) { demoFeaturesMakerAndAdmin(after: $after, before: $before, filter: $filter, first: $first, last: $last) }")
+  demoMe: DemoAuthInfo! @source(subgraph: "DEMO_FEATURES", name: "demoMe") @resolver(subgraph: "DEMO_FEATURES", operation: "query demoMe { demoMe }")
+  node(id: ID!): Node @source(subgraph: "NODE_RESOLVER", name: "node") @resolver(subgraph: "NODE_RESOLVER", operation: "query node($id: ID!) { node(id: $id) }")
+  nodes(ids: [ID!]!): [Node]! @source(subgraph: "NODE_RESOLVER", name: "nodes") @resolver(subgraph: "NODE_RESOLVER", operation: "query nodes($ids: [ID!]!) { nodes(ids: $ids) }")
+}
+
+enum core__Purpose @source(name: "core__Purpose", subgraph: "DEMO_FEATURES") @source(name: "core__Purpose", subgraph: "NODE_RESOLVER") {
+  """
+  \`EXECUTION\` features provide metadata necessary to for operation execution.
+  """
+  EXECUTION
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+}"
+`;
