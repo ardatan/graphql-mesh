@@ -7,6 +7,7 @@ import {
   isAsyncIterable,
   isPromise,
   mapAsyncIterator,
+  MaybePromise,
   relocatedError,
 } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
@@ -271,14 +272,12 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
       }
     }
     if (isAsyncIterable(depOpResult$)) {
-      asyncIterables.push(
-        mapAsyncIterator(depOpResult$ as AsyncIterableIterator<any>, handleDepOpResult),
-      );
+      asyncIterables.push(mapAsyncIterator(depOpResult$, handleDepOpResult));
     } else if (isPromise(depOpResult$)) {
       dependencyPromises.push(
         depOpResult$.then(res => {
           if (isAsyncIterable(res)) {
-            return mapAsyncIterator(res as AsyncIterableIterator<any>, handleDepOpResult);
+            return mapAsyncIterator(res, handleDepOpResult);
           } else {
             return handleDepOpResult(res);
           }
@@ -429,6 +428,7 @@ export function executeResolverOperationNodesWithDependenciesInParallel({
   return handleDependencyPromises();
 }
 
+// TODO: drop all `any`s
 export function executeResolverOperationNode({
   resolverOperationNode,
   inputVariableMap,
@@ -443,7 +443,18 @@ export function executeResolverOperationNode({
   context: any;
   path: string[];
   errors: GraphQLError[];
-}) {
+}): MaybePromise<
+  | {
+      exported: any[];
+      listed?: boolean;
+      outputVariableMap: Map<any, any>;
+    }
+  | AsyncIterableIterator<{
+      exported: any[];
+      listed?: boolean;
+      outputVariableMap: Map<any, any>;
+    }>
+> {
   const variablesForOperation: Record<string, any> = {};
   const inputVarMapWithPreDeps = new Map<string, any>(inputVariableMap);
 
@@ -475,9 +486,7 @@ export function executeResolverOperationNode({
             }
           }
           if (isAsyncIterable(itemResult$)) {
-            asyncIterables.push(
-              mapAsyncIterator(itemResult$ as AsyncIterableIterator<any>, handleItemResult),
-            );
+            asyncIterables.push(mapAsyncIterator(itemResult$, handleItemResult));
           } else if (isPromise(itemResult$)) {
             promises.push(itemResult$.then(handleItemResult));
           } else {
@@ -653,20 +662,20 @@ export function executeResolverOperationNode({
         } catch (e) {
           return stop(e);
         }
-      }) as AsyncIterableIterator<any>;
+      });
     }
 
     if (isAsyncIterable(result$)) {
-      return mapAsyncIterator(result$ as AsyncIterableIterator<any>, handleResult);
+      return mapAsyncIterator(result$ as any, handleResult) as any;
     }
 
     if (isPromise(result$)) {
       return result$.then(result => {
         if (isAsyncIterable(result)) {
-          return mapAsyncIterator(result as AsyncIterableIterator<any>, handleResult);
+          return mapAsyncIterator(result as any, handleResult);
         }
         return handleResult(result);
-      });
+      }) as any;
     }
 
     return handleResult(result$);
