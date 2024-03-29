@@ -33,6 +33,7 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.1",
     "@graphql-mesh/string-interpolation": "^0.5.3",
+    "@graphql-mesh/transport-mysql": "^0.1.6",
     "@graphql-mesh/utils": "^0.97.5",
     "@graphql-tools/delegate": "^10.0.3",
     "@graphql-tools/utils": "^10.0.12",

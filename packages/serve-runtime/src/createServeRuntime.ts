@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
 import { GraphQLSchema, parse } from 'graphql';
 import {

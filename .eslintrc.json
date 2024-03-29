@@ -53,7 +53,15 @@
       }
     }
   ],
-  "ignorePatterns": ["dist", "node_modules", "examples", "website", "scripts", ".bob"],
+  "ignorePatterns": [
+    "dist",
+    "node_modules",
+    "examples",
+    "website",
+    "scripts",
+    ".bob",
+    "config-schema.ts"
+  ],
   "globals": {
     "BigInt": true
   }
