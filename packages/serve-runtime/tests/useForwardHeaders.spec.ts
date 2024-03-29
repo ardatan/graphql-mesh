@@ -30,7 +30,7 @@ describe('useForwardHeaders', () => {
         endpoint: 'https://example.com/graphql',
       },
       fetchAPI: {
-        fetch: upstream.fetch as MeshFetch,
+        fetch: upstream.fetch as any,
       },
       plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
     });
