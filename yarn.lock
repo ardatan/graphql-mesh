@@ -8126,7 +8126,7 @@ __metadata:
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.9.0"
     ajv: "npm:8.12.0"
-    ajv-formats: "npm:2.1.1"
+    ajv-formats: "npm:3.0.0"
     dset: "npm:3.1.3"
     graphql-compose: "npm:9.0.10"
     graphql-fields: "npm:^2.0.3"
@@ -12228,7 +12228,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-formats@npm:2.1.1, ajv-formats@npm:^2.1.1":
+"ajv-formats@npm:3.0.0":
+  version: 3.0.0
+  resolution: "ajv-formats@npm:3.0.0"
+  dependencies:
+    ajv: "npm:^8.0.0"
+  peerDependencies:
+    ajv: ^8.0.0
+  peerDependenciesMeta:
+    ajv:
+      optional: true
+  checksum: 10c0/9853ad5a53c0444043fffe06e99b641485d6214d18c4c9c79a1511cef8d61f03527da133b4143b745a92967fc6688133d90296411a61b5e26567850b79dcc3c2
+  languageName: node
+  linkType: hard
+
+"ajv-formats@npm:^2.1.1":
   version: 2.1.1
   resolution: "ajv-formats@npm:2.1.1"
   dependencies:
