@@ -1,5 +1,12 @@
 # gateway-example
 
+## 0.9.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.8
+
 ## 0.9.11
 
 ### Patch Changes

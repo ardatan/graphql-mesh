@@ -1,5 +1,12 @@
 # json-schema-subscriptions
 
+## 0.10.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.8
+
 ## 0.10.8
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # example-persisted-operations
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.8
+
 ## 0.2.8
 
 ### Patch Changes
