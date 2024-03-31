@@ -1,5 +1,12 @@
 # batching-resolver-example
 
+## 0.11.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.14
+
 ## 0.11.14
 
 ### Patch Changes

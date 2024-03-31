@@ -1,5 +1,12 @@
 # @v1-next/soap-demo
 
+## 0.9.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.14
+
 ## 0.9.13
 
 ### Patch Changes

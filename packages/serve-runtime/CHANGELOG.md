@@ -1,5 +1,18 @@
 # @graphql-mesh/serve-runtime
 
+## 0.2.11
+
+### Patch Changes
+
+- [#6762](https://github.com/ardatan/graphql-mesh/pull/6762)
+  [`9ac2245`](https://github.com/ardatan/graphql-mesh/commit/9ac2245273a561449cfc17dcafc67d0c43baf33e)
+  Thanks [@ardatan](https://github.com/ardatan)! - New Plugin: useForwardHeaders
+
+- Updated dependencies
+  [[`4beaa4c`](https://github.com/ardatan/graphql-mesh/commit/4beaa4ce24ca3d63be8dd375d300d388f5bd5183)]:
+  - @graphql-mesh/fusion-federation@0.0.2
+  - @graphql-mesh/fusion-runtime@0.2.11
+
 ## 0.2.10
 
 ### Patch Changes

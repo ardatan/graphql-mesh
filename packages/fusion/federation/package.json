@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/fusion-federation",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "Conversion tool from Federation to Fusion",
   "repository": {

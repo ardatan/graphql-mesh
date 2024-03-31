@@ -1,5 +1,14 @@
 # @graphql-mesh/supergraph
 
+## 0.3.1
+
+### Patch Changes
+
+- [#6758](https://github.com/ardatan/graphql-mesh/pull/6758)
+  [`425afee`](https://github.com/ardatan/graphql-mesh/commit/425afee8e95d115469daa011ddc64b1f48c95daa)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix interpolation of headers and endpoint
+  configuration for each subgraph
+
 ## 0.3.0
 
 ### Minor Changes

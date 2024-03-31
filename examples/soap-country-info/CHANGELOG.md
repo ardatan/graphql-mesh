@@ -1,5 +1,14 @@
 # country-info-example
 
+## 0.12.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8ec0067`](https://github.com/ardatan/graphql-mesh/commit/8ec0067d6441e8083f1e79076462419904eb75c4)]:
+  - @graphql-mesh/plugin-snapshot@0.97.6
+  - @graphql-mesh/cli@0.89.8
+
 ## 0.12.7
 
 ### Patch Changes

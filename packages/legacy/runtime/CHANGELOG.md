@@ -1,5 +1,14 @@
 # @graphql-mesh/runtime
 
+## 0.98.7
+
+### Patch Changes
+
+- [#6760](https://github.com/ardatan/graphql-mesh/pull/6760)
+  [`c008dda`](https://github.com/ardatan/graphql-mesh/commit/c008ddae4bd617497a2a9bd70e8c90667c2b1ddc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Disable GraphQL JIT if there are nested input
+  types
+
 ## 0.98.6
 
 ### Patch Changes
