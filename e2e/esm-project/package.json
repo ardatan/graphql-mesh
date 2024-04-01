@@ -1,5 +1,8 @@
 {
   "name": "@e2e/esm-project",
   "type": "module",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/serve-cli": "workspace:*"
+  }
 }

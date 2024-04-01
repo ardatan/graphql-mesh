@@ -29,7 +29,8 @@
       "examples/v1-next/federation-example/services/*",
       "examples/v1-next/graphql-file-upload-example/frontend",
       "examples/v1-next/hive-example/gateway",
-      "examples/v1-next/hive-example/sources/*"
+      "examples/v1-next/hive-example/sources/*",
+      "e2e/*"
     ]
   },
   "packageManager": "yarn@4.1.1",

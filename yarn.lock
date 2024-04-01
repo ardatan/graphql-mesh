@@ -3535,6 +3535,8 @@ __metadata:
 "@e2e/esm-project@workspace:e2e/esm-project":
   version: 0.0.0-use.local
   resolution: "@e2e/esm-project@workspace:e2e/esm-project"
+  dependencies:
+    "@graphql-mesh/serve-cli": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5109,7 +5111,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/serve-cli@npm:^0.3.16, @graphql-mesh/serve-cli@workspace:packages/serve-cli":
+"@graphql-mesh/serve-cli@npm:^0.3.16, @graphql-mesh/serve-cli@workspace:*, @graphql-mesh/serve-cli@workspace:packages/serve-cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-cli@workspace:packages/serve-cli"
   dependencies:
