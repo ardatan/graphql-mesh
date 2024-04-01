@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-nodejs-modules
+/* eslint-disable import/no-nodejs-modules */
 import childProcess from 'child_process';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
@@ -9,7 +9,7 @@ export interface Proc {
   stdout: Repeater<string>;
   stderr: Repeater<string>;
   kill(code?: number): void;
-  waitForExit: Promise<number | null>;
+  waitForExit: Promise<void>;
 }
 
 let leftovers: Proc[] = [];
@@ -29,7 +29,7 @@ export function createSpawn(
   return async function spawn(cmd, ...args) {
     const child = childProcess.spawn(cmd, args.map(String), { cwd });
 
-    let exit: (code: number) => void;
+    let exit: (err: Error | null) => void;
     const proc: Proc = {
       stdout: new Repeater((push, stop) => {
         child.stdout.on('data', async x => {
@@ -44,7 +44,16 @@ export function createSpawn(
         child.stderr.once('error', err => stop(err));
       }),
       kill: code => child.kill(code),
-      waitForExit: new Promise(resolve => (exit = resolve)),
+      waitForExit: new Promise(
+        (resolve, reject) =>
+          (exit = err => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          }),
+      ),
     };
     leftovers.push(proc);
 
@@ -72,7 +81,7 @@ export function createSpawn(
       child.stderr.destroy();
       child.removeAllListeners();
 
-      exit(code);
+      exit(err);
     });
 
     return new Promise((resolve, reject) => {

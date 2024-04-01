@@ -2,7 +2,7 @@ import { createSpawn, getAvailablePort } from '../utils';
 
 const spawn = createSpawn(__dirname);
 
-it('should start mesh serve', async () => {
+it('should serve', async () => {
   const port = await getAvailablePort();
   const { stdout, kill } = await spawn('yarn', 'mesh-serve', port);
 
@@ -11,4 +11,9 @@ it('should start mesh serve', async () => {
       kill();
     }
   }
+});
+
+it('should compose', async () => {
+  const { waitForExit } = await spawn('yarn', 'mesh-compose');
+  await expect(waitForExit).resolves.toBeUndefined();
 });
