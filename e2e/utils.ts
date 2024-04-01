@@ -32,30 +32,48 @@ export function createSpawn(cwd: string): (cmd: string, ...args: string[]) => Pr
           await push(x.toString());
         });
         child.stdout.once('error', err => stop(err));
-        child.stdout.once('close', () => stop());
       }),
       stderr: new Repeater((push, stop) => {
         child.stderr.on('data', async x => {
           await push(x.toString());
         });
         child.stderr.once('error', err => stop(err));
-        child.stderr.once('close', () => stop());
       }),
       kill: code => child.kill(code),
       waitForExit: new Promise(resolve => (exit = resolve)),
     };
     leftovers.push(proc);
 
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', x => {
+      stdout += x.toString();
+    });
+    child.stderr.on('data', x => {
+      stderr += x.toString();
+    });
+
     child.once('exit', code => {
       leftovers = leftovers.filter(leftover => leftover !== proc);
+
+      const err =
+        code === 0 || code == null
+          ? undefined
+          : new Error(`Exit code ${code}\n${stderr || stdout}`);
+      child.stdout.emit('error', err);
+      child.stderr.emit('error', err);
+
       child.stdin.end();
       child.stdout.destroy();
       child.stderr.destroy();
       child.removeAllListeners();
+
       exit(code);
     });
 
     return new Promise((resolve, reject) => {
+      child.stdout.once('error', reject);
+      child.stderr.once('error', reject);
       child.once('error', reject);
       resolve(proc);
     });
