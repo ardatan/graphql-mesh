@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import childProcess from 'child_process';
+import { createServer } from 'http';
+import { AddressInfo } from 'net';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Repeater } from '@repeaterjs/repeater';
 
@@ -21,9 +23,11 @@ afterAll(async () => {
   leftovers = [];
 });
 
-export function createSpawn(cwd: string): (cmd: string, ...args: string[]) => Promise<Proc> {
+export function createSpawn(
+  cwd: string,
+): (cmd: string, ...args: (string | number)[]) => Promise<Proc> {
   return async function spawn(cmd, ...args) {
-    const child = childProcess.spawn(cmd, args, { cwd });
+    const child = childProcess.spawn(cmd, args.map(String), { cwd });
 
     let exit: (code: number) => void;
     const proc: Proc = {
@@ -78,4 +82,13 @@ export function createSpawn(cwd: string): (cmd: string, ...args: string[]) => Pr
       resolve(proc);
     });
   };
+}
+
+export async function getAvailablePort(): Promise<number> {
+  const server = createServer();
+  server.listen(0);
+  const { port } = server.address() as AddressInfo;
+  return new Promise(resolve => {
+    server.close(() => resolve(port));
+  });
 }

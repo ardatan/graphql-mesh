@@ -1,7 +1,7 @@
 const { defineConfig } = require('@graphql-mesh/serve-cli');
 
 const serveConfig = defineConfig({
-  port: 55100,
+  port: parseInt(process.argv[2]), // test provides the port
   fusiongraph: '',
 });
 
