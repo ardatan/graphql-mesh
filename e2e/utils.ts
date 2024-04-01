@@ -93,11 +93,10 @@ export function createSpawn(
   };
 }
 
-export async function getAvailablePort(): Promise<number> {
+export function getAvailablePort(): number {
   const server = createServer();
   server.listen(0);
   const { port } = server.address() as AddressInfo;
-  return new Promise(resolve => {
-    server.close(() => resolve(port));
-  });
+  server.close();
+  return port;
 }

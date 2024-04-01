@@ -3,8 +3,7 @@ import { createSpawn, getAvailablePort } from '../utils';
 const spawn = createSpawn(__dirname);
 
 it('should serve', async () => {
-  const port = await getAvailablePort();
-  const { stdout, kill } = await spawn('yarn', 'mesh-serve', port);
+  const { stdout, kill } = await spawn('yarn', 'mesh-serve', getAvailablePort());
 
   for await (const o of stdout) {
     if (o.includes('Started server on')) {
