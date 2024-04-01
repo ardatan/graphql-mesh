@@ -1,5 +1,13 @@
 # reddit-example
 
+## 0.11.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`910106c`](https://github.com/ardatan/graphql-mesh/commit/910106cb95e5f16ffddec0ada869ca8f4b0d2049)]:
+  - @graphql-mesh/serve-cli@0.3.15
+
 ## 0.11.15
 
 ### Patch Changes
