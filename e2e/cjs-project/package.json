@@ -1,0 +1,8 @@
+{
+  "name": "@e2e/cjs-project",
+  "type": "commonjs",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/serve-cli": "workspace:*"
+  }
+}
