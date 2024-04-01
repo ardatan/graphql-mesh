@@ -47,7 +47,7 @@
     "@whatwg-node/fetch": "^0.9.14",
     "dotenv": "^16.3.1",
     "spinnies": "^0.5.1",
-    "ts-node": "^10.9.2"
+    "tsx": "^4.7.1"
   },
   "devDependencies": {
     "@types/spinnies": "^0.5.3"
