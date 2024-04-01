@@ -1,5 +1,14 @@
 # @graphql-mesh/serve-cli
 
+## 0.3.15
+
+### Patch Changes
+
+- [#6776](https://github.com/ardatan/graphql-mesh/pull/6776)
+  [`910106c`](https://github.com/ardatan/graphql-mesh/commit/910106cb95e5f16ffddec0ada869ca8f4b0d2049)
+  Thanks [@ardatan](https://github.com/ardatan)! - Export useForwardHeaders and useStaticFiles from
+  serve-cli
+
 ## 0.3.14
 
 ### Patch Changes
