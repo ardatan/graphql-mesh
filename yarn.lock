@@ -3731,16 +3731,16 @@ __metadata:
   linkType: hard
 
 "@envelop/graphql-jit@npm:^8.0.0":
-  version: 8.0.2
-  resolution: "@envelop/graphql-jit@npm:8.0.2"
+  version: 8.0.3
+  resolution: "@envelop/graphql-jit@npm:8.0.3"
   dependencies:
-    graphql-jit: "npm:0.8.5"
+    graphql-jit: "npm:0.8.6"
     tslib: "npm:^2.5.0"
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
     "@envelop/core": ^5.0.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/e5bf06e3b8492a8c054fb6a576c934ed4e7028c24f0a9a87c7c09c698eafa11ac684aca30c6a33344634287d545a8c97e23373c4fad7eb79d5997ba232b5acfd
+  checksum: 10c0/6633e9c1f443bec17732d8a350a42ef33944ebfdfcd9719834d45cf18129a654bee31f1fab5a306583ba542a7973ca4f64eb8b36abc894a9322898850c01905f
   languageName: node
   linkType: hard
 
@@ -19689,9 +19689,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-jit@npm:0.8.5":
-  version: 0.8.5
-  resolution: "graphql-jit@npm:0.8.5"
+"graphql-jit@npm:0.8.6":
+  version: 0.8.6
+  resolution: "graphql-jit@npm:0.8.6"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.2.0"
     fast-json-stringify: "npm:^5.8.0"
@@ -19701,7 +19701,7 @@ __metadata:
     lodash.mergewith: "npm:4.6.2"
   peerDependencies:
     graphql: ">=15"
-  checksum: 10c0/04dd3f8853b162df9ad745d698cd9d89863b21fd6f906070a94c09fe915c4d5648196e9e8c69f5a06e53461065fe7773aebb4e854cfcade30136fc84da6a9fbb
+  checksum: 10c0/b83d469e14d482f00046c0028cf9228344b3d9bd890902a522b8976ef88f4f38ed43f7db798b33ce281fa476c0b89a7a060d80a8b2b4657b3d5aed2251c8c235
   languageName: node
   linkType: hard
 
