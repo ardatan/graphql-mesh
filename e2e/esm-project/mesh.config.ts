@@ -1,13 +1,15 @@
 import { GraphQLSchema } from 'graphql';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
+import { getPortArg, getTargetArg } from '../args';
 
 export const serveConfig = defineServeConfig({
-  port: parseInt(process.argv[2]), // test provides the port
+  port: getPortArg(process.argv),
   fusiongraph: '',
 });
 
 export const composeConfig = defineComposeConfig({
+  target: getTargetArg(process.argv),
   subgraphs: [
     {
       sourceHandler: () => ({

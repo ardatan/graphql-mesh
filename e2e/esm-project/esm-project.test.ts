@@ -1,19 +1,13 @@
 import { createTenv } from '../tenv';
 
-const { spawn, getAvailablePort, fileExists, deleteFile } = createTenv(__dirname);
+const { serve, spawn, fileExists, deleteFile } = createTenv(__dirname);
 
 it('should serve', async () => {
-  const { stdout, kill } = await spawn('yarn', 'mesh-serve', getAvailablePort());
-
-  for await (const o of stdout) {
-    if (o.includes('Started server on')) {
-      kill();
-    }
-  }
+  await expect(serve()).resolves.toBeDefined();
 });
 
 it('should compose', async () => {
-  const { waitForExit } = await spawn('yarn', 'mesh-compose');
+  const { waitForExit } = await spawn('yarn', 'mesh-compose', '--target=fusiongraph.graphql');
   await expect(waitForExit).resolves.toBeUndefined();
   await expect(fileExists('fusiongraph.graphql')).resolves.toBeTruthy();
   await deleteFile('fusiongraph.graphql');
