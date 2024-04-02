@@ -34,13 +34,13 @@
   "peerDependencies": {
     "@graphql-mesh/runtime": "^0.98.7",
     "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
-    "@urql/core": "^2.4.3 || ^4.0.0",
+    "@urql/core": "^2.4.3 || ^4.0.0 || ^5.0.0",
     "graphql": "^15.2.0 || ^16.0.0",
     "tslib": "^2.4.0",
     "wonka": "^6.3.1"
   },
   "devDependencies": {
-    "@urql/core": "4.3.0",
+    "@urql/core": "5.0.0",
     "wonka": "6.3.4"
   },
   "publishConfig": {
