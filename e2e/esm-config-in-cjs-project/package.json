@@ -2,9 +2,6 @@
   "name": "@e2e/esm-config-in-cjs-project",
   "type": "commonjs",
   "private": true,
-  "scripts": {
-    "serve": "mesh-serve 51000"
-  },
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
