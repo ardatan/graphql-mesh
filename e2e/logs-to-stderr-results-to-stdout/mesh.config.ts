@@ -13,7 +13,7 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: () => ({
-        name: 'test',
+        name: 'helloworld',
         schema$: new GraphQLSchema({
           query: new GraphQLObjectType({
             name: 'Query',

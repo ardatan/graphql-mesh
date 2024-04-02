@@ -1,4 +1,4 @@
-const { GraphQLSchema } = require('graphql');
+const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
 const { defineConfig: defineComposeConfig } = require('@graphql-mesh/compose-cli');
 const { defineConfig: defineServeConfig } = require('@graphql-mesh/serve-cli');
 const { getPortArg, getTargetArg } = require('../args');
@@ -13,8 +13,18 @@ const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: () => ({
-        name: 'test',
-        schema$: new GraphQLSchema({}),
+        name: 'helloworld',
+        schema$: new GraphQLSchema({
+          query: new GraphQLObjectType({
+            name: 'Query',
+            fields: {
+              hello: {
+                type: GraphQLString,
+                resolve: () => 'world',
+              },
+            },
+          }),
+        }),
       }),
     },
   ],
