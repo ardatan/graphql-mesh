@@ -17,14 +17,25 @@ afterAll(async () => {
   leftovers = [];
 });
 
-export interface Serve {
+export interface Proc {
+  stdout: string[];
+  stderr: string[];
+  stdboth: string[];
+  kill(code?: number): void;
+  waitForExit: Promise<void>;
+}
+
+export interface Serve extends Proc {
   port: number;
-  kill(): void;
+}
+
+export interface Compose extends Proc {
+  result: string;
 }
 
 export interface Tenv {
   serve(): Promise<Serve>;
-  compose(target?: string): Promise<string>;
+  compose(target?: string): Promise<Compose>;
 }
 
 export function createTenv(cwd: string): Tenv {
@@ -54,24 +65,16 @@ export function createTenv(cwd: string): Tenv {
           }
         })(),
       ]);
-      return { port, kill: proc.kill };
+      return { ...proc, port };
     },
     async compose(target = 'fusiongraph.graphql') {
-      const { waitForExit } = await spawn({ cwd }, 'yarn', 'mesh-compose', `--target=${target}`);
-      await waitForExit;
+      const proc = await spawn({ cwd }, 'yarn', 'mesh-compose', `--target=${target}`);
+      await proc.waitForExit;
       const result = await fs.readFile(path.join(cwd, target), 'utf-8');
       await fs.unlink(path.join(cwd, target));
-      return result;
+      return { ...proc, result };
     },
   };
-}
-
-interface Proc {
-  stdout: string[];
-  stderr: string[];
-  stdboth: string[];
-  kill(code?: number): void;
-  waitForExit: Promise<void>;
 }
 
 interface SpawnOptions {
@@ -128,8 +131,6 @@ function spawn({ cwd }: SpawnOptions, cmd: string, ...args: (string | number)[])
   });
 
   return new Promise((resolve, reject) => {
-    child.stdout.once('error', reject);
-    child.stderr.once('error', reject);
     child.once('error', reject);
     child.once('spawn', () => resolve(proc));
   });
