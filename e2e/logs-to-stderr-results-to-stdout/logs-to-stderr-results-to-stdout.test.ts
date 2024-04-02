@@ -21,7 +21,7 @@ it('should write compose output to stdout and logs to stderr', async () => {
 }
 
 type Query {
-  hello: String @resolver(subgraph: "test", operation: "query hello { hello }") @source(subgraph: "test", name: "hello", type: "String")
+  hello: String @resolver(subgraph: "helloworld", operation: "query hello { hello }") @source(subgraph: "helloworld", name: "hello", type: "String")
 }
 "
 `);
@@ -33,31 +33,31 @@ type Query {
 - Loaded Mesh Compose CLI Config from e2e/logs-to-stderr-results-to-stdout/mesh.config.ts
 - Starting Mesh Compose CLI
 - Loaded Mesh Compose CLI Config from e2e/logs-to-stderr-results-to-stdout/mesh.config.ts
-- Loading subgraph test
+- Loading subgraph helloworld
 - Starting Mesh Compose CLI
 - Loaded Mesh Compose CLI Config from e2e/logs-to-stderr-results-to-stdout/mesh.config.ts
-- Loaded subgraph test
+- Loaded subgraph helloworld
 - Starting Mesh Compose CLI
 - Loaded Mesh Compose CLI Config from e2e/logs-to-stderr-results-to-stdout/mesh.config.ts
-- Loaded subgraph test
+- Loaded subgraph helloworld
 - Composing fusiongraph
 - Starting Mesh Compose CLI
 - Loaded Mesh Compose CLI Config from e2e/logs-to-stderr-results-to-stdout/mesh.config.ts
-- Loaded subgraph test
+- Loaded subgraph helloworld
 - Composed fusiongraph
 - Starting Mesh Compose CLI
 - Loaded Mesh Compose CLI Config from e2e/logs-to-stderr-results-to-stdout/mesh.config.ts
-- Loaded subgraph test
+- Loaded subgraph helloworld
 - Composed fusiongraph
 - Writing Fusiongraph
 - Starting Mesh Compose CLI
 - Loaded Mesh Compose CLI Config from e2e/logs-to-stderr-results-to-stdout/mesh.config.ts
-- Loaded subgraph test
+- Loaded subgraph helloworld
 - Composed fusiongraph
 - Written fusiongraph to stdout
 - Finished Mesh Compose CLI
 - Loaded Mesh Compose CLI Config from e2e/logs-to-stderr-results-to-stdout/mesh.config.ts
-- Loaded subgraph test
+- Loaded subgraph helloworld
 - Composed fusiongraph
 - Written fusiongraph to stdout
 "

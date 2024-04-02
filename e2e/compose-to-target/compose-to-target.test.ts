@@ -13,7 +13,7 @@ it('should write compose output to fusiongraph.graphql', async () => {
 }
 
 type Query {
-  hello: String @resolver(subgraph: "test", operation: "query hello { hello }") @source(subgraph: "test", name: "hello", type: "String")
+  hello: String @resolver(subgraph: "helloworld", operation: "query hello { hello }") @source(subgraph: "helloworld", name: "hello", type: "String")
 }"
 `);
 
@@ -85,7 +85,7 @@ it('should write compose output to fusiongraph.json', async () => {
                   },
                   "value": {
                     "kind": "StringValue",
-                    "value": "test",
+                    "value": "helloworld",
                     "block": false
                   }
                 },
@@ -118,7 +118,7 @@ it('should write compose output to fusiongraph.json', async () => {
                   },
                   "value": {
                     "kind": "StringValue",
-                    "value": "test",
+                    "value": "helloworld",
                     "block": false
                   }
                 },
@@ -164,7 +164,7 @@ it('should write compose output to fusiongraph.js', async () => {
   const proc = await compose(target);
   await proc.waitForExit;
 
-  await expect(fs.read(target)).resolves.toMatchInlineSnapshot(`"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @resolver(subgraph: \\"test\\", operation: \\"query hello { hello }\\") @source(subgraph: \\"test\\", name: \\"hello\\", type: \\"String\\")\\n}""`);
+  await expect(fs.read(target)).resolves.toMatchInlineSnapshot(`"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @resolver(subgraph: \\"helloworld\\", operation: \\"query hello { hello }\\") @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`);
 
   await fs.delete(target);
 });
@@ -174,7 +174,7 @@ it('should write compose output to fusiongraph.ts', async () => {
   const proc = await compose(target);
   await proc.waitForExit;
 
-  await expect(fs.read(target)).resolves.toMatchInlineSnapshot(`"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @resolver(subgraph: \\"test\\", operation: \\"query hello { hello }\\") @source(subgraph: \\"test\\", name: \\"hello\\", type: \\"String\\")\\n}""`);
+  await expect(fs.read(target)).resolves.toMatchInlineSnapshot(`"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @resolver(subgraph: \\"helloworld\\", operation: \\"query hello { hello }\\") @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`);
 
   await fs.delete(target);
 });
