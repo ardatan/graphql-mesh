@@ -34,7 +34,9 @@ export function createTenv(cwd: string): Tenv {
       const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', `--port=${port}`);
       await Promise.race([
         proc.waitForExit.then(() =>
-          Promise.reject(new Error("Serve exited successfully, but shouldn't have.")),
+          Promise.reject(
+            new Error(`Serve exited successfully, but shouldn't have.\n${proc.stdboth.join('\n')}`),
+          ),
         ),
         // waitForHealthcheckReady
         (async () => {
