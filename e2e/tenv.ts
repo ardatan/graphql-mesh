@@ -123,8 +123,10 @@ function spawn(
     stdboth += x.toString();
   });
   child.stderr.on('data', x => {
-    stderr += x.toString();
-    stdboth += x.toString();
+    // prefer relative paths for logs consistency
+    const str = x.toString().replaceAll(path.resolve(__dirname, '..') + '/', '');
+    stderr += str;
+    stdboth += str;
   });
   child.once('exit', code => {
     leftovers = leftovers.filter(leftover => leftover !== proc);
