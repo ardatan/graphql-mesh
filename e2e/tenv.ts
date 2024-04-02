@@ -32,12 +32,24 @@ export interface Compose extends Proc {
 }
 
 export interface Tenv {
+  fs: {
+    read(path: string): Promise<string>;
+    delete(path: string): Promise<void>;
+  };
   serve(port?: number): Promise<Serve>;
   compose(target?: string): Promise<Compose>;
 }
 
 export function createTenv(cwd: string): Tenv {
   return {
+    fs: {
+      read(filePath) {
+        return fs.readFile(path.join(cwd, filePath), 'utf8');
+      },
+      delete(filePath) {
+        return fs.unlink(path.join(cwd, filePath));
+      },
+    },
     async serve(port = getAvailablePort()) {
       const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', `--port=${port}`);
       await Promise.race([

@@ -78,7 +78,7 @@ export async function runComposeCLI({
 
   let writtenData: string;
   if (fusiongraphPath.endsWith('.json')) {
-    writtenData = JSON.stringify(parse(writtenData, { noLocation: true }), null, 2);
+    writtenData = JSON.stringify(parse(printedSupergraph, { noLocation: true }), null, 2);
   } else if (
     fusiongraphPath.endsWith('.graphql') ||
     fusiongraphPath.endsWith('.gql') ||
