@@ -5,8 +5,6 @@ import { createServer } from 'http';
 import { AddressInfo } from 'net';
 import path from 'path';
 import { setTimeout } from 'timers/promises';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Repeater } from '@repeaterjs/repeater';
 
 let leftovers: Proc[] = [];
 afterAll(async () => {
@@ -43,18 +41,18 @@ export function createTenv(cwd: string): Tenv {
           let retries = 0;
           for (;;) {
             try {
-              await fetch(`http://localhost:${port}/healthcheck`);
+              await fetch(`http://0.0.0.0:${port}/healthcheck`);
               break;
-            } catch {
+            } catch (err) {
               if (++retries > 5) {
-                throw new Error('Serve healthcheck failed.');
+                throw new Error(`Serve healthcheck failed.\n${proc.stdboth.join('\n')}`);
               }
               await setTimeout(500);
             }
           }
         })(),
       ]);
-      return { port, kill: () => proc.kill() };
+      return { port, kill: proc.kill };
     },
     async compose(target = 'fusiongraph.graphql') {
       const { waitForExit } = await spawn({ cwd }, 'yarn', 'mesh-compose', `--target=${target}`);
@@ -67,8 +65,9 @@ export function createTenv(cwd: string): Tenv {
 }
 
 interface Proc {
-  stdout: Repeater<string>;
-  stderr: Repeater<string>;
+  stdout: string[];
+  stderr: string[];
+  stdboth: string[];
   kill(code?: number): void;
   waitForExit: Promise<void>;
 }
@@ -82,18 +81,9 @@ function spawn({ cwd }: SpawnOptions, cmd: string, ...args: (string | number)[])
 
   let exit: (err: Error | null) => void;
   const proc: Proc = {
-    stdout: new Repeater((push, stop) => {
-      child.stdout.on('data', async x => {
-        await push(x.toString());
-      });
-      child.stdout.once('error', err => stop(err));
-    }),
-    stderr: new Repeater((push, stop) => {
-      child.stderr.on('data', async x => {
-        await push(x.toString());
-      });
-      child.stderr.once('error', err => stop(err));
-    }),
+    stdout: [],
+    stderr: [],
+    stdboth: [],
     kill: code => child.kill(code),
     waitForExit: new Promise(
       (resolve, reject) =>
@@ -108,22 +98,24 @@ function spawn({ cwd }: SpawnOptions, cmd: string, ...args: (string | number)[])
   };
   leftovers.push(proc);
 
-  let stdout = '';
-  let stderr = '';
   child.stdout.on('data', x => {
-    stdout += x.toString();
+    proc.stdout.push(x.toString());
+    proc.stdboth.push(x.toString());
   });
   child.stderr.on('data', x => {
-    stderr += x.toString();
+    proc.stderr.push(x.toString());
+    proc.stdboth.push(x.toString());
   });
-
   child.once('exit', code => {
     leftovers = leftovers.filter(leftover => leftover !== proc);
 
     const err =
-      code === 0 || code == null ? undefined : new Error(`Exit code ${code}\n${stderr || stdout}`);
-    child.stdout.emit('error', err);
-    child.stderr.emit('error', err);
+      code === 0 || code == null
+        ? undefined
+        : new Error(`Exit code ${code}\n${proc.stdboth.join('\n')}`);
+    if (err) {
+      child.emit('error', err);
+    }
 
     child.stdin.end();
     child.stdout.destroy();
