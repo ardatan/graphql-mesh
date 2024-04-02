@@ -3542,6 +3542,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/esm-config-in-cjs-project@workspace:e2e/esm-config-in-cjs-project":
+  version: 0.0.0-use.local
+  resolution: "@e2e/esm-config-in-cjs-project@workspace:e2e/esm-config-in-cjs-project"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    graphql: "npm:16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/esm-project@workspace:e2e/esm-project":
   version: 0.0.0-use.local
   resolution: "@e2e/esm-project@workspace:e2e/esm-project"
