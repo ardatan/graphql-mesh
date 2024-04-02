@@ -1,0 +1,146 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should write compose output to fusiongraph.graphql 1`] = `
+"schema {
+  query: Query
+}
+
+type Query {
+  hello: String @resolver(subgraph: "helloworld", operation: "query hello { hello }") @source(subgraph: "helloworld", name: "hello", type: "String")
+}"
+`;
+
+exports[`should write compose output to fusiongraph.js 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @resolver(subgraph: \\"helloworld\\", operation: \\"query hello { hello }\\") @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
+
+exports[`should write compose output to fusiongraph.json 1`] = `
+"{
+  "kind": "Document",
+  "definitions": [
+    {
+      "kind": "SchemaDefinition",
+      "directives": [],
+      "operationTypes": [
+        {
+          "kind": "OperationTypeDefinition",
+          "operation": "query",
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Query"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "ObjectTypeDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "Query"
+      },
+      "interfaces": [],
+      "directives": [],
+      "fields": [
+        {
+          "kind": "FieldDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "hello"
+          },
+          "arguments": [],
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": [
+            {
+              "kind": "Directive",
+              "name": {
+                "kind": "Name",
+                "value": "resolver"
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "subgraph"
+                  },
+                  "value": {
+                    "kind": "StringValue",
+                    "value": "helloworld",
+                    "block": false
+                  }
+                },
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "operation"
+                  },
+                  "value": {
+                    "kind": "StringValue",
+                    "value": "query hello { hello }",
+                    "block": false
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Directive",
+              "name": {
+                "kind": "Name",
+                "value": "source"
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "subgraph"
+                  },
+                  "value": {
+                    "kind": "StringValue",
+                    "value": "helloworld",
+                    "block": false
+                  }
+                },
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "name"
+                  },
+                  "value": {
+                    "kind": "StringValue",
+                    "value": "hello",
+                    "block": false
+                  }
+                },
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "type"
+                  },
+                  "value": {
+                    "kind": "StringValue",
+                    "value": "String",
+                    "block": false
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}"
+`;
+
+exports[`should write compose output to fusiongraph.ts 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @resolver(subgraph: \\"helloworld\\", operation: \\"query hello { hello }\\") @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
