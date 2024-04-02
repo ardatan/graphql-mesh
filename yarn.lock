@@ -10892,13 +10892,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.2.73":
+"@types/react@npm:*":
   version: 18.2.73
   resolution: "@types/react@npm:18.2.73"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/b6645ab3c20efa41cfccf58ce0be45419517a0ba4594e323dd400342fb1c1f9589d169cf9bfa85b5b0605e9097fe9de7734b6d0c533f5b9bc32aaadb624537a4
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:18.2.74":
+  version: 18.2.74
+  resolution: "@types/react@npm:18.2.74"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/347e38b4c5dc20d50ff71bf04b7caaef490e5ff695e74a0088a13fbb2a0c5d125a5ecfd142adfa30f0176da0e2734942c91ba61d95ce269c43b3265bd7379361
   languageName: node
   linkType: hard
 
@@ -18926,7 +18936,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.12.2"
-    "@types/react": "npm:18.2.73"
+    "@types/react": "npm:18.2.74"
     "@types/react-dom": "npm:18.2.23"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
@@ -26107,32 +26117,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"neo4j-driver-bolt-connection@npm:5.18.0":
-  version: 5.18.0
-  resolution: "neo4j-driver-bolt-connection@npm:5.18.0"
+"neo4j-driver-bolt-connection@npm:5.19.0":
+  version: 5.19.0
+  resolution: "neo4j-driver-bolt-connection@npm:5.19.0"
   dependencies:
     buffer: "npm:^6.0.3"
-    neo4j-driver-core: "npm:5.18.0"
+    neo4j-driver-core: "npm:5.19.0"
     string_decoder: "npm:^1.3.0"
-  checksum: 10c0/29a0a43f3b08fe7d72c33fb460710487fbcb22812ddc6eb8ba07590839283b1492bedf5c2621b89a9f9e53e22cdbf53273e47f06173bd1890914aefd053b69b1
+  checksum: 10c0/fba6b9b3628c942332a7df817d3b0a418dae589f8077afade602fa2db7c6f54edab5f5c3f9ea4d7217ee67a1bb07cfd7c6004e86c2630d8ffdcc0e8c2e673971
   languageName: node
   linkType: hard
 
-"neo4j-driver-core@npm:5.18.0":
-  version: 5.18.0
-  resolution: "neo4j-driver-core@npm:5.18.0"
-  checksum: 10c0/b61c3028974f45f03fdb213668c46a4798b239c064bcf8ccae5aa766804aeb685c4133b8ddbb31504cf7ec52c2935961c5962f25456735cc76c22906f3d30971
+"neo4j-driver-core@npm:5.19.0":
+  version: 5.19.0
+  resolution: "neo4j-driver-core@npm:5.19.0"
+  checksum: 10c0/43f07c465d0ff7249527a317c49f881e25bd14e39df10f7af80ffb66488767586045cd3c5c1909b3ff55f50b147f80b1e25e172b99a032091df34198834e641d
   languageName: node
   linkType: hard
 
 "neo4j-driver@npm:^5.17.0, neo4j-driver@npm:^5.9.2":
-  version: 5.18.0
-  resolution: "neo4j-driver@npm:5.18.0"
+  version: 5.19.0
+  resolution: "neo4j-driver@npm:5.19.0"
   dependencies:
-    neo4j-driver-bolt-connection: "npm:5.18.0"
-    neo4j-driver-core: "npm:5.18.0"
+    neo4j-driver-bolt-connection: "npm:5.19.0"
+    neo4j-driver-core: "npm:5.19.0"
     rxjs: "npm:^7.8.1"
-  checksum: 10c0/cb79827badc9b73755ec50cead1cc59261175644d516cb03af1cffab32959cd5970710702de3d533267e2b483f4b4d4bb439457f1ae066e621045c673f205590
+  checksum: 10c0/91875b2816ec1f34a08e69fec2949ad6876d9fbf0017a9cdd8ca20ed79faf34f054b836f442e1dae8a1bc6c254cfbea6599657488b00d37ad1f065d8335bf0e7
   languageName: node
   linkType: hard
 
@@ -26286,7 +26296,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.99.8"
     "@graphql-mesh/openapi": "npm:0.99.6"
     "@graphql-mesh/runtime": "npm:0.98.7"
-    "@types/react": "npm:18.2.73"
+    "@types/react": "npm:18.2.74"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.1.4"
@@ -26304,7 +26314,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.99.8"
     "@graphql-mesh/openapi": "npm:0.99.6"
     "@graphql-mesh/runtime": "npm:0.98.7"
-    "@types/react": "npm:18.2.73"
+    "@types/react": "npm:18.2.74"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.1.4"
@@ -27066,7 +27076,7 @@ __metadata:
   resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.8"
-    "@types/react": "npm:18.2.73"
+    "@types/react": "npm:18.2.74"
     "@types/react-dom": "npm:18.2.23"
     "@vitejs/plugin-react": "npm:4.2.1"
     graphql: "npm:16.8.1"
@@ -33947,10 +33957,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:6.10.2":
-  version: 6.10.2
-  resolution: "undici@npm:6.10.2"
-  checksum: 10c0/e1a9538d439da4c33c53d0f11f78caebf111f86e73d6e444a918f030b40b1f9e2568484ca053040c8d5883f87ffc8e876ded97add8ec184354a0aa287fc74d48
+"undici@npm:6.11.0":
+  version: 6.11.0
+  resolution: "undici@npm:6.11.0"
+  checksum: 10c0/ccbe451e259a6ecace8c855641cc24428adbf0e5ca2d48e769ccd4f1ec4e39150cded6897490c5db7d11072fdf436be9714cbde6cde604b4737aac43745b7d62
   languageName: node
   linkType: hard
 
@@ -34904,7 +34914,7 @@ __metadata:
     "@theguild/components": "npm:^6.4.0"
     "@theguild/tailwind-config": "npm:0.3.2"
     "@types/node": "npm:20.12.2"
-    "@types/react": "npm:18.2.73"
+    "@types/react": "npm:18.2.74"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.1.4"
     next: "npm:^14.1.4"
