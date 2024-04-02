@@ -18,9 +18,7 @@ afterAll(async () => {
 });
 
 export interface Proc {
-  stdout: string[];
-  stderr: string[];
-  stdboth: string[];
+  getStd(o: 'out' | 'err' | 'both'): string;
   kill(code?: number): void;
   waitForExit: Promise<void>;
 }
@@ -46,7 +44,7 @@ export function createTenv(cwd: string): Tenv {
       await Promise.race([
         proc.waitForExit.then(() =>
           Promise.reject(
-            new Error(`Serve exited successfully, but shouldn't have.\n${proc.stdboth.join('\n')}`),
+            new Error(`Serve exited successfully, but shouldn't have.\n${proc.getStd('both')}`),
           ),
         ),
         // waitForHealthcheckReady
@@ -58,7 +56,7 @@ export function createTenv(cwd: string): Tenv {
               break;
             } catch (err) {
               if (++retries > 5) {
-                throw new Error(`Serve healthcheck failed.\n${proc.stdboth.join('\n')}`);
+                throw new Error(`Serve healthcheck failed.\n${proc.getStd('both')}`);
               }
               await setTimeout(500);
             }
@@ -67,11 +65,15 @@ export function createTenv(cwd: string): Tenv {
       ]);
       return { ...proc, port };
     },
-    async compose(target = 'fusiongraph.graphql') {
-      const proc = await spawn({ cwd }, 'yarn', 'mesh-compose', `--target=${target}`);
+    async compose(target) {
+      const proc = await spawn({ cwd }, 'yarn', 'mesh-compose', target && `--target=${target}`);
       await proc.waitForExit;
-      const result = await fs.readFile(path.join(cwd, target), 'utf-8');
-      await fs.unlink(path.join(cwd, target));
+      let result = '';
+      if (target) {
+        result = await fs.readFile(path.join(cwd, target), 'utf-8');
+      } else {
+        result = proc.getStd('out');
+      }
       return { ...proc, result };
     },
   };
@@ -81,14 +83,28 @@ interface SpawnOptions {
   cwd: string;
 }
 
-function spawn({ cwd }: SpawnOptions, cmd: string, ...args: (string | number)[]): Promise<Proc> {
-  const child = childProcess.spawn(cmd, args.map(String), { cwd });
+function spawn(
+  { cwd }: SpawnOptions,
+  cmd: string,
+  ...args: (string | number | boolean)[]
+): Promise<Proc> {
+  const child = childProcess.spawn(cmd, args.filter(Boolean).map(String), { cwd });
 
   let exit: (err: Error | null) => void;
+  let stdout = '';
+  let stderr = '';
+  let stdboth = '';
   const proc: Proc = {
-    stdout: [],
-    stderr: [],
-    stdboth: [],
+    getStd(o) {
+      switch (o) {
+        case 'out':
+          return stdout;
+        case 'err':
+          return stderr;
+        case 'both':
+          return stdboth;
+      }
+    },
     kill: code => child.kill(code),
     waitForExit: new Promise(
       (resolve, reject) =>
@@ -104,12 +120,12 @@ function spawn({ cwd }: SpawnOptions, cmd: string, ...args: (string | number)[])
   leftovers.push(proc);
 
   child.stdout.on('data', x => {
-    proc.stdout.push(x.toString());
-    proc.stdboth.push(x.toString());
+    stdout += x.toString();
+    stdboth += x.toString();
   });
   child.stderr.on('data', x => {
-    proc.stderr.push(x.toString());
-    proc.stdboth.push(x.toString());
+    stderr += x.toString();
+    stdboth += x.toString();
   });
   child.once('exit', code => {
     leftovers = leftovers.filter(leftover => leftover !== proc);
@@ -117,7 +133,7 @@ function spawn({ cwd }: SpawnOptions, cmd: string, ...args: (string | number)[])
     const err =
       code === 0 || code == null
         ? undefined
-        : new Error(`Exit code ${code}\n${proc.stdboth.join('\n')}`);
+        : new Error(`Exit code ${code}\n${proc.getStd('both')}`);
     if (err) {
       child.emit('error', err);
     }
