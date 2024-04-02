@@ -54,7 +54,7 @@ export function createTenv(cwd: string): Tenv {
               await fetch(`http://0.0.0.0:${port}/healthcheck`);
               break;
             } catch (err) {
-              if (++retries > 5) {
+              if (++retries > 10) {
                 throw new Error(`Serve healthcheck failed.\n${proc.getStd('both')}`);
               }
               await setTimeout(500);
