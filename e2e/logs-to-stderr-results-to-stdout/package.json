@@ -1,0 +1,10 @@
+{
+  "name": "@e2e/logs-to-stderr-results-to-stdout",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "graphql": "16.8.1"
+  }
+}

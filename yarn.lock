@@ -3562,6 +3562,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/logs-to-stderr-results-to-stdout@workspace:e2e/logs-to-stderr-results-to-stdout":
+  version: 0.0.0-use.local
+  resolution: "@e2e/logs-to-stderr-results-to-stdout@workspace:e2e/logs-to-stderr-results-to-stdout"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    graphql: "npm:16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@emnapi/runtime@npm:^1.1.0":
   version: 1.1.1
   resolution: "@emnapi/runtime@npm:1.1.1"

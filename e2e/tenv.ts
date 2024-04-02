@@ -32,14 +32,13 @@ export interface Compose extends Proc {
 }
 
 export interface Tenv {
-  serve(): Promise<Serve>;
+  serve(port?: number): Promise<Serve>;
   compose(target?: string): Promise<Compose>;
 }
 
 export function createTenv(cwd: string): Tenv {
   return {
-    async serve() {
-      const port = getAvailablePort();
+    async serve(port = getAvailablePort()) {
       const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', `--port=${port}`);
       await Promise.race([
         proc.waitForExit.then(() =>
