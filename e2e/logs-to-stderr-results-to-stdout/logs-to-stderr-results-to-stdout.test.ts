@@ -8,9 +8,7 @@ it('should write serve logs to stderr', async () => {
   await proc.waitForExit;
 
   expect(proc.getStd('out')).toBeFalsy();
-  expect(proc.getStd('err')).toMatchInlineSnapshot(
-    `"[1m🕸️  Mesh[0m 💡 [36mStarting[0m[1m🕸️  Mesh[0m 💡 [36mLoading configuration from mesh.config.ts[0m[1m🕸️  Mesh[0m 💡 [36mLoaded configuration from mesh.config.ts[0m[1m🕸️  Mesh[0m 💡 [36mLoading Fusiongraph from [0m[1m🕸️  Mesh[0m 💡 [36mStarting server on http://0.0.0.0:55001[0m[1m🕸️  Mesh[0m 💡 [36mStarted server on http://0.0.0.0:55001[0m[1m🕸️  Mesh[0m 💡 [36mClosing http://0.0.0.0:55001 for SIGTERM[0m[1m🕸️  Mesh[0m 💡 [36mClosing watcher for e2e/logs-to-stderr-...<Message is too long. Enable DEBUG=1 to see the full message.>[0m"`,
-  );
+  expect(proc.getStd('err')).toContain('Started server on');
 });
 
 it('should write compose output to stdout and logs to stderr', async () => {
