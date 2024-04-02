@@ -3,7 +3,7 @@ import { createTenv } from '../tenv';
 const { serve, compose } = createTenv(__dirname);
 
 it('should write serve logs to stderr', async () => {
-  const proc = await serve(55001);
+  const proc = await serve();
   proc.kill();
   await proc.waitForExit;
 
