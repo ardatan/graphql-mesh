@@ -4,7 +4,7 @@ const { serve, compose } = createTenv(__dirname);
 
 it('should serve', async () => {
   const proc = await serve();
-  const res = await fetch(`http://localhost:${proc.port}/healthcheck`);
+  const res = await fetch(`http://0.0.0.0:${proc.port}/healthcheck`);
   expect(res.ok).toBeTruthy();
 });
 
