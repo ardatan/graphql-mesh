@@ -79,7 +79,12 @@ export class DefaultLogger implements Logger {
     const message = this.getLoggerMessage({
       args,
     });
-    return console.log(`${this.prefix} ${message}`);
+    const fullMessage = `${this.prefix} ${message}`;
+    if (typeof process === 'object') {
+      process.stderr.write(fullMessage);
+    } else {
+      console.log(fullMessage);
+    }
   }
 
   warn(...args: any[]) {
@@ -87,10 +92,10 @@ export class DefaultLogger implements Logger {
       args,
     });
     const fullMessage = `${this.prefix} ⚠️ ${warnColor(message)}`;
-    if (console.warn) {
-      console.warn(fullMessage);
+    if (typeof process === 'object') {
+      process.stderr.write(fullMessage);
     } else {
-      console.log(fullMessage);
+      console.warn(fullMessage);
     }
   }
 
@@ -99,10 +104,10 @@ export class DefaultLogger implements Logger {
       args,
     });
     const fullMessage = `${this.prefix} 💡 ${infoColor(message)}`;
-    if (console.info) {
-      console.info(fullMessage);
+    if (typeof process === 'object') {
+      process.stderr.write(fullMessage);
     } else {
-      console.log(fullMessage);
+      console.info(fullMessage);
     }
   }
 
@@ -112,7 +117,11 @@ export class DefaultLogger implements Logger {
       trim: false,
     });
     const fullMessage = `${this.prefix} 💥 ${errorColor(message)}`;
-    console.log(fullMessage);
+    if (typeof process === 'object') {
+      process.stderr.write(fullMessage);
+    } else {
+      console.error(fullMessage);
+    }
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
@@ -121,10 +130,10 @@ export class DefaultLogger implements Logger {
         lazyArgs,
       });
       const fullMessage = `${this.prefix} 🐛 ${debugColor(message)}`;
-      if (console.debug) {
-        console.debug(fullMessage);
+      if (typeof process === 'object') {
+        process.stderr.write(fullMessage);
       } else {
-        console.log(fullMessage);
+        console.debug(fullMessage);
       }
     }
   }
