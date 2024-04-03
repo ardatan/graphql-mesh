@@ -61,8 +61,8 @@ describe('useForwardHeaders', () => {
       },
     });
 
-    expect(requestTrackerPlugin.onParams).toHaveBeenCalledTimes(2);
-    const onParamsPayload = requestTrackerPlugin.onParams.mock.calls[1][0];
+    expect(requestTrackerPlugin.onParams).toHaveBeenCalledTimes(1);
+    const onParamsPayload = requestTrackerPlugin.onParams.mock.calls[0][0];
     // Do not pass extensions
     expect(onParamsPayload.params.extensions).toBeUndefined();
     const headersObj = Object.fromEntries(onParamsPayload.request.headers.entries());
@@ -108,8 +108,8 @@ describe('useForwardHeaders', () => {
       },
     });
 
-    expect(requestTrackerPlugin.onParams).toHaveBeenCalledTimes(2);
-    const onParamsPayload = requestTrackerPlugin.onParams.mock.calls[1][0];
+    expect(requestTrackerPlugin.onParams).toHaveBeenCalledTimes(1);
+    const onParamsPayload = requestTrackerPlugin.onParams.mock.calls[0][0];
     // Do not pass extensions
     expect(onParamsPayload.params.extensions).toBeUndefined();
     const headersObj = Object.fromEntries(onParamsPayload.request.headers.entries());
