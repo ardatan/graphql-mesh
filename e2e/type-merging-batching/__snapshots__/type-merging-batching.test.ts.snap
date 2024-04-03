@@ -30,3 +30,218 @@ type Book @source(subgraph: "books", name: "Book") @resolver(subgraph: "books", 
 }
 "
 `;
+
+exports[`should properly plan Author 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "author": [
+      {
+        "id": 0,
+        "resolverDependencies": [
+          {
+            "id": 1,
+            "resolverDependencyFieldMap": {
+              "books.author": [
+                {
+                  "id": 2,
+                  "resolverOperationDocument": "query AuthorOfBook($__variable_3: ID!) {
+  __export: author(id: $__variable_3) {
+    id
+    name
+  }
+}",
+                  "subgraph": "authors",
+                },
+              ],
+            },
+            "resolverOperationDocument": "query AuthorWithBooksById($__variable_1: ID!) {
+  __export: authorWithBooks(id: $__variable_1) {
+    books {
+      id
+      title
+      __variable_3: authorId
+    }
+  }
+}",
+            "resolverPreDependencies": [
+              {
+                "id": 3,
+                "resolverOperationDocument": "query AuthorWithBooksById($__variable_2: ID!) {
+  __export: authorWithBooks(id: $__variable_2) {
+    __variable_1: id
+  }
+}",
+                "subgraph": "books",
+              },
+            ],
+            "subgraph": "books",
+          },
+        ],
+        "resolverOperationDocument": "query author {
+  __export: author(id: 1) {
+    id
+    name
+  }
+}",
+        "subgraph": "authors",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;
+
+exports[`should properly plan Authors 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "authors": [
+      {
+        "id": 0,
+        "resolverDependencies": [
+          {
+            "id": 1,
+            "resolverDependencyFieldMap": {
+              "books.author": [
+                {
+                  "id": 2,
+                  "resolverOperationDocument": "query AuthorOfBook($__variable_3: ID!) {
+  __export: author(id: $__variable_3) {
+    id
+    name
+  }
+}",
+                  "subgraph": "authors",
+                },
+              ],
+            },
+            "resolverOperationDocument": "query AuthorWithBooksById($__variable_1: ID!) {
+  __export: authorWithBooks(id: $__variable_1) {
+    books {
+      id
+      title
+      __variable_3: authorId
+    }
+  }
+}",
+            "resolverPreDependencies": [
+              {
+                "id": 3,
+                "resolverOperationDocument": "query AuthorWithBooksById($__variable_2: ID!) {
+  __export: authorWithBooks(id: $__variable_2) {
+    __variable_1: id
+  }
+}",
+                "subgraph": "books",
+              },
+            ],
+            "subgraph": "books",
+          },
+        ],
+        "resolverOperationDocument": "query authors($__variable_0: [ID]) {
+  __export: authors(ids: $__variable_0) {
+    id
+    name
+  }
+}",
+        "subgraph": "authors",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;
+
+exports[`should properly plan Book 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "book": [
+      {
+        "id": 0,
+        "resolverDependencyFieldMap": {
+          "author": [
+            {
+              "id": 1,
+              "resolverDependencies": [
+                {
+                  "id": 2,
+                  "resolverOperationDocument": "query AuthorWithBooksById($__variable_2: ID!) {
+  __export: authorWithBooks(id: $__variable_2) {
+    books {
+      id
+      title
+    }
+  }
+}",
+                  "resolverPreDependencies": [
+                    {
+                      "id": 3,
+                      "resolverOperationDocument": "query AuthorWithBooksById($__variable_3: ID!) {
+  __export: authorWithBooks(id: $__variable_3) {
+    __variable_2: id
+  }
+}",
+                      "subgraph": "books",
+                    },
+                  ],
+                  "subgraph": "books",
+                },
+              ],
+              "resolverOperationDocument": "query AuthorOfBook($__variable_1: ID!) {
+  __export: author(id: $__variable_1) {
+    id
+    name
+  }
+}",
+              "subgraph": "authors",
+            },
+          ],
+        },
+        "resolverOperationDocument": "query book {
+  __export: book(id: 1) {
+    id
+    title
+    __variable_1: authorId
+  }
+}",
+        "subgraph": "books",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;
+
+exports[`should properly plan Books 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "books": [
+      {
+        "id": 0,
+        "resolverDependencyFieldMap": {
+          "author": [
+            {
+              "id": 1,
+              "resolverOperationDocument": "query AuthorOfBook($__variable_1: ID!) {
+  __export: author(id: $__variable_1) {
+    id
+    name
+  }
+}",
+              "subgraph": "authors",
+            },
+          ],
+        },
+        "resolverOperationDocument": "query books($__variable_0: [ID]) {
+  __export: books(ids: $__variable_0) {
+    id
+    title
+    __variable_1: authorId
+  }
+}",
+        "subgraph": "books",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;

@@ -3587,6 +3587,7 @@ __metadata:
   resolution: "@e2e/type-merging-batching@workspace:e2e/type-merging-batching"
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/fusion-execution": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
     graphql: "npm:^16.8.1"
     graphql-yoga: "npm:^5.0.1"
@@ -4605,7 +4606,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/fusion-execution@npm:^0.0.2, @graphql-mesh/fusion-execution@workspace:packages/fusion/execution":
+"@graphql-mesh/fusion-execution@npm:^0.0.2, @graphql-mesh/fusion-execution@workspace:*, @graphql-mesh/fusion-execution@workspace:packages/fusion/execution":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-execution@workspace:packages/fusion/execution"
   dependencies:
