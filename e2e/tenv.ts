@@ -22,7 +22,7 @@ afterAll(async () => {
 
 export interface Proc {
   getStd(o: 'out' | 'err' | 'both'): string;
-  kill(code?: number): void;
+  kill(): void;
   waitForExit: Promise<void>;
 }
 
@@ -149,7 +149,12 @@ function spawn(
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<Proc> {
-  const child = childProcess.spawn(cmd, args.filter(Boolean).map(String), { cwd });
+  const child = childProcess.spawn(cmd, args.filter(Boolean).map(String), {
+    cwd,
+    // turn the child process into a group leader
+    // BEWARE: child wont receive signals from parent (like with CTRL-C) when detached
+    detached: true,
+  });
 
   let exit: (err: Error | null) => void;
   let stdout = '';
@@ -166,7 +171,10 @@ function spawn(
           return stdboth;
       }
     },
-    kill: code => child.kill(code),
+    kill: () => {
+      // kill the whole process group
+      process.kill(-child.pid, 9);
+    },
     waitForExit: new Promise(
       (resolve, reject) =>
         (exit = err => {
@@ -190,7 +198,7 @@ function spawn(
     stderr += str;
     stdboth += str;
   });
-  child.once('exit', code => {
+  child.once('close', code => {
     leftovers = leftovers.filter(leftover => leftover !== proc);
 
     const err =
