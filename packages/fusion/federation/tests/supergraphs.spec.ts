@@ -22,16 +22,10 @@ describe('Supergraphs', () => {
         expect(printSchemaWithDirectives(fusiongraph)).toMatchSnapshot('fusiongraph');
       });
       const serviceServers = {};
-      readdirSync(join(__dirname, 'fixtures', 'supergraphs', supergraph, 'services')).forEach(
+      const fixturePath = join(__dirname, 'fixtures', 'supergraphs', supergraph, 'services')
+      readdirSync(fixturePath).forEach(
         serviceName => {
-          const serviceDir = join(
-            __dirname,
-            'fixtures',
-            'supergraphs',
-            supergraph,
-            'services',
-            serviceName,
-          );
+          const serviceDir = join(fixturePath, serviceName);
           serviceServers[serviceName] = createYoga({
             schema: buildSubgraphSchema({
               typeDefs: parse(require(join(serviceDir, 'typeDefs')).typeDefs),
