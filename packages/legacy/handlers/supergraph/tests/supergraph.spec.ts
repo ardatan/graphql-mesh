@@ -4,8 +4,9 @@ import BareMerger from '@graphql-mesh/merger-bare';
 import { getMesh } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import SupergraphHandler from '@graphql-mesh/supergraph';
-import { MeshFetch } from '@graphql-mesh/types';
-import { DefaultLogger, defaultImportFn as importFn, PubSub } from '@graphql-mesh/utils';
+import { Logger, MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn as importFn, PubSub } from '@graphql-mesh/utils';
+import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import {
   AUTH_HEADER as AUTHORS_AUTH_HEADER,
   server as authorsServer,
@@ -16,38 +17,58 @@ import {
 } from './fixtures/service-book/server';
 
 describe('Supergraph', () => {
-  const baseDir = __dirname;
-  const cache = new LocalforageCache();
-  const store = new MeshStore('test', new InMemoryStoreStorageAdapter(), {
-    validate: false,
-    readonly: false,
+  let baseHandlerConfig;
+  let baseGetMeshConfig;
+  const logger = {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+    child() {
+      return logger;
+    },
+  };
+  const libcurl = globalThis.libcurl;
+  beforeEach(() => {
+    globalThis.libcurl = null;
+    const baseDir = __dirname;
+    const cache = new LocalforageCache();
+    const store = new MeshStore('test', new InMemoryStoreStorageAdapter(), {
+      validate: false,
+      readonly: false,
+    });
+    const pubsub = new PubSub();
+    const merger = new BareMerger({ cache, pubsub, store, logger });
+    const fetchFn: MeshFetch = async (url, options) => {
+      if (url.includes('authors')) {
+        return authorsServer.fetch(url, options);
+      }
+      if (url.includes('books')) {
+        return booksServer.fetch(url, options);
+      }
+      return defaultFetchFn(url, options);
+    };
+    baseHandlerConfig = {
+      name: 'BooksAndAuthors',
+      baseDir,
+      cache,
+      store,
+      pubsub,
+      logger,
+      importFn,
+    };
+    baseGetMeshConfig = {
+      cache,
+      logger,
+      fetchFn,
+      merger,
+    };
+    jest.clearAllMocks();
   });
-  const logger = new DefaultLogger('test');
-  const pubsub = new PubSub();
-  const merger = new BareMerger({ cache, pubsub, store, logger });
-  const fetchFn: MeshFetch = async (url, options) => {
-    if (url.includes('authors')) {
-      return authorsServer.fetch(url, options);
-    }
-    if (url.includes('books')) {
-      return booksServer.fetch(url, options);
-    }
-    throw new Error(`Unknown URL: ${url}`);
-  };
-  const baseHandlerConfig = {
-    name: 'BooksAndAuthors',
-    baseDir,
-    cache,
-    store,
-    pubsub,
-    logger,
-    importFn,
-  };
-  const baseGetMeshConfig = {
-    cache,
-    fetchFn,
-    merger,
-  };
+  afterEach(() => {
+    globalThis.libcurl = libcurl;
+  });
   it('supports individual headers for each subgraph with interpolation', async () => {
     const handler = new SupergraphHandler({
       ...baseHandlerConfig,
@@ -208,5 +229,53 @@ describe('Supergraph', () => {
         },
       },
     });
+  });
+  it('throws a helpful error when the supergraph is an invalid SDL', async () => {
+    const handler = new SupergraphHandler({
+      ...baseHandlerConfig,
+      config: {
+        source: './fixtures/supergraph-invalid.graphql',
+      },
+    });
+    await expect(
+      getMesh({
+        sources: [
+          {
+            name: 'supergraph',
+            handler,
+          },
+        ],
+        ...baseGetMeshConfig,
+      }),
+    ).rejects.toThrow();
+    expect(logger.error.mock.calls[0][0].toString())
+      .toBe(`Failed to generate the schema for the source "supergraph"
+ Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ./fixtures/supergraph-invalid.graphql instead.
+ Got result: type Query {
+
+ Got error: Syntax Error: Expected Name, found <EOF>.`);
+  });
+  it('throws a helpful error when the source is down', async () => {
+    const handler = new SupergraphHandler({
+      ...baseHandlerConfig,
+      config: {
+        source: 'http://down-sdl-source.com/my-sdl.graphql',
+      },
+    });
+    await expect(
+      getMesh({
+        sources: [
+          {
+            name: 'supergraph',
+            handler,
+          },
+        ],
+        ...baseGetMeshConfig,
+      }),
+    ).rejects.toThrow();
+    expect(logger.error.mock.calls[0][0].toString())
+      .toBe(`Failed to generate the schema for the source "supergraph"
+ Failed to load supergraph SDL from http://down-sdl-source.com/my-sdl.graphql:
+ getaddrinfo ENOTFOUND down-sdl-source.com`);
   });
 });

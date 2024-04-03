@@ -61,24 +61,25 @@ export default class SupergraphHandler implements MeshHandler {
         importFn: this.importFn,
         fetch: this.fetchFn,
         logger: this.logger,
+      }).catch(e => {
+        throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
       });
-      if (typeof res === 'string') {
-        return parse(res, { noLocation: true });
-      }
-      return res;
+      return handleSupergraphResponse(res, interpolatedSource);
     }
     return this.supergraphSdl.getWithSet(async () => {
       const sdlOrIntrospection = await readFile<string | DocumentNode>(interpolatedSource, {
+        headers: schemaHeadersFactory({
+          env: process.env,
+        }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
         fetch: this.fetchFn,
         logger: this.logger,
+      }).catch(e => {
+        throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
       });
-      if (typeof sdlOrIntrospection === 'string') {
-        return parse(sdlOrIntrospection, { noLocation: true });
-      }
-      return sdlOrIntrospection;
+      return handleSupergraphResponse(sdlOrIntrospection, interpolatedSource);
     });
   }
 
@@ -157,4 +158,25 @@ export default class SupergraphHandler implements MeshHandler {
       schema,
     };
   }
+}
+
+function handleSupergraphResponse(
+  sdlOrDocumentNode: string | DocumentNode,
+  interpolatedSource: string,
+) {
+  if (typeof sdlOrDocumentNode === 'string') {
+    try {
+      return parse(sdlOrDocumentNode, { noLocation: true });
+    } catch (e) {
+      throw new Error(
+        `Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ${interpolatedSource} instead.\n Got result: ${sdlOrDocumentNode}\n Got error: ${e.message}`,
+      );
+    }
+  }
+  if (sdlOrDocumentNode?.kind !== 'Document') {
+    throw new Error(
+      `Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ${interpolatedSource} instead.\n Got result: ${JSON.stringify(sdlOrDocumentNode, null, 2)}`,
+    );
+  }
+  return sdlOrDocumentNode;
 }
