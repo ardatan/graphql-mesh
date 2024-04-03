@@ -250,7 +250,7 @@ describe('Supergraph', () => {
     ).rejects.toThrow();
     expect(logger.error.mock.calls[0][0].toString())
       .toBe(`Failed to generate the schema for the source "supergraph"
- Supergraph SDL must be a string, but got an invalid result from ./fixtures/supergraph-invalid.graphql instead.
+ Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ./fixtures/supergraph-invalid.graphql instead.
  Got result: type Query {
 
  Got error: Syntax Error: Expected Name, found <EOF>.`);

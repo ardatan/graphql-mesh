@@ -161,22 +161,22 @@ export default class SupergraphHandler implements MeshHandler {
 }
 
 function handleSupergraphResponse(
-  sdlOrIntrospection: string | DocumentNode,
+  sdlOrDocumentNode: string | DocumentNode,
   interpolatedSource: string,
 ) {
-  if (typeof sdlOrIntrospection === 'string') {
+  if (typeof sdlOrDocumentNode === 'string') {
     try {
-      return parse(sdlOrIntrospection, { noLocation: true });
+      return parse(sdlOrDocumentNode, { noLocation: true });
     } catch (e) {
       throw new Error(
-        `Supergraph SDL must be a string, but got an invalid result from ${interpolatedSource} instead.\n Got result: ${sdlOrIntrospection}\n Got error: ${e.message}`,
+        `Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ${interpolatedSource} instead.\n Got result: ${sdlOrDocumentNode}\n Got error: ${e.message}`,
       );
     }
   }
-  if (sdlOrIntrospection?.kind !== 'Document') {
+  if (sdlOrDocumentNode?.kind !== 'Document') {
     throw new Error(
-      `Supergraph SDL must be a string, but got an invalid result from ${interpolatedSource} instead.\n Got result: ${JSON.stringify(sdlOrIntrospection, null, 2)}`,
+      `Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ${interpolatedSource} instead.\n Got result: ${JSON.stringify(sdlOrDocumentNode, null, 2)}`,
     );
   }
-  return sdlOrIntrospection;
+  return sdlOrDocumentNode;
 }
