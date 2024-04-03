@@ -6,6 +6,9 @@ import path from 'path';
 import { setTimeout } from 'timers/promises';
 import { createArg, createPortArg, createSubgraphPortArg } from './args';
 
+// increase timeout to get more room for reachability waits
+jest.setTimeout(15_000);
+
 let leftovers: Proc[] = [];
 afterAll(async () => {
   await Promise.allSettled(
