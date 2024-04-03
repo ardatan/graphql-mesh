@@ -2,8 +2,6 @@ import { createTenv } from '../tenv';
 
 const { compose, fs } = createTenv(__dirname);
 
-// jest.change
-
 it('should write compose output to fusiongraph.graphql', async () => {
   const target = 'fusiongraph.graphql';
   const proc = await compose(target);
