@@ -1,4 +1,6 @@
+import { createServer } from 'http';
 import { createSchema, createYoga } from 'graphql-yoga';
+import { Args } from '../../args';
 
 const books = [
   {
@@ -13,7 +15,7 @@ const books = [
   },
 ];
 
-export const booksYoga = createYoga({
+const yoga = createYoga({
   schema: createSchema({
     typeDefs: /* GraphQL */ `
       type Query {
@@ -45,4 +47,10 @@ export const booksYoga = createYoga({
       },
     },
   }),
+});
+
+const port = Args(process.argv).getSubgraphPort('books', true);
+
+createServer(yoga).listen(port, () => {
+  console.log(`Books service listening on http://localhost:${port}`);
 });

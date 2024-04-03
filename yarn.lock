@@ -3582,6 +3582,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/type-merging-batching@workspace:e2e/type-merging-batching":
+  version: 0.0.0-use.local
+  resolution: "@e2e/type-merging-batching@workspace:e2e/type-merging-batching"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    graphql: "npm:^16.8.1"
+    graphql-yoga: "npm:^5.0.1"
+  languageName: unknown
+  linkType: soft
+
 "@emnapi/runtime@npm:^1.1.0":
   version: 1.1.1
   resolution: "@emnapi/runtime@npm:1.1.1"
@@ -19431,6 +19442,7 @@ __metadata:
     minimatch: "npm:9.0.4"
     prettier: "npm:3.2.5"
     ts-jest: "npm:29.1.2"
+    tsx: "npm:^4.7.1"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft

@@ -1,4 +1,4 @@
-import { Args, createArg } from './args';
+import { Args, createArg, createPortArg, createSubgraphPortArg } from './args';
 
 it.each([
   {
@@ -13,6 +13,30 @@ it.each([
   },
 ])('should create $out from $key:$val', ({ key, val, out }) => {
   expect(createArg(key, val)).toBe(out);
+});
+
+it.each([
+  {
+    val: 5000,
+    out: '--port=5000',
+  },
+])('should create port arg $out with $val', ({ val, out }) => {
+  expect(createPortArg(val)).toBe(out);
+});
+
+it.each([
+  {
+    name: 'john',
+    val: 5000,
+    out: '--john_port=5000',
+  },
+  {
+    name: 'books',
+    val: 5001,
+    out: '--books_port=5001',
+  },
+])('should create subgraph port arg $out for $name with $val', ({ name, val, out }) => {
+  expect(createSubgraphPortArg(name, val)).toBe(out);
 });
 
 it.each([
@@ -40,12 +64,11 @@ it.each([
 
 it.each([
   {
-    argv: ['yarn', 'mesh', createArg('port', 5000)],
-    key: 'port',
+    argv: ['yarn', 'mesh', createPortArg(5000)],
     val: 5000,
   },
-])('should get int $val by "$key" from $argv', ({ argv, key, val }) => {
-  expect(Args(argv).getInt(key)).toBe(val);
+])('should get port $val from $argv', ({ argv, val }) => {
+  expect(Args(argv).getPort()).toBe(val);
 });
 
 it.each([

@@ -4,7 +4,7 @@ import { createServer } from 'http';
 import { AddressInfo } from 'net';
 import path from 'path';
 import { setTimeout } from 'timers/promises';
-import { createArg } from './args';
+import { createArg, createPortArg, createSubgraphPortArg } from './args';
 
 let leftovers: Proc[] = [];
 afterAll(async () => {
@@ -23,8 +23,23 @@ export interface Proc {
   waitForExit: Promise<void>;
 }
 
-export interface Serve extends Proc {
+export interface Server extends Proc {
   port: number;
+}
+
+export interface Subgraph extends Server {
+  name: string;
+}
+
+export interface ComposeOptions {
+  target?: string;
+  /**
+   * Subgraphs relevant to the compose process.
+   * It will supply `--<subgraph.name>_port=<subgraph.port>` arguments to the process.
+   */
+  subgraphs?: Subgraph[];
+  /** Whether to mask the subgraph ports in the result. */
+  maskSubgraphPorts?: boolean;
 }
 
 export interface Compose extends Proc {
@@ -36,8 +51,14 @@ export interface Tenv {
     read(path: string): Promise<string>;
     delete(path: string): Promise<void>;
   };
-  serve(port?: number): Promise<Serve>;
-  compose(target?: string): Promise<Compose>;
+  serve(port?: number): Promise<Server>;
+  compose(opts?: ComposeOptions): Promise<Compose>;
+  /**
+   * Starts a subgraph by name. Subgraphs are services that serve GraphQL.
+   * The TypeScript subgraph executable must be at `subgraphs/<name>.ts`.
+   * Port will be provided as an argument `--<name>_port=<port>` to the subgraph.
+   */
+  subgraph(name: string, port?: number): Promise<Subgraph>;
 }
 
 export function createTenv(cwd: string): Tenv {
@@ -51,37 +72,26 @@ export function createTenv(cwd: string): Tenv {
       },
     },
     async serve(port = getAvailablePort()) {
-      const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', createArg('port', port));
+      const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', createPortArg(port));
+      const server = { ...proc, port };
       await Promise.race([
         proc.waitForExit.then(() =>
           Promise.reject(
             new Error(`Serve exited successfully, but shouldn't have.\n${proc.getStd('both')}`),
           ),
         ),
-        // waitForHealthcheckReady
-        (async () => {
-          let retries = 0;
-          for (;;) {
-            try {
-              await fetch(`http://0.0.0.0:${port}/healthcheck`);
-              break;
-            } catch (err) {
-              if (++retries > 10) {
-                throw new Error(`Serve healthcheck failed.\n${proc.getStd('both')}`);
-              }
-              await setTimeout(500);
-            }
-          }
-        })(),
+        waitForReachable(server),
       ]);
-      return { ...proc, port };
+      return server;
     },
-    async compose(target) {
+    async compose(opts) {
+      const { target, subgraphs = [], maskSubgraphPorts } = opts || {};
       const proc = await spawn(
         { cwd },
         'yarn',
         'mesh-compose',
         target && createArg('target', target),
+        ...subgraphs.map(({ name, port }) => createSubgraphPortArg(name, port)),
       );
       await proc.waitForExit;
       let result = '';
@@ -90,7 +100,39 @@ export function createTenv(cwd: string): Tenv {
       } else {
         result = proc.getStd('out');
       }
+
+      if (maskSubgraphPorts) {
+        for (const subgraph of subgraphs) {
+          result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
+        }
+        if (target) {
+          await fs.writeFile(path.join(cwd, target), result, 'utf8');
+        }
+      }
+
       return { ...proc, result };
+    },
+    async subgraph(name, port = getAvailablePort()) {
+      const proc = await spawn(
+        { cwd },
+        // run with tsx from root workspace
+        'yarn',
+        'run',
+        '-T',
+        'tsx',
+        path.join(cwd, 'subgraphs', name),
+        createSubgraphPortArg(name, port),
+      );
+      const subgraph = { ...proc, name, port };
+      await Promise.race([
+        proc.waitForExit.then(() =>
+          Promise.reject(
+            new Error(`Subgraph exited successfully, but shouldn't have.\n${proc.getStd('both')}`),
+          ),
+        ),
+        waitForReachable(subgraph),
+      ]);
+      return subgraph;
     },
   };
 }
@@ -156,7 +198,7 @@ function spawn(
       child.emit('error', err);
     }
 
-    child.stdin.end();
+    child.stdin.destroy();
     child.stdout.destroy();
     child.stderr.destroy();
     child.removeAllListeners();
@@ -176,4 +218,19 @@ function getAvailablePort() {
   const { port } = server.address() as AddressInfo;
   server.close();
   return port;
+}
+
+async function waitForReachable(server: Server) {
+  let retries = 0;
+  for (;;) {
+    try {
+      await fetch(`http://0.0.0.0:${server.port}`);
+      break;
+    } catch (err) {
+      if (++retries > 10) {
+        throw new Error(`Server at port ${server.port} not reachable.\n${server.getStd('both')}`);
+      }
+      await setTimeout(500);
+    }
+  }
 }

@@ -6,7 +6,7 @@ import { Args } from '../args';
 const args = Args(process.argv);
 
 export const serveConfig = defineServeConfig({
-  port: args.getInt('port'),
+  port: args.getPort(),
   fusiongraph: '',
 });
 

@@ -4,17 +4,20 @@ import {
   defineConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
+import { Args } from '../args';
+
+const args = Args(process.argv);
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('authors', {
-        endpoint: 'http://localhost:4001/graphql',
+        endpoint: `http://localhost:${args.getSubgraphPort('authors', true)}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('books', {
-        endpoint: 'http://localhost:4002/graphql',
+        endpoint: `http://localhost:${args.getSubgraphPort('books', true)}/graphql`,
       }),
       transforms: [
         createRenameFieldTransform((_field, fieldName, typeName) =>

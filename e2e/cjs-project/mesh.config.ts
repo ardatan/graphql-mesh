@@ -6,7 +6,7 @@ const { Args } = require('../args');
 const args = Args(process.argv);
 
 const serveConfig = defineServeConfig({
-  port: args.getInt('port'),
+  port: args.getPort(),
   fusiongraph: '',
 });
 

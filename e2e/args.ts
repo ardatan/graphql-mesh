@@ -9,11 +9,21 @@ export function createArg(key: string, val: string | number): string {
   return `--${key}=${strVal}`;
 }
 
+export function createPortArg(val: number): string {
+  return createArg('port', val);
+}
+
+export function createSubgraphPortArg(name: string, val: number): string {
+  return createArg(`${name}_port`, val);
+}
+
 export interface Args {
   get(key: string): string | undefined;
   get(key: string, required: true): string;
-  getInt(key: string): number | undefined;
-  getInt(key: string, required: true): number;
+  getPort(): number | undefined;
+  getPort(required: true): number;
+  getSubgraphPort(name: string): number | undefined;
+  getSubgraphPort(name: string, required: true): number;
 }
 
 export function Args(argv: string[]): Args {
@@ -34,8 +44,19 @@ export function Args(argv: string[]): Args {
     }
     return val;
   }
-  function getInt(key: string, required?: true) {
-    const strVal = get(key, required);
+  function getPort(required?: true) {
+    const strVal = get('port', required);
+    if (!strVal) {
+      return undefined;
+    }
+    const val = parseInt(strVal);
+    if (isNaN(val)) {
+      throw new Error(`Arg value "${strVal}" is not a number.`);
+    }
+    return val;
+  }
+  function getSubgraphPort(name: string, required?: true) {
+    const strVal = get(`${name}_port`, required);
     if (!strVal) {
       return undefined;
     }
@@ -47,6 +68,7 @@ export function Args(argv: string[]): Args {
   }
   return {
     get,
-    getInt,
+    getPort,
+    getSubgraphPort,
   };
 }

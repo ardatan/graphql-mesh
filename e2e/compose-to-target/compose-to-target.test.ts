@@ -4,7 +4,7 @@ const { compose, fs } = createTenv(__dirname);
 
 it('should write compose output to fusiongraph.graphql', async () => {
   const target = 'fusiongraph.graphql';
-  const proc = await compose(target);
+  const proc = await compose({ target });
   await proc.waitForExit;
 
   await expect(fs.read(target)).resolves.toMatchSnapshot();
@@ -14,7 +14,7 @@ it('should write compose output to fusiongraph.graphql', async () => {
 
 it('should write compose output to fusiongraph.json', async () => {
   const target = 'fusiongraph.json';
-  const proc = await compose(target);
+  const proc = await compose({ target });
   await proc.waitForExit;
 
   await expect(fs.read(target)).resolves.toMatchSnapshot();
@@ -24,7 +24,7 @@ it('should write compose output to fusiongraph.json', async () => {
 
 it('should write compose output to fusiongraph.js', async () => {
   const target = 'fusiongraph.js';
-  const proc = await compose(target);
+  const proc = await compose({ target });
   await proc.waitForExit;
 
   await expect(fs.read(target)).resolves.toMatchSnapshot();
@@ -34,7 +34,7 @@ it('should write compose output to fusiongraph.js', async () => {
 
 it('should write compose output to fusiongraph.ts', async () => {
   const target = 'fusiongraph.ts';
-  const proc = await compose(target);
+  const proc = await compose({ target });
   await proc.waitForExit;
 
   await expect(fs.read(target)).resolves.toMatchSnapshot();
