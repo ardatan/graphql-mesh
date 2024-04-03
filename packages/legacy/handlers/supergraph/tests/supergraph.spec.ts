@@ -29,7 +29,9 @@ describe('Supergraph', () => {
       return logger;
     },
   };
+  const libcurl = globalThis.libcurl;
   beforeEach(() => {
+    globalThis.libcurl = null;
     const baseDir = __dirname;
     const cache = new LocalforageCache();
     const store = new MeshStore('test', new InMemoryStoreStorageAdapter(), {
@@ -63,6 +65,9 @@ describe('Supergraph', () => {
       merger,
     };
     jest.clearAllMocks();
+  });
+  afterEach(() => {
+    globalThis.libcurl = libcurl;
   });
   it('supports individual headers for each subgraph with interpolation', async () => {
     const handler = new SupergraphHandler({
@@ -271,6 +276,6 @@ describe('Supergraph', () => {
     expect(logger.error.mock.calls[0][0].toString())
       .toBe(`Failed to generate the schema for the source "supergraph"
  Failed to load supergraph SDL from http://down-sdl-source.com/my-sdl.graphql:
- Couldn't resolve host name`);
+ getaddrinfo ENOTFOUND down-sdl-source.com`);
   });
 });
