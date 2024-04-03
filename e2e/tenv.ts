@@ -1,4 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
 import childProcess from 'child_process';
 import fs from 'fs/promises';
 import { createServer } from 'http';
