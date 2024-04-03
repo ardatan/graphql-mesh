@@ -1,9 +1,9 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
 import { defineConfig } from '@graphql-mesh/compose-cli';
-import { getTargetArg } from '../args';
+import { Args } from '../args';
 
 export const composeConfig = defineConfig({
-  target: getTargetArg(process.argv),
+  target: Args(process.argv).get('target', true),
   subgraphs: [
     {
       sourceHandler: () => ({

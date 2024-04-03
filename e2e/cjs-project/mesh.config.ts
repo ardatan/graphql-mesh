@@ -1,15 +1,17 @@
 const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
 const { defineConfig: defineComposeConfig } = require('@graphql-mesh/compose-cli');
 const { defineConfig: defineServeConfig } = require('@graphql-mesh/serve-cli');
-const { getPortArg, getTargetArg } = require('../args');
+const { Args } = require('../args');
+
+const args = Args(process.argv);
 
 const serveConfig = defineServeConfig({
-  port: getPortArg(process.argv),
+  port: args.getInt('port'),
   fusiongraph: '',
 });
 
 const composeConfig = defineComposeConfig({
-  target: getTargetArg(process.argv),
+  port: args.get('target'),
   subgraphs: [
     {
       sourceHandler: () => ({

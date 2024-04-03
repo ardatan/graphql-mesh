@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import { AddressInfo } from 'net';
 import path from 'path';
 import { setTimeout } from 'timers/promises';
+import { createArg } from './args';
 
 let leftovers: Proc[] = [];
 afterAll(async () => {
@@ -50,7 +51,7 @@ export function createTenv(cwd: string): Tenv {
       },
     },
     async serve(port = getAvailablePort()) {
-      const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', `--port=${port}`);
+      const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', createArg('port', port));
       await Promise.race([
         proc.waitForExit.then(() =>
           Promise.reject(
@@ -76,7 +77,12 @@ export function createTenv(cwd: string): Tenv {
       return { ...proc, port };
     },
     async compose(target) {
-      const proc = await spawn({ cwd }, 'yarn', 'mesh-compose', target && `--target=${target}`);
+      const proc = await spawn(
+        { cwd },
+        'yarn',
+        'mesh-compose',
+        target && createArg('target', target),
+      );
       await proc.waitForExit;
       let result = '';
       if (target) {
