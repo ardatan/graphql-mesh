@@ -1,0 +1,184 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Empty Content generates the schema correctly: schema 1`] = `
+"schema @transport(subgraph: "Empty Content", kind: "rest") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  """
+  Retrieve wires activity (pending, future, historical) at a customer level or an account level.
+  """
+  getWire(input: getWire_request_Input): GetWireResponse @httpOperation(subgraph: "Empty Content", path: "/v1/wire/list", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+}
+
+type GetWireResponse {
+  wires: [Wire]
+  dapiStatus: SDAPIResponse
+}
+
+type Wire {
+  """This unique id for each wire transaction .Required."""
+  paymentId: String
+  """
+  This is status of wire transaction to indictae whether the wire status is complted or not completed.Required.
+  """
+  status: String
+  """
+  IMAD is the number that comes from the FED, it's the FED version of the wire transaction id This is IMAD number for wire transaction.Optional.
+  """
+  imadNumber: String
+  """Receipient type classification.Required."""
+  beneficiaryType: String
+  """
+  Routing/ABA number of recipient's bank. This field is not applicable for wire transfers invloving more than one bank. Required for wire transfers having one bank..
+  """
+  beneficiaryRoutingNumber: String
+  """Name of the receipient's bank as captured op the wire request form."""
+  beneficiaryBankName: String
+  """
+  Recipient's full name as entered on the wire request form (could be first & last name, name of the company, etc.).Required.
+  """
+  beneficiaryName: String
+  """
+  Customer who created the wire in case of outgoing and joint owner.Optional.
+  """
+  customerName: String
+  """
+  Receipient's account number as entered in the wire request form.Required.
+  """
+  beneficiaryAccountNumber: String
+  """
+  The Sender account number ID of the account that was selected by the sender as their "from" account in the wire request form.
+  """
+  fromAccountNumber: String
+  """
+  The amount of the wire that was entered by the customer (not including the wire fee) in the wire requst form.Required.
+  """
+  wireAmount: Float
+  """The fee that's being charged to peform to complete this wire.Required."""
+  wireFee: Float
+  """
+  Only to be passed in the request when the wire fee does not apply to the transaction.()ex. book transfers, etc.).Optional. Condition - only if a wire fee does not apply.
+  """
+  wireFeeWaive: String
+  """Date of the wire transfer to Deposits API in YYYY-MM-DD format"""
+  wireDate: String
+  """Date of the wire transfer when it is created in YYYY-MM-DD format"""
+  wireCreatedDate: String
+  """
+  Any test that the customer entered in the comment/further instructions field.Optional.
+  """
+  wireComments: String
+  """
+  True if user entered intermediary bank information in the wire request form. Required
+  """
+  intermediaryBankInstructions: Boolean
+  """
+  Routing number of the intermediary bank. Intermidiary bank is a middleman between the beneficiary bank and the sender's bank that will process the wire on behalf of the beneficiary bank. Most wire instruction will not have intermediary bank requirements.conditional.Condition - Required only if <intermidaryBankInstructions> is marked as "True".
+  """
+  intermediaryRoutingNumber: String
+  """
+  The account number of the intermediary bank. Intermidiary bank is a middleman between the beneficiary bank and the sender's bank that will process the wire on behalf of the beneficiary bank. Most wire instruction will not have intermediary bank requirements.conditional.condition- Required only if <intermidaryBankInstructions> is marked as "True".
+  """
+  intermediaryAccountNumber: String
+  """
+  Bank Name of the intermediary bank if intermediary bank is needed in the wire.Optional.
+  """
+  intermediaryBeneficiaryName: String
+  """
+  Any text that may have been entered for intermediary bank further instructions.Optional.
+  """
+  intermediaryComments: String
+  """
+  A flag to indicate whether the sender gave permission to contact the joint owner(s) of the account in case the wire needs to be contacted about and the sender is not available. This will only apply to joint account hodlers. If not passed, the default value will be "false".Optional.
+  """
+  jointOwnerPermission: Boolean
+  """
+  Account closure flag if the user indicates they want to close their account. Default value will be "false" unless "true" is passed in the request. FUTURE USE.Optional
+  """
+  closeAccount: Boolean
+  """
+  A flag to indicate that this wire is a loan pay off. Deafult will be "false". FUTURE USE.Optional
+  """
+  loanPayoff: Boolean
+  """
+  A flag that will indicate whether a duplicate check needs to be performed. If "true" is passed, DAPI will perform a duplicate check and return an error; if the user accepts the duplicate wire scenario, the client will need to pass this flag as "false" to not perform the duplicate check again.required.
+  """
+  isDuplicateWire: Boolean
+  """
+  A flag that will indicate whether a duplicate wire check performend and customer provided consent to process the duplicate wire.
+  """
+  customerConsentForDuplicate: Boolean
+  """A flag that will indicate Tranfer is between Ally to Ally accounts."""
+  isBookTransfer: Boolean
+  """Unique id generated by OPF for wire transaction"""
+  transactionId: String
+  sanctionsCheck: [JSON]
+  fraudCheck: [JSON]
+  caseDetails: [JSON]
+  sanctionObject: mutation_getWire_wires_items_sanctionObject
+  fraudCheckObject: mutation_getWire_wires_items_fraudCheckObject
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type mutation_getWire_wires_items_sanctionObject {
+  correlationId: String
+  """DAPI status indicator as to whether the sanction check was successful"""
+  sanctionsCheckResult: String
+  sanctionsRequestStatus: String
+}
+
+type mutation_getWire_wires_items_fraudCheckObject {
+  correlationId: String
+  """DAPI status indicator for fraud check"""
+  fraudCheckResult: String
+  fraudCheckStatus: String
+}
+
+type SDAPIResponse {
+  """Description of DAPI status error"""
+  statusDescription: String
+  """DAPI status"""
+  status: String
+}
+
+input getWire_request_Input {
+  """Sender's account number as entered in the wire request form."""
+  accountNumber: String
+  """Start date to filter the wires"""
+  fromDate: Date
+  """End date to filter the wires"""
+  toDate: Date
+}
+
+"""Represents date values"""
+scalar Date
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;

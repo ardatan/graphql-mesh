@@ -1,0 +1,195 @@
+openapi: '3.0.1'
+info:
+  description: 'Schema'
+  version: '1.0.0'
+  title: 'MyAPI'
+paths:
+  '/v1/wire/list':
+      post:
+        tags:
+          - Wire List - Retrieve wires activity
+        summary: Get wire API
+        description: Retrieve wires activity (pending, future, historical) at a customer level or an account level.
+        operationId: getWire
+        requestBody:
+          content:
+            application/json:
+              schema:
+                properties:
+                  accountNumber:
+                    type: string
+                    description: Sender's account number as entered in the wire request form.
+                    example: '12345'
+                  fromDate:
+                    type: string
+                    description: Start date to filter the wires
+                    example: '2020-07-31'
+                  toDate:
+                    type: string
+                    description: End date to filter the wires
+                    example: '2020-08-31'
+        responses:
+          '200':
+            description: Get Wire retrieved successfully
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/GetWireResponse'
+          '400':
+            description: >-
+              Bad Request/Validation Error<br>USB_BUS_579: CIF does not exist
+            content: { }
+          '401':
+            description: Authorization Failure
+            content: { }
+          '500':
+            description: Internal Server Error/Unexpected Error
+            content: { }
+          '503':
+            description: Service Unavailable/DB is down/Backend System unavailable
+            content: { }
+          '504':
+            description: Gateway Timeout
+            content: { }
+components:
+  schemas:
+    GetWireResponse:
+      type: object
+      properties:
+        wires:
+          type: array
+          items:
+            $ref: '#/components/schemas/Wire'
+        dapiStatus:
+          $ref: '#/components/schemas/SDAPIResponse'
+
+    Wire:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          description: This unique id for each wire transaction .Required.
+        status:
+          type: string
+          description: This is status of wire transaction to indictae whether the wire status is complted or not completed.Required.
+        imadNumber:
+          type: string
+          description: IMAD is the number that comes from the FED, it's the FED version of the wire transaction id This is IMAD number for wire transaction.Optional.
+        beneficiaryType:
+          type: string
+          description: Receipient type classification.Required.
+        beneficiaryRoutingNumber:
+          type: string
+          description: Routing/ABA number of recipient's bank. This field is not applicable for wire transfers invloving more than one bank. Required for wire transfers having one bank..
+        beneficiaryBankName:
+          type: string
+          description: Name of the receipient's bank as captured op the wire request form.
+        beneficiaryName:
+          type: string
+          description: Recipient's full name as entered on the wire request form (could be first & last name, name of the company, etc.).Required.
+        customerName:
+          type: string
+          description: Customer who created the wire in case of outgoing and joint owner.Optional.
+        beneficiaryAccountNumber:
+          type: string
+          description: Receipient's account number as entered in the wire request form.Required.
+        fromAccountNumber:
+          type: string
+          description: The Sender account number ID of the account that was selected by the sender as their "from" account in the wire request form.
+        wireAmount:
+          type: number
+          description: The amount of the wire that was entered by the customer (not including the wire fee) in the wire requst form.Required.
+        wireFee:
+          type: number
+          description: The fee that's being charged to peform to complete this wire.Required.
+        wireFeeWaive:
+          type: string
+          description: Only to be passed in the request when the wire fee does not apply to the transaction.()ex. book transfers, etc.).Optional. Condition - only if a wire fee does not apply.
+        wireDate:
+          type: string
+          description: Date of the wire transfer to Deposits API in YYYY-MM-DD format
+        wireCreatedDate:
+          type: string
+          description: Date of the wire transfer when it is created in YYYY-MM-DD format
+        wireComments:
+          type: string
+          description: Any test that the customer entered in the comment/further instructions field.Optional.
+        intermediaryBankInstructions:
+          type: boolean
+          description: True if user entered intermediary bank information in the wire request form. Required
+        intermediaryRoutingNumber:
+          type: string
+          description: Routing number of the intermediary bank. Intermidiary bank is a middleman between the beneficiary bank and the sender's bank that will process the wire on behalf of the beneficiary bank. Most wire instruction will not have intermediary bank requirements.conditional.Condition - Required only if <intermidaryBankInstructions> is marked as "True".
+        intermediaryAccountNumber:
+          type: string
+          description: The account number of the intermediary bank. Intermidiary bank is a middleman between the beneficiary bank and the sender's bank that will process the wire on behalf of the beneficiary bank. Most wire instruction will not have intermediary bank requirements.conditional.condition- Required only if <intermidaryBankInstructions> is marked as "True".
+        intermediaryBeneficiaryName:
+          type: string
+          description: Bank Name of the intermediary bank if intermediary bank is needed in the wire.Optional.
+        intermediaryComments:
+          type: string
+          description: Any text that may have been entered for intermediary bank further instructions.Optional.
+        jointOwnerPermission:
+          type: boolean
+          description: A flag to indicate whether the sender gave permission to contact the joint owner(s) of the account in case the wire needs to be contacted about and the sender is not available. This will only apply to joint account hodlers. If not passed, the default value will be "false".Optional.
+        closeAccount:
+          type: boolean
+          description: Account closure flag if the user indicates they want to close their account. Default value will be "false" unless "true" is passed in the request. FUTURE USE.Optional
+        loanPayoff:
+          type: boolean
+          description: A flag to indicate that this wire is a loan pay off. Deafult will be "false". FUTURE USE.Optional
+        isDuplicateWire:
+          type: boolean
+          description: A flag that will indicate whether a duplicate check needs to be performed. If "true" is passed, DAPI will perform a duplicate check and return an error; if the user accepts the duplicate wire scenario, the client will need to pass this flag as "false" to not perform the duplicate check again.required.
+        customerConsentForDuplicate:
+          type: boolean
+          description: A flag that will indicate whether a duplicate wire check performend and customer provided consent to process the duplicate wire.
+        isBookTransfer:
+          type: boolean
+          description: A flag that will indicate Tranfer is between Ally to Ally accounts.
+        transactionId:
+          type: string
+          description: Unique id generated by OPF for wire transaction
+        sanctionsCheck:
+          type: array
+          items:
+            $ref: '#/components/schemas/sanctionObject'
+        fraudCheck:
+          type: array
+          items:
+            $ref: '#/components/schemas/fraudCheckObject'
+        caseDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/wireCase'
+        sanctionObject:
+          type: object
+          properties:
+            correlationId:
+              type: string
+            sanctionsCheckResult:
+              type: string
+              description: DAPI status indicator as to whether the sanction check was successful
+            sanctionsRequestStatus:
+              type: string
+
+        fraudCheckObject:
+          type: object
+          properties:
+            correlationId:
+              type: string
+            fraudCheckResult:
+              type: string
+              description: DAPI status indicator for fraud check
+            fraudCheckStatus:
+              type: string
+
+    SDAPIResponse:
+      type: object
+      properties:
+        statusDescription:
+          type: string
+          description: Description of DAPI status error
+        status:
+          type: string
+          description: DAPI status
