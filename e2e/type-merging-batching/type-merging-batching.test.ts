@@ -90,7 +90,7 @@ const queries = [
   },
 ];
 
-it.each(queries)('should properly plan $name', async ({ document }) => {
+it.concurrent.each(queries)('should properly plan $name', async ({ document }) => {
   const { result } = await compose({
     subgraphs: [await subgraph('authors'), await subgraph('books')],
   });
