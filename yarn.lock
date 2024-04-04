@@ -4316,15 +4316,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@giscus/react@npm:2.4.0":
-  version: 2.4.0
-  resolution: "@giscus/react@npm:2.4.0"
+"@giscus/react@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@giscus/react@npm:3.0.0"
   dependencies:
-    giscus: "npm:^1.4.0"
+    giscus: "npm:^1.5.0"
   peerDependencies:
     react: ^16 || ^17 || ^18
     react-dom: ^16 || ^17 || ^18
-  checksum: 10c0/a3bd55dcb137a47f7a21319232136b54405cf9f53976ebc6b556fc4206c73dbb49a441d8d182ea98b15b48fb1be863f03aa78695731637cbfc6aedfa214813ea
+  checksum: 10c0/134de49eb80d124a511fa33b38cbc00da24aa338caa37f32f5b89fe130365e6bc4c5583b0de3916b80ecd01cc2db27f904b3f8d633bb317fe8caad83baa125d0
   languageName: node
   linkType: hard
 
@@ -10143,10 +10143,10 @@ __metadata:
   linkType: hard
 
 "@theguild/components@npm:^6.4.0":
-  version: 6.4.0
-  resolution: "@theguild/components@npm:6.4.0"
+  version: 6.4.1
+  resolution: "@theguild/components@npm:6.4.1"
   dependencies:
-    "@giscus/react": "npm:2.4.0"
+    "@giscus/react": "npm:3.0.0"
     "@next/bundle-analyzer": "npm:13.4.2"
     "@radix-ui/react-navigation-menu": "npm:1.1.4"
     clsx: "npm:2.0.0"
@@ -10155,15 +10155,15 @@ __metadata:
     nextra: "npm:3.0.0-alpha.22"
     nextra-theme-docs: "npm:3.0.0-alpha.22"
     react-paginate: "npm:8.2.0"
-    react-player: "npm:2.13.0"
+    react-player: "npm:2.15.1"
     remark-mdx-disable-explicit-jsx: "npm:0.1.0"
-    search-insights: "npm:2.9.0"
+    search-insights: "npm:2.13.0"
     semver: "npm:^7.3.8"
   peerDependencies:
     next: ^13 || ^14
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/40a3539eace18590dc1f63eb84b31208a4c083a0a5efe5553a548693acdf1def407e120091ad07de80f3d07a5d41660e20d0392708826ad9c2445ccbe4e90b86
+  checksum: 10c0/fd93d0a0eb928d80d11656c5694a49885772f82b85cfa4ddaba4766c9fede1c461eef8c32ba18d8c8224b06c16deb604c53a6ff59fab341c5b9c2f23918a4013
   languageName: node
   linkType: hard
 
@@ -19501,7 +19501,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"giscus@npm:^1.4.0":
+"giscus@npm:^1.5.0":
   version: 1.5.0
   resolution: "giscus@npm:1.5.0"
   dependencies:
@@ -30014,9 +30014,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-player@npm:2.13.0":
-  version: 2.13.0
-  resolution: "react-player@npm:2.13.0"
+"react-player@npm:2.15.1":
+  version: 2.15.1
+  resolution: "react-player@npm:2.15.1"
   dependencies:
     deepmerge: "npm:^4.0.0"
     load-script: "npm:^1.0.0"
@@ -30025,7 +30025,7 @@ __metadata:
     react-fast-compare: "npm:^3.0.1"
   peerDependencies:
     react: ">=16.6.0"
-  checksum: 10c0/3dc15908ffdab7c48788714ff806559b53bb80753024118ed2e31f8d0c857d83c04f9630bf1d195d4b0f621e3ce757f4dab9a51883fcc8c285250724edb0d9d9
+  checksum: 10c0/0d17002c08b333cfc9844d762e6cb064c992f4b58088895af6a445a6850f48a318fb39c54a5e0e3bc5c5d7027c76a8d8ed796a0fa723c011450634ba2ff881ca
   languageName: node
   linkType: hard
 
@@ -31367,10 +31367,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"search-insights@npm:2.9.0":
-  version: 2.9.0
-  resolution: "search-insights@npm:2.9.0"
-  checksum: 10c0/47c84d875acf555707237c5b51b9664f53f6613e4ef45bd04879c52de17b0183e720ea409f36b407c12ffff02640f08f247c3cedb01b17b944d8750204371931
+"search-insights@npm:2.13.0":
+  version: 2.13.0
+  resolution: "search-insights@npm:2.13.0"
+  checksum: 10c0/9235cc25e45bd3602edf1337aa43a89152575eda82bbec4f6fa7c8f61f45c788948e1ed6cfb26e986811307b7e83a56892fb3fbc77a84cfea3d84cd4cf0ad2b3
   languageName: node
   linkType: hard
 
