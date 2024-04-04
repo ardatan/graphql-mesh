@@ -31,6 +31,33 @@ type Book @source(subgraph: "books", name: "Book") @resolver(subgraph: "books", 
 "
 `;
 
+exports[`should execute Books 1`] = `
+{
+  "data": {
+    "books": [
+      {
+        "author": {
+          "id": "1",
+          "name": "Jane Doe",
+        },
+        "id": "0",
+        "title": "Lorem Ipsum",
+      },
+      {
+        "author": {
+          "id": "0",
+          "name": "John Doe",
+        },
+        "id": "1",
+        "title": "Dolor Sit Amet",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
 exports[`should properly plan Author 1`] = `
 {
   "resolverDependencyFieldMap": {

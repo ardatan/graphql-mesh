@@ -4,6 +4,7 @@ import {
   createExecutablePlanForOperation,
   serializeExecutableOperationPlan,
 } from '@graphql-mesh/fusion-execution';
+import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
 
 const { compose, subgraph } = createTenv(__dirname);
 
@@ -96,11 +97,19 @@ it.concurrent.each(queries)('should properly plan $name', async ({ document }) =
   });
 
   const plan = createExecutablePlanForOperation({
-    fusiongraph: buildSchema(result, {
-      assumeValid: true,
-    }),
+    fusiongraph: buildSchema(result, { assumeValid: true }),
     document,
   });
 
   expect(serializeExecutableOperationPlan(plan)).toMatchSnapshot();
+});
+
+it.concurrent.each(queries)('should execute $name', async ({ document }) => {
+  const { result } = await compose({
+    subgraphs: [await subgraph('authors'), await subgraph('books')],
+  });
+
+  const { fusiongraphExecutor } = getExecutorForFusiongraph({ fusiongraph: result });
+
+  await expect(fusiongraphExecutor({ document })).resolves.toMatchSnapshot();
 });
