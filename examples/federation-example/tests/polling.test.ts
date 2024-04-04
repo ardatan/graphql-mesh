@@ -10,7 +10,7 @@ describe('Polling Test', () => {
     cleanupCallbacks.forEach(cb => cb());
   });
   it('should pass', async () => {
-    const cwd = join(__dirname, '../polling_test');
+    const cwd = join(__dirname, 'fixtures/polling');
     const supergraphSdlPath = join(cwd, 'supergraph.graphql');
     const supergraphSdl = readFileSync(supergraphSdlPath, 'utf-8');
     let changedSupergraph = false;
