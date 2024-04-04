@@ -20,7 +20,7 @@ import {
 import { getInContextSDK } from '@graphql-mesh/runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { MeshServeContext } from '@graphql-mesh/serve-runtime';
-import {
+import type {
   Transport,
   TransportBaseContext,
   TransportEntry,

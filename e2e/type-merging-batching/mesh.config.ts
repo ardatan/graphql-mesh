@@ -1,10 +1,10 @@
+import { Args } from '@e2e/args';
 import {
   createRenameFieldTransform,
   createRenameTypeTransform,
   defineConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
-import { Args } from '../args';
 
 const args = Args(process.argv);
 

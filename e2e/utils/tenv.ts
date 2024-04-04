@@ -75,14 +75,21 @@ export function createTenv(cwd: string): Tenv {
       },
     },
     async serve(port = getAvailablePort()) {
-      const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', createPortArg(port));
+      const proc = await spawn(
+        { cwd },
+        'node',
+        '--import',
+        'tsx', // tsx is installed in the root workspace
+        path.resolve(__dirname, '..', '..', 'packages', 'serve-cli', 'src', 'bin.ts'),
+        createPortArg(port),
+      );
       const server = { ...proc, port };
       const ctrl = new AbortController();
       await Promise.race([
         proc.waitForExit
           .then(() =>
             Promise.reject(
-              new Error(`Serve exited successfully, but shouldn't have.\n${proc.getStd('both')}`),
+              new Error(`Serve exited successfully, but shouldn't have\n${proc.getStd('both')}`),
             ),
           )
           // stop reachability wait after exit
@@ -95,8 +102,10 @@ export function createTenv(cwd: string): Tenv {
       const { target, subgraphs = [], maskSubgraphPorts } = opts || {};
       const proc = await spawn(
         { cwd },
-        'yarn',
-        'mesh-compose',
+        'node',
+        '--import',
+        'tsx', // tsx is installed in the root workspace
+        path.resolve(__dirname, '..', '..', 'packages', 'compose-cli', 'src', 'bin.ts'),
         target && createArg('target', target),
         ...subgraphs.map(({ name, port }) => createSubgraphPortArg(name, port)),
       );
@@ -134,9 +143,7 @@ export function createTenv(cwd: string): Tenv {
         proc.waitForExit
           .then(() =>
             Promise.reject(
-              new Error(
-                `Subgraph exited successfully, but shouldn't have.\n${proc.getStd('both')}`,
-              ),
+              new Error(`Subgraph exited successfully, but shouldn't have\n${proc.getStd('both')}`),
             ),
           )
           // stop reachability wait after exit
@@ -199,7 +206,7 @@ function spawn(
   });
   child.stderr.on('data', x => {
     // prefer relative paths for logs consistency
-    const str = x.toString().replaceAll(path.resolve(__dirname, '..') + '/', '');
+    const str = x.toString().replaceAll(path.resolve(__dirname, '..', '..') + '/', '');
     stderr += str;
     stdboth += str;
   });
@@ -244,7 +251,7 @@ async function waitForReachable(server: Server, signal: AbortSignal) {
       break;
     } catch (err) {
       if (++retries > 10) {
-        throw new Error(`Server at port ${server.port} not reachable.\n${server.getStd('both')}`);
+        throw new Error(`Server at port ${server.port} not reachable\n${server.getStd('both')}`);
       }
       await setTimeout(500);
     }

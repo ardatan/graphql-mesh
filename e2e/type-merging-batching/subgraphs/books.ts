@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { createSchema, createYoga } from 'graphql-yoga';
-import { Args } from '../../args';
+import { Args } from '@e2e/args';
 
 const books = [
   {

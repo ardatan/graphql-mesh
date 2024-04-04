@@ -1,6 +1,6 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
+import { Args } from '@e2e/args';
 import { defineConfig } from '@graphql-mesh/compose-cli';
-import { Args } from '../args';
 
 export const composeConfig = defineConfig({
   target: Args(process.argv).get('target', true),

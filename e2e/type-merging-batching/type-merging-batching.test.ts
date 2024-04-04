@@ -1,9 +1,9 @@
 import { buildSchema, parse } from 'graphql';
+import { createTenv } from '@e2e/tenv';
 import {
   createExecutablePlanForOperation,
   serializeExecutableOperationPlan,
 } from '@graphql-mesh/fusion-execution';
-import { createTenv } from '../tenv';
 
 const { compose, subgraph } = createTenv(__dirname);
 

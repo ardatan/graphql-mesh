@@ -15,7 +15,7 @@ import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@grap
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import { IResolvers } from '@graphql-tools/utils';
 import { CORSPluginOptions } from '@whatwg-node/server';
-import { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
+import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
 export { UnifiedGraphConfig };
 

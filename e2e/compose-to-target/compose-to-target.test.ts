@@ -1,4 +1,4 @@
-import { createTenv } from '../tenv';
+import { createTenv } from '@e2e/tenv';
 
 const { compose, fs } = createTenv(__dirname);
 

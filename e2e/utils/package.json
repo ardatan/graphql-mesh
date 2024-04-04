@@ -1,0 +1,5 @@
+{
+  "name": "@e2e/utils",
+  "type": "module",
+  "private": true
+}

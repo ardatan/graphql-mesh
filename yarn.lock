@@ -3594,6 +3594,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/utils@workspace:e2e/utils":
+  version: 0.0.0-use.local
+  resolution: "@e2e/utils@workspace:e2e/utils"
+  languageName: unknown
+  linkType: soft
+
 "@emnapi/runtime@npm:^1.1.0":
   version: 1.1.1
   resolution: "@emnapi/runtime@npm:1.1.1"
