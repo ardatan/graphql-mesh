@@ -36,7 +36,26 @@ export const writeFile: typeof fs.promises.writeFile = async (path, ...args) => 
   return fs.promises.writeFile(path, ...args);
 };
 
-export async function mkdir(path: string, options: fs.MakeDirectoryOptions = { recursive: true }) {
+export async function mkdir(
+  path: string,
+  /**
+   * Copied from fs.MakeDirectoryOptions.
+   * TODO: somehow import it without depending on Node
+   */
+  options: {
+    /**
+     * Indicates whether parent folders should be created.
+     * If a folder was created, the path to the first created folder will be returned.
+     * @default true
+     */
+    recursive?: boolean | undefined;
+    /**
+     * A file mode. If a string is passed, it is parsed as an octal integer. If not specified
+     * @default 0o777
+     */
+    mode?: string | number | undefined;
+  } = { recursive: true },
+) {
   const ifExists = await pathExists(path);
   if (!ifExists) {
     await fs.promises.mkdir(path, options);
