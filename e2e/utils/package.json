@@ -1,5 +1,8 @@
 {
   "name": "@e2e/utils",
   "type": "module",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "tsx": "^4.7.1"
+  }
 }

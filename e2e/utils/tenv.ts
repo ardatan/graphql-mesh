@@ -9,20 +9,20 @@ import { createArg, createPortArg, createSubgraphPortArg } from './args';
 // increase timeout to get more room for reachability waits
 jest.setTimeout(15_000);
 
-let leftovers: Proc[] = [];
+const leftovers = new Set<Proc>();
 afterAll(async () => {
   await Promise.allSettled(
-    leftovers.map(proc => {
+    Array.from(leftovers.values()).map(proc => {
       proc.kill();
       return proc.waitForExit;
     }),
   );
-  leftovers = [];
 });
 
 export interface Proc {
   getStd(o: 'out' | 'err' | 'both'): string;
   kill(): void;
+  /** Waits for the process to exit successfuly, or throws on non-zero signal. */
   waitForExit: Promise<void>;
 }
 
@@ -79,7 +79,7 @@ export function createTenv(cwd: string): Tenv {
         { cwd },
         'node',
         '--import',
-        'tsx', // tsx is installed in the root workspace
+        'tsx',
         path.resolve(__dirname, '..', '..', 'packages', 'serve-cli', 'src', 'bin.ts'),
         createPortArg(port),
       );
@@ -104,7 +104,7 @@ export function createTenv(cwd: string): Tenv {
         { cwd },
         'node',
         '--import',
-        'tsx', // tsx is installed in the root workspace
+        'tsx',
         path.resolve(__dirname, '..', '..', 'packages', 'compose-cli', 'src', 'bin.ts'),
         target && createArg('target', target),
         ...subgraphs.map(({ name, port }) => createSubgraphPortArg(name, port)),
@@ -133,7 +133,7 @@ export function createTenv(cwd: string): Tenv {
         { cwd },
         'node',
         '--import',
-        'tsx', // tsx is installed in the root workspace
+        'tsx',
         path.join(cwd, 'subgraphs', name),
         createSubgraphPortArg(name, port),
       );
@@ -189,7 +189,7 @@ function spawn(
     waitForExit: new Promise(
       (resolve, reject) =>
         (exit = err => {
-          leftovers = leftovers.filter(leftover => leftover !== proc);
+          leftovers.delete(proc);
           if (err) {
             reject(err);
           } else {
@@ -198,7 +198,7 @@ function spawn(
         }),
     ),
   };
-  leftovers.push(proc);
+  leftovers.add(proc);
 
   child.stdout.on('data', x => {
     stdout += x.toString();
@@ -218,17 +218,13 @@ function spawn(
   });
   child.once('close', code => {
     // process ended _and_ the stdio streams have been closed
-    exit(
-      code === 0 || code == null
-        ? undefined
-        : new Error(`Exit code ${code}\n${proc.getStd('both')}`),
-    );
+    exit(code ? new Error(`Exit code ${code}\n${proc.getStd('both')}`) : null);
   });
 
   return new Promise((resolve, reject) => {
     child.once('error', err => {
       exit(err); // reject waitForExit promise
-      reject(err); // reject spawn promise
+      reject(err);
     });
     child.once('spawn', () => resolve(proc));
   });

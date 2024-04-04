@@ -3598,6 +3598,8 @@ __metadata:
 "@e2e/utils@workspace:e2e/utils":
   version: 0.0.0-use.local
   resolution: "@e2e/utils@workspace:e2e/utils"
+  dependencies:
+    tsx: "npm:^4.7.1"
   languageName: unknown
   linkType: soft
 
@@ -19436,7 +19438,6 @@ __metadata:
     minimatch: "npm:9.0.4"
     prettier: "npm:3.2.5"
     ts-jest: "npm:29.1.2"
-    tsx: "npm:^4.7.1"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
