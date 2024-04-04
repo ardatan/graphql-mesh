@@ -4547,23 +4547,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/cli@npm:0.34.0":
-  version: 0.34.0
-  resolution: "@graphql-hive/cli@npm:0.34.0"
+"@graphql-hive/cli@npm:0.35.0":
+  version: 0.35.0
+  resolution: "@graphql-hive/cli@npm:0.35.0"
   dependencies:
-    "@graphql-hive/core": "npm:0.2.3"
+    "@graphql-hive/core": "npm:0.2.4"
     "@graphql-inspector/core": "npm:5.1.0-alpha-20231208113249-34700c8a"
     "@graphql-tools/code-file-loader": "npm:~8.1.0"
     "@graphql-tools/graphql-file-loader": "npm:~8.0.0"
     "@graphql-tools/json-file-loader": "npm:~8.0.0"
     "@graphql-tools/load": "npm:~8.0.0"
     "@graphql-tools/url-loader": "npm:~8.0.0"
-    "@graphql-tools/utils": "npm:10.1.0"
+    "@graphql-tools/utils": "npm:10.1.2"
     "@graphql-typed-document-node/core": "npm:3.2.0"
     "@oclif/core": "npm:^2.8.5"
     "@oclif/plugin-help": "npm:5.2.20"
     "@oclif/plugin-update": "npm:3.2.4"
-    "@whatwg-node/fetch": "npm:0.9.16"
+    "@whatwg-node/fetch": "npm:0.9.17"
     colors: "npm:1.4.0"
     env-ci: "npm:7.3.0"
     graphql: "npm:^16.8.1"
@@ -4573,7 +4573,7 @@ __metadata:
     zod: "npm:3.22.4"
   bin:
     hive: bin/run
-  checksum: 10c0/72f21254af11f6746bb8742cbd821d35560de2fba83668ca55778008eb6f364bcda63b70938dee2a1db306a42ceb6c1f56d8973ff7b741d6081f10beabfc2b4a
+  checksum: 10c0/1175b74c6238b11d3d9330e4c0e790956034b737d29486ed03e28d5c896c44c6b325655e110e0a551e8821cf642572bb4d753ecf74bd02616c735e7dc904fef3
   languageName: node
   linkType: hard
 
@@ -4599,18 +4599,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/core@npm:0.2.3":
-  version: 0.2.3
-  resolution: "@graphql-hive/core@npm:0.2.3"
-  dependencies:
-    lodash.sortby: "npm:4.7.0"
-  peerDependencies:
-    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/ab79969fb17b4a89e0004b3c21ea7f11351648e5638297865276c979d48a8fbc411936595cdc7b0d65397b5f7191ce8d9c9a542027aba011d5b10f64962db49b
-  languageName: node
-  linkType: hard
-
-"@graphql-hive/core@npm:^0.2.4":
+"@graphql-hive/core@npm:0.2.4, @graphql-hive/core@npm:^0.2.4":
   version: 0.2.4
   resolution: "@graphql-hive/core@npm:0.2.4"
   dependencies:
@@ -6619,20 +6608,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/7ae1084bb2218c0b085cfc6c70a6a488225e4154873495a768bbcc6f3b9537384eb5062400b784e3558645ee95384d5aa44a634d60246809bb3604f2ac4ffa84
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/utils@npm:10.1.0":
-  version: 10.1.0
-  resolution: "@graphql-tools/utils@npm:10.1.0"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    cross-inspect: "npm:1.0.0"
-    dset: "npm:^3.1.2"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/dccae335426de66d42a49421764ed20b788f2efc7a900013b6907e66e0375b59e797263c6522357031b3dd56805b3ed80b33beb82f23fd2ccffd161fefbaa8ea
   languageName: node
   linkType: hard
 
@@ -12198,16 +12173,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/fetch@npm:0.9.16":
-  version: 0.9.16
-  resolution: "@whatwg-node/fetch@npm:0.9.16"
-  dependencies:
-    "@whatwg-node/node-fetch": "npm:^0.5.5"
-    urlpattern-polyfill: "npm:^10.0.0"
-  checksum: 10c0/757fd8560ee1a9ae404dafc43115eb37c72022c9bd3a30bc1c0028178cdece84d7378244fff4bad28ebbb3f2cc0b0b2ff738612824ed32bbd9dac49f5d0d5b42
-  languageName: node
-  linkType: hard
-
 "@whatwg-node/fetch@npm:0.9.17, @whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.4":
   version: 0.9.17
   resolution: "@whatwg-node/fetch@npm:0.9.17"
@@ -12218,7 +12183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/node-fetch@npm:^0.5.5, @whatwg-node/node-fetch@npm:^0.5.7":
+"@whatwg-node/node-fetch@npm:^0.5.7":
   version: 0.5.10
   resolution: "@whatwg-node/node-fetch@npm:0.5.10"
   dependencies:
@@ -13216,7 +13181,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "authors-service@workspace:examples/hive-example/sources/authors"
   dependencies:
-    "@graphql-hive/cli": "npm:0.34.0"
+    "@graphql-hive/cli": "npm:0.35.0"
     "@graphql-mesh/cli": "npm:0.89.8"
     "@graphql-mesh/openapi": "npm:0.99.6"
     fets: "npm:^0.8.0"
@@ -13825,7 +13790,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "books-service@workspace:examples/hive-example/sources/books"
   dependencies:
-    "@graphql-hive/cli": "npm:0.34.0"
+    "@graphql-hive/cli": "npm:0.35.0"
     "@graphql-mesh/cli": "npm:0.89.8"
     "@graphql-mesh/openapi": "npm:0.99.6"
     fets: "npm:^0.8.0"
