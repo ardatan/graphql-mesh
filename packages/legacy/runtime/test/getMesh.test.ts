@@ -213,4 +213,61 @@ describe('getMesh', () => {
       }
     `);
   });
+
+  it('logs the unexpected errors with stack traces', async () => {
+    const errorLogSpy = jest.spyOn(logger, 'error');
+    const mesh = await getMesh({
+      cache,
+      pubsub,
+      logger,
+      merger,
+      sources: [
+        createGraphQLSource({
+          suffix: 'Foo',
+          suffixRootTypeNames: false,
+          suffixFieldNames: true,
+          suffixResponses: true,
+        }),
+      ],
+      additionalTypeDefs: [
+        parse(/* GraphQL */ `
+          extend type Query {
+            throwMe: String
+          }
+        `),
+      ],
+      additionalResolvers: {
+        Query: {
+          throwMe: () => {
+            throw new Error('This is an error');
+          },
+        },
+      },
+    });
+
+    const result = await mesh.execute(
+      /* GraphQL */ `
+        query {
+          throwMe
+        }
+      `,
+      {},
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "data": {
+          "throwMe": null,
+        },
+        "errors": [
+          [GraphQLError: This is an error],
+        ],
+        "stringify": [Function],
+      }
+    `);
+
+    const firstErrorWithStack = errorLogSpy.mock.calls[0][0].stack;
+    expect(firstErrorWithStack).toContain('This is an error');
+    expect(firstErrorWithStack).toContain('at Object.throwMe (');
+  });
 });

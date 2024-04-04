@@ -7,7 +7,7 @@ import {
   GraphQLSchema,
   visit,
 } from 'graphql';
-import { getDocumentString } from '@envelop/core';
+import { getDocumentString, isGraphQLError } from '@envelop/core';
 import { MapperKind, mapSchema, memoize1 } from '@graphql-tools/utils';
 
 export const isStreamOperation = memoize1(function isStreamOperation(astNode: ASTNode): boolean {
@@ -74,3 +74,10 @@ export const isGraphQLJitCompatible = memoize1(function isGraphQLJitCompatible(
   }
   return false;
 });
+
+export function getOriginalError(error: Error) {
+  if (isGraphQLError(error)) {
+    return getOriginalError(error.originalError);
+  }
+  return error;
+}

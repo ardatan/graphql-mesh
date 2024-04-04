@@ -48,7 +48,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
-import { isGraphQLJitCompatible, isStreamOperation } from './utils.js';
+import { getOriginalError, isGraphQLJitCompatible, isStreamOperation } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -303,6 +303,22 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     useExtendedValidation({
       rules: [OneOfInputObjectsRule],
     }),
+    {
+      onExecute() {
+        return {
+          onExecuteDone({ result }) {
+            if (result.errors) {
+              for (const error of result.errors) {
+                const origError = getOriginalError(error);
+                if (origError) {
+                  logger.error(origError);
+                }
+              }
+            }
+          },
+        };
+      },
+    },
     ...initialPluginList,
   ];
 
