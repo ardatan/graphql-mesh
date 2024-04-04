@@ -245,11 +245,11 @@ function getAvailablePort() {
 async function waitForReachable(server: Server, signal: AbortSignal) {
   let retries = 0;
   for (;;) {
-    signal.throwIfAborted();
     try {
       await fetch(`http://0.0.0.0:${server.port}`, { signal });
       break;
     } catch (err) {
+      signal.throwIfAborted();
       if (++retries > 10) {
         throw new Error(`Server at port ${server.port} not reachable\n${server.getStd('both')}`);
       }
