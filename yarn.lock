@@ -4989,6 +4989,7 @@ __metadata:
     "@graphql-mesh/runtime": ^0.98.7
     "@graphql-mesh/types": ^0.97.5
     "@graphql-mesh/utils": ^0.97.5
+    "@graphql-tools/utils": ^9.2.1 || ^10.0.0
     graphql: "*"
     tslib: ^2.4.0
   languageName: unknown
