@@ -81,7 +81,7 @@ export class DefaultLogger implements Logger {
     });
     const fullMessage = `${this.prefix} ${message}`;
     if (typeof process === 'object') {
-      process.stderr.write(fullMessage);
+      process.stderr.write(fullMessage + '\n');
     } else {
       console.log(fullMessage);
     }
@@ -93,7 +93,7 @@ export class DefaultLogger implements Logger {
     });
     const fullMessage = `${this.prefix} ⚠️ ${warnColor(message)}`;
     if (typeof process === 'object') {
-      process.stderr.write(fullMessage);
+      process.stderr.write(fullMessage + '\n');
     } else {
       console.warn(fullMessage);
     }
@@ -105,7 +105,7 @@ export class DefaultLogger implements Logger {
     });
     const fullMessage = `${this.prefix} 💡 ${infoColor(message)}`;
     if (typeof process === 'object') {
-      process.stderr.write(fullMessage);
+      process.stderr.write(fullMessage + '\n');
     } else {
       console.info(fullMessage);
     }
@@ -118,7 +118,7 @@ export class DefaultLogger implements Logger {
     });
     const fullMessage = `${this.prefix} 💥 ${errorColor(message)}`;
     if (typeof process === 'object') {
-      process.stderr.write(fullMessage);
+      process.stderr.write(fullMessage + '\n');
     } else {
       console.error(fullMessage);
     }
@@ -131,7 +131,7 @@ export class DefaultLogger implements Logger {
       });
       const fullMessage = `${this.prefix} 🐛 ${debugColor(message)}`;
       if (typeof process === 'object') {
-        process.stderr.write(fullMessage);
+        process.stderr.write(fullMessage + '\n');
       } else {
         console.debug(fullMessage);
       }
