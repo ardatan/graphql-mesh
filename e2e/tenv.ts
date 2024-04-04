@@ -118,11 +118,9 @@ export function createTenv(cwd: string): Tenv {
     async subgraph(name, port = getAvailablePort()) {
       const proc = await spawn(
         { cwd },
-        // run with tsx from root workspace
-        'yarn',
-        'run',
-        '-T',
-        'tsx',
+        'node',
+        '--import',
+        'tsx', // tsx is installed in the root workspace
         path.join(cwd, 'subgraphs', name),
         createSubgraphPortArg(name, port),
       );
@@ -151,9 +149,8 @@ function spawn(
 ): Promise<Proc> {
   const child = childProcess.spawn(cmd, args.filter(Boolean).map(String), {
     cwd,
-    // turn the child process into a group leader
-    // BEWARE: child wont receive signals from parent (like with CTRL-C) when detached
-    detached: true,
+    // ignore stdin, pipe stdout and stderr
+    stdio: ['ignore', 'pipe', 'pipe'],
   });
 
   let exit: (err: Error | null) => void;
@@ -171,13 +168,11 @@ function spawn(
           return stdboth;
       }
     },
-    kill: () => {
-      // kill the whole process group
-      process.kill(-child.pid, 9);
-    },
+    kill: () => child.kill(),
     waitForExit: new Promise(
       (resolve, reject) =>
         (exit = err => {
+          leftovers = leftovers.filter(leftover => leftover !== proc);
           if (err) {
             reject(err);
           } else {
@@ -198,27 +193,26 @@ function spawn(
     stderr += str;
     stdboth += str;
   });
-  child.once('close', code => {
-    leftovers = leftovers.filter(leftover => leftover !== proc);
 
-    const err =
-      code === 0 || code == null
-        ? undefined
-        : new Error(`Exit code ${code}\n${proc.getStd('both')}`);
-    if (err) {
-      child.emit('error', err);
-    }
-
-    child.stdin.destroy();
+  child.once('exit', () => {
+    // process ended
     child.stdout.destroy();
     child.stderr.destroy();
-    child.removeAllListeners();
-
-    exit(err);
+  });
+  child.once('close', code => {
+    // process ended _and_ the stdio streams have been closed
+    exit(
+      code === 0 || code == null
+        ? undefined
+        : new Error(`Exit code ${code}\n${proc.getStd('both')}`),
+    );
   });
 
   return new Promise((resolve, reject) => {
-    child.once('error', reject);
+    child.once('error', err => {
+      exit(err); // reject waitForExit promise
+      reject(err); // reject spawn promise
+    });
     child.once('spawn', () => resolve(proc));
   });
 }
