@@ -77,13 +77,17 @@ export function createTenv(cwd: string): Tenv {
     async serve(port = getAvailablePort()) {
       const proc = await spawn({ cwd }, 'yarn', 'mesh-serve', createPortArg(port));
       const server = { ...proc, port };
+      const ctrl = new AbortController();
       await Promise.race([
-        proc.waitForExit.then(() =>
-          Promise.reject(
-            new Error(`Serve exited successfully, but shouldn't have.\n${proc.getStd('both')}`),
-          ),
-        ),
-        waitForReachable(server),
+        proc.waitForExit
+          .then(() =>
+            Promise.reject(
+              new Error(`Serve exited successfully, but shouldn't have.\n${proc.getStd('both')}`),
+            ),
+          )
+          // stop reachability wait after exit
+          .finally(() => ctrl.abort()),
+        waitForReachable(server, ctrl.signal),
       ]);
       return server;
     },
@@ -125,13 +129,19 @@ export function createTenv(cwd: string): Tenv {
         createSubgraphPortArg(name, port),
       );
       const subgraph = { ...proc, name, port };
+      const ctrl = new AbortController();
       await Promise.race([
-        proc.waitForExit.then(() =>
-          Promise.reject(
-            new Error(`Subgraph exited successfully, but shouldn't have.\n${proc.getStd('both')}`),
-          ),
-        ),
-        waitForReachable(subgraph),
+        proc.waitForExit
+          .then(() =>
+            Promise.reject(
+              new Error(
+                `Subgraph exited successfully, but shouldn't have.\n${proc.getStd('both')}`,
+              ),
+            ),
+          )
+          // stop reachability wait after exit
+          .finally(() => ctrl.abort()),
+        waitForReachable(subgraph, ctrl.signal),
       ]);
       return subgraph;
     },
@@ -225,11 +235,12 @@ function getAvailablePort() {
   return port;
 }
 
-async function waitForReachable(server: Server) {
+async function waitForReachable(server: Server, signal: AbortSignal) {
   let retries = 0;
   for (;;) {
+    signal.throwIfAborted();
     try {
-      await fetch(`http://0.0.0.0:${server.port}`);
+      await fetch(`http://0.0.0.0:${server.port}`, { signal });
       break;
     } catch (err) {
       if (++retries > 10) {
