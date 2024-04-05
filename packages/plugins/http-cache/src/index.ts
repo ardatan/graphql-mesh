@@ -141,7 +141,6 @@ export default function useHTTPCache({
           };
 
           let ttl = Math.round(policy.timeToLive() / 1000);
-
           if (ttl > 0) {
             // If a response can be revalidated, we don't want to remove it from the cache right after it expires.
             // We may be able to use better heuristics here, but for now we'll take the max-age times 2.
@@ -150,14 +149,14 @@ export default function useHTTPCache({
             }
 
             await cache.set(url, cacheEntry, { ttl });
-
-            setResponse(
-              new Response(resText, {
-                status: response.status,
-                headers: resHeaders,
-              }),
-            );
           }
+
+          setResponse(
+            new Response(resText, {
+              status: response.status,
+              headers: resHeaders,
+            }),
+          );
         }
       };
     },

@@ -1,0 +1,5 @@
+mutation DivideInteger {
+  s0_SOAPDemo_SOAPDemoSoap_DivideInteger(DivideInteger: { Arg1: 10, Arg2: 2 }) {
+    DivideIntegerResult
+  }
+}

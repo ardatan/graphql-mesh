@@ -1,5 +1,241 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.97.6
+
+### Patch Changes
+
+- [#6748](https://github.com/ardatan/graphql-mesh/pull/6748)
+  [`449e39d`](https://github.com/ardatan/graphql-mesh/commit/449e39dfe956d0a7b54929f4b4b7d6fbcbcddaf1)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency [`graphql-yoga@^5.1.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.1.1)
+    (to `dependencies`)
+
+## 0.97.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+  - @graphql-mesh/utils@0.97.5
+
+## 0.97.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/types@0.97.4
+
+## 0.97.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/utils@0.97.3
+
+## 0.97.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/utils@0.97.2
+
+## 0.97.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dbaf72c`](https://github.com/ardatan/graphql-mesh/commit/dbaf72c4520f64524dce14b798019639c4d57020)]:
+  - @graphql-mesh/types@0.97.1
+  - @graphql-mesh/utils@0.97.1
+
+## 0.97.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a),
+  [`70b05a2`](https://github.com/ardatan/graphql-mesh/commit/70b05a20a948b5ebed5306c14710c8839225cdad)]:
+  - @graphql-mesh/types@0.97.0
+  - @graphql-mesh/utils@0.97.0
+
+## 0.96.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0f274ef`](https://github.com/ardatan/graphql-mesh/commit/0f274ef8177068da65e50e08607998d0ed63e8b9)]:
+  - @graphql-mesh/utils@0.96.6
+  - @graphql-mesh/types@0.96.6
+
+## 0.96.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/types@0.96.5
+  - @graphql-mesh/utils@0.96.5
+
+## 0.96.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8)]:
+  - @graphql-mesh/types@0.96.4
+  - @graphql-mesh/utils@0.96.4
+
+## 0.96.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ac26793`](https://github.com/ardatan/graphql-mesh/commit/ac26793e59f76f0839b61a8030e0eefc7383e640)]:
+  - @graphql-mesh/types@0.96.3
+  - @graphql-mesh/utils@0.96.3
+
+## 0.96.4
+
+### Patch Changes
+
+- [`d83b5fe`](https://github.com/ardatan/graphql-mesh/commit/d83b5fe20f66a6853d5b5c83c38607e5cf305c68)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ranged dependencies
+
+- [`3dae173`](https://github.com/ardatan/graphql-mesh/commit/3dae1736aa74303c426985192483ad538fb40c5a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better Plugin options signature
+
+## 0.96.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d758afa`](https://github.com/ardatan/graphql-mesh/commit/d758afa7da55cf3ed6b4ed9e8cccfd0ed67fe658),
+  [`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/types@0.96.2
+  - @graphql-mesh/utils@0.96.2
+
+## 0.96.2
+
+### Patch Changes
+
+- [#6308](https://github.com/ardatan/graphql-mesh/pull/6308)
+  [`fbc705b`](https://github.com/ardatan/graphql-mesh/commit/fbc705bb0aab11c04a4d59fd165f35189f93077d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-response-cache@3.1.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-response-cache/v/3.1.1)
+    (from `3.1.0`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.96.1
+  - @graphql-mesh/utils@0.96.1
+
+## 0.96.1
+
+### Patch Changes
+
+- [#6233](https://github.com/ardatan/graphql-mesh/pull/6233)
+  [`78210d455`](https://github.com/ardatan/graphql-mesh/commit/78210d4550a4ec3c910c791abd5b6b804189d864)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-response-cache@3.1.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-response-cache/v/3.1.0)
+    (from `3.0.0`, in `dependencies`)
+
+## 0.96.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/types@0.96.0
+  - @graphql-mesh/utils@0.96.0
+
+## 0.95.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b4d38c55d`](https://github.com/ardatan/graphql-mesh/commit/b4d38c55df8c4d2aeb98325555979eb09d065906)]:
+  - @graphql-mesh/string-interpolation@0.5.3
+  - @graphql-mesh/utils@0.95.8
+  - @graphql-mesh/types@0.95.8
+
+## 0.95.10
+
+### Patch Changes
+
+- [#6094](https://github.com/Urigo/graphql-mesh/pull/6094)
+  [`7c509bf2d`](https://github.com/Urigo/graphql-mesh/commit/7c509bf2d9f110ca0da0984d4bed783c3b267458)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-yoga/plugin-response-cache@3.0.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-response-cache/v/3.0.0)
+    (from `2.2.0`, in `dependencies`)
+
+- [#6103](https://github.com/Urigo/graphql-mesh/pull/6103)
+  [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@^5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.0) (from
+    `^4.0.0`, in `dependencies`)
+
+## 0.95.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a13969c77`](https://github.com/Urigo/graphql-mesh/commit/a13969c77794c44493d7a9426be7e38a6d673c88)]:
+  - @graphql-mesh/types@0.95.7
+  - @graphql-mesh/utils@0.95.7
+
+## 0.95.8
+
+### Patch Changes
+
+- [#6017](https://github.com/Urigo/graphql-mesh/pull/6017)
+  [`ce4a580fb`](https://github.com/Urigo/graphql-mesh/commit/ce4a580fb2773bf0b401d4dffbcbedf0bf729de8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-response-cache@2.2.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-response-cache/v/2.2.0)
+    (from `2.1.1`, in `dependencies`)
+
+## 0.95.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8e1056cf9`](https://github.com/Urigo/graphql-mesh/commit/8e1056cf91b0e7069499f5102aaed163a0168597)]:
+  - @graphql-mesh/string-interpolation@0.5.2
+  - @graphql-mesh/utils@0.95.6
+  - @graphql-mesh/types@0.95.6
+
+## 0.95.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b8f16a42b`](https://github.com/Urigo/graphql-mesh/commit/b8f16a42bf599723c2e311c47e74f812c6d1b781),
+  [`b8f16a42b`](https://github.com/Urigo/graphql-mesh/commit/b8f16a42bf599723c2e311c47e74f812c6d1b781)]:
+  - @graphql-mesh/cross-helpers@0.4.1
+  - @graphql-mesh/types@0.95.5
+  - @graphql-mesh/utils@0.95.5
+
+## 0.95.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`625e5d787`](https://github.com/Urigo/graphql-mesh/commit/625e5d7878d44abd7c9d1542bf5cdcd4e37e2411)]:
+  - @graphql-mesh/types@0.95.4
+  - @graphql-mesh/utils@0.95.4
+
 ## 0.95.4
 
 ### Patch Changes

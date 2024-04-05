@@ -1,5 +1,312 @@
 # odata-msgraph-programmatic
 
+## 0.7.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c008dda`](https://github.com/ardatan/graphql-mesh/commit/c008ddae4bd617497a2a9bd70e8c90667c2b1ddc)]:
+  - @graphql-mesh/runtime@0.98.7
+  - @graphql-mesh/cli@0.89.8
+  - @graphql-mesh/config@0.99.8
+
+## 0.7.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.7
+  - @graphql-mesh/config@0.99.7
+  - @graphql-mesh/odata@0.97.5
+  - @graphql-mesh/runtime@0.98.6
+
+## 0.7.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/config@0.99.6
+  - @graphql-mesh/cli@0.89.6
+
+## 0.7.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`18e0d49`](https://github.com/ardatan/graphql-mesh/commit/18e0d495053f0b67fd1ba488270318e5d11309f8)]:
+  - @graphql-mesh/runtime@0.98.5
+  - @graphql-mesh/cli@0.89.5
+  - @graphql-mesh/config@0.99.5
+
+## 0.7.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/config@0.99.4
+  - @graphql-mesh/odata@0.97.4
+  - @graphql-mesh/runtime@0.98.4
+
+## 0.7.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/config@0.99.3
+  - @graphql-mesh/odata@0.97.3
+  - @graphql-mesh/runtime@0.98.3
+
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.2
+  - @graphql-mesh/config@0.99.2
+  - @graphql-mesh/odata@0.97.2
+  - @graphql-mesh/runtime@0.98.2
+
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.1
+  - @graphql-mesh/config@0.99.1
+  - @graphql-mesh/odata@0.97.1
+  - @graphql-mesh/runtime@0.98.1
+
+## 0.7.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/config@0.99.0
+  - @graphql-mesh/cli@0.89.0
+  - @graphql-mesh/odata@0.97.0
+  - @graphql-mesh/runtime@0.98.0
+
+## 0.6.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.9
+  - @graphql-mesh/config@0.98.7
+  - @graphql-mesh/odata@0.96.6
+  - @graphql-mesh/runtime@0.97.7
+
+## 0.6.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`74f2042`](https://github.com/ardatan/graphql-mesh/commit/74f20429bb725696315c937d6055cf99b6d2c30e)]:
+  - @graphql-mesh/cli@0.88.8
+
+## 0.6.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2e67aa0`](https://github.com/ardatan/graphql-mesh/commit/2e67aa0f37f2d438d5d7b766d45afb8d126556ee),
+  [`89d8dd6`](https://github.com/ardatan/graphql-mesh/commit/89d8dd6dde4b74a9c3edb3438ef23f2498d94276),
+  [`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/cli@0.88.7
+  - @graphql-mesh/runtime@0.97.6
+  - @graphql-mesh/config@0.98.6
+  - @graphql-mesh/odata@0.96.5
+
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8)]:
+  - @graphql-mesh/config@0.98.5
+  - @graphql-mesh/cli@0.88.6
+  - @graphql-mesh/odata@0.96.4
+  - @graphql-mesh/runtime@0.97.5
+
+## 0.6.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.5
+  - @graphql-mesh/config@0.98.4
+  - @graphql-mesh/odata@0.96.3
+  - @graphql-mesh/runtime@0.97.4
+
+## 0.6.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`10b01a1`](https://github.com/ardatan/graphql-mesh/commit/10b01a1794eaf4313ba8084b409260b99b78ee87)]:
+  - @graphql-mesh/cli@0.88.4
+
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/config@0.98.3
+  - @graphql-mesh/cli@0.88.3
+  - @graphql-mesh/odata@0.96.2
+  - @graphql-mesh/runtime@0.97.3
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a780dd8`](https://github.com/ardatan/graphql-mesh/commit/a780dd849b79000396246edfe0cb251eb91d7d74),
+  [`2482dc4`](https://github.com/ardatan/graphql-mesh/commit/2482dc4adc02ace4dc4322d6527a928f7c1efa88)]:
+  - @graphql-mesh/cli@0.88.2
+  - @graphql-mesh/config@0.98.2
+  - @graphql-mesh/odata@0.96.1
+  - @graphql-mesh/runtime@0.97.2
+
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`730398204`](https://github.com/ardatan/graphql-mesh/commit/730398204176837acb13f2c0cf1e22a64c56bde9),
+  [`0c4940802`](https://github.com/ardatan/graphql-mesh/commit/0c49408027896e99537683ee063231c5c0ac0a1b)]:
+  - @graphql-mesh/runtime@0.97.1
+  - @graphql-mesh/cli@0.88.1
+  - @graphql-mesh/config@0.98.1
+
+## 0.6.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.0
+  - @graphql-mesh/config@0.98.0
+  - @graphql-mesh/odata@0.96.0
+  - @graphql-mesh/runtime@0.97.0
+
+## 0.5.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/odata@0.95.9
+  - @graphql-mesh/runtime@0.96.13
+  - @graphql-mesh/cli@0.87.16
+  - @graphql-mesh/config@0.97.15
+
+## 0.5.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7c509bf2d`](https://github.com/Urigo/graphql-mesh/commit/7c509bf2d9f110ca0da0984d4bed783c3b267458),
+  [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b),
+  [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)]:
+  - @graphql-mesh/config@0.97.14
+  - @graphql-mesh/runtime@0.96.12
+  - @graphql-mesh/cli@0.87.15
+
+## 0.5.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2eb8d2d56`](https://github.com/Urigo/graphql-mesh/commit/2eb8d2d561ac8aa2f0aff72b8d39bd88963d464c),
+  [`0ee3c62f9`](https://github.com/Urigo/graphql-mesh/commit/0ee3c62f9c3c3d315e4926666e8881c4d0f46280)]:
+  - @graphql-mesh/runtime@0.96.11
+  - @graphql-mesh/cli@0.87.14
+  - @graphql-mesh/config@0.97.13
+
+## 0.5.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ae5e7c972`](https://github.com/Urigo/graphql-mesh/commit/ae5e7c9728e572ea75c0f4e3b57dad932658155c)]:
+  - @graphql-mesh/odata@0.95.8
+
+## 0.5.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.13
+  - @graphql-mesh/config@0.97.12
+  - @graphql-mesh/odata@0.95.7
+  - @graphql-mesh/runtime@0.96.10
+
+## 0.5.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`482d813a9`](https://github.com/Urigo/graphql-mesh/commit/482d813a9f75935024aa77872125d197f5fca3d0),
+  [`482d813a9`](https://github.com/Urigo/graphql-mesh/commit/482d813a9f75935024aa77872125d197f5fca3d0)]:
+  - @graphql-mesh/runtime@0.96.9
+  - @graphql-mesh/cli@0.87.12
+  - @graphql-mesh/config@0.97.11
+
+## 0.5.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`41005ff7d`](https://github.com/Urigo/graphql-mesh/commit/41005ff7d240ef7803c7fcca0504aaf84be850b0)]:
+  - @graphql-mesh/runtime@0.96.8
+  - @graphql-mesh/cli@0.87.11
+  - @graphql-mesh/config@0.97.10
+
+## 0.5.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/odata@0.95.6
+  - @graphql-mesh/runtime@0.96.7
+  - @graphql-mesh/cli@0.87.10
+  - @graphql-mesh/config@0.97.9
+
+## 0.5.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`675cc678a`](https://github.com/Urigo/graphql-mesh/commit/675cc678abb4922a7cad1aafd381dabd73721ffe),
+  [`675cc678a`](https://github.com/Urigo/graphql-mesh/commit/675cc678abb4922a7cad1aafd381dabd73721ffe)]:
+  - @graphql-mesh/runtime@0.96.6
+  - @graphql-mesh/cli@0.87.9
+  - @graphql-mesh/config@0.97.8
+  - @graphql-mesh/odata@0.95.5
+
+## 0.5.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9c49c5f7f`](https://github.com/Urigo/graphql-mesh/commit/9c49c5f7f7aac44f2fe141ad3d895d2e97205b4b),
+  [`9c49c5f7f`](https://github.com/Urigo/graphql-mesh/commit/9c49c5f7f7aac44f2fe141ad3d895d2e97205b4b)]:
+  - @graphql-mesh/runtime@0.96.5
+  - @graphql-mesh/cli@0.87.8
+  - @graphql-mesh/config@0.97.7
+  - @graphql-mesh/odata@0.95.4
+
+## 0.5.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a458c88f0`](https://github.com/Urigo/graphql-mesh/commit/a458c88f08e5fc5d6337354d3f781018c736db1f)]:
+  - @graphql-mesh/cli@0.87.7
+
 ## 0.5.6
 
 ### Patch Changes

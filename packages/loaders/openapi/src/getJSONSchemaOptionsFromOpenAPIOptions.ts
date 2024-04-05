@@ -7,9 +7,17 @@ import {
 } from 'json-machete';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { process } from '@graphql-mesh/cross-helpers';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import {
+  getInterpolatedHeadersFactory,
+  stringInterpolator,
+} from '@graphql-mesh/string-interpolation';
 import { Logger } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  DefaultLogger,
+  readFileOrUrl,
+  sanitizeNameForGraphQL,
+} from '@graphql-mesh/utils';
 import {
   HTTPMethod,
   JSONSchemaHTTPJSONOperationConfig,
@@ -32,6 +40,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   queryParams?: Record<string, any>;
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
   logger?: Logger;
+  jsonApi?: boolean;
 }
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
@@ -47,8 +56,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     queryParams = {},
     selectQueryOrMutationField = [],
     logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
+    jsonApi,
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
 ) {
+  if (typeof source === 'string') {
+    source = stringInterpolator.parse(source, {
+      env: process.env,
+    });
+  }
   const fieldTypeMap: Record<string, OpenAPILoaderSelectQueryOrMutationFieldConfig['fieldName']> =
     {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
@@ -57,6 +72,15 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   logger?.debug(`Fetching OpenAPI Document from ${source}`);
   let oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document;
+  const readFileOrUrlForJsonMachete = (path: string, opts: { cwd: string }) =>
+    readFileOrUrl(path, {
+      cwd: opts.cwd,
+      fetch: fetchFn,
+      headers: schemaHeadersFactory({ env: process.env }),
+      importFn: defaultImportFn,
+      logger,
+      fallbackFormat,
+    });
   if (typeof source === 'string') {
     oasOrSwagger = (await dereferenceObject(
       {
@@ -64,19 +88,15 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       },
       {
         cwd,
-        headers: schemaHeadersFactory({ env: process.env }),
-        fetchFn,
-        importFn: defaultImportFn,
-        logger,
+        readFileOrUrl: readFileOrUrlForJsonMachete,
+        debugLogFn: logger.debug.bind(logger),
       },
     )) as any;
   } else {
     oasOrSwagger = await dereferenceObject(source, {
       cwd,
-      headers: schemaHeadersFactory({ env: process.env }),
-      fetchFn,
-      importFn: defaultImportFn,
-      logger,
+      readFileOrUrl: readFileOrUrlForJsonMachete,
+      debugLogFn: logger.debug.bind(logger),
     });
   }
 
@@ -165,6 +185,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         schemaHeaders,
         operationHeaders,
         responseByStatusCode: {},
+        deprecated: methodObj.deprecated,
         ...(baseOperationArgTypeMap
           ? {
               argTypeMap: {
@@ -172,6 +193,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               },
             }
           : {}),
+        jsonApiFields: jsonApi,
       } as OperationConfig;
       operations.push(operationConfig);
       methodObjFieldMap.set(methodObj, operationConfig);
@@ -202,7 +224,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 paramObj.schema = paramObj.schema || {
                   type: 'string',
                 };
-                paramObj.schema.default = queryParams[paramObj.name];
+                paramObj.required = false;
+                paramObj.schema.nullable = true;
+                const valueFromQueryParams = queryParams[paramObj.name];
+                if (valueFromQueryParams === 'string' && !valueFromQueryParams.includes('{')) {
+                  paramObj.schema.default = queryParams[paramObj.name];
+                }
               }
             }
             if ('explode' in paramObj) {
@@ -322,7 +349,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       if ('requestBody' in methodObj) {
         const requestBodyObj = methodObj.requestBody;
         if ('content' in requestBodyObj) {
-          const contentKey = Object.keys(requestBodyObj.content)[0];
+          // use json if available, otherwise fall back to the first type
+          const contentKeys = Object.keys(requestBodyObj.content);
+          const contentKey =
+            contentKeys.find(
+              contentKey => typeof contentKey === 'string' && contentKey.match('json'),
+            ) || contentKeys[0];
           const contentSchema = requestBodyObj.content[contentKey]?.schema;
           if (contentSchema && Object.keys(contentSchema).length > 0) {
             operationConfig.requestSchema = contentSchema as JSONSchemaObject;
@@ -478,9 +510,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             {
               cwd,
               root: oasOrSwagger,
-              fetchFn,
-              logger,
-              headers: schemaHeaders,
+              readFileOrUrl: readFileOrUrlForJsonMachete,
             },
           );
           responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};

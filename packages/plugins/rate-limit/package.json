@@ -1,10 +1,10 @@
 {
   "name": "@graphql-mesh/plugin-rate-limit",
-  "version": "0.95.3",
+  "version": "0.97.6",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "Urigo/graphql-mesh",
+    "url": "ardatan/graphql-mesh",
     "directory": "packages/plugins/response-cache"
   },
   "license": "MIT",
@@ -32,18 +32,18 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.0",
-    "@graphql-mesh/types": "^0.95.3",
+    "@graphql-mesh/cross-helpers": "^0.4.1",
+    "@graphql-mesh/types": "^0.97.5",
     "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.5.1",
-    "minimatch": "9.0.3"
+    "@graphql-mesh/string-interpolation": "0.5.3",
+    "minimatch": "9.0.4"
   },
   "devDependencies": {
-    "@envelop/core": "4.0.1"
+    "@envelop/core": "5.0.0"
   },
   "publishConfig": {
     "access": "public",

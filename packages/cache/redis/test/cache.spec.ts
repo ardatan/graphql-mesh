@@ -25,6 +25,32 @@ describe('redis', () => {
       );
     });
 
+    it('passes configuration to redis client with default options, url and lazyConnect (=false) case', async () => {
+      new RedisCache({
+        url: 'redis://password@localhost:6379',
+        lazyConnect: false,
+        pubsub,
+        logger,
+      });
+
+      expect(Redis).toHaveBeenCalledWith(
+        'redis://password@localhost:6379?enableAutoPipelining=true&enableOfflineQueue=true',
+      );
+    });
+
+    it('passes configuration to redis client with default options, url and lazyConnect (=true) case', async () => {
+      new RedisCache({
+        url: 'redis://password@localhost:6379',
+        lazyConnect: true,
+        pubsub,
+        logger,
+      });
+
+      expect(Redis).toHaveBeenCalledWith(
+        'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
+      );
+    });
+
     it('passes configuration to redis client with default options, host, port & password case', async () => {
       new RedisCache({ port: '6379', password: 'testpassword', host: 'localhost', pubsub, logger });
 
@@ -33,6 +59,25 @@ describe('redis', () => {
         enableOfflineQueue: true,
         host: 'localhost',
         lazyConnect: true,
+        password: 'testpassword',
+        port: 6379,
+      });
+    });
+
+    it('passes configuration to redis client with default options, host, port, password & lazyConnect (=false) case', async () => {
+      new RedisCache({
+        port: '6379',
+        password: 'testpassword',
+        host: 'localhost',
+        lazyConnect: false,
+        pubsub,
+        logger,
+      });
+
+      expect(Redis).toHaveBeenCalledWith({
+        enableAutoPipelining: true,
+        enableOfflineQueue: true,
+        host: 'localhost',
         password: 'testpassword',
         port: 6379,
       });

@@ -12,10 +12,44 @@ GraphQL Hive is a schema registry, monitoring and analytics tool for your GraphQ
 possible to integrate your GraphQL Mesh application to GraphQL Hive by using the dedicated plugins
 and transforms.
 
+## Consume Supergraph SDL from Hive CDN
+
+If you have a supergraph schema published to GraphQL Hive registry, you can consume it in your
+GraphQL Mesh gateway through Hive CDN;
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: Supergraph
+    handler:
+      supergraph:
+        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: SOME_TOKEN
+```
+
+## Polling the Hive CDN
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: Supergraph
+    handler:
+      supergraph:
+        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: SOME_TOKEN
+pollingInterval: 60_000 # Poll for the supergraph updates per 1 hour
+```
+
+<Callout>
+  When you use Hive CDN, you don't have to rebuild Mesh artifacts and/or redeploy it. You can just
+  restart it if you don't configure `pollingInterval`. If you configured it already, you don't even
+  need to restart the server. GraphQL Mesh will pull the recent changes and update it automatically.
+</Callout>
+
 ## Track your Gateway
 
-You can connect your GraphQL Mesh gateway to GraphQL Hive to GraphQL Hive registry to track changes
-on the unified schema and monitor the operations done by the clients.
+You can connect your GraphQL Mesh gateway to GraphQL Hive registry to track changes on the unified
+schema and monitor the operations done by the clients.
 
 ```sh npm2yarn
 npm i @graphql-mesh/plugin-hive
@@ -130,8 +164,8 @@ sources:
 ### Track your non-GraphQL sources
 
 GraphQL Mesh creates GraphQL APIs from non GraphQL APIs, and it is still possible to register these
-to GraphQL Hive as a regular GraphQL API. GraphQL Hive transform hooks into the delegation phase to
-track operations done to the upstream APIs.
+to GraphQL Hive as a regular GraphQL API. Add GraphQL Hive transform hooks into the delegation phase
+to track operations done to the upstream APIs.
 
 ```sh npm2yarn
 npm i @graphql-mesh/transform-hive

@@ -38,8 +38,8 @@ export function parseInterpolationStrings(
       argTypeMap && varName in argTypeMap
         ? argTypeMap[varName]
         : interpolationKeyParts.length > 2
-        ? 'JSON'
-        : 'ID';
+          ? 'JSON'
+          : 'ID';
     switch (initialObject) {
       case 'args':
         args[varName] = {

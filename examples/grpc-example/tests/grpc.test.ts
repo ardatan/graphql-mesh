@@ -1,3 +1,4 @@
+import 'json-bigint-patch';
 import { join } from 'path';
 import { readFile } from 'fs-extra';
 import { findAndParseConfig } from '@graphql-mesh/cli';
@@ -35,7 +36,18 @@ describe('gRPC Example', () => {
     const result = await mesh.execute(MoviesByCastStream, undefined);
     let i = 0;
     for await (const item of result as AsyncIterable<any>) {
-      expect(item).toMatchSnapshot(`movies-by-cast-grpc-example-result-${i++}`);
+      expect(item).toMatchSnapshot(`movies-by-cast-grpc-example-result-stream-${i++}`);
+    }
+  });
+  it('should fetch movies by cast as a subscription correctly', async () => {
+    const MoviesByCastSubscription = await readFile(
+      join(__dirname, '../example-queries/MoviesByCast.subscription.graphql'),
+      'utf8',
+    );
+    const result = await mesh.execute(MoviesByCastSubscription, undefined);
+    let i = 0;
+    for await (const item of result as AsyncIterable<any>) {
+      expect(item).toMatchSnapshot(`movies-by-cast-grpc-example-result-subscription-${i++}`);
     }
   });
   afterAll(async () => {

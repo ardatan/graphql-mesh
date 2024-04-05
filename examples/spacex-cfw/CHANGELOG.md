@@ -1,5 +1,312 @@
 # spacex-cfw
 
+## 0.7.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8ec0067`](https://github.com/ardatan/graphql-mesh/commit/8ec0067d6441e8083f1e79076462419904eb75c4),
+  [`449e39d`](https://github.com/ardatan/graphql-mesh/commit/449e39dfe956d0a7b54929f4b4b7d6fbcbcddaf1)]:
+  - @graphql-mesh/plugin-rate-limit@0.97.6
+  - @graphql-mesh/plugin-response-cache@0.97.6
+  - @graphql-mesh/cli@0.89.8
+
+## 0.7.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.97.5
+  - @graphql-mesh/cli@0.89.7
+  - @graphql-mesh/graphql@0.97.5
+  - @graphql-mesh/plugin-rate-limit@0.97.5
+  - @graphql-mesh/plugin-response-cache@0.97.5
+
+## 0.7.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.6
+
+## 0.7.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.5
+
+## 0.7.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/cache-cfw-kv@0.97.4
+  - @graphql-mesh/graphql@0.97.4
+  - @graphql-mesh/plugin-response-cache@0.97.4
+  - @graphql-mesh/plugin-rate-limit@0.97.4
+
+## 0.7.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.97.3
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/graphql@0.97.3
+  - @graphql-mesh/plugin-rate-limit@0.97.3
+  - @graphql-mesh/plugin-response-cache@0.97.3
+
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.97.2
+  - @graphql-mesh/cli@0.89.2
+  - @graphql-mesh/graphql@0.97.2
+  - @graphql-mesh/plugin-rate-limit@0.97.2
+  - @graphql-mesh/plugin-response-cache@0.97.2
+
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.97.1
+  - @graphql-mesh/cli@0.89.1
+  - @graphql-mesh/graphql@0.97.1
+  - @graphql-mesh/plugin-rate-limit@0.97.1
+  - @graphql-mesh/plugin-response-cache@0.97.1
+
+## 0.7.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.97.0
+  - @graphql-mesh/cli@0.89.0
+  - @graphql-mesh/graphql@0.97.0
+  - @graphql-mesh/plugin-rate-limit@0.97.0
+  - @graphql-mesh/plugin-response-cache@0.97.0
+
+## 0.6.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.96.6
+  - @graphql-mesh/cli@0.88.9
+  - @graphql-mesh/graphql@0.96.6
+  - @graphql-mesh/plugin-response-cache@0.96.8
+  - @graphql-mesh/plugin-rate-limit@0.96.7
+
+## 0.6.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`74f2042`](https://github.com/ardatan/graphql-mesh/commit/74f20429bb725696315c937d6055cf99b6d2c30e)]:
+  - @graphql-mesh/cli@0.88.8
+
+## 0.6.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2e67aa0`](https://github.com/ardatan/graphql-mesh/commit/2e67aa0f37f2d438d5d7b766d45afb8d126556ee)]:
+  - @graphql-mesh/cli@0.88.7
+  - @graphql-mesh/cache-cfw-kv@0.96.5
+  - @graphql-mesh/graphql@0.96.5
+  - @graphql-mesh/plugin-rate-limit@0.96.6
+  - @graphql-mesh/plugin-response-cache@0.96.7
+
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)]:
+  - @graphql-mesh/graphql@0.96.4
+  - @graphql-mesh/cli@0.88.6
+  - @graphql-mesh/cache-cfw-kv@0.96.4
+  - @graphql-mesh/plugin-rate-limit@0.96.5
+  - @graphql-mesh/plugin-response-cache@0.96.6
+
+## 0.6.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.96.3
+  - @graphql-mesh/cli@0.88.5
+  - @graphql-mesh/graphql@0.96.3
+  - @graphql-mesh/plugin-rate-limit@0.96.4
+  - @graphql-mesh/plugin-response-cache@0.96.5
+
+## 0.6.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`10b01a1`](https://github.com/ardatan/graphql-mesh/commit/10b01a1794eaf4313ba8084b409260b99b78ee87),
+  [`d83b5fe`](https://github.com/ardatan/graphql-mesh/commit/d83b5fe20f66a6853d5b5c83c38607e5cf305c68),
+  [`3dae173`](https://github.com/ardatan/graphql-mesh/commit/3dae1736aa74303c426985192483ad538fb40c5a)]:
+  - @graphql-mesh/cli@0.88.4
+  - @graphql-mesh/plugin-response-cache@0.96.4
+  - @graphql-mesh/plugin-rate-limit@0.96.3
+
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/cli@0.88.3
+  - @graphql-mesh/cache-cfw-kv@0.96.2
+  - @graphql-mesh/graphql@0.96.2
+  - @graphql-mesh/plugin-rate-limit@0.96.2
+  - @graphql-mesh/plugin-response-cache@0.96.3
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a780dd8`](https://github.com/ardatan/graphql-mesh/commit/a780dd849b79000396246edfe0cb251eb91d7d74),
+  [`fbc705b`](https://github.com/ardatan/graphql-mesh/commit/fbc705bb0aab11c04a4d59fd165f35189f93077d),
+  [`2482dc4`](https://github.com/ardatan/graphql-mesh/commit/2482dc4adc02ace4dc4322d6527a928f7c1efa88)]:
+  - @graphql-mesh/cli@0.88.2
+  - @graphql-mesh/plugin-response-cache@0.96.2
+  - @graphql-mesh/graphql@0.96.1
+  - @graphql-mesh/cache-cfw-kv@0.96.1
+  - @graphql-mesh/plugin-rate-limit@0.96.1
+
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`78210d455`](https://github.com/ardatan/graphql-mesh/commit/78210d4550a4ec3c910c791abd5b6b804189d864)]:
+  - @graphql-mesh/plugin-response-cache@0.96.1
+  - @graphql-mesh/cli@0.88.1
+
+## 0.6.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.96.0
+  - @graphql-mesh/cli@0.88.0
+  - @graphql-mesh/graphql@0.96.0
+  - @graphql-mesh/plugin-rate-limit@0.96.0
+  - @graphql-mesh/plugin-response-cache@0.96.0
+
+## 0.5.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/graphql@0.95.8
+  - @graphql-mesh/plugin-rate-limit@0.95.8
+  - @graphql-mesh/plugin-response-cache@0.95.11
+  - @graphql-mesh/cli@0.87.16
+  - @graphql-mesh/cache-cfw-kv@0.95.8
+
+## 0.5.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7c509bf2d`](https://github.com/Urigo/graphql-mesh/commit/7c509bf2d9f110ca0da0984d4bed783c3b267458),
+  [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)]:
+  - @graphql-mesh/plugin-response-cache@0.95.10
+  - @graphql-mesh/cli@0.87.15
+
+## 0.5.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0ee3c62f9`](https://github.com/Urigo/graphql-mesh/commit/0ee3c62f9c3c3d315e4926666e8881c4d0f46280)]:
+  - @graphql-mesh/cli@0.87.14
+
+## 0.5.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.95.7
+  - @graphql-mesh/cli@0.87.13
+  - @graphql-mesh/graphql@0.95.7
+  - @graphql-mesh/plugin-rate-limit@0.95.7
+  - @graphql-mesh/plugin-response-cache@0.95.9
+
+## 0.5.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.12
+
+## 0.5.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ce4a580fb`](https://github.com/Urigo/graphql-mesh/commit/ce4a580fb2773bf0b401d4dffbcbedf0bf729de8)]:
+  - @graphql-mesh/plugin-response-cache@0.95.8
+
+## 0.5.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.11
+
+## 0.5.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/graphql@0.95.6
+  - @graphql-mesh/plugin-rate-limit@0.95.6
+  - @graphql-mesh/plugin-response-cache@0.95.7
+  - @graphql-mesh/cli@0.87.10
+  - @graphql-mesh/cache-cfw-kv@0.95.6
+
+## 0.5.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.9
+  - @graphql-mesh/graphql@0.95.5
+  - @graphql-mesh/plugin-rate-limit@0.95.5
+  - @graphql-mesh/plugin-response-cache@0.95.6
+  - @graphql-mesh/cache-cfw-kv@0.95.5
+
+## 0.5.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.8
+  - @graphql-mesh/cache-cfw-kv@0.95.4
+  - @graphql-mesh/graphql@0.95.4
+  - @graphql-mesh/plugin-rate-limit@0.95.4
+  - @graphql-mesh/plugin-response-cache@0.95.5
+
+## 0.5.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a458c88f0`](https://github.com/Urigo/graphql-mesh/commit/a458c88f08e5fc5d6337354d3f781018c736db1f)]:
+  - @graphql-mesh/cli@0.87.7
+
 ## 0.5.7
 
 ### Patch Changes

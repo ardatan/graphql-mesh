@@ -1,5 +1,24 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.3
+
+### Patch Changes
+
+- [#6138](https://github.com/ardatan/graphql-mesh/pull/6138)
+  [`b4d38c55d`](https://github.com/ardatan/graphql-mesh/commit/b4d38c55df8c4d2aeb98325555979eb09d065906)
+  Thanks [@Pagebakers](https://github.com/Pagebakers)! - Fixed issue where applyRule() would handle
+  falsy replacements incorrectly
+
+## 0.5.2
+
+### Patch Changes
+
+- [#5982](https://github.com/Urigo/graphql-mesh/pull/5982)
+  [`8e1056cf9`](https://github.com/Urigo/graphql-mesh/commit/8e1056cf91b0e7069499f5102aaed163a0168597)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dayjs@1.11.10` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.10) (from
+    `1.11.9`, in `dependencies`)
+
 ## 0.5.1
 
 ### Patch Changes

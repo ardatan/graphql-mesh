@@ -1,12 +1,12 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-
 /* eslint sort-keys: error */
 import { useRouter } from 'next/router';
-import { defineConfig, Giscus, useTheme } from '@theguild/components';
+import { defineConfig, Giscus, PRODUCTS, useTheme } from '@theguild/components';
 
 export default defineConfig({
+  description: 'GraphQL Gateway Framework and anything-to-GraphQL',
   docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website',
-  main({ children }) {
+  logo: PRODUCTS.MESH.logo({ className: 'w-8' }),
+  main: function Main({ children }) {
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
 
@@ -30,5 +30,5 @@ export default defineConfig({
       </>
     );
   },
-  siteName: 'MESH',
+  websiteName: 'GraphQL-Mesh',
 });

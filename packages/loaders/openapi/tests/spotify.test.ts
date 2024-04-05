@@ -56,7 +56,7 @@ describe('Spotify', () => {
     });
 
     const expectedURL = 'https://api.spotify.com/v1/search?q=test&type=album%2Cartist&limit=20';
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       data: {
         search: {
           albums: {

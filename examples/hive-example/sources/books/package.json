@@ -1,6 +1,6 @@
 {
   "name": "books-service",
-  "version": "0.5.7",
+  "version": "0.9.9",
   "description": "Books Service",
   "private": true,
   "scripts": {
@@ -9,14 +9,14 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "fets": "^0.4.0",
-    "ts-node": "10.9.1",
-    "typescript": "5.2.2"
+    "fets": "^0.8.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
   },
   "devDependencies": {
-    "@graphql-hive/cli": "0.29.0",
-    "@graphql-mesh/cli": "0.87.6",
-    "@graphql-mesh/openapi": "0.95.4",
-    "graphql": "16.8.0"
+    "@graphql-hive/cli": "0.35.0",
+    "@graphql-mesh/cli": "0.89.8",
+    "@graphql-mesh/openapi": "0.99.6",
+    "graphql": "16.8.1"
   }
 }

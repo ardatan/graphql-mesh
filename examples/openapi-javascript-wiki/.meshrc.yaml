@@ -2,7 +2,8 @@ sources:
   - name: Wiki
     handler:
       openapi:
-        source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+        source: https://wikimedia.org/api/rest_v1/?spec
+        endpoint: https://wikimedia.org/api/rest_v1
 
 additionalTypeDefs: |
   extend type Query {

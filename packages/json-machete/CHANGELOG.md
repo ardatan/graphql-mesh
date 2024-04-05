@@ -1,5 +1,77 @@
 # json-machete
 
+## 0.97.1
+
+### Patch Changes
+
+- [#6310](https://github.com/ardatan/graphql-mesh/pull/6310)
+  [`427ff87`](https://github.com/ardatan/graphql-mesh/commit/427ff871cd13781a4cd3dd0ead54cad3d100d083)
+  Thanks [@ardatan](https://github.com/ardatan)! - Respect `required` fields in allOf definitions
+
+## 0.97.0
+
+### Minor Changes
+
+- [#6230](https://github.com/ardatan/graphql-mesh/pull/6230)
+  [`47a50aa6d`](https://github.com/ardatan/graphql-mesh/commit/47a50aa6d1a1bb9766f0895b206756741c0f6769)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: All the functions requires
+  `readFileOrUrl` instead of fetch function and/or import function, and they no longer need a logger
+  instance but `debugLogFn` for verbose logging
+
+## 0.96.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/types@0.96.0
+  - @graphql-mesh/utils@0.96.0
+
+## 0.95.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.95.8
+  - @graphql-mesh/types@0.95.8
+
+## 0.95.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a13969c77`](https://github.com/Urigo/graphql-mesh/commit/a13969c77794c44493d7a9426be7e38a6d673c88)]:
+  - @graphql-mesh/types@0.95.7
+  - @graphql-mesh/utils@0.95.7
+
+## 0.95.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.95.6
+  - @graphql-mesh/types@0.95.6
+
+## 0.95.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b8f16a42b`](https://github.com/Urigo/graphql-mesh/commit/b8f16a42bf599723c2e311c47e74f812c6d1b781),
+  [`b8f16a42b`](https://github.com/Urigo/graphql-mesh/commit/b8f16a42bf599723c2e311c47e74f812c6d1b781)]:
+  - @graphql-mesh/cross-helpers@0.4.1
+  - @graphql-mesh/types@0.95.5
+  - @graphql-mesh/utils@0.95.5
+
+## 0.95.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`625e5d787`](https://github.com/Urigo/graphql-mesh/commit/625e5d7878d44abd7c9d1542bf5cdcd4e37e2411)]:
+  - @graphql-mesh/types@0.95.4
+  - @graphql-mesh/utils@0.95.4
+
 ## 0.95.3
 
 ### Patch Changes

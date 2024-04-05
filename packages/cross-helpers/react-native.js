@@ -1,5 +1,9 @@
-module.exports.fs = require('react-native-fs');
-module.exports.path = require('react-native-path');
+try {
+  module.exports.fs = require('react-native-fs');
+  module.exports.path = require('react-native-path');
+} catch (e) {
+  console.error('react-native-fs and react-native-path are required for react-native');
+}
 module.exports.path.join = (...args) =>
   module.exports.path.normalize(args.filter(x => !!x).join('/'));
 

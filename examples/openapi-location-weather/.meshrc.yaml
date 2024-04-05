@@ -2,10 +2,10 @@ sources:
   - name: Cities
     handler:
       openapi:
-        source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
+        source: https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/mashape.com/geodb/1.0.0/swagger.yaml
         ignoreErrorResponses: true
         operationHeaders:
-          'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
+          'X-RapidAPI-Key': '{env.GEODB_API_KEY}'
     transforms:
       - rename:
           - from:
@@ -16,8 +16,12 @@ sources:
   - name: Weather
     handler:
       openapi:
-        source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+        source: https://www.weatherbit.io/static/swagger.json
         ignoreErrorResponses: true
+        queryParams:
+          key: '{env.WEATHERBIT_API_KEY}'
+        operationHeaders:
+          'X-RapidAPI-Key': '{env.WEATHERBIT_API_KEY}'
     transforms:
       - rename:
           - from:
@@ -48,11 +52,10 @@ additionalTypeDefs: |
       """,
       sourceName: "Weather",
       sourceTypeName: "Query",
-      sourceFieldName: "forecast_daily_by_lat_by_lon",
+      sourceFieldName: "forecast_daily",
       sourceArgs: {
         lat: "{root.latitude}",
         lon: "{root.longitude}",
-        key: "971a693de7ff47a89127664547988be5"
       },
       result: "data"
     )
@@ -65,12 +68,11 @@ additionalTypeDefs: |
       """,
       sourceName: "Weather",
       sourceTypeName: "Query",
-      sourceFieldName: "forecast_daily_by_lat_by_lon",
+      sourceFieldName: "forecast_daily",
       sourceArgs: {
         lat: "{root.latitude}",
         lon: "{root.longitude}",
         days: 1
-        key: "971a693de7ff47a89127664547988be5"
       },
       result: "data[0]"
     )

@@ -1,10 +1,8 @@
 import { mkdirSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
-import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh } from '@graphql-mesh/runtime';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadDocuments } from '@graphql-tools/load';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import thriftServer from '../src/main';
 
 const problematicModulePath = join(__dirname, '../../../node_modules/core-js/modules');
@@ -23,19 +21,15 @@ jest.setTimeout(30000);
 describe('Thrift Calculator', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      introspectionFromSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      }),
-    ).toMatchSnapshot('thrift-calculator-schema');
+    expect(printSchemaWithDirectives(schema)).toMatchSnapshot('thrift-calculator-schema');
   });
   it('should give correct response for example queries', async () => {
     const { documents } = await config$;
     const { execute } = await mesh$;
     for (const source of documents) {
-      const result = await execute(source.document, {});
+      const result = await execute(source.document!, {});
       expect(result.errors).toBeFalsy();
-      expect(result).toMatchSnapshot(basename(source.location) + '-thrift-calculator-result');
+      expect(result).toMatchSnapshot(basename(source.location!) + '-thrift-calculator-result');
     }
   });
   afterAll(() => {

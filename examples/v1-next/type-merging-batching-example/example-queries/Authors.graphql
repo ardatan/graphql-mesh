@@ -1,0 +1,14 @@
+query Authors {
+  authors {
+    id
+    name
+    books {
+      id
+      title
+      author {
+        id
+        name
+      }
+    }
+  }
+}

@@ -6,9 +6,6 @@
 yarn --ignore-optional
 ```
 
-`--ignore-engines` is required if you are using node versions greater than `14.0` since the
-`@apollo/subgraph` package being used is incompatible with them.
-
 ## Pre-requisites
 
 In order to run the project successfully in your system, you would require `python 2.x` to be

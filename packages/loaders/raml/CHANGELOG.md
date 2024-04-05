@@ -1,5 +1,259 @@
 # @omnigraph/raml
 
+## 0.99.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+  - @graphql-mesh/utils@0.97.5
+  - @omnigraph/json-schema@0.99.6
+
+## 0.99.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/types@0.97.4
+  - @omnigraph/json-schema@0.99.5
+
+## 0.99.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/utils@0.97.3
+  - @omnigraph/json-schema@0.99.4
+
+## 0.99.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/utils@0.97.2
+  - @omnigraph/json-schema@0.99.3
+
+## 0.99.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9667954`](https://github.com/ardatan/graphql-mesh/commit/96679547598ccdaf765335b13b937248df662d77)]:
+  - @omnigraph/json-schema@0.99.2
+
+## 0.99.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dbaf72c`](https://github.com/ardatan/graphql-mesh/commit/dbaf72c4520f64524dce14b798019639c4d57020)]:
+  - @graphql-mesh/types@0.97.1
+  - @graphql-mesh/utils@0.97.1
+  - @omnigraph/json-schema@0.99.1
+
+## 0.99.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a),
+  [`70b05a2`](https://github.com/ardatan/graphql-mesh/commit/70b05a20a948b5ebed5306c14710c8839225cdad)]:
+  - @graphql-mesh/types@0.97.0
+  - @graphql-mesh/utils@0.97.0
+  - @omnigraph/json-schema@0.99.0
+
+## 0.98.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0f274ef`](https://github.com/ardatan/graphql-mesh/commit/0f274ef8177068da65e50e08607998d0ed63e8b9)]:
+  - @graphql-mesh/utils@0.96.6
+  - @omnigraph/json-schema@0.98.2
+  - @graphql-mesh/types@0.96.6
+
+## 0.98.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2138dea`](https://github.com/ardatan/graphql-mesh/commit/2138dea53c28fafe92fa1dc4243e3329d401d064),
+  [`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @omnigraph/json-schema@0.98.1
+  - @graphql-mesh/types@0.96.5
+  - @graphql-mesh/utils@0.96.5
+
+## 0.98.0
+
+### Patch Changes
+
+- [#6541](https://github.com/ardatan/graphql-mesh/pull/6541)
+  [`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-tools/delegate@^10.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.3)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/types@^0.96.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.96.2)
+    (to `peerDependencies`)
+- Updated dependencies
+  [[`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211),
+  [`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8),
+  [`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)]:
+  - @omnigraph/json-schema@0.98.0
+  - @graphql-mesh/types@0.96.4
+  - @graphql-mesh/utils@0.96.4
+
+## 0.97.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/json-schema@0.97.4
+  - @graphql-mesh/utils@0.96.3
+
+## 0.97.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`87501f4`](https://github.com/ardatan/graphql-mesh/commit/87501f45127bdc98440e78c591390e3f735ada00)]:
+  - @omnigraph/json-schema@0.97.3
+
+## 0.97.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/json-schema@0.97.2
+  - @graphql-mesh/utils@0.96.2
+
+## 0.97.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`427ff87`](https://github.com/ardatan/graphql-mesh/commit/427ff871cd13781a4cd3dd0ead54cad3d100d083),
+  [`c51549d`](https://github.com/ardatan/graphql-mesh/commit/c51549d8d93d94b5bbb09ba60f29b37d10c7cc39),
+  [`e6c7fde`](https://github.com/ardatan/graphql-mesh/commit/e6c7fde5b4aec4427beee91b9e9c444d99a9ece1),
+  [`a665baf`](https://github.com/ardatan/graphql-mesh/commit/a665baf90376cbdb552c7cabbb5e90e856c24fd1)]:
+  - @omnigraph/json-schema@0.97.1
+  - json-machete@0.97.1
+  - @graphql-mesh/utils@0.96.1
+
+## 0.97.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7909bcb8c`](https://github.com/ardatan/graphql-mesh/commit/7909bcb8cbae5d1449f242b1da86e143760ab517),
+  [`47a50aa6d`](https://github.com/ardatan/graphql-mesh/commit/47a50aa6d1a1bb9766f0895b206756741c0f6769)]:
+  - @omnigraph/json-schema@0.97.0
+  - json-machete@0.97.0
+
+## 0.96.0
+
+### Minor Changes
+
+- [#6222](https://github.com/ardatan/graphql-mesh/pull/6222)
+  [`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: Drop bundles, you can use the SDL
+  output from the artifacts later as a `source` of the handler
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @omnigraph/json-schema@0.96.0
+  - json-machete@0.96.0
+  - @graphql-mesh/utils@0.96.0
+
+## 0.95.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9b8ba5d47`](https://github.com/ardatan/graphql-mesh/commit/9b8ba5d472b82af9adddee000e0b32af9c97058e),
+  [`b4d38c55d`](https://github.com/ardatan/graphql-mesh/commit/b4d38c55df8c4d2aeb98325555979eb09d065906)]:
+  - @omnigraph/json-schema@0.95.12
+  - @graphql-mesh/string-interpolation@0.5.3
+  - @graphql-mesh/utils@0.95.8
+  - json-machete@0.95.8
+
+## 0.95.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7f467f522`](https://github.com/Urigo/graphql-mesh/commit/7f467f5227c3bb840a2483f6e8f8a2fed9d907e4)]:
+  - @omnigraph/json-schema@0.95.11
+
+## 0.95.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f55e946fc`](https://github.com/Urigo/graphql-mesh/commit/f55e946fc6472ea7b9bb8d85171b94ce79500cfb)]:
+  - @omnigraph/json-schema@0.95.10
+
+## 0.95.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ae5e7c972`](https://github.com/Urigo/graphql-mesh/commit/ae5e7c9728e572ea75c0f4e3b57dad932658155c)]:
+  - @omnigraph/json-schema@0.95.9
+
+## 0.95.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a13969c77`](https://github.com/Urigo/graphql-mesh/commit/a13969c77794c44493d7a9426be7e38a6d673c88)]:
+  - @omnigraph/json-schema@0.95.8
+  - json-machete@0.95.7
+  - @graphql-mesh/utils@0.95.7
+
+## 0.95.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8e1056cf9`](https://github.com/Urigo/graphql-mesh/commit/8e1056cf91b0e7069499f5102aaed163a0168597)]:
+  - @graphql-mesh/string-interpolation@0.5.2
+  - @omnigraph/json-schema@0.95.7
+  - @graphql-mesh/utils@0.95.6
+  - json-machete@0.95.6
+
+## 0.95.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b8f16a42b`](https://github.com/Urigo/graphql-mesh/commit/b8f16a42bf599723c2e311c47e74f812c6d1b781)]:
+  - @graphql-mesh/cross-helpers@0.4.1
+  - json-machete@0.95.5
+  - @omnigraph/json-schema@0.95.6
+  - @graphql-mesh/utils@0.95.5
+
+## 0.95.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - json-machete@0.95.4
+  - @omnigraph/json-schema@0.95.5
+  - @graphql-mesh/utils@0.95.4
+
 ## 0.95.4
 
 ### Patch Changes

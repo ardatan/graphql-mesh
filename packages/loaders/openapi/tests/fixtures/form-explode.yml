@@ -1,0 +1,48 @@
+openapi: 3.0.0
+info:
+  title: Api
+  version: 1.0.0
+paths:
+  /test:
+    get:
+      parameters:
+        - in: query
+          name: intent
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            discriminator: idtype
+            title: Intent
+            oneOf:
+              - title: User Intent
+                properties:
+                  idtype:
+                    type: string
+                    enum: ['user']
+                    default: 'user'
+                  user_id:
+                    type: string
+                required: [user_id]
+                additionalProperties: false
+              - title: Wallet Intent
+                properties:
+                  idtype:
+                    type: string
+                    enum: ['wallet']
+                    default: 'wallet'
+                  wallet_id:
+                    type: string
+                required: [wallet_id]
+                additionalProperties: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string

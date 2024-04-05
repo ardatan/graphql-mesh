@@ -19,13 +19,13 @@
         "@graphql-inspector/core",
         "next",
         "tailwindcss",
-        "@whatwg-node/*"
+        "@whatwg-node/*",
+        "graphql-jit"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch"
     }
-  ],
-  "ignoreDeps": ["@whatwg-node/router"]
+  ]
 }

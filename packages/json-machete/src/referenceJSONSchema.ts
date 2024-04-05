@@ -1,10 +1,9 @@
-import { DefaultLogger } from '@graphql-mesh/utils';
 import { JSONSchemaObject } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
 
 export async function referenceJSONSchema(
   schema: JSONSchemaObject,
-  logger = new DefaultLogger('referenceJSONSchema'),
+  debugLogFn?: (message?: any) => void,
 ) {
   const initialDefinitions: Record<string, JSONSchemaObject> = {};
   const { $ref: initialRef } = await visitJSONSchema(schema, {
@@ -15,7 +14,7 @@ export async function referenceJSONSchema(
         if (subSchema.$ref) {
           return subSchema;
         } else if (subSchema.title) {
-          logger.debug(`Referencing ${path}`);
+          debugLogFn?.(`Referencing ${path}`);
           if (subSchema.title in initialDefinitions) {
             let cnt = 2;
             while (`${subSchema.title}${cnt}` in initialDefinitions) {
@@ -36,7 +35,7 @@ export async function referenceJSONSchema(
             };
           }
         } else if (subSchema.type === 'object') {
-          logger.debug(`${path} cannot be referenced because it has no title`);
+          debugLogFn?.(`${path} cannot be referenced because it has no title`);
         }
       }
       return subSchema;

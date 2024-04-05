@@ -1,0 +1,8 @@
+query getProjectsWithIssues {
+  adminProjects {
+    shortName
+    issues {
+      summary
+    }
+  }
+}

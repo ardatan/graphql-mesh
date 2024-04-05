@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-nodejs-modules
+import { readFileSync } from 'fs';
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { dereferenceObject } from '../src/dereferenceObject.js';
 
@@ -56,7 +58,7 @@ describe('dereferenceObject', () => {
         },
       },
     };
-    const result = await dereferenceObject<JSONSchemaObject>(schema);
+    const result = await dereferenceObject<JSONSchemaObject>(schema, { readFileOrUrl: () => null });
     expect(result.title).toBe('Container');
     expect(result.properties.posts.items.title).toBe('Post');
     expect(result.properties.posts.items.properties.author.title).toBe('Author');
@@ -71,6 +73,7 @@ describe('dereferenceObject', () => {
       },
       {
         cwd: __dirname,
+        readFileOrUrl: path => JSON.parse(readFileSync(path, 'utf8')),
       },
     );
     expect(result.title).toBe('PostsResponse');
@@ -243,7 +246,9 @@ describe('dereferenceObject', () => {
         },
       },
     };
-    const dereferencedObject = await dereferenceObject(openapiSchema);
+    const dereferencedObject = await dereferenceObject(openapiSchema, {
+      readFileOrUrl: () => null,
+    });
     expect(
       dereferencedObject.paths['/pets/{petId}'].get.responses[200].content['application/json']
         .schema,

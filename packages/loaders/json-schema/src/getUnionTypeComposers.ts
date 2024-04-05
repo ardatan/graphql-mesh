@@ -15,6 +15,7 @@ import { ResolveRootDirective, StatusCodeTypeNameDirective } from './directives.
 import { TypeComposers } from './getComposerFromJSONSchema.js';
 
 export interface GetUnionTypeComposersOpts {
+  subgraphName: string;
   schemaComposer: SchemaComposer;
   typeComposersList: {
     input?: AnyTypeComposer<any>;
@@ -24,7 +25,11 @@ export interface GetUnionTypeComposersOpts {
   logger: Logger;
 }
 
-export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeInputType) {
+export function getContainerTC(
+  subgraphName: string,
+  schemaComposer: SchemaComposer,
+  output: ComposeInputType,
+) {
   const containerTypeName = `${output.getTypeName()}_container`;
   schemaComposer.addDirective(ResolveRootDirective);
   return schemaComposer.getOrCreateOTC(containerTypeName, otc =>
@@ -34,6 +39,9 @@ export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeIn
         directives: [
           {
             name: 'resolveRoot',
+            args: {
+              subgraph: subgraphName,
+            },
           },
         ],
       },
@@ -42,6 +50,7 @@ export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeIn
 }
 
 export function getUnionTypeComposers({
+  subgraphName,
   schemaComposer,
   typeComposersList,
   subSchemaAndTypeComposers,
@@ -60,7 +69,7 @@ export function getUnionTypeComposers({
       isOutputPlural = true;
     }
     if (isSomeInputTypeComposer(output)) {
-      outputTypeComposers.push(getContainerTC(schemaComposer, output));
+      outputTypeComposers.push(getContainerTC(subgraphName, schemaComposer, output));
     } else {
       outputTypeComposers.push(output);
     }
@@ -104,6 +113,7 @@ export function getUnionTypeComposers({
           directives.push({
             name: 'statusCodeTypeName',
             args: {
+              subgraph: subgraphName,
               statusCode,
               typeName: outputTypeComposer.getTypeName(),
             },

@@ -1,0 +1,53 @@
+{
+  "name": "@omnigraph/thrift",
+  "version": "0.1.6",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@creditkarma/thrift-parser": "^2.0.0",
+    "@creditkarma/thrift-server-core": "^1.0.4",
+    "@graphql-mesh/cross-helpers": "^0.4.1",
+    "@graphql-mesh/transport-thrift": "^0.1.5",
+    "@graphql-mesh/types": "^0.97.5",
+    "@graphql-mesh/utils": "^0.97.5",
+    "graphql-scalars": "^1.22.4",
+    "thrift": "^0.20.0"
+  },
+  "devDependencies": {
+    "@graphql-tools/utils": "10.1.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}

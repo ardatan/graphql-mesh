@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Execution executes deferred operations: defer 1`] = `
+[
+  {
+    "data": {
+      "myFoo": {
+        "bar": "B_BAR_FOR_A_FOO_ID",
+        "baz": "C_BAZ_FOR_A_FOO_ID",
+        "child": {
+          "child": {},
+        },
+      },
+    },
+    "errors": undefined,
+    "extensions": undefined,
+  },
+  {
+    "data": {
+      "myFoo": {
+        "bar": "B_BAR_FOR_A_FOO_ID",
+        "baz": "C_BAZ_FOR_A_FOO_ID",
+        "child": {
+          "bar": "B_BAR_FOR_C_CHILD_ID_FOR_A_FOO_ID",
+          "child": {},
+        },
+      },
+    },
+    "errors": undefined,
+    "extensions": undefined,
+  },
+  {
+    "data": {
+      "myFoo": {
+        "bar": "B_BAR_FOR_A_FOO_ID",
+        "baz": "C_BAZ_FOR_A_FOO_ID",
+        "child": {
+          "bar": "B_BAR_FOR_C_CHILD_ID_FOR_A_FOO_ID",
+          "child": {
+            "bar": "B_BAR_FOR_C_CHILD_ID_FOR_C_CHILD_ID_FOR_A_FOO_ID",
+          },
+        },
+      },
+    },
+    "errors": undefined,
+    "extensions": undefined,
+  },
+  {
+    "data": {
+      "myFoo": {
+        "bar": "B_BAR_FOR_A_FOO_ID",
+        "baz": "C_BAZ_FOR_A_FOO_ID",
+        "child": {
+          "bar": "B_BAR_FOR_C_CHILD_ID_FOR_A_FOO_ID",
+          "child": {
+            "bar": "B_BAR_FOR_C_CHILD_ID_FOR_C_CHILD_ID_FOR_A_FOO_ID",
+          },
+        },
+      },
+    },
+    "errors": undefined,
+    "extensions": undefined,
+  },
+]
+`;
+
+exports[`Execution executes deferred operations: defer patches 1`] = `
+[
+  {
+    "data": {
+      "myFoo": {
+        "bar": "B_BAR_FOR_A_FOO_ID",
+        "baz": "C_BAZ_FOR_A_FOO_ID",
+        "child": {
+          "child": {},
+        },
+      },
+    },
+    "errors": undefined,
+    "extensions": undefined,
+    "hasNext": true,
+  },
+  {
+    "data": "B_BAR_FOR_C_CHILD_ID_FOR_A_FOO_ID",
+    "errors": undefined,
+    "extensions": undefined,
+    "hasNext": true,
+    "path": [
+      "data",
+      "myFoo",
+      "child",
+      "bar",
+    ],
+  },
+  {
+    "data": "B_BAR_FOR_C_CHILD_ID_FOR_C_CHILD_ID_FOR_A_FOO_ID",
+    "errors": undefined,
+    "extensions": undefined,
+    "hasNext": true,
+    "path": [
+      "data",
+      "myFoo",
+      "child",
+      "child",
+      "bar",
+    ],
+  },
+  {
+    "hasNext": false,
+  },
+]
+`;

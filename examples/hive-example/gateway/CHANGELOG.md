@@ -1,5 +1,373 @@
 # gateway-example
 
+## 0.9.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.8
+
+## 0.9.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5250baf`](https://github.com/ardatan/graphql-mesh/commit/5250baf5405b8d42b2cd54c1680e371b7d28d04e)]:
+  - @graphql-mesh/transform-hive@0.97.8
+
+## 0.9.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`674c720`](https://github.com/ardatan/graphql-mesh/commit/674c720a87565ac8c313c27b17bf0846ee689193),
+  [`674c720`](https://github.com/ardatan/graphql-mesh/commit/674c720a87565ac8c313c27b17bf0846ee689193)]:
+  - @graphql-mesh/plugin-hive@0.97.7
+  - @graphql-mesh/transform-hive@0.97.7
+
+## 0.9.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.7
+  - @graphql-mesh/openapi@0.99.6
+  - @graphql-mesh/transform-hive@0.97.6
+  - @graphql-mesh/plugin-hive@0.97.6
+
+## 0.9.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.6
+
+## 0.9.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`800a7fc`](https://github.com/ardatan/graphql-mesh/commit/800a7fc788435b57aa1cf3bb619cd8cb7366f394),
+  [`800a7fc`](https://github.com/ardatan/graphql-mesh/commit/800a7fc788435b57aa1cf3bb619cd8cb7366f394),
+  [`e9d97e3`](https://github.com/ardatan/graphql-mesh/commit/e9d97e38f6b2765fd3c7acd6d4a1f1c2531c264e)]:
+  - @graphql-mesh/plugin-hive@0.97.5
+  - @graphql-mesh/transform-hive@0.97.5
+
+## 0.9.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.5
+
+## 0.9.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/plugin-hive@0.97.4
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/openapi@0.99.5
+  - @graphql-mesh/transform-hive@0.97.4
+
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/openapi@0.99.4
+  - @graphql-mesh/transform-hive@0.97.3
+  - @graphql-mesh/plugin-hive@0.97.3
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.2
+  - @graphql-mesh/openapi@0.99.3
+  - @graphql-mesh/transform-hive@0.97.2
+  - @graphql-mesh/plugin-hive@0.97.2
+
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.99.2
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.1
+  - @graphql-mesh/openapi@0.99.1
+  - @graphql-mesh/transform-hive@0.97.1
+  - @graphql-mesh/plugin-hive@0.97.1
+
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.0
+  - @graphql-mesh/openapi@0.99.0
+  - @graphql-mesh/transform-hive@0.97.0
+  - @graphql-mesh/plugin-hive@0.97.0
+
+## 0.8.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.9
+  - @graphql-mesh/openapi@0.98.2
+  - @graphql-mesh/transform-hive@0.96.8
+  - @graphql-mesh/plugin-hive@0.96.8
+
+## 0.8.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`74f2042`](https://github.com/ardatan/graphql-mesh/commit/74f20429bb725696315c937d6055cf99b6d2c30e)]:
+  - @graphql-mesh/cli@0.88.8
+
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2e67aa0`](https://github.com/ardatan/graphql-mesh/commit/2e67aa0f37f2d438d5d7b766d45afb8d126556ee)]:
+  - @graphql-mesh/cli@0.88.7
+  - @graphql-mesh/openapi@0.98.1
+  - @graphql-mesh/plugin-hive@0.96.7
+  - @graphql-mesh/transform-hive@0.96.7
+
+## 0.8.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.6
+  - @graphql-mesh/openapi@0.98.0
+  - @graphql-mesh/plugin-hive@0.96.6
+  - @graphql-mesh/transform-hive@0.96.6
+
+## 0.7.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.5
+  - @graphql-mesh/openapi@0.97.5
+  - @graphql-mesh/plugin-hive@0.96.5
+  - @graphql-mesh/transform-hive@0.96.5
+
+## 0.7.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.97.4
+
+## 0.7.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1bb2023`](https://github.com/ardatan/graphql-mesh/commit/1bb20238cf87b8dc5f4c124015c0bebf43204e2d),
+  [`1bb2023`](https://github.com/ardatan/graphql-mesh/commit/1bb20238cf87b8dc5f4c124015c0bebf43204e2d)]:
+  - @graphql-mesh/plugin-hive@0.96.4
+  - @graphql-mesh/transform-hive@0.96.4
+
+## 0.7.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.97.3
+
+## 0.7.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`10b01a1`](https://github.com/ardatan/graphql-mesh/commit/10b01a1794eaf4313ba8084b409260b99b78ee87)]:
+  - @graphql-mesh/cli@0.88.4
+
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`03f5566`](https://github.com/ardatan/graphql-mesh/commit/03f55664cebd98119699cbe6c03833a5f2348714),
+  [`03f5566`](https://github.com/ardatan/graphql-mesh/commit/03f55664cebd98119699cbe6c03833a5f2348714),
+  [`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/plugin-hive@0.96.3
+  - @graphql-mesh/transform-hive@0.96.3
+  - @graphql-mesh/cli@0.88.3
+  - @graphql-mesh/openapi@0.97.2
+
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a780dd8`](https://github.com/ardatan/graphql-mesh/commit/a780dd849b79000396246edfe0cb251eb91d7d74),
+  [`2482dc4`](https://github.com/ardatan/graphql-mesh/commit/2482dc4adc02ace4dc4322d6527a928f7c1efa88)]:
+  - @graphql-mesh/cli@0.88.2
+  - @graphql-mesh/openapi@0.97.1
+  - @graphql-mesh/plugin-hive@0.96.2
+  - @graphql-mesh/transform-hive@0.96.2
+
+## 0.7.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`95c340bed`](https://github.com/ardatan/graphql-mesh/commit/95c340bed250f397a919e1db9cbce2a04575eb69),
+  [`b88df4e7e`](https://github.com/ardatan/graphql-mesh/commit/b88df4e7efcf1026692e16e113cc2664d6d4ed95),
+  [`95c340bed`](https://github.com/ardatan/graphql-mesh/commit/95c340bed250f397a919e1db9cbce2a04575eb69),
+  [`b88df4e7e`](https://github.com/ardatan/graphql-mesh/commit/b88df4e7efcf1026692e16e113cc2664d6d4ed95)]:
+  - @graphql-mesh/plugin-hive@0.96.1
+  - @graphql-mesh/transform-hive@0.96.1
+  - @graphql-mesh/cli@0.88.1
+  - @graphql-mesh/openapi@0.97.0
+
+## 0.6.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/openapi@0.96.0
+  - @graphql-mesh/cli@0.88.0
+  - @graphql-mesh/plugin-hive@0.96.0
+  - @graphql-mesh/transform-hive@0.96.0
+
+## 0.5.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.12
+  - @graphql-mesh/plugin-hive@0.95.10
+  - @graphql-mesh/transform-hive@0.95.8
+  - @graphql-mesh/cli@0.87.16
+
+## 0.5.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.11
+
+## 0.5.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.15
+
+## 0.5.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0ee3c62f9`](https://github.com/Urigo/graphql-mesh/commit/0ee3c62f9c3c3d315e4926666e8881c4d0f46280)]:
+  - @graphql-mesh/cli@0.87.14
+
+## 0.5.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`888661506`](https://github.com/Urigo/graphql-mesh/commit/8886615066abeeae3669f9f7a0a4fa0b971b05f3)]:
+  - @graphql-mesh/plugin-hive@0.95.9
+  - @graphql-mesh/openapi@0.95.10
+
+## 0.5.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.9
+
+## 0.5.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.8
+  - @graphql-mesh/cli@0.87.13
+  - @graphql-mesh/plugin-hive@0.95.8
+  - @graphql-mesh/transform-hive@0.95.7
+
+## 0.5.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.12
+
+## 0.5.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`682280c66`](https://github.com/Urigo/graphql-mesh/commit/682280c66c1cbd3bf54f64b3c2b1bd25b1fe20f2)]:
+  - @graphql-mesh/plugin-hive@0.95.7
+
+## 0.5.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.11
+
+## 0.5.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.7
+  - @graphql-mesh/plugin-hive@0.95.6
+  - @graphql-mesh/transform-hive@0.95.6
+  - @graphql-mesh/cli@0.87.10
+
+## 0.5.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.9
+  - @graphql-mesh/plugin-hive@0.95.5
+  - @graphql-mesh/transform-hive@0.95.5
+  - @graphql-mesh/openapi@0.95.6
+
+## 0.5.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.8
+  - @graphql-mesh/openapi@0.95.5
+  - @graphql-mesh/plugin-hive@0.95.4
+  - @graphql-mesh/transform-hive@0.95.4
+
+## 0.5.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a458c88f0`](https://github.com/Urigo/graphql-mesh/commit/a458c88f08e5fc5d6337354d3f781018c736db1f)]:
+  - @graphql-mesh/cli@0.87.7
+
 ## 0.5.7
 
 ### Patch Changes

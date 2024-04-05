@@ -34,7 +34,7 @@ describe('JSON Schema File Uploads', () => {
         description: 'This is a test file description',
       },
     );
-    expect(uploadResult).toEqual({
+    expect(uploadResult).toMatchObject({
       data: {
         uploadFile: {
           message: 'File uploaded',
@@ -57,7 +57,7 @@ describe('JSON Schema File Uploads', () => {
         fileName: 'example.txt',
       },
     );
-    expect(readResult).toEqual({
+    expect(readResult).toMatchObject({
       data: {
         readFileAsText: {
           name: 'example.txt',

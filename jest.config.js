@@ -1,10 +1,13 @@
 const { resolve } = require('path');
 const { pathsToModuleNameMapper } = require('ts-jest');
+const JSON5 = require('json5');
 const CI = !!process.env.CI;
+const { readFileSync } = require('fs');
 
 const ROOT_DIR = __dirname;
 const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
-const tsconfig = require(TSCONFIG);
+const tsconfigStr = readFileSync(TSCONFIG, 'utf8');
+const tsconfig = JSON5.parse(tsconfigStr);
 
 process.env.LC_ALL = 'en_US';
 
@@ -14,6 +17,9 @@ if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/grpc-*/**');
   testMatch.push('!**/examples/sqlite-*/**');
   testMatch.push('!**/examples/mysql-*/**');
+  testMatch.push('!**/examples/v1-next/grpc-*/**');
+  testMatch.push('!**/examples/v1-next/sqlite-*/**');
+  testMatch.push('!**/examples/v1-next/mysql-*/**');
 }
 
 testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');
@@ -30,6 +36,12 @@ testMatch.push(
     : '!**/packages/plugins/newrelic/tests/**',
 );
 
+if (process.version.startsWith('v21.')) {
+  console.warn('Skipping SQLite Chinook tests because Node v21 is not supported yet');
+  testMatch.push('!**/examples/sqlite-chinook/**');
+}
+const ESM_PACKAGES = ['prettier'];
+
 module.exports = {
   testEnvironment: 'node',
   rootDir: ROOT_DIR,
@@ -42,15 +54,15 @@ module.exports = {
       prefix: `${ROOT_DIR}/`,
     }),
     'formdata-node': '<rootDir>/node_modules/formdata-node/lib/cjs/index.js',
+    prettier: '<rootDir>/node_modules/prettier/index.mjs',
   },
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
   extensionsToTreatAsEsm: ['.ts'],
   transform: {
-    '^.+\\.mjs?$': 'babel-jest',
-    '^.+\\.ts?$': 'babel-jest',
-    '^.+\\.js$': 'babel-jest',
+    '^.+\\.m?(t|j)s?$': 'babel-jest',
   },
+  transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
   resolver: 'bob-the-bundler/jest-resolver',
   testMatch,
 };

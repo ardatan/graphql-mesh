@@ -1,0 +1,132 @@
+extend type Handler {
+  """
+  Handler for remote/local/third-party GraphQL schema
+  """
+  graphql: GraphQLHandler
+}
+
+union GraphQLHandler =
+  | GraphQLHandlerHTTPConfiguration
+  | GraphQLHandlerCodeFirstConfiguration
+  | GraphQLHandlerMultipleHTTPConfiguration
+
+type GraphQLHandlerMultipleHTTPConfiguration {
+  """
+  HTTP Source Configurations
+  """
+  sources: [GraphQLHandlerHTTPConfiguration!]!
+  """
+  Handling strategy (default: fallback)
+  """
+  strategy: GraphQLHandlerMultipleHTTPSourceStrategy
+  """
+  Handling strategy configuration
+  """
+  strategyConfig: GraphQLHandlerhighestValueStrategyConfig
+}
+
+type GraphQLHandlerhighestValueStrategyConfig {
+  selectionSet: String!
+  value: String!
+}
+
+enum GraphQLHandlerMultipleHTTPSourceStrategy {
+  fallback
+  race
+  highestValue
+}
+
+type GraphQLHandlerCodeFirstConfiguration @md {
+  """
+  A file path to your GraphQL Schema
+  If you provide a path to a code file(js or ts),
+  other options will be ignored and the schema exported from the file will be used directly.
+  """
+  source: Any!
+}
+
+type GraphQLHandlerHTTPConfiguration @md {
+  """
+  A url or file path to your remote GraphQL endpoint.
+  If you provide a path to a code file(js or ts),
+  other options will be ignored and the schema exported from the file will be used directly.
+  """
+  endpoint: String!
+  """
+  JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
+  """
+  schemaHeaders: Any
+  """
+  JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
+  """
+  operationHeaders: JSON
+  """
+  Use HTTP GET for Query operations
+  """
+  useGETForQueries: Boolean
+  """
+  HTTP method used for GraphQL operations
+  """
+  method: GraphQLHandlerHTTPMethod
+  """
+  Request Credentials if your environment supports it.
+  [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
+
+  @default "same-origin"
+  """
+  credentials: RequestCredentials
+  """
+  Path to a custom W3 Compatible WebSocket Implementation
+  """
+  webSocketImpl: String
+  """
+  Path to the introspection
+  You can separately give schema introspection or SDL
+  """
+  source: String
+  """
+  SSE - Server Sent Events
+  WS - New graphql-ws
+  LEGACY_WS - Legacy subscriptions-transport-ws
+  """
+  subscriptionsProtocol: SubscriptionProtocol
+  """
+  URL to your endpoint serving all subscription queries for this source
+  """
+  subscriptionsEndpoint: String
+  """
+  Retry attempts if fails
+  """
+  retry: Int
+  """
+  Timeout in milliseconds
+  """
+  timeout: Int
+  """
+  Enable/Disable automatic query batching
+  """
+  batch: Boolean
+  """
+  JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.
+  More information about the WebSocket `connectionParams`:
+    - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams
+    - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient
+  """
+  connectionParams: JSON
+}
+
+enum SubscriptionProtocol {
+  SSE
+  WS
+  LEGACY_WS
+}
+
+enum GraphQLHandlerHTTPMethod {
+  GET
+  POST
+}
+
+enum RequestCredentials {
+  omit
+  include
+}

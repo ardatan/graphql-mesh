@@ -3,78 +3,122 @@
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
+import { createRouter, Response } from 'fets';
 import { parse as qsParse } from 'qs';
-import { createRouter, Response } from '@whatwg-node/router';
 
-export const exampleApi6 = createRouter({ base: '/api' });
-
-exampleApi6.get('/object', () => {
-  return new Response(JSON.stringify({ data: 'object' }), {
-    headers: {
-      'Content-Type': 'application/json',
+export const exampleApi6 = createRouter({ base: '/api' })
+  .route({
+    method: 'GET',
+    path: '/object',
+    handler: () => Response.json({ data: 'object' }),
+  })
+  .route({
+    method: 'GET',
+    path: '/object2',
+    handler(req) {
+      if (typeof req.headers.get('specialheader') === 'string') {
+        return Response.json({
+          data: `object2 with special header: '${req.headers.get('specialheader')}'`,
+        });
+      } else {
+        return Response.json({ data: 'object2' });
+      }
     },
-  });
-});
-
-exampleApi6.get('/object2', req => {
-  if (typeof req.headers.get('specialheader') === 'string') {
-    return new Response(
-      JSON.stringify({
-        data: `object2 with special header: '${req.headers.get('specialheader')}'`,
-      }),
-      {
+  })
+  .route({
+    method: 'POST',
+    path: '/formUrlEncoded',
+    handler: async req => {
+      const textBody = await req.text();
+      const body = qsParse(textBody);
+      return new Response(JSON.stringify(body), {
         headers: {
           'Content-Type': 'application/json',
         },
-      },
-    );
-  } else {
-    return new Response(JSON.stringify({ data: 'object2' }), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  }
-});
-
-exampleApi6.post('/formUrlEncoded', async req => {
-  const textBody = await req.text();
-  const body = qsParse(textBody);
-  return new Response(JSON.stringify(body), {
-    headers: {
-      'Content-Type': 'application/json',
+      });
     },
+  })
+  .route({
+    method: 'GET',
+    path: '/cars/:id',
+    handler: req => Response.json(`Car ID: ${req.params.id}`),
+  })
+  .route({
+    method: 'GET',
+    path: '/cacti/:cactusId',
+    handler: req => Response.json(`Cactus ID: ${req.params.cactusId}`),
+  })
+  .route({
+    method: 'GET',
+    path: '/eateries/:eatery/breads/:breadName/dishes/:dishKey',
+    handler: req =>
+      Response.json(
+        `Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`,
+      ),
+  })
+  .route({
+    method: 'GET',
+    path: '/nestedReferenceInParameter',
+    handler: req => {
+      const queryData = qsParse(req.parsedUrl.search.slice(1));
+      return new Response(stringifyRussianDolls(queryData.russianDoll), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/strictGetOperation',
+    handler: req => {
+      if (req.headers.get('content-type')) {
+        return new Response('Get request should not have Content-Type', {
+          status: 400,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      } else {
+        return new Response('Perfect!', {
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/noResponseSchema',
+    handler: () =>
+      new Response('Hello world', {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      }),
+  })
+  .route({
+    method: 'GET',
+    path: '/returnNumber',
+    handler: req => {
+      return new Response(req.headers.get('number'), {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      });
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/testLinkWithNonStringParam',
+    handler: () => Response.json({ hello: 'world' }),
+  })
+  .route({
+    method: 'GET',
+    path: '/testLinkwithNestedParam',
+    handler: () => Response.json({ nesting1: { nesting2: 5 } }),
   });
-});
-
-exampleApi6.get('/cars/:id', req => {
-  return new Response(JSON.stringify(`Car ID: ${req.params.id}`), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-});
-
-exampleApi6.get('/cacti/:cactusId', req => {
-  return new Response(JSON.stringify(`Cactus ID: ${req.params.cactusId}`), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-});
-
-exampleApi6.get('/eateries/:eatery/breads/:breadName/dishes/:dishKey', req => {
-  return new Response(
-    JSON.stringify(
-      `Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`,
-    ),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-});
 
 // TODO: better types for this
 function stringifyRussianDolls(russianDoll: any): any {
@@ -88,61 +132,3 @@ function stringifyRussianDolls(russianDoll: any): any {
     return russianDoll.name;
   }
 }
-
-exampleApi6.get('/nestedReferenceInParameter', req => {
-  const queryData = qsParse(req.parsedUrl.search.slice(1));
-  return new Response(stringifyRussianDolls(queryData.russianDoll), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-});
-
-exampleApi6.get('/strictGetOperation', req => {
-  if (req.headers.get('content-type')) {
-    return new Response('Get request should not have Content-Type', {
-      status: 400,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  } else {
-    return new Response('Perfect!', {
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  }
-});
-
-exampleApi6.get('/noResponseSchema', () => {
-  return new Response('Hello world', {
-    headers: {
-      'Content-Type': 'text/plain',
-    },
-  });
-});
-
-exampleApi6.get('/returnNumber', req => {
-  return new Response(req.headers.get('number'), {
-    headers: {
-      'Content-Type': 'text/plain',
-    },
-  });
-});
-
-exampleApi6.get('/testLinkWithNonStringParam', () => {
-  return new Response(JSON.stringify({ hello: 'world' }), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-});
-
-exampleApi6.get('/testLinkwithNestedParam', () => {
-  return new Response(JSON.stringify({ nesting1: { nesting2: 5 } }), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-});

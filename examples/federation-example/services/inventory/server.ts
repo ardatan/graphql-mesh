@@ -1,8 +1,10 @@
 import { inspect } from 'node:util';
-import { ApolloServer, gql } from 'apollo-server';
+import { parse } from 'graphql';
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 
-const typeDefs = gql`
+const typeDefs = parse(/* GraphQL */ `
   extend type Product @key(fields: "upc") {
     upc: String! @external
     weight: Int @external
@@ -10,7 +12,7 @@ const typeDefs = gql`
     inStock: Boolean
     shippingEstimate: Int @requires(fields: "price weight")
   }
-`;
+`);
 
 const resolvers = {
   Product: {
@@ -42,7 +44,7 @@ const server = new ApolloServer({
 });
 
 export const inventoryServer = () =>
-  server.listen({ port: 9872 }).then(({ url }) => {
+  startStandaloneServer(server, { listen: { port: 9872 } }).then(({ url }) => {
     if (!process.env.CI) {
       console.log(`🚀 Server ready at ${url}`);
     }

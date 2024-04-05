@@ -1,18 +1,12 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import { Response as NodeFetchResponse } from 'node-fetch';
-import { Response as UndiciResponse } from 'undici';
-import { Response as WhatwgNodeResponse } from '@whatwg-node/fetch';
-import { wrapFetchWithPlugins } from '../../../runtime/src/get-mesh.js';
+import { wrapFetchWithPlugins } from '../../../legacy/runtime/src/get-mesh.js';
 import useDeduplicateRequest from '../src/index.js';
 
+const modules = ['node-fetch', 'undici', '@whatwg-node/fetch'];
+
 describe('useDeduplicateRequest', () => {
-  (
-    [
-      [NodeFetchResponse, 'node-fetch'],
-      [UndiciResponse, 'undici'],
-      [WhatwgNodeResponse, '@whatwg-node/fetch'],
-    ] as const
-  ).forEach(([Response, fetchImplName]) => {
+  modules.forEach(fetchImplName => {
+    globalThis.ReadableStream ||= require(fetchImplName).ReadableStream;
+    const Response = require(fetchImplName).Response;
     if (!Response) {
       return;
     }

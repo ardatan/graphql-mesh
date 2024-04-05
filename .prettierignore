@@ -6,3 +6,5 @@ dist/
 .mesh/
 /.husky/_/
 .bob/
+.yarn
+supergraph-invalid.graphql

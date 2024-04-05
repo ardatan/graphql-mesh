@@ -1,0 +1,43 @@
+swagger: '2.0'
+info:
+  description: 'Schema'
+  version: '1.0.0'
+  title: 'MyAPI'
+paths:
+  /sample:
+    post:
+      summary: 'Create sample'
+      operationId: 'createSample'
+      parameters:
+        - name: 'input'
+          in: 'body'
+          description: 'The input'
+          required: true
+          schema:
+            type: 'object'
+            properties:
+              id:
+                type: 'integer'
+                format: 'int64'
+                required: true
+              name:
+                type: 'string'
+                required: false
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Result'
+definitions:
+  Result:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+        description: 'The Name.'
+        maxLength: 100
+      type:
+        type: 'string'
+        description: 'The type'

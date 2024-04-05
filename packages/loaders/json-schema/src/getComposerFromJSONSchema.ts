@@ -4,6 +4,7 @@ import {
   GraphQLBoolean,
   GraphQLFloat,
   GraphQLInt,
+  GraphQLScalarType,
   GraphQLString,
   GraphQLType,
   isNonNullType,
@@ -17,12 +18,10 @@ import {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
   InputTypeComposerFieldConfigAsObjectDefinition,
-  InputTypeComposerFieldConfigMap,
   InterfaceTypeComposer,
   isSomeInputTypeComposer,
   ListComposer,
   ObjectTypeComposer,
-  ObjectTypeComposerFieldConfigMap,
   ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
   SchemaComposer,
@@ -82,14 +81,128 @@ export interface TypeComposers {
   readOnly?: boolean;
   writeOnly?: boolean;
   flatten?: boolean;
+  deprecated?: boolean;
 }
 
-export function getComposerFromJSONSchema(
-  schema: JSONSchema,
-  logger: Logger,
-): Promise<TypeComposers> {
+const formatScalarMapWithoutAjv: Record<string, GraphQLScalarType> = {
+  byte: GraphQLByte,
+  binary: GraphQLFile,
+  'date-time': GraphQLDateTime,
+  time: GraphQLTime,
+  email: GraphQLEmailAddress,
+  ipv4: GraphQLIPv4,
+  ipv6: GraphQLIPv6,
+  uri: GraphQLURL,
+  uuid: GraphQLUUID,
+  'unix-time': GraphQLTimestamp,
+  int64: GraphQLBigInt,
+  int32: GraphQLInt,
+  decimal: GraphQLFloat,
+  float: GraphQLFloat,
+};
+
+export interface GetComposerFromJSONSchemaOpts {
+  subgraphName: string;
+  schema: JSONSchema;
+  logger: Logger;
+  getScalarForFormat?: (format: string) => GraphQLScalarType | void;
+}
+
+const deepMergedInputTypeComposerFields = new WeakMap<
+  InputTypeComposer<any>,
+  WeakSet<InputTypeComposer<any>>
+>();
+
+function deepMergeInputTypeComposerFields(
+  existingInputTypeComposer: InputTypeComposer<any>,
+  newInputTypeComposer: InputTypeComposer<any>,
+) {
+  let mergedInputTypes = deepMergedInputTypeComposerFields.get(existingInputTypeComposer);
+  if (!mergedInputTypes) {
+    mergedInputTypes = new WeakSet();
+    deepMergedInputTypeComposerFields.set(existingInputTypeComposer, mergedInputTypes);
+  }
+  if (mergedInputTypes.has(newInputTypeComposer)) {
+    return;
+  }
+  mergedInputTypes.add(newInputTypeComposer);
+  const existingInputTypeComposerFields = existingInputTypeComposer.getFields();
+  const newInputTypeComposerFields = newInputTypeComposer.getFields();
+  for (const [newFieldKey, newFieldValue] of Object.entries(newInputTypeComposerFields)) {
+    const existingFieldValue = existingInputTypeComposerFields[newFieldKey];
+    if (!existingFieldValue) {
+      existingInputTypeComposerFields[newFieldKey] = newFieldValue;
+    } else {
+      const existingFieldUnwrappedTC =
+        typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
+          ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
+          : undefined;
+      const newFieldUnwrappedTC =
+        typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
+          ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
+          : undefined;
+      if (
+        existingFieldUnwrappedTC instanceof InputTypeComposer &&
+        newFieldUnwrappedTC instanceof InputTypeComposer
+      ) {
+        deepMergeInputTypeComposerFields(existingFieldUnwrappedTC, newFieldUnwrappedTC);
+      } else {
+        existingInputTypeComposerFields[newFieldKey] = newFieldValue;
+      }
+    }
+  }
+}
+
+function deepMergeObjectTypeComposerFields(
+  existingObjectTypeComposer: ObjectTypeComposer<any, any>,
+  newObjectTypeComposer: ObjectTypeComposer<any, any>,
+) {
+  const existingObjectTypeComposerFields = existingObjectTypeComposer.getFields();
+  const newObjectTypeComposerFields = newObjectTypeComposer.getFields();
+  for (const [newFieldKey, newFieldValue] of Object.entries(newObjectTypeComposerFields)) {
+    const existingFieldValue = existingObjectTypeComposerFields[newFieldKey];
+    if (!existingFieldValue) {
+      existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
+    } else {
+      const existingFieldUnwrappedTC =
+        typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
+          ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
+          : undefined;
+      const newFieldUnwrappedTC =
+        typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
+          ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
+          : undefined;
+      if (
+        existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
+        newFieldUnwrappedTC instanceof ObjectTypeComposer
+      ) {
+        deepMergeObjectTypeComposerFields(existingFieldUnwrappedTC, newFieldUnwrappedTC);
+      } else {
+        if (
+          newFieldUnwrappedTC &&
+          existingFieldUnwrappedTC &&
+          !isUnspecificType(newFieldUnwrappedTC) &&
+          isUnspecificType(existingFieldUnwrappedTC)
+        ) {
+          continue;
+        }
+        existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
+      }
+    }
+  }
+}
+
+export function getComposerFromJSONSchema({
+  subgraphName,
+  schema,
+  logger,
+  getScalarForFormat,
+}: GetComposerFromJSONSchemaOpts): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const formatScalarMap = getJSONSchemaStringFormatScalarMap();
+  const getDefaultScalarForFormat = (format: string) =>
+    formatScalarMapWithoutAjv[format] || formatScalarMap.get(format);
+
   const rootInputTypeNameComposerMap: Record<string, () => ObjectTypeComposer<any>> = {
     QueryInput: () => schemaComposer.Query,
     MutationInput: () => schemaComposer.Mutation,
@@ -139,6 +252,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         // If it doesn't have any clue
@@ -158,6 +272,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
       }
@@ -190,12 +305,14 @@ export function getComposerFromJSONSchema(
             {
               name: 'regexp',
               args: {
+                subgraph: subgraphName,
                 pattern: subSchema.pattern,
               },
             },
             {
               name: 'typescript',
               args: {
+                subgraph: subgraphName,
                 type: typeScriptType,
               },
             },
@@ -207,6 +324,7 @@ export function getComposerFromJSONSchema(
           nullable: subSchema.nullable,
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
+          deprecated: subSchema.deprecated,
         };
       }
       if (subSchema.const) {
@@ -218,14 +336,19 @@ export function getComposerFromJSONSchema(
         schemaComposer.addDirective(EnumDirective);
         schemaComposer.addDirective(TypeScriptDirective);
         schemaComposer.addDirective(ExampleDirective);
+        let enumValueName = sanitizeNameForGraphQL(subSchema.const.toString());
+        if (enumValueName === 'true' || enumValueName === 'false') {
+          enumValueName = enumValueName.toUpperCase();
+        }
         const typeComposer = schemaComposer.createEnumTC({
           name: scalarTypeName,
           values: {
-            [sanitizeNameForGraphQL(subSchema.const.toString())]: {
+            [enumValueName]: {
               directives: [
                 {
                   name: 'enum',
                   args: {
+                    subgraph: subgraphName,
                     value: JSON.stringify(subSchema.const),
                   },
                 },
@@ -236,12 +359,14 @@ export function getComposerFromJSONSchema(
             {
               name: 'typescript',
               args: {
+                subgraph: subgraphName,
                 type: JSON.stringify(subSchema.const),
               },
             },
             {
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: subSchema.const,
               },
             },
@@ -256,6 +381,7 @@ export function getComposerFromJSONSchema(
           nullable: subSchema.nullable,
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
+          deprecated: subSchema.deprecated,
         };
       }
       if (subSchema.enum && subSchema.type !== 'boolean') {
@@ -277,6 +403,7 @@ export function getComposerFromJSONSchema(
             directives.push({
               name: 'enum',
               args: {
+                subgraph: subgraphName,
                 value: JSON.stringify(enumValue),
               },
             });
@@ -293,6 +420,7 @@ export function getComposerFromJSONSchema(
             directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -318,6 +446,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       }
 
@@ -335,180 +464,26 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
       }
 
       if (subSchema.format) {
-        switch (subSchema.format) {
-          case 'byte': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLByte);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              default: subSchema.default,
-            };
-          }
-          case 'binary': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              default: subSchema.default,
-            };
-          }
-          case 'date-time': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLDateTime);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'time': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLTime);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'email': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLEmailAddress);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'ipv4': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLIPv4);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'ipv6': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLIPv6);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'uri': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'uuid': {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLUUID);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'unix-time': {
-            const typeComposer = schemaComposer.createScalarTC(GraphQLTimestamp);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'int64': {
-            const typeComposer = schemaComposer.createScalarTC(GraphQLBigInt);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'int32': {
-            const typeComposer = schemaComposer.createScalarTC(GraphQLInt);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          case 'decimal':
-          case 'float': {
-            const typeComposer = schemaComposer.createScalarTC(GraphQLFloat);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          default: {
-            const formatScalar = formatScalarMap.get(subSchema.format);
-            if (formatScalar) {
-              const typeComposer = schemaComposer.getAnyTC(formatScalar);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-          }
+        const formatScalar =
+          getScalarForFormat?.(subSchema.format) || getDefaultScalarForFormat(subSchema.format);
+        if (formatScalar) {
+          const typeComposer = schemaComposer.getAnyTC(formatScalar);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+            deprecated: subSchema.deprecated,
+          };
         }
       }
 
@@ -524,6 +499,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       } else if (subSchema.minimum > 0) {
         const typeComposer = schemaComposer.getAnyTC(
@@ -537,6 +513,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       }
       if (subSchema.maximum === 0) {
@@ -551,6 +528,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       } else if (subSchema.maximum < 0) {
         const typeComposer = schemaComposer.getAnyTC(
@@ -564,6 +542,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       }
       if (
@@ -579,6 +558,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       }
 
@@ -593,6 +573,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'null': {
@@ -605,6 +586,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'integer': {
@@ -617,6 +599,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'number': {
@@ -629,6 +612,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'string': {
@@ -642,6 +626,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           if (subSchema.minLength || subSchema.maxLength) {
@@ -657,6 +642,7 @@ export function getComposerFromJSONSchema(
                 {
                   name: 'length',
                   args: {
+                    subgraph: subgraphName,
                     min: subSchema.minLength,
                     max: subSchema.maxLength,
                   },
@@ -671,6 +657,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           const typeComposer = schemaComposer.getAnyTC(GraphQLString);
@@ -682,6 +669,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'object': {
@@ -726,6 +714,9 @@ export function getComposerFromJSONSchema(
           directives: [
             {
               name: 'oneOf',
+              args: {
+                subgraph: subgraphName,
+              },
             },
           ],
         });
@@ -773,6 +764,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         const config = {
@@ -795,6 +787,7 @@ export function getComposerFromJSONSchema(
             config.directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -811,6 +804,7 @@ export function getComposerFromJSONSchema(
             directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -862,9 +856,11 @@ export function getComposerFromJSONSchema(
       if (subSchemaOnly.discriminator?.propertyName) {
         schemaComposer.addDirective(DiscriminatorDirective);
         const discriminatorArgs: {
+          subgraph: string;
           field: string;
           mapping?: Record<string, string>;
         } = {
+          subgraph: subgraphName,
           field: subSchemaOnly.discriminator.propertyName,
         };
         if (subSchemaOnly.discriminator.mapping) {
@@ -886,6 +882,7 @@ export function getComposerFromJSONSchema(
         );
         if (isPlural) {
           const { input, output, flatten } = getUnionTypeComposers({
+            subgraphName,
             schemaComposer,
             typeComposersList: (subSchemaAndTypeComposers.oneOf as any).map(
               ({ input, output }: any) => ({
@@ -907,9 +904,11 @@ export function getComposerFromJSONSchema(
             readOnly: subSchemaAndTypeComposers.readOnly,
             writeOnly: subSchemaAndTypeComposers.writeOnly,
             flatten,
+            deprecated: subSchemaAndTypeComposers.deprecated,
           };
         }
         return getUnionTypeComposers({
+          subgraphName,
           schemaComposer,
           typeComposersList: subSchemaAndTypeComposers.oneOf as any[],
           subSchemaAndTypeComposers,
@@ -971,8 +970,8 @@ export function getComposerFromJSONSchema(
                   newInputFieldUnwrappedTC instanceof InputTypeComposer
                 ) {
                   deepMergeInputTypeComposerFields(
-                    existingInputFieldUnwrappedTC.getFields(),
-                    newInputFieldUnwrappedTC.getFields(),
+                    existingInputFieldUnwrappedTC,
+                    newInputFieldUnwrappedTC,
                   );
                 } else {
                   inputFieldMap[fieldName] = newInputField;
@@ -988,6 +987,9 @@ export function getComposerFromJSONSchema(
               directives: [
                 {
                   name: 'resolveRoot',
+                  args: {
+                    subgraph: subgraphName,
+                  },
                 },
               ],
             };
@@ -1035,11 +1037,16 @@ export function getComposerFromJSONSchema(
                   existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
                   newFieldUnwrappedTC instanceof ObjectTypeComposer
                 ) {
-                  deepMergeObjectTypeComposerFields(
-                    existingFieldUnwrappedTC.getFields(),
-                    newFieldUnwrappedTC.getFields(),
-                  );
+                  deepMergeObjectTypeComposerFields(existingFieldUnwrappedTC, newFieldUnwrappedTC);
                 } else {
+                  if (
+                    newFieldUnwrappedTC &&
+                    existingFieldUnwrappedTC &&
+                    !isUnspecificType(newFieldUnwrappedTC) &&
+                    isUnspecificType(existingFieldUnwrappedTC)
+                  ) {
+                    continue;
+                  }
                   fieldMap[fieldName] = newField;
                 }
               }
@@ -1055,6 +1062,7 @@ export function getComposerFromJSONSchema(
             directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -1078,6 +1086,7 @@ export function getComposerFromJSONSchema(
               directives.push({
                 name: 'example',
                 args: {
+                  subgraph: subgraphName,
                   value: example,
                 },
               });
@@ -1167,6 +1176,9 @@ export function getComposerFromJSONSchema(
                   directives: [
                     {
                       name: 'resolveRoot',
+                      args: {
+                        subgraph: subgraphName,
+                      },
                     },
                   ],
                 };
@@ -1183,11 +1195,17 @@ export function getComposerFromJSONSchema(
                 directives: [
                   {
                     name: 'resolveRoot',
+                    args: {
+                      subgraph: subgraphName,
+                    },
                   },
                 ],
               };
             }
-          } else {
+          } else if (
+            outputTypeComposer instanceof ObjectTypeComposer ||
+            outputTypeComposer instanceof InterfaceTypeComposer
+          ) {
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
               // In case of conflict set it to JSON
@@ -1197,6 +1215,8 @@ export function getComposerFromJSONSchema(
               fieldMap[fieldName] = {
                 ...field,
                 type: () => {
+                  if (!field.type) {
+                  }
                   const fieldType = field.type.getType();
                   const namedType = getNamedType(fieldType as GraphQLType);
                   if (existingField) {
@@ -1232,6 +1252,7 @@ export function getComposerFromJSONSchema(
             directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -1258,6 +1279,7 @@ export function getComposerFromJSONSchema(
               directives.push({
                 name: 'example',
                 args: {
+                  subgraph: subgraphName,
                   value: example,
                 },
               });
@@ -1287,6 +1309,7 @@ export function getComposerFromJSONSchema(
                 fieldDirectives.push({
                   name: 'resolveRootField',
                   args: {
+                    subgraph: subgraphName,
                     field: propertyName,
                   },
                 });
@@ -1295,6 +1318,9 @@ export function getComposerFromJSONSchema(
                 schemaComposer.addDirective(FlattenDirective);
                 fieldDirectives.push({
                   name: 'flatten',
+                  args: {
+                    subgraph: subgraphName,
+                  },
                 });
               }
               fieldMap[fieldName] = {
@@ -1318,9 +1344,15 @@ export function getComposerFromJSONSchema(
                 },
                 // Make sure you get the right property
                 directives: fieldDirectives,
+                extensions: {
+                  nullable: subSchemaAndTypeComposers.properties?.[propertyName]?.nullable,
+                },
                 description:
                   subSchemaAndTypeComposers.properties[propertyName].description ||
                   subSchemaAndTypeComposers.properties[propertyName].output?.description,
+                deprecationReason: subSchemaAndTypeComposers.properties[propertyName].deprecated
+                  ? 'deprecated'
+                  : undefined,
               };
               const directives: Directive[] = [];
               if (fieldName !== propertyName) {
@@ -1328,6 +1360,7 @@ export function getComposerFromJSONSchema(
                 directives.push({
                   name: 'resolveRootField',
                   args: {
+                    subgraph: subgraphName,
                     field: propertyName,
                   },
                 });
@@ -1351,6 +1384,9 @@ export function getComposerFromJSONSchema(
                   }
                   return !nullable ? typeComposers.input?.getTypeNonNull() : typeComposers.input;
                 },
+                extensions: {
+                  nullable: subSchemaAndTypeComposers.properties?.[propertyName]?.nullable,
+                },
                 directives,
                 description:
                   subSchemaAndTypeComposers.properties[propertyName].description ||
@@ -1359,6 +1395,7 @@ export function getComposerFromJSONSchema(
                   subSchemaAndTypeComposers.properties[propertyName]?.default ||
                   subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ||
                   subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
+                // deprecationReason: subSchemaAndTypeComposers.properties[propertyName].deprecated ? 'deprecated' : undefined,
               };
             }
           }
@@ -1387,6 +1424,9 @@ export function getComposerFromJSONSchema(
                 directives: [
                   {
                     name: 'dictionary',
+                    args: {
+                      subgraph: subgraphName,
+                    },
                   },
                 ],
               };
@@ -1397,6 +1437,9 @@ export function getComposerFromJSONSchema(
                 directives: [
                   {
                     name: 'resolveRoot',
+                    args: {
+                      subgraph: subgraphName,
+                    },
                   },
                 ],
               };
@@ -1416,6 +1459,7 @@ export function getComposerFromJSONSchema(
                 default: subSchemaAndTypeComposers.default,
                 readOnly: subSchemaAndTypeComposers.readOnly,
                 writeOnly: subSchemaAndTypeComposers.writeOnly,
+                deprecated: subSchemaAndTypeComposers.deprecated,
               };
             }
           }
@@ -1445,12 +1489,28 @@ export function getComposerFromJSONSchema(
               }
             }
             (output as ObjectTypeComposer).addFields(fieldMap);
+            // TODO: Improve this later
+            for (const requiredFieldName of subSchemaAndTypeComposers.required || []) {
+              const sanitizedFieldName = sanitizeNameForGraphQL(requiredFieldName);
+              const fieldObj = (output as ObjectTypeComposer).getField(sanitizedFieldName);
+              if (!isNonNullType(fieldObj.type.getType()) && !fieldObj.extensions?.nullable) {
+                (output as ObjectTypeComposer).makeFieldNonNull(requiredFieldName);
+              }
+            }
           }
           let input = subSchemaAndTypeComposers.input;
           if (Object.keys(inputFieldMap).length === 0) {
             input = schemaComposer.getAnyTC(GraphQLJSON);
           } else if (input != null && 'addFields' in input) {
             (input as InputTypeComposer).addFields(inputFieldMap);
+            // TODO: Improve this later
+            for (const requiredFieldName of subSchemaAndTypeComposers.required || []) {
+              const sanitizedFieldName = sanitizeNameForGraphQL(requiredFieldName);
+              const field = (input as InputTypeComposer).getField(sanitizedFieldName);
+              if (!isNonNullType(field.type.getType()) && !field.extensions?.nullable) {
+                (input as InputTypeComposer).makeFieldNonNull(requiredFieldName);
+              }
+            }
           }
 
           if (isList) {
@@ -1464,9 +1524,9 @@ export function getComposerFromJSONSchema(
             default: subSchemaAndTypeComposers.default,
             readOnly: subSchemaAndTypeComposers.readOnly,
             writeOnly: subSchemaAndTypeComposers.writeOnly,
+            deprecated: subSchemaAndTypeComposers.deprecated,
           };
       }
-
       if (subSchemaAndTypeComposers.input || subSchemaAndTypeComposers.output) {
         return {
           input: subSchemaAndTypeComposers.input,
@@ -1476,6 +1536,7 @@ export function getComposerFromJSONSchema(
           default: subSchemaAndTypeComposers.default,
           readOnly: subSchemaAndTypeComposers.readOnly,
           writeOnly: subSchemaAndTypeComposers.writeOnly,
+          deprecated: subSchemaAndTypeComposers.deprecated,
         };
       } else {
         logger.debug(`GraphQL Type cannot be created for this JSON Schema definition;`, {
@@ -1491,72 +1552,16 @@ export function getComposerFromJSONSchema(
           readOnly: subSchemaAndTypeComposers.readOnly,
           writeOnly: subSchemaAndTypeComposers.writeOnly,
           default: subSchemaAndTypeComposers.default,
+          deprecated: subSchemaAndTypeComposers.deprecated,
         };
       }
     },
   });
+}
 
-  function deepMergeInputTypeComposerFields(
-    existingInputTypeComposerFields: InputTypeComposerFieldConfigMap,
-    newInputTypeComposerFields: InputTypeComposerFieldConfigMap,
-  ) {
-    for (const [newFieldKey, newFieldValue] of Object.entries(newInputTypeComposerFields)) {
-      const existingFieldValue = existingInputTypeComposerFields[newFieldKey];
-      if (!existingFieldValue) {
-        existingInputTypeComposerFields[newFieldKey] = newFieldValue;
-      } else {
-        const existingFieldUnwrappedTC =
-          typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
-            ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
-            : undefined;
-        const newFieldUnwrappedTC =
-          typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
-            ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
-            : undefined;
-        if (
-          existingFieldUnwrappedTC instanceof InputTypeComposer &&
-          newFieldUnwrappedTC instanceof InputTypeComposer
-        ) {
-          deepMergeInputTypeComposerFields(
-            existingFieldUnwrappedTC.getFields(),
-            newFieldUnwrappedTC.getFields(),
-          );
-        } else {
-          existingInputTypeComposerFields[newFieldKey] = newFieldValue;
-        }
-      }
-    }
-  }
+const specifiedTypeNames = ['String', 'Int', 'Float', 'Boolean', 'ID', 'JSON', 'Void'];
 
-  function deepMergeObjectTypeComposerFields(
-    existingObjectTypeComposerFields: ObjectTypeComposerFieldConfigMap<any, any>,
-    newObjectTypeComposerFields: ObjectTypeComposerFieldConfigMap<any, any>,
-  ) {
-    for (const [newFieldKey, newFieldValue] of Object.entries(newObjectTypeComposerFields)) {
-      const existingFieldValue = existingObjectTypeComposerFields[newFieldKey];
-      if (!existingFieldValue) {
-        existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
-      } else {
-        const existingFieldUnwrappedTC =
-          typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
-            ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
-            : undefined;
-        const newFieldUnwrappedTC =
-          typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
-            ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
-            : undefined;
-        if (
-          existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
-          newFieldUnwrappedTC instanceof ObjectTypeComposer
-        ) {
-          deepMergeObjectTypeComposerFields(
-            existingFieldUnwrappedTC.getFields(),
-            newFieldUnwrappedTC.getFields(),
-          );
-        } else {
-          existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
-        }
-      }
-    }
-  }
+function isUnspecificType(typeComposer: AnyTypeComposer<any>) {
+  const tc = typeComposer.getTypeName();
+  return !specifiedTypeNames.includes(tc);
 }

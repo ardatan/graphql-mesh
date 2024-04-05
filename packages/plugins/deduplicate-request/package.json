@@ -1,10 +1,10 @@
 {
   "name": "@graphql-mesh/plugin-deduplicate-request",
-  "version": "0.95.3",
+  "version": "0.97.5",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "Urigo/graphql-mesh",
+    "url": "ardatan/graphql-mesh",
     "directory": "packages/plugins/deduplicate-request"
   },
   "license": "MIT",
@@ -32,14 +32,13 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.95.3",
-    "@graphql-mesh/utils": "^0.95.3",
+    "@graphql-mesh/types": "^0.97.5",
+    "@graphql-mesh/utils": "^0.97.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@whatwg-node/fetch": "0.9.13"
+    "@whatwg-node/fetch": "0.9.17"
   },
   "publishConfig": {
     "access": "public",

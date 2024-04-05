@@ -1,5 +1,296 @@
 # json-schema-subscriptions
 
+## 0.10.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.8
+
+## 0.10.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.7
+  - @graphql-mesh/json-schema@0.99.6
+  - @graphql-mesh/plugin-live-query@0.97.5
+
+## 0.10.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.6
+
+## 0.10.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.5
+
+## 0.10.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/json-schema@0.99.5
+  - @graphql-mesh/plugin-live-query@0.97.4
+
+## 0.10.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/json-schema@0.99.4
+  - @graphql-mesh/plugin-live-query@0.97.3
+
+## 0.10.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.2
+  - @graphql-mesh/json-schema@0.99.3
+  - @graphql-mesh/plugin-live-query@0.97.2
+
+## 0.10.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.99.2
+
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.1
+  - @graphql-mesh/json-schema@0.99.1
+  - @graphql-mesh/plugin-live-query@0.97.1
+
+## 0.10.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.0
+  - @graphql-mesh/json-schema@0.99.0
+  - @graphql-mesh/plugin-live-query@0.97.0
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.9
+  - @graphql-mesh/json-schema@0.98.2
+  - @graphql-mesh/plugin-live-query@0.96.6
+
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`74f2042`](https://github.com/ardatan/graphql-mesh/commit/74f20429bb725696315c937d6055cf99b6d2c30e)]:
+  - @graphql-mesh/cli@0.88.8
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2e67aa0`](https://github.com/ardatan/graphql-mesh/commit/2e67aa0f37f2d438d5d7b766d45afb8d126556ee)]:
+  - @graphql-mesh/cli@0.88.7
+  - @graphql-mesh/json-schema@0.98.1
+  - @graphql-mesh/plugin-live-query@0.96.5
+
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)]:
+  - @graphql-mesh/plugin-live-query@0.96.4
+  - @graphql-mesh/cli@0.88.6
+  - @graphql-mesh/json-schema@0.98.0
+
+## 0.8.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.5
+  - @graphql-mesh/json-schema@0.97.4
+  - @graphql-mesh/plugin-live-query@0.96.3
+
+## 0.8.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.97.3
+
+## 0.8.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`10b01a1`](https://github.com/ardatan/graphql-mesh/commit/10b01a1794eaf4313ba8084b409260b99b78ee87)]:
+  - @graphql-mesh/cli@0.88.4
+
+## 0.8.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/cli@0.88.3
+  - @graphql-mesh/json-schema@0.97.2
+  - @graphql-mesh/plugin-live-query@0.96.2
+
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a780dd8`](https://github.com/ardatan/graphql-mesh/commit/a780dd849b79000396246edfe0cb251eb91d7d74),
+  [`2482dc4`](https://github.com/ardatan/graphql-mesh/commit/2482dc4adc02ace4dc4322d6527a928f7c1efa88)]:
+  - @graphql-mesh/cli@0.88.2
+  - @graphql-mesh/json-schema@0.97.1
+  - @graphql-mesh/plugin-live-query@0.96.1
+
+## 0.8.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`df7d9df10`](https://github.com/ardatan/graphql-mesh/commit/df7d9df10842738cb24ca02743cbb2dd624636e8)]:
+  - @graphql-mesh/json-schema@0.97.0
+  - @graphql-mesh/cli@0.88.1
+
+## 0.7.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/json-schema@0.96.0
+  - @graphql-mesh/cli@0.88.0
+  - @graphql-mesh/plugin-live-query@0.96.0
+
+## 0.6.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.95.12
+  - @graphql-mesh/plugin-live-query@0.95.10
+  - @graphql-mesh/cli@0.87.16
+
+## 0.6.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.95.11
+
+## 0.6.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)]:
+  - @graphql-mesh/plugin-live-query@0.95.9
+  - @graphql-mesh/cli@0.87.15
+
+## 0.6.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0ee3c62f9`](https://github.com/Urigo/graphql-mesh/commit/0ee3c62f9c3c3d315e4926666e8881c4d0f46280)]:
+  - @graphql-mesh/cli@0.87.14
+
+## 0.6.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.95.10
+
+## 0.6.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.95.9
+
+## 0.6.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a13969c77`](https://github.com/Urigo/graphql-mesh/commit/a13969c77794c44493d7a9426be7e38a6d673c88)]:
+  - @graphql-mesh/json-schema@0.95.8
+  - @graphql-mesh/cli@0.87.13
+  - @graphql-mesh/plugin-live-query@0.95.8
+
+## 0.6.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.12
+
+## 0.6.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.11
+
+## 0.6.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`498e357c8`](https://github.com/Urigo/graphql-mesh/commit/498e357c81f3b4b1799cb7c3a68cf8aeed8268fa)]:
+  - @graphql-mesh/plugin-live-query@0.95.7
+  - @graphql-mesh/json-schema@0.95.7
+  - @graphql-mesh/cli@0.87.10
+
+## 0.6.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.9
+  - @graphql-mesh/json-schema@0.95.6
+  - @graphql-mesh/plugin-live-query@0.95.6
+
+## 0.6.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.8
+  - @graphql-mesh/json-schema@0.95.5
+  - @graphql-mesh/plugin-live-query@0.95.5
+
+## 0.6.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a458c88f0`](https://github.com/Urigo/graphql-mesh/commit/a458c88f08e5fc5d6337354d3f781018c736db1f)]:
+  - @graphql-mesh/cli@0.87.7
+
 ## 0.6.8
 
 ### Patch Changes

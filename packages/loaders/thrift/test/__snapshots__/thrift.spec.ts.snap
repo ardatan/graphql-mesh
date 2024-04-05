@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`thrift Calc: Calc-schema 1`] = `
+"schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost:4000/thrift-with-imports", headers: {x-api-key: "123"}, options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 1, name: "AddRequest", type: 12, fields: {left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2}}}}}) {
+  query: Query
+}
+
+type Query {
+  add(request: AddRequestInput): Int @fieldTypeMap(request: {name: "AddRequest", type: "ref", id: 1})
+  subtract(left: Int, right: Int): Int @fieldTypeMap(left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2})
+}
+
+input AddRequestInput {
+  left: Int!
+  right: Int!
+}"
+`;
+
+exports[`thrift Recursive: Recursive-schema 1`] = `
+"schema @transport(subgraph: "Recursive", kind: "thrift", location: "http://localhost:4000/recursive", headers: {x-api-key: "123"}, options: {clientAnnotations: {serviceName: "Recursive", annotations: {}, methodNames: ["bar"], methodAnnotations: {bar: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {bar: 2}}, topTypeMap: {Foo: {id: 0, name: "Foo", type: 12, fields: {name: {id: 1}, foo: {name: "Foo", type: "ref", id: 2}}}}}) {
+  query: Query
+}
+
+type Query {
+  bar(foo: FooInput): Foo @fieldTypeMap(foo: {name: "Foo", type: "ref", id: 1})
+}
+
+type Foo {
+  name: String
+  foo: Foo
+}
+
+input FooInput {
+  name: String
+  foo: FooInput
+}"
+`;
+
+exports[`thrift Twitter: Twitter-schema 1`] = `
+"schema @transport(subgraph: "Twitter", kind: "thrift", location: "http://localhost:4000/twitter", headers: {x-api-key: "123"}, options: {clientAnnotations: {serviceName: "twitter-service", annotations: {}, methodNames: ["ping", "postTweet", "searchTweets", "zip"], methodAnnotations: {ping: {annotations: {}, fieldAnnotations: {}}, postTweet: {annotations: {}, fieldAnnotations: {}}, searchTweets: {annotations: {}, fieldAnnotations: {}}, zip: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {ping: 1, postTweet: 2, searchTweets: 2, zip: 1}}, topTypeMap: {Location: {id: 0, name: "Location", type: 12, fields: {latitude: {type: 4, id: 1}, longitude: {type: 4, id: 2}}}, Tweet: {id: 1, name: "Tweet", type: 12, fields: {userId: {type: 8, id: 1}, userName: {id: 2}, text: {id: 3}, loc: {name: "Location", type: "ref", id: 4}, tweetType: {name: "TweetType", type: "ref", id: 5}, language: {id: 16}}}, TweetSearchResult: {id: 3, name: "TweetSearchResult", type: 12, fields: {tweets: {name: "TweetList", type: "ref", id: 1}}}}}) {
+  query: Query
+}
+
+type Query {
+  ping: Void @fieldTypeMap
+  postTweet(tweet: TweetInput): Boolean @fieldTypeMap(tweet: {name: "Tweet", type: "ref", id: 1})
+  searchTweets(query: String): TweetSearchResult @fieldTypeMap(query: {id: 1})
+  zip: Void @fieldTypeMap
+}
+
+"""Represents NULL values"""
+scalar Void
+
+input TweetInput {
+  userId: Int!
+  userName: String!
+  text: String!
+  loc: LocationInput
+  tweetType: TweetType
+  language: String
+}
+
+input LocationInput {
+  latitude: Float!
+  longitude: Float!
+}
+
+enum TweetType {
+  TWEET
+  RETWEET
+  DM
+  REPLY
+}
+
+type TweetSearchResult {
+  tweets: [Tweet]
+}
+
+type Tweet {
+  userId: Int!
+  userName: String!
+  text: String!
+  loc: Location
+  tweetType: TweetType
+  language: String
+}
+
+type Location {
+  latitude: Float!
+  longitude: Float!
+}"
+`;

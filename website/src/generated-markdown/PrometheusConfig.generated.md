@@ -31,7 +31,12 @@
 * `delegation` -  One of: 
   * `Boolean`
   * `String`
-* `fetch` -  One of: 
+* `delegationArgs` (type: `Boolean`)
+* `delegationKey` (type: `Boolean`)
+* `subgraphExecute` -  One of: 
+  * `Boolean`
+  * `String`
+* `fetchMetrics` -  One of: 
   * `Boolean`
   * `String`
 * `fetchRequestHeaders` (type: `Boolean`)
@@ -41,5 +46,7 @@
   * `String`
 * `httpRequestHeaders` (type: `Boolean`)
 * `httpResponseHeaders` (type: `Boolean`)
-* `endpoint` (type: `String`) - The path to the metrics endpoint
-default: `/metrics`
+* `endpoint` -  - The path to the metrics endpoint
+default: `/metrics` One of: 
+  * `Boolean`
+  * `String`

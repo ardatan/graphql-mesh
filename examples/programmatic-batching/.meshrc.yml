@@ -3,7 +3,8 @@ sources:
     handler:
       openapi:
         endpoint: http://localhost:4001
-        source: ./example-api/openapi.json
+        source: http://localhost:4001/openapi.json
+        ignoreErrorResponses: true
 
 additionalTypeDefs: |
   extend type Query {

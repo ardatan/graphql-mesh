@@ -48,7 +48,8 @@ reproduce. Please also list any relevant details for your test configuration
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] I have added tests that prove my fix is effective or that my feature works, and I have added a
+      changeset using `yarn changeset` that bumps the version
 - [ ] New and existing unit tests and linter rules pass locally with my changes
 - [ ] Any dependent changes have been merged and published in downstream modules
 

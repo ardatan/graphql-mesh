@@ -19,8 +19,22 @@ jobs:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
     with:
       script: yarn prettier:check && yarn ci:lint
+      packageManagerVersion: modern
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          packageManagerVersion: modern
+      - name: typecheck
+        run: yarn typecheck
 
   unit:
     name: unit / node ${{matrix.node-version}}
@@ -29,19 +43,69 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18, 20, 21]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@main
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
 
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
+        with:
+          path: .cache/jest
+          key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{runner.os}}-${{matrix.node-version}}-jest-unit-
+
+      - name: Run Tests
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn test
+
+  unit-leaks:
+    name: unit / leak / node ${{matrix.node-version}}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
+
+      - name: Use Node
+        uses: actions/setup-node@master
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: Remove node-libcurl
+        run: node scripts/remove-node-libcurl.cjs
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
+
+      - name: Cache Jest
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
@@ -55,11 +119,11 @@ jobs:
         run: yarn generate-config-schema
 
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: yarn test
+          command: yarn test:leak
 
   integration:
     name: integration / node ${{matrix.node-version}}
@@ -68,7 +132,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18, 20, 21]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -106,15 +170,19 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@main
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
 
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key:
@@ -128,7 +196,7 @@ jobs:
           https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
           -o /tmp/backup.sql'
       - name: Load Postgres Data
-        uses: tj-actions/pg-restore@v4.10
+        uses: tj-actions/pg-restore@v6.0
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
@@ -146,7 +214,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -184,15 +252,28 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
+
+      - name: Use Node
+        uses: actions/setup-node@master
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: Remove node-libcurl
+        run: node scripts/remove-node-libcurl.cjs
 
       - uses: the-guild-org/shared-config/setup@main
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
 
       - name: Cache Jest
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .cache/jest
           key:
@@ -207,7 +288,7 @@ jobs:
           https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
           -o /tmp/backup.sql'
       - name: Load Postgres Data
-        uses: tj-actions/pg-restore@v4.10
+        uses: tj-actions/pg-restore@v6.0
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
@@ -218,7 +299,7 @@ jobs:
       - name: Remove node-libcurl
         run: rm -rf node_modules/node-libcurl
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
@@ -231,15 +312,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18, 20, 21]
     steps:
       - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@main
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
+          packageManagerVersion: modern
       - name: Build
         run: yarn build
       - name: Node.js integrity check

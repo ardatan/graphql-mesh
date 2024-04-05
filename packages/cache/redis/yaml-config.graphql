@@ -7,4 +7,10 @@ type RedisConfig @md {
   port: String
   password: String
   url: String
+  """
+  Flag to indicate lazyConnect value for Redis client.
+
+  @default: true
+  """
+  lazyConnect: Boolean
 }

@@ -172,6 +172,10 @@ export async function getReferencedJSONSchemaFromOperations({
       );
     }
 
+    if (operationConfig.deprecated) {
+      rootTypeDefinition.properties[fieldName].deprecated = true;
+    }
+
     const rootTypeInputPropertyName = operationType + 'Input';
     const rootInputTypeName = rootTypeName + 'Input';
     const rootTypeInputTypeDefinition = (finalJsonSchema.properties[rootTypeInputPropertyName] =

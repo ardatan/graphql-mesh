@@ -1,5 +1,12 @@
 # @graphql-mesh/cross-helpers
 
+## 0.4.1
+
+### Patch Changes
+
+- [`b8f16a42b`](https://github.com/Urigo/graphql-mesh/commit/b8f16a42bf599723c2e311c47e74f812c6d1b781)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop react-native dependency
+
 ## 0.4.0
 
 ### Minor Changes

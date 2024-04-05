@@ -1,5 +1,5 @@
-import { OperationTypeNode } from 'graphql';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { GraphQLScalarType, OperationTypeNode } from 'graphql';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { IStringifyOptions } from 'qs';
 import { ResolverData } from '@graphql-mesh/string-interpolation';
@@ -19,7 +19,9 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   ignoreErrorResponses?: boolean;
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
+  handlerName?: string;
   bundle?: boolean;
+  getScalarForFormat?: (format: string) => GraphQLScalarType | void;
 }
 
 export interface JSONSchemaOperationResponseConfig {
@@ -45,6 +47,8 @@ export type JSONSchemaBaseOperationConfig = {
 
   argTypeMap?: Record<string, string | JSONSchemaObject>;
   responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;
+
+  deprecated?: boolean;
 } & JSONSchemaOperationResponseConfig;
 
 export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperationConfig & {
@@ -73,6 +77,8 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
   queryParamArgMap?: Record<string, string>;
   queryStringOptionsByParam?: Record<string, IStringifyOptions & { destructObject?: boolean }>;
   queryParamsSample?: any;
+
+  jsonApiFields?: boolean;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

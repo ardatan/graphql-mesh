@@ -1,0 +1,3748 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MySQL Rfam should generate correct schema: mysql-rfam-schema 1`] = `
+""""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+"""
+A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+type Mutation {
+  delete__annotated_file(where: _annotated_file_WhereInput): Boolean
+  delete__family_file(where: _family_file_WhereInput): Boolean
+  delete__genome_data(where: _genome_data_WhereInput): Boolean
+  delete__lock(where: _lock_WhereInput): Boolean
+  delete__overlap(where: _overlap_WhereInput): Boolean
+  delete__overlap_membership(where: _overlap_membership_WhereInput): Boolean
+  delete__post_process(where: _post_process_WhereInput): Boolean
+  delete_alignment_and_tree(where: alignment_and_tree_WhereInput): Boolean
+  delete_author(where: author_WhereInput): Boolean
+  delete_clan(where: clan_WhereInput): Boolean
+  delete_clan_database_link(where: clan_database_link_WhereInput): Boolean
+  delete_clan_literature_reference(where: clan_literature_reference_WhereInput): Boolean
+  delete_clan_membership(where: clan_membership_WhereInput): Boolean
+  delete_database_link(where: database_link_WhereInput): Boolean
+  delete_db_version(where: db_version_WhereInput): Boolean
+  delete_dead_clan(where: dead_clan_WhereInput): Boolean
+  delete_dead_family(where: dead_family_WhereInput): Boolean
+  delete_ensembl_names(where: ensembl_names_WhereInput): Boolean
+  delete_family(where: family_WhereInput): Boolean
+  delete_family_author(where: family_author_WhereInput): Boolean
+  delete_family_literature_reference(where: family_literature_reference_WhereInput): Boolean
+  delete_family_long(where: family_long_WhereInput): Boolean
+  delete_family_ncbi(where: family_ncbi_WhereInput): Boolean
+  delete_features(where: features_WhereInput): Boolean
+  delete_full_region(where: full_region_WhereInput): Boolean
+  delete_genome(where: genome_WhereInput): Boolean
+  delete_genseq(where: genseq_WhereInput): Boolean
+  delete_html_alignment(where: html_alignment_WhereInput): Boolean
+  delete_keywords(where: keywords_WhereInput): Boolean
+  delete_literature_reference(where: literature_reference_WhereInput): Boolean
+  delete_matches_and_fasta(where: matches_and_fasta_WhereInput): Boolean
+  delete_motif(where: motif_WhereInput): Boolean
+  delete_motif_database_link(where: motif_database_link_WhereInput): Boolean
+  delete_motif_family_stats(where: motif_family_stats_WhereInput): Boolean
+  delete_motif_file(where: motif_file_WhereInput): Boolean
+  delete_motif_literature(where: motif_literature_WhereInput): Boolean
+  delete_motif_matches(where: motif_matches_WhereInput): Boolean
+  delete_motif_old(where: motif_old_WhereInput): Boolean
+  delete_motif_pdb(where: motif_pdb_WhereInput): Boolean
+  delete_motif_ss_image(where: motif_ss_image_WhereInput): Boolean
+  delete_pdb(where: pdb_WhereInput): Boolean
+  delete_pdb_full_region(where: pdb_full_region_WhereInput): Boolean
+  delete_pdb_full_region_old(where: pdb_full_region_old_WhereInput): Boolean
+  delete_pdb_rfam_reg(where: pdb_rfam_reg_WhereInput): Boolean
+  delete_pdb_sequence(where: pdb_sequence_WhereInput): Boolean
+  delete_processed_data(where: processed_data_WhereInput): Boolean
+  delete_pseudoknot(where: pseudoknot_WhereInput): Boolean
+  delete_refseq(where: refseq_WhereInput): Boolean
+  delete_refseq_full_region(where: refseq_full_region_WhereInput): Boolean
+  delete_rfamseq(where: rfamseq_WhereInput): Boolean
+  delete_rnacentral_matches(where: rnacentral_matches_WhereInput): Boolean
+  delete_rscape_annotations(where: rscape_annotations_WhereInput): Boolean
+  delete_secondary_structure_image(where: secondary_structure_image_WhereInput): Boolean
+  delete_seed_region(where: seed_region_WhereInput): Boolean
+  delete_sunburst(where: sunburst_WhereInput): Boolean
+  delete_taxonomic_tree(where: taxonomic_tree_WhereInput): Boolean
+  delete_taxonomy(where: taxonomy_WhereInput): Boolean
+  delete_taxonomy_websearch(where: taxonomy_websearch_WhereInput): Boolean
+  delete_version(where: version_WhereInput): Boolean
+  delete_wikitext(where: wikitext_WhereInput): Boolean
+  insert__annotated_file(_annotated_file: _annotated_file_InsertInput!): _annotated_file
+  insert__family_file(_family_file: _family_file_InsertInput!): _family_file
+  insert__genome_data(_genome_data: _genome_data_InsertInput!): _genome_data
+  insert__lock(_lock: _lock_InsertInput!): _lock
+  insert__overlap(_overlap: _overlap_InsertInput!): _overlap
+  insert__overlap_membership(_overlap_membership: _overlap_membership_InsertInput!): _overlap_membership
+  insert__post_process(_post_process: _post_process_InsertInput!): _post_process
+  insert_alignment_and_tree(alignment_and_tree: alignment_and_tree_InsertInput!): alignment_and_tree
+  insert_author(author: author_InsertInput!): author
+  insert_clan(clan: clan_InsertInput!): clan
+  insert_clan_database_link(clan_database_link: clan_database_link_InsertInput!): clan_database_link
+  insert_clan_literature_reference(clan_literature_reference: clan_literature_reference_InsertInput!): clan_literature_reference
+  insert_clan_membership(clan_membership: clan_membership_InsertInput!): clan_membership
+  insert_database_link(database_link: database_link_InsertInput!): database_link
+  insert_db_version(db_version: db_version_InsertInput!): db_version
+  insert_dead_clan(dead_clan: dead_clan_InsertInput!): dead_clan
+  insert_dead_family(dead_family: dead_family_InsertInput!): dead_family
+  insert_ensembl_names(ensembl_names: ensembl_names_InsertInput!): ensembl_names
+  insert_family(family: family_InsertInput!): family
+  insert_family_author(family_author: family_author_InsertInput!): family_author
+  insert_family_literature_reference(family_literature_reference: family_literature_reference_InsertInput!): family_literature_reference
+  insert_family_long(family_long: family_long_InsertInput!): family_long
+  insert_family_ncbi(family_ncbi: family_ncbi_InsertInput!): family_ncbi
+  insert_features(features: features_InsertInput!): features
+  insert_full_region(full_region: full_region_InsertInput!): full_region
+  insert_genome(genome: genome_InsertInput!): genome
+  insert_genseq(genseq: genseq_InsertInput!): genseq
+  insert_html_alignment(html_alignment: html_alignment_InsertInput!): html_alignment
+  insert_keywords(keywords: keywords_InsertInput!): keywords
+  insert_literature_reference(literature_reference: literature_reference_InsertInput!): literature_reference
+  insert_matches_and_fasta(matches_and_fasta: matches_and_fasta_InsertInput!): matches_and_fasta
+  insert_motif(motif: motif_InsertInput!): motif
+  insert_motif_database_link(motif_database_link: motif_database_link_InsertInput!): motif_database_link
+  insert_motif_family_stats(motif_family_stats: motif_family_stats_InsertInput!): motif_family_stats
+  insert_motif_file(motif_file: motif_file_InsertInput!): motif_file
+  insert_motif_literature(motif_literature: motif_literature_InsertInput!): motif_literature
+  insert_motif_matches(motif_matches: motif_matches_InsertInput!): motif_matches
+  insert_motif_old(motif_old: motif_old_InsertInput!): motif_old
+  insert_motif_pdb(motif_pdb: motif_pdb_InsertInput!): motif_pdb
+  insert_motif_ss_image(motif_ss_image: motif_ss_image_InsertInput!): motif_ss_image
+  insert_pdb(pdb: pdb_InsertInput!): pdb
+  insert_pdb_full_region(pdb_full_region: pdb_full_region_InsertInput!): pdb_full_region
+  insert_pdb_full_region_old(pdb_full_region_old: pdb_full_region_old_InsertInput!): pdb_full_region_old
+  insert_pdb_rfam_reg(pdb_rfam_reg: pdb_rfam_reg_InsertInput!): pdb_rfam_reg
+  insert_pdb_sequence(pdb_sequence: pdb_sequence_InsertInput!): pdb_sequence
+  insert_processed_data(processed_data: processed_data_InsertInput!): processed_data
+  insert_pseudoknot(pseudoknot: pseudoknot_InsertInput!): pseudoknot
+  insert_refseq(refseq: refseq_InsertInput!): refseq
+  insert_refseq_full_region(refseq_full_region: refseq_full_region_InsertInput!): refseq_full_region
+  insert_rfamseq(rfamseq: rfamseq_InsertInput!): rfamseq
+  insert_rnacentral_matches(rnacentral_matches: rnacentral_matches_InsertInput!): rnacentral_matches
+  insert_rscape_annotations(rscape_annotations: rscape_annotations_InsertInput!): rscape_annotations
+  insert_secondary_structure_image(secondary_structure_image: secondary_structure_image_InsertInput!): secondary_structure_image
+  insert_seed_region(seed_region: seed_region_InsertInput!): seed_region
+  insert_sunburst(sunburst: sunburst_InsertInput!): sunburst
+  insert_taxonomic_tree(taxonomic_tree: taxonomic_tree_InsertInput!): taxonomic_tree
+  insert_taxonomy(taxonomy: taxonomy_InsertInput!): taxonomy
+  insert_taxonomy_websearch(taxonomy_websearch: taxonomy_websearch_InsertInput!): taxonomy_websearch
+  insert_version(version: version_InsertInput!): version
+  insert_wikitext(wikitext: wikitext_InsertInput!): wikitext
+  update__annotated_file(_annotated_file: _annotated_file_UpdateInput!, where: _annotated_file_WhereInput): _annotated_file
+  update__family_file(_family_file: _family_file_UpdateInput!, where: _family_file_WhereInput): _family_file
+  update__genome_data(_genome_data: _genome_data_UpdateInput!, where: _genome_data_WhereInput): _genome_data
+  update__lock(_lock: _lock_UpdateInput!, where: _lock_WhereInput): _lock
+  update__overlap(_overlap: _overlap_UpdateInput!, where: _overlap_WhereInput): _overlap
+  update__overlap_membership(_overlap_membership: _overlap_membership_UpdateInput!, where: _overlap_membership_WhereInput): _overlap_membership
+  update__post_process(_post_process: _post_process_UpdateInput!, where: _post_process_WhereInput): _post_process
+  update_alignment_and_tree(alignment_and_tree: alignment_and_tree_UpdateInput!, where: alignment_and_tree_WhereInput): alignment_and_tree
+  update_author(author: author_UpdateInput!, where: author_WhereInput): author
+  update_clan(clan: clan_UpdateInput!, where: clan_WhereInput): clan
+  update_clan_database_link(clan_database_link: clan_database_link_UpdateInput!, where: clan_database_link_WhereInput): clan_database_link
+  update_clan_literature_reference(clan_literature_reference: clan_literature_reference_UpdateInput!, where: clan_literature_reference_WhereInput): clan_literature_reference
+  update_clan_membership(clan_membership: clan_membership_UpdateInput!, where: clan_membership_WhereInput): clan_membership
+  update_database_link(database_link: database_link_UpdateInput!, where: database_link_WhereInput): database_link
+  update_db_version(db_version: db_version_UpdateInput!, where: db_version_WhereInput): db_version
+  update_dead_clan(dead_clan: dead_clan_UpdateInput!, where: dead_clan_WhereInput): dead_clan
+  update_dead_family(dead_family: dead_family_UpdateInput!, where: dead_family_WhereInput): dead_family
+  update_ensembl_names(ensembl_names: ensembl_names_UpdateInput!, where: ensembl_names_WhereInput): ensembl_names
+  update_family(family: family_UpdateInput!, where: family_WhereInput): family
+  update_family_author(family_author: family_author_UpdateInput!, where: family_author_WhereInput): family_author
+  update_family_literature_reference(family_literature_reference: family_literature_reference_UpdateInput!, where: family_literature_reference_WhereInput): family_literature_reference
+  update_family_long(family_long: family_long_UpdateInput!, where: family_long_WhereInput): family_long
+  update_family_ncbi(family_ncbi: family_ncbi_UpdateInput!, where: family_ncbi_WhereInput): family_ncbi
+  update_features(features: features_UpdateInput!, where: features_WhereInput): features
+  update_full_region(full_region: full_region_UpdateInput!, where: full_region_WhereInput): full_region
+  update_genome(genome: genome_UpdateInput!, where: genome_WhereInput): genome
+  update_genseq(genseq: genseq_UpdateInput!, where: genseq_WhereInput): genseq
+  update_html_alignment(html_alignment: html_alignment_UpdateInput!, where: html_alignment_WhereInput): html_alignment
+  update_keywords(keywords: keywords_UpdateInput!, where: keywords_WhereInput): keywords
+  update_literature_reference(literature_reference: literature_reference_UpdateInput!, where: literature_reference_WhereInput): literature_reference
+  update_matches_and_fasta(matches_and_fasta: matches_and_fasta_UpdateInput!, where: matches_and_fasta_WhereInput): matches_and_fasta
+  update_motif(motif: motif_UpdateInput!, where: motif_WhereInput): motif
+  update_motif_database_link(motif_database_link: motif_database_link_UpdateInput!, where: motif_database_link_WhereInput): motif_database_link
+  update_motif_family_stats(motif_family_stats: motif_family_stats_UpdateInput!, where: motif_family_stats_WhereInput): motif_family_stats
+  update_motif_file(motif_file: motif_file_UpdateInput!, where: motif_file_WhereInput): motif_file
+  update_motif_literature(motif_literature: motif_literature_UpdateInput!, where: motif_literature_WhereInput): motif_literature
+  update_motif_matches(motif_matches: motif_matches_UpdateInput!, where: motif_matches_WhereInput): motif_matches
+  update_motif_old(motif_old: motif_old_UpdateInput!, where: motif_old_WhereInput): motif_old
+  update_motif_pdb(motif_pdb: motif_pdb_UpdateInput!, where: motif_pdb_WhereInput): motif_pdb
+  update_motif_ss_image(motif_ss_image: motif_ss_image_UpdateInput!, where: motif_ss_image_WhereInput): motif_ss_image
+  update_pdb(pdb: pdb_UpdateInput!, where: pdb_WhereInput): pdb
+  update_pdb_full_region(pdb_full_region: pdb_full_region_UpdateInput!, where: pdb_full_region_WhereInput): pdb_full_region
+  update_pdb_full_region_old(pdb_full_region_old: pdb_full_region_old_UpdateInput!, where: pdb_full_region_old_WhereInput): pdb_full_region_old
+  update_pdb_rfam_reg(pdb_rfam_reg: pdb_rfam_reg_UpdateInput!, where: pdb_rfam_reg_WhereInput): pdb_rfam_reg
+  update_pdb_sequence(pdb_sequence: pdb_sequence_UpdateInput!, where: pdb_sequence_WhereInput): pdb_sequence
+  update_processed_data(processed_data: processed_data_UpdateInput!, where: processed_data_WhereInput): processed_data
+  update_pseudoknot(pseudoknot: pseudoknot_UpdateInput!, where: pseudoknot_WhereInput): pseudoknot
+  update_refseq(refseq: refseq_UpdateInput!, where: refseq_WhereInput): refseq
+  update_refseq_full_region(refseq_full_region: refseq_full_region_UpdateInput!, where: refseq_full_region_WhereInput): refseq_full_region
+  update_rfamseq(rfamseq: rfamseq_UpdateInput!, where: rfamseq_WhereInput): rfamseq
+  update_rnacentral_matches(rnacentral_matches: rnacentral_matches_UpdateInput!, where: rnacentral_matches_WhereInput): rnacentral_matches
+  update_rscape_annotations(rscape_annotations: rscape_annotations_UpdateInput!, where: rscape_annotations_WhereInput): rscape_annotations
+  update_secondary_structure_image(secondary_structure_image: secondary_structure_image_UpdateInput!, where: secondary_structure_image_WhereInput): secondary_structure_image
+  update_seed_region(seed_region: seed_region_UpdateInput!, where: seed_region_WhereInput): seed_region
+  update_sunburst(sunburst: sunburst_UpdateInput!, where: sunburst_WhereInput): sunburst
+  update_taxonomic_tree(taxonomic_tree: taxonomic_tree_UpdateInput!, where: taxonomic_tree_WhereInput): taxonomic_tree
+  update_taxonomy(taxonomy: taxonomy_UpdateInput!, where: taxonomy_WhereInput): taxonomy
+  update_taxonomy_websearch(taxonomy_websearch: taxonomy_websearch_UpdateInput!, where: taxonomy_websearch_WhereInput): taxonomy_websearch
+  update_version(version: version_UpdateInput!, where: version_WhereInput): version
+  update_wikitext(where: wikitext_WhereInput, wikitext: wikitext_UpdateInput!): wikitext
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Query {
+  _annotated_file(limit: Int, offset: Int, orderBy: _annotated_file_OrderByInput, where: _annotated_file_WhereInput): [_annotated_file]
+  _family_file(limit: Int, offset: Int, orderBy: _family_file_OrderByInput, where: _family_file_WhereInput): [_family_file]
+  _genome_data(limit: Int, offset: Int, orderBy: _genome_data_OrderByInput, where: _genome_data_WhereInput): [_genome_data]
+  _lock(limit: Int, offset: Int, orderBy: _lock_OrderByInput, where: _lock_WhereInput): [_lock]
+  _overlap(limit: Int, offset: Int, orderBy: _overlap_OrderByInput, where: _overlap_WhereInput): [_overlap]
+  _overlap_membership(limit: Int, offset: Int, orderBy: _overlap_membership_OrderByInput, where: _overlap_membership_WhereInput): [_overlap_membership]
+  _post_process(limit: Int, offset: Int, orderBy: _post_process_OrderByInput, where: _post_process_WhereInput): [_post_process]
+  alignment_and_tree(limit: Int, offset: Int, orderBy: alignment_and_tree_OrderByInput, where: alignment_and_tree_WhereInput): [alignment_and_tree]
+  author(limit: Int, offset: Int, orderBy: author_OrderByInput, where: author_WhereInput): [author]
+  clan(limit: Int, offset: Int, orderBy: clan_OrderByInput, where: clan_WhereInput): [clan]
+  clan_database_link(limit: Int, offset: Int, orderBy: clan_database_link_OrderByInput, where: clan_database_link_WhereInput): [clan_database_link]
+  clan_literature_reference(limit: Int, offset: Int, orderBy: clan_literature_reference_OrderByInput, where: clan_literature_reference_WhereInput): [clan_literature_reference]
+  clan_membership(limit: Int, offset: Int, orderBy: clan_membership_OrderByInput, where: clan_membership_WhereInput): [clan_membership]
+  count__annotated_file(where: _annotated_file_WhereInput): Int
+  count__family_file(where: _family_file_WhereInput): Int
+  count__genome_data(where: _genome_data_WhereInput): Int
+  count__lock(where: _lock_WhereInput): Int
+  count__overlap(where: _overlap_WhereInput): Int
+  count__overlap_membership(where: _overlap_membership_WhereInput): Int
+  count__post_process(where: _post_process_WhereInput): Int
+  count_alignment_and_tree(where: alignment_and_tree_WhereInput): Int
+  count_author(where: author_WhereInput): Int
+  count_clan(where: clan_WhereInput): Int
+  count_clan_database_link(where: clan_database_link_WhereInput): Int
+  count_clan_literature_reference(where: clan_literature_reference_WhereInput): Int
+  count_clan_membership(where: clan_membership_WhereInput): Int
+  count_database_link(where: database_link_WhereInput): Int
+  count_db_version(where: db_version_WhereInput): Int
+  count_dead_clan(where: dead_clan_WhereInput): Int
+  count_dead_family(where: dead_family_WhereInput): Int
+  count_ensembl_names(where: ensembl_names_WhereInput): Int
+  count_family(where: family_WhereInput): Int
+  count_family_author(where: family_author_WhereInput): Int
+  count_family_literature_reference(where: family_literature_reference_WhereInput): Int
+  count_family_long(where: family_long_WhereInput): Int
+  count_family_ncbi(where: family_ncbi_WhereInput): Int
+  count_features(where: features_WhereInput): Int
+  count_full_region(where: full_region_WhereInput): Int
+  count_genome(where: genome_WhereInput): Int
+  count_genseq(where: genseq_WhereInput): Int
+  count_html_alignment(where: html_alignment_WhereInput): Int
+  count_keywords(where: keywords_WhereInput): Int
+  count_literature_reference(where: literature_reference_WhereInput): Int
+  count_matches_and_fasta(where: matches_and_fasta_WhereInput): Int
+  count_motif(where: motif_WhereInput): Int
+  count_motif_database_link(where: motif_database_link_WhereInput): Int
+  count_motif_family_stats(where: motif_family_stats_WhereInput): Int
+  count_motif_file(where: motif_file_WhereInput): Int
+  count_motif_literature(where: motif_literature_WhereInput): Int
+  count_motif_matches(where: motif_matches_WhereInput): Int
+  count_motif_old(where: motif_old_WhereInput): Int
+  count_motif_pdb(where: motif_pdb_WhereInput): Int
+  count_motif_ss_image(where: motif_ss_image_WhereInput): Int
+  count_pdb(where: pdb_WhereInput): Int
+  count_pdb_full_region(where: pdb_full_region_WhereInput): Int
+  count_pdb_full_region_old(where: pdb_full_region_old_WhereInput): Int
+  count_pdb_rfam_reg(where: pdb_rfam_reg_WhereInput): Int
+  count_pdb_sequence(where: pdb_sequence_WhereInput): Int
+  count_processed_data(where: processed_data_WhereInput): Int
+  count_pseudoknot(where: pseudoknot_WhereInput): Int
+  count_refseq(where: refseq_WhereInput): Int
+  count_refseq_full_region(where: refseq_full_region_WhereInput): Int
+  count_rfamseq(where: rfamseq_WhereInput): Int
+  count_rnacentral_matches(where: rnacentral_matches_WhereInput): Int
+  count_rscape_annotations(where: rscape_annotations_WhereInput): Int
+  count_secondary_structure_image(where: secondary_structure_image_WhereInput): Int
+  count_seed_region(where: seed_region_WhereInput): Int
+  count_sunburst(where: sunburst_WhereInput): Int
+  count_taxonomic_tree(where: taxonomic_tree_WhereInput): Int
+  count_taxonomy(where: taxonomy_WhereInput): Int
+  count_taxonomy_websearch(where: taxonomy_websearch_WhereInput): Int
+  count_version(where: version_WhereInput): Int
+  count_wikitext(where: wikitext_WhereInput): Int
+  database_link(limit: Int, offset: Int, orderBy: database_link_OrderByInput, where: database_link_WhereInput): [database_link]
+  db_version(limit: Int, offset: Int, orderBy: db_version_OrderByInput, where: db_version_WhereInput): [db_version]
+  dead_clan(limit: Int, offset: Int, orderBy: dead_clan_OrderByInput, where: dead_clan_WhereInput): [dead_clan]
+  dead_family(limit: Int, offset: Int, orderBy: dead_family_OrderByInput, where: dead_family_WhereInput): [dead_family]
+  ensembl_names(limit: Int, offset: Int, orderBy: ensembl_names_OrderByInput, where: ensembl_names_WhereInput): [ensembl_names]
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  family_author(limit: Int, offset: Int, orderBy: family_author_OrderByInput, where: family_author_WhereInput): [family_author]
+  family_literature_reference(limit: Int, offset: Int, orderBy: family_literature_reference_OrderByInput, where: family_literature_reference_WhereInput): [family_literature_reference]
+  family_long(limit: Int, offset: Int, orderBy: family_long_OrderByInput, where: family_long_WhereInput): [family_long]
+  family_ncbi(limit: Int, offset: Int, orderBy: family_ncbi_OrderByInput, where: family_ncbi_WhereInput): [family_ncbi]
+  features(limit: Int, offset: Int, orderBy: features_OrderByInput, where: features_WhereInput): [features]
+  full_region(limit: Int, offset: Int, orderBy: full_region_OrderByInput, where: full_region_WhereInput): [full_region]
+  genome(limit: Int, offset: Int, orderBy: genome_OrderByInput, where: genome_WhereInput): [genome]
+  genseq(limit: Int, offset: Int, orderBy: genseq_OrderByInput, where: genseq_WhereInput): [genseq]
+  html_alignment(limit: Int, offset: Int, orderBy: html_alignment_OrderByInput, where: html_alignment_WhereInput): [html_alignment]
+  keywords(limit: Int, offset: Int, orderBy: keywords_OrderByInput, where: keywords_WhereInput): [keywords]
+  literature_reference(limit: Int, offset: Int, orderBy: literature_reference_OrderByInput, where: literature_reference_WhereInput): [literature_reference]
+  matches_and_fasta(limit: Int, offset: Int, orderBy: matches_and_fasta_OrderByInput, where: matches_and_fasta_WhereInput): [matches_and_fasta]
+  motif(limit: Int, offset: Int, orderBy: motif_OrderByInput, where: motif_WhereInput): [motif]
+  motif_database_link(limit: Int, offset: Int, orderBy: motif_database_link_OrderByInput, where: motif_database_link_WhereInput): [motif_database_link]
+  motif_family_stats(limit: Int, offset: Int, orderBy: motif_family_stats_OrderByInput, where: motif_family_stats_WhereInput): [motif_family_stats]
+  motif_file(limit: Int, offset: Int, orderBy: motif_file_OrderByInput, where: motif_file_WhereInput): [motif_file]
+  motif_literature(limit: Int, offset: Int, orderBy: motif_literature_OrderByInput, where: motif_literature_WhereInput): [motif_literature]
+  motif_matches(limit: Int, offset: Int, orderBy: motif_matches_OrderByInput, where: motif_matches_WhereInput): [motif_matches]
+  motif_old(limit: Int, offset: Int, orderBy: motif_old_OrderByInput, where: motif_old_WhereInput): [motif_old]
+  motif_pdb(limit: Int, offset: Int, orderBy: motif_pdb_OrderByInput, where: motif_pdb_WhereInput): [motif_pdb]
+  motif_ss_image(limit: Int, offset: Int, orderBy: motif_ss_image_OrderByInput, where: motif_ss_image_WhereInput): [motif_ss_image]
+  pdb(limit: Int, offset: Int, orderBy: pdb_OrderByInput, where: pdb_WhereInput): [pdb]
+  pdb_full_region(limit: Int, offset: Int, orderBy: pdb_full_region_OrderByInput, where: pdb_full_region_WhereInput): [pdb_full_region]
+  pdb_full_region_old(limit: Int, offset: Int, orderBy: pdb_full_region_old_OrderByInput, where: pdb_full_region_old_WhereInput): [pdb_full_region_old]
+  pdb_rfam_reg(limit: Int, offset: Int, orderBy: pdb_rfam_reg_OrderByInput, where: pdb_rfam_reg_WhereInput): [pdb_rfam_reg]
+  pdb_sequence(limit: Int, offset: Int, orderBy: pdb_sequence_OrderByInput, where: pdb_sequence_WhereInput): [pdb_sequence]
+  processed_data(limit: Int, offset: Int, orderBy: processed_data_OrderByInput, where: processed_data_WhereInput): [processed_data]
+  pseudoknot(limit: Int, offset: Int, orderBy: pseudoknot_OrderByInput, where: pseudoknot_WhereInput): [pseudoknot]
+  refseq(limit: Int, offset: Int, orderBy: refseq_OrderByInput, where: refseq_WhereInput): [refseq]
+  refseq_full_region(limit: Int, offset: Int, orderBy: refseq_full_region_OrderByInput, where: refseq_full_region_WhereInput): [refseq_full_region]
+  rfamseq(limit: Int, offset: Int, orderBy: rfamseq_OrderByInput, where: rfamseq_WhereInput): [rfamseq]
+  rnacentral_matches(limit: Int, offset: Int, orderBy: rnacentral_matches_OrderByInput, where: rnacentral_matches_WhereInput): [rnacentral_matches]
+  rscape_annotations(limit: Int, offset: Int, orderBy: rscape_annotations_OrderByInput, where: rscape_annotations_WhereInput): [rscape_annotations]
+  secondary_structure_image(limit: Int, offset: Int, orderBy: secondary_structure_image_OrderByInput, where: secondary_structure_image_WhereInput): [secondary_structure_image]
+  seed_region(limit: Int, offset: Int, orderBy: seed_region_OrderByInput, where: seed_region_WhereInput): [seed_region]
+  sunburst(limit: Int, offset: Int, orderBy: sunburst_OrderByInput, where: sunburst_WhereInput): [sunburst]
+  taxonomic_tree(limit: Int, offset: Int, orderBy: taxonomic_tree_OrderByInput, where: taxonomic_tree_WhereInput): [taxonomic_tree]
+  taxonomy(limit: Int, offset: Int, orderBy: taxonomy_OrderByInput, where: taxonomy_WhereInput): [taxonomy]
+  taxonomy_websearch(limit: Int, offset: Int, orderBy: taxonomy_websearch_OrderByInput, where: taxonomy_websearch_WhereInput): [taxonomy_websearch]
+  version(limit: Int, offset: Int, orderBy: version_OrderByInput, where: version_WhereInput): [version]
+  wikitext(limit: Int, offset: Int, orderBy: wikitext_OrderByInput, where: wikitext_WhereInput): [wikitext]
+}
+
+"""
+The javascript \`Date\` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+type _annotated_file {
+  cm: String!
+  full: String
+  rfam_acc: String!
+  seed: String!
+}
+
+input _annotated_file_InsertInput {
+  cm: String!
+  full: String
+  rfam_acc: String!
+  seed: String!
+}
+
+input _annotated_file_OrderByInput {
+  cm: OrderBy
+  full: OrderBy
+  rfam_acc: OrderBy
+  seed: OrderBy
+}
+
+input _annotated_file_UpdateInput {
+  cm: String
+  full: String
+  rfam_acc: String
+  seed: String
+}
+
+input _annotated_file_WhereInput {
+  cm: String
+  full: String
+  rfam_acc: String
+  seed: String
+}
+
+type _family_file {
+  cm: String!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  rfam_acc: String!
+  seed: String!
+}
+
+input _family_file_InsertInput {
+  cm: String!
+  rfam_acc: String!
+  seed: String!
+}
+
+input _family_file_OrderByInput {
+  cm: OrderBy
+  rfam_acc: OrderBy
+  seed: OrderBy
+}
+
+input _family_file_UpdateInput {
+  cm: String
+  rfam_acc: String
+  seed: String
+}
+
+input _family_file_WhereInput {
+  cm: String
+  rfam_acc: String
+  seed: String
+}
+
+type _genome_data {
+  author: String!
+  closed: DateTime
+  created: DateTime!
+  data_file: String!
+  lsf_id: Int
+  message: String
+  opened: DateTime
+  status: _genome_data_status!
+  uuid: String!
+}
+
+input _genome_data_InsertInput {
+  author: String!
+  closed: DateTime
+  created: DateTime!
+  data_file: String!
+  lsf_id: Int
+  message: String
+  opened: DateTime
+  status: _genome_data_status!
+  uuid: String!
+}
+
+input _genome_data_OrderByInput {
+  author: OrderBy
+  closed: OrderBy
+  created: OrderBy
+  data_file: OrderBy
+  lsf_id: OrderBy
+  message: OrderBy
+  opened: OrderBy
+  status: OrderBy
+  uuid: OrderBy
+}
+
+input _genome_data_UpdateInput {
+  author: String
+  closed: DateTime
+  created: DateTime
+  data_file: String
+  lsf_id: Int
+  message: String
+  opened: DateTime
+  status: _genome_data_status
+  uuid: String
+}
+
+input _genome_data_WhereInput {
+  author: String
+  closed: String
+  created: String
+  data_file: String
+  lsf_id: String
+  message: String
+  opened: String
+  status: String
+  uuid: String
+}
+
+enum _genome_data_status {
+  DONE
+  FAIL
+  KILL
+  PEND
+  RUN
+}
+
+type _lock {
+  """Do you lock individual families? Do ever lock the whole database?"""
+  allowCommits: Int!
+  alsoAllow: String
+  locked: Int!
+  locker: String!
+}
+
+input _lock_InsertInput {
+  """Do you lock individual families? Do ever lock the whole database?"""
+  allowCommits: Int!
+  alsoAllow: String
+  locked: Int!
+  locker: String!
+}
+
+input _lock_OrderByInput {
+  """Do you lock individual families? Do ever lock the whole database?"""
+  allowCommits: OrderBy
+  alsoAllow: OrderBy
+  locked: OrderBy
+  locker: OrderBy
+}
+
+input _lock_UpdateInput {
+  """Do you lock individual families? Do ever lock the whole database?"""
+  allowCommits: Int
+  alsoAllow: String
+  locked: Int
+  locker: String
+}
+
+input _lock_WhereInput {
+  """Do you lock individual families? Do ever lock the whole database?"""
+  allowCommits: String
+  alsoAllow: String
+  locked: String
+  locker: String
+}
+
+type _overlap {
+  _overlap_membership(limit: Int, offset: Int, orderBy: _overlap_membership_OrderByInput, where: _overlap_membership_WhereInput): [_overlap_membership]
+  author: String
+  auto_overlap: Int!
+  comment: String
+  description: String
+  id: String
+}
+
+input _overlap_InsertInput {
+  author: String
+  auto_overlap: Int!
+  comment: String
+  description: String
+  id: String
+}
+
+input _overlap_OrderByInput {
+  author: OrderBy
+  auto_overlap: OrderBy
+  comment: OrderBy
+  description: OrderBy
+  id: OrderBy
+}
+
+input _overlap_UpdateInput {
+  author: String
+  auto_overlap: Int
+  comment: String
+  description: String
+  id: String
+}
+
+input _overlap_WhereInput {
+  author: String
+  auto_overlap: String
+  comment: String
+  description: String
+  id: String
+}
+
+type _overlap_membership {
+  _overlap(limit: Int, offset: Int, orderBy: _overlap_OrderByInput, where: _overlap_WhereInput): [_overlap]
+  auto_overlap: Int!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  rfam_acc: String!
+}
+
+input _overlap_membership_InsertInput {
+  auto_overlap: Int!
+  rfam_acc: String!
+}
+
+input _overlap_membership_OrderByInput {
+  auto_overlap: OrderBy
+  rfam_acc: OrderBy
+}
+
+input _overlap_membership_UpdateInput {
+  auto_overlap: Int
+  rfam_acc: String
+}
+
+input _overlap_membership_WhereInput {
+  auto_overlap: String
+  rfam_acc: String
+}
+
+type _post_process {
+  author: String!
+  closed: DateTime
+  created: DateTime!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  lsf_id: Int
+  message: String
+  opened: DateTime
+  rfam_acc: String!
+  status: _post_process_status!
+  uuid: String!
+}
+
+input _post_process_InsertInput {
+  author: String!
+  closed: DateTime
+  created: DateTime!
+  lsf_id: Int
+  message: String
+  opened: DateTime
+  rfam_acc: String!
+  status: _post_process_status!
+  uuid: String!
+}
+
+input _post_process_OrderByInput {
+  author: OrderBy
+  closed: OrderBy
+  created: OrderBy
+  lsf_id: OrderBy
+  message: OrderBy
+  opened: OrderBy
+  rfam_acc: OrderBy
+  status: OrderBy
+  uuid: OrderBy
+}
+
+input _post_process_UpdateInput {
+  author: String
+  closed: DateTime
+  created: DateTime
+  lsf_id: Int
+  message: String
+  opened: DateTime
+  rfam_acc: String
+  status: _post_process_status
+  uuid: String
+}
+
+input _post_process_WhereInput {
+  author: String
+  closed: String
+  created: String
+  lsf_id: String
+  message: String
+  opened: String
+  rfam_acc: String
+  status: String
+  uuid: String
+}
+
+enum _post_process_status {
+  DONE
+  FAIL
+  KILL
+  PEND
+  RUN
+}
+
+type alignment_and_tree {
+  alignment: String
+  average_length: Float
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  number_of_sequences: BigInt
+  percent_id: Float
+  rfam_acc: String!
+  tree: String
+  treemethod: String
+  type: alignment_and_tree_type!
+}
+
+input alignment_and_tree_InsertInput {
+  alignment: String
+  average_length: Float
+  number_of_sequences: BigInt
+  percent_id: Float
+  rfam_acc: String!
+  tree: String
+  treemethod: String
+  type: alignment_and_tree_type!
+}
+
+input alignment_and_tree_OrderByInput {
+  alignment: OrderBy
+  average_length: OrderBy
+  number_of_sequences: OrderBy
+  percent_id: OrderBy
+  rfam_acc: OrderBy
+  tree: OrderBy
+  treemethod: OrderBy
+  type: OrderBy
+}
+
+input alignment_and_tree_UpdateInput {
+  alignment: String
+  average_length: Float
+  number_of_sequences: BigInt
+  percent_id: Float
+  rfam_acc: String
+  tree: String
+  treemethod: String
+  type: alignment_and_tree_type
+}
+
+input alignment_and_tree_WhereInput {
+  alignment: String
+  average_length: String
+  number_of_sequences: String
+  percent_id: String
+  rfam_acc: String
+  tree: String
+  treemethod: String
+  type: String
+}
+
+enum alignment_and_tree_type {
+  genome
+  genomeTax
+  seed
+  seedTax
+}
+
+type author {
+  author_id: Int!
+  initials: String
+  last_name: String
+  name: String!
+  orcid: String
+  synonyms: String
+}
+
+input author_InsertInput {
+  author_id: Int!
+  initials: String
+  last_name: String
+  name: String!
+  orcid: String
+  synonyms: String
+}
+
+input author_OrderByInput {
+  author_id: OrderBy
+  initials: OrderBy
+  last_name: OrderBy
+  name: OrderBy
+  orcid: OrderBy
+  synonyms: OrderBy
+}
+
+input author_UpdateInput {
+  author_id: Int
+  initials: String
+  last_name: String
+  name: String
+  orcid: String
+  synonyms: String
+}
+
+input author_WhereInput {
+  author_id: String
+  initials: String
+  last_name: String
+  name: String
+  orcid: String
+  synonyms: String
+}
+
+type clan {
+  author: String
+  clan_acc: String!
+  clan_database_link(limit: Int, offset: Int, orderBy: clan_database_link_OrderByInput, where: clan_database_link_WhereInput): [clan_database_link]
+  clan_literature_reference(limit: Int, offset: Int, orderBy: clan_literature_reference_OrderByInput, where: clan_literature_reference_WhereInput): [clan_literature_reference]
+  clan_membership(limit: Int, offset: Int, orderBy: clan_membership_OrderByInput, where: clan_membership_WhereInput): [clan_membership]
+  comment: String
+  created: DateTime!
+  description: String
+  id: String
+  previous_id: String
+  updated: Timestamp!
+}
+
+input clan_InsertInput {
+  author: String
+  clan_acc: String!
+  comment: String
+  created: DateTime!
+  description: String
+  id: String
+  previous_id: String
+  updated: Timestamp!
+}
+
+input clan_OrderByInput {
+  author: OrderBy
+  clan_acc: OrderBy
+  comment: OrderBy
+  created: OrderBy
+  description: OrderBy
+  id: OrderBy
+  previous_id: OrderBy
+  updated: OrderBy
+}
+
+input clan_UpdateInput {
+  author: String
+  clan_acc: String
+  comment: String
+  created: DateTime
+  description: String
+  id: String
+  previous_id: String
+  updated: Timestamp
+}
+
+input clan_WhereInput {
+  author: String
+  clan_acc: String
+  comment: String
+  created: String
+  description: String
+  id: String
+  previous_id: String
+  updated: String
+}
+
+type clan_database_link {
+  clan(limit: Int, offset: Int, orderBy: clan_OrderByInput, where: clan_WhereInput): [clan]
+  clan_acc: String!
+  comment: String
+  db_id: String!
+  db_link: String!
+  other_params: String
+}
+
+input clan_database_link_InsertInput {
+  clan_acc: String!
+  comment: String
+  db_id: String!
+  db_link: String!
+  other_params: String
+}
+
+input clan_database_link_OrderByInput {
+  clan_acc: OrderBy
+  comment: OrderBy
+  db_id: OrderBy
+  db_link: OrderBy
+  other_params: OrderBy
+}
+
+input clan_database_link_UpdateInput {
+  clan_acc: String
+  comment: String
+  db_id: String
+  db_link: String
+  other_params: String
+}
+
+input clan_database_link_WhereInput {
+  clan_acc: String
+  comment: String
+  db_id: String
+  db_link: String
+  other_params: String
+}
+
+type clan_literature_reference {
+  clan(limit: Int, offset: Int, orderBy: clan_OrderByInput, where: clan_WhereInput): [clan]
+  clan_acc: String!
+  comment: String
+  literature_reference(limit: Int, offset: Int, orderBy: literature_reference_OrderByInput, where: literature_reference_WhereInput): [literature_reference]
+  order_added: Int
+  pmid: Int!
+}
+
+input clan_literature_reference_InsertInput {
+  clan_acc: String!
+  comment: String
+  order_added: Int
+  pmid: Int!
+}
+
+input clan_literature_reference_OrderByInput {
+  clan_acc: OrderBy
+  comment: OrderBy
+  order_added: OrderBy
+  pmid: OrderBy
+}
+
+input clan_literature_reference_UpdateInput {
+  clan_acc: String
+  comment: String
+  order_added: Int
+  pmid: Int
+}
+
+input clan_literature_reference_WhereInput {
+  clan_acc: String
+  comment: String
+  order_added: String
+  pmid: String
+}
+
+type clan_membership {
+  clan(limit: Int, offset: Int, orderBy: clan_OrderByInput, where: clan_WhereInput): [clan]
+  clan_acc: String!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  rfam_acc: String!
+}
+
+input clan_membership_InsertInput {
+  clan_acc: String!
+  rfam_acc: String!
+}
+
+input clan_membership_OrderByInput {
+  clan_acc: OrderBy
+  rfam_acc: OrderBy
+}
+
+input clan_membership_UpdateInput {
+  clan_acc: String
+  rfam_acc: String
+}
+
+input clan_membership_WhereInput {
+  clan_acc: String
+  rfam_acc: String
+}
+
+type database_link {
+  comment: String
+  db_id: String!
+  db_link: String!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  other_params: String
+  rfam_acc: String!
+}
+
+input database_link_InsertInput {
+  comment: String
+  db_id: String!
+  db_link: String!
+  other_params: String
+  rfam_acc: String!
+}
+
+input database_link_OrderByInput {
+  comment: OrderBy
+  db_id: OrderBy
+  db_link: OrderBy
+  other_params: OrderBy
+  rfam_acc: OrderBy
+}
+
+input database_link_UpdateInput {
+  comment: String
+  db_id: String
+  db_link: String
+  other_params: String
+  rfam_acc: String
+}
+
+input database_link_WhereInput {
+  comment: String
+  db_id: String
+  db_link: String
+  other_params: String
+  rfam_acc: String
+}
+
+type db_version {
+  embl_release: String!
+  genome_collection_date: DateTime
+  infernal_version: String
+  number_families: Int!
+  pdb_date: DateTime
+  refseq_version: Int
+  rfam_release: Float!
+  rfam_release_date: DateTime!
+}
+
+input db_version_InsertInput {
+  embl_release: String!
+  genome_collection_date: DateTime
+  infernal_version: String
+  number_families: Int!
+  pdb_date: DateTime
+  refseq_version: Int
+  rfam_release: Float!
+  rfam_release_date: DateTime!
+}
+
+input db_version_OrderByInput {
+  embl_release: OrderBy
+  genome_collection_date: OrderBy
+  infernal_version: OrderBy
+  number_families: OrderBy
+  pdb_date: OrderBy
+  refseq_version: OrderBy
+  rfam_release: OrderBy
+  rfam_release_date: OrderBy
+}
+
+input db_version_UpdateInput {
+  embl_release: String
+  genome_collection_date: DateTime
+  infernal_version: String
+  number_families: Int
+  pdb_date: DateTime
+  refseq_version: Int
+  rfam_release: Float
+  rfam_release_date: DateTime
+}
+
+input db_version_WhereInput {
+  embl_release: String
+  genome_collection_date: String
+  infernal_version: String
+  number_families: String
+  pdb_date: String
+  refseq_version: String
+  rfam_release: String
+  rfam_release_date: String
+}
+
+type dead_clan {
+  clan_acc: String!
+
+  """Added. Add author?"""
+  clan_id: String!
+  comment: String
+  forward_to: String
+  user: String!
+}
+
+input dead_clan_InsertInput {
+  clan_acc: String!
+
+  """Added. Add author?"""
+  clan_id: String!
+  comment: String
+  forward_to: String
+  user: String!
+}
+
+input dead_clan_OrderByInput {
+  clan_acc: OrderBy
+
+  """Added. Add author?"""
+  clan_id: OrderBy
+  comment: OrderBy
+  forward_to: OrderBy
+  user: OrderBy
+}
+
+input dead_clan_UpdateInput {
+  clan_acc: String
+
+  """Added. Add author?"""
+  clan_id: String
+  comment: String
+  forward_to: String
+  user: String
+}
+
+input dead_clan_WhereInput {
+  clan_acc: String
+
+  """Added. Add author?"""
+  clan_id: String
+  comment: String
+  forward_to: String
+  user: String
+}
+
+type dead_family {
+  comment: String
+  forward_to: String
+
+  """record the author???"""
+  rfam_acc: String!
+  rfam_id: String!
+
+  "wikipedia page title\\n"
+  title: String
+  user: String!
+}
+
+input dead_family_InsertInput {
+  comment: String
+  forward_to: String
+
+  """record the author???"""
+  rfam_acc: String!
+  rfam_id: String!
+
+  "wikipedia page title\\n"
+  title: String
+  user: String!
+}
+
+input dead_family_OrderByInput {
+  comment: OrderBy
+  forward_to: OrderBy
+
+  """record the author???"""
+  rfam_acc: OrderBy
+  rfam_id: OrderBy
+
+  "wikipedia page title\\n"
+  title: OrderBy
+  user: OrderBy
+}
+
+input dead_family_UpdateInput {
+  comment: String
+  forward_to: String
+
+  """record the author???"""
+  rfam_acc: String
+  rfam_id: String
+
+  "wikipedia page title\\n"
+  title: String
+  user: String
+}
+
+input dead_family_WhereInput {
+  comment: String
+  forward_to: String
+
+  """record the author???"""
+  rfam_acc: String
+  rfam_id: String
+
+  "wikipedia page title\\n"
+  title: String
+  user: String
+}
+
+type ensembl_names {
+  ensembl: String
+  insdc: String!
+}
+
+input ensembl_names_InsertInput {
+  ensembl: String
+  insdc: String!
+}
+
+input ensembl_names_OrderByInput {
+  ensembl: OrderBy
+  insdc: OrderBy
+}
+
+input ensembl_names_UpdateInput {
+  ensembl: String
+  insdc: String
+}
+
+input ensembl_names_WhereInput {
+  ensembl: String
+  insdc: String
+}
+
+type family {
+  _family_file(limit: Int, offset: Int, orderBy: _family_file_OrderByInput, where: _family_file_WhereInput): [_family_file]
+  _overlap_membership(limit: Int, offset: Int, orderBy: _overlap_membership_OrderByInput, where: _overlap_membership_WhereInput): [_overlap_membership]
+  _post_process(limit: Int, offset: Int, orderBy: _post_process_OrderByInput, where: _post_process_WhereInput): [_post_process]
+  alignment_and_tree(limit: Int, offset: Int, orderBy: alignment_and_tree_OrderByInput, where: alignment_and_tree_WhereInput): [alignment_and_tree]
+  author: String
+  auto_wiki: Int!
+  clan_membership(limit: Int, offset: Int, orderBy: clan_membership_OrderByInput, where: clan_membership_WhereInput): [clan_membership]
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  cmsearch: String
+  comment: String
+  created: DateTime!
+  database_link(limit: Int, offset: Int, orderBy: database_link_OrderByInput, where: database_link_WhereInput): [database_link]
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  family_literature_reference(limit: Int, offset: Int, orderBy: family_literature_reference_OrderByInput, where: family_literature_reference_WhereInput): [family_literature_reference]
+  family_long(limit: Int, offset: Int, orderBy: family_long_OrderByInput, where: family_long_WhereInput): [family_long]
+  family_ncbi(limit: Int, offset: Int, orderBy: family_ncbi_OrderByInput, where: family_ncbi_WhereInput): [family_ncbi]
+  full_region(limit: Int, offset: Int, orderBy: full_region_OrderByInput, where: full_region_WhereInput): [full_region]
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  html_alignment(limit: Int, offset: Int, orderBy: html_alignment_OrderByInput, where: html_alignment_WhereInput): [html_alignment]
+  match_pair_node: Int
+  matches_and_fasta(limit: Int, offset: Int, orderBy: matches_and_fasta_OrderByInput, where: matches_and_fasta_WhereInput): [matches_and_fasta]
+  maxl: Int
+  motif_family_stats(limit: Int, offset: Int, orderBy: motif_family_stats_OrderByInput, where: motif_family_stats_WhereInput): [motif_family_stats]
+  motif_matches(limit: Int, offset: Int, orderBy: motif_matches_OrderByInput, where: motif_matches_WhereInput): [motif_matches]
+  motif_ss_image(limit: Int, offset: Int, orderBy: motif_ss_image_OrderByInput, where: motif_ss_image_WhereInput): [motif_ss_image]
+  noise_cutoff: Float
+  num_full: BigInt
+  num_genome_seq: BigInt
+  num_pseudonokts: Int
+  num_refseq: BigInt
+  num_seed: BigInt
+  number_3d_structures: Int
+  number_of_species: BigInt
+  pdb_rfam_reg(limit: Int, offset: Int, orderBy: pdb_rfam_reg_OrderByInput, where: pdb_rfam_reg_WhereInput): [pdb_rfam_reg]
+  previous_id: String
+  processed_data(limit: Int, offset: Int, orderBy: processed_data_OrderByInput, where: processed_data_WhereInput): [processed_data]
+  pseudoknot(limit: Int, offset: Int, orderBy: pseudoknot_OrderByInput, where: pseudoknot_WhereInput): [pseudoknot]
+  refseq_full_region(limit: Int, offset: Int, orderBy: refseq_full_region_OrderByInput, where: refseq_full_region_WhereInput): [refseq_full_region]
+  rfam_acc: String!
+  rfam_id: String!
+  secondary_structure_image(limit: Int, offset: Int, orderBy: secondary_structure_image_OrderByInput, where: secondary_structure_image_WhereInput): [secondary_structure_image]
+  seed_region(limit: Int, offset: Int, orderBy: seed_region_OrderByInput, where: seed_region_WhereInput): [seed_region]
+  seed_source: String
+  structure_source: String
+  sunburst(limit: Int, offset: Int, orderBy: sunburst_OrderByInput, where: sunburst_WhereInput): [sunburst]
+  tax_seed: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp!
+  wikitext(limit: Int, offset: Int, orderBy: wikitext_OrderByInput, where: wikitext_WhereInput): [wikitext]
+}
+
+input family_InsertInput {
+  author: String
+  auto_wiki: Int!
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  cmsearch: String
+  comment: String
+  created: DateTime!
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  match_pair_node: Int
+  maxl: Int
+  noise_cutoff: Float
+  num_full: BigInt
+  num_genome_seq: BigInt
+  num_pseudonokts: Int
+  num_refseq: BigInt
+  num_seed: BigInt
+  number_3d_structures: Int
+  number_of_species: BigInt
+  previous_id: String
+  rfam_acc: String!
+  rfam_id: String!
+  seed_source: String
+  structure_source: String
+  tax_seed: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp!
+}
+
+input family_OrderByInput {
+  author: OrderBy
+  auto_wiki: OrderBy
+  clen: OrderBy
+  cmbuild: OrderBy
+  cmcalibrate: OrderBy
+  cmsearch: OrderBy
+  comment: OrderBy
+  created: OrderBy
+  description: OrderBy
+  ecmli_cal_db: OrderBy
+  ecmli_cal_hits: OrderBy
+  ecmli_lambda: OrderBy
+  ecmli_mu: OrderBy
+  gathering_cutoff: OrderBy
+  hmm_lambda: OrderBy
+  hmm_tau: OrderBy
+  match_pair_node: OrderBy
+  maxl: OrderBy
+  noise_cutoff: OrderBy
+  num_full: OrderBy
+  num_genome_seq: OrderBy
+  num_pseudonokts: OrderBy
+  num_refseq: OrderBy
+  num_seed: OrderBy
+  number_3d_structures: OrderBy
+  number_of_species: OrderBy
+  previous_id: OrderBy
+  rfam_acc: OrderBy
+  rfam_id: OrderBy
+  seed_source: OrderBy
+  structure_source: OrderBy
+  tax_seed: OrderBy
+  trusted_cutoff: OrderBy
+  type: OrderBy
+  updated: OrderBy
+}
+
+input family_UpdateInput {
+  author: String
+  auto_wiki: Int
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  cmsearch: String
+  comment: String
+  created: DateTime
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  match_pair_node: Int
+  maxl: Int
+  noise_cutoff: Float
+  num_full: BigInt
+  num_genome_seq: BigInt
+  num_pseudonokts: Int
+  num_refseq: BigInt
+  num_seed: BigInt
+  number_3d_structures: Int
+  number_of_species: BigInt
+  previous_id: String
+  rfam_acc: String
+  rfam_id: String
+  seed_source: String
+  structure_source: String
+  tax_seed: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp
+}
+
+input family_WhereInput {
+  author: String
+  auto_wiki: String
+  clen: String
+  cmbuild: String
+  cmcalibrate: String
+  cmsearch: String
+  comment: String
+  created: String
+  description: String
+  ecmli_cal_db: String
+  ecmli_cal_hits: String
+  ecmli_lambda: String
+  ecmli_mu: String
+  gathering_cutoff: String
+  hmm_lambda: String
+  hmm_tau: String
+  match_pair_node: String
+  maxl: String
+  noise_cutoff: String
+  num_full: String
+  num_genome_seq: String
+  num_pseudonokts: String
+  num_refseq: String
+  num_seed: String
+  number_3d_structures: String
+  number_of_species: String
+  previous_id: String
+  rfam_acc: String
+  rfam_id: String
+  seed_source: String
+  structure_source: String
+  tax_seed: String
+  trusted_cutoff: String
+  type: String
+  updated: String
+}
+
+type family_author {
+  author_id: Int!
+  desc_order: Int!
+  rfam_acc: String!
+}
+
+input family_author_InsertInput {
+  author_id: Int!
+  desc_order: Int!
+  rfam_acc: String!
+}
+
+input family_author_OrderByInput {
+  author_id: OrderBy
+  desc_order: OrderBy
+  rfam_acc: OrderBy
+}
+
+input family_author_UpdateInput {
+  author_id: Int
+  desc_order: Int
+  rfam_acc: String
+}
+
+input family_author_WhereInput {
+  author_id: String
+  desc_order: String
+  rfam_acc: String
+}
+
+type family_literature_reference {
+  comment: String
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  literature_reference(limit: Int, offset: Int, orderBy: literature_reference_OrderByInput, where: literature_reference_WhereInput): [literature_reference]
+  order_added: Int
+  pmid: Int!
+  rfam_acc: String!
+}
+
+input family_literature_reference_InsertInput {
+  comment: String
+  order_added: Int
+  pmid: Int!
+  rfam_acc: String!
+}
+
+input family_literature_reference_OrderByInput {
+  comment: OrderBy
+  order_added: OrderBy
+  pmid: OrderBy
+  rfam_acc: OrderBy
+}
+
+input family_literature_reference_UpdateInput {
+  comment: String
+  order_added: Int
+  pmid: Int
+  rfam_acc: String
+}
+
+input family_literature_reference_WhereInput {
+  comment: String
+  order_added: String
+  pmid: String
+  rfam_acc: String
+}
+
+type family_long {
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  reference_sequence: String
+  referenece_structure: String
+  rfam_acc: String!
+}
+
+input family_long_InsertInput {
+  reference_sequence: String
+  referenece_structure: String
+  rfam_acc: String!
+}
+
+input family_long_OrderByInput {
+  reference_sequence: OrderBy
+  referenece_structure: OrderBy
+  rfam_acc: OrderBy
+}
+
+input family_long_UpdateInput {
+  reference_sequence: String
+  referenece_structure: String
+  rfam_acc: String
+}
+
+input family_long_WhereInput {
+  reference_sequence: String
+  referenece_structure: String
+  rfam_acc: String
+}
+
+type family_ncbi {
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  ncbi_id: Int!
+  rfam_acc: String!
+
+  """Is this really needed?"""
+  rfam_id: String
+  taxonomy(limit: Int, offset: Int, orderBy: taxonomy_OrderByInput, where: taxonomy_WhereInput): [taxonomy]
+}
+
+input family_ncbi_InsertInput {
+  ncbi_id: Int!
+  rfam_acc: String!
+
+  """Is this really needed?"""
+  rfam_id: String
+}
+
+input family_ncbi_OrderByInput {
+  ncbi_id: OrderBy
+  rfam_acc: OrderBy
+
+  """Is this really needed?"""
+  rfam_id: OrderBy
+}
+
+input family_ncbi_UpdateInput {
+  ncbi_id: Int
+  rfam_acc: String
+
+  """Is this really needed?"""
+  rfam_id: String
+}
+
+input family_ncbi_WhereInput {
+  ncbi_id: String
+  rfam_acc: String
+
+  """Is this really needed?"""
+  rfam_id: String
+}
+
+type features {
+  database_id: String!
+  feat_end: BigInt!
+  feat_orient: Int!
+  feat_start: BigInt!
+  primary_id: String!
+  quaternary_id: String
+  rfamseq(limit: Int, offset: Int, orderBy: rfamseq_OrderByInput, where: rfamseq_WhereInput): [rfamseq]
+  rfamseq_acc: String
+  secondary_id: String
+}
+
+input features_InsertInput {
+  database_id: String!
+  feat_end: BigInt!
+  feat_orient: Int!
+  feat_start: BigInt!
+  primary_id: String!
+  quaternary_id: String
+  rfamseq_acc: String
+  secondary_id: String
+}
+
+input features_OrderByInput {
+  database_id: OrderBy
+  feat_end: OrderBy
+  feat_orient: OrderBy
+  feat_start: OrderBy
+  primary_id: OrderBy
+  quaternary_id: OrderBy
+  rfamseq_acc: OrderBy
+  secondary_id: OrderBy
+}
+
+input features_UpdateInput {
+  database_id: String
+  feat_end: BigInt
+  feat_orient: Int
+  feat_start: BigInt
+  primary_id: String
+  quaternary_id: String
+  rfamseq_acc: String
+  secondary_id: String
+}
+
+input features_WhereInput {
+  database_id: String
+  feat_end: String
+  feat_orient: String
+  feat_start: String
+  primary_id: String
+  quaternary_id: String
+  rfamseq_acc: String
+  secondary_id: String
+}
+
+type full_region {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: Float!
+  cm_end: Int!
+  cm_start: Int!
+  evalue_score: String!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  is_significant: Int!
+  rfam_acc: String!
+  rfamseq(limit: Int, offset: Int, orderBy: rfamseq_OrderByInput, where: rfamseq_WhereInput): [rfamseq]
+  rfamseq_acc: String!
+  seq_end: BigInt!
+  seq_start: BigInt!
+  truncated: full_region_truncated!
+  type: full_region_type!
+}
+
+input full_region_InsertInput {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: Float!
+  cm_end: Int!
+  cm_start: Int!
+  evalue_score: String!
+  is_significant: Int!
+  rfam_acc: String!
+  rfamseq_acc: String!
+  seq_end: BigInt!
+  seq_start: BigInt!
+  truncated: full_region_truncated!
+  type: full_region_type!
+}
+
+input full_region_OrderByInput {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: OrderBy
+  cm_end: OrderBy
+  cm_start: OrderBy
+  evalue_score: OrderBy
+  is_significant: OrderBy
+  rfam_acc: OrderBy
+  rfamseq_acc: OrderBy
+  seq_end: OrderBy
+  seq_start: OrderBy
+  truncated: OrderBy
+  type: OrderBy
+}
+
+input full_region_UpdateInput {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: Float
+  cm_end: Int
+  cm_start: Int
+  evalue_score: String
+  is_significant: Int
+  rfam_acc: String
+  rfamseq_acc: String
+  seq_end: BigInt
+  seq_start: BigInt
+  truncated: full_region_truncated
+  type: full_region_type
+}
+
+input full_region_WhereInput {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: String
+  cm_end: String
+  cm_start: String
+  evalue_score: String
+  is_significant: String
+  rfam_acc: String
+  rfamseq_acc: String
+  seq_end: String
+  seq_start: String
+  truncated: String
+  type: String
+}
+
+enum full_region_truncated {
+  _0
+  _3
+  _5
+  _53
+}
+
+enum full_region_type {
+  full
+  seed
+}
+
+type genome {
+  assembly_acc: String
+  assembly_level: genome_assembly_level
+  assembly_name: String
+  assembly_version: Int
+  circular: Int
+  common_name: String
+  created: DateTime!
+  description: String
+  is_reference: Int!
+  is_representative: Int!
+  kingdom: String
+  ncbi_id: Int!
+  num_families: Int
+  num_rfam_regions: Int
+  scientific_name: String
+  study_ref: String
+  total_length: BigInt
+  ungapped_length: BigInt
+  updated: Timestamp!
+
+  """This should be """
+  upid: String!
+  wgs_acc: String
+  wgs_version: Int
+}
+
+input genome_InsertInput {
+  assembly_acc: String
+  assembly_level: genome_assembly_level
+  assembly_name: String
+  assembly_version: Int
+  circular: Int
+  common_name: String
+  created: DateTime!
+  description: String
+  is_reference: Int!
+  is_representative: Int!
+  kingdom: String
+  ncbi_id: Int!
+  num_families: Int
+  num_rfam_regions: Int
+  scientific_name: String
+  study_ref: String
+  total_length: BigInt
+  ungapped_length: BigInt
+  updated: Timestamp!
+
+  """This should be """
+  upid: String!
+  wgs_acc: String
+  wgs_version: Int
+}
+
+input genome_OrderByInput {
+  assembly_acc: OrderBy
+  assembly_level: OrderBy
+  assembly_name: OrderBy
+  assembly_version: OrderBy
+  circular: OrderBy
+  common_name: OrderBy
+  created: OrderBy
+  description: OrderBy
+  is_reference: OrderBy
+  is_representative: OrderBy
+  kingdom: OrderBy
+  ncbi_id: OrderBy
+  num_families: OrderBy
+  num_rfam_regions: OrderBy
+  scientific_name: OrderBy
+  study_ref: OrderBy
+  total_length: OrderBy
+  ungapped_length: OrderBy
+  updated: OrderBy
+
+  """This should be """
+  upid: OrderBy
+  wgs_acc: OrderBy
+  wgs_version: OrderBy
+}
+
+input genome_UpdateInput {
+  assembly_acc: String
+  assembly_level: genome_assembly_level
+  assembly_name: String
+  assembly_version: Int
+  circular: Int
+  common_name: String
+  created: DateTime
+  description: String
+  is_reference: Int
+  is_representative: Int
+  kingdom: String
+  ncbi_id: Int
+  num_families: Int
+  num_rfam_regions: Int
+  scientific_name: String
+  study_ref: String
+  total_length: BigInt
+  ungapped_length: BigInt
+  updated: Timestamp
+
+  """This should be """
+  upid: String
+  wgs_acc: String
+  wgs_version: Int
+}
+
+input genome_WhereInput {
+  assembly_acc: String
+  assembly_level: String
+  assembly_name: String
+  assembly_version: String
+  circular: String
+  common_name: String
+  created: String
+  description: String
+  is_reference: String
+  is_representative: String
+  kingdom: String
+  ncbi_id: String
+  num_families: String
+  num_rfam_regions: String
+  scientific_name: String
+  study_ref: String
+  total_length: String
+  ungapped_length: String
+  updated: String
+
+  """This should be """
+  upid: String
+  wgs_acc: String
+  wgs_version: String
+}
+
+enum genome_assembly_level {
+  chromosome
+  complete_genome
+  contig
+  scaffold
+}
+
+type genseq {
+  chromosome_name: String
+  chromosome_type: String
+  rfamseq_acc: String
+
+  """This should be """
+  upid: String!
+  version: String
+}
+
+input genseq_InsertInput {
+  chromosome_name: String
+  chromosome_type: String
+  rfamseq_acc: String
+
+  """This should be """
+  upid: String!
+  version: String
+}
+
+input genseq_OrderByInput {
+  chromosome_name: OrderBy
+  chromosome_type: OrderBy
+  rfamseq_acc: OrderBy
+
+  """This should be """
+  upid: OrderBy
+  version: OrderBy
+}
+
+input genseq_UpdateInput {
+  chromosome_name: String
+  chromosome_type: String
+  rfamseq_acc: String
+
+  """This should be """
+  upid: String
+  version: String
+}
+
+input genseq_WhereInput {
+  chromosome_name: String
+  chromosome_type: String
+  rfamseq_acc: String
+
+  """This should be """
+  upid: String
+  version: String
+}
+
+type html_alignment {
+  block: Int!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  html: String
+  html_alignmentscol: String
+  rfam_acc: String!
+  type: html_alignment_type!
+}
+
+input html_alignment_InsertInput {
+  block: Int!
+  html: String
+  html_alignmentscol: String
+  rfam_acc: String!
+  type: html_alignment_type!
+}
+
+input html_alignment_OrderByInput {
+  block: OrderBy
+  html: OrderBy
+  html_alignmentscol: OrderBy
+  rfam_acc: OrderBy
+  type: OrderBy
+}
+
+input html_alignment_UpdateInput {
+  block: Int
+  html: String
+  html_alignmentscol: String
+  rfam_acc: String
+  type: html_alignment_type
+}
+
+input html_alignment_WhereInput {
+  block: String
+  html: String
+  html_alignmentscol: String
+  rfam_acc: String
+  type: String
+}
+
+enum html_alignment_type {
+  genome
+  genomeColorstock
+  seed
+  seedColorstock
+}
+
+type keywords {
+  clan_info: String
+  description: String
+  literature: String
+  pdb_mappings: String
+  rfam_acc: String!
+  rfam_general: String
+  rfam_id: String
+  wiki: String
+}
+
+input keywords_InsertInput {
+  clan_info: String
+  description: String
+  literature: String
+  pdb_mappings: String
+  rfam_acc: String!
+  rfam_general: String
+  rfam_id: String
+  wiki: String
+}
+
+input keywords_OrderByInput {
+  clan_info: OrderBy
+  description: OrderBy
+  literature: OrderBy
+  pdb_mappings: OrderBy
+  rfam_acc: OrderBy
+  rfam_general: OrderBy
+  rfam_id: OrderBy
+  wiki: OrderBy
+}
+
+input keywords_UpdateInput {
+  clan_info: String
+  description: String
+  literature: String
+  pdb_mappings: String
+  rfam_acc: String
+  rfam_general: String
+  rfam_id: String
+  wiki: String
+}
+
+input keywords_WhereInput {
+  clan_info: String
+  description: String
+  literature: String
+  pdb_mappings: String
+  rfam_acc: String
+  rfam_general: String
+  rfam_id: String
+  wiki: String
+}
+
+type literature_reference {
+  author: String
+  clan_literature_reference(limit: Int, offset: Int, orderBy: clan_literature_reference_OrderByInput, where: clan_literature_reference_WhereInput): [clan_literature_reference]
+  family_literature_reference(limit: Int, offset: Int, orderBy: family_literature_reference_OrderByInput, where: family_literature_reference_WhereInput): [family_literature_reference]
+  journal: String
+  motif_literature(limit: Int, offset: Int, orderBy: motif_literature_OrderByInput, where: motif_literature_WhereInput): [motif_literature]
+  pmid: Int!
+  title: String
+}
+
+input literature_reference_InsertInput {
+  author: String
+  journal: String
+  pmid: Int!
+  title: String
+}
+
+input literature_reference_OrderByInput {
+  author: OrderBy
+  journal: OrderBy
+  pmid: OrderBy
+  title: OrderBy
+}
+
+input literature_reference_UpdateInput {
+  author: String
+  journal: String
+  pmid: Int
+  title: String
+}
+
+input literature_reference_WhereInput {
+  author: String
+  journal: String
+  pmid: String
+  title: String
+}
+
+type matches_and_fasta {
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  fasta: String
+  match_list: String
+  rfam_acc: String!
+  type: matches_and_fasta_type!
+}
+
+input matches_and_fasta_InsertInput {
+  fasta: String
+  match_list: String
+  rfam_acc: String!
+  type: matches_and_fasta_type!
+}
+
+input matches_and_fasta_OrderByInput {
+  fasta: OrderBy
+  match_list: OrderBy
+  rfam_acc: OrderBy
+  type: OrderBy
+}
+
+input matches_and_fasta_UpdateInput {
+  fasta: String
+  match_list: String
+  rfam_acc: String
+  type: matches_and_fasta_type
+}
+
+input matches_and_fasta_WhereInput {
+  fasta: String
+  match_list: String
+  rfam_acc: String
+  type: String
+}
+
+enum matches_and_fasta_type {
+  genome
+  refseq
+  rfamseq
+}
+
+type motif {
+  author: String
+  average_id: Float
+  average_sqlen: Float
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  created: DateTime!
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  match_pair_node: Int
+  maxl: Int
+  motif_acc: String!
+  motif_database_link(limit: Int, offset: Int, orderBy: motif_database_link_OrderByInput, where: motif_database_link_WhereInput): [motif_database_link]
+  motif_file(limit: Int, offset: Int, orderBy: motif_file_OrderByInput, where: motif_file_WhereInput): [motif_file]
+  motif_id: String
+  noise_cutoff: Float
+  num_seed: BigInt
+  seed_source: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp!
+  wiki: String
+}
+
+input motif_InsertInput {
+  author: String
+  average_id: Float
+  average_sqlen: Float
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  created: DateTime!
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  match_pair_node: Int
+  maxl: Int
+  motif_acc: String!
+  motif_id: String
+  noise_cutoff: Float
+  num_seed: BigInt
+  seed_source: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp!
+  wiki: String
+}
+
+input motif_OrderByInput {
+  author: OrderBy
+  average_id: OrderBy
+  average_sqlen: OrderBy
+  clen: OrderBy
+  cmbuild: OrderBy
+  cmcalibrate: OrderBy
+  created: OrderBy
+  description: OrderBy
+  ecmli_cal_db: OrderBy
+  ecmli_cal_hits: OrderBy
+  ecmli_lambda: OrderBy
+  ecmli_mu: OrderBy
+  gathering_cutoff: OrderBy
+  hmm_lambda: OrderBy
+  hmm_tau: OrderBy
+  match_pair_node: OrderBy
+  maxl: OrderBy
+  motif_acc: OrderBy
+  motif_id: OrderBy
+  noise_cutoff: OrderBy
+  num_seed: OrderBy
+  seed_source: OrderBy
+  trusted_cutoff: OrderBy
+  type: OrderBy
+  updated: OrderBy
+  wiki: OrderBy
+}
+
+input motif_UpdateInput {
+  author: String
+  average_id: Float
+  average_sqlen: Float
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  created: DateTime
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  match_pair_node: Int
+  maxl: Int
+  motif_acc: String
+  motif_id: String
+  noise_cutoff: Float
+  num_seed: BigInt
+  seed_source: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp
+  wiki: String
+}
+
+input motif_WhereInput {
+  author: String
+  average_id: String
+  average_sqlen: String
+  clen: String
+  cmbuild: String
+  cmcalibrate: String
+  created: String
+  description: String
+  ecmli_cal_db: String
+  ecmli_cal_hits: String
+  ecmli_lambda: String
+  ecmli_mu: String
+  gathering_cutoff: String
+  hmm_lambda: String
+  hmm_tau: String
+  match_pair_node: String
+  maxl: String
+  motif_acc: String
+  motif_id: String
+  noise_cutoff: String
+  num_seed: String
+  seed_source: String
+  trusted_cutoff: String
+  type: String
+  updated: String
+  wiki: String
+}
+
+type motif_database_link {
+  comment: String
+  db_id: String!
+  db_link: String!
+  motif(limit: Int, offset: Int, orderBy: motif_OrderByInput, where: motif_WhereInput): [motif]
+  motif_acc: String!
+  other_params: String
+}
+
+input motif_database_link_InsertInput {
+  comment: String
+  db_id: String!
+  db_link: String!
+  motif_acc: String!
+  other_params: String
+}
+
+input motif_database_link_OrderByInput {
+  comment: OrderBy
+  db_id: OrderBy
+  db_link: OrderBy
+  motif_acc: OrderBy
+  other_params: OrderBy
+}
+
+input motif_database_link_UpdateInput {
+  comment: String
+  db_id: String
+  db_link: String
+  motif_acc: String
+  other_params: String
+}
+
+input motif_database_link_WhereInput {
+  comment: String
+  db_id: String
+  db_link: String
+  motif_acc: String
+  other_params: String
+}
+
+type motif_family_stats {
+  avg_weight_bits: Float
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  frac_hits: Float
+  motif_acc: String!
+  motif_old(limit: Int, offset: Int, orderBy: motif_old_OrderByInput, where: motif_old_WhereInput): [motif_old]
+  num_hits: Int
+  rfam_acc: String!
+  sum_bits: Float
+}
+
+input motif_family_stats_InsertInput {
+  avg_weight_bits: Float
+  frac_hits: Float
+  motif_acc: String!
+  num_hits: Int
+  rfam_acc: String!
+  sum_bits: Float
+}
+
+input motif_family_stats_OrderByInput {
+  avg_weight_bits: OrderBy
+  frac_hits: OrderBy
+  motif_acc: OrderBy
+  num_hits: OrderBy
+  rfam_acc: OrderBy
+  sum_bits: OrderBy
+}
+
+input motif_family_stats_UpdateInput {
+  avg_weight_bits: Float
+  frac_hits: Float
+  motif_acc: String
+  num_hits: Int
+  rfam_acc: String
+  sum_bits: Float
+}
+
+input motif_family_stats_WhereInput {
+  avg_weight_bits: String
+  frac_hits: String
+  motif_acc: String
+  num_hits: String
+  rfam_acc: String
+  sum_bits: String
+}
+
+type motif_file {
+  cm: String!
+  motif(limit: Int, offset: Int, orderBy: motif_OrderByInput, where: motif_WhereInput): [motif]
+  motif_acc: String!
+  seed: String!
+}
+
+input motif_file_InsertInput {
+  cm: String!
+  motif_acc: String!
+  seed: String!
+}
+
+input motif_file_OrderByInput {
+  cm: OrderBy
+  motif_acc: OrderBy
+  seed: OrderBy
+}
+
+input motif_file_UpdateInput {
+  cm: String
+  motif_acc: String
+  seed: String
+}
+
+input motif_file_WhereInput {
+  cm: String
+  motif_acc: String
+  seed: String
+}
+
+type motif_literature {
+  comment: String
+  literature_reference(limit: Int, offset: Int, orderBy: literature_reference_OrderByInput, where: literature_reference_WhereInput): [literature_reference]
+  motif_acc: String!
+  motif_old(limit: Int, offset: Int, orderBy: motif_old_OrderByInput, where: motif_old_WhereInput): [motif_old]
+  order_added: Int
+  pmid: Int!
+}
+
+input motif_literature_InsertInput {
+  comment: String
+  motif_acc: String!
+  order_added: Int
+  pmid: Int!
+}
+
+input motif_literature_OrderByInput {
+  comment: OrderBy
+  motif_acc: OrderBy
+  order_added: OrderBy
+  pmid: OrderBy
+}
+
+input motif_literature_UpdateInput {
+  comment: String
+  motif_acc: String
+  order_added: Int
+  pmid: Int
+}
+
+input motif_literature_WhereInput {
+  comment: String
+  motif_acc: String
+  order_added: String
+  pmid: String
+}
+
+type motif_matches {
+  bit_score: Float
+  e_value: String
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  motif_acc: String!
+  motif_old(limit: Int, offset: Int, orderBy: motif_old_OrderByInput, where: motif_old_WhereInput): [motif_old]
+  motif_start: Int
+  motif_stop: Int
+  query_start: Int
+  query_stop: Int
+  rfam_acc: String!
+  rfamseq(limit: Int, offset: Int, orderBy: rfamseq_OrderByInput, where: rfamseq_WhereInput): [rfamseq]
+  rfamseq_acc: String
+  rfamseq_start: BigInt
+  rfamseq_stop: BigInt
+}
+
+input motif_matches_InsertInput {
+  bit_score: Float
+  e_value: String
+  motif_acc: String!
+  motif_start: Int
+  motif_stop: Int
+  query_start: Int
+  query_stop: Int
+  rfam_acc: String!
+  rfamseq_acc: String
+  rfamseq_start: BigInt
+  rfamseq_stop: BigInt
+}
+
+input motif_matches_OrderByInput {
+  bit_score: OrderBy
+  e_value: OrderBy
+  motif_acc: OrderBy
+  motif_start: OrderBy
+  motif_stop: OrderBy
+  query_start: OrderBy
+  query_stop: OrderBy
+  rfam_acc: OrderBy
+  rfamseq_acc: OrderBy
+  rfamseq_start: OrderBy
+  rfamseq_stop: OrderBy
+}
+
+input motif_matches_UpdateInput {
+  bit_score: Float
+  e_value: String
+  motif_acc: String
+  motif_start: Int
+  motif_stop: Int
+  query_start: Int
+  query_stop: Int
+  rfam_acc: String
+  rfamseq_acc: String
+  rfamseq_start: BigInt
+  rfamseq_stop: BigInt
+}
+
+input motif_matches_WhereInput {
+  bit_score: String
+  e_value: String
+  motif_acc: String
+  motif_start: String
+  motif_stop: String
+  query_start: String
+  query_stop: String
+  rfam_acc: String
+  rfamseq_acc: String
+  rfamseq_start: String
+  rfamseq_stop: String
+}
+
+type motif_old {
+  author: String
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  created: DateTime!
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  match_pair_node: Int
+  maxl: Int
+  motif_acc: String!
+  motif_family_stats(limit: Int, offset: Int, orderBy: motif_family_stats_OrderByInput, where: motif_family_stats_WhereInput): [motif_family_stats]
+  motif_id: String
+  motif_literature(limit: Int, offset: Int, orderBy: motif_literature_OrderByInput, where: motif_literature_WhereInput): [motif_literature]
+  motif_matches(limit: Int, offset: Int, orderBy: motif_matches_OrderByInput, where: motif_matches_WhereInput): [motif_matches]
+  motif_pdb(limit: Int, offset: Int, orderBy: motif_pdb_OrderByInput, where: motif_pdb_WhereInput): [motif_pdb]
+  motif_ss_image(limit: Int, offset: Int, orderBy: motif_ss_image_OrderByInput, where: motif_ss_image_WhereInput): [motif_ss_image]
+  noise_cutoff: Float
+  seed_source: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp!
+}
+
+input motif_old_InsertInput {
+  author: String
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  created: DateTime!
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  match_pair_node: Int
+  maxl: Int
+  motif_acc: String!
+  motif_id: String
+  noise_cutoff: Float
+  seed_source: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp!
+}
+
+input motif_old_OrderByInput {
+  author: OrderBy
+  clen: OrderBy
+  cmbuild: OrderBy
+  cmcalibrate: OrderBy
+  created: OrderBy
+  description: OrderBy
+  ecmli_cal_db: OrderBy
+  ecmli_cal_hits: OrderBy
+  ecmli_lambda: OrderBy
+  ecmli_mu: OrderBy
+  gathering_cutoff: OrderBy
+  hmm_lambda: OrderBy
+  hmm_tau: OrderBy
+  match_pair_node: OrderBy
+  maxl: OrderBy
+  motif_acc: OrderBy
+  motif_id: OrderBy
+  noise_cutoff: OrderBy
+  seed_source: OrderBy
+  trusted_cutoff: OrderBy
+  type: OrderBy
+  updated: OrderBy
+}
+
+input motif_old_UpdateInput {
+  author: String
+  clen: Int
+  cmbuild: String
+  cmcalibrate: String
+  created: DateTime
+  description: String
+  ecmli_cal_db: Int
+  ecmli_cal_hits: Int
+  ecmli_lambda: Float
+  ecmli_mu: Float
+  gathering_cutoff: Float
+  hmm_lambda: Float
+  hmm_tau: Float
+  match_pair_node: Int
+  maxl: Int
+  motif_acc: String
+  motif_id: String
+  noise_cutoff: Float
+  seed_source: String
+  trusted_cutoff: Float
+  type: String
+  updated: Timestamp
+}
+
+input motif_old_WhereInput {
+  author: String
+  clen: String
+  cmbuild: String
+  cmcalibrate: String
+  created: String
+  description: String
+  ecmli_cal_db: String
+  ecmli_cal_hits: String
+  ecmli_lambda: String
+  ecmli_mu: String
+  gathering_cutoff: String
+  hmm_lambda: String
+  hmm_tau: String
+  match_pair_node: String
+  maxl: String
+  motif_acc: String
+  motif_id: String
+  noise_cutoff: String
+  seed_source: String
+  trusted_cutoff: String
+  type: String
+  updated: String
+}
+
+type motif_pdb {
+  chain: String
+  motif_acc: String!
+  motif_old(limit: Int, offset: Int, orderBy: motif_old_OrderByInput, where: motif_old_WhereInput): [motif_old]
+  pdb_end: Int
+  pdb_id: String!
+  pdb_start: Int
+}
+
+input motif_pdb_InsertInput {
+  chain: String
+  motif_acc: String!
+  pdb_end: Int
+  pdb_id: String!
+  pdb_start: Int
+}
+
+input motif_pdb_OrderByInput {
+  chain: OrderBy
+  motif_acc: OrderBy
+  pdb_end: OrderBy
+  pdb_id: OrderBy
+  pdb_start: OrderBy
+}
+
+input motif_pdb_UpdateInput {
+  chain: String
+  motif_acc: String
+  pdb_end: Int
+  pdb_id: String
+  pdb_start: Int
+}
+
+input motif_pdb_WhereInput {
+  chain: String
+  motif_acc: String
+  pdb_end: String
+  pdb_id: String
+  pdb_start: String
+}
+
+type motif_ss_image {
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  image: String
+  motif_acc: String!
+  motif_old(limit: Int, offset: Int, orderBy: motif_old_OrderByInput, where: motif_old_WhereInput): [motif_old]
+  rfam_acc: String!
+}
+
+input motif_ss_image_InsertInput {
+  image: String
+  motif_acc: String!
+  rfam_acc: String!
+}
+
+input motif_ss_image_OrderByInput {
+  image: OrderBy
+  motif_acc: OrderBy
+  rfam_acc: OrderBy
+}
+
+input motif_ss_image_UpdateInput {
+  image: String
+  motif_acc: String
+  rfam_acc: String
+}
+
+input motif_ss_image_WhereInput {
+  image: String
+  motif_acc: String
+  rfam_acc: String
+}
+
+type pdb {
+  author: String
+  date: String
+  keywords: String
+  method: String
+  pdb_id: String!
+  pdb_rfam_reg(limit: Int, offset: Int, orderBy: pdb_rfam_reg_OrderByInput, where: pdb_rfam_reg_WhereInput): [pdb_rfam_reg]
+  pdb_sequence(limit: Int, offset: Int, orderBy: pdb_sequence_OrderByInput, where: pdb_sequence_WhereInput): [pdb_sequence]
+  resolution: Float
+  title: String
+}
+
+input pdb_InsertInput {
+  author: String
+  date: String
+  keywords: String
+  method: String
+  pdb_id: String!
+  resolution: Float
+  title: String
+}
+
+input pdb_OrderByInput {
+  author: OrderBy
+  date: OrderBy
+  keywords: OrderBy
+  method: OrderBy
+  pdb_id: OrderBy
+  resolution: OrderBy
+  title: OrderBy
+}
+
+input pdb_UpdateInput {
+  author: String
+  date: String
+  keywords: String
+  method: String
+  pdb_id: String
+  resolution: Float
+  title: String
+}
+
+input pdb_WhereInput {
+  author: String
+  date: String
+  keywords: String
+  method: String
+  pdb_id: String
+  resolution: String
+  title: String
+}
+
+type pdb_full_region {
+  bit_score: Float!
+  chain: String
+  cm_end: Int!
+  cm_start: Int!
+  evalue_score: String!
+  hex_colour: String
+  is_significant: Int!
+  pdb_end: Int!
+  pdb_id: String!
+  pdb_start: Int!
+  rfam_acc: String!
+}
+
+input pdb_full_region_InsertInput {
+  bit_score: Float!
+  chain: String
+  cm_end: Int!
+  cm_start: Int!
+  evalue_score: String!
+  hex_colour: String
+  is_significant: Int!
+  pdb_end: Int!
+  pdb_id: String!
+  pdb_start: Int!
+  rfam_acc: String!
+}
+
+input pdb_full_region_OrderByInput {
+  bit_score: OrderBy
+  chain: OrderBy
+  cm_end: OrderBy
+  cm_start: OrderBy
+  evalue_score: OrderBy
+  hex_colour: OrderBy
+  is_significant: OrderBy
+  pdb_end: OrderBy
+  pdb_id: OrderBy
+  pdb_start: OrderBy
+  rfam_acc: OrderBy
+}
+
+input pdb_full_region_UpdateInput {
+  bit_score: Float
+  chain: String
+  cm_end: Int
+  cm_start: Int
+  evalue_score: String
+  hex_colour: String
+  is_significant: Int
+  pdb_end: Int
+  pdb_id: String
+  pdb_start: Int
+  rfam_acc: String
+}
+
+input pdb_full_region_WhereInput {
+  bit_score: String
+  chain: String
+  cm_end: String
+  cm_start: String
+  evalue_score: String
+  hex_colour: String
+  is_significant: String
+  pdb_end: String
+  pdb_id: String
+  pdb_start: String
+  rfam_acc: String
+}
+
+type pdb_full_region_old {
+  bit_score: Float!
+  chain: String
+  cm_end: Int!
+  cm_start: Int!
+  evalue_score: String!
+  hex_colour: String
+  is_significant: Int!
+  pdb_end: Int!
+  pdb_id: String!
+  pdb_start: Int!
+  rfam_acc: String!
+}
+
+input pdb_full_region_old_InsertInput {
+  bit_score: Float!
+  chain: String
+  cm_end: Int!
+  cm_start: Int!
+  evalue_score: String!
+  hex_colour: String
+  is_significant: Int!
+  pdb_end: Int!
+  pdb_id: String!
+  pdb_start: Int!
+  rfam_acc: String!
+}
+
+input pdb_full_region_old_OrderByInput {
+  bit_score: OrderBy
+  chain: OrderBy
+  cm_end: OrderBy
+  cm_start: OrderBy
+  evalue_score: OrderBy
+  hex_colour: OrderBy
+  is_significant: OrderBy
+  pdb_end: OrderBy
+  pdb_id: OrderBy
+  pdb_start: OrderBy
+  rfam_acc: OrderBy
+}
+
+input pdb_full_region_old_UpdateInput {
+  bit_score: Float
+  chain: String
+  cm_end: Int
+  cm_start: Int
+  evalue_score: String
+  hex_colour: String
+  is_significant: Int
+  pdb_end: Int
+  pdb_id: String
+  pdb_start: Int
+  rfam_acc: String
+}
+
+input pdb_full_region_old_WhereInput {
+  bit_score: String
+  chain: String
+  cm_end: String
+  cm_start: String
+  evalue_score: String
+  hex_colour: String
+  is_significant: String
+  pdb_end: String
+  pdb_id: String
+  pdb_start: String
+  rfam_acc: String
+}
+
+type pdb_rfam_reg {
+  auto_pdb_reg: Int!
+  chain: String
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  hex_colour: String
+  pdb(limit: Int, offset: Int, orderBy: pdb_OrderByInput, where: pdb_WhereInput): [pdb]
+  pdb_id: String!
+  pdb_res_end: Int
+  pdb_res_start: Int
+  pdb_seq: String!
+  pdb_sequence(limit: Int, offset: Int, orderBy: pdb_sequence_OrderByInput, where: pdb_sequence_WhereInput): [pdb_sequence]
+  rfam_acc: String!
+  rfamseq(limit: Int, offset: Int, orderBy: rfamseq_OrderByInput, where: rfamseq_WhereInput): [rfamseq]
+  rfamseq_acc: String
+  seq_end: BigInt
+  seq_start: BigInt
+}
+
+input pdb_rfam_reg_InsertInput {
+  auto_pdb_reg: Int!
+  chain: String
+  hex_colour: String
+  pdb_id: String!
+  pdb_res_end: Int
+  pdb_res_start: Int
+  pdb_seq: String!
+  rfam_acc: String!
+  rfamseq_acc: String
+  seq_end: BigInt
+  seq_start: BigInt
+}
+
+input pdb_rfam_reg_OrderByInput {
+  auto_pdb_reg: OrderBy
+  chain: OrderBy
+  hex_colour: OrderBy
+  pdb_id: OrderBy
+  pdb_res_end: OrderBy
+  pdb_res_start: OrderBy
+  pdb_seq: OrderBy
+  rfam_acc: OrderBy
+  rfamseq_acc: OrderBy
+  seq_end: OrderBy
+  seq_start: OrderBy
+}
+
+input pdb_rfam_reg_UpdateInput {
+  auto_pdb_reg: Int
+  chain: String
+  hex_colour: String
+  pdb_id: String
+  pdb_res_end: Int
+  pdb_res_start: Int
+  pdb_seq: String
+  rfam_acc: String
+  rfamseq_acc: String
+  seq_end: BigInt
+  seq_start: BigInt
+}
+
+input pdb_rfam_reg_WhereInput {
+  auto_pdb_reg: String
+  chain: String
+  hex_colour: String
+  pdb_id: String
+  pdb_res_end: String
+  pdb_res_start: String
+  pdb_seq: String
+  rfam_acc: String
+  rfamseq_acc: String
+  seq_end: String
+  seq_start: String
+}
+
+type pdb_sequence {
+  chain: String
+  pdb(limit: Int, offset: Int, orderBy: pdb_OrderByInput, where: pdb_WhereInput): [pdb]
+  pdb_id: String!
+  pdb_rfam_reg(limit: Int, offset: Int, orderBy: pdb_rfam_reg_OrderByInput, where: pdb_rfam_reg_WhereInput): [pdb_rfam_reg]
+  pdb_seq: String!
+}
+
+input pdb_sequence_InsertInput {
+  chain: String
+  pdb_id: String!
+  pdb_seq: String!
+}
+
+input pdb_sequence_OrderByInput {
+  chain: OrderBy
+  pdb_id: OrderBy
+  pdb_seq: OrderBy
+}
+
+input pdb_sequence_UpdateInput {
+  chain: String
+  pdb_id: String
+  pdb_seq: String
+}
+
+input pdb_sequence_WhereInput {
+  chain: String
+  pdb_id: String
+  pdb_seq: String
+}
+
+type processed_data {
+  cm: String
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  genome_full: String
+  genome_full_md5: String
+  refseq_full: String
+  refseq_full_md5: String
+  rfam_acc: String!
+  scores_graph: String
+  ss_stats_fam: String
+  ss_stats_pbp: String
+  ss_stats_seq: String
+}
+
+input processed_data_InsertInput {
+  cm: String
+  genome_full: String
+  genome_full_md5: String
+  refseq_full: String
+  refseq_full_md5: String
+  rfam_acc: String!
+  scores_graph: String
+  ss_stats_fam: String
+  ss_stats_pbp: String
+  ss_stats_seq: String
+}
+
+input processed_data_OrderByInput {
+  cm: OrderBy
+  genome_full: OrderBy
+  genome_full_md5: OrderBy
+  refseq_full: OrderBy
+  refseq_full_md5: OrderBy
+  rfam_acc: OrderBy
+  scores_graph: OrderBy
+  ss_stats_fam: OrderBy
+  ss_stats_pbp: OrderBy
+  ss_stats_seq: OrderBy
+}
+
+input processed_data_UpdateInput {
+  cm: String
+  genome_full: String
+  genome_full_md5: String
+  refseq_full: String
+  refseq_full_md5: String
+  rfam_acc: String
+  scores_graph: String
+  ss_stats_fam: String
+  ss_stats_pbp: String
+  ss_stats_seq: String
+}
+
+input processed_data_WhereInput {
+  cm: String
+  genome_full: String
+  genome_full_md5: String
+  refseq_full: String
+  refseq_full_md5: String
+  rfam_acc: String
+  scores_graph: String
+  ss_stats_fam: String
+  ss_stats_pbp: String
+  ss_stats_seq: String
+}
+
+type pseudoknot {
+  covariation: Int
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  pseudoknot_id: String!
+  rfam_acc: String!
+  source: pseudoknot_source!
+}
+
+input pseudoknot_InsertInput {
+  covariation: Int
+  pseudoknot_id: String!
+  rfam_acc: String!
+  source: pseudoknot_source!
+}
+
+input pseudoknot_OrderByInput {
+  covariation: OrderBy
+  pseudoknot_id: OrderBy
+  rfam_acc: OrderBy
+  source: OrderBy
+}
+
+input pseudoknot_UpdateInput {
+  covariation: Int
+  pseudoknot_id: String
+  rfam_acc: String
+  source: pseudoknot_source
+}
+
+input pseudoknot_WhereInput {
+  covariation: String
+  pseudoknot_id: String
+  rfam_acc: String
+  source: String
+}
+
+enum pseudoknot_source {
+  rscape
+  seed
+}
+
+type refseq {
+  description: String
+  ncbi_taxid: Int
+  refseq_acc: String!
+  refseq_full_region(limit: Int, offset: Int, orderBy: refseq_full_region_OrderByInput, where: refseq_full_region_WhereInput): [refseq_full_region]
+  species: String
+}
+
+input refseq_InsertInput {
+  description: String
+  ncbi_taxid: Int
+  refseq_acc: String!
+  species: String
+}
+
+input refseq_OrderByInput {
+  description: OrderBy
+  ncbi_taxid: OrderBy
+  refseq_acc: OrderBy
+  species: OrderBy
+}
+
+input refseq_UpdateInput {
+  description: String
+  ncbi_taxid: Int
+  refseq_acc: String
+  species: String
+}
+
+input refseq_WhereInput {
+  description: String
+  ncbi_taxid: String
+  refseq_acc: String
+  species: String
+}
+
+type refseq_full_region {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: Float!
+  cm_end: Int!
+  cm_start: Int!
+  evalue_score: String!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  refseq(limit: Int, offset: Int, orderBy: refseq_OrderByInput, where: refseq_WhereInput): [refseq]
+  refseq_acc: String!
+  rfam_acc: String!
+  seq_end: BigInt!
+  seq_start: BigInt!
+  truncated: refseq_full_region_truncated!
+}
+
+input refseq_full_region_InsertInput {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: Float!
+  cm_end: Int!
+  cm_start: Int!
+  evalue_score: String!
+  refseq_acc: String!
+  rfam_acc: String!
+  seq_end: BigInt!
+  seq_start: BigInt!
+  truncated: refseq_full_region_truncated!
+}
+
+input refseq_full_region_OrderByInput {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: OrderBy
+  cm_end: OrderBy
+  cm_start: OrderBy
+  evalue_score: OrderBy
+  refseq_acc: OrderBy
+  rfam_acc: OrderBy
+  seq_end: OrderBy
+  seq_start: OrderBy
+  truncated: OrderBy
+}
+
+input refseq_full_region_UpdateInput {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: Float
+  cm_end: Int
+  cm_start: Int
+  evalue_score: String
+  refseq_acc: String
+  rfam_acc: String
+  seq_end: BigInt
+  seq_start: BigInt
+  truncated: refseq_full_region_truncated
+}
+
+input refseq_full_region_WhereInput {
+  """99999.99 is the approx limit from Infernal."""
+  bit_score: String
+  cm_end: String
+  cm_start: String
+  evalue_score: String
+  refseq_acc: String
+  rfam_acc: String
+  seq_end: String
+  seq_start: String
+  truncated: String
+}
+
+enum refseq_full_region_truncated {
+  _0
+  _3
+  _5
+  _53
+}
+
+type rfamseq {
+  accession: String!
+  description: String!
+  features(limit: Int, offset: Int, orderBy: features_OrderByInput, where: features_WhereInput): [features]
+  full_region(limit: Int, offset: Int, orderBy: full_region_OrderByInput, where: full_region_WhereInput): [full_region]
+  length: Int
+  mol_type: rfamseq_mol_type!
+  motif_matches(limit: Int, offset: Int, orderBy: motif_matches_OrderByInput, where: motif_matches_WhereInput): [motif_matches]
+  ncbi_id: Int!
+  pdb_rfam_reg(limit: Int, offset: Int, orderBy: pdb_rfam_reg_OrderByInput, where: pdb_rfam_reg_WhereInput): [pdb_rfam_reg]
+  previous_acc: String
+
+  """This should be """
+  rfamseq_acc: String!
+  seed_region(limit: Int, offset: Int, orderBy: seed_region_OrderByInput, where: seed_region_WhereInput): [seed_region]
+  source: String!
+  taxonomy(limit: Int, offset: Int, orderBy: taxonomy_OrderByInput, where: taxonomy_WhereInput): [taxonomy]
+  version: Int!
+}
+
+input rfamseq_InsertInput {
+  accession: String!
+  description: String!
+  length: Int
+  mol_type: rfamseq_mol_type!
+  ncbi_id: Int!
+  previous_acc: String
+
+  """This should be """
+  rfamseq_acc: String!
+  source: String!
+  version: Int!
+}
+
+input rfamseq_OrderByInput {
+  accession: OrderBy
+  description: OrderBy
+  length: OrderBy
+  mol_type: OrderBy
+  ncbi_id: OrderBy
+  previous_acc: OrderBy
+
+  """This should be """
+  rfamseq_acc: OrderBy
+  source: OrderBy
+  version: OrderBy
+}
+
+input rfamseq_UpdateInput {
+  accession: String
+  description: String
+  length: Int
+  mol_type: rfamseq_mol_type
+  ncbi_id: Int
+  previous_acc: String
+
+  """This should be """
+  rfamseq_acc: String
+  source: String
+  version: Int
+}
+
+input rfamseq_WhereInput {
+  accession: String
+  description: String
+  length: String
+  mol_type: String
+  ncbi_id: String
+  previous_acc: String
+
+  """This should be """
+  rfamseq_acc: String
+  source: String
+  version: String
+}
+
+enum rfamseq_mol_type {
+  DNA
+  RNA
+  antisense_RNA
+  cRNA
+  ds_RNA
+  genomic_DNA
+  genomic_RNA
+  mRNA
+  ncRNA
+  other
+  other_DNA
+  other_RNA
+  pre_RNA
+  protein
+  rRNA
+  ribozyme
+  scRNA
+  snRNA
+  snoRNA
+  ss_DNA
+  ss_RNA
+  ss_cRNA
+  tRNA
+  transcribed_RNA
+  unassigned_DNA
+  unassigned_RNA
+  viral_cRNA
+}
+
+type rnacentral_matches {
+  md5: String!
+  rfamseq_acc: String!
+  rnacentral_id: String
+  seq_end: BigInt!
+  seq_start: BigInt!
+  type: rnacentral_matches_type
+}
+
+input rnacentral_matches_InsertInput {
+  md5: String!
+  rfamseq_acc: String!
+  rnacentral_id: String
+  seq_end: BigInt!
+  seq_start: BigInt!
+  type: rnacentral_matches_type
+}
+
+input rnacentral_matches_OrderByInput {
+  md5: OrderBy
+  rfamseq_acc: OrderBy
+  rnacentral_id: OrderBy
+  seq_end: OrderBy
+  seq_start: OrderBy
+  type: OrderBy
+}
+
+input rnacentral_matches_UpdateInput {
+  md5: String
+  rfamseq_acc: String
+  rnacentral_id: String
+  seq_end: BigInt
+  seq_start: BigInt
+  type: rnacentral_matches_type
+}
+
+input rnacentral_matches_WhereInput {
+  md5: String
+  rfamseq_acc: String
+  rnacentral_id: String
+  seq_end: String
+  seq_start: String
+  type: String
+}
+
+enum rnacentral_matches_type {
+  full
+  seed
+}
+
+type rscape_annotations {
+  F: Float
+  alen: Int
+  avgid: Float
+  found: Int
+  nseq: Int
+  ppv: Float
+  rfam_acc: String!
+  sensitivity: Float
+  tp: Int
+  true: Int
+}
+
+input rscape_annotations_InsertInput {
+  F: Float
+  alen: Int
+  avgid: Float
+  found: Int
+  nseq: Int
+  ppv: Float
+  rfam_acc: String!
+  sensitivity: Float
+  tp: Int
+  true: Int
+}
+
+input rscape_annotations_OrderByInput {
+  F: OrderBy
+  alen: OrderBy
+  avgid: OrderBy
+  found: OrderBy
+  nseq: OrderBy
+  ppv: OrderBy
+  rfam_acc: OrderBy
+  sensitivity: OrderBy
+  tp: OrderBy
+  true: OrderBy
+}
+
+input rscape_annotations_UpdateInput {
+  F: Float
+  alen: Int
+  avgid: Float
+  found: Int
+  nseq: Int
+  ppv: Float
+  rfam_acc: String
+  sensitivity: Float
+  tp: Int
+  true: Int
+}
+
+input rscape_annotations_WhereInput {
+  F: String
+  alen: String
+  avgid: String
+  found: String
+  nseq: String
+  ppv: String
+  rfam_acc: String
+  sensitivity: String
+  tp: String
+  true: String
+}
+
+type secondary_structure_image {
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  image: String
+  rfam_acc: String!
+  type: secondary_structure_image_type
+}
+
+input secondary_structure_image_InsertInput {
+  image: String
+  rfam_acc: String!
+  type: secondary_structure_image_type
+}
+
+input secondary_structure_image_OrderByInput {
+  image: OrderBy
+  rfam_acc: OrderBy
+  type: OrderBy
+}
+
+input secondary_structure_image_UpdateInput {
+  image: String
+  rfam_acc: String
+  type: secondary_structure_image_type
+}
+
+input secondary_structure_image_WhereInput {
+  image: String
+  rfam_acc: String
+  type: String
+}
+
+enum secondary_structure_image_type {
+  cons
+  cov
+  dist
+  disttruc
+  ent
+  fcbp
+  maxcm
+  norm
+  rchie
+  rscape
+  rscape_cyk
+  species
+  ss
+}
+
+type seed_region {
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  md5: String
+  rfam_acc: String!
+  rfamseq(limit: Int, offset: Int, orderBy: rfamseq_OrderByInput, where: rfamseq_WhereInput): [rfamseq]
+  rfamseq_acc: String
+  seq_end: BigInt!
+  seq_start: BigInt!
+}
+
+input seed_region_InsertInput {
+  md5: String
+  rfam_acc: String!
+  rfamseq_acc: String
+  seq_end: BigInt!
+  seq_start: BigInt!
+}
+
+input seed_region_OrderByInput {
+  md5: OrderBy
+  rfam_acc: OrderBy
+  rfamseq_acc: OrderBy
+  seq_end: OrderBy
+  seq_start: OrderBy
+}
+
+input seed_region_UpdateInput {
+  md5: String
+  rfam_acc: String
+  rfamseq_acc: String
+  seq_end: BigInt
+  seq_start: BigInt
+}
+
+input seed_region_WhereInput {
+  md5: String
+  rfam_acc: String
+  rfamseq_acc: String
+  seq_end: String
+  seq_start: String
+}
+
+type sunburst {
+  data: String!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  rfam_acc: String!
+  type: sunburst_type!
+}
+
+input sunburst_InsertInput {
+  data: String!
+  rfam_acc: String!
+  type: sunburst_type!
+}
+
+input sunburst_OrderByInput {
+  data: OrderBy
+  rfam_acc: OrderBy
+  type: OrderBy
+}
+
+input sunburst_UpdateInput {
+  data: String
+  rfam_acc: String
+  type: sunburst_type
+}
+
+input sunburst_WhereInput {
+  data: String
+  rfam_acc: String
+  type: String
+}
+
+enum sunburst_type {
+  genome
+  refseq
+  rfamseq
+}
+
+type taxonomic_tree {
+  level: String
+  lft: Int
+  ncbi_code: Int!
+  parent: String
+  rgt: Int
+  species: String
+  taxonomy: String
+}
+
+input taxonomic_tree_InsertInput {
+  level: String
+  lft: Int
+  ncbi_code: Int!
+  parent: String
+  rgt: Int
+  species: String
+  taxonomy: String
+}
+
+input taxonomic_tree_OrderByInput {
+  level: OrderBy
+  lft: OrderBy
+  ncbi_code: OrderBy
+  parent: OrderBy
+  rgt: OrderBy
+  species: OrderBy
+  taxonomy: OrderBy
+}
+
+input taxonomic_tree_UpdateInput {
+  level: String
+  lft: Int
+  ncbi_code: Int
+  parent: String
+  rgt: Int
+  species: String
+  taxonomy: String
+}
+
+input taxonomic_tree_WhereInput {
+  level: String
+  lft: String
+  ncbi_code: String
+  parent: String
+  rgt: String
+  species: String
+  taxonomy: String
+}
+
+type taxonomy {
+  align_display_name: String
+  family_ncbi(limit: Int, offset: Int, orderBy: family_ncbi_OrderByInput, where: family_ncbi_WhereInput): [family_ncbi]
+  ncbi_id: Int!
+  rfamseq(limit: Int, offset: Int, orderBy: rfamseq_OrderByInput, where: rfamseq_WhereInput): [rfamseq]
+  species: String!
+  tax_string: String
+  tree_display_name: String
+}
+
+input taxonomy_InsertInput {
+  align_display_name: String
+  ncbi_id: Int!
+  species: String!
+  tax_string: String
+  tree_display_name: String
+}
+
+input taxonomy_OrderByInput {
+  align_display_name: OrderBy
+  ncbi_id: OrderBy
+  species: OrderBy
+  tax_string: OrderBy
+  tree_display_name: OrderBy
+}
+
+input taxonomy_UpdateInput {
+  align_display_name: String
+  ncbi_id: Int
+  species: String
+  tax_string: String
+  tree_display_name: String
+}
+
+input taxonomy_WhereInput {
+  align_display_name: String
+  ncbi_id: String
+  species: String
+  tax_string: String
+  tree_display_name: String
+}
+
+type taxonomy_websearch {
+  level: String
+  lft: Int
+  minimal: Int!
+  ncbi_id: Int
+  parent: Int
+  rank: String
+  rgt: Int
+  species: String
+  taxonomy: String
+}
+
+input taxonomy_websearch_InsertInput {
+  level: String
+  lft: Int
+  minimal: Int!
+  ncbi_id: Int
+  parent: Int
+  rank: String
+  rgt: Int
+  species: String
+  taxonomy: String
+}
+
+input taxonomy_websearch_OrderByInput {
+  level: OrderBy
+  lft: OrderBy
+  minimal: OrderBy
+  ncbi_id: OrderBy
+  parent: OrderBy
+  rank: OrderBy
+  rgt: OrderBy
+  species: OrderBy
+  taxonomy: OrderBy
+}
+
+input taxonomy_websearch_UpdateInput {
+  level: String
+  lft: Int
+  minimal: Int
+  ncbi_id: Int
+  parent: Int
+  rank: String
+  rgt: Int
+  species: String
+  taxonomy: String
+}
+
+input taxonomy_websearch_WhereInput {
+  level: String
+  lft: String
+  minimal: String
+  ncbi_id: String
+  parent: String
+  rank: String
+  rgt: String
+  species: String
+  taxonomy: String
+}
+
+type version {
+  embl_release: String!
+  number_families: Int!
+  rfam_release: Float!
+  rfam_release_date: Date!
+}
+
+input version_InsertInput {
+  embl_release: String!
+  number_families: Int!
+  rfam_release: Float!
+  rfam_release_date: Date!
+}
+
+input version_OrderByInput {
+  embl_release: OrderBy
+  number_families: OrderBy
+  rfam_release: OrderBy
+  rfam_release_date: OrderBy
+}
+
+input version_UpdateInput {
+  embl_release: String
+  number_families: Int
+  rfam_release: Float
+  rfam_release_date: Date
+}
+
+input version_WhereInput {
+  embl_release: String
+  number_families: String
+  rfam_release: String
+  rfam_release_date: String
+}
+
+type wikitext {
+  auto_wiki: Int!
+  family(limit: Int, offset: Int, orderBy: family_OrderByInput, where: family_WhereInput): [family]
+  title: String!
+}
+
+input wikitext_InsertInput {
+  auto_wiki: Int!
+  title: String!
+}
+
+input wikitext_OrderByInput {
+  auto_wiki: OrderBy
+  title: OrderBy
+}
+
+input wikitext_UpdateInput {
+  auto_wiki: Int
+  title: String
+}
+
+input wikitext_WhereInput {
+  auto_wiki: String
+  title: String
+}"
+`;
+
+exports[`MySQL Rfam should give correct response for example queries: example-query.graphql-query-result 1`] = `
+{
+  "data": {
+    "alignment_and_tree": [
+      {
+        "family": [
+          {
+            "author": "Griffiths-Jones SR, Mifsud W, Gardner PP",
+            "comment": "5S ribosomal RNA (5S rRNA) is a component of the large ribosomal subunit in both prokaryotes and eukaryotes. In eukaryotes, it is synthesised by RNA polymerase III (the other eukaryotic rRNAs are cleaved from a 45S precursor synthesised by RNA polymerase I). In Xenopus oocytes, it has been shown that fingers 4-7 of the nine-zinc finger transcription factor TFIIIA can bind to the central region of 5S RNA. Thus, in addition to positively regulating 5S rRNA transcription, TFIIIA also stabilises 5S rRNA until it is required for transcription.",
+            "created": 2013-10-03T17:41:44.000Z,
+            "description": "5S ribosomal RNA",
+            "type": "Gene; rRNA;",
+          },
+        ],
+        "rfam_acc": "RF00001",
+      },
+      {
+        "family": [
+          {
+            "author": "Griffiths-Jones SR, Mifsud W, Gardner PP",
+            "comment": "5S ribosomal RNA (5S rRNA) is a component of the large ribosomal subunit in both prokaryotes and eukaryotes. In eukaryotes, it is synthesised by RNA polymerase III (the other eukaryotic rRNAs are cleaved from a 45S precursor synthesised by RNA polymerase I). In Xenopus oocytes, it has been shown that fingers 4-7 of the nine-zinc finger transcription factor TFIIIA can bind to the central region of 5S RNA. Thus, in addition to positively regulating 5S rRNA transcription, TFIIIA also stabilises 5S rRNA until it is required for transcription.",
+            "created": 2013-10-03T17:41:44.000Z,
+            "description": "5S ribosomal RNA",
+            "type": "Gene; rRNA;",
+          },
+        ],
+        "rfam_acc": "RF00001",
+      },
+      {
+        "family": [
+          {
+            "author": "Griffiths-Jones SR, Mifsud W",
+            "comment": "5.8S ribosomal RNA (5.8S rRNA) is a component of the large subunit of the eukaryotic ribosome. It is transcribed by RNA polymerase I as part of the 45S precursor that also contains 18S and 28S rRNA. Functionally, it is thought that 5.8S rRNA may be involved in ribosome translocation [2]. It is also known to form covalent linkage to the p53 tumour suppressor protein [3]. 5.8S rRNA is also found in archaea.",
+            "created": 2013-10-03T17:47:00.000Z,
+            "description": "5.8S ribosomal RNA",
+            "type": "Gene; rRNA;",
+          },
+        ],
+        "rfam_acc": "RF00002",
+      },
+      {
+        "family": [
+          {
+            "author": "Griffiths-Jones SR, Mifsud W",
+            "comment": "5.8S ribosomal RNA (5.8S rRNA) is a component of the large subunit of the eukaryotic ribosome. It is transcribed by RNA polymerase I as part of the 45S precursor that also contains 18S and 28S rRNA. Functionally, it is thought that 5.8S rRNA may be involved in ribosome translocation [2]. It is also known to form covalent linkage to the p53 tumour suppressor protein [3]. 5.8S rRNA is also found in archaea.",
+            "created": 2013-10-03T17:47:00.000Z,
+            "description": "5.8S ribosomal RNA",
+            "type": "Gene; rRNA;",
+          },
+        ],
+        "rfam_acc": "RF00002",
+      },
+      {
+        "family": [
+          {
+            "author": "Griffiths-Jones SR, Mifsud W, Moxon SJ",
+            "comment": "U1 is a small nuclear RNA (snRNA) component of the spliceosome (involved in pre-mRNA splicing). Its 5' end forms complementary base pairs with the 5' splice junction, thus defining the 5' donor site of an intron. There are significant differences in sequence and secondary structure between metazoan and yeast U1 snRNAs, the latter being much longer (568 nucleotides as compared to 164 nucleotides in human). Nevertheless, secondary structure predictions suggest that all U1 snRNAs share a 'common core' consisting of helices I, II, the proximal region of III, and IV [1]. This family does not contain the larger yeast sequences. The structure of U1 spliceosomal RNA has been reported in [5,6]. It present 4 Stem loops (SL1, SL2, SL3, and SL4) and a region call Helix H. SL1, SL2, and SL3 are join for the Helix H, forming a four-helix junction that are separated of SL4. U1 snRNA is important in the precatalytic spliceosome, where the 5' splice site (5'SS) of the pre-mRNA is recognized by pairing with 5'-U1 snRNA. Where spliceosome activation is initiated by a disruption of the 5â€²SSâ€“U1 snRNP interaction by the DEAD-box helicase Prp28 [6].",
+            "created": 2013-10-03T17:57:11.000Z,
+            "description": "U1 spliceosomal RNA",
+            "type": "Gene; snRNA; splicing;",
+          },
+        ],
+        "rfam_acc": "RF00003",
+      },
+    ],
+  },
+}
+`;

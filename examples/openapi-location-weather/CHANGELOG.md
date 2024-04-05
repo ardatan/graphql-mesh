@@ -1,5 +1,398 @@
 # typescript-location-weather-example
 
+## 0.14.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`449e39d`](https://github.com/ardatan/graphql-mesh/commit/449e39dfe956d0a7b54929f4b4b7d6fbcbcddaf1),
+  [`c008dda`](https://github.com/ardatan/graphql-mesh/commit/c008ddae4bd617497a2a9bd70e8c90667c2b1ddc)]:
+  - @graphql-mesh/plugin-response-cache@0.97.6
+  - @graphql-mesh/runtime@0.98.7
+  - @graphql-mesh/cli@0.89.8
+
+## 0.14.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.7
+  - @graphql-mesh/openapi@0.99.6
+  - @graphql-mesh/runtime@0.98.6
+  - @graphql-mesh/transform-cache@0.97.5
+  - @graphql-mesh/transform-rename@0.97.5
+  - @graphql-mesh/plugin-response-cache@0.97.5
+
+## 0.14.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.6
+
+## 0.14.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`18e0d49`](https://github.com/ardatan/graphql-mesh/commit/18e0d495053f0b67fd1ba488270318e5d11309f8)]:
+  - @graphql-mesh/runtime@0.98.5
+  - @graphql-mesh/cli@0.89.5
+
+## 0.14.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/openapi@0.99.5
+  - @graphql-mesh/runtime@0.98.4
+  - @graphql-mesh/transform-cache@0.97.4
+  - @graphql-mesh/transform-rename@0.97.4
+  - @graphql-mesh/plugin-response-cache@0.97.4
+
+## 0.14.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/openapi@0.99.4
+  - @graphql-mesh/runtime@0.98.3
+  - @graphql-mesh/transform-cache@0.97.3
+  - @graphql-mesh/transform-rename@0.97.3
+  - @graphql-mesh/plugin-response-cache@0.97.3
+
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.2
+  - @graphql-mesh/openapi@0.99.3
+  - @graphql-mesh/runtime@0.98.2
+  - @graphql-mesh/transform-cache@0.97.2
+  - @graphql-mesh/transform-rename@0.97.2
+  - @graphql-mesh/plugin-response-cache@0.97.2
+
+## 0.14.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.99.2
+
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.1
+  - @graphql-mesh/openapi@0.99.1
+  - @graphql-mesh/runtime@0.98.1
+  - @graphql-mesh/transform-cache@0.97.1
+  - @graphql-mesh/transform-rename@0.97.1
+  - @graphql-mesh/plugin-response-cache@0.97.1
+
+## 0.14.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.0
+  - @graphql-mesh/openapi@0.99.0
+  - @graphql-mesh/runtime@0.98.0
+  - @graphql-mesh/transform-cache@0.97.0
+  - @graphql-mesh/transform-rename@0.97.0
+  - @graphql-mesh/plugin-response-cache@0.97.0
+
+## 0.13.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.9
+  - @graphql-mesh/openapi@0.98.2
+  - @graphql-mesh/runtime@0.97.7
+  - @graphql-mesh/transform-cache@0.96.6
+  - @graphql-mesh/transform-rename@0.96.7
+  - @graphql-mesh/plugin-response-cache@0.96.8
+
+## 0.13.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`74f2042`](https://github.com/ardatan/graphql-mesh/commit/74f20429bb725696315c937d6055cf99b6d2c30e)]:
+  - @graphql-mesh/cli@0.88.8
+
+## 0.13.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2e67aa0`](https://github.com/ardatan/graphql-mesh/commit/2e67aa0f37f2d438d5d7b766d45afb8d126556ee),
+  [`89d8dd6`](https://github.com/ardatan/graphql-mesh/commit/89d8dd6dde4b74a9c3edb3438ef23f2498d94276),
+  [`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/cli@0.88.7
+  - @graphql-mesh/runtime@0.97.6
+  - @graphql-mesh/openapi@0.98.1
+  - @graphql-mesh/plugin-response-cache@0.96.7
+  - @graphql-mesh/transform-cache@0.96.5
+  - @graphql-mesh/transform-rename@0.96.6
+
+## 0.13.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.6
+  - @graphql-mesh/openapi@0.98.0
+  - @graphql-mesh/plugin-response-cache@0.96.6
+  - @graphql-mesh/runtime@0.97.5
+  - @graphql-mesh/transform-cache@0.96.4
+  - @graphql-mesh/transform-rename@0.96.5
+
+## 0.12.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.88.5
+  - @graphql-mesh/openapi@0.97.5
+  - @graphql-mesh/plugin-response-cache@0.96.5
+  - @graphql-mesh/runtime@0.97.4
+  - @graphql-mesh/transform-cache@0.96.3
+  - @graphql-mesh/transform-rename@0.96.4
+
+## 0.12.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`64563c4`](https://github.com/ardatan/graphql-mesh/commit/64563c451cdfa2c8af4856323b2ac08381655331),
+  [`77dc09b`](https://github.com/ardatan/graphql-mesh/commit/77dc09b0e890ce5efb6e72dac05e82547702e32e),
+  [`f485345`](https://github.com/ardatan/graphql-mesh/commit/f4853459ba763d5325fbf2bb3417ef4109dc64d3)]:
+  - @graphql-mesh/transform-rename@0.96.3
+  - @graphql-mesh/openapi@0.97.4
+
+## 0.12.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.97.3
+
+## 0.12.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`10b01a1`](https://github.com/ardatan/graphql-mesh/commit/10b01a1794eaf4313ba8084b409260b99b78ee87),
+  [`d83b5fe`](https://github.com/ardatan/graphql-mesh/commit/d83b5fe20f66a6853d5b5c83c38607e5cf305c68),
+  [`3dae173`](https://github.com/ardatan/graphql-mesh/commit/3dae1736aa74303c426985192483ad538fb40c5a)]:
+  - @graphql-mesh/cli@0.88.4
+  - @graphql-mesh/plugin-response-cache@0.96.4
+
+## 0.12.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/cli@0.88.3
+  - @graphql-mesh/openapi@0.97.2
+  - @graphql-mesh/plugin-response-cache@0.96.3
+  - @graphql-mesh/runtime@0.97.3
+  - @graphql-mesh/transform-cache@0.96.2
+  - @graphql-mesh/transform-rename@0.96.2
+
+## 0.12.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a780dd8`](https://github.com/ardatan/graphql-mesh/commit/a780dd849b79000396246edfe0cb251eb91d7d74),
+  [`fbc705b`](https://github.com/ardatan/graphql-mesh/commit/fbc705bb0aab11c04a4d59fd165f35189f93077d),
+  [`2482dc4`](https://github.com/ardatan/graphql-mesh/commit/2482dc4adc02ace4dc4322d6527a928f7c1efa88)]:
+  - @graphql-mesh/cli@0.88.2
+  - @graphql-mesh/plugin-response-cache@0.96.2
+  - @graphql-mesh/openapi@0.97.1
+  - @graphql-mesh/runtime@0.97.2
+  - @graphql-mesh/transform-cache@0.96.1
+  - @graphql-mesh/transform-rename@0.96.1
+
+## 0.12.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`78210d455`](https://github.com/ardatan/graphql-mesh/commit/78210d4550a4ec3c910c791abd5b6b804189d864),
+  [`730398204`](https://github.com/ardatan/graphql-mesh/commit/730398204176837acb13f2c0cf1e22a64c56bde9),
+  [`0c4940802`](https://github.com/ardatan/graphql-mesh/commit/0c49408027896e99537683ee063231c5c0ac0a1b)]:
+  - @graphql-mesh/plugin-response-cache@0.96.1
+  - @graphql-mesh/runtime@0.97.1
+  - @graphql-mesh/cli@0.88.1
+  - @graphql-mesh/openapi@0.97.0
+
+## 0.11.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/openapi@0.96.0
+  - @graphql-mesh/cli@0.88.0
+  - @graphql-mesh/plugin-response-cache@0.96.0
+  - @graphql-mesh/runtime@0.97.0
+  - @graphql-mesh/transform-cache@0.96.0
+  - @graphql-mesh/transform-rename@0.96.0
+
+## 0.10.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.12
+  - @graphql-mesh/plugin-response-cache@0.95.11
+  - @graphql-mesh/runtime@0.96.13
+  - @graphql-mesh/transform-cache@0.95.8
+  - @graphql-mesh/cli@0.87.16
+  - @graphql-mesh/transform-rename@0.95.9
+
+## 0.10.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.11
+
+## 0.10.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7c509bf2d`](https://github.com/Urigo/graphql-mesh/commit/7c509bf2d9f110ca0da0984d4bed783c3b267458),
+  [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b),
+  [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)]:
+  - @graphql-mesh/plugin-response-cache@0.95.10
+  - @graphql-mesh/runtime@0.96.12
+  - @graphql-mesh/cli@0.87.15
+
+## 0.10.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2eb8d2d56`](https://github.com/Urigo/graphql-mesh/commit/2eb8d2d561ac8aa2f0aff72b8d39bd88963d464c),
+  [`0ee3c62f9`](https://github.com/Urigo/graphql-mesh/commit/0ee3c62f9c3c3d315e4926666e8881c4d0f46280)]:
+  - @graphql-mesh/runtime@0.96.11
+  - @graphql-mesh/cli@0.87.14
+
+## 0.10.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.10
+
+## 0.10.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ae5e7c972`](https://github.com/Urigo/graphql-mesh/commit/ae5e7c9728e572ea75c0f4e3b57dad932658155c)]:
+  - @graphql-mesh/transform-rename@0.95.8
+  - @graphql-mesh/openapi@0.95.9
+
+## 0.10.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.8
+  - @graphql-mesh/cli@0.87.13
+  - @graphql-mesh/plugin-response-cache@0.95.9
+  - @graphql-mesh/runtime@0.96.10
+  - @graphql-mesh/transform-cache@0.95.7
+  - @graphql-mesh/transform-rename@0.95.7
+
+## 0.10.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`482d813a9`](https://github.com/Urigo/graphql-mesh/commit/482d813a9f75935024aa77872125d197f5fca3d0),
+  [`482d813a9`](https://github.com/Urigo/graphql-mesh/commit/482d813a9f75935024aa77872125d197f5fca3d0)]:
+  - @graphql-mesh/runtime@0.96.9
+  - @graphql-mesh/cli@0.87.12
+
+## 0.10.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ce4a580fb`](https://github.com/Urigo/graphql-mesh/commit/ce4a580fb2773bf0b401d4dffbcbedf0bf729de8)]:
+  - @graphql-mesh/plugin-response-cache@0.95.8
+
+## 0.10.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`41005ff7d`](https://github.com/Urigo/graphql-mesh/commit/41005ff7d240ef7803c7fcca0504aaf84be850b0)]:
+  - @graphql-mesh/runtime@0.96.8
+  - @graphql-mesh/cli@0.87.11
+
+## 0.10.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.7
+  - @graphql-mesh/plugin-response-cache@0.95.7
+  - @graphql-mesh/runtime@0.96.7
+  - @graphql-mesh/transform-cache@0.95.6
+  - @graphql-mesh/cli@0.87.10
+  - @graphql-mesh/transform-rename@0.95.6
+
+## 0.10.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`675cc678a`](https://github.com/Urigo/graphql-mesh/commit/675cc678abb4922a7cad1aafd381dabd73721ffe),
+  [`675cc678a`](https://github.com/Urigo/graphql-mesh/commit/675cc678abb4922a7cad1aafd381dabd73721ffe)]:
+  - @graphql-mesh/runtime@0.96.6
+  - @graphql-mesh/cli@0.87.9
+  - @graphql-mesh/plugin-response-cache@0.95.6
+  - @graphql-mesh/transform-cache@0.95.5
+  - @graphql-mesh/openapi@0.95.6
+  - @graphql-mesh/transform-rename@0.95.5
+
+## 0.10.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9c49c5f7f`](https://github.com/Urigo/graphql-mesh/commit/9c49c5f7f7aac44f2fe141ad3d895d2e97205b4b),
+  [`9c49c5f7f`](https://github.com/Urigo/graphql-mesh/commit/9c49c5f7f7aac44f2fe141ad3d895d2e97205b4b)]:
+  - @graphql-mesh/runtime@0.96.5
+  - @graphql-mesh/cli@0.87.8
+  - @graphql-mesh/openapi@0.95.5
+  - @graphql-mesh/plugin-response-cache@0.95.5
+  - @graphql-mesh/transform-cache@0.95.4
+  - @graphql-mesh/transform-rename@0.95.4
+
+## 0.10.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a458c88f0`](https://github.com/Urigo/graphql-mesh/commit/a458c88f08e5fc5d6337354d3f781018c736db1f)]:
+  - @graphql-mesh/cli@0.87.7
+
 ## 0.10.7
 
 ### Patch Changes
