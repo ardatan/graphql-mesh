@@ -1,0 +1,10 @@
+sources:
+  - name: Supergraph
+    handler:
+      supergraph:
+        source: '{env.SUPERGRAPH_SOURCE}'
+
+serve:
+  fork: 0
+
+pollingInterval: 2_000

@@ -20,6 +20,7 @@ if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/v1-next/grpc-*/**');
   testMatch.push('!**/examples/v1-next/sqlite-*/**');
   testMatch.push('!**/examples/v1-next/mysql-*/**');
+  testMatch.push('!**/examples/federation-example/tests/polling.test.ts');
 }
 
 testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');
