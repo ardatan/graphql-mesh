@@ -11744,17 +11744,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@v1-next/country-info-example@workspace:examples/v1-next/soap-country-info":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/country-info-example@workspace:examples/v1-next/soap-country-info"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.15"
-    "@omnigraph/soap": "npm:^0.97.5"
-    graphql: "npm:^16.8.1"
-  languageName: unknown
-  linkType: soft
-
 "@v1-next/example-fastify@workspace:examples/v1-next/integrations/fastify":
   version: 0.0.0-use.local
   resolution: "@v1-next/example-fastify@workspace:examples/v1-next/integrations/fastify"
