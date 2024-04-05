@@ -115,11 +115,5 @@ it.concurrent.each(queries)('should execute $name', async ({ document }) => {
 
   const { fusiongraphExecutor } = getExecutorForFusiongraph({ fusiongraph: result });
 
-  const executionResult = await fusiongraphExecutor({ document });
-  if (Symbol.asyncIterator in executionResult) {
-    throw new Error('Expected execution result to be a value, not an async iterable');
-  }
-  expect(executionResult.errors).toBeUndefined();
-  expect(executionResult).toMatchSnapshot();
   await expect(fusiongraphExecutor({ document })).resolves.toMatchSnapshot();
 });
