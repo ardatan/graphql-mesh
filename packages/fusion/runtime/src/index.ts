@@ -325,7 +325,7 @@ export function getExecutorForFusiongraph({
   function fusiongraphExecutor(execReq: ExecutionRequest) {
     if (execReq.operationName === 'IntrospectionQuery') {
       return {
-        data: introspectionFromSchema(fusiongraph) as any,
+        data: introspectionFromSchema(fusiongraph),
       };
     }
 
@@ -343,7 +343,7 @@ export function getExecutorForFusiongraph({
   }
 
   return {
-    fusiongraphExecutor,
+    fusiongraphExecutor: fusiongraphExecutor as Executor,
     transportEntryMap,
     onSubgraphExecute,
   };

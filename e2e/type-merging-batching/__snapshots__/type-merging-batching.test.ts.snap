@@ -31,12 +31,188 @@ type Book @source(subgraph: "books", name: "Book") @resolver(subgraph: "books", 
 "
 `;
 
+exports[`should execute Author 1`] = `
+{
+  "data": {
+    "author": {
+      "books": [
+        {
+          "author": {
+            "id": "1",
+            "name": "Jane Doe",
+          },
+          "id": "0",
+          "title": "Lorem Ipsum",
+        },
+      ],
+      "id": "1",
+      "name": "Jane Doe",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`should execute Author 2`] = `
+{
+  "data": {
+    "author": {
+      "books": [
+        {
+          "author": {
+            "id": "1",
+            "name": "Jane Doe",
+          },
+          "id": "0",
+          "title": "Lorem Ipsum",
+        },
+      ],
+      "id": "1",
+      "name": "Jane Doe",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`should execute Authors 1`] = `
+{
+  "data": {
+    "authors": [
+      {
+        "books": [
+          {
+            "author": {
+              "id": "0",
+              "name": "John Doe",
+            },
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      {
+        "books": [
+          {
+            "author": {
+              "id": "1",
+              "name": "Jane Doe",
+            },
+            "id": "0",
+            "title": "Lorem Ipsum",
+          },
+        ],
+        "id": "1",
+        "name": "Jane Doe",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`should execute Authors 2`] = `
+{
+  "data": {
+    "authors": [
+      {
+        "books": [
+          {
+            "author": {
+              "id": "0",
+              "name": "John Doe",
+            },
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      {
+        "books": [
+          {
+            "author": {
+              "id": "1",
+              "name": "Jane Doe",
+            },
+            "id": "0",
+            "title": "Lorem Ipsum",
+          },
+        ],
+        "id": "1",
+        "name": "Jane Doe",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`should execute Book 1`] = `
+{
+  "data": {
+    "book": {
+      "author": {
+        "books": [
+          {
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      "id": "1",
+      "title": "Dolor Sit Amet",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`should execute Book 2`] = `
+{
+  "data": {
+    "book": {
+      "author": {
+        "books": [
+          {
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      "id": "1",
+      "title": "Dolor Sit Amet",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
 exports[`should execute Books 1`] = `
 {
   "data": {
     "books": [
       {
         "author": {
+          "books": [
+            {
+              "id": "0",
+              "title": "Lorem Ipsum",
+            },
+          ],
           "id": "1",
           "name": "Jane Doe",
         },
@@ -45,6 +221,51 @@ exports[`should execute Books 1`] = `
       },
       {
         "author": {
+          "books": [
+            {
+              "id": "1",
+              "title": "Dolor Sit Amet",
+            },
+          ],
+          "id": "0",
+          "name": "John Doe",
+        },
+        "id": "1",
+        "title": "Dolor Sit Amet",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`should execute Books 2`] = `
+{
+  "data": {
+    "books": [
+      {
+        "author": {
+          "books": [
+            {
+              "id": "0",
+              "title": "Lorem Ipsum",
+            },
+          ],
+          "id": "1",
+          "name": "Jane Doe",
+        },
+        "id": "0",
+        "title": "Lorem Ipsum",
+      },
+      {
+        "author": {
+          "books": [
+            {
+              "id": "1",
+              "title": "Dolor Sit Amet",
+            },
+          ],
           "id": "0",
           "name": "John Doe",
         },
@@ -93,7 +314,7 @@ exports[`should properly plan Author 1`] = `
             "resolverPreDependencies": [
               {
                 "id": 3,
-                "resolverOperationDocument": "query AuthorWithBooksById($__variable_2: ID!) {
+                "resolverOperationDocument": "query AuthorById($__variable_2: ID!) {
   __export: authorWithBooks(id: $__variable_2) {
     __variable_1: id
   }
@@ -108,6 +329,7 @@ exports[`should properly plan Author 1`] = `
   __export: author(id: 1) {
     id
     name
+    __variable_2: id
   }
 }",
         "subgraph": "authors",
@@ -153,7 +375,7 @@ exports[`should properly plan Authors 1`] = `
             "resolverPreDependencies": [
               {
                 "id": 3,
-                "resolverOperationDocument": "query AuthorWithBooksById($__variable_2: ID!) {
+                "resolverOperationDocument": "query AuthorById($__variable_2: ID!) {
   __export: authorWithBooks(id: $__variable_2) {
     __variable_1: id
   }
@@ -168,6 +390,7 @@ exports[`should properly plan Authors 1`] = `
   __export: authors(ids: $__variable_0) {
     id
     name
+    __variable_2: id
   }
 }",
         "subgraph": "authors",
@@ -202,7 +425,7 @@ exports[`should properly plan Book 1`] = `
                   "resolverPreDependencies": [
                     {
                       "id": 3,
-                      "resolverOperationDocument": "query AuthorWithBooksById($__variable_3: ID!) {
+                      "resolverOperationDocument": "query AuthorById($__variable_3: ID!) {
   __export: authorWithBooks(id: $__variable_3) {
     __variable_2: id
   }
@@ -217,6 +440,7 @@ exports[`should properly plan Book 1`] = `
   __export: author(id: $__variable_1) {
     id
     name
+    __variable_3: id
   }
 }",
               "subgraph": "authors",
@@ -248,10 +472,36 @@ exports[`should properly plan Books 1`] = `
           "author": [
             {
               "id": 1,
+              "resolverDependencies": [
+                {
+                  "id": 2,
+                  "resolverOperationDocument": "query AuthorWithBooksById($__variable_2: ID!) {
+  __export: authorWithBooks(id: $__variable_2) {
+    books {
+      id
+      title
+    }
+  }
+}",
+                  "resolverPreDependencies": [
+                    {
+                      "id": 3,
+                      "resolverOperationDocument": "query AuthorById($__variable_3: ID!) {
+  __export: authorWithBooks(id: $__variable_3) {
+    __variable_2: id
+  }
+}",
+                      "subgraph": "books",
+                    },
+                  ],
+                  "subgraph": "books",
+                },
+              ],
               "resolverOperationDocument": "query AuthorOfBook($__variable_1: ID!) {
   __export: author(id: $__variable_1) {
     id
     name
+    __variable_3: id
   }
 }",
               "subgraph": "authors",
