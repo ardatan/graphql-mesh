@@ -292,8 +292,8 @@ exports[`should properly plan Author 1`] = `
               "books.author": [
                 {
                   "id": 2,
-                  "resolverOperationDocument": "query AuthorOfBook($__variable_3: ID!) {
-  __export: author(id: $__variable_3) {
+                  "resolverOperationDocument": "query AuthorOfBook($__variable_2: ID!) {
+  __export: author(id: $__variable_2) {
     id
     name
   }
@@ -302,26 +302,15 @@ exports[`should properly plan Author 1`] = `
                 },
               ],
             },
-            "resolverOperationDocument": "query AuthorWithBooksById($__variable_1: ID!) {
+            "resolverOperationDocument": "query AuthorById($__variable_1: ID!) {
   __export: authorWithBooks(id: $__variable_1) {
     books {
       id
       title
-      __variable_3: authorId
+      __variable_2: authorId
     }
   }
 }",
-            "resolverPreDependencies": [
-              {
-                "id": 3,
-                "resolverOperationDocument": "query AuthorById($__variable_2: ID!) {
-  __export: authorWithBooks(id: $__variable_2) {
-    __variable_1: id
-  }
-}",
-                "subgraph": "books",
-              },
-            ],
             "subgraph": "books",
           },
         ],
@@ -329,7 +318,7 @@ exports[`should properly plan Author 1`] = `
   __export: author(id: 1) {
     id
     name
-    __variable_2: id
+    __variable_1: id
   }
 }",
         "subgraph": "authors",
@@ -353,8 +342,8 @@ exports[`should properly plan Authors 1`] = `
               "books.author": [
                 {
                   "id": 2,
-                  "resolverOperationDocument": "query AuthorOfBook($__variable_3: ID!) {
-  __export: author(id: $__variable_3) {
+                  "resolverOperationDocument": "query AuthorOfBook($__variable_2: ID!) {
+  __export: author(id: $__variable_2) {
     id
     name
   }
@@ -363,26 +352,15 @@ exports[`should properly plan Authors 1`] = `
                 },
               ],
             },
-            "resolverOperationDocument": "query AuthorWithBooksById($__variable_1: ID!) {
+            "resolverOperationDocument": "query AuthorById($__variable_1: ID!) {
   __export: authorWithBooks(id: $__variable_1) {
     books {
       id
       title
-      __variable_3: authorId
+      __variable_2: authorId
     }
   }
 }",
-            "resolverPreDependencies": [
-              {
-                "id": 3,
-                "resolverOperationDocument": "query AuthorById($__variable_2: ID!) {
-  __export: authorWithBooks(id: $__variable_2) {
-    __variable_1: id
-  }
-}",
-                "subgraph": "books",
-              },
-            ],
             "subgraph": "books",
           },
         ],
@@ -390,7 +368,7 @@ exports[`should properly plan Authors 1`] = `
   __export: authors(ids: $__variable_0) {
     id
     name
-    __variable_2: id
+    __variable_1: id
   }
 }",
         "subgraph": "authors",
@@ -414,7 +392,7 @@ exports[`should properly plan Book 1`] = `
               "resolverDependencies": [
                 {
                   "id": 2,
-                  "resolverOperationDocument": "query AuthorWithBooksById($__variable_2: ID!) {
+                  "resolverOperationDocument": "query AuthorById($__variable_2: ID!) {
   __export: authorWithBooks(id: $__variable_2) {
     books {
       id
@@ -422,17 +400,6 @@ exports[`should properly plan Book 1`] = `
     }
   }
 }",
-                  "resolverPreDependencies": [
-                    {
-                      "id": 3,
-                      "resolverOperationDocument": "query AuthorById($__variable_3: ID!) {
-  __export: authorWithBooks(id: $__variable_3) {
-    __variable_2: id
-  }
-}",
-                      "subgraph": "books",
-                    },
-                  ],
                   "subgraph": "books",
                 },
               ],
@@ -440,7 +407,7 @@ exports[`should properly plan Book 1`] = `
   __export: author(id: $__variable_1) {
     id
     name
-    __variable_3: id
+    __variable_2: id
   }
 }",
               "subgraph": "authors",
@@ -475,7 +442,7 @@ exports[`should properly plan Books 1`] = `
               "resolverDependencies": [
                 {
                   "id": 2,
-                  "resolverOperationDocument": "query AuthorWithBooksById($__variable_2: ID!) {
+                  "resolverOperationDocument": "query AuthorById($__variable_2: ID!) {
   __export: authorWithBooks(id: $__variable_2) {
     books {
       id
@@ -483,17 +450,6 @@ exports[`should properly plan Books 1`] = `
     }
   }
 }",
-                  "resolverPreDependencies": [
-                    {
-                      "id": 3,
-                      "resolverOperationDocument": "query AuthorById($__variable_3: ID!) {
-  __export: authorWithBooks(id: $__variable_3) {
-    __variable_2: id
-  }
-}",
-                      "subgraph": "books",
-                    },
-                  ],
                   "subgraph": "books",
                 },
               ],
@@ -501,7 +457,7 @@ exports[`should properly plan Books 1`] = `
   __export: author(id: $__variable_1) {
     id
     name
-    __variable_3: id
+    __variable_2: id
   }
 }",
               "subgraph": "authors",
