@@ -4,7 +4,7 @@ import { createServer } from 'http';
 import { AddressInfo } from 'net';
 import path from 'path';
 import { setTimeout } from 'timers/promises';
-import { createArg, createPortArg, createSubgraphPortArg } from './args';
+import { createArg, createPortArg, createServicePortArg } from './args';
 
 // increase timeout to get more room for reachability waits
 jest.setTimeout(15_000);
@@ -30,19 +30,19 @@ export interface Server extends Proc {
   port: number;
 }
 
-export interface Subgraph extends Server {
+export interface Service extends Server {
   name: string;
 }
 
 export interface ComposeOptions {
   target?: string;
   /**
-   * Subgraphs relevant to the compose process.
-   * It will supply `--<subgraph.name>_port=<subgraph.port>` arguments to the process.
+   * Services relevant to the compose process.
+   * It will supply `--<service.name>_port=<service.port>` arguments to the process.
    */
-  subgraphs?: Subgraph[];
-  /** Whether to mask the subgraph ports in the result. */
-  maskSubgraphPorts?: boolean;
+  services?: Service[];
+  /** Whether to mask the service ports in the result. */
+  maskServicePorts?: boolean;
 }
 
 export interface Compose extends Proc {
@@ -57,11 +57,11 @@ export interface Tenv {
   serve(port?: number): Promise<Server>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
-   * Starts a subgraph by name. Subgraphs are services that serve GraphQL.
-   * The TypeScript subgraph executable must be at `subgraphs/<name>.ts`.
-   * Port will be provided as an argument `--<name>_port=<port>` to the subgraph.
+   * Starts a service by name. Services are services that serve data, not necessarily GraphQL.
+   * The TypeScript service executable must be at `services/<name>.ts`.
+   * Port will be provided as an argument `--<name>_port=<port>` to the service.
    */
-  subgraph(name: string, port?: number): Promise<Subgraph>;
+  service(name: string, port?: number): Promise<Service>;
 }
 
 export function createTenv(cwd: string): Tenv {
@@ -99,7 +99,7 @@ export function createTenv(cwd: string): Tenv {
       return server;
     },
     async compose(opts) {
-      const { target, subgraphs = [], maskSubgraphPorts } = opts || {};
+      const { target, services = [], maskServicePorts } = opts || {};
       const proc = await spawn(
         { cwd },
         'node',
@@ -107,7 +107,7 @@ export function createTenv(cwd: string): Tenv {
         'tsx',
         path.resolve(__dirname, '..', '..', 'packages', 'compose-cli', 'src', 'bin.ts'),
         target && createArg('target', target),
-        ...subgraphs.map(({ name, port }) => createSubgraphPortArg(name, port)),
+        ...services.map(({ name, port }) => createServicePortArg(name, port)),
       );
       await proc.waitForExit;
       let result = '';
@@ -117,8 +117,8 @@ export function createTenv(cwd: string): Tenv {
         result = proc.getStd('out');
       }
 
-      if (maskSubgraphPorts) {
-        for (const subgraph of subgraphs) {
+      if (maskServicePorts) {
+        for (const subgraph of services) {
           result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
         }
         if (target) {
@@ -128,14 +128,14 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, result };
     },
-    async subgraph(name, port = getAvailablePort()) {
+    async service(name, port = getAvailablePort()) {
       const proc = await spawn(
         { cwd },
         'node',
         '--import',
         'tsx',
-        path.join(cwd, 'subgraphs', name),
-        createSubgraphPortArg(name, port),
+        path.join(cwd, 'services', name),
+        createServicePortArg(name, port),
       );
       const subgraph = { ...proc, name, port };
       const ctrl = new AbortController();
@@ -143,7 +143,7 @@ export function createTenv(cwd: string): Tenv {
         proc.waitForExit
           .then(() =>
             Promise.reject(
-              new Error(`Subgraph exited successfully, but shouldn't have\n${proc.getStd('both')}`),
+              new Error(`Service exited successfully, but shouldn't have\n${proc.getStd('both')}`),
             ),
           )
           // stop reachability wait after exit

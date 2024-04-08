@@ -1,4 +1,4 @@
-import { Args, createArg, createPortArg, createSubgraphPortArg } from './args';
+import { Args, createArg, createPortArg, createServicePortArg } from './args';
 
 it.each([
   {
@@ -36,7 +36,7 @@ it.each([
     out: '--books_port=5001',
   },
 ])('should create subgraph port arg $out for $name with $val', ({ name, val, out }) => {
-  expect(createSubgraphPortArg(name, val)).toBe(out);
+  expect(createServicePortArg(name, val)).toBe(out);
 });
 
 it.each([

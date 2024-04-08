@@ -36,7 +36,7 @@ const yoga = createYoga({
   }),
 });
 
-const port = Args(process.argv).getSubgraphPort('authors', true);
+const port = Args(process.argv).getServicePort('authors', true);
 
 createServer(yoga).listen(port, () => {
   console.log(`Authors service listening on http://localhost:${port}`);

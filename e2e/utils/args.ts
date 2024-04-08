@@ -13,7 +13,7 @@ export function createPortArg(val: number): string {
   return createArg('port', val);
 }
 
-export function createSubgraphPortArg(name: string, val: number): string {
+export function createServicePortArg(name: string, val: number): string {
   return createArg(`${name}_port`, val);
 }
 
@@ -22,8 +22,8 @@ export interface Args {
   get(key: string, required: true): string;
   getPort(): number | undefined;
   getPort(required: true): number;
-  getSubgraphPort(name: string): number | undefined;
-  getSubgraphPort(name: string, required: true): number;
+  getServicePort(name: string): number | undefined;
+  getServicePort(name: string, required: true): number;
 }
 
 export function Args(argv: string[]): Args {
@@ -55,7 +55,7 @@ export function Args(argv: string[]): Args {
     }
     return val;
   }
-  function getSubgraphPort(name: string, required?: true) {
+  function getServicePort(name: string, required?: true) {
     const strVal = get(`${name}_port`, required);
     if (!strVal) {
       return undefined;
@@ -69,6 +69,6 @@ export function Args(argv: string[]): Args {
   return {
     get,
     getPort,
-    getSubgraphPort,
+    getServicePort,
   };
 }

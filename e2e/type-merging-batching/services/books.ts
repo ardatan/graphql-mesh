@@ -49,7 +49,7 @@ const yoga = createYoga({
   }),
 });
 
-const port = Args(process.argv).getSubgraphPort('books', true);
+const port = Args(process.argv).getServicePort('books', true);
 
 createServer(yoga).listen(port, () => {
   console.log(`Books service listening on http://localhost:${port}`);

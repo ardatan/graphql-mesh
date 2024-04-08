@@ -6,12 +6,12 @@ import {
 } from '@graphql-mesh/fusion-execution';
 import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
 
-const { compose, subgraph } = createTenv(__dirname);
+const { compose, service } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose({
-    subgraphs: [await subgraph('authors'), await subgraph('books')],
-    maskSubgraphPorts: true,
+    services: [await service('authors'), await service('books')],
+    maskServicePorts: true,
   });
   expect(result).toMatchSnapshot();
 });
@@ -97,7 +97,7 @@ const queries = [
 
 it.concurrent.each(queries)('should properly plan $name', async ({ document }) => {
   const { result } = await compose({
-    subgraphs: [await subgraph('authors'), await subgraph('books')],
+    services: [await service('authors'), await service('books')],
   });
 
   const plan = createExecutablePlanForOperation({
@@ -110,7 +110,7 @@ it.concurrent.each(queries)('should properly plan $name', async ({ document }) =
 
 it.concurrent.each(queries)('should execute $name', async ({ document }) => {
   const { result } = await compose({
-    subgraphs: [await subgraph('authors'), await subgraph('books')],
+    services: [await service('authors'), await service('books')],
   });
 
   const { fusiongraphExecutor } = getExecutorForFusiongraph({ fusiongraph: result });

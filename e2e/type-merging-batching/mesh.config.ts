@@ -12,12 +12,12 @@ export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('authors', {
-        endpoint: `http://localhost:${args.getSubgraphPort('authors', true)}/graphql`,
+        endpoint: `http://localhost:${args.getServicePort('authors', true)}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('books', {
-        endpoint: `http://localhost:${args.getSubgraphPort('books', true)}/graphql`,
+        endpoint: `http://localhost:${args.getServicePort('books', true)}/graphql`,
       }),
       transforms: [
         createRenameFieldTransform((_field, fieldName, typeName) =>
