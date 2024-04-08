@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`JavaScript Wiki should generate correct schema: javascript-wiki-schema 1`] = `
+exports[`should compose the appropriate schema 1`] = `
 "schema @transport(subgraph: "Wiki", kind: "rest", location: "https://wikimedia.org/api/rest_v1") {
   query: Query
   mutation: Mutation
@@ -2288,10 +2288,11 @@ enum HTTPMethod @source(subgraph: "Wiki", name: "HTTPMethod") {
   OPTIONS @source(subgraph: "Wiki", name: "OPTIONS")
   TRACE @source(subgraph: "Wiki", name: "TRACE")
   PATCH @source(subgraph: "Wiki", name: "PATCH")
-}"
+}
+"
 `;
 
-exports[`JavaScript Wiki should give correct response for wikipediaMetrics within specific range: wikipedia-metrics-result 1`] = `
+exports[`should execute Metrics 1`] = `
 {
   "data": {
     "metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end": {
@@ -2469,6 +2470,14 @@ exports[`JavaScript Wiki should give correct response for wikipediaMetrics withi
         },
       ],
     },
+  },
+}
+`;
+
+exports[`should execute ViewsInPastMonth 1`] = `
+{
+  "data": {
+    "viewsInPastMonth": 249626434,
   },
 }
 `;
