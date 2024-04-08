@@ -9,7 +9,7 @@ import { ExecutionResult } from 'graphql';
 import { createArg, createPortArg, createServicePortArg } from './args';
 
 // increase timeout to get more room for reachability waits
-jest.setTimeout(15_000);
+jest.setTimeout(30_000);
 
 const leftoverProcs = new Set<Proc>();
 afterAll(async () => {
