@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@theguild/algolia": "2.1.0",
-    "@theguild/tailwind-config": "0.3.2",
+    "@theguild/tailwind-config": "0.4.0",
     "@types/node": "20.12.5",
     "@types/react": "18.2.74",
     "cross-env": "7.0.3",
