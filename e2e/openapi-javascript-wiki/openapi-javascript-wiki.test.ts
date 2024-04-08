@@ -1,14 +1,13 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve, fs } = createTenv(__dirname);
+const { compose, serve } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose();
   expect(result).toMatchSnapshot();
 });
 
-// TODO: cant be concurrent because compose is writing to a file
-it.each([
+it.concurrent.each([
   {
     name: 'ViewsInPastMonth',
     query: /* GraphQL */ `
@@ -39,11 +38,7 @@ it.each([
     `,
   },
 ])('should execute $name', async ({ query }) => {
-  const fusiongraphPath = 'fusiongraph.graphql';
-  await compose({ target: fusiongraphPath });
-
-  const { execute } = await serve({ fusiongraph: fusiongraphPath });
+  const { target } = await compose({ target: 'graphql' });
+  const { execute } = await serve({ fusiongraph: target });
   await expect(execute({ query })).resolves.toMatchSnapshot();
-
-  await fs.delete(fusiongraphPath);
 });

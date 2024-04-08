@@ -2,7 +2,8 @@ import childProcess from 'child_process';
 import fs from 'fs/promises';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
-import path from 'path';
+import os, { tmpdir } from 'os';
+import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
 import { ExecutionResult } from 'graphql';
 import { createArg, createPortArg, createServicePortArg } from './args';
@@ -10,14 +11,23 @@ import { createArg, createPortArg, createServicePortArg } from './args';
 // increase timeout to get more room for reachability waits
 jest.setTimeout(15_000);
 
-const leftovers = new Set<Proc>();
+const leftoverProcs = new Set<Proc>();
 afterAll(async () => {
   await Promise.allSettled(
-    Array.from(leftovers.values()).map(proc => {
+    Array.from(leftoverProcs.values()).map(proc => {
       proc.kill();
       return proc.waitForExit;
     }),
   );
+});
+
+const leftoverTempDirs = new Set<string>();
+afterAll(async () => {
+  await Promise.all(
+    Array.from(leftoverTempDirs.values()).map(dir => fs.rm(dir, { recursive: true })),
+  ).finally(() => {
+    leftoverTempDirs.clear();
+  });
 });
 
 const __project = path.resolve(__dirname, '..', '..') + '/';
@@ -51,7 +61,11 @@ export interface Service extends Server {
 }
 
 export interface ComposeOptions {
-  target?: string;
+  /**
+   * Write the compose output/result to a temporary unique file with the extension.
+   * The file will be deleted after the tests complete.
+   */
+  target?: 'graphql' | 'json' | 'js' | 'ts';
   /**
    * Services relevant to the compose process.
    * It will supply `--<service.name>_port=<service.port>` arguments to the process.
@@ -64,6 +78,11 @@ export interface ComposeOptions {
 }
 
 export interface Compose extends Proc {
+  /**
+   * The path to the target composed file.
+   * If target was not specified in the options, an empty string will be provided.
+   */
+  target: string;
   result: string;
 }
 
@@ -86,10 +105,10 @@ export function createTenv(cwd: string): Tenv {
   return {
     fs: {
       read(filePath) {
-        return fs.readFile(path.join(cwd, filePath), 'utf8');
+        return fs.readFile(isAbsolute(filePath) ? filePath : path.join(cwd, filePath), 'utf8');
       },
       delete(filePath) {
-        return fs.unlink(path.join(cwd, filePath));
+        return fs.unlink(isAbsolute(filePath) ? filePath : path.join(cwd, filePath));
       },
     },
     async serve(opts) {
@@ -138,7 +157,13 @@ export function createTenv(cwd: string): Tenv {
       return serve;
     },
     async compose(opts) {
-      const { target, services = [], trimHostPaths, maskServicePorts } = opts || {};
+      const { services = [], trimHostPaths, maskServicePorts } = opts || {};
+      let target = '';
+      if (opts?.target) {
+        const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
+        leftoverTempDirs.add(tempDir);
+        target = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.target}`);
+      }
       const proc = await spawn(
         { cwd },
         'node',
@@ -151,13 +176,12 @@ export function createTenv(cwd: string): Tenv {
       await proc.waitForExit;
       let result = '';
       if (target) {
-        const targetPath = path.join(cwd, target);
         try {
-          result = await fs.readFile(targetPath, 'utf-8');
+          result = await fs.readFile(target, 'utf-8');
         } catch (err) {
           if ('code' in err && err.code === 'ENOENT') {
             throw new Error(
-              `Compose command has "target" argument but file was not created at ${targetPath}`,
+              `Compose command has "target" argument but file was not created at ${target}`,
             );
           }
           throw err;
@@ -176,11 +200,11 @@ export function createTenv(cwd: string): Tenv {
           }
         }
         if (target) {
-          await fs.writeFile(path.join(cwd, target), result, 'utf8');
+          await fs.writeFile(target, result, 'utf8');
         }
       }
 
-      return { ...proc, result };
+      return { ...proc, target, result };
     },
     async service(name, port = getAvailablePort()) {
       const proc = await spawn(
@@ -243,7 +267,7 @@ function spawn(
     waitForExit: new Promise(
       (resolve, reject) =>
         (exit = err => {
-          leftovers.delete(proc);
+          leftoverProcs.delete(proc);
           if (err) {
             reject(err);
           } else {
@@ -252,7 +276,7 @@ function spawn(
         }),
     ),
   };
-  leftovers.add(proc);
+  leftoverProcs.add(proc);
 
   child.stdout.on('data', x => {
     stdout += x.toString();
