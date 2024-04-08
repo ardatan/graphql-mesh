@@ -324,7 +324,8 @@ async function waitForReachable(server: Server, signal: AbortSignal) {
       break;
     } catch (err) {
       signal.throwIfAborted();
-      if (++retries > 10) {
+      // 500ms * 30 = 15s
+      if (++retries > 30) {
         throw new Error(`Server at port ${server.port} not reachable\n${server.getStd('both')}`);
       }
       await setTimeout(500);
