@@ -73,8 +73,8 @@ export async function runComposeCLI({
   }
 
   const fusiongraphPath = isAbsolute(fusiongraphFileName)
-    ? join(process.cwd(), fusiongraphFileName)
-    : fusiongraphFileName;
+    ? fusiongraphFileName
+    : join(process.cwd(), fusiongraphFileName);
 
   let writtenData: string;
   if (fusiongraphPath.endsWith('.json')) {
