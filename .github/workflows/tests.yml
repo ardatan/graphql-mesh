@@ -343,4 +343,6 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
       - name: test
-        run: yarn test:e2e
+        # we limit max workers because e2e tests spawn processes and GH Actions have limits for concurrent processes
+        # read more: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
+        run: yarn test:e2e --maxWorkers=50%
