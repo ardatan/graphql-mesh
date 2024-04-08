@@ -1,5 +1,22 @@
 # @graphql-mesh/cli
 
+## 0.89.9
+
+### Patch Changes
+
+- [#6797](https://github.com/ardatan/graphql-mesh/pull/6797)
+  [`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update introspection on schema updates via
+  polling
+
+- Updated dependencies
+  [[`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34),
+  [`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34),
+  [`afe0cc5`](https://github.com/ardatan/graphql-mesh/commit/afe0cc5ddfc7a1291dc878c61793b58850ae848b)]:
+  - @graphql-mesh/http@0.98.8
+  - @graphql-mesh/runtime@0.98.8
+  - @graphql-mesh/config@0.99.9
+
 ## 0.89.8
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @graphql-mesh/urql-exchange
 
+## 0.98.8
+
+### Patch Changes
+
+- [#6786](https://github.com/ardatan/graphql-mesh/pull/6786)
+  [`b5f9ebb`](https://github.com/ardatan/graphql-mesh/commit/b5f9ebb18e2ab6cc23e7805e848608ff67ee5fcd)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@urql/core@^2.4.3 || ^4.0.0 || ^5.0.0` ↗︎](https://www.npmjs.com/package/@urql/core/v/2.4.3)
+    (from `^2.4.3 || ^4.0.0`, in `peerDependencies`)
+- Updated dependencies
+  [[`afe0cc5`](https://github.com/ardatan/graphql-mesh/commit/afe0cc5ddfc7a1291dc878c61793b58850ae848b)]:
+  - @graphql-mesh/runtime@0.98.8
+
 ## 0.98.7
 
 ### Patch Changes
