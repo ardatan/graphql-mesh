@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import { AddressInfo } from 'net';
 import path from 'path';
 import { setTimeout } from 'timers/promises';
+import { ExecutionResult } from 'graphql';
 import { createArg, createPortArg, createServicePortArg } from './args';
 
 // increase timeout to get more room for reachability waits
@@ -28,14 +29,22 @@ export interface Proc {
   waitForExit: Promise<void>;
 }
 
+export interface Server extends Proc {
+  port: number;
+}
+
 export interface ServeOptions {
   port?: number;
   fusiongraph?: string;
   supergraph?: string;
 }
 
-export interface Server extends Proc {
-  port: number;
+export interface Serve extends Server {
+  execute(args: {
+    query: string;
+    variables?: Record<string, unknown>;
+    operationName?: string;
+  }): Promise<ExecutionResult>;
 }
 
 export interface Service extends Server {
@@ -64,7 +73,7 @@ export interface Tenv {
     read(path: string): Promise<string>;
     delete(path: string): Promise<void>;
   };
-  serve(opts?: ServeOptions): Promise<Server>;
+  serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
    * Starts a service by name. Services are services that serve data, not necessarily GraphQL.
@@ -96,7 +105,26 @@ export function createTenv(cwd: string): Tenv {
         fusiongraph && createArg('fusiongraph', fusiongraph),
         supergraph && createArg('supergraph', supergraph),
       );
-      const server = { ...proc, port };
+      const serve: Serve = {
+        ...proc,
+        port,
+        async execute(args) {
+          const res = await fetch(`http://0.0.0.0:${port}/graphql`, {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              accept: 'application/graphql-response+json, application/json',
+            },
+            body: JSON.stringify(args),
+          });
+          if (!res.ok) {
+            const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
+            err.name = 'ResponseError';
+            throw err;
+          }
+          return await res.json();
+        },
+      };
       const ctrl = new AbortController();
       await Promise.race([
         proc.waitForExit
@@ -107,9 +135,9 @@ export function createTenv(cwd: string): Tenv {
           )
           // stop reachability wait after exit
           .finally(() => ctrl.abort()),
-        waitForReachable(server, ctrl.signal),
+        waitForReachable(serve, ctrl.signal),
       ]);
-      return server;
+      return serve;
     },
     async compose(opts) {
       const { target, services = [], trimHostPaths, maskServicePorts } = opts || {};
@@ -165,7 +193,7 @@ export function createTenv(cwd: string): Tenv {
         path.join(cwd, 'services', name),
         createServicePortArg(name, port),
       );
-      const subgraph = { ...proc, name, port };
+      const service: Service = { ...proc, name, port };
       const ctrl = new AbortController();
       await Promise.race([
         proc.waitForExit
@@ -176,9 +204,9 @@ export function createTenv(cwd: string): Tenv {
           )
           // stop reachability wait after exit
           .finally(() => ctrl.abort()),
-        waitForReachable(subgraph, ctrl.signal),
+        waitForReachable(service, ctrl.signal),
       ]);
-      return subgraph;
+      return service;
     },
   };
 }
