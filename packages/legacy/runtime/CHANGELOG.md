@@ -1,5 +1,32 @@
 # @graphql-mesh/runtime
 
+## 0.98.8
+
+### Patch Changes
+
+- [#6790](https://github.com/ardatan/graphql-mesh/pull/6790)
+  [`afe0cc5`](https://github.com/ardatan/graphql-mesh/commit/afe0cc5ddfc7a1291dc878c61793b58850ae848b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better error messages in case of Supergraph SDL
+  endpoint returns invalid result or it is down
+
+  If the endpoint is down;
+
+  ```
+  Failed to generate the schema for the source "supergraph"
+  Failed to load supergraph SDL from http://down-sdl-source.com/my-sdl.graphql:
+  Couldn't resolve host name
+  ```
+
+  If the endpoint returns invalid result;
+
+  ```
+  Failed to generate the schema for the source "supergraph"
+  Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ./fixtures/supergraph-invalid.graphql instead.
+  Got result: type Query {
+
+  Got error: Syntax Error: Expected Name, found <EOF>.
+  ```
+
 ## 0.98.7
 
 ### Patch Changes

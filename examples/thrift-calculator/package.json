@@ -1,6 +1,6 @@
 {
   "name": "thrift-calculator",
-  "version": "0.13.9",
+  "version": "0.13.10",
   "license": "MIT",
   "private": true,
   "main": "build/main.js",
@@ -14,7 +14,7 @@
     "@creditkarma/thrift-server-core": "1.0.4",
     "@creditkarma/thrift-server-express": "1.0.4",
     "@creditkarma/thrift-typescript": "3.7.6",
-    "@graphql-mesh/cli": "0.89.8",
+    "@graphql-mesh/cli": "0.89.9",
     "@graphql-mesh/thrift": "0.98.6",
     "express": "4.19.2",
     "graphql": "16.8.1",

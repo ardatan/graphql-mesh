@@ -1,5 +1,13 @@
 # example-gcp
 
+## 0.10.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`05aabae`](https://github.com/ardatan/graphql-mesh/commit/05aabae48ad17f80847eb153e5fd4a96b7643d5d)]:
+  - @graphql-mesh/serve-runtime@0.2.12
+
 ## 0.10.12
 
 ### Patch Changes

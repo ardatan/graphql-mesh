@@ -16,8 +16,8 @@
     "tslib": "^2.5.0"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.89.8",
-    "@graphql-mesh/config": "0.99.8",
+    "@graphql-mesh/cli": "0.89.9",
+    "@graphql-mesh/config": "0.99.9",
     "@graphql-mesh/graphql": "0.97.5",
     "@graphql-mesh/grpc": "0.98.5",
     "@graphql-mesh/json-schema": "0.99.6",
@@ -25,7 +25,7 @@
     "@graphql-mesh/openapi": "0.99.6",
     "@graphql-mesh/plugin-mock": "0.97.5",
     "@graphql-mesh/postgraphile": "0.97.5",
-    "@graphql-mesh/runtime": "0.98.7",
+    "@graphql-mesh/runtime": "0.98.8",
     "@graphql-mesh/soap": "0.97.5",
     "@graphql-mesh/transform-cache": "0.97.5",
     "@graphql-mesh/transform-encapsulate": "0.97.5",

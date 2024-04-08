@@ -1,5 +1,17 @@
 # @graphql-mesh/serve-runtime
 
+## 0.2.12
+
+### Patch Changes
+
+- [#6792](https://github.com/ardatan/graphql-mesh/pull/6792)
+  [`05aabae`](https://github.com/ardatan/graphql-mesh/commit/05aabae48ad17f80847eb153e5fd4a96b7643d5d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Forward headers only if it is a request from the
+  client to the gateway
+
+- Updated dependencies []:
+  - @graphql-mesh/fusion-runtime@0.2.12
+
 ## 0.2.11
 
 ### Patch Changes

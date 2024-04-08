@@ -1,6 +1,6 @@
 {
   "name": "auto-type-merging-example",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@graphql-mesh/compose-cli": "^0.2.5",
-    "@graphql-mesh/serve-cli": "^0.3.15",
+    "@graphql-mesh/serve-cli": "^0.3.16",
     "@graphql-yoga/plugin-defer-stream": "^3.1.1",
     "graphql": "^16.8.1",
     "graphql-yoga": "^5.1.1",

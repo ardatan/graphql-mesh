@@ -1,5 +1,13 @@
 # chinook
 
+## 0.13.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34)]:
+  - @graphql-mesh/cli@0.89.9
+
 ## 0.13.8
 
 ### Patch Changes

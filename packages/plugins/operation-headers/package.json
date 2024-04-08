@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-operation-headers",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/serve-runtime": "^0.2.11",
+    "@graphql-mesh/serve-runtime": "^0.2.12",
     "@graphql-mesh/types": "^0.97.5",
     "@graphql-mesh/utils": "^0.97.5",
     "graphql": "*",

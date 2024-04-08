@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/javascript-wiki",
-  "version": "0.15.9",
+  "version": "0.15.10",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.89.8",
+    "@graphql-mesh/cli": "0.89.9",
     "@graphql-mesh/openapi": "0.99.6",
     "graphql": "16.8.1",
     "moment": "2.30.1",

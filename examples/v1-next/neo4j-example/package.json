@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/neo4j-example",
-  "version": "0.16.15",
+  "version": "0.16.16",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.2.5",
-    "@graphql-mesh/serve-cli": "^0.3.15",
+    "@graphql-mesh/serve-cli": "^0.3.16",
     "@omnigraph/neo4j": "^0.1.5",
     "graphql": "^16.8.1",
     "typescript": "^5.4.2"
