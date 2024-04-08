@@ -57,9 +57,9 @@ export interface ComposeOptions {
    * It will supply `--<service.name>_port=<service.port>` arguments to the process.
    */
   services?: Service[];
-  /** Whether to trim paths to not include the absolute host path in the result. */
+  /** Trim paths to not include the absolute host path in the result. */
   trimHostPaths?: boolean;
-  /** Whether to mask the service ports in the result. */
+  /** Mask the service ports in the result. */
   maskServicePorts?: boolean;
 }
 
