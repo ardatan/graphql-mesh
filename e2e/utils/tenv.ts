@@ -19,6 +19,8 @@ afterAll(async () => {
   );
 });
 
+const __project = path.resolve(__dirname, '..', '..') + '/';
+
 export interface Proc {
   getStd(o: 'out' | 'err' | 'both'): string;
   kill(): void;
@@ -41,6 +43,8 @@ export interface ComposeOptions {
    * It will supply `--<service.name>_port=<service.port>` arguments to the process.
    */
   services?: Service[];
+  /** Whether to trim paths to not include the absolute host path in the result. */
+  trimHostPaths?: boolean;
   /** Whether to mask the service ports in the result. */
   maskServicePorts?: boolean;
 }
@@ -99,7 +103,7 @@ export function createTenv(cwd: string): Tenv {
       return server;
     },
     async compose(opts) {
-      const { target, services = [], maskServicePorts } = opts || {};
+      const { target, services = [], trimHostPaths, maskServicePorts } = opts || {};
       const proc = await spawn(
         { cwd },
         'node',
@@ -117,9 +121,14 @@ export function createTenv(cwd: string): Tenv {
         result = proc.getStd('out');
       }
 
-      if (maskServicePorts) {
+      if (trimHostPaths || maskServicePorts) {
+        if (trimHostPaths) {
+          result = result.replaceAll(__project, '');
+        }
         for (const subgraph of services) {
-          result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
+          if (maskServicePorts) {
+            result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
+          }
         }
         if (target) {
           await fs.writeFile(path.join(cwd, target), result, 'utf8');
@@ -206,7 +215,7 @@ function spawn(
   });
   child.stderr.on('data', x => {
     // prefer relative paths for logs consistency
-    const str = x.toString().replaceAll(path.resolve(__dirname, '..', '..') + '/', '');
+    const str = x.toString().replaceAll(__project, '');
     stderr += str;
     stdboth += str;
   });

@@ -1,32 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SQLite Chinook executes Albums.query.graphql query: Albums.query.graphql 1`] = `
-{
-  "data": {
-    "albums": [
-      {
-        "albumId": 1,
-        "artist": {
-          "name": "AC/DC",
-        },
-        "title": "For Those About To Rock We Salute You",
-      },
-      {
-        "albumId": 2,
-        "artist": {
-          "name": "Accept",
-        },
-        "title": "Balls to the Wall",
-      },
-    ],
-  },
-  "errors": undefined,
-  "extensions": undefined,
-}
-`;
-
-exports[`SQLite Chinook generates the schema correctly: schema 1`] = `
-"schema @transport(kind: "sqlite", subgraph: "chinook", location: "/home/runner/work/graphql-mesh/graphql-mesh/examples/v1-next/sqlite-chinook/chinook.db", options: {type: "db"}) {
+exports[`should compose the appropriate schema 1`] = `
+"schema @transport(kind: "sqlite", subgraph: "chinook", location: "e2e/sqlite-chinook/chinook.db", options: {type: "db"}) {
   query: Query
   mutation: Mutation
 }
@@ -420,5 +395,31 @@ type Mutation {
 
 type GenericResponse @source(subgraph: "chinook", name: "GenericResponse") {
   success: Boolean @source(subgraph: "chinook", name: "success", type: "Boolean")
-}"
+}
+"
+`;
+
+exports[`should execute Albums 1`] = `
+{
+  "data": {
+    "albums": [
+      {
+        "albumId": 1,
+        "artist": {
+          "name": "AC/DC",
+        },
+        "title": "For Those About To Rock We Salute You",
+      },
+      {
+        "albumId": 2,
+        "artist": {
+          "name": "Accept",
+        },
+        "title": "Balls to the Wall",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
 `;
