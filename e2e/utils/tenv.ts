@@ -118,7 +118,7 @@ export function createTenv(cwd: string): Tenv {
         'node',
         '--import',
         'tsx',
-        path.resolve(__dirname, '..', '..', 'packages', 'serve-cli', 'src', 'bin.ts'),
+        path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
         createPortArg(port),
         fusiongraph && createArg('fusiongraph', fusiongraph),
       );
@@ -169,7 +169,7 @@ export function createTenv(cwd: string): Tenv {
         'node',
         '--import',
         'tsx',
-        path.resolve(__dirname, '..', '..', 'packages', 'compose-cli', 'src', 'bin.ts'),
+        path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
         target && createArg('target', target),
         ...services.map(({ name, port }) => createServicePortArg(name, port)),
       );
