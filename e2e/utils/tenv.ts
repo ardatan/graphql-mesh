@@ -112,7 +112,7 @@ export function createTenv(cwd: string): Tenv {
       },
     },
     async serve(opts) {
-      const { port = getAvailablePort(), fusiongraph } = opts || {};
+      const { port = await getAvailablePort(), fusiongraph } = opts || {};
       const proc = await spawn(
         { cwd },
         'node',
@@ -206,7 +206,8 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, target, result };
     },
-    async service(name, port = getAvailablePort()) {
+    async service(name, port) {
+      port ||= await getAvailablePort();
       const proc = await spawn(
         { cwd },
         'node',
@@ -308,12 +309,11 @@ function spawn(
   });
 }
 
-function getAvailablePort() {
+function getAvailablePort(): Promise<number> {
   const server = createServer();
   server.listen(0);
   const { port } = server.address() as AddressInfo;
-  server.close();
-  return port;
+  return new Promise((resolve, reject) => server.close(err => (err ? reject(err) : resolve(port))));
 }
 
 async function waitForReachable(server: Server, signal: AbortSignal) {
