@@ -3582,6 +3582,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/sqlite-chinook@workspace:e2e/sqlite-chinook":
+  version: 0.0.0-use.local
+  resolution: "@e2e/sqlite-chinook@workspace:e2e/sqlite-chinook"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@omnigraph/sqlite": "npm:^0.1.5"
+    graphql: "npm:^16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/thrift-calculator@workspace:e2e/thrift-calculator":
   version: 0.0.0-use.local
   resolution: "@e2e/thrift-calculator@workspace:e2e/thrift-calculator"
@@ -31730,17 +31740,6 @@ __metadata:
   checksum: 10c0/ecadcfe4c771890140da5023d43e190b7566d9cf8b2d238600f31bec0fc653f328da4450eb04bd59a431771a8e9cc0e118f0aa3974b683a4981b4e07abc2a5bb
   languageName: node
   linkType: hard
-
-"sqlite-chinook@workspace:examples/v1-next/sqlite-chinook":
-  version: 0.0.0-use.local
-  resolution: "sqlite-chinook@workspace:examples/v1-next/sqlite-chinook"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@omnigraph/sqlite": "npm:^0.1.5"
-    graphql: "npm:^16.8.1"
-  languageName: unknown
-  linkType: soft
 
 "sqlite3@npm:^4.1.0":
   version: 4.2.0
