@@ -125,7 +125,17 @@ export function createTenv(cwd: string): Tenv {
       await proc.waitForExit;
       let result = '';
       if (target) {
-        result = await fs.readFile(path.join(cwd, target), 'utf-8');
+        const targetPath = path.join(cwd, target);
+        try {
+          result = await fs.readFile(targetPath, 'utf-8');
+        } catch (err) {
+          if ('code' in err && err.code === 'ENOENT') {
+            throw new Error(
+              `Compose command has "target" argument but file was not created at ${targetPath}`,
+            );
+          }
+          throw err;
+        }
       } else {
         result = proc.getStd('out');
       }
