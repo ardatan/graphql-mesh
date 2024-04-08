@@ -343,6 +343,6 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
       - name: test
-        # we limit max workers because e2e tests spawn processes and GH Actions have limits for concurrent processes
+        # we limit concurrency because e2e tests spawn processes and GH Actions have limits
         # read more: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
-        run: yarn test:e2e --maxWorkers=50%
+        run: yarn test:e2e --maxConcurrency=3
