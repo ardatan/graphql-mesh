@@ -1,17 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Thrift Calculator executes Add.query.graphql query: Add.query.graphql 1`] = `
-{
-  "data": {
-    "add": 5,
-  },
-  "errors": undefined,
-  "extensions": undefined,
-}
-`;
-
-exports[`Thrift Calculator generates the schema correctly: schema 1`] = `
-"schema @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: {}, options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
+exports[`should compose the appropriate schema 1`] = `
+"schema @transport(subgraph: "calculator", kind: "thrift", location: "http://0.0.0.0:<calculator_port>/thrift", headers: {}, options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
   query: Query
 }
 
@@ -23,5 +13,16 @@ type Query {
 input AddRequestInput @source(subgraph: "calculator", name: "AddRequestInput") {
   left: Int! @source(subgraph: "calculator", name: "left", type: "Int!")
   right: Int! @source(subgraph: "calculator", name: "right", type: "Int!")
-}"
+}
+"
+`;
+
+exports[`should execute Add 1`] = `
+{
+  "data": {
+    "add": 5,
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
 `;

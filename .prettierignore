@@ -8,3 +8,4 @@ dist/
 .bob/
 .yarn
 supergraph-invalid.graphql
+__generated__/

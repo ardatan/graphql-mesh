@@ -3582,6 +3582,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/thrift-calculator@workspace:e2e/thrift-calculator":
+  version: 0.0.0-use.local
+  resolution: "@e2e/thrift-calculator@workspace:e2e/thrift-calculator"
+  dependencies:
+    "@creditkarma/thrift-server-core": "npm:^1.0.4"
+    "@creditkarma/thrift-server-express": "npm:^1.0.4"
+    "@creditkarma/thrift-typescript": "npm:^3.7.6"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/fusion-runtime": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/thrift": "npm:^0.1.6"
+    express: "npm:^4.18.2"
+    graphql: "npm:^16.8.1"
+    thrift: "npm:^0.20.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/type-merging-batching@workspace:e2e/type-merging-batching":
   version: 0.0.0-use.local
   resolution: "@e2e/type-merging-batching@workspace:e2e/type-merging-batching"
@@ -11392,25 +11409,6 @@ __metadata:
     "@graphql-mesh/serve-cli": "npm:^0.3.16"
     "@omnigraph/soap": "npm:^0.97.5"
     graphql: "npm:16.8.1"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/thrift-calculator@workspace:examples/v1-next/thrift-calculator":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/thrift-calculator@workspace:examples/v1-next/thrift-calculator"
-  dependencies:
-    "@creditkarma/thrift-server-core": "npm:^1.0.4"
-    "@creditkarma/thrift-server-express": "npm:^1.0.4"
-    "@creditkarma/thrift-typescript": "npm:^3.7.6"
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@omnigraph/thrift": "npm:^0.1.6"
-    concurrently: "npm:8.2.2"
-    express: "npm:^4.18.2"
-    graphql: "npm:^16.8.1"
-    thrift: "npm:^0.20.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
 
