@@ -28,6 +28,12 @@ export interface Proc {
   waitForExit: Promise<void>;
 }
 
+export interface ServeOptions {
+  port?: number;
+  fusiongraph?: string;
+  supergraph?: string;
+}
+
 export interface Server extends Proc {
   port: number;
 }
@@ -58,7 +64,7 @@ export interface Tenv {
     read(path: string): Promise<string>;
     delete(path: string): Promise<void>;
   };
-  serve(port?: number): Promise<Server>;
+  serve(opts?: ServeOptions): Promise<Server>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
    * Starts a service by name. Services are services that serve data, not necessarily GraphQL.
@@ -78,7 +84,8 @@ export function createTenv(cwd: string): Tenv {
         return fs.unlink(path.join(cwd, filePath));
       },
     },
-    async serve(port = getAvailablePort()) {
+    async serve(opts) {
+      const { port = getAvailablePort(), fusiongraph, supergraph } = opts || {};
       const proc = await spawn(
         { cwd },
         'node',
@@ -86,6 +93,8 @@ export function createTenv(cwd: string): Tenv {
         'tsx',
         path.resolve(__dirname, '..', '..', 'packages', 'serve-cli', 'src', 'bin.ts'),
         createPortArg(port),
+        fusiongraph && createArg('fusiongraph', fusiongraph),
+        supergraph && createArg('supergraph', supergraph),
       );
       const server = { ...proc, port };
       const ctrl = new AbortController();
