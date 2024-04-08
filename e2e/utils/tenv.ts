@@ -58,7 +58,7 @@ export interface Tenv {
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
    * Starts a service by name. Services are services that serve data, not necessarily GraphQL.
-   * The TypeScript service executable must be at `services/<name>.ts`.
+   * The TypeScript service executable must be at `services/<name>.ts` or `services/<name>/index.ts`.
    * Port will be provided as an argument `--<name>_port=<port>` to the service.
    */
   service(name: string, port?: number): Promise<Service>;
