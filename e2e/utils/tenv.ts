@@ -2,7 +2,7 @@ import childProcess from 'child_process';
 import fs from 'fs/promises';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
-import os, { tmpdir } from 'os';
+import os from 'os';
 import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
 import { ExecutionResult } from 'graphql';
