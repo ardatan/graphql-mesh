@@ -36,7 +36,6 @@ export interface Server extends Proc {
 export interface ServeOptions {
   port?: number;
   fusiongraph?: string;
-  supergraph?: string;
 }
 
 export interface Serve extends Server {
@@ -94,7 +93,7 @@ export function createTenv(cwd: string): Tenv {
       },
     },
     async serve(opts) {
-      const { port = getAvailablePort(), fusiongraph, supergraph } = opts || {};
+      const { port = getAvailablePort(), fusiongraph } = opts || {};
       const proc = await spawn(
         { cwd },
         'node',
@@ -103,7 +102,6 @@ export function createTenv(cwd: string): Tenv {
         path.resolve(__dirname, '..', '..', 'packages', 'serve-cli', 'src', 'bin.ts'),
         createPortArg(port),
         fusiongraph && createArg('fusiongraph', fusiongraph),
-        supergraph && createArg('supergraph', supergraph),
       );
       const serve: Serve = {
         ...proc,
