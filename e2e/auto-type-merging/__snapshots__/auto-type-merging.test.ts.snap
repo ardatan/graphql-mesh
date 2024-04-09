@@ -1,0 +1,269 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose the appropriate schema 1`] = `
+"schema @transport(subgraph: "petstore", kind: "rest", location: "https://petstore.swagger.io/v2") @transport(subgraph: "vaccination", kind: "http", location: "http://0.0.0.0:<vaccination_port>/graphql") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+type Query {
+  """Multiple status values can be provided with comma separated strings"""
+  findPetsByStatus(
+    """Status values that need to be considered for filter"""
+    status: [queryInput_findPetsByStatus_status_items]!
+  ): [Pet] @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"") @resolver(subgraph: "petstore", operation: "query findPetsByStatus($status: [queryInput_findPetsByStatus_status_items]!) { findPetsByStatus(status: $status) }") @source(subgraph: "petstore", name: "findPetsByStatus", type: "[Pet]") @hidden
+  """
+  Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+  """
+  findPetsByTags(
+    """Tags to filter by"""
+    tags: [String]!
+  ): [Pet] @deprecated(reason: "deprecated") @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\"") @resolver(subgraph: "petstore", operation: "query findPetsByTags($tags: [String]!) { findPetsByTags(tags: $tags) }") @source(subgraph: "petstore", name: "findPetsByTags", type: "[Pet]") @hidden
+  """Returns a single pet"""
+  getPetById(
+    """ID of pet to return"""
+    petId: BigInt!
+  ): Pet! @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET) @resolver(subgraph: "petstore", operation: "query getPetById($petId: BigInt!) { getPetById(petId: $petId) }") @source(subgraph: "petstore", name: "getPetById", type: "Pet!")
+  """Returns a map of status codes to quantities"""
+  getInventory: JSON @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @resolver(subgraph: "petstore", operation: "query getInventory { getInventory }") @source(subgraph: "petstore", name: "getInventory", type: "JSON") @hidden
+  """
+  For valid response try integer IDs with value >= 1 and <= 10. Other values will generated exceptions
+  """
+  getOrderById(
+    """ID of pet that needs to be fetched"""
+    orderId: BigInt!
+  ): Order! @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET) @resolver(subgraph: "petstore", operation: "query getOrderById($orderId: BigInt!) { getOrderById(orderId: $orderId) }") @source(subgraph: "petstore", name: "getOrderById", type: "Order!") @hidden
+  """Get user by user name"""
+  getUserByName(
+    """The name that needs to be fetched. Use user1 for testing."""
+    username: String!
+  ): User! @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET) @resolver(subgraph: "petstore", operation: "query getUserByName($username: String!) { getUserByName(username: $username) }") @source(subgraph: "petstore", name: "getUserByName", type: "User!") @hidden
+  """Logs user into the system"""
+  loginUser(
+    """The user name for login"""
+    username: String!
+    """The password for login in clear text"""
+    password: String!
+  ): String @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\"") @resolver(subgraph: "petstore", operation: "query loginUser($username: String!, $password: String!) { loginUser(username: $username, password: $password) }") @source(subgraph: "petstore", name: "loginUser", type: "String") @hidden
+  """Logs out current logged in user session"""
+  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/logout", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: GET) @resolver(subgraph: "petstore", operation: "query logoutUser { logoutUser }") @source(subgraph: "petstore", name: "logoutUser", type: "JSON") @hidden
+  vaccinationPetById(id: BigInt!): Pet @resolver(subgraph: "vaccination", operation: "query pet_by_id($id: BigInt!) { pet_by_id(id: $id) }") @source(subgraph: "vaccination", name: "pet_by_id", type: "Pet")
+}
+
+"""Pet object that needs to be added to the store"""
+type Pet @source(subgraph: "petstore", name: "Pet") @source(subgraph: "vaccination", name: "Pet") @resolver(subgraph: "petstore", operation: "query PetById($Pet_id: BigInt!) { getPetById(petId: $Pet_id) }", kind: "FETCH") @resolver(subgraph: "petstore", operation: "query PetById($Pet_id: BigInt!) { getPetById(petId: $Pet_id) }", kind: "FETCH") @resolver(subgraph: "vaccination", operation: "query PetById($Pet_id: BigInt!) { pet_by_id(id: $Pet_id) }", kind: "FETCH") @variable(subgraph: "petstore", name: "Pet_id", select: "id") @variable(subgraph: "vaccination", name: "Pet_id", select: "id") @variable(subgraph: "petstore", name: "Pet_id", select: "id") @variable(subgraph: "vaccination", name: "Pet_id", select: "id") {
+  id: BigInt! @source(subgraph: "petstore", name: "id", type: "BigInt") @source(subgraph: "vaccination", name: "id", type: "BigInt!")
+  category: Category @source(subgraph: "petstore", name: "category", type: "Category")
+  name: String! @source(subgraph: "petstore", name: "name", type: "String!")
+  photoUrls: [String]! @source(subgraph: "petstore", name: "photoUrls", type: "[String]!")
+  tags: [Tag] @source(subgraph: "petstore", name: "tags", type: "[Tag]")
+  status: mutationInput_addPet_input_status @source(subgraph: "petstore", name: "status", type: "mutationInput_addPet_input_status")
+  vaccinated: Boolean! @source(subgraph: "vaccination", name: "vaccinated", type: "Boolean!")
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt @source(subgraph: "vaccination", name: "BigInt") @source(subgraph: "petstore", name: "BigInt") @source(subgraph: "vaccination", name: "BigInt")
+
+type Category @source(subgraph: "petstore", name: "Category") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  name: String @source(subgraph: "petstore", name: "name", type: "String")
+}
+
+type Tag @source(subgraph: "petstore", name: "Tag") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  name: String @source(subgraph: "petstore", name: "name", type: "String")
+}
+
+"""pet status in the store"""
+enum mutationInput_addPet_input_status @source(subgraph: "petstore", name: "mutationInput_addPet_input_status") {
+  available @source(subgraph: "petstore", name: "available")
+  pending @source(subgraph: "petstore", name: "pending")
+  sold @source(subgraph: "petstore", name: "sold")
+}
+
+enum queryInput_findPetsByStatus_status_items @source(subgraph: "petstore", name: "queryInput_findPetsByStatus_status_items") {
+  available @source(subgraph: "petstore", name: "available")
+  pending @source(subgraph: "petstore", name: "pending")
+  sold @source(subgraph: "petstore", name: "sold")
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf") @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf") @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf") @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf") @source(subgraph: "petstore", name: "JSON") @source(subgraph: "petstore", name: "JSON")
+
+"""order placed for purchasing the pet"""
+type Order @source(subgraph: "petstore", name: "Order") @resolver(subgraph: "petstore", operation: "query OrderById($Order_id: BigInt!) { getOrderById(orderId: $Order_id) }", kind: "FETCH") @resolver(subgraph: "petstore", operation: "query OrderById($Order_id: BigInt!) { getOrderById(orderId: $Order_id) }", kind: "FETCH") @variable(subgraph: "petstore", name: "Order_id", select: "id") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  petId: BigInt @source(subgraph: "petstore", name: "petId", type: "BigInt")
+  quantity: Int @source(subgraph: "petstore", name: "quantity", type: "Int")
+  shipDate: DateTime @source(subgraph: "petstore", name: "shipDate", type: "DateTime")
+  status: mutation_placeOrder_status @source(subgraph: "petstore", name: "status", type: "mutation_placeOrder_status")
+  complete: Boolean @source(subgraph: "petstore", name: "complete", type: "Boolean")
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime @source(subgraph: "petstore", name: "DateTime") @source(subgraph: "petstore", name: "DateTime")
+
+"""Order Status"""
+enum mutation_placeOrder_status @source(subgraph: "petstore", name: "mutation_placeOrder_status") {
+  placed @source(subgraph: "petstore", name: "placed")
+  approved @source(subgraph: "petstore", name: "approved")
+  delivered @source(subgraph: "petstore", name: "delivered")
+}
+
+"""Updated user object"""
+type User @source(subgraph: "petstore", name: "User") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  username: String @source(subgraph: "petstore", name: "username", type: "String")
+  firstName: String @source(subgraph: "petstore", name: "firstName", type: "String")
+  lastName: String @source(subgraph: "petstore", name: "lastName", type: "String")
+  email: String @source(subgraph: "petstore", name: "email", type: "String")
+  password: String @source(subgraph: "petstore", name: "password", type: "String")
+  phone: String @source(subgraph: "petstore", name: "phone", type: "String")
+  """User Status"""
+  userStatus: Int @source(subgraph: "petstore", name: "userStatus", type: "Int")
+}
+
+type Mutation {
+  """uploads an image"""
+  uploadFile(
+    """ID of pet to update"""
+    petId: BigInt!
+  ): ApiResponse @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"multipart/form-data\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"multipart/form-data\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "petstore", operation: "mutation mutationuploadFile($petId: BigInt!) { uploadFile(petId: $petId) }") @source(subgraph: "petstore", name: "uploadFile", type: "ApiResponse") @hidden
+  """Add a new pet to the store"""
+  addPet(input: Pet_Input!): JSON @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json, application/xml\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json, application/xml\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "petstore", operation: "mutation mutationaddPet($input: Pet_Input!) { addPet(input: $input) }") @source(subgraph: "petstore", name: "addPet", type: "JSON") @hidden
+  """Update an existing pet"""
+  updatePet(input: Pet_Input!): JSON @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json, application/xml\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json, application/xml\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: PUT) @resolver(subgraph: "petstore", operation: "mutation mutationupdatePet($input: Pet_Input!) { updatePet(input: $input) }") @source(subgraph: "petstore", name: "updatePet", type: "JSON") @hidden
+  """Updates a pet in the store with form data"""
+  updatePetWithForm(
+    """ID of pet that needs to be updated"""
+    petId: BigInt!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/x-www-form-urlencoded\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/x-www-form-urlencoded\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "petstore", operation: "mutation mutationupdatePetWithForm($petId: BigInt!) { updatePetWithForm(petId: $petId) }") @source(subgraph: "petstore", name: "updatePetWithForm", type: "JSON") @hidden
+  """Deletes a pet"""
+  deletePet(
+    api_key: String
+    """Pet id to delete"""
+    petId: BigInt!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: DELETE) @resolver(subgraph: "petstore", operation: "mutation mutationdeletePet($api_key: String, $petId: BigInt!) { deletePet(api_key: $api_key, petId: $petId) }") @source(subgraph: "petstore", name: "deletePet", type: "JSON") @hidden
+  """Place an order for a pet"""
+  placeOrder(input: Order_Input!): Order! @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "petstore", operation: "mutation mutationplaceOrder($input: Order_Input!) { placeOrder(input: $input) }") @source(subgraph: "petstore", name: "placeOrder", type: "Order!") @hidden
+  """
+  For valid response try integer IDs with positive integer value. Negative or non-integer values will generate API errors
+  """
+  deleteOrder(
+    """ID of the order that needs to be deleted"""
+    orderId: BigInt!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: DELETE) @resolver(subgraph: "petstore", operation: "mutation mutationdeleteOrder($orderId: BigInt!) { deleteOrder(orderId: $orderId) }") @source(subgraph: "petstore", name: "deleteOrder", type: "JSON") @hidden
+  """Creates list of users with given input array"""
+  createUsersWithListInput(
+    """List of user object"""
+    input: [User_Input]!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "petstore", operation: "mutation mutationcreateUsersWithListInput($input: [User_Input]!) { createUsersWithListInput(input: $input) }") @source(subgraph: "petstore", name: "createUsersWithListInput", type: "JSON") @hidden
+  """This can only be done by the logged in user."""
+  updateUser(
+    """name that need to be updated"""
+    username: String!
+    input: User_Input!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: PUT) @resolver(subgraph: "petstore", operation: "mutation mutationupdateUser($username: String!, $input: User_Input!) { updateUser(username: $username, input: $input) }") @source(subgraph: "petstore", name: "updateUser", type: "JSON") @hidden
+  """This can only be done by the logged in user."""
+  deleteUser(
+    """The name that needs to be deleted"""
+    username: String!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: DELETE) @resolver(subgraph: "petstore", operation: "mutation mutationdeleteUser($username: String!) { deleteUser(username: $username) }") @source(subgraph: "petstore", name: "deleteUser", type: "JSON") @hidden
+  """Creates list of users with given input array"""
+  createUsersWithArrayInput(
+    """List of user object"""
+    input: [User_Input]!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/user/createWithArray", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user/createWithArray", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "petstore", operation: "mutation mutationcreateUsersWithArrayInput($input: [User_Input]!) { createUsersWithArrayInput(input: $input) }") @source(subgraph: "petstore", name: "createUsersWithArrayInput", type: "JSON") @hidden
+  """This can only be done by the logged in user."""
+  createUser(input: User_Input!): JSON @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"Accept\\\\\\":\\\\\\"application/json, application/xml\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "petstore", operation: "mutation mutationcreateUser($input: User_Input!) { createUser(input: $input) }") @source(subgraph: "petstore", name: "createUser", type: "JSON") @hidden
+}
+
+type ApiResponse @source(subgraph: "petstore", name: "ApiResponse") {
+  code: Int @source(subgraph: "petstore", name: "code", type: "Int")
+  type: String @source(subgraph: "petstore", name: "type", type: "String")
+  message: String @source(subgraph: "petstore", name: "message", type: "String")
+}
+
+"""Pet object that needs to be added to the store"""
+input Pet_Input @source(subgraph: "petstore", name: "Pet_Input") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  category: Category_Input @source(subgraph: "petstore", name: "category", type: "Category_Input")
+  name: String! @source(subgraph: "petstore", name: "name", type: "String!")
+  photoUrls: [String]! @source(subgraph: "petstore", name: "photoUrls", type: "[String]!")
+  tags: [Tag_Input] @source(subgraph: "petstore", name: "tags", type: "[Tag_Input]")
+  status: mutationInput_addPet_input_status @source(subgraph: "petstore", name: "status", type: "mutationInput_addPet_input_status")
+}
+
+input Category_Input @source(subgraph: "petstore", name: "Category_Input") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  name: String @source(subgraph: "petstore", name: "name", type: "String")
+}
+
+input Tag_Input @source(subgraph: "petstore", name: "Tag_Input") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  name: String @source(subgraph: "petstore", name: "name", type: "String")
+}
+
+"""order placed for purchasing the pet"""
+input Order_Input @source(subgraph: "petstore", name: "Order_Input") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  petId: BigInt @source(subgraph: "petstore", name: "petId", type: "BigInt")
+  quantity: Int @source(subgraph: "petstore", name: "quantity", type: "Int")
+  shipDate: DateTime @source(subgraph: "petstore", name: "shipDate", type: "DateTime")
+  status: mutation_placeOrder_status @source(subgraph: "petstore", name: "status", type: "mutation_placeOrder_status")
+  complete: Boolean @source(subgraph: "petstore", name: "complete", type: "Boolean")
+}
+
+"""Updated user object"""
+input User_Input @source(subgraph: "petstore", name: "User_Input") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  username: String @source(subgraph: "petstore", name: "username", type: "String")
+  firstName: String @source(subgraph: "petstore", name: "firstName", type: "String")
+  lastName: String @source(subgraph: "petstore", name: "lastName", type: "String")
+  email: String @source(subgraph: "petstore", name: "email", type: "String")
+  password: String @source(subgraph: "petstore", name: "password", type: "String")
+  phone: String @source(subgraph: "petstore", name: "phone", type: "String")
+  """User Status"""
+  userStatus: Int @source(subgraph: "petstore", name: "userStatus", type: "Int")
+}
+
+scalar ObjMap @source(subgraph: "petstore", name: "ObjMap") @source(subgraph: "petstore", name: "ObjMap")
+
+enum HTTPMethod @source(subgraph: "petstore", name: "HTTPMethod") {
+  GET @source(subgraph: "petstore", name: "GET")
+  HEAD @source(subgraph: "petstore", name: "HEAD")
+  POST @source(subgraph: "petstore", name: "POST")
+  PUT @source(subgraph: "petstore", name: "PUT")
+  DELETE @source(subgraph: "petstore", name: "DELETE")
+  CONNECT @source(subgraph: "petstore", name: "CONNECT")
+  OPTIONS @source(subgraph: "petstore", name: "OPTIONS")
+  TRACE @source(subgraph: "petstore", name: "TRACE")
+  PATCH @source(subgraph: "petstore", name: "PATCH")
+}
+"
+`;
+
+exports[`should execute GetPet 1`] = `
+{
+  "data": {
+    "getPetById": {
+      "__typename": "Pet",
+      "id": 1,
+      "name": "doggie",
+      "vaccinated": false,
+    },
+  },
+}
+`;

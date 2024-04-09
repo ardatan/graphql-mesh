@@ -3539,6 +3539,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@e2e/auto-type-merging@workspace:e2e/auto-type-merging":
+  version: 0.0.0-use.local
+  resolution: "@e2e/auto-type-merging@workspace:e2e/auto-type-merging"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-yoga/plugin-defer-stream": "npm:^3.1.1"
+    "@omnigraph/openapi": "workspace:*"
+    graphql: "npm:^16.8.1"
+    graphql-yoga: "npm:^5.1.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/cjs-project@workspace:e2e/cjs-project":
   version: 0.0.0-use.local
   resolution: "@e2e/cjs-project@workspace:e2e/cjs-project"
@@ -12663,19 +12676,6 @@ __metadata:
   checksum: 10c0/12f70745d081ba990dca028ecfa70de25d4baa9a8b74a5bef3ab293da56cba32ff8276c3ff8e5fe6d9f370547bf3fa71486befbfefe272af7e722c21d0c25530
   languageName: node
   linkType: hard
-
-"auto-type-merging-example@workspace:examples/v1-next/auto-type-merging":
-  version: 0.0.0-use.local
-  resolution: "auto-type-merging-example@workspace:examples/v1-next/auto-type-merging"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@graphql-yoga/plugin-defer-stream": "npm:^3.1.1"
-    graphql: "npm:^16.8.1"
-    graphql-yoga: "npm:^5.1.1"
-    ts-node: "npm:^10.9.2"
-  languageName: unknown
-  linkType: soft
 
 "autoprefixer@npm:^10.4.13, autoprefixer@npm:^10.4.19":
   version: 10.4.19

@@ -1,6 +1,8 @@
+import { createServer } from 'http';
 import { createSchema, createYoga } from 'graphql-yoga';
+import { Args } from '@e2e/args';
 
-export const vaccinationApi = createYoga({
+export const yoga = createYoga({
   schema: createSchema({
     typeDefs: /* GraphQL */ `
       scalar BigInt
@@ -16,7 +18,7 @@ export const vaccinationApi = createYoga({
     `,
     resolvers: {
       Query: {
-        pet_by_id: async (root, args, context, info) => {
+        pet_by_id: async (_root, args, _context, _info) => {
           await new Promise(resolve => setTimeout(resolve, 1000));
           return {
             id: args.id,
@@ -26,4 +28,10 @@ export const vaccinationApi = createYoga({
       },
     },
   }),
+});
+
+const port = Args(process.argv).getServicePort('vaccination', true);
+
+createServer(yoga).listen(port, () => {
+  console.log(`Vaccination service listening on http://localhost:${port}`);
 });

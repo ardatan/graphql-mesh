@@ -1,3 +1,4 @@
+import { Args } from '@e2e/args';
 import {
   camelCase,
   createFilterTransform,
@@ -14,11 +15,14 @@ import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
+const args = Args(process.argv);
+
 /**
  * The configuration to build a supergraph
  */
 
 export const composeConfig = defineComposeConfig({
+  target: args.get('target'),
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('petstore', {
@@ -33,7 +37,7 @@ export const composeConfig = defineComposeConfig({
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('vaccination', {
-        endpoint: 'http://localhost:4001/graphql',
+        endpoint: `http://0.0.0.0:${args.getServicePort('vaccination')}/graphql`,
       }),
       transforms: [
         createPrefixTransform({
@@ -50,7 +54,8 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const serveConfig = defineServeConfig({
-  fusiongraph: './fusiongraph.graphql',
+  port: args.getPort(),
+  fusiongraph: args.get('fusiongraph'),
   graphiql: {
     defaultQuery: /* GraphQL */ `
       query Test {
@@ -63,5 +68,8 @@ export const serveConfig = defineServeConfig({
       }
     `,
   },
-  plugins: () => [useDeferStream()],
+  plugins: () => [
+    // @ts-expect-error TODO: TPluginContext should not extend Record<string, unknown>
+    useDeferStream(),
+  ],
 });
