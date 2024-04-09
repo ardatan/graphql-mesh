@@ -11,8 +11,7 @@ it('should write serve logs to stderr', async () => {
 });
 
 it('should write compose output to stdout and logs to stderr', async () => {
-  const { getStd, waitForExit } = await compose();
-  await waitForExit;
+  const { getStd } = await compose();
 
   expect(getStd('out')).toMatchSnapshot();
   expect(getStd('err')).toMatchSnapshot();

@@ -35,8 +35,6 @@ export interface Disposable {
 
 export interface Proc extends Disposable {
   getStd(o: 'out' | 'err' | 'both'): string;
-  /** Waits for the process to exit successfuly, or throws on non-zero signal. */
-  waitForExit: Promise<void>;
 }
 
 export interface Server extends Proc {
@@ -113,7 +111,7 @@ export function createTenv(cwd: string): Tenv {
     },
     async serve(opts) {
       const { port = await getAvailablePort(), fusiongraph } = opts || {};
-      const proc = await spawn(
+      const [proc, waitForExit] = await spawn(
         { cwd },
         'node',
         '--import',
@@ -144,7 +142,7 @@ export function createTenv(cwd: string): Tenv {
       };
       const ctrl = new AbortController();
       await Promise.race([
-        proc.waitForExit
+        waitForExit
           .then(() =>
             Promise.reject(
               new Error(`Serve exited successfully, but shouldn't have\n${proc.getStd('both')}`),
@@ -164,7 +162,7 @@ export function createTenv(cwd: string): Tenv {
         leftovers.add(tempDir);
         target = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.target}`);
       }
-      const proc = await spawn(
+      const [proc, waitForExit] = await spawn(
         { cwd },
         'node',
         '--import',
@@ -173,7 +171,7 @@ export function createTenv(cwd: string): Tenv {
         target && createArg('target', target),
         ...services.map(({ name, port }) => createServicePortArg(name, port)),
       );
-      await proc.waitForExit;
+      await waitForExit;
       let result = '';
       if (target) {
         try {
@@ -208,7 +206,7 @@ export function createTenv(cwd: string): Tenv {
     },
     async service(name, port) {
       port ||= await getAvailablePort();
-      const proc = await spawn(
+      const [proc, waitForExit] = await spawn(
         { cwd },
         'node',
         '--import',
@@ -219,7 +217,7 @@ export function createTenv(cwd: string): Tenv {
       const service: Service = { ...proc, name, port };
       const ctrl = new AbortController();
       await Promise.race([
-        proc.waitForExit
+        waitForExit
           .then(() =>
             Promise.reject(
               new Error(`Service exited successfully, but shouldn't have\n${proc.getStd('both')}`),
@@ -242,7 +240,7 @@ function spawn(
   { cwd }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
-): Promise<Proc> {
+): Promise<[proc: Proc, waitForExit: Promise<void>]> {
   const child = childProcess.spawn(cmd, args.filter(Boolean).map(String), {
     cwd,
     // ignore stdin, pipe stdout and stderr
@@ -275,7 +273,6 @@ function spawn(
       }
     },
     dispose: () => (child.kill(), waitForExit),
-    waitForExit,
   };
   leftovers.add(proc);
 
@@ -305,7 +302,7 @@ function spawn(
       exit(err); // reject waitForExit promise
       reject(err);
     });
-    child.once('spawn', () => resolve(proc));
+    child.once('spawn', () => resolve([proc, waitForExit]));
   });
 }
 
