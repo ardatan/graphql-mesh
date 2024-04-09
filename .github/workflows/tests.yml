@@ -343,4 +343,4 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
       - name: test
-        run: yarn test:e2e
+        run: yarn test:e2e --detectOpenHandles
