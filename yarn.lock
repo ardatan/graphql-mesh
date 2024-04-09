@@ -13416,7 +13416,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"builtin-modules@npm:^3.1.0, builtin-modules@npm:^3.3.0":
+"builtin-modules@npm:^3.1.0":
   version: 3.3.0
   resolution: "builtin-modules@npm:3.3.0"
   checksum: 10c0/2cb3448b4f7306dc853632a4fcddc95e8d4e4b9868c139400027b71938fc6806d4ff44007deffb362ac85724bd40c2c6452fb6a0aa4531650eeddb98d8e5ee8a
@@ -17171,9 +17171,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:17.0.0":
-  version: 17.0.0
-  resolution: "eslint-plugin-n@npm:17.0.0"
+"eslint-plugin-n@npm:17.1.0":
+  version: 17.1.0
+  resolution: "eslint-plugin-n@npm:17.1.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     enhanced-resolve: "npm:^5.15.0"
@@ -17181,12 +17181,11 @@ __metadata:
     get-tsconfig: "npm:^4.7.0"
     globals: "npm:^14.0.0"
     ignore: "npm:^5.2.4"
-    is-builtin-module: "npm:^3.2.1"
     minimatch: "npm:^9.0.0"
     semver: "npm:^7.5.3"
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: 10c0/0ffc4ad60906f8ec792ca4d0736cf38f2c13ac2bddcc998ac5724f94059a0f6e9bd3a77abe1569955e9f1845d8f68dc78fbb664a61857d025fa1bf39e07c395f
+  checksum: 10c0/adb0a87ba591c37676628af4303b8fa70111e28082031cad4cfb8813d2122066936c5ed6f953685dc07b5cc6cc887ec940b41ca17421c59769343d14d683c4ba
   languageName: node
   linkType: hard
 
@@ -19473,7 +19472,7 @@ __metadata:
     eslint-config-prettier: "npm:9.1.0"
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.29.1"
-    eslint-plugin-n: "npm:17.0.0"
+    eslint-plugin-n: "npm:17.1.0"
     eslint-plugin-promise: "npm:6.1.1"
     eslint-plugin-standard: "npm:5.0.0"
     globby: "npm:11.1.0"
@@ -20892,15 +20891,6 @@ __metadata:
   version: 2.0.5
   resolution: "is-buffer@npm:2.0.5"
   checksum: 10c0/e603f6fced83cf94c53399cff3bda1a9f08e391b872b64a73793b0928be3e5f047f2bcece230edb7632eaea2acdbfcb56c23b33d8a20c820023b230f1485679a
-  languageName: node
-  linkType: hard
-
-"is-builtin-module@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "is-builtin-module@npm:3.2.1"
-  dependencies:
-    builtin-modules: "npm:^3.3.0"
-  checksum: 10c0/5a66937a03f3b18803381518f0ef679752ac18cdb7dd53b5e23ee8df8d440558737bd8dcc04d2aae555909d2ecb4a81b5c0d334d119402584b61e6a003e31af1
   languageName: node
   linkType: hard
 
