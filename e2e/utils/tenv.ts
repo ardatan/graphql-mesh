@@ -5,11 +5,14 @@ import { AddressInfo } from 'net';
 import os from 'os';
 import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
+import Dockerode from 'dockerode';
 import { ExecutionResult } from 'graphql';
 import { createArg, createPortArg, createServicePortArg } from './args';
 
-// increase timeout to get more room for reachability waits
-jest.setTimeout(15_000);
+const retries = 120,
+  interval = 500,
+  timeout = retries * interval; // 1min
+jest.setTimeout(timeout);
 
 const leftovers = new Set<Disposable | string>();
 afterAll(async () => {
@@ -28,6 +31,8 @@ afterAll(async () => {
 });
 
 const __project = path.resolve(__dirname, '..', '..') + '/';
+
+const docker = new Dockerode();
 
 export interface Disposable {
   dispose(): Promise<void>;
@@ -84,6 +89,32 @@ export interface Compose extends Proc {
   result: string;
 }
 
+export interface ContainerOptions {
+  /**
+   * Name of the service.
+   * Note that the actual Docker container will have a unique suffix.
+   */
+  name: string;
+  image: string;
+  /**
+   * Port that the container uses.
+   * Will be bound to an available port on the host in {@link Container.port}.
+   */
+  containerPort: number;
+  /** A map of environment variable names to values. */
+  env?: Record<string, string | number>;
+  /**
+   * The healtcheck test command to run on the container.
+   * If provided, the run function will wait for the container to become healthy.
+   */
+  healthcheck: string[];
+}
+
+export interface Container extends Service {
+  /** Host port binding to the {@link ContainerOptions.containerPort}. */
+  port: number;
+}
+
 export interface Tenv {
   fs: {
     read(path: string): Promise<string>;
@@ -97,6 +128,7 @@ export interface Tenv {
    * Port will be provided as an argument `--<name>_port=<port>` to the service.
    */
   service(name: string, port?: number): Promise<Service>;
+  container(opts: ContainerOptions): Promise<Container>;
 }
 
 export function createTenv(cwd: string): Tenv {
@@ -229,6 +261,110 @@ export function createTenv(cwd: string): Tenv {
       ]);
       return service;
     },
+    async container({ name, image, env = {}, containerPort, healthcheck }) {
+      const uniqueName = `${name}_${Math.random().toString(32).slice(2)}`;
+
+      const hostPort = await getAvailablePort();
+
+      function msToNs(ms: number): number {
+        return ms * 1000000;
+      }
+
+      // start the image pull and wait for complete, always pull the image (will load from cache if exists)
+      const imageStream = await docker.pull(image);
+      await new Promise(resolve => docker.modem.followProgress(imageStream, resolve));
+
+      const ctr = await docker.createContainer({
+        name: uniqueName,
+        Image: image,
+        Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
+        HostConfig: {
+          AutoRemove: true,
+          PortBindings: {
+            [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
+          },
+        },
+        Healthcheck: {
+          Test: healthcheck,
+          Interval: msToNs(interval),
+          Timeout: 0, // dont wait between tests
+          Retries: retries,
+        },
+      });
+
+      let stdboth = '';
+      const stream = await ctr.attach({ stream: true, stdout: true, stderr: true });
+      stream.on('data', data => (stdboth += data.toString()));
+
+      await ctr.start();
+
+      const ctrl = new AbortController();
+      const container: Container = {
+        name,
+        port: hostPort,
+        getStd() {
+          // TODO: distinguish stdout and stderr
+          return stdboth;
+        },
+        async dispose() {
+          if (ctrl.signal.aborted) {
+            // noop if already disposed
+            return;
+          }
+          ctrl.abort();
+          await ctr.stop({ t: 0 });
+        },
+      };
+      leftovers.add(container);
+
+      // verify that the container has started
+      await setTimeout(interval);
+      try {
+        await ctr.inspect();
+      } catch (err) {
+        if (Object(err).statusCode === 404) {
+          throw new DockerError('Container was not started', container);
+        }
+        throw err;
+      }
+
+      // wait for healthy
+      for (;;) {
+        let status = '';
+        try {
+          const {
+            State: { Health },
+          } = await ctr.inspect({ abortSignal: ctrl.signal });
+          status = Health?.Status ? String(Health?.Status) : '';
+        } catch (err) {
+          if (Object(err).statusCode === 404) {
+            throw new DockerError('Container was not started', container);
+          }
+          throw err;
+        }
+
+        if (status === 'none') {
+          await container.dispose();
+          throw new DockerError(
+            'Container has "none" health status, but has a healthcheck',
+            container,
+          );
+        } else if (status === 'unhealthy') {
+          await container.dispose();
+          throw new DockerError('Container is unhealthy', container);
+        } else if (status === 'healthy') {
+          break;
+        } else if (status === 'starting') {
+          // no need to track retries, jest will time out aborting the signal
+          ctrl.signal.throwIfAborted();
+          await setTimeout(interval);
+        } else {
+          throw new DockerError(`Unknown health status "${status}"`, container);
+        }
+      }
+
+      return container;
+    },
   };
 }
 
@@ -314,18 +450,25 @@ function getAvailablePort(): Promise<number> {
 }
 
 async function waitForReachable(server: Server, signal: AbortSignal) {
-  let retries = 0;
   for (;;) {
     try {
       await fetch(`http://0.0.0.0:${server.port}`, { signal });
       break;
     } catch (err) {
+      // no need to track retries, jest will time out aborting the signal
       signal.throwIfAborted();
-      // 500ms * 30 = 15s
-      if (++retries > 30) {
-        throw new Error(`Server at port ${server.port} not reachable\n${server.getStd('both')}`);
-      }
-      await setTimeout(500);
+      await setTimeout(interval);
     }
+  }
+}
+
+class DockerError extends Error {
+  constructor(
+    public message: string,
+    container: Container,
+  ) {
+    super();
+    this.name = 'DockerError';
+    this.message = message + '\n' + container.getStd('both');
   }
 }
