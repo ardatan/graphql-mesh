@@ -3,18 +3,17 @@ import { createTenv } from '@e2e/tenv';
 const { serve, compose } = createTenv(__dirname);
 
 it('should write serve logs to stderr', async () => {
-  const proc = await serve();
-  proc.kill();
-  await proc.waitForExit;
+  const { getStd, dispose } = await serve();
+  await dispose();
 
-  expect(proc.getStd('out')).toBeFalsy();
-  expect(proc.getStd('err')).toContain('Started server on');
+  expect(getStd('out')).toBeFalsy();
+  expect(getStd('err')).toContain('Started server on');
 });
 
 it('should write compose output to stdout and logs to stderr', async () => {
-  const proc = await compose();
-  await proc.waitForExit;
+  const { getStd, waitForExit } = await compose();
+  await waitForExit;
 
-  expect(proc.getStd('out')).toMatchSnapshot();
-  expect(proc.getStd('err')).toMatchSnapshot();
+  expect(getStd('out')).toMatchSnapshot();
+  expect(getStd('err')).toMatchSnapshot();
 });

@@ -11,30 +11,30 @@ import { createArg, createPortArg, createServicePortArg } from './args';
 // increase timeout to get more room for reachability waits
 jest.setTimeout(15_000);
 
-const leftoverProcs = new Set<Proc>();
+const leftovers = new Set<Disposable | string>();
 afterAll(async () => {
   await Promise.allSettled(
-    Array.from(leftoverProcs.values()).map(proc => {
-      proc.kill();
-      return proc.waitForExit;
+    Array.from(leftovers.values()).map(leftover => {
+      if (typeof leftover === 'string') {
+        // file
+        return fs.rm(leftover, { recursive: true });
+      }
+      // process
+      return leftover.dispose();
     }),
-  );
-});
-
-const leftoverTempDirs = new Set<string>();
-afterAll(async () => {
-  await Promise.all(
-    Array.from(leftoverTempDirs.values()).map(dir => fs.rm(dir, { recursive: true })),
   ).finally(() => {
-    leftoverTempDirs.clear();
+    leftovers.clear();
   });
 });
 
 const __project = path.resolve(__dirname, '..', '..') + '/';
 
-export interface Proc {
+export interface Disposable {
+  dispose(): Promise<void>;
+}
+
+export interface Proc extends Disposable {
   getStd(o: 'out' | 'err' | 'both'): string;
-  kill(): void;
   /** Waits for the process to exit successfuly, or throws on non-zero signal. */
   waitForExit: Promise<void>;
 }
@@ -161,7 +161,7 @@ export function createTenv(cwd: string): Tenv {
       let target = '';
       if (opts?.target) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
-        leftoverTempDirs.add(tempDir);
+        leftovers.add(tempDir);
         target = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.target}`);
       }
       const proc = await spawn(
@@ -250,6 +250,16 @@ function spawn(
   });
 
   let exit: (err: Error | null) => void;
+  const waitForExit = new Promise<void>(
+    (resolve, reject) =>
+      (exit = err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      }),
+  );
   let stdout = '';
   let stderr = '';
   let stdboth = '';
@@ -264,20 +274,10 @@ function spawn(
           return stdboth;
       }
     },
-    kill: () => child.kill(),
-    waitForExit: new Promise(
-      (resolve, reject) =>
-        (exit = err => {
-          leftoverProcs.delete(proc);
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        }),
-    ),
+    dispose: () => (child.kill(), waitForExit),
+    waitForExit,
   };
-  leftoverProcs.add(proc);
+  leftovers.add(proc);
 
   child.stdout.on('data', x => {
     stdout += x.toString();
