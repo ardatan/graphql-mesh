@@ -3589,6 +3589,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/mysql-employees@workspace:e2e/mysql-employees":
+  version: 0.0.0-use.local
+  resolution: "@e2e/mysql-employees@workspace:e2e/mysql-employees"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/mysql": "workspace:*"
+    graphql: "npm:^16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki"
@@ -8206,7 +8217,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/mysql@npm:^0.1.5, @omnigraph/mysql@workspace:packages/loaders/mysql":
+"@omnigraph/mysql@npm:^0.1.5, @omnigraph/mysql@workspace:*, @omnigraph/mysql@workspace:packages/loaders/mysql":
   version: 0.0.0-use.local
   resolution: "@omnigraph/mysql@workspace:packages/loaders/mysql"
   dependencies:
@@ -11342,19 +11353,6 @@ __metadata:
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/mysql-employees@workspace:examples/v1-next/mysql-employees":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/mysql-employees@workspace:examples/v1-next/mysql-employees"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@omnigraph/mysql": "npm:^0.1.5"
-    graphql: "npm:^16.8.1"
-    jest: "npm:^29.7.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft

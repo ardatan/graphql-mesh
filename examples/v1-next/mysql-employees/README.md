@@ -1,10 +1,3 @@
-Run this docker container;
+# This example is [e2e](/e2e) tested
 
-```sh
-docker run -d \
-  --name mysql-employees \
-  -p 33306:3306 \
-  -e MYSQL_ROOT_PASSWORD=passwd \
-  -v $PWD/data:/var/lib/mysql \
-  genschsa/mysql-employees
-```
+[🔗 Go to example.](/e2e/mysql-employees)

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`MySQL Employees should generate correct schema: schema 1`] = `
-"schema @transport(subgraph: "Employees", kind: "mysql", location: "mysql://root:passwd@localhost:33306/employees") {
+exports[`should compose the appropriate schema 1`] = `
+"schema @transport(subgraph: "Employees", kind: "mysql", location: "mysql://root:passwd@0.0.0.0:<employees_port>/employees") {
   query: Query
   mutation: Mutation
 }
@@ -479,16 +479,17 @@ input v_full_employees_UpdateInput @source(subgraph: "Employees", name: "v_full_
   gender: v_full_employees_gender @source(subgraph: "Employees", name: "gender", type: "v_full_employees_gender")
   hire_date: Date @source(subgraph: "Employees", name: "hire_date", type: "Date")
   department: String @source(subgraph: "Employees", name: "department", type: "String")
-}"
+}
+"
 `;
 
-exports[`MySQL Employees should give correct response for the example query: example-query.graphql-query-result 1`] = `
+exports[`should execute GetSomeEmployees 1`] = `
 {
   "data": {
     "employees": [
       {
         "__typename": "employees",
-        "birth_date": 1953-09-02T00:00:00.000Z,
+        "birth_date": "1953-09-01T23:00:00.000Z",
         "dept_emp": [
           {
             "departments": [
@@ -499,19 +500,19 @@ exports[`MySQL Employees should give correct response for the example query: exa
             ],
             "dept_no": "d005",
             "emp_no": 10001,
-            "from_date": 1986-06-26T00:00:00.000Z,
-            "to_date": 9999-01-01T00:00:00.000Z,
+            "from_date": "1986-06-25T22:00:00.000Z",
+            "to_date": "9998-12-31T23:00:00.000Z",
           },
         ],
         "emp_no": 10001,
         "first_name": "Georgi",
         "gender": "M",
-        "hire_date": 1986-06-26T00:00:00.000Z,
+        "hire_date": "1986-06-25T22:00:00.000Z",
         "last_name": "Facello",
       },
       {
         "__typename": "employees",
-        "birth_date": 1964-06-02T00:00:00.000Z,
+        "birth_date": "1964-06-01T23:00:00.000Z",
         "dept_emp": [
           {
             "departments": [
@@ -522,19 +523,19 @@ exports[`MySQL Employees should give correct response for the example query: exa
             ],
             "dept_no": "d007",
             "emp_no": 10002,
-            "from_date": 1996-08-03T00:00:00.000Z,
-            "to_date": 9999-01-01T00:00:00.000Z,
+            "from_date": "1996-08-02T22:00:00.000Z",
+            "to_date": "9998-12-31T23:00:00.000Z",
           },
         ],
         "emp_no": 10002,
         "first_name": "Bezalel",
         "gender": "F",
-        "hire_date": 1985-11-21T00:00:00.000Z,
+        "hire_date": "1985-11-20T23:00:00.000Z",
         "last_name": "Simmel",
       },
       {
         "__typename": "employees",
-        "birth_date": 1959-12-03T00:00:00.000Z,
+        "birth_date": "1959-12-02T23:00:00.000Z",
         "dept_emp": [
           {
             "departments": [
@@ -545,19 +546,19 @@ exports[`MySQL Employees should give correct response for the example query: exa
             ],
             "dept_no": "d004",
             "emp_no": 10003,
-            "from_date": 1995-12-03T00:00:00.000Z,
-            "to_date": 9999-01-01T00:00:00.000Z,
+            "from_date": "1995-12-02T23:00:00.000Z",
+            "to_date": "9998-12-31T23:00:00.000Z",
           },
         ],
         "emp_no": 10003,
         "first_name": "Parto",
         "gender": "M",
-        "hire_date": 1986-08-28T00:00:00.000Z,
+        "hire_date": "1986-08-27T22:00:00.000Z",
         "last_name": "Bamford",
       },
       {
         "__typename": "employees",
-        "birth_date": 1954-05-01T00:00:00.000Z,
+        "birth_date": "1954-04-30T23:00:00.000Z",
         "dept_emp": [
           {
             "departments": [
@@ -568,19 +569,19 @@ exports[`MySQL Employees should give correct response for the example query: exa
             ],
             "dept_no": "d004",
             "emp_no": 10004,
-            "from_date": 1986-12-01T00:00:00.000Z,
-            "to_date": 9999-01-01T00:00:00.000Z,
+            "from_date": "1986-11-30T23:00:00.000Z",
+            "to_date": "9998-12-31T23:00:00.000Z",
           },
         ],
         "emp_no": 10004,
         "first_name": "Chirstian",
         "gender": "M",
-        "hire_date": 1986-12-01T00:00:00.000Z,
+        "hire_date": "1986-11-30T23:00:00.000Z",
         "last_name": "Koblick",
       },
       {
         "__typename": "employees",
-        "birth_date": 1955-01-21T00:00:00.000Z,
+        "birth_date": "1955-01-20T23:00:00.000Z",
         "dept_emp": [
           {
             "departments": [
@@ -591,19 +592,17 @@ exports[`MySQL Employees should give correct response for the example query: exa
             ],
             "dept_no": "d003",
             "emp_no": 10005,
-            "from_date": 1989-09-12T00:00:00.000Z,
-            "to_date": 9999-01-01T00:00:00.000Z,
+            "from_date": "1989-09-11T22:00:00.000Z",
+            "to_date": "9998-12-31T23:00:00.000Z",
           },
         ],
         "emp_no": 10005,
         "first_name": "Kyoichi",
         "gender": "M",
-        "hire_date": 1989-09-12T00:00:00.000Z,
+        "hire_date": "1989-09-11T22:00:00.000Z",
         "last_name": "Maliniak",
       },
     ],
   },
-  "errors": undefined,
-  "extensions": undefined,
 }
 `;
