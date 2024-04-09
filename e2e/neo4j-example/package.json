@@ -1,0 +1,11 @@
+{
+  "name": "@e2e/neo4j-example",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/fusion-runtime": "workspace:*",
+    "@omnigraph/neo4j": "workspace:*",
+    "graphql": "^16.8.1"
+  }
+}

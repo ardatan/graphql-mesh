@@ -3600,6 +3600,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/neo4j-example@workspace:e2e/neo4j-example":
+  version: 0.0.0-use.local
+  resolution: "@e2e/neo4j-example@workspace:e2e/neo4j-example"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/fusion-runtime": "workspace:*"
+    "@omnigraph/neo4j": "workspace:*"
+    graphql: "npm:^16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki"
@@ -8240,7 +8251,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/neo4j@npm:^0.1.5, @omnigraph/neo4j@workspace:packages/loaders/neo4j":
+"@omnigraph/neo4j@npm:^0.1.5, @omnigraph/neo4j@workspace:*, @omnigraph/neo4j@workspace:packages/loaders/neo4j":
   version: 0.0.0-use.local
   resolution: "@omnigraph/neo4j@workspace:packages/loaders/neo4j"
   dependencies:
@@ -11366,19 +11377,6 @@ __metadata:
     "@omnigraph/mysql": "npm:^0.1.5"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/neo4j-example@workspace:examples/v1-next/neo4j-example":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/neo4j-example@workspace:examples/v1-next/neo4j-example"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@omnigraph/neo4j": "npm:^0.1.5"
-    graphql: "npm:^16.8.1"
-    jest: "npm:^29.7.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -22590,7 +22588,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:29.7.0, jest@npm:^29.7.0":
+"jest@npm:29.7.0":
   version: 29.7.0
   resolution: "jest@npm:29.7.0"
   dependencies:
