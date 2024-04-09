@@ -1,4 +1,6 @@
+import { createServer } from 'http';
 import { createRouter, Response, Type } from 'fets';
+import { Args } from '@e2e/args';
 
 export function createApp() {
   const users = [
@@ -48,3 +50,9 @@ export function createApp() {
     },
   });
 }
+
+const port = Args(process.argv).getServicePort('api', true);
+
+createServer(createApp()).listen(port, () => {
+  console.log(`API service listening on http://localhost:${port}`);
+});

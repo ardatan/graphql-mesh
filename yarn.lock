@@ -3552,6 +3552,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/batching-resolver-example@workspace:e2e/batching-resolver":
+  version: 0.0.0-use.local
+  resolution: "@e2e/batching-resolver-example@workspace:e2e/batching-resolver"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fets: "npm:^0.8.0"
+    graphql: "npm:16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/cjs-project@workspace:e2e/cjs-project":
   version: 0.0.0-use.local
   resolution: "@e2e/cjs-project@workspace:e2e/cjs-project"
@@ -13071,21 +13083,6 @@ __metadata:
   checksum: 10c0/925a13897b4db80d4211082fe287bcf96d297af38e26448c857cee3e095c9792e3b8f26b37d268812e7f38a589f694609de8534a018b1937d7dc9f84e6b387c5
   languageName: node
   linkType: hard
-
-"batching-resolver-example@workspace:examples/v1-next/batching-resolver":
-  version: 0.0.0-use.local
-  resolution: "batching-resolver-example@workspace:examples/v1-next/batching-resolver"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@omnigraph/openapi": "npm:^0.99.6"
-    concurrently: "npm:8.2.2"
-    fets: "npm:^0.8.0"
-    graphql: "npm:16.8.1"
-    jest: "npm:29.7.0"
-    ts-node: "npm:^10.9.2"
-  languageName: unknown
-  linkType: soft
 
 "bcrypt-pbkdf@npm:^1.0.2":
   version: 1.0.2
