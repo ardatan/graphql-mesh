@@ -1,9 +1,8 @@
 const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
 const { defineConfig: defineComposeConfig } = require('@graphql-mesh/compose-cli');
 const { defineConfig: defineServeConfig } = require('@graphql-mesh/serve-cli');
-const { Args } = require('@e2e/args');
 
-const args = Args(process.argv);
+const args = require('@e2e/args').Args(process.argv);
 
 const serveConfig = defineServeConfig({
   port: args.getPort(),
