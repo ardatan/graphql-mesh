@@ -119,6 +119,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@apollo/federation-internals@npm:2.7.2":
+  version: 2.7.2
+  resolution: "@apollo/federation-internals@npm:2.7.2"
+  dependencies:
+    "@types/uuid": "npm:^9.0.0"
+    chalk: "npm:^4.1.0"
+    js-levenshtein: "npm:^1.1.6"
+    uuid: "npm:^9.0.0"
+  peerDependencies:
+    graphql: ^16.5.0
+  checksum: 10c0/d75b9c7982ca7872c6e6ab70a6a7636a07c66c21134ce09d776e65ef10ac4fdd304f0bc48fcdc53c291464aeaedf3e44b3b10c8dc2fbd3ca9907e81bc28b393f
+  languageName: node
+  linkType: hard
+
 "@apollo/federation-internals@npm:2.7.3":
   version: 2.7.3
   resolution: "@apollo/federation-internals@npm:2.7.3"
@@ -267,7 +281,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:4.10.3":
+"@apollo/server@npm:4.10.3, @apollo/server@npm:^4.10.3":
   version: 4.10.3
   resolution: "@apollo/server@npm:4.10.3"
   dependencies:
@@ -346,6 +360,18 @@ __metadata:
   peerDependencies:
     graphql: ^16.5.0
   checksum: 10c0/f40cdca2beb57a502c9f9c1c184cb607c58ce2cfa5d13674bef252eaec8e4cf53d5de9a4e87d946834fbd1f58357d776fcf4b811cef450d9d1735879be95e09a
+  languageName: node
+  linkType: hard
+
+"@apollo/subgraph@npm:^2.7.2":
+  version: 2.7.2
+  resolution: "@apollo/subgraph@npm:2.7.2"
+  dependencies:
+    "@apollo/cache-control-types": "npm:^1.0.2"
+    "@apollo/federation-internals": "npm:2.7.2"
+  peerDependencies:
+    graphql: ^16.5.0
+  checksum: 10c0/ca9e685f329a710075582594e4911f1252a125e547c12f7f91002197c1decdeb3343e257f7299efd1067f93a68a53795d001674947a2cca0332b775fcb3e9ce1
   languageName: node
   linkType: hard
 
@@ -3601,6 +3627,16 @@ __metadata:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
     graphql: "npm:16.8.1"
+  languageName: unknown
+  linkType: soft
+
+"@e2e/federation-example@workspace:e2e/federation-example":
+  version: 0.0.0-use.local
+  resolution: "@e2e/federation-example@workspace:e2e/federation-example"
+  dependencies:
+    "@apollo/rover": "npm:^0.23.0"
+    "@apollo/server": "npm:^4.10.3"
+    "@apollo/subgraph": "npm:^2.7.2"
   languageName: unknown
   linkType: soft
 
@@ -11285,18 +11321,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v1-next/accounts-subgraph@workspace:examples/v1-next/federation-example/services/accounts":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/accounts-subgraph@workspace:examples/v1-next/federation-example/services/accounts"
-  dependencies:
-    "@apollo/server": "npm:4.10.3"
-    "@apollo/subgraph": "npm:2.7.3"
-    graphql: "npm:16.8.1"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "@v1-next/auth0-example@workspace:examples/v1-next/auth0":
   version: 0.0.0-use.local
   resolution: "@v1-next/auth0-example@workspace:examples/v1-next/auth0"
@@ -11350,27 +11374,6 @@ __metadata:
     "@omnigraph/json-schema": "npm:^0.99.6"
     "@types/node": "npm:^20.10.6"
     graphql: "npm:^16.8.1"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/federation-supergraph-gateway@workspace:examples/v1-next/federation-example/gateway":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/federation-supergraph-gateway@workspace:examples/v1-next/federation-example/gateway"
-  dependencies:
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    graphql: "npm:16.8.1"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/inventory@workspace:examples/v1-next/federation-example/services/inventory":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/inventory@workspace:examples/v1-next/federation-example/services/inventory"
-  dependencies:
-    "@apollo/server": "npm:4.10.3"
-    "@apollo/subgraph": "npm:2.7.3"
-    graphql: "npm:16.8.1"
-    ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -11445,18 +11448,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@v1-next/products@workspace:examples/v1-next/federation-example/services/products":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/products@workspace:examples/v1-next/federation-example/services/products"
-  dependencies:
-    "@apollo/server": "npm:4.10.3"
-    "@apollo/subgraph": "npm:2.7.3"
-    graphql: "npm:16.8.1"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "@v1-next/reddit-example@workspace:examples/v1-next/json-schema-reddit":
   version: 0.0.0-use.local
   resolution: "@v1-next/reddit-example@workspace:examples/v1-next/json-schema-reddit"
@@ -11465,18 +11456,6 @@ __metadata:
     "@graphql-mesh/serve-cli": "npm:^0.3.16"
     "@omnigraph/json-schema": "npm:^0.99.6"
     graphql: "npm:16.8.1"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/reviews@workspace:examples/v1-next/federation-example/services/reviews":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/reviews@workspace:examples/v1-next/federation-example/services/reviews"
-  dependencies:
-    "@apollo/server": "npm:4.10.3"
-    "@apollo/subgraph": "npm:2.7.3"
-    graphql: "npm:16.8.1"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -18221,17 +18200,6 @@ __metadata:
   checksum: 10c0/0e895965959cf6a22bb7b00f0bf546f2783836310f510ddf63f463e1518d4c96dec61ab33fdfd8e79a71b4856a7c865478ce2ee8498d560fe125947703c9b1cf
   languageName: node
   linkType: hard
-
-"federation-example@workspace:examples/v1-next/federation-example":
-  version: 0.0.0-use.local
-  resolution: "federation-example@workspace:examples/v1-next/federation-example"
-  dependencies:
-    "@apollo/rover": "npm:^0.23.0"
-    concurrently: "npm:8.2.2"
-    delay-cli: "npm:2.0.0"
-    jest: "npm:29.7.0"
-  languageName: unknown
-  linkType: soft
 
 "federation-gateway@workspace:examples/federation-example/gateway":
   version: 0.0.0-use.local

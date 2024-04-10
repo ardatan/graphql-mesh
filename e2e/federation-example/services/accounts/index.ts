@@ -4,8 +4,9 @@ import { parse } from 'graphql';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
+import { Args } from '@e2e/args';
 
-const typeDefs = parse(readFileSync(join(__dirname, './typeDefs.graphql'), 'utf8'));
+const typeDefs = parse(readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf8'));
 
 const resolvers = {
   User: {
@@ -53,10 +54,9 @@ const users = [
   },
 ];
 
-export const accountsServer = () =>
-  startStandaloneServer(server, { listen: { port: 9880 } }).then(({ url }) => {
-    if (!process.env.CI) {
-      console.log(`🚀 Server ready at ${url}`);
-    }
-    return server;
-  });
+const args = Args(process.argv);
+
+startStandaloneServer(server, { listen: { port: args.getServicePort('accounts') } }).catch(err => {
+  console.error(err);
+  process.exit(1);
+});

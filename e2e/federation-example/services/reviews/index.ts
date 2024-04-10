@@ -1,27 +1,12 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { parse } from 'graphql';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
+import { Args } from '@e2e/args';
 
-const typeDefs = parse(/* GraphQL */ `
-  type Review @key(fields: "id") {
-    id: ID!
-    body: String
-    author: User @provides(fields: "username")
-    product: Product
-  }
-
-  extend type User @key(fields: "id") {
-    id: ID! @external
-    username: String @external
-    reviews: [Review]
-  }
-
-  extend type Product @key(fields: "upc") {
-    upc: String! @external
-    reviews: [Review]
-  }
-`);
+const typeDefs = parse(readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf8'));
 
 const resolvers = {
   Review: {
@@ -57,18 +42,11 @@ const server = new ApolloServer({
   ]),
 });
 
-export const reviewsServer = () =>
-  startStandaloneServer(server, { listen: { port: 9874 } }).then(({ url }) => {
-    if (!process.env.CI) {
-      console.log(`🚀 Server ready at ${url}`);
-    }
-    return server;
-  });
-
 const usernames = [
   { id: '1', username: '@ada' },
   { id: '2', username: '@complete' },
 ];
+
 const reviews = [
   {
     id: '1',
@@ -95,3 +73,10 @@ const reviews = [
     body: 'Prefer something else.',
   },
 ];
+
+const args = Args(process.argv);
+
+startStandaloneServer(server, { listen: { port: args.getServicePort('reviews') } }).catch(err => {
+  console.error(err);
+  process.exit(1);
+});

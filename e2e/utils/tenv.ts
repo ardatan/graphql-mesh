@@ -49,6 +49,7 @@ export interface Server extends Proc {
 export interface ServeOptions {
   port?: number;
   fusiongraph?: string;
+  supergraph?: string;
 }
 
 export interface Serve extends Server {
@@ -119,7 +120,10 @@ export interface Tenv {
   fs: {
     read(path: string): Promise<string>;
     delete(path: string): Promise<void>;
+    tempfile(name: string): Promise<string>;
+    write(path: string, content: string): Promise<void>;
   };
+  spawn(command: string): Promise<[proc: Proc, waitForExit: Promise<void>]>;
   serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
@@ -140,9 +144,21 @@ export function createTenv(cwd: string): Tenv {
       delete(filePath) {
         return fs.unlink(isAbsolute(filePath) ? filePath : path.join(cwd, filePath));
       },
+      async tempfile(name) {
+        const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_fs'));
+        leftovers.add(tempDir);
+        return path.join(tempDir, name);
+      },
+      write(filePath, content) {
+        return fs.writeFile(filePath, content, 'utf-8');
+      },
+    },
+    spawn(command) {
+      const [cmd, ...args] = command.split(' ');
+      return spawn({ cwd }, cmd, ...args);
     },
     async serve(opts) {
-      const { port = await getAvailablePort(), fusiongraph } = opts || {};
+      const { port = await getAvailablePort(), fusiongraph, supergraph } = opts || {};
       const [proc, waitForExit] = await spawn(
         { cwd },
         'node',
@@ -151,6 +167,7 @@ export function createTenv(cwd: string): Tenv {
         path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
         createPortArg(port),
         fusiongraph && createArg('fusiongraph', fusiongraph),
+        supergraph && createArg('supergraph', supergraph),
       );
       const serve: Serve = {
         ...proc,

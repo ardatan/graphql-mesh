@@ -4,8 +4,9 @@ import { parse } from 'graphql';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
+import { Args } from '@e2e/args';
 
-const typeDefs = parse(readFileSync(join(__dirname, './typeDefs.graphql'), 'utf8'));
+const typeDefs = parse(readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf8'));
 
 const resolvers = {
   Product: {
@@ -32,14 +33,6 @@ const server = new ApolloServer({
   ]),
 });
 
-export const productsServer = () =>
-  startStandaloneServer(server, { listen: { port: 9873 } }).then(({ url }) => {
-    if (!process.env.CI) {
-      console.log(`🚀 Server ready at ${url}`);
-    }
-    return server;
-  });
-
 const products = [
   {
     upc: '1',
@@ -60,3 +53,10 @@ const products = [
     weight: 50,
   },
 ];
+
+const args = Args(process.argv);
+
+startStandaloneServer(server, { listen: { port: args.getServicePort('products') } }).catch(err => {
+  console.error(err);
+  process.exit(1);
+});

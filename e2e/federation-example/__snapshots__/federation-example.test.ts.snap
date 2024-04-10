@@ -1,0 +1,183 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose supergraph with rover 1`] = `
+"schema
+  @core(feature: "https://specs.apollo.dev/core/v0.2"),
+  @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
+{
+  query: Query
+}
+
+directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
+
+directive @join__field(graph: join__Graph, provides: join__FieldSet, requires: join__FieldSet) on FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__owner(graph: join__Graph!) on INTERFACE | OBJECT
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on INTERFACE | OBJECT
+
+type Product
+  @join__owner(graph: PRODUCTS)
+  @join__type(graph: PRODUCTS, key: "upc")
+  @join__type(graph: INVENTORY, key: "upc")
+  @join__type(graph: REVIEWS, key: "upc")
+{
+  inStock: Boolean @join__field(graph: INVENTORY)
+  name: String @join__field(graph: PRODUCTS)
+  price: Int @join__field(graph: PRODUCTS)
+  reviews: [Review] @join__field(graph: REVIEWS)
+  shippingEstimate: Int @join__field(graph: INVENTORY, requires: "price weight")
+  upc: String! @join__field(graph: PRODUCTS)
+  weight: Int @join__field(graph: PRODUCTS)
+}
+
+type Query {
+  me: User @join__field(graph: ACCOUNTS)
+  topProducts(first: Int = 5): [Product] @join__field(graph: PRODUCTS)
+  user(id: ID!): User @join__field(graph: ACCOUNTS)
+  users: [User] @join__field(graph: ACCOUNTS)
+}
+
+type Review
+  @join__owner(graph: REVIEWS)
+  @join__type(graph: REVIEWS, key: "id")
+{
+  author: User @join__field(graph: REVIEWS, provides: "username")
+  body: String @join__field(graph: REVIEWS)
+  id: ID! @join__field(graph: REVIEWS)
+  product: Product @join__field(graph: REVIEWS)
+}
+
+type User
+  @join__owner(graph: ACCOUNTS)
+  @join__type(graph: ACCOUNTS, key: "id")
+  @join__type(graph: REVIEWS, key: "id")
+{
+  id: ID! @join__field(graph: ACCOUNTS)
+  name: String @join__field(graph: ACCOUNTS)
+  reviews: [Review] @join__field(graph: REVIEWS)
+  username: String @join__field(graph: ACCOUNTS)
+}
+
+enum core__Purpose {
+  """
+  \`EXECUTION\` features provide metadata necessary to for operation execution.
+  """
+  EXECUTION
+
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+}
+
+scalar join__FieldSet
+
+enum join__Graph {
+  ACCOUNTS @join__graph(name: "accounts" url: "http://0.0.0.0:<accounts>/graphql")
+  INVENTORY @join__graph(name: "inventory" url: "http://0.0.0.0:<inventory>/graphql")
+  PRODUCTS @join__graph(name: "products" url: "http://0.0.0.0:<products>/graphql")
+  REVIEWS @join__graph(name: "reviews" url: "http://0.0.0.0:<reviews>/graphql")
+}
+
+"
+`;
+
+exports[`should execute TestQuery 1`] = `
+{
+  "data": {
+    "topProducts": [
+      {
+        "inStock": true,
+        "name": "Table",
+        "price": 899,
+        "shippingEstimate": 50,
+        "upc": "1",
+        "weight": 100,
+      },
+      {
+        "inStock": false,
+        "name": "Couch",
+        "price": 1299,
+        "shippingEstimate": 0,
+        "upc": "2",
+        "weight": 1000,
+      },
+      {
+        "inStock": true,
+        "name": "Chair",
+        "price": 54,
+        "shippingEstimate": 25,
+        "upc": "3",
+        "weight": 50,
+      },
+    ],
+    "users": [
+      {
+        "id": "1",
+        "name": "Ada Lovelace",
+        "username": "@ada",
+      },
+      {
+        "id": "2",
+        "name": "Alan Turing",
+        "username": "@complete",
+      },
+    ],
+  },
+  "errors": [
+    {
+      "extensions": {
+        "code": "GRAPHQL_VALIDATION_FAILED",
+        "planNodeId": 3,
+      },
+      "message": "Field "product" of type "Product" must have a selection of subfields. Did you mean "product { ... }"?",
+      "path": [
+        "topProducts",
+      ],
+    },
+    {
+      "extensions": {
+        "code": "GRAPHQL_VALIDATION_FAILED",
+        "planNodeId": 3,
+      },
+      "message": "Field "product" of type "Product" must have a selection of subfields. Did you mean "product { ... }"?",
+      "path": [
+        "topProducts",
+      ],
+    },
+    {
+      "extensions": {
+        "code": "GRAPHQL_VALIDATION_FAILED",
+        "planNodeId": 1,
+      },
+      "message": "Field "product" of type "Product" must have a selection of subfields. Did you mean "product { ... }"?",
+      "path": [
+        "users",
+      ],
+    },
+    {
+      "extensions": {
+        "code": "GRAPHQL_VALIDATION_FAILED",
+        "planNodeId": 1,
+      },
+      "message": "Field "product" of type "Product" must have a selection of subfields. Did you mean "product { ... }"?",
+      "path": [
+        "users",
+      ],
+    },
+    {
+      "extensions": {
+        "code": "GRAPHQL_VALIDATION_FAILED",
+        "planNodeId": 3,
+      },
+      "message": "Field "product" of type "Product" must have a selection of subfields. Did you mean "product { ... }"?",
+      "path": [
+        "topProducts",
+      ],
+    },
+  ],
+}
+`;
