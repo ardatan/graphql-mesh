@@ -19,10 +19,9 @@ export const yoga = createYoga({
     resolvers: {
       Query: {
         pet_by_id: async (_root, args, _context, _info) => {
-          await new Promise(resolve => setTimeout(resolve, 1000));
           return {
             id: args.id,
-            vaccinated: Math.random() > 0.5,
+            vaccinated: false,
           };
         },
       },
