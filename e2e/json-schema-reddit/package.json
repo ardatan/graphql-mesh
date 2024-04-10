@@ -1,0 +1,10 @@
+{
+  "name": "@e2e/reddit-example",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@omnigraph/json-schema": "workspace:*",
+    "graphql": "16.8.1"
+  }
+}
