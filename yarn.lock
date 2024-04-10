@@ -3684,6 +3684,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions":
+  version: 0.0.0-use.local
+  resolution: "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-mesh/utils": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fets: "npm:^0.8.0"
+    graphql: "npm:16.8.1"
+    url-join: "npm:^5.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/soap-demo@workspace:e2e/soap-demo":
   version: 0.0.0-use.local
   resolution: "@e2e/soap-demo@workspace:e2e/soap-demo"
@@ -5890,7 +5904,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/utils@npm:^0.97.5, @graphql-mesh/utils@workspace:packages/legacy/utils":
+"@graphql-mesh/utils@npm:^0.97.5, @graphql-mesh/utils@workspace:*, @graphql-mesh/utils@workspace:packages/legacy/utils":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/utils@workspace:packages/legacy/utils"
   dependencies:
@@ -11416,22 +11430,6 @@ __metadata:
     "@omnigraph/mysql": "npm:^0.1.5"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/openapi-subscriptions@workspace:examples/v1-next/openapi-subscriptions":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/openapi-subscriptions@workspace:examples/v1-next/openapi-subscriptions"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.89.9"
-    "@graphql-mesh/openapi": "npm:0.99.6"
-    "@whatwg-node/fetch": "npm:^0.9.0"
-    concurrently: "npm:8.2.2"
-    fets: "npm:^0.8.0"
-    graphql: "npm:16.8.1"
-    ts-node: "npm:^10.9.2"
-    ts-node-dev: "npm:2.0.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -34176,6 +34174,13 @@ __metadata:
   version: 4.0.1
   resolution: "url-join@npm:4.0.1"
   checksum: 10c0/ac65e2c7c562d7b49b68edddcf55385d3e922bc1dd5d90419ea40b53b6de1607d1e45ceb71efb9d60da02c681d13c6cb3a1aa8b13fc0c989dfc219df97ee992d
+  languageName: node
+  linkType: hard
+
+"url-join@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "url-join@npm:5.0.0"
+  checksum: 10c0/ed2b166b4b5a98adcf6828a48b6bd6df1dac4c8a464a73cf4d8e2457ed410dd8da6be0d24855b86026cd7f5c5a3657c1b7b2c7a7c5b8870af17635a41387b04c
   languageName: node
   linkType: hard
 

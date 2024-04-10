@@ -70,4 +70,5 @@ module.exports = {
   },
   resolver: 'bob-the-bundler/jest-resolver',
   testMatch,
+  prettierPath: null,
 };
