@@ -9642,8 +9642,8 @@ __metadata:
   linkType: hard
 
 "@theguild/components@npm:^6.4.0":
-  version: 6.5.1
-  resolution: "@theguild/components@npm:6.5.1"
+  version: 6.5.2
+  resolution: "@theguild/components@npm:6.5.2"
   dependencies:
     "@giscus/react": "npm:3.0.0"
     "@next/bundle-analyzer": "npm:13.4.2"
@@ -9655,13 +9655,12 @@ __metadata:
     react-paginate: "npm:8.2.0"
     react-player: "npm:2.16.0"
     remark-mdx-disable-explicit-jsx: "npm:0.1.0"
-    search-insights: "npm:2.13.0"
     semver: "npm:^7.3.8"
   peerDependencies:
     next: ^13 || ^14
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/48793f0d351420f8f5290148b0b1c9a390576080a7a98ba91d725fb9180cafd9abbf1325b5985d4a7f6281b5151a3391955cfa9c4d65c1adebe428ef5f5df805
+  checksum: 10c0/9a2922b1f252913ee0acc844f5f94415e519039fc698e691a4f850518ffc72018042a668681fdb8fb24da4ec47822207a5c1040eb024fa532b591fc13577b8be
   languageName: node
   linkType: hard
 
@@ -30898,13 +30897,6 @@ __metadata:
   dependencies:
     compute-scroll-into-view: "npm:^3.0.2"
   checksum: 10c0/1f46b090e1e04fcfdef1e384f6d7e615f9f84d4176faf4dbba7347cc0a6e491e5d578eaf4dbe9618dd3d8d38efafde58535b3e00f2a21ce4178c14be364850ff
-  languageName: node
-  linkType: hard
-
-"search-insights@npm:2.13.0":
-  version: 2.13.0
-  resolution: "search-insights@npm:2.13.0"
-  checksum: 10c0/9235cc25e45bd3602edf1337aa43a89152575eda82bbec4f6fa7c8f61f45c788948e1ed6cfb26e986811307b7e83a56892fb3fbc77a84cfea3d84cd4cf0ad2b3
   languageName: node
   linkType: hard
 
