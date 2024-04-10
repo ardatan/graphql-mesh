@@ -3684,6 +3684,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/soap-demo@workspace:e2e/soap-demo":
+  version: 0.0.0-use.local
+  resolution: "@e2e/soap-demo@workspace:e2e/soap-demo"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/soap": "workspace:*"
+    graphql: "npm:16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/sqlite-chinook@workspace:e2e/sqlite-chinook":
   version: 0.0.0-use.local
   resolution: "@e2e/sqlite-chinook@workspace:e2e/sqlite-chinook"
@@ -8374,7 +8385,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/soap@npm:0.97.5, @omnigraph/soap@npm:^0.97.5, @omnigraph/soap@workspace:packages/loaders/soap":
+"@omnigraph/soap@npm:0.97.5, @omnigraph/soap@workspace:*, @omnigraph/soap@workspace:packages/loaders/soap":
   version: 0.0.0-use.local
   resolution: "@omnigraph/soap@workspace:packages/loaders/soap"
   dependencies:
@@ -11455,17 +11466,6 @@ __metadata:
     "@graphql-mesh/compose-cli": "npm:^0.2.5"
     "@graphql-mesh/serve-cli": "npm:^0.3.16"
     "@omnigraph/json-schema": "npm:^0.99.6"
-    graphql: "npm:16.8.1"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/soap-demo@workspace:examples/v1-next/soap-demo":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/soap-demo@workspace:examples/v1-next/soap-demo"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@omnigraph/soap": "npm:^0.97.5"
     graphql: "npm:16.8.1"
   languageName: unknown
   linkType: soft
