@@ -1,7 +1,0 @@
-{
-  "template": "node",
-  "container": {
-    "node": "16",
-    "port": 4000
-  }
-}

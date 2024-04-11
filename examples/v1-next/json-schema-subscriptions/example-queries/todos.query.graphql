@@ -1,7 +1,0 @@
-query getTodos @live {
-  todos {
-    id
-    name
-    content
-  }
-}
