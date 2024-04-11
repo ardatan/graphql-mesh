@@ -7,7 +7,6 @@
     "analyze": "cross-env ANALYZE=true next build",
     "build": "next build && next-sitemap",
     "dev": "next",
-    "next": "next",
     "start": "next start"
   },
   "dependencies": {
