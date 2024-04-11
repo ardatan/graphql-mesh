@@ -3571,7 +3571,6 @@ __metadata:
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
-    "@graphql-yoga/plugin-defer-stream": "npm:^3.1.1"
     "@omnigraph/openapi": "workspace:*"
     graphql: "npm:^16.8.1"
     graphql-yoga: "npm:^5.1.1"
@@ -6635,18 +6634,6 @@ __metadata:
   dependencies:
     tslib: "npm:^2.5.2"
   checksum: 10c0/1489588485c9974aba66c0e5002a1251085771b0703ac1aaa2a3df93b895fc57f7cf6203680ff453b304d4ba438ea6a4cc9999d13a4bf6fd5128f3f088ff927b
-  languageName: node
-  linkType: hard
-
-"@graphql-yoga/plugin-defer-stream@npm:^3.1.1":
-  version: 3.3.0
-  resolution: "@graphql-yoga/plugin-defer-stream@npm:3.3.0"
-  dependencies:
-    "@graphql-tools/utils": "npm:^10.0.0"
-  peerDependencies:
-    graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.3.0
-  checksum: 10c0/4a97932c5b7df5341145342f5bda24febf16d746226d38bde0a0624ace8e666a80bbc70f7899db24e24c213f2e3514d9b22f214f63afa89b1f53ddd7a305cc7d
   languageName: node
   linkType: hard
 

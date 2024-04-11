@@ -12,7 +12,6 @@ import {
  */
 
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
-import { useDeferStream } from '@graphql-yoga/plugin-defer-stream';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 const args = Args(process.argv);
@@ -68,8 +67,4 @@ export const serveConfig = defineServeConfig({
       }
     `,
   },
-  plugins: () => [
-    // @ts-expect-error TODO: TPluginContext should not extend Record<string, unknown>
-    useDeferStream(),
-  ],
 });
