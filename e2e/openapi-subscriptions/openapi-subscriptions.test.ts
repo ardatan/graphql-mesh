@@ -12,7 +12,7 @@ it('should compose the appropriate schema', async () => {
 
 it('should listen for webhooks', async () => {
   const { target } = await compose({ target: 'graphql', services: [await service('api')] });
-  const { execute, fetch, port } = await serve({ fusiongraph: target });
+  const { execute, port } = await serve({ fusiongraph: target });
 
   const res = await execute({
     query: /* GraphQL */ `
@@ -31,7 +31,7 @@ it('should listen for webhooks', async () => {
 
   expect(subscriptionId).toBeTruthy();
 
-  const sub = await fetch('/graphql', {
+  const sub = await fetch(`http://0.0.0.0:${port}/graphql`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -50,6 +50,8 @@ it('should listen for webhooks', async () => {
       },
     }),
   });
+
+  expect(sub.ok).toBeTruthy();
 
   let body = '';
   let i = 0;

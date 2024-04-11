@@ -58,7 +58,6 @@ export interface Serve extends Server {
     variables?: Record<string, unknown>;
     operationName?: string;
   }): Promise<ExecutionResult<any>>;
-  fetch(pathname: string, init: RequestInit): Promise<Response>;
 }
 
 export interface Service extends Server {
@@ -188,15 +187,6 @@ export function createTenv(cwd: string): Tenv {
             throw err;
           }
           return await res.json();
-        },
-        async fetch(pathname, init) {
-          const res = await fetch(`http://0.0.0.0:${port}${pathname}`, init);
-          if (!res.ok) {
-            const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
-            err.name = 'ResponseError';
-            throw err;
-          }
-          return res;
         },
       };
       const ctrl = new AbortController();
