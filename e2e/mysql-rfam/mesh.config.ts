@@ -1,10 +1,12 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { Args } from '@e2e/args';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadMySQLSubgraph } from '@omnigraph/mysql';
 
+const args = Args(process.argv);
+
 export const composeConfig = defineComposeConfig({
+  target: args.get('target'),
   subgraphs: [
     {
       sourceHandler: loadMySQLSubgraph('Rfam', {
@@ -15,8 +17,6 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const serveConfig = defineServeConfig({
-  fusiongraph: './fusiongraph.graphql',
-  graphiql: {
-    defaultQuery: readFileSync(join(__dirname, './example-query.graphql'), 'utf8'),
-  },
+  port: args.getPort(),
+  fusiongraph: args.get('fusiongraph'),
 });

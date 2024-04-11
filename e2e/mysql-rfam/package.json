@@ -1,0 +1,10 @@
+{
+  "name": "@e2e/mysql-rfam",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@omnigraph/mysql": "workspace:*",
+    "graphql": "16.8.1"
+  }
+}

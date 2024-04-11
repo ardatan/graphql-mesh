@@ -3660,6 +3660,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/mysql-rfam@workspace:e2e/mysql-rfam":
+  version: 0.0.0-use.local
+  resolution: "@e2e/mysql-rfam@workspace:e2e/mysql-rfam"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/mysql": "workspace:*"
+    graphql: "npm:16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/neo4j-example@workspace:e2e/neo4j-example":
   version: 0.0.0-use.local
   resolution: "@e2e/neo4j-example@workspace:e2e/neo4j-example"
@@ -11415,19 +11426,6 @@ __metadata:
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/mysql-rfam@workspace:examples/v1-next/mysql-rfam":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/mysql-rfam@workspace:examples/v1-next/mysql-rfam"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@omnigraph/mysql": "npm:^0.1.5"
-    graphql: "npm:16.8.1"
-    jest: "npm:29.7.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
