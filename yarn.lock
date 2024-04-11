@@ -5125,7 +5125,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-live-query@npm:0.97.5, @graphql-mesh/plugin-live-query@npm:^0.97.5, @graphql-mesh/plugin-live-query@workspace:packages/plugins/live-query":
+"@graphql-mesh/plugin-live-query@npm:0.97.5, @graphql-mesh/plugin-live-query@workspace:packages/plugins/live-query":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-live-query@workspace:packages/plugins/live-query"
   dependencies:
@@ -11408,24 +11408,6 @@ __metadata:
     "@omnigraph/json-schema": "npm:^0.99.6"
     "@types/node": "npm:^20.10.6"
     graphql: "npm:^16.8.1"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/json-schema-subscriptions@workspace:examples/v1-next/json-schema-subscriptions":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/json-schema-subscriptions@workspace:examples/v1-next/json-schema-subscriptions"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.2.5"
-    "@graphql-mesh/plugin-live-query": "npm:^0.97.5"
-    "@graphql-mesh/serve-cli": "npm:^0.3.16"
-    "@omnigraph/json-schema": "npm:^0.99.6"
-    "@whatwg-node/fetch": "npm:^0.9.0"
-    concurrently: "npm:8.2.2"
-    fets: "npm:^0.8.0"
-    graphql: "npm:16.8.1"
-    ts-node: "npm:^10.9.2"
-    ts-node-dev: "npm:2.0.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
