@@ -9568,16 +9568,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/tailwind-config@npm:0.4.0":
-  version: 0.4.0
-  resolution: "@theguild/tailwind-config@npm:0.4.0"
+"@theguild/tailwind-config@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@theguild/tailwind-config@npm:0.4.1"
   dependencies:
     autoprefixer: "npm:^10.4.19"
     cssnano: "npm:^6.1.2"
     postcss: "npm:^8.4.38"
     postcss-import: "npm:^16.1.0"
     tailwindcss: "npm:^3.4.3"
-  checksum: 10c0/b7d49e3649fdffd1e9d772dd24a9cc8273789680f68a4d3f2a95d470ea4f383e0b0ee46db9a81c6690bc124540097faba0c9e72105710be66fb1f83eea442dee
+  checksum: 10c0/9edeb131a3d94c4c88af67e9adac1b336c12db0b7b322bc6a65e12cfd95abdc1ef8501e34a86f203d0d270ae62a429139b7e114fcd374fd8e39cc7bc59a43715
   languageName: node
   linkType: hard
 
@@ -34502,7 +34502,7 @@ __metadata:
   resolution: "website@workspace:website"
   dependencies:
     "@theguild/components": "npm:^6.5.3"
-    "@theguild/tailwind-config": "npm:0.4.0"
+    "@theguild/tailwind-config": "npm:0.4.1"
     "@types/node": "npm:20.12.7"
     "@types/react": "npm:18.2.75"
     cross-env: "npm:7.0.3"
