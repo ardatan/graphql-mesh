@@ -60,6 +60,20 @@ export interface Serve extends Server {
   }): Promise<ExecutionResult<any>>;
 }
 
+export interface ServiceOptions {
+  /**
+   * Custom port of this service.
+   *
+   * @default getAvailablePort()
+   */
+  port?: number;
+  /**
+   * Custom port of the serve instance.
+   * Is set to the `--port` argument (available under `Args.getPort()`).
+   */
+  servePort?: number;
+}
+
 export interface Service extends Server {
   name: string;
 }
@@ -131,7 +145,7 @@ export interface Tenv {
    * The TypeScript service executable must be at `services/<name>.ts` or `services/<name>/index.ts`.
    * Port will be provided as an argument `--<name>_port=<port>` to the service.
    */
-  service(name: string, port?: number): Promise<Service>;
+  service(name: string, opts?: ServiceOptions): Promise<Service>;
   container(opts: ContainerOptions): Promise<Container>;
 }
 
@@ -253,7 +267,7 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, target, result };
     },
-    async service(name, port) {
+    async service(name, { port, servePort } = {}) {
       port ||= await getAvailablePort();
       const [proc, waitForExit] = await spawn(
         { cwd },
@@ -262,6 +276,7 @@ export function createTenv(cwd: string): Tenv {
         'tsx',
         path.join(cwd, 'services', name),
         createServicePortArg(name, port),
+        servePort && createPortArg(servePort),
       );
       const service: Service = { ...proc, name, port };
       const ctrl = new AbortController();
@@ -459,7 +474,7 @@ function spawn(
   });
 }
 
-function getAvailablePort(): Promise<number> {
+export function getAvailablePort(): Promise<number> {
   const server = createServer();
   server.listen(0);
   const { port } = server.address() as AddressInfo;

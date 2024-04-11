@@ -1,0 +1,65 @@
+schema @transport(subgraph: "API", kind: "rest", location: "http://0.0.0.0:4001", headers: "{\"Content-Type\":\"application/json\"}") {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+
+directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @live on QUERY
+
+type Query {
+  todos: [query_todos_items] @httpOperation(subgraph: "API", path: "/todos", httpMethod: GET) @resolver(subgraph: "API", operation: "query todos { todos }") @source(subgraph: "API", name: "todos", type: "[query_todos_items]")
+}
+
+type query_todos_items @source(subgraph: "API", name: "query_todos_items") {
+  id: Int @source(subgraph: "API", name: "id", type: "Int")
+  name: String @source(subgraph: "API", name: "name", type: "String")
+  content: String @source(subgraph: "API", name: "content", type: "String")
+}
+
+type Mutation {
+  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST) @resolver(subgraph: "API", operation: "mutation mutationaddTodo($input: mutationInput_addTodo_input_Input) { addTodo(input: $input) }") @source(subgraph: "API", name: "addTodo", type: "mutation_addTodo")
+}
+
+type mutation_addTodo @example(subgraph: "API", value: "\"{\\\"id\\\":0,\\\"name\\\":\\\"TodoName\\\",\\\"content\\\":\\\"TodoContent\\\"}\"") @source(subgraph: "API", name: "mutation_addTodo") {
+  id: Int @source(subgraph: "API", name: "id", type: "Int")
+  name: String @source(subgraph: "API", name: "name", type: "String")
+  content: String @source(subgraph: "API", name: "content", type: "String")
+}
+
+input mutationInput_addTodo_input_Input @example(subgraph: "API", value: "\"{\\\"name\\\":\\\"TodoName\\\",\\\"content\\\":\\\"TodoContent\\\"}\"") @source(subgraph: "API", name: "mutationInput_addTodo_input_Input") {
+  name: String @source(subgraph: "API", name: "name", type: "String")
+  content: String @source(subgraph: "API", name: "content", type: "String")
+}
+
+type Subscription {
+  """PubSub Topic: webhook:post:/webhooks/todo_added"""
+  todoAdded: subscription_todoAdded @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added") @resolver(subgraph: "API", operation: "subscription subscriptiontodoAdded { todoAdded }") @source(subgraph: "API", name: "todoAdded", type: "subscription_todoAdded")
+}
+
+type subscription_todoAdded @example(subgraph: "API", value: "\"{\\\"id\\\":0,\\\"name\\\":\\\"TodoName\\\",\\\"content\\\":\\\"TodoContent\\\"}\"") @source(subgraph: "API", name: "subscription_todoAdded") {
+  id: Int @source(subgraph: "API", name: "id", type: "Int")
+  name: String @source(subgraph: "API", name: "name", type: "String")
+  content: String @source(subgraph: "API", name: "content", type: "String")
+}
+
+scalar ObjMap @source(subgraph: "API", name: "ObjMap") @source(subgraph: "API", name: "ObjMap")
+
+enum HTTPMethod @source(subgraph: "API", name: "HTTPMethod") {
+  GET @source(subgraph: "API", name: "GET")
+  HEAD @source(subgraph: "API", name: "HEAD")
+  POST @source(subgraph: "API", name: "POST")
+  PUT @source(subgraph: "API", name: "PUT")
+  DELETE @source(subgraph: "API", name: "DELETE")
+  CONNECT @source(subgraph: "API", name: "CONNECT")
+  OPTIONS @source(subgraph: "API", name: "OPTIONS")
+  TRACE @source(subgraph: "API", name: "TRACE")
+  PATCH @source(subgraph: "API", name: "PATCH")
+}
