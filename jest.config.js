@@ -41,9 +41,9 @@ if (process.version.startsWith('v21.')) {
   console.warn('Skipping SQLite Chinook tests because Node v21 is not supported yet');
   testMatch.push('!**/examples/sqlite-chinook/**');
 }
-const ESM_PACKAGES = ['prettier'];
 
 module.exports = {
+  prettierPath: null, // not supported before Jest v30 https://github.com/jestjs/jest/issues/14305
   testEnvironment: 'node',
   rootDir: ROOT_DIR,
   restoreMocks: true,
@@ -55,7 +55,6 @@ module.exports = {
       prefix: `${ROOT_DIR}/`,
     }),
     'formdata-node': '<rootDir>/node_modules/formdata-node/lib/cjs/index.js',
-    prettier: '<rootDir>/node_modules/prettier/index.mjs',
   },
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
@@ -63,7 +62,6 @@ module.exports = {
   transform: {
     '^.+\\.m?(t|j)s?$': 'babel-jest',
   },
-  transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
   resolver: 'bob-the-bundler/jest-resolver',
   testMatch,
 };
