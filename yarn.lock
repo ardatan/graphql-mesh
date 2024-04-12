@@ -3679,6 +3679,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-mesh/utils": "workspace:*"
     "@omnigraph/mysql": "workspace:*"
     graphql: "npm:16.8.1"
   languageName: unknown
