@@ -3689,7 +3689,8 @@ __metadata:
   resolution: "@e2e/neo4j-example@workspace:e2e/neo4j-example"
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
-    "@graphql-mesh/fusion-runtime": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-mesh/utils": "workspace:*"
     "@omnigraph/neo4j": "workspace:*"
     graphql: "npm:^16.8.1"
   languageName: unknown

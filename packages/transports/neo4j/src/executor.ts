@@ -120,6 +120,10 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
       await driver.close();
       logger?.debug('Neo4j closed');
     });
+  } else {
+    logger?.warn(
+      'FIXME: No pubsub provided for neo4j executor, so the connection will never be closed',
+    );
   }
   const neo4jGraphQL = new Neo4jGraphQL({
     typeDefs,

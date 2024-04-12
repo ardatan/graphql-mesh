@@ -1,7 +1,13 @@
-import { defineConfig } from '@graphql-mesh/compose-cli';
+import { Args } from '@e2e/args';
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
+import { PubSub } from '@graphql-mesh/utils';
 import { loadNeo4JSubgraph } from '@omnigraph/neo4j';
 
-export const composeConfig = defineConfig({
+const args = Args(process.argv);
+
+export const composeConfig = defineComposeConfig({
+  target: args.get('target'),
   subgraphs: [
     {
       sourceHandler: loadNeo4JSubgraph('Movies', {
@@ -15,4 +21,10 @@ export const composeConfig = defineConfig({
       }),
     },
   ],
+});
+
+export const serveConfig = defineServeConfig({
+  port: args.getPort(),
+  fusiongraph: args.get('fusiongraph'),
+  pubsub: new PubSub(),
 });

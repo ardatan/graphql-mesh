@@ -3149,7 +3149,5 @@ exports[`should execute MovieWithActedIn 1`] = `
       },
     ],
   },
-  "errors": undefined,
-  "extensions": undefined,
 }
 `;
