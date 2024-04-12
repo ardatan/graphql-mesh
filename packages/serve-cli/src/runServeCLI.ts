@@ -52,6 +52,13 @@ export async function runServeCLI({
   const meshServeCLIConfig = loadedConfig.serveConfig || defaultConfig;
   workerLogger.info(`Loaded configuration from ${meshServeCLIConfigRelativePath}`);
 
+  if (meshServeCLIConfig.pubsub) {
+    registerTerminateHandler(eventName => {
+      workerLogger.info(`Destroying pubsub for ${eventName}`);
+      meshServeCLIConfig.pubsub.publish('destroy', undefined);
+    });
+  }
+
   let unifiedGraphPath: UnifiedGraphConfig;
   let spec: 'federation' | 'fusion';
 
