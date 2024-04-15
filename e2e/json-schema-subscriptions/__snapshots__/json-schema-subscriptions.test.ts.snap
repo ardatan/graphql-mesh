@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @transport(subgraph: "API", kind: "rest", location: "http://localhost:56909", headers: "{\\"Content-Type\\":\\"application/json\\"}") {
+"schema @transport(subgraph: "API", kind: "rest", location: "http://0.0.0.0:<api_port>", headers: "{\\"Content-Type\\":\\"application/json\\"}") {
   query: Query
   mutation: Mutation
   subscription: Subscription

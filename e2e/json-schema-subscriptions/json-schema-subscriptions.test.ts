@@ -3,15 +3,15 @@ import { createTenv, getAvailablePort } from '@e2e/tenv';
 const { compose, serve, service } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
-  const { result } = await compose({ services: [await service('api')] });
+  const { result } = await compose({ services: [await service('api')], maskServicePorts: true });
   expect(result).toMatchSnapshot();
 });
 
-it.only('should query, mutate and subscribe', async () => {
+it('should query, mutate and subscribe', async () => {
   const servePort = await getAvailablePort();
   const api = await service('api', { servePort });
   const { target } = await compose({ target: 'graphql', services: [api] });
-  const { execute, getStd } = await serve({ fusiongraph: target, port: servePort });
+  const { execute } = await serve({ fusiongraph: target, port: servePort });
 
   await expect(
     execute({
