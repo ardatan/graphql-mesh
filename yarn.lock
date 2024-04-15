@@ -4630,7 +4630,7 @@ __metadata:
   resolution: "@graphql-mesh/json-schema@workspace:packages/legacy/handlers/json-schema"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:0.5.3"
-    "@json-schema-tools/meta-schema": "npm:1.7.0"
+    "@json-schema-tools/meta-schema": "npm:1.7.4"
     "@omnigraph/json-schema": "npm:0.99.6"
     graphql-compose: "npm:9.0.10"
     json-machete: "npm:0.97.1"
@@ -7357,10 +7357,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@json-schema-tools/meta-schema@npm:1.7.0":
-  version: 1.7.0
-  resolution: "@json-schema-tools/meta-schema@npm:1.7.0"
-  checksum: 10c0/058051df647d30a6164da5a09c4aa3a81248467624f6579756af6f607ae2b609e51120f303d851cd63bc5b1a87891e2ca460fb77210376b44aecc0ad8dfb3651
+"@json-schema-tools/meta-schema@npm:1.7.4":
+  version: 1.7.4
+  resolution: "@json-schema-tools/meta-schema@npm:1.7.4"
+  checksum: 10c0/4f0fe494c7a09458aad07215754db6c1f17ed353e6da04fafc00b6f9d8c2e14412114072806e71c796ed7608fc232da267fe3483edb126bbce1d136577c85d95
   languageName: node
   linkType: hard
 
@@ -8012,7 +8012,7 @@ __metadata:
     "@graphql-mesh/transport-common": "npm:^0.1.5"
     "@graphql-mesh/transport-rest": "npm:^0.1.6"
     "@graphql-tools/delegate": "npm:^10.0.3"
-    "@json-schema-tools/meta-schema": "npm:1.7.0"
+    "@json-schema-tools/meta-schema": "npm:1.7.4"
     "@types/qs": "npm:6.9.14"
     "@types/to-json-schema": "npm:0.2.4"
     "@types/url-join": "npm:4.0.3"
@@ -22577,7 +22577,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "json-machete@workspace:packages/json-machete"
   dependencies:
-    "@json-schema-tools/meta-schema": "npm:1.7.0"
+    "@json-schema-tools/meta-schema": "npm:1.7.4"
     "@types/json-pointer": "npm:1.0.34"
     cross-inspect: "npm:1.0.0"
     json-pointer: "npm:0.6.2"
