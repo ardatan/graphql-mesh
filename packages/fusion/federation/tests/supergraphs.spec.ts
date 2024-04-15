@@ -3,6 +3,8 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { parse } from 'graphql';
+import { createYoga } from 'graphql-yoga';
+import { buildSubgraphSchema } from '@apollo/subgraph';
 import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -16,17 +18,27 @@ describe('Supergraphs', () => {
     );
     const fusiongraph = convertSupergraphToFusiongraph(supergraphSdl);
     describe(supergraph, () => {
-      it('fusiongraph', async () => {
+      it('Fusiongraph', async () => {
         expect(printSchemaWithDirectives(fusiongraph)).toMatchSnapshot('fusiongraph');
       });
+      const serviceServers = {};
+      const fixturePath = join(__dirname, 'fixtures', 'supergraphs', supergraph, 'services')
+      readdirSync(fixturePath).forEach(
+        serviceName => {
+          const serviceDir = join(fixturePath, serviceName);
+          serviceServers[serviceName] = createYoga({
+            schema: buildSubgraphSchema({
+              typeDefs: parse(require(join(serviceDir, 'typeDefs')).typeDefs),
+              resolvers: require(join(serviceDir, 'resolvers')).resolvers,
+            }),
+          });
+        },
+      );
       const { fusiongraphExecutor } = getExecutorForFusiongraph({
         fusiongraph,
         transports() {
           return {
-            async getSubgraphExecutor({ subgraphName }) {
-              const serviceServers = await import(
-                join(__dirname, 'fixtures', 'supergraphs', supergraph, 'services')
-              );
+            getSubgraphExecutor({ subgraphName }) {
               const serviceServer = serviceServers[subgraphName];
               return buildHTTPExecutor({
                 fetch: serviceServer,
@@ -35,15 +47,18 @@ describe('Supergraphs', () => {
           };
         },
       });
-      it('example query', async () => {
-        const exampleQuery = readFileSync(
-          join(__dirname, 'fixtures', 'supergraphs', supergraph, 'example-query.graphql'),
-          'utf-8',
-        );
-        const result = await fusiongraphExecutor({
-          document: parse(exampleQuery),
+      const { exampleQueries } = require(
+        join(__dirname, 'fixtures', 'supergraphs', supergraph, 'example-queries'),
+      ) as {
+        exampleQueries: Record<string, string>;
+      };
+      Object.entries(exampleQueries).forEach(([name, query]) => {
+        it(`Example Query: ${name}`, async () => {
+          const result = await fusiongraphExecutor({
+            document: parse(query),
+          });
+          expect(result).toMatchSnapshot(`${supergraph}-${name}-result`);
         });
-        expect(result).toMatchSnapshot('example-query-result');
       });
     });
   });
