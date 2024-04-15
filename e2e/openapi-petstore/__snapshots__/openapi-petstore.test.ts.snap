@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @transport(subgraph: "petstore", kind: "rest", location: "/api/v3") {
+"schema @transport(subgraph: "petstore", kind: "rest", location: "http://0.0.0.0:<petstore_port>/api/v3") {
   query: Query
   mutation: Mutation
 }
@@ -257,18 +257,11 @@ enum HTTPMethod @source(subgraph: "petstore", name: "HTTPMethod") {
 exports[`should execute GetPet 1`] = `
 {
   "data": {
-    "getPetById": null,
-  },
-  "errors": [
-    {
-      "extensions": {
-        "planNodeId": 0,
-      },
-      "message": "Unsupported protocol: /api/v3/pet/1",
-      "path": [
-        "getPetById",
-      ],
+    "getPetById": {
+      "__typename": "Pet",
+      "id": 1,
+      "name": "Cat 1",
     },
-  ],
+  },
 }
 `;

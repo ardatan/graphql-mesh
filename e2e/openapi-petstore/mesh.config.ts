@@ -10,6 +10,7 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('petstore', {
+        endpoint: `http://0.0.0.0:${args.getServicePort('petstore')}/api/v3`,
         source: `http://0.0.0.0:${args.getServicePort('petstore')}/api/v3/openapi.json`,
       }),
     },
