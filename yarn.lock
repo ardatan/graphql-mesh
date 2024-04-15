@@ -4218,9 +4218,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/client@npm:^0.30.0":
-  version: 0.30.0
-  resolution: "@graphql-hive/client@npm:0.30.0"
+"@graphql-hive/client@npm:^0.31.0":
+  version: 0.31.0
+  resolution: "@graphql-hive/client@npm:0.31.0"
   dependencies:
     "@apollo/server": "npm:^4.0.0"
     "@envelop/types": "npm:^5.0.0"
@@ -4236,7 +4236,7 @@ __metadata:
       optional: true
     "@envelop/types":
       optional: true
-  checksum: 10c0/036dce0715f9cb0c878ed8ef0ac86ca744b2c7db7c5808b6bbb8decf5ead5d2e38bb0b392d2b197e971353277688bd8c6a1088075421194782e7c02fb431f03c
+  checksum: 10c0/dc8312a01ed5bc2f741d1374931129679aee301dd02cdd00571ae56891501a8eab6ae53aaae41b9842135bba7444b62e66253c2abdbd51433a73738957b337bf
   languageName: node
   linkType: hard
 
@@ -4802,7 +4802,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
-    "@graphql-hive/client": "npm:^0.30.0"
+    "@graphql-hive/client": "npm:^0.31.0"
     "@graphql-mesh/string-interpolation": "npm:0.5.3"
     "@graphql-mesh/utils": "npm:^0.97.5"
   peerDependencies:
@@ -5296,7 +5296,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive"
   dependencies:
-    "@graphql-hive/client": "npm:^0.30.0"
+    "@graphql-hive/client": "npm:^0.31.0"
     "@graphql-mesh/string-interpolation": "npm:^0.5.3"
     "@graphql-tools/delegate": "npm:^10.0.0"
   peerDependencies:
@@ -5446,7 +5446,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-transfer-schema@workspace:packages/legacy/transforms/transfer-schema"
   dependencies:
-    "@types/micromatch": "npm:4.0.6"
+    "@types/micromatch": "npm:4.0.7"
     micromatch: "npm:4.0.5"
   peerDependencies:
     "@graphql-mesh/types": ^0.97.5
@@ -5540,7 +5540,7 @@ __metadata:
     dset: "npm:^3.1.3"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^1.22.4"
-    qs: "npm:6.12.0"
+    qs: "npm:6.12.1"
     url-join: "npm:4.0.1"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.1
@@ -6253,7 +6253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.1.2, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.1, @graphql-tools/utils@npm:^10.0.10, @graphql-tools/utils@npm:^10.0.12, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.0.8, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1":
+"@graphql-tools/utils@npm:10.1.2":
   version: 10.1.2
   resolution: "@graphql-tools/utils@npm:10.1.2"
   dependencies:
@@ -6264,6 +6264,20 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/ae78ef4f6c8e58e0ca4023b66229ddd1263caee58ca8353cc4dca8ded5c751f4f2711ff9fbe830dbd84f05ae850db96c6098012644d47142b34ad2d4e96731ae
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/utils@npm:10.1.3, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.1, @graphql-tools/utils@npm:^10.0.10, @graphql-tools/utils@npm:^10.0.12, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.0.8, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1":
+  version: 10.1.3
+  resolution: "@graphql-tools/utils@npm:10.1.3"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    cross-inspect: "npm:1.0.0"
+    dset: "npm:^3.1.2"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/657e0758b3cfcbccbaa0c5bf81277c03e02bda32070e71e9f7f728ad692893ef0a0c4bc873b6972edf0b96d0d6397df6e55a8db3e2050bd9c00f6a5bf8881858
   languageName: node
   linkType: hard
 
@@ -8025,7 +8039,7 @@ __metadata:
     graphql-scalars: "npm:^1.22.4"
     json-machete: "npm:0.97.1"
     pascal-case: "npm:3.1.2"
-    qs: "npm:6.12.0"
+    qs: "npm:6.12.1"
     to-json-schema: "npm:0.2.5"
     url-join: "npm:4.0.1"
   peerDependencies:
@@ -8083,7 +8097,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.3"
     "@graphql-tools/delegate": "npm:^10.0.3"
-    "@graphql-tools/utils": "npm:10.1.2"
+    "@graphql-tools/utils": "npm:10.1.3"
     "@omnigraph/json-schema": "npm:^0.99.6"
     "@whatwg-node/fetch": "npm:0.9.17"
     change-case: "npm:^4.1.2"
@@ -8170,7 +8184,7 @@ __metadata:
     "@graphql-mesh/transport-thrift": "npm:^0.1.5"
     "@graphql-mesh/types": "npm:^0.97.5"
     "@graphql-mesh/utils": "npm:^0.97.5"
-    "@graphql-tools/utils": "npm:10.1.2"
+    "@graphql-tools/utils": "npm:10.1.3"
     graphql-scalars: "npm:^1.22.4"
     thrift: "npm:^0.20.0"
   peerDependencies:
@@ -10177,12 +10191,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/micromatch@npm:4.0.6":
-  version: 4.0.6
-  resolution: "@types/micromatch@npm:4.0.6"
+"@types/micromatch@npm:4.0.7":
+  version: 4.0.7
+  resolution: "@types/micromatch@npm:4.0.7"
   dependencies:
     "@types/braces": "npm:*"
-  checksum: 10c0/deba87b2bb740cb3f206c006baddc2d3f411fdba48e47452fb189a2a1a73cc3d6f6f2e6f52b970d1383e988afd9f12046e50f902ad740f1f8afa3faa273ab2a0
+  checksum: 10c0/972cdc349b611f18e3e43123865a46c053490f16cbd1d97e95c7d04ff7c8aef69bbae831249518d374e7bc0378e51ba088da9950422fbfced4b5bedde9738d13
   languageName: node
   linkType: hard
 
@@ -10396,16 +10410,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.2.24":
-  version: 18.2.24
-  resolution: "@types/react-dom@npm:18.2.24"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/9ec38e5ab4727c56ef17bd8e938ead88748ba19db314b8d9807714a5cae430f5b799514667b221b4f2dc8d9b4ca17dd1c3da8c41c083c2de9eddcc31bec6b8ff
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:^18.0.0":
+"@types/react-dom@npm:18.2.25, @types/react-dom@npm:^18.0.0":
   version: 18.2.25
   resolution: "@types/react-dom@npm:18.2.25"
   dependencies:
@@ -10414,23 +10419,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
+"@types/react@npm:*, @types/react@npm:18.2.78":
   version: 18.2.78
   resolution: "@types/react@npm:18.2.78"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/5eb8e1dd98c29aeddf40b90f466d1a9ce83b113d42a096633d632b834e7ae9821f24ba7999928de9d98cca37764532a7ea35355a8103a377d8baa750f1841b5c
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:18.2.75":
-  version: 18.2.75
-  resolution: "@types/react@npm:18.2.75"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/3c0d035d64007d38cf1b682108de8c5f042452025899280c5d2c040b9f53b1f81482d0d57fd93e6687c2c619f3b605d33a01569b1fbbbdeec7fb3a56c7a72af8
   languageName: node
   linkType: hard
 
@@ -11069,7 +11064,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.97.6"
     "@graphql-mesh/serve-runtime": "npm:^0.2.12"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.49.0"
+    wrangler: "npm:3.50.0"
   languageName: unknown
   linkType: soft
 
@@ -13520,7 +13515,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.2.12"
     "@omnigraph/json-schema": "npm:^0.99.6"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.49.0"
+    wrangler: "npm:3.50.0"
   languageName: unknown
   linkType: soft
 
@@ -13967,7 +13962,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.99.6"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.6"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.49.0"
+    wrangler: "npm:3.50.0"
   languageName: unknown
   linkType: soft
 
@@ -17008,9 +17003,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:17.2.0":
-  version: 17.2.0
-  resolution: "eslint-plugin-n@npm:17.2.0"
+"eslint-plugin-n@npm:17.2.1":
+  version: 17.2.1
+  resolution: "eslint-plugin-n@npm:17.2.1"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     enhanced-resolve: "npm:^5.15.0"
@@ -17022,7 +17017,7 @@ __metadata:
     semver: "npm:^7.5.3"
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: 10c0/f6ebdd2d6b1c68bba2043d91c2d5e188a0c8c40ec07d298ce3daf073063a65b724187733d70ae3ecff13adc5182bc6f7333f282a795b751cc598bea45ef4fd6f
+  checksum: 10c0/f00ea5de2dcc990be18b719834a1296ede93c66911fc9369a3d2357e0d3fcf23b5c91c7e022c58d88652cd13206a33e40440db035937c059c721098fd5e07e86
   languageName: node
   linkType: hard
 
@@ -18498,8 +18493,8 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.12.7"
-    "@types/react": "npm:18.2.75"
-    "@types/react-dom": "npm:18.2.24"
+    "@types/react": "npm:18.2.78"
+    "@types/react-dom": "npm:18.2.25"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
     react: "npm:18.2.0"
@@ -19322,7 +19317,7 @@ __metadata:
     eslint-config-prettier: "npm:9.1.0"
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.29.1"
-    eslint-plugin-n: "npm:17.2.0"
+    eslint-plugin-n: "npm:17.2.1"
     eslint-plugin-promise: "npm:6.1.1"
     eslint-plugin-standard: "npm:5.0.0"
     globby: "npm:11.1.0"
@@ -25135,9 +25130,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20240405.0":
-  version: 3.20240405.0
-  resolution: "miniflare@npm:3.20240405.0"
+"miniflare@npm:3.20240405.1":
+  version: 3.20240405.1
+  resolution: "miniflare@npm:3.20240405.1"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
@@ -25153,7 +25148,7 @@ __metadata:
     zod: "npm:^3.20.6"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/970f5cccd65fef7f76272949a6d03f473dab2d5d40c28200f1fb5df3634216c5089fdfcaa1067cdbf132a17282d29a81ee64a241a60a7c3fcf9ce6c3ff8e608c
+  checksum: 10c0/ceb724a3b82a7a669330ffe58864baeffb954a7589572c3933a1afc703d24b063b8fe0cd1ce454336f143ce41ff827abb82f8ed81c919d90dc4277b24670aace
   languageName: node
   linkType: hard
 
@@ -25872,7 +25867,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.99.9"
     "@graphql-mesh/openapi": "npm:0.99.6"
     "@graphql-mesh/runtime": "npm:0.98.8"
-    "@types/react": "npm:18.2.75"
+    "@types/react": "npm:18.2.78"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.2.1"
@@ -25890,7 +25885,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.99.9"
     "@graphql-mesh/openapi": "npm:0.99.6"
     "@graphql-mesh/runtime": "npm:0.98.8"
-    "@types/react": "npm:18.2.75"
+    "@types/react": "npm:18.2.78"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.2.1"
@@ -26652,8 +26647,8 @@ __metadata:
   resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.9"
-    "@types/react": "npm:18.2.75"
-    "@types/react-dom": "npm:18.2.24"
+    "@types/react": "npm:18.2.78"
+    "@types/react-dom": "npm:18.2.25"
     "@vitejs/plugin-react": "npm:4.2.1"
     graphql: "npm:16.8.1"
     react: "npm:18.2.0"
@@ -29139,16 +29134,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:6.12.0":
-  version: 6.12.0
-  resolution: "qs@npm:6.12.0"
-  dependencies:
-    side-channel: "npm:^1.0.6"
-  checksum: 10c0/e165a77ac5f3ca60c15c5f3d51b321ddec7aa438804436b29d160117bc6fb7bf7dab94abd0c7d7c0785890d3a75ae41e1d6346e158aaf1540c6fe53a31f11675
-  languageName: node
-  linkType: hard
-
-"qs@npm:^6.11.2, qs@npm:^6.4.0":
+"qs@npm:6.12.1, qs@npm:^6.11.2, qs@npm:^6.4.0":
   version: 6.12.1
   resolution: "qs@npm:6.12.1"
   dependencies:
@@ -31492,7 +31478,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.97.6"
     "@graphql-mesh/plugin-response-cache": "npm:0.97.6"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.49.0"
+    wrangler: "npm:3.50.0"
   languageName: unknown
   linkType: soft
 
@@ -33545,10 +33531,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:6.12.0":
-  version: 6.12.0
-  resolution: "undici@npm:6.12.0"
-  checksum: 10c0/5bbfd261ea20c8ed6bb3a22703acdae80cb40b1de0595a1c4df46f6602db78d7a387174c292c5640e339422acb1bfd1d2e0987ec086c057ccc24806edfd4688b
+"undici@npm:6.13.0":
+  version: 6.13.0
+  resolution: "undici@npm:6.13.0"
+  checksum: 10c0/b1b0456e7d4e87fd4f71a2a0716d8ea826f024fbcf16b7c6185194ca138cb822c20db509ed18c837fffcd9ffc3d74004ad6f950ebc895ff81ebb5ca6bf001cb2
   languageName: node
   linkType: hard
 
@@ -34501,7 +34487,7 @@ __metadata:
     "@theguild/components": "npm:^6.5.3"
     "@theguild/tailwind-config": "npm:0.4.1"
     "@types/node": "npm:20.12.7"
-    "@types/react": "npm:18.2.75"
+    "@types/react": "npm:18.2.78"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.1"
     next: "npm:^14.1.4"
@@ -35034,9 +35020,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.49.0":
-  version: 3.49.0
-  resolution: "wrangler@npm:3.49.0"
+"wrangler@npm:3.50.0":
+  version: 3.50.0
+  resolution: "wrangler@npm:3.50.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.1"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35045,7 +35031,7 @@ __metadata:
     chokidar: "npm:^3.5.3"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20240405.0"
+    miniflare: "npm:3.20240405.1"
     nanoid: "npm:^3.3.3"
     path-to-regexp: "npm:^6.2.0"
     resolve: "npm:^1.22.8"
@@ -35065,7 +35051,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/4542883ae9207a874dffd4fde9ac5f1ddfe28f3723a48e3fe2468c40aad3ffbb6c5c77858d9371d3d8fb9a7bc297df912d95444748f436ae3c92f7fbe67a20ce
+  checksum: 10c0/c7bb8508ce1e03297626e992f1bf76b3e73ee288382f144b0e6ed545b9763a40769a6dab7b0f7d2e4b52e20c1fa5ec0dff1ab466819f1a6f2726ec39fb005ffd
   languageName: node
   linkType: hard
 
