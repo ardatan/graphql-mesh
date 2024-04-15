@@ -262,6 +262,6 @@ scalar join__FieldSet
 
 enum join__Graph {
   DEMO_FEATURES
-    @join__graph(name: "demo-features", url: "http://graphql-demo-features-service/graphql")
-  NODE_RESOLVER @join__graph(name: "node-resolver", url: "http://graphql-node-resolver/graphql")
+    @join__graph(name: "DEMO_FEATURES", url: "http://graphql-demo-features-service/graphql")
+  NODE_RESOLVER @join__graph(name: "NODE_RESOLVER", url: "http://graphql-node-resolver/graphql")
 }

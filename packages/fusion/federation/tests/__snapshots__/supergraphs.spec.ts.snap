@@ -438,8 +438,6 @@ exports[`Supergraphs pb Fusiongraph: fusiongraph 1`] = `
   mutation: Mutation
 }
 
-directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
-
 directive @tag(name: String!) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION
 
 type DemoAuthInfo @source(name: "DemoAuthInfo", subgraph: "DEMO_FEATURES") @source(name: "DemoAuthInfo", subgraph: "NODE_RESOLVER") {
@@ -617,16 +615,5 @@ type Query @source(name: "Query", subgraph: "DEMO_FEATURES") @source(name: "Quer
   demoMe: DemoAuthInfo! @source(subgraph: "DEMO_FEATURES", name: "demoMe") @resolver(subgraph: "DEMO_FEATURES", operation: "query demoMe { demoMe }")
   node(id: ID!): Node @source(subgraph: "NODE_RESOLVER", name: "node") @resolver(subgraph: "NODE_RESOLVER", operation: "query node($id: ID!) { node(id: $id) }")
   nodes(ids: [ID!]!): [Node]! @source(subgraph: "NODE_RESOLVER", name: "nodes") @resolver(subgraph: "NODE_RESOLVER", operation: "query nodes($ids: [ID!]!) { nodes(ids: $ids) }")
-}
-
-enum core__Purpose @source(name: "core__Purpose", subgraph: "DEMO_FEATURES") @source(name: "core__Purpose", subgraph: "NODE_RESOLVER") {
-  """
-  \`EXECUTION\` features provide metadata necessary to for operation execution.
-  """
-  EXECUTION
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
 }"
 `;
