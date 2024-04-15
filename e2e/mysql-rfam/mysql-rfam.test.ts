@@ -19,7 +19,6 @@ it.concurrent.each([
             description
             comment
             author
-            created
           }
         }
       }
