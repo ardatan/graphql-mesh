@@ -7,25 +7,19 @@ import {
   defineConfig as defineComposeConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
-/**
- * The configuration to serve the supergraph
- */
-
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 const args = Args(process.argv);
-
-/**
- * The configuration to build a supergraph
- */
 
 export const composeConfig = defineComposeConfig({
   target: args.get('target'),
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('petstore', {
-        source: 'https://petstore.swagger.io/v2/swagger.json',
+        source: `http://0.0.0.0:${args.getServicePort('petstore')}/api/v3/openapi.json`,
+        // endpoint must be manually specified because the openapi.json spec doesn't contain one
+        endpoint: `http://0.0.0.0:${args.getServicePort('petstore')}/api/v3`,
       }),
       transforms: [
         createFilterTransform({

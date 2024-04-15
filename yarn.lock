@@ -3746,17 +3746,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/openapi-petstore@workspace:e2e/openapi-petstore":
-  version: 0.0.0-use.local
-  resolution: "@e2e/openapi-petstore@workspace:e2e/openapi-petstore"
-  dependencies:
-    "@graphql-mesh/compose-cli": "workspace:*"
-    "@graphql-mesh/serve-cli": "workspace:*"
-    "@omnigraph/openapi": "workspace:*"
-    graphql: "npm:^16.8.1"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions"
