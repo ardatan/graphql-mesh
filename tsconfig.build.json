@@ -10,6 +10,7 @@
     "**/test/*.ts",
     "**/tests/*.ts",
     "*.spec.ts",
-    "examples/**/*"
+    "examples/**/*",
+    "e2e/**/*"
   ]
 }

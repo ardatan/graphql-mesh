@@ -551,6 +551,104 @@ query MeFromA {
         ],
       });
     });
+
+    it('ignores if the resolver does not have variables for the parent subgraph', () => {
+      const fieldNodeInText = /* GraphQL */ `
+      myFoo {
+        bar
+        baz
+      }
+    `;
+      const typeDefInText = /* GraphQL */ `
+        type Foo
+          # There is only Foo_A_id, but no Foo_B_id or Foo_C_id
+          @variable(name: "Foo_A_id", select: "id", subgraph: "A")
+          # This resolver should be skipped
+          @resolver(
+            operation: "query FooFromB($Foo_B_id: ID!) { foo(id: $Foo_B_id) }"
+            subgraph: "B"
+          )
+          # This resolver should be used
+          @resolver(
+            operation: "query FooFromB($Foo_A_id: ID!) { foo(id: $Foo_A_id) }"
+            subgraph: "B"
+          )
+          # This resolver should be skipped
+          @resolver(
+            operation: "query FooFromC($Foo_C_id: ID!) { foo(id: $Foo_C_id) }"
+            subgraph: "C"
+          )
+          # This resolver should be used
+          @resolver(
+            operation: "query FooFromC($Foo_A_id: ID!) { foo(id: $Foo_A_id) }"
+            subgraph: "C"
+          ) {
+          id: ID! @source(subgraph: "A")
+          bar: String! @source(subgraph: "B")
+          baz: String! @source(subgraph: "C")
+        }
+      `;
+
+      const schemaInText = /* GraphQL */ `
+        type Query {
+          myFoo: Foo!
+        }
+
+        ${typeDefInText}
+      `;
+
+      const fusiongraph = buildSchema(schemaInText, {
+        assumeValid: true,
+        assumeValidSDL: true,
+      });
+
+      const operationInText = /* GraphQL */ `
+      query Test {
+        ${fieldNodeInText}
+      }
+    `;
+
+      const operationDoc = parseAndCache(operationInText);
+
+      const operationAst = getOperationAST(operationDoc, 'Test');
+
+      const selections = operationAst!.selectionSet.selections as FlattenedFieldNode[];
+
+      const type = fusiongraph.getType('Foo') as GraphQLObjectType;
+
+      const { newFieldNode, resolverOperationNodes } = visitFieldNodeForTypeResolvers(
+        'A',
+        selections[0],
+        type,
+        fusiongraph,
+        { currentVariableIndex: 0, rootVariableMap: new Map() },
+      );
+
+      expect(resolverOperationNodes.map(serializeResolverOperationNode)).toStrictEqual([
+        {
+          subgraph: 'B',
+          resolverOperationDocument: /* GraphQL */ `
+query FooFromB($__variable_0: ID!) {
+  __export: foo(id: $__variable_0) {
+    bar
+  }
+}
+        `.trim(),
+        },
+        {
+          subgraph: 'C',
+          resolverOperationDocument: /* GraphQL */ `
+query FooFromC($__variable_1: ID!) {
+  __export: foo(id: $__variable_1) {
+    baz
+  }
+}
+        `.trim(),
+        },
+      ]);
+
+      expect(printCached(newFieldNode)).toBe('myFoo {\n  __variable_0: id\n  __variable_1: id\n}');
+    });
   });
 });
 

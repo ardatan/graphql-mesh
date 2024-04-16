@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { runComposeCLI, spinnies } from './runComposeCLI.js';
-import 'ts-node/register';
 import 'dotenv/config';
+import 'tsx/cjs';
 
 runComposeCLI().catch(e => {
   spinnies.stopAll('fail');

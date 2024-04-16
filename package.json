@@ -29,7 +29,8 @@
       "examples/v1-next/federation-example/services/*",
       "examples/v1-next/graphql-file-upload-example/frontend",
       "examples/v1-next/hive-example/gateway",
-      "examples/v1-next/hive-example/sources/*"
+      "examples/v1-next/hive-example/sources/*",
+      "e2e/*"
     ]
   },
   "packageManager": "yarn@4.1.1",
@@ -51,6 +52,7 @@
     "prettier:check": "prettier --check .",
     "release": "yarn build && changeset publish",
     "test": "cross-env \"JEST=1\" jest --detectOpenHandles --no-watchman",
+    "test:e2e": "cross-env \"JEST=1\" \"E2E_TEST=true\" jest --no-watchman",
     "test:integration": "cross-env \"JEST=1\" \"INTEGRATION_TEST=true\" jest --forceExit --no-watchman --runInBand",
     "test:integration:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" \"INTEGRATION_TEST=true\" jest --detectOpenHandles --detectLeaks --no-watchman --runInBand",
     "test:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" jest --detectOpenHandles --detectLeaks --no-watchman --runInBand",
@@ -64,6 +66,7 @@
     "@babel/preset-typescript": "7.24.1",
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.1",
+    "@repeaterjs/repeater": "^3.0.5",
     "@theguild/prettier-config": "2.0.6",
     "@tsconfig/node16": "^16.1.3",
     "@tsconfig/recommended": "^1.0.5",

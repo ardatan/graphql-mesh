@@ -35,6 +35,7 @@ export function convertSupergraphToFusiongraph(
     supergraphSchema = buildSchema(federationSupergraph, schemaBuildOpts);
   }
   const subgraphLocationMap = new Map<string, string>();
+  const subgraphNameMap = new Map<string, string>();
   const joinGraphEnum = supergraphSchema.getType('join__Graph');
   if (!isEnumType(joinGraphEnum)) {
     throw new Error('Expected join__Graph to be an enum');
@@ -44,8 +45,9 @@ export function convertSupergraphToFusiongraph(
     if (!joinGraphDirective?.length) {
       throw new Error('Expected join__Graph to have a join__graph directive');
     }
-    const { url } = joinGraphDirective[0];
-    subgraphLocationMap.set(joinGraphEnumValue.value, url);
+    const { name = joinGraphEnumValue.value, url } = joinGraphDirective[0];
+    subgraphLocationMap.set(name, url);
+    subgraphNameMap.set(joinGraphEnumValue.value, name);
   }
 
   const typeMap = new Map<string, GraphQLType>();
@@ -57,7 +59,7 @@ export function convertSupergraphToFusiongraph(
 
   const fusiongraphSchema = mapSchema(supergraphSchema, {
     [MapperKind.TYPE](type) {
-      if (type.name.startsWith('link__') || type.name.startsWith('join__')) {
+      if (type.name.startsWith('link__') || type.name.startsWith('join__') || type.name.startsWith('core__')) {
         return null;
       }
       const typeExtensions: any = (type.extensions ||= {});
@@ -72,7 +74,7 @@ export function convertSupergraphToFusiongraph(
         if (!joinTypeDirective.external) {
           sourceDirectivesForFusion.push({
             name: type.name,
-            subgraph: joinTypeDirective.graph,
+            subgraph: subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph,
           });
         }
         if (joinTypeDirective.key) {
@@ -98,11 +100,15 @@ export function convertSupergraphToFusiongraph(
               if (joinFieldDirectives?.length) {
                 availableSubgraphsForField = joinFieldDirectives
                   .filter(joinFieldDirective => !joinFieldDirective.external)
-                  .map(joinFieldDirective => joinFieldDirective.graph);
+                  .map(joinFieldDirective => subgraphNameMap.get(joinFieldDirective.graph) || joinFieldDirective.graph);
               } else {
                 availableSubgraphsForField = joinTypeDirectives.map(
-                  joinTypeDirective => joinTypeDirective.graph,
+                  joinTypeDirective => subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph,
                 );
+              }
+              const keyGraph = subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph;
+              if (!availableSubgraphsForField.includes(keyGraph)) {
+                availableSubgraphsForField.push(keyGraph);
               }
               for (const availableSubgraph of availableSubgraphsForField) {
                 variableDirectivesForFusion.push({
@@ -117,13 +123,13 @@ export function convertSupergraphToFusiongraph(
           }
           const mainVariable = {
             name: `representations`,
-            subgraph: joinTypeDirective.graph,
+            subgraph: subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph,
             value: `{ __typename: "${type.name}", ${[...combinedVariableValues].join(', ')} }`,
           };
           variableDirectivesForFusion.push(mainVariable);
           resolverDirectives.push({
             operation: `query get${type.name}($representations: [_Any!]!) { _entities(representations: $representations) { ... on ${type.name} { ...__export } } }`,
-            subgraph: joinTypeDirective.graph,
+            subgraph: subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph,
           });
         }
       }
@@ -162,7 +168,7 @@ export function convertSupergraphToFusiongraph(
       for (const joinFieldDirective of joinFieldDirectives || []) {
         if (!joinFieldDirective.external) {
           sourceDirectivesForFusion.push({
-            subgraph: joinFieldDirective.graph,
+            subgraph: subgraphNameMap.get(joinFieldDirective.graph) || joinFieldDirective.graph,
             name: fieldName,
           });
         }
@@ -190,7 +196,7 @@ export function convertSupergraphToFusiongraph(
                   variableDirectivesForFusion.push({
                     name: varName,
                     select: print(selection),
-                    subgraph: joinFieldDirective.graph,
+                    subgraph: subgraphNameMap.get(joinFieldDirective.graph) || joinFieldDirective.graph,
                     type: getNamedType(typeFieldMap[selectionName].type).toString(),
                   });
                 }
@@ -230,7 +236,7 @@ export function convertSupergraphToFusiongraph(
           const resolverDirectives = (fieldDirectiveExtensions.resolver ||= []);
           // TODO: Later use global resolvers to batch queries for different types
           resolverDirectives.push({
-            subgraph: joinFieldDirective.graph,
+            subgraph: subgraphNameMap.get(joinFieldDirective.graph) || joinFieldDirective.graph,
             operation: operationString,
           });
         }
@@ -278,7 +284,7 @@ export function convertSupergraphToFusiongraph(
       const sourceDirectivesForFusion: any[] = (enumValueDirectiveExtensions.source ||= []);
       for (const joinEnumValueDirective of joinEnumValueDirectives || []) {
         sourceDirectivesForFusion.push({
-          subgraph: joinEnumValueDirective.graph,
+          subgraph: subgraphNameMap.get(joinEnumValueDirective.graph) || joinEnumValueDirective.graph,
           name: enumValueName,
         });
       }
@@ -287,8 +293,10 @@ export function convertSupergraphToFusiongraph(
     [MapperKind.DIRECTIVE](directiveConfig) {
       if (
         directiveConfig.name.startsWith('join__') ||
-        directiveConfig.name === 'link__' ||
-        directiveConfig.name === 'link'
+        directiveConfig.name.startsWith('link__') ||
+        directiveConfig.name.startsWith('core__') ||
+        directiveConfig.name === 'link' ||
+        directiveConfig.name === 'core'
       ) {
         return null;
       }

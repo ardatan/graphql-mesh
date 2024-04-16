@@ -15,7 +15,7 @@ import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@grap
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import { IResolvers } from '@graphql-tools/utils';
 import { CORSPluginOptions } from '@whatwg-node/server';
-import { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
+import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
 export { UnifiedGraphConfig };
 
@@ -75,7 +75,7 @@ interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithou
   /**
    * Additional GraphQL schema resolvers.
    */
-  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
+  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext> | IResolvers<unknown, MeshServeContext>[];
   /**
    * Implement custom executors for transports.
    */
@@ -94,7 +94,7 @@ interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithout
   /**
    * Additional GraphQL schema resolvers.
    */
-  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
+  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext> | IResolvers<unknown, MeshServeContext>[];
   /**
    * Implement custom executors for transports.
    */

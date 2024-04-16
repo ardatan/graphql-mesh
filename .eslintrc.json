@@ -51,6 +51,12 @@
       "rules": {
         "@typescript-eslint/no-unused-vars": "off"
       }
+    },
+    {
+      "files": ["e2e/**/*"],
+      "rules": {
+        "import/no-nodejs-modules": "off"
+      }
     }
   ],
   "ignorePatterns": [

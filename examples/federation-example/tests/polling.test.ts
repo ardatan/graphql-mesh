@@ -36,9 +36,9 @@ describe('Polling Test', () => {
       },
     });
     await new Promise<void>(resolve => {
-      buildCmd.stdout?.on('data', function stdoutListener(data: string) {
+      buildCmd.stderr?.on('data', function stderrListener(data: string) {
         if (data.includes('Done!')) {
-          buildCmd.stdout?.off('data', stdoutListener);
+          buildCmd.stderr?.off('data', stderrListener);
           resolve();
         }
       });
@@ -52,10 +52,10 @@ describe('Polling Test', () => {
     });
     cleanupCallbacks.push(() => serveCmd.kill());
     await new Promise<void>(resolve => {
-      serveCmd.stdout?.on('data', function stdoutListener(data: string) {
+      serveCmd.stderr?.on('data', function stderrListener(data: string) {
         console.log(data);
         if (data.includes('Serving GraphQL Mesh')) {
-          serveCmd.stdout?.off('data', stdoutListener);
+          serveCmd.stderr?.off('data', stderrListener);
           resolve();
         }
       });

@@ -373,36 +373,35 @@ exports[`Supergraphs apollo-example Fusiongraph: fusiongraph 1`] = `
   query: Query
 }
 
-type Product @source(name: "Product", subgraph: "inventory") @source(name: "Product", subgraph: "products") @source(name: "Product", subgraph: "reviews") @variable(name: "Product_key_upc", select: "upc", subgraph: "inventory", type: "String") @variable(name: "Product_key_upc", select: "upc", subgraph: "products", type: "String") @variable(name: "Product_key_upc", select: "upc", subgraph: "reviews", type: "String") @variable(name: "representations", subgraph: "inventory", value: "{ __typename: \\"Product\\", upc: $Product_key_upc, price: $Product_shippingEstimate_requires_price, weight: $Product_shippingEstimate_requires_weight }") @variable(name: "representations", subgraph: "products", value: "{ __typename: \\"Product\\", upc: $Product_key_upc }") @variable(name: "representations", subgraph: "reviews", value: "{ __typename: \\"Product\\", upc: $Product_key_upc }") @resolver(operation: "query getProduct($representations: [_Any!]!) { _entities(representations: $representations) { ... on Product { ...__export } } }", subgraph: "inventory") @resolver(operation: "query getProduct($representations: [_Any!]!) { _entities(representations: $representations) { ... on Product { ...__export } } }", subgraph: "products") @resolver(operation: "query getProduct($representations: [_Any!]!) { _entities(representations: $representations) { ... on Product { ...__export } } }", subgraph: "reviews") {
-  upc: String! @source(subgraph: "inventory", name: "upc") @source(subgraph: "products", name: "upc") @source(subgraph: "reviews", name: "upc")
-  weight: Int @source(subgraph: "products", name: "weight")
-  price: Int @source(subgraph: "products", name: "price")
+type Product @source(name: "Product", subgraph: "products") @source(name: "Product", subgraph: "inventory") @source(name: "Product", subgraph: "reviews") @variable(name: "Product_key_upc", select: "upc", subgraph: "products", type: "String") @variable(name: "representations", subgraph: "products", value: "{ __typename: \\"Product\\", upc: $Product_key_upc, price: $Product_shippingEstimate_requires_price, weight: $Product_shippingEstimate_requires_weight }") @variable(name: "Product_key_upc", select: "upc", subgraph: "inventory", type: "String") @variable(name: "representations", subgraph: "inventory", value: "{ __typename: \\"Product\\", upc: $Product_key_upc }") @variable(name: "Product_key_upc", select: "upc", subgraph: "reviews", type: "String") @variable(name: "representations", subgraph: "reviews", value: "{ __typename: \\"Product\\", upc: $Product_key_upc }") @resolver(operation: "query getProduct($representations: [_Any!]!) { _entities(representations: $representations) { ... on Product { ...__export } } }", subgraph: "products") @resolver(operation: "query getProduct($representations: [_Any!]!) { _entities(representations: $representations) { ... on Product { ...__export } } }", subgraph: "inventory") @resolver(operation: "query getProduct($representations: [_Any!]!) { _entities(representations: $representations) { ... on Product { ...__export } } }", subgraph: "reviews") {
   inStock: Boolean @source(subgraph: "inventory", name: "inStock")
-  shippingEstimate: Int @source(subgraph: "inventory", name: "shippingEstimate") @variable(name: "Product_shippingEstimate_requires_price", select: "price", subgraph: "products", type: "Int") @variable(name: "Product_shippingEstimate_requires_weight", select: "weight", subgraph: "products", type: "Int")
   name: String @source(subgraph: "products", name: "name")
+  price: Int @source(subgraph: "products", name: "price")
   reviews: [Review] @source(subgraph: "reviews", name: "reviews")
+  shippingEstimate: Int @source(subgraph: "inventory", name: "shippingEstimate") @variable(name: "Product_shippingEstimate_requires_price", select: "price", subgraph: "products", type: "Int") @variable(name: "Product_shippingEstimate_requires_weight", select: "weight", subgraph: "products", type: "Int")
+  upc: String! @source(subgraph: "products", name: "upc")
+  weight: Int @source(subgraph: "products", name: "weight")
 }
 
 type Query @source(name: "Query", subgraph: "accounts") @source(name: "Query", subgraph: "inventory") @source(name: "Query", subgraph: "products") @source(name: "Query", subgraph: "reviews") {
   me: User @source(subgraph: "accounts", name: "me") @resolver(subgraph: "accounts", operation: "query me { me }")
+  topProducts(first: Int = 5): [Product] @source(subgraph: "products", name: "topProducts") @resolver(subgraph: "products", operation: "query topProducts($first: Int = 5) { topProducts(first: $first) }")
+  user(id: ID!): User @source(subgraph: "accounts", name: "user") @resolver(subgraph: "accounts", operation: "query user($id: ID!) { user(id: $id) }")
   users: [User] @source(subgraph: "accounts", name: "users") @resolver(subgraph: "accounts", operation: "query users { users }")
-  topProducts(first: Int): [Product] @source(subgraph: "products", name: "topProducts") @resolver(subgraph: "products", operation: "query topProducts($first: Int) { topProducts(first: $first) }")
 }
 
 type Review @source(name: "Review", subgraph: "reviews") @variable(name: "Review_key_id", select: "id", subgraph: "reviews", type: "ID") @variable(name: "representations", subgraph: "reviews", value: "{ __typename: \\"Review\\", id: $Review_key_id }") @resolver(operation: "query getReview($representations: [_Any!]!) { _entities(representations: $representations) { ... on Review { ...__export } } }", subgraph: "reviews") {
-  id: ID! @source(subgraph: "reviews", name: "id")
-  body: String @source(subgraph: "reviews", name: "body")
-  product: Product @source(subgraph: "reviews", name: "product")
   author: User @source(subgraph: "reviews", name: "author")
+  body: String @source(subgraph: "reviews", name: "body")
+  id: ID! @source(subgraph: "reviews", name: "id")
+  product: Product @source(subgraph: "reviews", name: "product")
 }
 
-type User @source(name: "User", subgraph: "accounts") @source(name: "User", subgraph: "reviews") @variable(name: "User_key_id", select: "id", subgraph: "accounts", type: "ID") @variable(name: "User_key_id", select: "id", subgraph: "reviews", type: "ID") @variable(name: "representations", subgraph: "accounts", value: "{ __typename: \\"User\\", id: $User_key_id }") @variable(name: "representations", subgraph: "reviews", value: "{ __typename: \\"User\\", id: $User_key_id }") @resolver(operation: "query getUser($representations: [_Any!]!) { _entities(representations: $representations) { ... on User { ...__export } } }", subgraph: "accounts") @resolver(operation: "query getUser($representations: [_Any!]!) { _entities(representations: $representations) { ... on User { ...__export } } }", subgraph: "reviews") {
-  id: ID! @source(subgraph: "accounts", name: "id") @source(subgraph: "reviews", name: "id")
+type User @source(name: "User", subgraph: "accounts") @source(name: "User", subgraph: "reviews") @variable(name: "User_key_id", select: "id", subgraph: "accounts", type: "ID") @variable(name: "representations", subgraph: "accounts", value: "{ __typename: \\"User\\", id: $User_key_id }") @variable(name: "User_key_id", select: "id", subgraph: "reviews", type: "ID") @variable(name: "representations", subgraph: "reviews", value: "{ __typename: \\"User\\", id: $User_key_id }") @resolver(operation: "query getUser($representations: [_Any!]!) { _entities(representations: $representations) { ... on User { ...__export } } }", subgraph: "accounts") @resolver(operation: "query getUser($representations: [_Any!]!) { _entities(representations: $representations) { ... on User { ...__export } } }", subgraph: "reviews") {
+  id: ID! @source(subgraph: "accounts", name: "id")
   name: String @source(subgraph: "accounts", name: "name")
-  username: String @source(subgraph: "accounts", name: "username")
-  birthDate: String @source(subgraph: "accounts", name: "birthDate")
-  numberOfReviews: Int @source(subgraph: "reviews", name: "numberOfReviews")
   reviews: [Review] @source(subgraph: "reviews", name: "reviews")
+  username: String @source(subgraph: "accounts", name: "username")
 }"
 `;
 
@@ -437,8 +436,6 @@ exports[`Supergraphs pb Fusiongraph: fusiongraph 1`] = `
   query: Query
   mutation: Mutation
 }
-
-directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
 
 directive @tag(name: String!) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION
 
@@ -617,16 +614,5 @@ type Query @source(name: "Query", subgraph: "DEMO_FEATURES") @source(name: "Quer
   demoMe: DemoAuthInfo! @source(subgraph: "DEMO_FEATURES", name: "demoMe") @resolver(subgraph: "DEMO_FEATURES", operation: "query demoMe { demoMe }")
   node(id: ID!): Node @source(subgraph: "NODE_RESOLVER", name: "node") @resolver(subgraph: "NODE_RESOLVER", operation: "query node($id: ID!) { node(id: $id) }")
   nodes(ids: [ID!]!): [Node]! @source(subgraph: "NODE_RESOLVER", name: "nodes") @resolver(subgraph: "NODE_RESOLVER", operation: "query nodes($ids: [ID!]!) { nodes(ids: $ids) }")
-}
-
-enum core__Purpose @source(name: "core__Purpose", subgraph: "DEMO_FEATURES") @source(name: "core__Purpose", subgraph: "NODE_RESOLVER") {
-  """
-  \`EXECUTION\` features provide metadata necessary to for operation execution.
-  """
-  EXECUTION
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
 }"
 `;

@@ -544,10 +544,13 @@ export function executeResolverOperationNode({
         error.extensions.planNodeId = resolverOperationNode.id;
         errors.push(error);
       });
-      if (result?.data == null) {
-        return null;
-      }
       const outputVariableMap = new Map();
+      if (result?.data == null) {
+        return {
+          exported: null,
+          outputVariableMap,
+        };
+      }
       const exported = _.get(result.data, resolverOperationNode.exportPath);
       function handleExportedListForBatching(exportedList: any) {
         for (const [

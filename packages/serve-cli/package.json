@@ -51,7 +51,7 @@
     "dotenv": "^16.3.1",
     "json-bigint-patch": "^0.0.8",
     "spinnies": "^0.5.1",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.7.1",
     "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "optionalDependencies": {

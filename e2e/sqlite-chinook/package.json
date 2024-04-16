@@ -1,0 +1,9 @@
+{
+  "name": "@e2e/sqlite-chinook",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@omnigraph/sqlite": "^0.1.5",
+    "graphql": "^16.8.1"
+  }
+}

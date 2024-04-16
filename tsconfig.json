@@ -37,7 +37,7 @@
       "@graphql-mesh/transform-*": ["packages/legacy/transforms/*/src/index.ts"],
       "@graphql-mesh/merger-*": ["packages/legacy/mergers/*/src/index.ts"],
       "@graphql-mesh/plugin-*": ["packages/plugins/*/src/index.ts"],
-      "@graphql-mesh/cross-helpers": ["packages/cross-helpers/index.d.ts"],
+      "@graphql-mesh/cross-helpers": ["packages/cross-helpers/node.js"],
       "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index.ts"],
       "@graphql-mesh/fusion-*": ["packages/fusion/*/src/index.ts"],
       "@graphql-mesh/compose-cli": ["packages/compose-cli/src/index.ts"],
@@ -46,9 +46,11 @@
       "@graphql-mesh/transport-*": ["packages/transports/*/src/index.ts"],
       "@graphql-mesh/*": ["packages/legacy/handlers/*/src/index.ts"],
       "json-machete": ["packages/json-machete/src/index.ts"],
-      "@omnigraph/*": ["packages/loaders/*/src/index.ts"]
+      "@omnigraph/*": ["packages/loaders/*/src/index.ts"],
+      "@e2e/args": ["e2e/utils/args.ts"],
+      "@e2e/tenv": ["e2e/utils/tenv.ts"]
     }
   },
-  "include": ["declarations.d.ts", "packages"],
+  "include": ["declarations.d.ts", "packages", "e2e"],
   "exclude": ["**/node_modules", "**/dist"]
 }

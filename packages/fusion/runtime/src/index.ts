@@ -20,7 +20,7 @@ import {
 import { getInContextSDK } from '@graphql-mesh/runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { MeshServeContext } from '@graphql-mesh/serve-runtime';
-import {
+import type {
   Transport,
   TransportBaseContext,
   TransportEntry,
@@ -325,7 +325,7 @@ export function getExecutorForFusiongraph({
   function fusiongraphExecutor(execReq: ExecutionRequest) {
     if (execReq.operationName === 'IntrospectionQuery') {
       return {
-        data: introspectionFromSchema(fusiongraph) as any,
+        data: introspectionFromSchema(fusiongraph),
       };
     }
 
@@ -343,7 +343,7 @@ export function getExecutorForFusiongraph({
   }
 
   return {
-    fusiongraphExecutor,
+    fusiongraphExecutor: fusiongraphExecutor as Executor,
     transportEntryMap,
     onSubgraphExecute,
   };

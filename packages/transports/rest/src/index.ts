@@ -1,5 +1,5 @@
 import { createDefaultExecutor, TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
-import { ProcessDirectiveArgs, processDirectives } from './directives/process.js';
+import { processDirectives, type ProcessDirectiveArgs } from './directives/process.js';
 
 export interface RESTTransportOptions {
   timeout?: number;
@@ -20,5 +20,6 @@ export const getSubgraphExecutor: TransportExecutorFactoryFn<'rest', RESTTranspo
     return executor;
   };
 
-export { processDirectives, ProcessDirectiveArgs } from './directives/process.js';
+export { processDirectives } from './directives/process.js';
+export type { ProcessDirectiveArgs } from './directives/process.js';
 export { processScalarType } from './directives/scalars.js';

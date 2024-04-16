@@ -1,7 +1,0 @@
-subscription todoAdded {
-  todoAdded {
-    id
-    name
-    content
-  }
-}
