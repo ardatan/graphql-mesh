@@ -32751,9 +32751,9 @@ __metadata:
   linkType: hard
 
 "tiny-lru@npm:^11.0.0":
-  version: 11.2.5
-  resolution: "tiny-lru@npm:11.2.5"
-  checksum: 10c0/bda6de074035ca108ce179ba4ceb02a3eca6aab78b5cf161736035f2af562644594435d8fa4c07f098eee96e1a483992025af72f25e6033d54a66cf270fa8372
+  version: 11.2.6
+  resolution: "tiny-lru@npm:11.2.6"
+  checksum: 10c0/d59b2047edae1b4b79708070463ed27ddb1daa64563b74eedaa571e555c47f8de3a7cc19171f47dc46c01f1b7283d9afd2c682dddb4832552ed747d52cd297a6
   languageName: node
   linkType: hard
 
