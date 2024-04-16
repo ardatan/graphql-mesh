@@ -1,13 +1,10 @@
 import { OperationTypeNode } from 'graphql';
-import { Args } from '@e2e/args';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
-const args = Args(process.argv);
-
 export const composeConfig = defineComposeConfig({
-  target: args.get('target'),
+  target: 'fusiongraph.graphql',
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('Reddit', {
@@ -39,6 +36,5 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  fusiongraph: args.get('fusiongraph'),
+  fusiongraph: 'fusiongraph.graphql',
 });

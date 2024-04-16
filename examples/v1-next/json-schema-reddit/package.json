@@ -1,6 +1,10 @@
 {
-  "name": "@e2e/reddit-example",
+  "name": "@examples/reddit-example",
   "private": true,
+  "scripts": {
+    "compose": "yarn mesh-compose",
+    "serve": "yarn mesh-serve"
+  },
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
