@@ -4969,7 +4969,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/serve-runtime": "npm:^0.2.12"
     "@graphql-yoga/plugin-prometheus": "npm:^4.1.0"
-    prom-client: "npm:15.1.1"
+    prom-client: "npm:15.1.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.97.5
     "@graphql-mesh/utils": ^0.97.5
@@ -8062,7 +8062,7 @@ __metadata:
     "@graphql-mesh/transport-rest": "npm:^0.1.6"
     "@graphql-tools/delegate": "npm:^10.0.3"
     "@json-schema-tools/meta-schema": "npm:1.7.4"
-    "@types/qs": "npm:6.9.14"
+    "@types/qs": "npm:6.9.15"
     "@types/to-json-schema": "npm:0.2.4"
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.9.0"
@@ -10431,10 +10431,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:*, @types/qs@npm:6.9.14, @types/qs@npm:^6.2.31":
+"@types/qs@npm:*, @types/qs@npm:^6.2.31":
   version: 6.9.14
   resolution: "@types/qs@npm:6.9.14"
   checksum: 10c0/11ad1eb7f6d7c216002789959d88acc7c43f72854fa4335f01de0df41b4c4024668dace8a37ba12270314345ede0ec6b07f93053a45e7bd4cd7318a3dcf0b6b8
+  languageName: node
+  linkType: hard
+
+"@types/qs@npm:6.9.15":
+  version: 6.9.15
+  resolution: "@types/qs@npm:6.9.15"
+  checksum: 10c0/49c5ff75ca3adb18a1939310042d273c9fc55920861bd8e5100c8a923b3cda90d759e1a95e18334092da1c8f7b820084687770c83a1ccef04fb2c6908117c823
   languageName: node
   linkType: hard
 
@@ -26699,7 +26706,7 @@ __metadata:
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.2.8"
+    vite: "npm:5.2.9"
   languageName: unknown
   linkType: soft
 
@@ -28991,13 +28998,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"prom-client@npm:15.1.1":
-  version: 15.1.1
-  resolution: "prom-client@npm:15.1.1"
+"prom-client@npm:15.1.2":
+  version: 15.1.2
+  resolution: "prom-client@npm:15.1.2"
   dependencies:
     "@opentelemetry/api": "npm:^1.4.0"
     tdigest: "npm:^0.1.1"
-  checksum: 10c0/b3e6a58fc0ef87cf5b0badf06d7d79c24ac93ba47cccfaad95faeba79824c6a7724d74a257e7268d691245c847173818c16c8153054cccf16b8f033c37c74129
+  checksum: 10c0/a221db148fa64e29dfd4c6cdcaaae14635495a4272b68917e2b44fcfd988bc57027d275b04489ceeea4d0c4d64d058af842c1300966d2c1ffa255f1fa6af1277
   languageName: node
   linkType: hard
 
@@ -34217,9 +34224,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.2.8":
-  version: 5.2.8
-  resolution: "vite@npm:5.2.8"
+"vite@npm:5.2.9":
+  version: 5.2.9
+  resolution: "vite@npm:5.2.9"
   dependencies:
     esbuild: "npm:^0.20.1"
     fsevents: "npm:~2.3.3"
@@ -34253,7 +34260,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/b5717bb00c2570c08ff6d8ed917655e79184efcafa9dd62d52eea19c5d6dfc5a708ec3de9ebc670a7165fc5d401c2bdf1563bb39e2748d8e51e1593d286a9a13
+  checksum: 10c0/2bf8faa7ae84d5fffabc28b2b2462128a839b8a7ce6d4dde1794975c8c896443df49a54ef95ad8f0326457648426fd9317a618479ef28049cb195d91985729ed
   languageName: node
   linkType: hard
 
