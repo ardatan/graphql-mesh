@@ -243,7 +243,11 @@ function addAnnotationsForSemanticConventions({
         const objectField = fieldMap[fieldName];
         const queryField = queryFields[queryFieldName];
         const objectFieldType = getNamedType(objectField.type);
-        const arg = queryField.args.find(arg => getNamedType(arg.type) === objectFieldType);
+        const arg = queryField.args.find(
+          arg =>
+            getNamedType(arg.type) === objectFieldType &&
+            (arg.name === pluralize(fieldName) || arg.name === fieldName),
+        );
         const queryFieldTypeName = getNamedType(queryField.type).name;
         const queryFieldNameSnakeCase = snakeCase(queryFieldName);
         const varName = `${type.name}_${fieldName}`;
@@ -284,6 +288,7 @@ function addAnnotationsForSemanticConventions({
           if (arg) {
             switch (queryFieldNameSnakeCase) {
               case snakeCase(type.name):
+              case snakeCase(`_${type.name}`):
               case snakeCase(`get_${type.name}_by_${fieldName}`):
               case snakeCase(`${type.name}_by_${fieldName}`): {
                 const operationName = pascalCase(`${type.name}_by_${fieldName}`);
@@ -299,6 +304,7 @@ function addAnnotationsForSemanticConventions({
                 break;
               }
               case snakeCase(pluralTypeName):
+              case snakeCase(`_${pluralTypeName}`):
               case snakeCase(`get_${pluralTypeName}_by_${fieldName}`):
               case snakeCase(`${pluralTypeName}_by_${fieldName}`):
               case snakeCase(`get_${pluralTypeName}_by_${fieldName}s`):

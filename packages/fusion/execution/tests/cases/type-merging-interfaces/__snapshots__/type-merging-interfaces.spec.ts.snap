@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cross-service interfaces composes the schema 1`] = `
+"schema {
+  query: Query
+}
+
+interface ProductOffering @source(subgraph: "products", name: "ProductOffering") @source(subgraph: "storefronts", name: "ProductOffering") {
+  id: ID! @source(subgraph: "products", name: "id", type: "ID!") @source(subgraph: "storefronts", name: "id", type: "ID!")
+  name: String! @source(subgraph: "products", name: "name", type: "String!")
+  price: Float! @source(subgraph: "products", name: "price", type: "Float!")
+}
+
+type Product implements ProductOffering @source(subgraph: "products", name: "Product") @source(subgraph: "storefronts", name: "Product") @resolver(subgraph: "products", operation: "query ProductsByIds($Product_id: [ID!]!) { products(ids: $Product_id) }", kind: "BATCH") @resolver(subgraph: "products", operation: "query ProductById($Product_id: ID!) { product(id: $Product_id) }", kind: "FETCH") @variable(subgraph: "products", name: "Product_id", select: "id") @variable(subgraph: "storefronts", name: "Product_id", select: "id") {
+  id: ID! @source(subgraph: "products", name: "id", type: "ID!") @source(subgraph: "storefronts", name: "id", type: "ID!")
+  name: String! @source(subgraph: "products", name: "name", type: "String!")
+  price: Float! @source(subgraph: "products", name: "price", type: "Float!")
+}
+
+type Query {
+  products(ids: [ID!]!): [Product]! @resolver(subgraph: "products", operation: "query products($ids: [ID!]!) { products(ids: $ids) }") @source(subgraph: "products", name: "products", type: "[Product]!")
+  product(id: ID!): Product @resolver(subgraph: "products", operation: "query product($id: ID!) { product(id: $id) }") @source(subgraph: "products", name: "product", type: "Product")
+  storefront(id: ID!): Storefront @resolver(subgraph: "storefronts", operation: "query storefront($id: ID!) { storefront(id: $id) }") @source(subgraph: "storefronts", name: "storefront", type: "Storefront")
+}
+
+type ProductDeal implements ProductOffering @source(subgraph: "storefronts", name: "ProductDeal") {
+  id: ID! @source(subgraph: "storefronts", name: "id", type: "ID!")
+  name: String! @source(subgraph: "storefronts", name: "name", type: "String!")
+  price: Float! @source(subgraph: "storefronts", name: "price", type: "Float!")
+  products: [Product]! @source(subgraph: "storefronts", name: "products", type: "[Product]!")
+}
+
+type Storefront @source(subgraph: "storefronts", name: "Storefront") @resolver(subgraph: "storefronts", operation: "query StorefrontById($Storefront_id: ID!) { storefront(id: $Storefront_id) }", kind: "FETCH") @variable(subgraph: "storefronts", name: "Storefront_id", select: "id") {
+  id: ID! @source(subgraph: "storefronts", name: "id", type: "ID!")
+  name: String! @source(subgraph: "storefronts", name: "name", type: "String!")
+  productOfferings: [ProductOffering]! @source(subgraph: "storefronts", name: "productOfferings", type: "[ProductOffering]!")
+}"
+`;
+
+exports[`Cross-service interfaces plans correctly 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "storefront": [
+      {
+        "id": 0,
+        "resolverOperationDocument": "query storefront {
+  __export: storefront(id: "1") {
+    id
+    name
+    productOfferings {
+      __typename
+      id
+      __variable_1: id
+    }
+  }
+}",
+        "subgraph": "storefronts",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;

@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Nullable merges composes correctly 1`] = `
+"schema {
+  query: Query
+}
+
+type Product @source(subgraph: "products", name: "Product") @source(subgraph: "reviews", name: "Product") @resolver(subgraph: "products", operation: "query ProductsByUpcs($Product_upc: [ID!]!) { products(upcs: $Product_upc) }", kind: "BATCH") @resolver(subgraph: "reviews", operation: "query ProductsByUpcs($Product_upc: [ID!]!) { _products(upcs: $Product_upc) }", kind: "BATCH") @variable(subgraph: "products", name: "Product_upc", select: "upc") @variable(subgraph: "reviews", name: "Product_upc", select: "upc") @variable(subgraph: "products", name: "Product_upc", select: "upc") @variable(subgraph: "reviews", name: "Product_upc", select: "upc") {
+  upc: ID! @source(subgraph: "products", name: "upc", type: "ID!") @source(subgraph: "reviews", name: "upc", type: "ID!")
+  name: String! @source(subgraph: "products", name: "name", type: "String!")
+  price: Float! @source(subgraph: "products", name: "price", type: "Float!")
+  reviews: [Review] @source(subgraph: "reviews", name: "reviews", type: "[Review]")
+}
+
+type Query {
+  products(upcs: [ID!]!): [Product]! @resolver(subgraph: "products", operation: "query products($upcs: [ID!]!) { products(upcs: $upcs) }") @source(subgraph: "products", name: "products", type: "[Product]!")
+  reviews(ids: [ID!]!): [Review]! @resolver(subgraph: "reviews", operation: "query reviews($ids: [ID!]!) { reviews(ids: $ids) }") @source(subgraph: "reviews", name: "reviews", type: "[Review]!")
+  _users(ids: [ID!]!): [User]! @resolver(subgraph: "reviews", operation: "query _users($ids: [ID!]!) { _users(ids: $ids) }") @source(subgraph: "reviews", name: "_users", type: "[User]!")
+  _products(upcs: [ID!]!): [Product]! @resolver(subgraph: "reviews", operation: "query _products($upcs: [ID!]!) { _products(upcs: $upcs) }") @source(subgraph: "reviews", name: "_products", type: "[Product]!")
+  users(ids: [ID!]!): [User]! @resolver(subgraph: "users", operation: "query users($ids: [ID!]!) { users(ids: $ids) }") @source(subgraph: "users", name: "users", type: "[User]!")
+}
+
+type Review @source(subgraph: "reviews", name: "Review") @resolver(subgraph: "reviews", operation: "query ReviewsByIds($Review_id: [ID!]!) { reviews(ids: $Review_id) }", kind: "BATCH") @variable(subgraph: "reviews", name: "Review_id", select: "id") {
+  id: ID! @source(subgraph: "reviews", name: "id", type: "ID!")
+  body: String! @source(subgraph: "reviews", name: "body", type: "String!")
+  product: Product @source(subgraph: "reviews", name: "product", type: "Product")
+  user: User @source(subgraph: "reviews", name: "user", type: "User")
+}
+
+type User @source(subgraph: "reviews", name: "User") @source(subgraph: "users", name: "User") @resolver(subgraph: "reviews", operation: "query UsersByIds($User_id: [ID!]!) { _users(ids: $User_id) }", kind: "BATCH") @resolver(subgraph: "users", operation: "query UsersByIds($User_id: [ID!]!) { users(ids: $User_id) }", kind: "BATCH") @variable(subgraph: "reviews", name: "User_id", select: "id") @variable(subgraph: "users", name: "User_id", select: "id") @variable(subgraph: "reviews", name: "User_id", select: "id") @variable(subgraph: "users", name: "User_id", select: "id") {
+  id: ID! @source(subgraph: "reviews", name: "id", type: "ID!") @source(subgraph: "users", name: "id", type: "ID!")
+  reviews: [Review]! @source(subgraph: "reviews", name: "reviews", type: "[Review]!")
+  username: String! @source(subgraph: "users", name: "username", type: "String!")
+}"
+`;
+
+exports[`Nullable merges null product result plans correctly 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "_products": [
+      {
+        "id": 0,
+        "resolverDependencyFieldMap": {
+          "reviews": [],
+        },
+        "resolverOperationDocument": "query _products {
+  __export: _products(upcs: ["DOES_NOT_EXIST"]) {
+    upc
+    reviews {
+      body
+    }
+  }
+}",
+        "subgraph": "reviews",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;
+
+exports[`Nullable merges null user result plans correctly 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "_users": [
+      {
+        "id": 0,
+        "resolverDependencyFieldMap": {
+          "reviews": [],
+        },
+        "resolverOperationDocument": "query _users {
+  __export: _users(ids: ["DOES_NOT_EXIST"]) {
+    id
+    reviews {
+      body
+    }
+  }
+}",
+        "subgraph": "reviews",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;
+
+exports[`Nullable merges regular plans correctly 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "products": [
+      {
+        "id": 1,
+        "resolverDependencies": [
+          {
+            "batch": true,
+            "id": 2,
+            "resolverOperationDocument": "query ProductsByUpcs($__variable_3: [ID!]!) {
+  __export: _products(upcs: $__variable_3) {
+    reviews {
+      body
+    }
+  }
+}",
+            "subgraph": "reviews",
+          },
+        ],
+        "resolverOperationDocument": "query products {
+  __export: products(upcs: [2]) {
+    name
+    __variable_3: upc
+  }
+}",
+        "subgraph": "products",
+      },
+    ],
+    "users": [
+      {
+        "id": 0,
+        "resolverDependencies": [
+          {
+            "batch": true,
+            "id": 1,
+            "resolverOperationDocument": "query UsersByIds($__variable_1: [ID!]!) {
+  __export: _users(ids: $__variable_1) {
+    reviews {
+      body
+    }
+  }
+}",
+            "subgraph": "reviews",
+          },
+        ],
+        "resolverOperationDocument": "query users {
+  __export: users(ids: [2]) {
+    username
+    __variable_1: id
+  }
+}",
+        "subgraph": "users",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;

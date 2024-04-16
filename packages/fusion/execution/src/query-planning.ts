@@ -26,14 +26,7 @@ import {
 import _ from 'lodash';
 import { DirectiveAnnotation } from '@graphql-tools/utils';
 import { FlattenedFieldNode, FlattenedSelectionSet } from './flattenSelections.js';
-import { parseAndCache } from './parseAndPrintWithCache.js';
-import {
-  GlobalResolverConfig,
-  RegularResolverConfig,
-  ResolverKind,
-  ResolverRefConfig,
-  ResolverVariableConfig,
-} from './types.js';
+import { ResolverKind, ResolverVariableConfig } from './types.js';
 
 // Resolution direction is from parentSubgraph to resolverDirective.subgraph
 export function createResolveNode({
@@ -687,7 +680,9 @@ export function visitFieldNodeForTypeResolvers(
       otherConditionFn: d => d.args?.subgraph === fieldSubgraph,
     });
     if (!resolverDirective) {
-      throw new Error(`No resolver directive found for ${fieldSubgraph}`);
+      throw new Error(
+        `No resolver directive found for the type from ${parentSubgraph} to ${fieldSubgraph}`,
+      );
     }
     const {
       newFieldNode: newFieldNodeForSubgraph,

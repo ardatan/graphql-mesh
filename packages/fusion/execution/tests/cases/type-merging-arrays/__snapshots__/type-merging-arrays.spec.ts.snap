@@ -1,0 +1,130 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Array-batched type merging composes the schema correctly 1`] = `
+"schema {
+  query: Query
+}
+
+type Manufacturer @source(subgraph: "manufacturers", name: "Manufacturer") @source(subgraph: "products", name: "Manufacturer") @resolver(subgraph: "manufacturers", operation: "query ManufacturersByIds($Manufacturer_id: [ID!]!) { manufacturers(ids: $Manufacturer_id) }", kind: "BATCH") @resolver(subgraph: "products", operation: "query ManufacturersByIds($Manufacturer_id: [ID!]!) { _manufacturers(ids: $Manufacturer_id) }", kind: "BATCH") @variable(subgraph: "manufacturers", name: "Manufacturer_id", select: "id") @variable(subgraph: "products", name: "Manufacturer_id", select: "id") @variable(subgraph: "manufacturers", name: "Manufacturer_id", select: "id") @variable(subgraph: "products", name: "Manufacturer_id", select: "id") {
+  id: ID! @source(subgraph: "manufacturers", name: "id", type: "ID!") @source(subgraph: "products", name: "id", type: "ID!")
+  name: String! @source(subgraph: "manufacturers", name: "name", type: "String!")
+  products: [Product]! @source(subgraph: "products", name: "products", type: "[Product]!")
+}
+
+type Query {
+  manufacturers(ids: [ID!]!): [Manufacturer]! @resolver(subgraph: "manufacturers", operation: "query manufacturers($ids: [ID!]!) { manufacturers(ids: $ids) }") @source(subgraph: "manufacturers", name: "manufacturers", type: "[Manufacturer]!")
+  product(upc: ID!): Product @resolver(subgraph: "products", operation: "query product($upc: ID!) { product(upc: $upc) }") @source(subgraph: "products", name: "product", type: "Product")
+  products(upcs: [ID!]!): [Product]! @resolver(subgraph: "products", operation: "query products($upcs: [ID!]!) { products(upcs: $upcs) }") @source(subgraph: "products", name: "products", type: "[Product]!")
+  _manufacturers(ids: [ID!]!): [Manufacturer]! @resolver(subgraph: "products", operation: "query _manufacturers($ids: [ID!]!) { _manufacturers(ids: $ids) }") @source(subgraph: "products", name: "_manufacturers", type: "[Manufacturer]!")
+  storefront(id: ID!): Storefront @resolver(subgraph: "storefronts", operation: "query storefront($id: ID!) { storefront(id: $id) }") @source(subgraph: "storefronts", name: "storefront", type: "Storefront")
+}
+
+type Product @source(subgraph: "products", name: "Product") @source(subgraph: "storefronts", name: "Product") @resolver(subgraph: "products", operation: "query ProductByUpc($Product_upc: ID!) { product(upc: $Product_upc) }", kind: "FETCH") @resolver(subgraph: "products", operation: "query ProductsByUpcs($Product_upc: [ID!]!) { products(upcs: $Product_upc) }", kind: "BATCH") @variable(subgraph: "products", name: "Product_upc", select: "upc") @variable(subgraph: "storefronts", name: "Product_upc", select: "upc") {
+  manufacturer: Manufacturer @source(subgraph: "products", name: "manufacturer", type: "Manufacturer")
+  name: String! @source(subgraph: "products", name: "name", type: "String!")
+  price: Float! @source(subgraph: "products", name: "price", type: "Float!")
+  upc: ID! @source(subgraph: "products", name: "upc", type: "ID!") @source(subgraph: "storefronts", name: "upc", type: "ID!")
+}
+
+type Storefront @source(subgraph: "storefronts", name: "Storefront") @resolver(subgraph: "storefronts", operation: "query StorefrontById($Storefront_id: ID!) { storefront(id: $Storefront_id) }", kind: "FETCH") @variable(subgraph: "storefronts", name: "Storefront_id", select: "id") {
+  id: ID! @source(subgraph: "storefronts", name: "id", type: "ID!")
+  name: String! @source(subgraph: "storefronts", name: "name", type: "String!")
+  products: [Product]! @source(subgraph: "storefronts", name: "products", type: "[Product]!")
+}"
+`;
+
+exports[`Array-batched type merging errors plans correctly 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "products": [
+      {
+        "id": 0,
+        "resolverDependencyFieldMap": {
+          "manufacturer": [
+            {
+              "batch": true,
+              "id": 1,
+              "resolverOperationDocument": "query ManufacturersByIds($__variable_1: [ID!]!) {
+  __export: manufacturers(ids: $__variable_1) {
+    name
+  }
+}",
+              "subgraph": "manufacturers",
+            },
+          ],
+        },
+        "resolverOperationDocument": "query products {
+  __export: products(upcs: ["6"]) {
+    upc
+    name
+    manufacturer {
+      __variable_1: id
+    }
+  }
+}",
+        "subgraph": "products",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;
+
+exports[`Array-batched type merging successful query plans correctly 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "storefront": [
+      {
+        "id": 0,
+        "resolverDependencyFieldMap": {
+          "products": [
+            {
+              "batch": true,
+              "id": 1,
+              "resolverDependencyFieldMap": {
+                "manufacturer": [
+                  {
+                    "batch": true,
+                    "id": 2,
+                    "resolverOperationDocument": "query ManufacturersByIds($__variable_2: [ID!]!) {
+  __export: manufacturers(ids: $__variable_2) {
+    name
+  }
+}",
+                    "subgraph": "manufacturers",
+                  },
+                ],
+              },
+              "resolverOperationDocument": "query ProductsByUpcs($__variable_1: [ID!]!) {
+  __export: products(upcs: $__variable_1) {
+    name
+    manufacturer {
+      products {
+        upc
+        name
+      }
+      __variable_2: id
+    }
+  }
+}",
+              "subgraph": "products",
+            },
+          ],
+        },
+        "resolverOperationDocument": "query storefront {
+  __export: storefront(id: "2") {
+    id
+    name
+    products {
+      upc
+      __variable_1: upc
+    }
+  }
+}",
+        "subgraph": "storefronts",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;

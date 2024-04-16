@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Single-record type merging composes the schema correctly 1`] = `
+"schema {
+  query: Query
+}
+
+type Manufacturer @source(subgraph: "manufacturers", name: "Manufacturer") @source(subgraph: "products", name: "Manufacturer") @resolver(subgraph: "manufacturers", operation: "query ManufacturerById($Manufacturer_id: ID!) { manufacturer(id: $Manufacturer_id) }", kind: "FETCH") @resolver(subgraph: "products", operation: "query ManufacturerById($Manufacturer_id: ID!) { _manufacturer(id: $Manufacturer_id) }", kind: "FETCH") @variable(subgraph: "manufacturers", name: "Manufacturer_id", select: "id") @variable(subgraph: "products", name: "Manufacturer_id", select: "id") @variable(subgraph: "manufacturers", name: "Manufacturer_id", select: "id") @variable(subgraph: "products", name: "Manufacturer_id", select: "id") {
+  id: ID! @source(subgraph: "manufacturers", name: "id", type: "ID!") @source(subgraph: "products", name: "id", type: "ID!")
+  name: String! @source(subgraph: "manufacturers", name: "name", type: "String!")
+  products: [Product]! @source(subgraph: "products", name: "products", type: "[Product]!")
+}
+
+type Query {
+  manufacturer(id: ID!): Manufacturer @resolver(subgraph: "manufacturers", operation: "query manufacturer($id: ID!) { manufacturer(id: $id) }") @source(subgraph: "manufacturers", name: "manufacturer", type: "Manufacturer")
+  product(upc: ID!): Product @resolver(subgraph: "products", operation: "query product($upc: ID!) { product(upc: $upc) }") @source(subgraph: "products", name: "product", type: "Product")
+  _manufacturer(id: ID!): Manufacturer @resolver(subgraph: "products", operation: "query _manufacturer($id: ID!) { _manufacturer(id: $id) }") @source(subgraph: "products", name: "_manufacturer", type: "Manufacturer")
+  storefront(id: ID!): Storefront @resolver(subgraph: "storefronts", operation: "query storefront($id: ID!) { storefront(id: $id) }") @source(subgraph: "storefronts", name: "storefront", type: "Storefront")
+}
+
+type Product @source(subgraph: "products", name: "Product") @source(subgraph: "storefronts", name: "Product") @resolver(subgraph: "products", operation: "query ProductByUpc($Product_upc: ID!) { product(upc: $Product_upc) }", kind: "FETCH") @variable(subgraph: "products", name: "Product_upc", select: "upc") @variable(subgraph: "storefronts", name: "Product_upc", select: "upc") {
+  manufacturer: Manufacturer @source(subgraph: "products", name: "manufacturer", type: "Manufacturer")
+  name: String! @source(subgraph: "products", name: "name", type: "String!")
+  price: Float! @source(subgraph: "products", name: "price", type: "Float!")
+  upc: ID! @source(subgraph: "products", name: "upc", type: "ID!") @source(subgraph: "storefronts", name: "upc", type: "ID!")
+}
+
+type Storefront @source(subgraph: "storefronts", name: "Storefront") @resolver(subgraph: "storefronts", operation: "query StorefrontById($Storefront_id: ID!) { storefront(id: $Storefront_id) }", kind: "FETCH") @variable(subgraph: "storefronts", name: "Storefront_id", select: "id") {
+  id: ID! @source(subgraph: "storefronts", name: "id", type: "ID!")
+  name: String! @source(subgraph: "storefronts", name: "name", type: "String!")
+  products: [Product]! @source(subgraph: "storefronts", name: "products", type: "[Product]!")
+}"
+`;

@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Type merging with multiple keys composes correctly 1`] = `
+"schema {
+  query: Query
+}
+
+type Product @source(subgraph: "catalog", name: "Product") @source(subgraph: "reviews", name: "Product") @source(subgraph: "vendors", name: "Product") @resolver(subgraph: "catalog", operation: "query ProductsByUpcs($Product_upc: [ID!]!) { productsByUpcs(upcs: $Product_upc) }", kind: "BATCH") @resolver(subgraph: "reviews", operation: "query ProductsByIds($Product_id: [ID!]!) { productsByIds(ids: $Product_id) }", kind: "BATCH") @resolver(subgraph: "vendors", operation: "query productsByKeys($Product_key: [ProductKey]) { productsByKeys(keys: $Product_key) }", kind: "BATCH") @variable(subgraph: "catalog", name: "Product_upc", select: "upc") @variable(subgraph: "vendors", name: "Product_upc", select: "upc") @variable(subgraph: "reviews", name: "Product_id", select: "id") @variable(subgraph: "vendors", name: "Product_id", select: "id") @variable(subgraph: "catalog", name: "Product_key", value: "{ upc: $upc }") @variable(subgraph: "reviews", name: "Product_key", value: "{ id: $id }") @variable(subgraph: "vendors", name: "Product_key", value: "{ upc: $upc, id: $id }") {
+  upc: ID! @source(subgraph: "catalog", name: "upc", type: "ID!") @source(subgraph: "vendors", name: "upc", type: "ID!")
+  msrp: Int! @source(subgraph: "catalog", name: "msrp", type: "Int!")
+  name: String @source(subgraph: "catalog", name: "name", type: "String")
+  weight: Int! @source(subgraph: "catalog", name: "weight", type: "Int!")
+  id: ID! @source(subgraph: "reviews", name: "id", type: "ID!") @source(subgraph: "vendors", name: "id", type: "ID!")
+  reviews: [Review] @source(subgraph: "reviews", name: "reviews", type: "[Review]")
+  retailPrice: Int @source(subgraph: "vendors", name: "retailPrice", type: "Int")
+  unitsInStock: Int @source(subgraph: "vendors", name: "unitsInStock", type: "Int")
+}
+
+type Query {
+  productsByUpcs(upcs: [ID!]!): [Product]! @resolver(subgraph: "catalog", operation: "query productsByUpcs($upcs: [ID!]!) { productsByUpcs(upcs: $upcs) }") @source(subgraph: "catalog", name: "productsByUpcs", type: "[Product]!")
+  review(id: ID!): Review @resolver(subgraph: "reviews", operation: "query review($id: ID!) { review(id: $id) }") @source(subgraph: "reviews", name: "review", type: "Review")
+  productsByIds(ids: [ID!]!): [Product]! @resolver(subgraph: "reviews", operation: "query productsByIds($ids: [ID!]!) { productsByIds(ids: $ids) }") @source(subgraph: "reviews", name: "productsByIds", type: "[Product]!")
+  productsByKeys(keys: [ProductKey!]!): [Product]! @resolver(subgraph: "vendors", operation: "query productsByKeys($keys: [ProductKey!]!) { productsByKeys(keys: $keys) }") @source(subgraph: "vendors", name: "productsByKeys", type: "[Product]!")
+}
+
+type Review @source(subgraph: "reviews", name: "Review") @resolver(subgraph: "reviews", operation: "query ReviewById($Review_id: ID!) { review(id: $Review_id) }", kind: "FETCH") @variable(subgraph: "reviews", name: "Review_id", select: "id") {
+  id: ID! @source(subgraph: "reviews", name: "id", type: "ID!")
+  body: String @source(subgraph: "reviews", name: "body", type: "String")
+  product: Product @source(subgraph: "reviews", name: "product", type: "Product")
+}
+
+input ProductKey @source(subgraph: "vendors", name: "ProductKey") {
+  id: ID @source(subgraph: "vendors", name: "id", type: "ID")
+  upc: ID @source(subgraph: "vendors", name: "upc", type: "ID")
+}"
+`;

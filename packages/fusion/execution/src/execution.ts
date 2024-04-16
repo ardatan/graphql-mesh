@@ -614,7 +614,25 @@ export function executeResolverOperationNode({
           depsResult$ = Promise.all(depsResultPromises);
         }
       } else {
-        depsResult$ = handleExportedItem(exported);
+        const depsAsyncIterables: AsyncIterable<any>[] = [];
+        const depsResultPromises: PromiseLike<any>[] = [];
+        const exportedFakeListForBatching$ = handleExportedListForBatching(exported);
+        if (isAsyncIterable(exportedFakeListForBatching$)) {
+          depsAsyncIterables.push(exportedFakeListForBatching$);
+        } else if (isPromise(exportedFakeListForBatching$)) {
+          depsResultPromises.push(exportedFakeListForBatching$);
+        }
+        const regularExported$ = handleExportedItem(exported);
+        if (isAsyncIterable(regularExported$)) {
+          depsAsyncIterables.push(regularExported$);
+        } else if (isPromise(regularExported$)) {
+          depsResultPromises.push(regularExported$);
+        }
+        if (depsAsyncIterables.length) {
+          depsResult$ = Repeater.merge([...depsResultPromises, ...depsAsyncIterables]);
+        } else if (depsResultPromises.length) {
+          depsResult$ = Promise.all(depsResultPromises);
+        }
       }
       if (isAsyncIterable(depsResult$)) {
         return mapAsyncIterator(depsResult$ as AsyncIterableIterator<any>, () => ({

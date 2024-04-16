@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Computed fields composes correctly 1`] = `
+"schema {
+  query: Query
+}
+
+type Product @source(subgraph: "products", name: "Product") @source(subgraph: "metadata", name: "Product") @resolver(subgraph: "products", operation: "query ProductsByUpcs($Product_upc: [ID!]!) { products(upcs: $Product_upc) }", kind: "BATCH") @resolver(subgraph: "metadata", operation: "\\n      query ProductMetadata($Product_key: [ProductKey]) {\\n        _products(keys: $Product_key)\\n      }\\n    ", kind: "BATCH") @variable(subgraph: "products", name: "Product_upc", select: "upc") @variable(subgraph: "metadata", name: "Product_key", value: "{ categoryId: $Product_categoryId, metadataIds: $Product_metadataIds }") {
+  categoryId: ID @source(subgraph: "products", name: "categoryId", type: "ID")
+  metadataIds: [ID!] @source(subgraph: "products", name: "metadataIds", type: "[ID!]")
+  name: String! @source(subgraph: "products", name: "name", type: "String!")
+  price: Float! @source(subgraph: "products", name: "price", type: "Float!")
+  upc: ID! @source(subgraph: "products", name: "upc", type: "ID!")
+  category: Category @deprecated(reason: "gateway access only") @source(subgraph: "metadata", name: "category", type: "Category") @variable(subgraph: "products", name: "Product_categoryId", select: "categoryId")
+  metadata: [Metadata] @deprecated(reason: "gateway access only") @source(subgraph: "metadata", name: "metadata", type: "[Metadata]") @variable(subgraph: "products", name: "Product_metadataIds", select: "metadataIds")
+}
+
+type Query {
+  products(upcs: [ID!]!): [Product]! @resolver(subgraph: "products", operation: "query products($upcs: [ID!]!) { products(upcs: $upcs) }") @source(subgraph: "products", name: "products", type: "[Product]!")
+  _products(keys: [ProductKey!]!): [Product]! @resolver(subgraph: "metadata", operation: "query _products($keys: [ProductKey!]!) { _products(keys: $keys) }") @source(subgraph: "metadata", name: "_products", type: "[Product]!")
+}
+
+type Category @source(subgraph: "metadata", name: "Category") {
+  id: ID! @source(subgraph: "metadata", name: "id", type: "ID!")
+  name: String! @source(subgraph: "metadata", name: "name", type: "String!")
+}
+
+interface Metadata @source(subgraph: "metadata", name: "Metadata") {
+  id: ID! @source(subgraph: "metadata", name: "id", type: "ID!")
+  name: String! @source(subgraph: "metadata", name: "name", type: "String!")
+}
+
+type GeoLocation implements Metadata @source(subgraph: "metadata", name: "GeoLocation") {
+  id: ID! @source(subgraph: "metadata", name: "id", type: "ID!")
+  name: String! @source(subgraph: "metadata", name: "name", type: "String!")
+  lat: Float! @source(subgraph: "metadata", name: "lat", type: "Float!")
+  lon: Float! @source(subgraph: "metadata", name: "lon", type: "Float!")
+}
+
+type SportsTeam implements Metadata @source(subgraph: "metadata", name: "SportsTeam") {
+  id: ID! @source(subgraph: "metadata", name: "id", type: "ID!")
+  name: String! @source(subgraph: "metadata", name: "name", type: "String!")
+  location: GeoLocation @source(subgraph: "metadata", name: "location", type: "GeoLocation")
+}
+
+type TelevisionSeries implements Metadata @source(subgraph: "metadata", name: "TelevisionSeries") {
+  id: ID! @source(subgraph: "metadata", name: "id", type: "ID!")
+  name: String! @source(subgraph: "metadata", name: "name", type: "String!")
+  season: Int @source(subgraph: "metadata", name: "season", type: "Int")
+}
+
+input ProductKey @source(subgraph: "metadata", name: "ProductKey") {
+  categoryId: ID @source(subgraph: "metadata", name: "categoryId", type: "ID")
+  metadataIds: [ID!] @source(subgraph: "metadata", name: "metadataIds", type: "[ID!]")
+}"
+`;
+
+exports[`Computed fields plans correctly 1`] = `
+{
+  "resolverDependencyFieldMap": {
+    "products": [
+      {
+        "id": 0,
+        "resolverDependencies": [
+          {
+            "batch": true,
+            "id": 1,
+            "resolverDependencyFieldMap": {
+              "metadata": [],
+            },
+            "resolverOperationDocument": "query ProductMetadata($__variable_1: ID, $__variable_2: ID) {
+  __export: _products(
+    keys: {categoryId: $__variable_1, metadataIds: $__variable_2}
+  ) {
+    category {
+      name
+    }
+    metadata {
+      __typename
+      name
+      name
+    }
+  }
+}",
+            "subgraph": "metadata",
+          },
+        ],
+        "resolverOperationDocument": "query products {
+  __export: products(upcs: [1, 2, 3, 4]) {
+    name
+    price
+    __variable_1: categoryId
+    __variable_2: metadataIds
+  }
+}",
+        "subgraph": "products",
+      },
+    ],
+  },
+  "resolverOperationNodes": [],
+}
+`;
