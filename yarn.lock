@@ -156,20 +156,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/federation-internals@npm:2.7.2":
-  version: 2.7.2
-  resolution: "@apollo/federation-internals@npm:2.7.2"
-  dependencies:
-    "@types/uuid": "npm:^9.0.0"
-    chalk: "npm:^4.1.0"
-    js-levenshtein: "npm:^1.1.6"
-    uuid: "npm:^9.0.0"
-  peerDependencies:
-    graphql: ^16.5.0
-  checksum: 10c0/d75b9c7982ca7872c6e6ab70a6a7636a07c66c21134ce09d776e65ef10ac4fdd304f0bc48fcdc53c291464aeaedf3e44b3b10c8dc2fbd3ca9907e81bc28b393f
-  languageName: node
-  linkType: hard
-
 "@apollo/federation-internals@npm:2.7.3":
   version: 2.7.3
   resolution: "@apollo/federation-internals@npm:2.7.3"
@@ -388,7 +374,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/subgraph@npm:2.7.3, @apollo/subgraph@npm:^2.2.3, @apollo/subgraph@npm:^2.4.1":
+"@apollo/subgraph@npm:2.7.3, @apollo/subgraph@npm:^2.2.3, @apollo/subgraph@npm:^2.4.1, @apollo/subgraph@npm:^2.7.2":
   version: 2.7.3
   resolution: "@apollo/subgraph@npm:2.7.3"
   dependencies:
@@ -397,18 +383,6 @@ __metadata:
   peerDependencies:
     graphql: ^16.5.0
   checksum: 10c0/f40cdca2beb57a502c9f9c1c184cb607c58ce2cfa5d13674bef252eaec8e4cf53d5de9a4e87d946834fbd1f58357d776fcf4b811cef450d9d1735879be95e09a
-  languageName: node
-  linkType: hard
-
-"@apollo/subgraph@npm:^2.7.2":
-  version: 2.7.2
-  resolution: "@apollo/subgraph@npm:2.7.2"
-  dependencies:
-    "@apollo/cache-control-types": "npm:^1.0.2"
-    "@apollo/federation-internals": "npm:2.7.2"
-  peerDependencies:
-    graphql: ^16.5.0
-  checksum: 10c0/ca9e685f329a710075582594e4911f1252a125e547c12f7f91002197c1decdeb3343e257f7299efd1067f93a68a53795d001674947a2cca0332b775fcb3e9ce1
   languageName: node
   linkType: hard
 
@@ -33388,8 +33362,8 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.7.1":
-  version: 4.7.1
-  resolution: "tsx@npm:4.7.1"
+  version: 4.7.2
+  resolution: "tsx@npm:4.7.2"
   dependencies:
     esbuild: "npm:~0.19.10"
     fsevents: "npm:~2.3.3"
@@ -33399,7 +33373,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/5711bec9467fe2984b8cca2f3d99955a49aad62b8e2e8c2054488827dd2ea4618e0dfc0cc1c1642e311734e085631a268a2b53e83afb666c86f572039adebb9f
+  checksum: 10c0/0338598cc3b7b01a47939297797dfb77a1d675acb33bf71e816faf2b8cb76da3994d341d2920d105dbe98cd01a4babd80ca4b9a5a36120813dd79c4fc1c32df1
   languageName: node
   linkType: hard
 
