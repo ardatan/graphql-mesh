@@ -75,7 +75,9 @@ interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithou
   /**
    * Additional GraphQL schema resolvers.
    */
-  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext> | IResolvers<unknown, MeshServeContext>[];
+  additionalResolvers?:
+    | IResolvers<unknown, MeshServeContext & TContext>
+    | IResolvers<unknown, MeshServeContext>[];
   /**
    * Implement custom executors for transports.
    */
@@ -94,7 +96,9 @@ interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithout
   /**
    * Additional GraphQL schema resolvers.
    */
-  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext> | IResolvers<unknown, MeshServeContext>[];
+  additionalResolvers?:
+    | IResolvers<unknown, MeshServeContext & TContext>
+    | IResolvers<unknown, MeshServeContext>[];
   /**
    * Implement custom executors for transports.
    */

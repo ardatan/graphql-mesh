@@ -59,7 +59,11 @@ export function convertSupergraphToFusiongraph(
 
   const fusiongraphSchema = mapSchema(supergraphSchema, {
     [MapperKind.TYPE](type) {
-      if (type.name.startsWith('link__') || type.name.startsWith('join__') || type.name.startsWith('core__')) {
+      if (
+        type.name.startsWith('link__') ||
+        type.name.startsWith('join__') ||
+        type.name.startsWith('core__')
+      ) {
         return null;
       }
       const typeExtensions: any = (type.extensions ||= {});
@@ -100,13 +104,18 @@ export function convertSupergraphToFusiongraph(
               if (joinFieldDirectives?.length) {
                 availableSubgraphsForField = joinFieldDirectives
                   .filter(joinFieldDirective => !joinFieldDirective.external)
-                  .map(joinFieldDirective => subgraphNameMap.get(joinFieldDirective.graph) || joinFieldDirective.graph);
+                  .map(
+                    joinFieldDirective =>
+                      subgraphNameMap.get(joinFieldDirective.graph) || joinFieldDirective.graph,
+                  );
               } else {
                 availableSubgraphsForField = joinTypeDirectives.map(
-                  joinTypeDirective => subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph,
+                  joinTypeDirective =>
+                    subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph,
                 );
               }
-              const keyGraph = subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph;
+              const keyGraph =
+                subgraphNameMap.get(joinTypeDirective.graph) || joinTypeDirective.graph;
               if (!availableSubgraphsForField.includes(keyGraph)) {
                 availableSubgraphsForField.push(keyGraph);
               }
@@ -196,7 +205,8 @@ export function convertSupergraphToFusiongraph(
                   variableDirectivesForFusion.push({
                     name: varName,
                     select: print(selection),
-                    subgraph: subgraphNameMap.get(joinFieldDirective.graph) || joinFieldDirective.graph,
+                    subgraph:
+                      subgraphNameMap.get(joinFieldDirective.graph) || joinFieldDirective.graph,
                     type: getNamedType(typeFieldMap[selectionName].type).toString(),
                   });
                 }
@@ -284,7 +294,8 @@ export function convertSupergraphToFusiongraph(
       const sourceDirectivesForFusion: any[] = (enumValueDirectiveExtensions.source ||= []);
       for (const joinEnumValueDirective of joinEnumValueDirectives || []) {
         sourceDirectivesForFusion.push({
-          subgraph: subgraphNameMap.get(joinEnumValueDirective.graph) || joinEnumValueDirective.graph,
+          subgraph:
+            subgraphNameMap.get(joinEnumValueDirective.graph) || joinEnumValueDirective.graph,
           name: enumValueName,
         });
       }
