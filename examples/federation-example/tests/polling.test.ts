@@ -43,6 +43,7 @@ describe('Polling Test', () => {
         }
       });
     });
+    changedSupergraph = true;
     const serveCmd = exec(`${join(__dirname, '../node_modules/.bin/mesh')} start`, {
       cwd,
       env: {
@@ -92,13 +93,13 @@ describe('Polling Test', () => {
               name: 'users',
             },
             {
-              name: 'topProducts',
+              name: 'topProductsNew',
             },
           ],
         },
       },
     });
-    changedSupergraph = true;
+    changedSupergraph = false;
     await new Promise(resolve => setTimeout(resolve, 3000));
     const resp2 = await fetch('http://127.0.0.1:4000/graphql', {
       method: 'POST',
@@ -132,7 +133,7 @@ describe('Polling Test', () => {
               name: 'users',
             },
             {
-              name: 'topProductsNew',
+              name: 'topProducts',
             },
           ],
         },
