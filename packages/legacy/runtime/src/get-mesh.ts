@@ -1,6 +1,7 @@
 import {
   DocumentNode,
   getOperationAST,
+  GraphQLError,
   GraphQLObjectType,
   GraphQLSchema,
   OperationTypeNode,
@@ -36,6 +37,7 @@ import {
 import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import {
+  createGraphQLError,
   ExecutionResult,
   getRootTypeMap,
   isAsyncIterable,
@@ -48,7 +50,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
-import { isGraphQLJitCompatible, isStreamOperation } from './utils.js';
+import { getOriginalError, isGraphQLJitCompatible, isStreamOperation } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -303,6 +305,46 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     useExtendedValidation({
       rules: [OneOfInputObjectsRule],
     }),
+    {
+      onExecute() {
+        return {
+          onExecuteDone({ result, setResult }) {
+            if (result.errors) {
+              // Print errors with stack trace in development
+              if (process.env.NODE_ENV === 'production') {
+                for (const error of result.errors) {
+                  const origError = getOriginalError(error);
+                  if (origError) {
+                    logger.error(origError);
+                  }
+                }
+              } else {
+                setResult({
+                  ...result,
+                  errors: result.errors.map(error => {
+                    const origError = getOriginalError(error);
+                    if (origError) {
+                      return createGraphQLError(error.message, {
+                        ...error,
+                        extensions: {
+                          ...error.extensions,
+                          originalError: {
+                            name: origError.name,
+                            message: origError.message,
+                            stack: origError.stack,
+                          },
+                        },
+                      });
+                    }
+                    return error;
+                  }),
+                });
+              }
+            }
+          },
+        };
+      },
+    },
     ...initialPluginList,
   ];
 
