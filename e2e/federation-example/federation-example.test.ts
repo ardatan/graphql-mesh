@@ -4,7 +4,7 @@ import { createTenv, Service } from '@e2e/tenv';
 const { fs, spawn, service, serve } = createTenv(__dirname);
 
 let services!: Service[];
-const supergraphConfig = { subgraphs: {} };
+let supergraph!: string;
 beforeAll(async () => {
   services = [
     await service('accounts'),
@@ -12,6 +12,8 @@ beforeAll(async () => {
     await service('products'),
     await service('reviews'),
   ];
+
+  const supergraphConfig = { subgraphs: {} };
   for (const service of services) {
     supergraphConfig.subgraphs[service.name] = {
       routing_url: `http://0.0.0.0:${service.port}/graphql`,
@@ -20,11 +22,7 @@ beforeAll(async () => {
       },
     };
   }
-});
 
-async function composeSupergraph(
-  maskServicePorts?: boolean,
-): Promise<[result: string, path: string]> {
   const supergraphConfigFile = await fs.tempfile('supergraph.json');
   await fs.write(supergraphConfigFile, JSON.stringify(supergraphConfig));
 
@@ -33,22 +31,15 @@ async function composeSupergraph(
   );
   await waitForExit;
 
-  let result = proc.getStd('out');
-  if (maskServicePorts) {
-    for (const service of services) {
-      result = result.replaceAll(service.port.toString(), `<${service.name}>`);
-    }
-  }
-
-  const supergraphFile = await fs.tempfile('supergraph.graphql');
-  await fs.write(supergraphFile, result);
-
-  return [result, supergraphFile];
-}
+  supergraph = proc.getStd('out');
+});
 
 it('should compose supergraph with rover', async () => {
-  const [result] = await composeSupergraph(true);
-  expect(result).toMatchSnapshot();
+  let maskedSupergraph = supergraph;
+  for (const service of services) {
+    maskedSupergraph = maskedSupergraph.replaceAll(service.port.toString(), `<${service.name}>`);
+  }
+  expect(maskedSupergraph).toMatchSnapshot();
 });
 
 it.concurrent.each([
@@ -116,7 +107,8 @@ it.concurrent.each([
     `,
   },
 ])('should execute $name', async ({ query }) => {
-  const [, supergraph] = await composeSupergraph();
-  const { execute } = await serve({ supergraph });
+  const supergraphFile = await fs.tempfile('supergraph.graphql');
+  await fs.write(supergraphFile, supergraph);
+  const { execute } = await serve({ supergraph: supergraphFile });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });
