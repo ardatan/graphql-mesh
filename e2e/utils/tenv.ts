@@ -180,9 +180,9 @@ export function createTenv(cwd: string): Tenv {
       return spawn({ ...opts, cwd }, cmd, ...args);
     },
     async serve(opts) {
-      const { port = await getAvailablePort(), fusiongraph, supergraph } = opts || {};
+      const { port = await getAvailablePort(), fusiongraph, supergraph, pipeLogs } = opts || {};
       const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs: opts.pipeLogs },
+        { cwd, pipeLogs },
         'node',
         '--import',
         'tsx',
@@ -226,7 +226,7 @@ export function createTenv(cwd: string): Tenv {
       return serve;
     },
     async compose(opts) {
-      const { services = [], trimHostPaths, maskServicePorts } = opts || {};
+      const { services = [], trimHostPaths, maskServicePorts, pipeLogs } = opts || {};
       let target = '';
       if (opts?.target) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
@@ -234,7 +234,7 @@ export function createTenv(cwd: string): Tenv {
         target = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.target}`);
       }
       const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs: opts.pipeLogs },
+        { cwd, pipeLogs },
         'node',
         '--import',
         'tsx',
