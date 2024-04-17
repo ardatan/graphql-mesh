@@ -38,6 +38,14 @@ export interface Disposable {
   dispose(): Promise<void>;
 }
 
+export interface ProcOptions {
+  /**
+   * Pipe the logs from the spawned process to the current process.
+   * Useful for debugging.
+   */
+  pipeLogs?: boolean;
+}
+
 export interface Proc extends Disposable {
   getStd(o: 'out' | 'err' | 'both'): string;
 }
@@ -46,7 +54,7 @@ export interface Server extends Proc {
   port: number;
 }
 
-export interface ServeOptions {
+export interface ServeOptions extends ProcOptions {
   port?: number;
   fusiongraph?: string;
   supergraph?: string;
@@ -60,7 +68,7 @@ export interface Serve extends Server {
   }): Promise<ExecutionResult<any>>;
 }
 
-export interface ServiceOptions {
+export interface ServiceOptions extends ProcOptions {
   /**
    * Custom port of this service.
    *
@@ -78,7 +86,7 @@ export interface Service extends Server {
   name: string;
 }
 
-export interface ComposeOptions {
+export interface ComposeOptions extends ProcOptions {
   /**
    * Write the compose output/result to a temporary unique file with the extension.
    * The file will be deleted after the tests complete.
@@ -104,7 +112,7 @@ export interface Compose extends Proc {
   result: string;
 }
 
-export interface ContainerOptions {
+export interface ContainerOptions extends ProcOptions {
   /**
    * Name of the service.
    * Note that the actual Docker container will have a unique suffix.
@@ -137,7 +145,7 @@ export interface Tenv {
     tempfile(name: string): Promise<string>;
     write(path: string, content: string): Promise<void>;
   };
-  spawn(command: string): Promise<[proc: Proc, waitForExit: Promise<void>]>;
+  spawn(command: string, opts?: ProcOptions): Promise<[proc: Proc, waitForExit: Promise<void>]>;
   serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
@@ -167,14 +175,14 @@ export function createTenv(cwd: string): Tenv {
         return fs.writeFile(filePath, content, 'utf-8');
       },
     },
-    spawn(command) {
+    spawn(command, opts) {
       const [cmd, ...args] = command.split(' ');
-      return spawn({ cwd }, cmd, ...args);
+      return spawn({ ...opts, cwd }, cmd, ...args);
     },
     async serve(opts) {
       const { port = await getAvailablePort(), fusiongraph, supergraph } = opts || {};
       const [proc, waitForExit] = await spawn(
-        { cwd },
+        { cwd, pipeLogs: opts.pipeLogs },
         'node',
         '--import',
         'tsx',
@@ -226,7 +234,7 @@ export function createTenv(cwd: string): Tenv {
         target = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.target}`);
       }
       const [proc, waitForExit] = await spawn(
-        { cwd },
+        { cwd, pipeLogs: opts.pipeLogs },
         'node',
         '--import',
         'tsx',
@@ -267,10 +275,10 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, target, result };
     },
-    async service(name, { port, servePort } = {}) {
+    async service(name, { port, servePort, pipeLogs } = {}) {
       port ||= await getAvailablePort();
       const [proc, waitForExit] = await spawn(
-        { cwd },
+        { cwd, pipeLogs },
         'node',
         '--import',
         'tsx',
@@ -293,7 +301,7 @@ export function createTenv(cwd: string): Tenv {
       ]);
       return service;
     },
-    async container({ name, image, env = {}, containerPort, healthcheck }) {
+    async container({ name, image, env = {}, containerPort, healthcheck, pipeLogs }) {
       const uniqueName = `${name}_${Math.random().toString(32).slice(2)}`;
 
       const hostPort = await getAvailablePort();
@@ -326,7 +334,12 @@ export function createTenv(cwd: string): Tenv {
 
       let stdboth = '';
       const stream = await ctr.attach({ stream: true, stdout: true, stderr: true });
-      stream.on('data', data => (stdboth += data.toString()));
+      stream.on('data', data => {
+        stdboth += data.toString();
+        if (pipeLogs) {
+          process.stderr.write(data);
+        }
+      });
 
       await ctr.start();
 
@@ -400,12 +413,12 @@ export function createTenv(cwd: string): Tenv {
   };
 }
 
-interface SpawnOptions {
+interface SpawnOptions extends ProcOptions {
   cwd: string;
 }
 
 function spawn(
-  { cwd }: SpawnOptions,
+  { cwd, pipeLogs }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<[proc: Proc, waitForExit: Promise<void>]> {
@@ -447,12 +460,18 @@ function spawn(
   child.stdout.on('data', x => {
     stdout += x.toString();
     stdboth += x.toString();
+    if (pipeLogs) {
+      process.stdout.write(x);
+    }
   });
   child.stderr.on('data', x => {
     // prefer relative paths for logs consistency
     const str = x.toString().replaceAll(__project, '');
     stderr += str;
     stdboth += str;
+    if (pipeLogs) {
+      process.stderr.write(x);
+    }
   });
 
   child.once('exit', () => {
