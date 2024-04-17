@@ -25,8 +25,7 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  fusiongraph: args.get('fusiongraph'),
+  fusiongraph: '', // TODO: dont require fusiongraph option since it can be provided from as a CLI arg
   additionalResolvers: {
     Query: {
       async viewsInPastMonth(root, { project }, context: any, info) {
