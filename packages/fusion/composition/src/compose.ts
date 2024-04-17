@@ -3,6 +3,7 @@ import {
   GraphQLField,
   GraphQLNamedType,
   GraphQLSchema,
+  isCompositeType,
   isInputObjectType,
   isObjectType,
   isSpecifiedScalarType,
@@ -134,7 +135,7 @@ export function composeSubgraphs(
         if (fieldConfig.args) {
           for (const argName in fieldConfig.args) {
             const arg = fieldConfig.args[argName];
-            let variableDefinitionStr = `$${argName}: ${arg.type}`;
+            let variableDefinitionStr = `$_arg_${argName}: ${arg.type}`;
             if (arg.defaultValue) {
               variableDefinitionStr += ` = ${
                 typeof arg.defaultValue === 'string'
@@ -143,14 +144,20 @@ export function composeSubgraphs(
               }`;
             }
             variableDefinitions.push(variableDefinitionStr);
-            rootFieldArgs.push(`${argName}: $${argName}`);
+            rootFieldArgs.push(`${argName}: $_arg_${argName}`);
           }
         }
         const variableDefinitionsString = variableDefinitions.length
           ? `(${variableDefinitions.join(', ')})`
           : '';
         const rootFieldArgsString = rootFieldArgs.length ? `(${rootFieldArgs.join(', ')})` : '';
-        const operationString = `${operationType} ${operationName}${variableDefinitionsString} { ${fieldName}${rootFieldArgsString} }`;
+        const operationString = /* GraphQL */`
+          ${operationType} ${operationName}${variableDefinitionsString} {
+            _export: ${fieldName}${rootFieldArgsString} ${isCompositeType(getNamedType(fieldConfig.type)) ? `{
+                ..._Export
+              }
+            ` : ''}
+          }`;
 
         return {
           ...fieldConfig,
@@ -295,7 +302,12 @@ function addAnnotationsForSemanticConventions({
                 const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
                 const resolverAnnotation: ResolverAnnotation = {
                   subgraph: subgraphName,
-                  operation: `query ${operationName}($${varName}: ${arg.type}) { ${originalFieldName}(${arg.name}: $${varName}) }`,
+                  operation: /* GraphQL */`
+                  query ${operationName}($${varName}: ${arg.type}) {
+                    _export: ${originalFieldName}(${arg.name}: $${varName}) {
+                      ..._Export
+                    }
+                  }`,
                   kind: 'FETCH',
                 };
                 directives.resolver ||= [];
@@ -314,7 +326,12 @@ function addAnnotationsForSemanticConventions({
                   getOriginalFieldNameForSubgraph(queryField, subgraphName) || queryFieldName;
                 const resolverAnnotation: ResolverAnnotation = {
                   subgraph: subgraphName,
-                  operation: `query ${operationName}($${varName}: ${arg.type}) { ${originalFieldName}(${arg.name}: $${varName}) }`,
+                  operation: /* GraphQL */`
+                    query ${operationName}($${varName}: ${arg.type}) {
+                      _export: ${originalFieldName}(${arg.name}: $${varName}) {
+                        ..._Export
+                      }
+                    }`,
                   kind: 'BATCH',
                 };
                 directives.resolver ||= [];
@@ -342,7 +359,13 @@ function addAnnotationsForSemanticConventions({
               const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
               const resolverAnnotation: ResolverAnnotation = {
                 subgraph: subgraphName,
-                operation: `query ${operationName}($${varName}: ${objectFieldTypeName}!) { ${originalFieldName}(where: { ${fieldName}: $${varName}) } }`,
+                operation: /* GraphQL */`
+                query ${operationName}($${varName}: ${objectFieldTypeName}!) {
+                  _export: ${originalFieldName}(where: { ${fieldName}: $${varName} }) {
+                    ..._Export
+                  }
+                }
+                `,
                 kind: 'FETCH',
               };
               directives.resolver ||= [];
@@ -356,7 +379,12 @@ function addAnnotationsForSemanticConventions({
               const originalFieldName = getOriginalFieldNameForSubgraph(queryField, subgraphName);
               const resolverAnnotation: ResolverAnnotation = {
                 subgraph: subgraphName,
-                operation: `query ${operationName}($${varName}: [${objectFieldTypeName}!]!) { ${originalFieldName}(where: { ${fieldName}_in: $${varName} }) }`,
+                operation: /* GraphQL */`
+                  query ${operationName}($${varName}: [${objectFieldTypeName}!]!) {
+                    _export: ${originalFieldName}(where: { ${fieldName}_in: $${varName} }) {
+                      ..._Export
+                    }
+                  }`,
                 kind: 'BATCH',
               };
               directives.resolver ||= [];

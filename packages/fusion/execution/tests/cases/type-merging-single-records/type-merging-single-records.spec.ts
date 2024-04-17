@@ -7,6 +7,8 @@ import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { manufacturersSchema } from './services/manufacturers';
 import { productsSchema } from './services/products';
 import { storefrontsSchema } from './services/storefronts';
+import { planOperation } from '../../../src/v2/query-planning';
+import { inspect } from 'util';
 
 describe('Single-record type merging', () => {
   const fusiongraph = composeSubgraphs([
@@ -173,4 +175,30 @@ describe('Single-record type merging', () => {
 
     expect(cnt).toBe(1);
   });
+  it.only('v2', () => {
+    console.log(
+      inspect(planOperation({
+        schema: fusiongraph,
+        operationDoc: parse(/* GraphQL */ `
+        query {
+          storefront(id: "2") {
+            id
+            name
+            products {
+              upc
+              name
+              manufacturer {
+                products {
+                  upc
+                  name
+                }
+                name
+              }
+            }
+          }
+        }
+      `, { noLocation: true }),
+      }), { depth: 10 })
+    )
+  })
 });

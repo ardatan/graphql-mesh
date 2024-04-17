@@ -27,6 +27,7 @@ import _ from 'lodash';
 import { DirectiveAnnotation } from '@graphql-tools/utils';
 import { FlattenedFieldNode, FlattenedSelectionSet } from './flattenSelections.js';
 import { ResolverKind, ResolverVariableConfig } from './types.js';
+import { getDefDirectives } from './getDefDirectives.js';
 
 // Resolution direction is from parentSubgraph to resolverDirective.subgraph
 export function createResolveNode({
@@ -352,46 +353,6 @@ export function createResolveNode({
     batch: resolverKind === 'BATCH',
     defer: fieldNode.defer,
   };
-}
-
-function getDefDirectives({ astNode, extensions }: { astNode?: ASTNode | null; extensions?: any }) {
-  const directiveAnnotations: DirectiveAnnotation[] = [];
-  if (astNode != null && 'directives' in astNode) {
-    astNode.directives?.forEach(directiveNode => {
-      directiveAnnotations.push({
-        name: directiveNode.name.value,
-        args:
-          directiveNode.arguments?.reduce(
-            (acc, arg) => {
-              acc[arg.name.value] = valueFromASTUntyped(arg.value);
-              return acc;
-            },
-            {} as Record<string, any>,
-          ) ?? {},
-      });
-    });
-  }
-  if (extensions?.directives != null) {
-    for (const directiveName in extensions.directives) {
-      const directiveExt = extensions.directives[directiveName];
-      if (directiveExt != null) {
-        if (Array.isArray(directiveExt)) {
-          directiveExt.forEach(directive => {
-            directiveAnnotations.push({
-              name: directiveName,
-              args: directive,
-            });
-          });
-        } else {
-          directiveAnnotations.push({
-            name: directiveName,
-            args: directiveExt,
-          });
-        }
-      }
-    }
-  }
-  return directiveAnnotations;
 }
 
 export function isList(type: GraphQLOutputType) {
