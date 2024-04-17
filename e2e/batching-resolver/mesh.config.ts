@@ -1,6 +1,5 @@
 import { Args } from '@e2e/args';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 const args = Args(process.argv);
@@ -32,9 +31,4 @@ export const composeConfig = defineComposeConfig({
         )
     }
   `,
-});
-
-export const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  fusiongraph: args.get('fusiongraph'),
 });
