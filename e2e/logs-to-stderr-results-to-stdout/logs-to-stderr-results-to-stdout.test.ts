@@ -7,7 +7,7 @@ it('should write serve logs to stderr', async () => {
   await dispose();
 
   expect(getStd('out')).toBeFalsy();
-  expect(getStd('err')).toContain('Started server on');
+  expect(getStd('err')).toContain('Starting server on');
 });
 
 it('should write compose output to stdout and logs to stderr', async () => {
