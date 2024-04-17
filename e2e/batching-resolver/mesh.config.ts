@@ -1,10 +1,10 @@
 import { Args } from '@e2e/args';
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 const args = Args(process.argv);
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   target: args.get('target'),
   subgraphs: [
     {

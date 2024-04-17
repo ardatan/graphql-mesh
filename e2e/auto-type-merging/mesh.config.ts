@@ -4,14 +4,14 @@ import {
   createFilterTransform,
   createNamingConventionTransform,
   createPrefixTransform,
-  defineConfig as defineComposeConfig,
+  defineConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 const args = Args(process.argv);
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   target: args.get('target'),
   subgraphs: [
     {
