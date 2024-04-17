@@ -331,7 +331,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                           originalError: {
                             name: origError.name,
                             message: origError.message,
-                            stack: origError.stack?.split('\n').map(line => line.trim()),
+                            stack: origError.stack,
                           },
                         },
                       });
