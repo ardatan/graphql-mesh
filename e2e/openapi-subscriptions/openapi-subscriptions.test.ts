@@ -53,27 +53,26 @@ it('should listen for webhooks', async () => {
 
   expect(sub.ok).toBeTruthy();
 
-  let body = '';
-  let i = 0;
+  const msgs: string[] = [];
   for await (const chunk of sub.body) {
-    body += Buffer.from(chunk).toString('utf8');
-    if (++i > 3) {
+    const parts = Buffer.from(chunk)
+      .toString('utf8')
+      .split('\n\n')
+      .filter(msg => msg.includes('event: next'));
+    msgs.push(...parts);
+    if (msgs.length === 3) {
       break;
     }
   }
 
-  expect(body).toMatchInlineSnapshot(`
-":
-
-event: next
-data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}
-
-event: next
-data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}
-
-event: next
-data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}
-
-"
+  expect(msgs).toMatchInlineSnapshot(`
+[
+  "event: next
+data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}",
+  "event: next
+data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}",
+  "event: next
+data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}",
+]
 `);
 });
