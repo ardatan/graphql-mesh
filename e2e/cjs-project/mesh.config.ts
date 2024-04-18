@@ -4,7 +4,7 @@ const { defineConfig } = require('@graphql-mesh/compose-cli');
 const args = require('@e2e/args').Args(process.argv);
 
 const composeConfig = defineConfig({
-  port: args.get('target'),
+  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: () => ({

@@ -59,7 +59,7 @@ export async function runComposeCLI({
   spinnies.add('write', { text: `Writing Fusiongraph` });
   const printedSupergraph = printSchemaWithDirectives(composedSchema);
 
-  const fusiongraphFileName = meshComposeCLIConfig.target;
+  const fusiongraphFileName = meshComposeCLIConfig.output;
 
   if (!fusiongraphFileName) {
     if (typeof process === 'object') {

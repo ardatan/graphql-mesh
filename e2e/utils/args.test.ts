@@ -2,9 +2,9 @@ import { Args, createArg, createPortArg, createServicePortArg } from './args';
 
 it.each([
   {
-    key: 'target',
+    key: 'output',
     val: 'internet',
-    out: '--target=internet',
+    out: '--output=internet',
   },
   {
     key: 'port',
@@ -54,8 +54,8 @@ it.each([
 
 it.each([
   {
-    argv: ['yarn', 'mesh', createArg('target', 'internet')],
-    key: 'target',
+    argv: ['yarn', 'mesh', createArg('output', 'internet')],
+    key: 'output',
     val: 'internet',
   },
 ])('should get str "$val" by "$key" from $argv', ({ argv, key, val }) => {
@@ -74,7 +74,7 @@ it.each([
 it.each([
   {
     argv: ['yarn', 'mesh'],
-    key: 'target',
+    key: 'output',
   },
 ])('should get undefined by "$key" from $argv', ({ argv, key }) => {
   expect(Args(argv).get(key)).toBeUndefined();
@@ -83,11 +83,11 @@ it.each([
 it.each([
   {
     argv: ['yarn', 'mesh'],
-    key: 'target',
+    key: 'output',
   },
   {
-    argv: ['yarn', 'mesh', '--target space=internet'],
-    key: 'target space',
+    argv: ['yarn', 'mesh', '--output space=internet'],
+    key: 'output space',
   },
 ])('should throw when requiring "$key" from $argv', ({ argv, key }) => {
   expect(() => Args(argv).get(key, true)).toThrow();

@@ -3,7 +3,7 @@ import { Args } from '@e2e/args';
 import { defineConfig } from '@graphql-mesh/compose-cli';
 
 export const composeConfig = defineConfig({
-  target: Args(process.argv).get('target', true),
+  output: Args(process.argv).get('output', true),
   subgraphs: [
     {
       sourceHandler: () => ({

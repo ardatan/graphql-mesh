@@ -7,7 +7,7 @@ import { loadMySQLSubgraph } from '@omnigraph/mysql';
 const args = Args(process.argv);
 
 export const composeConfig = defineComposeConfig({
-  target: args.get('target'),
+  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadMySQLSubgraph('Rfam', {

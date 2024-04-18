@@ -9,7 +9,7 @@ import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 const args = Args(process.argv);
 
 export const composeConfig = defineComposeConfig({
-  target: args.get('target'),
+  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('API', {

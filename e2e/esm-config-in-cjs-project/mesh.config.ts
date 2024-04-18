@@ -5,7 +5,7 @@ import { defineConfig } from '@graphql-mesh/compose-cli';
 const args = Args(process.argv);
 
 export const composeConfig = defineConfig({
-  target: args.get('target'),
+  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: () => ({

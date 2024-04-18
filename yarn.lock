@@ -3619,9 +3619,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/compose-to-target@workspace:e2e/compose-to-target":
+"@e2e/compose-to-output@workspace:e2e/compose-to-output":
   version: 0.0.0-use.local
-  resolution: "@e2e/compose-to-target@workspace:e2e/compose-to-target"
+  resolution: "@e2e/compose-to-output@workspace:e2e/compose-to-output"
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"

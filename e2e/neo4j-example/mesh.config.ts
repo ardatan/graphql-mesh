@@ -7,7 +7,7 @@ import { loadNeo4JSubgraph } from '@omnigraph/neo4j';
 const args = Args(process.argv);
 
 export const composeConfig = defineComposeConfig({
-  target: args.get('target'),
+  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadNeo4JSubgraph('Movies', {

@@ -5,7 +5,7 @@ import { loadSOAPSubgraph } from '@omnigraph/soap';
 const args = Args(process.argv);
 
 export const composeConfig = defineConfig({
-  target: args.get('target'),
+  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadSOAPSubgraph('soap-demo', {
