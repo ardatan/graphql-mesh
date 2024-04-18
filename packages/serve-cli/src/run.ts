@@ -65,7 +65,7 @@ let program = new Command()
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */
   log?: Logger;
-  /** @default Mesh */
+  /** @default Mesh Serve */
   productName?: string;
   /** @default serve GraphQL federated architecture for any API service(s) */
   productDescription?: string;
