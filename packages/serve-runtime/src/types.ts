@@ -143,6 +143,10 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
    */
   graphiql?: YogaServerOptions<unknown, MeshServeContext & TContext>['graphiql'];
   /**
+   * Whether the landing page should be shown.
+   */
+  landingPage?: boolean;
+  /**
    * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md).
    */
   batching?: BatchingOptions;

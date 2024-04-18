@@ -165,6 +165,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     graphqlEndpoint: config.graphqlEndpoint,
     maskedErrors: config.maskedErrors,
     healthCheckEndpoint: config.healthCheckEndpoint || '/healthcheck',
+    landingPage: config.landingPage,
   });
 
   fetchAPI ||= yoga.fetchAPI;
