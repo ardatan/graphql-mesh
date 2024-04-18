@@ -2,8 +2,11 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 import 'tsx/cjs'; // support importing typescript configs
 import 'dotenv/config'; // inject dotenv options to process.env
 
+// eslint-disable-next-line import/no-nodejs-modules
 import cluster from 'cluster';
+// eslint-disable-next-line import/no-nodejs-modules
 import { availableParallelism, release } from 'os';
+// eslint-disable-next-line import/no-nodejs-modules
 import { dirname, isAbsolute, resolve } from 'path';
 import { App, SSLApp } from 'uWebSockets.js';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
@@ -129,7 +132,8 @@ export async function run({
     spec = 'federation';
     // the program defaults to fusiongraph, remove it
     // from the config if a supergraph is provided
-    delete config['fusiongraph'];
+    // @ts-expect-error fusiongraph _can_ be in the config
+    delete config.fusiongraph;
   } else if ('fusiongraph' in config) {
     unifiedGraphPath = config.fusiongraph;
     spec = 'fusion';
