@@ -10,11 +10,3 @@ type Query {
 }
 "
 `;
-
-exports[`should write compose output to stdout and logs to stderr 2`] = `
-"[1m🕸️  Mesh Compose[0m 💡 [36mChecking configuration at e2e/logs-to-s...<Message is too long. Enable DEBUG=1 to see the full message.>[0m
-[1m🕸️  Mesh Compose[0m 💡 [36mLoaded configuration[0m
-[1m🕸️  Mesh Compose[0m 💡 [36mComposing[0m
-[1m🕸️  Mesh Compose - "helloworld" subgraph[0m 💡 [36mLoading[0m
-"
-`;

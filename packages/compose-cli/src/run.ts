@@ -82,6 +82,7 @@ export async function run({
     } else {
       console.log(fusiongraph);
     }
+    log.info('Done!');
     return;
   }
 

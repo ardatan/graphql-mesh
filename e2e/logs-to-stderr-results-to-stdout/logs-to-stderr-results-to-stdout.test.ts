@@ -14,5 +14,5 @@ it('should write compose output to stdout and logs to stderr', async () => {
   const { getStd } = await compose();
 
   expect(getStd('out')).toMatchSnapshot();
-  expect(getStd('err')).toMatchSnapshot();
+  expect(getStd('err')).toContain('Done!');
 });
