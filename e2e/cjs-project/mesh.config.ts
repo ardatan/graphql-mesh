@@ -1,10 +1,7 @@
 const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
 const { defineConfig } = require('@graphql-mesh/compose-cli');
 
-const args = require('@e2e/args').Args(process.argv);
-
 const composeConfig = defineConfig({
-  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: () => ({

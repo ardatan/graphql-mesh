@@ -41,6 +41,7 @@ export async function run({
 }: RunOptions): Promise<void | never> {
   program = program.name(binName).description(productDescription);
   if (version) program = program.version(version);
+  if (process.env.NODE_ENV === 'test') program = program.allowUnknownOption();
   const opts = program.parse().opts();
 
   const log = rootLog.child(`🕸️  ${productName}`);

@@ -12,7 +12,6 @@ import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 const args = Args(process.argv);
 
 export const composeConfig = defineConfig({
-  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('petstore', {

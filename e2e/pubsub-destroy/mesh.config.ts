@@ -1,9 +1,6 @@
 import { createServer } from 'http';
-import { Args } from '@e2e/args';
 import { defineConfig } from '@graphql-mesh/serve-cli';
 import { PubSub } from '@graphql-mesh/utils';
-
-const args = Args(process.argv);
 
 const pubsub = new PubSub();
 

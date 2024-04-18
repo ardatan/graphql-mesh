@@ -1,13 +1,9 @@
-import { Args } from '@e2e/args';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { PubSub } from '@graphql-mesh/utils';
 import { loadNeo4JSubgraph } from '@omnigraph/neo4j';
 
-const args = Args(process.argv);
-
 export const composeConfig = defineComposeConfig({
-  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadNeo4JSubgraph('Movies', {
