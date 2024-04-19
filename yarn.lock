@@ -70,7 +70,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.10.1, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0":
+"@apollo/client@npm:3.10.1":
   version: 3.10.1
   resolution: "@apollo/client@npm:3.10.1"
   dependencies:
@@ -107,9 +107,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:^3.8.0":
-  version: 3.9.11
-  resolution: "@apollo/client@npm:3.9.11"
+"@apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0":
+  version: 3.9.10
+  resolution: "@apollo/client@npm:3.9.10"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     "@wry/caches": "npm:^1.0.0"
@@ -140,7 +140,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 10c0/c7657a8e0d62f6d1e0b2da7573e9a9397af879946396e86682166596ffb201c22f7677d11cf65ca2ce97acc8ff2ee8e37c077716cd1b6ae9bb0e3a9cdfdecaf4
+  checksum: 10c0/4bec40c73a4acc8aac0341e944e06a67b22008a5f42c9b8bcc1d5f0a1ebe5fef5614ccba163e9c58f945fea5ce89e7d1c8f12f281ab3e423b81c24e6c96dd8d3
   languageName: node
   linkType: hard
 
@@ -4833,18 +4833,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/fusion-federation@npm:^0.0.2, @graphql-mesh/fusion-federation@workspace:packages/fusion/federation":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/fusion-federation@workspace:packages/fusion/federation"
-  dependencies:
-    "@apollo/server": "npm:4.10.4"
-    "@graphql-tools/utils": "npm:^10.0.10"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  languageName: unknown
-  linkType: soft
-
 "@graphql-mesh/fusion-runtime@npm:^0.2.12, @graphql-mesh/fusion-runtime@workspace:*, @graphql-mesh/fusion-runtime@workspace:packages/fusion/runtime":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-runtime@workspace:packages/fusion/runtime"
@@ -5414,13 +5402,15 @@ __metadata:
   dependencies:
     "@envelop/core": "npm:^5.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.1"
-    "@graphql-mesh/fusion-federation": "npm:^0.0.2"
     "@graphql-mesh/fusion-runtime": "npm:^0.2.12"
+    "@graphql-mesh/transport-common": "npm:^0.1.5"
     "@graphql-mesh/utils": "npm:^0.97.5"
     "@graphql-tools/delegate": "npm:^10.0.3"
     "@graphql-tools/executor-http": "npm:^1.0.6"
     "@graphql-tools/executor-yoga": "npm:^2.0.3"
+    "@graphql-tools/federation": "npm:^1.1.25"
     "@graphql-tools/schema": "npm:^10.0.2"
+    "@graphql-tools/stitch": "npm:^9.1.0"
     "@graphql-tools/utils": "npm:^10.1.3"
     "@graphql-tools/wrap": "npm:^10.0.1"
     "@whatwg-node/server": "npm:^0.9.16"
@@ -6142,11 +6132,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/federation@npm:^1.1.12":
-  version: 1.1.27
-  resolution: "@graphql-tools/federation@npm:1.1.27"
+"@graphql-tools/federation@npm:^1.1.12, @graphql-tools/federation@npm:^1.1.25":
+  version: 1.1.25
+  resolution: "@graphql-tools/federation@npm:1.1.25"
   dependencies:
-    "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0"
+    "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0"
     "@graphql-tools/delegate": "npm:^10.0.4"
     "@graphql-tools/executor-http": "npm:^1.0.9"
     "@graphql-tools/merge": "npm:^9.0.3"
@@ -6161,7 +6151,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/ebd016f712be6787c19bf3594c22ae1f383daf7e4fa0bbee753b58e9ef3511787e830f2e7d7a2930900b7444766ad0c96f213cd1781e39f574a18aee09c14437
+  checksum: 10c0/ff395887a4652a29a395d996a7c7cc4b7c6fd09aca7da4ecb43d9c9d62bdac0a19266bd349be97568ecd57ebdb41423b77014565c3ed2b36bfc2b1b4c0d107f3
   languageName: node
   linkType: hard
 
@@ -6489,9 +6479,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/stitch@npm:^9.0.0, @graphql-tools/stitch@npm:^9.0.3, @graphql-tools/stitch@npm:^9.0.5":
-  version: 9.1.2
-  resolution: "@graphql-tools/stitch@npm:9.1.2"
+"@graphql-tools/stitch@npm:^9.0.0, @graphql-tools/stitch@npm:^9.0.3, @graphql-tools/stitch@npm:^9.0.5, @graphql-tools/stitch@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "@graphql-tools/stitch@npm:9.1.0"
   dependencies:
     "@graphql-tools/batch-delegate": "npm:^9.0.1"
     "@graphql-tools/delegate": "npm:^10.0.4"
@@ -6504,7 +6494,7 @@ __metadata:
     value-or-promise: "npm:^1.0.11"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/98d1de77dac4b4cb37d4b801c046b2b6237301266ca46fcbfa12c4d9b1a68e0c11c413a8fda7f9627c007b9e0d969959b4b56ac850b8493246f6d43d5055481e
+  checksum: 10c0/71654982ae19190a3c63ffa0fb97c70a91e7649e3bccf7f3593180bcc6ce95ee091c0c5540f055f003c1000dabbda82c5e86c8f0a3fdb586b7a6760fb90b7ce1
   languageName: node
   linkType: hard
 
@@ -10731,7 +10721,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:*, @types/qs@npm:6.9.15, @types/qs@npm:^6.2.31":
+"@types/qs@npm:*, @types/qs@npm:^6.2.31":
+  version: 6.9.14
+  resolution: "@types/qs@npm:6.9.14"
+  checksum: 10c0/11ad1eb7f6d7c216002789959d88acc7c43f72854fa4335f01de0df41b4c4024668dace8a37ba12270314345ede0ec6b07f93053a45e7bd4cd7318a3dcf0b6b8
+  languageName: node
+  linkType: hard
+
+"@types/qs@npm:6.9.15":
   version: 6.9.15
   resolution: "@types/qs@npm:6.9.15"
   checksum: 10c0/49c5ff75ca3adb18a1939310042d273c9fc55920861bd8e5100c8a923b3cda90d759e1a95e18334092da1c8f7b820084687770c83a1ccef04fb2c6908117c823

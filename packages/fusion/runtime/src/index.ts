@@ -18,8 +18,6 @@ import {
 } from '@graphql-mesh/fusion-execution';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getInContextSDK } from '@graphql-mesh/runtime';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import type { MeshServeContext } from '@graphql-mesh/serve-runtime';
 import type {
   Transport,
   TransportBaseContext,
