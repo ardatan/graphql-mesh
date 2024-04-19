@@ -1,12 +1,10 @@
 import { Args } from '@e2e/args';
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadMySQLSubgraph } from '@omnigraph/mysql';
 
 const args = Args(process.argv);
 
-export const composeConfig = defineComposeConfig({
-  target: args.get('target'),
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadMySQLSubgraph('Employees', {
@@ -14,9 +12,4 @@ export const composeConfig = defineComposeConfig({
       }),
     },
   ],
-});
-
-export const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  fusiongraph: args.get('fusiongraph'),
 });

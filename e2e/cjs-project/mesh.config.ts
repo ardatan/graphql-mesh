@@ -1,16 +1,7 @@
 const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
-const { defineConfig: defineComposeConfig } = require('@graphql-mesh/compose-cli');
-const { defineConfig: defineServeConfig } = require('@graphql-mesh/serve-cli');
+const { defineConfig } = require('@graphql-mesh/compose-cli');
 
-const args = require('@e2e/args').Args(process.argv);
-
-const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  fusiongraph: '',
-});
-
-const composeConfig = defineComposeConfig({
-  port: args.get('target'),
+const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: () => ({
@@ -31,4 +22,4 @@ const composeConfig = defineComposeConfig({
   ],
 });
 
-module.exports = { serveConfig, composeConfig };
+module.exports = { composeConfig };

@@ -1,9 +1,6 @@
 import { createServer } from 'http';
-import { Args } from '@e2e/args';
 import { defineConfig } from '@graphql-mesh/serve-cli';
 import { PubSub } from '@graphql-mesh/utils';
-
-const args = Args(process.argv);
 
 const pubsub = new PubSub();
 
@@ -14,7 +11,6 @@ server.listen();
 pubsub.subscribe('destroy', () => server.close());
 
 export const serveConfig = defineConfig({
-  port: args.getPort(),
-  fusiongraph: '',
+  fusiongraph: '', // TODO: dont require fusiongraph option since it can be provided from as a CLI arg
   pubsub,
 });

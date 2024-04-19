@@ -9,7 +9,6 @@ import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 const args = Args(process.argv);
 
 export const composeConfig = defineComposeConfig({
-  target: args.get('target'),
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('API', {
@@ -49,8 +48,7 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  fusiongraph: args.get('fusiongraph'),
+  fusiongraph: '', // TODO: dont require fusiongraph option since it can be provided from as a CLI arg
   pubsub: new PubSub(),
   plugins: ctx => [
     useWebhooks(ctx),

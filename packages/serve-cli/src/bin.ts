@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { runServeCLI } from './runServeCLI.js';
-import 'dotenv/config';
-import 'json-bigint-patch';
-import 'tsx/cjs';
+import { DefaultLogger } from '@graphql-mesh/utils';
+import { run } from './run.js';
 
-runServeCLI().catch(e => {
-  console.error(e);
+const log = new DefaultLogger();
+
+run({ log }).catch(err => {
+  log.error(err);
   process.exit(1);
 });

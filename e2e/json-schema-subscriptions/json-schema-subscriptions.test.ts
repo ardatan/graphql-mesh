@@ -10,8 +10,8 @@ it('should compose the appropriate schema', async () => {
 it('should query, mutate and subscribe', async () => {
   const servePort = await getAvailablePort();
   const api = await service('api', { servePort });
-  const { target } = await compose({ target: 'graphql', services: [api] });
-  const { execute } = await serve({ fusiongraph: target, port: servePort });
+  const { output } = await compose({ output: 'graphql', services: [api] });
+  const { execute } = await serve({ fusiongraph: output, port: servePort });
 
   await expect(
     execute({

@@ -1,13 +1,9 @@
 import moment from 'moment';
-import { Args } from '@e2e/args';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
-const args = Args(process.argv);
-
 export const composeConfig = defineComposeConfig({
-  target: args.get('target'),
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Wiki', {
@@ -25,8 +21,7 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  fusiongraph: args.get('fusiongraph'),
+  fusiongraph: '', // TODO: dont require fusiongraph option since it can be provided from as a CLI arg
   additionalResolvers: {
     Query: {
       async viewsInPastMonth(root, { project }, context: any, info) {

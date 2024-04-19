@@ -91,7 +91,7 @@ export interface ComposeOptions extends ProcOptions {
    * Write the compose output/result to a temporary unique file with the extension.
    * The file will be deleted after the tests complete.
    */
-  target?: 'graphql' | 'json' | 'js' | 'ts';
+  output?: 'graphql' | 'json' | 'js' | 'ts';
   /**
    * Services relevant to the compose process.
    * It will supply `--<service.name>_port=<service.port>` arguments to the process.
@@ -105,10 +105,10 @@ export interface ComposeOptions extends ProcOptions {
 
 export interface Compose extends Proc {
   /**
-   * The path to the target composed file.
-   * If target was not specified in the options, an empty string will be provided.
+   * The path to the composed file.
+   * If output was not specified in the options, an empty string will be provided.
    */
-  target: string;
+  output: string;
   result: string;
 }
 
@@ -227,11 +227,11 @@ export function createTenv(cwd: string): Tenv {
     },
     async compose(opts) {
       const { services = [], trimHostPaths, maskServicePorts, pipeLogs } = opts || {};
-      let target = '';
-      if (opts?.target) {
+      let output = '';
+      if (opts?.output) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
         leftovers.add(tempDir);
-        target = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.target}`);
+        output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
       }
       const [proc, waitForExit] = await spawn(
         { cwd, pipeLogs },
@@ -239,18 +239,18 @@ export function createTenv(cwd: string): Tenv {
         '--import',
         'tsx',
         path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
-        target && createArg('target', target),
+        output && createArg('output', output),
         ...services.map(({ name, port }) => createServicePortArg(name, port)),
       );
       await waitForExit;
       let result = '';
-      if (target) {
+      if (output) {
         try {
-          result = await fs.readFile(target, 'utf-8');
+          result = await fs.readFile(output, 'utf-8');
         } catch (err) {
           if ('code' in err && err.code === 'ENOENT') {
             throw new Error(
-              `Compose command has "target" argument but file was not created at ${target}`,
+              `Compose command has "output" argument but file was not created at ${output}`,
             );
           }
           throw err;
@@ -268,12 +268,12 @@ export function createTenv(cwd: string): Tenv {
             result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
           }
         }
-        if (target) {
-          await fs.writeFile(target, result, 'utf8');
+        if (output) {
+          await fs.writeFile(output, result, 'utf8');
         }
       }
 
-      return { ...proc, target, result };
+      return { ...proc, output, result };
     },
     async service(name, { port, servePort, pipeLogs } = {}) {
       port ||= await getAvailablePort();

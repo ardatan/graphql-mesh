@@ -3,10 +3,14 @@ import { Logger } from '@graphql-mesh/types';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
 export interface MeshComposeCLIConfig {
+  /**
+   * The output destination of the resulting composed GraphQL schema.
+   * By default, the CLI will write the result to stdout.
+   */
+  output?: string;
   subgraphs: MeshComposeCLISubgraphConfig[];
   transforms?: MeshComposeCLITransformConfig[];
   additionalTypeDefs?: string | DocumentNode | (string | DocumentNode)[];
-  target?: string;
   fetch?: typeof defaultFetch;
   cwd?: string;
 }

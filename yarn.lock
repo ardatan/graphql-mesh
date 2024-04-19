@@ -3272,6 +3272,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@commander-js/extra-typings@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@commander-js/extra-typings@npm:12.0.1"
+  peerDependencies:
+    commander: ~12.0.0
+  checksum: 10c0/cc3219c70df3ab5c9d3a1f34eda7bd982762b5f68add49067aa80a7ae56a42211c46984e638263bd598c50d2714ed2dbab71301e823970a6bcc14b0303c39d81
+  languageName: node
+  linkType: hard
+
 "@contrast/fn-inspect@npm:^3.3.0":
   version: 3.4.0
   resolution: "@contrast/fn-inspect@npm:3.4.0"
@@ -3575,9 +3584,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/compose-to-target@workspace:e2e/compose-to-target":
+"@e2e/compose-to-output@workspace:e2e/compose-to-output":
   version: 0.0.0-use.local
-  resolution: "@e2e/compose-to-target@workspace:e2e/compose-to-target"
+  resolution: "@e2e/compose-to-output@workspace:e2e/compose-to-output"
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
@@ -4690,15 +4699,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
+    "@commander-js/extra-typings": "npm:^12.0.1"
     "@graphql-mesh/fusion-composition": "npm:^0.0.2"
     "@graphql-mesh/utils": "npm:^0.97.5"
     "@graphql-tools/graphql-file-loader": "npm:8.0.1"
     "@graphql-tools/load": "npm:^8.0.1"
     "@graphql-tools/utils": "npm:^10.0.8"
-    "@types/spinnies": "npm:^0.5.3"
     "@whatwg-node/fetch": "npm:^0.9.14"
+    commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
-    spinnies: "npm:^0.5.1"
     tsx: "npm:^4.7.1"
   peerDependencies:
     "@graphql-mesh/types": ^0.97.5
@@ -5355,12 +5364,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-cli@workspace:packages/serve-cli"
   dependencies:
+    "@commander-js/extra-typings": "npm:^12.0.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.1"
     "@graphql-mesh/serve-runtime": "npm:^0.2.12"
     "@graphql-mesh/types": "npm:^0.97.5"
     "@graphql-mesh/utils": "npm:^0.97.5"
+    "@graphql-tools/utils": "npm:^10.1.3"
     "@parcel/watcher": "npm:^2.3.0"
     "@types/spinnies": "npm:^0.5.3"
+    commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
     json-bigint-patch: "npm:^0.0.8"
     node-libcurl: "npm:^4.0.0"

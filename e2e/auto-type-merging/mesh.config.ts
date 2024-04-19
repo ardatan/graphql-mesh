@@ -4,16 +4,14 @@ import {
   createFilterTransform,
   createNamingConventionTransform,
   createPrefixTransform,
-  defineConfig as defineComposeConfig,
+  defineConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 const args = Args(process.argv);
 
-export const composeConfig = defineComposeConfig({
-  target: args.get('target'),
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('petstore', {
@@ -44,21 +42,4 @@ export const composeConfig = defineComposeConfig({
       ],
     },
   ],
-});
-
-export const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  fusiongraph: args.get('fusiongraph'),
-  graphiql: {
-    defaultQuery: /* GraphQL */ `
-      query Test {
-        getPetById(petId: 1) {
-          __typename
-          id
-          name
-          vaccinated
-        }
-      }
-    `,
-  },
 });
