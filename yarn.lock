@@ -5963,8 +5963,8 @@ __metadata:
   linkType: soft
 
 "@graphql-tools/batch-delegate@npm:^9.0.0, @graphql-tools/batch-delegate@npm:^9.0.1":
-  version: 9.0.1
-  resolution: "@graphql-tools/batch-delegate@npm:9.0.1"
+  version: 9.0.2
+  resolution: "@graphql-tools/batch-delegate@npm:9.0.2"
   dependencies:
     "@graphql-tools/delegate": "npm:^10.0.4"
     "@graphql-tools/utils": "npm:^10.0.13"
@@ -5973,7 +5973,7 @@ __metadata:
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/76d5955b99752bee9d41b7bc86ef669e24e77d52edc9fa831e8dba3a2b4cc8234f21ecfa91ddf78e6666f7b39fda85c1e40d90848a14696c41020d4bb6aaf185
+  checksum: 10c0/778886521124585ab4b17922b634257f60d149ed06d484618accdac0e39c6acedb1edc89e0ff9aa5934593b028fb8609dcfc4d703aa9a2e1a5004a91522c7549
   languageName: node
   linkType: hard
 
@@ -6128,8 +6128,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^1.1.12":
-  version: 1.1.25
-  resolution: "@graphql-tools/federation@npm:1.1.25"
+  version: 1.1.26
+  resolution: "@graphql-tools/federation@npm:1.1.26"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0"
     "@graphql-tools/delegate": "npm:^10.0.4"
@@ -6146,7 +6146,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/ff395887a4652a29a395d996a7c7cc4b7c6fd09aca7da4ecb43d9c9d62bdac0a19266bd349be97568ecd57ebdb41423b77014565c3ed2b36bfc2b1b4c0d107f3
+  checksum: 10c0/94f42644868adf1271ee0eedc5b561fc49f7be82961f19b80b4311eacf7fe4e6433fb262d2dfe76cb2d8673a44a8cc8160460185fbd9cdee9003eb75dd621eef
   languageName: node
   linkType: hard
 
