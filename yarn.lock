@@ -8950,10 +8950,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.21":
-  version: 0.32.21
-  resolution: "@sinclair/typebox@npm:0.32.21"
-  checksum: 10c0/838a58e519300664dd52e064a6480f96d0b00b607e8f5e81d413d5600738e1050ed1c751901fb7af993db67e79210939c4d6173f022fa303e66ce4e33cf8598a
+"@sinclair/typebox@npm:0.32.22":
+  version: 0.32.22
+  resolution: "@sinclair/typebox@npm:0.32.22"
+  checksum: 10c0/99f7391803088ee35ac17895895fd38f049cabc030850830ba6e6628670c91b0a4e4b35dbc5bcc74ea0deb107d8b34a2da6e8fd54ecbef0fe1f76f28643e69c8
   languageName: node
   linkType: hard
 
@@ -22811,7 +22811,7 @@ __metadata:
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
-    unzip-stream: "npm:0.3.1"
+    unzip-stream: "npm:0.3.4"
   languageName: unknown
   linkType: soft
 
@@ -26831,7 +26831,7 @@ __metadata:
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.2.9"
+    vite: "npm:5.2.10"
   languageName: unknown
   linkType: soft
 
@@ -29114,7 +29114,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.89.9"
     "@graphql-mesh/openapi": "npm:0.99.6"
-    "@sinclair/typebox": "npm:0.32.21"
+    "@sinclair/typebox": "npm:0.32.22"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.0"
     graphql: "npm:16.8.1"
@@ -34105,13 +34105,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unzip-stream@npm:0.3.1":
-  version: 0.3.1
-  resolution: "unzip-stream@npm:0.3.1"
+"unzip-stream@npm:0.3.4":
+  version: 0.3.4
+  resolution: "unzip-stream@npm:0.3.4"
   dependencies:
     binary: "npm:^0.3.0"
     mkdirp: "npm:^0.5.1"
-  checksum: 10c0/d0f8db39717e3229f8e46c0d68955db6838399723149e21560da887fe967d7bf8d08a892ad0908be9a3ebfbe7447f29042579eb5451336fbf50d3ce46661a3ed
+  checksum: 10c0/fcd2eeb5374c51f4b506af9ad6c0dcf227f47770844c16f096f45eb496a5225c69e7df702264ea7049b5b917221b5730b18c02311c927a4586d933220a430ee4
   languageName: node
   linkType: hard
 
@@ -34404,9 +34404,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.2.9":
-  version: 5.2.9
-  resolution: "vite@npm:5.2.9"
+"vite@npm:5.2.10":
+  version: 5.2.10
+  resolution: "vite@npm:5.2.10"
   dependencies:
     esbuild: "npm:^0.20.1"
     fsevents: "npm:~2.3.3"
@@ -34440,7 +34440,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/2bf8faa7ae84d5fffabc28b2b2462128a839b8a7ce6d4dde1794975c8c896443df49a54ef95ad8f0326457648426fd9317a618479ef28049cb195d91985729ed
+  checksum: 10c0/d50630ac8de807a6185cd9b5763b3969b2950a454cf6a4482f3780f183865e8d6f7e3aa57dd70ede1c493aaa861efb25b43562287efbcf8b471b7f3b88857a33
   languageName: node
   linkType: hard
 

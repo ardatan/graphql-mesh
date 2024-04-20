@@ -13,7 +13,7 @@
     "@graphql-mesh/cli": "0.89.9",
     "@graphql-mesh/json-schema": "0.99.6",
     "graphql": "16.8.1",
-    "unzip-stream": "0.3.1"
+    "unzip-stream": "0.3.4"
   },
   "devDependencies": {
     "@types/unzip-stream": "0.3.4",
