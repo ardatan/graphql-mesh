@@ -3221,10 +3221,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20240419.0":
-  version: 4.20240419.0
-  resolution: "@cloudflare/workers-types@npm:4.20240419.0"
-  checksum: 10c0/e84f7bb16fb0d929dd91f9e0917f4c6f628b6b33d6894229fabd24350c28cfab2b632b605d5ac81eb56a9af096d9179488b4522d6ed9cc772c3d71a4e8f33717
+"@cloudflare/workers-types@npm:4.20240423.0":
+  version: 4.20240423.0
+  resolution: "@cloudflare/workers-types@npm:4.20240423.0"
+  checksum: 10c0/a6130dae99abfd747a4f0632da89eefc68e9789e2d944282a3175cfcb92bfcac346f110bac82d5193abff7d4bac56b8347682cfda68b90aa4e00054bade150fa
   languageName: node
   linkType: hard
 
@@ -4443,11 +4443,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/cli@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@graphql-hive/cli@npm:0.36.0"
+"@graphql-hive/cli@npm:0.37.0":
+  version: 0.37.0
+  resolution: "@graphql-hive/cli@npm:0.37.0"
   dependencies:
-    "@graphql-hive/core": "npm:0.2.4"
+    "@graphql-hive/core": "npm:0.3.0"
     "@graphql-inspector/core": "npm:5.1.0-alpha-20231208113249-34700c8a"
     "@graphql-tools/code-file-loader": "npm:~8.1.0"
     "@graphql-tools/graphql-file-loader": "npm:~8.0.0"
@@ -4469,7 +4469,7 @@ __metadata:
     zod: "npm:3.22.4"
   bin:
     hive: bin/run
-  checksum: 10c0/51e320df3ac5d20b28bcc81cb6abc192795d9bbacf806fb75ecf11767b070666a492976b53e462a07e7d64d3e38011a21790883280d440a7dd389677c40a1d49
+  checksum: 10c0/c46b095dbcdf04459e63970d4b23baa27a107d8c5d7ab44a043b78d55b70d5fc88ae008fad025caa70f28021763bbc918fff9193e4dcd746b046c9cb43164c40
   languageName: node
   linkType: hard
 
@@ -4495,7 +4495,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/core@npm:0.2.4, @graphql-hive/core@npm:^0.2.4":
+"@graphql-hive/core@npm:0.3.0":
+  version: 0.3.0
+  resolution: "@graphql-hive/core@npm:0.3.0"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.0.0"
+    "@whatwg-node/fetch": "npm:0.9.17"
+    async-retry: "npm:1.3.3"
+    lodash.sortby: "npm:4.7.0"
+    tiny-lru: "npm:8.0.2"
+  peerDependencies:
+    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/302a045dfa7f4aa266a59b88ce5df34416eb669ba8003bbfc3963fdc852c0b2584d07dd8f3f02b09352d29d1bf3db2e8c40afb1a59d9b7daf3085b48b29e6d41
+  languageName: node
+  linkType: hard
+
+"@graphql-hive/core@npm:^0.2.4":
   version: 0.2.4
   resolution: "@graphql-hive/core@npm:0.2.4"
   dependencies:
@@ -4550,7 +4565,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20240419.0"
+    "@cloudflare/workers-types": "npm:4.20240423.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.97.5
     "@graphql-mesh/utils": ^0.97.5
@@ -9718,9 +9733,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:15.0.2":
-  version: 15.0.2
-  resolution: "@testing-library/react@npm:15.0.2"
+"@testing-library/react@npm:15.0.4":
+  version: 15.0.4
+  resolution: "@testing-library/react@npm:15.0.4"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^10.0.0"
@@ -9728,7 +9743,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 10c0/8d75e4850f8f749244bf4f30b0f99a5d4aa1156ee5a59eea0772f47971c38535d1fb31d021c4f0f0b816346ae664870dc223d5d997ab399dfb1b6211f0e2acf1
+  checksum: 10c0/2f58729e39b93915c527557e87396e02deb5aecd3cf806427deee19bcccf8114681bf259c24b6a4a916e98710193b190ec321e842faaac4196131e22c8a8ac92
   languageName: node
   linkType: hard
 
@@ -12574,7 +12589,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "authors-service@workspace:examples/hive-example/sources/authors"
   dependencies:
-    "@graphql-hive/cli": "npm:0.36.0"
+    "@graphql-hive/cli": "npm:0.37.0"
     "@graphql-mesh/cli": "npm:0.89.9"
     "@graphql-mesh/openapi": "npm:0.99.6"
     fets: "npm:^0.8.0"
@@ -13164,7 +13179,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "books-service@workspace:examples/hive-example/sources/books"
   dependencies:
-    "@graphql-hive/cli": "npm:0.36.0"
+    "@graphql-hive/cli": "npm:0.37.0"
     "@graphql-mesh/cli": "npm:0.89.9"
     "@graphql-mesh/openapi": "npm:0.99.6"
     fets: "npm:^0.8.0"
@@ -18593,7 +18608,7 @@ __metadata:
   dependencies:
     "@apollo/client": "npm:3.9.11"
     "@testing-library/jest-dom": "npm:6.4.2"
-    "@testing-library/react": "npm:15.0.2"
+    "@testing-library/react": "npm:15.0.4"
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
@@ -33681,10 +33696,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:6.14.0":
-  version: 6.14.0
-  resolution: "undici@npm:6.14.0"
-  checksum: 10c0/d25f9921285b871462f5ee45fb6dad78946e443d7a54e52d9412cd8c6eb5f9333406e889f69273e5f0b08b963d6492e9be736b01ee469c480c8315a6f79d861c
+"undici@npm:6.14.1":
+  version: 6.14.1
+  resolution: "undici@npm:6.14.1"
+  checksum: 10c0/1d0e2607c29d975d8d6b1ef81feb3ef5b8e262df95d66b17a5df7e1bbb96f84e5d85e2737b5a23c811254fe5e537ebbfb45ce3ebe6f2b9100f5ec911d08e3ec5
   languageName: node
   linkType: hard
 
