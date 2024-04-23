@@ -5,6 +5,7 @@ import { loadThriftSubgraph } from '@omnigraph/thrift';
 const args = Args(process.argv);
 
 export const composeConfig = defineConfig({
+  target: args.get('target'),
   subgraphs: [
     {
       sourceHandler: loadThriftSubgraph('calculator', {

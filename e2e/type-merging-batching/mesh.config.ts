@@ -9,6 +9,7 @@ import {
 const args = Args(process.argv);
 
 export const composeConfig = defineConfig({
+  target: args.get('target'),
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('authors', {
@@ -30,14 +31,12 @@ export const composeConfig = defineConfig({
   additionalTypeDefs: /* GraphQL */ `
     extend type Book {
       author: Author
-        @variable(name: "bookAuthorId", select: "authorId", subgraph: "books")
-        @resolver(
-          subgraph: "authors"
-          operation: """
-          query AuthorOfBook($bookAuthorId: ID!) {
-            author(id: $bookAuthorId)
-          }
-          """
+        @resolveTo(
+          sourceName: "AuthorService"
+          sourceTypeName: "Query"
+          sourceFieldName: "authors"
+          keyField: "authorId"
+          keysArg: "ids"
         )
     }
   `,

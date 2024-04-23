@@ -69,7 +69,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     });
   } else if ('proxy' in config) {
     let schema: GraphQLSchema;
-    const proxyExecutor = getProxyExecutor(config, configContext, () => schema);
+    const proxyExecutor = getProxyExecutor(config, configContext, schema);
     // TODO: fix useExecutor typings to inherit the context
     const executorPlugin = useExecutor(proxyExecutor) as unknown as Plugin<
       MeshServeContext & TContext

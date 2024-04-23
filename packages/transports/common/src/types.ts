@@ -22,7 +22,7 @@ export interface TransportExecutorFactoryOpts<
 > extends TransportBaseContext {
   subgraphName: string;
   transportEntry: TransportEntry<TTransportKind, TTransportOptions>;
-  getSubgraph(): GraphQLSchema;
+  subgraph: GraphQLSchema;
 }
 
 export type TransportExecutorFactoryFn<

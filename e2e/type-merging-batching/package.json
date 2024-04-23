@@ -3,7 +3,6 @@
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/fusion-execution": "workspace:*",
     "@graphql-mesh/fusion-runtime": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
     "graphql": "^16.8.1",

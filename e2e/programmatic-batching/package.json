@@ -1,5 +1,5 @@
 {
-  "name": "@e2e/batching-resolver-example",
+  "name": "@e2e/programmatic-batching-example",
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",

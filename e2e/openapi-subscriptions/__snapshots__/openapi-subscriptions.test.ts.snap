@@ -13,13 +13,15 @@ directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFIN
 
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
+directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
+
 type Query {
-  dummy: String @resolver(subgraph: "OpenAPICallbackExample", operation: "query dummy { dummy }") @source(subgraph: "OpenAPICallbackExample", name: "dummy", type: "String")
+  dummy: String @source(subgraph: "OpenAPICallbackExample", name: "dummy", type: "String")
 }
 
 type Mutation {
   """subscribes a client to receive out-of-band data"""
-  post_streams(input: post_streams_request_Input): SubscriptionInfo @httpOperation(subgraph: "OpenAPICallbackExample", path: "/streams", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "OpenAPICallbackExample", operation: "mutation mutationpost_streams($input: post_streams_request_Input) { post_streams(input: $input) }") @source(subgraph: "OpenAPICallbackExample", name: "post_streams", type: "SubscriptionInfo")
+  post_streams(input: post_streams_request_Input): SubscriptionInfo @httpOperation(subgraph: "OpenAPICallbackExample", path: "/streams", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "OpenAPICallbackExample", name: "post_streams", type: "SubscriptionInfo")
 }
 
 """subscription information"""
@@ -43,7 +45,7 @@ scalar URL @source(subgraph: "OpenAPICallbackExample", name: "URL") @source(subg
 
 type Subscription {
   """PubSub Topic: webhook:post:/callback/{args.subscriptionId}"""
-  onData(subscriptionId: String): SubscriptionPayload @pubsubOperation(subgraph: "OpenAPICallbackExample", pubsubTopic: "webhook:post:/callback/{args.subscriptionId}") @resolver(subgraph: "OpenAPICallbackExample", operation: "subscription subscriptiononData($subscriptionId: String) { onData(subscriptionId: $subscriptionId) }") @source(subgraph: "OpenAPICallbackExample", name: "onData", type: "SubscriptionPayload")
+  onData(subscriptionId: String): SubscriptionPayload @pubsubOperation(subgraph: "OpenAPICallbackExample", pubsubTopic: "webhook:post:/callback/{args.subscriptionId}") @source(subgraph: "OpenAPICallbackExample", name: "onData", type: "SubscriptionPayload")
 }
 
 type SubscriptionPayload @source(subgraph: "OpenAPICallbackExample", name: "SubscriptionPayload") {

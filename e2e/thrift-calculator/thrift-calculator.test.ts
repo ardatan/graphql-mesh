@@ -1,8 +1,6 @@
-import { parse } from 'graphql';
 import { createTenv } from '@e2e/tenv';
-import { getExecutorForFusiongraph } from '@graphql-mesh/fusion-runtime';
 
-const { compose, service } = createTenv(__dirname);
+const { compose, service, serve } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose({
@@ -15,18 +13,18 @@ it('should compose the appropriate schema', async () => {
 it.concurrent.each([
   {
     name: 'Add',
-    document: parse(/* GraphQL */ `
+    query: /* GraphQL */ `
       query Add {
         add(request: { left: 2, right: 3 })
       }
-    `),
+    `,
   },
-])('should execute $name', async ({ document }) => {
-  const { result } = await compose({
+])('should execute $name', async ({ query }) => {
+  const { target } = await compose({
     services: [await service('calculator')],
+    target: 'graphql',
   });
 
-  const { fusiongraphExecutor } = getExecutorForFusiongraph({ fusiongraph: result });
-
-  await expect(fusiongraphExecutor({ document })).resolves.toMatchSnapshot();
+  const { execute } = await serve({ fusiongraph: target });
+  await expect(execute({ query })).resolves.toMatchSnapshot();
 });

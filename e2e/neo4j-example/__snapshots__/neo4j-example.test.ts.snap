@@ -14,22 +14,24 @@ directive @introspection(subgraph: String) on ENUM | OBJECT | INTERFACE | UNION 
 
 directive @transport(kind: String, subgraph: String, location: String, options: Any) on SCHEMA
 
+directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
+
 type Query {
-  movies(where: MovieWhere, options: MovieOptions): [Movie!]! @resolver(subgraph: "Movies", operation: "query movies($where: MovieWhere, $options: MovieOptions) { movies(where: $where, options: $options) }") @source(subgraph: "Movies", name: "movies", type: "[Movie!]!")
-  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort]): MoviesConnection! @resolver(subgraph: "Movies", operation: "query moviesConnection($first: Int, $after: String, $where: MovieWhere, $sort: [MovieSort]) { moviesConnection(first: $first, after: $after, where: $where, sort: $sort) }") @source(subgraph: "Movies", name: "moviesConnection", type: "MoviesConnection!")
-  moviesAggregate(where: MovieWhere): MovieAggregateSelection! @resolver(subgraph: "Movies", operation: "query moviesAggregate($where: MovieWhere) { moviesAggregate(where: $where) }") @source(subgraph: "Movies", name: "moviesAggregate", type: "MovieAggregateSelection!")
-  people(where: PersonWhere, options: PersonOptions): [Person!]! @resolver(subgraph: "Movies", operation: "query people($where: PersonWhere, $options: PersonOptions) { people(where: $where, options: $options) }") @source(subgraph: "Movies", name: "people", type: "[Person!]!")
-  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort]): PeopleConnection! @resolver(subgraph: "Movies", operation: "query peopleConnection($first: Int, $after: String, $where: PersonWhere, $sort: [PersonSort]) { peopleConnection(first: $first, after: $after, where: $where, sort: $sort) }") @source(subgraph: "Movies", name: "peopleConnection", type: "PeopleConnection!")
-  peopleAggregate(where: PersonWhere): PersonAggregateSelection! @resolver(subgraph: "Movies", operation: "query peopleAggregate($where: PersonWhere) { peopleAggregate(where: $where) }") @source(subgraph: "Movies", name: "peopleAggregate", type: "PersonAggregateSelection!")
+  movies(where: MovieWhere, options: MovieOptions): [Movie!]! @source(subgraph: "Movies", name: "movies", type: "[Movie!]!")
+  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort]): MoviesConnection! @source(subgraph: "Movies", name: "moviesConnection", type: "MoviesConnection!") @merge(subgraph: "Movies", keyField: "totalCount", keyArg: "first")
+  moviesAggregate(where: MovieWhere): MovieAggregateSelection! @source(subgraph: "Movies", name: "moviesAggregate", type: "MovieAggregateSelection!")
+  people(where: PersonWhere, options: PersonOptions): [Person!]! @source(subgraph: "Movies", name: "people", type: "[Person!]!")
+  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort]): PeopleConnection! @source(subgraph: "Movies", name: "peopleConnection", type: "PeopleConnection!") @merge(subgraph: "Movies", keyField: "totalCount", keyArg: "first")
+  peopleAggregate(where: PersonWhere): PersonAggregateSelection! @source(subgraph: "Movies", name: "peopleAggregate", type: "PersonAggregateSelection!")
 }
 
 type Mutation {
-  createMovies(input: [MovieCreateInput!]!): CreateMoviesMutationResponse! @resolver(subgraph: "Movies", operation: "mutation mutationcreateMovies($input: [MovieCreateInput!]!) { createMovies(input: $input) }") @source(subgraph: "Movies", name: "createMovies", type: "CreateMoviesMutationResponse!")
-  deleteMovies(where: MovieWhere, delete: MovieDeleteInput): DeleteInfo! @resolver(subgraph: "Movies", operation: "mutation mutationdeleteMovies($where: MovieWhere, $delete: MovieDeleteInput) { deleteMovies(where: $where, delete: $delete) }") @source(subgraph: "Movies", name: "deleteMovies", type: "DeleteInfo!")
-  updateMovies(where: MovieWhere, update: MovieUpdateInput, connect: MovieConnectInput, disconnect: MovieDisconnectInput, create: MovieRelationInput, delete: MovieDeleteInput): UpdateMoviesMutationResponse! @resolver(subgraph: "Movies", operation: "mutation mutationupdateMovies($where: MovieWhere, $update: MovieUpdateInput, $connect: MovieConnectInput, $disconnect: MovieDisconnectInput, $create: MovieRelationInput, $delete: MovieDeleteInput) { updateMovies(where: $where, update: $update, connect: $connect, disconnect: $disconnect, create: $create, delete: $delete) }") @source(subgraph: "Movies", name: "updateMovies", type: "UpdateMoviesMutationResponse!")
-  createPeople(input: [PersonCreateInput!]!): CreatePeopleMutationResponse! @resolver(subgraph: "Movies", operation: "mutation mutationcreatePeople($input: [PersonCreateInput!]!) { createPeople(input: $input) }") @source(subgraph: "Movies", name: "createPeople", type: "CreatePeopleMutationResponse!")
-  deletePeople(where: PersonWhere, delete: PersonDeleteInput): DeleteInfo! @resolver(subgraph: "Movies", operation: "mutation mutationdeletePeople($where: PersonWhere, $delete: PersonDeleteInput) { deletePeople(where: $where, delete: $delete) }") @source(subgraph: "Movies", name: "deletePeople", type: "DeleteInfo!")
-  updatePeople(where: PersonWhere, update: PersonUpdateInput, connect: PersonConnectInput, disconnect: PersonDisconnectInput, create: PersonRelationInput, delete: PersonDeleteInput): UpdatePeopleMutationResponse! @resolver(subgraph: "Movies", operation: "mutation mutationupdatePeople($where: PersonWhere, $update: PersonUpdateInput, $connect: PersonConnectInput, $disconnect: PersonDisconnectInput, $create: PersonRelationInput, $delete: PersonDeleteInput) { updatePeople(where: $where, update: $update, connect: $connect, disconnect: $disconnect, create: $create, delete: $delete) }") @source(subgraph: "Movies", name: "updatePeople", type: "UpdatePeopleMutationResponse!")
+  createMovies(input: [MovieCreateInput!]!): CreateMoviesMutationResponse! @source(subgraph: "Movies", name: "createMovies", type: "CreateMoviesMutationResponse!")
+  deleteMovies(where: MovieWhere, delete: MovieDeleteInput): DeleteInfo! @source(subgraph: "Movies", name: "deleteMovies", type: "DeleteInfo!")
+  updateMovies(where: MovieWhere, update: MovieUpdateInput, connect: MovieConnectInput, disconnect: MovieDisconnectInput, create: MovieRelationInput, delete: MovieDeleteInput): UpdateMoviesMutationResponse! @source(subgraph: "Movies", name: "updateMovies", type: "UpdateMoviesMutationResponse!")
+  createPeople(input: [PersonCreateInput!]!): CreatePeopleMutationResponse! @source(subgraph: "Movies", name: "createPeople", type: "CreatePeopleMutationResponse!")
+  deletePeople(where: PersonWhere, delete: PersonDeleteInput): DeleteInfo! @source(subgraph: "Movies", name: "deletePeople", type: "DeleteInfo!")
+  updatePeople(where: PersonWhere, update: PersonUpdateInput, connect: PersonConnectInput, disconnect: PersonDisconnectInput, create: PersonRelationInput, delete: PersonDeleteInput): UpdatePeopleMutationResponse! @source(subgraph: "Movies", name: "updatePeople", type: "UpdatePeopleMutationResponse!")
 }
 
 """
@@ -242,7 +244,7 @@ type MoviePersonPeopleWroteNodeAggregateSelection @source(subgraph: "Movies", na
   name: StringAggregateSelection! @source(subgraph: "Movies", name: "name", type: "StringAggregateSelection!")
 }
 
-type MoviesConnection @source(subgraph: "Movies", name: "MoviesConnection") @resolver(subgraph: "Movies", operation: "query MoviesConnectionByTotalCount($MoviesConnection_totalCount: Int) { moviesConnection(first: $MoviesConnection_totalCount) }", kind: "FETCH") @variable(subgraph: "Movies", name: "MoviesConnection_totalCount", select: "totalCount") {
+type MoviesConnection @source(subgraph: "Movies", name: "MoviesConnection") {
   totalCount: Int! @source(subgraph: "Movies", name: "totalCount", type: "Int!")
   pageInfo: PageInfo! @source(subgraph: "Movies", name: "pageInfo", type: "PageInfo!")
   edges: [MovieEdge!]! @source(subgraph: "Movies", name: "edges", type: "[MovieEdge!]!")
@@ -256,7 +258,7 @@ type PageInfo @source(subgraph: "Movies", name: "PageInfo") {
   endCursor: String @source(subgraph: "Movies", name: "endCursor", type: "String")
 }
 
-type PeopleConnection @source(subgraph: "Movies", name: "PeopleConnection") @resolver(subgraph: "Movies", operation: "query PeopleConnectionByTotalCount($PeopleConnection_totalCount: Int) { peopleConnection(first: $PeopleConnection_totalCount) }", kind: "FETCH") @variable(subgraph: "Movies", name: "PeopleConnection_totalCount", select: "totalCount") {
+type PeopleConnection @source(subgraph: "Movies", name: "PeopleConnection") {
   totalCount: Int! @source(subgraph: "Movies", name: "totalCount", type: "Int!")
   pageInfo: PageInfo! @source(subgraph: "Movies", name: "pageInfo", type: "PageInfo!")
   edges: [PersonEdge!]! @source(subgraph: "Movies", name: "edges", type: "[PersonEdge!]!")

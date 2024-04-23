@@ -10,13 +10,13 @@ import { MeshServeConfigContext, MeshServeConfigWithProxy } from './types.js';
 export function getProxyExecutor<TContext>(
   config: MeshServeConfigWithProxy<TContext>,
   configContext: MeshServeConfigContext,
-  getSchema?: () => GraphQLSchema,
+  schema?: GraphQLSchema,
 ): Executor {
   const fakeTransportEntryMap: Record<string, TransportEntry> = {};
   let subgraphName: string = 'upstream';
   const onSubgraphExecute = getOnSubgraphExecute({
     plugins: config.plugins?.(configContext as any) as any,
-    getFusiongraph: getSchema,
+    fusiongraph: schema,
     transports() {
       if (typeof config.transport === 'object') {
         return config.transport;
@@ -42,13 +42,15 @@ export function getProxyExecutor<TContext>(
       },
     }),
     transportBaseContext: configContext,
+    subgraphMap: new Proxy(new Map(), {
+      get(_, subgraphNameProp: string) {
+        if (subgraphNameProp === 'get') {
+          return () => schema;
+        }
+      },
+    }),
   });
   return function proxyExecutor(executionRequest) {
-    return onSubgraphExecute(
-      subgraphName,
-      executionRequest.document,
-      executionRequest.variables,
-      executionRequest.context,
-    );
+    return onSubgraphExecute(subgraphName, executionRequest);
   };
 }

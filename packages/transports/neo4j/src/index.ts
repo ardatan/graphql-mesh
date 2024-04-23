@@ -7,9 +7,9 @@ export * from './eventEmitterForPubSub.js';
 export * from './executor.js';
 
 export const getSubgraphExecutor: TransportExecutorFactoryFn<'neo4j', never> =
-  function getNeo4JSubgraphExecutor({ getSubgraph, pubsub, logger }) {
+  function getNeo4JSubgraphExecutor({ subgraph, pubsub, logger }) {
     return getNeo4JExecutor({
-      schema: getSubgraph(),
+      schema: subgraph,
       pubsub,
       logger,
     });

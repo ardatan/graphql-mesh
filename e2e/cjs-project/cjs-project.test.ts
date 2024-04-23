@@ -15,8 +15,10 @@ it('should compose', async () => {
   query: Query
 }
 
+directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
+
 type Query {
-  hello: String @resolver(subgraph: "helloworld", operation: "query hello { hello }") @source(subgraph: "helloworld", name: "hello", type: "String")
+  hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
 }
 "
 `);
