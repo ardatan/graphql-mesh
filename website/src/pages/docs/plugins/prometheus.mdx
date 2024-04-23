@@ -38,7 +38,7 @@ npm i @graphql-mesh/plugin-prometheus prom-client
 plugins:
   - prometheus:
       # all optional, and by default, all set to false, please opt-in to the metrics you wish to get
-  
+
       # requires `execute` to be true
       requestCount: true
       # requires `execute` to be true
@@ -48,17 +48,17 @@ plugins:
       contextBuilding: true
       execute: true
       errors: true
-  
+
       # reports metrics for the delegation to the individual sources
       delegation: true
-  
+
       # reports metrics for the outgoing HTTP requests
       fetchMetrics: true
       # Adds the request headers to the metrics
       fetchRequestHeaders: true
       # Adds the response headers to the metrics
       fetchResponseHeaders: true
-  
+
       # reports metrics for the incoming HTTP requests (this sets a custom name for http)
       # If you pass a string instead of boolean, it will be used as the name of the metric
       http: my-http-duration-metric
@@ -66,7 +66,7 @@ plugins:
       httpRequestHeaders: true
       # Adds the response headers to the metrics
       httpResponseHeaders: true
-  
+
       # by default all fields are reported
       deprecatedFields: true
       # the path of the endpoint to expose the metrics, default is /metrics
