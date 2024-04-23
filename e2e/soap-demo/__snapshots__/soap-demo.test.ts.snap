@@ -8,8 +8,6 @@ exports[`should compose the appropriate schema 1`] = `
 
 directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String) on FIELD_DEFINITION
 
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
-
 type Query {
   s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input = {}): s0_FindPersonResponse @soap(elementName: "FindPersonResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_FindPerson", type: "s0_FindPersonResponse")
   s0_SOAPDemo_SOAPDemoSoap_GetByName(GetByName: s0_GetByName_Input = {}): s0_GetByNameResponse @soap(elementName: "GetByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "soap-demo") @source(subgraph: "soap-demo", name: "s0_SOAPDemo_SOAPDemoSoap_GetByName", type: "s0_GetByNameResponse")

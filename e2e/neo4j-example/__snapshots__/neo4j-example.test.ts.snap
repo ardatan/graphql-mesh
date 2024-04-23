@@ -14,14 +14,12 @@ directive @introspection(subgraph: String) on ENUM | OBJECT | INTERFACE | UNION 
 
 directive @transport(kind: String, subgraph: String, location: String, options: Any) on SCHEMA
 
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
-
 type Query {
   movies(where: MovieWhere, options: MovieOptions): [Movie!]! @source(subgraph: "Movies", name: "movies", type: "[Movie!]!")
-  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort]): MoviesConnection! @source(subgraph: "Movies", name: "moviesConnection", type: "MoviesConnection!") @merge(subgraph: "Movies", keyField: "totalCount", keyArg: "first")
+  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort]): MoviesConnection! @source(subgraph: "Movies", name: "moviesConnection", type: "MoviesConnection!")
   moviesAggregate(where: MovieWhere): MovieAggregateSelection! @source(subgraph: "Movies", name: "moviesAggregate", type: "MovieAggregateSelection!")
   people(where: PersonWhere, options: PersonOptions): [Person!]! @source(subgraph: "Movies", name: "people", type: "[Person!]!")
-  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort]): PeopleConnection! @source(subgraph: "Movies", name: "peopleConnection", type: "PeopleConnection!") @merge(subgraph: "Movies", keyField: "totalCount", keyArg: "first")
+  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort]): PeopleConnection! @source(subgraph: "Movies", name: "peopleConnection", type: "PeopleConnection!")
   peopleAggregate(where: PersonWhere): PersonAggregateSelection! @source(subgraph: "Movies", name: "peopleAggregate", type: "PersonAggregateSelection!")
 }
 

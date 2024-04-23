@@ -17,7 +17,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [Album] @source(subgraph: "chinook", name: "albums", type: "[Album]") @merge(subgraph: "chinook", keyField: "albumId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "title", keyArg: "order") @merge(subgraph: "chinook", keyField: "artistId", keyArg: "limit")
+  ): [Album] @source(subgraph: "chinook", name: "albums", type: "[Album]")
   album(
     albumId: Int
     """
@@ -33,7 +33,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [Artist] @source(subgraph: "chinook", name: "artists", type: "[Artist]") @merge(subgraph: "chinook", keyField: "artistId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "name", keyArg: "order")
+  ): [Artist] @source(subgraph: "chinook", name: "artists", type: "[Artist]")
   artist(
     artistId: Int
     """
@@ -49,7 +49,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [Customer] @source(subgraph: "chinook", name: "customers", type: "[Customer]") @merge(subgraph: "chinook", keyField: "customerId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "firstName", keyArg: "order") @merge(subgraph: "chinook", keyField: "lastName", keyArg: "order") @merge(subgraph: "chinook", keyField: "company", keyArg: "order") @merge(subgraph: "chinook", keyField: "address", keyArg: "order") @merge(subgraph: "chinook", keyField: "city", keyArg: "order") @merge(subgraph: "chinook", keyField: "state", keyArg: "order") @merge(subgraph: "chinook", keyField: "country", keyArg: "order") @merge(subgraph: "chinook", keyField: "postalCode", keyArg: "order") @merge(subgraph: "chinook", keyField: "phone", keyArg: "order") @merge(subgraph: "chinook", keyField: "fax", keyArg: "order") @merge(subgraph: "chinook", keyField: "email", keyArg: "order") @merge(subgraph: "chinook", keyField: "supportRepId", keyArg: "limit")
+  ): [Customer] @source(subgraph: "chinook", name: "customers", type: "[Customer]")
   customer(
     customerId: Int
     """
@@ -65,7 +65,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [Employee] @source(subgraph: "chinook", name: "employees", type: "[Employee]") @merge(subgraph: "chinook", keyField: "employeeId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "lastName", keyArg: "order") @merge(subgraph: "chinook", keyField: "firstName", keyArg: "order") @merge(subgraph: "chinook", keyField: "title", keyArg: "order") @merge(subgraph: "chinook", keyField: "reportsTo", keyArg: "limit") @merge(subgraph: "chinook", keyField: "birthDate", keyArg: "order") @merge(subgraph: "chinook", keyField: "hireDate", keyArg: "order") @merge(subgraph: "chinook", keyField: "address", keyArg: "order") @merge(subgraph: "chinook", keyField: "city", keyArg: "order") @merge(subgraph: "chinook", keyField: "state", keyArg: "order") @merge(subgraph: "chinook", keyField: "country", keyArg: "order") @merge(subgraph: "chinook", keyField: "postalCode", keyArg: "order") @merge(subgraph: "chinook", keyField: "phone", keyArg: "order") @merge(subgraph: "chinook", keyField: "fax", keyArg: "order") @merge(subgraph: "chinook", keyField: "email", keyArg: "order")
+  ): [Employee] @source(subgraph: "chinook", name: "employees", type: "[Employee]")
   employee(
     employeeId: Int
     """
@@ -81,7 +81,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [Genre] @source(subgraph: "chinook", name: "genres", type: "[Genre]") @merge(subgraph: "chinook", keyField: "genreId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "name", keyArg: "order")
+  ): [Genre] @source(subgraph: "chinook", name: "genres", type: "[Genre]")
   genre(
     genreId: Int
     """
@@ -97,7 +97,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [Invoice] @source(subgraph: "chinook", name: "invoices", type: "[Invoice]") @merge(subgraph: "chinook", keyField: "invoiceId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "customerId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "invoiceDate", keyArg: "order") @merge(subgraph: "chinook", keyField: "billingAddress", keyArg: "order") @merge(subgraph: "chinook", keyField: "billingCity", keyArg: "order") @merge(subgraph: "chinook", keyField: "billingState", keyArg: "order") @merge(subgraph: "chinook", keyField: "billingCountry", keyArg: "order") @merge(subgraph: "chinook", keyField: "billingPostalCode", keyArg: "order") @merge(subgraph: "chinook", keyField: "total", keyArg: "order")
+  ): [Invoice] @source(subgraph: "chinook", name: "invoices", type: "[Invoice]")
   invoice(
     invoiceId: Int
     """
@@ -113,7 +113,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [InvoiceItem] @source(subgraph: "chinook", name: "invoiceItems", type: "[InvoiceItem]") @merge(subgraph: "chinook", keyField: "invoiceLineId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "invoiceId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "trackId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "unitPrice", keyArg: "order") @merge(subgraph: "chinook", keyField: "quantity", keyArg: "limit")
+  ): [InvoiceItem] @source(subgraph: "chinook", name: "invoiceItems", type: "[InvoiceItem]")
   invoiceItem(
     invoiceLineId: Int
     """
@@ -129,7 +129,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [MediaType] @source(subgraph: "chinook", name: "mediaTypes", type: "[MediaType]") @merge(subgraph: "chinook", keyField: "mediaTypeId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "name", keyArg: "order")
+  ): [MediaType] @source(subgraph: "chinook", name: "mediaTypes", type: "[MediaType]")
   mediaType(
     mediaTypeId: Int
     """
@@ -145,7 +145,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [Playlist] @source(subgraph: "chinook", name: "playlists", type: "[Playlist]") @merge(subgraph: "chinook", keyField: "playlistId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "name", keyArg: "order")
+  ): [Playlist] @source(subgraph: "chinook", name: "playlists", type: "[Playlist]")
   playlist(
     playlistId: Int
     """
@@ -161,7 +161,7 @@ type Query {
     """
     where: SequelizeJSON
     offset: Int
-  ): [Track] @source(subgraph: "chinook", name: "tracks", type: "[Track]") @merge(subgraph: "chinook", keyField: "trackId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "name", keyArg: "order") @merge(subgraph: "chinook", keyField: "albumId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "mediaTypeId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "genreId", keyArg: "limit") @merge(subgraph: "chinook", keyField: "composer", keyArg: "order") @merge(subgraph: "chinook", keyField: "milliseconds", keyArg: "limit") @merge(subgraph: "chinook", keyField: "bytes", keyArg: "limit") @merge(subgraph: "chinook", keyField: "unitPrice", keyArg: "order")
+  ): [Track] @source(subgraph: "chinook", name: "tracks", type: "[Track]")
   track(
     trackId: Int
     """
@@ -421,7 +421,5 @@ exports[`should execute Albums 1`] = `
       },
     ],
   },
-  "errors": undefined,
-  "extensions": undefined,
 }
 `;

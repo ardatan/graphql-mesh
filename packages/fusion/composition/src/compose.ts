@@ -9,7 +9,7 @@ import {
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { mergeSchemas, MergeSchemasConfig } from '@graphql-tools/schema';
-import { getRootTypeMap, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { getRootTypeMap, MapperKind, mapSchema, TypeSource } from '@graphql-tools/utils';
 import { getDirectiveExtensions } from './getDirectiveExtensions.js';
 
 export interface SubgraphConfig {
@@ -34,6 +34,7 @@ export function composeSubgraphs(
   options?: Omit<MergeSchemasConfig, 'schema'>,
 ) {
   const annotatedSubgraphs: GraphQLSchema[] = [];
+  let mergeDirectiveUsed = false;
   for (const subgraphConfig of subgraphs) {
     const { name: subgraphName, schema, transforms } = subgraphConfig;
     const rootTypeMap = getRootTypeMap(schema);
@@ -111,6 +112,9 @@ export function composeSubgraphs(
           directiveExtensions,
           subgraphName,
         });
+        if (directiveExtensions.merge) {
+          mergeDirectiveUsed = true;
+        }
         return {
           ...fieldConfig,
           extensions: {
@@ -150,19 +154,28 @@ export function composeSubgraphs(
     annotatedSubgraphs.push(transformedSubgraph);
   }
 
+  const typeDefs: TypeSource[] = [];
+
+  if (mergeDirectiveUsed) {
+    typeDefs.push(`
+      directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
+    `);
+  }
+
+  if (options?.typeDefs) {
+    typeDefs.push(options.typeDefs);
+  }
+
   return mergeSchemas({
     assumeValidSDL: true,
     assumeValid: true,
     ...options,
     schemas: [...annotatedSubgraphs, ...(options?.schemas || [])],
-    typeDefs: [
-      `
-        directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
-    `,
-      options?.typeDefs,
-    ],
+    typeDefs,
   });
 }
+
+const ignoredArgumentNames = ['limit', 'offset', 'order', 'first', 'after', 'skip'];
 
 function addAnnotationsForSemanticConventions({
   queryFieldName,
@@ -183,7 +196,8 @@ function addAnnotationsForSemanticConventions({
       const objectFieldType = getNamedType(objectField.type);
       const [argName, arg] =
         Object.entries(queryFieldConfig.args).find(
-          ([, arg]) => getNamedType(arg.type) === objectFieldType,
+          ([argName, arg]) =>
+            getNamedType(arg.type) === objectFieldType && !ignoredArgumentNames.includes(argName),
         ) || [];
       const queryFieldNameSnakeCase = snakeCase(queryFieldName);
       const pluralTypeName = pluralize(type.name);

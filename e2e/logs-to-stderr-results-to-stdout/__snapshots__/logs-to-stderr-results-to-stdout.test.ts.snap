@@ -5,8 +5,6 @@ exports[`should write compose output to stdout and logs to stderr 1`] = `
   query: Query
 }
 
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
-
 type Query {
   hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
 }

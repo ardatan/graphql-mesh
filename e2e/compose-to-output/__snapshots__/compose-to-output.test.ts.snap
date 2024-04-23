@@ -5,14 +5,12 @@ exports[`should write compose output to fusiongraph.graphql 1`] = `
   query: Query
 }
 
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
-
 type Query {
   hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
 }"
 `;
 
-exports[`should write compose output to fusiongraph.js 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ndirective @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION\\n\\ntype Query {\\n  hello: String @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
+exports[`should write compose output to fusiongraph.js 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
 
 exports[`should write compose output to fusiongraph.json 1`] = `
 "{
@@ -32,76 +30,6 @@ exports[`should write compose output to fusiongraph.json 1`] = `
               "value": "Query"
             }
           }
-        }
-      ]
-    },
-    {
-      "kind": "DirectiveDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "merge"
-      },
-      "arguments": [
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "subgraph"
-          },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "keyField"
-          },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "keyArg"
-          },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
-          },
-          "directives": []
-        }
-      ],
-      "repeatable": false,
-      "locations": [
-        {
-          "kind": "Name",
-          "value": "FIELD_DEFINITION"
         }
       ]
     },
@@ -182,4 +110,4 @@ exports[`should write compose output to fusiongraph.json 1`] = `
 }"
 `;
 
-exports[`should write compose output to fusiongraph.ts 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ndirective @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION\\n\\ntype Query {\\n  hello: String @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
+exports[`should write compose output to fusiongraph.ts 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;

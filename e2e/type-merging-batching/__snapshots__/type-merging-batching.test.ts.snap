@@ -47,8 +47,6 @@ exports[`should execute Author 1`] = `
       "name": "Jane Doe",
     },
   },
-  "errors": undefined,
-  "extensions": undefined,
 }
 `;
 
@@ -86,8 +84,6 @@ exports[`should execute Authors 1`] = `
       },
     ],
   },
-  "errors": undefined,
-  "extensions": undefined,
 }
 `;
 
@@ -109,8 +105,6 @@ exports[`should execute Book 1`] = `
       "title": "Dolor Sit Amet",
     },
   },
-  "errors": undefined,
-  "extensions": undefined,
 }
 `;
 
@@ -148,7 +142,5 @@ exports[`should execute Books 1`] = `
       },
     ],
   },
-  "errors": undefined,
-  "extensions": undefined,
 }
 `;
