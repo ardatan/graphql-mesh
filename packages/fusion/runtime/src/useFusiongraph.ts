@@ -1,4 +1,11 @@
-import { buildASTSchema, buildSchema, DocumentNode, GraphQLSchema, isSchema } from 'graphql';
+import {
+  buildASTSchema,
+  buildSchema,
+  DocumentNode,
+  GraphQLSchema,
+  isSchema,
+  printSchema,
+} from 'graphql';
 import { Plugin, PromiseOrValue, useReadinessCheck, YogaServer } from 'graphql-yoga';
 import { getInContextSDK } from '@graphql-mesh/runtime';
 import { TransportBaseContext } from '@graphql-mesh/transport-common';
@@ -6,7 +13,6 @@ import { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise, resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
 import { SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchSchemas } from '@graphql-tools/stitch';
-import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { IResolvers, isDocumentNode, isPromise } from '@graphql-tools/utils';
 import { extractSubgraphsFromFusiongraph } from './getSubschemasFromFusiongraph.js';
 import {
@@ -46,7 +52,6 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
 ): Plugin<TContext> & {
   invalidateUnifiedGraph(): void;
 } {
-  const { stitchingDirectivesTransformer } = stitchingDirectives();
   let fusiongraph: GraphQLSchema;
   let lastLoadedFusiongraph: string | GraphQLSchema | DocumentNode;
   let yoga: YogaServer<unknown, TContext>;
@@ -84,16 +89,15 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
       subschemas,
       assumeValid: true,
       assumeValidSDL: true,
-      typeDefs: [opts.additionalTypedefs, additionalTypeDefs],
+      typeDefs: [opts.additionalTypedefs, ...additionalTypeDefs],
       resolvers: [
         opts.additionalResolvers as any,
         additionalResolversFromTypeDefs.map(additionalResolver =>
           resolveAdditionalResolversWithoutImport(additionalResolver),
         ),
       ] as any,
-      subschemaConfigTransforms: [stitchingDirectivesTransformer],
     });
-    if (opts.additionalResolvers || additionalResolversFromTypeDefs.length) {
+    if (opts.additionalResolvers?.length || additionalResolversFromTypeDefs.length) {
       const onDelegateHooks: OnDelegateHook<TContext>[] = [];
       for (const plugin of yoga.getEnveloped._plugins as any[]) {
         if (plugin.onDelegate) {

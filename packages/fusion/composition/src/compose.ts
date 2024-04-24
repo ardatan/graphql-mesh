@@ -106,14 +106,16 @@ export function composeSubgraphs(
           name: fieldName,
           type: fieldConfig.type.toString(),
         });
-        addAnnotationsForSemanticConventions({
-          queryFieldName: fieldName,
-          queryFieldConfig: fieldConfig,
-          directiveExtensions,
-          subgraphName,
-        });
-        if (directiveExtensions.merge) {
-          mergeDirectiveUsed = true;
+        if (!transforms?.length) {
+          addAnnotationsForSemanticConventions({
+            queryFieldName: fieldName,
+            queryFieldConfig: fieldConfig,
+            directiveExtensions,
+            subgraphName,
+          });
+          if (directiveExtensions.merge) {
+            mergeDirectiveUsed = true;
+          }
         }
         return {
           ...fieldConfig,
@@ -141,6 +143,9 @@ export function composeSubgraphs(
             directiveExtensions,
             subgraphName,
           });
+          if (directiveExtensions.merge) {
+            mergeDirectiveUsed = true;
+          }
           return {
             ...fieldConfig,
             extensions: {
@@ -175,8 +180,6 @@ export function composeSubgraphs(
   });
 }
 
-const ignoredArgumentNames = ['limit', 'offset', 'order', 'first', 'after', 'skip'];
-
 function addAnnotationsForSemanticConventions({
   queryFieldName,
   queryFieldConfig,
@@ -197,7 +200,8 @@ function addAnnotationsForSemanticConventions({
       const [argName, arg] =
         Object.entries(queryFieldConfig.args).find(
           ([argName, arg]) =>
-            getNamedType(arg.type) === objectFieldType && !ignoredArgumentNames.includes(argName),
+            getNamedType(arg.type) === objectFieldType &&
+            (argName === fieldName || pluralize(fieldName) === argName),
         ) || [];
       const queryFieldNameSnakeCase = snakeCase(queryFieldName);
       const pluralTypeName = pluralize(type.name);

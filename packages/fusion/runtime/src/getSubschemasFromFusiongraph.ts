@@ -8,32 +8,38 @@ import {
   Kind,
   parseType,
   print,
+  printSchema,
   valueFromASTUntyped,
   visit,
 } from 'graphql';
 import { TransportEntry } from '@graphql-mesh/transport-common';
 import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { DirectiveAnnotation, getRootTypeNames, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { stitchingDirectives } from '@graphql-tools/stitching-directives';
+import {
+  DirectiveAnnotation,
+  getRootTypeMap,
+  getRootTypeNames,
+  MapperKind,
+  mapSchema,
+  printSchemaWithDirectives,
+} from '@graphql-tools/utils';
 import {
   RenameInputObjectFields,
   RenameInterfaceFields,
-  RenameObjectFieldArguments,
+  RenameObjectFields,
   RenameRootFields,
+  RenameTypes,
   TransformEnumValues,
 } from '@graphql-tools/wrap';
 
 export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
-  const renameTypeNames: Record<string, string> = {};
-  const renameFieldByObjectTypeNames: Record<string, Record<string, string>> = {};
-  const renameFieldByInputTypeNames: Record<string, Record<string, string>> = {};
-  const renameFieldByInterfaceTypeNames: Record<string, Record<string, string>> = {};
-  const renameEnumValueByEnumTypeNames: Record<string, Record<string, string>> = {};
   const subgraphNames = new Set<string>();
   const subschemaMap = new Map<string, SubschemaConfig>();
   const transportEntryMap: Record<string, TransportEntry> = {};
   const schemaDirectives = getDefDirectives(fusiongraph);
   const transportDirectives = schemaDirectives.filter(directive => directive.name === 'transport');
+  const { stitchingDirectivesTransformer } = stitchingDirectives();
   for (const transportDirective of transportDirectives) {
     const subgraph = transportDirective.args.subgraph;
     if (typeof subgraph === 'string') {
@@ -46,11 +52,17 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
     Parameters<typeof resolveAdditionalResolvers>[1][0],
     string
   >[] = [];
-  const additionalTypeDefs: string[] = [];
+  const additionalTypeDefs = new Set<string>();
   for (const subgraph of subgraphNames) {
+    const renameTypeNames: Record<string, string> = {};
+    const renameTypeNamesReversed: Record<string, string> = {};
+    const renameFieldByObjectTypeNames: Record<string, Record<string, string>> = {};
+    const renameFieldByInputTypeNames: Record<string, Record<string, string>> = {};
+    const renameFieldByInterfaceTypeNames: Record<string, Record<string, string>> = {};
+    const renameEnumValueByEnumTypeNames: Record<string, Record<string, string>> = {};
     const subgraphSchema = mapSchema(fusiongraph, {
       [MapperKind.TYPE]: type => {
-        const typeDirectives = getDefDirectives(type);
+        const typeDirectives = getDefDirectives(type, subgraph);
         const sourceDirectives = typeDirectives.filter(directive => directive.name === 'source');
         const sourceDirective = sourceDirectives.find(
           directive => directive.args.subgraph === subgraph,
@@ -59,6 +71,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
           const realName = sourceDirective.args.name ?? type.name;
           if (type.name !== realName) {
             renameTypeNames[realName] = type.name;
+            renameTypeNamesReversed[type.name] = realName;
             return new (Object.getPrototypeOf(type).constructor)({
               ...type.toConfig(),
               name: realName,
@@ -88,7 +101,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
         const sourceDirectives = fieldDirectives.filter(directive => directive.name === 'source');
         if (!sourceDirectives.length) {
           const argEntries = Object.entries(fieldConfig.args ?? {});
-          additionalTypeDefs.push(
+          additionalTypeDefs.add(
             `extend type ${typeName} {
               ${fieldName}${
                 argEntries.length > 0
@@ -105,68 +118,84 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
           directive => directive.args.subgraph === subgraph,
         );
         if (sourceDirective != null) {
+          const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
           const realName = sourceDirective.args.name ?? fieldName;
           if (fieldName !== realName) {
-            if (!renameFieldByObjectTypeNames[typeName]) {
-              renameFieldByObjectTypeNames[typeName] = {};
+            if (!renameFieldByObjectTypeNames[realTypeName]) {
+              renameFieldByObjectTypeNames[realTypeName] = {};
             }
-            renameFieldByObjectTypeNames[typeName][realName] = fieldName;
+            renameFieldByObjectTypeNames[realTypeName][realName] = fieldName;
           }
-          return [realName, fieldConfig];
+          const directivesObj: Record<string, any> = {};
+          for (const fieldDirective of fieldDirectives) {
+            if (fieldDirective?.args?.subgraph && fieldDirective.args.subgraph !== subgraph)
+              continue;
+            directivesObj[fieldDirective.name] ||= [];
+            directivesObj[fieldDirective.name].push(fieldDirective.args);
+          }
+          return [
+            realName,
+            {
+              ...fieldConfig,
+              astNode: undefined,
+              extensions: {
+                ...fieldConfig.extensions,
+                directives: directivesObj,
+              },
+            },
+          ];
         }
         return null;
       },
       [MapperKind.INPUT_OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
-        const fieldDirectives = getDefDirectives(fieldConfig);
-        const sourceDirectives = fieldDirectives.filter(directive => directive.name === 'source');
-        const sourceDirective = sourceDirectives.find(
-          directive => directive.args.subgraph === subgraph,
+        const fieldDirectives = getDefDirectives(fieldConfig, subgraph);
+        const [sourceDirective] = fieldDirectives.filter(
+          directive => directive.name === 'source' && directive.args.subgraph === subgraph,
         );
         if (sourceDirective != null) {
+          const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
           const realName = sourceDirective.args.name ?? fieldName;
           if (fieldName !== realName) {
-            if (!renameFieldByInputTypeNames[typeName]) {
-              renameFieldByInputTypeNames[typeName] = {};
+            if (!renameFieldByInputTypeNames[realTypeName]) {
+              renameFieldByInputTypeNames[realTypeName] = {};
             }
-            renameFieldByInputTypeNames[typeName][realName] = fieldName;
+            renameFieldByInputTypeNames[realTypeName][realName] = fieldName;
           }
           return [realName, fieldConfig];
         }
         return null;
       },
       [MapperKind.INTERFACE_FIELD]: (fieldConfig, fieldName, typeName) => {
-        const fieldDirectives = getDefDirectives(fieldConfig);
-        const sourceDirectives = fieldDirectives.filter(directive => directive.name === 'source');
-        const sourceDirective = sourceDirectives.find(
-          directive => directive.args.subgraph === subgraph,
+        const fieldDirectives = getDefDirectives(fieldConfig, subgraph);
+        const [sourceDirective] = fieldDirectives.filter(
+          directive => directive.name === 'source' && directive.args.subgraph === subgraph,
         );
         if (sourceDirective != null) {
           const realName = sourceDirective.args.name ?? fieldName;
           if (fieldName !== realName) {
-            if (!renameFieldByInterfaceTypeNames[typeName]) {
-              renameFieldByInterfaceTypeNames[typeName] = {};
+            const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
+            if (!renameFieldByInterfaceTypeNames[realTypeName]) {
+              renameFieldByInterfaceTypeNames[realTypeName] = {};
             }
-            renameFieldByInterfaceTypeNames[typeName][realName] = fieldName;
+            renameFieldByInterfaceTypeNames[realTypeName][realName] = fieldName;
           }
           return [realName, fieldConfig];
         }
         return null;
       },
-      [MapperKind.ENUM_VALUE]: (enumValueConfig, enumName, _schema, externalValue) => {
-        const enumValueDirectives = getDefDirectives(enumValueConfig);
-        const sourceDirectives = enumValueDirectives.filter(
-          directive => directive.name === 'source',
-        );
-        const sourceDirective = sourceDirectives.find(
-          directive => directive.args.subgraph === subgraph,
+      [MapperKind.ENUM_VALUE]: (enumValueConfig, typeName, _schema, externalValue) => {
+        const enumValueDirectives = getDefDirectives(enumValueConfig, subgraph);
+        const [sourceDirective] = enumValueDirectives.filter(
+          directive => directive.name === 'source' && directive.args.subgraph === subgraph,
         );
         if (sourceDirective != null) {
           const realValue = sourceDirective.args.name ?? externalValue;
+          const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
           if (externalValue !== realValue) {
-            if (!renameEnumValueByEnumTypeNames[enumName]) {
-              renameEnumValueByEnumTypeNames[enumName] = {};
+            if (!renameEnumValueByEnumTypeNames[realTypeName]) {
+              renameEnumValueByEnumTypeNames[realTypeName] = {};
             }
-            renameEnumValueByEnumTypeNames[enumName][realValue] = externalValue;
+            renameEnumValueByEnumTypeNames[realTypeName][realValue] = externalValue;
           }
           return [realValue, enumValueConfig];
         }
@@ -175,13 +204,11 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
     });
     const transforms: Transform[] = [];
     if (Object.keys(renameTypeNames).length > 0) {
-      transforms.push(
-        new RenameRootFields((_operation, fieldName) => renameTypeNames[fieldName] || fieldName),
-      );
+      transforms.push(new RenameTypes(typeName => renameTypeNames[typeName] || typeName));
     }
     if (Object.keys(renameFieldByObjectTypeNames).length > 0) {
       transforms.push(
-        new RenameObjectFieldArguments((typeName, fieldName, _fieldConfig) => {
+        new RenameObjectFields((typeName, fieldName, _fieldConfig) => {
           return renameFieldByObjectTypeNames[typeName]?.[fieldName] ?? fieldName;
         }),
       );
@@ -210,10 +237,36 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
         }),
       );
     }
-    subschemaMap.set(subgraph, {
+    let subschema: SubschemaConfig = {
       schema: subgraphSchema,
       transforms,
-    });
+    };
+    subschema = stitchingDirectivesTransformer(subschema);
+    const queryType = subgraphSchema.getQueryType();
+    // Transformer doesn't respect transforms
+    if (transforms.length && subschema.merge) {
+      const mergeConfig: SubschemaConfig['merge'] = {};
+      for (const realTypeName in subschema.merge) {
+        const renamedTypeName = renameTypeNames[realTypeName] ?? realTypeName;
+        mergeConfig[renamedTypeName] = subschema.merge[realTypeName];
+        const realQueryFieldName = mergeConfig[renamedTypeName].fieldName;
+        if (realQueryFieldName) {
+          mergeConfig[renamedTypeName].fieldName =
+            renameFieldByObjectTypeNames[queryType.name]?.[realQueryFieldName] ??
+            realQueryFieldName;
+        }
+        mergeConfig[renamedTypeName].entryPoints = subschema.merge[realTypeName].entryPoints?.map(
+          entryPoint => ({
+            ...entryPoint,
+            fieldName:
+              renameFieldByObjectTypeNames[queryType.name]?.[entryPoint.fieldName] ??
+              entryPoint.fieldName,
+          }),
+        );
+      }
+      subschema.merge = mergeConfig;
+    }
+    subschemaMap.set(subgraph, subschema);
   }
   return {
     subschemaMap,
@@ -223,11 +276,14 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
   };
 }
 
-function getDefDirectives({ astNode, extensions }: { astNode?: ASTNode | null; extensions?: any }) {
+function getDefDirectives(
+  { astNode, extensions }: { astNode?: ASTNode | null; extensions?: any },
+  subgraph?: string,
+) {
   const directiveAnnotations: DirectiveAnnotation[] = [];
   if (astNode != null && 'directives' in astNode) {
     astNode.directives?.forEach(directiveNode => {
-      directiveAnnotations.push({
+      const directiveAnnotation = {
         name: directiveNode.name.value,
         args:
           directiveNode.arguments?.reduce(
@@ -237,7 +293,14 @@ function getDefDirectives({ astNode, extensions }: { astNode?: ASTNode | null; e
             },
             {} as Record<string, any>,
           ) ?? {},
-      });
+      };
+      if (
+        subgraph &&
+        directiveAnnotation.args.subgraph &&
+        directiveAnnotation.args.subgraph !== subgraph
+      )
+        return;
+      directiveAnnotations.push(directiveAnnotation);
     });
   }
   if (extensions?.directives != null) {
@@ -246,12 +309,14 @@ function getDefDirectives({ astNode, extensions }: { astNode?: ASTNode | null; e
       if (directiveExt != null) {
         if (Array.isArray(directiveExt)) {
           directiveExt.forEach(directive => {
+            if (subgraph && directive.subgraph && directive.subgraph !== subgraph) return;
             directiveAnnotations.push({
               name: directiveName,
               args: directive,
             });
           });
         } else {
+          if (subgraph && directiveExt.subgraph && directiveExt.subgraph !== subgraph) continue;
           directiveAnnotations.push({
             name: directiveName,
             args: directiveExt,

@@ -57,6 +57,10 @@ interface SelectionHandlerCtx {
 
 function handleFieldNode(fieldNode: FieldNode, ctx: SelectionHandlerCtx) {
   const originalFieldName = fieldNode.name.value;
+  if (originalFieldName === '__typename') {
+    ctx.rootFieldsWithArgs.set(originalFieldName, {});
+    return;
+  }
   const rootField = ctx.rootFieldMap[originalFieldName];
   if (!rootField) {
     throw new GraphQLError(`No root field found for field ${originalFieldName}`);

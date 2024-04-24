@@ -5,20 +5,21 @@ import {
   defineConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 
 const args = Args(process.argv);
 
 export const composeConfig = defineConfig({
-  target: args.get('target'),
+  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('authors', {
-        endpoint: `http://localhost:${args.getServicePort('authors', true)}/graphql`,
+        endpoint: `http://localhost:${args.getServicePort('authors')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('books', {
-        endpoint: `http://localhost:${args.getServicePort('books', true)}/graphql`,
+        endpoint: `http://localhost:${args.getServicePort('books')}/graphql`,
       }),
       transforms: [
         createRenameFieldTransform((_field, fieldName, typeName) =>
@@ -32,7 +33,7 @@ export const composeConfig = defineConfig({
     extend type Book {
       author: Author
         @resolveTo(
-          sourceName: "AuthorService"
+          sourceName: "authors"
           sourceTypeName: "Query"
           sourceFieldName: "authors"
           keyField: "authorId"
@@ -40,4 +41,8 @@ export const composeConfig = defineConfig({
         )
     }
   `,
+});
+
+export const serveConfig = defineServeConfig({
+  maskedErrors: false,
 });

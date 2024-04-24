@@ -22,7 +22,5 @@ exports[`should execute Add 1`] = `
   "data": {
     "add": 5,
   },
-  "errors": undefined,
-  "extensions": undefined,
 }
 `;
