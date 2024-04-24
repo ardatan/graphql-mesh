@@ -70,7 +70,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.9.11, @apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0":
+"@apollo/client@npm:3.10.1, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0":
+  version: 3.10.1
+  resolution: "@apollo/client@npm:3.10.1"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@wry/caches": "npm:^1.0.0"
+    "@wry/equality": "npm:^0.5.6"
+    "@wry/trie": "npm:^0.5.0"
+    graphql-tag: "npm:^2.12.6"
+    hoist-non-react-statics: "npm:^3.3.2"
+    optimism: "npm:^0.18.0"
+    prop-types: "npm:^15.7.2"
+    rehackt: "npm:^0.1.0"
+    response-iterator: "npm:^0.2.6"
+    symbol-observable: "npm:^4.0.0"
+    ts-invariant: "npm:^0.10.3"
+    tslib: "npm:^2.3.0"
+    zen-observable-ts: "npm:^1.2.5"
+  peerDependencies:
+    graphql: ^15.0.0 || ^16.0.0
+    graphql-ws: ^5.5.5
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+  peerDependenciesMeta:
+    graphql-ws:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    subscriptions-transport-ws:
+      optional: true
+  checksum: 10c0/966ff0f3f6cfa172fe77498a6a376158046606378f5439f1c5e39ff7afa13be01b6414e0c49082777aca5a6d05de491edc22083f2c4d5801faf88b8e7a886e99
+  languageName: node
+  linkType: hard
+
+"@apollo/client@npm:^3.8.0":
   version: 3.9.11
   resolution: "@apollo/client@npm:3.9.11"
   dependencies:
@@ -4551,7 +4588,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:3.9.11"
+    "@apollo/client": "npm:3.10.1"
   peerDependencies:
     "@apollo/client": ^3.5.9
     "@graphql-mesh/runtime": ^0.98.8
@@ -6106,10 +6143,10 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^1.1.12":
-  version: 1.1.26
-  resolution: "@graphql-tools/federation@npm:1.1.26"
+  version: 1.1.27
+  resolution: "@graphql-tools/federation@npm:1.1.27"
   dependencies:
-    "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0"
+    "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0"
     "@graphql-tools/delegate": "npm:^10.0.4"
     "@graphql-tools/executor-http": "npm:^1.0.9"
     "@graphql-tools/merge": "npm:^9.0.3"
@@ -6124,7 +6161,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/94f42644868adf1271ee0eedc5b561fc49f7be82961f19b80b4311eacf7fe4e6433fb262d2dfe76cb2d8673a44a8cc8160460185fbd9cdee9003eb75dd621eef
+  checksum: 10c0/ebd016f712be6787c19bf3594c22ae1f383daf7e4fa0bbee753b58e9ef3511787e830f2e7d7a2930900b7444766ad0c96f213cd1781e39f574a18aee09c14437
   languageName: node
   linkType: hard
 
@@ -18613,7 +18650,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:3.9.11"
+    "@apollo/client": "npm:3.10.1"
     "@testing-library/jest-dom": "npm:6.4.2"
     "@testing-library/react": "npm:15.0.4"
     "@testing-library/user-event": "npm:14.5.2"
@@ -29954,6 +29991,21 @@ __metadata:
     react:
       optional: true
   checksum: 10c0/814c9b80b2680dc0572639ecad1ed1961b23b606e53a00976ee4c4876f6ed736ea702381235ac40ed2a5c826fb55641b46ae23343e4ddd6378ced1da3d51ada7
+  languageName: node
+  linkType: hard
+
+"rehackt@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "rehackt@npm:0.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    react: "*"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 10c0/3d838bfee84ec06c976f21027936f3b0fdb7660ab8a2d4d3f19c65e0daa78a268aa81352311352b8576b89a074714b36ae6cd5bdadb6e975eca079f2b342de73
   languageName: node
   linkType: hard
 
