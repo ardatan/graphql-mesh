@@ -16,7 +16,7 @@ it('should compose', async () => {
 }
 
 type Query {
-  hello: String @resolver(subgraph: "helloworld", operation: "query hello { hello }") @source(subgraph: "helloworld", name: "hello", type: "String")
+  hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
 }
 "
 `);

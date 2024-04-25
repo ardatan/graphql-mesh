@@ -22,3 +22,4 @@ export * from './with-cancel.js';
 export * from './with-cookies.js';
 export * from './wrapFetchWithHooks.js';
 export * from './registerTerminateHandler.js';
+export * from './getAdditionalResolversFromTypeDefs.js';

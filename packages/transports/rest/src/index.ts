@@ -7,15 +7,14 @@ export interface RESTTransportOptions {
 }
 
 export const getSubgraphExecutor: TransportExecutorFactoryFn<'rest', RESTTransportOptions> =
-  function getRESTSubgraphExecutor({ transportEntry, getSubgraph, fetch, pubsub, logger }) {
-    const preProcessedSchema = getSubgraph();
+  function getRESTSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, logger }) {
     const processDirectiveOpts: ProcessDirectiveArgs = {
       globalFetch: fetch,
       pubsub,
       logger,
       ...transportEntry.options,
     };
-    const processedSchema = processDirectives(preProcessedSchema, processDirectiveOpts);
+    const processedSchema = processDirectives(subgraph, processDirectiveOpts);
     const executor = createDefaultExecutor(processedSchema);
     return executor;
   };

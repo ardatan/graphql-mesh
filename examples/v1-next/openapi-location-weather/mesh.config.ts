@@ -40,36 +40,39 @@ export const composeConfig = defineComposeConfig({
   additionalTypeDefs: /* GraphQL */ `
     extend type PopulatedPlaceSummary {
       dailyForecast: [Forecast]
-        @variable(name: "latitude", select: "latitude", subgraph: "Cities")
-        @variable(name: "longitude", select: "longitude", subgraph: "Cities")
-        @resolver(
-          subgraph: "Weather"
-          operation: """
-          query getForecastDaily($latitude: Float!, $longitude: Float!) {
-            forecast_daily(lat: $latitude, lon: $longitude) {
-              data
-            }
-          }
+        @resolveTo(
+          requiredSelectionSet: """
+          {
+             latitude
+             longitude
+           }
           """
+          sourceName: "Weather"
+          sourceTypeName: "Query"
+          sourceFieldName: "forecast_daily"
+          sourceArgs: { lat: "{root.latitude}", lon: "{root.longitude}" }
+          result: "data"
         )
       todayForecast: Forecast
-        @variable(name: "latitude", select: "latitude", subgraph: "Cities")
-        @variable(name: "longitude", select: "longitude", subgraph: "Cities")
-        @resolver(
-          subgraph: "Weather"
-          operation: """
-          query getForecastDaily($latitude: Float!, $longitude: Float!) {
-            forecast_daily_by_lat_by_lon(lat: $latitude, lon: $longitude) {
-              data
-            }
-          }
+        @resolveTo(
+          requiredSelectionSet: """
+          {
+             latitude
+             longitude
+           }
           """
+          sourceName: "Weather"
+          sourceTypeName: "Query"
+          sourceFieldName: "forecast_daily"
+          sourceArgs: { lat: "{root.latitude}", lon: "{root.longitude}", days: 1 }
+          result: "data[0]"
         )
     }
   `,
 });
 
 export const serveConfig = defineServeConfig({
+  fusiongraph: './fusiongraph.graphql',
   cache: new LocalforageCache(),
   plugins: ctx => {
     const { cache } = ctx;

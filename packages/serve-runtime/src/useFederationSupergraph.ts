@@ -71,25 +71,23 @@ export function useFederationSupergraph<TContext extends Record<string, any> = R
       },
     });
     const subschemas: SubschemaConfig[] = [];
+    const subgraphMap: Map<string, GraphQLSchema> = new Map();
     const onSubgraphExecute = getOnSubgraphExecute({
-      getFusiongraph: () => supergraph,
+      fusiongraph: supergraph,
       plugins: yoga.getEnveloped._plugins as FusiongraphPlugin[],
       transports: opts.transports || defaultTransportsOption,
       transportBaseContext: opts.transportBaseContext,
       transportEntryMap,
+      subgraphMap,
     });
     for (const [subschemaName, subschemaConfig] of subschemaMap) {
       subschemas.push({
         ...subschemaConfig,
         executor(execReq) {
-          return onSubgraphExecute(
-            subschemaName,
-            execReq.document,
-            execReq.variables,
-            execReq.context,
-          );
+          return onSubgraphExecute(subschemaName, execReq);
         },
       });
+      subgraphMap.set(subschemaName, subschemaConfig.schema);
     }
     supergraph = stitchSchemas({
       subschemas,

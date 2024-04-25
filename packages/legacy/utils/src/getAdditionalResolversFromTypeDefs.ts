@@ -6,7 +6,7 @@ import {
   Kind,
   visit,
 } from 'graphql';
-import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import { resolveAdditionalResolvers } from './resolve-additional-resolvers.js';
 
 function parseObject(ast: ConstObjectValueNode): any {
   const value = Object.create(null);

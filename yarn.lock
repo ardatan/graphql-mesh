@@ -3562,18 +3562,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/batching-resolver-example@workspace:e2e/batching-resolver":
-  version: 0.0.0-use.local
-  resolution: "@e2e/batching-resolver-example@workspace:e2e/batching-resolver"
-  dependencies:
-    "@graphql-mesh/compose-cli": "workspace:*"
-    "@graphql-mesh/serve-cli": "workspace:*"
-    "@omnigraph/openapi": "workspace:*"
-    fets: "npm:^0.8.0"
-    graphql: "npm:16.8.1"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/cjs-project@workspace:e2e/cjs-project":
   version: 0.0.0-use.local
   resolution: "@e2e/cjs-project@workspace:e2e/cjs-project"
@@ -3708,6 +3696,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/programmatic-batching-example@workspace:e2e/programmatic-batching":
+  version: 0.0.0-use.local
+  resolution: "@e2e/programmatic-batching-example@workspace:e2e/programmatic-batching"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fets: "npm:^0.8.0"
+    graphql: "npm:16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/pubsub-destroy@workspace:e2e/pubsub-destroy":
   version: 0.0.0-use.local
   resolution: "@e2e/pubsub-destroy@workspace:e2e/pubsub-destroy"
@@ -3724,7 +3724,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
     "@omnigraph/soap": "workspace:*"
-    graphql: "npm:16.8.1"
+    graphql: "npm:^16.8.1"
   languageName: unknown
   linkType: soft
 
@@ -3733,7 +3733,8 @@ __metadata:
   resolution: "@e2e/sqlite-chinook@workspace:e2e/sqlite-chinook"
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
-    "@omnigraph/sqlite": "npm:^0.1.5"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/sqlite": "workspace:*"
     graphql: "npm:^16.8.1"
   languageName: unknown
   linkType: soft
@@ -3760,7 +3761,6 @@ __metadata:
   resolution: "@e2e/type-merging-batching@workspace:e2e/type-merging-batching"
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
-    "@graphql-mesh/fusion-execution": "workspace:*"
     "@graphql-mesh/fusion-runtime": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
     graphql: "npm:^16.8.1"
@@ -4807,26 +4807,8 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.0.10"
     "@types/pluralize": "npm:^0.0.33"
     change-case: "npm:^4.1.2"
-    pascal-case: "npm:^3.0.0"
     pluralize: "npm:^8.0.0"
     snake-case: "npm:^3.0.0"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  languageName: unknown
-  linkType: soft
-
-"@graphql-mesh/fusion-execution@npm:^0.0.2, @graphql-mesh/fusion-execution@workspace:*, @graphql-mesh/fusion-execution@workspace:packages/fusion/execution":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/fusion-execution@workspace:packages/fusion/execution"
-  dependencies:
-    "@graphql-tools/delegate": "npm:^10.0.3"
-    "@graphql-tools/executor-graphql-ws": "npm:^1.1.0"
-    "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/utils": "npm:^10.0.8"
-    "@repeaterjs/repeater": "npm:^3.0.5"
-    fast-json-patch: "npm:^3.1.1"
-    lodash: "npm:^4.17.21"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
@@ -4837,13 +4819,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-runtime@workspace:packages/fusion/runtime"
   dependencies:
-    "@graphql-mesh/fusion-execution": "npm:^0.0.2"
     "@graphql-mesh/runtime": "npm:^0.98.8"
     "@graphql-mesh/transport-common": "npm:^0.1.5"
+    "@graphql-mesh/types": "npm:^0.97.5"
     "@graphql-mesh/utils": "npm:^0.97.5"
     "@graphql-tools/delegate": "npm:^10.0.3"
-    "@graphql-tools/stitch": "npm:^9.0.3"
+    "@graphql-tools/stitch": "npm:^9.2.0"
+    "@graphql-tools/stitching-directives": "npm:^3.0.2"
     "@graphql-tools/utils": "npm:^10.1.3"
+    "@graphql-tools/wrap": "npm:^10.0.5"
     graphql-yoga: "npm:^5.1.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -4978,7 +4962,7 @@ __metadata:
   dependencies:
     "@graphql-tools/delegate": "npm:^10.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/stitch": "npm:^9.0.0"
+    "@graphql-tools/stitch": "npm:^9.2.0"
   peerDependencies:
     "@graphql-mesh/store": ^0.97.5
     "@graphql-mesh/types": ^0.97.5
@@ -6042,6 +6026,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/delegate@npm:^10.0.5":
+  version: 10.0.5
+  resolution: "@graphql-tools/delegate@npm:10.0.5"
+  dependencies:
+    "@graphql-tools/batch-execute": "npm:^9.0.4"
+    "@graphql-tools/executor": "npm:^1.2.1"
+    "@graphql-tools/schema": "npm:^10.0.3"
+    "@graphql-tools/utils": "npm:^10.0.13"
+    dataloader: "npm:^2.2.2"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/4c0f47587510d23633b7b4260ee46d5818c70350cba8a9551cbce1dd271804d6cea809802066828716d292c914a933f66b97b80dd15da218012edd7383bf6f07
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/executor-envelop@npm:^2.0.4":
   version: 2.0.4
   resolution: "@graphql-tools/executor-envelop@npm:2.0.4"
@@ -6055,7 +6055,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor-graphql-ws@npm:^1.1.0, @graphql-tools/executor-graphql-ws@npm:^1.1.2":
+"@graphql-tools/executor-graphql-ws@npm:^1.1.2":
   version: 1.1.2
   resolution: "@graphql-tools/executor-graphql-ws@npm:1.1.2"
   dependencies:
@@ -6479,7 +6479,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/stitch@npm:^9.0.0, @graphql-tools/stitch@npm:^9.0.3, @graphql-tools/stitch@npm:^9.0.5, @graphql-tools/stitch@npm:^9.1.0":
+"@graphql-tools/stitch@npm:^9.0.5, @graphql-tools/stitch@npm:^9.1.0":
   version: 9.1.0
   resolution: "@graphql-tools/stitch@npm:9.1.0"
   dependencies:
@@ -6498,7 +6498,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/stitching-directives@npm:^3.0.0":
+"@graphql-tools/stitch@npm:^9.2.0":
+  version: 9.2.0
+  resolution: "@graphql-tools/stitch@npm:9.2.0"
+  dependencies:
+    "@graphql-tools/batch-delegate": "npm:^9.0.1"
+    "@graphql-tools/delegate": "npm:^10.0.5"
+    "@graphql-tools/executor": "npm:^1.2.1"
+    "@graphql-tools/merge": "npm:^9.0.3"
+    "@graphql-tools/schema": "npm:^10.0.3"
+    "@graphql-tools/utils": "npm:^10.0.13"
+    "@graphql-tools/wrap": "npm:^10.0.2"
+    tslib: "npm:^2.4.0"
+    value-or-promise: "npm:^1.0.11"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/112b906283e60e2cfd43d57c34938a3b61080470cc4861819ed404c0d7aeefbfbe26232dbf19d62349f0bcaaccce8a9c77cc4a97df678eeb2f698d73dd127d8c
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/stitching-directives@npm:^3.0.0, @graphql-tools/stitching-directives@npm:^3.0.2":
   version: 3.0.2
   resolution: "@graphql-tools/stitching-directives@npm:3.0.2"
   dependencies:
@@ -6613,7 +6632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/wrap@npm:10.0.5, @graphql-tools/wrap@npm:^10.0.0, @graphql-tools/wrap@npm:^10.0.1, @graphql-tools/wrap@npm:^10.0.2, @graphql-tools/wrap@npm:^10.0.3":
+"@graphql-tools/wrap@npm:10.0.5, @graphql-tools/wrap@npm:^10.0.0, @graphql-tools/wrap@npm:^10.0.1, @graphql-tools/wrap@npm:^10.0.2, @graphql-tools/wrap@npm:^10.0.3, @graphql-tools/wrap@npm:^10.0.5":
   version: 10.0.5
   resolution: "@graphql-tools/wrap@npm:10.0.5"
   dependencies:
@@ -8438,7 +8457,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/sqlite@npm:^0.1.5, @omnigraph/sqlite@workspace:packages/loaders/sqlite":
+"@omnigraph/sqlite@npm:^0.1.5, @omnigraph/sqlite@workspace:*, @omnigraph/sqlite@workspace:packages/loaders/sqlite":
   version: 0.0.0-use.local
   resolution: "@omnigraph/sqlite@workspace:packages/loaders/sqlite"
   dependencies:
@@ -18008,13 +18027,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-json-patch@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "fast-json-patch@npm:3.1.1"
-  checksum: 10c0/8a0438b4818bb53153275fe5b38033610e8c9d9eb11869e6a7dc05eb92fa70f3caa57015e344eb3ae1e71c7a75ad4cc6bc2dc9e0ff281d6ed8ecd44505210ca8
-  languageName: node
-  linkType: hard
-
 "fast-json-stable-stringify@npm:2.x, fast-json-stable-stringify@npm:^2.0.0, fast-json-stable-stringify@npm:^2.1.0":
   version: 2.1.0
   resolution: "fast-json-stable-stringify@npm:2.1.0"
@@ -27225,7 +27237,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pascal-case@npm:3.1.2, pascal-case@npm:^3.0.0, pascal-case@npm:^3.1.1, pascal-case@npm:^3.1.2":
+"pascal-case@npm:3.1.2, pascal-case@npm:^3.1.1, pascal-case@npm:^3.1.2":
   version: 3.1.2
   resolution: "pascal-case@npm:3.1.2"
   dependencies:

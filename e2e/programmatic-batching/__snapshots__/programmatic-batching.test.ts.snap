@@ -11,18 +11,12 @@ directive @httpOperation(subgraph: String, path: String, operationSpecificHeader
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
 type Query {
-  dummy: String @resolver(subgraph: "API", operation: "query dummy { dummy }") @source(subgraph: "API", name: "dummy", type: "String")
-  user(id: Float!): User @resolver(subgraph: "API", kind: BATCH, operation: """
-  mutation UserBatch($id: [Float!]!) {
-    usersByIds(input: { ids: $id }) {
-      results
-    }
-  }
-  """)
+  dummy: String @source(subgraph: "API", name: "dummy", type: "String")
+  user(id: Float!): User
 }
 
 type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(subgraph: "API", path: "/users_by_ids", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "API", operation: "mutation mutationusersByIds($input: UsersByIdRequest_Input) { usersByIds(input: $input) }") @source(subgraph: "API", name: "usersByIds", type: "UsersByIdResponse")
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(subgraph: "API", path: "/users_by_ids", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "API", name: "usersByIds", type: "UsersByIdResponse")
 }
 
 type UsersByIdResponse @source(subgraph: "API", name: "UsersByIdResponse") {
@@ -57,18 +51,14 @@ enum HTTPMethod @source(subgraph: "API", name: "HTTPMethod") {
 exports[`should execute User 1`] = `
 {
   "data": {
-    "jane": [
-      {
-        "id": 2,
-        "name": "Jane Doe",
-      },
-    ],
-    "john": [
-      {
-        "id": 1,
-        "name": "John Doe",
-      },
-    ],
+    "jane": {
+      "id": 2,
+      "name": "Jane Doe",
+    },
+    "john": {
+      "id": 1,
+      "name": "John Doe",
+    },
   },
 }
 `;

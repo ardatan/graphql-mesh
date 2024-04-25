@@ -6,11 +6,11 @@ exports[`should write compose output to fusiongraph.graphql 1`] = `
 }
 
 type Query {
-  hello: String @resolver(subgraph: "helloworld", operation: "query hello { hello }") @source(subgraph: "helloworld", name: "hello", type: "String")
+  hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
 }"
 `;
 
-exports[`should write compose output to fusiongraph.js 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @resolver(subgraph: \\"helloworld\\", operation: \\"query hello { hello }\\") @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
+exports[`should write compose output to fusiongraph.js 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
 
 exports[`should write compose output to fusiongraph.json 1`] = `
 "{
@@ -57,39 +57,6 @@ exports[`should write compose output to fusiongraph.json 1`] = `
             }
           },
           "directives": [
-            {
-              "kind": "Directive",
-              "name": {
-                "kind": "Name",
-                "value": "resolver"
-              },
-              "arguments": [
-                {
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "subgraph"
-                  },
-                  "value": {
-                    "kind": "StringValue",
-                    "value": "helloworld",
-                    "block": false
-                  }
-                },
-                {
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "operation"
-                  },
-                  "value": {
-                    "kind": "StringValue",
-                    "value": "query hello { hello }",
-                    "block": false
-                  }
-                }
-              ]
-            },
             {
               "kind": "Directive",
               "name": {
@@ -143,4 +110,4 @@ exports[`should write compose output to fusiongraph.json 1`] = `
 }"
 `;
 
-exports[`should write compose output to fusiongraph.ts 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @resolver(subgraph: \\"helloworld\\", operation: \\"query hello { hello }\\") @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
+exports[`should write compose output to fusiongraph.ts 1`] = `"export default "schema {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
