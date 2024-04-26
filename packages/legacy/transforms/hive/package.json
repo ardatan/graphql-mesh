@@ -41,7 +41,7 @@
   "dependencies": {
     "@graphql-hive/client": "^0.32.0",
     "@graphql-mesh/string-interpolation": "^0.5.3",
-    "@graphql-tools/delegate": "^10.0.5"
+    "@graphql-tools/delegate": "^10.0.6"
   },
   "publishConfig": {
     "access": "public",

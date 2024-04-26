@@ -38,7 +38,7 @@
   "dependencies": {
     "@graphql-mesh/transport-common": "^0.1.5",
     "@graphql-mesh/types": "^0.97.5",
-    "@graphql-tools/delegate": "^10.0.5",
+    "@graphql-tools/delegate": "^10.0.6",
     "@graphql-tools/utils": "^10.0.13",
     "@neo4j/graphql": "^5.0.0",
     "graphql-scalars": "^1.22.4",

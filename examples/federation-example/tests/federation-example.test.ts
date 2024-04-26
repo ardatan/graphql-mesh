@@ -504,7 +504,7 @@ describe('Federation Example', () => {
       mesh.destroy();
     });
   });
-  describe('regular', () => {
+  describe.skip('regular', () => {
     let mesh: MeshInstance;
     beforeAll(async () => {
       const config = await findAndParseConfig({

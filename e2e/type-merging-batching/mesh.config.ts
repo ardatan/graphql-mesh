@@ -5,7 +5,6 @@ import {
   defineConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 
 const args = Args(process.argv);
 
@@ -41,8 +40,4 @@ export const composeConfig = defineConfig({
         )
     }
   `,
-});
-
-export const serveConfig = defineServeConfig({
-  maskedErrors: false,
 });
