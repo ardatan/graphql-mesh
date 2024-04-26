@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { assertValidSchema } from 'graphql';
 import { createSchema } from 'graphql-yoga';
 import { register as registry } from 'prom-client';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
@@ -25,13 +26,14 @@ describe('Prometheus', () => {
   });
   let serveRuntime: ReturnType<typeof createServeRuntime>;
   beforeEach(() => {
+    const fusiongraph = composeSubgraphs([
+      {
+        name: 'TestSubgraph',
+        schema: subgraphSchema,
+      },
+    ]);
     serveRuntime = createServeRuntime({
-      fusiongraph: composeSubgraphs([
-        {
-          name: 'TestSubgraph',
-          schema: subgraphSchema,
-        },
-      ]),
+      fusiongraph,
       transports() {
         return {
           getSubgraphExecutor() {

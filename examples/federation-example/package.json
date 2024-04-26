@@ -11,7 +11,7 @@
     "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
     "start-gateway": "mesh dev --dir gateway",
     "start-gateway-delayed": "delay 1 && npm run start-gateway",
-    "start-gateway-supergraph": "mesh dev --dir gateway-supergraph",
+    "start-gateway-supergraph": "npx mesh dev --dir gateway-supergraph",
     "start-gateway-supergraph-delayed": "delay 1 && npm run start-gateway-supergraph",
     "start-service-accounts": "ts-node services/accounts/index.ts",
     "start-service-accounts-subgraph": "ts-node services/accounts-subgraph/index.ts",

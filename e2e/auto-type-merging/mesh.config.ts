@@ -3,7 +3,6 @@ import {
   camelCase,
   createFilterTransform,
   createNamingConventionTransform,
-  createPrefixTransform,
   defineConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
@@ -31,11 +30,6 @@ export const composeConfig = defineConfig({
         endpoint: `http://0.0.0.0:${args.getServicePort('vaccination')}/graphql`,
       }),
       transforms: [
-        createPrefixTransform({
-          includeTypes: false,
-          includeRootOperations: true,
-          value: 'Vaccination_',
-        }),
         createNamingConventionTransform({
           fieldNames: camelCase,
         }),

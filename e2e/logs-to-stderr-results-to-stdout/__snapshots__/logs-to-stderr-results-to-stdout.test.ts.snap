@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should write compose output to stdout and logs to stderr 1`] = `
-"schema {
+"schema @transport(subgraph: "helloworld") {
   query: Query
 }
 
 type Query {
-  hello: String @resolver(subgraph: "helloworld", operation: "query hello { hello }") @source(subgraph: "helloworld", name: "hello", type: "String")
+  hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
 }
 "
 `;

@@ -154,7 +154,7 @@ export function resolveAdditionalResolversWithoutImport(
     | YamlConfig.AdditionalStitchingResolverObject
     | YamlConfig.AdditionalSubscriptionObject
     | YamlConfig.AdditionalStitchingBatchResolverObject,
-  pubsub: MeshPubSub,
+  pubsub?: MeshPubSub,
 ): IResolvers {
   const baseOptions: any = {};
   if (additionalResolver.result) {
@@ -168,7 +168,7 @@ export function resolveAdditionalResolversWithoutImport(
             (root, args, context, info) => {
               const resolverData = { root, args, context, info, env: process.env };
               const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
-              return pubsub.asyncIterator(topic) as AsyncIterableIterator<any>;
+              return (pubsub || context.pubsub).asyncIterator(topic) as AsyncIterableIterator<any>;
             },
             (root, args, context, info) => {
               return additionalResolver.filterBy

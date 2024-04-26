@@ -3,7 +3,8 @@
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
-    "@omnigraph/sqlite": "^0.1.5",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@omnigraph/sqlite": "workspace:*",
     "graphql": "^16.8.1"
   }
 }

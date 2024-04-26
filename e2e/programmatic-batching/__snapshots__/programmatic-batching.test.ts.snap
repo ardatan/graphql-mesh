@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose the appropriate schema 1`] = `
+"schema @transport(subgraph: "API", kind: "rest", location: "http://0.0.0.0:<api_port>") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+type Query {
+  dummy: String @source(subgraph: "API", name: "dummy", type: "String")
+  user(id: Float!): User
+}
+
+type Mutation {
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(subgraph: "API", path: "/users_by_ids", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "API", name: "usersByIds", type: "UsersByIdResponse")
+}
+
+type UsersByIdResponse @source(subgraph: "API", name: "UsersByIdResponse") {
+  results: [User]! @source(subgraph: "API", name: "results", type: "[User]!")
+}
+
+type User @source(subgraph: "API", name: "User") {
+  id: Float! @source(subgraph: "API", name: "id", type: "Float!")
+  name: String! @source(subgraph: "API", name: "name", type: "String!")
+}
+
+input UsersByIdRequest_Input @source(subgraph: "API", name: "UsersByIdRequest_Input") {
+  ids: [Float]! @source(subgraph: "API", name: "ids", type: "[Float]!")
+}
+
+scalar ObjMap @source(subgraph: "API", name: "ObjMap") @source(subgraph: "API", name: "ObjMap")
+
+enum HTTPMethod @source(subgraph: "API", name: "HTTPMethod") {
+  GET @source(subgraph: "API", name: "GET")
+  HEAD @source(subgraph: "API", name: "HEAD")
+  POST @source(subgraph: "API", name: "POST")
+  PUT @source(subgraph: "API", name: "PUT")
+  DELETE @source(subgraph: "API", name: "DELETE")
+  CONNECT @source(subgraph: "API", name: "CONNECT")
+  OPTIONS @source(subgraph: "API", name: "OPTIONS")
+  TRACE @source(subgraph: "API", name: "TRACE")
+  PATCH @source(subgraph: "API", name: "PATCH")
+}
+"
+`;
+
+exports[`should execute User 1`] = `
+{
+  "data": {
+    "jane": {
+      "id": 2,
+      "name": "Jane Doe",
+    },
+    "john": {
+      "id": 1,
+      "name": "John Doe",
+    },
+  },
+}
+`;

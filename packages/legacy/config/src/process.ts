@@ -16,12 +16,12 @@ import {
 } from '@graphql-mesh/types';
 import {
   defaultImportFn,
+  getAdditionalResolversFromTypeDefs,
   parseWithCache,
   printWithCache,
   resolveAdditionalResolvers,
 } from '@graphql-mesh/utils';
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
-import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs.js';
 import {
   getPackage,
   hashSHA256,

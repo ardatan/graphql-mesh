@@ -43,7 +43,7 @@
     "@graphql-mesh/string-interpolation": "0.5.3",
     "@graphql-mesh/transport-common": "^0.1.5",
     "@graphql-mesh/transport-rest": "^0.1.6",
-    "@graphql-tools/delegate": "^10.0.3",
+    "@graphql-tools/delegate": "^10.0.6",
     "@json-schema-tools/meta-schema": "1.7.4",
     "@whatwg-node/fetch": "^0.9.0",
     "ajv": "8.12.0",

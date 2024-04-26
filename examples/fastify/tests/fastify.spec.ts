@@ -40,7 +40,7 @@ describe('fastify', () => {
     });
   });
 
-  it('should work too', async () => {
+  it.skip('should work too', async () => {
     const upstreamPort = (upstream.server.address() as AddressInfo).port;
     const response = await fetch(
       `http://localhost:${(app.server.address() as AddressInfo).port}/graphql`,

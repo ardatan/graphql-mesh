@@ -71,7 +71,6 @@ describe('fastify', () => {
           message: 'HTTP Error: 500, Could not invoke operation GET /pet/{args.petId}',
           path: ['pet_by_petId'],
           extensions: {
-            planNodeId: 0,
             request: { url: `http://localhost:${upstreamPort}/pet/pet500`, method: 'GET' },
             responseJson: { error: 'Error' },
           },

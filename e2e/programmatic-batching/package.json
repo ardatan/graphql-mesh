@@ -1,0 +1,11 @@
+{
+  "name": "@e2e/programmatic-batching-example",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@omnigraph/openapi": "workspace:*",
+    "fets": "^0.8.0",
+    "graphql": "16.8.1"
+  }
+}

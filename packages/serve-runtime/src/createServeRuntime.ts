@@ -9,11 +9,9 @@ import {
   YogaServerInstance,
   type Plugin,
 } from 'graphql-yoga';
-import { convertSupergraphToFusiongraph } from '@graphql-mesh/fusion-federation';
 import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { DefaultLogger, getHeadersObj, wrapFetchWithHooks } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import { isPromise } from '@graphql-tools/utils';
@@ -25,6 +23,7 @@ import {
   MeshServeContext,
   MeshServePlugin,
 } from './types.js';
+import { useFederationSupergraph } from './useFederationSupergraph.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext>,
@@ -60,15 +59,8 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       readinessCheckEndpoint: config.readinessCheckEndpoint || '/readiness',
     });
   } else if ('supergraph' in config) {
-    supergraphYogaPlugin = useFusiongraph({
-      getFusiongraph() {
-        const supergraph$ = handleUnifiedGraphConfig(config.supergraph, configContext);
-        configContext.logger?.info?.(`Converting Federation Supergraph to Fusiongraph`);
-        if (isPromise(supergraph$)) {
-          return supergraph$.then(supergraph => convertSupergraphToFusiongraph(supergraph));
-        }
-        return convertSupergraphToFusiongraph(supergraph$);
-      },
+    supergraphYogaPlugin = useFederationSupergraph({
+      getFederationSupergraph: () => handleUnifiedGraphConfig(config.supergraph, configContext),
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
@@ -77,7 +69,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     });
   } else if ('proxy' in config) {
     let schema: GraphQLSchema;
-    const proxyExecutor = getProxyExecutor(config, configContext, () => schema);
+    const proxyExecutor = getProxyExecutor(config, configContext, schema);
     // TODO: fix useExecutor typings to inherit the context
     const executorPlugin = useExecutor(proxyExecutor) as unknown as Plugin<
       MeshServeContext & TContext

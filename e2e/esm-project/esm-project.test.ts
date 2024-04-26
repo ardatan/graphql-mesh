@@ -11,12 +11,12 @@ it('should serve', async () => {
 it('should compose', async () => {
   const proc = await compose();
   expect(proc.result).toMatchInlineSnapshot(`
-"schema {
+"schema @transport(subgraph: "helloworld") {
   query: Query
 }
 
 type Query {
-  hello: String @resolver(subgraph: "helloworld", operation: "query hello { hello }") @source(subgraph: "helloworld", name: "hello", type: "String")
+  hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
 }
 "
 `);

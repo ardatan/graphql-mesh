@@ -18,7 +18,7 @@ directive @transport(subgraph: String, kind: String, location: String, headers: 
 directive @live on QUERY
 
 type Query {
-  todos: [query_todos_items] @httpOperation(subgraph: "API", path: "/todos", httpMethod: GET) @resolver(subgraph: "API", operation: "query todos { todos }") @source(subgraph: "API", name: "todos", type: "[query_todos_items]")
+  todos: [query_todos_items] @httpOperation(subgraph: "API", path: "/todos", httpMethod: GET) @source(subgraph: "API", name: "todos", type: "[query_todos_items]")
 }
 
 type query_todos_items @source(subgraph: "API", name: "query_todos_items") {
@@ -28,7 +28,7 @@ type query_todos_items @source(subgraph: "API", name: "query_todos_items") {
 }
 
 type Mutation {
-  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST) @resolver(subgraph: "API", operation: "mutation mutationaddTodo($input: mutationInput_addTodo_input_Input) { addTodo(input: $input) }") @source(subgraph: "API", name: "addTodo", type: "mutation_addTodo")
+  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST) @source(subgraph: "API", name: "addTodo", type: "mutation_addTodo")
 }
 
 type mutation_addTodo @example(subgraph: "API", value: "\\"{\\\\\\"id\\\\\\":0,\\\\\\"name\\\\\\":\\\\\\"TodoName\\\\\\",\\\\\\"content\\\\\\":\\\\\\"TodoContent\\\\\\"}\\"") @source(subgraph: "API", name: "mutation_addTodo") {
@@ -44,7 +44,7 @@ input mutationInput_addTodo_input_Input @example(subgraph: "API", value: "\\"{\\
 
 type Subscription {
   """PubSub Topic: webhook:post:/webhooks/todo_added"""
-  todoAdded: subscription_todoAdded @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added") @resolver(subgraph: "API", operation: "subscription subscriptiontodoAdded { todoAdded }") @source(subgraph: "API", name: "todoAdded", type: "subscription_todoAdded")
+  todoAdded: subscription_todoAdded @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added") @source(subgraph: "API", name: "todoAdded", type: "subscription_todoAdded")
 }
 
 type subscription_todoAdded @example(subgraph: "API", value: "\\"{\\\\\\"id\\\\\\":0,\\\\\\"name\\\\\\":\\\\\\"TodoName\\\\\\",\\\\\\"content\\\\\\":\\\\\\"TodoContent\\\\\\"}\\"") @source(subgraph: "API", name: "subscription_todoAdded") {

@@ -9,15 +9,16 @@ import {
 const args = Args(process.argv);
 
 export const composeConfig = defineConfig({
+  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('authors', {
-        endpoint: `http://localhost:${args.getServicePort('authors', true)}/graphql`,
+        endpoint: `http://localhost:${args.getServicePort('authors')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('books', {
-        endpoint: `http://localhost:${args.getServicePort('books', true)}/graphql`,
+        endpoint: `http://localhost:${args.getServicePort('books')}/graphql`,
       }),
       transforms: [
         createRenameFieldTransform((_field, fieldName, typeName) =>
@@ -30,14 +31,12 @@ export const composeConfig = defineConfig({
   additionalTypeDefs: /* GraphQL */ `
     extend type Book {
       author: Author
-        @variable(name: "bookAuthorId", select: "authorId", subgraph: "books")
-        @resolver(
-          subgraph: "authors"
-          operation: """
-          query AuthorOfBook($bookAuthorId: ID!) {
-            author(id: $bookAuthorId)
-          }
-          """
+        @resolveTo(
+          sourceName: "authors"
+          sourceTypeName: "Query"
+          sourceFieldName: "authors"
+          keyField: "authorId"
+          keysArg: "ids"
         )
     }
   `,
