@@ -9708,9 +9708,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:15.0.4":
-  version: 15.0.4
-  resolution: "@testing-library/react@npm:15.0.4"
+"@testing-library/react@npm:15.0.5":
+  version: 15.0.5
+  resolution: "@testing-library/react@npm:15.0.5"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^10.0.0"
@@ -9718,7 +9718,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 10c0/2f58729e39b93915c527557e87396e02deb5aecd3cf806427deee19bcccf8114681bf259c24b6a4a916e98710193b190ec321e842faaac4196131e22c8a8ac92
+  checksum: 10c0/8759cc8e7e6b4d8964f151d8872ea3c91b6ef6d8fb3b9116fae53350b9a6b29e5ad45b18408c22525924d050263f7ea77cd17ca803918759f22a760f68a42227
   languageName: node
   linkType: hard
 
@@ -18576,7 +18576,7 @@ __metadata:
   dependencies:
     "@apollo/client": "npm:3.10.1"
     "@testing-library/jest-dom": "npm:6.4.2"
-    "@testing-library/react": "npm:15.0.4"
+    "@testing-library/react": "npm:15.0.5"
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
@@ -18585,8 +18585,8 @@ __metadata:
     "@types/react-dom": "npm:18.3.0"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
-    react: "npm:18.3.0"
-    react-dom: "npm:18.3.0"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
     react-scripts: "npm:5.0.1"
     typescript: "npm:^5.4.2"
     web-vitals: "npm:3.5.2"
@@ -25947,8 +25947,8 @@ __metadata:
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.2.3"
-    react: "npm:18.3.0"
-    react-dom: "npm:18.3.0"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -25965,8 +25965,8 @@ __metadata:
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.2.3"
-    react: "npm:18.3.0"
-    react-dom: "npm:18.3.0"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -26727,8 +26727,8 @@ __metadata:
     "@types/react-dom": "npm:18.3.0"
     "@vitejs/plugin-react": "npm:4.2.1"
     graphql: "npm:16.8.1"
-    react: "npm:18.3.0"
-    react-dom: "npm:18.3.0"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
     vite: "npm:5.2.10"
   languageName: unknown
@@ -29405,15 +29405,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.3.0, react-dom@npm:^18.2.0":
-  version: 18.3.0
-  resolution: "react-dom@npm:18.3.0"
+"react-dom@npm:18.3.1, react-dom@npm:^18.2.0":
+  version: 18.3.1
+  resolution: "react-dom@npm:18.3.1"
   dependencies:
     loose-envify: "npm:^1.1.0"
-    scheduler: "npm:^0.23.1"
+    scheduler: "npm:^0.23.2"
   peerDependencies:
-    react: ^18.3.0
-  checksum: 10c0/5072767a5d67e242579e5ed46094bf5665385fcfc50584e818273ba668f768348bfd9101841fa3986635635b1238a7a5b2d28b73b134ebbe58a415311afd60d4
+    react: ^18.3.1
+  checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
   languageName: node
   linkType: hard
 
@@ -29568,12 +29568,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.0, react@npm:^18.2.0":
-  version: 18.3.0
-  resolution: "react@npm:18.3.0"
+"react@npm:18.3.1, react@npm:^18.2.0":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
   dependencies:
     loose-envify: "npm:^1.1.0"
-  checksum: 10c0/ad87bbfdb0c5466148c657da18b0d5458e835389fc591d59840f0e6ec797a004073a01c8cdbff1767a8774c7219054a56f74dacd67bdbb849f1314e427999268
+  checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
   languageName: node
   linkType: hard
 
@@ -30758,12 +30758,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.23.1":
-  version: 0.23.1
-  resolution: "scheduler@npm:0.23.1"
+"scheduler@npm:^0.23.2":
+  version: 0.23.2
+  resolution: "scheduler@npm:0.23.2"
   dependencies:
     loose-envify: "npm:^1.1.0"
-  checksum: 10c0/cfda827a445fb57192e05275040eccc7c5e2749b98f15559520c7f6539d89d75633bb8b6c1cedf56ca0546630b72d0958bf00b63e2b8f9296e87d0d9d2d50e35
+  checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
   languageName: node
   linkType: hard
 
