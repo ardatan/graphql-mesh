@@ -24,7 +24,7 @@ type Query {
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Album @source(subgraph: "chinook", name: "album", type: "Album") @merge(subgraph: "chinook", keyField: "albumId", keyArg: "albumId") @merge(subgraph: "chinook", keyField: "artistId", keyArg: "albumId")
+  ): Album @source(subgraph: "chinook", name: "album", type: "Album") @merge(subgraph: "chinook", keyField: "albumId", keyArg: "albumId")
   artists(
     limit: Int
     order: String
@@ -56,7 +56,7 @@ type Query {
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Customer @source(subgraph: "chinook", name: "customer", type: "Customer") @merge(subgraph: "chinook", keyField: "customerId", keyArg: "customerId") @merge(subgraph: "chinook", keyField: "supportRepId", keyArg: "customerId")
+  ): Customer @source(subgraph: "chinook", name: "customer", type: "Customer") @merge(subgraph: "chinook", keyField: "customerId", keyArg: "customerId")
   employees(
     limit: Int
     order: String
@@ -72,7 +72,7 @@ type Query {
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Employee @source(subgraph: "chinook", name: "employee", type: "Employee") @merge(subgraph: "chinook", keyField: "employeeId", keyArg: "employeeId") @merge(subgraph: "chinook", keyField: "reportsTo", keyArg: "employeeId")
+  ): Employee @source(subgraph: "chinook", name: "employee", type: "Employee") @merge(subgraph: "chinook", keyField: "employeeId", keyArg: "employeeId")
   genres(
     limit: Int
     order: String
@@ -104,7 +104,7 @@ type Query {
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Invoice @source(subgraph: "chinook", name: "invoice", type: "Invoice") @merge(subgraph: "chinook", keyField: "invoiceId", keyArg: "invoiceId") @merge(subgraph: "chinook", keyField: "customerId", keyArg: "invoiceId")
+  ): Invoice @source(subgraph: "chinook", name: "invoice", type: "Invoice") @merge(subgraph: "chinook", keyField: "invoiceId", keyArg: "invoiceId")
   invoiceItems(
     limit: Int
     order: String
@@ -120,7 +120,7 @@ type Query {
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): InvoiceItem @source(subgraph: "chinook", name: "invoiceItem", type: "InvoiceItem") @merge(subgraph: "chinook", keyField: "invoiceLineId", keyArg: "invoiceLineId") @merge(subgraph: "chinook", keyField: "invoiceId", keyArg: "invoiceLineId") @merge(subgraph: "chinook", keyField: "trackId", keyArg: "invoiceLineId") @merge(subgraph: "chinook", keyField: "quantity", keyArg: "invoiceLineId")
+  ): InvoiceItem @source(subgraph: "chinook", name: "invoiceItem", type: "InvoiceItem") @merge(subgraph: "chinook", keyField: "invoiceLineId", keyArg: "invoiceLineId")
   mediaTypes(
     limit: Int
     order: String
@@ -168,7 +168,7 @@ type Query {
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Track @source(subgraph: "chinook", name: "track", type: "Track") @merge(subgraph: "chinook", keyField: "trackId", keyArg: "trackId") @merge(subgraph: "chinook", keyField: "albumId", keyArg: "trackId") @merge(subgraph: "chinook", keyField: "mediaTypeId", keyArg: "trackId") @merge(subgraph: "chinook", keyField: "genreId", keyArg: "trackId") @merge(subgraph: "chinook", keyField: "milliseconds", keyArg: "trackId") @merge(subgraph: "chinook", keyField: "bytes", keyArg: "trackId")
+  ): Track @source(subgraph: "chinook", name: "track", type: "Track") @merge(subgraph: "chinook", keyField: "trackId", keyArg: "trackId")
 }
 
 type Album @source(subgraph: "chinook", name: "Album") {

@@ -8,10 +8,10 @@ exports[`should compose the appropriate schema 1`] = `
 directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
 
 type Query {
-  author(id: ID!): Author @source(subgraph: "authors", name: "author", type: "Author") @source(subgraph: "books", name: "authorWithBooks", type: "AuthorWithBooks") @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id")
-  authors(ids: [ID]): [Author] @source(subgraph: "authors", name: "authors", type: "[Author]") @merge(subgraph: "authors", keyField: "id", keyArg: "ids")
-  book(id: ID!): Book @source(subgraph: "books", name: "book", type: "Book") @merge(subgraph: "books", keyField: "id", keyArg: "id")
-  books(ids: [ID]): [Book!]! @source(subgraph: "books", name: "books", type: "[Book!]!") @merge(subgraph: "books", keyField: "id", keyArg: "ids")
+  author(id: ID!): Author @source(subgraph: "authors", name: "author", type: "Author") @source(subgraph: "books", name: "authorWithBooks", type: "AuthorWithBooks") @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "authors", keyField: "name", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "books", keyArg: "id")
+  authors(ids: [ID]): [Author] @source(subgraph: "authors", name: "authors", type: "[Author]") @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @merge(subgraph: "authors", keyField: "name", keyArg: "ids")
+  book(id: ID!): Book @source(subgraph: "books", name: "book", type: "Book") @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "title", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id")
+  books(ids: [ID]): [Book!]! @source(subgraph: "books", name: "books", type: "[Book!]!") @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "title", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids")
 }
 
 type Author @source(subgraph: "authors", name: "Author") @source(subgraph: "books", name: "AuthorWithBooks") {

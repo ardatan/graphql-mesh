@@ -1,5 +1,6 @@
 import {
   getNamedType,
+  GraphQLArgumentConfig,
   GraphQLFieldConfig,
   GraphQLSchema,
   isObjectType,
@@ -9,13 +10,7 @@ import {
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { mergeSchemas, MergeSchemasConfig } from '@graphql-tools/schema';
-import {
-  getRootTypeMap,
-  MapperKind,
-  mapSchema,
-  printSchemaWithDirectives,
-  TypeSource,
-} from '@graphql-tools/utils';
+import { getRootTypeMap, MapperKind, mapSchema, TypeSource } from '@graphql-tools/utils';
 import { getDirectiveExtensions } from './getDirectiveExtensions.js';
 
 export interface SubgraphConfig {
@@ -162,13 +157,18 @@ export function composeSubgraphs(
         },
       });
     }
-    const extensions: any = (transformedSubgraph.extensions ||= {});
-    const directiveExtensions = (extensions.directives ||= {});
-    const transportDirectives = (directiveExtensions.transport = []);
-    if (transportDirectives.length === 0) {
-      transportDirectives.push({
+    const isTransportAddedBefore = transformedSubgraph.astNode?.directives?.some(
+      directive => directive.name.value === 'transport',
+    );
+    if (
+      !isTransportAddedBefore &&
+      !(transformedSubgraph.extensions?.directives as any)?.transport
+    ) {
+      const extensions: any = (transformedSubgraph.extensions ||= {});
+      const directiveExtensions = (extensions.directives ||= {});
+      directiveExtensions.transport ||= {
         subgraph: subgraphName,
-      });
+      };
     }
     annotatedSubgraphs.push(transformedSubgraph);
   }
@@ -211,12 +211,22 @@ function addAnnotationsForSemanticConventions({
     for (const fieldName in fieldMap) {
       const objectField = fieldMap[fieldName];
       const objectFieldType = getNamedType(objectField.type);
-      const [argName, arg] =
-        Object.entries(queryFieldConfig.args).find(
-          ([argName, arg]) =>
-            getNamedType(arg.type) === objectFieldType &&
-            (argName === fieldName || pluralize(fieldName) === argName),
-        ) || [];
+      const argEntries = Object.entries(queryFieldConfig.args);
+      let argName: string;
+      let arg: GraphQLArgumentConfig;
+      if (argEntries.length === 1) {
+        const argType = getNamedType(argEntries[0][1].type);
+        if (argType.name === objectFieldType.name) {
+          [argName, arg] = argEntries[0];
+        }
+      } else {
+        for (const [argName, argConfig] of argEntries) {
+          if (argName === fieldName || pluralize(fieldName) === argName) {
+            arg = argConfig;
+            break;
+          }
+        }
+      }
       const queryFieldNameSnakeCase = snakeCase(queryFieldName);
       const pluralTypeName = pluralize(type.name);
       if (arg) {

@@ -11,7 +11,7 @@ it('should serve', async () => {
 it('should compose', async () => {
   const proc = await compose();
   expect(proc.result).toMatchInlineSnapshot(`
-"schema {
+"schema @transport(subgraph: "helloworld") {
   query: Query
 }
 

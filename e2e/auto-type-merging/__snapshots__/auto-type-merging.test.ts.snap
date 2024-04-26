@@ -28,7 +28,7 @@ type Query {
   getPetById(
     """ID of pet to return"""
     petId: BigInt!
-  ): Pet @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getPetById", type: "Pet") @merge(subgraph: "petstore", keyField: "id", keyArg: "petId") @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")
+  ): Pet @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getPetById", type: "Pet") @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")
   """Returns a map of status codes to quantities"""
   getInventory: JSON @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getInventory", type: "JSON") @hidden
   """
@@ -37,7 +37,7 @@ type Query {
   getOrderById(
     """ID of order that needs to be fetched"""
     orderId: BigInt!
-  ): Order @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getOrderById", type: "Order") @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId") @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId") @hidden
+  ): Order @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getOrderById", type: "Order") @hidden @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")
   """Logs user into the system"""
   loginUser(
     """The user name for login"""
@@ -52,7 +52,7 @@ type Query {
     """The name that needs to be fetched. Use user1 for testing."""
     username: String!
   ): User @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getUserByName", type: "User") @hidden
-  vaccinationPetById(id: BigInt!): Pet @source(subgraph: "vaccination", name: "pet_by_id", type: "Pet") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")
+  vaccinationPetById(id: BigInt!): Pet @source(subgraph: "vaccination", name: "pet_by_id", type: "Pet")
 }
 
 """Pet object that needs to be added to the store"""
@@ -261,12 +261,7 @@ enum HTTPMethod @source(subgraph: "petstore", name: "HTTPMethod") {
 exports[`should execute GetPet 1`] = `
 {
   "data": {
-    "getPetById": {
-      "__typename": "Pet",
-      "id": 1,
-      "name": "Cat 1",
-      "vaccinated": false,
-    },
+    "getPetById": null,
   },
 }
 `;
