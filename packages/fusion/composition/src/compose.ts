@@ -164,7 +164,13 @@ export function composeSubgraphs(
       !isTransportAddedBefore &&
       !(transformedSubgraph.extensions?.directives as any)?.transport
     ) {
-      const extensions: any = (transformedSubgraph.extensions ||= {});
+      if (
+        !transformedSubgraph.extensions ||
+        Object.keys(transformedSubgraph.extensions).length === 0
+      ) {
+        transformedSubgraph.extensions = {};
+      }
+      const extensions: any = transformedSubgraph.extensions as any;
       const directiveExtensions = (extensions.directives ||= {});
       directiveExtensions.transport ||= {
         subgraph: subgraphName,
