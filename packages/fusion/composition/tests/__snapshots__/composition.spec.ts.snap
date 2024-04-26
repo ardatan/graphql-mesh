@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Composition composes basic schemas 1`] = `
-"schema {
+"schema @transport(subgraph: "A") @transport(subgraph: "B") {
   query: Query
 }
 
@@ -25,41 +25,15 @@ input FooFilter @source(subgraph: "B", name: "FooFilter") {
 }"
 `;
 
-exports[`Composition composes with transforms on fields 1`] = `
-"schema {
-  query: Query
-}
-
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
-
-type Query {
-  A_myFoo: Foo! @source(subgraph: "A", name: "myFoo", type: "Foo!")
-  B_foo(id: ID!): Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
-  B_foos(ids: [ID!]!): [Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
-  B_foosByFilter(where: FooFilter!): [Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
-}
-
-type Foo @source(subgraph: "A", name: "Foo") @source(subgraph: "B", name: "Foo") {
-  A_id: ID! @source(subgraph: "A", name: "id", type: "ID!")
-  B_id: ID! @source(subgraph: "B", name: "id", type: "ID!")
-  B_bar: String! @source(subgraph: "B", name: "bar", type: "String!")
-}
-
-input FooFilter @source(subgraph: "B", name: "FooFilter") {
-  B_id: ID @source(subgraph: "B", name: "id", type: "ID")
-  B_id_in: [ID!] @source(subgraph: "B", name: "id_in", type: "[ID!]")
-}"
-`;
-
-exports[`Composition composes with transforms on types 1`] = `
-"schema {
+exports[`Composition composes with transforms 1`] = `
+"schema @transport(subgraph: "A") @transport(subgraph: "B") {
   query: B_Query
 }
 
 directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
 
 type A_Query {
-  myFoo: A_Foo! @source(subgraph: "A", name: "myFoo", type: "Foo!")
+  A_myFoo: A_Foo! @source(subgraph: "A", name: "myFoo", type: "Foo!")
 }
 
 type A_Foo @source(subgraph: "A", name: "Foo") {
@@ -67,9 +41,9 @@ type A_Foo @source(subgraph: "A", name: "Foo") {
 }
 
 type B_Query {
-  foo(id: ID!): B_Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
-  foos(ids: [ID!]!): [B_Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
-  foosByFilter(where: B_FooFilter!): [B_Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
+  B_foo(id: ID!): B_Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
+  B_foos(ids: [ID!]!): [B_Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
+  B_foosByFilter(where: B_FooFilter!): [B_Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
 }
 
 input B_FooFilter @source(subgraph: "B", name: "FooFilter") {
@@ -84,7 +58,7 @@ type B_Foo @source(subgraph: "B", name: "Foo") {
 `;
 
 exports[`Composition keeps the directives 1`] = `
-"schema {
+"schema @transport(subgraph: "A") @transport(subgraph: "B") @transport(subgraph: "C") {
   query: Query
 }
 

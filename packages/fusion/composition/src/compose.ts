@@ -9,7 +9,13 @@ import {
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { mergeSchemas, MergeSchemasConfig } from '@graphql-tools/schema';
-import { getRootTypeMap, MapperKind, mapSchema, TypeSource } from '@graphql-tools/utils';
+import {
+  getRootTypeMap,
+  MapperKind,
+  mapSchema,
+  printSchemaWithDirectives,
+  TypeSource,
+} from '@graphql-tools/utils';
 import { getDirectiveExtensions } from './getDirectiveExtensions.js';
 
 export interface SubgraphConfig {
@@ -154,6 +160,14 @@ export function composeSubgraphs(
             },
           };
         },
+      });
+    }
+    const extensions: any = (transformedSubgraph.extensions ||= {});
+    const directiveExtensions = (extensions.directives ||= {});
+    const transportDirectives = (directiveExtensions.transport = []);
+    if (transportDirectives.length === 0) {
+      transportDirectives.push({
+        subgraph: subgraphName,
       });
     }
     annotatedSubgraphs.push(transformedSubgraph);

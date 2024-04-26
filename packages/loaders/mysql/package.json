@@ -35,7 +35,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.3",
     "@graphql-mesh/transport-mysql": "^0.1.6",
     "@graphql-mesh/utils": "^0.97.5",
-    "@graphql-tools/delegate": "^10.0.3",
+    "@graphql-tools/delegate": "^10.0.5",
     "@graphql-tools/utils": "^10.0.12",
     "graphql-compose": "^9.0.10",
     "graphql-fields": "^2.0.3",

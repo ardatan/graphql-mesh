@@ -16,19 +16,11 @@ import { TransportEntry } from '@graphql-mesh/transport-common';
 import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import {
-  DirectiveAnnotation,
-  getRootTypeMap,
-  getRootTypeNames,
-  MapperKind,
-  mapSchema,
-  printSchemaWithDirectives,
-} from '@graphql-tools/utils';
+import { DirectiveAnnotation, getRootTypeNames, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   RenameInputObjectFields,
   RenameInterfaceFields,
   RenameObjectFields,
-  RenameRootFields,
   RenameTypes,
   TransformEnumValues,
 } from '@graphql-tools/wrap';
