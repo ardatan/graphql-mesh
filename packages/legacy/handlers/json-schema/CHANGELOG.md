@@ -1,5 +1,30 @@
 # @graphql-mesh/json-schema
 
+## 0.100.0
+
+### Patch Changes
+
+- [#6832](https://github.com/ardatan/graphql-mesh/pull/6832)
+  [`6521fa0`](https://github.com/ardatan/graphql-mesh/commit/6521fa0ec66fd5af734d8ca03941d78d852d3a0c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@json-schema-tools/meta-schema@1.7.4` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.4)
+    (from `1.7.0`, in `dependencies`)
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6521fa0`](https://github.com/ardatan/graphql-mesh/commit/6521fa0ec66fd5af734d8ca03941d78d852d3a0c),
+  [`d793807`](https://github.com/ardatan/graphql-mesh/commit/d793807f43ece9bf797f1b9fc9252ab959753492),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6521fa0`](https://github.com/ardatan/graphql-mesh/commit/6521fa0ec66fd5af734d8ca03941d78d852d3a0c),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+  - @omnigraph/json-schema@0.100.0
+  - json-machete@0.97.2
+  - @graphql-mesh/store@0.98.0
+
 ## 0.99.6
 
 ### Patch Changes

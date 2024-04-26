@@ -1,5 +1,29 @@
 # @graphql-mesh/http
 
+## 0.99.0
+
+### Patch Changes
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/server@^0.9.34` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.34)
+    (from `^0.9.0`, in `dependencies`)
+  - Updated dependency
+    [`graphql-yoga@^5.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.3.0) (from `^5.1.1`,
+    in `dependencies`)
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`666b79c`](https://github.com/ardatan/graphql-mesh/commit/666b79c5bd03f86da29b479b5902741b5ad506e8),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/runtime@0.99.0
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+
 ## 0.98.8
 
 ### Patch Changes

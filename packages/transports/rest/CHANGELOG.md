@@ -1,5 +1,30 @@
 # @graphql-mesh/transport-rest
 
+## 0.2.0
+
+### Patch Changes
+
+- [#6845](https://github.com/ardatan/graphql-mesh/pull/6845)
+  [`d793807`](https://github.com/ardatan/graphql-mesh/commit/d793807f43ece9bf797f1b9fc9252ab959753492)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`qs@6.12.1` ↗︎](https://www.npmjs.com/package/qs/v/6.12.1) (from `6.12.0`,
+    in `dependencies`)
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Explicitly specify type for type exports
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/transport-common@0.2.0
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+
 ## 0.1.6
 
 ### Patch Changes

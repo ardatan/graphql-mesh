@@ -1,5 +1,102 @@
 # @graphql-mesh/compose-cli
 
+## 0.3.0
+
+### Minor Changes
+
+- [#6862](https://github.com/ardatan/graphql-mesh/pull/6862)
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Better CLI, supporting arguments and adding
+  help in the shell
+
+- [#6862](https://github.com/ardatan/graphql-mesh/pull/6862)
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Rename `target` option to `output` in order
+  to be more clear that it's the output file.
+
+  ```diff
+  import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
+  import { defineConfig } from '@graphql-mesh/compose-cli';
+
+  export const composeConfig = defineConfig({
+  - target: 'fusiongraph.graphql',
+  + output: 'fusiongraph.graphql',
+    subgraphs: [
+      {
+        sourceHandler: () => ({
+          name: 'helloworld',
+          schema$: new GraphQLSchema({
+            query: new GraphQLObjectType({
+              name: 'Query',
+              fields: {
+                hello: {
+                  type: GraphQLString,
+                  resolve: () => 'world',
+                },
+              },
+            }),
+          }),
+        }),
+      },
+    ],
+  });
+  ```
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - use tsx node loader instead of ts-node
+
+- [#6862](https://github.com/ardatan/graphql-mesh/pull/6862)
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Rename `runComposeCLI` to just `run` and
+  change the supported options
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - write composed schema to stdout by default
+  when no target is specified
+
+### Patch Changes
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (to
+    `dependencies`)
+  - Removed dependency [`ts-node@^10.9.2` ↗︎](https://www.npmjs.com/package/ts-node/v/10.9.2) (from
+    `dependencies`)
+
+- [#6862](https://github.com/ardatan/graphql-mesh/pull/6862)
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@commander-js/extra-typings@^12.0.1` ↗︎](https://www.npmjs.com/package/@commander-js/extra-typings/v/12.0.1)
+    (to `dependencies`)
+  - Added dependency [`commander@^12.0.0` ↗︎](https://www.npmjs.com/package/commander/v/12.0.0) (to
+    `dependencies`)
+  - Removed dependency [`spinnies@^0.5.1` ↗︎](https://www.npmjs.com/package/spinnies/v/0.5.1) (from
+    `dependencies`)
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - fix writing to json target
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use target's absolute path if detected
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/fusion-composition@0.0.3
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+
 ## 0.2.5
 
 ### Patch Changes
