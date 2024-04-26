@@ -5788,6 +5788,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.3"
     "@graphql-mesh/transport-common": "npm:^0.1.5"
     "@graphql-mesh/types": "npm:^0.97.5"
+    "@graphql-mesh/utils": "npm:^0.97.5"
     "@graphql-tools/delegate": "npm:^10.0.6"
     "@graphql-tools/utils": "npm:^10.0.13"
     graphql-fields: "npm:^2.0.3"
