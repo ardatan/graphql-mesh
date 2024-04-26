@@ -52,7 +52,7 @@ type Query {
     """The name that needs to be fetched. Use user1 for testing."""
     username: String!
   ): User @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getUserByName", type: "User") @hidden
-  vaccinationPetById(id: BigInt!): Pet @source(subgraph: "vaccination", name: "pet_by_id", type: "Pet")
+  petById(id: BigInt!): Pet @source(subgraph: "vaccination", name: "pet_by_id", type: "Pet") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")
 }
 
 """Pet object that needs to be added to the store"""
@@ -261,7 +261,12 @@ enum HTTPMethod @source(subgraph: "petstore", name: "HTTPMethod") {
 exports[`should execute GetPet 1`] = `
 {
   "data": {
-    "getPetById": null,
+    "getPetById": {
+      "__typename": "Pet",
+      "id": 1,
+      "name": "Cat 1",
+      "vaccinated": false,
+    },
   },
 }
 `;

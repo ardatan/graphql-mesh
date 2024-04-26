@@ -4,8 +4,9 @@ import { createPool, PoolConnection, type Pool } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { util } from '@graphql-mesh/cross-helpers';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { getDefDirectives } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { Executor, getDirective, getDirectives, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { Executor, getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import { MySQLContext } from './types.js';
 
@@ -31,7 +32,7 @@ export function getMySQLExecutor({
 }: GetMySQLExecutorOpts): Executor {
   subgraph = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig, fieldName) {
-      const directives = getDirectives(subgraph, fieldConfig);
+      const directives = getDefDirectives(subgraph, fieldConfig);
       for (const directive of directives) {
         switch (directive.name) {
           case 'mysqlSelect': {

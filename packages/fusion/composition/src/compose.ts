@@ -220,9 +220,10 @@ function addAnnotationsForSemanticConventions({
           [argName, arg] = argEntries[0];
         }
       } else {
-        for (const [argName, argConfig] of argEntries) {
-          if (argName === fieldName || pluralize(fieldName) === argName) {
-            arg = argConfig;
+        for (const [currentArgName, currentArg] of argEntries) {
+          if (currentArgName === fieldName || pluralize(fieldName) === currentArgName) {
+            argName = currentArgName;
+            arg = currentArg;
             break;
           }
         }

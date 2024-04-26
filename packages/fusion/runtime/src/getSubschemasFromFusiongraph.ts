@@ -3,6 +3,7 @@ import {
   buildASTSchema,
   ConstDirectiveNode,
   DocumentNode,
+  getArgumentValues,
   GraphQLSchema,
   isSpecifiedScalarType,
   Kind,
@@ -13,7 +14,7 @@ import {
   visit,
 } from 'graphql';
 import { TransportEntry } from '@graphql-mesh/transport-common';
-import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import { getDefDirectives, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { DirectiveAnnotation, getRootTypeNames, MapperKind, mapSchema } from '@graphql-tools/utils';
@@ -29,7 +30,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
   const subgraphNames = new Set<string>();
   const subschemaMap = new Map<string, SubschemaConfig>();
   const transportEntryMap: Record<string, TransportEntry> = {};
-  const schemaDirectives = getDefDirectives(fusiongraph);
+  const schemaDirectives = getDefDirectives(fusiongraph, fusiongraph);
   const transportDirectives = schemaDirectives.filter(directive => directive.name === 'transport');
   const { stitchingDirectivesTransformer } = stitchingDirectives();
   for (const transportDirective of transportDirectives) {
@@ -54,7 +55,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
     const renameEnumValueByEnumTypeNames: Record<string, Record<string, string>> = {};
     const subgraphSchema = mapSchema(fusiongraph, {
       [MapperKind.TYPE]: type => {
-        const typeDirectives = getDefDirectives(type, subgraph);
+        const typeDirectives = getDefDirectives(fusiongraph, type, subgraph);
         const sourceDirectives = typeDirectives.filter(directive => directive.name === 'source');
         const sourceDirective = sourceDirectives.find(
           directive => directive.args.subgraph === subgraph,
@@ -77,7 +78,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
         return null;
       },
       [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
-        const fieldDirectives = getDefDirectives(fieldConfig);
+        const fieldDirectives = getDefDirectives(fusiongraph, fieldConfig);
         const resolveToDirectives = fieldDirectives.filter(
           directive => directive.name === 'resolveTo',
         );
@@ -120,8 +121,9 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
           }
           const directivesObj: Record<string, any> = {};
           for (const fieldDirective of fieldDirectives) {
-            if (fieldDirective?.args?.subgraph && fieldDirective.args.subgraph !== subgraph)
+            if (fieldDirective?.args?.subgraph && fieldDirective.args.subgraph !== subgraph) {
               continue;
+            }
             directivesObj[fieldDirective.name] ||= [];
             directivesObj[fieldDirective.name].push(fieldDirective.args);
           }
@@ -140,7 +142,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
         return null;
       },
       [MapperKind.INPUT_OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
-        const fieldDirectives = getDefDirectives(fieldConfig, subgraph);
+        const fieldDirectives = getDefDirectives(fusiongraph, fieldConfig, subgraph);
         const [sourceDirective] = fieldDirectives.filter(
           directive => directive.name === 'source' && directive.args.subgraph === subgraph,
         );
@@ -158,7 +160,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
         return null;
       },
       [MapperKind.INTERFACE_FIELD]: (fieldConfig, fieldName, typeName) => {
-        const fieldDirectives = getDefDirectives(fieldConfig, subgraph);
+        const fieldDirectives = getDefDirectives(fusiongraph, fieldConfig, subgraph);
         const [sourceDirective] = fieldDirectives.filter(
           directive => directive.name === 'source' && directive.args.subgraph === subgraph,
         );
@@ -176,7 +178,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
         return null;
       },
       [MapperKind.ENUM_VALUE]: (enumValueConfig, typeName, _schema, externalValue) => {
-        const enumValueDirectives = getDefDirectives(enumValueConfig, subgraph);
+        const enumValueDirectives = getDefDirectives(fusiongraph, enumValueConfig, subgraph);
         const [sourceDirective] = enumValueDirectives.filter(
           directive => directive.name === 'source' && directive.args.subgraph === subgraph,
         );
@@ -266,56 +268,4 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
     additionalTypeDefs,
     additionalResolversFromTypeDefs,
   };
-}
-
-function getDefDirectives(
-  { astNode, extensions }: { astNode?: ASTNode | null; extensions?: any },
-  subgraph?: string,
-) {
-  const directiveAnnotations: DirectiveAnnotation[] = [];
-  if (astNode != null && 'directives' in astNode) {
-    astNode.directives?.forEach(directiveNode => {
-      const directiveAnnotation = {
-        name: directiveNode.name.value,
-        args:
-          directiveNode.arguments?.reduce(
-            (acc, arg) => {
-              acc[arg.name.value] = valueFromASTUntyped(arg.value);
-              return acc;
-            },
-            {} as Record<string, any>,
-          ) ?? {},
-      };
-      if (
-        subgraph &&
-        directiveAnnotation.args.subgraph &&
-        directiveAnnotation.args.subgraph !== subgraph
-      )
-        return;
-      directiveAnnotations.push(directiveAnnotation);
-    });
-  }
-  if (extensions?.directives != null) {
-    for (const directiveName in extensions.directives) {
-      const directiveExt = extensions.directives[directiveName];
-      if (directiveExt != null) {
-        if (Array.isArray(directiveExt)) {
-          directiveExt.forEach(directive => {
-            if (subgraph && directive.subgraph && directive.subgraph !== subgraph) return;
-            directiveAnnotations.push({
-              name: directiveName,
-              args: directive,
-            });
-          });
-        } else {
-          if (subgraph && directiveExt.subgraph && directiveExt.subgraph !== subgraph) continue;
-          directiveAnnotations.push({
-            name: directiveName,
-            args: directiveExt,
-          });
-        }
-      }
-    }
-  }
-  return directiveAnnotations;
 }

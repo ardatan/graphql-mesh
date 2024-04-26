@@ -67,6 +67,14 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
       extractSubgraphsFromFusiongraph(fusiongraph);
     const subgraphMap = new Map<string, GraphQLSchema>();
     const subschemas: SubschemaConfig[] = [];
+    const onSubgraphExecute = getOnSubgraphExecute({
+      fusiongraph,
+      plugins: yoga.getEnveloped._plugins as FusiongraphPlugin[],
+      transports: opts.transports || defaultTransportsOption,
+      transportBaseContext: opts.transportBaseContext,
+      transportEntryMap,
+      subgraphMap,
+    });
     for (const [subschemaName, subschemaConfig] of subschemaMap) {
       subgraphMap.set(subschemaName, subschemaConfig.schema);
       subschemas.push({
@@ -77,14 +85,6 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
         },
       } as SubschemaConfig);
     }
-    const onSubgraphExecute = getOnSubgraphExecute({
-      fusiongraph,
-      plugins: yoga.getEnveloped._plugins as FusiongraphPlugin[],
-      transports: opts.transports || defaultTransportsOption,
-      transportBaseContext: opts.transportBaseContext,
-      transportEntryMap,
-      subgraphMap,
-    });
     fusiongraph = stitchSchemas({
       subschemas,
       assumeValid: true,
@@ -97,7 +97,7 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
         ),
       ] as any,
     });
-    if (opts.additionalResolvers?.length || additionalResolversFromTypeDefs.length) {
+    if (opts.additionalResolvers || additionalResolversFromTypeDefs.length) {
       const onDelegateHooks: OnDelegateHook<TContext>[] = [];
       for (const plugin of yoga.getEnveloped._plugins as any[]) {
         if (plugin.onDelegate) {

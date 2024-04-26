@@ -6,7 +6,7 @@ import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 const args = Args(process.argv);
 
-export const composeConfig = defineConfig({
+export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('API', {
@@ -38,7 +38,7 @@ export const serveConfig = defineServeConfig({
           // Arguments for the following batched request
           argsFromKeys: ids => ({ input: { ids } }),
           // Function to extract the result from the batched response
-          valuesFromResults: data => data.results,
+          valuesFromResults: data => data?.results,
           // Function to generate the selectionSet for the batched request
           selectionSet: userSelectionSet => /* GraphQL */ `
           {
