@@ -1,5 +1,15 @@
 # example-persisted-operations
 
+## 0.3.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6521fa0`](https://github.com/ardatan/graphql-mesh/commit/6521fa0ec66fd5af734d8ca03941d78d852d3a0c)]:
+  - @graphql-mesh/json-schema@0.100.0
+  - @graphql-mesh/cli@0.90.0
+  - @graphql-mesh/plugin-mock@0.98.0
+
 ## 0.2.10
 
 ### Patch Changes

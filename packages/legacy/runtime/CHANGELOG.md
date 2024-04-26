@@ -1,5 +1,38 @@
 # @graphql-mesh/runtime
 
+## 0.99.0
+
+### Patch Changes
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@^9.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/9.0.2)
+    (from `^9.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.6)
+    (from `^10.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.5)
+    (from `^10.0.0`, in `dependencies`)
+
+- [`666b79c`](https://github.com/ardatan/graphql-mesh/commit/666b79c5bd03f86da29b479b5902741b5ad506e8)
+  Thanks [@ardatan](https://github.com/ardatan)! - Log unexpected non GraphQL errors with the stack
+  trace
+
+  Previously, it was not possible to see the stack trace of unexpected errors that were not related
+  to GraphQL. This change logs the stack trace of such errors.
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+
 ## 0.98.8
 
 ### Patch Changes

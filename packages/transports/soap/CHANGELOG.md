@@ -1,5 +1,15 @@
 # @graphql-mesh/transport-soap
 
+## 0.2.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)]:
+  - @graphql-mesh/transport-common@0.2.0
+  - @graphql-mesh/types@0.98.0
+
 ## 0.1.5
 
 ### Patch Changes

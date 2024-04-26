@@ -1,5 +1,66 @@
 # @graphql-mesh/serve-runtime
 
+## 0.3.0
+
+### Patch Changes
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@^10.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.1.3)
+    (from `^10.0.8`, in `dependencies`)
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.6)
+    (from `^10.0.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.5)
+    (from `^10.0.1`, in `dependencies`)
+  - Updated dependency
+    [`@whatwg-node/server@^0.9.34` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.34)
+    (from `^0.9.16`, in `dependencies`)
+  - Updated dependency
+    [`graphql-yoga@^5.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.3.0) (from `^5.1.1`,
+    in `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/transport-common@^0.1.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/0.1.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/federation@^1.1.25` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/1.1.25)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/stitch@^9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.2.0)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/fusion-federation@^0.0.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-federation/v/0.0.2)
+    (from `dependencies`)
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `@graphql-tools/federation` for Federation
+  Supergraphs
+
+- [`b372de6`](https://github.com/ardatan/graphql-mesh/commit/b372de6ac72e871ebdc731c0f3f67c16f04bb405)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump Federation packages
+
+- Updated dependencies
+  [[`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`7881346`](https://github.com/ardatan/graphql-mesh/commit/78813467cf0e2c988a55cdf1225ff60c4690ede8),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/fusion-runtime@0.3.0
+  - @graphql-mesh/transport-common@0.2.0
+  - @graphql-mesh/utils@0.98.0
+
 ## 0.2.12
 
 ### Patch Changes

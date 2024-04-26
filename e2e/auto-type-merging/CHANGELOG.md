@@ -1,0 +1,3 @@
+# @e2e/auto-type-merging
+
+## null

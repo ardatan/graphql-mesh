@@ -1,5 +1,35 @@
 # @graphql-mesh/transform-hive
 
+## 0.98.0
+
+### Patch Changes
+
+- [#6845](https://github.com/ardatan/graphql-mesh/pull/6845)
+  [`d793807`](https://github.com/ardatan/graphql-mesh/commit/d793807f43ece9bf797f1b9fc9252ab959753492)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/client@^0.31.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.31.0)
+    (from `^0.30.0`, in `dependencies`)
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.6)
+    (from `^10.0.0`, in `dependencies`)
+
+- [#6880](https://github.com/ardatan/graphql-mesh/pull/6880)
+  [`4e658c6`](https://github.com/ardatan/graphql-mesh/commit/4e658c6245527f79d08451a39eb6511efc97c772)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/client@^0.32.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.32.0)
+    (from `^0.31.0`, in `dependencies`)
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)]:
+  - @graphql-mesh/types@0.98.0
+
 ## 0.97.8
 
 ### Patch Changes
