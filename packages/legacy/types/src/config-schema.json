@@ -169,6 +169,10 @@
         "batchingLimit": {
           "type": "integer",
           "description": "Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)"
+        },
+        "healthCheckEndpoint": {
+          "type": "string",
+          "description": "Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)"
         }
       }
     },

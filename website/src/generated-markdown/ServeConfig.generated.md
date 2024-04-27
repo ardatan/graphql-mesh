@@ -29,3 +29,4 @@ This feature can be disabled by passing `false` One of:
 * `trustProxy` (type: `String`) - Configure Express Proxy Handling
 [Learn more](https://expressjs.com/en/guide/behind-proxies.html)
 * `batchingLimit` (type: `Int`) - Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
+* `healthCheckEndpoint` (type: `String`) - Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)

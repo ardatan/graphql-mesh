@@ -121,6 +121,10 @@ export interface ServeConfig {
    * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
    */
   batchingLimit?: number;
+  /**
+   * Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)
+   */
+  healthCheckEndpoint?: string;
 }
 /**
  * Configuration for CORS
