@@ -5405,7 +5405,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/string-interpolation@workspace:packages/string-interpolation"
   dependencies:
-    dayjs: "npm:1.11.10"
+    dayjs: "npm:1.11.11"
     json-pointer: "npm:0.6.2"
     lodash.get: "npm:4.4.2"
   peerDependencies:
@@ -8896,10 +8896,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.26":
-  version: 0.32.26
-  resolution: "@sinclair/typebox@npm:0.32.26"
-  checksum: 10c0/dc1f6ac5f9095bf9125958a52783520015433ac4696e72cb43ba87f77d1da2d50ae5ac7a2412ebf485cf1bedbb7893951a58dbf9ac5c6ffe7c0ca86435bc7416
+"@sinclair/typebox@npm:0.32.27":
+  version: 0.32.27
+  resolution: "@sinclair/typebox@npm:0.32.27"
+  checksum: 10c0/b29dda806b80439f476ca7f326e2474302305810b44e3a9469290fbd8c2e00f209876f19519e4591a258cfa9fa6c32b4abf1a89f90cce2597867b987909337bf
   languageName: node
   linkType: hard
 
@@ -15641,10 +15641,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.10, dayjs@npm:^1.11.7":
-  version: 1.11.10
-  resolution: "dayjs@npm:1.11.10"
-  checksum: 10c0/4de9af50639d47df87f2e15fa36bb07e0f9ed1e9c52c6caa1482788ee9a384d668f1dbd00c54f82aaab163db07d61d2899384b8254da3a9184fc6deca080e2fe
+"dayjs@npm:1.11.11, dayjs@npm:^1.11.7":
+  version: 1.11.11
+  resolution: "dayjs@npm:1.11.11"
+  checksum: 10c0/0131d10516b9945f05a57e13f4af49a6814de5573a494824e103131a3bbe4cc470b1aefe8e17e51f9a478a22cd116084be1ee5725cedb66ec4c3f9091202dc4b
   languageName: node
   linkType: hard
 
@@ -29030,7 +29030,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.0"
     "@graphql-mesh/openapi": "npm:0.100.0"
-    "@sinclair/typebox": "npm:0.32.26"
+    "@sinclair/typebox": "npm:0.32.27"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.0"
     graphql: "npm:16.8.1"
