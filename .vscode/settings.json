@@ -5,7 +5,7 @@
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "editor.rulers": [80],
+  "editor.rulers": [100],
   "editor.wordWrapColumn": 110,
   "prettier.semi": true,
   "files.trimTrailingWhitespace": true,
