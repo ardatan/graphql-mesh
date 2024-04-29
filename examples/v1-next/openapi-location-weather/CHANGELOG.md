@@ -1,5 +1,13 @@
 # typescript-location-weather-example
 
+## 0.17.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9f41ea8`](https://github.com/ardatan/graphql-mesh/commit/9f41ea85452440f44b3643cdcee3439c582e7fd0)]:
+  - @omnigraph/openapi@0.100.3
+
 ## 0.17.2
 
 ### Patch Changes
