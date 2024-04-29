@@ -1,5 +1,15 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.4
+
+### Patch Changes
+
+- [#6904](https://github.com/ardatan/graphql-mesh/pull/6904)
+  [`3d88cb8`](https://github.com/ardatan/graphql-mesh/commit/3d88cb8ff1829081411fcb2051ad18d7f89536ba)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dayjs@1.11.11` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.11) (from
+    `1.11.10`, in `dependencies`)
+
 ## 0.5.3
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # thrift-calculator
 
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/cli@0.90.1
+  - @graphql-mesh/thrift@0.99.1
+
 ## 0.14.0
 
 ### Patch Changes

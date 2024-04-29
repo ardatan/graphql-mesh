@@ -1,5 +1,14 @@
 # openapi-youtrack
 
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/openapi@0.100.1
+  - @graphql-mesh/compose-cli@0.3.1
+  - @graphql-mesh/serve-cli@0.4.1
+
 ## 0.17.0
 
 ### Patch Changes

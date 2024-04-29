@@ -1,5 +1,31 @@
 # @graphql-mesh/http
 
+## 0.99.1
+
+### Patch Changes
+
+- [#6903](https://github.com/ardatan/graphql-mesh/pull/6903)
+  [`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Previously GraphQL Yoga also had a health check
+  endpoint in `/health` path while Mesh's health check endpoint is `/healthcheck`. Now they are both
+  aligned. Also now you can customize the health check endpoint within Mesh Configuration using
+  `serve.healthCheckEndpoint` key. Default value is `/healthcheck.
+
+  ```yaml
+  serve:
+    healthCheckEndpoint: /health
+  ```
+
+  **Action Required:** If you are using GraphQL Yoga's endpoint `/health`, instead of
+  `/healthcheck`, you should update your health check endpoint to `/health` in the configuration
+  like above to keep the behavior.
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/types@0.98.1
+  - @graphql-mesh/runtime@0.99.1
+  - @graphql-mesh/utils@0.98.1
+
 ## 0.99.0
 
 ### Patch Changes

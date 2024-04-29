@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/serve-runtime",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,9 +37,9 @@
   "dependencies": {
     "@envelop/core": "^5.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.1",
-    "@graphql-mesh/fusion-runtime": "^0.3.0",
-    "@graphql-mesh/transport-common": "^0.2.0",
-    "@graphql-mesh/utils": "^0.98.0",
+    "@graphql-mesh/fusion-runtime": "^0.3.1",
+    "@graphql-mesh/transport-common": "^0.2.1",
+    "@graphql-mesh/utils": "^0.98.1",
     "@graphql-tools/delegate": "^10.0.6",
     "@graphql-tools/executor-http": "^1.0.6",
     "@graphql-tools/executor-yoga": "^2.0.3",
