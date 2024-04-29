@@ -8368,7 +8368,7 @@ __metadata:
     fast-xml-parser: "npm:^4.3.4"
     graphql-compose: "npm:^9.0.10"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.0.1"
+    soap: "npm:1.0.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.0
     "@graphql-mesh/utils": ^0.98.0
@@ -12646,7 +12646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.6.5":
+"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.6.5, axios@npm:^1.6.8":
   version: 1.6.8
   resolution: "axios@npm:1.6.8"
   dependencies:
@@ -31360,10 +31360,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"soap@npm:1.0.1":
-  version: 1.0.1
-  resolution: "soap@npm:1.0.1"
+"soap@npm:1.0.2":
+  version: 1.0.2
+  resolution: "soap@npm:1.0.2"
   dependencies:
+    axios: "npm:^1.6.8"
     axios-ntlm: "npm:^1.4.2"
     debug: "npm:^4.3.2"
     formidable: "npm:^3.2.4"
@@ -31374,9 +31375,7 @@ __metadata:
     uuid: "npm:^8.3.2"
     whatwg-mimetype: "npm:3.0.0"
     xml-crypto: "npm:^3.0.0"
-  peerDependencies:
-    axios: ^1.6.1
-  checksum: 10c0/1ddd30dcea2113c4e14a2d2b5bc71a97ec0c13ac4e59f1b9c6ccc15a2b75fb5736f224d1ef8ecafa60e9b225fefa5d35f01b69ec28916b247d225c82fc1043e5
+  checksum: 10c0/34c8b81dca5d9a0f750c5ed8dc75bc76a4751cf79d51c4ebb23df6f6c42a8c6f62bc8b9cea5b14f947529fd64c028e7e01e4eb04e42c4213310a951fc4001394
   languageName: node
   linkType: hard
 
