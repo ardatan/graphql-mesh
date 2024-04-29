@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@graphql-tools/delegate": "^10.0.6",
-    "@graphql-tools/utils": "^10.0.12"
+    "@graphql-tools/utils": "^10.2.0"
   },
   "publishConfig": {
     "access": "public",

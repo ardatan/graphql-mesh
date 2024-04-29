@@ -1,0 +1,54 @@
+---
+"@graphql-mesh/transform-naming-convention": patch
+"@graphql-mesh/transform-transfer-schema": patch
+"@graphql-mesh/transform-filter-schema": patch
+"@graphql-mesh/transform-replace-field": patch
+"@graphql-mesh/transform-encapsulate": patch
+"@graphql-mesh/transform-hoist-field": patch
+"@graphql-mesh/transform-federation": patch
+"@graphql-mesh/transform-rate-limit": patch
+"@graphql-mesh/merger-federation": patch
+"@graphql-mesh/merger-stitching": patch
+"@graphql-mesh/transform-extend": patch
+"@graphql-mesh/transform-prefix": patch
+"@graphql-mesh/transform-rename": patch
+"@graphql-mesh/graphql": patch
+"@graphql-mesh/transform-cache": patch
+"@graphql-mesh/transform-prune": patch
+"@graphql-mesh/thrift": patch
+"@graphql-mesh/transform-hive": patch
+"@graphql-mesh/mysql": patch
+"@graphql-mesh/odata": patch
+"@graphql-mesh/grpc": patch
+"@graphql-mesh/soap": patch
+"@graphql-mesh/merger-bare": patch
+"@omnigraph/json-schema": patch
+"@graphql-mesh/fusion-composition": patch
+"@graphql-mesh/apollo-link": patch
+"@graphql-mesh/plugin-rate-limit": patch
+"@graphql-mesh/transport-common": patch
+"@graphql-mesh/transport-thrift": patch
+"@graphql-mesh/transport-mysql": patch
+"@graphql-mesh/transport-neo4j": patch
+"@graphql-mesh/transport-rest": patch
+"@graphql-mesh/transport-soap": patch
+"@graphql-mesh/fusion-runtime": patch
+"@graphql-mesh/runtime": patch
+"@graphql-mesh/cross-helpers": patch
+"@graphql-mesh/config": patch
+"@omnigraph/mysql": patch
+"@graphql-mesh/serve-runtime": patch
+"@graphql-mesh/store": patch
+"@graphql-mesh/types": patch
+"@graphql-mesh/utils": patch
+"@omnigraph/raml": patch
+"@omnigraph/soap": patch
+"@graphql-mesh/plugin-mock": patch
+"@graphql-mesh/compose-cli": patch
+"@graphql-mesh/http": patch
+"@graphql-mesh/urql-exchange": patch
+"@graphql-mesh/cli": patch
+"@graphql-mesh/serve-cli": patch
+---
+
+Bump GraphQL Tools versions
