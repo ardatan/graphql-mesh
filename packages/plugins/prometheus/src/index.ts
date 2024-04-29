@@ -16,11 +16,8 @@ import {
   loadFromModuleExportExpression,
 } from '@graphql-mesh/utils';
 import type { ExecutionRequest } from '@graphql-tools/utils';
+import type { CounterAndLabels, HistogramAndLabels } from '@graphql-yoga/plugin-prometheus';
 import { createCounter, createHistogram, usePrometheus } from '@graphql-yoga/plugin-prometheus';
-import type {
-  CounterAndLabels,
-  HistogramAndLabels,
-} from '../../../../../envelop/packages/plugins/prometheus/dist/typings/utils';
 
 type SubgraphMetricsLabelParams = {
   subgraphName: string;
