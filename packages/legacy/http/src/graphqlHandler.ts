@@ -9,6 +9,7 @@ export const graphqlHandler = ({
   graphqlEndpoint,
   corsConfig,
   batchingLimit,
+  healthCheckEndpoint = '/healthcheck',
 }: {
   getBuiltMesh: () => Promise<MeshInstance>;
   playgroundTitle: string;
@@ -16,6 +17,7 @@ export const graphqlHandler = ({
   graphqlEndpoint: string;
   corsConfig: CORSOptions;
   batchingLimit?: number;
+  healthCheckEndpoint?: string;
 }) => {
   const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
     return createYoga({
@@ -39,6 +41,7 @@ export const graphqlHandler = ({
       graphqlEndpoint,
       landingPage: false,
       batching: batchingLimit ? { limit: batchingLimit } : false,
+      healthCheckEndpoint,
     });
   });
   return (request: Request, ctx: any) =>

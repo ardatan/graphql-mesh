@@ -66,6 +66,10 @@ type ServeConfig @md {
   Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
   """
   batchingLimit: Int
+  """
+  Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)
+  """
+  healthCheckEndpoint: String
 }
 
 union Port = Int | String
