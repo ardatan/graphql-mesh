@@ -431,8 +431,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 : allMimeTypes[0].toString();
           }
 
-          for (const contentKey in responseObj.content) {
-            if (!mimeTypes.includes(contentKey)) {
+          for (const contentKeyWithMeta in responseObj.content) {
+            const contentKey = contentKeyWithMeta.split(';')[0];
+            if (!mimeTypes.some(mimeType => mimeType.includes(contentKey))) {
               continue;
             }
             schemaObj = responseObj.content[contentKey].schema as any;
