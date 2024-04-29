@@ -6419,8 +6419,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/stitch@npm:^9.2.0, @graphql-tools/stitch@npm:^9.2.1":
-  version: 9.2.1
-  resolution: "@graphql-tools/stitch@npm:9.2.1"
+  version: 9.2.2
+  resolution: "@graphql-tools/stitch@npm:9.2.2"
   dependencies:
     "@graphql-tools/batch-delegate": "npm:^9.0.1"
     "@graphql-tools/delegate": "npm:^10.0.5"
@@ -6433,7 +6433,7 @@ __metadata:
     value-or-promise: "npm:^1.0.11"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/218246aec46862f95f1630dc2405b9884eaa50518f730c27d029e9e36b61cfccb44ae86060d0861388d2473625345d17580d8a8258058c6cbf3179c20389a812
+  checksum: 10c0/b6d60fce0ef6eb75223203daee7ac81af72c1b85190ba82b899c65db18560d9673f78528c80178a7413b7a99d9e7c127de1814fbed30fb2b8a83b5f4fe7c8ce2
   languageName: node
   linkType: hard
 
