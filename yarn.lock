@@ -6635,17 +6635,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-prometheus@portal:/Users/valentin/Dev/Projects/TheGuild/graphql-yoga/packages/plugins/prometheus::locator=graphql-mesh-monorepo%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@graphql-yoga/plugin-prometheus@portal:/Users/valentin/Dev/Projects/TheGuild/graphql-yoga/packages/plugins/prometheus::locator=graphql-mesh-monorepo%40workspace%3A."
+"@graphql-yoga/plugin-prometheus@npm:^5.0.0-alpha-20240429140335-de802810":
+  version: 5.0.0-rc-20240429140244-de802810
+  resolution: "@graphql-yoga/plugin-prometheus@npm:5.0.0-rc-20240429140244-de802810"
   dependencies:
     "@envelop/prometheus": "npm:10.0.0-alpha-20240507125432-5841b485"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.3.0
+    graphql-yoga: 5.3.1-rc-20240429140244-de802810
     prom-client: ^15.0.0
+  checksum: 10c0/b041e84d5ca61585aca598aea7cdefbdb4995955c4bdb102e56fc4d9a8ecf1dfde7978b44155385af67273e3f2ce5e26a83bb9fcae5c4132626493ebe920f1c1
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@graphql-yoga/plugin-response-cache@npm:^3.1.1":
   version: 3.5.0
