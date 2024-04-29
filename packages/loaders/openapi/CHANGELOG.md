@@ -1,5 +1,15 @@
 # @omnigraph/openapi
 
+## 0.100.3
+
+### Patch Changes
+
+- [#6910](https://github.com/ardatan/graphql-mesh/pull/6910)
+  [`9f41ea8`](https://github.com/ardatan/graphql-mesh/commit/9f41ea85452440f44b3643cdcee3439c582e7fd0)
+  Thanks [@ardatan](https://github.com/ardatan)! - When a custom mime type provided in
+  `operationHeaders`, it sets all the fields as generic `JSON` scalar. Fixes
+  https://github.com/ardatan/graphql-mesh/issues/4460
+
 ## 0.100.2
 
 ### Patch Changes
