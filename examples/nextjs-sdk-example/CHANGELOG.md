@@ -1,5 +1,16 @@
 # nextjs-sdk-example
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/cli@0.90.1
+  - @graphql-mesh/openapi@0.100.1
+  - @graphql-mesh/runtime@0.99.1
+  - @graphql-mesh/config@0.100.1
+
 ## 0.10.0
 
 ### Patch Changes
