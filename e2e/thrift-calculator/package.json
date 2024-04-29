@@ -1,6 +1,5 @@
 {
   "name": "@e2e/thrift-calculator",
-  "version": null,
   "type": "module",
   "private": true,
   "scripts": {
