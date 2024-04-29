@@ -1,5 +1,12 @@
 # @graphql-mesh/fusion-composition
 
+## 0.0.4
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
 ## 0.0.3
 
 ### Patch Changes

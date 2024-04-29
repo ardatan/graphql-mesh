@@ -4,6 +4,16 @@
 
 ### Patch Changes
 
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @omnigraph/soap@0.98.2
+  - @graphql-mesh/compose-cli@0.3.2
+  - @graphql-mesh/serve-cli@0.4.2
+
+## null
+
+### Patch Changes
+
 - Updated dependencies []:
   - @omnigraph/soap@0.98.1
   - @graphql-mesh/compose-cli@0.3.1

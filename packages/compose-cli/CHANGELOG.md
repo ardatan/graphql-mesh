@@ -1,5 +1,18 @@
 # @graphql-mesh/compose-cli
 
+## 0.3.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/fusion-composition@0.0.4
+  - @graphql-mesh/types@0.98.2
+  - @graphql-mesh/utils@0.98.2
+
 ## 0.3.1
 
 ### Patch Changes

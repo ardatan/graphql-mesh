@@ -1,5 +1,16 @@
 # @graphql-mesh/postgraphile
 
+## 0.98.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/cross-helpers@0.4.2
+  - @graphql-mesh/store@0.98.2
+  - @graphql-mesh/types@0.98.2
+  - @graphql-mesh/utils@0.98.2
+
 ## 0.98.1
 
 ### Patch Changes
