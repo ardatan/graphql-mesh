@@ -44,12 +44,9 @@
     "@graphql-tools/executor-http": "^1.0.6",
     "@graphql-tools/executor-yoga": "^2.0.3",
     "@graphql-tools/federation": "^1.1.28",
-    "@graphql-tools/schema": "^10.0.2",
     "@graphql-tools/stitch": "^9.2.1",
     "@graphql-tools/utils": "^10.2.0",
-    "@graphql-tools/wrap": "^10.0.5",
     "@whatwg-node/server": "^0.9.34",
-    "graphql-mobius": "^0.1.13",
     "graphql-yoga": "^5.3.0"
   },
   "publishConfig": {
