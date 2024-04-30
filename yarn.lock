@@ -4580,13 +4580,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/functions-framework@npm:3.3.0, @google-cloud/functions-framework@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "@google-cloud/functions-framework@npm:3.3.0"
+"@google-cloud/functions-framework@npm:3.4.0, @google-cloud/functions-framework@npm:^3.3.0":
+  version: 3.4.0
+  resolution: "@google-cloud/functions-framework@npm:3.4.0"
   dependencies:
-    "@types/express": "npm:4.17.17"
+    "@types/express": "npm:4.17.21"
     body-parser: "npm:^1.18.3"
-    cloudevents: "npm:^7.0.0"
+    cloudevents: "npm:^8.0.0"
     express: "npm:^4.16.4"
     minimist: "npm:^1.2.7"
     on-finished: "npm:^2.3.0"
@@ -4595,7 +4595,7 @@ __metadata:
   bin:
     functions-framework: build/src/main.js
     functions-framework-nodejs: build/src/main.js
-  checksum: 10c0/9e6b3008e4a2794c757bb8b3e0793749c397ab1cd4c321eff4f84e8f582b943cd30262e505cce4d0f281ffdb6bf1ccae6dfaf286366920c8cbb6a1001b165831
+  checksum: 10c0/ebf986e4a2aaeb6724e0404aa6efe389443e9603d30e5a7fe70be40e974f7fd08a882a4bc6fda9883015094715eca1437c1ef6eb323c6d1374a8b81a0e2ef3ac
   languageName: node
   linkType: hard
 
@@ -8630,7 +8630,7 @@ __metadata:
     "@types/to-json-schema": "npm:0.2.4"
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.9.0"
-    ajv: "npm:8.12.0"
+    ajv: "npm:8.13.0"
     ajv-formats: "npm:2.1.1"
     dset: "npm:3.1.3"
     graphql-compose: "npm:9.0.10"
@@ -10484,7 +10484,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
+"@types/express@npm:*, @types/express@npm:4.17.21, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -10493,18 +10493,6 @@ __metadata:
     "@types/qs": "npm:*"
     "@types/serve-static": "npm:*"
   checksum: 10c0/12e562c4571da50c7d239e117e688dc434db1bac8be55613294762f84fd77fbd0658ccd553c7d3ab02408f385bc93980992369dd30e2ecd2c68c358e6af8fabf
-  languageName: node
-  linkType: hard
-
-"@types/express@npm:4.17.17":
-  version: 4.17.17
-  resolution: "@types/express@npm:4.17.17"
-  dependencies:
-    "@types/body-parser": "npm:*"
-    "@types/express-serve-static-core": "npm:^4.17.33"
-    "@types/qs": "npm:*"
-    "@types/serve-static": "npm:*"
-  checksum: 10c0/5802a0a28f7473744dd6a118479440d8c5c801c973d34fb6f31b5ee645a41fee936193978a8e905d55deefda9b675d19924167bf11a31339874c3161a3fc2922
   languageName: node
   linkType: hard
 
@@ -12264,15 +12252,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:8.12.0, ajv@npm:^8.0.0, ajv@npm:^8.10.0, ajv@npm:^8.11.0, ajv@npm:^8.12.0, ajv@npm:^8.6.0, ajv@npm:^8.9.0":
-  version: 8.12.0
-  resolution: "ajv@npm:8.12.0"
+"ajv@npm:8.13.0, ajv@npm:^8.0.0, ajv@npm:^8.10.0, ajv@npm:^8.11.0, ajv@npm:^8.12.0, ajv@npm:^8.6.0, ajv@npm:^8.9.0":
+  version: 8.13.0
+  resolution: "ajv@npm:8.13.0"
   dependencies:
-    fast-deep-equal: "npm:^3.1.1"
+    fast-deep-equal: "npm:^3.1.3"
     json-schema-traverse: "npm:^1.0.0"
     require-from-string: "npm:^2.0.2"
-    uri-js: "npm:^4.2.2"
-  checksum: 10c0/ac4f72adf727ee425e049bc9d8b31d4a57e1c90da8d28bcd23d60781b12fcd6fc3d68db5df16994c57b78b94eed7988f5a6b482fd376dc5b084125e20a0a622e
+    uri-js: "npm:^4.4.1"
+  checksum: 10c0/14c6497b6f72843986d7344175a1aa0e2c35b1e7f7475e55bc582cddb765fca7e6bf950f465dc7846f817776d9541b706f4b5b3fbedd8dfdeb5fce6f22864264
   languageName: node
   linkType: hard
 
@@ -14382,9 +14370,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cloudevents@npm:^7.0.0":
-  version: 7.0.2
-  resolution: "cloudevents@npm:7.0.2"
+"cloudevents@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "cloudevents@npm:8.0.0"
   dependencies:
     ajv: "npm:^8.11.0"
     ajv-formats: "npm:^2.1.1"
@@ -14392,7 +14380,7 @@ __metadata:
     process: "npm:^0.11.10"
     util: "npm:^0.12.4"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/cabcd5273c5720ee65e93b7d00dbabd6cdb8d50e29a890c053f4ea731c608852856402f4d50c887a8ac380d9a90c2d1f440e39200e65acf83b719bc496ce4e4a
+  checksum: 10c0/56170b962078cad774157f00219ba604210f3416d099f6a76d705639f3d5fccbaf349a4e016d87b460001f603079c7ab756691c39175ec78764c81391a9e665b
   languageName: node
   linkType: hard
 
@@ -17997,7 +17985,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-gcp@workspace:examples/gcp-functions"
   dependencies:
-    "@google-cloud/functions-framework": "npm:3.3.0"
+    "@google-cloud/functions-framework": "npm:3.4.0"
     "@graphql-mesh/cli": "npm:0.90.2"
     "@graphql-mesh/json-schema": "npm:0.100.2"
     "@types/node": "npm:20.12.7"
@@ -34406,7 +34394,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uri-js@npm:^4.2.2":
+"uri-js@npm:^4.2.2, uri-js@npm:^4.4.1":
   version: 4.4.1
   resolution: "uri-js@npm:4.4.1"
   dependencies:
