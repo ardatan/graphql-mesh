@@ -6636,6 +6636,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/merge@npm:^9.0.4":
+  version: 9.0.4
+  resolution: "@graphql-tools/merge@npm:9.0.4"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.0.13"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/baf8558955d2f5cefdad298be295e48564bd6d2e691eed1b6d4c62f58cea898c8269443181fe847ca2747ec179c5b2b620be9215323281b2d65afc29591ce52d
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/mock@npm:^8.1.2":
   version: 8.7.20
   resolution: "@graphql-tools/mock@npm:8.7.20"
@@ -6781,13 +6793,13 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/stitch@npm:^9.2.1, @graphql-tools/stitch@npm:^9.2.3":
-  version: 9.2.3
-  resolution: "@graphql-tools/stitch@npm:9.2.3"
+  version: 9.2.4
+  resolution: "@graphql-tools/stitch@npm:9.2.4"
   dependencies:
     "@graphql-tools/batch-delegate": "npm:^9.0.1"
     "@graphql-tools/delegate": "npm:^10.0.7"
     "@graphql-tools/executor": "npm:^1.2.1"
-    "@graphql-tools/merge": "npm:^9.0.3"
+    "@graphql-tools/merge": "npm:^9.0.4"
     "@graphql-tools/schema": "npm:^10.0.3"
     "@graphql-tools/utils": "npm:^10.2.0"
     "@graphql-tools/wrap": "npm:^10.0.2"
@@ -6795,7 +6807,7 @@ __metadata:
     value-or-promise: "npm:^1.0.11"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/bf58e6de6a47882391b0a771a6edbd044f288684054a1702d24b0ff3ffefeabb134aa090830a2031b94113490e675ba6a5107bb859bf3e7a2b2e1ed8445f7c37
+  checksum: 10c0/c4275c49165a38363df76128af5fdf3797f932f482c5fd32827919bf96da3502d5dd1e1869d4e6897e33f7d604e80ca5f90ab8161479042745506d1e2f4759fd
   languageName: node
   linkType: hard
 
@@ -8270,8 +8282,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^5.0.0":
-  version: 5.3.3
-  resolution: "@neo4j/graphql@npm:5.3.3"
+  version: 5.3.4
+  resolution: "@neo4j/graphql@npm:5.3.4"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -8292,20 +8304,20 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/efb8dc52c369ab2ad5b0b5951800bf9bfbd8022d759ef6d1f44138738c1647164ff76ae8baf8ccc5f870a6b4417c1e3904f46c5ce391aad36a6ed33e756f01dc
+  checksum: 10c0/d4caeeb1cc8843e5bad6449b7f18edf2ae390647333992eeb96b7467742f8abaf6bd82bcc77609752b27af561694374488b95f42648f8845c43baa225fdcca30
   languageName: node
   linkType: hard
 
 "@neo4j/introspector@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@neo4j/introspector@npm:3.0.0"
+  version: 3.0.1
+  resolution: "@neo4j/introspector@npm:3.0.1"
   dependencies:
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     pluralize: "npm:^8.0.0"
   peerDependencies:
     neo4j-driver: ^5.8.0
-  checksum: 10c0/ad59c325c0882acf1a1e5b54f7e52ebf0584e6e66f6fbaeb2811657cf0b0216d7a0dc196b4d7464033da81128a6417a7c0fdc38de00aa0888289fb87081e44ba
+  checksum: 10c0/1d69d910478d6dbda69acccc625bf250c80ff6c7c5add83b959d83e9b70b218cfbb80eafeb34d568d4ca6a3d13ea48a61ce57a9a3eb62da8cd9e207071b92ef0
   languageName: node
   linkType: hard
 
@@ -17462,9 +17474,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:17.3.1":
-  version: 17.3.1
-  resolution: "eslint-plugin-n@npm:17.3.1"
+"eslint-plugin-n@npm:17.4.0":
+  version: 17.4.0
+  resolution: "eslint-plugin-n@npm:17.4.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     enhanced-resolve: "npm:^5.15.0"
@@ -17476,7 +17488,7 @@ __metadata:
     semver: "npm:^7.5.3"
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: 10c0/9faf1e99201150c14a1071cefa5261047c0412f867641fe785236ddd0b73d98080eb8bce6da27aabfeb60fdf6977d08d0cac21bdd2343f341654f901d408ad8b
+  checksum: 10c0/3ec2c14fb0b97eae0911fc7e07b4bb29d0095d21fabcff490c01a1195a6d1ae511eefac37f8796c9858b0a09bc85a0ebfa2ac5c567593adbc22a454cb1496b39
   languageName: node
   linkType: hard
 
@@ -19753,7 +19765,7 @@ __metadata:
     eslint-config-prettier: "npm:9.1.0"
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.29.1"
-    eslint-plugin-n: "npm:17.3.1"
+    eslint-plugin-n: "npm:17.4.0"
     eslint-plugin-promise: "npm:6.1.1"
     eslint-plugin-standard: "npm:5.0.0"
     globby: "npm:11.1.0"
