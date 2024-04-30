@@ -5717,7 +5717,6 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.2.0"
     "@graphql-tools/wrap": "npm:^10.0.5"
     "@whatwg-node/server": "npm:^0.9.34"
-    graphql-mobius: "npm:^0.1.13"
     graphql-yoga: "npm:^5.3.0"
   peerDependencies:
     graphql: "*"
@@ -19782,18 +19781,6 @@ __metadata:
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
-
-"graphql-mobius@npm:^0.1.13":
-  version: 0.1.13
-  resolution: "graphql-mobius@npm:0.1.13"
-  peerDependenciesMeta:
-    graphql:
-      optional: true
-    graphql-yoga:
-      optional: true
-  checksum: 10c0/714dc8a409606fa56d84f45db0b5eb24156719d99885ba0c8a120168f78a71dda688f8b892329946abe6b243d1395e0174bdf34788e98b00d968c8ff1d19447c
-  languageName: node
-  linkType: hard
 
 "graphql-parse-resolve-info@npm:4.14.0, graphql-parse-resolve-info@npm:^4.12.3, graphql-parse-resolve-info@npm:^4.13.0":
   version: 4.14.0
