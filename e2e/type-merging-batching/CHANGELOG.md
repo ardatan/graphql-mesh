@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.4.3
+
+## null
+
+### Patch Changes
+
 - Updated dependencies
   [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
   - @graphql-mesh/fusion-runtime@0.3.2

@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/auth0-example",
-  "version": "0.13.2",
+  "version": "0.13.3",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -13,8 +13,8 @@
     "@envelop/auth0": "^6.0.0",
     "@graphql-mesh/compose-cli": "^0.3.2",
     "@graphql-mesh/plugin-operation-field-permissions": "^0.98.2",
-    "@graphql-mesh/serve-cli": "^0.4.2",
-    "@omnigraph/json-schema": "^0.100.2",
+    "@graphql-mesh/serve-cli": "^0.4.3",
+    "@omnigraph/json-schema": "^0.100.3",
     "graphql": "16.8.1"
   },
   "devDependencies": {
