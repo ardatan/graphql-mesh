@@ -1,6 +1,5 @@
 {
   "name": "@e2e/pubsub-destroy",
-  "version": null,
   "private": true,
   "dependencies": {
     "@graphql-mesh/serve-cli": "workspace:*",
