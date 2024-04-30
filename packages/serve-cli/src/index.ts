@@ -5,5 +5,4 @@ export {
   useCustomFetch,
   useForwardHeaders,
   useStaticFiles,
-  type InferResolvers,
 } from '@graphql-mesh/serve-runtime';
