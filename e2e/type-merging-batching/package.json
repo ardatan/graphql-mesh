@@ -1,5 +1,6 @@
 {
   "name": "@e2e/type-merging-batching",
+  "version": null,
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",

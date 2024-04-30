@@ -5,6 +5,14 @@
 ### Patch Changes
 
 - Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.4.4
+  - @graphql-mesh/compose-cli@0.3.3
+
+## null
+
+### Patch Changes
+
+- Updated dependencies []:
   - @graphql-mesh/serve-cli@0.4.3
 
 ## null

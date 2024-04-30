@@ -1,5 +1,13 @@
 # openapi-meilisearch
 
+## 0.10.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.100.5
+  - @graphql-mesh/cli@0.90.3
+
 ## 0.10.4
 
 ### Patch Changes

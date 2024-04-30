@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.98.3
+
+### Patch Changes
+
+- [`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.98.3
+
 ## 0.98.2
 
 ### Patch Changes
