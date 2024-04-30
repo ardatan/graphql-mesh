@@ -1,5 +1,27 @@
 # @graphql-mesh/serve-runtime
 
+## 0.3.3
+
+### Patch Changes
+
+- [#6917](https://github.com/ardatan/graphql-mesh/pull/6917)
+  [`da798ac`](https://github.com/ardatan/graphql-mesh/commit/da798acf85cf7da8cd45609725dde751b4ef24a3)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Removed dependency
+    [`@graphql-tools/schema@^10.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.2)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/wrap@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.5)
+    (from `dependencies`)
+  - Removed dependency
+    [`graphql-mobius@^0.1.13` ↗︎](https://www.npmjs.com/package/graphql-mobius/v/0.1.13) (from
+    `dependencies`)
+
+- [#6917](https://github.com/ardatan/graphql-mesh/pull/6917)
+  [`da798ac`](https://github.com/ardatan/graphql-mesh/commit/da798acf85cf7da8cd45609725dde751b4ef24a3)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove unnecessary dependency and unused code
+
 ## 0.3.2
 
 ### Patch Changes
