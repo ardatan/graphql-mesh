@@ -10428,13 +10428,13 @@ __metadata:
   linkType: hard
 
 "@types/dockerode@npm:^3.3.28":
-  version: 3.3.28
-  resolution: "@types/dockerode@npm:3.3.28"
+  version: 3.3.29
+  resolution: "@types/dockerode@npm:3.3.29"
   dependencies:
     "@types/docker-modem": "npm:*"
     "@types/node": "npm:*"
     "@types/ssh2": "npm:*"
-  checksum: 10c0/ce43da3cd269e11e999366aa9019a067d97dc012d7c460b560dfe75d4ccacc618077f2dfc5f34da2c915d4d86ed883d00d3bb741fd8440ef4ca1136afbc29b9f
+  checksum: 10c0/1c51a9f7d9a2ab81ecdf9e56b9a8e25400a97ed5f0701c583ed030b4518dee4b3d2ecc7d927fe1ff618c06747f3b285168adac5293aa3cdafafa1914db595cc2
   languageName: node
   linkType: hard
 
@@ -11692,7 +11692,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.98.2"
     "@graphql-mesh/serve-runtime": "npm:^0.3.3"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.52.0"
+    wrangler: "npm:3.53.0"
   languageName: unknown
   linkType: soft
 
@@ -13955,7 +13955,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.3.3"
     "@omnigraph/json-schema": "npm:^0.100.3"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.52.0"
+    wrangler: "npm:3.53.0"
   languageName: unknown
   linkType: soft
 
@@ -14402,7 +14402,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.100.3"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.2"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.52.0"
+    wrangler: "npm:3.53.0"
   languageName: unknown
   linkType: soft
 
@@ -31909,7 +31909,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.98.2"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.2"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.52.0"
+    wrangler: "npm:3.53.0"
   languageName: unknown
   linkType: soft
 
@@ -35489,9 +35489,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.52.0":
-  version: 3.52.0
-  resolution: "wrangler@npm:3.52.0"
+"wrangler@npm:3.53.0":
+  version: 3.53.0
+  resolution: "wrangler@npm:3.53.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.2"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35519,7 +35519,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/97bfa5faffc2a3cea76e8dbbfda46e5d9fae7ee0d5963691e64523d904c5d0e5db16fe48c7f326bb1e51e2e2dfeb0c2bf902d0190d3cd51a9f49bcea9e6215d5
+  checksum: 10c0/e839cde756b37d92ac6cd8780d998ef9b83555b478a19995d14bcd07a81f2def7f3385b82c43e6235e0662bcf77f874a0f64172ee1c806c38b2d3089db8fe6ad
   languageName: node
   linkType: hard
 
