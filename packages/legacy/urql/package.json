@@ -40,7 +40,7 @@
     "wonka": "^6.3.1"
   },
   "devDependencies": {
-    "@urql/core": "5.0.2",
+    "@urql/core": "5.0.3",
     "wonka": "6.3.4"
   },
   "publishConfig": {

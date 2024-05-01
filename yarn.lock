@@ -6231,7 +6231,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/urql-exchange@workspace:packages/legacy/urql"
   dependencies:
-    "@urql/core": "npm:5.0.2"
+    "@urql/core": "npm:5.0.3"
     wonka: "npm:6.3.4"
   peerDependencies:
     "@graphql-mesh/runtime": ^0.99.3
@@ -7069,17 +7069,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/proto-loader@npm:0.7.12, @grpc/proto-loader@npm:^0.7.10, @grpc/proto-loader@npm:^0.7.5, @grpc/proto-loader@npm:^0.7.8":
-  version: 0.7.12
-  resolution: "@grpc/proto-loader@npm:0.7.12"
+"@grpc/proto-loader@npm:0.7.13, @grpc/proto-loader@npm:^0.7.10, @grpc/proto-loader@npm:^0.7.5, @grpc/proto-loader@npm:^0.7.8":
+  version: 0.7.13
+  resolution: "@grpc/proto-loader@npm:0.7.13"
   dependencies:
     lodash.camelcase: "npm:^4.3.0"
     long: "npm:^5.0.0"
-    protobufjs: "npm:^7.2.4"
+    protobufjs: "npm:^7.2.5"
     yargs: "npm:^17.7.2"
   bin:
     proto-loader-gen-types: build/bin/proto-loader-gen-types.js
-  checksum: 10c0/d026236f309e24fd5b840b9aefca49eb4002f270821e8194d0b622013c421b54e04df5f6b8f0797121a1e1141811a4ef088120690aea1e873701d277cd5b47fa
+  checksum: 10c0/dc8ed7aa1454c15e224707cc53d84a166b98d76f33606a9f334c7a6fb1aedd3e3614dcd2c2b02a6ffaf140587d19494f93b3a56346c6c2e26bc564f6deddbbf3
   languageName: node
   linkType: hard
 
@@ -11658,13 +11658,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@urql/core@npm:5.0.2":
-  version: 5.0.2
-  resolution: "@urql/core@npm:5.0.2"
+"@urql/core@npm:5.0.3":
+  version: 5.0.3
+  resolution: "@urql/core@npm:5.0.3"
   dependencies:
     "@0no-co/graphql.web": "npm:^1.0.5"
     wonka: "npm:^6.3.2"
-  checksum: 10c0/2ff08f269a663477a36f7bead23d288e8a072e26994b9bc2aed18ba43a98b7aa84b603112f98015bfb1a926406080b218776990e2f86792a309b02d1a75d3829
+  checksum: 10c0/7ae9dfe4cbce949a0e2856f46e5c0f62a1bdb6eda6f24480468b62f886cc03131e77b578da4fbb9fe8c1622b7542fdd371b83e7883f01a296924b5dfbe738f10
   languageName: node
   linkType: hard
 
@@ -19320,7 +19320,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.0, get-tsconfig@npm:^4.7.2":
+"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.0, get-tsconfig@npm:^4.7.3":
   version: 4.7.3
   resolution: "get-tsconfig@npm:4.7.3"
   dependencies:
@@ -19925,7 +19925,7 @@ __metadata:
     "@graphql-mesh/grpc": "npm:0.99.3"
     "@graphql-mesh/transform-naming-convention": "npm:0.98.3"
     "@grpc/grpc-js": "npm:1.10.6"
-    "@grpc/proto-loader": "npm:0.7.12"
+    "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.2"
     graphql: "npm:16.8.1"
@@ -19955,7 +19955,7 @@ __metadata:
     "@graphql-mesh/grpc": "npm:0.99.3"
     "@graphql-mesh/transform-naming-convention": "npm:0.98.3"
     "@grpc/grpc-js": "npm:1.10.6"
-    "@grpc/proto-loader": "npm:0.7.12"
+    "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.2"
     graphql: "npm:16.8.1"
@@ -29472,7 +29472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^7.2.4, protobufjs@npm:^7.2.5":
+"protobufjs@npm:^7.2.5":
   version: 7.2.6
   resolution: "protobufjs@npm:7.2.6"
   dependencies:
@@ -29785,11 +29785,11 @@ __metadata:
   linkType: hard
 
 "react-icons@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "react-icons@npm:5.1.0"
+  version: 5.2.0
+  resolution: "react-icons@npm:5.2.0"
   peerDependencies:
     react: "*"
-  checksum: 10c0/f01648bbf37854510a568c1ac4aeb1c23f734f2ff3a9e94d624bc039ff6291d83ea83281a1380e8105b3f1819bb359a6f34326a5cefbfbced1024b4b81493e01
+  checksum: 10c0/bd9176b1aa6ddaa99b2abea2cecb523443b39a470912725e12da0b478697312fdefb55daaee921cf28bd9d76f580f0fa879d127c8f63fa1ca4516d44817eb6f4
   languageName: node
   linkType: hard
 
@@ -33590,18 +33590,18 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.7.1":
-  version: 4.7.3
-  resolution: "tsx@npm:4.7.3"
+  version: 4.8.2
+  resolution: "tsx@npm:4.8.2"
   dependencies:
-    esbuild: "npm:~0.19.10"
+    esbuild: "npm:~0.20.2"
     fsevents: "npm:~2.3.3"
-    get-tsconfig: "npm:^4.7.2"
+    get-tsconfig: "npm:^4.7.3"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/d86e7e3807369c91c1d3e24f45f678455fa14cb8f56e0dd0ae9b3a010a89d631901d0fb8fbb1a074c2fee3f99acf4201c43a1c50f977e36e0b6ffe4dfba7d15a
+  checksum: 10c0/113025f4518191b57a1600569eadbcf0b09d9fa50032a03b6d5b0c0e7e371f4ae7f9b483deff48267aecda60701ab08f1805217a1666204aac4d47d8f2045bb4
   languageName: node
   linkType: hard
 
