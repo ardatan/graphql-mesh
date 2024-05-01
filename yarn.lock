@@ -7059,17 +7059,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.10.6, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.8.10":
-  version: 1.10.6
-  resolution: "@grpc/grpc-js@npm:1.10.6"
+"@grpc/grpc-js@npm:1.10.7, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.8.10":
+  version: 1.10.7
+  resolution: "@grpc/grpc-js@npm:1.10.7"
   dependencies:
-    "@grpc/proto-loader": "npm:^0.7.10"
+    "@grpc/proto-loader": "npm:^0.7.13"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10c0/5fc5ad0dd7fa49ddc3ccf05fa09b2c6ef20b9ff1933c574c8a3119de98b13f164c04b1bbf73bdea8f59b475d377771f4a6f8281d13b6636832676584399ef65f
+  checksum: 10c0/77a59af3780fa9ef90c6342e4d86afd2334524de44688adbe2f8365c87185e93ec9909c4f70b37d7055d27164950878781d5877596aff817e9c0961a3a0ef034
   languageName: node
   linkType: hard
 
-"@grpc/proto-loader@npm:0.7.13, @grpc/proto-loader@npm:^0.7.10, @grpc/proto-loader@npm:^0.7.5, @grpc/proto-loader@npm:^0.7.8":
+"@grpc/proto-loader@npm:0.7.13, @grpc/proto-loader@npm:^0.7.13, @grpc/proto-loader@npm:^0.7.5, @grpc/proto-loader@npm:^0.7.8":
   version: 0.7.13
   resolution: "@grpc/proto-loader@npm:0.7.13"
   dependencies:
@@ -10085,17 +10085,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:15.0.5":
-  version: 15.0.5
-  resolution: "@testing-library/react@npm:15.0.5"
+"@testing-library/react@npm:15.0.6":
+  version: 15.0.6
+  resolution: "@testing-library/react@npm:15.0.6"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^10.0.0"
     "@types/react-dom": "npm:^18.0.0"
   peerDependencies:
+    "@types/react": ^18.0.0
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 10c0/8759cc8e7e6b4d8964f151d8872ea3c91b6ef6d8fb3b9116fae53350b9a6b29e5ad45b18408c22525924d050263f7ea77cd17ca803918759f22a760f68a42227
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/3705a2272f929f2f848f5d7e6ac9829bf7ecc1725a35733ffae7e7a261d4bdab470b080558e8544edb1f9ba25db9fbc4232527df9b4ec6ab6ae4462a902a7f95
   languageName: node
   linkType: hard
 
@@ -10921,12 +10925,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.12.7, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6":
-  version: 20.12.7
-  resolution: "@types/node@npm:20.12.7"
+"@types/node@npm:*, @types/node@npm:20.12.8, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6":
+  version: 20.12.8
+  resolution: "@types/node@npm:20.12.8"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/dce80d63a3b91892b321af823d624995c61e39c6a223cc0ac481a44d337640cc46931d33efb3beeed75f5c85c3bda1d97cef4c5cd4ec333caf5dee59cff6eca0
+  checksum: 10c0/840002d20654e38a9af8cdffa215598fdb28ac4f96c5701ed672ec365ed6ccc66da299edddaa409baf13cd71bbf1128901f633b5e44e070fc236e26415805b78
   languageName: node
   linkType: hard
 
@@ -17997,7 +18001,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.0"
     "@graphql-mesh/cli": "npm:0.90.3"
     "@graphql-mesh/json-schema": "npm:0.100.4"
-    "@types/node": "npm:20.12.7"
+    "@types/node": "npm:20.12.8"
     graphql: "npm:16.8.1"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -18941,11 +18945,11 @@ __metadata:
   dependencies:
     "@apollo/client": "npm:3.10.1"
     "@testing-library/jest-dom": "npm:6.4.2"
-    "@testing-library/react": "npm:15.0.5"
+    "@testing-library/react": "npm:15.0.6"
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.12.7"
+    "@types/node": "npm:20.12.8"
     "@types/react": "npm:18.3.1"
     "@types/react-dom": "npm:18.3.0"
     apollo-upload-client: "npm:18.0.1"
@@ -19755,7 +19759,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.12.7"
+    "@types/node": "npm:20.12.8"
     "@typescript-eslint/eslint-plugin": "npm:7.8.0"
     "@typescript-eslint/parser": "npm:7.8.0"
     babel-jest: "npm:29.7.0"
@@ -19924,7 +19928,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.90.3"
     "@graphql-mesh/grpc": "npm:0.99.3"
     "@graphql-mesh/transform-naming-convention": "npm:0.98.3"
-    "@grpc/grpc-js": "npm:1.10.6"
+    "@grpc/grpc-js": "npm:1.10.7"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.2"
@@ -19954,7 +19958,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.90.3"
     "@graphql-mesh/grpc": "npm:0.99.3"
     "@graphql-mesh/transform-naming-convention": "npm:0.98.3"
-    "@grpc/grpc-js": "npm:1.10.6"
+    "@grpc/grpc-js": "npm:1.10.7"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.2"
@@ -23073,7 +23077,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.3"
     "@graphql-mesh/json-schema": "npm:0.100.4"
-    "@types/node": "npm:20.12.7"
+    "@types/node": "npm:20.12.8"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.0"
     graphql: "npm:16.8.1"
@@ -29157,7 +29161,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.98.3"
     "@graphql-mesh/runtime": "npm:0.99.3"
     "@graphql-mesh/transform-prefix": "npm:0.98.3"
-    "@types/node": "npm:20.12.7"
+    "@types/node": "npm:20.12.8"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
@@ -34955,7 +34959,7 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^6.5.3"
     "@theguild/tailwind-config": "npm:0.4.1"
-    "@types/node": "npm:20.12.7"
+    "@types/node": "npm:20.12.8"
     "@types/react": "npm:18.3.1"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.3"
