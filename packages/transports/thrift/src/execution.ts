@@ -85,6 +85,10 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
     const root: any = {};
     const errors: GraphQLError[] = [];
     for (const [fieldName, args] of rootFieldsWithArgs) {
+      if (fieldName === '__typename') {
+        root[fieldName] = rootType.name;
+        continue;
+      }
       const field = rootFieldMap[fieldName];
       if (!field) {
         throw new Error(`No root field found for field ${fieldName}`);

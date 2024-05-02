@@ -1,5 +1,158 @@
 # @graphql-mesh/http
 
+## 0.99.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/runtime@0.99.3
+  - @graphql-mesh/types@0.98.3
+  - @graphql-mesh/utils@0.98.3
+
+## 0.99.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/runtime@0.99.2
+  - @graphql-mesh/cross-helpers@0.4.2
+  - @graphql-mesh/types@0.98.2
+  - @graphql-mesh/utils@0.98.2
+
+## 0.99.1
+
+### Patch Changes
+
+- [#6903](https://github.com/ardatan/graphql-mesh/pull/6903)
+  [`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Previously GraphQL Yoga also had a health check
+  endpoint in `/health` path while Mesh's health check endpoint is `/healthcheck`. Now they are both
+  aligned. Also now you can customize the health check endpoint within Mesh Configuration using
+  `serve.healthCheckEndpoint` key. Default value is `/healthcheck.
+
+  ```yaml
+  serve:
+    healthCheckEndpoint: /health
+  ```
+
+  **Action Required:** If you are using GraphQL Yoga's endpoint `/health`, instead of
+  `/healthcheck`, you should update your health check endpoint to `/health` in the configuration
+  like above to keep the behavior.
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/types@0.98.1
+  - @graphql-mesh/runtime@0.99.1
+  - @graphql-mesh/utils@0.98.1
+
+## 0.99.0
+
+### Patch Changes
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/server@^0.9.34` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.34)
+    (from `^0.9.0`, in `dependencies`)
+  - Updated dependency
+    [`graphql-yoga@^5.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.3.0) (from `^5.1.1`,
+    in `dependencies`)
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`666b79c`](https://github.com/ardatan/graphql-mesh/commit/666b79c5bd03f86da29b479b5902741b5ad506e8),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/runtime@0.99.0
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+
+## 0.98.8
+
+### Patch Changes
+
+- [#6797](https://github.com/ardatan/graphql-mesh/pull/6797)
+  [`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (to `peerDependencies`)
+
+- [#6797](https://github.com/ardatan/graphql-mesh/pull/6797)
+  [`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update introspection on schema updates via
+  polling
+
+- Updated dependencies
+  [[`afe0cc5`](https://github.com/ardatan/graphql-mesh/commit/afe0cc5ddfc7a1291dc878c61793b58850ae848b)]:
+  - @graphql-mesh/runtime@0.98.8
+
+## 0.98.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c008dda`](https://github.com/ardatan/graphql-mesh/commit/c008ddae4bd617497a2a9bd70e8c90667c2b1ddc)]:
+  - @graphql-mesh/runtime@0.98.7
+
+## 0.98.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+  - @graphql-mesh/runtime@0.98.6
+  - @graphql-mesh/utils@0.97.5
+
+## 0.98.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`18e0d49`](https://github.com/ardatan/graphql-mesh/commit/18e0d495053f0b67fd1ba488270318e5d11309f8)]:
+  - @graphql-mesh/runtime@0.98.5
+
+## 0.98.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/types@0.97.4
+  - @graphql-mesh/runtime@0.98.4
+
+## 0.98.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/runtime@0.98.3
+  - @graphql-mesh/utils@0.97.3
+
+## 0.98.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/runtime@0.98.2
+  - @graphql-mesh/utils@0.97.2
+
 ## 0.98.1
 
 ### Patch Changes

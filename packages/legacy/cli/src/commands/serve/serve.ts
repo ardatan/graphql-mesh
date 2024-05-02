@@ -11,9 +11,9 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
+import { registerTerminateHandler } from '@graphql-mesh/utils';
 import { handleFatalError } from '../../handleFatalError.js';
 import { GraphQLMeshCLIParams } from '../../index.js';
-import { registerTerminateHandler } from '../../terminateHandler.js';
 
 function portSelectorFn(sources: [number, number, number], logger: Logger) {
   const port = sources.find(source => Boolean(source)) || 4000;
@@ -125,26 +125,20 @@ export async function serveMesh(
     }
     logger.info(`Starting GraphQL Mesh...`);
 
-    const mesh$: Promise<MeshInstance> = getBuiltMesh()
-      .then(async mesh => {
-        if (mesh.schema.getType('BigInt')) {
-          await import('json-bigint-patch');
-        }
-        logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
-        registerTerminateHandler(eventName => {
-          const eventLogger = logger.child(`${eventName}  💀`);
-          eventLogger.info(`Destroying GraphQL Mesh...`);
-          mesh.destroy();
-        });
-        return mesh;
-      })
-      .catch(e => handleFatalError(e, logger));
+    logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
+    registerTerminateHandler(eventName => {
+      const eventLogger = logger.child(`${eventName}  💀`);
+      eventLogger.info(`Destroying GraphQL Mesh...`);
+      getBuiltMesh()
+        .then(mesh => mesh.destroy())
+        .catch(e => eventLogger.error(e));
+    });
 
     let uWebSocketsApp: TemplatedApp;
 
     const meshHTTPHandler = createMeshHTTPHandler({
       baseDir,
-      getBuiltMesh: () => mesh$,
+      getBuiltMesh,
       rawServeConfig,
       playgroundTitle,
     });
@@ -175,7 +169,7 @@ export async function serveMesh(
       execute: args => (args as EnvelopedExecutionArgs).rootValue.execute(args),
       subscribe: args => (args as EnvelopedExecutionArgs).rootValue.subscribe(args),
       onSubscribe: async (ctx, msg) => {
-        const { getEnveloped } = await mesh$;
+        const { getEnveloped } = await getBuiltMesh();
         const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped(ctx);
 
         const args: EnvelopedExecutionArgs = {
@@ -216,12 +210,6 @@ export async function serveMesh(
         ).catch(() => {});
       }
     });
-
-    return mesh$.then(mesh => ({
-      mesh,
-      httpServer: uWebSocketsApp,
-      logger,
-    }));
   }
   return null;
 }

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/serve-runtime",
-  "version": "0.2.2",
+  "version": "0.3.4",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,19 +36,18 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.0",
-    "@graphql-mesh/cross-helpers": "^0.4.1",
-    "@graphql-mesh/fusion-federation": "^0.0.1",
-    "@graphql-mesh/fusion-runtime": "^0.2.2",
-    "@graphql-mesh/utils": "^0.97.1",
-    "@graphql-tools/delegate": "^10.0.3",
+    "@graphql-mesh/cross-helpers": "^0.4.2",
+    "@graphql-mesh/fusion-runtime": "^0.3.3",
+    "@graphql-mesh/transport-common": "^0.2.3",
+    "@graphql-mesh/utils": "^0.98.3",
+    "@graphql-tools/delegate": "^10.0.7",
     "@graphql-tools/executor-http": "^1.0.6",
     "@graphql-tools/executor-yoga": "^2.0.3",
-    "@graphql-tools/schema": "^10.0.2",
-    "@graphql-tools/utils": "^10.0.8",
-    "@graphql-tools/wrap": "^10.0.1",
-    "@whatwg-node/server": "^0.9.16",
-    "graphql-mobius": "^0.1.13",
-    "graphql-yoga": "^5.1.1"
+    "@graphql-tools/federation": "^1.1.28",
+    "@graphql-tools/stitch": "^9.2.4",
+    "@graphql-tools/utils": "^10.2.0",
+    "@whatwg-node/server": "^0.9.34",
+    "graphql-yoga": "^5.3.0"
   },
   "publishConfig": {
     "access": "public",

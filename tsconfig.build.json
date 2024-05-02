@@ -1,11 +1,16 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "importHelpers": true,
+    "declaration": true
+  },
   "exclude": [
     "**/node_modules",
     "**/dist",
     "**/test/*.ts",
     "**/tests/*.ts",
     "*.spec.ts",
-    "examples/**/*"
+    "examples/**/*",
+    "e2e/**/*"
   ]
 }

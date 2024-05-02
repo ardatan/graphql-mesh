@@ -1,5 +1,6 @@
 import { CORSOptions, createYoga, useLogger } from 'graphql-yoga';
 import { MeshInstance } from '@graphql-mesh/runtime';
+import { memoize1 } from '@graphql-tools/utils';
 
 export const graphqlHandler = ({
   getBuiltMesh,
@@ -8,6 +9,7 @@ export const graphqlHandler = ({
   graphqlEndpoint,
   corsConfig,
   batchingLimit,
+  healthCheckEndpoint = '/healthcheck',
 }: {
   getBuiltMesh: () => Promise<MeshInstance>;
   playgroundTitle: string;
@@ -15,40 +17,33 @@ export const graphqlHandler = ({
   graphqlEndpoint: string;
   corsConfig: CORSOptions;
   batchingLimit?: number;
+  healthCheckEndpoint?: string;
 }) => {
-  let yoga: ReturnType<typeof createYoga>;
-  let yoga$: Promise<ReturnType<typeof createYoga>>;
-  return (request: Request, ctx: any) => {
-    if (yoga) {
-      return yoga.handleRequest(request, ctx);
-    }
-    if (!yoga$) {
-      yoga$ = getBuiltMesh().then(mesh => {
-        yoga = createYoga({
-          plugins: [
-            ...mesh.plugins,
-            useLogger({
-              skipIntrospection: true,
-              logFn: (eventName, { args }) => {
-                if (eventName.endsWith('-start')) {
-                  mesh.logger.debug(`\t headers: `, args.contextValue.headers);
-                }
-              },
-            }),
-          ],
-          logging: mesh.logger,
-          maskedErrors: false,
-          graphiql: playgroundEnabled && {
-            title: playgroundTitle,
+  const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
+    return createYoga({
+      plugins: [
+        ...mesh.plugins,
+        useLogger({
+          skipIntrospection: true,
+          logFn: (eventName, { args }) => {
+            if (eventName.endsWith('-start')) {
+              mesh.logger.debug(`\t headers: `, args.contextValue.headers);
+            }
           },
-          cors: corsConfig,
-          graphqlEndpoint,
-          landingPage: false,
-          batching: batchingLimit ? { limit: batchingLimit } : false,
-        });
-        return yoga;
-      });
-    }
-    return yoga$.then(yoga => yoga.handleRequest(request, ctx));
-  };
+        }),
+      ],
+      logging: mesh.logger,
+      maskedErrors: false,
+      graphiql: playgroundEnabled && {
+        title: playgroundTitle,
+      },
+      cors: corsConfig,
+      graphqlEndpoint,
+      landingPage: false,
+      batching: batchingLimit ? { limit: batchingLimit } : false,
+      healthCheckEndpoint,
+    });
+  });
+  return (request: Request, ctx: any) =>
+    getBuiltMesh().then(mesh => getYogaForMesh(mesh).handleRequest(request, ctx));
 };

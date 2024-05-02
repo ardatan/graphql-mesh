@@ -51,9 +51,23 @@
       "rules": {
         "@typescript-eslint/no-unused-vars": "off"
       }
+    },
+    {
+      "files": ["e2e/**/*"],
+      "rules": {
+        "import/no-nodejs-modules": "off"
+      }
     }
   ],
-  "ignorePatterns": ["dist", "node_modules", "examples", "website", "scripts", ".bob"],
+  "ignorePatterns": [
+    "dist",
+    "node_modules",
+    "examples",
+    "website",
+    "scripts",
+    ".bob",
+    "config-schema.ts"
+  ],
   "globals": {
     "BigInt": true
   }

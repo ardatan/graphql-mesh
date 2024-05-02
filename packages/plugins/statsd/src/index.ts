@@ -1,4 +1,4 @@
-import StatsD, { Tags } from 'hot-shots';
+import { StatsD, Tags } from 'hot-shots';
 import { useStatsD } from '@envelop/statsd';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';

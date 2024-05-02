@@ -2,7 +2,7 @@
 import { createServer, Server } from 'http';
 import { AddressInfo } from 'net';
 import { execute, OperationTypeNode, parse } from 'graphql';
-import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas';
+import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
 describe('Timeout', () => {
   let server: Server;

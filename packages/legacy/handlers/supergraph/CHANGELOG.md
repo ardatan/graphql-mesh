@@ -1,5 +1,137 @@
 # @graphql-mesh/supergraph
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/types@0.98.3
+  - @graphql-mesh/utils@0.98.3
+  - @graphql-mesh/store@0.98.3
+
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/cross-helpers@0.4.2
+  - @graphql-mesh/store@0.98.2
+  - @graphql-mesh/types@0.98.2
+  - @graphql-mesh/utils@0.98.2
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3d88cb8`](https://github.com/ardatan/graphql-mesh/commit/3d88cb8ff1829081411fcb2051ad18d7f89536ba),
+  [`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/string-interpolation@0.5.4
+  - @graphql-mesh/types@0.98.1
+  - @graphql-mesh/utils@0.98.1
+  - @graphql-mesh/store@0.98.1
+
+## 0.4.0
+
+### Patch Changes
+
+- [`b372de6`](https://github.com/ardatan/graphql-mesh/commit/b372de6ac72e871ebdc731c0f3f67c16f04bb405)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump Federation packages
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+  - @graphql-mesh/store@0.98.0
+
+## 0.3.2
+
+### Patch Changes
+
+- [#6790](https://github.com/ardatan/graphql-mesh/pull/6790)
+  [`afe0cc5`](https://github.com/ardatan/graphql-mesh/commit/afe0cc5ddfc7a1291dc878c61793b58850ae848b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better error messages in case of Supergraph SDL
+  endpoint returns invalid result or it is down
+
+  If the endpoint is down;
+
+  ```
+  Failed to generate the schema for the source "supergraph"
+  Failed to load supergraph SDL from http://down-sdl-source.com/my-sdl.graphql:
+  Couldn't resolve host name
+  ```
+
+  If the endpoint returns invalid result;
+
+  ```
+  Failed to generate the schema for the source "supergraph"
+  Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ./fixtures/supergraph-invalid.graphql instead.
+  Got result: type Query {
+
+  Got error: Syntax Error: Expected Name, found <EOF>.
+  ```
+
+## 0.3.1
+
+### Patch Changes
+
+- [#6758](https://github.com/ardatan/graphql-mesh/pull/6758)
+  [`425afee`](https://github.com/ardatan/graphql-mesh/commit/425afee8e95d115469daa011ddc64b1f48c95daa)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix interpolation of headers and endpoint
+  configuration for each subgraph
+
+## 0.3.0
+
+### Minor Changes
+
+- [`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to configure subgraphs
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+  - @graphql-mesh/store@0.97.5
+  - @graphql-mesh/utils@0.97.5
+
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/types@0.97.4
+  - @graphql-mesh/store@0.97.4
+
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/store@0.97.3
+  - @graphql-mesh/utils@0.97.3
+
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/store@0.97.2
+  - @graphql-mesh/utils@0.97.2
+
 ## 0.2.1
 
 ### Patch Changes

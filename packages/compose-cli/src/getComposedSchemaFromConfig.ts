@@ -1,31 +1,28 @@
 import { DocumentNode, GraphQLSchema } from 'graphql';
 import { composeSubgraphs, SubgraphConfig } from '@graphql-mesh/fusion-composition';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-mesh/types';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { LoaderContext, MeshComposeCLIConfig } from './types';
+import { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
-export async function getComposedSchemaFromConfig(
-  meshComposeCLIConfig: MeshComposeCLIConfig,
-  spinnies?: Spinnies,
-) {
+export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, logger: Logger) {
   const ctx: LoaderContext = {
-    fetch: meshComposeCLIConfig.fetch || defaultFetch,
-    cwd: meshComposeCLIConfig.cwd || globalThis.process?.cwd?.(),
-    logger: new DefaultLogger(),
+    fetch: config.fetch || defaultFetch,
+    cwd: config.cwd || globalThis.process?.cwd?.(),
+    logger,
   };
   const subgraphConfigsForComposition: SubgraphConfig[] = await Promise.all(
-    meshComposeCLIConfig.subgraphs.map(async subgraphCLIConfig => {
+    config.subgraphs.map(async subgraphCLIConfig => {
       const { name: subgraphName, schema$ } = subgraphCLIConfig.sourceHandler(ctx);
-      spinnies?.add(subgraphName, { text: `Loading subgraph ${subgraphName}` });
+      const log = logger.child(`"${subgraphName}" subgraph`);
+      log.info(`Loading`);
       let subgraphSchema: GraphQLSchema;
       try {
         subgraphSchema = await schema$;
       } catch (e) {
         throw new Error(`Failed to load subgraph ${subgraphName} - ${e.stack}`);
       }
-      spinnies?.succeed(subgraphName, { text: `Loaded subgraph ${subgraphName}` });
       return {
         name: subgraphName,
         schema: subgraphSchema,
@@ -33,10 +30,9 @@ export async function getComposedSchemaFromConfig(
       };
     }),
   );
-  spinnies?.add('composition', { text: `Composing fusiongraph` });
   let additionalTypeDefs: (DocumentNode | string)[] | undefined;
-  if (meshComposeCLIConfig.additionalTypeDefs != null) {
-    const result = await loadTypedefs(meshComposeCLIConfig.additionalTypeDefs, {
+  if (config.additionalTypeDefs != null) {
+    const result = await loadTypedefs(config.additionalTypeDefs, {
       noLocation: true,
       assumeValid: true,
       assumeValidSDL: true,
@@ -47,13 +43,11 @@ export async function getComposedSchemaFromConfig(
   let composedSchema = composeSubgraphs(subgraphConfigsForComposition, {
     typeDefs: additionalTypeDefs,
   });
-  if (meshComposeCLIConfig.transforms?.length) {
-    spinnies?.add('transforms', { text: `Applying transforms` });
-    for (const transform of meshComposeCLIConfig.transforms) {
+  if (config.transforms?.length) {
+    logger.info('Applying transforms');
+    for (const transform of config.transforms) {
       composedSchema = transform(composedSchema);
     }
-    spinnies?.succeed('transforms', { text: `Applied transforms` });
   }
-  spinnies?.succeed('composition', { text: `Composed fusiongraph` });
   return composedSchema;
 }

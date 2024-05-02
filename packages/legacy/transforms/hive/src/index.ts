@@ -73,6 +73,8 @@ export default class HiveTransform implements MeshTransform {
       agent,
       usage,
       reporting,
+      autoDispose: ['SIGINT', 'SIGTERM'],
+      selfHosting: config.selfHosting,
     });
     const id = pubsub.subscribe('destroy', () => {
       this.hiveClient

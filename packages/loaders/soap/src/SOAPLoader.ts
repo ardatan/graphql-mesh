@@ -556,7 +556,6 @@ export class SOAPLoader {
   getAliasMapFromAttributes(attributes: XSSchema['attributes'] | WSDLDefinition['attributes']) {
     const aliasMap = new Map<string, string>();
     for (const attributeName in attributes) {
-      // @ts-expect-error - Weird TS error
       const attributeValue = attributes[attributeName];
       if (attributeName !== 'targetNamespace' && attributeValue.startsWith('http')) {
         aliasMap.set(attributeName, attributeValue);

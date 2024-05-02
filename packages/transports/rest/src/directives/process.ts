@@ -3,12 +3,15 @@ import {
   GraphQLSchema,
   isEnumType,
   isInterfaceType,
+  isIntrospectionType,
   isScalarType,
+  isSpecifiedScalarType,
   isUnionType,
 } from 'graphql';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
-import { getDirective, getDirectives } from '@graphql-tools/utils';
+import { getDefDirectives } from '@graphql-mesh/utils';
+import { getDirective } from '@graphql-tools/utils';
 import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
 import { processFlattenAnnotations } from './flatten.js';
@@ -58,6 +61,9 @@ export function processDirectives(
   const typeMap = schema.getTypeMap();
   for (const typeName in typeMap) {
     const type = typeMap[typeName];
+    if (isSpecifiedScalarType(type) || isIntrospectionType(type)) {
+      continue;
+    }
     const exampleAnnotations = getDirective(schema, type, 'example');
     if (exampleAnnotations?.length) {
       const examples = [];
@@ -73,7 +79,7 @@ export function processDirectives(
       processScalarType(type);
     }
     if (isInterfaceType(type)) {
-      const directiveAnnotations = getDirectives(schema, type);
+      const directiveAnnotations = getDefDirectives(schema, type);
       for (const directiveAnnotation of directiveAnnotations) {
         switch (directiveAnnotation.name) {
           case 'discriminator':
@@ -86,7 +92,7 @@ export function processDirectives(
       }
     }
     if (isUnionType(type)) {
-      const directiveAnnotations = getDirectives(schema, type);
+      const directiveAnnotations = getDefDirectives(schema, type);
       let statusCodeTypeNameIndexMap: Record<number, string>;
       let discriminatorField: string;
       let discriminatorMapping: Record<string, string>;
@@ -111,7 +117,7 @@ export function processDirectives(
       });
     }
     if (isEnumType(type)) {
-      const directiveAnnotations = getDirectives(schema, type);
+      const directiveAnnotations = getDefDirectives(schema, type);
       for (const directiveAnnotation of directiveAnnotations) {
         switch (directiveAnnotation.name) {
           case 'typescript':
@@ -121,7 +127,7 @@ export function processDirectives(
       }
       const enumValues = type.getValues();
       for (const enumValue of enumValues) {
-        const directiveAnnotations = getDirectives(schema, enumValue);
+        const directiveAnnotations = getDefDirectives(schema, enumValue);
         for (const directiveAnnotation of directiveAnnotations) {
           switch (directiveAnnotation.name) {
             case 'enum': {
@@ -138,7 +144,7 @@ export function processDirectives(
       const fields = type.getFields();
       for (const fieldName in fields) {
         const field = fields[fieldName];
-        const directiveAnnotations = getDirectives(schema, field);
+        const directiveAnnotations = getDefDirectives(schema, field);
         for (const directiveAnnotation of directiveAnnotations) {
           switch (directiveAnnotation.name) {
             case 'resolveRoot':

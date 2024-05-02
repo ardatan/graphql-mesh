@@ -1,5 +1,102 @@
 # @graphql-mesh/mysql
 
+## 0.98.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @omnigraph/mysql@0.2.3
+  - @graphql-mesh/types@0.98.3
+  - @graphql-mesh/utils@0.98.3
+  - @graphql-mesh/store@0.98.3
+
+## 0.98.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @omnigraph/mysql@0.2.2
+  - @graphql-mesh/store@0.98.2
+  - @graphql-mesh/types@0.98.2
+  - @graphql-mesh/utils@0.98.2
+
+## 0.98.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/types@0.98.1
+  - @graphql-mesh/utils@0.98.1
+  - @omnigraph/mysql@0.2.1
+  - @graphql-mesh/store@0.98.1
+
+## 0.98.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+  - @omnigraph/mysql@0.2.0
+  - @graphql-mesh/store@0.98.0
+
+## 0.97.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+  - @graphql-mesh/store@0.97.5
+  - @graphql-mesh/utils@0.97.5
+  - @omnigraph/mysql@0.1.5
+
+## 0.97.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/types@0.97.4
+  - @graphql-mesh/store@0.97.4
+  - @omnigraph/mysql@0.1.4
+
+## 0.97.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/store@0.97.3
+  - @graphql-mesh/utils@0.97.3
+  - @omnigraph/mysql@0.1.3
+
+## 0.97.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/store@0.97.2
+  - @graphql-mesh/utils@0.97.2
+  - @omnigraph/mysql@0.1.2
+
 ## 0.97.1
 
 ### Patch Changes

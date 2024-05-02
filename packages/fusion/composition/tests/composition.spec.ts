@@ -1,6 +1,10 @@
 import { buildSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { composeSubgraphs, createRenameFieldTransform, createRenameTypeTransform } from '../src';
+import {
+  composeSubgraphs,
+  createRenameFieldTransform,
+  createRenameTypeTransform,
+} from '../src/index.js';
 
 describe('Composition', () => {
   const aSchema = buildSchema(/* GraphQL */ `
@@ -44,39 +48,26 @@ describe('Composition', () => {
 
     expect(printSchemaWithDirectives(composedSchema)).toMatchSnapshot();
   });
-  it('composes with transforms on types', () => {
-    const prefixTransform = createRenameTypeTransform(
+  it('composes with transforms', () => {
+    const prefixTypeTransform = createRenameTypeTransform(
       (type, subgraphConfig) => `${subgraphConfig.name}_${type.name}`,
     );
-    const composedSchema = composeSubgraphs([
-      {
-        name: 'A',
-        schema: aSchema,
-        transforms: [prefixTransform],
-      },
-      {
-        name: 'B',
-        schema: bSchema,
-        transforms: [prefixTransform],
-      },
-    ]);
-
-    expect(printSchemaWithDirectives(composedSchema)).toMatchSnapshot();
-  });
-  it('composes with transforms on fields', () => {
-    const prefixTransform = createRenameFieldTransform(
-      (_field, fieldName, _typeName, subgraphConfig) => `${subgraphConfig.name}_${fieldName}`,
+    const prefixFieldTransform = createRenameFieldTransform(
+      (_field, fieldName, typeName, subgraphConfig) =>
+        typeName === `${subgraphConfig.name}_Query`
+          ? `${subgraphConfig.name}_${fieldName}`
+          : fieldName,
     );
     const composedSchema = composeSubgraphs([
       {
         name: 'A',
         schema: aSchema,
-        transforms: [prefixTransform],
+        transforms: [prefixTypeTransform, prefixFieldTransform],
       },
       {
         name: 'B',
         schema: bSchema,
-        transforms: [prefixTransform],
+        transforms: [prefixTypeTransform, prefixFieldTransform],
       },
     ]);
 

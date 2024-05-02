@@ -1,5 +1,70 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.98.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/types@0.98.3
+
+## 0.98.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/cross-helpers@0.4.2
+  - @graphql-mesh/types@0.98.2
+
+## 0.98.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/types@0.98.1
+
+## 0.98.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)]:
+  - @graphql-mesh/types@0.98.0
+
+## 0.97.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+
+## 0.97.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/types@0.97.4
+
+## 0.97.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+
+## 0.97.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+
 ## 0.97.1
 
 ### Patch Changes

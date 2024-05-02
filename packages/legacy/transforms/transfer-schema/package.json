@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-transfer-schema",
-  "version": "0.97.1",
+  "version": "0.98.3",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -27,16 +27,16 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.97.1",
-    "@graphql-mesh/utils": "^0.97.1",
-    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
+    "@graphql-mesh/types": "^0.98.3",
+    "@graphql-mesh/utils": "^0.98.3",
+    "@graphql-tools/utils": "^10.2.0",
     "graphql": "*"
   },
   "dependencies": {
     "micromatch": "4.0.5"
   },
   "devDependencies": {
-    "@types/micromatch": "4.0.6"
+    "@types/micromatch": "4.0.7"
   },
   "publishConfig": {
     "access": "public",

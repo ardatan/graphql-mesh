@@ -1,5 +1,134 @@
 # @graphql-mesh/transform-hive
 
+## 0.98.3
+
+### Patch Changes
+
+- [`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/types@0.98.3
+
+## 0.98.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/cross-helpers@0.4.2
+  - @graphql-mesh/types@0.98.2
+
+## 0.98.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3d88cb8`](https://github.com/ardatan/graphql-mesh/commit/3d88cb8ff1829081411fcb2051ad18d7f89536ba),
+  [`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/string-interpolation@0.5.4
+  - @graphql-mesh/types@0.98.1
+
+## 0.98.0
+
+### Patch Changes
+
+- [#6845](https://github.com/ardatan/graphql-mesh/pull/6845)
+  [`d793807`](https://github.com/ardatan/graphql-mesh/commit/d793807f43ece9bf797f1b9fc9252ab959753492)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/client@^0.31.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.31.0)
+    (from `^0.30.0`, in `dependencies`)
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.6)
+    (from `^10.0.0`, in `dependencies`)
+
+- [#6880](https://github.com/ardatan/graphql-mesh/pull/6880)
+  [`4e658c6`](https://github.com/ardatan/graphql-mesh/commit/4e658c6245527f79d08451a39eb6511efc97c772)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/client@^0.32.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.32.0)
+    (from `^0.31.0`, in `dependencies`)
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)]:
+  - @graphql-mesh/types@0.98.0
+
+## 0.97.8
+
+### Patch Changes
+
+- [#6743](https://github.com/ardatan/graphql-mesh/pull/6743)
+  [`5250baf`](https://github.com/ardatan/graphql-mesh/commit/5250baf5405b8d42b2cd54c1680e371b7d28d04e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support selfHosting options
+
+## 0.97.7
+
+### Patch Changes
+
+- [#6739](https://github.com/ardatan/graphql-mesh/pull/6739)
+  [`674c720`](https://github.com/ardatan/graphql-mesh/commit/674c720a87565ac8c313c27b17bf0846ee689193)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/client@^0.30.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.30.0)
+    (from `^0.29.0`, in `dependencies`)
+
+## 0.97.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+
+## 0.97.5
+
+### Patch Changes
+
+- [#6675](https://github.com/ardatan/graphql-mesh/pull/6675)
+  [`800a7fc`](https://github.com/ardatan/graphql-mesh/commit/800a7fc788435b57aa1cf3bb619cd8cb7366f394)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/client@^0.29.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.29.0)
+    (from `^0.28.0`, in `dependencies`)
+
+- [`e9d97e3`](https://github.com/ardatan/graphql-mesh/commit/e9d97e38f6b2765fd3c7acd6d4a1f1c2531c264e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Enable autoDispose for Hive client instances
+
+## 0.97.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/types@0.97.4
+
+## 0.97.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+
+## 0.97.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+
 ## 0.97.1
 
 ### Patch Changes

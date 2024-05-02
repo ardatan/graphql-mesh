@@ -2,13 +2,13 @@
 
 /* eslint-disable no-unreachable-loop */
 import { GraphQLSchema } from 'graphql';
-import { createYoga } from 'graphql-yoga';
+import { createYoga, YogaServerInstance } from 'graphql-yoga';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { exampleApi7, pubsub } from './example_api7_server.js';
 
 let createdSchema: GraphQLSchema;
 
-let yogaServer: ReturnType<typeof createYoga>;
+let yogaServer: YogaServerInstance<any, any>;
 
 describe('OpenAPI Loader: example_api7', () => {
   // Set up the schema first and run example API servers

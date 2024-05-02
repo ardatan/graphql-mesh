@@ -1,5 +1,254 @@
 # @graphql-mesh/serve-cli
 
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/serve-runtime@0.3.4
+  - @graphql-mesh/types@0.98.3
+  - @graphql-mesh/utils@0.98.3
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`da798ac`](https://github.com/ardatan/graphql-mesh/commit/da798acf85cf7da8cd45609725dde751b4ef24a3),
+  [`da798ac`](https://github.com/ardatan/graphql-mesh/commit/da798acf85cf7da8cd45609725dde751b4ef24a3)]:
+  - @graphql-mesh/serve-runtime@0.3.3
+
+## 0.4.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/cross-helpers@0.4.2
+  - @graphql-mesh/serve-runtime@0.3.2
+  - @graphql-mesh/types@0.98.2
+  - @graphql-mesh/utils@0.98.2
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/types@0.98.1
+  - @graphql-mesh/utils@0.98.1
+  - @graphql-mesh/serve-runtime@0.3.1
+
+## 0.4.0
+
+### Minor Changes
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - use tsx node loader instead of ts-node
+
+- [#6862](https://github.com/ardatan/graphql-mesh/pull/6862)
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Better CLI, supporting arguments and adding
+  help in the shell
+
+- [#6862](https://github.com/ardatan/graphql-mesh/pull/6862)
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Rename `runServeCLI` to just `run` and change
+  the supported options
+
+### Patch Changes
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (to
+    `dependencies`)
+  - Removed dependency [`ts-node@^10.9.2` ↗︎](https://www.npmjs.com/package/ts-node/v/10.9.2) (from
+    `dependencies`)
+
+- [#6862](https://github.com/ardatan/graphql-mesh/pull/6862)
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@commander-js/extra-typings@^12.0.1` ↗︎](https://www.npmjs.com/package/@commander-js/extra-typings/v/12.0.1)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.1.3)
+    (to `dependencies`)
+  - Added dependency [`commander@^12.0.0` ↗︎](https://www.npmjs.com/package/commander/v/12.0.0) (to
+    `dependencies`)
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Destroy pubsub on process kill signals
+
+- Updated dependencies
+  [[`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`b372de6`](https://github.com/ardatan/graphql-mesh/commit/b372de6ac72e871ebdc731c0f3f67c16f04bb405),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/serve-runtime@0.3.0
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+
+## 0.3.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`05aabae`](https://github.com/ardatan/graphql-mesh/commit/05aabae48ad17f80847eb153e5fd4a96b7643d5d)]:
+  - @graphql-mesh/serve-runtime@0.2.12
+
+## 0.3.15
+
+### Patch Changes
+
+- [#6776](https://github.com/ardatan/graphql-mesh/pull/6776)
+  [`910106c`](https://github.com/ardatan/graphql-mesh/commit/910106cb95e5f16ffddec0ada869ca8f4b0d2049)
+  Thanks [@ardatan](https://github.com/ardatan)! - Export useForwardHeaders and useStaticFiles from
+  serve-cli
+
+## 0.3.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9ac2245`](https://github.com/ardatan/graphql-mesh/commit/9ac2245273a561449cfc17dcafc67d0c43baf33e)]:
+  - @graphql-mesh/serve-runtime@0.2.11
+
+## 0.3.13
+
+### Patch Changes
+
+- [#6751](https://github.com/ardatan/graphql-mesh/pull/6751)
+  [`e100dcc`](https://github.com/ardatan/graphql-mesh/commit/e100dcc43efeebe81085389cee8bb6a6039268be)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better defaults for hostname
+
+## 0.3.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8924438`](https://github.com/ardatan/graphql-mesh/commit/8924438131a7320ef160573539bddfb024bbe343)]:
+  - @graphql-mesh/serve-runtime@0.2.10
+
+## 0.3.11
+
+### Patch Changes
+
+- [#6740](https://github.com/ardatan/graphql-mesh/pull/6740)
+  [`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Removed dependency
+    [`@graphql-tools/code-file-loader@^8.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/8.1.1)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/git-loader@^8.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/git-loader/v/8.0.3)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/github-loader@^8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/github-loader/v/8.0.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/graphql-file-loader@^8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/load@^8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.0)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/url-loader@^8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/8.0.0)
+    (from `dependencies`)
+
+- [#6740](https://github.com/ardatan/graphql-mesh/pull/6740)
+  [`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix schema loading
+
+## 0.3.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+  - @graphql-mesh/utils@0.97.5
+  - @graphql-mesh/serve-runtime@0.2.9
+
+## 0.3.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f293329`](https://github.com/ardatan/graphql-mesh/commit/f2933295532d0760bb731e055dd2bd6e9cb2a63b)]:
+  - @graphql-mesh/serve-runtime@0.2.8
+
+## 0.3.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1639001`](https://github.com/ardatan/graphql-mesh/commit/16390018bd54946fbfbd2bfb8eb3ba7682966a12)]:
+  - @graphql-mesh/serve-runtime@0.2.7
+
+## 0.3.7
+
+### Patch Changes
+
+- [`e6e19d6`](https://github.com/ardatan/graphql-mesh/commit/e6e19d6e73161e3719405138d8d0f853d5c805d9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support code files as fusiongraph input
+
+## 0.3.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.2.6
+
+## 0.3.5
+
+### Patch Changes
+
+- [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Terminate handler registry
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/types@0.97.4
+  - @graphql-mesh/serve-runtime@0.2.5
+
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/utils@0.97.3
+  - @graphql-mesh/serve-runtime@0.2.4
+
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/utils@0.97.2
+  - @graphql-mesh/serve-runtime@0.2.3
+
 ## 0.3.2
 
 ### Patch Changes

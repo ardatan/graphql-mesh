@@ -1,7 +1,7 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response, URL } from '@whatwg-node/fetch';
-import { loadGraphQLSchemaFromRAML } from '../src/loadGraphQLSchemaFromRAML';
+import { loadGraphQLSchemaFromRAML } from '../src/loadGraphQLSchemaFromRAML.js';
 
 describe('Query Parameters', () => {
   let schema: GraphQLSchema;

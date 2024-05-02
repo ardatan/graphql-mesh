@@ -454,7 +454,7 @@ export default class ODataHandler implements MeshHandler {
       }
     }
 
-    function handleBatchJsonResults(batchResponseJson: any, requests: Request[]) {
+    function handleBatchJsonResults(batchResponseJson: any, requests: readonly Request[]) {
       if ('error' in batchResponseJson) {
         const error = new Error(batchResponseJson.error.message);
         Object.assign(error, {
@@ -486,7 +486,7 @@ export default class ODataHandler implements MeshHandler {
 
     const DATALOADER_FACTORIES = {
       multipart: (context: any) =>
-        new DataLoader(async (requests: Request[]): Promise<Response[]> => {
+        new DataLoader<Request, Response>(async requests => {
           let requestBody = '';
           const requestBoundary = 'batch_' + Date.now();
           for (const requestIndex in requests) {
@@ -541,7 +541,7 @@ export default class ODataHandler implements MeshHandler {
           });
         }),
       json: (context: any) =>
-        new DataLoader(async (requests: Request[]): Promise<Response[]> => {
+        new DataLoader<Request, Response>(async requests => {
           const batchHeaders = headersFactory(
             {
               context,
@@ -579,17 +579,16 @@ export default class ODataHandler implements MeshHandler {
         }),
       none: () =>
         // We should refactor here
-        new DataLoader(
-          (requests: Request[]): Promise<Response[]> =>
-            Promise.all(
-              requests.map(async request =>
-                this.fetchFn(request.url, {
-                  method: request.method,
-                  body: request.body && (await request.text()),
-                  headers: getHeadersObj(request.headers),
-                }),
-              ),
+        new DataLoader<Request, Response>(requests =>
+          Promise.all(
+            requests.map(async request =>
+              this.fetchFn(request.url, {
+                method: request.method,
+                body: request.body && (await request.text()),
+                headers: getHeadersObj(request.headers),
+              }),
             ),
+          ),
         ),
     };
 
@@ -712,7 +711,7 @@ export default class ODataHandler implements MeshHandler {
               extensions: { propertyObj },
             },
           });
-          const field: ObjectTypeComposerFieldConfigDefinition<any, unknown> = {
+          const field: ObjectTypeComposerFieldConfigDefinition<unknown, DataLoaderMap> = {
             type: getTypeNameFromRef({
               typeRef: propertyTypeRef,
               isInput: false,
@@ -749,7 +748,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context: DataLoaderMap, info) => {
+              resolve: async (root, args, context, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -783,12 +782,15 @@ export default class ODataHandler implements MeshHandler {
                     method,
                   ),
                 });
-                const response = await context[contextDataloaderName].load(request);
+                // TODO: context argument should inherit the generic TContext
+                const response = await (context as DataLoaderMap)[contextDataloaderName].load(
+                  request,
+                );
                 const responseText = await response.text();
                 return handleResponseText(responseText, urlString, info);
               },
             };
-            const pluralField: ObjectTypeComposerFieldConfigDefinition<any, unknown> = {
+            const pluralField: ObjectTypeComposerFieldConfigDefinition<any, DataLoaderMap> = {
               type: getTypeNameFromRef({
                 typeRef: navigationPropertyTypeRef,
                 isInput: false,
@@ -799,7 +801,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context: DataLoaderMap, info) => {
+              resolve: async (root, args, context, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -839,7 +841,7 @@ export default class ODataHandler implements MeshHandler {
               [`${navigationPropertyName}ById`]: singularField,
             });
           } else {
-            const field: ObjectTypeComposerFieldConfigDefinition<any, unknown> = {
+            const field: ObjectTypeComposerFieldConfigDefinition<any, DataLoaderMap> = {
               type: getTypeNameFromRef({
                 typeRef: navigationPropertyTypeRef,
                 isInput: false,
@@ -849,7 +851,7 @@ export default class ODataHandler implements MeshHandler {
                 ...commonArgs,
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context: DataLoaderMap, info) => {
+              resolve: async (root, args, context, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }

@@ -1,5 +1,178 @@
 # openwhisk-example
 
+## 0.10.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/serve-runtime@0.3.4
+  - @graphql-mesh/serve-cli@0.4.4
+
+## 0.10.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`da798ac`](https://github.com/ardatan/graphql-mesh/commit/da798acf85cf7da8cd45609725dde751b4ef24a3),
+  [`da798ac`](https://github.com/ardatan/graphql-mesh/commit/da798acf85cf7da8cd45609725dde751b4ef24a3)]:
+  - @graphql-mesh/serve-runtime@0.3.3
+  - @graphql-mesh/serve-cli@0.4.3
+
+## 0.10.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/serve-runtime@0.3.2
+  - @graphql-mesh/serve-cli@0.4.2
+
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.4.1
+  - @graphql-mesh/serve-runtime@0.3.1
+
+## 0.10.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c),
+  [`b372de6`](https://github.com/ardatan/graphql-mesh/commit/b372de6ac72e871ebdc731c0f3f67c16f04bb405),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)]:
+  - @graphql-mesh/serve-cli@0.4.0
+  - @graphql-mesh/serve-runtime@0.3.0
+
+## 0.9.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`05aabae`](https://github.com/ardatan/graphql-mesh/commit/05aabae48ad17f80847eb153e5fd4a96b7643d5d)]:
+  - @graphql-mesh/serve-runtime@0.2.12
+  - @graphql-mesh/serve-cli@0.3.16
+
+## 0.9.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`910106c`](https://github.com/ardatan/graphql-mesh/commit/910106cb95e5f16ffddec0ada869ca8f4b0d2049)]:
+  - @graphql-mesh/serve-cli@0.3.15
+
+## 0.9.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9ac2245`](https://github.com/ardatan/graphql-mesh/commit/9ac2245273a561449cfc17dcafc67d0c43baf33e)]:
+  - @graphql-mesh/serve-runtime@0.2.11
+  - @graphql-mesh/serve-cli@0.3.14
+
+## 0.9.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e100dcc`](https://github.com/ardatan/graphql-mesh/commit/e100dcc43efeebe81085389cee8bb6a6039268be)]:
+  - @graphql-mesh/serve-cli@0.3.13
+
+## 0.9.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8924438`](https://github.com/ardatan/graphql-mesh/commit/8924438131a7320ef160573539bddfb024bbe343)]:
+  - @graphql-mesh/serve-runtime@0.2.10
+  - @graphql-mesh/serve-cli@0.3.12
+
+## 0.9.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd),
+  [`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd)]:
+  - @graphql-mesh/serve-cli@0.3.11
+
+## 0.9.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.10
+  - @graphql-mesh/serve-runtime@0.2.9
+
+## 0.9.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f293329`](https://github.com/ardatan/graphql-mesh/commit/f2933295532d0760bb731e055dd2bd6e9cb2a63b)]:
+  - @graphql-mesh/serve-runtime@0.2.8
+  - @graphql-mesh/serve-cli@0.3.9
+
+## 0.9.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1639001`](https://github.com/ardatan/graphql-mesh/commit/16390018bd54946fbfbd2bfb8eb3ba7682966a12)]:
+  - @graphql-mesh/serve-runtime@0.2.7
+  - @graphql-mesh/serve-cli@0.3.8
+
+## 0.9.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e6e19d6`](https://github.com/ardatan/graphql-mesh/commit/e6e19d6e73161e3719405138d8d0f853d5c805d9)]:
+  - @graphql-mesh/serve-cli@0.3.7
+
+## 0.9.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.2.6
+  - @graphql-mesh/serve-cli@0.3.6
+
+## 0.9.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/serve-cli@0.3.5
+  - @graphql-mesh/serve-runtime@0.2.5
+
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.4
+  - @graphql-mesh/serve-runtime@0.2.4
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.3
+  - @graphql-mesh/serve-runtime@0.2.3
+
 ## 0.9.2
 
 ### Patch Changes

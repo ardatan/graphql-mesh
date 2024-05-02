@@ -30,9 +30,10 @@ export function createRenameTypeTransform(
   kind: MapperTypeKind = MapperKind.TYPE,
 ): SubgraphTransform {
   return function renameTypeTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
+    const rootTypes: Set<GraphQLNamedType> = getRootTypes(schema);
     return mapSchema(schema, {
       [kind]: (type: GraphQLNamedType) =>
-        isSpecifiedScalarType(type)
+        isSpecifiedScalarType(type) || rootTypes.has(type)
           ? type
           : new (Object.getPrototypeOf(type).constructor)({
               ...type.toConfig(),

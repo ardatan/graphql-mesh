@@ -31,6 +31,7 @@ describe('getMesh', () => {
       pubsub,
       logger,
     });
+    process.env.NODE_ENV = 'test';
   });
 
   interface CreateSchemaConfiguration {
@@ -212,5 +213,114 @@ describe('getMesh', () => {
         "stringify": [Function],
       }
     `);
+  });
+
+  it('logs the unexpected errors with stack traces in production', async () => {
+    process.env.NODE_ENV = 'production';
+    const errorLogSpy = jest.spyOn(logger, 'error');
+    const mesh = await getMesh({
+      cache,
+      pubsub,
+      logger,
+      merger,
+      sources: [
+        createGraphQLSource({
+          suffix: 'Foo',
+          suffixRootTypeNames: false,
+          suffixFieldNames: true,
+          suffixResponses: true,
+        }),
+      ],
+      additionalTypeDefs: [
+        parse(/* GraphQL */ `
+          extend type Query {
+            throwMe: String
+          }
+        `),
+      ],
+      additionalResolvers: {
+        Query: {
+          throwMe: () => {
+            throw new Error('This is an error');
+          },
+        },
+      },
+    });
+
+    const result = await mesh.execute(
+      /* GraphQL */ `
+        query {
+          throwMe
+        }
+      `,
+      {},
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "data": {
+          "throwMe": null,
+        },
+        "errors": [
+          [GraphQLError: This is an error],
+        ],
+        "stringify": [Function],
+      }
+    `);
+
+    const firstErrorWithStack = errorLogSpy.mock.calls[0][0].stack;
+    expect(firstErrorWithStack).toContain('This is an error');
+    expect(firstErrorWithStack).toContain('at Object.throwMe (');
+  });
+
+  it('prints errors with stack traces of the original errors in development', async () => {
+    process.env.NODE_ENV = 'development';
+    const mesh = await getMesh({
+      cache,
+      pubsub,
+      logger,
+      merger,
+      sources: [
+        createGraphQLSource({
+          suffix: 'Foo',
+          suffixRootTypeNames: false,
+          suffixFieldNames: true,
+          suffixResponses: true,
+        }),
+      ],
+      additionalTypeDefs: [
+        parse(/* GraphQL */ `
+          extend type Query {
+            throwMe: String
+          }
+        `),
+      ],
+      additionalResolvers: {
+        Query: {
+          throwMe: () => {
+            throw new Error('This is an error');
+          },
+        },
+      },
+    });
+
+    const result = await mesh.execute(
+      /* GraphQL */ `
+        query {
+          throwMe
+        }
+      `,
+      {},
+    );
+
+    const error = result.errors[0];
+    expect(error.message).toContain('This is an error');
+    const serializedOriginalError = error.extensions?.originalError as {
+      name: string;
+      message: string;
+      stack: string[];
+    };
+    expect(serializedOriginalError?.message).toContain('This is an error');
+    expect(serializedOriginalError?.stack).toContain('at Object.throwMe (');
   });
 });

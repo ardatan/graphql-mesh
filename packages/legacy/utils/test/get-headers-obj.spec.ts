@@ -1,6 +1,6 @@
 import { HeaderMap } from '@apollo/server';
 import { Headers } from '@whatwg-node/fetch';
-import { getHeadersObj } from '../src/getHeadersObj';
+import { getHeadersObj } from '../src/getHeadersObj.js';
 
 describe('getHeadersObj', () => {
   const headersTypes: Record<string, () => HeaderMap | Headers | Map<string, string>> = {

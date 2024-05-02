@@ -5,8 +5,8 @@ import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { TestAgent } from '@newrelic/test-utilities';
-import { getTestMesh } from '../../../legacy/testing/getTestMesh';
-import useMeshNewRelic from '../src';
+import { getTestMesh } from '../../../legacy/testing/getTestMesh.js';
+import useMeshNewRelic from '../src/index.js';
 
 describe('New Relic', () => {
   let mesh: MeshInstance;

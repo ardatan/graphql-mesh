@@ -6,7 +6,7 @@ type Listener<THookName extends HookName = HookName> = (data: AllHooks[THookName
 export class PubSub implements MeshPubSub {
   private subIdListenerMap = new Map<number, Listener>();
   private listenerEventMap = new Map<Listener, HookName>();
-  private eventNameListenersMap = new Map<HookName, Set<Listener>>();
+  private eventNameListenersMap = new Map<HookName, Set<Listener<HookName>>>();
 
   getEventNames(): Iterable<string> {
     return this.eventNameListenersMap.keys();
@@ -21,7 +21,7 @@ export class PubSub implements MeshPubSub {
     }
   }
 
-  subscribe<THook extends HookName>(triggerName: THook, onMessage: Listener<THook>): number {
+  subscribe<THook extends HookName>(triggerName: THook, onMessage: Listener<string>): number {
     let eventNameListeners = this.eventNameListenersMap.get(triggerName);
     if (!eventNameListeners) {
       eventNameListeners = new Set();

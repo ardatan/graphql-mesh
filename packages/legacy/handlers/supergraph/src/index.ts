@@ -1,8 +1,10 @@
-import { DocumentNode, parse } from 'graphql';
+import { DocumentNode, EnumTypeDefinitionNode, parse } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
+  getInterpolatedStringFactory,
+  ResolverData,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
 import {
@@ -59,47 +61,95 @@ export default class SupergraphHandler implements MeshHandler {
         importFn: this.importFn,
         fetch: this.fetchFn,
         logger: this.logger,
+      }).catch(e => {
+        throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
       });
-      if (typeof res === 'string') {
-        return parse(res, { noLocation: true });
-      }
-      return res;
+      return handleSupergraphResponse(res, interpolatedSource);
     }
     return this.supergraphSdl.getWithSet(async () => {
       const sdlOrIntrospection = await readFile<string | DocumentNode>(interpolatedSource, {
+        headers: schemaHeadersFactory({
+          env: process.env,
+        }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
         fetch: this.fetchFn,
         logger: this.logger,
+      }).catch(e => {
+        throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
       });
-      if (typeof sdlOrIntrospection === 'string') {
-        return parse(sdlOrIntrospection, { noLocation: true });
-      }
-      return sdlOrIntrospection;
+      return handleSupergraphResponse(sdlOrIntrospection, interpolatedSource);
     });
   }
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    const subgraphConfigs = this.config.subgraphs || [];
     this.fetchFn = fetchFn;
     const supergraphSdl = await this.getSupergraphSdl();
     const operationHeadersFactory =
       this.config.operationHeaders != null
         ? getInterpolatedHeadersFactory(this.config.operationHeaders)
         : undefined;
+    const joingraphEnum = supergraphSdl.definitions.find(
+      def => def.kind === 'EnumTypeDefinition' && def.name.value === 'join__Graph',
+    ) as EnumTypeDefinitionNode;
+    const subgraphNameIdMap = new Map<string, string>();
+    if (joingraphEnum) {
+      joingraphEnum.values?.forEach(value => {
+        value.directives?.forEach(directive => {
+          if (directive.name.value === 'join__graph') {
+            const nameArg = directive.arguments?.find(arg => arg.name.value === 'name');
+            if (nameArg?.value?.kind === 'StringValue') {
+              subgraphNameIdMap.set(value.name.value, nameArg.value.value);
+            }
+          }
+        });
+      });
+    }
     const schema = getStitchedSchemaFromSupergraphSdl({
       supergraphSdl,
-      onExecutor: ({ endpoint }) => {
+      onExecutor: ({ subgraphName, endpoint: nonInterpolatedEndpoint }) => {
+        const subgraphRealName = subgraphNameIdMap.get(subgraphName);
+        const subgraphConfiguration: YamlConfig.SubgraphConfiguration = subgraphConfigs.find(
+          subgraphConfig => subgraphConfig.name === subgraphRealName,
+        ) || {
+          name: subgraphName,
+        };
+        nonInterpolatedEndpoint = subgraphConfiguration.endpoint || nonInterpolatedEndpoint;
+        const endpointFactory = getInterpolatedStringFactory(nonInterpolatedEndpoint);
         return buildHTTPExecutor({
-          endpoint,
-          fetch: fetchFn,
-          headers:
-            operationHeadersFactory &&
-            (execReq =>
-              operationHeadersFactory({
-                env: process.env,
-                context: execReq.context,
-              })),
+          ...(subgraphConfiguration as any),
+          endpoint: nonInterpolatedEndpoint,
+          fetch(url: string, init: any, context: any, info: any) {
+            const endpoint = endpointFactory({
+              env: process.env,
+              context,
+              info,
+            });
+            url = url.replace(nonInterpolatedEndpoint, endpoint);
+            return fetchFn(url, init, context, info);
+          },
+          headers(executorRequest) {
+            const headers = {};
+            const resolverData: ResolverData = {
+              root: executorRequest.rootValue,
+              env: process.env,
+              context: executorRequest.context,
+              info: executorRequest.info,
+              args: executorRequest.variables,
+            };
+            if (subgraphConfiguration?.operationHeaders) {
+              const headersFactory = getInterpolatedHeadersFactory(
+                subgraphConfiguration.operationHeaders,
+              );
+              Object.assign(headers, headersFactory(resolverData));
+            }
+            if (operationHeadersFactory) {
+              Object.assign(headers, operationHeadersFactory(resolverData));
+            }
+            return headers;
+          },
         } as HTTPExecutorOptions);
       },
       batch: this.config.batch == null ? true : this.config.batch,
@@ -108,4 +158,25 @@ export default class SupergraphHandler implements MeshHandler {
       schema,
     };
   }
+}
+
+function handleSupergraphResponse(
+  sdlOrDocumentNode: string | DocumentNode,
+  interpolatedSource: string,
+) {
+  if (typeof sdlOrDocumentNode === 'string') {
+    try {
+      return parse(sdlOrDocumentNode, { noLocation: true });
+    } catch (e) {
+      throw new Error(
+        `Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ${interpolatedSource} instead.\n Got result: ${sdlOrDocumentNode}\n Got error: ${e.message}`,
+      );
+    }
+  }
+  if (sdlOrDocumentNode?.kind !== 'Document') {
+    throw new Error(
+      `Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ${interpolatedSource} instead.\n Got result: ${JSON.stringify(sdlOrDocumentNode, null, 2)}`,
+    );
+  }
+  return sdlOrDocumentNode;
 }

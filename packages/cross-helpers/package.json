@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cross-helpers",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   "types": "index.d.ts",
   "typings": "./index.d.ts",
   "peerDependencies": {
-    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
+    "@graphql-tools/utils": "^10.2.0",
     "graphql": "*"
   },
   "dependencies": {

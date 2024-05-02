@@ -1,5 +1,123 @@
 # openapi-youtrack
 
+## 0.15.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.100.5
+  - @graphql-mesh/cli@0.90.3
+  - @graphql-mesh/transform-resolvers-composition@0.98.3
+
+## 0.15.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.100.4
+
+## 0.15.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.100.3
+
+## 0.15.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/cli@0.90.2
+  - @graphql-mesh/openapi@0.100.2
+  - @graphql-mesh/transform-resolvers-composition@0.98.2
+
+## 0.15.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/cli@0.90.1
+  - @graphql-mesh/openapi@0.100.1
+  - @graphql-mesh/transform-resolvers-composition@0.98.1
+
+## 0.15.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.90.0
+  - @graphql-mesh/openapi@0.100.0
+  - @graphql-mesh/transform-resolvers-composition@0.98.0
+
+## 0.14.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34)]:
+  - @graphql-mesh/cli@0.89.9
+
+## 0.14.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.8
+
+## 0.14.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.7
+  - @graphql-mesh/openapi@0.99.6
+  - @graphql-mesh/transform-resolvers-composition@0.97.5
+
+## 0.14.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.6
+
+## 0.14.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.5
+
+## 0.14.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/openapi@0.99.5
+  - @graphql-mesh/transform-resolvers-composition@0.97.4
+
+## 0.14.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/openapi@0.99.4
+  - @graphql-mesh/transform-resolvers-composition@0.97.3
+
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.2
+  - @graphql-mesh/openapi@0.99.3
+  - @graphql-mesh/transform-resolvers-composition@0.97.2
+
 ## 0.14.2
 
 ### Patch Changes

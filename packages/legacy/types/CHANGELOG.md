@@ -1,5 +1,105 @@
 # @graphql-mesh/types
 
+## 0.98.3
+
+### Patch Changes
+
+- [`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.98.3
+
+## 0.98.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/store@0.98.2
+
+## 0.98.1
+
+### Patch Changes
+
+- [#6903](https://github.com/ardatan/graphql-mesh/pull/6903)
+  [`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Previously GraphQL Yoga also had a health check
+  endpoint in `/health` path while Mesh's health check endpoint is `/healthcheck`. Now they are both
+  aligned. Also now you can customize the health check endpoint within Mesh Configuration using
+  `serve.healthCheckEndpoint` key. Default value is `/healthcheck.
+
+  ```yaml
+  serve:
+    healthCheckEndpoint: /health
+  ```
+
+  **Action Required:** If you are using GraphQL Yoga's endpoint `/health`, instead of
+  `/healthcheck`, you should update your health check endpoint to `/health` in the configuration
+  like above to keep the behavior.
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.98.1
+
+## 0.98.0
+
+### Patch Changes
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@^9.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/9.0.2)
+    (from `^9.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.6)
+    (from `^10.0.0`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/store@0.98.0
+
+## 0.97.5
+
+### Patch Changes
+
+- [`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to configure subgraphs
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.97.5
+
+## 0.97.4
+
+### Patch Changes
+
+- [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update types in Hive plugin
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.97.4
+
+## 0.97.3
+
+### Patch Changes
+
+- [`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fixes on Prometheus plugin
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.97.3
+
+## 0.97.2
+
+### Patch Changes
+
+- [`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Track Fusion subgraphs
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.97.2
+
 ## 0.97.1
 
 ### Patch Changes

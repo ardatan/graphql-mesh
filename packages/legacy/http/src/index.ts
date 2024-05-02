@@ -28,6 +28,7 @@ export function createMeshHTTPHandler<TServerContext>({
     playground: playgroundEnabled = process.env.NODE_ENV !== 'production',
     endpoint: graphqlPath = '/graphql',
     batchingLimit,
+    healthCheckEndpoint = '/healthcheck',
     // TODO
     // trustProxy = 'loopback',
   } = rawServeConfig;
@@ -55,7 +56,7 @@ export function createMeshHTTPHandler<TServerContext>({
         {
           onRequest({ request, url, endResponse }): void | Promise<void> {
             switch (url.pathname) {
-              case '/healthcheck':
+              case healthCheckEndpoint:
                 endResponse(
                   new Response(null, {
                     status: 200,

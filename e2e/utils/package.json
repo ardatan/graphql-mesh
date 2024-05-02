@@ -1,0 +1,10 @@
+{
+  "name": "@e2e/utils",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@types/dockerode": "^3.3.28",
+    "dockerode": "^4.0.2",
+    "tsx": "^4.7.1"
+  }
+}

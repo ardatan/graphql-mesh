@@ -1,0 +1,146 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose the appropriate schema 1`] = `
+"schema @transport(kind: "http", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}) @transport(kind: "http", subgraph: "books", location: "http://localhost:<books_port>/graphql", options: {}) {
+  query: Query
+}
+
+directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
+
+type Query {
+  author(id: ID!): Author @source(subgraph: "authors", name: "author", type: "Author") @source(subgraph: "books", name: "authorWithBooks", type: "AuthorWithBooks") @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id")
+  authors(ids: [ID]): [Author] @source(subgraph: "authors", name: "authors", type: "[Author]") @merge(subgraph: "authors", keyField: "id", keyArg: "ids")
+  book(id: ID!): Book @source(subgraph: "books", name: "book", type: "Book") @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id")
+  books(ids: [ID]): [Book!]! @source(subgraph: "books", name: "books", type: "[Book!]!") @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids")
+}
+
+type Author @source(subgraph: "authors", name: "Author") @source(subgraph: "books", name: "AuthorWithBooks") {
+  id: ID! @source(subgraph: "authors", name: "id", type: "ID!") @source(subgraph: "books", name: "id", type: "ID!")
+  name: String! @source(subgraph: "authors", name: "name", type: "String!")
+  books: [Book!]! @source(subgraph: "books", name: "books", type: "[Book!]!")
+}
+
+type Book @source(subgraph: "books", name: "Book") {
+  id: ID! @source(subgraph: "books", name: "id", type: "ID!")
+  title: String! @source(subgraph: "books", name: "title", type: "String!")
+  authorId: ID! @source(subgraph: "books", name: "authorId", type: "ID!")
+  author: Author @resolveTo(sourceName: "authors", sourceTypeName: "Query", sourceFieldName: "authors", keyField: "authorId", keysArg: "ids")
+}
+"
+`;
+
+exports[`should execute Author 1`] = `
+{
+  "data": {
+    "author": {
+      "books": [
+        {
+          "author": {
+            "id": "1",
+            "name": "Jane Doe",
+          },
+          "id": "0",
+          "title": "Lorem Ipsum",
+        },
+      ],
+      "id": "1",
+      "name": "Jane Doe",
+    },
+  },
+}
+`;
+
+exports[`should execute Authors 1`] = `
+{
+  "data": {
+    "authors": [
+      {
+        "books": [
+          {
+            "author": {
+              "id": "0",
+              "name": "John Doe",
+            },
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      {
+        "books": [
+          {
+            "author": {
+              "id": "1",
+              "name": "Jane Doe",
+            },
+            "id": "0",
+            "title": "Lorem Ipsum",
+          },
+        ],
+        "id": "1",
+        "name": "Jane Doe",
+      },
+    ],
+  },
+}
+`;
+
+exports[`should execute Book 1`] = `
+{
+  "data": {
+    "book": {
+      "author": {
+        "books": [
+          {
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      "id": "1",
+      "title": "Dolor Sit Amet",
+    },
+  },
+}
+`;
+
+exports[`should execute Books 1`] = `
+{
+  "data": {
+    "books": [
+      {
+        "author": {
+          "books": [
+            {
+              "id": "0",
+              "title": "Lorem Ipsum",
+            },
+          ],
+          "id": "1",
+          "name": "Jane Doe",
+        },
+        "id": "0",
+        "title": "Lorem Ipsum",
+      },
+      {
+        "author": {
+          "books": [
+            {
+              "id": "1",
+              "title": "Dolor Sit Amet",
+            },
+          ],
+          "id": "0",
+          "name": "John Doe",
+        },
+        "id": "1",
+        "title": "Dolor Sit Amet",
+      },
+    ],
+  },
+}
+`;

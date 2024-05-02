@@ -1,5 +1,182 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.3.3
+
+### Patch Changes
+
+- [`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/transport-common@0.2.3
+  - @graphql-mesh/runtime@0.99.3
+  - @graphql-mesh/types@0.98.3
+  - @graphql-mesh/utils@0.98.3
+
+## 0.3.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/transport-common@0.2.2
+  - @graphql-mesh/runtime@0.99.2
+  - @graphql-mesh/types@0.98.2
+  - @graphql-mesh/utils@0.98.2
+
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/types@0.98.1
+  - @graphql-mesh/runtime@0.99.1
+  - @graphql-mesh/utils@0.98.1
+  - @graphql-mesh/transport-common@0.2.1
+
+## 0.3.0
+
+### Patch Changes
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@^10.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.1.3)
+    (from `^10.1.0`, in `dependencies`)
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/stitch@^9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.2.0)
+    (from `^9.2.3`, in `dependencies`)
+  - Updated dependency
+    [`graphql-yoga@^5.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.3.0) (from `^5.1.1`,
+    in `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/types@^0.97.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.97.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/delegate@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.6)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/stitching-directives@^3.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.0.2)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/wrap@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.5)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/fusion-execution@^0.0.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-execution/v/0.0.2)
+    (from `dependencies`)
+
+- [`7881346`](https://github.com/ardatan/graphql-mesh/commit/78813467cf0e2c988a55cdf1225ff60c4690ede8)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump @graphql-tools/stitch package
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`666b79c`](https://github.com/ardatan/graphql-mesh/commit/666b79c5bd03f86da29b479b5902741b5ad506e8),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/runtime@0.99.0
+  - @graphql-mesh/transport-common@0.2.0
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+
+## 0.2.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`afe0cc5`](https://github.com/ardatan/graphql-mesh/commit/afe0cc5ddfc7a1291dc878c61793b58850ae848b)]:
+  - @graphql-mesh/runtime@0.98.8
+
+## 0.2.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c008dda`](https://github.com/ardatan/graphql-mesh/commit/c008ddae4bd617497a2a9bd70e8c90667c2b1ddc)]:
+  - @graphql-mesh/runtime@0.98.7
+
+## 0.2.10
+
+### Patch Changes
+
+- [#6747](https://github.com/ardatan/graphql-mesh/pull/6747)
+  [`8924438`](https://github.com/ardatan/graphql-mesh/commit/8924438131a7320ef160573539bddfb024bbe343)
+  Thanks [@ardatan](https://github.com/ardatan)! - Readiness and healthcheck endpoints
+
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.98.6
+  - @graphql-mesh/utils@0.97.5
+  - @graphql-mesh/transport-common@0.1.5
+
+## 0.2.8
+
+### Patch Changes
+
+- [`f293329`](https://github.com/ardatan/graphql-mesh/commit/f2933295532d0760bb731e055dd2bd6e9cb2a63b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improve proxy execution
+
+## 0.2.7
+
+### Patch Changes
+
+- [`1639001`](https://github.com/ardatan/graphql-mesh/commit/16390018bd54946fbfbd2bfb8eb3ba7682966a12)
+  Thanks [@ardatan](https://github.com/ardatan)! - Modularization
+
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`18e0d49`](https://github.com/ardatan/graphql-mesh/commit/18e0d495053f0b67fd1ba488270318e5d11309f8)]:
+  - @graphql-mesh/runtime@0.98.5
+
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/runtime@0.98.4
+  - @graphql-mesh/transport-common@0.1.4
+
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.98.3
+  - @graphql-mesh/utils@0.97.3
+  - @graphql-mesh/transport-common@0.1.3
+
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.98.2
+  - @graphql-mesh/utils@0.97.2
+  - @graphql-mesh/transport-common@0.1.2
+
 ## 0.2.2
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # @graphql-mesh/fusion-composition
 
+## 0.0.4
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+## 0.0.3
+
+### Patch Changes
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Removed dependency [`pascal-case@^3.0.0` ↗︎](https://www.npmjs.com/package/pascal-case/v/3.0.0)
+    (from `dependencies`)
+
 ## 0.0.2
 
 ### Patch Changes

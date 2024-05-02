@@ -6,16 +6,16 @@ import {
   YogaLogger,
   YogaMaskedErrorOpts,
   Plugin as YogaPlugin,
+  YogaServerOptions,
 } from 'graphql-yoga';
-import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql';
 import { Plugin as EnvelopPlugin } from '@envelop/core';
-import { FusiongraphPlugin, TransportsOption } from '@graphql-mesh/fusion-runtime';
+import { FusiongraphPlugin, Transport, TransportsOption } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@graphql-mesh/types';
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import { IResolvers } from '@graphql-tools/utils';
 import { CORSPluginOptions } from '@whatwg-node/server';
-import { UnifiedGraphConfig } from './handleUnifiedGraphConfig';
+import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
 export { UnifiedGraphConfig };
 
@@ -25,14 +25,26 @@ export type MeshServeConfig<TContext extends Record<string, any> = Record<string
   | MeshServeConfigWithProxy<TContext>;
 
 export interface MeshServeConfigContext {
+  /**
+   * WHATWG compatible Fetch implementation.
+   */
   fetch: MeshFetch;
   logger: Logger;
+  /**
+   * Current working directory.
+   */
   cwd: string;
+  /**
+   * Event bus for pub/sub.
+   */
   pubsub?: MeshPubSub;
+  /**
+   * Cache Storage
+   */
   cache?: KeyValueCache;
 }
 
-export interface MeshServeContext extends MeshServeConfigContext {
+export interface MeshServeContext extends MeshServeConfigContext, YogaInitialContext {
   /**
    * Environment agnostic HTTP headers provided with the request.
    */
@@ -48,9 +60,7 @@ export type MeshServePlugin<
   TContext extends Record<string, any> = Record<string, any>,
 > = YogaPlugin<Partial<TPluginContext> & MeshServeContext & TContext> &
   FusiongraphPlugin & {
-    onFetch?: OnFetchHook<
-      Partial<TPluginContext> & YogaInitialContext & MeshServeContext & TContext
-    >;
+    onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   };
 
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -65,7 +75,9 @@ interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithou
   /**
    * Additional GraphQL schema resolvers.
    */
-  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
+  additionalResolvers?:
+    | IResolvers<unknown, MeshServeContext & TContext>
+    | IResolvers<unknown, MeshServeContext>[];
   /**
    * Implement custom executors for transports.
    */
@@ -84,18 +96,25 @@ interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithout
   /**
    * Additional GraphQL schema resolvers.
    */
-  additionalResolvers?: IResolvers<unknown, MeshServeContext & TContext>;
+  additionalResolvers?:
+    | IResolvers<unknown, MeshServeContext & TContext>
+    | IResolvers<unknown, MeshServeContext>[];
   /**
    * Implement custom executors for transports.
    */
   transports?: TransportsOption;
 }
 
-interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
+export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
   proxy: HTTPExecutorOptions;
+
+  transport?:
+    | Transport<'http'>
+    | Promise<Transport<'http'>>
+    | (() => Transport<'http'> | Promise<Transport<'http'>>);
 }
 
 interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
@@ -122,7 +141,11 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Show, hide or configure GraphiQL.
    */
-  graphiql?: GraphiQLOptionsOrFactory<unknown>;
+  graphiql?: YogaServerOptions<unknown, MeshServeContext & TContext>['graphiql'];
+  /**
+   * Whether the landing page should be shown.
+   */
+  landingPage?: boolean;
   /**
    * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md).
    */
@@ -153,4 +176,12 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   maskedErrors?: boolean | Partial<YogaMaskedErrorOpts>;
   cache?: KeyValueCache;
   pubsub?: MeshPubSub;
+  /**
+   * Health check endpoint
+   */
+  healthCheckEndpoint?: string;
+  /**
+   * Readiness check endpoint
+   */
+  readinessCheckEndpoint?: string;
 }

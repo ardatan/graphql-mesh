@@ -1,5 +1,107 @@
 # federation-supergraph-gateway
 
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.90.3
+  - @graphql-mesh/supergraph@0.4.3
+
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/cli@0.90.2
+  - @graphql-mesh/supergraph@0.4.2
+
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/cli@0.90.1
+  - @graphql-mesh/supergraph@0.4.1
+
+## 0.5.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b372de6`](https://github.com/ardatan/graphql-mesh/commit/b372de6ac72e871ebdc731c0f3f67c16f04bb405)]:
+  - @graphql-mesh/supergraph@0.4.0
+  - @graphql-mesh/cli@0.90.0
+
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34),
+  [`afe0cc5`](https://github.com/ardatan/graphql-mesh/commit/afe0cc5ddfc7a1291dc878c61793b58850ae848b)]:
+  - @graphql-mesh/cli@0.89.9
+  - @graphql-mesh/supergraph@0.3.2
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`425afee`](https://github.com/ardatan/graphql-mesh/commit/425afee8e95d115469daa011ddc64b1f48c95daa)]:
+  - @graphql-mesh/supergraph@0.3.1
+  - @graphql-mesh/cli@0.89.8
+
+## 0.4.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/supergraph@0.3.0
+  - @graphql-mesh/cli@0.89.7
+
+## 0.3.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.6
+
+## 0.3.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.5
+
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/supergraph@0.2.4
+
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/supergraph@0.2.3
+
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.2
+  - @graphql-mesh/supergraph@0.2.2
+
 ## 0.3.1
 
 ### Patch Changes

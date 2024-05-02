@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { runComposeCLI, spinnies } from './runComposeCLI.js';
-import 'ts-node/register';
-import 'dotenv/config';
+import { DefaultLogger } from '@graphql-mesh/utils';
+import { run } from './run.js';
 
-runComposeCLI().catch(e => {
-  spinnies.stopAll('fail');
-  console.error(e);
+const log = new DefaultLogger();
+
+run({ log }).catch(err => {
+  log.error(err);
   process.exit(1);
 });

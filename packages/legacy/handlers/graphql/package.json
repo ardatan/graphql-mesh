@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/graphql",
-  "version": "0.97.1",
+  "version": "0.98.3",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,18 +32,18 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.1",
-    "@graphql-mesh/store": "^0.97.1",
-    "@graphql-mesh/types": "^0.97.1",
-    "@graphql-mesh/utils": "^0.97.1",
-    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
+    "@graphql-mesh/cross-helpers": "^0.4.2",
+    "@graphql-mesh/store": "^0.98.3",
+    "@graphql-mesh/types": "^0.98.3",
+    "@graphql-mesh/utils": "^0.98.3",
+    "@graphql-tools/utils": "^10.2.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "^0.5.3",
-    "@graphql-tools/delegate": "^10.0.0",
-    "@graphql-tools/federation": "^1.1.12",
+    "@graphql-mesh/string-interpolation": "^0.5.4",
+    "@graphql-tools/delegate": "^10.0.7",
+    "@graphql-tools/federation": "^1.1.28",
     "@graphql-tools/url-loader": "^8.0.0",
     "lodash.get": "^4.4.2"
   },

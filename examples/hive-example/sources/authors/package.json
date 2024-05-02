@@ -1,6 +1,6 @@
 {
   "name": "authors-service",
-  "version": "0.9.2",
+  "version": "0.10.5",
   "description": "Authors Service",
   "private": true,
   "scripts": {
@@ -9,14 +9,14 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "fets": "^0.7.0",
+    "fets": "^0.8.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   },
   "devDependencies": {
-    "@graphql-hive/cli": "0.34.0",
-    "@graphql-mesh/cli": "0.89.1",
-    "@graphql-mesh/openapi": "0.99.2",
+    "@graphql-hive/cli": "0.37.0",
+    "@graphql-mesh/cli": "0.90.3",
+    "@graphql-mesh/openapi": "0.100.5",
     "graphql": "16.8.1"
   }
 }

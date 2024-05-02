@@ -7,3 +7,5 @@ dist/
 /.husky/_/
 .bob/
 .yarn
+supergraph-invalid.graphql
+__generated__/

@@ -1,5 +1,224 @@
 # @graphql-mesh/serve-runtime
 
+## 0.3.4
+
+### Patch Changes
+
+- [`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/transport-common@0.2.3
+  - @graphql-mesh/fusion-runtime@0.3.3
+  - @graphql-mesh/utils@0.98.3
+
+## 0.3.3
+
+### Patch Changes
+
+- [#6917](https://github.com/ardatan/graphql-mesh/pull/6917)
+  [`da798ac`](https://github.com/ardatan/graphql-mesh/commit/da798acf85cf7da8cd45609725dde751b4ef24a3)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Removed dependency
+    [`@graphql-tools/schema@^10.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.2)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/wrap@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.5)
+    (from `dependencies`)
+  - Removed dependency
+    [`graphql-mobius@^0.1.13` ↗︎](https://www.npmjs.com/package/graphql-mobius/v/0.1.13) (from
+    `dependencies`)
+
+- [#6917](https://github.com/ardatan/graphql-mesh/pull/6917)
+  [`da798ac`](https://github.com/ardatan/graphql-mesh/commit/da798acf85cf7da8cd45609725dde751b4ef24a3)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove unnecessary dependency and unused code
+
+## 0.3.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/transport-common@0.2.2
+  - @graphql-mesh/fusion-runtime@0.3.2
+  - @graphql-mesh/cross-helpers@0.4.2
+  - @graphql-mesh/utils@0.98.2
+
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.98.1
+  - @graphql-mesh/fusion-runtime@0.3.1
+  - @graphql-mesh/transport-common@0.2.1
+
+## 0.3.0
+
+### Patch Changes
+
+- [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@^10.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.1.3)
+    (from `^10.0.8`, in `dependencies`)
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.6)
+    (from `^10.0.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.5)
+    (from `^10.0.1`, in `dependencies`)
+  - Updated dependency
+    [`@whatwg-node/server@^0.9.34` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.34)
+    (from `^0.9.16`, in `dependencies`)
+  - Updated dependency
+    [`graphql-yoga@^5.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.3.0) (from `^5.1.1`,
+    in `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/transport-common@^0.1.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/0.1.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/federation@^1.1.25` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/1.1.25)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/stitch@^9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.2.0)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/fusion-federation@^0.0.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-federation/v/0.0.2)
+    (from `dependencies`)
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `@graphql-tools/federation` for Federation
+  Supergraphs
+
+- [`b372de6`](https://github.com/ardatan/graphql-mesh/commit/b372de6ac72e871ebdc731c0f3f67c16f04bb405)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump Federation packages
+
+- Updated dependencies
+  [[`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`7881346`](https://github.com/ardatan/graphql-mesh/commit/78813467cf0e2c988a55cdf1225ff60c4690ede8),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/fusion-runtime@0.3.0
+  - @graphql-mesh/transport-common@0.2.0
+  - @graphql-mesh/utils@0.98.0
+
+## 0.2.12
+
+### Patch Changes
+
+- [#6792](https://github.com/ardatan/graphql-mesh/pull/6792)
+  [`05aabae`](https://github.com/ardatan/graphql-mesh/commit/05aabae48ad17f80847eb153e5fd4a96b7643d5d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Forward headers only if it is a request from the
+  client to the gateway
+
+- Updated dependencies []:
+  - @graphql-mesh/fusion-runtime@0.2.12
+
+## 0.2.11
+
+### Patch Changes
+
+- [#6762](https://github.com/ardatan/graphql-mesh/pull/6762)
+  [`9ac2245`](https://github.com/ardatan/graphql-mesh/commit/9ac2245273a561449cfc17dcafc67d0c43baf33e)
+  Thanks [@ardatan](https://github.com/ardatan)! - New Plugin: useForwardHeaders
+
+- Updated dependencies
+  [[`4beaa4c`](https://github.com/ardatan/graphql-mesh/commit/4beaa4ce24ca3d63be8dd375d300d388f5bd5183)]:
+  - @graphql-mesh/fusion-federation@0.0.2
+  - @graphql-mesh/fusion-runtime@0.2.11
+
+## 0.2.10
+
+### Patch Changes
+
+- [#6747](https://github.com/ardatan/graphql-mesh/pull/6747)
+  [`8924438`](https://github.com/ardatan/graphql-mesh/commit/8924438131a7320ef160573539bddfb024bbe343)
+  Thanks [@ardatan](https://github.com/ardatan)! - Readiness and healthcheck endpoints
+
+- Updated dependencies
+  [[`8924438`](https://github.com/ardatan/graphql-mesh/commit/8924438131a7320ef160573539bddfb024bbe343)]:
+  - @graphql-mesh/fusion-runtime@0.2.10
+
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.97.5
+  - @graphql-mesh/fusion-runtime@0.2.9
+
+## 0.2.8
+
+### Patch Changes
+
+- [`f293329`](https://github.com/ardatan/graphql-mesh/commit/f2933295532d0760bb731e055dd2bd6e9cb2a63b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improve proxy execution
+
+- Updated dependencies
+  [[`f293329`](https://github.com/ardatan/graphql-mesh/commit/f2933295532d0760bb731e055dd2bd6e9cb2a63b)]:
+  - @graphql-mesh/fusion-runtime@0.2.8
+
+## 0.2.7
+
+### Patch Changes
+
+- [`1639001`](https://github.com/ardatan/graphql-mesh/commit/16390018bd54946fbfbd2bfb8eb3ba7682966a12)
+  Thanks [@ardatan](https://github.com/ardatan)! - Modularization
+
+- Updated dependencies
+  [[`1639001`](https://github.com/ardatan/graphql-mesh/commit/16390018bd54946fbfbd2bfb8eb3ba7682966a12)]:
+  - @graphql-mesh/fusion-runtime@0.2.7
+
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/fusion-runtime@0.2.6
+
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/fusion-runtime@0.2.5
+
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.97.3
+  - @graphql-mesh/fusion-runtime@0.2.4
+
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.97.2
+  - @graphql-mesh/fusion-runtime@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

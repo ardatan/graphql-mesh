@@ -1,3 +1,8 @@
-export * from './runServeCLI.js';
+export * from './run.js';
 export * from './types.js';
-export { useWebhooks, useCustomFetch, type InferResolvers } from '@graphql-mesh/serve-runtime';
+export {
+  useWebhooks,
+  useCustomFetch,
+  useForwardHeaders,
+  useStaticFiles,
+} from '@graphql-mesh/serve-runtime';

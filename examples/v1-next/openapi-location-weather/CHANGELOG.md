@@ -1,5 +1,204 @@
 # typescript-location-weather-example
 
+## 0.17.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @omnigraph/openapi@0.100.5
+  - @graphql-mesh/serve-cli@0.4.4
+  - @graphql-mesh/cache-localforage@0.98.3
+  - @graphql-mesh/compose-cli@0.3.3
+  - @graphql-mesh/plugin-response-cache@0.98.3
+
+## 0.17.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.4.3
+  - @omnigraph/openapi@0.100.4
+
+## 0.17.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9f41ea8`](https://github.com/ardatan/graphql-mesh/commit/9f41ea85452440f44b3643cdcee3439c582e7fd0)]:
+  - @omnigraph/openapi@0.100.3
+
+## 0.17.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/compose-cli@0.3.2
+  - @graphql-mesh/serve-cli@0.4.2
+  - @omnigraph/openapi@0.100.2
+  - @graphql-mesh/plugin-response-cache@0.98.2
+  - @graphql-mesh/cache-localforage@0.98.2
+
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/openapi@0.100.1
+  - @graphql-mesh/plugin-response-cache@0.98.1
+  - @graphql-mesh/cache-localforage@0.98.1
+  - @graphql-mesh/compose-cli@0.3.1
+  - @graphql-mesh/serve-cli@0.4.1
+
+## 0.17.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)]:
+  - @graphql-mesh/compose-cli@0.3.0
+  - @graphql-mesh/serve-cli@0.4.0
+  - @omnigraph/openapi@0.100.0
+  - @graphql-mesh/cache-localforage@0.98.0
+  - @graphql-mesh/plugin-response-cache@0.98.0
+
+## 0.16.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.16
+
+## 0.16.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`910106c`](https://github.com/ardatan/graphql-mesh/commit/910106cb95e5f16ffddec0ada869ca8f4b0d2049)]:
+  - @graphql-mesh/serve-cli@0.3.15
+
+## 0.16.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`449e39d`](https://github.com/ardatan/graphql-mesh/commit/449e39dfe956d0a7b54929f4b4b7d6fbcbcddaf1)]:
+  - @graphql-mesh/plugin-response-cache@0.97.6
+  - @graphql-mesh/serve-cli@0.3.14
+
+## 0.16.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e100dcc`](https://github.com/ardatan/graphql-mesh/commit/e100dcc43efeebe81085389cee8bb6a6039268be)]:
+  - @graphql-mesh/serve-cli@0.3.13
+
+## 0.16.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.12
+
+## 0.16.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd),
+  [`1ac3fff`](https://github.com/ardatan/graphql-mesh/commit/1ac3fffae8072fd787e6462a97d21a437d4c2dfd)]:
+  - @graphql-mesh/serve-cli@0.3.11
+
+## 0.16.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-localforage@0.97.5
+  - @graphql-mesh/compose-cli@0.2.5
+  - @omnigraph/openapi@0.99.6
+  - @graphql-mesh/plugin-response-cache@0.97.5
+  - @graphql-mesh/serve-cli@0.3.10
+
+## 0.16.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.9
+
+## 0.16.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.8
+
+## 0.16.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e6e19d6`](https://github.com/ardatan/graphql-mesh/commit/e6e19d6e73161e3719405138d8d0f853d5c805d9)]:
+  - @graphql-mesh/serve-cli@0.3.7
+
+## 0.16.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.3.6
+
+## 0.16.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/serve-cli@0.3.5
+  - @graphql-mesh/cache-localforage@0.97.4
+  - @graphql-mesh/compose-cli@0.2.4
+  - @omnigraph/openapi@0.99.5
+  - @graphql-mesh/plugin-response-cache@0.97.4
+
+## 0.16.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-localforage@0.97.3
+  - @graphql-mesh/compose-cli@0.2.3
+  - @omnigraph/openapi@0.99.4
+  - @graphql-mesh/plugin-response-cache@0.97.3
+  - @graphql-mesh/serve-cli@0.3.4
+
+## 0.16.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-localforage@0.97.2
+  - @graphql-mesh/compose-cli@0.2.2
+  - @omnigraph/openapi@0.99.3
+  - @graphql-mesh/plugin-response-cache@0.97.2
+  - @graphql-mesh/serve-cli@0.3.3
+
 ## 0.16.3
 
 ### Patch Changes

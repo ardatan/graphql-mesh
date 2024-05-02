@@ -1,5 +1,144 @@
 # nextjs-apollo-example
 
+## 0.11.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/runtime@0.99.3
+  - @graphql-mesh/config@0.100.3
+  - @graphql-mesh/openapi@0.100.5
+  - @graphql-mesh/cli@0.90.3
+
+## 0.11.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.100.4
+
+## 0.11.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.100.3
+
+## 0.11.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/runtime@0.99.2
+  - @graphql-mesh/config@0.100.2
+  - @graphql-mesh/cli@0.90.2
+  - @graphql-mesh/openapi@0.100.2
+
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/cli@0.90.1
+  - @graphql-mesh/openapi@0.100.1
+  - @graphql-mesh/runtime@0.99.1
+  - @graphql-mesh/config@0.100.1
+
+## 0.11.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`666b79c`](https://github.com/ardatan/graphql-mesh/commit/666b79c5bd03f86da29b479b5902741b5ad506e8)]:
+  - @graphql-mesh/runtime@0.99.0
+  - @graphql-mesh/cli@0.90.0
+  - @graphql-mesh/config@0.100.0
+  - @graphql-mesh/openapi@0.100.0
+
+## 0.10.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`edc0752`](https://github.com/ardatan/graphql-mesh/commit/edc0752e5393150833aa1f4501cd478aca7e4c34),
+  [`afe0cc5`](https://github.com/ardatan/graphql-mesh/commit/afe0cc5ddfc7a1291dc878c61793b58850ae848b)]:
+  - @graphql-mesh/cli@0.89.9
+  - @graphql-mesh/runtime@0.98.8
+  - @graphql-mesh/config@0.99.9
+
+## 0.10.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c008dda`](https://github.com/ardatan/graphql-mesh/commit/c008ddae4bd617497a2a9bd70e8c90667c2b1ddc)]:
+  - @graphql-mesh/runtime@0.98.7
+  - @graphql-mesh/cli@0.89.8
+  - @graphql-mesh/config@0.99.8
+
+## 0.10.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.7
+  - @graphql-mesh/config@0.99.7
+  - @graphql-mesh/openapi@0.99.6
+  - @graphql-mesh/runtime@0.98.6
+
+## 0.10.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/config@0.99.6
+  - @graphql-mesh/cli@0.89.6
+
+## 0.10.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`18e0d49`](https://github.com/ardatan/graphql-mesh/commit/18e0d495053f0b67fd1ba488270318e5d11309f8)]:
+  - @graphql-mesh/runtime@0.98.5
+  - @graphql-mesh/cli@0.89.5
+  - @graphql-mesh/config@0.99.5
+
+## 0.10.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f)]:
+  - @graphql-mesh/cli@0.89.4
+  - @graphql-mesh/config@0.99.4
+  - @graphql-mesh/openapi@0.99.5
+  - @graphql-mesh/runtime@0.98.4
+
+## 0.10.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.3
+  - @graphql-mesh/config@0.99.3
+  - @graphql-mesh/openapi@0.99.4
+  - @graphql-mesh/runtime@0.98.3
+
+## 0.10.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.89.2
+  - @graphql-mesh/config@0.99.2
+  - @graphql-mesh/openapi@0.99.3
+  - @graphql-mesh/runtime@0.98.2
+
 ## 0.10.2
 
 ### Patch Changes
