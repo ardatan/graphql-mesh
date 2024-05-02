@@ -6327,9 +6327,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/delegate@npm:^10.0.4, @graphql-tools/delegate@npm:^10.0.7":
-  version: 10.0.7
-  resolution: "@graphql-tools/delegate@npm:10.0.7"
+"@graphql-tools/delegate@npm:^10.0.4, @graphql-tools/delegate@npm:^10.0.7, @graphql-tools/delegate@npm:^10.0.9":
+  version: 10.0.9
+  resolution: "@graphql-tools/delegate@npm:10.0.9"
   dependencies:
     "@graphql-tools/batch-execute": "npm:^9.0.4"
     "@graphql-tools/executor": "npm:^1.2.1"
@@ -6339,7 +6339,7 @@ __metadata:
     tslib: "npm:^2.5.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/af0c30e7ee4da547ac6bfc460c74b09756c0bf6cd44ffcf45591c60257e653c9e66b75b7b6d02916d2e9fa6bd87b3132caad2ff1cb9fdbf3c7fdb34e13049247
+  checksum: 10c0/a86bc4288ea56a2ba32e8bb7f35cd17d55e574b8ff66264d396c3a853cb3029e011cc12c2a7741a7659348802b0cd47d813be375de22c06f8fa6133ee3773cb1
   languageName: node
   linkType: hard
 
@@ -6434,15 +6434,15 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^1.1.28":
-  version: 1.1.29
-  resolution: "@graphql-tools/federation@npm:1.1.29"
+  version: 1.1.33
+  resolution: "@graphql-tools/federation@npm:1.1.33"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0"
-    "@graphql-tools/delegate": "npm:^10.0.7"
+    "@graphql-tools/delegate": "npm:^10.0.9"
     "@graphql-tools/executor-http": "npm:^1.0.9"
     "@graphql-tools/merge": "npm:^9.0.3"
     "@graphql-tools/schema": "npm:^10.0.3"
-    "@graphql-tools/stitch": "npm:^9.2.3"
+    "@graphql-tools/stitch": "npm:^9.2.7"
     "@graphql-tools/utils": "npm:^10.1.1"
     "@graphql-tools/wrap": "npm:^10.0.3"
     tslib: "npm:^2.4.0"
@@ -6452,7 +6452,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/da62c23d5a27234c0469b74aff5ce2f16e10108a382c5858a9106af60a44000ccf0bf837f8d32967f0dd5b31866728cfb8a6a585ae99df18e6f4a17b2e8d136e
+  checksum: 10c0/0bbabe111d98400c00669fd9aea2922f8a27a9e9899ceb6ffd11d3cc725cf4fb54820a114ae93d3b67beb360604d0cd19ef91e137c8ff5b6657e6bce69d89f3d
   languageName: node
   linkType: hard
 
@@ -6792,12 +6792,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/stitch@npm:^9.2.3, @graphql-tools/stitch@npm:^9.2.4":
-  version: 9.2.4
-  resolution: "@graphql-tools/stitch@npm:9.2.4"
+"@graphql-tools/stitch@npm:^9.2.4, @graphql-tools/stitch@npm:^9.2.7":
+  version: 9.2.7
+  resolution: "@graphql-tools/stitch@npm:9.2.7"
   dependencies:
     "@graphql-tools/batch-delegate": "npm:^9.0.1"
-    "@graphql-tools/delegate": "npm:^10.0.7"
+    "@graphql-tools/delegate": "npm:^10.0.9"
     "@graphql-tools/executor": "npm:^1.2.1"
     "@graphql-tools/merge": "npm:^9.0.4"
     "@graphql-tools/schema": "npm:^10.0.3"
@@ -6807,7 +6807,7 @@ __metadata:
     value-or-promise: "npm:^1.0.11"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/c4275c49165a38363df76128af5fdf3797f932f482c5fd32827919bf96da3502d5dd1e1869d4e6897e33f7d604e80ca5f90ab8161479042745506d1e2f4759fd
+  checksum: 10c0/9de12a5da00061f0221e65b6cad26979ea55c0229868768d53e7314c8c8104bdebe08e23396b3b105892c59fe5ab959fcca75cd7d104b7185b1e7c3295008e74
   languageName: node
   linkType: hard
 
@@ -27087,7 +27087,7 @@ __metadata:
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.2.10"
+    vite: "npm:5.2.11"
   languageName: unknown
   linkType: soft
 
@@ -34645,9 +34645,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.2.10":
-  version: 5.2.10
-  resolution: "vite@npm:5.2.10"
+"vite@npm:5.2.11":
+  version: 5.2.11
+  resolution: "vite@npm:5.2.11"
   dependencies:
     esbuild: "npm:^0.20.1"
     fsevents: "npm:~2.3.3"
@@ -34681,7 +34681,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/d50630ac8de807a6185cd9b5763b3969b2950a454cf6a4482f3780f183865e8d6f7e3aa57dd70ede1c493aaa861efb25b43562287efbcf8b471b7f3b88857a33
+  checksum: 10c0/664b8d68e4f5152ae16bd2041af1bbaf11c43630ac461835bc31ff7d019913b33e465386e09f66dc1037d7aeefbb06939e0173787c063319bc2bd30c3b9ad8e4
   languageName: node
   linkType: hard
 
