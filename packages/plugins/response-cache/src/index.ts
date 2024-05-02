@@ -22,7 +22,7 @@ function generateSessionIdFactory(sessionIdDef: string) {
 function generateEnabledFactory(ifDef: string) {
   return function enabled(context: any) {
     // eslint-disable-next-line no-new-func
-    return new Function(`return ${ifDef}`)();
+    return new Function(["context"], `return ${ifDef}`)(context);
   };
 }
 
