@@ -1,5 +1,6 @@
 import type { AppOptions, HttpRequest, HttpResponse } from 'uWebSockets.js';
 import type { MeshServeConfig } from '@graphql-mesh/serve-runtime';
+import { Logger } from '@graphql-mesh/types';
 
 export interface MeshServeCLIContext {
   req: HttpRequest;
@@ -32,4 +33,13 @@ export type MeshServeCLIConfig = MeshServeConfig<MeshServeCLIContext> & {
  */
 export function defineConfig(config: MeshServeCLIConfig) {
   return config;
+}
+
+export interface ServerOptions {
+  handler: any;
+  logger: Logger;
+  protocol: 'http' | 'https';
+  host: string;
+  port: number;
+  sslCredentials?: MeshServeCLIConfig['sslCredentials'];
 }

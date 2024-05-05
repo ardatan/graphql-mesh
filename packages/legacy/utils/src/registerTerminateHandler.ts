@@ -1,7 +1,7 @@
 const terminateEvents = ['SIGINT', 'SIGTERM'] as const;
 
 type TerminateEvents = (typeof terminateEvents)[number];
-type TerminateHandler = (eventName: TerminateEvents) => void;
+export type TerminateHandler = (eventName: TerminateEvents) => void;
 
 let eventListenerRegistered = false;
 
