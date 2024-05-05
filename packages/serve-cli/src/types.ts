@@ -37,7 +37,7 @@ export function defineConfig(config: MeshServeCLIConfig) {
 
 export interface ServerOptions {
   handler: any;
-  logger: Logger;
+  log: Logger;
   protocol: 'http' | 'https';
   host: string;
   port: number;

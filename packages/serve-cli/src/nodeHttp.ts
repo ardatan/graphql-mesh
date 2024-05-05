@@ -22,7 +22,7 @@ export function readRecognizedString(recognizedString: RecognizedString) {
 
 export async function startNodeHttpServer({
   handler,
-  logger,
+  log,
   protocol,
   host,
   port,
@@ -58,15 +58,15 @@ export async function startNodeHttpServer({
       sslOptionsForNodeHttp.honorCipherOrder = true;
     }
     const server = createHTTPSServer(sslOptionsForNodeHttp, handler);
-    logger.info(`Starting server on ${protocol}://${host}:${port}`);
+    log.info(`Starting server on ${protocol}://${host}:${port}`);
     return new Promise<void>((resolve, reject) => {
       server.once('error', reject);
       server.listen(port, host, () => {
-        logger.info(`Server started on ${protocol}://${host}:${port}`);
+        log.info(`Server started on ${protocol}://${host}:${port}`);
         registerTerminateHandler(eventName => {
-          logger.info(`Closing server for ${eventName}`);
+          log.info(`Closing server for ${eventName}`);
           server.close(() => {
-            logger.info(`Server closed for ${eventName}`);
+            log.info(`Server closed for ${eventName}`);
             resolve();
           });
         });
@@ -74,15 +74,15 @@ export async function startNodeHttpServer({
     });
   }
   const server = createHTTPServer(handler);
-  logger.info(`Starting server on ${protocol}://${host}:${port}`);
+  log.info(`Starting server on ${protocol}://${host}:${port}`);
   return new Promise<void>((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
-      logger.info(`Server started on ${protocol}://${host}:${port}`);
+      log.info(`Server started on ${protocol}://${host}:${port}`);
       registerTerminateHandler(eventName => {
-        logger.info(`Closing server for ${eventName}`);
+        log.info(`Closing server for ${eventName}`);
         server.close(() => {
-          logger.info(`Server closed for ${eventName}`);
+          log.info(`Server closed for ${eventName}`);
           resolve();
         });
       });

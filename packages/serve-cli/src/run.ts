@@ -247,24 +247,22 @@ export async function run({
     }
   });
 
-  const serverImpls = {
-    uWebSockets: startuWebSocketsServer,
-    'node:http': startNodeHttpServer,
-  };
-  for (const serverImplName in serverImpls) {
-    try {
-      log.info(`Attempting to start server with ${serverImplName}`);
-      await serverImpls[serverImplName]({
-        handler,
-        logger: log,
-        protocol,
-        host,
-        port,
-        sslCredentials: config.sslCredentials,
-      });
-      break;
-    } catch (err) {
-      log.warn(`Failed to start server with ${serverImplName} so trying another...`, err);
-    }
+  let uWebSocketsAvailable = false;
+  try {
+    await import('uWebSockets.js');
+    uWebSocketsAvailable = true;
+  } catch (err) {
+    log.warn(
+      'uWebSockets.js is not available currently so the server will fallback to node:http. We recommend using uWebSockets.js for better performance in production. However, this does not affect the functionality of Mesh.',
+    );
   }
+  const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
+  await startServer({
+    handler,
+    log,
+    protocol,
+    host,
+    port,
+    sslCredentials: config.sslCredentials,
+  });
 }

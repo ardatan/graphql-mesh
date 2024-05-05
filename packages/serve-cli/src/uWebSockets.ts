@@ -3,7 +3,7 @@ import { ServerOptions } from './types.js';
 
 export async function startuWebSocketsServer({
   handler,
-  logger,
+  log,
   protocol,
   host,
   port,
@@ -12,12 +12,12 @@ export async function startuWebSocketsServer({
   return import('uWebSockets.js').then(uWS => {
     const app = sslCredentials ? uWS.SSLApp(sslCredentials) : uWS.App();
     app.any('/*', handler);
-    logger.info(`Starting server on ${protocol}://${host}:${port}`);
+    log.info(`Starting server on ${protocol}://${host}:${port}`);
     return new Promise<void>((resolve, reject) => {
       app.listen(host, port, function listenCallback(listenSocket) {
         if (listenSocket) {
           registerTerminateHandler(eventName => {
-            logger.info(`Closing ${protocol}://${host}:${port} for ${eventName}`);
+            log.info(`Closing ${protocol}://${host}:${port} for ${eventName}`);
             app.close();
           });
           resolve();
