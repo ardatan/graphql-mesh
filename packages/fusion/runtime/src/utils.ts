@@ -1,4 +1,4 @@
-import { ExecutionResult, GraphQLSchema } from 'graphql';
+import { ExecutionResult, GraphQLSchema, print } from 'graphql';
 import type {
   Transport,
   TransportBaseContext,
@@ -7,6 +7,7 @@ import type {
   TransportExecutorFactoryOpts,
 } from '@graphql-mesh/transport-common';
 import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
+import { contextIdMap } from '@graphql-tools/delegate';
 import {
   ExecutionRequest,
   Executor,
@@ -81,6 +82,17 @@ export function getOnSubgraphExecute({
         onSubgraphExecuteHooks.push(plugin.onSubgraphExecute);
       }
     }
+  }
+  if (globalThis.process?.env.DEBUG) {
+    onSubgraphExecuteHooks.push(({ executionRequest, subgraphName }) => {
+      transportBaseContext.logger.debug({
+        status: 'EXECUTION_SUBGRAPH',
+        contextId: contextIdMap.get(executionRequest.context),
+        subgraphName,
+        document: print(executionRequest.document),
+        variables: executionRequest.variables,
+      });
+    });
   }
   const subgraphExecutorMap: Record<string, Executor> = {};
   const transportGetter = createTransportGetter(transports);

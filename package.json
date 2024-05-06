@@ -96,6 +96,8 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
+    "@graphql-tools/delegate": "10.0.10-alpha-20240506151554-b7759744c4a48363815cfc09d92a275b838f6bcb",
+    "@graphql-tools/stitch": "9.2.8-alpha-20240506151554-b7759744c4a48363815cfc09d92a275b838f6bcb",
     "es5-ext": "0.10.64",
     "esbuild": "0.20.2",
     "graphql": "16.8.1",
