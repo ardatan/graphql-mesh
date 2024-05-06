@@ -39,6 +39,6 @@ it.concurrent.each([
     output: 'graphql',
     services: [petstore, await service('vaccination')],
   });
-  const { execute } = await serve({ fusiongraph: output, pipeLogs: true });
+  const { execute } = await serve({ fusiongraph: output });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });

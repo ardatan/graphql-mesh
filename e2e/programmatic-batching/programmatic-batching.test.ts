@@ -30,6 +30,6 @@ it.concurrent.each([
   },
 ])('should execute $name', async ({ query }) => {
   const { output } = await compose({ output: 'graphql', services: [await service('api')] });
-  const { execute } = await serve({ fusiongraph: output, pipeLogs: true });
+  const { execute } = await serve({ fusiongraph: output });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });

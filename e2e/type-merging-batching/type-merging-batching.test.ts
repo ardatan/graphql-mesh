@@ -95,9 +95,6 @@ it.concurrent.each(queries)('should execute $name', async ({ query }) => {
     output: 'graphql',
   });
 
-  const { execute } = await serve({
-    fusiongraph: output,
-    pipeLogs: true,
-  });
+  const { execute } = await serve({ fusiongraph: output });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });
