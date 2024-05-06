@@ -9310,10 +9310,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.28":
-  version: 0.32.28
-  resolution: "@sinclair/typebox@npm:0.32.28"
-  checksum: 10c0/dbf7ab7ba9ea59e5d4bbcd3bff180ddbc2fe3184dddeccbab13444c563d98e4bba8510f6b4a94b2cf95ec61fbce1637b1f4f384752e2f6281883955d7919fbe9
+"@sinclair/typebox@npm:0.32.29":
+  version: 0.32.29
+  resolution: "@sinclair/typebox@npm:0.32.29"
+  checksum: 10c0/fb2500bc6f31292dd996eaa789763a58ff3abab13a4133d2d55a3d4674e06eb5cdf6fd831bcb423d195a64a44e3feebc4f148356e095947af3ba77255c81d661
   languageName: node
   linkType: hard
 
@@ -29414,7 +29414,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.3"
     "@graphql-mesh/openapi": "npm:0.100.5"
-    "@sinclair/typebox": "npm:0.32.28"
+    "@sinclair/typebox": "npm:0.32.29"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.0"
     graphql: "npm:16.8.1"
@@ -33638,8 +33638,8 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.7.1":
-  version: 4.9.0
-  resolution: "tsx@npm:4.9.0"
+  version: 4.9.3
+  resolution: "tsx@npm:4.9.3"
   dependencies:
     esbuild: "npm:~0.20.2"
     fsevents: "npm:~2.3.3"
@@ -33649,7 +33649,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/c325788df8fce8ea42caeb25920b9be7f0fec38cf2e4c1f13b53be70704c65abf4ffdece4cbb545bb0f22cc6ca53557d21b99c4f0f2d0cda237ca5a31007179c
+  checksum: 10c0/abc0d461885ef227959274de5e2f80961e860cc1524d090fc9161bf6450b732f9c3e88ec770ea8cbe49880c9fed7c65aa7853d060b83d9c56f70d935e9162d18
   languageName: node
   linkType: hard
 
