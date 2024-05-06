@@ -8901,7 +8901,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.29":
+"@sinclair/typebox@npm:0.32.29, @sinclair/typebox@npm:^0.32.0":
   version: 0.32.29
   resolution: "@sinclair/typebox@npm:0.32.29"
   checksum: 10c0/fb2500bc6f31292dd996eaa789763a58ff3abab13a4133d2d55a3d4674e06eb5cdf6fd831bcb423d195a64a44e3feebc4f148356e095947af3ba77255c81d661
@@ -8919,13 +8919,6 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
-  languageName: node
-  linkType: hard
-
-"@sinclair/typebox@npm:^0.32.0":
-  version: 0.32.29
-  resolution: "@sinclair/typebox@npm:0.32.29"
-  checksum: 10c0/fb2500bc6f31292dd996eaa789763a58ff3abab13a4133d2d55a3d4674e06eb5cdf6fd831bcb423d195a64a44e3feebc4f148356e095947af3ba77255c81d661
   languageName: node
   linkType: hard
 
