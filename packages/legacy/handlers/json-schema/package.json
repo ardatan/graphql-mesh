@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.5.4",
-    "@json-schema-tools/meta-schema": "1.7.4",
+    "@json-schema-tools/meta-schema": "1.7.5",
     "@omnigraph/json-schema": "0.100.4",
     "graphql-compose": "9.0.10",
     "json-machete": "0.97.2"
