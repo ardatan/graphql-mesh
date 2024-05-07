@@ -11,7 +11,12 @@ afterAll(async () => {
 });
 
 export interface Tworker {
-  execute(
+  /**
+   * Executes the provided GraphQL operation through an
+   * HTTP request on the local server at the port requiring
+   * no response or GraphQL result errors.
+   */
+  mustExecute(
     port: number,
     args: {
       query: string;
@@ -22,9 +27,9 @@ export interface Tworker {
 }
 
 export async function createTworker(): Promise<Tworker> {
-  const worker_execute = await spawn(new Worker('./workers/execute.js'));
-  leftovers.add(worker_execute);
+  const worker_mustExecute = await spawn(new Worker('./workers/mustExecute.js'));
+  leftovers.add(worker_mustExecute);
   return {
-    execute: worker_execute,
+    mustExecute: worker_mustExecute,
   };
 }
