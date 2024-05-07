@@ -11,14 +11,15 @@ beforeAll(async () => {
   }
 });
 
-it('should not consume a lot of memory', async () => {
+it('should not consume more than 250MB of memory', async () => {
   const { output } = await compose({ output: 'graphql' });
-  const { port } = await serve({ fusiongraph: output });
+  const { port, getStats } = await serve({ fusiongraph: output });
 
-  const timeout = AbortSignal.timeout(1_000);
+  const duration = AbortSignal.timeout(1_000);
+
   const runner = (async () => {
     for (;;) {
-      if (timeout.aborted) {
+      if (duration.aborted) {
         return; // done
       }
       await Promise.all(
@@ -41,5 +42,24 @@ it('should not consume a lot of memory', async () => {
     }
   })();
 
+  let highCpu = 0;
+  let highMem = 0;
+  (async () => {
+    for (;;) {
+      if (duration.aborted) {
+        return; // done
+      }
+      const { cpu, mem } = await getStats();
+      if (highCpu < cpu) {
+        highCpu = cpu;
+      }
+      if (highMem < mem) {
+        highMem = mem;
+      }
+    }
+  })();
+
   await runner;
+
+  expect(highMem).toBeLessThan(250);
 });
