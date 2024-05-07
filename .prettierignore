@@ -1,4 +1,3 @@
-/.changeset/*.md
 /website/src/generated-markdown/
 /website/src/pages/docs/api/
 .next/
