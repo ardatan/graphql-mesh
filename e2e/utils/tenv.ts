@@ -48,6 +48,12 @@ export interface ProcOptions {
 
 export interface Proc extends Disposable {
   getStd(o: 'out' | 'err' | 'both'): string;
+  getStats(): Promise<{
+    // Total CPU utilization (of all cores) as a percentage.
+    cpu: number;
+    // Memory consumption in megabytes (MB).
+    mem: number;
+  }>;
 }
 
 export interface Server extends Proc {
@@ -351,6 +357,9 @@ export function createTenv(cwd: string): Tenv {
           // TODO: distinguish stdout and stderr
           return stdboth;
         },
+        getStats() {
+          throw new Error('Cannot get stats of a container.');
+        },
         async dispose() {
           if (ctrl.signal.aborted) {
             // noop if already disposed
@@ -452,6 +461,22 @@ function spawn(
         case 'both':
           return stdboth;
       }
+    },
+    async getStats() {
+      const [proc, waitForExit] = await spawn(
+        { cwd, pipeLogs },
+        'ps',
+        '-o',
+        'pcpu=,rss=',
+        '-p',
+        child.pid!,
+      );
+      await waitForExit;
+      const [cpu, mem] = proc.getStd('out').trim().split(/\s+/);
+      return {
+        cpu: parseFloat(cpu),
+        mem: parseFloat(mem) * 0.001,
+      };
     },
     dispose: () => (child.kill(), waitForExit),
   };
