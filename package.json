@@ -35,6 +35,7 @@
   },
   "packageManager": "yarn@4.2.2",
   "scripts": {
+    "bench:e2e": "cross-env \"JEST=1\" \"E2E_TEST=true\" jest --no-watchman --runInBand --config=jest.config.bench.js",
     "build": "yarn prebuild && bob build && yarn postbuild",
     "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace @v1-next/example-fastify compose && yarn workspace example-fastify build && yarn workspace example-persisted-operations build",
     "build:website": "yarn build && cd website && yarn build",
