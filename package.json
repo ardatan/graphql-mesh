@@ -92,6 +92,7 @@
     "lint-staged": "15.2.2",
     "minimatch": "9.0.4",
     "prettier": "3.2.5",
+    "threads": "^1.7.0",
     "ts-jest": "29.1.2",
     "typescript": "^5.4.2"
   },
