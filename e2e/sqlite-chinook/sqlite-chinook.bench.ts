@@ -1,4 +1,5 @@
 import os from 'os';
+import { setTimeout } from 'timers/promises';
 import { createTenv } from '@e2e/tenv';
 import { createTworker, Tworker } from '@e2e/tworker';
 
@@ -46,6 +47,7 @@ it('should not consume more than 250MB of memory', async () => {
   let highMem = 0;
   (async () => {
     for (;;) {
+      await setTimeout(300);
       if (duration.aborted) {
         return; // done
       }
