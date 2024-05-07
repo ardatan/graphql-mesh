@@ -55,38 +55,19 @@ const registry = new Registry()
 
 usePrometheus({
   registry,
-  execute: createHistogram({
-    registry: registry
+  parse: createHistogram({
+    registry: registry // make sure to add your custom registry, if you are not using the default one
     histogram: new Histogram({
-      name: 'my_custom_histogram_name',
+      name: 'my_custom_name',
       help: 'HELP ME',
       labelNames: ['opText'] as const,
     }),
-    fillLabelsFn: () => {
-      // Customize how labels are extracted and filled
+    fillLabelsFn: params => {
+      // if you wish to fill your `labels` with metadata, you can use the params in order to get access to things like DocumentNode, operationName, operationType, `error` (for error metrics) and `info` (for resolvers metrics)
+      return {
+        opText: print(params.document)
+      }
     }
-  }),
-  requestCount: createCounter({
-    registry: registry
-    histogram: new Histogram({
-      name: 'my_custom_counter_name',
-      help: 'HELP ME',
-      labelNames: ['opText'] as const,
-    }),
-    fillLabelsFn: () => {
-      // Customize how labels are extracted and filled
-    }
-  }),
-  requestSummary: createSummary({
-    registry: registry
-    histogram: new Histogram({
-      name: 'my_custom_summary_name',
-      help: 'HELP ME',
-      labelNames: ['opText'] as const,
-    }),
-    fillLabelsFn: () => {
-      // Customize how labels are extracted and filled
-    }
-  }),
+  })
 })
 ```
