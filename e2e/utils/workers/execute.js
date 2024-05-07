@@ -14,5 +14,9 @@ expose(async function (port, args) {
     err.name = 'ResponseError';
     throw err;
   }
-  return await res.json();
+  const result = await res.json();
+  if (result.errors?.length) {
+    throw new Error(`GraphQL result has errors\n${JSON.stringify(result.errors)}`);
+  }
+  return result;
 });
