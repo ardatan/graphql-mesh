@@ -3869,17 +3869,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/prometheus@npm:10.0.0-alpha-20240429150713-f648c855":
-  version: 10.0.0-alpha-20240429150713-f648c855
-  resolution: "@envelop/prometheus@npm:10.0.0-alpha-20240429150713-f648c855"
+"@envelop/prometheus@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@envelop/prometheus@npm:10.0.0"
   dependencies:
     "@envelop/on-resolve": "npm:^4.1.0"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.0
+    "@envelop/core": ^5.0.1
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     prom-client: ^15.0.0
-  checksum: 10c0/58ea0204388fe3dec11d0b2e685d1f316a6954aa4546646d1b2eeae0468792cdff1c840bfdab263c790bc4975a70d1cf9957c390f3561c42e45b6164600a59d4
+  checksum: 10c0/31dde41f74c81710d60443bc9d23ac88512418a59815fd9059c0a0f5f4257f761c7e49919e352aa85029df0e15db2fb76d018b87796c6131086ac935a04d5383
   languageName: node
   linkType: hard
 
@@ -5178,7 +5178,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-prometheus@workspace:packages/plugins/prometheus"
   dependencies:
     "@graphql-mesh/serve-runtime": "npm:^0.3.4"
-    "@graphql-yoga/plugin-prometheus": "npm:^5.0.0-rc-20240429151956-4a601b11"
+    "@graphql-yoga/plugin-prometheus": "npm:^5.0.0"
     prom-client: "npm:15.1.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.3
@@ -6635,16 +6635,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-prometheus@npm:^5.0.0-rc-20240429151956-4a601b11":
-  version: 5.0.0-rc-20240429151956-4a601b11
-  resolution: "@graphql-yoga/plugin-prometheus@npm:5.0.0-rc-20240429151956-4a601b11"
+"@graphql-yoga/plugin-prometheus@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@graphql-yoga/plugin-prometheus@npm:5.0.0"
   dependencies:
-    "@envelop/prometheus": "npm:10.0.0-alpha-20240429150713-f648c855"
+    "@envelop/prometheus": "npm:^10.0.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: 5.3.1-rc-20240429151956-4a601b11
+    graphql-yoga: ^5.3.1
     prom-client: ^15.0.0
-  checksum: 10c0/76a5e3f10c574a8c18ad22cd0e68c60d2df0f38d80a7ebae3acad5e1c6cbcf81c0b93926a55f7694ed21b6076f35f3d985023999139d4053607254fdb1576cc9
+  checksum: 10c0/b1af4c1ce05e4a622167730ed5c7fcd7128c80f38ad853d45b5f62c7dad154289581407c2c18bd7d2088f12253a140b3c6674a3208bc2af00c413f40d422abce
   languageName: node
   linkType: hard
 
