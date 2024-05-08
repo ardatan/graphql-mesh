@@ -1,6 +1,6 @@
 import { setTimeout } from 'timers/promises';
 import { spawn, Thread, Worker } from 'threads';
-import { Serve } from './tenv';
+import { timeout as jestTimeout, Serve } from './tenv';
 import type { benchGraphQLServer } from './workers/benchGraphQLServer';
 
 const leftovers = new Set<Thread>();
@@ -15,10 +15,16 @@ afterAll(async () => {
 export interface ServeSustainOptions {
   /** The serve process to benchmark. */
   serve: Serve;
-  /** How long should the benchmark run for. */
-  duration: number;
-  /** How many parallel requests should each VU perform. */
-  parallelRequestsPerVU: number;
+  /**
+   * How long should the benchmark run for.
+   * @default jest.timeout - 1second
+   */
+  duration?: number;
+  /**
+   * How many parallel requests should each VU perform.
+   * @default 10
+   */
+  parallelRequestsPerVU?: number;
   /** GraphQL parameters to use. */
   params: {
     query: string;
@@ -54,7 +60,12 @@ export async function createTbench(vus: number): Promise<Tbench> {
   );
   workers.forEach(worker => leftovers.add(worker));
   return {
-    async serveSustain({ serve, duration, parallelRequestsPerVU, params }) {
+    async serveSustain({
+      serve,
+      duration = jestTimeout - 1_000,
+      parallelRequestsPerVU = 10,
+      params,
+    }) {
       let maxCpu = 0;
       let maxMem = 0;
       const signal = AbortSignal.timeout(duration);

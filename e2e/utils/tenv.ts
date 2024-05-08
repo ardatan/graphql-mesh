@@ -9,7 +9,7 @@ import Dockerode from 'dockerode';
 import { ExecutionResult } from 'graphql';
 import { createArg, createPortArg, createServicePortArg } from './args';
 
-const retries = 120,
+export const retries = 120,
   interval = 500,
   timeout = retries * interval; // 1min
 jest.setTimeout(timeout);

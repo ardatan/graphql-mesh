@@ -23,8 +23,6 @@ it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
 
   const { maxCpu, maxMem, slowestRequest } = await tbench.serveSustain({
     serve: await serve({ fusiongraph: output }),
-    duration: 10_000,
-    parallelRequestsPerVU: 10,
     params: {
       query: /* GraphQL */ `
         query Albums {
