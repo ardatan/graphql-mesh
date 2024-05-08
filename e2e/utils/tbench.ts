@@ -50,7 +50,7 @@ export interface Tbench {
 }
 
 /**
- * @param vusCount VUS (Virtual USers) to sustain. Is actually the count of threads making parallel requests.
+ * @param vusCount VUs (Virtual Users) to sustain. Is actually the count of threads making parallel requests.
  */
 export async function createTbench(vusCount: number): Promise<Tbench> {
   const vus = await Promise.all(
