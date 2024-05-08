@@ -475,7 +475,7 @@ function spawn(
       const [cpu, mem] = proc.getStd('out').trim().split(/\s+/);
       return {
         cpu: parseFloat(cpu),
-        mem: parseFloat(mem) * 0.001,
+        mem: parseFloat(mem) * 0.001, // KB to MB
       };
     },
     dispose: () => (child.kill(), waitForExit),
