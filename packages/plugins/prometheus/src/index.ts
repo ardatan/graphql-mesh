@@ -17,10 +17,27 @@ import {
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import type {
   CounterAndLabels,
+  FillLabelsFnParams,
   HistogramAndLabels,
   PrometheusTracingPluginConfig,
+  SummaryAndLabels,
 } from '@graphql-yoga/plugin-prometheus';
-import { createCounter, createHistogram, usePrometheus } from '@graphql-yoga/plugin-prometheus';
+import {
+  createCounter,
+  createHistogram,
+  createSummary,
+  usePrometheus,
+} from '@graphql-yoga/plugin-prometheus';
+
+export {
+  CounterAndLabels,
+  FillLabelsFnParams,
+  HistogramAndLabels,
+  SummaryAndLabels,
+  createCounter,
+  createHistogram,
+  createSummary,
+};
 
 type MeshMetricsConfig = {
   delegation?:
