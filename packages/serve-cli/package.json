@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/serve-cli",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -46,7 +46,7 @@
   "dependencies": {
     "@commander-js/extra-typings": "^12.0.1",
     "@graphql-mesh/cross-helpers": "^0.4.2",
-    "@graphql-mesh/serve-runtime": "^0.3.4",
+    "@graphql-mesh/serve-runtime": "^0.3.5",
     "@graphql-mesh/types": "^0.98.3",
     "@graphql-mesh/utils": "^0.98.3",
     "@graphql-tools/utils": "^10.2.0",

@@ -1,14 +1,14 @@
 {
   "name": "gateway-example",
-  "version": "0.10.5",
+  "version": "0.10.6",
   "description": "Gateway Example",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.90.3",
-    "@graphql-mesh/openapi": "0.100.5",
+    "@graphql-mesh/cli": "0.90.4",
+    "@graphql-mesh/openapi": "0.100.6",
     "@graphql-mesh/plugin-hive": "0.98.3",
     "@graphql-mesh/transform-hive": "0.98.3",
     "graphql": "16.8.1"

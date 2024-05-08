@@ -1,5 +1,17 @@
 # @graphql-mesh/plugin-http-details-extensions
 
+## 0.98.4
+
+### Patch Changes
+
+- [#6948](https://github.com/ardatan/graphql-mesh/pull/6948)
+  [`8ee8d40`](https://github.com/ardatan/graphql-mesh/commit/8ee8d40871ca1be19a630b4a7181d0f0017d587f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@envelop/core@5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.1) (from `5.0.0`,
+    in `dependencies`)
+
 ## 0.98.3
 
 ### Patch Changes
