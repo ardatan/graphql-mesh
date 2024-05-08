@@ -1,67 +1,46 @@
 import os from 'os';
-import { setTimeout } from 'timers/promises';
+import { createTbench, Tbench, TbenchResult } from '@e2e/tbench';
 import { createTenv } from '@e2e/tenv';
-import { createTworker, Tworker } from '@e2e/tworker';
 
 const { serve, compose } = createTenv(__dirname);
 
-const tworkers: Tworker[] = [];
+let tbench: Tbench;
 beforeAll(async () => {
-  for (let i = 0; i < os.availableParallelism(); i++) {
-    tworkers.push(await createTworker());
-  }
+  tbench = await createTbench(
+    // to give space for jest and the serve process.
+    os.availableParallelism() - 2,
+  );
 });
 
-it('should not consume more than 250MB of memory', async () => {
+const threshold: TbenchResult = {
+  maxCpu: Infinity, // we dont care
+  maxMem: 300, // MB
+  slowestRequest: 0.5, // seconds
+};
+
+it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
   const { output } = await compose({ output: 'graphql' });
-  const { port, getStats } = await serve({ fusiongraph: output });
 
-  const duration = AbortSignal.timeout(1_000);
+  const { maxCpu, maxMem, slowestRequest } = await tbench.serveSustain({
+    serve: await serve({ fusiongraph: output }),
+    duration: 10_000,
+    parallelRequestsPerVU: 10,
+    params: {
+      query: /* GraphQL */ `
+        query Albums {
+          albums(limit: 2) {
+            albumId
+            title
+            artist {
+              name
+            }
+          }
+        }
+      `,
+    },
+  });
 
-  const runner = (async () => {
-    for (;;) {
-      if (duration.aborted) {
-        return; // done
-      }
-      await Promise.all(
-        tworkers.map(({ mustExecute }) =>
-          mustExecute(port, {
-            query: /* GraphQL */ `
-              query Albums {
-                albums(limit: 2) {
-                  albumId
-                  title
-                  artist {
-                    name
-                  }
-                }
-              }
-            `,
-          }),
-        ),
-      );
-    }
-  })();
-
-  let highCpu = 0;
-  let highMem = 0;
-  (async () => {
-    for (;;) {
-      await setTimeout(300);
-      if (duration.aborted) {
-        return; // done
-      }
-      const { cpu, mem } = await getStats();
-      if (highCpu < cpu) {
-        highCpu = cpu;
-      }
-      if (highMem < mem) {
-        highMem = mem;
-      }
-    }
-  })();
-
-  await runner;
-
-  expect(highMem).toBeLessThan(250);
+  expect(maxCpu).toBeLessThan(threshold.maxCpu);
+  expect(maxMem).toBeLessThan(threshold.maxMem);
+  expect(slowestRequest).toBeLessThan(threshold.slowestRequest);
 });

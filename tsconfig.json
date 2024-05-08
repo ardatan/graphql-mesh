@@ -49,7 +49,7 @@
       "@omnigraph/*": ["packages/loaders/*/src/index.ts"],
       "@e2e/args": ["e2e/utils/args.ts"],
       "@e2e/tenv": ["e2e/utils/tenv.ts"],
-      "@e2e/tworker": ["e2e/utils/tworker.ts"]
+      "@e2e/tbench": ["e2e/utils/tbench.ts"]
     }
   },
   "include": ["declarations.d.ts", "packages", "e2e"],
