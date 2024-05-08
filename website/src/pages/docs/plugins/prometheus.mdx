@@ -95,6 +95,32 @@ plugins:
       registry: ./myRegistry.ts
 ```
 
+## Caveats
+
+Due to Prometheus client API limitations, if this plugin is initialized multiple times, only the
+metrics configuration of the first initialization will be applied.
+
+If necessary, use a different registry instance for each plugin instance, or clear the registry
+before plugin initialization.
+
+```ts
+function usePrometheusWithRegistry() {
+  // create a new registry instance for each plugin instance
+  const registry = new Registry()
+
+  // or just clear the registry if you use only on plugin instance at a time
+  registry.clear()
+
+  return usePrometheus({
+    registry,
+    ...
+  })
+}
+```
+
+Keep in mind that this implies potential data loss in pull mode if some data is produced between
+last pull and the re-initialization of the plugin.
+
 ## Config API Reference
 
 import API from '../../../generated-markdown/PrometheusConfig.generated.md'

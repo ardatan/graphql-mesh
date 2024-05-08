@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { assertValidSchema } from 'graphql';
 import { createSchema } from 'graphql-yoga';
 import { register as registry } from 'prom-client';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
@@ -24,8 +23,10 @@ describe('Prometheus', () => {
       },
     },
   });
+
   let serveRuntime: ReturnType<typeof createServeRuntime>;
-  beforeEach(() => {
+
+  function newTestRuntime() {
     const fusiongraph = composeSubgraphs([
       {
         name: 'TestSubgraph',
@@ -43,10 +44,16 @@ describe('Prometheus', () => {
       },
       plugins: ctx => [usePrometheus(ctx)],
     });
+  }
+
+  beforeEach(() => {
+    newTestRuntime();
   });
+
   afterEach(() => {
     registry.clear();
   });
+
   it('should track subgraph requests', async () => {
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
@@ -89,6 +96,38 @@ describe('Prometheus', () => {
     });
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_errors');
+    expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('operationType="query"');
+  });
+
+  it('can be initialized multiple times in the same node process', async () => {
+    async function testQuery() {
+      const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: /* GraphQL */ `
+            query {
+              hello
+            }
+          `,
+        }),
+      });
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual({ data: { hello: 'Hello world!' } });
+    }
+
+    await testQuery();
+
+    // Create a new mesh instance, as what happens when polling is enabled
+    newTestRuntime();
+
+    await testQuery();
+
+    const metrics = await registry.metrics();
+    expect(metrics).toContain('graphql_mesh_subgraph_execute_duration');
     expect(metrics).toContain('subgraphName="TestSubgraph"');
     expect(metrics).toContain('operationType="query"');
   });
