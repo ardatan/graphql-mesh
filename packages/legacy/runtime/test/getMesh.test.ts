@@ -335,7 +335,7 @@ describe('getMesh', () => {
         suffixRootTypeNames: true,
         suffixFieldNames: true,
         suffixResponses: true,
-        delayFetch: true,
+        delayImport: true,
       }),
       ...new Array(2).fill(0).map((_, i) =>
         createGraphQLSource({
