@@ -17,7 +17,7 @@ export interface ServeSustainOptions {
   serve: Serve;
   /**
    * How long should the benchmark run for.
-   * @default jest.timeout - 1second
+   * @default jest.timeout - 10 seconds
    */
   duration?: number;
   /**
@@ -62,7 +62,7 @@ export async function createTbench(vus: number): Promise<Tbench> {
   return {
     async serveSustain({
       serve,
-      duration = jestTimeout - 1_000,
+      duration = jestTimeout - 10_000,
       parallelRequestsPerVU = 10,
       params,
     }) {
