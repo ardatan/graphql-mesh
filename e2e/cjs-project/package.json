@@ -1,5 +1,6 @@
 {
   "name": "@e2e/cjs-project",
+  "version": null,
   "type": "commonjs",
   "private": true,
   "dependencies": {

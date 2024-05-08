@@ -1,5 +1,6 @@
 {
   "name": "@e2e/neo4j-example",
+  "version": null,
   "license": "MIT",
   "private": true,
   "dependencies": {

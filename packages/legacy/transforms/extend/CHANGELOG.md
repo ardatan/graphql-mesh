@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-extend
 
+## 0.98.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fb59244`](https://github.com/ardatan/graphql-mesh/commit/fb592447c12950582881b24c0ca035a34d2ca48c)]:
+  - @graphql-mesh/types@0.98.4
+  - @graphql-mesh/utils@0.98.4
+
 ## 0.98.3
 
 ### Patch Changes
