@@ -1,5 +1,13 @@
 # @graphql-mesh/runtime
 
+## 0.99.4
+
+### Patch Changes
+
+- [#6951](https://github.com/ardatan/graphql-mesh/pull/6951)
+  [`d9b5137`](https://github.com/ardatan/graphql-mesh/commit/d9b513704f7083d523f03d1dbb379a5fb27580c4)
+  Thanks [@masiulis](https://github.com/masiulis)! - Make schema generation consistent
+
 ## 0.99.3
 
 ### Patch Changes

@@ -1,13 +1,13 @@
 {
   "name": "chinook",
-  "version": "0.14.3",
+  "version": "0.14.4",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.90.3",
+    "@graphql-mesh/cli": "0.90.4",
     "@graphql-mesh/tuql": "0.99.3",
     "graphql": "16.8.1"
   },

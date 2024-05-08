@@ -1,5 +1,14 @@
 # cloudflare-workers
 
+## 0.11.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`234d2f9`](https://github.com/ardatan/graphql-mesh/commit/234d2f9d390bd340b0f7bcdb8f335334ff5f60b9)]:
+  - @omnigraph/json-schema@0.100.5
+  - @graphql-mesh/serve-runtime@0.3.5
+
 ## 0.11.4
 
 ### Patch Changes

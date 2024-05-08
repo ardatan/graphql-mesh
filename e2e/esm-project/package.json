@@ -1,5 +1,6 @@
 {
   "name": "@e2e/esm-project",
+  "version": null,
   "type": "module",
   "private": true,
   "dependencies": {

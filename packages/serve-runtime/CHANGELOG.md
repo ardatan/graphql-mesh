@@ -1,5 +1,12 @@
 # @graphql-mesh/serve-runtime
 
+## 0.3.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/fusion-runtime@0.3.4
+
 ## 0.3.4
 
 ### Patch Changes
