@@ -1,4 +1,4 @@
-name: benchmark
+name: loadtest
 
 on:
   pull_request:
@@ -24,6 +24,6 @@ jobs:
         with:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
-      - name: bench
+      - name: loadtest
         timeout-minutes: 3
-        run: yarn bench:e2e
+        run: yarn loadtest:e2e
