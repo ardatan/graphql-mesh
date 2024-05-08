@@ -25,25 +25,27 @@ export async function benchGraphQLServer(port, duration, parallelCount, params) 
   const signal = AbortSignal.timeout(duration);
   while (!signal.aborted) {
     await Promise.all(
-      Array(parallelCount).fill(
-        (async () => {
-          const start = Date.now();
-          const res = await fetch(url, init);
-          if (!res.ok) {
-            const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
-            err.name = 'ResponseError';
-            throw err;
-          }
-          const result = await res.json();
-          if (result.errors?.length) {
-            throw new Error(`GraphQL result has errors\n${JSON.stringify(result.errors)}`);
-          }
-          const duration = Date.now() - start;
-          if (duration > slowestRequest) {
-            slowestRequest = duration;
-          }
-        })(),
-      ),
+      Array(parallelCount)
+        .fill(null)
+        .map(() =>
+          (async () => {
+            const start = Date.now();
+            const res = await fetch(url, init);
+            if (!res.ok) {
+              const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
+              err.name = 'ResponseError';
+              throw err;
+            }
+            const result = await res.json();
+            if (result.errors?.length) {
+              throw new Error(`GraphQL result has errors\n${JSON.stringify(result.errors)}`);
+            }
+            const duration = Date.now() - start;
+            if (duration > slowestRequest) {
+              slowestRequest = duration;
+            }
+          })(),
+        ),
     );
   }
   return slowestRequest;
