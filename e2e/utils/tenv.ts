@@ -464,7 +464,7 @@ function spawn(
     },
     async getStats() {
       const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs },
+        { cwd, pipeLogs: false },
         'ps',
         '-o',
         'pcpu=,rss=',
