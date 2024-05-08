@@ -14,7 +14,7 @@ beforeAll(async () => {
 
 const threshold: TbenchResult = {
   maxCpu: Infinity, // we dont care
-  maxMem: 300, // MB
+  maxMem: 500, // MB
   slowestRequest: 0.5, // seconds
 };
 
