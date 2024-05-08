@@ -1,5 +1,15 @@
 # federation-gateway
 
+## 0.8.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fb59244`](https://github.com/ardatan/graphql-mesh/commit/fb592447c12950582881b24c0ca035a34d2ca48c)]:
+  - @graphql-mesh/transform-federation@0.98.4
+  - @graphql-mesh/graphql@0.98.4
+  - @graphql-mesh/cli@0.90.5
+
 ## 0.8.4
 
 ### Patch Changes

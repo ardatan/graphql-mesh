@@ -1,5 +1,16 @@
 # @omnigraph/sqlite
 
+## 0.2.4
+
+### Patch Changes
+
+- [`fb59244`](https://github.com/ardatan/graphql-mesh/commit/fb592447c12950582881b24c0ca035a34d2ca48c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update GraphQL Tools packages
+
+- Updated dependencies
+  [[`fb59244`](https://github.com/ardatan/graphql-mesh/commit/fb592447c12950582881b24c0ca035a34d2ca48c)]:
+  - @graphql-mesh/types@0.98.4
+
 ## 0.2.3
 
 ### Patch Changes

@@ -4,6 +4,16 @@
 
 ### Patch Changes
 
+- Updated dependencies
+  [[`fb59244`](https://github.com/ardatan/graphql-mesh/commit/fb592447c12950582881b24c0ca035a34d2ca48c)]:
+  - @omnigraph/mysql@0.2.4
+  - @graphql-mesh/serve-cli@0.4.6
+  - @graphql-mesh/compose-cli@0.3.4
+
+## null
+
+### Patch Changes
+
 - Updated dependencies []:
   - @graphql-mesh/serve-cli@0.4.5
 
