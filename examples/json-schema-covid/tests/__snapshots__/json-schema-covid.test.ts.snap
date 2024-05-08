@@ -137,7 +137,6 @@ scalar JSON
 
 scalar ObjMap
 
-""""""
 type Query {
   """"""
   case(countryRegion: String): Case

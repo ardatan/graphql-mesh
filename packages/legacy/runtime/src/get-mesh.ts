@@ -168,7 +168,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   ];
   const wrappedFetchFn: MeshFetch = wrapFetchWithPlugins(initialPluginList);
   await Promise.allSettled(
-    sources.map(async apiSource => {
+    sources.map(async (apiSource, index) => {
       const apiName = apiSource.name;
       const sourceLogger = logger.child(apiName);
       sourceLogger.debug(`Generating the schema`);
@@ -199,7 +199,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         }
 
         const rootTypeMap = getRootTypeMap(apiSchema);
-        rawSources.push({
+        rawSources[index] = {
           name: apiName,
           schema: apiSchema,
           executor: source.executor,
@@ -209,7 +209,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           batch: 'batch' in source ? source.batch : true,
           merge: source.merge,
           createProxyingResolver: createProxyingResolverFactory(apiName, rootTypeMap),
-        });
+        };
       } catch (e: any) {
         sourceLogger.error(
           `Failed to generate the schema for the source "${apiName}"\n ${e.message}`,

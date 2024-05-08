@@ -39,6 +39,7 @@ describe('getMesh', () => {
     suffixRootTypeNames: boolean;
     suffixFieldNames: boolean;
     suffixResponses: boolean;
+    delayImport?: boolean;
   }
 
   function createGraphQLSchema(config: CreateSchemaConfiguration) {
@@ -96,6 +97,9 @@ describe('getMesh', () => {
         store,
         logger,
         async importFn(moduleId) {
+          if (config.delayImport) {
+            await new Promise(r => setTimeout(r, 1));
+          }
           if (moduleId.endsWith(`schema${config.suffix}.ts`)) {
             return createGraphQLSchema(config);
           }
@@ -322,5 +326,70 @@ describe('getMesh', () => {
     };
     expect(serializedOriginalError?.message).toContain('This is an error');
     expect(serializedOriginalError?.stack).toContain('at Object.throwMe (');
+  });
+
+  it('generated consistent schema', async () => {
+    const sources = [
+      createGraphQLSource({
+        suffix: 'Large',
+        suffixRootTypeNames: true,
+        suffixFieldNames: true,
+        suffixResponses: true,
+        delayImport: true,
+      }),
+      ...new Array(2).fill(0).map((_, i) =>
+        createGraphQLSource({
+          suffix: i.toString(),
+          suffixRootTypeNames: true,
+          suffixFieldNames: true,
+          suffixResponses: true,
+        }),
+      ),
+    ];
+    const mesh1 = await getMesh({
+      cache,
+      pubsub,
+      logger,
+      sources,
+      merger,
+    });
+
+    const mesh2 = await getMesh({
+      cache,
+      pubsub,
+      logger,
+      sources,
+      merger,
+    });
+
+    expect(printSchemaWithDirectives(mesh1.schema)).toEqual(
+      printSchemaWithDirectives(mesh2.schema),
+    );
+
+    expect(printSchemaWithDirectives(mesh1.schema)).toMatchInlineSnapshot(`
+      "schema {
+        query: Query
+        mutation: Mutation
+        subscription: Subscription
+      }
+
+      type Query {
+        helloLarge: String
+        hello0: String
+        hello1: String
+      }
+
+      type Mutation {
+        byeLarge: String
+        bye0: String
+        bye1: String
+      }
+
+      type Subscription {
+        waveLarge: String
+        wave0: String
+        wave1: String
+      }"
+    `);
   });
 });
