@@ -81,7 +81,7 @@
     "eslint-config-prettier": "9.1.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-n": "17.4.0",
+    "eslint-plugin-n": "17.5.1",
     "eslint-plugin-promise": "6.1.1",
     "eslint-plugin-standard": "5.0.0",
     "globby": "11.1.0",
@@ -97,7 +97,7 @@
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "es5-ext": "0.10.64",
-    "esbuild": "0.20.2",
+    "esbuild": "^0.21.1",
     "graphql": "16.8.1",
     "tslib": "2.6.2",
     "undici": "6.15.0",
