@@ -50,15 +50,15 @@ export interface Tbench {
 }
 
 /**
- * @param vus VUS (Virtual USers) to sustain. Is actually the count of threads making parallel requests.
+ * @param vusCount VUS (Virtual USers) to sustain. Is actually the count of threads making parallel requests.
  */
-export async function createTbench(vus: number): Promise<Tbench> {
-  const workers = await Promise.all(
-    Array(vus)
+export async function createTbench(vusCount: number): Promise<Tbench> {
+  const vus = await Promise.all(
+    Array(vusCount)
       .fill(null)
       .map(() => spawn<typeof benchGraphQLServer>(new Worker('./workers/benchGraphQLServer.js'))),
   );
-  workers.forEach(worker => leftovers.add(worker));
+  vus.forEach(worker => leftovers.add(worker));
   return {
     async serveSustain({
       serve,
@@ -84,7 +84,7 @@ export async function createTbench(vus: number): Promise<Tbench> {
 
       let slowestRequest = 0;
       for (const slowestRequestInVU of await Promise.all(
-        workers.map(benchGraphQLServer =>
+        vus.map(benchGraphQLServer =>
           benchGraphQLServer(serve.port, duration, parallelRequestsPerVU, params),
         ),
       )) {
