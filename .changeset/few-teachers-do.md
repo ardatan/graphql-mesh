@@ -1,5 +1,5 @@
 ---
-"@graphql-mesh/runtime": patch
+'@graphql-mesh/runtime': patch
 ---
 
 Make schema generation consistent
