@@ -1,6 +1,6 @@
 import { setTimeout } from 'timers/promises';
 import { spawn, Thread, Worker } from 'threads';
-import { timeout as jestTimeout, Serve } from './tenv';
+import { timeout as jestTimeout, Server } from './tenv';
 import type { benchGraphQLServer } from './workers/benchGraphQLServer';
 
 const leftovers = new Set<Thread>();
@@ -12,9 +12,9 @@ afterAll(async () => {
   });
 });
 
-export interface ServeSustainOptions {
-  /** The serve process to benchmark. */
-  serve: Serve;
+export interface TbenchSustainOptions {
+  /** The server process to benchmark. */
+  server: Server;
   /**
    * How long should the benchmark run for.
    * @default jest.timeout - 10 seconds
@@ -46,7 +46,7 @@ export interface TbenchResult {
 }
 
 export interface Tbench {
-  serveSustain(opts: ServeSustainOptions): Promise<TbenchResult>;
+  sustain(opts: TbenchSustainOptions): Promise<TbenchResult>;
 }
 
 /**
@@ -60,18 +60,13 @@ export async function createTbench(vusCount: number): Promise<Tbench> {
   );
   vus.forEach(worker => leftovers.add(worker));
   return {
-    async serveSustain({
-      serve,
-      duration = jestTimeout - 10_000,
-      parallelRequestsPerVU = 10,
-      params,
-    }) {
+    async sustain({ server, duration = jestTimeout - 10_000, parallelRequestsPerVU = 10, params }) {
       let maxCpu = 0;
       let maxMem = 0;
       const signal = AbortSignal.timeout(duration);
       (async () => {
         while (!signal.aborted) {
-          const { cpu, mem } = await serve.getStats();
+          const { cpu, mem } = await server.getStats();
           if (maxCpu < cpu) {
             maxCpu = cpu;
           }
@@ -85,7 +80,7 @@ export async function createTbench(vusCount: number): Promise<Tbench> {
       let slowestRequest = 0;
       for (const slowestRequestInVU of await Promise.all(
         vus.map(benchGraphQLServer =>
-          benchGraphQLServer(serve.port, duration, parallelRequestsPerVU, params),
+          benchGraphQLServer(server.port, duration, parallelRequestsPerVU, params),
         ),
       )) {
         if (slowestRequestInVU > slowestRequest) {

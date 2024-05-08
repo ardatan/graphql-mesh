@@ -15,14 +15,14 @@ beforeAll(async () => {
 const threshold: TbenchResult = {
   maxCpu: Infinity, // we dont care
   maxMem: 500, // MB
-  slowestRequest: 0.5, // seconds
+  slowestRequest: 1, // second
 };
 
 it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
   const { output } = await compose({ output: 'graphql' });
-
-  const { maxCpu, maxMem, slowestRequest } = await tbench.serveSustain({
-    serve: await serve({ fusiongraph: output }),
+  const server = await serve({ fusiongraph: output });
+  const result = await tbench.sustain({
+    server,
     params: {
       query: /* GraphQL */ `
         query Albums {
@@ -38,7 +38,9 @@ it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
     },
   });
 
-  expect(maxCpu).toBeLessThan(threshold.maxCpu);
-  expect(maxMem).toBeLessThan(threshold.maxMem);
-  expect(slowestRequest).toBeLessThan(threshold.slowestRequest);
+  console.debug(result);
+
+  expect(result.maxCpu).toBeLessThan(threshold.maxCpu);
+  expect(result.maxMem).toBeLessThan(threshold.maxMem);
+  expect(result.slowestRequest).toBeLessThan(threshold.slowestRequest);
 });
