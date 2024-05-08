@@ -11,9 +11,15 @@ import { getInContextSDK } from '@graphql-mesh/runtime';
 import { TransportBaseContext } from '@graphql-mesh/transport-common';
 import { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise, resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
-import { SubschemaConfig } from '@graphql-tools/delegate';
+import {
+  DelegationPlanInfo,
+  delegationPlanInfosByContext,
+  isDelegationDebugging,
+  logFnForContext,
+  SubschemaConfig,
+} from '@graphql-tools/delegate';
 import { stitchSchemas } from '@graphql-tools/stitch';
-import { IResolvers, isDocumentNode, isPromise } from '@graphql-tools/utils';
+import { IResolvers, isAsyncIterable, isDocumentNode, isPromise } from '@graphql-tools/utils';
 import { extractSubgraphsFromFusiongraph } from './getSubschemasFromFusiongraph.js';
 import {
   defaultTransportsOption,
@@ -155,6 +161,31 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
           return ensureFusiongraph();
         },
       };
+    },
+    onExecute({ args }) {
+      if (isDelegationDebugging()) {
+        logFnForContext.set(args.contextValue, (...args: any[]) =>
+          opts.transportBaseContext?.logger?.debug(args),
+        );
+
+        return {
+          onExecuteDone({ result }) {
+            if (isAsyncIterable(result)) {
+              opts.transportBaseContext?.logger?.warn(
+                'Delegation result is an AsyncIterable. This is not supported by the delegation logger.',
+              );
+              return;
+            }
+            const delegationPlanInfos = delegationPlanInfosByContext.get(args.contextValue);
+            if (delegationPlanInfos) {
+              result.extensions = result.extensions || {};
+              const delegationPlans = (result.extensions.delegationPlans ||=
+                []) as DelegationPlanInfo[];
+              delegationPlans.push(...delegationPlanInfos);
+            }
+          },
+        };
+      }
     },
     onEnveloped({ setSchema }: { setSchema: (schema: GraphQLSchema) => void }) {
       setSchema(fusiongraph);

@@ -13,6 +13,7 @@ import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj, wrapFetchWithHooks } from '@graphql-mesh/utils';
+import { isDelegationDebugging } from '@graphql-tools/delegate';
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import { isPromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
@@ -24,6 +25,7 @@ import {
   MeshServePlugin,
 } from './types.js';
 import { useFederationSupergraph } from './useFederationSupergraph.js';
+import { useRequestId } from './useRequestId.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext>,
@@ -125,10 +127,16 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     },
   };
 
+  const plugins = [
+    defaultFetchPlugin,
+    supergraphYogaPlugin,
+    ...(config.plugins?.(configContext) || []),
+  ];
+
   const yoga = createYoga<unknown, MeshServeContext>({
     fetchAPI: config.fetchAPI,
     logging: config.logging == null ? new DefaultLogger() : config.logging,
-    plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(configContext) || [])],
+    plugins,
     context: ({ request, params, ...rest }) => {
       // TODO: I dont like this cast, but it's necessary
       const { req, connectionParams } = rest as {
