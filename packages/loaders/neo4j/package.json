@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@graphql-mesh/transport-neo4j": "^0.2.3",
-    "@graphql-tools/delegate": "^10.0.7",
+    "@graphql-tools/delegate": "^10.0.10",
     "@graphql-tools/schema": "^10.0.2",
     "@neo4j/introspector": "^3.0.0",
     "neo4j-driver": "^5.9.2"
