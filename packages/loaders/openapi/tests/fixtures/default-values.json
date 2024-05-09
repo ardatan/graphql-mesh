@@ -1,0 +1,160 @@
+{
+  "swagger": "2.0",
+  "basePath": "/api/v1",
+  "paths": {
+    "/stacks": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/StacksResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "operationId": "Retrieve list of stacks",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": ["Stacks"]
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "description": "Creates a new stack",
+        "operationId": "Create a stack",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateStackPayload"
+            }
+          }
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": ["Stacks"]
+      }
+    }
+  },
+  "info": {
+    "title": "My Stacks API",
+    "version": "1.0",
+    "description": "Manage your stacks"
+  },
+  "produces": ["application/json"],
+  "consumes": ["application/json"],
+  "securityDefinitions": {
+    "jwt": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
+  "security": [
+    {
+      "jwt": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Stacks"
+    }
+  ],
+  "definitions": {
+    "StacksResponse": {
+      "required": ["data"],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Stack"
+          }
+        }
+      }
+    },
+    "Stack": {
+      "required": ["name", "description", "items"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Stack name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Stack description"
+        },
+        "items": {
+          "type": "array",
+          "description": "list of items in the stack",
+          "items": {
+            "$ref": "#/definitions/StackItem"
+          }
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "CreateStackPayload": {
+      "required": ["name", "description", "items"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Stack name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Stack description"
+        },
+        "items": {
+          "type": "array",
+          "description": "Stack Items",
+          "items": {
+            "$ref": "#/definitions/StackItem"
+          }
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "StackItem": {
+      "required": ["item"],
+      "properties": {
+        "item": {
+          "type": "object",
+          "description": "Item details",
+          "default": {}
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "responses": {
+    "ParseError": {
+      "description": "When a mask can't be parsed"
+    },
+    "MaskError": {
+      "description": "When any error occurs on mask"
+    }
+  }
+}
