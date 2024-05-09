@@ -53,7 +53,7 @@ describe('Artifacts', () => {
       await serveMesh(
         {
           baseDir: join(__dirname, '..'),
-          argsPort: 4000,
+          argsPort: 9876,
           getBuiltMesh,
           logger: mockLogger,
           rawServeConfig: {

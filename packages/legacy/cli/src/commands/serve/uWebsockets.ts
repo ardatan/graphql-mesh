@@ -1,7 +1,7 @@
 import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
 import { type TemplatedApp } from 'uWebSockets.js';
-import { getGraphQLWSOptions } from './getGraphQLWSOpts';
-import type { ServerStartOptions, ServerStartResult } from './types';
+import { getGraphQLWSOptions } from './getGraphQLWSOpts.js';
+import type { ServerStartOptions, ServerStartResult } from './types.js';
 
 export async function startuWebSocketsServer({
   meshHTTPHandler,
