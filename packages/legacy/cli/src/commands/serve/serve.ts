@@ -3,17 +3,15 @@
 /* eslint-disable dot-notation */
 import cluster from 'cluster';
 import os from 'os';
-import { execute, ExecutionArgs, subscribe } from 'graphql';
-import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
 import open from 'open';
-import type { TemplatedApp } from 'uWebSockets.js';
 import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
-import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
+import { ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
-import { registerTerminateHandler } from '@graphql-mesh/utils';
-import { handleFatalError } from '../../handleFatalError.js';
+import { TerminateHandler } from '@graphql-mesh/utils';
 import { GraphQLMeshCLIParams } from '../../index.js';
+import { startNodeHttpServer } from './node-http.js';
+import { startuWebSocketsServer } from './uWebsockets.js';
 
 function portSelectorFn(sources: [number, number, number], logger: Logger) {
   const port = sources.find(source => Boolean(source)) || 4000;
@@ -42,6 +40,7 @@ export async function serveMesh(
     logger,
     rawServeConfig = {},
     playgroundTitle,
+    registerTerminateHandler,
   }: ServeMeshOptions,
   cliParams: GraphQLMeshCLIParams,
 ) {
@@ -134,8 +133,6 @@ export async function serveMesh(
         .catch(e => eventLogger.error(e));
     });
 
-    let uWebSocketsApp: TemplatedApp;
-
     const meshHTTPHandler = createMeshHTTPHandler({
       baseDir,
       getBuiltMesh,
@@ -143,73 +140,40 @@ export async function serveMesh(
       playgroundTitle,
     });
 
-    if (sslCredentials) {
-      const { SSLApp } = await import('uWebSockets.js');
-      uWebSocketsApp = SSLApp({
-        key_file_name: sslCredentials.key,
-        cert_file_name: sslCredentials.cert,
-      });
-    } else {
-      const { App } = await import('uWebSockets.js');
-      uWebSocketsApp = App();
+    let uWebSocketsAvailable = false;
+    try {
+      await import('uWebSockets.js');
+      uWebSocketsAvailable = true;
+    } catch (err) {
+      logger.warn(
+        'uWebSockets.js is not available currently so the server will fallback to node:http.',
+      );
     }
 
-    uWebSocketsApp.any('/*', meshHTTPHandler);
-
-    // yoga's envelop may augment the `execute` and `subscribe` operations
-    // so we need to make sure we always use the freshest instance
-    type EnvelopedExecutionArgs = ExecutionArgs & {
-      rootValue: {
-        execute: typeof execute;
-        subscribe: typeof subscribe;
-      };
-    };
-
-    const wsHandler = makeBehavior({
-      execute: args => (args as EnvelopedExecutionArgs).rootValue.execute(args),
-      subscribe: args => (args as EnvelopedExecutionArgs).rootValue.subscribe(args),
-      onSubscribe: async (ctx, msg) => {
-        const { getEnveloped } = await getBuiltMesh();
-        const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped(ctx);
-
-        const args: EnvelopedExecutionArgs = {
-          schema,
-          operationName: msg.payload.operationName,
-          document: parse(msg.payload.query),
-          variableValues: msg.payload.variables,
-          contextValue: await contextFactory(),
-          rootValue: {
-            execute,
-            subscribe,
-          },
-        };
-
-        const errors = validate(args.schema, args.document);
-        if (errors.length) return errors;
-        return args;
-      },
+    const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
+    const { stop } = await startServer({
+      meshHTTPHandler,
+      getBuiltMesh,
+      sslCredentials,
+      graphqlPath,
+      hostname,
+      port,
     });
 
-    uWebSocketsApp.ws(graphqlPath, wsHandler);
-
-    uWebSocketsApp.listen(hostname, port, listenSocket => {
-      if (!listenSocket) {
-        logger.error(`Failed to listen to ${serverUrl}`);
-        process.exit(1);
-      }
-      registerTerminateHandler(async eventName => {
-        const eventLogger = logger.child(`${eventName}  💀`);
-        eventLogger.debug(`Stopping HTTP Server`);
-        uWebSocketsApp?.close?.();
-        eventLogger.debug(`HTTP Server has been stopped`);
+    registerTerminateHandler(async eventName => {
+      const eventLogger = logger.child(`${eventName}  💀`);
+      eventLogger.debug(`Stopping HTTP Server`);
+      stop();
+      eventLogger.debug(`HTTP Server has been stopped`);
+    });
+    if (browser) {
+      open(
+        serverUrl.replace('0.0.0.0', 'localhost'),
+        typeof browser === 'string' ? { app: browser } : undefined,
+      ).catch(() => {
+        logger.warn(`Failed to open browser for ${serverUrl}`);
       });
-      if (browser) {
-        open(
-          serverUrl.replace('0.0.0.0', 'localhost'),
-          typeof browser === 'string' ? { app: browser } : undefined,
-        ).catch(() => {});
-      }
-    });
+    }
   }
   return null;
 }

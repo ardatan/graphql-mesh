@@ -71,11 +71,12 @@
     "tsconfig-paths": "^4.2.0",
     "tslib": "^2.4.0",
     "typescript": "^5.4.2",
-    "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20",
+    "ws": "^8.17.0",
     "yargs": "^17.7.1"
   },
   "optionalDependencies": {
-    "node-libcurl": "^4.0.0"
+    "node-libcurl": "^4.0.0",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "devDependencies": {
     "@types/lodash.get": "4.4.9",

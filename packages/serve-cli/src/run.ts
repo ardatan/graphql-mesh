@@ -252,9 +252,7 @@ export async function run({
     await import('uWebSockets.js');
     uWebSocketsAvailable = true;
   } catch (err) {
-    log.warn(
-      'uWebSockets.js is not available currently so the server will fallback to node:http. We recommend using uWebSockets.js for better performance in production. However, this does not affect the functionality of Mesh.',
-    );
+    log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
   }
   const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
   await startServer({

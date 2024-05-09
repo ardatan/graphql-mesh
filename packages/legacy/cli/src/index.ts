@@ -251,6 +251,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             getBuiltMesh: () => meshInstance$,
             logger: meshConfig.logger.child('Server'),
             rawServeConfig: meshConfig.config.serve,
+            registerTerminateHandler,
           };
           await serveMesh(serveMeshOptions, cliParams);
         } catch (e) {
@@ -286,6 +287,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             getBuiltMesh: builtMeshArtifacts[cliParams.builtMeshFactoryName],
             logger,
             rawServeConfig,
+            registerTerminateHandler,
           };
           await serveMesh(serveMeshOptions, cliParams);
         } catch (e) {
@@ -523,6 +525,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           logger: meshConfig.logger.child('Server'),
           rawServeConfig: meshConfig.config.serve,
           playgroundTitle: `${args.source} GraphiQL`,
+          registerTerminateHandler,
         };
         await serveMesh(serveMeshOptions, cliParams);
       },
