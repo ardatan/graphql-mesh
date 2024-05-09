@@ -2,6 +2,7 @@ import { join } from 'path';
 import { DEFAULT_CLI_PARAMS, serveMesh } from '@graphql-mesh/cli';
 import { fs } from '@graphql-mesh/cross-helpers';
 import { Logger } from '@graphql-mesh/types';
+import { fetch } from '@whatwg-node/fetch';
 import { TerminateHandler } from '../../../packages/legacy/utils/dist/typings/registerTerminateHandler';
 
 const { readFile } = fs.promises;
@@ -68,6 +69,26 @@ describe('Artifacts', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'uWebSockets.js is not available currently so the server will fallback to node:http.',
       );
+      const res = await fetch(`http://localhost:9876/graphql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            query {
+              __typename
+            }
+          `,
+        }),
+      });
+      expect(res.status).toBe(200);
+      const resJson = await res.json();
+      expect(resJson).toMatchObject({
+        data: {
+          __typename: 'Query',
+        },
+      });
     } finally {
       jest.resetModules();
       await Promise.all(terminateHandlers.map(terminateHandler => terminateHandler('SIGTERM')));
