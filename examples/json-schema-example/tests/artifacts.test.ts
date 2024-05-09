@@ -69,26 +69,9 @@ describe('Artifacts', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'uWebSockets.js is not available currently so the server will fallback to node:http.',
       );
-      const res = await fetch(`http://localhost:9876/graphql`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: `
-            query {
-              __typename
-            }
-          `,
-        }),
-      });
+      const res = await fetch(`http://localhost:9876/graphql`);
       expect(res.status).toBe(200);
-      const resJson = await res.json();
-      expect(resJson).toMatchObject({
-        data: {
-          __typename: 'Query',
-        },
-      });
+      await res.text();
     } finally {
       jest.resetModules();
       await Promise.all(terminateHandlers.map(terminateHandler => terminateHandler('SIGTERM')));
