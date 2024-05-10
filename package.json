@@ -81,7 +81,7 @@
     "eslint-config-prettier": "9.1.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-n": "17.5.1",
+    "eslint-plugin-n": "17.6.0",
     "eslint-plugin-promise": "6.1.1",
     "eslint-plugin-standard": "5.0.0",
     "globby": "11.1.0",
@@ -100,7 +100,7 @@
     "esbuild": "^0.21.1",
     "graphql": "16.8.1",
     "tslib": "2.6.2",
-    "undici": "6.16.0",
+    "undici": "6.16.1",
     "uuid": "7.0.3"
   },
   "lint-staged": {
