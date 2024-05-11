@@ -43,7 +43,7 @@
     "@graphql-mesh/string-interpolation": "0.5.4",
     "@json-schema-tools/meta-schema": "1.7.5",
     "@omnigraph/json-schema": "0.100.6",
-    "graphql-compose": "9.0.10",
+    "graphql-compose": "9.0.11",
     "json-machete": "0.97.3"
   },
   "publishConfig": {
