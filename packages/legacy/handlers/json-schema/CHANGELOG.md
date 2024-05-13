@@ -1,5 +1,19 @@
 # @graphql-mesh/json-schema
 
+## 0.100.7
+
+### Patch Changes
+
+- [#6966](https://github.com/ardatan/graphql-mesh/pull/6966)
+  [`5bfef52`](https://github.com/ardatan/graphql-mesh/commit/5bfef5249fd8c02dd7063ee84c0edb52a476f58f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`graphql-compose@9.0.11` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.11) (from
+    `9.0.10`, in `dependencies`)
+- Updated dependencies
+  [[`5bfef52`](https://github.com/ardatan/graphql-mesh/commit/5bfef5249fd8c02dd7063ee84c0edb52a476f58f)]:
+  - @omnigraph/json-schema@0.100.7
+
 ## 0.100.6
 
 ### Patch Changes
