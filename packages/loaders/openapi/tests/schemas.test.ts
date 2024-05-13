@@ -30,6 +30,7 @@ const schemas: Record<string, string> = {
   StackExchange:
     'https://raw.githubusercontent.com/grokify/api-specs/master/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml',
   YouTrack: 'youtrack.json',
+  DefaultValues: 'default-values.json',
 };
 
 describe('Schemas', () => {
