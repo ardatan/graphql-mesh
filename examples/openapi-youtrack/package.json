@@ -1,6 +1,6 @@
 {
   "name": "openapi-youtrack",
-  "version": "0.15.7",
+  "version": "0.15.8",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.90.5",
-    "@graphql-mesh/openapi": "0.100.7",
+    "@graphql-mesh/openapi": "0.100.8",
     "@graphql-mesh/transform-resolvers-composition": "0.98.4",
     "graphql": "16.8.1",
     "graphql-fields": "2.0.3"

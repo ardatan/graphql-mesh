@@ -1,5 +1,12 @@
 # openapi-youtrack
 
+## 0.17.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/openapi@0.100.8
+
 ## 0.17.7
 
 ### Patch Changes
