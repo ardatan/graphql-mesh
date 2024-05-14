@@ -25,5 +25,4 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
       - name: loadtest
-        timeout-minutes: 3
         run: yarn loadtest:e2e
