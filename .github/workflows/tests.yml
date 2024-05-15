@@ -66,6 +66,9 @@ jobs:
           restore-keys: |
             ${{runner.os}}-${{matrix.node-version}}-jest-unit-
 
+      - name: Generate config schema
+        run: yarn generate-config-schema
+
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:

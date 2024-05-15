@@ -313,10 +313,12 @@ const importFn: ImportFn = <T>(moduleId: string) => {
       }
       if (pathModule.isAbsolute(importPath)) {
         moduleMapProp = pathModule.relative(baseDir, importedModuleName).split('\\').join('/');
+        moduleMapProp = replaceTypeScriptExtension(moduleMapProp);
         importPath = `./${pathModule
           .relative(artifactsDir, importedModuleName)
           .split('\\')
           .join('/')}`;
+        importPath = replaceTypeScriptExtension(importPath);
       }
       const importIdentifier = `importedModule$${importedModuleIndex}`;
       importCodes.add(`import * as ${importIdentifier} from ${JSON.stringify(importPath)};`);
@@ -588,4 +590,20 @@ export function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFileP
   // Prepare and emit the d.ts files
   const program = ts.createProgram([tsFilePath], options, host);
   program.emit();
+}
+
+/**
+ * If the specified path corresponds to a TypeScript file, replace
+ * its extension to `.js`.
+ *
+ * @param {string} path The path to a potential TypeScript file
+ * @returns {string}
+ */
+function replaceTypeScriptExtension(path: string): string {
+  let modifiedPath = path;
+  if (modifiedPath.toLowerCase().endsWith('.ts')) {
+    const extensionStart = modifiedPath.lastIndexOf('.');
+    modifiedPath = modifiedPath.substring(0, extensionStart).concat('.js');
+  }
+  return modifiedPath;
 }
