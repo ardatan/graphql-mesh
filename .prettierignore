@@ -8,3 +8,4 @@ dist/
 .yarn
 supergraph-invalid.graphql
 __generated__/
+.changeset
