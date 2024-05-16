@@ -557,7 +557,7 @@ export class SOAPLoader {
     const aliasMap = new Map<string, string>();
     for (const attributeName in attributes) {
       const attributeValue = attributes[attributeName];
-      if (attributeName !== 'targetNamespace' && attributeValue.startsWith('http')) {
+      if (attributeName !== 'targetNamespace') {
         aliasMap.set(attributeName, attributeValue);
       }
     }
