@@ -1,6 +1,6 @@
 {
   "name": "location-weather-example",
-  "version": "0.17.8",
+  "version": "0.17.9",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
   "dependencies": {
     "@graphql-mesh/cache-localforage": "^0.98.4",
     "@graphql-mesh/compose-cli": "^0.3.4",
-    "@graphql-mesh/plugin-response-cache": "^0.98.4",
+    "@graphql-mesh/plugin-response-cache": "^0.98.5",
     "@graphql-mesh/serve-cli": "^0.4.6",
     "@omnigraph/openapi": "^0.100.8",
     "graphql": "^16.8.1"

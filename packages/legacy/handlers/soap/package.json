@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/soap",
-  "version": "0.98.4",
+  "version": "0.99.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.2",
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@omnigraph/soap": "0.98.4"
+    "@omnigraph/soap": "0.99.0"
   },
   "publishConfig": {
     "access": "public",

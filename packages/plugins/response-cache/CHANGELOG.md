@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.98.5
+
+### Patch Changes
+
+- [#6927](https://github.com/ardatan/graphql-mesh/pull/6927)
+  [`6c0de5f`](https://github.com/ardatan/graphql-mesh/commit/6c0de5f0e8f2bacb915da11f9a4f7128192e1314)
+  Thanks [@mmadson](https://github.com/mmadson)! - fix to ensure graphql request context is
+  available within response cache if configuration definition
+
 ## 0.98.4
 
 ### Patch Changes
