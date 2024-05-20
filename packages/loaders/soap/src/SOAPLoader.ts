@@ -27,6 +27,10 @@ import {
   GraphQLDateTime,
   GraphQLDuration,
   GraphQLHexadecimal,
+  GraphQLNegativeInt,
+  GraphQLNonNegativeInt,
+  GraphQLNonPositiveInt,
+  GraphQLPositiveInt,
   GraphQLTime,
   GraphQLUnsignedInt,
   GraphQLURL,
@@ -154,6 +158,11 @@ export class SOAPLoader {
       ['duration', GraphQLDuration],
       ['float', GraphQLFloat],
       ['int', GraphQLInt],
+      ['integer', GraphQLInt],
+      ['negativeInteger', GraphQLNegativeInt],
+      ['nonNegativeInteger', GraphQLNonNegativeInt],
+      ['nonPositiveInteger', GraphQLNonPositiveInt],
+      ['positiveInteger', GraphQLPositiveInt],
       ['hexBinary', GraphQLHexadecimal],
       ['long', GraphQLBigInt],
       ['gDay', GraphQLString],
@@ -330,7 +339,8 @@ export class SOAPLoader {
       definition.attributes.name ||
       [...definitionAliasMap.entries()].find(
         ([, namespace]) => namespace === definitionNamespace,
-      )[0];
+      )?.[0] ||
+      '';
     this.namespaceTypePrefixMap.set(definition.attributes.targetNamespace, typePrefix);
     if (definition.import) {
       for (const importObj of definition.import) {
@@ -573,7 +583,7 @@ export class SOAPLoader {
       const simpleTypeName = simpleType.attributes.name;
       const restrictionObj = simpleType.restriction[0];
       const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
-      if (restrictionObj.attributes.base === 'string' && restrictionObj.enumeration) {
+      if (restrictionObj.enumeration) {
         const enumTypeName = `${prefix}_${simpleTypeName}`;
         const values: Record<string, Readonly<EnumTypeComposerValueConfigDefinition>> = {};
         for (const enumerationObj of restrictionObj.enumeration) {

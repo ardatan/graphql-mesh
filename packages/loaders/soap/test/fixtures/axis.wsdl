@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:com.guild:operations/test" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:com.guild:operations/test" xmlns:intf="urn:com.guild:operations/test" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="urn:com.guild:operations/test" xmlns="http://www.w3.org/2001/XMLSchema">
+   <simpleType name="weekday">
+    <restriction base="xsd:NMTOKEN">
+     <enumeration value="MONDAY"/>
+     <enumeration value="TUESDAY"/>
+     <enumeration value="WEDNESDAY"/>
+     <enumeration value="THURSDAY"/>
+     <enumeration value="FRIDAY"/>
+    </restriction>
+   </simpleType>
+   <complexType name="weekDays">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="option" type="impl:weekday"/>
+    </sequence>
+   </complexType>
+   <complexType name="createTestRequestType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="0" name="name" type="xsd:string"/>
+     <element maxOccurs="1" minOccurs="0" name="intCount" type="xsd:int"/>
+     <element maxOccurs="1" minOccurs="0" name="integerCount" type="xsd:integer"/>
+     <element maxOccurs="1" minOccurs="0" name="doubleCount" type="xsd:double"/>
+     <element maxOccurs="1" minOccurs="0" name="floatCount" type="xsd:float"/>
+     <element maxOccurs="1" minOccurs="0" name="longCount" type="xsd:long"/>
+     <element maxOccurs="1" minOccurs="0" name="shortCount" type="xsd:short"/>
+     <element maxOccurs="1" minOccurs="0" name="unsignedIntCount" type="xsd:unsignedInt"/>
+     <element maxOccurs="1" minOccurs="0" name="unsignedLongCount" type="xsd:unsignedLong"/>
+     <element maxOccurs="1" minOccurs="0" name="unsignedShortCount" type="xsd:unsignedShort"/>
+     <element maxOccurs="1" minOccurs="0" name="unsignedByteField" type="xsd:unsignedByte"/>
+     <element maxOccurs="1" minOccurs="0" name="booleanField" type="xsd:boolean"/>
+     <element maxOccurs="1" minOccurs="0" name="byteField" type="xsd:byte"/>
+     <element maxOccurs="1" minOccurs="0" name="dateField" type="xsd:date"/>
+     <element maxOccurs="1" minOccurs="0" name="dateTimeField" type="xsd:dateTime"/>
+     <element maxOccurs="1" minOccurs="0" name="decimalField" type="xsd:decimal"/>
+     <element maxOccurs="1" minOccurs="0" name="nonNegIntField" type="xsd:nonNegativeInteger"/>
+     <element maxOccurs="1" minOccurs="0" name="nonPosIntField" type="xsd:nonPositiveInteger"/>
+     <element maxOccurs="1" minOccurs="0" name="posIntField" type="xsd:positiveInteger"/>
+     <element maxOccurs="1" minOccurs="0" name="negIntField" type="xsd:negativeInteger"/>
+     <element maxOccurs="1" minOccurs="0" name="weekday" type="impl:weekday"/>
+     <element maxOccurs="1" minOccurs="0" name="weekdays" type="impl:weekDays"/>
+    </sequence>
+   </complexType>
+   <element name="createTestRequest" type="impl:createTestRequestType"/>
+   <complexType name="testStatusInfoType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="0" name="status" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="createTestResponseType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="0" name="name" type="xsd:string"/>
+     <element maxOccurs="1" minOccurs="0" name="intCount" type="xsd:int"/>
+     <element maxOccurs="1" minOccurs="0" name="integerCount" type="xsd:integer"/>
+     <element maxOccurs="1" minOccurs="0" name="doubleCount" type="xsd:double"/>
+     <element maxOccurs="1" minOccurs="0" name="floatCount" type="xsd:float"/>
+     <element maxOccurs="1" minOccurs="0" name="longCount" type="xsd:long"/>
+     <element maxOccurs="1" minOccurs="0" name="shortCount" type="xsd:short"/>
+     <element maxOccurs="1" minOccurs="0" name="unsignedIntCount" type="xsd:unsignedInt"/>
+     <element maxOccurs="1" minOccurs="0" name="unsignedLongCount" type="xsd:unsignedLong"/>
+     <element maxOccurs="1" minOccurs="0" name="unsignedShortCount" type="xsd:unsignedShort"/>
+     <element maxOccurs="1" minOccurs="0" name="unsignedByteField" type="xsd:unsignedByte"/>
+     <element maxOccurs="1" minOccurs="0" name="booleanField" type="xsd:boolean"/>
+     <element maxOccurs="1" minOccurs="0" name="byteField" type="xsd:byte"/>
+     <element maxOccurs="1" minOccurs="0" name="dateField" type="xsd:date"/>
+     <element maxOccurs="1" minOccurs="0" name="dateTimeField" type="xsd:dateTime"/>
+     <element maxOccurs="1" minOccurs="0" name="decimalField" type="xsd:decimal"/>
+     <element maxOccurs="1" minOccurs="0" name="nonNegIntField" type="xsd:nonNegativeInteger"/>
+     <element maxOccurs="1" minOccurs="0" name="nonPosIntField" type="xsd:nonPositiveInteger"/>
+     <element maxOccurs="1" minOccurs="0" name="posIntField" type="xsd:positiveInteger"/>
+     <element maxOccurs="1" minOccurs="0" name="negIntField" type="xsd:negativeInteger"/>
+     <element maxOccurs="1" minOccurs="0" name="weekday" type="impl:weekday"/>
+     <element maxOccurs="1" minOccurs="0" name="status" type="impl:testStatusInfoType"/>
+     <element maxOccurs="1" minOccurs="0" name="weekdays" type="impl:weekDays"/>
+    </sequence>
+   </complexType>
+   <element name="createTestResponse" type="impl:createTestResponseType"/>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="createTestRequest">
+
+      <wsdl:part element="impl:createTestRequest" name="createTestRequest"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createTestResponse">
+
+      <wsdl:part element="impl:createTestResponse" name="createTestResponse"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="TestServiceInterface">
+
+      <wsdl:operation name="createTest" parameterOrder="createTestRequest">
+
+         <wsdl:input message="impl:createTestRequest" name="createTestRequest"/>
+
+         <wsdl:output message="impl:createTestResponse" name="createTestResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="TestServiceSoapBinding" type="impl:TestServiceInterface">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="createTest">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createTestRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createTestResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="TestService">
+
+      <wsdl:port binding="impl:TestServiceSoapBinding" name="TestService">
+
+         <wsdlsoap:address location="http://the-guild.dev/graphql/mesh/soap/TestService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
