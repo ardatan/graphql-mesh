@@ -1,5 +1,16 @@
 # @graphql-mesh/soap
 
+## 0.99.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`bd5cea3`](https://github.com/ardatan/graphql-mesh/commit/bd5cea366a75f4593e151a278e9b475eae2fd624),
+  [`e8fdfa3`](https://github.com/ardatan/graphql-mesh/commit/e8fdfa354a6ddae4f4fd57378d1b64c71aa57095),
+  [`bd5cea3`](https://github.com/ardatan/graphql-mesh/commit/bd5cea366a75f4593e151a278e9b475eae2fd624),
+  [`bd5cea3`](https://github.com/ardatan/graphql-mesh/commit/bd5cea366a75f4593e151a278e9b475eae2fd624)]:
+  - @omnigraph/soap@0.99.0
+
 ## 0.98.4
 
 ### Patch Changes

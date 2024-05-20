@@ -1,6 +1,6 @@
 {
   "name": "cfw-breweries",
-  "version": "0.11.7",
+  "version": "0.11.8",
   "private": true,
   "scripts": {
     "compose": "node ../../../packages/compose-cli/dist/cjs/bin.js",
@@ -10,7 +10,7 @@
     "@graphql-mesh/cache-cfw-kv": "^0.98.4",
     "@graphql-mesh/cache-localforage": "^0.98.4",
     "@graphql-mesh/compose-cli": "^0.3.4",
-    "@graphql-mesh/plugin-response-cache": "^0.98.4",
+    "@graphql-mesh/plugin-response-cache": "^0.98.5",
     "@graphql-mesh/serve-runtime": "^0.3.6",
     "@omnigraph/json-schema": "^0.100.7",
     "graphql": "16.8.1"

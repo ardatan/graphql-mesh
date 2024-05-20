@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.90.6
+
+### Patch Changes
+
+- [#5966](https://github.com/ardatan/graphql-mesh/pull/5966)
+  [`8f2349c`](https://github.com/ardatan/graphql-mesh/commit/8f2349c6ed05e8d06566d3c028d805e4de6f52e7)
+  Thanks [@cweckesser](https://github.com/cweckesser)! - Fix TS artifact generation when running
+  Mesh build command so no reference to Mesh config script files (TS/JS) are included in the built
+  sources.
+
 ## 0.90.5
 
 ### Patch Changes

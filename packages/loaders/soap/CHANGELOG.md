@@ -1,5 +1,54 @@
 # @omnigraph/soap
 
+## 0.99.0
+
+### Minor Changes
+
+- [#6980](https://github.com/ardatan/graphql-mesh/pull/6980)
+  [`e8fdfa3`](https://github.com/ardatan/graphql-mesh/commit/e8fdfa354a6ddae4f4fd57378d1b64c71aa57095)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - Enable non-http WSDL definitions attributes
+
+### Patch Changes
+
+- [#6992](https://github.com/ardatan/graphql-mesh/pull/6992)
+  [`bd5cea3`](https://github.com/ardatan/graphql-mesh/commit/bd5cea366a75f4593e151a278e9b475eae2fd624)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support documents without any prefixes on W3
+  definitions like `xs` etc.
+
+  WSDL definitions might not have any prefix for W3 definitions as in here;
+
+  ```xml
+  <xs:schema />
+  ```
+
+  Unlike this one;
+
+  ```xml
+  <schema />
+  ```
+
+  Both are supported, previously it was throwing while looking for a namespace prefix for W3. Now it
+  considers W3 to be the default/global namespace if there is no explicit prefix for it in the
+  document.
+
+  ```xml
+  <wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+  ```
+
+- [#6992](https://github.com/ardatan/graphql-mesh/pull/6992)
+  [`bd5cea3`](https://github.com/ardatan/graphql-mesh/commit/bd5cea366a75f4593e151a278e9b475eae2fd624)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support new numeric types; `integer`,
+  `negativeInteger`, `nonNegativeInteger`, `nonPositiveInteger` and `positiveInteger` as scalar
+  types
+
+  See all the numeric types in SOAP; https://www.w3schools.com/xml/schema_dtypes_numeric.asp
+
+- [#6992](https://github.com/ardatan/graphql-mesh/pull/6992)
+  [`bd5cea3`](https://github.com/ardatan/graphql-mesh/commit/bd5cea366a75f4593e151a278e9b475eae2fd624)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support extended enum types, before it was
+  supporting `string` only but it might be other types of enums which are not string. In GraphQL,
+  there is not such a thing like `Enum<T>` so all enums are just enums.
+
 ## 0.98.4
 
 ### Patch Changes

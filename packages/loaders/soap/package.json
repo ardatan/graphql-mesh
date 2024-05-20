@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/soap",
-  "version": "0.98.4",
+  "version": "0.99.0",
   "type": "module",
   "license": "MIT",
   "engines": {
