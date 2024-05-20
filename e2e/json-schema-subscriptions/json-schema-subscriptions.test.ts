@@ -74,16 +74,16 @@ it('should query, mutate and subscribe', async () => {
 }
 `);
 
-  for await (const chunk of sub.body) {
+  Stream: for await (const chunk of sub.body) {
     const msg = Buffer.from(chunk).toString('utf8');
-    if (msg.startsWith('event: next')) {
-      expect(msg).toMatchInlineSnapshot(`
-"event: next
-data: {"data":{"todoAdded":{"name":"Shopping","content":"Buy Milk"}}}
-
-"
-`);
-      break;
+    for (const part of msg.split('\n\n')) {
+      if (part.startsWith('event: next')) {
+        expect(part).toMatchInlineSnapshot(`
+  "event: next
+  data: {"data":{"todoAdded":{"name":"Shopping","content":"Buy Milk"}}}"
+  `);
+        break Stream;
+      }
     }
   }
 });
