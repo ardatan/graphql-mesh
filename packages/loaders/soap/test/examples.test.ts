@@ -7,7 +7,7 @@ import { SOAPLoader } from '../src/index.js';
 
 const { readFile } = promises;
 
-const examples = ['example1', 'example2'];
+const examples = ['example1', 'example2', 'axis'];
 
 describe('Examples', () => {
   examples.forEach(example => {

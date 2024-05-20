@@ -1,5 +1,124 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Examples should generate schema for axis: axis 1`] = `
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String) on FIELD_DEFINITION
+
+type Query {
+  placeholder: Void
+}
+
+"""Represents NULL values"""
+scalar Void
+
+type Mutation {
+  impl_TestService_TestService_createTest(createTestRequest: impl_createTestRequestType_Input): impl_createTestResponseType
+}
+
+type impl_createTestResponseType {
+  name: String!
+  intCount: Int!
+  integerCount: Int!
+  doubleCount: Float!
+  floatCount: Float!
+  longCount: BigInt!
+  shortCount: Int!
+  unsignedIntCount: UnsignedInt!
+  unsignedLongCount: BigInt!
+  unsignedShortCount: UnsignedInt!
+  unsignedByteField: Byte!
+  booleanField: Boolean!
+  byteField: Byte!
+  dateField: Date!
+  dateTimeField: DateTime!
+  decimalField: Float!
+  nonNegIntField: NonNegativeInt!
+  nonPosIntField: NonPositiveInt!
+  posIntField: PositiveInt!
+  negIntField: NegativeInt!
+  weekday: impl_weekday!
+  status: impl_testStatusInfoType!
+  weekdays: impl_weekDays!
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+"""Integers that will have a value of 0 or more."""
+scalar UnsignedInt
+
+"""The \`Byte\` scalar type represents byte value as a Buffer"""
+scalar Byte
+
+"""
+A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+"""Integers that will have a value of 0 or more."""
+scalar NonNegativeInt
+
+"""Integers that will have a value of 0 or less."""
+scalar NonPositiveInt
+
+"""Integers that will have a value greater than 0."""
+scalar PositiveInt
+
+"""Integers that will have a value less than 0."""
+scalar NegativeInt
+
+enum impl_weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+}
+
+type impl_testStatusInfoType {
+  status: String!
+}
+
+type impl_weekDays {
+  option: [impl_weekday]!
+}
+
+input impl_createTestRequestType_Input {
+  name: String
+  intCount: Int
+  integerCount: Int
+  doubleCount: Float
+  floatCount: Float
+  longCount: BigInt
+  shortCount: Int
+  unsignedIntCount: UnsignedInt
+  unsignedLongCount: BigInt
+  unsignedShortCount: UnsignedInt
+  unsignedByteField: Byte
+  booleanField: Boolean
+  byteField: Byte
+  dateField: Date
+  dateTimeField: DateTime
+  decimalField: Float
+  nonNegIntField: NonNegativeInt
+  nonPosIntField: NonPositiveInt
+  posIntField: PositiveInt
+  negIntField: NegativeInt
+  weekday: impl_weekday
+  weekdays: impl_weekDays_Input
+}
+
+input impl_weekDays_Input {
+  option: [impl_weekday]
+}"
+`;
+
 exports[`Examples should generate schema for example1: example1 1`] = `
 "directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String) on FIELD_DEFINITION
 
@@ -44,7 +163,7 @@ input TodoService_UpdateFileClass_Input {
 }
 
 input tns_FileClass_Input {
-  Mode: String
+  Mode: tns_EntityMode
   ClassIntID: BigInt
   CreatedBy: String
   CreatedDtTm: DateTime
@@ -52,9 +171,16 @@ input tns_FileClass_Input {
   LastUpdatedBy: String
   LastUpdatedDtTm: DateTime
   Name: String
-  PeriodType: String
+  PeriodType: tns_PeriodType
   Retention: Int
   Timestamp: Byte
+}
+
+enum tns_EntityMode {
+  New
+  Deleted
+  Changed
+  Unchanged
 }
 
 """
@@ -66,6 +192,13 @@ scalar BigInt
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
+
+enum tns_PeriodType {
+  Days
+  Weeks
+  Months
+  Years
+}
 
 """The \`Byte\` scalar type represents byte value as a Buffer"""
 scalar Byte
@@ -147,7 +280,7 @@ type AdminServiceType_GetFileClassByClassIDResponse {
 }
 
 type tns_FileClass {
-  Mode: String!
+  Mode: tns_EntityMode!
   ClassIntID: BigInt!
   CreatedBy: String!
   CreatedDtTm: DateTime!
@@ -158,12 +291,19 @@ type tns_FileClass {
   LastUpdatedDtTm: DateTime!
   Name: String!
   NeedANotification: Boolean!
-  PeriodType: String!
+  PeriodType: tns_PeriodType!
   PreventPublishFlg: Boolean!
   Retention: Int!
   RetentionChanged: String!
   Subclasses: tns_FileSubclassList!
   Timestamp: Byte!
+}
+
+enum tns_EntityMode {
+  New
+  Deleted
+  Changed
+  Unchanged
 }
 
 """
@@ -176,12 +316,28 @@ type tns_EntityClassList {
 }
 
 type tns_EntityClass {
-  Mode: String!
+  Mode: tns_EntityMode!
   ClassIntID: BigInt!
   EntityClassIntID: BigInt!
   EntityIntID: BigInt!
-  EntityType: String!
+  EntityType: tns_EntityType!
   FirmIntID: BigInt!
+}
+
+enum tns_EntityType {
+  Firm
+  Office
+  Staff
+  StaffList
+  BusinessUnit
+  Client
+  ClientList
+  DocumentEntityType
+  OtherClient
+  ClientOtherEntity
+  OfficeBusinessUnit
+  NonClient
+  NonClientList
 }
 
 """
@@ -189,21 +345,28 @@ A field whose value matches /[\\da-fA-F]{8}-[\\da-fA-F]{4}-[\\da-fA-F]{4}-[\\da-
 """
 scalar tns_guid
 
+enum tns_PeriodType {
+  Days
+  Weeks
+  Months
+  Years
+}
+
 type tns_FileSubclassList {
   FileSubclass: [tns_FileSubclass]!
 }
 
 type tns_FileSubclass {
-  Mode: String!
+  Mode: tns_EntityMode!
   ClassIntID: BigInt!
   CreatedBy: String!
   CreatedDtTm: DateTime!
-  EffectivePeriodType: String!
+  EffectivePeriodType: tns_PeriodType!
   EffectiveRetention: Int!
   LastUpdatedBy: String!
   LastUpdatedDtTm: DateTime!
   Name: String!
-  PeriodType: String!
+  PeriodType: tns_PeriodType!
   Permanent: Boolean!
   Retention: Int!
   RetentionChanged: String!
@@ -242,7 +405,7 @@ input AdminServiceType_CreateFileClass_Input {
 }
 
 input tns_FileClass_Input {
-  Mode: String
+  Mode: tns_EntityMode
   ClassIntID: BigInt
   CreatedBy: String
   CreatedDtTm: DateTime
@@ -253,7 +416,7 @@ input tns_FileClass_Input {
   LastUpdatedDtTm: DateTime
   Name: String
   NeedANotification: Boolean
-  PeriodType: String
+  PeriodType: tns_PeriodType
   PreventPublishFlg: Boolean
   Retention: Int
   RetentionChanged: String
@@ -266,11 +429,11 @@ input tns_EntityClassList_Input {
 }
 
 input tns_EntityClass_Input {
-  Mode: String
+  Mode: tns_EntityMode
   ClassIntID: BigInt
   EntityClassIntID: BigInt
   EntityIntID: BigInt
-  EntityType: String
+  EntityType: tns_EntityType
   FirmIntID: BigInt
 }
 
@@ -279,16 +442,16 @@ input tns_FileSubclassList_Input {
 }
 
 input tns_FileSubclass_Input {
-  Mode: String
+  Mode: tns_EntityMode
   ClassIntID: BigInt
   CreatedBy: String
   CreatedDtTm: DateTime
-  EffectivePeriodType: String
+  EffectivePeriodType: tns_PeriodType
   EffectiveRetention: Int
   LastUpdatedBy: String
   LastUpdatedDtTm: DateTime
   Name: String
-  PeriodType: String
+  PeriodType: tns_PeriodType
   Permanent: Boolean
   Retention: Int
   RetentionChanged: String
