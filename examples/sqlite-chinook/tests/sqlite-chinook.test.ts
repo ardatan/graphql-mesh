@@ -1,5 +1,4 @@
 import { basename, join } from 'path';
-import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { ProcessedConfig } from '@graphql-mesh/config';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
