@@ -89,7 +89,7 @@ describe('Artifacts', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'uWebSockets.js is not available currently so the server will fallback to node:http.',
       );
-      const res = await fetch(`http://localhost:${PORT}/graphql`);
+      const res = await fetch(`http://127.0.0.1:${PORT}/graphql`);
       expect(res.status).toBe(200);
       await res.text();
     } finally {
