@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 21]
+        node-version: [18, 20, 22]
 
     steps:
       - name: Checkout
@@ -83,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18]
+        node-version: [18, 20, 22]
 
     steps:
       - name: Checkout
@@ -96,7 +96,6 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
 
       - uses: the-guild-org/shared-config/setup@main
         name: setup env
@@ -129,7 +128,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 21]
+        node-version: [18, 20, 22]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -211,7 +210,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18]
+        node-version: [18, 20, 22]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -258,7 +257,6 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
 
       - name: Remove node-libcurl
         run: node scripts/remove-node-libcurl.cjs
@@ -309,7 +307,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 21]
+        node-version: [18, 20, 22]
     steps:
       - name: Checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
@@ -333,7 +331,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 21]
+        node-version: [18, 20, 22]
     steps:
       - name: checkout
         uses: actions/checkout@v4
