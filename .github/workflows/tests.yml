@@ -89,9 +89,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
-
       - name: Use Node
         uses: actions/setup-node@master
         with:
@@ -111,9 +108,6 @@ jobs:
           key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{runner.os}}-${{matrix.node-version}}-jest-unit-
-
-      - name: Remove node-libcurl
-        run: rm -rf node_modules/node-libcurl
 
       - name: Run Tests
         uses: nick-fields/retry@v3
