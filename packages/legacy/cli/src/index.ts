@@ -25,6 +25,7 @@ import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 
+// Note: required to make build command compatible with esm
 register('ts-node/esm', pathToFileURL('./'));
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
