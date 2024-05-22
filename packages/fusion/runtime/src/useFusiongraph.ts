@@ -4,16 +4,36 @@ import {
   DocumentNode,
   GraphQLSchema,
   isSchema,
-  printSchema,
+  specifiedRules,
+  validate,
 } from 'graphql';
-import { Plugin, PromiseOrValue, useReadinessCheck, YogaServer } from 'graphql-yoga';
+import { envelop, PromiseOrValue, useReadinessCheck, type Plugin } from 'graphql-yoga';
+import { useEngine } from '@envelop/core';
 import { getInContextSDK } from '@graphql-mesh/runtime';
 import { TransportBaseContext } from '@graphql-mesh/transport-common';
 import { OnDelegateHook } from '@graphql-mesh/types';
-import { mapMaybePromise, resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
+import {
+  mapMaybePromise,
+  parseWithCache,
+  resolveAdditionalResolversWithoutImport,
+} from '@graphql-mesh/utils';
 import { SubschemaConfig } from '@graphql-tools/delegate';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { stitchSchemas } from '@graphql-tools/stitch';
-import { IResolvers, isDocumentNode, isPromise } from '@graphql-tools/utils';
+import {
+  ExecutionResult,
+  IResolvers,
+  isAsyncIterable,
+  isDocumentNode,
+  isPromise,
+  mapAsyncIterator,
+  mapSchema,
+  MaybeAsyncIterable,
+  MaybePromise,
+  pruneSchema,
+} from '@graphql-tools/utils';
+import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { filterHiddenPartsInSchema } from './filterHiddenPartsInSchema.js';
 import { extractSubgraphsFromFusiongraph } from './getSubschemasFromFusiongraph.js';
 import {
   defaultTransportsOption,
@@ -21,18 +41,6 @@ import {
   getOnSubgraphExecute,
   TransportsOption,
 } from './utils.js';
-
-export interface FusiongraphPluginOptions<TContext> {
-  getFusiongraph(
-    baseCtx: TransportBaseContext,
-  ): GraphQLSchema | DocumentNode | string | Promise<GraphQLSchema | string | DocumentNode>;
-  transports?: TransportsOption;
-  polling?: number;
-  additionalTypedefs?: DocumentNode | string | DocumentNode[] | string[];
-  additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
-  transportBaseContext?: TransportBaseContext;
-  readinessCheckEndpoint?: string;
-}
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   if (isSchema(source)) {
@@ -47,6 +55,103 @@ function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   return source;
 }
 
+export interface GetExecutableSchemaFromFusiongraphOptions<TContext extends Record<string, any>> {
+  additionalTypedefs?: DocumentNode | string | DocumentNode[] | string[];
+  additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
+  transportBaseContext?: TransportBaseContext;
+}
+
+export interface FusiongraphPluginOptions<TContext> {
+  getFusiongraph(
+    baseCtx: TransportBaseContext,
+  ): GraphQLSchema | DocumentNode | string | Promise<GraphQLSchema | string | DocumentNode>;
+  transports?: TransportsOption;
+  polling?: number;
+  additionalTypedefs?: DocumentNode | string | DocumentNode[] | string[];
+  additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
+  transportBaseContext?: TransportBaseContext;
+  readinessCheckEndpoint?: string;
+}
+
+export type EnvelopFusiongraphOpts<TContext> = FusiongraphPluginOptions<TContext> & {
+  plugins?: (Plugin & FusiongraphPlugin)[];
+};
+
+export function envelopFusiongraph<TContext extends Record<string, any> = Record<string, any>>(
+  opts: EnvelopFusiongraphOpts<TContext>,
+) {
+  return envelop({
+    plugins: [
+      useEngine({
+        execute: normalizedExecutor,
+        validate,
+        parse: parseWithCache,
+        specifiedRules,
+      }),
+      useFusiongraph(opts),
+      ...(opts.plugins || []),
+    ],
+  });
+}
+
+export function getExecutorForFusiongraph<TContext extends Record<string, any>>(
+  opts: EnvelopFusiongraphOpts<TContext>,
+) {
+  const getEnveloped = envelopFusiongraph(opts);
+  return function fusiongraphExecutor<TResult = any, TVariables = {}>(executorOpts: {
+    query: TypedDocumentNode<TResult, TVariables> | string;
+    variables?: TVariables;
+    context?: unknown;
+  }): MaybePromise<MaybeAsyncIterable<TResult>> {
+    const { parse, validate, contextFactory, execute, schema } = getEnveloped(executorOpts.context);
+    const document =
+      typeof executorOpts.query === 'string' ? parse(executorOpts.query) : executorOpts.query;
+
+    if (schema) {
+      const validationErrors = validate(schema, document);
+      if (validationErrors.length) {
+        if (validationErrors.length === 1) {
+          throw validationErrors[0];
+        } else {
+          throw new AggregateError(
+            validationErrors,
+            validationErrors.map(err => err.message).join('\n'),
+          );
+        }
+      }
+    }
+
+    // @ts-expect-error Somehow contextFactory typings are not correct
+    return mapMaybePromise(contextFactory(), context => {
+      const executionResult$ = execute({
+        document,
+        schema,
+        variableValues: executorOpts.variables,
+        contextValue: context,
+      });
+      return mapMaybePromise(
+        executionResult$,
+        (executionResult: MaybeAsyncIterable<ExecutionResult>) => {
+          function handleSingleResult(result: ExecutionResult) {
+            if (result.errors) {
+              if (result.errors.length === 1) {
+                throw result.errors[0];
+              }
+              throw new AggregateError(result.errors, 'Multiple errors occurred');
+            }
+            return result.data;
+          }
+          if (isAsyncIterable(executionResult)) {
+            const iterator = executionResult[Symbol.asyncIterator]();
+            return mapAsyncIterator(iterator, handleSingleResult);
+          }
+          return handleSingleResult(executionResult);
+        },
+      );
+    });
+  };
+}
+
 export function useFusiongraph<TContext extends Record<string, any> = Record<string, any>>(
   opts: FusiongraphPluginOptions<TContext>,
 ): Plugin<TContext> & {
@@ -54,7 +159,7 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
 } {
   let fusiongraph: GraphQLSchema;
   let lastLoadedFusiongraph: string | GraphQLSchema | DocumentNode;
-  let yoga: YogaServer<unknown, TContext>;
+  let plugins: (Plugin & FusiongraphPlugin)[];
   // TODO: We need to figure this out in a better way
   let inContextSDK: any;
   function handleLoadedFusiongraph(loadedFusiongraph: string | GraphQLSchema | DocumentNode) {
@@ -69,7 +174,7 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
     const subschemas: SubschemaConfig[] = [];
     const onSubgraphExecute = getOnSubgraphExecute({
       fusiongraph,
-      plugins: yoga.getEnveloped._plugins as FusiongraphPlugin[],
+      plugins,
       transports: opts.transports || defaultTransportsOption,
       transportBaseContext: opts.transportBaseContext,
       transportEntryMap,
@@ -97,9 +202,11 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
         ),
       ] as any,
     });
+    fusiongraph = filterHiddenPartsInSchema(fusiongraph);
+    fusiongraph = pruneSchema(fusiongraph);
     if (opts.additionalResolvers || additionalResolversFromTypeDefs.length) {
       const onDelegateHooks: OnDelegateHook<TContext>[] = [];
-      for (const plugin of yoga.getEnveloped._plugins as any[]) {
+      for (const plugin of plugins as any[]) {
         if (plugin.onDelegate) {
           onDelegateHooks.push(plugin.onDelegate);
         }
@@ -129,10 +236,8 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
     return initialFusiongraph$;
   }
   return {
-    onYogaInit(payload) {
-      yoga = payload.yoga;
-    },
-    onPluginInit({ addPlugin }) {
+    onPluginInit({ addPlugin, plugins: allPlugins }) {
+      plugins = allPlugins as any;
       if (opts.readinessCheckEndpoint) {
         addPlugin(
           // TODO: fix useReadinessCheck typings to inherit the context
@@ -158,6 +263,12 @@ export function useFusiongraph<TContext extends Record<string, any> = Record<str
     },
     onEnveloped({ setSchema }: { setSchema: (schema: GraphQLSchema) => void }) {
       setSchema(fusiongraph);
+    },
+    // @ts-expect-error PromiseLike and Promise conflicts
+    onExecute({ args }) {
+      return mapMaybePromise(ensureFusiongraph(), () => {
+        args.schema ||= fusiongraph;
+      });
     },
     onContextBuilding({ extendContext }) {
       const initialFusiongraph$ = ensureFusiongraph();

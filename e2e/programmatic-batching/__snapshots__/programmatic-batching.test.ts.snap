@@ -16,7 +16,7 @@ type Query {
 }
 
 type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(subgraph: "API", path: "/users_by_ids", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "API", name: "usersByIds", type: "UsersByIdResponse")
+  usersByIds(input: UsersByIdRequest_Input @source(subgraph: "API", name: "input", type: "UsersByIdRequest_Input")): UsersByIdResponse @httpOperation(subgraph: "API", path: "/users_by_ids", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "API", name: "usersByIds", type: "UsersByIdResponse")
 }
 
 type UsersByIdResponse @source(subgraph: "API", name: "UsersByIdResponse") {

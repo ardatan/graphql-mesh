@@ -19,7 +19,7 @@ type Query {
 
 type Mutation {
   """subscribes a client to receive out-of-band data"""
-  post_streams(input: post_streams_request_Input): SubscriptionInfo @httpOperation(subgraph: "OpenAPICallbackExample", path: "/streams", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "OpenAPICallbackExample", name: "post_streams", type: "SubscriptionInfo")
+  post_streams(input: post_streams_request_Input @source(subgraph: "OpenAPICallbackExample", name: "input", type: "post_streams_request_Input")): SubscriptionInfo @httpOperation(subgraph: "OpenAPICallbackExample", path: "/streams", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "OpenAPICallbackExample", name: "post_streams", type: "SubscriptionInfo")
 }
 
 """subscription information"""
@@ -43,7 +43,7 @@ scalar URL @source(subgraph: "OpenAPICallbackExample", name: "URL") @source(subg
 
 type Subscription {
   """PubSub Topic: webhook:post:/callback/{args.subscriptionId}"""
-  onData(subscriptionId: String): SubscriptionPayload @pubsubOperation(subgraph: "OpenAPICallbackExample", pubsubTopic: "webhook:post:/callback/{args.subscriptionId}") @source(subgraph: "OpenAPICallbackExample", name: "onData", type: "SubscriptionPayload")
+  onData(subscriptionId: String @source(subgraph: "OpenAPICallbackExample", name: "subscriptionId", type: "String")): SubscriptionPayload @pubsubOperation(subgraph: "OpenAPICallbackExample", pubsubTopic: "webhook:post:/callback/{args.subscriptionId}") @source(subgraph: "OpenAPICallbackExample", name: "onData", type: "SubscriptionPayload")
 }
 
 type SubscriptionPayload @source(subgraph: "OpenAPICallbackExample", name: "SubscriptionPayload") {

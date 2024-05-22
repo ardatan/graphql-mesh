@@ -16,18 +16,18 @@ directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD
 
 type Query {
   """Multiple status values can be provided with comma separated strings"""
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @source(subgraph: "petstore", name: "findPetsByStatus", type: "[Pet]") @hidden
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available @source(subgraph: "petstore", name: "status", type: "queryInput_findPetsByStatus_status")): [Pet] @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @source(subgraph: "petstore", name: "findPetsByStatus", type: "[Pet]") @hidden
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
   """
   findPetsByTags(
     """Tags to filter by"""
-    tags: [String]
+    tags: [String] @source(subgraph: "petstore", name: "tags", type: "String")
   ): [Pet] @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"tags\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"tags\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"tags\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @source(subgraph: "petstore", name: "findPetsByTags", type: "[Pet]") @hidden
   """Returns a single pet"""
   getPetById(
     """ID of pet to return"""
-    petId: BigInt!
+    petId: BigInt! @source(subgraph: "petstore", name: "petId", type: "BigInt")
   ): Pet @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getPetById", type: "Pet") @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")
   """Returns a map of status codes to quantities"""
   getInventory: JSON @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getInventory", type: "JSON") @hidden
@@ -36,23 +36,23 @@ type Query {
   """
   getOrderById(
     """ID of order that needs to be fetched"""
-    orderId: BigInt!
+    orderId: BigInt! @source(subgraph: "petstore", name: "orderId", type: "BigInt")
   ): Order @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getOrderById", type: "Order") @hidden @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")
   """Logs user into the system"""
   loginUser(
     """The user name for login"""
-    username: String
+    username: String @source(subgraph: "petstore", name: "username", type: "String")
     """The password for login in clear text"""
-    password: String
+    password: String @source(subgraph: "petstore", name: "password", type: "String")
   ): String @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\"") @source(subgraph: "petstore", name: "loginUser", type: "String") @hidden
   """Logs out current logged in user session"""
   logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET) @source(subgraph: "petstore", name: "logoutUser", type: "JSON") @hidden
   """Get user by user name"""
   getUserByName(
     """The name that needs to be fetched. Use user1 for testing."""
-    username: String!
+    username: String! @source(subgraph: "petstore", name: "username", type: "String")
   ): User @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "petstore", name: "getUserByName", type: "User") @hidden
-  petById(id: BigInt!): Pet @source(subgraph: "vaccination", name: "pet_by_id", type: "Pet") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")
+  petById(id: BigInt! @source(subgraph: "vaccination", name: "id", type: "BigInt")): Pet @source(subgraph: "vaccination", name: "pet_by_id", type: "Pet") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")
 }
 
 """Pet object that needs to be added to the store"""
@@ -140,55 +140,55 @@ scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/in
 
 type Mutation {
   """Update an existing pet by Id"""
-  updatePet(input: Pet_Input): Pet @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @source(subgraph: "petstore", name: "updatePet", type: "Pet") @hidden
+  updatePet(input: Pet_Input @source(subgraph: "petstore", name: "input", type: "Pet_Input")): Pet @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @source(subgraph: "petstore", name: "updatePet", type: "Pet") @hidden
   """Add a new pet to the store"""
-  addPet(input: Pet_Input): Pet @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "petstore", name: "addPet", type: "Pet") @hidden
+  addPet(input: Pet_Input @source(subgraph: "petstore", name: "input", type: "Pet_Input")): Pet @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "petstore", name: "addPet", type: "Pet") @hidden
   """Updates a pet in the store with form data"""
   updatePetWithForm(
     """ID of pet that needs to be updated"""
-    petId: BigInt!
+    petId: BigInt! @source(subgraph: "petstore", name: "petId", type: "BigInt")
     """Name of pet that needs to be updated"""
-    name: String
+    name: String @source(subgraph: "petstore", name: "name", type: "String")
     """Status of pet that needs to be updated"""
-    status: String
+    status: String @source(subgraph: "petstore", name: "status", type: "String")
   ): JSON @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"name\\\\\\":\\\\\\"name\\\\\\",\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"name\\\\\\":\\\\\\"name\\\\\\",\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"name\\\\\\":\\\\\\"name\\\\\\",\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"") @source(subgraph: "petstore", name: "updatePetWithForm", type: "JSON") @hidden
   """Deletes a pet"""
   deletePet(
-    api_key: String
+    api_key: String @source(subgraph: "petstore", name: "api_key", type: "String")
     """Pet id to delete"""
-    petId: BigInt!
+    petId: BigInt! @source(subgraph: "petstore", name: "petId", type: "BigInt")
   ): JSON @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\"", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\"", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\"", httpMethod: DELETE) @source(subgraph: "petstore", name: "deletePet", type: "JSON") @hidden
   """uploads an image"""
   uploadFile(
     """ID of pet to update"""
-    petId: BigInt!
+    petId: BigInt! @source(subgraph: "petstore", name: "petId", type: "BigInt")
     """Additional Metadata"""
-    additionalMetadata: String
-    input: File
+    additionalMetadata: String @source(subgraph: "petstore", name: "additionalMetadata", type: "String")
+    input: File @source(subgraph: "petstore", name: "input", type: "File")
   ): ApiResponse @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/octet-stream\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"additionalMetadata\\\\\\":\\\\\\"additionalMetadata\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/octet-stream\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"additionalMetadata\\\\\\":\\\\\\"additionalMetadata\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/octet-stream\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"additionalMetadata\\\\\\":\\\\\\"additionalMetadata\\\\\\"}\\"") @source(subgraph: "petstore", name: "uploadFile", type: "ApiResponse") @hidden
   """Place a new order in the store"""
-  placeOrder(input: Order_Input): Order @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "petstore", name: "placeOrder", type: "Order") @hidden
+  placeOrder(input: Order_Input @source(subgraph: "petstore", name: "input", type: "Order_Input")): Order @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "petstore", name: "placeOrder", type: "Order") @hidden
   """
   For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
   """
   deleteOrder(
     """ID of the order that needs to be deleted"""
-    orderId: BigInt!
+    orderId: BigInt! @source(subgraph: "petstore", name: "orderId", type: "BigInt")
   ): JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE) @source(subgraph: "petstore", name: "deleteOrder", type: "JSON") @hidden
   """This can only be done by the logged in user."""
-  createUser(input: User_Input): User @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "petstore", name: "createUser", type: "User") @hidden
+  createUser(input: User_Input @source(subgraph: "petstore", name: "input", type: "User_Input")): User @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "petstore", name: "createUser", type: "User") @hidden
   """Creates list of users with given input array"""
-  createUsersWithListInput(input: [User_Input]): User @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "petstore", name: "createUsersWithListInput", type: "User") @hidden
+  createUsersWithListInput(input: [User_Input] @source(subgraph: "petstore", name: "input", type: "User_Input")): User @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "petstore", name: "createUsersWithListInput", type: "User") @hidden
   """This can only be done by the logged in user."""
   updateUser(
     """name that need to be deleted"""
-    username: String!
-    input: User_Input
+    username: String! @source(subgraph: "petstore", name: "username", type: "String")
+    input: User_Input @source(subgraph: "petstore", name: "input", type: "User_Input")
   ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @source(subgraph: "petstore", name: "updateUser", type: "JSON") @hidden
   """This can only be done by the logged in user."""
   deleteUser(
     """The name that needs to be deleted"""
-    username: String!
+    username: String! @source(subgraph: "petstore", name: "username", type: "String")
   ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE) @source(subgraph: "petstore", name: "deleteUser", type: "JSON") @hidden
 }
 

@@ -21,10 +21,12 @@ export const composeConfig = defineConfig({
         endpoint: `http://localhost:${args.getServicePort('books')}/graphql`,
       }),
       transforms: [
-        createRenameFieldTransform((_field, fieldName, typeName) =>
+        createRenameFieldTransform(({ fieldName, typeName }) =>
           typeName === 'Query' && fieldName === 'authorWithBooks' ? 'author' : fieldName,
         ),
-        createRenameTypeTransform(type => (type.name === 'AuthorWithBooks' ? 'Author' : type.name)),
+        createRenameTypeTransform(({ typeName }) =>
+          typeName === 'AuthorWithBooks' ? 'Author' : typeName,
+        ),
       ],
     },
   ],

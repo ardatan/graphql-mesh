@@ -18,7 +18,9 @@ export const composeConfig = defineComposeConfig({
         },
       }),
       transforms: [
-        createRenameTypeTransform(type => (type.name === 'Error' ? 'CitiesError' : type.name)),
+        createRenameTypeTransform(({ typeName }) =>
+          typeName === 'Error' ? 'CitiesError' : typeName,
+        ),
       ],
     },
     {

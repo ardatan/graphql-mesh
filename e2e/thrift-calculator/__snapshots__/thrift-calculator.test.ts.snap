@@ -6,8 +6,8 @@ exports[`should compose the appropriate schema 1`] = `
 }
 
 type Query {
-  add(request: AddRequestInput): Int @fieldTypeMap(request: {name: "AddRequest", type: "ref", id: 1}) @source(subgraph: "calculator", name: "add", type: "Int")
-  subtract(left: Int, right: Int): Int @fieldTypeMap(left: {type: 8, id: 1}, right: {type: 8, id: 2}) @source(subgraph: "calculator", name: "subtract", type: "Int")
+  add(request: AddRequestInput @source(subgraph: "calculator", name: "request", type: "AddRequestInput")): Int @fieldTypeMap(request: {name: "AddRequest", type: "ref", id: 1}) @source(subgraph: "calculator", name: "add", type: "Int")
+  subtract(left: Int @source(subgraph: "calculator", name: "left", type: "Int"), right: Int @source(subgraph: "calculator", name: "right", type: "Int")): Int @fieldTypeMap(left: {type: 8, id: 1}, right: {type: 8, id: 2}) @source(subgraph: "calculator", name: "subtract", type: "Int")
 }
 
 input AddRequestInput @source(subgraph: "calculator", name: "AddRequestInput") {
