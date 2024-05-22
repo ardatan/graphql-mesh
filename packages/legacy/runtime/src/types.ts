@@ -11,6 +11,7 @@ import {
   MeshTransform,
   YamlConfig,
 } from '@graphql-mesh/types';
+import { TerminateHandler } from '@graphql-mesh/utils';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { MeshInstance } from './get-mesh.js';
@@ -62,6 +63,7 @@ export interface ServeMeshOptions {
   rawServeConfig: YamlConfig.Config['serve'];
   argsPort?: number;
   playgroundTitle?: string;
+  registerTerminateHandler(handler: TerminateHandler): void;
 }
 
 export type MeshExecutor = <TData, TVariables, TContext, TRootValue>(

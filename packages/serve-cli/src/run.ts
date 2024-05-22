@@ -8,13 +8,14 @@ import cluster from 'cluster';
 import { availableParallelism, release } from 'os';
 // eslint-disable-next-line import/no-nodejs-modules
 import { dirname, isAbsolute, resolve } from 'path';
-import { App, SSLApp } from 'uWebSockets.js';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 import { Logger } from '@graphql-mesh/types';
 import { DefaultLogger, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
+import { startNodeHttpServer } from './nodeHttp.js';
 import { MeshServeCLIConfig } from './types.js';
+import { startuWebSocketsServer } from './uWebSockets.js';
 
 const defaultFork = process.env.NODE_ENV === 'production' ? availableParallelism() : 1;
 
@@ -246,20 +247,20 @@ export async function run({
     }
   });
 
-  await new Promise<void>((resolve, reject) => {
-    log.info(`Starting server on ${protocol}://${host}:${port}`);
-    const app = config.sslCredentials ? SSLApp(config.sslCredentials) : App();
-    app.any('/*', handler);
-    app.listen(host, port, function listenCallback(listenSocket) {
-      if (listenSocket) {
-        registerTerminateHandler(eventName => {
-          log.info(`Closing ${protocol}://${host}:${port} for ${eventName}`);
-          app.close();
-        });
-        resolve();
-      } else {
-        reject(new Error(`Failed to start server on ${protocol}://${host}:${port}!`));
-      }
-    });
+  let uWebSocketsAvailable = false;
+  try {
+    await import('uWebSockets.js');
+    uWebSocketsAvailable = true;
+  } catch (err) {
+    log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
+  }
+  const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
+  await startServer({
+    handler,
+    log,
+    protocol,
+    host,
+    port,
+    sslCredentials: config.sslCredentials,
   });
 }

@@ -4655,11 +4655,14 @@ __metadata:
     tslib: "npm:^2.4.0"
     typescript: "npm:^5.4.2"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
+    ws: "npm:^8.17.0"
     yargs: "npm:^17.7.1"
   peerDependencies:
     graphql: "*"
   dependenciesMeta:
     node-libcurl:
+      optional: true
+    uWebSockets.js:
       optional: true
   bin:
     gql-mesh: dist/cjs/bin.js
@@ -35319,7 +35322,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.11.0, ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.15.0":
+"ws@npm:^8.11.0, ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.15.0, ws@npm:^8.17.0":
   version: 8.17.0
   resolution: "ws@npm:8.17.0"
   peerDependencies:
