@@ -5690,7 +5690,7 @@ __metadata:
   resolution: "@graphql-mesh/transform-transfer-schema@workspace:packages/legacy/transforms/transfer-schema"
   dependencies:
     "@types/micromatch": "npm:4.0.7"
-    micromatch: "npm:4.0.6"
+    micromatch: "npm:4.0.7"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.4
     "@graphql-mesh/utils": ^0.98.4
@@ -25109,6 +25109,16 @@ __metadata:
     braces: "npm:^3.0.3"
     picomatch: "npm:^4.0.2"
   checksum: 10c0/38c62036b45f6d0062e96845c5652464bcfdb1ec21c8eec227c57048171529a5407321cdc7266b6c950c0f357d38dae33dc33f8de96f4b44b87670ed33c0c713
+  languageName: node
+  linkType: hard
+
+"micromatch@npm:4.0.7":
+  version: 4.0.7
+  resolution: "micromatch@npm:4.0.7"
+  dependencies:
+    braces: "npm:^3.0.3"
+    picomatch: "npm:^2.3.1"
+  checksum: 10c0/58fa99bc5265edec206e9163a1d2cec5fabc46a5b473c45f4a700adce88c2520456ae35f2b301e4410fb3afb27e9521fb2813f6fc96be0a48a89430e0916a772
   languageName: node
   linkType: hard
 
