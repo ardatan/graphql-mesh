@@ -1,5 +1,32 @@
 # @graphql-mesh/cli
 
+## 0.90.7
+
+### Patch Changes
+
+- [#6936](https://github.com/ardatan/graphql-mesh/pull/6936)
+  [`c4d2249`](https://github.com/ardatan/graphql-mesh/commit/c4d22497b4249f9a0969e1d01efbe0721774ce73)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`ws@^8.17.0` ↗︎](https://www.npmjs.com/package/ws/v/8.17.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`uWebSockets.js@uNetworking/uWebSockets.js#semver:^20` ↗︎](https://www.npmjs.com/package/uWebSockets.js/v/20.0.0)
+    (from `dependencies`)
+
+- [#7001](https://github.com/ardatan/graphql-mesh/pull/7001)
+  [`885d540`](https://github.com/ardatan/graphql-mesh/commit/885d5409343d37bc85edc34c5e2a444a8e0794e1)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - Fix 'mesh build' command ESM compatibility
+
+- Updated dependencies
+  [[`c4d2249`](https://github.com/ardatan/graphql-mesh/commit/c4d22497b4249f9a0969e1d01efbe0721774ce73)]:
+  - @graphql-mesh/utils@0.98.5
+  - @graphql-mesh/config@0.100.6
+  - @graphql-mesh/http@0.99.6
+  - @graphql-mesh/runtime@0.99.6
+  - @graphql-mesh/store@0.98.5
+  - @graphql-mesh/types@0.98.5
+
 ## 0.90.6
 
 ### Patch Changes

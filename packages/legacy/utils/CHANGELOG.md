@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.98.5
+
+### Patch Changes
+
+- [#6936](https://github.com/ardatan/graphql-mesh/pull/6936)
+  [`c4d2249`](https://github.com/ardatan/graphql-mesh/commit/c4d22497b4249f9a0969e1d01efbe0721774ce73)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fallback to node:http when uWebSockets.js is not
+  available
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.98.5
+
 ## 0.98.4
 
 ### Patch Changes

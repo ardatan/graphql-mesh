@@ -1,5 +1,15 @@
 # openapi-youtrack
 
+## 0.17.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c4d2249`](https://github.com/ardatan/graphql-mesh/commit/c4d22497b4249f9a0969e1d01efbe0721774ce73)]:
+  - @graphql-mesh/serve-cli@0.4.7
+  - @graphql-mesh/compose-cli@0.3.5
+  - @omnigraph/openapi@0.100.9
+
 ## 0.17.8
 
 ### Patch Changes
