@@ -1,3 +1,6 @@
+/* eslint-disable import/no-nodejs-modules */
+import { register } from 'node:module';
+import { pathToFileURL } from 'node:url';
 import { config as dotEnvRegister } from 'dotenv';
 import JSON5 from 'json5';
 import { register as tsNodeRegister } from 'ts-node';
@@ -21,6 +24,9 @@ import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
+
+// Note: required to make build command compatible with esm
+register('ts-node/esm', pathToFileURL('./'));
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
 
