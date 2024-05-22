@@ -9,9 +9,9 @@ directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD
 
 type Query {
   myFoo: Foo! @source(subgraph: "A", name: "myFoo", type: "Foo!")
-  foo(id: ID!): Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
-  foos(ids: [ID!]!): [Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
-  foosByFilter(where: FooFilter!): [Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
+  foo(id: ID! @source(subgraph: "B", name: "id", type: "ID")): Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
+  foos(ids: [ID!]! @source(subgraph: "B", name: "ids", type: "ID")): [Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
+  foosByFilter(where: FooFilter! @source(subgraph: "B", name: "where", type: "FooFilter")): [Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
 }
 
 type Foo @source(subgraph: "A", name: "Foo") @source(subgraph: "B", name: "Foo") {
@@ -41,9 +41,9 @@ type A_Foo @source(subgraph: "A", name: "Foo") {
 }
 
 type B_Query {
-  B_foo(id: ID!): B_Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
-  B_foos(ids: [ID!]!): [B_Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
-  B_foosByFilter(where: B_FooFilter!): [B_Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
+  B_foo(id: ID! @source(subgraph: "B", name: "id", type: "ID")): B_Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
+  B_foos(ids: [ID!]! @source(subgraph: "B", name: "ids", type: "ID")): [B_Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
+  B_foosByFilter(where: B_FooFilter! @source(subgraph: "B", name: "where", type: "FooFilter")): [B_Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
 }
 
 input B_FooFilter @source(subgraph: "B", name: "FooFilter") {
@@ -68,9 +68,9 @@ directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD
 
 type Query {
   myFoo: Foo! @source(subgraph: "A", name: "myFoo", type: "Foo!")
-  foo(id: ID!): Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
-  foos(ids: [ID!]!): [Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
-  foosByFilter(where: FooFilter!): [Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
+  foo(id: ID! @source(subgraph: "B", name: "id", type: "ID")): Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
+  foos(ids: [ID!]! @source(subgraph: "B", name: "ids", type: "ID")): [Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
+  foosByFilter(where: FooFilter! @source(subgraph: "B", name: "where", type: "FooFilter")): [Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
   cFoo: Foo! @foo @source(subgraph: "C", name: "cFoo", type: "Foo!")
 }
 

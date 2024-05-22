@@ -246,6 +246,9 @@ export function resolveAdditionalResolversWithoutImport(
                   ).join(',')})}}`,
               );
             }
+            if (additionalResolver.sourceFieldName === '__typename') {
+              return additionalResolver.sourceTypeName;
+            }
             if (
               !context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
                 additionalResolver.sourceFieldName

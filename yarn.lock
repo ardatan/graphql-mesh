@@ -3771,7 +3771,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/core@npm:5.0.1, @envelop/core@npm:^5.0.0":
+"@envelop/core@npm:5.0.1, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.0.1":
   version: 5.0.1
   resolution: "@envelop/core@npm:5.0.1"
   dependencies:
@@ -4795,10 +4795,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-composition@workspace:packages/fusion/composition"
   dependencies:
+    "@graphql-mesh/utils": "npm:^0.98.6"
     "@graphql-tools/schema": "npm:^10.0.4"
     "@graphql-tools/utils": "npm:^10.2.1"
+    "@types/minimatch": "npm:5.1.2"
     "@types/pluralize": "npm:^0.0.33"
     change-case: "npm:^4.1.2"
+    graphql-scalars: "npm:^1.23.0"
+    minimatch: "npm:^9.0.0"
     pluralize: "npm:^8.0.0"
     snake-case: "npm:^3.0.0"
     tslib: "npm:^2.4.0"
@@ -4811,11 +4815,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-runtime@workspace:packages/fusion/runtime"
   dependencies:
+    "@envelop/core": "npm:^5.0.1"
     "@graphql-mesh/runtime": "npm:^0.99.7"
     "@graphql-mesh/transport-common": "npm:^0.2.6"
     "@graphql-mesh/types": "npm:^0.98.6"
     "@graphql-mesh/utils": "npm:^0.98.6"
     "@graphql-tools/delegate": "npm:^10.0.11"
+    "@graphql-tools/executor": "npm:^1.2.6"
     "@graphql-tools/stitch": "npm:^9.2.9"
     "@graphql-tools/stitching-directives": "npm:^3.0.2"
     "@graphql-tools/utils": "npm:^10.2.1"
@@ -6091,7 +6097,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor@npm:^1.2.0, @graphql-tools/executor@npm:^1.2.1, @graphql-tools/executor@npm:^1.2.5":
+"@graphql-tools/executor@npm:^1.2.0, @graphql-tools/executor@npm:^1.2.1, @graphql-tools/executor@npm:^1.2.5, @graphql-tools/executor@npm:^1.2.6":
   version: 1.2.6
   resolution: "@graphql-tools/executor@npm:1.2.6"
   dependencies:
@@ -13278,6 +13284,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"braces@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "braces@npm:3.0.2"
+  dependencies:
+    fill-range: "npm:^7.0.1"
+  checksum: 10c0/321b4d675791479293264019156ca322163f02dc06e3c4cab33bb15cd43d80b51efef69b0930cfde3acd63d126ebca24cd0544fa6f261e093a0fb41ab9dda381
+  languageName: node
+  linkType: hard
+
 "braces@npm:^3.0.3, braces@npm:~3.0.2":
   version: 3.0.3
   resolution: "braces@npm:3.0.3"
@@ -18354,6 +18369,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fill-range@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "fill-range@npm:7.0.1"
+  dependencies:
+    to-regex-range: "npm:^5.0.1"
+  checksum: 10c0/7cdad7d426ffbaadf45aeb5d15ec675bbd77f7597ad5399e3d2766987ed20bda24d5fac64b3ee79d93276f5865608bb22344a26b9b1ae6c4d00bd94bf611623f
+  languageName: node
+  linkType: hard
+
 "fill-range@npm:^7.1.1":
   version: 7.1.1
   resolution: "fill-range@npm:7.1.1"
@@ -19555,7 +19579,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-scalars@npm:^1.22.4":
+"graphql-scalars@npm:^1.22.4, graphql-scalars@npm:^1.23.0":
   version: 1.23.0
   resolution: "graphql-scalars@npm:1.23.0"
   dependencies:
@@ -25141,13 +25165,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:4.0.7, micromatch@npm:^4.0.2, micromatch@npm:^4.0.4, micromatch@npm:^4.0.5, micromatch@npm:~4.0.7":
+"micromatch@npm:4.0.7, micromatch@npm:~4.0.7":
   version: 4.0.7
   resolution: "micromatch@npm:4.0.7"
   dependencies:
     braces: "npm:^3.0.3"
     picomatch: "npm:^2.3.1"
   checksum: 10c0/58fa99bc5265edec206e9163a1d2cec5fabc46a5b473c45f4a700adce88c2520456ae35f2b301e4410fb3afb27e9521fb2813f6fc96be0a48a89430e0916a772
+  languageName: node
+  linkType: hard
+
+"micromatch@npm:^4.0.2, micromatch@npm:^4.0.4, micromatch@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "micromatch@npm:4.0.5"
+  dependencies:
+    braces: "npm:^3.0.2"
+    picomatch: "npm:^2.3.1"
+  checksum: 10c0/3d6505b20f9fa804af5d8c596cb1c5e475b9b0cd05f652c5b56141cf941bd72adaeb7a436fda344235cef93a7f29b7472efc779fcdb83b478eab0867b95cdeff
   languageName: node
   linkType: hard
 

@@ -28,7 +28,7 @@ type query_todos_items @source(subgraph: "API", name: "query_todos_items") {
 }
 
 type Mutation {
-  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST) @source(subgraph: "API", name: "addTodo", type: "mutation_addTodo")
+  addTodo(input: mutationInput_addTodo_input_Input @source(subgraph: "API", name: "input", type: "mutationInput_addTodo_input_Input")): mutation_addTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST) @source(subgraph: "API", name: "addTodo", type: "mutation_addTodo")
 }
 
 type mutation_addTodo @example(subgraph: "API", value: "\\"{\\\\\\"id\\\\\\":0,\\\\\\"name\\\\\\":\\\\\\"TodoName\\\\\\",\\\\\\"content\\\\\\":\\\\\\"TodoContent\\\\\\"}\\"") @source(subgraph: "API", name: "mutation_addTodo") {

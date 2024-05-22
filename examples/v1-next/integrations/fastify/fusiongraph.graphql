@@ -33,17 +33,13 @@ type Query {
     """
     ID of pet to return
     """
-    petId: String!
+    petId: String! @source(subgraph: "Pets", name: "petId", type: "String")
   ): Pet
     @httpOperation(
       subgraph: "Pets"
       path: "/pet/{args.petId}"
       operationSpecificHeaders: "\"{\\\"accept\\\":\\\"application/json\\\"}\""
       httpMethod: GET
-    )
-    @resolver(
-      subgraph: "Pets"
-      operation: "query pet_by_petId($petId: String!) { pet_by_petId(petId: $petId) }"
     )
     @source(subgraph: "Pets", name: "pet_by_petId", type: "Pet")
 }

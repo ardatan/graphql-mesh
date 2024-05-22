@@ -50,11 +50,13 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "dependencies": {
+    "@envelop/core": "^5.0.1",
     "@graphql-mesh/runtime": "^0.99.7",
     "@graphql-mesh/transport-common": "^0.2.6",
     "@graphql-mesh/types": "^0.98.6",
     "@graphql-mesh/utils": "^0.98.6",
     "@graphql-tools/delegate": "^10.0.11",
+    "@graphql-tools/executor": "^1.2.6",
     "@graphql-tools/stitch": "^9.2.9",
     "@graphql-tools/stitching-directives": "^3.0.2",
     "@graphql-tools/utils": "^10.2.1",

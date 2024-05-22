@@ -59,7 +59,20 @@ describe('hoist', () => {
     const fields = queryType.getFields();
     expect(fields.users).toBeDefined();
 
-    expect(printSchema(newSchema)).toMatchSnapshot();
+    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
+"type Query {
+  users(limit: Int!, page: Int): [User!]!
+}
+
+type UserSearchResult {
+  page: Int!
+}
+
+type User {
+  id: ID!
+  name: String!
+}"
+`);
   });
 
   it('should hoist field with mixed pathConfig array', () => {
@@ -96,7 +109,20 @@ describe('hoist', () => {
     const fields = queryType.getFields();
     expect(fields.users).toBeDefined();
 
-    expect(printSchema(newSchema)).toMatchSnapshot();
+    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
+"type Query {
+  users(limit: Int!, page: Int): [User!]!
+}
+
+type UserSearchResult {
+  page: Int!
+}
+
+type User {
+  id: ID!
+  name: String!
+}"
+`);
   });
 
   it('should hoist field and filter args with global flag', () => {
@@ -131,7 +157,20 @@ describe('hoist', () => {
     const args = (fields.users as GraphQLField<any, any>).args;
     expect(args.length).toEqual(0);
 
-    expect(printSchema(newSchema)).toMatchSnapshot();
+    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
+"type Query {
+  users: [User!]!
+}
+
+type UserSearchResult {
+  page: Int!
+}
+
+type User {
+  id: ID!
+  name: String!
+}"
+`);
   });
 
   it('should hoist field and filter individual args via pathConfig', () => {
@@ -172,7 +211,20 @@ describe('hoist', () => {
     expect(args.length).toEqual(1);
     expect(args[0].name).toEqual('page');
 
-    expect(printSchema(newSchema)).toMatchSnapshot();
+    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
+"type Query {
+  users(page: Int): [User!]!
+}
+
+type UserSearchResult {
+  page: Int!
+}
+
+type User {
+  id: ID!
+  name: String!
+}"
+`);
   });
 
   it('should hoist field and filter individual args via pathConfig independent of global flag', () => {
@@ -214,6 +266,19 @@ describe('hoist', () => {
     expect(args.length).toEqual(1);
     expect(args[0].name).toEqual('page');
 
-    expect(printSchema(newSchema)).toMatchSnapshot();
+    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
+"type Query {
+  users(page: Int): [User!]!
+}
+
+type UserSearchResult {
+  page: Int!
+}
+
+type User {
+  id: ID!
+  name: String!
+}"
+`);
   });
 });

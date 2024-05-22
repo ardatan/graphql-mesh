@@ -50,10 +50,10 @@ describe('Composition', () => {
   });
   it('composes with transforms', () => {
     const prefixTypeTransform = createRenameTypeTransform(
-      (type, subgraphConfig) => `${subgraphConfig.name}_${type.name}`,
+      ({ type, subgraphConfig }) => `${subgraphConfig.name}_${type.name}`,
     );
     const prefixFieldTransform = createRenameFieldTransform(
-      (_field, fieldName, typeName, subgraphConfig) =>
+      ({ fieldName, typeName, subgraphConfig }) =>
         typeName === `${subgraphConfig.name}_Query`
           ? `${subgraphConfig.name}_${fieldName}`
           : fieldName,

@@ -28,7 +28,7 @@ type Query {
   """
   media_math_formula_by_hash(
     """The hash string of the previous POST data"""
-    hash: NonEmptyString!
+    hash: NonEmptyString! @source(subgraph: "Wiki", name: "hash", type: "NonEmptyString")
   ): JSON @httpOperation(subgraph: "Wiki", path: "/media/math/formula/{args.hash}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "media_math_formula_by_hash", type: "JSON")
   """
   Given a request hash, renders a TeX formula into its mathematic
@@ -41,9 +41,9 @@ type Query {
   
   """
   media_math_render_by_format_by_hash(
-    format: queryInput_media_math_render_by_format_by_hash_format!
+    format: queryInput_media_math_render_by_format_by_hash_format! @source(subgraph: "Wiki", name: "format", type: "queryInput_media_math_render_by_format_by_hash_format")
     """The hash string of the previous POST data"""
-    hash: NonEmptyString!
+    hash: NonEmptyString! @source(subgraph: "Wiki", name: "hash", type: "NonEmptyString")
   ): String @httpOperation(subgraph: "Wiki", path: "/media/math/render/{args.format}/{args.hash}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "media_math_render_by_format_by_hash", type: "String")
   """
   Given a Mediawiki article and a date range, returns a daily timeseries of its pageview
@@ -60,20 +60,20 @@ type Query {
     If you want to filter by project, use the domain of any Wikimedia project,
     for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
     """
-    project: String!
-    access: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access!
-    agent: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    access: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access! @source(subgraph: "Wiki", name: "access", type: "queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access")
+    agent: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent! @source(subgraph: "Wiki", name: "agent", type: "queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent")
     """
     'The title of any article in the specified project. Any spaces should be replaced
     with underscores. It also should be URI-encoded, so that non-URI-safe characters like
     %, / or ? are accepted. Example: Are_You_the_One%3F'.
     """
-    article: String!
-    granularity: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_granularity!
+    article: String! @source(subgraph: "Wiki", name: "article", type: "String")
+    granularity: queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD or YYYYMMDDHH format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): pageview_article @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/per-article/{args.project}/{args.access}/{args.agent}/{args.article}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end", type: "pageview_article")
   """
   Given a date range, returns a timeseries of pageview counts. You can filter by project,
@@ -92,18 +92,18 @@ type Query {
     for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
     If you are interested in all pageviews regardless of project, use all-projects.
     """
-    project: String!
-    access: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access!
-    agent: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent!
-    granularity: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    access: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access! @source(subgraph: "Wiki", name: "access", type: "queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access")
+    agent: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent! @source(subgraph: "Wiki", name: "agent", type: "queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent")
+    granularity: queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_granularity")
     """
     The timestamp of the first hour/day/month to include, in YYYYMMDDHH format
     """
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """
     The timestamp of the last hour/day/month to include, in YYYYMMDDHH format
     """
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): pageview_project @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/aggregate/{args.project}/{args.access}/{args.agent}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end", type: "pageview_project")
   """
   Lists the 1000 most viewed articles for a given project and timespan (month or day).
@@ -120,19 +120,19 @@ type Query {
     If you want to filter by project, use the domain of any Wikimedia project,
     for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
     """
-    project: String!
-    access: queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    access: queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access! @source(subgraph: "Wiki", name: "access", type: "queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access")
     """
     The year of the date for which to retrieve top articles, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top articles, in MM format. If you want
     to get the top articles of a whole month, the day parameter should be all-days.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """The day of the date for which to retrieve top articles, in DD format."""
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): pageview_tops @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/top/{args.project}/{args.access}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day", type: "pageview_tops")
   """
   Lists the pageviews to this project, split by country of origin for a given month.
@@ -149,16 +149,16 @@ type Query {
     If you want to filter by project, use the domain of any Wikimedia project,
     for example 'en.wikipedia.org', 'www.mediawiki.org' or 'commons.wikimedia.org'.
     """
-    project: String!
-    access: queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    access: queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access! @source(subgraph: "Wiki", name: "access", type: "queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access")
     """
     The year of the date for which to retrieve top countries, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top countries, in MM format.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
   ): by_country @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/top-by-country/{args.project}/{args.access}/{args.year}/{args.month}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month", type: "by_country")
   """
   Lists the 1000 most viewed articles for a given country and date, across all projects.
@@ -177,14 +177,14 @@ type Query {
     """
     The ISO 3166-1 alpha-2 code of a country for which to retrieve top articles, like 'FR' or 'IN'.
     """
-    country: String!
-    access: queryInput_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_access!
+    country: String! @source(subgraph: "Wiki", name: "country", type: "String")
+    access: queryInput_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_access! @source(subgraph: "Wiki", name: "access", type: "queryInput_metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day_access")
     """The year for which to retrieve top articles, in YYYY format."""
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """The month for which to retrieve top articles, in MM format."""
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """The day for which to retrieve top articles, in DD format."""
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): per_country @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/top-per-country/{args.country}/{args.access}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_pageviews_top_per_country_by_country_by_access_by_year_by_month_by_day", type: "per_country")
   """
   Given a project and a date range, returns a timeseries of unique devices counts.
@@ -204,13 +204,13 @@ type Query {
     For data grouped by project family, use all-[family]-projects
     (for example: all-wikipedia-projects).
     """
-    project: String!
-    access_site: queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site!
-    granularity: queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    access_site: queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site! @source(subgraph: "Wiki", name: "access_site", type: "queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site")
+    granularity: queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_granularity")
     """The timestamp of the first day/month to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The timestamp of the last day/month to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): unique_devices @httpOperation(subgraph: "Wiki", path: "/metrics/unique-devices/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end", type: "unique_devices")
   """
   Given a project and a date range, returns a timeseries of pagecounts.
@@ -229,19 +229,19 @@ type Query {
     for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
     off. For projects like commons without language codes, use commons.wikimedia.
     """
-    project: String!
-    access_site: queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site!
-    granularity: queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    access_site: queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site! @source(subgraph: "Wiki", name: "access_site", type: "queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site")
+    granularity: queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_granularity")
     """
     The timestamp of the first hour/day/month to include, in YYYYMMDDHH format.
     """
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """
     The timestamp of the last hour/day/month to include, in YYYYMMDDHH format.
     In hourly and daily granularities this value is inclusive, in the monthly granularity
     this value is exclusive.
     """
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): pagecounts_project @httpOperation(subgraph: "Wiki", path: "/metrics/legacy/pagecounts/aggregate/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end", type: "pagecounts_project")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its new pages counts.
@@ -265,14 +265,14 @@ type Query {
     data grouped by project family, use all-[family]-projects (for example:
     all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
-    granularity: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type")
+    page_type: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type")
+    granularity: queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): new_pages @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/new/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end", type: "new_pages")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its edited-pages counts.
@@ -295,15 +295,15 @@ type Query {
     For projects like www.mediawiki.org, you can use that full string, or just use
     mediawiki or mediawiki.org.
     """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type!
-    activity_level: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level!
-    granularity: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type")
+    page_type: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type")
+    activity_level: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level! @source(subgraph: "Wiki", name: "activity_level", type: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level")
+    granularity: queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): edited_pages @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end", type: "edited_pages")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
@@ -326,21 +326,21 @@ type Query {
     or mediawiki.org. For data from all projects, use all-projects. For data grouped by
     project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type")
+    page_type: queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type")
     """
     The year of the date for which to retrieve top edited-pages, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): top_edited_pages_by_edits @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day", type: "top_edited_pages_by_edits")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
@@ -362,21 +362,21 @@ type Query {
     or mediawiki.org. For data from all projects, use all-projects. For data grouped by
     project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type")
+    page_type: queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type")
     """
     The year of the date for which to retrieve top edited-pages, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): top_edited_pages_by_net_bytes_diff @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day", type: "top_edited_pages_by_net_bytes_diff")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
@@ -398,21 +398,21 @@ type Query {
     or mediawiki.org. For data from all projects, use all-projects. For data grouped by
     project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type")
+    page_type: queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type")
     """
     The year of the date for which to retrieve top edited-pages, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top edited-pages, in MM format. If you want to get the top edited-pages of a whole month, the day parameter should be all-days.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): top_edited_pages_by_abs_bytes_diff @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day", type: "top_edited_pages_by_abs_bytes_diff")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its editors counts.
@@ -435,15 +435,15 @@ type Query {
     For projects like www.mediawiki.org, you can use that full string, or just use
     mediawiki or mediawiki.org.
     """
-    project: String!
-    editor_type: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type!
-    activity_level: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level!
-    granularity: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type")
+    page_type: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type")
+    activity_level: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level! @source(subgraph: "Wiki", name: "activity_level", type: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level")
+    granularity: queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): editors @httpOperation(subgraph: "Wiki", path: "/metrics/editors/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end", type: "editors")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
@@ -467,21 +467,21 @@ type Query {
     or mediawiki.org. For data from all projects, use all-projects. For data grouped by
     project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type")
+    page_type: queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type")
     """
     The year of the date for which to retrieve top editors, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): top_editors_by_edits @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day", type: "top_editors_by_edits")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
@@ -505,21 +505,21 @@ type Query {
     or mediawiki.org. For data from all projects, use all-projects. For data grouped by
     project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type")
+    page_type: queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type")
     """
     The year of the date for which to retrieve top editors, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): top_editors_by_net_bytes_diff @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day", type: "top_editors_by_net_bytes_diff")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
@@ -543,21 +543,21 @@ type Query {
     or mediawiki.org. For data from all projects, use all-projects. For data grouped by
     project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type!
-    page_type: queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type")
+    page_type: queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type")
     """
     The year of the date for which to retrieve top editors, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top editors, in MM format. If you want to get the top editors of a whole month, the day parameter should be all-days.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): top_editors_by_abs_bytes_diff @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day", type: "top_editors_by_abs_bytes_diff")
   """
   Given a Mediawiki project and a date range, returns a timeseries of edits counts.
@@ -580,14 +580,14 @@ type Query {
     mediawiki or mediawiki.org. For data from all projects, use all-projects. For data
     grouped by project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
-    granularity: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type")
+    page_type: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type")
+    granularity: queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): edits @httpOperation(subgraph: "Wiki", path: "/metrics/edits/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end", type: "edits")
   """
   Given a Mediawiki project, a page-title prefixed with its canonical namespace (for
@@ -612,18 +612,18 @@ type Query {
     projects like www.mediawiki.org, you can use that full string, or just use mediawiki
     or mediawiki.org.
     """
-    project: String!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
     """
     The page-title to request edits for. It should be prefixed with canonical namespace.
     Spaces will be converted to underscores.
     """
-    page_title: String!
-    editor_type: queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
-    granularity: queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
+    page_title: String! @source(subgraph: "Wiki", name: "page_title", type: "String")
+    editor_type: queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type")
+    granularity: queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): edits_per_page @httpOperation(subgraph: "Wiki", path: "/metrics/edits/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end", type: "edits_per_page")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its newly registered
@@ -645,12 +645,12 @@ type Query {
     mediawiki or mediawiki.org. For data from all projects, use all-projects. For data
     grouped by project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    granularity: queryInput_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    granularity: queryInput_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): new_registered_users @httpOperation(subgraph: "Wiki", path: "/metrics/registered-users/new/{args.project}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_registered_users_new_by_project_by_granularity_by_start_by_end", type: "new_registered_users")
   """
   Given a Mediawiki project and a date range, returns a timeseries of bytes difference net
@@ -673,14 +673,14 @@ type Query {
     or mediawiki.org. For data from all projects, use all-projects. For data grouped by
     project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
-    granularity: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type")
+    page_type: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type")
+    granularity: queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): net_bytes_difference @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/net/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end", type: "net_bytes_difference")
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
@@ -705,18 +705,18 @@ type Query {
     projects like www.mediawiki.org, you can use that full string, or just use mediawiki
     or mediawiki.org.
     """
-    project: String!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
     """
     The page-title to request net bytes-difference for. Should be prefixed with the
     page canonical namespace.
     """
-    page_title: String!
-    editor_type: queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
-    granularity: queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
+    page_title: String! @source(subgraph: "Wiki", name: "page_title", type: "String")
+    editor_type: queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type")
+    granularity: queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): net_bytes_difference_per_page @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/net/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end", type: "net_bytes_difference_per_page")
   """
   Given a Mediawiki project and a date range, returns a timeseries of absolute bytes
@@ -739,14 +739,14 @@ type Query {
     or mediawiki.org. For data from all projects, use all-projects. For data grouped by
     project family, use all-[family]-projects (for example: all-wikipedia-projects).
     """
-    project: String!
-    editor_type: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type!
-    page_type: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type!
-    granularity: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    editor_type: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type")
+    page_type: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type! @source(subgraph: "Wiki", name: "page_type", type: "queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type")
+    granularity: queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): absolute_bytes_difference @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/absolute/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end", type: "absolute_bytes_difference")
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
@@ -771,18 +771,18 @@ type Query {
     projects like www.mediawiki.org, you can use that full string, or just use mediawiki
     or mediawiki.org.
     """
-    project: String!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
     """
     The page-title to request absolute bytes-difference for. Should be prefixed with the
     page canonical namespace.
     """
-    page_title: String!
-    editor_type: queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type!
-    granularity: queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity!
+    page_title: String! @source(subgraph: "Wiki", name: "page_title", type: "String")
+    editor_type: queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type! @source(subgraph: "Wiki", name: "editor_type", type: "queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type")
+    granularity: queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): absolute_bytes_difference_per_page @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/absolute/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end", type: "absolute_bytes_difference_per_page")
   """
   Given a date range, returns a timeseries of mediarequest counts. You can filter by referer, media types and/or agent type. You can choose between daily and monthly granularity.
@@ -798,18 +798,18 @@ type Query {
     The place that the request was made from. It can be any Wikimedia project (e.g. de.wikipedia),
     "all-referers", "internal", "external", "search-engine", "unknown" or "none".
     """
-    referer: String!
-    media_type: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_media_type!
-    agent: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_agent!
-    granularity: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_granularity!
+    referer: String! @source(subgraph: "Wiki", name: "referer", type: "String")
+    media_type: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_media_type! @source(subgraph: "Wiki", name: "media_type", type: "queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_media_type")
+    agent: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_agent! @source(subgraph: "Wiki", name: "agent", type: "queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_agent")
+    granularity: queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end_granularity")
     """
     The timestamp of the first hour/day/month to include, in YYYYMMDD format
     """
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """
     The timestamp of the last hour/day/month to include, in YYYYMMDD format
     """
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): mediarequest_referer @httpOperation(subgraph: "Wiki", path: "/metrics/mediarequests/aggregate/{args.referer}/{args.media_type}/{args.agent}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_mediarequests_aggregate_by_referer_by_media_type_by_agent_by_granularity_by_start_by_end", type: "mediarequest_referer")
   """
   Given a file stored in upload.wikimedia.org (the file storage for all media in any wiki) and a date range,
@@ -826,19 +826,19 @@ type Query {
     The place that the request was made from. It can be any Wikimedia project (e.g. de.wikipedia), "all-referers",
     "internal", "external", "search-engine", "unknown" or "none".
     """
-    referer: String!
-    agent: queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_agent!
+    referer: String! @source(subgraph: "Wiki", name: "referer", type: "String")
+    agent: queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_agent! @source(subgraph: "Wiki", name: "agent", type: "queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_agent")
     """
     The upload.wikimedia.org (the file storage for all media in any wiki) path to the file. It also should
     be URI-encoded, so that non-URI-safe characters like %, / or ? are accepted.
     Example: %2Fwiktionary%2Fte%2F4%2F40%2Fpeacocks.JPG
     """
-    file_path: String!
-    granularity: queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_granularity!
+    file_path: String! @source(subgraph: "Wiki", name: "file_path", type: "String")
+    granularity: queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_granularity! @source(subgraph: "Wiki", name: "granularity", type: "queryInput_metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end_granularity")
     """The date of the first day to include, in YYYYMMDD or YYYYMMDDHH format"""
-    start: String!
+    start: String! @source(subgraph: "Wiki", name: "start", type: "String")
     """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
-    end: String!
+    end: String! @source(subgraph: "Wiki", name: "end", type: "String")
   ): mediarequest_file @httpOperation(subgraph: "Wiki", path: "/metrics/mediarequests/per-file/{args.referer}/{args.agent}/{args.file_path}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_mediarequests_per_file_by_referer_by_agent_by_file_path_by_granularity_by_start_by_end", type: "mediarequest_file")
   """
   Lists the 1000 most requested files for a given referer and timespan (month or day). You can filter by access method.
@@ -853,17 +853,17 @@ type Query {
     The place that the request was made from. Non Wikimedia projects appear aggreggated under the classification "external".
     It can be any Wikimedia project (e.g. de.wikipedia), "all-referers", "internal", "external", "search-engine", "unknown" or "none".
     """
-    referer: String!
-    media_type: queryInput_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_media_type!
+    referer: String! @source(subgraph: "Wiki", name: "referer", type: "String")
+    media_type: queryInput_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_media_type! @source(subgraph: "Wiki", name: "media_type", type: "queryInput_metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day_media_type")
     """The year of the date for which to retrieve top files, in YYYY format."""
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve top files, in MM format. If you want
     to get the top files of a whole month, the day parameter should be all-days.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
     """The day of the date for which to retrieve top files, in DD format."""
-    day: String!
+    day: String! @source(subgraph: "Wiki", name: "day", type: "String")
   ): mediarequest_tops @httpOperation(subgraph: "Wiki", path: "/metrics/mediarequests/top/{args.referer}/{args.media_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_mediarequests_top_by_referer_by_media_type_by_year_by_month_by_day", type: "mediarequest_tops")
   """
   Given a Wikipedia project, an activity level, and a month, returns the upper bounds of
@@ -880,16 +880,16 @@ type Query {
     for example en.wikipedia. You may pass en.wikipedia.org and the .org will be stripped
     off. Non-Wikipedia projects are not available for this endpoint.
     """
-    project: String!
-    activity_level: queryInput_metrics_editors_by_country_by_project_by_activity_level_by_year_by_month_activity_level!
+    project: String! @source(subgraph: "Wiki", name: "project", type: "String")
+    activity_level: queryInput_metrics_editors_by_country_by_project_by_activity_level_by_year_by_month_activity_level! @source(subgraph: "Wiki", name: "activity_level", type: "queryInput_metrics_editors_by_country_by_project_by_activity_level_by_year_by_month_activity_level")
     """
     The year of the date for which to retrieve editor counts, in YYYY format.
     """
-    year: String!
+    year: String! @source(subgraph: "Wiki", name: "year", type: "String")
     """
     The month of the date for which to retrieve editor counts, in MM format.
     """
-    month: String!
+    month: String! @source(subgraph: "Wiki", name: "month", type: "String")
   ): JSON @httpOperation(subgraph: "Wiki", path: "/metrics/editors/by-country/{args.project}/{args.activity_level}/{args.year}/{args.month}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "metrics_editors_by_country_by_project_by_activity_level_by_year_by_month", type: "JSON")
   """
   Fetches the dictionary meaning of a word from a language and displays
@@ -900,11 +900,11 @@ type Query {
   """
   transform_word_from_by_from_lang_to_by_to_lang_by_word(
     """The source language code"""
-    from_lang: String!
+    from_lang: String! @source(subgraph: "Wiki", name: "from_lang", type: "String")
     """The target language code"""
-    to_lang: String!
+    to_lang: String! @source(subgraph: "Wiki", name: "to_lang", type: "String")
     """The word to lookup"""
-    word: String!
+    word: String! @source(subgraph: "Wiki", name: "word", type: "String")
   ): cx_dict @httpOperation(subgraph: "Wiki", path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "transform_word_from_by_from_lang_to_by_to_lang_by_word", type: "cx_dict")
   """
   Fetches the dictionary meaning of a word from a language and displays
@@ -915,12 +915,12 @@ type Query {
   """
   transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider(
     """The source language code"""
-    from_lang: String!
+    from_lang: String! @source(subgraph: "Wiki", name: "from_lang", type: "String")
     """The target language code"""
-    to_lang: String!
+    to_lang: String! @source(subgraph: "Wiki", name: "to_lang", type: "String")
     """The word to lookup"""
-    word: String!
-    provider: queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider!
+    word: String! @source(subgraph: "Wiki", name: "word", type: "String")
+    provider: queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider! @source(subgraph: "Wiki", name: "provider", type: "queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider")
   ): cx_dict @httpOperation(subgraph: "Wiki", path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}/{args.provider}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider", type: "cx_dict")
   """
   Fetches the list of tools that are available for the given pair of languages.
@@ -930,9 +930,9 @@ type Query {
   """
   transform_list_pair_by_from_by_to(
     """The source language code"""
-    from: String!
+    from: String! @source(subgraph: "Wiki", name: "from", type: "String")
     """The target language code"""
-    to: String!
+    to: String! @source(subgraph: "Wiki", name: "to", type: "String")
   ): cx_list_tools @httpOperation(subgraph: "Wiki", path: "/transform/list/pair/{args.from}/{args.to}/", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "transform_list_pair_by_from_by_to", type: "cx_list_tools")
   """
   Fetches the list of tools and all of the language pairs it can translate
@@ -940,7 +940,7 @@ type Query {
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   
   """
-  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): JSON @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "transform_list_tool_by_tool", type: "JSON")
+  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool! @source(subgraph: "Wiki", name: "tool", type: "queryInput_transform_list_tool_by_tool_tool")): JSON @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "transform_list_tool_by_tool", type: "JSON")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -948,11 +948,11 @@ type Query {
   
   """
   transform_list_tool_by_tool_by_from_by_to(
-    tool: queryInput_transform_list_tool_by_tool_by_from_by_to_tool!
+    tool: queryInput_transform_list_tool_by_tool_by_from_by_to_tool! @source(subgraph: "Wiki", name: "tool", type: "queryInput_transform_list_tool_by_tool_by_from_by_to_tool")
     """The source language code"""
-    from: String!
+    from: String! @source(subgraph: "Wiki", name: "from", type: "String")
     """The target language code"""
-    to: String!
+    to: String! @source(subgraph: "Wiki", name: "to", type: "String")
   ): JSON @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}/{args.from}/{args.to}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: GET) @source(subgraph: "Wiki", name: "transform_list_tool_by_tool_by_from_by_to", type: "JSON")
   """
   Fetches the list of language pairs the back-end service can translate
@@ -2210,7 +2210,7 @@ type Mutation {
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, input: post_media_math_check_by_type_request_Input): JSON @httpOperation(subgraph: "Wiki", path: "/media/math/check/{args.type}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"multipart/form-data\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "Wiki", name: "post_media_math_check_by_type", type: "JSON")
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type! @source(subgraph: "Wiki", name: "type", type: "mutationInput_post_media_math_check_by_type_type"), input: post_media_math_check_by_type_request_Input @source(subgraph: "Wiki", name: "input", type: "post_media_math_check_by_type_request_Input")): JSON @httpOperation(subgraph: "Wiki", path: "/media/math/check/{args.type}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"multipart/form-data\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "Wiki", name: "post_media_math_check_by_type", type: "JSON")
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2220,10 +2220,10 @@ type Mutation {
   """
   post_transform_html_from_by_from_lang_to_by_to_lang(
     """The source language code"""
-    from_lang: String!
+    from_lang: String! @source(subgraph: "Wiki", name: "from_lang", type: "String")
     """The target language code"""
-    to_lang: String!
-    input: post_transform_html_from_by_from_lang_to_by_to_lang_request_Input
+    to_lang: String! @source(subgraph: "Wiki", name: "to_lang", type: "String")
+    input: post_transform_html_from_by_from_lang_to_by_to_lang_request_Input @source(subgraph: "Wiki", name: "input", type: "post_transform_html_from_by_from_lang_to_by_to_lang_request_Input")
   ): cx_mt @httpOperation(subgraph: "Wiki", path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/x-www-form-urlencoded\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "Wiki", name: "post_transform_html_from_by_from_lang_to_by_to_lang", type: "cx_mt")
   """
   Fetches the machine translation for the posted content from the source
@@ -2234,11 +2234,11 @@ type Mutation {
   """
   post_transform_html_from_by_from_lang_to_by_to_lang_by_provider(
     """The source language code"""
-    from_lang: String!
+    from_lang: String! @source(subgraph: "Wiki", name: "from_lang", type: "String")
     """The target language code"""
-    to_lang: String!
-    provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
-    input: post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_request_Input
+    to_lang: String! @source(subgraph: "Wiki", name: "to_lang", type: "String")
+    provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider! @source(subgraph: "Wiki", name: "provider", type: "mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider")
+    input: post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_request_Input @source(subgraph: "Wiki", name: "input", type: "post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_request_Input")
   ): cx_mt @httpOperation(subgraph: "Wiki", path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}/{args.provider}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"multipart/form-data\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/problem+json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "Wiki", name: "post_transform_html_from_by_from_lang_to_by_to_lang_by_provider", type: "cx_mt")
 }
 

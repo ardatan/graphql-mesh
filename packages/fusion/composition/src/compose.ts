@@ -2,16 +2,18 @@ import {
   getNamedType,
   GraphQLArgumentConfig,
   GraphQLFieldConfig,
+  GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
   isObjectType,
   isSpecifiedScalarType,
   OperationTypeNode,
+  printSchema,
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
+import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { mergeSchemas, MergeSchemasConfig } from '@graphql-tools/schema';
 import { getRootTypeMap, MapperKind, mapSchema, TypeSource } from '@graphql-tools/utils';
-import { getDirectiveExtensions } from './getDirectiveExtensions.js';
 
 export interface SubgraphConfig {
   name: string;
@@ -72,20 +74,44 @@ export function composeSubgraphs(
           },
         });
       },
-      [MapperKind.FIELD]: (fieldConfig, fieldName) => ({
-        ...fieldConfig,
-        extensions: {
-          ...fieldConfig.extensions,
-          directives: {
-            ...getDirectiveExtensions(fieldConfig),
-            source: {
+      [MapperKind.FIELD]: (fieldConfig, fieldName) => {
+        const newArgs: GraphQLFieldConfigArgumentMap = {};
+        if ('args' in fieldConfig && fieldConfig.args) {
+          for (const argName in fieldConfig.args) {
+            const arg = fieldConfig.args[argName];
+            const argType = getNamedType(arg.type);
+            const directives = getDirectiveExtensions(arg);
+            directives.source ||= [];
+            directives.source.push({
               subgraph: subgraphName,
-              name: fieldName,
-              type: fieldConfig.type.toString(),
+              name: argName,
+              type: argType.toString(),
+            });
+            newArgs[argName] = {
+              ...arg,
+              extensions: {
+                ...arg.extensions,
+                directives,
+              },
+            };
+          }
+        }
+        return {
+          ...fieldConfig,
+          args: newArgs,
+          extensions: {
+            ...fieldConfig.extensions,
+            directives: {
+              ...getDirectiveExtensions(fieldConfig),
+              source: {
+                subgraph: subgraphName,
+                name: fieldName,
+                type: fieldConfig.type.toString(),
+              },
             },
           },
-        },
-      }),
+        };
+      },
       [MapperKind.ENUM_VALUE]: (valueConfig, _typeName, _schema, externalValue) => ({
         ...valueConfig,
         extensions: {
@@ -118,12 +144,34 @@ export function composeSubgraphs(
             mergeDirectiveUsed = true;
           }
         }
+        const newArgs: GraphQLFieldConfigArgumentMap = {};
+        if (fieldConfig.args) {
+          for (const argName in fieldConfig.args) {
+            const arg = fieldConfig.args[argName];
+            const argType = getNamedType(arg.type);
+            const directives = getDirectiveExtensions(arg);
+            directives.source ||= [];
+            directives.source.push({
+              subgraph: subgraphName,
+              name: argName,
+              type: argType.toString(),
+            });
+            newArgs[argName] = {
+              ...arg,
+              extensions: {
+                ...arg.extensions,
+                directives,
+              },
+            };
+          }
+        }
         return {
           ...fieldConfig,
           extensions: {
             ...fieldConfig.extensions,
             directives: directiveExtensions,
           },
+          args: newArgs,
         };
       },
     });
