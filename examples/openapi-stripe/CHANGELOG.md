@@ -1,5 +1,15 @@
 # openapi-stripe
 
+## 0.15.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c4d2249`](https://github.com/ardatan/graphql-mesh/commit/c4d22497b4249f9a0969e1d01efbe0721774ce73),
+  [`885d540`](https://github.com/ardatan/graphql-mesh/commit/885d5409343d37bc85edc34c5e2a444a8e0794e1)]:
+  - @graphql-mesh/cli@0.90.7
+  - @graphql-mesh/openapi@0.100.9
+
 ## 0.15.9
 
 ### Patch Changes
