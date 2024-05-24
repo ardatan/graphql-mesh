@@ -1,5 +1,13 @@
 # mysql-rfam
 
+## 0.13.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8e336b7`](https://github.com/ardatan/graphql-mesh/commit/8e336b781df516c8b106f2882a7c6f1d71909ce6)]:
+  - @graphql-mesh/cli@0.90.8
+
 ## 0.13.7
 
 ### Patch Changes
