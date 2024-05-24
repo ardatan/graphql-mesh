@@ -1,5 +1,13 @@
 # @graphql-mesh/cli
 
+## 0.90.8
+
+### Patch Changes
+
+- [`8e336b7`](https://github.com/ardatan/graphql-mesh/commit/8e336b781df516c8b106f2882a7c6f1d71909ce6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `register` from `node:module` only if it
+  exists
+
 ## 0.90.7
 
 ### Patch Changes
