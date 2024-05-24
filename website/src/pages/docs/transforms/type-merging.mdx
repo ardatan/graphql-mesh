@@ -100,9 +100,10 @@ then you expect the following query to work fine;
 }
 ```
 
-But it won't work because Mesh doesn't know which field belongs to which entity and how to combine them.
-You could add `additionalResolvers` to extract `books` from `AuthorWithBooks` and then return it as
-`books` field of `Author` type, but this adds a lot of overhead. So, let's try Type Merging here.
+But it won't work because Mesh doesn't know which field belongs to which entity and how to combine
+them. You could add `additionalResolvers` to extract `books` from `AuthorWithBooks` and then return
+it as `books` field of `Author` type, but this adds a lot of overhead. So, let's try Type Merging
+here.
 
 We have Type Merging transform to teach Mesh how to fetch entities from different sources:
 
