@@ -8934,10 +8934,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.30, @sinclair/typebox@npm:^0.32.0":
-  version: 0.32.30
-  resolution: "@sinclair/typebox@npm:0.32.30"
-  checksum: 10c0/0140e159d2a1ed8e78ac74730cbd7cfeae6565239a70130a937bf51006951f40d3e758192cd11241bb9b03d298195855de0713d1c8041ec6838fd7fcd02d4ef9
+"@sinclair/typebox@npm:0.32.31":
+  version: 0.32.31
+  resolution: "@sinclair/typebox@npm:0.32.31"
+  checksum: 10c0/65a15a5cff3ad3b1ddc10f8d9c82d524a33af65ff0402fd3063fefba0416878c1e2f6c14cffec9cfabd8dbfac83e2ea4d4377ce7e2e94ae49be9055e15677064
   languageName: node
   linkType: hard
 
@@ -8952,6 +8952,13 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+  languageName: node
+  linkType: hard
+
+"@sinclair/typebox@npm:^0.32.0":
+  version: 0.32.30
+  resolution: "@sinclair/typebox@npm:0.32.30"
+  checksum: 10c0/0140e159d2a1ed8e78ac74730cbd7cfeae6565239a70130a937bf51006951f40d3e758192cd11241bb9b03d298195855de0713d1c8041ec6838fd7fcd02d4ef9
   languageName: node
   linkType: hard
 
@@ -10740,13 +10747,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.3.2":
+"@types/react@npm:*":
   version: 18.3.2
   resolution: "@types/react@npm:18.3.2"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/9fb2f1fcf7e889ee4ea7c3c5978df595c66e770e5fd3a245dbdd2589b9b911524c11dab25a6275d8af4e336e4cb5fa850d447884b84c335a187a338c89df99ba
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:18.3.3":
+  version: 18.3.3
+  resolution: "@types/react@npm:18.3.3"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/fe455f805c5da13b89964c3d68060cebd43e73ec15001a68b34634604a78140e6fc202f3f61679b9d809dde6d7a7c2cb3ed51e0fd1462557911db09879b55114
   languageName: node
   linkType: hard
 
@@ -18662,7 +18679,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.12.12"
-    "@types/react": "npm:18.3.2"
+    "@types/react": "npm:18.3.3"
     "@types/react-dom": "npm:18.3.0"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.8.1"
@@ -25977,7 +25994,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.100.6"
     "@graphql-mesh/openapi": "npm:0.100.9"
     "@graphql-mesh/runtime": "npm:0.99.6"
-    "@types/react": "npm:18.3.2"
+    "@types/react": "npm:18.3.3"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.2.3"
@@ -25995,7 +26012,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.100.6"
     "@graphql-mesh/openapi": "npm:0.100.9"
     "@graphql-mesh/runtime": "npm:0.99.6"
-    "@types/react": "npm:18.3.2"
+    "@types/react": "npm:18.3.3"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.8.1"
     next: "npm:14.2.3"
@@ -26771,7 +26788,7 @@ __metadata:
   resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.7"
-    "@types/react": "npm:18.3.2"
+    "@types/react": "npm:18.3.3"
     "@types/react-dom": "npm:18.3.0"
     "@vitejs/plugin-react": "npm:4.3.0"
     graphql: "npm:16.8.1"
@@ -29055,7 +29072,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.7"
     "@graphql-mesh/openapi": "npm:0.100.9"
-    "@sinclair/typebox": "npm:0.32.30"
+    "@sinclair/typebox": "npm:0.32.31"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.0"
     graphql: "npm:16.8.1"
@@ -34668,7 +34685,7 @@ __metadata:
     "@theguild/components": "npm:^6.5.3"
     "@theguild/tailwind-config": "npm:0.4.2"
     "@types/node": "npm:20.12.12"
-    "@types/react": "npm:18.3.2"
+    "@types/react": "npm:18.3.3"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.3"
     next: "npm:^14.1.4"
