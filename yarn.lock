@@ -5654,19 +5654,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-inspector/core@npm:5.0.2":
-  version: 5.0.2
-  resolution: "@graphql-inspector/core@npm:5.0.2"
-  dependencies:
-    dependency-graph: "npm:0.11.0"
-    object-inspect: "npm:1.12.3"
-    tslib: "npm:2.6.2"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/d417ed342eca1b4447fdffae92adc100c5bee5b20d8993afa5132c890ebf15a568d60b023412d0f76e667754e9195ab57e89f4f6d10e797d5bcf7638a93f351e
-  languageName: node
-  linkType: hard
-
 "@graphql-inspector/core@npm:5.1.0-alpha-20231208113249-34700c8a":
   version: 5.1.0-alpha-20231208113249-34700c8a
   resolution: "@graphql-inspector/core@npm:5.1.0-alpha-20231208113249-34700c8a"
@@ -5677,6 +5664,19 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 10c0/4678ef80b755a776fc4afbbec614a7b33fb471913911b543fbc7b40eae2b89713d5f8d0a5189b013e27881e97989ab1e946d74323b2d2d6e7be35d1448ba475b
+  languageName: node
+  linkType: hard
+
+"@graphql-inspector/core@npm:6.0.1":
+  version: 6.0.1
+  resolution: "@graphql-inspector/core@npm:6.0.1"
+  dependencies:
+    dependency-graph: "npm:0.11.0"
+    object-inspect: "npm:1.13.1"
+    tslib: "npm:2.6.2"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/da97559fefbf58dacf7bbd14bc91e2615fd68ded93adf4b40d58c20a67a7ea03aed516691161c2845aba61eeba3d017d0b1a104e2dbff4cd8640c0140ef857b1
   languageName: node
   linkType: hard
 
@@ -6522,7 +6522,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/store@workspace:packages/legacy/store"
   dependencies:
-    "@graphql-inspector/core": "npm:5.0.2"
+    "@graphql-inspector/core": "npm:6.0.1"
     graphql: "npm:16.8.1"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.2
@@ -27639,7 +27639,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-inspect@npm:^1.13.1":
+"object-inspect@npm:1.13.1, object-inspect@npm:^1.13.1":
   version: 1.13.1
   resolution: "object-inspect@npm:1.13.1"
   checksum: 10c0/fad603f408e345c82e946abdf4bfd774260a5ed3e5997a0b057c44153ac32c7271ff19e3a5ae39c858da683ba045ccac2f65245c12763ce4e8594f818f4a648d
