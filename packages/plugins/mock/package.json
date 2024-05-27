@@ -35,13 +35,13 @@
     "@graphql-mesh/cross-helpers": "^0.4.2",
     "@graphql-mesh/types": "^0.98.5",
     "@graphql-mesh/utils": "^0.98.5",
-    "@graphql-tools/utils": "^10.2.0",
+    "@graphql-tools/utils": "^10.2.1",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-tools/mock": "^9.0.0",
+    "@graphql-tools/mock": "^9.0.3",
     "@graphql-tools/schema": "^10.0.0",
     "faker": "5.5.3",
     "graphql-scalars": "^1.22.4"

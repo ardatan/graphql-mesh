@@ -41,8 +41,8 @@
     "@graphql-mesh/transport-common": "^0.2.5",
     "@graphql-mesh/types": "^0.98.5",
     "@graphql-mesh/utils": "^0.98.5",
-    "@graphql-tools/delegate": "^10.0.10",
-    "@graphql-tools/utils": "^10.2.0",
+    "@graphql-tools/delegate": "^10.0.11",
+    "@graphql-tools/utils": "^10.2.1",
     "graphql-fields": "^2.0.3",
     "mysql": "^2.18.1",
     "mysql-utilities": "^1.1.4"
