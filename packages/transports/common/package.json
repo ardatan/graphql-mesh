@@ -37,8 +37,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.10",
-    "@graphql-tools/utils": "^10.2.0"
+    "@graphql-tools/delegate": "^10.0.11",
+    "@graphql-tools/utils": "^10.2.1"
   },
   "publishConfig": {
     "access": "public",

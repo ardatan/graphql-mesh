@@ -54,16 +54,13 @@
     "@graphql-mesh/transport-common": "^0.2.5",
     "@graphql-mesh/types": "^0.98.5",
     "@graphql-mesh/utils": "^0.98.5",
-    "@graphql-tools/delegate": "^10.0.10",
-    "@graphql-tools/stitch": "^9.2.8",
+    "@graphql-tools/delegate": "^10.0.11",
+    "@graphql-tools/stitch": "^9.2.9",
     "@graphql-tools/stitching-directives": "^3.0.2",
-    "@graphql-tools/utils": "^10.2.0",
+    "@graphql-tools/utils": "^10.2.1",
     "@graphql-tools/wrap": "^10.0.5",
     "graphql-yoga": "^5.3.0",
     "tslib": "^2.4.0"
-  },
-  "devDependencies": {
-    "@graphql-tools/delegate": "^10.0.10"
   },
   "publishConfig": {
     "directory": "dist",

@@ -50,8 +50,8 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-tools/schema": "^10.0.2",
-    "@graphql-tools/utils": "^10.2.0",
+    "@graphql-tools/schema": "^10.0.4",
+    "@graphql-tools/utils": "^10.2.1",
     "change-case": "^4.1.2",
     "pluralize": "^8.0.0",
     "snake-case": "^3.0.0",

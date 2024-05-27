@@ -40,14 +40,14 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-tools/delegate": "^10.0.10",
+    "@graphql-tools/delegate": "^10.0.11",
     "@omnigraph/json-schema": "^0.100.8",
     "change-case": "^4.1.2",
     "json-machete": "^0.97.3",
     "openapi-types": "^12.1.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "10.2.0",
+    "@graphql-tools/utils": "10.2.1",
     "@whatwg-node/fetch": "0.9.17",
     "fets": "0.8.0",
     "graphql-yoga": "5.3.1",
