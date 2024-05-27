@@ -94,16 +94,25 @@ export default class MongooseHandler implements MeshHandler {
             throw new Error(`Model ${modelConfig.name} cannot be imported ${modelConfig.path}!`);
           }
           const modelTC = composeWithMongoose(model, modelConfig.options as any);
+
+          const resolversOption = modelConfig.options?.resolvers;
+          function isResolverEnabled(operation): boolean {
+            return !resolversOption?.hasOwnProperty(operation) || resolversOption[operation] !== false;
+          }
+
+          const enabledQueryOperations = modelQueryOperations.filter(isResolverEnabled);
+          const enabledMuationOperations = modelMutationOperations.filter(isResolverEnabled);
+
           await Promise.all([
             Promise.all(
-              modelQueryOperations.map(async queryOperation =>
+              enabledQueryOperations.map(async queryOperation =>
                 schemaComposer.Query.addFields({
                   [`${modelConfig.name}_${queryOperation}`]: modelTC.getResolver(queryOperation),
                 }),
               ),
             ),
             Promise.all(
-              modelMutationOperations.map(async mutationOperation =>
+              enabledMuationOperations.map(async mutationOperation =>
                 schemaComposer.Mutation.addFields({
                   [`${modelConfig.name}_${mutationOperation}`]:
                     modelTC.getResolver(mutationOperation),
