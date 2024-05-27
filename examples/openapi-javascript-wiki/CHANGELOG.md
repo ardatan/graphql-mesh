@@ -1,5 +1,14 @@
 # javascript-wiki
 
+## 0.16.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/cli@0.90.9
+  - @graphql-mesh/openapi@0.100.10
+
 ## 0.16.11
 
 ### Patch Changes

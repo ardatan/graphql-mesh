@@ -1,5 +1,17 @@
 # example-fastify
 
+## 0.10.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/compose-cli@0.3.6
+  - @graphql-mesh/serve-runtime@0.3.8
+  - @omnigraph/openapi@0.100.10
+
 ## 0.10.9
 
 ### Patch Changes

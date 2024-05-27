@@ -1,5 +1,37 @@
 # @omnigraph/json-schema
 
+## 0.100.9
+
+### Patch Changes
+
+- [#7023](https://github.com/ardatan/graphql-mesh/pull/7023)
+  [`3288e30`](https://github.com/ardatan/graphql-mesh/commit/3288e302d3a8ed82a6138e33fa5c47aa95493aec)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`ajv@8.14.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.14.0) (from
+    `8.13.0`, in `dependencies`)
+
+- [#7030](https://github.com/ardatan/graphql-mesh/pull/7030)
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.11)
+    (from `^10.0.10`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.1)
+    (from `^10.2.0`, in `peerDependencies`)
+- Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/cross-helpers@0.4.3
+  - @graphql-mesh/transport-common@0.2.6
+  - @graphql-mesh/transport-rest@0.2.6
+  - @graphql-mesh/types@0.98.6
+  - @graphql-mesh/utils@0.98.6
+
 ## 0.100.8
 
 ### Patch Changes

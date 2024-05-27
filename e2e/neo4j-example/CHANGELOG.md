@@ -5,6 +5,20 @@
 ### Patch Changes
 
 - Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/compose-cli@0.3.6
+  - @graphql-mesh/serve-cli@0.4.8
+  - @graphql-mesh/utils@0.98.6
+  - @omnigraph/neo4j@0.2.6
+
+## null
+
+### Patch Changes
+
+- Updated dependencies
   [[`c4d2249`](https://github.com/ardatan/graphql-mesh/commit/c4d22497b4249f9a0969e1d01efbe0721774ce73)]:
   - @graphql-mesh/utils@0.98.5
   - @graphql-mesh/serve-cli@0.4.7
