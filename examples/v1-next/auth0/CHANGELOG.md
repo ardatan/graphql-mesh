@@ -1,5 +1,19 @@
 # auth0-example
 
+## 0.13.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`3288e30`](https://github.com/ardatan/graphql-mesh/commit/3288e302d3a8ed82a6138e33fa5c47aa95493aec),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/compose-cli@0.3.6
+  - @graphql-mesh/serve-cli@0.4.8
+  - @omnigraph/json-schema@0.100.9
+  - @graphql-mesh/plugin-operation-field-permissions@0.98.6
+
 ## 0.13.8
 
 ### Patch Changes

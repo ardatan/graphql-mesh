@@ -1,5 +1,26 @@
 # @graphql-mesh/postgraphile
 
+## 0.98.6
+
+### Patch Changes
+
+- [#7030](https://github.com/ardatan/graphql-mesh/pull/7030)
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.11)
+    (from `^10.0.10`, in `dependencies`)
+- Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`e569774`](https://github.com/ardatan/graphql-mesh/commit/e569774dd6491dd64093323b751f4926cf428932),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/cross-helpers@0.4.3
+  - @graphql-mesh/store@0.98.6
+  - @graphql-mesh/types@0.98.6
+  - @graphql-mesh/utils@0.98.6
+
 ## 0.98.5
 
 ### Patch Changes

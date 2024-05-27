@@ -1,5 +1,6 @@
 {
   "name": "@e2e/logs-to-stderr-results-to-stdout",
+  "version": null,
   "type": "module",
   "private": true,
   "dependencies": {

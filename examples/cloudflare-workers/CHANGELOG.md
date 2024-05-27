@@ -1,5 +1,16 @@
 # cloudflare-workers
 
+## 0.10.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/cli@0.90.9
+  - @graphql-mesh/json-schema@0.100.9
+  - @graphql-mesh/plugin-response-cache@0.98.7
+  - @graphql-mesh/cache-cfw-kv@0.98.6
+
 ## 0.10.10
 
 ### Patch Changes
