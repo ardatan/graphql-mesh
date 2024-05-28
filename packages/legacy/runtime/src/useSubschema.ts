@@ -1,4 +1,12 @@
-import { BREAK, DocumentNode, execute, FieldNode, OperationDefinitionNode, visit } from 'graphql';
+import {
+  BREAK,
+  DocumentNode,
+  execute,
+  FieldNode,
+  OperationDefinitionNode,
+  print,
+  visit,
+} from 'graphql';
 import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { ExecutionResultWithSerializer } from '@envelop/graphql-jit';
@@ -56,7 +64,13 @@ const getIntrospectionOperationType = memoize1(function getIntrospectionOperatio
 
 function getExecuteFn(subschema: Subschema) {
   const compiledQueryCache = new WeakMap<DocumentNode, CompiledQuery>();
-  const transformedDocumentNodeCache = new WeakMap<DocumentNode, DocumentNode>();
+  const transformedDocumentNodeCache = new Map<
+    string,
+    {
+      document: DocumentNode;
+      transformationContext: Record<string, any>;
+    }
+  >();
   return function subschemaExecute(args: TypedExecutionArgs<any>): any {
     const originalRequest: ExecutionRequest = {
       document: args.document,
@@ -158,20 +172,36 @@ function getExecuteFn(subschema: Subschema) {
       executor = createBatchingExecutor(executor);
     }
     */
-    const transformationContext: Record<string, any> = {};
-    const transformedRequest = applyRequestTransforms(
-      originalRequest,
-      delegationContext,
-      transformationContext,
-      subschema.transforms,
-    );
-    const cachedTransfomedDocumentNode: DocumentNode = transformedDocumentNodeCache.get(
-      originalRequest.document,
-    );
+    let transformationContext: Record<string, any> = {
+      contextMap: new WeakMap(),
+    };
+
+    // Some of the transformers can do the transformation based on the existence of query variables
+    // that means that there could be several different version for the same original document
+    // @example https://github.com/graphprotocol/graph-client/blob/ba84c2ab10902c1547dae3cf4a74cb4958d0e70f/packages/auto-pagination/src/index.ts#L167
+    const key =
+      print(originalRequest.document) +
+      '@' +
+      Object.keys(originalRequest.variables || []).join(',');
+    let transformedRequest: ExecutionRequest = {
+      ...originalRequest,
+    };
+
+    const cachedTransfomedDocumentNode = transformedDocumentNodeCache.get(key);
     if (cachedTransfomedDocumentNode) {
-      transformedRequest.document = cachedTransfomedDocumentNode;
+      transformedRequest.document = cachedTransfomedDocumentNode.document;
+      transformationContext = cachedTransfomedDocumentNode.transformationContext;
     } else {
-      transformedDocumentNodeCache.set(originalRequest.document, transformedRequest.document);
+      transformedRequest = applyRequestTransforms(
+        originalRequest,
+        delegationContext,
+        transformationContext,
+        subschema.transforms,
+      );
+      transformedDocumentNodeCache.set(key, {
+        document: transformedRequest.document,
+        transformationContext,
+      });
     }
     function handleResult(originalResult: MaybeAsyncIterable<ExecutionResult>) {
       if (isAsyncIterable(originalResult)) {
