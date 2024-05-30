@@ -3229,10 +3229,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20240524.0":
-  version: 4.20240524.0
-  resolution: "@cloudflare/workers-types@npm:4.20240524.0"
-  checksum: 10c0/44599a914cbee3acb17c6a1f70c6a8c2fd0329b45e39c0ee8d681a85469d70f4efba1b136d5f692105e9bce97b0ef979c623e8d87b14c3acca95d6a87474dbbf
+"@cloudflare/workers-types@npm:4.20240529.0":
+  version: 4.20240529.0
+  resolution: "@cloudflare/workers-types@npm:4.20240529.0"
+  checksum: 10c0/f5a8b3e930d19806d1bfbfce7106b9fe32f1eebb517bbf662ec8ecf7981f8496401e1b4177d71583afe4bb447738af947ffd12d08cfe8fc8cae318b3173a0190
   languageName: node
   linkType: hard
 
@@ -4573,7 +4573,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20240524.0"
+    "@cloudflare/workers-types": "npm:4.20240529.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.6
     "@graphql-mesh/utils": ^0.98.6
@@ -10651,12 +10651,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.12.12, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6, @types/node@npm:^20.12.12":
-  version: 20.12.12
-  resolution: "@types/node@npm:20.12.12"
+"@types/node@npm:*, @types/node@npm:20.12.13, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6, @types/node@npm:^20.12.12":
+  version: 20.12.13
+  resolution: "@types/node@npm:20.12.13"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/f374b763c744e8f16e4f38cf6e2c0eef31781ec9228c9e43a6f267880fea420fab0a238b59f10a7cb3444e49547c5e3785787e371fc242307310995b21988812
+  checksum: 10c0/2ac92bb631dbddfb560eb3ba4eedbb1c688044a0130bc1ef032f5c0f20148ac7c9aa3c5aaa5a9787b6c4c6299847d754b96ee8c9def951481ba6628c46b683f5
   languageName: node
   linkType: hard
 
@@ -17728,7 +17728,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.0"
     "@graphql-mesh/cli": "npm:0.90.9"
     "@graphql-mesh/json-schema": "npm:0.100.9"
-    "@types/node": "npm:20.12.12"
+    "@types/node": "npm:20.12.13"
     graphql: "npm:16.8.1"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -18674,7 +18674,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.12.12"
+    "@types/node": "npm:20.12.13"
     "@types/react": "npm:18.3.3"
     "@types/react-dom": "npm:18.3.0"
     apollo-upload-client: "npm:18.0.1"
@@ -19504,7 +19504,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.12.12"
+    "@types/node": "npm:20.12.13"
     "@typescript-eslint/eslint-plugin": "npm:7.10.0"
     "@typescript-eslint/parser": "npm:7.10.0"
     babel-jest: "npm:29.7.0"
@@ -22788,7 +22788,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.9"
     "@graphql-mesh/json-schema": "npm:0.100.9"
-    "@types/node": "npm:20.12.12"
+    "@types/node": "npm:20.12.13"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.0"
     graphql: "npm:16.8.1"
@@ -28838,7 +28838,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.98.6"
     "@graphql-mesh/runtime": "npm:0.99.7"
     "@graphql-mesh/transform-prefix": "npm:0.98.6"
-    "@types/node": "npm:20.12.12"
+    "@types/node": "npm:20.12.13"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
@@ -34666,7 +34666,7 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^6.5.3"
     "@theguild/tailwind-config": "npm:0.4.2"
-    "@types/node": "npm:20.12.12"
+    "@types/node": "npm:20.12.13"
     "@types/react": "npm:18.3.3"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.3"
