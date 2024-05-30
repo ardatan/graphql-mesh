@@ -59,6 +59,7 @@ export interface HTTPRootFieldResolverOpts {
     string,
     IStringifyOptions & { destructObject?: boolean; jsonStringify?: boolean }
   >;
+  queryStringOptions: IStringifyOptions & { destructObject?: boolean; jsonStringify?: boolean };
   jsonApiFields: boolean;
 }
 
@@ -84,6 +85,7 @@ export function addHTTPRootFieldResolver(
     requestBaseBody,
     queryParamArgMap,
     queryStringOptionsByParam,
+    queryStringOptions,
     jsonApiFields,
   }: HTTPRootFieldResolverOpts,
   {
@@ -98,6 +100,7 @@ export function addHTTPRootFieldResolver(
   globalQueryStringOptions = {
     ...defaultQsOptions,
     ...globalQueryStringOptions,
+    ...queryStringOptions,
   };
   const returnNamedGraphQLType = getNamedType(field.type);
   field.resolve = async (root, args, context, info) => {

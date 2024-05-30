@@ -8,6 +8,7 @@ import {
   isSpecifiedScalarType,
   isUnionType,
 } from 'graphql';
+import { IStringifyOptions } from 'qs';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import { getDefDirectives, getDirectiveExtensions } from '@graphql-mesh/utils';
@@ -218,6 +219,7 @@ export function processDirectives(
                       ? JSON.parse(directiveAnnotation.args.queryStringOptionsByParam)
                       : directiveAnnotation.args.queryStringOptionsByParam,
                   jsonApiFields: directiveAnnotation.args.jsonApiFields,
+                  queryStringOptions: directiveAnnotation.args.queryStringOptions,
                 },
                 globalOptions as GlobalOptions,
               );

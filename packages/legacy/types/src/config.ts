@@ -538,6 +538,11 @@ export interface QueryStringOptions {
    * (default: false)
    */
   commaRoundTrip?: boolean;
+  /**
+   * Stringify the nested objects as JSON
+   * (default: false)
+   */
+  jsonStringify?: boolean;
 }
 export interface MongooseHandler {
   connectionString?: string;
