@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@theguild/tailwind-config": "0.4.2",
-    "@types/node": "20.12.13",
+    "@types/node": "20.13.0",
     "@types/react": "18.3.3",
     "cross-env": "7.0.3",
     "eslint-config-next": "14.2.3",
