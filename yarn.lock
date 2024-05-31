@@ -4956,7 +4956,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.4.0"
+    mongoose: "npm:8.4.1"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.6
     "@graphql-mesh/utils": ^0.98.6
@@ -6378,20 +6378,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/58faa690f01b87eeb8ed73681171484253977a2402e1e19c762dda70415050da947fad160ff7d685371e55b2dea3e3cd29c801736ca8d301fc069771d9e94ac4
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/schema@npm:10.0.3":
-  version: 10.0.3
-  resolution: "@graphql-tools/schema@npm:10.0.3"
-  dependencies:
-    "@graphql-tools/merge": "npm:^9.0.3"
-    "@graphql-tools/utils": "npm:^10.0.13"
-    tslib: "npm:^2.4.0"
-    value-or-promise: "npm:^1.0.12"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/420bfa29d00927da085a3e521d7d6de5694f3abcdf5ba18655cc2a6b6145816d74503b13ba3ea15c7c65411023c9d81cfb73e7d49aa35ccfb91943f16ab9db8f
   languageName: node
   linkType: hard
 
@@ -7987,13 +7973,13 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^5.0.0":
-  version: 5.4.1
-  resolution: "@neo4j/graphql@npm:5.4.1"
+  version: 5.4.2
+  resolution: "@neo4j/graphql@npm:5.4.2"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
-    "@graphql-tools/schema": "npm:10.0.3"
+    "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/utils": "npm:^10.0.0"
     "@neo4j/cypher-builder": "npm:^1.16.0"
     camelcase: "npm:^6.3.0"
@@ -8009,7 +7995,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/45bb611271704009599e134963e48be4d43104e1ae6648972da250d19738bbacf55a94bcc5fac08e0759fbe2f9e97a917d64d93d1a93d0ef21b13a0750cf955b
+  checksum: 10c0/06397cb365aafee540406d79547013065f9d153f09a178d977467a77c24beb6dbcbfd1e53d58e4bff926d82cd0dccb0abf06052f55198fd671075ba2e563d2a2
   languageName: node
   linkType: hard
 
@@ -11424,7 +11410,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.98.7"
     "@graphql-mesh/serve-runtime": "npm:^0.3.8"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.57.2"
+    wrangler: "npm:3.58.0"
   languageName: unknown
   linkType: soft
 
@@ -13693,7 +13679,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.3.8"
     "@omnigraph/json-schema": "npm:^0.100.9"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.57.2"
+    wrangler: "npm:3.58.0"
   languageName: unknown
   linkType: soft
 
@@ -14140,7 +14126,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.100.9"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.7"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.57.2"
+    wrangler: "npm:3.58.0"
   languageName: unknown
   linkType: soft
 
@@ -25246,9 +25232,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20240524.0":
-  version: 3.20240524.0
-  resolution: "miniflare@npm:3.20240524.0"
+"miniflare@npm:3.20240524.1":
+  version: 3.20240524.1
+  resolution: "miniflare@npm:3.20240524.1"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
@@ -25264,7 +25250,7 @@ __metadata:
     zod: "npm:^3.20.6"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/8cd3eaf4ee80f92f4e44fa099ec3f506b617392d31cdb127e76b409f655ce323b903dce0ea71c84bb95dd7e44b6f8f2f93c706f6df54a2d051627107e0ce58f4
+  checksum: 10c0/2eeafa52eefe87f6abc388f64ccd418b9bcfdc15c9d97f457e08d3182d482aaa335ea41229cdf32518ca1e7504ab0ee32eb677eb82c89b5fea66658840167e7e
   languageName: node
   linkType: hard
 
@@ -25568,13 +25554,13 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.98.6"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
-    mongoose: "npm:8.4.0"
+    mongoose: "npm:8.4.1"
   languageName: unknown
   linkType: soft
 
-"mongoose@npm:8.4.0":
-  version: 8.4.0
-  resolution: "mongoose@npm:8.4.0"
+"mongoose@npm:8.4.1":
+  version: 8.4.1
+  resolution: "mongoose@npm:8.4.1"
   dependencies:
     bson: "npm:^6.7.0"
     kareem: "npm:2.6.3"
@@ -25583,7 +25569,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/07208405f23200331c2d3732e845e324bdf9e853bd611fcc8c8e13660959afddd382391ba8d27bab467e5a56bb83dbda010adb986a0043aa31ada449393b4731
+  checksum: 10c0/b32a869480e525c7070e386a2f68005fb3c681cd6ad285f0bc448017db4244512f86031fac51b611f5439a7093b231745382669d3b8622c240b4122f9073191a
   languageName: node
   linkType: hard
 
@@ -25801,32 +25787,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"neo4j-driver-bolt-connection@npm:5.20.0":
-  version: 5.20.0
-  resolution: "neo4j-driver-bolt-connection@npm:5.20.0"
+"neo4j-driver-bolt-connection@npm:5.21.0":
+  version: 5.21.0
+  resolution: "neo4j-driver-bolt-connection@npm:5.21.0"
   dependencies:
     buffer: "npm:^6.0.3"
-    neo4j-driver-core: "npm:5.20.0"
+    neo4j-driver-core: "npm:5.21.0"
     string_decoder: "npm:^1.3.0"
-  checksum: 10c0/a60b51192a37a5c86b7fcdbac4ef56a647c3ebe8596ab813b7354188ee3659426f14aaad7fa1025ebc5e07eecabe89c8f2e33d95663c9cd8e49263c12c287c22
+  checksum: 10c0/429d1936d6e3b50fc2857cedc2919ad09bce9a2ff026dc9eee9c7d9baa80cc412352794d7d55661e8f88069fdd2e94ef6de828b2bdf75cb05c534d45269a6ba9
   languageName: node
   linkType: hard
 
-"neo4j-driver-core@npm:5.20.0":
-  version: 5.20.0
-  resolution: "neo4j-driver-core@npm:5.20.0"
-  checksum: 10c0/162ef4953bf04643c7d21b777b5cc0a9fb01aad7e9098bae5eb272de9d88d877808c43406f04db4c245306f501af31f7f5d9d3115f0f635758af394bae5fba17
+"neo4j-driver-core@npm:5.21.0":
+  version: 5.21.0
+  resolution: "neo4j-driver-core@npm:5.21.0"
+  checksum: 10c0/03a574ee3b7781196586343e8d8cf97d92f13a1c3b550259c4f99896f8f912819c90e154813e2b7504d8a885667c1cb80514fb792638b38e862028b076490166
   languageName: node
   linkType: hard
 
 "neo4j-driver@npm:^5.17.0, neo4j-driver@npm:^5.9.2":
-  version: 5.20.0
-  resolution: "neo4j-driver@npm:5.20.0"
+  version: 5.21.0
+  resolution: "neo4j-driver@npm:5.21.0"
   dependencies:
-    neo4j-driver-bolt-connection: "npm:5.20.0"
-    neo4j-driver-core: "npm:5.20.0"
+    neo4j-driver-bolt-connection: "npm:5.21.0"
+    neo4j-driver-core: "npm:5.21.0"
     rxjs: "npm:^7.8.1"
-  checksum: 10c0/1ed4cc3bcf4d0a5f6742aa5a2224ee1f1006ccedd5e62e3c15d612e4dd46d1ec67f1039a69aa008123da1ec74ff5369f760cb9e068b49b1624efbcdf622671a1
+  checksum: 10c0/278d719a669189f4d756ebc76996c7027331a44567ff187507c12fb749d426f63648bef1c2c36c5c7ee68d52e881445ae9d7c69a1a25dd261f566a491b82d58d
   languageName: node
   linkType: hard
 
@@ -31608,7 +31594,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.98.6"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.7"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.57.2"
+    wrangler: "npm:3.58.0"
   languageName: unknown
   linkType: soft
 
@@ -35200,9 +35186,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.57.2":
-  version: 3.57.2
-  resolution: "wrangler@npm:3.57.2"
+"wrangler@npm:3.58.0":
+  version: 3.58.0
+  resolution: "wrangler@npm:3.58.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.2"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35211,7 +35197,7 @@ __metadata:
     chokidar: "npm:^3.5.3"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20240524.0"
+    miniflare: "npm:3.20240524.1"
     nanoid: "npm:^3.3.3"
     path-to-regexp: "npm:^6.2.0"
     resolve: "npm:^1.22.8"
@@ -35230,7 +35216,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/bf426f25b3dc760b1fdb4da54cc683b60dca49a6507b16fb0e31b228d98392626acfad22a8f4a7b4c77b79dfe59376f45d570c54304409da8634ccb80cf67e8a
+  checksum: 10c0/860efee71b5b5638fc3571dc7051408a0e12d8c7ef03f62c2560b460c402a66f7defe17d63ce939297626cf90f65e1e772a6f57ec3479d62b8fa1a5f057737e6
   languageName: node
   linkType: hard
 
