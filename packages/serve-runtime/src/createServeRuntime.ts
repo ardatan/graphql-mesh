@@ -9,12 +9,16 @@ import {
   YogaServerInstance,
   type Plugin,
 } from 'graphql-yoga';
-import { useFusiongraph } from '@graphql-mesh/fusion-runtime';
+import { handleFederationSupergraph, useUnifiedGraph } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
-import { DefaultLogger, getHeadersObj, wrapFetchWithHooks } from '@graphql-mesh/utils';
+import {
+  DefaultLogger,
+  getHeadersObj,
+  mapMaybePromise,
+  wrapFetchWithHooks,
+} from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import { isPromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import {
@@ -23,7 +27,6 @@ import {
   MeshServeContext,
   MeshServePlugin,
 } from './types.js';
-import { useFederationSupergraph } from './useFederationSupergraph.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext>,
@@ -49,62 +52,55 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     invalidateUnifiedGraph: () => void;
   };
 
+  const readinessCheckEndpoint = config.readinessCheckEndpoint || '/readiness';
+
   if ('fusiongraph' in config) {
-    supergraphYogaPlugin = useFusiongraph({
-      getFusiongraph: () => handleUnifiedGraphConfig(config.fusiongraph, configContext),
+    supergraphYogaPlugin = useUnifiedGraph({
+      getUnifiedGraph: () => handleUnifiedGraphConfig(config.fusiongraph, configContext),
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
       transportBaseContext: configContext,
-      readinessCheckEndpoint: config.readinessCheckEndpoint || '/readiness',
+      readinessCheckEndpoint,
     });
   } else if ('supergraph' in config) {
-    supergraphYogaPlugin = useFederationSupergraph({
-      getFederationSupergraph: () => handleUnifiedGraphConfig(config.supergraph, configContext),
+    supergraphYogaPlugin = useUnifiedGraph({
+      getUnifiedGraph: () => handleUnifiedGraphConfig(config.supergraph, configContext),
+      handleUnifiedGraph: handleFederationSupergraph,
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
       transportBaseContext: configContext,
-      readinessCheckEndpoint: config.readinessCheckEndpoint || '/readiness',
+      readinessCheckEndpoint,
     });
   } else if ('proxy' in config) {
     let schema: GraphQLSchema;
-    const proxyExecutor = getProxyExecutor(config, configContext, schema);
-    // TODO: fix useExecutor typings to inherit the context
-    const executorPlugin = useExecutor(proxyExecutor) as unknown as Plugin<
-      MeshServeContext & TContext
-    > & {
-      invalidateSupergraph: () => void;
-    };
+    const proxyExecutor = getProxyExecutor(config, configContext, () => schema);
+    const executorPlugin = useExecutor(proxyExecutor);
     supergraphYogaPlugin = {
       onPluginInit({ addPlugin }) {
+        // @ts-expect-error Fix this
         addPlugin(executorPlugin);
         addPlugin(
-          // TODO: fix useReadinessCheck typings to inherit the context
+          // @ts-expect-error Fix this
           useReadinessCheck({
-            endpoint: config.readinessCheckEndpoint || '/readiness',
+            endpoint: readinessCheckEndpoint,
+            // @ts-expect-error PromiseLike is not compatible with Promise
             check() {
               const res$ = proxyExecutor({
                 document: parse(`query { __typename }`),
               });
-              if (isPromise(res$)) {
-                return res$.then(
-                  res => !isAsyncIterable(res) && !!res.data?.__typename,
-                ) as Promise<any>;
-              }
-              if (!isAsyncIterable(res$)) {
-                return !!res$.data?.__typename;
-              }
-              return false;
+              return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
             },
-          }) as any,
+          }),
         );
       },
       onSchemaChange: payload => {
         schema = payload.schema;
       },
-      invalidateUnifiedGraph: () =>
-        (executorPlugin.invalidateSupergraph || (executorPlugin as any).invalidateUnifiedGraph)(),
+      invalidateUnifiedGraph() {
+        return executorPlugin.invalidateUnifiedGraph();
+      },
     };
   }
 

@@ -109,7 +109,9 @@ export default class SupergraphHandler implements MeshHandler {
     }
     const schema = getStitchedSchemaFromSupergraphSdl({
       supergraphSdl,
-      onExecutor: ({ subgraphName, endpoint: nonInterpolatedEndpoint }) => {
+      onSubschemaConfig(subschemaConfig) {
+        const subgraphName = subschemaConfig.name;
+        let nonInterpolatedEndpoint = subschemaConfig.endpoint;
         const subgraphRealName = subgraphNameIdMap.get(subgraphName);
         const subgraphConfiguration: YamlConfig.SubgraphConfiguration = subgraphConfigs.find(
           subgraphConfig => subgraphConfig.name === subgraphRealName,
@@ -118,7 +120,7 @@ export default class SupergraphHandler implements MeshHandler {
         };
         nonInterpolatedEndpoint = subgraphConfiguration.endpoint || nonInterpolatedEndpoint;
         const endpointFactory = getInterpolatedStringFactory(nonInterpolatedEndpoint);
-        return buildHTTPExecutor({
+        subschemaConfig.executor = buildHTTPExecutor({
           ...(subgraphConfiguration as any),
           endpoint: nonInterpolatedEndpoint,
           fetch(url: string, init: any, context: any, info: any) {
