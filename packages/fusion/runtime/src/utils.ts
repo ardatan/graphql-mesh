@@ -1,4 +1,4 @@
-import { ExecutionResult, GraphQLSchema } from 'graphql';
+import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
 import type {
   Transport,
   TransportBaseContext,
@@ -7,11 +7,14 @@ import type {
   TransportExecutorFactoryOpts,
 } from '@graphql-mesh/transport-common';
 import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
+import { SubschemaConfig } from '@graphql-tools/delegate';
 import {
   ExecutionRequest,
   Executor,
   isAsyncIterable,
+  isDocumentNode,
   mapAsyncIterator,
+  printSchemaWithDirectives,
   type Maybe,
   type MaybePromise,
 } from '@graphql-tools/utils';
@@ -35,7 +38,7 @@ export function defaultTransportsOption(transportKind: string) {
   });
 }
 
-export function createTransportGetter(transports: TransportsOption) {
+export function createTransportGetter(transports: TransportsOption = defaultTransportsOption) {
   if (typeof transports === 'function') {
     return transports;
   }
@@ -60,19 +63,17 @@ export function getTransportExecutor(
 }
 
 export function getOnSubgraphExecute({
-  fusiongraph,
   plugins,
   transports,
   transportBaseContext,
   transportEntryMap,
-  subgraphMap,
+  getSubgraphSchema,
 }: {
-  fusiongraph: GraphQLSchema;
-  plugins?: FusiongraphPlugin[];
+  plugins?: UnifiedGraphPlugin[];
   transports?: TransportsOption;
   transportBaseContext?: TransportBaseContext;
   transportEntryMap?: Record<string, TransportEntry>;
-  subgraphMap: Map<string, GraphQLSchema>;
+  getSubgraphSchema(subgraphName: string): GraphQLSchema;
 }) {
   const onSubgraphExecuteHooks: OnSubgraphExecuteHook[] = [];
   if (plugins) {
@@ -84,7 +85,8 @@ export function getOnSubgraphExecute({
   }
   const subgraphExecutorMap: Record<string, Executor> = {};
   const transportGetter = createTransportGetter(transports);
-  function onSubgraphExecute(subgraphName: string, executionRequest: ExecutionRequest) {
+
+  return function onSubgraphExecute(subgraphName: string, executionRequest: ExecutionRequest) {
     let executor: Executor = subgraphExecutorMap[subgraphName];
     if (executor == null) {
       transportBaseContext?.logger?.info(`Initializing executor for subgraph ${subgraphName}`);
@@ -94,13 +96,13 @@ export function getOnSubgraphExecute({
         if (onSubgraphExecuteHooks.length) {
           return function executorWithHooks(executionRequest: ExecutionRequest) {
             const onSubgraphExecuteDoneHooks: OnSubgraphExecuteDoneHook[] = [];
-            const subgraph = subgraphMap.get(subgraphName);
             const onSubgraphExecuteHooksRes$ = iterateAsync(
               onSubgraphExecuteHooks,
               onSubgraphExecuteHook =>
                 onSubgraphExecuteHook({
-                  fusiongraph,
-                  subgraph,
+                  get subgraph() {
+                    return getSubgraphSchema(subgraphName);
+                  },
                   subgraphName,
                   transportEntry,
                   executionRequest,
@@ -192,17 +194,24 @@ export function getOnSubgraphExecute({
         return currentExecutor;
       }
       executor = function lazyExecutor(subgraphExecReq: ExecutionRequest) {
-        const subgraph = subgraphMap.get(subgraphName);
         const executor$ = getTransportExecutor(
           transportGetter,
           transportBaseContext
             ? {
                 ...transportBaseContext,
                 subgraphName,
-                subgraph,
+                get subgraph() {
+                  return getSubgraphSchema(subgraphName);
+                },
                 transportEntry,
               }
-            : { subgraph, transportEntry, subgraphName },
+            : {
+                get subgraph() {
+                  return getSubgraphSchema(subgraphName);
+                },
+                transportEntry,
+                subgraphName,
+              },
         );
         return mapMaybePromise(executor$, executor_ => {
           executor = wrapExecutorWithHooks(executor_) as Executor;
@@ -212,12 +221,10 @@ export function getOnSubgraphExecute({
       };
     }
     return executor(executionRequest);
-  }
-
-  return onSubgraphExecute;
+  };
 }
 
-export interface FusiongraphPlugin {
+export interface UnifiedGraphPlugin {
   onSubgraphExecute?: OnSubgraphExecuteHook;
 }
 
@@ -226,7 +233,6 @@ export type OnSubgraphExecuteHook = (
 ) => Promise<Maybe<OnSubgraphExecuteDoneHook | void>> | Maybe<OnSubgraphExecuteDoneHook | void>;
 
 export interface OnSubgraphExecutePayload {
-  fusiongraph: GraphQLSchema;
   subgraph: GraphQLSchema;
   subgraphName: string;
   transportEntry?: TransportEntry;
@@ -260,3 +266,26 @@ export type OnSubgraphExecuteDoneResult = {
   onNext?: OnSubgraphExecuteDoneResultOnNext;
   onEnd?: OnSubgraphExecuteDoneResultOnEnd;
 };
+
+export function compareSchemas(
+  a: DocumentNode | string | GraphQLSchema,
+  b: DocumentNode | string | GraphQLSchema,
+) {
+  let aStr: string;
+  if (typeof a === 'string') {
+    aStr = a;
+  } else if (isDocumentNode(a)) {
+    aStr = print(a);
+  } else {
+    aStr = printSchemaWithDirectives(a);
+  }
+  let bStr: string;
+  if (typeof b === 'string') {
+    bStr = b;
+  } else if (isDocumentNode(b)) {
+    bStr = print(b);
+  } else {
+    bStr = printSchemaWithDirectives(b);
+  }
+  return aStr === bStr;
+}

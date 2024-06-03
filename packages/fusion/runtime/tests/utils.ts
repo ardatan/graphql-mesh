@@ -10,7 +10,7 @@ import {
 import { composeSubgraphs, SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { getExecutorForFusiongraph } from '../src/useFusiongraph';
+import { getExecutorForUnifiedGraph } from '../src/useUnifiedGraph';
 
 export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
   const executor = composeAndGetExecutor(subgraphs);
@@ -24,8 +24,8 @@ export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
 
 export function composeAndGetExecutor(subgraphs: SubgraphConfig[]) {
   const fusiongraph = composeSubgraphs(subgraphs);
-  return getExecutorForFusiongraph({
-    getFusiongraph: () => fusiongraph,
+  return getExecutorForUnifiedGraph({
+    getUnifiedGraph: () => fusiongraph,
     transports() {
       return {
         getSubgraphExecutor({ subgraphName }) {

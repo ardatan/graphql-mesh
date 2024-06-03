@@ -11,6 +11,5 @@ server.listen();
 pubsub.subscribe('destroy', () => server.close());
 
 export const serveConfig = defineConfig({
-  fusiongraph: '', // TODO: dont require fusiongraph option since it can be provided from as a CLI arg
   pubsub,
 });

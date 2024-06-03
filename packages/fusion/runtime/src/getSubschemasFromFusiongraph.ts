@@ -1,34 +1,23 @@
 import {
-  ASTNode,
-  buildASTSchema,
-  ConstDirectiveNode,
-  DocumentNode,
-  getArgumentValues,
   GraphQLArgument,
   GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
   isOutputType,
   isSpecifiedScalarType,
-  Kind,
   parseType,
-  print,
-  printSchema,
   printType,
   typeFromAST,
-  valueFromASTUntyped,
   visit,
 } from 'graphql';
 import { TransportEntry } from '@graphql-mesh/transport-common';
-import { getDefDirectives, resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import {
+  getDefDirectives,
+  resolveAdditionalResolvers,
+  resolveAdditionalResolversWithoutImport,
+} from '@graphql-mesh/utils';
 import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import {
-  DirectiveAnnotation,
-  getRootTypeNames,
-  MapperKind,
-  mapSchema,
-  printSchemaWithDirectives,
-} from '@graphql-tools/utils';
+import { getRootTypeNames, IResolvers, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   HoistField,
   RenameInputObjectFields,
@@ -39,9 +28,12 @@ import {
   TransformEnumValues,
 } from '@graphql-tools/wrap';
 
-export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
+export function extractSubgraphsFromFusiongraph(
+  fusiongraph: GraphQLSchema,
+  onSubschemaConfig?: (subschema: SubschemaConfig) => void,
+) {
   const subgraphNames = new Set<string>();
-  const subschemaMap = new Map<string, SubschemaConfig>();
+  const subschemas: SubschemaConfig[] = [];
   const transportEntryMap: Record<string, TransportEntry> = {};
   const schemaDirectives = getDefDirectives(fusiongraph, fusiongraph);
   const transportDirectives = schemaDirectives.filter(directive => directive.name === 'transport');
@@ -54,10 +46,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
     }
   }
   const rootTypeNames = getRootTypeNames(fusiongraph);
-  const additionalResolversFromTypeDefs: Exclude<
-    Parameters<typeof resolveAdditionalResolvers>[1][0],
-    string
-  >[] = [];
+  const additionalResolvers: IResolvers[] = [];
   const additionalTypeDefs = new Set<string>();
   for (const subgraph of subgraphNames) {
     const renameTypeNames: Record<string, string> = {};
@@ -102,11 +91,13 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
             );
             if (resolveToDirectives.length > 0) {
               for (const resolveToDirective of resolveToDirectives) {
-                additionalResolversFromTypeDefs.push({
-                  targetTypeName: type.name,
-                  targetFieldName: fieldName,
-                  ...(resolveToDirective.args as any),
-                });
+                additionalResolvers.push(
+                  resolveAdditionalResolversWithoutImport({
+                    targetTypeName: type.name,
+                    targetFieldName: fieldName,
+                    ...(resolveToDirective.args as any),
+                  }),
+                );
               }
             }
           }
@@ -120,11 +111,13 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
         );
         if (resolveToDirectives.length > 0) {
           for (const resolveToDirective of resolveToDirectives) {
-            additionalResolversFromTypeDefs.push({
-              targetTypeName: typeName,
-              targetFieldName: fieldName,
-              ...(resolveToDirective.args as any),
-            });
+            additionalResolvers.push(
+              resolveAdditionalResolversWithoutImport({
+                targetTypeName: typeName,
+                targetFieldName: fieldName,
+                ...(resolveToDirective.args as any),
+              }),
+            );
           }
         }
         const sourceDirectives = fieldDirectives.filter(directive => directive.name === 'source');
@@ -357,6 +350,7 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
       );
     }
     let subschema: SubschemaConfig = {
+      name: subgraph,
       schema: subgraphSchema,
       transforms,
     };
@@ -385,13 +379,14 @@ export function extractSubgraphsFromFusiongraph(fusiongraph: GraphQLSchema) {
       }
       subschema.merge = mergeConfig;
     }
-    subschemaMap.set(subgraph, subschema);
+    onSubschemaConfig?.(subschema);
+    subschemas.push(subschema);
   }
   return {
-    subschemaMap,
+    subschemas,
     transportEntryMap,
     additionalTypeDefs,
-    additionalResolversFromTypeDefs,
+    additionalResolvers,
   };
 }
 

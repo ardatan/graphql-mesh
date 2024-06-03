@@ -8,7 +8,7 @@ import {
 import { createNamingConventionTransform } from '@graphql-mesh/fusion-composition';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { getExecutorForFusiongraph } from '../../src/useFusiongraph';
+import { getExecutorForUnifiedGraph } from '../../src/useUnifiedGraph';
 import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils';
 
 describe('Naming Convention', () => {
