@@ -5061,7 +5061,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-deduplicate-request@workspace:packages/plugins/deduplicate-request"
   dependencies:
-    "@whatwg-node/fetch": "npm:0.9.17"
+    "@whatwg-node/fetch": "npm:0.9.18"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.6
     "@graphql-mesh/utils": ^0.98.6
@@ -8403,7 +8403,7 @@ __metadata:
     "@graphql-tools/delegate": "npm:^10.0.11"
     "@graphql-tools/utils": "npm:10.2.1"
     "@omnigraph/json-schema": "npm:^0.100.10"
-    "@whatwg-node/fetch": "npm:0.9.17"
+    "@whatwg-node/fetch": "npm:0.9.18"
     change-case: "npm:^4.1.2"
     fets: "npm:0.8.0"
     graphql-yoga: "npm:5.3.1"
@@ -11667,7 +11667,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.4":
+"@whatwg-node/fetch@npm:0.9.18, @whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.4":
   version: 0.9.18
   resolution: "@whatwg-node/fetch@npm:0.9.18"
   dependencies:
