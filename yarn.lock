@@ -11656,13 +11656,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/fetch@npm:0.9.17, @whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.4":
+"@whatwg-node/fetch@npm:0.9.17":
   version: 0.9.17
   resolution: "@whatwg-node/fetch@npm:0.9.17"
   dependencies:
     "@whatwg-node/node-fetch": "npm:^0.5.7"
     urlpattern-polyfill: "npm:^10.0.0"
   checksum: 10c0/6638f1d456d17c9eab55f6278aa8045157ceb43a27acc65def1b7a2a3b80ef1b79f4c203e523865c9bcf1236ef64e1378ab0627e91932c97e9f1f3a129b17195
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.4":
+  version: 0.9.18
+  resolution: "@whatwg-node/fetch@npm:0.9.18"
+  dependencies:
+    "@whatwg-node/node-fetch": "npm:^0.5.7"
+    urlpattern-polyfill: "npm:^10.0.0"
+  checksum: 10c0/53fbbdb9c8b99d5ac550c80c4523e0e574c311fca55854c81e26949a4269638a36688cc485220f65845c9c5f10251f474b4982d594f063859af7b44316775a64
   languageName: node
   linkType: hard
 
