@@ -1,5 +1,15 @@
 # @omnigraph/json-schema
 
+## 0.100.10
+
+### Patch Changes
+
+- [#7057](https://github.com/ardatan/graphql-mesh/pull/7057)
+  [`882091b`](https://github.com/ardatan/graphql-mesh/commit/882091b1cb0b76c110b258c7a52a54eec4ad7815)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`ajv@8.15.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.15.0) (from
+    `8.14.0`, in `dependencies`)
+
 ## 0.100.9
 
 ### Patch Changes

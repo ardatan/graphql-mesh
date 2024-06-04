@@ -1,5 +1,16 @@
 # @graphql-mesh/graphql
 
+## 0.98.7
+
+### Patch Changes
+
+- [#7061](https://github.com/ardatan/graphql-mesh/pull/7061)
+  [`56f5449`](https://github.com/ardatan/graphql-mesh/commit/56f54491e0770ca9621120c202201fd7ef3fd3fe)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/federation@^2.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.0.0)
+    (from `^1.1.36`, in `dependencies`)
+
 ## 0.98.6
 
 ### Patch Changes

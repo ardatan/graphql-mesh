@@ -5,6 +5,15 @@
 ### Patch Changes
 
 - Updated dependencies
+  [[`882091b`](https://github.com/ardatan/graphql-mesh/commit/882091b1cb0b76c110b258c7a52a54eec4ad7815)]:
+  - @omnigraph/json-schema@0.100.10
+  - @graphql-mesh/serve-cli@0.4.9
+
+## null
+
+### Patch Changes
+
+- Updated dependencies
   [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
   [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
   [`3288e30`](https://github.com/ardatan/graphql-mesh/commit/3288e302d3a8ed82a6138e33fa5c47aa95493aec),

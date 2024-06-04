@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.4.9
+
+## null
+
+### Patch Changes
+
 - Updated dependencies
   [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
   [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
