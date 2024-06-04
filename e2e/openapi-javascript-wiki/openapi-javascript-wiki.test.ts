@@ -40,9 +40,5 @@ it.concurrent.each([
 ])('should execute $name', async ({ query }) => {
   const { output } = await compose({ output: 'graphql' });
   const { execute } = await serve({ fusiongraph: output });
-  await expect(execute({ query })).resolves.toMatchObject({
-    data: {
-      viewsInPastMonth: expect.any(Number),
-    },
-  });
+  await expect(execute({ query })).resolves.toMatchSnapshot();
 });
