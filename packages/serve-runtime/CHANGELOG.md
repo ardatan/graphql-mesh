@@ -1,5 +1,19 @@
 # @graphql-mesh/serve-runtime
 
+## 0.3.9
+
+### Patch Changes
+
+- [#7061](https://github.com/ardatan/graphql-mesh/pull/7061)
+  [`56f5449`](https://github.com/ardatan/graphql-mesh/commit/56f54491e0770ca9621120c202201fd7ef3fd3fe)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor-yoga@^3.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-yoga/v/3.0.0)
+    (from `^2.0.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.0.0)
+    (from `^1.1.36`, in `dependencies`)
+
 ## 0.3.8
 
 ### Patch Changes

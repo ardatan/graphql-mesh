@@ -1,5 +1,13 @@
 # typescript-location-weather-example
 
+## 0.17.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.4.9
+  - @omnigraph/openapi@0.100.11
+
 ## 0.17.11
 
 ### Patch Changes

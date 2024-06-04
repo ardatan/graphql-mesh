@@ -1,5 +1,14 @@
 # covid-mesh
 
+## 0.15.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`56f5449`](https://github.com/ardatan/graphql-mesh/commit/56f54491e0770ca9621120c202201fd7ef3fd3fe)]:
+  - @graphql-mesh/graphql@0.98.7
+  - @graphql-mesh/json-schema@0.100.10
+
 ## 0.15.11
 
 ### Patch Changes
