@@ -3229,10 +3229,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20240529.0":
-  version: 4.20240529.0
-  resolution: "@cloudflare/workers-types@npm:4.20240529.0"
-  checksum: 10c0/f5a8b3e930d19806d1bfbfce7106b9fe32f1eebb517bbf662ec8ecf7981f8496401e1b4177d71583afe4bb447738af947ffd12d08cfe8fc8cae318b3173a0190
+"@cloudflare/workers-types@npm:4.20240603.0":
+  version: 4.20240603.0
+  resolution: "@cloudflare/workers-types@npm:4.20240603.0"
+  checksum: 10c0/09829ee9daaaf410ab2dc3900590f843febc5dc2962fa8f197445ed59407d1ca129f5bf228117687c56e8dd91c9d1003c4f57ea3c3fe06d521ffecc0a0b4a2bf
   languageName: node
   linkType: hard
 
@@ -4591,7 +4591,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20240529.0"
+    "@cloudflare/workers-types": "npm:4.20240603.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.6
     "@graphql-mesh/utils": ^0.98.6
@@ -10644,12 +10644,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.14.0, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6, @types/node@npm:^20.12.12":
-  version: 20.14.0
-  resolution: "@types/node@npm:20.14.0"
+"@types/node@npm:*, @types/node@npm:20.14.1, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6, @types/node@npm:^20.12.12":
+  version: 20.14.1
+  resolution: "@types/node@npm:20.14.1"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/29ccc7592e9ca6b81d00f3a6673241d08e9042d801b10adfd9ebcbbf326208e0a0133a8d146158db18d02a68b85d9ce1fd94e6e1e5be0da263129bf6e42eb22d
+  checksum: 10c0/12b7879047f50cc217bbea3add7c45e542070f6e9fb2092be97542152b7022512bcb2bf848d04f77e295c4c8699acd484e79a4a4dbe9bcfa4e89dd543d530611
   languageName: node
   linkType: hard
 
@@ -10668,11 +10668,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.11.18":
-  version: 18.19.33
-  resolution: "@types/node@npm:18.19.33"
+  version: 18.19.34
+  resolution: "@types/node@npm:18.19.34"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/0a17cf55c4e6ec90fdb47e73fde44a613ec0f6cd02619b156b1e8fd3f81f8b3346b06ca0757024ddff304d44c8ce5b99570eac8fa2d6baa0fc12e4b2146ac7c6
+  checksum: 10c0/e985f50684def801801069e236165ee511f9195fc04ad4a2af7642d86aeaeaf7bfe34c147f894a48618a5c71c15b388ca91341a244792149543a712e38351988
   languageName: node
   linkType: hard
 
@@ -17721,7 +17721,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.0"
     "@graphql-mesh/cli": "npm:0.90.9"
     "@graphql-mesh/json-schema": "npm:0.100.9"
-    "@types/node": "npm:20.14.0"
+    "@types/node": "npm:20.14.1"
     graphql: "npm:16.8.1"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -18667,7 +18667,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.14.0"
+    "@types/node": "npm:20.14.1"
     "@types/react": "npm:18.3.3"
     "@types/react-dom": "npm:18.3.0"
     apollo-upload-client: "npm:18.0.1"
@@ -19497,7 +19497,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.14.0"
+    "@types/node": "npm:20.14.1"
     "@typescript-eslint/eslint-plugin": "npm:7.11.0"
     "@typescript-eslint/parser": "npm:7.11.0"
     babel-jest: "npm:29.7.0"
@@ -22781,7 +22781,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.9"
     "@graphql-mesh/json-schema": "npm:0.100.9"
-    "@types/node": "npm:20.14.0"
+    "@types/node": "npm:20.14.1"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.0"
     graphql: "npm:16.8.1"
@@ -28831,7 +28831,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.98.6"
     "@graphql-mesh/runtime": "npm:0.99.7"
     "@graphql-mesh/transform-prefix": "npm:0.98.6"
-    "@types/node": "npm:20.14.0"
+    "@types/node": "npm:20.14.1"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
@@ -34659,7 +34659,7 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^6.5.3"
     "@theguild/tailwind-config": "npm:0.4.2"
-    "@types/node": "npm:20.14.0"
+    "@types/node": "npm:20.14.1"
     "@types/react": "npm:18.3.3"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.3"
