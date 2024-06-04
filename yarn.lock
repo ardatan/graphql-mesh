@@ -4833,7 +4833,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
     "@graphql-tools/delegate": "npm:^10.0.11"
-    "@graphql-tools/federation": "npm:^1.1.36"
+    "@graphql-tools/federation": "npm:^2.0.0"
     "@graphql-tools/url-loader": "npm:^8.0.0"
     lodash.get: "npm:^4.4.2"
   peerDependencies:
@@ -5383,8 +5383,8 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.98.6"
     "@graphql-tools/delegate": "npm:^10.0.11"
     "@graphql-tools/executor-http": "npm:^1.0.6"
-    "@graphql-tools/executor-yoga": "npm:^2.0.3"
-    "@graphql-tools/federation": "npm:^1.1.36"
+    "@graphql-tools/executor-yoga": "npm:^3.0.0"
+    "@graphql-tools/federation": "npm:^2.0.0"
     "@graphql-tools/stitch": "npm:^9.2.9"
     "@graphql-tools/utils": "npm:^10.2.1"
     "@whatwg-node/server": "npm:^0.9.34"
@@ -5446,7 +5446,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
     "@graphql-tools/executor-http": "npm:^1.0.2"
-    "@graphql-tools/federation": "npm:^1.1.36"
+    "@graphql-tools/federation": "npm:^2.0.0"
     lodash.get: "npm:^4.4.2"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.3
@@ -6016,16 +6016,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor-envelop@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "@graphql-tools/executor-envelop@npm:2.0.4"
+"@graphql-tools/executor-envelop@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@graphql-tools/executor-envelop@npm:3.0.0"
   dependencies:
     "@graphql-tools/utils": "npm:^10.0.13"
     "@graphql-tools/wrap": "npm:^10.0.2"
     tslib: "npm:^2.3.1"
   peerDependencies:
     "@envelop/core": ^3.0.4 || ^4.0.0 || ^5.0.0
-  checksum: 10c0/e46362b7e1d264aa8d4f7e81f9ba45299eb80b101d0855f8b3c779dae8ec7e6f1260ca50792f696b100125733691474fb27293f8e670b4b668220677c9f1cf62
+  checksum: 10c0/d0c9a4c3235ea638d42e9bdd4201f2078dc8f9ab6c6cebd5f27992dec20d558066e6bc8dc42bd86910c6ab48942b5ed9c2c38be3bb0e77272cf5ab518edb3deb
   languageName: node
   linkType: hard
 
@@ -6077,17 +6077,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor-yoga@npm:^2.0.3":
-  version: 2.0.4
-  resolution: "@graphql-tools/executor-yoga@npm:2.0.4"
+"@graphql-tools/executor-yoga@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@graphql-tools/executor-yoga@npm:3.0.0"
   dependencies:
-    "@graphql-tools/executor-envelop": "npm:^2.0.4"
+    "@graphql-tools/executor-envelop": "npm:^3.0.0"
     "@graphql-tools/utils": "npm:^10.0.13"
     tslib: "npm:^2.3.1"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
     graphql-yoga: ^3.5.1 || ^4.0.0 || ^5.0.0
-  checksum: 10c0/44f6c51f44ee4a7a4fcb8eab6904e786e6c06c61e634d1a9294093e08e36507a0a19000ff6d562e4d013dd4977ea106849745568f945dc3c29552a9696d55bdc
+  checksum: 10c0/89294bbe1c4e80f98e03b5b5c329b66bef9a90d0973cb85d9092b10cb37871f18b16a61bfba1eae7c2e18083418bf0e9fa8706a6f09273acc6b1edd2f33bac45
   languageName: node
   linkType: hard
 
@@ -6106,9 +6106,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/federation@npm:^1.1.36":
-  version: 1.1.36
-  resolution: "@graphql-tools/federation@npm:1.1.36"
+"@graphql-tools/federation@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@graphql-tools/federation@npm:2.0.0"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0"
     "@graphql-tools/delegate": "npm:^10.0.11"
@@ -6118,6 +6118,7 @@ __metadata:
     "@graphql-tools/stitch": "npm:^9.2.9"
     "@graphql-tools/utils": "npm:^10.2.1"
     "@graphql-tools/wrap": "npm:^10.0.3"
+    "@whatwg-node/fetch": "npm:^0.9.17"
     tslib: "npm:^2.4.0"
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
@@ -6125,7 +6126,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/f27ddbb93745d7d44323653f5490cf5d0cdf51a4cfd3a0e36ee5aeca1a9b609722f69df384147b4083b8bc67668f675eae7d13843c89d785f5ce3556a0af2d2b
+  checksum: 10c0/1097e1a43f3e0082d1a5081eedc6f4a6992b7f4dc7af5d9da243b3f99008aa87624e111a1c5d27e20fe2c9a5619431ebb58d200b54f73fdddd6810f3cc5c3fe1
   languageName: node
   linkType: hard
 
