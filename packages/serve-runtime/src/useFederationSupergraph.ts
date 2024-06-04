@@ -12,10 +12,9 @@ import { TransportBaseContext, TransportEntry } from '@graphql-mesh/transport-co
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
-import { SubschemaConfig } from '@graphql-tools/delegate';
 import {
   filterInternalFieldsAndTypes,
-  getSubschemasFromSupergraphSdl,
+  getStitchingOptionsFromSupergraphSdl,
 } from '@graphql-tools/federation';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { getDocumentNodeFromSchema, IResolvers, isPromise } from '@graphql-tools/utils';
@@ -59,18 +58,20 @@ export function useFederationSupergraph<TContext extends Record<string, any> = R
     lastLoadedSupergraph = loadedSupergraph;
     const schemaAST = ensureSchemaAST(loadedSupergraph);
     const transportEntryMap: Record<string, TransportEntry> = {};
-    const subschemaMap = getSubschemasFromSupergraphSdl({
+    const { subschemas, typeDefs, typeMergingOptions } = getStitchingOptionsFromSupergraphSdl({
       supergraphSdl: schemaAST,
       batch: true,
-      onExecutor({ subgraphName, endpoint }): any {
-        transportEntryMap[subgraphName] = {
-          subgraph: subgraphName,
+      onSubschemaConfig(subschemaConfig) {
+        transportEntryMap[subschemaConfig.name] = {
+          subgraph: subschemaConfig.name,
           kind: 'http',
-          location: endpoint,
+          location: subschemaConfig.endpoint,
+        };
+        subschemaConfig.executor = function executor(execReq) {
+          return onSubgraphExecute(subschemaConfig.name, execReq);
         };
       },
     });
-    const subschemas: SubschemaConfig[] = [];
     const subgraphMap: Map<string, GraphQLSchema> = new Map();
     const onSubgraphExecute = getOnSubgraphExecute({
       fusiongraph: supergraph,
@@ -80,21 +81,16 @@ export function useFederationSupergraph<TContext extends Record<string, any> = R
       transportEntryMap,
       subgraphMap,
     });
-    for (const [subschemaName, subschemaConfig] of subschemaMap) {
-      subschemas.push({
-        ...subschemaConfig,
-        executor(execReq) {
-          return onSubgraphExecute(subschemaName, execReq);
-        },
-      });
-      subgraphMap.set(subschemaName, subschemaConfig.schema);
+    for (const subschemaConfig of subschemas) {
+      subgraphMap.set(subschemaConfig.name!, subschemaConfig.schema);
     }
     supergraph = stitchSchemas({
       subschemas,
       assumeValid: true,
       assumeValidSDL: true,
-      typeDefs: opts.additionalTypedefs,
+      typeDefs: [typeDefs, opts.additionalTypedefs],
       resolvers: opts.additionalResolvers as any,
+      typeMergingOptions,
     });
     supergraph = filterInternalFieldsAndTypes(supergraph);
     if (opts.additionalResolvers) {
