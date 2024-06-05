@@ -46,6 +46,7 @@
     "@graphql-tools/stitch": "^9.2.9",
     "@graphql-tools/utils": "^10.2.1",
     "@whatwg-node/server": "^0.9.34",
+    "disposablestack": "^1.1.6",
     "graphql-yoga": "^5.3.0"
   },
   "publishConfig": {

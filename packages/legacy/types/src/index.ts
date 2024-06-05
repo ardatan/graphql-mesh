@@ -157,7 +157,7 @@ export type OnDelegateHookDone = (payload: OnDelegateHookDonePayload) => Promise
 export type MeshPlugin<TContext> = Plugin<TContext> & {
   onFetch?: OnFetchHook<TContext>;
   onDelegate?: OnDelegateHook<TContext>;
-};
+} & Partial<AsyncDisposable>;
 
 export type MeshFetch = (
   url: string,

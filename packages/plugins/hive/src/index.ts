@@ -107,6 +107,8 @@ export default function useMeshHive(
     selfHosting,
     autoDispose: ['SIGINT', 'SIGTERM'],
   });
+  // TODO: Remove later after v0
+  // Pubsub.destroy will no longer
   function onTerminate() {
     return hiveClient
       .dispose()
@@ -122,6 +124,9 @@ export default function useMeshHive(
         // TODO: fix useYogaHive typings to inherit the context
         useYogaHive(hiveClient) as any,
       );
+    },
+    [Symbol.asyncDispose]() {
+      return onTerminate();
     },
   };
 }

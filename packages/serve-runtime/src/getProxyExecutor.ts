@@ -1,21 +1,29 @@
 import { GraphQLSchema } from 'graphql';
 import {
-  defaultTransportsOption,
   getOnSubgraphExecute,
+  OnSubgraphExecuteHook,
   TransportEntry,
 } from '@graphql-mesh/fusion-runtime';
 import { Executor } from '@graphql-tools/utils';
 import { MeshServeConfigContext, MeshServeConfigWithProxy } from './types.js';
 
-export function getProxyExecutor<TContext>(
-  config: MeshServeConfigWithProxy<TContext>,
-  configContext: MeshServeConfigContext,
-  getSchema: () => GraphQLSchema,
-): Executor {
+export function getProxyExecutor<TContext>({
+  config,
+  configContext,
+  getSchema,
+  onSubgraphExecuteHooks,
+  disposableStack,
+}: {
+  config: MeshServeConfigWithProxy<TContext>;
+  configContext: MeshServeConfigContext;
+  getSchema: () => GraphQLSchema;
+  onSubgraphExecuteHooks: OnSubgraphExecuteHook[];
+  disposableStack: AsyncDisposableStack;
+}): Executor {
   const fakeTransportEntryMap: Record<string, TransportEntry> = {};
   let subgraphName: string = 'upstream';
   const onSubgraphExecute = getOnSubgraphExecute({
-    plugins: config.plugins?.(configContext as any) as any,
+    onSubgraphExecuteHooks,
     transportEntryMap: new Proxy(fakeTransportEntryMap, {
       get(fakeTransportEntryMap, subgraphNameProp: string): TransportEntry {
         if (!fakeTransportEntryMap[subgraphNameProp]) {
@@ -33,6 +41,7 @@ export function getProxyExecutor<TContext>(
     }),
     transportBaseContext: configContext,
     getSubgraphSchema: getSchema,
+    disposableStack,
   });
   return function proxyExecutor(executionRequest) {
     return onSubgraphExecute(subgraphName, executionRequest);

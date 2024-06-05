@@ -1,16 +1,10 @@
-import { buildSchema, ExecutionResult } from 'graphql';
-import { createYoga } from 'graphql-yoga';
+import { buildSchema } from 'graphql';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
-import { useUnifiedGraph } from '../src/useUnifiedGraph';
+import { UnifiedGraphManager } from '../src/unifiedGraphManager';
 
 describe('Polling', () => {
   it('polls the schema in a certain interval', async () => {
     jest.useFakeTimers();
-    interface QueryResult {
-      __type: {
-        description: string;
-      };
-    }
     const pollingInterval = 35_000;
     const unifiedGraphFetcher = () =>
       composeSubgraphs([
@@ -26,32 +20,14 @@ describe('Polling', () => {
         `),
         },
       ]);
-    const yoga = createYoga({
-      plugins: [
-        useUnifiedGraph({
-          getUnifiedGraph: unifiedGraphFetcher,
-          polling: pollingInterval,
-        }),
-      ],
+    await using manager = new UnifiedGraphManager({
+      getUnifiedGraph: unifiedGraphFetcher,
+      polling: pollingInterval,
     });
     async function getFetchedTime() {
-      const result = await yoga.fetch('/graphql', {
-        method: 'POST',
-        body: JSON.stringify({
-          query: /* GraphQL */ `
-            query {
-              __type(name: "Query") {
-                description
-              }
-            }
-          `,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const resJson: ExecutionResult<QueryResult> = await result.json();
-      const lastFetchedDateStr = resJson.data.__type.description.match(/Fetched on (.*)/)[1];
+      const schema = await manager.getUnifiedGraph();
+      const queryType = schema.getQueryType();
+      const lastFetchedDateStr = queryType.description.match(/Fetched on (.*)/)[1];
       const lastFetchedDate = new Date(lastFetchedDateStr);
       return lastFetchedDate;
     }

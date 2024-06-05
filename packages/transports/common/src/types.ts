@@ -35,3 +35,5 @@ export type TransportExecutorFactoryFn<
 export type Transport<TTransportKind extends string = string, TTransportOptions = any> = {
   getSubgraphExecutor?: TransportExecutorFactoryFn<TTransportKind, TTransportOptions>;
 };
+
+export type DisposableExecutor = Executor & Partial<Disposable | AsyncDisposable>;

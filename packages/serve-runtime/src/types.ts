@@ -61,7 +61,7 @@ export type MeshServePlugin<
 > = YogaPlugin<Partial<TPluginContext> & MeshServeContext & TContext> &
   UnifiedGraphPlugin & {
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
-  };
+  } & Partial<Disposable | AsyncDisposable>;
 
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**

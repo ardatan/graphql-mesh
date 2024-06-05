@@ -1,6 +1,4 @@
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
-import { PubSub } from '@graphql-mesh/utils';
 import { loadMySQLSubgraph } from '@omnigraph/mysql';
 
 export const composeConfig = defineComposeConfig({
@@ -11,8 +9,4 @@ export const composeConfig = defineComposeConfig({
       }),
     },
   ],
-});
-
-export const serveConfig = defineServeConfig({
-  pubsub: new PubSub(),
 });

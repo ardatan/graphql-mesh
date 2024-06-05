@@ -7,7 +7,6 @@ import { createServer as createHTTPSServer } from 'https';
 // eslint-disable-next-line import/no-nodejs-modules
 import { SecureContextOptions } from 'tls';
 import { RecognizedString } from 'uWebSockets.js';
-import { registerTerminateHandler } from '@graphql-mesh/utils';
 import { ServerOptions } from './types.js';
 
 export function readRecognizedString(recognizedString: RecognizedString) {
@@ -27,7 +26,7 @@ export async function startNodeHttpServer({
   host,
   port,
   sslCredentials,
-}: ServerOptions): Promise<void> {
+}: ServerOptions): Promise<AsyncDisposable> {
   if (sslCredentials) {
     const sslOptionsForNodeHttp: SecureContextOptions = {};
     if (sslCredentials.ca_file_name) {
@@ -59,32 +58,42 @@ export async function startNodeHttpServer({
     }
     const server = createHTTPSServer(sslOptionsForNodeHttp, handler);
     log.info(`Starting server on ${protocol}://${host}:${port}`);
-    return new Promise<void>((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       server.once('error', reject);
       server.listen(port, host, () => {
         log.info(`Server started on ${protocol}://${host}:${port}`);
-        registerTerminateHandler(eventName => {
-          log.info(`Closing server for ${eventName}`);
-          server.close(() => {
-            log.info(`Server closed for ${eventName}`);
-            resolve();
-          });
+        resolve({
+          [Symbol.asyncDispose]() {
+            return new Promise<void>(resolve => {
+              log.info(`Closing server`);
+              server.closeAllConnections();
+              server.close(() => {
+                log.info(`Server closed`);
+                resolve();
+              });
+            });
+          },
         });
       });
     });
   }
   const server = createHTTPServer(handler);
   log.info(`Starting server on ${protocol}://${host}:${port}`);
-  return new Promise<void>((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
       log.info(`Server started on ${protocol}://${host}:${port}`);
-      registerTerminateHandler(eventName => {
-        log.info(`Closing server for ${eventName}`);
-        server.close(() => {
-          log.info(`Server closed for ${eventName}`);
-          resolve();
-        });
+      resolve({
+        [Symbol.asyncDispose]() {
+          return new Promise<void>(resolve => {
+            log.info(`Closing server`);
+            server.closeAllConnections();
+            server.close(() => {
+              log.info(`Server closed`);
+              resolve();
+            });
+          });
+        },
       });
     });
   });

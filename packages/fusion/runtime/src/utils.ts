@@ -56,33 +56,35 @@ export function createTransportGetter(transports: TransportsOption = defaultTran
 export function getTransportExecutor(
   transportGetter: ReturnType<typeof createTransportGetter>,
   transportContext: TransportExecutorFactoryOpts,
+  disposableStack: AsyncDisposableStack,
 ): MaybePromise<Executor> {
   transportContext.logger?.info(`Loading transport ${transportContext.transportEntry?.kind}`);
   const transport$ = transportGetter(transportContext.transportEntry?.kind);
-  return mapMaybePromise(transport$, transport => transport.getSubgraphExecutor(transportContext));
+  return mapMaybePromise(transport$, transport =>
+    mapMaybePromise(transport.getSubgraphExecutor(transportContext), executor => {
+      if (isDisposable(executor)) {
+        disposableStack.use(executor);
+      }
+      return executor;
+    }),
+  );
 }
 
 export function getOnSubgraphExecute({
-  plugins,
+  onSubgraphExecuteHooks,
   transports,
   transportBaseContext,
   transportEntryMap,
   getSubgraphSchema,
+  disposableStack,
 }: {
-  plugins?: UnifiedGraphPlugin[];
+  onSubgraphExecuteHooks: OnSubgraphExecuteHook[];
   transports?: TransportsOption;
   transportBaseContext?: TransportBaseContext;
   transportEntryMap?: Record<string, TransportEntry>;
   getSubgraphSchema(subgraphName: string): GraphQLSchema;
+  disposableStack: AsyncDisposableStack;
 }) {
-  const onSubgraphExecuteHooks: OnSubgraphExecuteHook[] = [];
-  if (plugins) {
-    for (const plugin of plugins) {
-      if (plugin.onSubgraphExecute) {
-        onSubgraphExecuteHooks.push(plugin.onSubgraphExecute);
-      }
-    }
-  }
   const subgraphExecutorMap: Record<string, Executor> = {};
   const transportGetter = createTransportGetter(transports);
 
@@ -212,6 +214,7 @@ export function getOnSubgraphExecute({
                 transportEntry,
                 subgraphName,
               },
+          disposableStack,
         );
         return mapMaybePromise(executor$, executor_ => {
           executor = wrapExecutorWithHooks(executor_) as Executor;
@@ -288,4 +291,8 @@ export function compareSchemas(
     bStr = printSchemaWithDirectives(b);
   }
   return aStr === bStr;
+}
+
+export function isDisposable(obj: any): obj is Disposable | AsyncDisposable {
+  return obj?.[Symbol.dispose] != null || obj?.[Symbol.asyncDispose] != null;
 }

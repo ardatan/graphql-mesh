@@ -1,14 +1,6 @@
-import {
-  buildSchema,
-  GraphQLEnumType,
-  GraphQLObjectType,
-  GraphQLUnionType,
-  validate,
-} from 'graphql';
+import { buildSchema, GraphQLEnumType, GraphQLObjectType, GraphQLUnionType } from 'graphql';
 import { createNamingConventionTransform } from '@graphql-mesh/fusion-composition';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { getExecutorForUnifiedGraph } from '../../src/useUnifiedGraph';
 import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils';
 
 describe('Naming Convention', () => {
