@@ -3702,15 +3702,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/pubsub-destroy@workspace:e2e/pubsub-destroy":
-  version: 0.0.0-use.local
-  resolution: "@e2e/pubsub-destroy@workspace:e2e/pubsub-destroy"
-  dependencies:
-    "@graphql-mesh/serve-cli": "workspace:*"
-    "@graphql-mesh/utils": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/soap-demo@workspace:e2e/soap-demo":
   version: 0.0.0-use.local
   resolution: "@e2e/soap-demo@workspace:e2e/soap-demo"
