@@ -1,4 +1,5 @@
 import { GraphQLObjectType, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
+import { MeshUpstreamErrorExtensions } from '@graphql-mesh/types';
 import { createGraphQLError, getDirective } from '@graphql-tools/utils';
 
 export function getTypeResolverFromOutputTCs({
@@ -90,18 +91,19 @@ export function getTypeResolverFromOutputTCs({
       return typeName;
     }
     if (data.$response) {
-      const error = createGraphQLError(`HTTP Error: ${data.$statusCode}`, {
-        extensions: {
-          http: {
-            status: data.$statusCode,
-            headers: data.$response.header,
-          },
-          request: {
-            url: data.$url,
-            method: data.$method,
-          },
-          responseJson: data.$response,
+      const extensions: MeshUpstreamErrorExtensions = {
+        http: {
+          status: data.$statusCode,
+          headers: data.$response.header,
         },
+        request: {
+          endpoint: data.$url,
+          method: data.$method,
+        },
+        responseBody: data.$response,
+      };
+      const error = createGraphQLError(`Upstream HTTP Error: ${data.$statusCode}`, {
+        extensions,
       });
       return error;
     }

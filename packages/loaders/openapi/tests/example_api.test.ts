@@ -1567,13 +1567,13 @@ describe('example_api', () => {
     expect(extensions).toMatchObject({
       request: {
         method: 'GET',
-        url: `http://localhost:3000/api/users/abcdef`,
+        endpoint: `http://localhost:3000/api/users/abcdef`,
       },
       http: {
         status: 404,
         statusText: 'Not Found',
       },
-      responseJson: {
+      responseBody: {
         message: 'Wrong username',
       },
     });
@@ -2222,9 +2222,9 @@ describe('example_api', () => {
 
     result.errors.forEach(error => {
       const requestDetails: any = error.extensions.request;
-      expect(requestDetails.url).toBeDefined();
+      expect(requestDetails.endpoint).toBeDefined();
 
-      const url = new URL(requestDetails.url);
+      const url = new URL(requestDetails.endpoint);
 
       expect(url.searchParams.has('limit')).toBe(true);
       expect(url.searchParams.get('limit')).toBe(String(LIMIT));

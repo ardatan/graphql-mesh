@@ -272,3 +272,18 @@ export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any
 >(
   params: InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn>,
 ) => Promise<TReturn>;
+
+export interface MeshUpstreamErrorExtensions {
+  subgraph?: string;
+  request?: {
+    endpoint?: string;
+    method?: string;
+    body?: unknown;
+  };
+  http?: {
+    status?: number;
+    statusText?: string;
+    headers?: Record<string, string>;
+  };
+  responseBody?: unknown;
+}

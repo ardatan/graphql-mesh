@@ -14,7 +14,12 @@ import { IStringifyOptions, parse as qsParse, stringify as qsStringify } from 'q
 import urlJoin from 'url-join';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
+import {
+  Logger,
+  MeshFetch,
+  MeshFetchRequestInit,
+  MeshUpstreamErrorExtensions,
+} from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
 import { Blob, File, FormData } from '@whatwg-node/fetch';
@@ -321,39 +326,42 @@ export function addHTTPRootFieldResolver(
       } else if (response.status === 204 || (response.status === 200 && responseText === '')) {
         responseJson = {};
       } else if (response.status.toString().startsWith('2')) {
-        logger.debug(`Unexpected response in ${field.name};\n\t${responseText}`);
-        return createGraphQLError(`Unexpected response in ${field.name}`, {
-          extensions: {
-            http: {
-              status: response.status,
-              statusText: response.statusText,
-              headers: getHeadersObj(response.headers),
-            },
-            request: {
-              url: fullPath,
-              method: httpMethod,
-            },
-            responseText,
-            originalError: {
-              message: error.message,
-              stack: error.stack,
-            },
+        logger.debug(`Unexpected upstream HTTP response in ${field.name};\n\t${responseText}`);
+        const extensions: MeshUpstreamErrorExtensions = {
+          subgraph: sourceName,
+          http: {
+            status: response.status,
+            statusText: response.statusText,
+            headers: getHeadersObj(response.headers),
           },
+          request: {
+            endpoint: fullPath,
+            method: httpMethod,
+          },
+          responseBody: responseText,
+        };
+        return createGraphQLError(`Unexpected upstream HTTP response in ${field.name}`, {
+          originalError: error,
+          extensions,
         });
       } else {
+        const extensions: MeshUpstreamErrorExtensions = {
+          subgraph: sourceName,
+          http: {
+            status: response.status,
+            statusText: response.statusText,
+            headers: getHeadersObj(response.headers),
+          },
+          request: {
+            endpoint: fullPath,
+            method: httpMethod,
+          },
+          responseBody: responseText,
+        };
         return createGraphQLError(
-          `HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
+          `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
-            extensions: {
-              request: {
-                url: fullPath,
-                method: httpMethod,
-              },
-              responseText,
-              responseStatus: response.status,
-              responseStatusText: response.statusText,
-              responseHeaders: getHeadersObj(response.headers),
-            },
+            extensions,
           },
         );
       }
@@ -361,21 +369,23 @@ export function addHTTPRootFieldResolver(
 
     if (!response.status.toString().startsWith('2')) {
       if (!isUnionType(returnNamedGraphQLType)) {
+        const extensions: MeshUpstreamErrorExtensions = {
+          subgraph: sourceName,
+          http: {
+            status: response.status,
+            statusText: response.statusText,
+            headers: getHeadersObj(response.headers),
+          },
+          request: {
+            endpoint: fullPath,
+            method: httpMethod,
+          },
+          responseBody: responseJson,
+        };
         return createGraphQLError(
-          `HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
+          `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
-            extensions: {
-              http: {
-                status: response.status,
-                statusText: response.statusText,
-                headers: getHeadersObj(response.headers),
-              },
-              request: {
-                url: fullPath,
-                method: httpMethod,
-              },
-              responseJson,
-            },
+            extensions,
           },
         );
       }
