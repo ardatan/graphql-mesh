@@ -1,9 +1,10 @@
 import { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema, parse, visit } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import { Driver } from 'neo4j-driver';
+import { DisposableExecutor } from '@graphql-mesh/transport-common';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { Executor, getDirective, getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { getDirective, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
@@ -28,7 +29,7 @@ function filterIntrospectionDefinitions<TASTNode extends { directives?: readonly
   return node;
 }
 
-export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Executor> {
+export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<DisposableExecutor> {
   const transportDirectives = getDirective(opts.schema, opts.schema, 'transport');
   if (!transportDirectives?.length) {
     throw new Error('No transport directive found on the schema!');
@@ -72,7 +73,6 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Executo
   );
   const executableSchema = await getExecutableSchemaFromTypeDefsAndDriver({
     driver,
-    logger: opts.logger,
     pubsub: opts.pubsub,
     typeDefs,
   });
@@ -81,7 +81,7 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Executo
     database,
   };
 
-  return function neo4JExecutor(args) {
+  const executor: DisposableExecutor = function neo4JExecutor(args) {
     return defaultExecutor({
       ...args,
       context: {
@@ -90,18 +90,22 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Executo
       },
     });
   };
+
+  executor[Symbol.asyncDispose] = function dispose() {
+    return driver.close();
+  };
+
+  return executor;
 }
 
 interface GetExecutableSchemaFromTypeDefs {
   driver: Driver;
-  logger?: Logger;
   pubsub?: MeshPubSub;
   typeDefs?: string | DocumentNode;
 }
 
 export function getExecutableSchemaFromTypeDefsAndDriver({
   driver,
-  logger,
   pubsub,
   typeDefs,
 }: GetExecutableSchemaFromTypeDefs) {
@@ -114,16 +118,6 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
         close: () => {},
       },
     };
-    const id = pubsub.subscribe('destroy', async () => {
-      pubsub.unsubscribe(id);
-      logger?.debug('Closing Neo4j');
-      await driver.close();
-      logger?.debug('Neo4j closed');
-    });
-  } else {
-    logger?.warn(
-      'FIXME: No pubsub provided for neo4j executor, so the connection will never be closed',
-    );
   }
   const neo4jGraphQL = new Neo4jGraphQL({
     typeDefs,

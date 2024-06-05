@@ -4,7 +4,10 @@ import { loadGraphQLSchemaFromNeo4J, LoadGraphQLSchemaFromNeo4JOpts } from './sc
 export function loadNeo4JSubgraph(name: string, opts: LoadGraphQLSchemaFromNeo4JOpts) {
   return ({ logger }: { logger: Logger }) => ({
     name,
-    schema$: loadGraphQLSchemaFromNeo4J(name, opts),
+    schema$: loadGraphQLSchemaFromNeo4J(name, {
+      ...opts,
+      logger,
+    }),
   });
 }
 

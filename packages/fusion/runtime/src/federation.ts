@@ -5,7 +5,7 @@ import { SubschemaConfig } from '@graphql-tools/delegate';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
-import { UnifiedGraphHandler } from './useUnifiedGraph.js';
+import { UnifiedGraphHandler } from './unifiedGraphManager.js';
 
 function ensureSchemaAST(source: GraphQLSchema | DocumentNode | string) {
   if (isSchema(source)) {

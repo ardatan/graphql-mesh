@@ -83,14 +83,20 @@ export default class MySQLHandler implements MeshHandler {
           })
         : configPool;
 
+    const executor = getMySQLExecutor({
+      subgraph: schema,
+      pool,
+      logger: this.logger,
+    });
+
+    const id = this.pubsub.subscribe('destroy', () => {
+      executor[Symbol.asyncDispose]();
+      this.pubsub.unsubscribe(id);
+    });
+
     return {
       schema,
-      executor: getMySQLExecutor({
-        subgraph: schema,
-        pool,
-        pubsub: this.pubsub,
-        logger: this.logger,
-      }),
+      executor,
     };
   }
 }

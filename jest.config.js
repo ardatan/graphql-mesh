@@ -42,7 +42,7 @@ if (process.env.E2E_TEST) {
 } else {
   testMatch.push('!**/e2e/**/?(*.)+(spec|test).[jt]s?(x)');
 }
-
+/** @type {import('jest').Config} */
 module.exports = {
   prettierPath: null, // not supported before Jest v30 https://github.com/jestjs/jest/issues/14305
   testEnvironment: 'node',
@@ -65,4 +65,5 @@ module.exports = {
   },
   resolver: 'bob-the-bundler/jest-resolver',
   testMatch,
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.js'],
 };

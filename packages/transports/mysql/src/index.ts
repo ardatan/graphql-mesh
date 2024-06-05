@@ -6,10 +6,9 @@ export * from './execution.js';
 export * from './parseEndpointUri.js';
 
 export const getSubgraphExecutor: TransportExecutorFactoryFn<'mysql', never> =
-  function getMySQLSubgraphExecutor({ subgraph, pubsub, logger }) {
+  function getMySQLSubgraphExecutor({ subgraph, logger }) {
     return getMySQLExecutor({
       subgraph,
-      pubsub,
       logger,
     });
   };

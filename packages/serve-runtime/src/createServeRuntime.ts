@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
+import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import { GraphQLSchema, parse } from 'graphql';
 import {
   createYoga,
@@ -9,9 +10,16 @@ import {
   YogaServerInstance,
   type Plugin,
 } from 'graphql-yoga';
-import { handleFederationSupergraph, useUnifiedGraph } from '@graphql-mesh/fusion-runtime';
+import {
+  handleFederationSupergraph,
+  handleFusiongraph,
+  isDisposable,
+  OnSubgraphExecuteHook,
+  UnifiedGraphHandler,
+  UnifiedGraphManager,
+} from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Logger, MeshFetch, OnFetchHook } from '@graphql-mesh/types';
+import { Logger, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
@@ -19,8 +27,9 @@ import {
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
+import { MaybePromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
-import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
+import { handleUnifiedGraphConfig, UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import {
   MeshServeConfig,
   MeshServeConfigContext,
@@ -34,12 +43,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   // eslint-disable-next-line prefer-const
   let logger: Logger;
-  let wrappedFetchFn: MeshFetch;
+  const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
+  const wrappedFetchFn = wrapFetchWithHooks(onFetchHooks);
 
   const configContext: MeshServeConfigContext = {
-    get fetch() {
-      return wrappedFetchFn;
-    },
+    fetch: wrappedFetchFn,
     get logger() {
       return logger;
     },
@@ -48,90 +56,111 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
   };
 
-  let supergraphYogaPlugin: Plugin<MeshServeContext & TContext> & {
-    invalidateUnifiedGraph: () => void;
-  };
+  let unifiedGraphPlugin: Plugin<unknown>;
 
   const readinessCheckEndpoint = config.readinessCheckEndpoint || '/readiness';
+  const onSubgraphExecuteHooks: OnSubgraphExecuteHook[] = [];
 
-  if ('fusiongraph' in config) {
-    supergraphYogaPlugin = useUnifiedGraph({
-      getUnifiedGraph: () => handleUnifiedGraphConfig(config.fusiongraph, configContext),
-      transports: config.transports,
-      polling: config.polling,
-      additionalResolvers: config.additionalResolvers,
-      transportBaseContext: configContext,
-      readinessCheckEndpoint,
+  let unifiedGraph: GraphQLSchema;
+  let schemaInvalidator: () => void;
+  let schemaFetcher: () => MaybePromise<GraphQLSchema>;
+  let contextBuilder: <T>(context: T) => MaybePromise<T>;
+  let readinessChecker: () => MaybePromise<boolean>;
+
+  const disposableStack = new AsyncDisposableStack();
+
+  if ('proxy' in config) {
+    const proxyExecutor = getProxyExecutor({
+      config,
+      configContext,
+      getSchema: () => unifiedGraph,
+      onSubgraphExecuteHooks,
+      disposableStack,
     });
-  } else if ('supergraph' in config) {
-    supergraphYogaPlugin = useUnifiedGraph({
-      getUnifiedGraph: () => handleUnifiedGraphConfig(config.supergraph, configContext),
-      handleUnifiedGraph: handleFederationSupergraph,
-      transports: config.transports,
-      polling: config.polling,
-      additionalResolvers: config.additionalResolvers,
-      transportBaseContext: configContext,
-      readinessCheckEndpoint,
-    });
-  } else if ('proxy' in config) {
-    let schema: GraphQLSchema;
-    const proxyExecutor = getProxyExecutor(config, configContext, () => schema);
     const executorPlugin = useExecutor(proxyExecutor);
-    supergraphYogaPlugin = {
-      onPluginInit({ addPlugin }) {
-        // @ts-expect-error Fix this
-        addPlugin(executorPlugin);
-        addPlugin(
-          // @ts-expect-error Fix this
-          useReadinessCheck({
-            endpoint: readinessCheckEndpoint,
-            // @ts-expect-error PromiseLike is not compatible with Promise
-            check() {
-              const res$ = proxyExecutor({
-                document: parse(`query { __typename }`),
-              });
-              return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
-            },
-          }),
-        );
-      },
-      onSchemaChange: payload => {
-        schema = payload.schema;
-      },
-      invalidateUnifiedGraph() {
-        return executorPlugin.invalidateUnifiedGraph();
-      },
+    unifiedGraphPlugin = executorPlugin;
+    readinessChecker = () => {
+      const res$ = proxyExecutor({
+        document: parse(`query { __typename }`),
+      });
+      return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
     };
+    schemaInvalidator = () => executorPlugin.invalidateUnifiedGraph();
+  } else {
+    let handleUnifiedGraph: UnifiedGraphHandler;
+    let unifiedGraphInConfig: UnifiedGraphConfig;
+    if ('fusiongraph' in config) {
+      handleUnifiedGraph = handleFusiongraph;
+      unifiedGraphInConfig = config.fusiongraph;
+    } else if ('supergraph' in config) {
+      handleUnifiedGraph = handleFederationSupergraph;
+      unifiedGraphInConfig = config.supergraph;
+    }
+    const unifiedGraphManager = new UnifiedGraphManager({
+      getUnifiedGraph: () => handleUnifiedGraphConfig(unifiedGraphInConfig, configContext),
+      handleUnifiedGraph,
+      transports: config.transports,
+      polling: config.polling,
+      additionalResolvers: config.additionalResolvers,
+      transportBaseContext: configContext,
+      readinessCheckEndpoint,
+      onDelegateHooks: [],
+      onSubgraphExecuteHooks,
+    });
+    schemaFetcher = () => unifiedGraphManager.getUnifiedGraph();
+    readinessChecker = () =>
+      mapMaybePromise(unifiedGraphManager.getUnifiedGraph(), schema => !!schema);
+    schemaInvalidator = () => unifiedGraphManager.invalidateUnifiedGraph();
+    contextBuilder = base => unifiedGraphManager.getContext(base);
+    disposableStack.use(unifiedGraphManager);
   }
 
-  const defaultFetchPlugin: MeshServePlugin = {
+  const readinessCheckPlugin = useReadinessCheck({
+    endpoint: readinessCheckEndpoint,
+    // @ts-expect-error PromiseLike is not compatible with Promise
+    check: readinessChecker,
+  });
+
+  const defaultMeshPlugin: MeshServePlugin = {
     onFetch({ setFetchFn }) {
       setFetchFn(fetchAPI.fetch);
     },
-    onYogaInit({ yoga }) {
-      const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
-
-      for (const plugin of yoga.getEnveloped._plugins as unknown as MeshServePlugin[]) {
+    onPluginInit({ plugins }) {
+      onFetchHooks.splice(0, onFetchHooks.length);
+      onSubgraphExecuteHooks.splice(0, onSubgraphExecuteHooks.length);
+      for (const plugin of plugins as MeshServePlugin[]) {
         if (plugin.onFetch) {
           onFetchHooks.push(plugin.onFetch);
         }
+        if (plugin.onSubgraphExecute) {
+          onSubgraphExecuteHooks.push(plugin.onSubgraphExecute);
+        }
+        if (isDisposable(plugin)) {
+          disposableStack.use(plugin);
+        }
       }
-
-      wrappedFetchFn = wrapFetchWithHooks(onFetchHooks);
     },
   };
 
   const yoga = createYoga<unknown, MeshServeContext>({
+    // @ts-expect-error PromiseLike is not compatible with Promise
+    schema: schemaFetcher,
     fetchAPI: config.fetchAPI,
     logging: config.logging == null ? new DefaultLogger() : config.logging,
-    plugins: [defaultFetchPlugin, supergraphYogaPlugin, ...(config.plugins?.(configContext) || [])],
-    context: ({ request, params, ...rest }) => {
+    plugins: [
+      defaultMeshPlugin,
+      unifiedGraphPlugin,
+      readinessCheckPlugin,
+      ...(config.plugins?.(configContext) || []),
+    ],
+    // @ts-expect-error PromiseLike is not compatible with Promise
+    context({ request, params, ...rest }) {
       // TODO: I dont like this cast, but it's necessary
       const { req, connectionParams } = rest as {
         req?: IncomingMessage;
         connectionParams?: Record<string, string>;
       };
-      return {
+      const baseContext = {
         ...configContext,
         request,
         params,
@@ -146,6 +175,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
                 {},
         connectionParams,
       };
+      if (contextBuilder) {
+        return contextBuilder(baseContext);
+      }
+      return baseContext;
     },
     cors: config.cors,
     graphiql: config.graphiql,
@@ -159,10 +192,18 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   fetchAPI ||= yoga.fetchAPI;
   logger = yoga.logger as Logger;
 
-  Object.defineProperty(yoga, 'invalidateUnifiedGraph', {
-    value: supergraphYogaPlugin.invalidateUnifiedGraph,
-    configurable: true,
+  Object.defineProperties(yoga, {
+    invalidateUnifiedGraph: {
+      value: schemaInvalidator,
+      configurable: true,
+    },
+    [Symbol.asyncDispose]: {
+      value: () => disposableStack.disposeAsync(),
+      configurable: true,
+    },
   });
 
-  return yoga as YogaServerInstance<unknown, MeshServeContext> & { invalidateUnifiedGraph(): void };
+  return yoga as YogaServerInstance<unknown, MeshServeContext> & {
+    invalidateUnifiedGraph(): void;
+  } & AsyncDisposable;
 }
