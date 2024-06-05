@@ -20,14 +20,12 @@ export default class MySQLHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
-  private logger: Logger;
 
   constructor({
     name,
     config,
     baseDir,
     pubsub,
-    logger,
     store,
     importFn,
   }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
@@ -36,7 +34,6 @@ export default class MySQLHandler implements MeshHandler {
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.importFn = importFn;
-    this.logger = logger;
     this.schemaProxy = store.proxy(
       'schema.graphql',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
@@ -86,7 +83,6 @@ export default class MySQLHandler implements MeshHandler {
     const executor = getMySQLExecutor({
       subgraph: schema,
       pool,
-      logger: this.logger,
     });
 
     const id = this.pubsub.subscribe('destroy', () => {
