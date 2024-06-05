@@ -105,7 +105,8 @@ export default function useMeshHive(
     usage,
     reporting,
     selfHosting,
-    autoDispose: ['SIGINT', 'SIGTERM'],
+    // Mesh already disposes the client below on Mesh's `destroy` event
+    autoDispose: false,
   });
   function onTerminate() {
     return hiveClient
