@@ -21,14 +21,10 @@ function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
 export interface GetMySQLExecutorOpts {
   subgraph: GraphQLSchema;
   pool?: Pool;
-  logger: Logger;
 }
 
-export function getMySQLExecutor({
-  subgraph,
-  pool,
-  logger,
-}: GetMySQLExecutorOpts): DisposableExecutor {
+export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): DisposableExecutor {
+  const mysqlConnectionByContext = new WeakMap<any, PoolConnection>();
   subgraph = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig, fieldName) {
       const directives = getDefDirectives(subgraph, fieldConfig);
@@ -192,6 +188,7 @@ export function getMySQLExecutor({
 
   const defaultExecutor = createDefaultExecutor(subgraph);
   const getConnection$ = util.promisify(pool.getConnection.bind(pool));
+
   const executor: DisposableExecutor = async function mysqlExecutor(executionRequest) {
     const mysqlConnection = await getConnection$();
     mysqlConnectionByContext.set(executionRequest.context, mysqlConnection);
@@ -215,5 +212,3 @@ export function getMySQLExecutor({
   };
   return executor;
 }
-
-const mysqlConnectionByContext = new WeakMap<any, PoolConnection>();
