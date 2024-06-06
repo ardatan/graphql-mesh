@@ -4375,10 +4375,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20240603.0":
-  version: 4.20240603.0
-  resolution: "@cloudflare/workers-types@npm:4.20240603.0"
-  checksum: 10c0/09829ee9daaaf410ab2dc3900590f843febc5dc2962fa8f197445ed59407d1ca129f5bf228117687c56e8dd91c9d1003c4f57ea3c3fe06d521ffecc0a0b4a2bf
+"@cloudflare/workers-types@npm:4.20240605.0":
+  version: 4.20240605.0
+  resolution: "@cloudflare/workers-types@npm:4.20240605.0"
+  checksum: 10c0/ad7e2d1f3155be559bb2ec67d32198b071c514c4bbd9ea0a0340645ade57304d70f71530b208cbed49e18e4a8e2491072d762e01af8709b4e286f3fb0d29f178
   languageName: node
   linkType: hard
 
@@ -5737,7 +5737,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20240603.0"
+    "@cloudflare/workers-types": "npm:4.20240605.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.6
     "@graphql-mesh/utils": ^0.98.6
@@ -18374,9 +18374,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:17.8.0":
-  version: 17.8.0
-  resolution: "eslint-plugin-n@npm:17.8.0"
+"eslint-plugin-n@npm:17.8.1":
+  version: 17.8.1
+  resolution: "eslint-plugin-n@npm:17.8.1"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     enhanced-resolve: "npm:^5.17.0"
@@ -18388,7 +18388,7 @@ __metadata:
     semver: "npm:^7.5.3"
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: 10c0/893c9bfa398ddf06c62e91adeb8d4e870fe0cf5f2aff82d6a7813a083a4f2504102387923ec92c3d84ddf8707302486ea69cb9b833588f88de9533fcb558c767
+  checksum: 10c0/e4e6992d066fa6e21d1a8ea4392d7362c95383a59c16f63d62076ae7c6d5ff085a2ece5e6fb353f4667158a0336c00fdf707b9be38f8cbaa6f5685da39e68b8f
   languageName: node
   linkType: hard
 
@@ -20683,7 +20683,7 @@ __metadata:
     eslint-config-prettier: "npm:9.1.0"
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.29.1"
-    eslint-plugin-n: "npm:17.8.0"
+    eslint-plugin-n: "npm:17.8.1"
     eslint-plugin-promise: "npm:6.2.0"
     eslint-plugin-standard: "npm:5.0.0"
     globby: "npm:11.1.0"
@@ -34512,8 +34512,8 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.7.1":
-  version: 4.11.2
-  resolution: "tsx@npm:4.11.2"
+  version: 4.12.0
+  resolution: "tsx@npm:4.12.0"
   dependencies:
     esbuild: "npm:~0.20.2"
     fsevents: "npm:~2.3.3"
@@ -34523,7 +34523,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/e2ea22a1ec3133ebfc09a90cc94adb1623b880a56eed8296ab2ff04560aa724298a97510cadac86c2917f05df08d8cc7aae7aa0387c5a4861f7bd92de3daead4
+  checksum: 10c0/3ffe41869512685041ee4fffad63ebbabcac9f76b2349c7ca354cf27284c696e45beb7e8a2f39eb44e01e13d54ea97b37e5882e1aa3ddf67aff96a9ffc58a1c0
   languageName: node
   linkType: hard
 
