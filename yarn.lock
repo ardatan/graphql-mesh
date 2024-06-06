@@ -5386,6 +5386,8 @@ __metadata:
   dependenciesMeta:
     node-libcurl:
       optional: true
+    uWebSockets.js:
+      optional: true
   peerDependenciesMeta:
     "@parcel/watcher":
       optional: true
