@@ -19,7 +19,6 @@ import {
   getDefinedRootType,
   getOperationASTFromRequest,
   isAsyncIterable,
-  isPromise,
   MaybeAsyncIterable,
   MaybePromise,
   memoize1,
