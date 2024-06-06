@@ -2,7 +2,11 @@ import { BREAK, DocumentNode, execute, FieldNode, OperationDefinitionNode, visit
 import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { ExecutionResultWithSerializer } from '@envelop/graphql-jit';
-import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
+import {
+  applyRequestTransforms,
+  applyResultTransforms,
+  mapMaybePromise,
+} from '@graphql-mesh/utils';
 import {
   applySchemaTransforms,
   createDefaultExecutor,
@@ -123,33 +127,29 @@ function getExecuteFn(subschema: Subschema) {
             compiledQueryCache.set(request.document, compiledQuery);
           }
           if (operationAST.operation === 'subscription') {
-            const result$ = compiledQuery.subscribe(
+            return mapMaybePromise(
+              compiledQuery.subscribe(
+                request.rootValue,
+                request.context,
+                request.variables,
+              ) as MaybePromise<ExecutionResultWithSerializer>,
+              result => {
+                result.stringify = compiledQuery.stringify;
+                return result;
+              },
+            );
+          }
+          return mapMaybePromise(
+            compiledQuery.query(
               request.rootValue,
               request.context,
               request.variables,
-            ) as MaybePromise<ExecutionResultWithSerializer>;
-            if (isPromise(result$)) {
-              return result$.then(result => {
-                result.stringify = compiledQuery.stringify;
-                return result;
-              });
-            }
-            result$.stringify = compiledQuery.stringify;
-            return result$;
-          }
-          const result$ = compiledQuery.query(
-            request.rootValue,
-            request.context,
-            request.variables,
-          ) as MaybePromise<ExecutionResultWithSerializer>;
-          if (isPromise(result$)) {
-            return result$.then(result => {
+            ) as MaybePromise<ExecutionResultWithSerializer>,
+            result => {
               result.stringify = compiledQuery.stringify;
               return result;
-            });
-          }
-          result$.stringify = compiledQuery.stringify;
-          return result$;
+            },
+          );
         };
       }
     }
@@ -173,30 +173,29 @@ function getExecuteFn(subschema: Subschema) {
     } else {
       transformedDocumentNodeCache.set(originalRequest.document, transformedRequest.document);
     }
-    function handleResult(originalResult: MaybeAsyncIterable<ExecutionResult>) {
-      if (isAsyncIterable(originalResult)) {
-        return mapAsyncIterator(originalResult, singleResult =>
-          applyResultTransforms(
-            singleResult,
-            delegationContext,
-            transformationContext,
-            subschema.transforms,
-          ),
+
+    return mapMaybePromise(
+      executor(transformedRequest),
+      function handleResult(originalResult: MaybeAsyncIterable<ExecutionResult>) {
+        if (isAsyncIterable(originalResult)) {
+          return mapAsyncIterator(originalResult, singleResult =>
+            applyResultTransforms(
+              singleResult,
+              delegationContext,
+              transformationContext,
+              subschema.transforms,
+            ),
+          );
+        }
+        const transformedResult = applyResultTransforms(
+          originalResult,
+          delegationContext,
+          transformationContext,
+          subschema.transforms,
         );
-      }
-      const transformedResult = applyResultTransforms(
-        originalResult,
-        delegationContext,
-        transformationContext,
-        subschema.transforms,
-      );
-      return transformedResult;
-    }
-    const originalResult$ = executor(transformedRequest);
-    if (isPromise(originalResult$)) {
-      return originalResult$.then(handleResult);
-    }
-    return handleResult(originalResult$);
+        return transformedResult;
+      },
+    );
   };
 }
 

@@ -30,6 +30,7 @@ import {
   DefaultLogger,
   getHeadersObj,
   groupTransforms,
+  mapMaybePromise,
   parseWithCache,
   PubSub,
   wrapFetchWithHooks,
@@ -363,44 +364,34 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       operationName?: string,
     ) {
       const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
-      const contextValue$ = contextFactory(contextValue);
       const operationAST = getOperationAST(document, operationName);
       if (!operationAST) {
         throw new Error(`Cannot execute a request without a valid operation.`);
       }
       const isSubscription = operationAST.operation === 'subscription';
       const executeFn = isSubscription ? subscribe : execute;
-      if (isPromise(contextValue$)) {
-        return contextValue$.then(contextValue =>
-          executeFn({
-            schema,
-            document,
-            contextValue,
-            rootValue,
-            variableValues: variableValues as any,
-            operationName,
-          }),
-        );
-      }
-      return executeFn({
-        schema,
-        document,
-        contextValue: contextValue$,
-        rootValue,
-        variableValues: variableValues as any,
-        operationName,
-      });
+      return mapMaybePromise(contextFactory(contextValue), contextValue =>
+        executeFn({
+          schema,
+          document,
+          contextValue,
+          rootValue,
+          variableValues,
+          operationName,
+        }),
+      );
     } as MeshExecutor;
   }
 
   function sdkRequesterFactory(globalContext: any): SdkRequester {
     const executor = createExecutor(globalContext);
     return function sdkRequester(...args) {
-      const result$ = executor(...args);
-      if (isPromise(result$)) {
-        return result$.then(handleExecutorResultForSdk);
-      }
-      return handleExecutorResultForSdk(result$);
+      return mapMaybePromise(executor(...args), function handleExecutorResultForSdk(result) {
+        if (isAsyncIterable(result)) {
+          return mapAsyncIterator(result as AsyncIterableIterator<any>, extractDataOrThrowErrors);
+        }
+        return extractDataOrThrowErrors(result);
+      });
     };
   }
 
@@ -430,13 +421,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     },
     sdkRequesterFactory,
   };
-}
-
-function handleExecutorResultForSdk(result: Awaited<ReturnType<MeshExecutor>>) {
-  if (isAsyncIterable(result)) {
-    return mapAsyncIterator(result as AsyncIterableIterator<any>, extractDataOrThrowErrors);
-  }
-  return extractDataOrThrowErrors(result);
 }
 
 function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {

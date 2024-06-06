@@ -137,13 +137,7 @@ export function addHTTPRootFieldResolver(
       const binaryUpload = await args.input;
       if (isFileUpload(binaryUpload)) {
         const readable = binaryUpload.createReadStream();
-        const chunks: number[] = [];
-        for await (const chunk of readable) {
-          for (const byte of chunk) {
-            chunks.push(byte);
-          }
-        }
-        requestInit.body = new Uint8Array(chunks);
+        requestInit.body = readable as ReadableStream;
 
         const [, contentType] =
           Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
