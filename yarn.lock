@@ -4780,7 +4780,7 @@ __metadata:
     "@graphql-mesh/types": ^0.98.7
     graphql: "*"
   bin:
-    mesh-compose: dist/cjs/bin.js
+    mesh-compose: dist/esm/bin.js
   languageName: unknown
   linkType: soft
 
@@ -5436,7 +5436,7 @@ __metadata:
     "@parcel/watcher":
       optional: true
   bin:
-    mesh-serve: dist/cjs/bin.js
+    mesh-serve: dist/esm/bin.js
   languageName: unknown
   linkType: soft
 

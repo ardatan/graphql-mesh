@@ -1,5 +1,6 @@
 import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
-import 'tsx/cjs'; // support importing typescript configs
+import 'tsx/cjs'; // support importing typescript configs in CommonJS
+import 'tsx/esm'; // support importing typescript configs in ESM
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
@@ -79,6 +80,8 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
   version?: string;
 }
 
+export type ImportedModule<T> = T | { default: T };
+
 export async function run({
   log: rootLog = new DefaultLogger(),
   productName = 'Mesh',
@@ -98,23 +101,29 @@ export async function run({
     ? opts.configPath
     : resolve(process.cwd(), opts.configPath);
   log.info(`Checking configuration at ${configPath}`);
-  const importedConfig: { serveConfig?: MeshServeCLIConfig } = await import(configPath).catch(
-    err => {
-      if (err.code === 'ERR_MODULE_NOT_FOUND') {
-        return {}; // no config is ok
-      }
-      log.error('Loading configuration failed!');
-      throw err;
-    },
-  );
-  if (importedConfig.serveConfig) {
+  const importedConfigModule: ImportedModule<{ serveConfig?: MeshServeCLIConfig }> = await import(
+    configPath
+  ).catch(err => {
+    if (err.code === 'ERR_MODULE_NOT_FOUND') {
+      return {}; // no config is ok
+    }
+    log.error('Loading configuration failed!');
+    throw err;
+  });
+  let importedConfig: MeshServeCLIConfig;
+  if ('default' in importedConfigModule) {
     log.info('Loaded configuration');
+    importedConfig = importedConfigModule.default.serveConfig;
+  } else if ('serveConfig' in importedConfigModule) {
+    log.info('Loaded configuration');
+    importedConfig = importedConfigModule.serveConfig;
   } else {
+    importedConfig = {};
     log.info('No configuration found');
   }
 
   const config: MeshServeCLIConfig = {
-    ...importedConfig?.serveConfig,
+    ...importedConfig,
     ...opts,
   };
 
