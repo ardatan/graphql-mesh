@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-hive
 
+## 0.98.7
+
+### Patch Changes
+
+- [#7069](https://github.com/ardatan/graphql-mesh/pull/7069)
+  [`c5ab899`](https://github.com/ardatan/graphql-mesh/commit/c5ab89992628b2a588dc227d3400ed2b3784cc7d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not hook into `terminate` events of Node.js,
+  because Mesh handles it already
+
+  Hooking into those events cause a memory leak because plugins are initialized on each polling
+  iteration in legacy Mesh CLI/Runtime
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.98.7
+  - @graphql-mesh/utils@0.98.7
+
 ## 0.98.6
 
 ### Patch Changes
