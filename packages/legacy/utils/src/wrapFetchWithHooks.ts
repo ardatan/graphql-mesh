@@ -1,5 +1,4 @@
 import { MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
-import { isPromise } from '@graphql-tools/utils';
 import { iterateAsync } from './iterateAsync.js';
 import { mapMaybePromise } from './map-maybe-promise.js';
 

@@ -42,7 +42,6 @@ import {
   ExecutionResult,
   getRootTypeMap,
   isAsyncIterable,
-  isPromise,
   mapAsyncIterator,
   memoize1,
 } from '@graphql-tools/utils';

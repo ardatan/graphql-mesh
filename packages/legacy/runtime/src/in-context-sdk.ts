@@ -29,12 +29,7 @@ import {
   StitchingInfo,
   SubschemaConfig,
 } from '@graphql-tools/delegate';
-import {
-  buildOperationNodeForField,
-  isDocumentNode,
-  isPromise,
-  memoize1,
-} from '@graphql-tools/utils';
+import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { MESH_API_CONTEXT_SYMBOL } from './constants.js';
 
