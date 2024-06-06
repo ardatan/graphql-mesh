@@ -9,7 +9,7 @@ import { useNewRelic } from '@envelop/newrelic';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
+import { getHeadersObj, mapMaybePromise } from '@graphql-mesh/utils';
 
 const DESTS = attributeFilter.DESTINATIONS;
 
@@ -124,14 +124,10 @@ export default function useMeshNewrelic(
             }
             const res$ = requestHandler(...args);
 
-            if (res$) {
-              if (isPromise(res$)) {
-                return res$.then(sendResAttributes).then(() => res$);
-              }
-              sendResAttributes(res$);
-            }
-
-            return res$;
+            return mapMaybePromise(res$, res => {
+              sendResAttributes(res);
+              return res;
+            });
           }),
         );
       }

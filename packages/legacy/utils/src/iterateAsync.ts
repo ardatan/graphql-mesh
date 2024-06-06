@@ -1,4 +1,5 @@
 import { isPromise, type MaybePromise } from '@graphql-tools/utils';
+import { mapMaybePromise } from './map-maybe-promise';
 
 export function iterateAsync<TInput, TOutput>(
   iterable: Iterable<TInput>,
@@ -11,19 +12,12 @@ export function iterateAsync<TInput, TOutput>(
     if (endOfIterator) {
       return;
     }
-    const result$ = callback(value);
-    if (isPromise(result$)) {
-      return result$.then(result => {
-        if (result) {
-          results?.push(result);
-        }
-        return iterate();
-      });
-    }
-    if (result$) {
-      results?.push(result$);
-    }
-    return iterate();
+    return mapMaybePromise(callback(value), result => {
+      if (result) {
+        results?.push(result);
+      }
+      return iterate();
+    });
   }
   return iterate();
 }

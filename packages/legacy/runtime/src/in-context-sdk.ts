@@ -21,7 +21,7 @@ import {
   SelectionSetParam,
   SelectionSetParamOrFactory,
 } from '@graphql-mesh/types';
-import { iterateAsync, parseWithCache } from '@graphql-mesh/utils';
+import { iterateAsync, mapMaybePromise, parseWithCache } from '@graphql-mesh/utils';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import {
   delegateToSchema,
@@ -219,19 +219,12 @@ export function getInContextSDK(
                 onDelegateHook => onDelegateHook(onDelegatePayload),
                 onDelegateHookDones,
               );
-              if (isPromise(onDelegateResult$)) {
-                return onDelegateResult$.then(() =>
-                  handleIterationResult(
-                    batchDelegateToSchema,
-                    batchDelegationOptions,
-                    onDelegateHookDones,
-                  ),
-                );
-              }
-              return handleIterationResult(
-                batchDelegateToSchema,
-                batchDelegationOptions,
-                onDelegateHookDones,
+              return mapMaybePromise(onDelegateResult$, () =>
+                handleIterationResult(
+                  batchDelegateToSchema,
+                  batchDelegationOptions,
+                  onDelegateHookDones,
+                ),
               );
             } else {
               const regularDelegateOptions: IDelegateToSchemaOptions = {
@@ -260,19 +253,12 @@ export function getInContextSDK(
                 onDelegateHook => onDelegateHook(onDelegatePayload),
                 onDelegateHookDones,
               );
-              if (isPromise(onDelegateResult$)) {
-                return onDelegateResult$.then(() =>
-                  handleIterationResult(
-                    delegateToSchema,
-                    regularDelegateOptions,
-                    onDelegateHookDones,
-                  ),
-                );
-              }
-              return handleIterationResult(
-                delegateToSchema,
-                regularDelegateOptions,
-                onDelegateHookDones,
+              return mapMaybePromise(onDelegateResult$, () =>
+                handleIterationResult(
+                  delegateToSchema,
+                  regularDelegateOptions,
+                  onDelegateHookDones,
+                ),
               );
             }
           };
@@ -334,26 +320,16 @@ function handleIterationResult<TDelegateFn extends (...args: any) => any>(
   onDelegateHookDones: OnDelegateHookDone[],
 ) {
   const delegationResult$ = delegateFn(delegateOptions);
-  if (isPromise(delegationResult$)) {
-    return delegationResult$.then(delegationResult =>
-      handleOnDelegateDone(delegationResult, onDelegateHookDones),
+  return mapMaybePromise(delegationResult$, function handleOnDelegateDone(delegationResult) {
+    function setResult(newResult: any) {
+      delegationResult = newResult;
+    }
+    const onDelegateDoneResult$ = iterateAsync(onDelegateHookDones, onDelegateHookDone =>
+      onDelegateHookDone({
+        result: delegationResult,
+        setResult,
+      }),
     );
-  }
-  return handleOnDelegateDone(delegationResult$, onDelegateHookDones);
-}
-
-function handleOnDelegateDone(delegationResult: any, onDelegateHookDones: OnDelegateHookDone[]) {
-  function setResult(newResult: any) {
-    delegationResult = newResult;
-  }
-  const onDelegateDoneResult$ = iterateAsync(onDelegateHookDones, onDelegateHookDone =>
-    onDelegateHookDone({
-      result: delegationResult,
-      setResult,
-    }),
-  );
-  if (isPromise(onDelegateDoneResult$)) {
-    return onDelegateDoneResult$.then(() => delegationResult);
-  }
-  return delegationResult;
+    return mapMaybePromise(onDelegateDoneResult$, () => delegationResult);
+  });
 }
