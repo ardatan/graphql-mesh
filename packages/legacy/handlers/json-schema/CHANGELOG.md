@@ -1,5 +1,17 @@
 # @graphql-mesh/json-schema
 
+## 0.100.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`19e90eb`](https://github.com/ardatan/graphql-mesh/commit/19e90ebc82b6636b9e89118efe672b67459514c1),
+  [`40d9235`](https://github.com/ardatan/graphql-mesh/commit/40d9235fc9b90b5d3b75adc8228b40bc6e476078)]:
+  - @graphql-mesh/store@0.98.7
+  - @omnigraph/json-schema@0.100.11
+  - @graphql-mesh/types@0.98.7
+  - @graphql-mesh/utils@0.98.7
+
 ## 0.100.10
 
 ### Patch Changes

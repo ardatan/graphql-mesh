@@ -1,5 +1,14 @@
 # @omnigraph/soap
 
+## 0.99.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.98.7
+  - @graphql-mesh/utils@0.98.7
+  - @graphql-mesh/transport-soap@0.2.7
+
 ## 0.99.2
 
 ### Patch Changes

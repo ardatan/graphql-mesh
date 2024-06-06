@@ -5,6 +5,16 @@
 ### Patch Changes
 
 - Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.3.7
+  - @graphql-mesh/fusion-runtime@0.3.8
+  - @omnigraph/thrift@0.2.7
+  - @graphql-mesh/serve-cli@0.4.10
+
+## null
+
+### Patch Changes
+
+- Updated dependencies []:
   - @graphql-mesh/serve-cli@0.4.9
 
 ## null

@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/openapi-youtrack",
-  "version": "0.17.11",
+  "version": "0.17.12",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,9 +8,9 @@
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.3.6",
-    "@graphql-mesh/serve-cli": "^0.4.9",
-    "@omnigraph/openapi": "^0.100.11",
+    "@graphql-mesh/compose-cli": "^0.3.7",
+    "@graphql-mesh/serve-cli": "^0.4.10",
+    "@omnigraph/openapi": "^0.100.12",
     "graphql": "^16.8.1"
   }
 }

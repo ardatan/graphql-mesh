@@ -1,5 +1,18 @@
 # cloudflare-workers
 
+## 0.11.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`40d9235`](https://github.com/ardatan/graphql-mesh/commit/40d9235fc9b90b5d3b75adc8228b40bc6e476078)]:
+  - @omnigraph/json-schema@0.100.11
+  - @graphql-mesh/cache-cfw-kv@0.98.7
+  - @graphql-mesh/cache-localforage@0.98.7
+  - @graphql-mesh/compose-cli@0.3.7
+  - @graphql-mesh/plugin-response-cache@0.98.8
+  - @graphql-mesh/serve-runtime@0.3.10
+
 ## 0.11.11
 
 ### Patch Changes
