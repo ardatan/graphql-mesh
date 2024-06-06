@@ -12,7 +12,7 @@
     "node": ">=16.0.0"
   },
   "bin": {
-    "mesh-compose": "dist/cjs/bin.js"
+    "mesh-compose": "dist/esm/bin.js"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

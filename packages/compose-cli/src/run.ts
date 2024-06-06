@@ -1,4 +1,5 @@
-import 'tsx/cjs'; // support importing typescript configs
+import 'tsx/cjs'; // support importing typescript configs in CommonJS
+import 'tsx/esm'; // support importing typescript configs in ESM
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
@@ -34,6 +35,8 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
   version?: string;
 }
 
+export type ImportedModule<T> = T | { default: T };
+
 export async function run({
   log: rootLog = new DefaultLogger(),
   productName = 'Mesh Compose',
@@ -52,23 +55,27 @@ export async function run({
     ? opts.configPath
     : resolve(process.cwd(), opts.configPath);
   log.info(`Checking configuration at ${configPath}`);
-  const importedConfig: { composeConfig?: MeshComposeCLIConfig } = await import(configPath).catch(
-    err => {
+  const importedConfigModule: ImportedModule<{ composeConfig?: MeshComposeCLIConfig }> =
+    await import(configPath).catch(err => {
       if (err.code === 'ERR_MODULE_NOT_FOUND') {
         return {}; // no config is ok
       }
       log.error('Loading configuration failed!');
       throw err;
-    },
-  );
-  if (importedConfig.composeConfig) {
-    log.info('Loaded configuration');
+    });
+
+  let importedConfig: MeshComposeCLIConfig;
+  if ('default' in importedConfigModule) {
+    importedConfig = importedConfigModule.default.composeConfig;
+  } else if ('composeConfig' in importedConfigModule) {
+    importedConfig = importedConfigModule.composeConfig;
   } else {
     throw new Error(`No configuration found at ${configPath}`);
   }
+  log.info('Loaded configuration');
 
   const config: MeshComposeCLIConfig = {
-    ...importedConfig?.composeConfig,
+    ...importedConfig,
     ...opts,
   };
 
