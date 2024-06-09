@@ -34516,10 +34516,10 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.7.1":
-  version: 4.13.3
-  resolution: "tsx@npm:4.13.3"
+  version: 4.15.1
+  resolution: "tsx@npm:4.15.1"
   dependencies:
-    esbuild: "npm:~0.20.2"
+    esbuild: "npm:~0.21.4"
     fsevents: "npm:~2.3.3"
     get-tsconfig: "npm:^4.7.5"
   dependenciesMeta:
@@ -34527,7 +34527,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/b3b485aa3196ac03385fc6db6ad4f873e4a5bdacead1dd30dc1ef2938072bb349ad05633f87125c1acaad7804350905a65ca64d1f1455a84942440c798a3a1cc
+  checksum: 10c0/ae361b98ba4b99cab3faa5d448a80d6c44c2a88768c1dea11ccf7c444ccd2253ae2914744a5cdcb7aa5f6a3a18a2cb933623ae467b9b0b767c103ee913b0fdd1
   languageName: node
   linkType: hard
 
