@@ -9,10 +9,19 @@ import {
   YogaServerOptions,
 } from 'graphql-yoga';
 import { Plugin as EnvelopPlugin } from '@envelop/core';
+import { SupergraphSDLFetcherOptions } from '@graphql-hive/client/typings/internal/types.js';
 import { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@graphql-mesh/types';
+import {
+  KeyValueCache,
+  Logger,
+  MeshFetch,
+  MeshPubSub,
+  OnFetchHook,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
+import { FetchSupergraphSdlFromManagedFederationOpts } from '@graphql-tools/federation';
 import { IResolvers } from '@graphql-tools/utils';
 import { CORSPluginOptions } from '@whatwg-node/server';
 import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
@@ -22,6 +31,8 @@ export { UnifiedGraphConfig };
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithFusiongraph<TContext>
   | MeshServeConfigWithSupergraph<TContext>
+  | MeshServeConfigWithHive<TContext>
+  | MeshServeConfigWithGraphOS<TContext>
   | MeshServeConfigWithProxy<TContext>;
 
 export interface MeshServeConfigContext {
@@ -63,46 +74,20 @@ export type MeshServePlugin<
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
 
-interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
+interface MeshServeConfigWithFusiongraph<TContext>
+  extends MeshServeConfigWithUnifiedGraphSource<TContext> {
   /**
    * Path to the GraphQL Fusion unified schema.
    */
   fusiongraph?: UnifiedGraphConfig;
-  /**
-   * Polling interval in milliseconds.
-   */
-  polling?: number;
-  /**
-   * Additional GraphQL schema resolvers.
-   */
-  additionalResolvers?:
-    | IResolvers<unknown, MeshServeContext & TContext>
-    | IResolvers<unknown, MeshServeContext>[];
-  /**
-   * Implement custom executors for transports.
-   */
-  transports?: TransportsOption;
 }
 
-interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
+interface MeshServeConfigWithSupergraph<TContext>
+  extends MeshServeConfigWithUnifiedGraphSource<TContext> {
   /**
    * Path to the Apollo Federation unified schema.
    */
   supergraph?: UnifiedGraphConfig;
-  /**
-   * Polling interval in milliseconds.
-   */
-  polling?: number;
-  /**
-   * Additional GraphQL schema resolvers.
-   */
-  additionalResolvers?:
-    | IResolvers<unknown, MeshServeContext & TContext>
-    | IResolvers<unknown, MeshServeContext>[];
-  /**
-   * Implement custom executors for transports.
-   */
-  transports?: TransportsOption;
 }
 
 export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -115,6 +100,43 @@ export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWitho
     | Transport<'http'>
     | Promise<Transport<'http'>>
     | (() => Transport<'http'> | Promise<Transport<'http'>>);
+}
+
+interface MeshServeConfigWithUnifiedGraphSource<TContext>
+  extends MeshServeConfigWithoutSource<TContext> {
+  /**
+   * Polling interval in milliseconds.
+   */
+  polling?: number;
+  /**
+   * Additional GraphQL schema resolvers.
+   */
+  additionalResolvers?:
+    | IResolvers<unknown, MeshServeContext & TContext>
+    | IResolvers<unknown, MeshServeContext>[];
+  /**
+   * Implement custom executors for transports.
+   */
+  transports?: TransportsOption;
+}
+
+interface MeshServeConfigWithHive<TContext>
+  extends MeshServeConfigWithUnifiedGraphSource<TContext> {
+  /**
+   * Integration options with GraphQL Hive.
+   */
+  hive: YamlConfig.HivePlugin & SupergraphSDLFetcherOptions;
+}
+
+interface MeshServeConfigWithGraphOS<TContext>
+  extends MeshServeConfigWithUnifiedGraphSource<TContext> {
+  /**
+   * Integration options with Apollo GraphOS.
+   */
+  graphos: Omit<
+    FetchSupergraphSdlFromManagedFederationOpts,
+    'lastSeenId' | 'fetch' | 'loggerByMessageLevel'
+  >;
 }
 
 interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {

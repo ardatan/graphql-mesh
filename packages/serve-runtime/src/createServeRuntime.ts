@@ -10,6 +10,7 @@ import {
   YogaServerInstance,
   type Plugin,
 } from 'graphql-yoga';
+import { createSupergraphSDLFetcher } from '@graphql-hive/client';
 import {
   handleFederationSupergraph,
   handleFusiongraph,
@@ -18,8 +19,9 @@ import {
   UnifiedGraphHandler,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
+import useMeshHive from '@graphql-mesh/plugin-hive';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
+import { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
@@ -27,6 +29,7 @@ import {
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
+import { fetchSupergraphSdlFromManagedFederation } from '@graphql-tools/federation';
 import { MaybePromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig, UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
@@ -63,15 +66,16 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   // TODO: Will be deleted after v0
   const onDelegateHooks: OnDelegateHook<unknown>[] = [];
 
-  let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
   let schemaFetcher: () => MaybePromise<GraphQLSchema>;
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
+  let registryPlugin: MeshPlugin<unknown>;
 
   const disposableStack = new AsyncDisposableStack();
 
   if ('proxy' in config) {
+    let unifiedGraph: GraphQLSchema;
     const proxyExecutor = getProxyExecutor({
       config,
       configContext,
@@ -80,6 +84,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       disposableStack,
     });
     const executorPlugin = useExecutor(proxyExecutor);
+    executorPlugin.onSchemaChange = function onSchemaChange(payload) {
+      unifiedGraph = payload.schema;
+    };
     unifiedGraphPlugin = executorPlugin;
     readinessChecker = () => {
       const res$ = proxyExecutor({
@@ -97,7 +104,88 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     } else if ('supergraph' in config) {
       handleUnifiedGraph = handleFederationSupergraph;
       unifiedGraphInConfig = config.supergraph;
+
+      // When the schema is managed by GraphQL Hive
+    } else if ('hive' in config) {
+      // TODO: We need to fetch the unified graph type from Hive
+      handleUnifiedGraph = handleFederationSupergraph;
+      const fetcher = createSupergraphSDLFetcher(config.hive);
+      unifiedGraphInConfig = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
+      // Create a child logger for Hive
+      const hiveLogger = logger.child('Hive');
+      registryPlugin = useMeshHive({
+        enabled: true,
+        logger: hiveLogger,
+        ...config.hive,
+        ...configContext,
+      });
+
+      // When the schema is managed by Apollo GraphOS
+    } else if ('graphos' in config) {
+      handleUnifiedGraph = handleFederationSupergraph;
+      // Create a child logger for GraphOS
+      const graphosLogger = logger.child('GraphOS');
+      let lastSeenId: string;
+      let lastFetchedSupergraph: string;
+      let delayTimeout: NodeJS.Timeout;
+      let delayTimeoutPromise = Promise.resolve();
+      disposableStack.defer(() => {
+        if (delayTimeout) {
+          clearTimeout(delayTimeout);
+        }
+      });
+      unifiedGraphInConfig = () =>
+        // When Apollo GraphOS needs some delay to fetch the next schema, we wait for it
+        delayTimeoutPromise
+          .then(() =>
+            fetchSupergraphSdlFromManagedFederation({
+              fetch: wrappedFetchFn,
+              loggerByMessageLevel: {
+                ERROR(message) {
+                  graphosLogger.error(message);
+                },
+                WARN(message) {
+                  graphosLogger.warn(message);
+                },
+                INFO(message) {
+                  graphosLogger.info(message);
+                },
+              },
+              lastSeenId,
+              ...config.graphos,
+            }),
+          )
+          .then(result => {
+            if ('id' in result) {
+              lastSeenId = result.id;
+            }
+            if ('supergraphSdl' in result) {
+              lastFetchedSupergraph = result.supergraphSdl;
+            }
+            if ('minDelaySeconds' in result) {
+              // Respect GraphOS's delay
+              const minDelayMilliseconds = result.minDelaySeconds * 1000;
+              if (delayTimeout) {
+                clearTimeout(delayTimeout);
+              }
+              delayTimeoutPromise = new Promise(resolve => {
+                delayTimeout = setTimeout(resolve, minDelayMilliseconds);
+              });
+            }
+            if ('error' in result) {
+              const messageForLog = `Failed to fetch supergraph SDL: ${result.error.code}: ${result.error.message}`;
+              if (lastFetchedSupergraph) {
+                graphosLogger.error(messageForLog);
+              } else {
+                throw new Error(messageForLog);
+              }
+            }
+            return lastFetchedSupergraph;
+          });
+      // TODO: Reporting will be added here
+      // registryPlugin = ...
     }
+
     const unifiedGraphManager = new UnifiedGraphManager({
       getUnifiedGraph: () => handleUnifiedGraphConfig(unifiedGraphInConfig, configContext),
       handleUnifiedGraph,
@@ -158,6 +246,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       defaultMeshPlugin,
       unifiedGraphPlugin,
       readinessCheckPlugin,
+      registryPlugin,
       ...(config.plugins?.(configContext) || []),
     ],
     // @ts-expect-error PromiseLike is not compatible with Promise
