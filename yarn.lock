@@ -17,7 +17,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/css-tools@npm:^4.3.2":
+"@adobe/css-tools@npm:^4.4.0":
   version: 4.4.0
   resolution: "@adobe/css-tools@npm:4.4.0"
   checksum: 10c0/d65ddc719389bf469097df80fb16a8af48a973dea4b57565789d70ac8e7ab4987e6dc0095da3ed5dc16c1b6f8960214a7590312eeda8abd543d91fd0f59e6c94
@@ -9768,11 +9768,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:6.4.5":
-  version: 6.4.5
-  resolution: "@testing-library/jest-dom@npm:6.4.5"
+"@testing-library/jest-dom@npm:6.4.6":
+  version: 6.4.6
+  resolution: "@testing-library/jest-dom@npm:6.4.6"
   dependencies:
-    "@adobe/css-tools": "npm:^4.3.2"
+    "@adobe/css-tools": "npm:^4.4.0"
     "@babel/runtime": "npm:^7.9.2"
     aria-query: "npm:^5.0.0"
     chalk: "npm:^3.0.0"
@@ -9797,7 +9797,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/4cfdd44e2abab2b9d399c47cbfe686729bb65160d7df0f9e2329aaaea7702f6e852a9eefb29b468f00c1e5a5274b684f8cac76959d33299dfa909ba007ea191d
+  checksum: 10c0/8f369c1d27f8128b3794c6b9af5f5b794a47af4670819756e9f4e7cf69e277b30e8b89c548277a279918f648c85c6c7874f1a867e52edd4edb0629a2cf377daa
   languageName: node
   linkType: hard
 
@@ -11423,7 +11423,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.98.8"
     "@graphql-mesh/serve-runtime": "npm:^0.3.10"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.60.0"
+    wrangler: "npm:3.60.1"
   languageName: unknown
   linkType: soft
 
@@ -13701,7 +13701,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.3.10"
     "@omnigraph/json-schema": "npm:^0.100.11"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.60.0"
+    wrangler: "npm:3.60.1"
   languageName: unknown
   linkType: soft
 
@@ -14148,7 +14148,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.100.11"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.8"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.60.0"
+    wrangler: "npm:3.60.1"
   languageName: unknown
   linkType: soft
 
@@ -18691,7 +18691,7 @@ __metadata:
   resolution: "frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
     "@apollo/client": "npm:3.10.4"
-    "@testing-library/jest-dom": "npm:6.4.5"
+    "@testing-library/jest-dom": "npm:6.4.6"
     "@testing-library/react": "npm:15.0.7"
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
@@ -18705,7 +18705,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     react-scripts: "npm:5.0.1"
     typescript: "npm:^5.4.2"
-    web-vitals: "npm:4.1.0"
+    web-vitals: "npm:4.1.1"
   languageName: unknown
   linkType: soft
 
@@ -31644,7 +31644,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.98.7"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.8"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.60.0"
+    wrangler: "npm:3.60.1"
   languageName: unknown
   linkType: soft
 
@@ -33346,8 +33346,8 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.7.1":
-  version: 4.15.1
-  resolution: "tsx@npm:4.15.1"
+  version: 4.15.2
+  resolution: "tsx@npm:4.15.2"
   dependencies:
     esbuild: "npm:~0.21.4"
     fsevents: "npm:~2.3.3"
@@ -33357,7 +33357,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/ae361b98ba4b99cab3faa5d448a80d6c44c2a88768c1dea11ccf7c444ccd2253ae2914744a5cdcb7aa5f6a3a18a2cb933623ae467b9b0b767c103ee913b0fdd1
+  checksum: 10c0/6349ac29c13b567ece91d38e239606c0a8655ddbbdfab7250c04d7f9d5c447ff28f8dc7db62eaa16cafaff9cb5194c2a511d618cbfd4909e76cc54f07bc22424
   languageName: node
   linkType: hard
 
@@ -34511,10 +34511,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-vitals@npm:4.1.0":
-  version: 4.1.0
-  resolution: "web-vitals@npm:4.1.0"
-  checksum: 10c0/5f30db0c098172e48ebe95a28e9782447c7b31e9b275577fa4c70b8d2381aa425998c7da2e8f1a21e47283fb2002e4d6126339d0b6fab3ad125dab1fcd60e1d3
+"web-vitals@npm:4.1.1":
+  version: 4.1.1
+  resolution: "web-vitals@npm:4.1.1"
+  checksum: 10c0/3f658a05e45a3ef186cb99fd1cbe37944b3a6d807c137bb57257c0717892a6c464a1e29f9f3c356ef5d9f3253ccc67d1f85b887c549a8a5d3c4670021dd5fdaf
   languageName: node
   linkType: hard
 
@@ -35257,9 +35257,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.60.0":
-  version: 3.60.0
-  resolution: "wrangler@npm:3.60.0"
+"wrangler@npm:3.60.1":
+  version: 3.60.1
+  resolution: "wrangler@npm:3.60.1"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.2"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35288,7 +35288,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/6d4f1bb7c2d6342fceb4310f7e3aee5651403b58edf264be68e63ece3d2e16db256bafb68ca3699f07c1b2b27a619e90a574bbe33acdd6c5460392c88d6c0e1a
+  checksum: 10c0/5b459ec57321cc51ac5f6f699c0cc9b18344f9840329ffd7a4bfe020c8067573a2409d3840f9c473a6fb13495e1cc4f0d02d355a4b463a83cb30e380ed60704a
   languageName: node
   linkType: hard
 
