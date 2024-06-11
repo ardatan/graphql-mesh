@@ -11406,7 +11406,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.98.8"
     "@graphql-mesh/serve-runtime": "npm:^0.3.10"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.60.1"
+    wrangler: "npm:3.60.2"
   languageName: unknown
   linkType: soft
 
@@ -13684,7 +13684,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.3.10"
     "@omnigraph/json-schema": "npm:^0.100.11"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.60.1"
+    wrangler: "npm:3.60.2"
   languageName: unknown
   linkType: soft
 
@@ -14131,7 +14131,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.100.11"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.8"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.60.1"
+    wrangler: "npm:3.60.2"
   languageName: unknown
   linkType: soft
 
@@ -19519,7 +19519,7 @@ __metadata:
     graphql: "npm:16.8.1"
     husky: "npm:9.0.11"
     jest: "npm:29.7.0"
-    lint-staged: "npm:15.2.5"
+    lint-staged: "npm:15.2.6"
     minimatch: "npm:9.0.4"
     prettier: "npm:3.3.2"
     threads: "npm:^1.7.0"
@@ -23252,9 +23252,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:15.2.5":
-  version: 15.2.5
-  resolution: "lint-staged@npm:15.2.5"
+"lint-staged@npm:15.2.6":
+  version: 15.2.6
+  resolution: "lint-staged@npm:15.2.6"
   dependencies:
     chalk: "npm:~5.3.0"
     commander: "npm:~12.1.0"
@@ -23268,7 +23268,7 @@ __metadata:
     yaml: "npm:~2.4.2"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/89c54489783510f86df15756659facade82e849c0cbfb564fe047b82be91c5d2b1b5608a4bfc5237bd7b9fd0e1206e66aa3e4f8cad3ac51e37a098b8492c2fa6
+  checksum: 10c0/3976a86634324e5e0704911f30681f36e0c3e3aa4737da49cce1e5e73e089ccde65f20a6d0c74fff763baa9bc29b598ba3ba31fc785a66012cd3d75a19d69e8b
   languageName: node
   linkType: hard
 
@@ -31611,7 +31611,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.98.7"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.8"
     graphql: "npm:16.8.1"
-    wrangler: "npm:3.60.1"
+    wrangler: "npm:3.60.2"
   languageName: unknown
   linkType: soft
 
@@ -35224,9 +35224,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.60.1":
-  version: 3.60.1
-  resolution: "wrangler@npm:3.60.1"
+"wrangler@npm:3.60.2":
+  version: 3.60.2
+  resolution: "wrangler@npm:3.60.2"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.2"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35255,7 +35255,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/5b459ec57321cc51ac5f6f699c0cc9b18344f9840329ffd7a4bfe020c8067573a2409d3840f9c473a6fb13495e1cc4f0d02d355a4b463a83cb30e380ed60704a
+  checksum: 10c0/edf25ccb0dafc9caf74af75ca1e4f535e627ca6ed530f292fd4f4927426f04b9d47191409f9457669b3002e3f3e630b3fda115b10a0790ca90cee88c2379fa52
   languageName: node
   linkType: hard
 
