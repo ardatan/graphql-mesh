@@ -8413,7 +8413,7 @@ __metadata:
     "@omnigraph/json-schema": "npm:^0.100.11"
     "@whatwg-node/fetch": "npm:0.9.18"
     change-case: "npm:^4.1.2"
-    fets: "npm:0.8.0"
+    fets: "npm:0.8.1"
     graphql-yoga: "npm:5.3.1"
     json-bigint-patch: "npm:0.0.8"
     json-machete: "npm:^0.97.3"
@@ -18253,9 +18253,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fets@npm:0.8.0, fets@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "fets@npm:0.8.0"
+"fets@npm:0.8.1, fets@npm:^0.8.0":
+  version: 0.8.1
+  resolution: "fets@npm:0.8.1"
   dependencies:
     "@sinclair/typebox": "npm:^0.32.0"
     "@whatwg-node/cookie-store": "npm:^0.2.0"
@@ -18266,7 +18266,7 @@ __metadata:
     qs: "npm:^6.11.2"
     ts-toolbelt: "npm:^9.6.0"
     tslib: "npm:^2.3.1"
-  checksum: 10c0/f352005c9e78526369db00c70fc1c2831bbd80438a748f65cb15894f584ff1af64242bdd74578b94981e270b69741588f18d0c93d3485199613959c4fa668ce2
+  checksum: 10c0/fd7d8bb284b6b77ea498c26cb4e7d7d5d2f83ed74fc53bf82708f561b237255563425ac6690dbc6a0bd8563f7317330f1839eb0369618f27f95e79855b3307cd
   languageName: node
   linkType: hard
 
@@ -22788,7 +22788,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.100.11"
     "@types/node": "npm:20.14.2"
     concurrently: "npm:8.2.2"
-    fets: "npm:0.8.0"
+    fets: "npm:0.8.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
@@ -22837,7 +22837,7 @@ __metadata:
     "@graphql-mesh/plugin-live-query": "npm:0.98.7"
     "@whatwg-node/fetch": "npm:^0.9.0"
     concurrently: "npm:8.2.2"
-    fets: "npm:0.8.0"
+    fets: "npm:0.8.1"
     graphql: "npm:16.8.1"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -29059,7 +29059,7 @@ __metadata:
     "@graphql-mesh/openapi": "npm:0.100.12"
     "@sinclair/typebox": "npm:0.32.31"
     concurrently: "npm:8.2.2"
-    fets: "npm:0.8.0"
+    fets: "npm:0.8.1"
     graphql: "npm:16.8.1"
     jest: "npm:29.7.0"
     ts-node: "npm:^10.9.2"
