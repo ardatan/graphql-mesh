@@ -14,60 +14,60 @@ directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFIN
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
 type Query {
-  dummy: String @source(subgraph: "OpenAPICallbackExample", name: "dummy", type: "String")
+  dummy: String @source(name: "dummy", type: "String", subgraph: "OpenAPICallbackExample")
 }
 
 type Mutation {
   """subscribes a client to receive out-of-band data"""
-  post_streams(input: post_streams_request_Input @source(subgraph: "OpenAPICallbackExample", name: "input", type: "post_streams_request_Input")): SubscriptionInfo @httpOperation(subgraph: "OpenAPICallbackExample", path: "/streams", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "OpenAPICallbackExample", name: "post_streams", type: "SubscriptionInfo")
+  post_streams(input: post_streams_request_Input @source(name: "input", type: "post_streams_request_Input", subgraph: "OpenAPICallbackExample")): SubscriptionInfo @httpOperation(subgraph: "OpenAPICallbackExample", path: "/streams", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(name: "post_streams", type: "SubscriptionInfo", subgraph: "OpenAPICallbackExample")
 }
 
 """subscription information"""
-type SubscriptionInfo @source(subgraph: "OpenAPICallbackExample", name: "SubscriptionInfo") {
+type SubscriptionInfo @source(name: "SubscriptionInfo", subgraph: "OpenAPICallbackExample") {
   """this unique identifier allows management of the subscription"""
-  subscriptionId: String! @source(subgraph: "OpenAPICallbackExample", name: "subscriptionId", type: "String!")
+  subscriptionId: String! @source(name: "subscriptionId", type: "String!", subgraph: "OpenAPICallbackExample")
 }
 
-input post_streams_request_Input @source(subgraph: "OpenAPICallbackExample", name: "post_streams_request_Input") {
+input post_streams_request_Input @source(name: "post_streams_request_Input", subgraph: "OpenAPICallbackExample") {
   """
   the location where data will be sent.  Must be network accessible
   by the source server
   """
-  callbackUrl: URL @source(subgraph: "OpenAPICallbackExample", name: "callbackUrl", type: "URL")
+  callbackUrl: URL @source(name: "callbackUrl", type: "URL", subgraph: "OpenAPICallbackExample")
 }
 
 """
 A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
 """
-scalar URL @source(subgraph: "OpenAPICallbackExample", name: "URL") @source(subgraph: "OpenAPICallbackExample", name: "URL")
+scalar URL @source(name: "URL", subgraph: "OpenAPICallbackExample") @source(name: "URL", subgraph: "OpenAPICallbackExample")
 
 type Subscription {
   """PubSub Topic: webhook:post:/callback/{args.subscriptionId}"""
-  onData(subscriptionId: String @source(subgraph: "OpenAPICallbackExample", name: "subscriptionId", type: "String")): SubscriptionPayload @pubsubOperation(subgraph: "OpenAPICallbackExample", pubsubTopic: "webhook:post:/callback/{args.subscriptionId}") @source(subgraph: "OpenAPICallbackExample", name: "onData", type: "SubscriptionPayload")
+  onData(subscriptionId: String @source(name: "subscriptionId", type: "String", subgraph: "OpenAPICallbackExample")): SubscriptionPayload @pubsubOperation(subgraph: "OpenAPICallbackExample", pubsubTopic: "webhook:post:/callback/{args.subscriptionId}") @source(name: "onData", type: "SubscriptionPayload", subgraph: "OpenAPICallbackExample")
 }
 
-type SubscriptionPayload @source(subgraph: "OpenAPICallbackExample", name: "SubscriptionPayload") {
-  timestamp: DateTime @source(subgraph: "OpenAPICallbackExample", name: "timestamp", type: "DateTime")
-  userData: String @source(subgraph: "OpenAPICallbackExample", name: "userData", type: "String")
+type SubscriptionPayload @source(name: "SubscriptionPayload", subgraph: "OpenAPICallbackExample") {
+  timestamp: DateTime @source(name: "timestamp", type: "DateTime", subgraph: "OpenAPICallbackExample")
+  userData: String @source(name: "userData", type: "String", subgraph: "OpenAPICallbackExample")
 }
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar DateTime @source(subgraph: "OpenAPICallbackExample", name: "DateTime") @source(subgraph: "OpenAPICallbackExample", name: "DateTime")
+scalar DateTime @source(name: "DateTime", subgraph: "OpenAPICallbackExample") @source(name: "DateTime", subgraph: "OpenAPICallbackExample")
 
-scalar ObjMap @source(subgraph: "OpenAPICallbackExample", name: "ObjMap") @source(subgraph: "OpenAPICallbackExample", name: "ObjMap")
+scalar ObjMap @source(name: "ObjMap", subgraph: "OpenAPICallbackExample") @source(name: "ObjMap", subgraph: "OpenAPICallbackExample")
 
-enum HTTPMethod @source(subgraph: "OpenAPICallbackExample", name: "HTTPMethod") {
-  GET @source(subgraph: "OpenAPICallbackExample", name: "GET")
-  HEAD @source(subgraph: "OpenAPICallbackExample", name: "HEAD")
-  POST @source(subgraph: "OpenAPICallbackExample", name: "POST")
-  PUT @source(subgraph: "OpenAPICallbackExample", name: "PUT")
-  DELETE @source(subgraph: "OpenAPICallbackExample", name: "DELETE")
-  CONNECT @source(subgraph: "OpenAPICallbackExample", name: "CONNECT")
-  OPTIONS @source(subgraph: "OpenAPICallbackExample", name: "OPTIONS")
-  TRACE @source(subgraph: "OpenAPICallbackExample", name: "TRACE")
-  PATCH @source(subgraph: "OpenAPICallbackExample", name: "PATCH")
+enum HTTPMethod @source(name: "HTTPMethod", subgraph: "OpenAPICallbackExample") {
+  GET @source(name: "GET", subgraph: "OpenAPICallbackExample")
+  HEAD @source(name: "HEAD", subgraph: "OpenAPICallbackExample")
+  POST @source(name: "POST", subgraph: "OpenAPICallbackExample")
+  PUT @source(name: "PUT", subgraph: "OpenAPICallbackExample")
+  DELETE @source(name: "DELETE", subgraph: "OpenAPICallbackExample")
+  CONNECT @source(name: "CONNECT", subgraph: "OpenAPICallbackExample")
+  OPTIONS @source(name: "OPTIONS", subgraph: "OpenAPICallbackExample")
+  TRACE @source(name: "TRACE", subgraph: "OpenAPICallbackExample")
+  PATCH @source(name: "PATCH", subgraph: "OpenAPICallbackExample")
 }
 "
 `;

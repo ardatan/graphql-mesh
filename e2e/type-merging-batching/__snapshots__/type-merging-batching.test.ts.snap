@@ -8,22 +8,22 @@ exports[`should compose the appropriate schema 1`] = `
 directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
 
 type Query {
-  author(id: ID! @source(subgraph: "authors", name: "id", type: "ID") @source(subgraph: "books", name: "id", type: "ID")): Author @source(subgraph: "authors", name: "author", type: "Author") @source(subgraph: "books", name: "authorWithBooks", type: "AuthorWithBooks") @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id")
-  authors(ids: [ID] @source(subgraph: "authors", name: "ids", type: "ID")): [Author] @source(subgraph: "authors", name: "authors", type: "[Author]") @merge(subgraph: "authors", keyField: "id", keyArg: "ids")
-  book(id: ID! @source(subgraph: "books", name: "id", type: "ID")): Book @source(subgraph: "books", name: "book", type: "Book") @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id")
-  books(ids: [ID] @source(subgraph: "books", name: "ids", type: "ID")): [Book!]! @source(subgraph: "books", name: "books", type: "[Book!]!") @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids")
+  author(id: ID! @source(name: "id", type: "ID", subgraph: "authors") @source(name: "id", type: "ID", subgraph: "books")): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @source(name: "author", type: "Author", subgraph: "authors") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books")
+  authors(ids: [ID] @source(name: "ids", type: "ID", subgraph: "authors")): [Author] @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @source(name: "authors", type: "[Author]", subgraph: "authors")
+  book(id: ID! @source(name: "id", type: "ID", subgraph: "books")): Book @source(name: "book", type: "Book", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id")
+  books(ids: [ID] @source(name: "ids", type: "ID", subgraph: "books")): [Book!]! @source(name: "books", type: "[Book!]!", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids")
 }
 
-type Author @source(subgraph: "authors", name: "Author") @source(subgraph: "books", name: "AuthorWithBooks") {
-  id: ID! @source(subgraph: "authors", name: "id", type: "ID!") @source(subgraph: "books", name: "id", type: "ID!")
-  name: String! @source(subgraph: "authors", name: "name", type: "String!")
-  books: [Book!]! @source(subgraph: "books", name: "books", type: "[Book!]!")
+type Author @source(name: "Author", subgraph: "authors") @source(name: "AuthorWithBooks", subgraph: "books") {
+  id: ID! @source(name: "id", type: "ID!", subgraph: "authors") @source(name: "id", type: "ID!", subgraph: "books")
+  name: String! @source(name: "name", type: "String!", subgraph: "authors")
+  books: [Book!]! @source(name: "books", type: "[Book!]!", subgraph: "books")
 }
 
-type Book @source(subgraph: "books", name: "Book") {
-  id: ID! @source(subgraph: "books", name: "id", type: "ID!")
-  title: String! @source(subgraph: "books", name: "title", type: "String!")
-  authorId: ID! @source(subgraph: "books", name: "authorId", type: "ID!")
+type Book @source(name: "Book", subgraph: "books") {
+  id: ID! @source(name: "id", type: "ID!", subgraph: "books")
+  title: String! @source(name: "title", type: "String!", subgraph: "books")
+  authorId: ID! @source(name: "authorId", type: "ID!", subgraph: "books")
   author: Author @resolveTo(sourceName: "authors", sourceTypeName: "Query", sourceFieldName: "authors", keyField: "authorId", keysArg: "ids")
 }
 "

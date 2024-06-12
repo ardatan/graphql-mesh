@@ -59,11 +59,22 @@ export function composeSubgraphs(
             name: defaultRootTypeNames[operationType],
           });
         }
+        const existingDirectives = getDirectiveExtensions(type);
+        const existingSourceDirectives = existingDirectives?.source || [];
+        if (existingSourceDirectives.length > 1) {
+          throw new Error(
+            `Type ${type.name} already has source directives from multiple subgraphs: ${existingSourceDirectives
+              .map((source: any) => source.subgraph)
+              .join(', ')}`,
+          );
+        }
+        const existingSourceDirective = existingSourceDirectives[0] || {};
         const directives: Record<string, any> = {
-          ...getDirectiveExtensions(type),
+          ...existingDirectives,
           source: {
-            subgraph: subgraphName,
             name: type.name,
+            ...existingSourceDirective,
+            subgraph: subgraphName,
           },
         };
         return new (Object.getPrototypeOf(type).constructor)({
@@ -81,58 +92,87 @@ export function composeSubgraphs(
             const arg = fieldConfig.args[argName];
             const argType = getNamedType(arg.type);
             const directives = getDirectiveExtensions(arg);
-            directives.source ||= [];
-            directives.source.push({
-              subgraph: subgraphName,
-              name: argName,
-              type: argType.toString(),
-            });
+            const existingSourceDirectives = directives.source || [];
+            if (existingSourceDirectives.length > 1) {
+              throw new Error(
+                `Argument ${argName} of field ${fieldName} already has source directives from multiple subgraphs: ${existingSourceDirectives
+                  .map((source: any) => source.subgraph)
+                  .join(', ')}`,
+              );
+            }
+            const existingSourceDirective = existingSourceDirectives[0] || {};
             newArgs[argName] = {
               ...arg,
               extensions: {
                 ...arg.extensions,
-                directives,
+                directives: {
+                  ...directives,
+                  source: {
+                    name: argName,
+                    type: argType.toString(),
+                    ...existingSourceDirective,
+                    subgraph: subgraphName,
+                  },
+                },
               },
             };
           }
         }
+        const existingDirectives = getDirectiveExtensions(fieldConfig);
+        const existingSourceDirectives = existingDirectives.source || [];
+        if (existingSourceDirectives.length > 1) {
+          throw new Error(
+            `Field ${fieldName} already has source directives from multiple subgraphs: ${existingSourceDirectives
+              .map((source: any) => source.subgraph)
+              .join(', ')}`,
+          );
+        }
+        const existingSourceDirective = existingSourceDirectives[0] || {};
         return {
           ...fieldConfig,
           args: newArgs,
           extensions: {
             ...fieldConfig.extensions,
             directives: {
-              ...getDirectiveExtensions(fieldConfig),
+              ...existingDirectives,
               source: {
-                subgraph: subgraphName,
                 name: fieldName,
                 type: fieldConfig.type.toString(),
+                ...existingSourceDirective,
+                subgraph: subgraphName,
               },
             },
           },
         };
       },
-      [MapperKind.ENUM_VALUE]: (valueConfig, _typeName, _schema, externalValue) => ({
-        ...valueConfig,
-        extensions: {
-          ...valueConfig.extensions,
-          directives: {
-            ...getDirectiveExtensions(valueConfig),
-            source: {
-              subgraph: subgraphName,
-              name: externalValue,
+      [MapperKind.ENUM_VALUE]: (valueConfig, _typeName, _schema, externalValue) => {
+        const existingDirectives = getDirectiveExtensions(valueConfig);
+        const existingSourceDirectives = existingDirectives.source || [];
+        if (existingSourceDirectives.length > 1) {
+          throw new Error(
+            `Enum value ${externalValue} already has source directives from multiple subgraphs: ${existingSourceDirectives
+              .map((source: any) => source.subgraph)
+              .join(', ')}`,
+          );
+        }
+        const existingSourceDirective = existingSourceDirectives[0] || {};
+        return {
+          ...valueConfig,
+          extensions: {
+            ...valueConfig.extensions,
+            directives: {
+              ...existingDirectives,
+              source: {
+                name: externalValue,
+                ...existingSourceDirective,
+                subgraph: subgraphName,
+              },
             },
           },
-        },
-      }),
+        };
+      },
       [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
         const directiveExtensions = getDirectiveExtensions(fieldConfig);
-        directiveExtensions.source ||= [];
-        directiveExtensions.source.push({
-          subgraph: subgraphName,
-          name: fieldName,
-          type: fieldConfig.type.toString(),
-        });
         if (!transforms?.length) {
           addAnnotationsForSemanticConventions({
             queryFieldName: fieldName,
@@ -150,26 +190,54 @@ export function composeSubgraphs(
             const arg = fieldConfig.args[argName];
             const argType = getNamedType(arg.type);
             const directives = getDirectiveExtensions(arg);
-            directives.source ||= [];
-            directives.source.push({
-              subgraph: subgraphName,
-              name: argName,
-              type: argType.toString(),
-            });
+            const existingSourceDirectives = directives.source || [];
+            if (existingSourceDirectives.length > 1) {
+              throw new Error(
+                `Argument ${argName} of field ${fieldName} already has source directives from multiple subgraphs: ${existingSourceDirectives
+                  .map((source: any) => source.subgraph)
+                  .join(', ')}`,
+              );
+            }
+            const existingSourceDirective = existingSourceDirectives[0] || {};
             newArgs[argName] = {
               ...arg,
               extensions: {
                 ...arg.extensions,
-                directives,
+                directives: {
+                  ...directives,
+                  source: {
+                    name: argName,
+                    type: argType.toString(),
+                    ...existingSourceDirective,
+                    subgraph: subgraphName,
+                  },
+                },
               },
             };
           }
         }
+        const existingSourceDirectives = directiveExtensions.source || [];
+        if (existingSourceDirectives.length > 1) {
+          throw new Error(
+            `Field ${fieldName} already has source directives from multiple subgraphs: ${existingSourceDirectives
+              .map((source: any) => source.subgraph)
+              .join(', ')}`,
+          );
+        }
+        const existingSourceDirective = existingSourceDirectives[0] || {};
         return {
           ...fieldConfig,
           extensions: {
             ...fieldConfig.extensions,
-            directives: directiveExtensions,
+            directives: {
+              ...directiveExtensions,
+              source: {
+                name: fieldName,
+                type: fieldConfig.type.toString(),
+                ...existingSourceDirective,
+                subgraph: subgraphName,
+              },
+            },
           },
           args: newArgs,
         };

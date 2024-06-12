@@ -6,11 +6,11 @@ exports[`should write compose output to fusiongraph.graphql 1`] = `
 }
 
 type Query {
-  hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
+  hello: String @source(name: "hello", type: "String", subgraph: "helloworld")
 }"
 `;
 
-exports[`should write compose output to fusiongraph.js 1`] = `"export default "schema @transport(subgraph: \\"helloworld\\") {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
+exports[`should write compose output to fusiongraph.js 1`] = `"export default "schema @transport(subgraph: \\"helloworld\\") {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @source(name: \\"hello\\", type: \\"String\\", subgraph: \\"helloworld\\")\\n}""`;
 
 exports[`should write compose output to fusiongraph.json 1`] = `
 "{
@@ -90,18 +90,6 @@ exports[`should write compose output to fusiongraph.json 1`] = `
                   "kind": "Argument",
                   "name": {
                     "kind": "Name",
-                    "value": "subgraph"
-                  },
-                  "value": {
-                    "kind": "StringValue",
-                    "value": "helloworld",
-                    "block": false
-                  }
-                },
-                {
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
                     "value": "name"
                   },
                   "value": {
@@ -121,6 +109,18 @@ exports[`should write compose output to fusiongraph.json 1`] = `
                     "value": "String",
                     "block": false
                   }
+                },
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "subgraph"
+                  },
+                  "value": {
+                    "kind": "StringValue",
+                    "value": "helloworld",
+                    "block": false
+                  }
                 }
               ]
             }
@@ -132,4 +132,4 @@ exports[`should write compose output to fusiongraph.json 1`] = `
 }"
 `;
 
-exports[`should write compose output to fusiongraph.ts 1`] = `"export default "schema @transport(subgraph: \\"helloworld\\") {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @source(subgraph: \\"helloworld\\", name: \\"hello\\", type: \\"String\\")\\n}""`;
+exports[`should write compose output to fusiongraph.ts 1`] = `"export default "schema @transport(subgraph: \\"helloworld\\") {\\n  query: Query\\n}\\n\\ntype Query {\\n  hello: String @source(name: \\"hello\\", type: \\"String\\", subgraph: \\"helloworld\\")\\n}""`;
