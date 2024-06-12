@@ -11,7 +11,7 @@
     "@graphql-mesh/serve-runtime": "^0.3.10",
     "@omnigraph/openapi": "^0.100.12",
     "fastify": "^4.26.0",
-    "graphql": "16.8.1",
+    "graphql": "16.8.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "2.0.0",
     "typescript": "^5.4.2"

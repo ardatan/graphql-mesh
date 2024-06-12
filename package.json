@@ -88,7 +88,7 @@
     "eslint-plugin-promise": "6.2.0",
     "eslint-plugin-standard": "5.0.0",
     "globby": "11.1.0",
-    "graphql": "16.8.1",
+    "graphql": "16.8.2",
     "husky": "9.0.11",
     "jest": "29.7.0",
     "lint-staged": "15.2.6",
@@ -102,7 +102,7 @@
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "es5-ext": "0.10.64",
     "esbuild": "^0.21.1",
-    "graphql": "16.8.1",
+    "graphql": "16.8.2",
     "tslib": "2.6.3",
     "undici": "6.18.2",
     "uuid": "10.0.0"

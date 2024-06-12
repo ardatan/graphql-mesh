@@ -7,6 +7,6 @@
     "@graphql-mesh/serve-cli": "workspace:*",
     "@omnigraph/json-schema": "workspace:*",
     "fets": "^0.8.0",
-    "graphql": "16.8.1"
+    "graphql": "16.8.2"
   }
 }
