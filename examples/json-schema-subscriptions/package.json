@@ -13,7 +13,7 @@
     "@graphql-mesh/plugin-live-query": "0.98.7",
     "@whatwg-node/fetch": "^0.9.0",
     "fets": "0.8.1",
-    "graphql": "16.8.1"
+    "graphql": "16.8.2"
   },
   "devDependencies": {
     "concurrently": "8.2.2",

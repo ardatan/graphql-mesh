@@ -13,7 +13,7 @@
     "@graphql-mesh/plugin-response-cache": "^0.98.8",
     "@graphql-mesh/serve-runtime": "^0.3.10",
     "@omnigraph/json-schema": "^0.100.11",
-    "graphql": "16.8.1"
+    "graphql": "16.8.2"
   },
   "devDependencies": {
     "wrangler": "3.60.2"

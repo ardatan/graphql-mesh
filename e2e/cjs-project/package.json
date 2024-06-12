@@ -5,6 +5,6 @@
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
-    "graphql": "16.8.1"
+    "graphql": "16.8.2"
   }
 }

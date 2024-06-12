@@ -16,7 +16,7 @@
     "@graphql-mesh/openapi": "0.100.12",
     "@graphql-mesh/runtime": "0.99.8",
     "apollo-server-micro": "3.13.0",
-    "graphql": "16.8.1",
+    "graphql": "16.8.2",
     "next": "14.2.3",
     "react": "18.3.1",
     "react-dom": "18.3.1"
