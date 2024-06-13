@@ -108,6 +108,8 @@ export default function useMeshHive(
     // Mesh already disposes the client below on Mesh's `destroy` event
     autoDispose: false,
   });
+  // TODO: Remove later after v0
+  // Pubsub.destroy will no longer
   function onTerminate() {
     return hiveClient
       .dispose()
@@ -123,6 +125,9 @@ export default function useMeshHive(
         // TODO: fix useYogaHive typings to inherit the context
         useYogaHive(hiveClient) as any,
       );
+    },
+    [Symbol.asyncDispose]() {
+      return onTerminate();
     },
   };
 }

@@ -42,8 +42,8 @@ import {
   getInterpolatedHeadersFactory,
   ResolverDataBasedFactory,
 } from '@graphql-mesh/string-interpolation';
-import { MeshFetch } from '@graphql-mesh/types';
-import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { Logger, MeshFetch } from '@graphql-mesh/types';
+import { DefaultLogger, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import {
   WSDLBinding,
@@ -65,6 +65,7 @@ import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 export interface SOAPLoaderOptions {
   subgraphName: string;
   fetch?: MeshFetch;
+  logger?: Logger;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
 }
@@ -134,9 +135,11 @@ export class SOAPLoader {
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
   private fetchFn: MeshFetch;
   private subgraphName: string;
+  private logger: Logger;
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
+    this.logger = options.logger || new DefaultLogger(options.subgraphName);
     this.subgraphName = options.subgraphName;
     this.loadXMLSchemaNamespace();
     this.schemaComposer.addDirective(soapDirective);
@@ -754,9 +757,9 @@ export class SOAPLoader {
               };
             } else {
               if (elementObj.attributes?.ref) {
-                console.warn(`element.ref isn't supported yet.`);
+                this.logger.warn(`element.ref isn't supported yet.`);
               } else {
-                console.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
+                this.logger.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
               }
             }
           }
@@ -941,9 +944,9 @@ export class SOAPLoader {
               };
             } else {
               if (elementObj.attributes?.ref) {
-                console.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
+                this.logger.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
               } else {
-                console.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
+                this.logger.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
               }
             }
           }

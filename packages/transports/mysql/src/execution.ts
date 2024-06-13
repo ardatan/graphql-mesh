@@ -3,10 +3,11 @@ import graphqlFields from 'graphql-fields';
 import { createPool, PoolConnection, type Pool } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { util } from '@graphql-mesh/cross-helpers';
-import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { DisposableExecutor } from '@graphql-mesh/transport-common';
+import { Logger } from '@graphql-mesh/types';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { Executor, getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import { MySQLContext } from './types.js';
 
@@ -20,16 +21,10 @@ function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
 export interface GetMySQLExecutorOpts {
   subgraph: GraphQLSchema;
   pool?: Pool;
-  pubsub?: MeshPubSub;
-  logger: Logger;
 }
 
-export function getMySQLExecutor({
-  subgraph,
-  pool,
-  pubsub,
-  logger,
-}: GetMySQLExecutorOpts): Executor {
+export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): DisposableExecutor {
+  const mysqlConnectionByContext = new WeakMap<any, PoolConnection>();
   subgraph = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig, fieldName) {
       const directives = getDefDirectives(subgraph, fieldConfig);
@@ -193,21 +188,8 @@ export function getMySQLExecutor({
 
   const defaultExecutor = createDefaultExecutor(subgraph);
   const getConnection$ = util.promisify(pool.getConnection.bind(pool));
-  if (pubsub) {
-    const id = pubsub.subscribe('destroy', () => {
-      pool.end(err => {
-        if (err) {
-          console.error(err);
-        }
-        pubsub.unsubscribe(id);
-      });
-    });
-  } else {
-    logger?.warn(
-      `FIXME: No pubsub provided for mysql executor, so the connection pool will never be closed`,
-    );
-  }
-  return async function mysqlExecutor(executionRequest) {
+
+  const executor: DisposableExecutor = async function mysqlExecutor(executionRequest) {
     const mysqlConnection = await getConnection$();
     mysqlConnectionByContext.set(executionRequest.context, mysqlConnection);
     try {
@@ -217,6 +199,16 @@ export function getMySQLExecutor({
       mysqlConnection.release();
     }
   };
+  executor[Symbol.asyncDispose] = function dispose() {
+    return new Promise<void>((resolve, reject) => {
+      pool.end(err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  };
+  return executor;
 }
-
-const mysqlConnectionByContext = new WeakMap<any, PoolConnection>();

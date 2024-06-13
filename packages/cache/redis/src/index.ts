@@ -14,10 +14,10 @@ function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
 }
 
-export default class RedisCache<V = string> implements KeyValueCache<V> {
+export default class RedisCache<V = string> implements KeyValueCache<V>, Disposable {
   private client: Redis;
 
-  constructor(options: YamlConfig.Cache['redis'] & { pubsub: MeshPubSub; logger: Logger }) {
+  constructor(options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub; logger: Logger }) {
     const lazyConnect = options.lazyConnect !== false;
 
     if (options.url) {
@@ -55,10 +55,15 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         this.client = new RedisMock();
       }
     }
-    const id = options.pubsub.subscribe('destroy', () => {
+    // TODO: PubSub.destroy will no longer be needed after v0
+    const id = options.pubsub?.subscribe('destroy', () => {
       this.client.disconnect(false);
       options.pubsub.unsubscribe(id);
     });
+  }
+
+  [Symbol.dispose](): void {
+    this.client.disconnect();
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {

@@ -60,6 +60,7 @@ export default class SoapHandler implements MeshHandler {
         const soapLoader = new SOAPLoader({
           subgraphName: this.name,
           fetch: fetchFn,
+          logger: this.logger,
           schemaHeaders: this.config.schemaHeaders,
           operationHeaders: this.config.operationHeaders,
         });

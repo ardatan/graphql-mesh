@@ -1628,6 +1628,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-proposal-explicit-resource-management@npm:7.24.7":
+  version: 7.24.7
+  resolution: "@babel/plugin-proposal-explicit-resource-management@npm:7.24.7"
+  dependencies:
+    "@babel/helper-plugin-utils": "npm:^7.24.7"
+    "@babel/plugin-syntax-explicit-resource-management": "npm:^7.24.7"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 10c0/c07b2f44763b381f83cd36a70be16be72d10357a6ab986203a0af795bcf4bf917f0f3b8356b8bee30cfacdba410a8c8186e98ce6828c46e6315c56873ba9971d
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-proposal-nullish-coalescing-operator@npm:^7.16.0":
   version: 7.18.6
   resolution: "@babel/plugin-proposal-nullish-coalescing-operator@npm:7.18.6"
@@ -1778,6 +1790,17 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 10c0/9c50927bf71adf63f60c75370e2335879402648f468d0172bc912e303c6a3876927d8eb35807331b57f415392732ed05ab9b42c68ac30a936813ab549e0246c5
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-syntax-explicit-resource-management@npm:^7.24.7":
+  version: 7.24.7
+  resolution: "@babel/plugin-syntax-explicit-resource-management@npm:7.24.7"
+  dependencies:
+    "@babel/helper-plugin-utils": "npm:^7.24.7"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 10c0/4a4bc77a4a4fa69a29871d470604d69d3eb451153a4eda3bc956ae28dccd2d251ad4f2cc62076f326260314b873ef72230ec985eec416f8f7ebb81df0402636a
   languageName: node
   linkType: hard
 
@@ -3725,15 +3748,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/pubsub-destroy@workspace:e2e/pubsub-destroy":
-  version: 0.0.0-use.local
-  resolution: "@e2e/pubsub-destroy@workspace:e2e/pubsub-destroy"
-  dependencies:
-    "@graphql-mesh/serve-cli": "workspace:*"
-    "@graphql-mesh/utils": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/soap-demo@workspace:e2e/soap-demo":
   version: 0.0.0-use.local
   resolution: "@e2e/soap-demo@workspace:e2e/soap-demo"
@@ -4766,7 +4780,7 @@ __metadata:
     "@graphql-mesh/types": ^0.98.7
     graphql: "*"
   bin:
-    mesh-compose: dist/cjs/bin.js
+    mesh-compose: dist/esm/bin.js
   languageName: unknown
   linkType: soft
 
@@ -4868,10 +4882,12 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.98.7"
     "@graphql-tools/delegate": "npm:^10.0.11"
     "@graphql-tools/executor": "npm:^1.2.6"
+    "@graphql-tools/federation": "npm:^2.0.0"
     "@graphql-tools/stitch": "npm:^9.2.9"
     "@graphql-tools/stitching-directives": "npm:^3.0.2"
     "@graphql-tools/utils": "npm:^10.2.1"
     "@graphql-tools/wrap": "npm:^10.0.5"
+    disposablestack: "npm:^1.1.6"
     graphql-yoga: "npm:^5.3.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -5416,11 +5432,13 @@ __metadata:
   dependenciesMeta:
     node-libcurl:
       optional: true
+    uWebSockets.js:
+      optional: true
   peerDependenciesMeta:
     "@parcel/watcher":
       optional: true
   bin:
-    mesh-serve: dist/cjs/bin.js
+    mesh-serve: dist/esm/bin.js
   languageName: unknown
   linkType: soft
 
@@ -5440,6 +5458,7 @@ __metadata:
     "@graphql-tools/stitch": "npm:^9.2.9"
     "@graphql-tools/utils": "npm:^10.2.1"
     "@whatwg-node/server": "npm:^0.9.34"
+    disposablestack: "npm:^1.1.6"
     graphql-yoga: "npm:^5.3.0"
   peerDependencies:
     graphql: "*"
@@ -5979,6 +5998,7 @@ __metadata:
     "@types/lodash.topath": "npm:4.5.9"
     "@types/object-hash": "npm:3.0.6"
     "@whatwg-node/fetch": "npm:^0.9.13"
+    disposablestack: "npm:^1.1.6"
     dset: "npm:^3.1.2"
     js-yaml: "npm:^4.1.0"
     lodash.get: "npm:^4.4.2"
@@ -6159,8 +6179,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "@graphql-tools/federation@npm:2.0.1"
+  version: 2.0.0
+  resolution: "@graphql-tools/federation@npm:2.0.0"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0"
     "@graphql-tools/delegate": "npm:^10.0.11"
@@ -6168,7 +6188,7 @@ __metadata:
     "@graphql-tools/merge": "npm:^9.0.3"
     "@graphql-tools/schema": "npm:^10.0.4"
     "@graphql-tools/stitch": "npm:^9.2.9"
-    "@graphql-tools/utils": "npm:^10.2.2"
+    "@graphql-tools/utils": "npm:^10.2.1"
     "@graphql-tools/wrap": "npm:^10.0.3"
     "@whatwg-node/fetch": "npm:^0.9.17"
     tslib: "npm:^2.4.0"
@@ -6178,7 +6198,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/e34752a8907807ccefa99ccea55690776e083eb8dcb3cdb7f5dcfb4a9da885cda8cc800e928d359518bfe98d8de8bb3f10dc5980bcb41e3642234569cf9946ad
+  checksum: 10c0/1097e1a43f3e0082d1a5081eedc6f4a6992b7f4dc7af5d9da243b3f99008aa87624e111a1c5d27e20fe2c9a5619431ebb58d200b54f73fdddd6810f3cc5c3fe1
   languageName: node
   linkType: hard
 
@@ -6594,7 +6614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.2.2, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2":
+"@graphql-tools/utils@npm:10.2.2, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1":
   version: 10.2.2
   resolution: "@graphql-tools/utils@npm:10.2.2"
   dependencies:
@@ -15959,7 +15979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"define-data-property@npm:^1.0.1, define-data-property@npm:^1.1.4":
+"define-data-property@npm:^1.0.1, define-data-property@npm:^1.1.1, define-data-property@npm:^1.1.4":
   version: 1.1.4
   resolution: "define-data-property@npm:1.1.4"
   dependencies:
@@ -16205,6 +16225,25 @@ __metadata:
   dependencies:
     path-type: "npm:^4.0.0"
   checksum: 10c0/dcac00920a4d503e38bb64001acb19df4efc14536ada475725e12f52c16777afdee4db827f55f13a908ee7efc0cb282e2e3dbaeeb98c0993dd93d1802d3bf00c
+  languageName: node
+  linkType: hard
+
+"disposablestack@npm:^1.1.6":
+  version: 1.1.6
+  resolution: "disposablestack@npm:1.1.6"
+  dependencies:
+    call-bind: "npm:^1.0.7"
+    define-properties: "npm:^1.2.1"
+    es-abstract: "npm:^1.23.3"
+    es-errors: "npm:^1.3.0"
+    es-set-tostringtag: "npm:^2.0.3"
+    get-intrinsic: "npm:^1.2.4"
+    globalthis: "npm:^1.0.4"
+    has-symbols: "npm:^1.0.3"
+    hasown: "npm:^2.0.2"
+    internal-slot: "npm:^1.0.7"
+    suppressed-error: "npm:^1.0.3"
+  checksum: 10c0/ea7e165148f076f3c9e7f40aa8f8deb7d33cd9d09c3938c593a899bdbc43fd1cd746182c0cefb0c54be6ec375a5634e68907408f93a2916bb50c6861f978ae62
   languageName: node
   linkType: hard
 
@@ -16758,7 +16797,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-errors@npm:^1.2.1, es-errors@npm:^1.3.0":
+"es-errors@npm:^1.1.0, es-errors@npm:^1.2.1, es-errors@npm:^1.3.0":
   version: 1.3.0
   resolution: "es-errors@npm:1.3.0"
   checksum: 10c0/0a61325670072f98d8ae3b914edab3559b6caa980f08054a3b872052640d91da01d38df55df797fcc916389d77fc92b8d5906cf028f4db46d7e3003abecbca85
@@ -19271,7 +19310,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globalthis@npm:^1.0.3":
+"globalthis@npm:^1.0.3, globalthis@npm:^1.0.4":
   version: 1.0.4
   resolution: "globalthis@npm:1.0.4"
   dependencies:
@@ -19573,6 +19612,7 @@ __metadata:
     "@ardatan/graphql-to-config-schema": "npm:0.1.25"
     "@babel/core": "npm:7.24.7"
     "@babel/plugin-proposal-class-properties": "npm:7.18.6"
+    "@babel/plugin-proposal-explicit-resource-management": "npm:7.24.7"
     "@babel/preset-env": "npm:7.24.7"
     "@babel/preset-typescript": "npm:7.24.7"
     "@changesets/changelog-github": "npm:0.5.0"
@@ -19851,7 +19891,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"has-property-descriptors@npm:^1.0.0, has-property-descriptors@npm:^1.0.2":
+"has-property-descriptors@npm:^1.0.0, has-property-descriptors@npm:^1.0.1, has-property-descriptors@npm:^1.0.2":
   version: 1.0.2
   resolution: "has-property-descriptors@npm:1.0.2"
   dependencies:
@@ -32490,6 +32530,22 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 10c0/6c4032340701a9950865f7ae8ef38578d8d7053f5e10518076e6554a9381fa91bd9c6850193695c141f32b21f979c985db07265a758867bac95de05f7d8aeb39
+  languageName: node
+  linkType: hard
+
+"suppressed-error@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "suppressed-error@npm:1.0.3"
+  dependencies:
+    define-data-property: "npm:^1.1.1"
+    define-properties: "npm:^1.2.1"
+    es-abstract: "npm:^1.22.3"
+    es-errors: "npm:^1.1.0"
+    function-bind: "npm:^1.1.2"
+    globalthis: "npm:^1.0.3"
+    has-property-descriptors: "npm:^1.0.1"
+    set-function-name: "npm:^2.0.1"
+  checksum: 10c0/e16592004cabda11bc257d437264d657ed2fabf20b6bea0f2b1978fcb6e0c20b09e398c92773c337e21ef856bb247e320e907c734ccd1cae96395823e6d84aef
   languageName: node
   linkType: hard
 

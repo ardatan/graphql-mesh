@@ -111,7 +111,6 @@ export async function loadGraphQLSchemaFromNeo4J(
 
   const schema = await getExecutableSchemaFromTypeDefsAndDriver({
     driver,
-    logger,
     pubsub,
     typeDefs,
   });

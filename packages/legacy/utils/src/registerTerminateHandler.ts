@@ -1,3 +1,5 @@
+import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
+
 const terminateEvents = ['SIGINT', 'SIGTERM'] as const;
 
 export type TerminateEvents = (typeof terminateEvents)[number];
@@ -27,4 +29,14 @@ export function registerTerminateHandler(callback: TerminateHandler) {
   return () => {
     terminateHandlers.delete(callback);
   };
+}
+
+let terminateStack: AsyncDisposableStack;
+
+export function getTerminateStack() {
+  if (!terminateStack) {
+    terminateStack = new AsyncDisposableStack();
+    registerTerminateHandler(() => terminateStack.disposeAsync());
+  }
+  return terminateStack;
 }

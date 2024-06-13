@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { buildASTSchema, buildSchema, DocumentNode, GraphQLSchema, isSchema } from 'graphql';
-import { defaultImportFn, isUrl, readFileOrUrl } from '@graphql-mesh/utils';
-import { isDocumentNode, isPromise, isValidPath } from '@graphql-tools/utils';
+import { defaultImportFn, isUrl, mapMaybePromise, readFileOrUrl } from '@graphql-mesh/utils';
+import { isDocumentNode, isValidPath, MaybePromise } from '@graphql-tools/utils';
 import { MeshServeConfigContext } from './types.js';
 
 export type UnifiedGraphSchema = GraphQLSchema | DocumentNode | string;
@@ -14,12 +14,10 @@ export type UnifiedGraphConfig =
 export function handleUnifiedGraphConfig(
   config: UnifiedGraphConfig,
   configContext: MeshServeConfigContext,
-): Promise<GraphQLSchema> | GraphQLSchema {
-  const config$ = typeof config === 'function' ? config() : config;
-  if (isPromise(config$)) {
-    return config$.then(schema => handleUnifiedGraphSchema(schema, configContext));
-  }
-  return handleUnifiedGraphSchema(config$, configContext);
+): MaybePromise<GraphQLSchema> {
+  return mapMaybePromise(typeof config === 'function' ? config() : config, schema =>
+    handleUnifiedGraphSchema(schema, configContext),
+  );
 }
 
 export function handleUnifiedGraphSchema(

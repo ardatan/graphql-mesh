@@ -7,8 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    // part of @tsconfig/node16
-    "lib": ["es2021"],
+    "lib": ["ESNext"],
     //
 
     "outDir": "dist",

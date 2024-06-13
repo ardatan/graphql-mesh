@@ -1,24 +1,23 @@
 /* eslint-disable no-new */
 import Redis from 'ioredis';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger } from '@graphql-mesh/utils';
 import RedisCache from '../src/index.js';
 
 jest.mock('ioredis');
 
 describe('redis', () => {
   beforeEach(() => jest.clearAllMocks());
-  const pubsub = new PubSub();
   const logger = new DefaultLogger('test');
 
   describe('constructor', () => {
     it('never call Redis constructor if no config is provided', async () => {
-      new RedisCache({ pubsub, logger });
+      using redis = new RedisCache({ logger });
 
       expect(Redis).toHaveBeenCalledTimes(0);
     });
 
     it('passes configuration to redis client with default options, url case', async () => {
-      new RedisCache({ url: 'redis://password@localhost:6379', pubsub, logger });
+      using redis = new RedisCache({ url: 'redis://password@localhost:6379', logger });
 
       expect(Redis).toHaveBeenCalledWith(
         'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
@@ -26,10 +25,9 @@ describe('redis', () => {
     });
 
     it('passes configuration to redis client with default options, url and lazyConnect (=false) case', async () => {
-      new RedisCache({
+      using redis = new RedisCache({
         url: 'redis://password@localhost:6379',
         lazyConnect: false,
-        pubsub,
         logger,
       });
 
@@ -39,10 +37,9 @@ describe('redis', () => {
     });
 
     it('passes configuration to redis client with default options, url and lazyConnect (=true) case', async () => {
-      new RedisCache({
+      using redis = new RedisCache({
         url: 'redis://password@localhost:6379',
         lazyConnect: true,
-        pubsub,
         logger,
       });
 
@@ -52,7 +49,12 @@ describe('redis', () => {
     });
 
     it('passes configuration to redis client with default options, host, port & password case', async () => {
-      new RedisCache({ port: '6379', password: 'testpassword', host: 'localhost', pubsub, logger });
+      using redis = new RedisCache({
+        port: '6379',
+        password: 'testpassword',
+        host: 'localhost',
+        logger,
+      });
 
       expect(Redis).toHaveBeenCalledWith({
         enableAutoPipelining: true,
@@ -65,12 +67,11 @@ describe('redis', () => {
     });
 
     it('passes configuration to redis client with default options, host, port, password & lazyConnect (=false) case', async () => {
-      new RedisCache({
+      using redis = new RedisCache({
         port: '6379',
         password: 'testpassword',
         host: 'localhost',
         lazyConnect: false,
-        pubsub,
         logger,
       });
 
@@ -84,11 +85,10 @@ describe('redis', () => {
     });
 
     it('prefers url over specific properties if both given', () => {
-      new RedisCache({
+      using redis = new RedisCache({
         url: 'redis://localhost:6379',
         host: 'ignoreme',
         port: '9999',
-        pubsub,
         logger,
       });
 
@@ -101,7 +101,7 @@ describe('redis', () => {
       'throws an error if protocol does not match [%s]',
       protocol => {
         expect(() => {
-          new RedisCache({ url: `${protocol}localhost:6379`, pubsub, logger });
+          using redis = new RedisCache({ url: `${protocol}localhost:6379`, logger });
         }).toThrowError('Redis URL must use either redis:// or rediss://');
       },
     );
@@ -121,9 +121,8 @@ describe('redis', () => {
       delete process.env.REDIS_PASSWORD;
     });
     it('supports string interpolation for url', async () => {
-      new RedisCache({
+      using redis = new RedisCache({
         url: '{env.REDIS_URL}',
-        pubsub,
         logger,
       });
       expect(Redis).toHaveBeenCalledWith(
@@ -131,11 +130,10 @@ describe('redis', () => {
       );
     });
     it('supports string interpolation for host, port and password', async () => {
-      new RedisCache({
+      using redis = new RedisCache({
         host: '{env.REDIS_HOST}',
         port: '{env.REDIS_PORT}',
         password: '{env.REDIS_PASSWORD}',
-        pubsub,
         logger,
       });
       expect(Redis).toHaveBeenCalledWith({

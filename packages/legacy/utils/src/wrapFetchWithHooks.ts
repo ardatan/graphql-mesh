@@ -1,62 +1,54 @@
 import { MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
-import { isPromise } from '@graphql-tools/utils';
 import { iterateAsync } from './iterateAsync.js';
+import { mapMaybePromise } from './map-maybe-promise.js';
 
 export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>[]): MeshFetch {
   return function wrappedFetchFn(url, options, context, info) {
     let fetchFn: MeshFetch;
-    const doneHooks: OnFetchHookDone[] = [];
-    function setFetchFn(newFetchFn: MeshFetch) {
-      fetchFn = newFetchFn;
-    }
-    const result$ = iterateAsync(
-      onFetchHooks,
-      onFetch =>
-        onFetch({
-          fetchFn,
-          setFetchFn,
-          url,
-          setURL(newUrl) {
-            url = String(newUrl);
-          },
-          options,
-          setOptions(newOptions) {
-            options = newOptions;
-          },
-          context,
-          info,
-        }),
-      doneHooks,
+    const onFetchDoneHooks: OnFetchHookDone[] = [];
+    return mapMaybePromise(
+      iterateAsync(
+        onFetchHooks,
+        onFetch =>
+          onFetch({
+            fetchFn,
+            setFetchFn(newFetchFn) {
+              fetchFn = newFetchFn;
+            },
+            url,
+            setURL(newUrl) {
+              url = String(newUrl);
+            },
+            options,
+            setOptions(newOptions) {
+              options = newOptions;
+            },
+            context,
+            info,
+          }),
+        onFetchDoneHooks,
+      ),
+      function handleIterationResult() {
+        const res$ = fetchFn(url, options, context, info);
+        if (onFetchDoneHooks.length === 0) {
+          return res$;
+        }
+        return mapMaybePromise(res$, function (response: Response) {
+          return mapMaybePromise(
+            iterateAsync(onFetchDoneHooks, onFetchDone =>
+              onFetchDone({
+                response,
+                setResponse(newResponse) {
+                  response = newResponse;
+                },
+              }),
+            ),
+            function handleOnFetchDone() {
+              return response;
+            },
+          );
+        });
+      },
     );
-    function handleIterationResult() {
-      const response$ = fetchFn(url, options, context, info);
-      if (doneHooks.length === 0) {
-        return response$;
-      }
-      if (isPromise(response$)) {
-        return response$.then(response => handleOnFetchDone(response, doneHooks));
-      }
-      return handleOnFetchDone(response$, doneHooks);
-    }
-    if (isPromise(result$)) {
-      return result$.then(handleIterationResult);
-    }
-    return handleIterationResult();
   } as MeshFetch;
-}
-
-function handleOnFetchDone(response: Response, onFetchDoneHooks: OnFetchHookDone[]) {
-  function setResponse(newResponse: Response) {
-    response = newResponse;
-  }
-  const result$ = iterateAsync(onFetchDoneHooks, onFetchDone =>
-    onFetchDone({
-      response,
-      setResponse,
-    }),
-  );
-  if (isPromise(result$)) {
-    return result$.then(() => response);
-  }
-  return response;
 }

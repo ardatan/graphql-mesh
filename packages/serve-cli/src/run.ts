@@ -1,5 +1,6 @@
 import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
-import 'tsx/cjs'; // support importing typescript configs
+import 'tsx/cjs'; // support importing typescript configs in CommonJS
+import 'tsx/esm'; // support importing typescript configs in ESM
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
@@ -11,7 +12,7 @@ import { dirname, isAbsolute, resolve } from 'path';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 import { Logger } from '@graphql-mesh/types';
-import { DefaultLogger, registerTerminateHandler } from '@graphql-mesh/utils';
+import { DefaultLogger, getTerminateStack, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import { startNodeHttpServer } from './nodeHttp.js';
 import { MeshServeCLIConfig } from './types.js';
@@ -79,6 +80,8 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
   version?: string;
 }
 
+export type ImportedModule<T> = T | { default: T };
+
 export async function run({
   log: rootLog = new DefaultLogger(),
   productName = 'Mesh',
@@ -98,32 +101,31 @@ export async function run({
     ? opts.configPath
     : resolve(process.cwd(), opts.configPath);
   log.info(`Checking configuration at ${configPath}`);
-  const importedConfig: { serveConfig?: MeshServeCLIConfig } = await import(configPath).catch(
-    err => {
-      if (err.code === 'ERR_MODULE_NOT_FOUND') {
-        return {}; // no config is ok
-      }
-      log.error('Loading configuration failed!');
-      throw err;
-    },
-  );
-  if (importedConfig.serveConfig) {
+  const importedConfigModule: ImportedModule<{ serveConfig?: MeshServeCLIConfig }> = await import(
+    configPath
+  ).catch(err => {
+    if (err.code === 'ERR_MODULE_NOT_FOUND') {
+      return {}; // no config is ok
+    }
+    log.error('Loading configuration failed!');
+    throw err;
+  });
+  let importedConfig: MeshServeCLIConfig;
+  if ('default' in importedConfigModule) {
     log.info('Loaded configuration');
+    importedConfig = importedConfigModule.default.serveConfig;
+  } else if ('serveConfig' in importedConfigModule) {
+    log.info('Loaded configuration');
+    importedConfig = importedConfigModule.serveConfig;
   } else {
+    importedConfig = {};
     log.info('No configuration found');
   }
 
   const config: MeshServeCLIConfig = {
-    ...importedConfig?.serveConfig,
+    ...importedConfig,
     ...opts,
   };
-
-  if (config.pubsub) {
-    registerTerminateHandler(eventName => {
-      log.info(`Destroying pubsub for ${eventName}`);
-      config.pubsub!.publish('destroy', undefined);
-    });
-  }
 
   let unifiedGraphPath: UnifiedGraphConfig;
   let spec: 'federation' | 'fusion';
@@ -240,6 +242,8 @@ export async function run({
     logging: log,
     ...config,
   });
+  const terminateStack = getTerminateStack();
+  terminateStack.use(handler);
   process.on('message', message => {
     if (message === 'invalidateUnifiedGraph') {
       log.info(`Invalidating ${unifiedGraphName}`);
@@ -255,7 +259,7 @@ export async function run({
     log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
   }
   const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
-  await startServer({
+  const server = await startServer({
     handler,
     log,
     protocol,
@@ -263,4 +267,5 @@ export async function run({
     port,
     sslCredentials: config.sslCredentials,
   });
+  terminateStack.use(server);
 }

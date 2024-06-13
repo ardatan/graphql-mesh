@@ -9,7 +9,7 @@ import {
   YogaServerOptions,
 } from 'graphql-yoga';
 import { Plugin as EnvelopPlugin } from '@envelop/core';
-import { FusiongraphPlugin, Transport, TransportsOption } from '@graphql-mesh/fusion-runtime';
+import { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@graphql-mesh/types';
 import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
@@ -59,15 +59,15 @@ export type MeshServePlugin<
   TPluginContext extends Record<string, any> = Record<string, any>,
   TContext extends Record<string, any> = Record<string, any>,
 > = YogaPlugin<Partial<TPluginContext> & MeshServeContext & TContext> &
-  FusiongraphPlugin & {
+  UnifiedGraphPlugin & {
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
-  };
+  } & Partial<Disposable | AsyncDisposable>;
 
 interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
    * Path to the GraphQL Fusion unified schema.
    */
-  fusiongraph: UnifiedGraphConfig;
+  fusiongraph?: UnifiedGraphConfig;
   /**
    * Polling interval in milliseconds.
    */
@@ -88,7 +88,7 @@ interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithout
   /**
    * Path to the Apollo Federation unified schema.
    */
-  supergraph: UnifiedGraphConfig;
+  supergraph?: UnifiedGraphConfig;
   /**
    * Polling interval in milliseconds.
    */

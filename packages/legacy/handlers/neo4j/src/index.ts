@@ -100,6 +100,11 @@ export default class Neo4JHandler implements MeshHandler {
       logger: this.logger,
     });
 
+    const id = this.pubsub.subscribe('destroy', () => {
+      executor[Symbol.asyncDispose]();
+      this.pubsub.unsubscribe(id);
+    });
+
     return {
       schema,
       executor,

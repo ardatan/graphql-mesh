@@ -21,6 +21,7 @@ describe('Serve Runtime', () => {
     });
     const upstreamAPI = createYoga({
       schema: upstreamSchema,
+      logging: false,
     });
     let upstreamIsUp = true;
     const serveRuntimes = {
