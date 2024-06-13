@@ -6179,8 +6179,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@graphql-tools/federation@npm:2.0.0"
+  version: 2.0.1
+  resolution: "@graphql-tools/federation@npm:2.0.1"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0"
     "@graphql-tools/delegate": "npm:^10.0.11"
@@ -6188,7 +6188,7 @@ __metadata:
     "@graphql-tools/merge": "npm:^9.0.3"
     "@graphql-tools/schema": "npm:^10.0.4"
     "@graphql-tools/stitch": "npm:^9.2.9"
-    "@graphql-tools/utils": "npm:^10.2.1"
+    "@graphql-tools/utils": "npm:^10.2.2"
     "@graphql-tools/wrap": "npm:^10.0.3"
     "@whatwg-node/fetch": "npm:^0.9.17"
     tslib: "npm:^2.4.0"
@@ -6198,7 +6198,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/1097e1a43f3e0082d1a5081eedc6f4a6992b7f4dc7af5d9da243b3f99008aa87624e111a1c5d27e20fe2c9a5619431ebb58d200b54f73fdddd6810f3cc5c3fe1
+  checksum: 10c0/e34752a8907807ccefa99ccea55690776e083eb8dcb3cdb7f5dcfb4a9da885cda8cc800e928d359518bfe98d8de8bb3f10dc5980bcb41e3642234569cf9946ad
   languageName: node
   linkType: hard
 
@@ -6614,7 +6614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.2.2, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1":
+"@graphql-tools/utils@npm:10.2.2, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2":
   version: 10.2.2
   resolution: "@graphql-tools/utils@npm:10.2.2"
   dependencies:
