@@ -6,7 +6,7 @@ exports[`should write compose output to stdout and logs to stderr 1`] = `
 }
 
 type Query {
-  hello: String @source(subgraph: "helloworld", name: "hello", type: "String")
+  hello: String @source(name: "hello", type: "String", subgraph: "helloworld")
 }
 "
 `;

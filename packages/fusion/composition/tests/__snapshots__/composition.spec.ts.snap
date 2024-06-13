@@ -8,20 +8,20 @@ exports[`Composition composes basic schemas 1`] = `
 directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
 
 type Query {
-  myFoo: Foo! @source(subgraph: "A", name: "myFoo", type: "Foo!")
-  foo(id: ID!): Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
-  foos(ids: [ID!]!): [Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
-  foosByFilter(where: FooFilter!): [Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
+  myFoo: Foo! @source(name: "myFoo", type: "Foo!", subgraph: "A")
+  foo(id: ID! @source(name: "id", type: "ID", subgraph: "B")): Foo! @merge(subgraph: "B", keyField: "id", keyArg: "id") @source(name: "foo", type: "Foo!", subgraph: "B")
+  foos(ids: [ID!]! @source(name: "ids", type: "ID", subgraph: "B")): [Foo!]! @merge(subgraph: "B", keyField: "id", keyArg: "ids") @source(name: "foos", type: "[Foo!]!", subgraph: "B")
+  foosByFilter(where: FooFilter! @source(name: "where", type: "FooFilter", subgraph: "B")): [Foo!]! @source(name: "foosByFilter", type: "[Foo!]!", subgraph: "B")
 }
 
-type Foo @source(subgraph: "A", name: "Foo") @source(subgraph: "B", name: "Foo") {
-  id: ID! @source(subgraph: "A", name: "id", type: "ID!") @source(subgraph: "B", name: "id", type: "ID!")
-  bar: String! @source(subgraph: "B", name: "bar", type: "String!")
+type Foo @source(name: "Foo", subgraph: "A") @source(name: "Foo", subgraph: "B") {
+  id: ID! @source(name: "id", type: "ID!", subgraph: "A") @source(name: "id", type: "ID!", subgraph: "B")
+  bar: String! @source(name: "bar", type: "String!", subgraph: "B")
 }
 
-input FooFilter @source(subgraph: "B", name: "FooFilter") {
-  id: ID @source(subgraph: "B", name: "id", type: "ID")
-  id_in: [ID!] @source(subgraph: "B", name: "id_in", type: "[ID!]")
+input FooFilter @source(name: "FooFilter", subgraph: "B") {
+  id: ID @source(name: "id", type: "ID", subgraph: "B")
+  id_in: [ID!] @source(name: "id_in", type: "[ID!]", subgraph: "B")
 }"
 `;
 
@@ -33,27 +33,27 @@ exports[`Composition composes with transforms 1`] = `
 directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
 
 type A_Query {
-  A_myFoo: A_Foo! @source(subgraph: "A", name: "myFoo", type: "Foo!")
+  A_myFoo: A_Foo! @source(name: "myFoo", type: "Foo!", subgraph: "A")
 }
 
-type A_Foo @source(subgraph: "A", name: "Foo") {
-  id: ID! @source(subgraph: "A", name: "id", type: "ID!")
+type A_Foo @source(name: "Foo", subgraph: "A") {
+  id: ID! @source(name: "id", type: "ID!", subgraph: "A")
 }
 
 type B_Query {
-  B_foo(id: ID!): B_Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
-  B_foos(ids: [ID!]!): [B_Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
-  B_foosByFilter(where: B_FooFilter!): [B_Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
+  B_foo(id: ID! @source(name: "id", type: "ID", subgraph: "B")): B_Foo! @source(name: "foo", type: "Foo!", subgraph: "B") @merge(subgraph: "B", keyField: "id", keyArg: "id")
+  B_foos(ids: [ID!]! @source(name: "ids", type: "ID", subgraph: "B")): [B_Foo!]! @source(name: "foos", type: "[Foo!]!", subgraph: "B") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
+  B_foosByFilter(where: B_FooFilter! @source(name: "where", type: "FooFilter", subgraph: "B")): [B_Foo!]! @source(name: "foosByFilter", type: "[Foo!]!", subgraph: "B")
 }
 
-input B_FooFilter @source(subgraph: "B", name: "FooFilter") {
-  id: ID @source(subgraph: "B", name: "id", type: "ID")
-  id_in: [ID!] @source(subgraph: "B", name: "id_in", type: "[ID!]")
+input B_FooFilter @source(name: "FooFilter", subgraph: "B") {
+  id: ID @source(name: "id", type: "ID", subgraph: "B")
+  id_in: [ID!] @source(name: "id_in", type: "[ID!]", subgraph: "B")
 }
 
-type B_Foo @source(subgraph: "B", name: "Foo") {
-  id: ID! @source(subgraph: "B", name: "id", type: "ID!")
-  bar: String! @source(subgraph: "B", name: "bar", type: "String!")
+type B_Foo @source(name: "Foo", subgraph: "B") {
+  id: ID! @source(name: "id", type: "ID!", subgraph: "B")
+  bar: String! @source(name: "bar", type: "String!", subgraph: "B")
 }"
 `;
 
@@ -67,20 +67,35 @@ directive @foo on FIELD_DEFINITION
 directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
 
 type Query {
-  myFoo: Foo! @source(subgraph: "A", name: "myFoo", type: "Foo!")
-  foo(id: ID!): Foo! @source(subgraph: "B", name: "foo", type: "Foo!") @merge(subgraph: "B", keyField: "id", keyArg: "id")
-  foos(ids: [ID!]!): [Foo!]! @source(subgraph: "B", name: "foos", type: "[Foo!]!") @merge(subgraph: "B", keyField: "id", keyArg: "ids")
-  foosByFilter(where: FooFilter!): [Foo!]! @source(subgraph: "B", name: "foosByFilter", type: "[Foo!]!")
-  cFoo: Foo! @foo @source(subgraph: "C", name: "cFoo", type: "Foo!")
+  myFoo: Foo! @source(name: "myFoo", type: "Foo!", subgraph: "A")
+  foo(id: ID! @source(name: "id", type: "ID", subgraph: "B")): Foo! @merge(subgraph: "B", keyField: "id", keyArg: "id") @source(name: "foo", type: "Foo!", subgraph: "B")
+  foos(ids: [ID!]! @source(name: "ids", type: "ID", subgraph: "B")): [Foo!]! @merge(subgraph: "B", keyField: "id", keyArg: "ids") @source(name: "foos", type: "[Foo!]!", subgraph: "B")
+  foosByFilter(where: FooFilter! @source(name: "where", type: "FooFilter", subgraph: "B")): [Foo!]! @source(name: "foosByFilter", type: "[Foo!]!", subgraph: "B")
+  cFoo: Foo! @foo @source(name: "cFoo", type: "Foo!", subgraph: "C")
 }
 
-type Foo @source(subgraph: "A", name: "Foo") @source(subgraph: "B", name: "Foo") @source(subgraph: "C", name: "Foo") {
-  id: ID! @source(subgraph: "A", name: "id", type: "ID!") @source(subgraph: "B", name: "id", type: "ID!") @source(subgraph: "C", name: "id", type: "ID!")
-  bar: String! @source(subgraph: "B", name: "bar", type: "String!")
+type Foo @source(name: "Foo", subgraph: "A") @source(name: "Foo", subgraph: "B") @source(name: "Foo", subgraph: "C") {
+  id: ID! @source(name: "id", type: "ID!", subgraph: "A") @source(name: "id", type: "ID!", subgraph: "B") @source(name: "id", type: "ID!", subgraph: "C")
+  bar: String! @source(name: "bar", type: "String!", subgraph: "B")
 }
 
-input FooFilter @source(subgraph: "B", name: "FooFilter") {
-  id: ID @source(subgraph: "B", name: "id", type: "ID")
-  id_in: [ID!] @source(subgraph: "B", name: "id_in", type: "[ID!]")
+input FooFilter @source(name: "FooFilter", subgraph: "B") {
+  id: ID @source(name: "id", type: "ID", subgraph: "B")
+  id_in: [ID!] @source(name: "id_in", type: "[ID!]", subgraph: "B")
+}"
+`;
+
+exports[`Composition respects the existing transforms done 1`] = `
+"schema @transport(subgraph: "A") @transport(subgraph: "B") {
+  query: Query
+}
+
+type Query {
+  myFoo: Foo! @source(name: "yourFoo", type: "Foo!", subgraph: "A")
+  foo: Foo! @source(name: "bar", type: "Bar!", subgraph: "B")
+}
+
+type Foo @source(name: "Foo", subgraph: "A") @source(name: "Bar", subgraph: "B") {
+  id: ID! @source(name: "id", type: "ID!", subgraph: "A") @source(name: "id", type: "ID!", subgraph: "B")
 }"
 `;

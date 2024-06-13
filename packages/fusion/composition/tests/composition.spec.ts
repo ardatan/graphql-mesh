@@ -50,10 +50,10 @@ describe('Composition', () => {
   });
   it('composes with transforms', () => {
     const prefixTypeTransform = createRenameTypeTransform(
-      (type, subgraphConfig) => `${subgraphConfig.name}_${type.name}`,
+      ({ type, subgraphConfig }) => `${subgraphConfig.name}_${type.name}`,
     );
     const prefixFieldTransform = createRenameFieldTransform(
-      (_field, fieldName, typeName, subgraphConfig) =>
+      ({ fieldName, typeName, subgraphConfig }) =>
         typeName === `${subgraphConfig.name}_Query`
           ? `${subgraphConfig.name}_${fieldName}`
           : fieldName,
@@ -98,6 +98,48 @@ describe('Composition', () => {
       },
     ]);
 
+    expect(printSchemaWithDirectives(composedSchema)).toMatchSnapshot();
+  });
+  it('respects the existing transforms done', async () => {
+    const aSchema = buildSchema(
+      /* GraphQL */ `
+        type Query {
+          myFoo: Foo! @source(name: "yourFoo")
+        }
+
+        type Foo {
+          id: ID!
+        }
+      `,
+      {
+        assumeValid: true,
+        assumeValidSDL: true,
+      },
+    );
+    const bSchema = buildSchema(
+      /* GraphQL */ `
+        type Query {
+          foo: Foo! @source(name: "bar", type: "Bar!")
+        }
+        type Foo @source(name: "Bar") {
+          id: ID!
+        }
+      `,
+      {
+        assumeValid: true,
+        assumeValidSDL: true,
+      },
+    );
+    const composedSchema = composeSubgraphs([
+      {
+        name: 'A',
+        schema: aSchema,
+      },
+      {
+        name: 'B',
+        schema: bSchema,
+      },
+    ]);
     expect(printSchemaWithDirectives(composedSchema)).toMatchSnapshot();
   });
 });

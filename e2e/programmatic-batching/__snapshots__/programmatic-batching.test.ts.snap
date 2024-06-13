@@ -11,39 +11,39 @@ directive @httpOperation(subgraph: String, path: String, operationSpecificHeader
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
 type Query {
-  dummy: String @source(subgraph: "API", name: "dummy", type: "String")
+  dummy: String @source(name: "dummy", type: "String", subgraph: "API")
   user(id: Float!): User
 }
 
 type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(subgraph: "API", path: "/users_by_ids", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(subgraph: "API", name: "usersByIds", type: "UsersByIdResponse")
+  usersByIds(input: UsersByIdRequest_Input @source(name: "input", type: "UsersByIdRequest_Input", subgraph: "API")): UsersByIdResponse @httpOperation(subgraph: "API", path: "/users_by_ids", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(name: "usersByIds", type: "UsersByIdResponse", subgraph: "API")
 }
 
-type UsersByIdResponse @source(subgraph: "API", name: "UsersByIdResponse") {
-  results: [User]! @source(subgraph: "API", name: "results", type: "[User]!")
+type UsersByIdResponse @source(name: "UsersByIdResponse", subgraph: "API") {
+  results: [User]! @source(name: "results", type: "[User]!", subgraph: "API")
 }
 
-type User @source(subgraph: "API", name: "User") {
-  id: Float! @source(subgraph: "API", name: "id", type: "Float!")
-  name: String! @source(subgraph: "API", name: "name", type: "String!")
+type User @source(name: "User", subgraph: "API") {
+  id: Float! @source(name: "id", type: "Float!", subgraph: "API")
+  name: String! @source(name: "name", type: "String!", subgraph: "API")
 }
 
-input UsersByIdRequest_Input @source(subgraph: "API", name: "UsersByIdRequest_Input") {
-  ids: [Float]! @source(subgraph: "API", name: "ids", type: "[Float]!")
+input UsersByIdRequest_Input @source(name: "UsersByIdRequest_Input", subgraph: "API") {
+  ids: [Float]! @source(name: "ids", type: "[Float]!", subgraph: "API")
 }
 
-scalar ObjMap @source(subgraph: "API", name: "ObjMap") @source(subgraph: "API", name: "ObjMap")
+scalar ObjMap @source(name: "ObjMap", subgraph: "API") @source(name: "ObjMap", subgraph: "API")
 
-enum HTTPMethod @source(subgraph: "API", name: "HTTPMethod") {
-  GET @source(subgraph: "API", name: "GET")
-  HEAD @source(subgraph: "API", name: "HEAD")
-  POST @source(subgraph: "API", name: "POST")
-  PUT @source(subgraph: "API", name: "PUT")
-  DELETE @source(subgraph: "API", name: "DELETE")
-  CONNECT @source(subgraph: "API", name: "CONNECT")
-  OPTIONS @source(subgraph: "API", name: "OPTIONS")
-  TRACE @source(subgraph: "API", name: "TRACE")
-  PATCH @source(subgraph: "API", name: "PATCH")
+enum HTTPMethod @source(name: "HTTPMethod", subgraph: "API") {
+  GET @source(name: "GET", subgraph: "API")
+  HEAD @source(name: "HEAD", subgraph: "API")
+  POST @source(name: "POST", subgraph: "API")
+  PUT @source(name: "PUT", subgraph: "API")
+  DELETE @source(name: "DELETE", subgraph: "API")
+  CONNECT @source(name: "CONNECT", subgraph: "API")
+  OPTIONS @source(name: "OPTIONS", subgraph: "API")
+  TRACE @source(name: "TRACE", subgraph: "API")
+  PATCH @source(name: "PATCH", subgraph: "API")
 }
 "
 `;
