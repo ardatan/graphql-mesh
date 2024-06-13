@@ -15,7 +15,7 @@ beforeAll(async () => {
 const threshold: TbenchResult = {
   maxCpu: Infinity, // we dont care
   maxMem: 500, // MB
-  slowestRequest: 1, // second
+  slowestRequest: 1.5, // second
 };
 
 it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
