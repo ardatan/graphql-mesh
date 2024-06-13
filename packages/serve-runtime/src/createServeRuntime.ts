@@ -19,7 +19,7 @@ import {
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Logger, OnFetchHook } from '@graphql-mesh/types';
+import { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
@@ -60,6 +60,8 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   const readinessCheckEndpoint = config.readinessCheckEndpoint || '/readiness';
   const onSubgraphExecuteHooks: OnSubgraphExecuteHook[] = [];
+  // TODO: Will be deleted after v0
+  const onDelegateHooks: OnDelegateHook<unknown>[] = [];
 
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
@@ -103,8 +105,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
       transportBaseContext: configContext,
-      readinessCheckEndpoint,
-      onDelegateHooks: [],
+      onDelegateHooks,
       onSubgraphExecuteHooks,
     });
     schemaFetcher = () => unifiedGraphManager.getUnifiedGraph();
@@ -128,12 +129,18 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     onPluginInit({ plugins }) {
       onFetchHooks.splice(0, onFetchHooks.length);
       onSubgraphExecuteHooks.splice(0, onSubgraphExecuteHooks.length);
+      onDelegateHooks.splice(0, onDelegateHooks.length);
       for (const plugin of plugins as MeshServePlugin[]) {
         if (plugin.onFetch) {
           onFetchHooks.push(plugin.onFetch);
         }
         if (plugin.onSubgraphExecute) {
           onSubgraphExecuteHooks.push(plugin.onSubgraphExecute);
+        }
+        // @ts-expect-error For backward compatibility
+        if (plugin.onDelegate) {
+          // @ts-expect-error For backward compatibility
+          onDelegateHooks.push(plugin.onDelegate);
         }
         if (isDisposable(plugin)) {
           disposableStack.use(plugin);

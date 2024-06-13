@@ -68,10 +68,9 @@ export interface UnifiedGraphManagerOptions<TContext> {
   additionalTypeDefs?: TypeSource;
   additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
   transportBaseContext?: TransportBaseContext;
-  readinessCheckEndpoint?: string;
   onSubgraphExecuteHooks?: OnSubgraphExecuteHook[];
   // TODO: Will be removed later once we get rid of v0
-  onDelegateHooks?: OnDelegateHook<TContext>[];
+  onDelegateHooks?: OnDelegateHook<unknown>[];
 }
 
 export const handleFusiongraph: UnifiedGraphHandler = function handleFusiongraph(opts) {
