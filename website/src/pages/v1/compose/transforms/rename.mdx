@@ -1,0 +1,62 @@
+---
+description:
+  The Rename Transform in GraphQL Mesh allows you to rename types, fields, and field arguments,
+  making queries look more like mutations. Learn how to use this transform and its RegEx feature in
+  this guide.
+---
+
+# Rename Transform
+
+The rename transform allows you to rename:
+
+- GraphQL types
+- GraphQL fields
+- GraphQL field arguments
+
+The `rename` transform helps you avoid conflicting names, simplify complicated names and make
+queries look more like mutations.
+
+## How to use?
+
+You can import `createRenameTransform` to create an instance of the transform. You can use regular
+JavaScript functions to rename types, fields, and field arguments.
+
+```ts filename="mesh.config.ts" {13-17}
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph,
+  createRenameTransform
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Countries', {
+        endpoint: 'https://countries.trevorblades.com'
+      }),
+      transforms: [
+        createRenameTransform({
+          // Rename types
+          typeRenamer(typeName) {
+            if (typeName === 'Country') {
+              return 'MyCountry'
+            }
+          }
+          // Rename fields
+          fieldRenamer(fieldName, typeName) {
+            if (typeName === 'Country' && fieldName === 'name') {
+              return 'countryName'
+            }
+          }
+          // Rename field arguments
+          argRenamer(argName, fieldName, typeName) {
+            if (typeName === 'Country' && fieldName === 'name' && argName === 'lang') {
+              return 'language'
+            }
+          }
+        })
+      ]
+    }
+  ]
+})
+```
