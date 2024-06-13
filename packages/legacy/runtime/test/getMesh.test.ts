@@ -4,7 +4,8 @@ import LocalforageCache from '@graphql-mesh/cache-localforage';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-mesh/types';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { getMesh } from '../src/get-mesh.js';
@@ -15,7 +16,7 @@ describe('getMesh', () => {
   let cache: LocalforageCache;
   let pubsub: PubSub;
   let store: MeshStore;
-  let logger: DefaultLogger;
+  let logger: Logger;
   let merger: StitchingMerger;
   beforeEach(() => {
     cache = new LocalforageCache();
@@ -24,7 +25,14 @@ describe('getMesh', () => {
       readonly: false,
       validate: false,
     });
-    logger = new DefaultLogger('Mesh Test');
+    logger = {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      log: jest.fn(),
+      child: () => logger,
+    };
     merger = new StitchingMerger({
       store,
       cache,

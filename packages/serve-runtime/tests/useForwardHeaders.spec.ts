@@ -20,6 +20,7 @@ describe('useForwardHeaders', () => {
       },
     }),
     plugins: [requestTrackerPlugin],
+    logging: false,
   });
   beforeEach(() => {
     requestTrackerPlugin.onParams.mockClear();

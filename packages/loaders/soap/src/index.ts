@@ -1,4 +1,4 @@
-import { MeshFetch } from '@graphql-mesh/types';
+import { Logger, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
 import { SOAPLoader } from './SOAPLoader.js';
 
@@ -9,15 +9,17 @@ export * from '@graphql-mesh/transport-soap';
 export interface SOAPSubgraphLoaderOptions {
   source?: string;
   fetch?: MeshFetch;
+  logger?: Logger;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
 }
 
 export function loadSOAPSubgraph(subgraphName: string, options: SOAPSubgraphLoaderOptions) {
-  return ({ cwd, fetch }: { cwd: string; fetch: MeshFetch }) => {
+  return ({ cwd, fetch, logger }: { cwd: string; fetch: MeshFetch; logger: Logger }) => {
     const soapLoader = new SOAPLoader({
       subgraphName,
       fetch: options.fetch || fetch,
+      logger: options.logger || logger,
       schemaHeaders: options.schemaHeaders,
       operationHeaders: options.operationHeaders,
     });

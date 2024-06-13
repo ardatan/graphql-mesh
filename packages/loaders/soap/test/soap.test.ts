@@ -2,7 +2,7 @@
 import { promises } from 'fs';
 import { join } from 'path';
 import { parse } from 'graphql';
-import { MeshFetch } from '@graphql-mesh/types';
+import { Logger, MeshFetch } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { createExecutorFromSchemaAST, SOAPLoader } from '../src/index.js';
@@ -10,10 +10,19 @@ import { createExecutorFromSchemaAST, SOAPLoader } from '../src/index.js';
 const { readFile } = promises;
 
 describe('SOAP Loader', () => {
+  const mockLogger: Logger = {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+    child: () => mockLogger,
+  };
   it('should generate the schema correctly', async () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
+      logger: mockLogger,
     });
     await soapLoader.fetchWSDL('https://www.w3schools.com/xml/tempconvert.asmx?WSDL');
     const schema = soapLoader.buildSchema();
@@ -23,6 +32,7 @@ describe('SOAP Loader', () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
+      logger: mockLogger,
     });
     await soapLoader.fetchWSDL('https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL');
     const schema = soapLoader.buildSchema();
@@ -44,6 +54,7 @@ describe('SOAP Loader', () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
+      logger: mockLogger,
     });
     const example1Wsdl = await readFile(join(__dirname, './fixtures/greeting.wsdl'), 'utf8');
     await soapLoader.loadWSDL(example1Wsdl);
