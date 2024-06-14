@@ -97,7 +97,12 @@ export const serveConfig = defineServeConfig({
   // or
   supergraph: 'https://example.com/supergraph.graphql',
   // or you can provide a function that returns a promise of the schema
-  fusiongraph: () => fetch('https://example.com/unified.graphql').then(res => res.text())
+  fusiongraph: () =>
+    fetch('https://example.com/unified.graphql', {
+      headers: {
+        Authorization: 'Bearer token'
+      }
+    }).then(res => res.text())
 })
 ```
 
