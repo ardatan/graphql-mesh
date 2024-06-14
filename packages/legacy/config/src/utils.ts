@@ -271,7 +271,7 @@ export async function resolveLogger(
   code: string;
   logger: Logger;
 }> {
-  if (typeof loggerConfig === 'string') {
+  if (loggerConfig) {
     const { moduleName, resolved: logger } = await getPackage<Logger>({
       name: loggerConfig,
       type: 'logger',
@@ -279,9 +279,14 @@ export async function resolveLogger(
       cwd,
       additionalPrefixes: additionalPackagePrefixes,
     });
+
+    const processedModuleName = moduleName.startsWith('.')
+      ? path.join('..', moduleName)
+      : moduleName;
+
     return {
       logger,
-      importCode: `import logger from ${JSON.stringify(moduleName)};`,
+      importCode: `import logger from ${JSON.stringify(processedModuleName)};`,
       code: '',
     };
   }

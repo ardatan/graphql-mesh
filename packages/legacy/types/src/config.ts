@@ -51,9 +51,9 @@ export interface Config {
   documents?: string[];
   persistedOperations?: PersistedOperationsConfig;
   /**
-   * Logger instance that matches `Console` interface of NodeJS
+   * Path to a file exporting a logger instance compatible with the `Logger` type from `@graphql-mesh/types`
    */
-  logger?: any;
+  logger?: string;
   /**
    * Path to a custom W3 Compatible Fetch Implementation
    */
