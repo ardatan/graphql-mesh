@@ -16,8 +16,9 @@ available through [type merging](/v1/compose/type-merging). While type merging f
 the need for schema extensions, it does not preclude their use.
 
 <Callout>
-  Schema delegation is a way to automatically forward a query (or a part of a query) from the unified
-  graph to an underlying subgraph that can execute the query.
+
+Schema delegation is a way to automatically forward a query (or a part of a query) from the unified
+graph to an underlying subgraph that can execute the query.
 
 Schema extensions are usually used to apply this approach to combine independent, uncontrolled
 sources.
@@ -327,9 +328,10 @@ export const composeConfig = defineComposeConfig({
 <Callout>
 Internally, `resolveTo` wraps a single `resolveTo` call in a `DataLoader` scoped by context, field, arguments, and query selection. It assumes that the delegated operation will return an array of objects matching the gateway field’s named GraphQL type (ex: a `User` field delegates to a `[User]` query). If this is not the case, then you should manually provide a `returnType` option citing the expected GraphQL return type. Since it is a thin wrapper around DataLoader, it also makes the following assumptions on the results:
 
-- The Array of values must be the same length as the Array of keys.
-- Each index in the Array of values must correspond to the same index in the Array of keys.
-  </Callout>
+The Array of values must be the same length as the Array of keys, and each index in the Array of
+values must correspond to the same index in the Array of keys.
+
+</Callout>
 
 If the query you’re delegating to don’t conform to these expectations, you can provide a custom
 resolver function in `additionalResolvers` in `serve-runtime` configuration.
