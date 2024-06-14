@@ -104,10 +104,10 @@ describe('Composition', () => {
     const aSchema = buildSchema(
       /* GraphQL */ `
         type Query {
-          myFoo: Foo! @source(name: "yourFoo")
+          foo(id: ID!): Foo! @source(name: "yourFoo") @merge
         }
 
-        type Foo {
+        type Foo @key(selectionSet: "{ id }") {
           id: ID!
         }
       `,

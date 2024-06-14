@@ -327,6 +327,9 @@ function addAnnotationsForSemanticConventions({
   directiveExtensions: any;
   subgraphName: string;
 }) {
+  if (directiveExtensions.merge?.length) {
+    return;
+  }
   const type = getNamedType(queryFieldConfig.type);
   if (isObjectType(type)) {
     const fieldMap = type.getFields();
