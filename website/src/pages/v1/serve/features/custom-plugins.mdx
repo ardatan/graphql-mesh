@@ -1,0 +1,47 @@
+# Custom Plugins
+
+GraphQL Mesh uses
+[GraphQL Yoga](https://the-guild.dev/graphql/yoga-server/docs/features/envelop-plugins), and it uses
+[Envelop](https://the-guild.dev/graphql/envelop) plugin system which allows you to hook into the
+different phases of the GraphQL execution to manipulate or track the entire workflow step-by-step.
+
+We'd recommend to check the features of GraphQL Mesh first, and if you can't find what you are
+looking for, then you can use this option on your own to add plugins from either GraphQL Yoga or
+[Envelop's Plugin Hub](https://the-guild.dev/graphql/envelop/plugins).
+
+You can provide those plugins as an array of objects,
+
+```ts filename="mesh.config.ts"
+import { useGraphQLJit } from '@envelop/graphql-jit'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+// or a Yoga Plugin
+import { useCSRFPrevention } from '@graphql-yoga/plugin-csrf-prevention'
+
+export const serveConfig = defineServeConfig({
+  plugins: () => [useGraphQLJit(), useCSRFPrevention()]
+})
+```
+
+##### Plugin Context
+
+GraphQL Mesh comes with ready-to-use `logger`, `fetch`, cache storage and etc that are shared across
+different components. We'd highly recommend you to use those available context values instead of
+creating your own for a specific plugin.
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  plugins({
+    fetch, // WHATWG compatible Fetch implementation.
+    logger, // Logger instance used by Mesh
+    cwd, // Current working directory
+    pubsub, // PubSub instance used by Mesh
+    cache // Cache storage used by Mesh
+  }) {
+    return [
+      useMyPlugin({ logger, fetch }) // So the plugin can use the shared logger and fetch
+    ]
+  }
+})
+```

@@ -6,6 +6,6 @@ export default {
   auth: 'Authorization/Authentication',
   'subscriptions-webhooks': 'Subscriptions/Webhooks',
   testing: 'Testing & Debugging',
+  'custom-plugins': 'Custom Plugins',
   'rest-api': 'Exposing REST API',
-  'file-uploads': 'File Uploads',
 };
