@@ -5,4 +5,6 @@ export default {
   'schema-extensions': 'Schema Extensions',
   'type-merging': 'Type Merging',
   'response-caching': 'Response Caching',
+  'rate-limit': 'Rate Limit',
+  auth: 'Authentication',
 };
