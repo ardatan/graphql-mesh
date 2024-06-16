@@ -82,8 +82,11 @@ stateDiagram-v2
       onExecute --> onSubgraphExecute
       onSubscribe --> onSubgraphExecute
 
-      onSubgraphExecute --> onExecuteDone
-      onSubgraphExecute --> onSubscribeDone
+      onSubgraphExecute --> onFetch
+      onFetch --> onSubgraphExecuteDone
+
+      onSubgraphExecuteDone --> onExecuteDone
+      onSubgraphExecuteDone --> onSubscribeDone
 
       onExecuteDone --> onResultProcess
       onSubscribeDone --> onResultProcess
@@ -108,6 +111,23 @@ This hook is invoked for ANY request that is sent to the subgraph.
 
 You can see [Prometheus plugin](/v1/serve/plugins/monitoring-tracing/prometheus) for an example of
 how to use this hook.
+
+#### `onFetch`
+
+This hook is invoked everytime the gateways sends an outgoing HTTP request to an upstream service.
+
+**Example actions in this hook:**
+
+- Manipulate HTTP [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) object
+- Manipulate HTTP [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) object
+- Change [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation
+- Add custom headers
+- Monitor the HTTP request
+
+**Example plugins:**
+
+- [Prometheus plugin](/v1/serve/plugins/monitoring-tracing/prometheus)
+- [Forward Headers plugin](/v1/serve/plugins/auth/forward-headers)
 
 ##### `API`
 
