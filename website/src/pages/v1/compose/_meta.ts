@@ -4,4 +4,5 @@ export default {
   transforms: 'Transforms',
   'schema-extensions': 'Schema Extensions',
   'type-merging': 'Type Merging',
+  'response-caching': 'Response Caching',
 };
