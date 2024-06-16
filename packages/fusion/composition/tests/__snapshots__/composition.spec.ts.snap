@@ -90,12 +90,13 @@ exports[`Composition respects the existing transforms done 1`] = `
   query: Query
 }
 
+directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
+
 type Query {
-  myFoo: Foo! @source(name: "yourFoo", type: "Foo!", subgraph: "A")
-  foo: Foo! @source(name: "bar", type: "Bar!", subgraph: "B")
+  foo(id: ID! @source(name: "id", type: "ID", subgraph: "A")): Foo! @source(name: "yourFoo", type: "Foo!", subgraph: "A") @source(name: "bar", type: "Bar!", subgraph: "B") @merge
 }
 
-type Foo @source(name: "Foo", subgraph: "A") @source(name: "Bar", subgraph: "B") {
+type Foo @key(selectionSet: "{ id }") @source(name: "Foo", subgraph: "A") @source(name: "Bar", subgraph: "B") {
   id: ID! @source(name: "id", type: "ID!", subgraph: "A") @source(name: "id", type: "ID!", subgraph: "B")
 }"
 `;
