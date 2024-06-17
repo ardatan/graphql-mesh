@@ -86,6 +86,7 @@ the `scope` to indicate that the cache should only be used if a session is prese
 
 ```ts filename="Response Cache configuration with scope"
 useResponseCache({
+  ...pluginCtx,
   // cache based on the authentication header
   session: request => request.headers.get('authentication')
 
@@ -116,6 +117,7 @@ is picked.
 
 ````ts filename="Response Cache configuration with TTL"
 useResponseCache({
+  ...pluginCtx,
   session: () => null,
   // by default cache all operations for 2 seconds
   ttl: 2_000,
@@ -164,6 +166,7 @@ This behavior can be disabled by setting the `invalidateViaMutation` option to `
 
 ```ts filename="Disabling mutation invalidation"
 useResponseCache({
+  ...pluginCtx,
   session: request => null,
   invalidateViaMutation: false
 })

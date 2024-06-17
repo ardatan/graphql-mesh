@@ -1,0 +1,27 @@
+# Deduplicate HTTP Requests
+
+Most of the time, your GraphQL Mesh Gateway will receive multiple requests for the same data. This
+can happen when multiple clients request the same data, or when a single client sends multiple
+requests for the same data.
+
+To reduce the load on your downstream services, you can deduplicate the requests. This means that if
+multiple requests for the same data are received at the same time, only one request will be sent to
+the downstream service, and the responses will be shared among the clients.
+
+You can enable request deduplication by using the `useRequestDeduplication` plugin.
+
+```sh npm2yarn
+npm i @graphql-mesh/plugin-deduplicate-request
+```
+
+```ts filename="mesh.config.ts"
+import useRequestDeduplication from '@graphql-mesh/plugin-deduplicate-request'
+
+export const serveConfig = {
+  plugins: pluginCtx => [
+    useRequestDeduplication({
+      ...pluginCtx
+    })
+  ]
+}
+```
