@@ -8984,10 +8984,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.32, @sinclair/typebox@npm:^0.32.0":
-  version: 0.32.32
-  resolution: "@sinclair/typebox@npm:0.32.32"
-  checksum: 10c0/a8f5013570fd20381fe9d3f9c932bc4808564fe7e94d740265d8af8b62b81ba5100ae7b3db03de0cff5a07d0b76413388733e61ea988e6e7b336c13e0f6621b6
+"@sinclair/typebox@npm:0.32.33":
+  version: 0.32.33
+  resolution: "@sinclair/typebox@npm:0.32.33"
+  checksum: 10c0/8011a8e69970316955b901d2c112b1f87f67bdb0b78969a70ba6895816e0e818a309b61cfb5ad4d8f314f29c210e7b9b86a3fa60d5f09abbedf5861282147253
   languageName: node
   linkType: hard
 
@@ -9002,6 +9002,13 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+  languageName: node
+  linkType: hard
+
+"@sinclair/typebox@npm:^0.32.0":
+  version: 0.32.32
+  resolution: "@sinclair/typebox@npm:0.32.32"
+  checksum: 10c0/a8f5013570fd20381fe9d3f9c932bc4808564fe7e94d740265d8af8b62b81ba5100ae7b3db03de0cff5a07d0b76413388733e61ea988e6e7b336c13e0f6621b6
   languageName: node
   linkType: hard
 
@@ -29115,7 +29122,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.10"
     "@graphql-mesh/openapi": "npm:0.100.12"
-    "@sinclair/typebox": "npm:0.32.32"
+    "@sinclair/typebox": "npm:0.32.33"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.1"
     graphql: "npm:16.8.2"
@@ -33387,8 +33394,8 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.7.1":
-  version: 4.15.5
-  resolution: "tsx@npm:4.15.5"
+  version: 4.15.6
+  resolution: "tsx@npm:4.15.6"
   dependencies:
     esbuild: "npm:~0.21.4"
     fsevents: "npm:~2.3.3"
@@ -33398,7 +33405,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/e05d72f50857224051675f81b64e1af47163d6b8a87cd5353ef94cdf8c7510e7c4707357ed461abddeac67cc2252866844e8c6c691ac1608fe1d8062f0a1c841
+  checksum: 10c0/c44e489d35b8b4795d68164572eb9e322a707290aa0786c2aac0f5c7782a884dfec38d557d74471b981a8314b2c7f6612078451d0429db028a23cb54a37e83a0
   languageName: node
   linkType: hard
 
