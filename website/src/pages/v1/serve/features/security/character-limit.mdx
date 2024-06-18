@@ -1,0 +1,38 @@
+# Character Limit
+
+import { Callout } from '@theguild/components'
+
+**Limit** number of **characters** in a GraphQL query document.
+
+This plugin helps you to prevent **DoS attacks** by hard-limiting the size of the query document.
+
+[Provided by GraphQL Armor](https://escape.tech/graphql-armor/docs/plugins/character-limit)
+
+## How to use?
+
+Install the plugin:
+
+```sh npm2yarn
+npm install @escape.tech/graphql-armor-character-limit
+```
+
+Then, add it to your plugins:
+
+```ts filename="mesh.config.ts"
+import { characterLimitPlugin } from '@escape.tech/graphql-armor-character-limit'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export default defineServeConfig({
+  plugins: () => [
+    characterLimitPlugin({
+      maxLength: 15000 // Number of characters allowed | Default: 15000
+    })
+  ]
+})
+```
+
+<Callout>
+  - We recommend using the [Max Tokens Plugin](/v1/serve/features/security/max-tokens) instead of
+  this one. - This plugin does not limit the size of input variables. - This plugin relies on a
+  parser plugin to works and access query document through the context.
+</Callout>

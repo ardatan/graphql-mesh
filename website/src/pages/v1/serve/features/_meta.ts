@@ -5,7 +5,7 @@ export default {
   security: 'Security',
   // auth: 'Authorization/Authentication',
   // 'subscriptions-webhooks': 'Subscriptions/Webhooks',
-  // testing: 'Testing & Debugging',
+  testing: 'Testing & Debugging',
   'custom-plugins': 'Custom Plugins',
   'rest-api': 'Exposing REST API',
 };
