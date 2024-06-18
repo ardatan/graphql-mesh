@@ -8467,7 +8467,7 @@ __metadata:
     fast-xml-parser: "npm:^4.3.4"
     graphql-compose: "npm:^9.0.10"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.0.3"
+    soap: "npm:1.0.4"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.7
     "@graphql-mesh/utils": ^0.98.7
@@ -10676,12 +10676,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.14.4, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6, @types/node@npm:^20.12.13":
-  version: 20.14.4
-  resolution: "@types/node@npm:20.14.4"
+"@types/node@npm:*, @types/node@npm:20.14.5, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6, @types/node@npm:^20.12.13":
+  version: 20.14.5
+  resolution: "@types/node@npm:20.14.5"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/2244be2e66e19377a491bfc279b52bc3f598c2e31d683d2388f4a16dbf6e81ad0032fde01770c4babcc73a31609e23fa0e5864dffc5830e9f457db250bd08b33
+  checksum: 10c0/06a8c304b5f7f190d4497807dc67ad09ee7b14ea2996bfdc823553c624698d8cab1ef9d16f8b764f20cb9eb11caa0e832787741e9ef70e1c89d620797ab28436
   languageName: node
   linkType: hard
 
@@ -17790,7 +17790,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.0"
     "@graphql-mesh/cli": "npm:0.90.10"
     "@graphql-mesh/json-schema": "npm:0.100.11"
-    "@types/node": "npm:20.14.4"
+    "@types/node": "npm:20.14.5"
     graphql: "npm:16.8.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -18736,7 +18736,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.14.4"
+    "@types/node": "npm:20.14.5"
     "@types/react": "npm:18.3.3"
     "@types/react-dom": "npm:18.3.0"
     apollo-upload-client: "npm:18.0.1"
@@ -19567,7 +19567,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.14.4"
+    "@types/node": "npm:20.14.5"
     "@typescript-eslint/eslint-plugin": "npm:7.13.1"
     "@typescript-eslint/parser": "npm:7.13.1"
     babel-jest: "npm:29.7.0"
@@ -22851,7 +22851,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.90.10"
     "@graphql-mesh/json-schema": "npm:0.100.11"
-    "@types/node": "npm:20.14.4"
+    "@types/node": "npm:20.14.5"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.1"
     graphql: "npm:16.8.2"
@@ -28906,7 +28906,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.98.7"
     "@graphql-mesh/runtime": "npm:0.99.8"
     "@graphql-mesh/transform-prefix": "npm:0.98.7"
-    "@types/node": "npm:20.14.4"
+    "@types/node": "npm:20.14.5"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.8.2"
     ts-node: "npm:^10.9.2"
@@ -31491,9 +31491,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"soap@npm:1.0.3":
-  version: 1.0.3
-  resolution: "soap@npm:1.0.3"
+"soap@npm:1.0.4":
+  version: 1.0.4
+  resolution: "soap@npm:1.0.4"
   dependencies:
     axios: "npm:^1.6.8"
     axios-ntlm: "npm:^1.4.2"
@@ -31506,7 +31506,7 @@ __metadata:
     uuid: "npm:^8.3.2"
     whatwg-mimetype: "npm:3.0.0"
     xml-crypto: "npm:^3.0.0"
-  checksum: 10c0/5bac27df219f2ef386e83599e4ce029d9c89b0bba3d120d86ecc4672ff631b5df3fd663f64af70af3142210daa2541b216d293293447654acdf4560ba80e123e
+  checksum: 10c0/eea303a777b690c91cdfbefc9145ef1e5223ca4896de3eaec91bba0ba038300a917f763c3dd29f4904c10debdece3e78b2f7f916673d9847f9b0756616575c97
   languageName: node
   linkType: hard
 
@@ -34771,7 +34771,7 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^6.5.3"
     "@theguild/tailwind-config": "npm:0.4.2"
-    "@types/node": "npm:20.14.4"
+    "@types/node": "npm:20.14.5"
     "@types/react": "npm:18.3.3"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.4"
