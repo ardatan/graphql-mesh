@@ -105,7 +105,7 @@
     "esbuild": "^0.21.1",
     "graphql": "16.8.2",
     "tslib": "2.6.3",
-    "undici": "6.19.1",
+    "undici": "6.19.2",
     "uuid": "10.0.0"
   },
   "lint-staged": {
