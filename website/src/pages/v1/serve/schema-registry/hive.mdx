@@ -1,0 +1,35 @@
+# Integration with GraphQL Hive
+
+`TODO: Finish this PR https://github.com/ardatan/graphql-mesh/pull/7096/files`
+
+[GraphQL Hive](https://the-guild.dev/graphql/hive) is a schema registry, monitoring and analytics
+tool for your GraphQL API, and it is possible to integrate your GraphQL Mesh application to GraphQL
+Hive by using the dedicated plugins and transforms.
+
+GraphQL Mesh Serve can fetch the supergraph from Hive's High-Availablity CDN, and serve it with a
+few lines of configuration.
+
+By using the built-in Hive plugin, it allows you to monitor and analyze the operation performance.
+
+[Learn more about GraphQL Hive](https://the-guild.dev/graphql/hive/docs)
+
+## How to use?
+
+GraphQL Mesh has a built-in support for GraphQL Hive. In this case, you don't need to provide
+`supergraph` in your configuration, but the credentials provided by GraphQL Hive;
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export default defineServeConfig({
+  hive: {
+    // The endpoint of CDN
+    endpoint: 'CDN_ENDPOINT',
+    // The API key provided by GraphQL Hive
+    token: 'API_KEY'
+    // TODO: Add other plugin options here
+  }
+})
+
+;`TODO: Persisted Operations`
+```
