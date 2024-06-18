@@ -1,0 +1,41 @@
+# Execution Cancellation
+
+In the real world, a lot of HTTP requests are dropped or canceled. This can happen due to a flakey
+internet connection, navigation to a new view or page within a web or native app or the user simply
+closing the app. In this case, the server can stop processing the request and save resources.
+
+That is why GraphQL Mesh comes with the support for canceling the GraphQL execution upon request
+cancellation.
+
+So any extra calls to the services can be stopped and the resources can be saved.
+
+## Enable Execution Cancellation
+
+```ts filename="mesh.config.ts"
+import {
+  defineConfig as defineServeConfig,
+  useExecutionCancellation
+} from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  plugins: pluginCtx => [useExecutionCancellation()]
+})
+```
+
+That is all you need to do to enable execution cancellation in your Mesh gateway. Theoretically, you
+can enable this and immediately benefit from it without making any other adjustments within your
+GraphQL schema implementation.
+
+If you want to understand how it works and how you can adjust your resolvers to properly cancel
+pending promises (e.g. database reads or HTTP requests), you can continue with the next section.
+
+<Callout>
+  You can also use the same plugin with your subgraph configuration if you use GraphQL Yoga. [See
+  more](https://the-guild.dev/graphql/yoga-server/docs/features/execution-cancellation)
+</Callout>
+
+<Callout>
+  Also this can be combined with [Upstream
+  Cancellation](/v1/serve/features/performance/upstream-cancellation) that does this cancellation
+  not only in the execution level but also on the upstream HTTP level.
+</Callout>
