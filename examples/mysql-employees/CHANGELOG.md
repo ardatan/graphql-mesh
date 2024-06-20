@@ -1,5 +1,14 @@
 # mysql-employees
 
+## 0.13.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)]:
+  - @graphql-mesh/mysql@0.98.8
+  - @graphql-mesh/cli@0.90.11
+
 ## 0.13.10
 
 ### Patch Changes

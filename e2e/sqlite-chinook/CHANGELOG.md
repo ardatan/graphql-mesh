@@ -4,6 +4,18 @@
 
 ### Patch Changes
 
+- Updated dependencies
+  [[`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207),
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207),
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)]:
+  - @graphql-mesh/serve-cli@0.5.0
+  - @graphql-mesh/compose-cli@0.4.0
+  - @omnigraph/sqlite@0.2.8
+
+## null
+
+### Patch Changes
+
 - Updated dependencies []:
   - @graphql-mesh/compose-cli@0.3.7
   - @omnigraph/sqlite@0.2.7
