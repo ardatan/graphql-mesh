@@ -3,4 +3,4 @@
 '@graphql-mesh/types': patch
 ---
 
-Fix importing a logger using the `logger` configuration option and update docs
+Fix incorrect import code generated based on the `logger` configuration option and the documentation suggesting to pass a logger instance instead of a file path.
