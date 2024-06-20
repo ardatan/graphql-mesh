@@ -4382,20 +4382,8 @@
       "description": "Configure persisted operations options"
     },
     "logger": {
-      "anyOf": [
-        {
-          "type": "object",
-          "additionalProperties": true
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "array",
-          "additionalItems": true
-        }
-      ],
-      "description": "Logger instance that matches `Console` interface of NodeJS"
+      "type": "string",
+      "description": "Path to a file exporting a logger instance compatible with the `Logger` type from `@graphql-mesh/types`"
     },
     "customFetch": {
       "anyOf": [

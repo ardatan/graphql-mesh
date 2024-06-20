@@ -39,9 +39,9 @@ type Query {
   """
   persistedOperations: PersistedOperationsConfig
   """
-  Logger instance that matches `Console` interface of NodeJS
+  Path to a file exporting a logger instance compatible with the `Logger` type from `@graphql-mesh/types`
   """
-  logger: Any
+  logger: String
   """
   Path to a custom W3 Compatible Fetch Implementation
   """
