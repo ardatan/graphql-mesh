@@ -1,6 +1,3 @@
-import 'tsx/cjs'; // support importing typescript configs in CommonJS
-import 'tsx/esm'; // support importing typescript configs in ESM
-
 import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
