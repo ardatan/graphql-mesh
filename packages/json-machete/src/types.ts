@@ -1,1 +1,1 @@
-export { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
+export type { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
