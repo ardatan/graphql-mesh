@@ -15,7 +15,7 @@
     "graphql": "16.8.2"
   },
   "devDependencies": {
-    "@types/node": "20.14.2",
+    "@types/node": "20.14.6",
     "concurrently": "8.2.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
