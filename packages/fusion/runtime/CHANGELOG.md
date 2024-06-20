@@ -1,5 +1,54 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.3.9
+
+### Patch Changes
+
+- [#7009](https://github.com/ardatan/graphql-mesh/pull/7009)
+  [`b5bf97c`](https://github.com/ardatan/graphql-mesh/commit/b5bf97c6fd92dbfa9ed88e03003910a1247149a0)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@envelop/core@^5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.1) (to
+    `dependencies`)
+  - Added dependency
+    [`@graphql-tools/executor@^1.2.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.2.6)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/federation@^1.1.36` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/1.1.36)
+    (to `dependencies`)
+
+- [#7054](https://github.com/ardatan/graphql-mesh/pull/7054)
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/federation@^2.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.0.0)
+    (to `dependencies`)
+  - Added dependency
+    [`disposablestack@^1.1.6` ↗︎](https://www.npmjs.com/package/disposablestack/v/1.1.6) (to
+    `dependencies`)
+
+- [#7009](https://github.com/ardatan/graphql-mesh/pull/7009)
+  [`b5bf97c`](https://github.com/ardatan/graphql-mesh/commit/b5bf97c6fd92dbfa9ed88e03003910a1247149a0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Implement declarative transforms
+
+- [#7054](https://github.com/ardatan/graphql-mesh/pull/7054)
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `Disposable` pattern for plugins and
+  transports
+
+- Updated dependencies
+  [[`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207),
+  [`b5bf97c`](https://github.com/ardatan/graphql-mesh/commit/b5bf97c6fd92dbfa9ed88e03003910a1247149a0),
+  [`4c75671`](https://github.com/ardatan/graphql-mesh/commit/4c756717247eb0a8f3431e31e6c86fc97297bd32),
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207),
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)]:
+  - @graphql-mesh/utils@0.98.8
+  - @graphql-mesh/types@0.98.8
+  - @graphql-mesh/transport-common@0.2.8
+  - @graphql-mesh/runtime@0.99.9
+
 ## 0.3.8
 
 ### Patch Changes

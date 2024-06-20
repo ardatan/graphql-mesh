@@ -1,5 +1,6 @@
 {
   "name": "@e2e/mysql-rfam",
+  "version": null,
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",

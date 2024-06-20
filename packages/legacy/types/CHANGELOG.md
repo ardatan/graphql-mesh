@@ -1,5 +1,22 @@
 # @graphql-mesh/types
 
+## 0.98.8
+
+### Patch Changes
+
+- [#7118](https://github.com/ardatan/graphql-mesh/pull/7118)
+  [`4c75671`](https://github.com/ardatan/graphql-mesh/commit/4c756717247eb0a8f3431e31e6c86fc97297bd32)
+  Thanks [@kamilkowalski](https://github.com/kamilkowalski)! - `logger` configuration option only
+  accepts a string
+
+- [#7054](https://github.com/ardatan/graphql-mesh/pull/7054)
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `Disposable` pattern for plugins and
+  transports
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.98.8
+
 ## 0.98.7
 
 ### Patch Changes

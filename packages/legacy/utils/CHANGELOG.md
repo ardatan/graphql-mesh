@@ -1,5 +1,35 @@
 # @graphql-mesh/utils
 
+## 0.98.8
+
+### Patch Changes
+
+- [#7054](https://github.com/ardatan/graphql-mesh/pull/7054)
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`disposablestack@^1.1.6` ↗︎](https://www.npmjs.com/package/disposablestack/v/1.1.6) (to
+    `dependencies`)
+
+- [#7009](https://github.com/ardatan/graphql-mesh/pull/7009)
+  [`b5bf97c`](https://github.com/ardatan/graphql-mesh/commit/b5bf97c6fd92dbfa9ed88e03003910a1247149a0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Implement declarative transforms
+
+- [#7054](https://github.com/ardatan/graphql-mesh/pull/7054)
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `Disposable` pattern for plugins and
+  transports
+
+- [#7054](https://github.com/ardatan/graphql-mesh/pull/7054)
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)
+  Thanks [@ardatan](https://github.com/ardatan)! - Simplify the code by using `mapMaybePromise`
+
+- Updated dependencies
+  [[`4c75671`](https://github.com/ardatan/graphql-mesh/commit/4c756717247eb0a8f3431e31e6c86fc97297bd32),
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)]:
+  - @graphql-mesh/types@0.98.8
+
 ## 0.98.7
 
 ### Patch Changes

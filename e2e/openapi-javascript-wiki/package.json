@@ -1,5 +1,6 @@
 {
   "name": "@e2e/openapi-javascript-wiki",
+  "version": null,
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",

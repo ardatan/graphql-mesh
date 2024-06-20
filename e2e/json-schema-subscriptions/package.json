@@ -1,5 +1,6 @@
 {
   "name": "@e2e/json-schema-subscriptions",
+  "version": null,
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
