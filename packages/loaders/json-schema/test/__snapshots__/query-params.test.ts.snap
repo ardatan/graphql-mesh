@@ -7,7 +7,7 @@ exports[`Query Params queryParamsSample with invalid param names: queryParamsSam
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on SCHEMA
 
 type Query {
   test(foo_bar: String): JSON @httpOperation(subgraph: "test", path: "/test", httpMethod: GET, queryParamArgMap: "{\\"foo:bar\\":\\"foo_bar\\"}")

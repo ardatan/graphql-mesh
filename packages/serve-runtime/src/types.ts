@@ -24,7 +24,6 @@ import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 export { UnifiedGraphConfig };
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
-  | MeshServeConfigWithFusiongraph<TContext>
   | MeshServeConfigWithSupergraph<TContext>
   | MeshServeConfigWithProxy<TContext>;
 
@@ -66,27 +65,6 @@ export type MeshServePlugin<
   UnifiedGraphPlugin & {
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
-
-interface MeshServeConfigWithFusiongraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
-  /**
-   * Path to the GraphQL Fusion unified schema.
-   */
-  fusiongraph?: UnifiedGraphConfig;
-  /**
-   * Polling interval in milliseconds.
-   */
-  polling?: number;
-  /**
-   * Additional GraphQL schema resolvers.
-   */
-  additionalResolvers?:
-    | IResolvers<unknown, MeshServeContext & TContext>
-    | IResolvers<unknown, MeshServeContext>[];
-  /**
-   * Implement custom executors for transports.
-   */
-  transports?: TransportsOption;
-}
 
 interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**

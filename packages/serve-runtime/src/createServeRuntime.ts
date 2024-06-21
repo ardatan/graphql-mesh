@@ -12,10 +12,8 @@ import {
 } from 'graphql-yoga';
 import {
   handleFederationSupergraph,
-  handleFusiongraph,
   isDisposable,
   OnSubgraphExecuteHook,
-  UnifiedGraphHandler,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -30,7 +28,7 @@ import {
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import { MaybePromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
-import { handleUnifiedGraphConfig, UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
+import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import {
   MeshServeConfig,
   MeshServeConfigContext,
@@ -96,19 +94,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
     };
     schemaInvalidator = () => executorPlugin.invalidateUnifiedGraph();
-  } else {
-    let handleUnifiedGraph: UnifiedGraphHandler;
-    let unifiedGraphInConfig: UnifiedGraphConfig;
-    if ('fusiongraph' in config) {
-      handleUnifiedGraph = handleFusiongraph;
-      unifiedGraphInConfig = config.fusiongraph;
-    } else if ('supergraph' in config) {
-      handleUnifiedGraph = handleFederationSupergraph;
-      unifiedGraphInConfig = config.supergraph;
-    }
+  } else if ('supergraph' in config) {
     const unifiedGraphManager = new UnifiedGraphManager({
-      getUnifiedGraph: () => handleUnifiedGraphConfig(unifiedGraphInConfig, configContext),
-      handleUnifiedGraph,
+      getUnifiedGraph: () => handleUnifiedGraphConfig(config.supergraph, configContext),
+      handleUnifiedGraph: handleFederationSupergraph,
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,

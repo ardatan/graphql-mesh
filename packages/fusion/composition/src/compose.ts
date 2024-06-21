@@ -1,23 +1,39 @@
 import {
+  buildSchema,
+  concatAST,
   getNamedType,
   GraphQLArgumentConfig,
+  GraphQLEnumType,
   GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
+  GraphQLNamedType,
   GraphQLSchema,
+  GraphQLUnionType,
   isObjectType,
   isSpecifiedScalarType,
-  OperationTypeNode,
-  printSchema,
+  parse,
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
-import { mergeSchemas, MergeSchemasConfig } from '@graphql-tools/schema';
-import { getRootTypeMap, MapperKind, mapSchema, TypeSource } from '@graphql-tools/utils';
+import { stitchingDirectives } from '@graphql-tools/stitching-directives';
+import {
+  Constructor,
+  FieldMapper,
+  getDocumentNodeFromSchema,
+  MapperKind,
+  mapSchema,
+} from '@graphql-tools/utils';
+import { composeServices, ServiceDefinition } from '@theguild/federation-composition';
+import {
+  convertSubgraphToFederationv2,
+  importMeshDirectives,
+} from './federation-utils.js';
 
 export interface SubgraphConfig {
   name: string;
   schema: GraphQLSchema;
+  isFederation?: boolean;
   transforms?: SubgraphTransform[];
 }
 
@@ -26,38 +42,37 @@ export type SubgraphTransform = (
   subgraphConfig: SubgraphConfig,
 ) => GraphQLSchema;
 
-const defaultRootTypeNames: Record<OperationTypeNode, string> = {
-  query: 'Query',
-  mutation: 'Mutation',
-  subscription: 'Subscription',
-};
+export interface GetMeshFederationTypeDefsForDirectivesOpts {
+  meshDirectiveNames?: string[];
+  federationDirectiveNames?: string[];
+  federationVersion?: string;
+}
 
-export function composeSubgraphs(
-  subgraphs: SubgraphConfig[],
-  options?: Omit<MergeSchemasConfig, 'schema'>,
-) {
-  const annotatedSubgraphs: GraphQLSchema[] = [];
-  let mergeDirectiveUsed = false;
+export function getUnifiedGraphGracefully(subgraphs: SubgraphConfig[]) {
+  const result = composeSubgraphs(subgraphs);
+  if (result.errors?.length) {
+    throw new AggregateError(result.errors, `Failed to compose subgraphs; \n${result.errors.map(e => `- ${e.message}`).join('\n')}`);
+  }
+  return result.supergraphSdl;
+}
+
+export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
+  const annotatedSubgraphs: ServiceDefinition[] = [];
   for (const subgraphConfig of subgraphs) {
     const { name: subgraphName, schema, transforms } = subgraphConfig;
-    const rootTypeMap = getRootTypeMap(schema);
-    const typeToOperationType = new Map<string, OperationTypeNode>();
-
-    for (const [operationType, rootType] of rootTypeMap) {
-      typeToOperationType.set(rootType.name, operationType);
+    let url: string;
+    const subgraphSchemaExtensions = getDirectiveExtensions(schema);
+    const transportDirectives = subgraphSchemaExtensions?.transport;
+    if (transportDirectives?.length) {
+      url = transportDirectives[0].location;
     }
 
+    let mergeDirectiveUsed = false;
+    const sourceDirectiveUsed = transforms?.length > 0;
     const annotatedSubgraph = mapSchema(schema, {
       [MapperKind.TYPE]: type => {
-        if (isSpecifiedScalarType(type)) {
+        if (!sourceDirectiveUsed || isSpecifiedScalarType(type)) {
           return type;
-        }
-        const operationType = typeToOperationType.get(type.name);
-        if (operationType) {
-          return new (Object.getPrototypeOf(type).constructor)({
-            ...type.toConfig(),
-            name: defaultRootTypeNames[operationType],
-          });
         }
         const existingDirectives = getDirectiveExtensions(type);
         const existingSourceDirectives = existingDirectives?.source || [];
@@ -83,9 +98,13 @@ export function composeSubgraphs(
             ...type.extensions,
             directives,
           },
+          astNode: undefined,
         });
       },
       [MapperKind.FIELD]: (fieldConfig, fieldName) => {
+        if (!sourceDirectiveUsed) {
+          return fieldConfig;
+        }
         const newArgs: GraphQLFieldConfigArgumentMap = {};
         if ('args' in fieldConfig && fieldConfig.args) {
           for (const argName in fieldConfig.args) {
@@ -115,6 +134,7 @@ export function composeSubgraphs(
                   },
                 },
               },
+              astNode: undefined,
             };
           }
         }
@@ -143,9 +163,13 @@ export function composeSubgraphs(
               },
             },
           },
+          astNode: undefined,
         };
       },
       [MapperKind.ENUM_VALUE]: (valueConfig, _typeName, _schema, externalValue) => {
+        if (!sourceDirectiveUsed) {
+          return valueConfig;
+        }
         const existingDirectives = getDirectiveExtensions(valueConfig);
         const existingSourceDirectives = existingDirectives.source || [];
         if (existingSourceDirectives.length > 1) {
@@ -169,6 +193,7 @@ export function composeSubgraphs(
               },
             },
           },
+          astNode: undefined,
         };
       },
       [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
@@ -183,6 +208,14 @@ export function composeSubgraphs(
           if (directiveExtensions.merge) {
             mergeDirectiveUsed = true;
           }
+          return {
+            ...fieldConfig,
+            extensions: {
+              ...fieldConfig.extensions,
+              directives: directiveExtensions,
+            },
+            astNode: undefined,
+          };
         }
         const newArgs: GraphQLFieldConfigArgumentMap = {};
         if (fieldConfig.args) {
@@ -213,6 +246,7 @@ export function composeSubgraphs(
                   },
                 },
               },
+              astNode: undefined,
             };
           }
         }
@@ -240,6 +274,7 @@ export function composeSubgraphs(
             },
           },
           args: newArgs,
+          astNode: undefined,
         };
       },
     });
@@ -269,51 +304,289 @@ export function composeSubgraphs(
               ...fieldConfig.extensions,
               directives: directiveExtensions,
             },
+            astNode: undefined,
           };
         },
       });
     }
-    const isTransportAddedBefore = transformedSubgraph.astNode?.directives?.some(
-      directive => directive.name.value === 'transport',
-    );
-    if (
-      !isTransportAddedBefore &&
-      !(transformedSubgraph.extensions?.directives as any)?.transport
-    ) {
-      if (
-        !transformedSubgraph.extensions ||
-        Object.keys(transformedSubgraph.extensions).length === 0
-      ) {
-        transformedSubgraph.extensions = {};
-      }
-      const extensions: any = transformedSubgraph.extensions as any;
-      const directiveExtensions = (extensions.directives ||= {});
-      directiveExtensions.transport ||= {
-        subgraph: subgraphName,
-      };
+    transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
+    const importedDirectives = new Set<string>();
+    if (mergeDirectiveUsed) {
+      importedDirectives.add('@merge');
     }
-    annotatedSubgraphs.push(transformedSubgraph);
+    if (sourceDirectiveUsed) {
+      importedDirectives.add('@source');
+    }
+    const fieldMapper: FieldMapper = (fieldConfig, fieldName) => {
+      const fieldDirectives = getDirectiveExtensions(fieldConfig);
+      const sourceDirectives = fieldDirectives?.source;
+      if (sourceDirectives?.length) {
+        const filteredSourceDirectives = sourceDirectives.filter(
+          sourceDirective =>
+            sourceDirective.name !== fieldName ||
+            sourceDirective.type !== fieldConfig.type.toString(),
+        );
+        fieldDirectives.source = filteredSourceDirectives;
+      }
+      if ('args' in fieldConfig) {
+        const newArgs: GraphQLFieldConfigArgumentMap = {};
+        for (const argName in fieldConfig.args) {
+          const arg = fieldConfig.args[argName];
+          const argDirectives = getDirectiveExtensions(arg);
+          const sourceDirectives = argDirectives?.source;
+          if (sourceDirectives?.length) {
+            const filteredSourceDirectives = sourceDirectives.filter(
+              sourceDirective =>
+                sourceDirective.name !== argName || sourceDirective.type !== arg.type.toString(),
+            );
+            newArgs[argName] = {
+              ...arg,
+              extensions: {
+                ...arg.extensions,
+                directives: {
+                  ...argDirectives,
+                  source: filteredSourceDirectives,
+                },
+              },
+            };
+          } else {
+            newArgs[argName] = arg;
+          }
+        }
+        return {
+          ...fieldConfig,
+          args: newArgs,
+          extensions: {
+            ...fieldConfig.extensions,
+            directives: fieldDirectives,
+          },
+          astNode: undefined,
+        };
+      }
+      return {
+        ...fieldConfig,
+        extensions: {
+          ...fieldConfig.extensions,
+          directives: fieldDirectives,
+        },
+        astNode: undefined,
+      };
+    };
+    // Remove unnecessary @source directives
+    transformedSubgraph = mapSchema(transformedSubgraph, {
+      [MapperKind.TYPE]: type => {
+        const typeDirectives = getDirectiveExtensions(type);
+        const sourceDirectives = typeDirectives?.source;
+        if (sourceDirectives?.length) {
+          const filteredSourceDirectives = sourceDirectives.filter(
+            sourceDirective => sourceDirective.name !== type.name,
+          );
+          const typeExtensions: Record<string, any> = (type.extensions ||= {});
+          typeExtensions.directives = {
+            ...typeDirectives,
+            source: filteredSourceDirectives,
+          };
+        }
+        return type;
+      },
+      [MapperKind.ROOT_FIELD]: fieldMapper,
+      [MapperKind.FIELD]: fieldMapper as any,
+      [MapperKind.ENUM_VALUE]: (valueConfig, _typeName, _schema, externalValue) => {
+        const valueDirectives = getDirectiveExtensions(valueConfig);
+        const sourceDirectives = valueDirectives?.source;
+        if (sourceDirectives?.length) {
+          const filteredSourceDirectives = sourceDirectives.filter(
+            sourceDirective => sourceDirective.name !== externalValue,
+          );
+          const valueExtensions: Record<string, any> = (valueConfig.extensions ||= {});
+          valueExtensions.directives = {
+            ...valueDirectives,
+            source: filteredSourceDirectives,
+          };
+        }
+        return valueConfig;
+      },
+    });
+    // Workaround to keep directives on unsupported nodes since not all of them are supported by the composition library
+    const extraTypeDirectivesMap = new Map<string, Record<string, any[]>>();
+    function saveDirectives<T extends GraphQLNamedType>(type: T, typeCtor: Constructor<T>) {
+      const typeConfig = type.toConfig();
+
+      const directiveExtensions = getDirectiveExtensions(type);
+      if (directiveExtensions && Object.keys(directiveExtensions).length) {
+        extraTypeDirectivesMap.set(type.name, directiveExtensions);
+
+        // Cleanup directives
+        return new typeCtor({
+          ...typeConfig,
+          extensions: {
+            ...typeConfig.extensions,
+            directives: undefined,
+          },
+          astNode: undefined,
+        });
+      }
+
+      return type;
+    }
+    const extraEnumValueDirectivesMap = new Map<string, Map<string, Record<string, any[]>>>();
+    transformedSubgraph = mapSchema(transformedSubgraph, {
+      [MapperKind.UNION_TYPE]: type => saveDirectives(type, GraphQLUnionType),
+      [MapperKind.ENUM_TYPE]: type => saveDirectives(type, GraphQLEnumType),
+      [MapperKind.ENUM_VALUE]: (valueConfig, typeName, _, externalValue) => {
+        const enumValueDirectives = getDirectiveExtensions(valueConfig);
+
+        if (enumValueDirectives && Object.keys(enumValueDirectives).length) {
+          let enumValueDirectivesMap = extraEnumValueDirectivesMap.get(typeName);
+          if (!enumValueDirectivesMap) {
+            enumValueDirectivesMap = new Map<string, Record<string, any[]>>();
+            extraEnumValueDirectivesMap.set(typeName, enumValueDirectivesMap);
+          }
+          enumValueDirectivesMap.set(externalValue, enumValueDirectives);
+
+          // Cleanup directives
+          return {
+            ...valueConfig,
+            extensions: {
+              ...valueConfig.extensions,
+              directives: undefined,
+            },
+            astNode: undefined,
+          };
+        }
+      },
+    });
+    let extraSchemaDefinitionDirectives: Record<string, any> | undefined;
+    const schemaDirectiveExtensions = getDirectiveExtensions(transformedSubgraph);
+    if (schemaDirectiveExtensions) {
+      const schemaDirectiveExtensionsEntries = Object.entries(schemaDirectiveExtensions);
+      const schemaDirectiveExtraEntries = schemaDirectiveExtensionsEntries.filter(
+        ([dirName]) => dirName !== 'link' && dirName !== 'composeDirective',
+      );
+      if (schemaDirectiveExtraEntries.length) {
+        transformedSubgraph = new GraphQLSchema({
+          ...transformedSubgraph.toConfig(),
+          extensions: {
+            ...transformedSubgraph.extensions,
+            directives: {
+              link: schemaDirectiveExtensions.link,
+              composeDirective: schemaDirectiveExtensions.composeDirective,
+            },
+          },
+          // Cleanup AST Node to avoid conflicts with extensions
+          astNode: undefined,
+        });
+        extraSchemaDefinitionDirectives = Object.fromEntries(schemaDirectiveExtraEntries);
+      }
+    }
+
+    const importedDirectivesAST = new Set<string>();
+    if (mergeDirectiveUsed) {
+      const { mergeDirectiveTypeDefs } = stitchingDirectives();
+      // Add subgraph argument to @merge directive
+      importedDirectivesAST.add(
+        mergeDirectiveTypeDefs.replace('@merge(', '@merge(subgraph: String, '),
+      );
+    }
+    if (sourceDirectiveUsed) {
+      importedDirectivesAST.add(/* GraphQL */ `scalar _HoistConfig`);
+      importedDirectivesAST.add(/* GraphQL */ `
+        directive @source(
+          name: String!
+          type: String
+          subgraph: String!
+          hoist: _HoistConfig
+        ) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+      `);
+    }
+
+    const queryType = transformedSubgraph.getQueryType();
+    const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
+    if (extraTypeDirectivesMap.size) {
+      importedDirectives.add('@extraTypeDirective');
+      importedDirectivesAST.add(/* GraphQL */ `scalar _DirectiveExtensions`);
+      importedDirectivesAST.add(/* GraphQL */ `
+        directive @extraTypeDirective(
+          name: String!
+          directives: _DirectiveExtensions
+        ) repeatable on OBJECT
+      `);
+      queryTypeDirectives.extraTypeDirective ||= [];
+      for (const [typeName, directives] of extraTypeDirectivesMap.entries()) {
+        queryTypeDirectives.extraTypeDirective.push({
+          name: typeName,
+          directives: directives,
+        });
+      }
+    }
+
+    if (extraSchemaDefinitionDirectives) {
+      importedDirectives.add('@extraSchemaDefinitionDirective');
+      importedDirectivesAST.add(/* GraphQL */ `
+        scalar _DirectiveExtensions
+      `);
+      importedDirectivesAST.add(/* GraphQL */ `
+        directive @extraSchemaDefinitionDirective(
+          directives: _DirectiveExtensions
+        ) repeatable on OBJECT
+      `);
+      queryTypeDirectives.extraSchemaDefinitionDirective ||= [];
+      queryTypeDirectives.extraSchemaDefinitionDirective.push({
+        directives: extraSchemaDefinitionDirectives,
+      });
+    }
+
+    if (extraEnumValueDirectivesMap.size) {
+      importedDirectives.add('@extraEnumValueDirective');
+      importedDirectivesAST.add(/* GraphQL */ `
+        scalar _DirectiveExtensions
+      `);
+      importedDirectivesAST.add(/* GraphQL */ `
+        directive @extraEnumValueDirective(
+          name: String!
+          value: String!
+          directives: _DirectiveExtensions
+        ) repeatable on OBJECT
+      `);
+      queryTypeDirectives.extraEnumValueDirective ||= [];
+      for (const [typeName, enumValueDirectivesMap] of extraEnumValueDirectivesMap) {
+        for (const [enumValueName, directives] of enumValueDirectivesMap) {
+          queryTypeDirectives.extraEnumValueDirective.push({
+            name: typeName,
+            value: enumValueName,
+            directives: directives,
+          });
+        }
+      }
+    }
+
+    const queryTypeExtensions: Record<string, unknown> = (queryType.extensions ||= {});
+    queryTypeExtensions.directives = queryTypeDirectives;
+
+    if (importedDirectives.size) {
+      transformedSubgraph = importMeshDirectives(transformedSubgraph, [...importedDirectives]);
+    }
+
+    let subgraphAST = getDocumentNodeFromSchema(transformedSubgraph);
+    if (importedDirectivesAST.size) {
+      subgraphAST = concatAST([
+        subgraphAST,
+        parse([...importedDirectivesAST].join('\n'), { noLocation: true }),
+      ]);
+    }
+
+    annotatedSubgraphs.push({
+      name: subgraphName,
+      typeDefs: subgraphAST,
+      url,
+    });
   }
 
-  const typeDefs: TypeSource[] = [];
-
-  if (mergeDirectiveUsed) {
-    typeDefs.push(`
-      directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
-    `);
-  }
-
-  if (options?.typeDefs) {
-    typeDefs.push(options.typeDefs);
-  }
-
-  return mergeSchemas({
-    assumeValidSDL: true,
-    assumeValid: true,
-    ...options,
-    schemas: [...annotatedSubgraphs, ...(options?.schemas || [])],
-    typeDefs,
-  });
+  const composedSupergraphSdl = composeServices(annotatedSubgraphs);
+  return {
+    ...composedSupergraphSdl,
+    subgraphs,
+  };
 }
 
 function addAnnotationsForSemanticConventions({
@@ -356,6 +629,7 @@ function addAnnotationsForSemanticConventions({
       const queryFieldNameSnakeCase = snakeCase(queryFieldName);
       const pluralTypeName = pluralize(type.name);
       if (arg) {
+        const typeDirectives = getDirectiveExtensions(type);
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):
           case snakeCase(`get_${type.name}_by_${fieldName}`):
@@ -366,6 +640,14 @@ function addAnnotationsForSemanticConventions({
               keyField: fieldName,
               keyArg: argName,
             });
+            typeDirectives.key ||= [];
+            if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
+              typeDirectives.key.push({
+                fields: fieldName,
+              });
+              const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+              typeExtensions.directives = typeDirectives;
+            }
             break;
           }
           case snakeCase(pluralTypeName):
@@ -379,6 +661,14 @@ function addAnnotationsForSemanticConventions({
               keyField: fieldName,
               keyArg: argName,
             });
+            typeDirectives.key ||= [];
+            if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
+              typeDirectives.key.push({
+                fields: fieldName,
+              });
+              const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+              typeExtensions.directives = typeDirectives;
+            }
             break;
           }
         }

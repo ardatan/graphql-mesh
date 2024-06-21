@@ -1,5 +1,5 @@
 import { buildSchema, printSchema } from 'graphql';
-import { composeSubgraphs, createFilterTransform } from '@graphql-mesh/fusion-composition';
+import { composeSubgraphs, createFilterTransform, createPruneTransform } from '@graphql-mesh/fusion-composition';
 import { printSchemaWithDirectives, pruneSchema } from '@graphql-tools/utils';
 import { composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils.js';
 
@@ -34,7 +34,7 @@ describe('filter-schema', () => {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -58,6 +58,8 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -92,7 +94,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -117,6 +119,8 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -175,7 +179,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -200,6 +204,8 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -222,7 +228,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -241,6 +247,8 @@ type Query {
   userOne(name: String, age: Int): User
   userTwo(name: String, age: Int): User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -263,7 +271,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -282,6 +290,8 @@ type Query {
   userOne(name: String): User
   userTwo(name: String, age: Int): User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -316,7 +326,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -331,9 +341,17 @@ type User {
   username: String
 }
 
+type Book {
+  id: ID
+  name: String
+  author: User
+}
+
 type Query {
   user: User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -355,17 +373,19 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
-        transforms: [filterTransform],
+        transforms: [filterTransform, createPruneTransform()],
       },
     ]);
-    expect(printSchema(pruneSchema(schema)).trim()).toBe(
+    expect(printSchema(schema).trim()).toBe(
       /* GraphQL */ `
 type Query {
   foo: String
   bar: String
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -400,7 +420,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -409,6 +429,10 @@ type Query {
     expectTheSchemaSDLToBe(
       schema,
       /* GraphQL */ `
+type Book {
+  id: ID
+}
+
 type User {
   id: ID
   username: String
@@ -417,6 +441,8 @@ type User {
 type Query {
   user: User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -451,7 +477,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -475,6 +501,8 @@ type Query {
   user: User
   admin: User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -518,7 +546,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -543,6 +571,8 @@ type Post {
 type Query {
   user(id: ID!): User
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -587,7 +617,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -596,6 +626,8 @@ type Query {
     expectTheSchemaSDLToBe(
       schema,
       /* GraphQL */ `
+scalar _HoistConfig
+
 type User {
   id: ID
   name: String
@@ -647,7 +679,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -666,6 +698,8 @@ type Book {
 type Query {
   book: Book
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });
@@ -715,7 +749,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -733,6 +767,15 @@ type User {
   c: String
   d: String
   e: String
+}
+
+scalar _HoistConfig
+
+type Book {
+  id: ID
+  name: String
+  authorId: ID
+  author: User
 }
 
 type Query {
@@ -767,7 +810,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -781,6 +824,8 @@ type User {
   name: String
   username: String
 }
+
+scalar _HoistConfig
 
 type Book {
   id: ID
@@ -818,7 +863,7 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
         transforms: [filterTransform],
       },
@@ -836,6 +881,8 @@ type Test implements ITest {
   name: String
   username: String
 }
+
+scalar _HoistConfig
 
 type Query {
   test: Test
@@ -858,9 +905,9 @@ type Query {
     });
     schema = await composeAndGetPublicSchema([
       {
-        name: 'default',
+        name: 'TEST',
         schema,
-        transforms: [filterTransform],
+        transforms: [filterTransform, createPruneTransform()],
       },
     ]);
     expectTheSchemaSDLToBe(
@@ -869,6 +916,8 @@ type Query {
 type Query {
   foo: String
 }
+
+scalar _HoistConfig
 `.trim(),
     );
   });

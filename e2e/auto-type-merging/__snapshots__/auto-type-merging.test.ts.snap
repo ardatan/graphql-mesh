@@ -1,260 +1,551 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @transport(subgraph: "petstore", kind: "rest", location: "http://0.0.0.0:<petstore_port>/api/v3") @transport(subgraph: "vaccination", kind: "http", location: "http://0.0.0.0:<vaccination_port>/graphql") {
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@enum", "@httpOperation", "@transport", "@hidden", "@merge", "@source", "@extraSchemaDefinitionDirective"]
+)
+{
   query: Query
   mutation: Mutation
+  
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-type Query {
-  """Multiple status values can be provided with comma separated strings"""
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available @source(name: "status", type: "queryInput_findPetsByStatus_status", subgraph: "petstore")): [Pet] @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @source(name: "findPetsByStatus", type: "[Pet]", subgraph: "petstore") @hidden
-  """
-  Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-  """
-  findPetsByTags(
-    """Tags to filter by"""
-    tags: [String] @source(name: "tags", type: "String", subgraph: "petstore")
-  ): [Pet] @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"tags\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"tags\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\"", queryStringOptionsByParam: "\\"{\\\\\\"tags\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\"") @source(name: "findPetsByTags", type: "[Pet]", subgraph: "petstore") @hidden
-  """Returns a single pet"""
-  getPetById(
-    """ID of pet to return"""
-    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore")
-  ): Pet @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(name: "getPetById", type: "Pet", subgraph: "petstore") @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")
-  """Returns a map of status codes to quantities"""
-  getInventory: JSON @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(name: "getInventory", type: "JSON", subgraph: "petstore") @hidden
-  """
-  For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
-  """
-  getOrderById(
-    """ID of order that needs to be fetched"""
-    orderId: BigInt! @source(name: "orderId", type: "BigInt", subgraph: "petstore")
-  ): Order @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(name: "getOrderById", type: "Order", subgraph: "petstore") @hidden @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")
-  """Logs user into the system"""
-  loginUser(
-    """The user name for login"""
-    username: String @source(name: "username", type: "String", subgraph: "petstore")
-    """The password for login in clear text"""
-    password: String @source(name: "password", type: "String", subgraph: "petstore")
-  ): String @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET, queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\"") @source(name: "loginUser", type: "String", subgraph: "petstore") @hidden
-  """Logs out current logged in user session"""
-  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET) @source(name: "logoutUser", type: "JSON", subgraph: "petstore") @hidden
-  """Get user by user name"""
-  getUserByName(
-    """The name that needs to be fetched. Use user1 for testing."""
-    username: String! @source(name: "username", type: "String", subgraph: "petstore")
-  ): User @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: GET) @source(name: "getUserByName", type: "User", subgraph: "petstore") @hidden
-  petById(id: BigInt! @source(name: "id", type: "BigInt", subgraph: "vaccination")): Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  PETSTORE @join__graph(name: "petstore", url: "http://0.0.0.0:<petstore_port>/api/v3") 
+  VACCINATION @join__graph(name: "vaccination", url: "http://0.0.0.0:<vaccination_port>/graphql") 
 }
 
-"""Pet object that needs to be added to the store"""
-type Pet @source(name: "Pet", subgraph: "petstore") @source(name: "Pet", subgraph: "vaccination") {
-  id: BigInt! @source(name: "id", type: "BigInt", subgraph: "petstore") @source(name: "id", type: "BigInt!", subgraph: "vaccination")
-  name: String! @source(name: "name", type: "String!", subgraph: "petstore")
-  category: Category @source(name: "category", type: "Category", subgraph: "petstore")
-  photoUrls: [String]! @source(name: "photoUrls", type: "[String]!", subgraph: "petstore")
-  tags: [Tag] @source(name: "tags", type: "[Tag]", subgraph: "petstore")
-  status: mutation_updatePet_status @source(name: "status", type: "mutation_updatePet_status", subgraph: "petstore")
-  vaccinated: Boolean! @source(name: "vaccinated", type: "Boolean!", subgraph: "vaccination")
-}
+directive @enum(subgraph: String, value: String)  repeatable on ENUM_VALUE
+
+directive @httpOperation(
+  subgraph: String
+  path: String
+  operationSpecificHeaders: ObjMap
+  httpMethod: HTTPMethod
+  isBinary: Boolean
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
+  jsonApiFields: Boolean
+) repeatable on FIELD_DEFINITION
+
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String!
+  headers: ObjMap
+  queryStringOptions: ObjMap
+  queryParams: ObjMap
+  options: TransportOptions
+) repeatable on SCHEMA
+
+directive @hidden repeatable on FIELD_DEFINITION | OBJECT | INTERFACE | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_OBJECT
+
+directive @merge(
+  subgraph: String
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String!]
+  additionalArgs: String
+) on FIELD_DEFINITION
+
+directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
-scalar BigInt @source(name: "BigInt", subgraph: "vaccination") @source(name: "BigInt", subgraph: "petstore") @source(name: "BigInt", subgraph: "vaccination")
-
-type Category @source(name: "Category", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  name: String @source(name: "name", type: "String", subgraph: "petstore")
-}
-
-type Tag @source(name: "Tag", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  name: String @source(name: "name", type: "String", subgraph: "petstore")
-}
-
-"""pet status in the store"""
-enum mutation_updatePet_status @source(name: "mutation_updatePet_status", subgraph: "petstore") {
-  available @source(name: "available", subgraph: "petstore")
-  pending @source(name: "pending", subgraph: "petstore")
-  sold @source(name: "sold", subgraph: "petstore")
-}
-
-"""Status values that need to be considered for filter"""
-enum queryInput_findPetsByStatus_status @source(name: "queryInput_findPetsByStatus_status", subgraph: "petstore") {
-  available @source(name: "available", subgraph: "petstore")
-  pending @source(name: "pending", subgraph: "petstore")
-  sold @source(name: "sold", subgraph: "petstore")
-}
+scalar BigInt @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION) 
 
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf") @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf") @source(name: "JSON", subgraph: "petstore") @source(name: "JSON", subgraph: "petstore")
-
-type Order @source(name: "Order", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  petId: BigInt @source(name: "petId", type: "BigInt", subgraph: "petstore")
-  quantity: Int @source(name: "quantity", type: "Int", subgraph: "petstore")
-  shipDate: DateTime @source(name: "shipDate", type: "DateTime", subgraph: "petstore")
-  status: mutation_placeOrder_status @source(name: "status", type: "mutation_placeOrder_status", subgraph: "petstore")
-  complete: Boolean @source(name: "complete", type: "Boolean", subgraph: "petstore")
-}
+scalar JSON @join__type(graph: PETSTORE)  @specifiedBy(
+  url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
+)
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar DateTime @source(name: "DateTime", subgraph: "petstore") @source(name: "DateTime", subgraph: "petstore")
-
-"""Order Status"""
-enum mutation_placeOrder_status @source(name: "mutation_placeOrder_status", subgraph: "petstore") {
-  placed @source(name: "placed", subgraph: "petstore")
-  approved @source(name: "approved", subgraph: "petstore")
-  delivered @source(name: "delivered", subgraph: "petstore")
-}
-
-type User @source(name: "User", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  username: String @source(name: "username", type: "String", subgraph: "petstore")
-  firstName: String @source(name: "firstName", type: "String", subgraph: "petstore")
-  lastName: String @source(name: "lastName", type: "String", subgraph: "petstore")
-  email: EmailAddress @source(name: "email", type: "EmailAddress", subgraph: "petstore")
-  password: String @source(name: "password", type: "String", subgraph: "petstore")
-  phone: String @source(name: "phone", type: "String", subgraph: "petstore")
-  """User Status"""
-  userStatus: Int @source(name: "userStatus", type: "Int", subgraph: "petstore")
-}
+scalar DateTime @join__type(graph: PETSTORE) 
 
 """
 A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 """
-scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address") @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address") @source(name: "EmailAddress", subgraph: "petstore") @source(name: "EmailAddress", subgraph: "petstore")
+scalar EmailAddress @join__type(graph: PETSTORE)  @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address") 
 
-type Mutation {
-  """Update an existing pet by Id"""
-  updatePet(input: Pet_Input @source(name: "input", type: "Pet_Input", subgraph: "petstore")): Pet @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @source(name: "updatePet", type: "Pet", subgraph: "petstore") @hidden
-  """Add a new pet to the store"""
-  addPet(input: Pet_Input @source(name: "input", type: "Pet_Input", subgraph: "petstore")): Pet @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(name: "addPet", type: "Pet", subgraph: "petstore") @hidden
-  """Updates a pet in the store with form data"""
+"""
+The \`File\` scalar type represents a file upload.
+"""
+scalar File @join__type(graph: PETSTORE) 
+
+scalar ObjMap @join__type(graph: PETSTORE) 
+
+scalar _HoistConfig @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION) 
+
+scalar _DirectiveExtensions @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION) 
+
+scalar Headers @join__type(graph: VACCINATION) 
+
+scalar TransportOptions @join__type(graph: VACCINATION) 
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "petstore", kind: "rest", location: "http://0.0.0.0:<petstore_port>/api/v3"}]}
+) @extraSchemaDefinitionDirective(
+  directives: {transport: [{kind: "http", subgraph: "vaccination", location: "http://0.0.0.0:<vaccination_port>/graphql", options: {}}]}
+) @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION)  {
+  """
+  Multiple status values can be provided with comma separated strings
+  """
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available) : [Pet] @httpOperation(
+    subgraph: "petstore"
+    path: "/pet/findByStatus"
+    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: GET
+    queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\""
+    queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\""
+  ) @hidden @join__field(graph: PETSTORE) 
+  """
+  Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+  """
+  findPetsByTags(
+    """
+    Tags to filter by
+    """
+    tags: [String] @source(name: "tags", type: "String", subgraph: "petstore") 
+  ): [Pet] @httpOperation(
+    subgraph: "petstore"
+    path: "/pet/findByTags"
+    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: GET
+    queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\""
+    queryStringOptionsByParam: "\\"{\\\\\\"tags\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\""
+  ) @hidden @join__field(graph: PETSTORE) 
+  """
+  Returns a single pet
+  """
+  getPetById(
+    """
+    ID of pet to return
+    """
+    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore") 
+  ): Pet @httpOperation(
+    subgraph: "petstore"
+    path: "/pet/{args.petId}"
+    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: GET
+  ) @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")  @join__field(graph: PETSTORE) 
+  """
+  Returns a map of status codes to quantities
+  """
+  getInventory: JSON @httpOperation(
+    subgraph: "petstore"
+    path: "/store/inventory"
+    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: GET
+  ) @hidden @join__field(graph: PETSTORE) 
+  """
+  For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
+  """
+  getOrderById(
+    """
+    ID of order that needs to be fetched
+    """
+    orderId: BigInt! @source(name: "orderId", type: "BigInt", subgraph: "petstore") 
+  ): Order @httpOperation(
+    subgraph: "petstore"
+    path: "/store/order/{args.orderId}"
+    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: GET
+  ) @hidden @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")  @join__field(graph: PETSTORE) 
+  """
+  Logs user into the system
+  """
+  loginUser(
+    """
+    The user name for login
+    """
+    username: String
+    """
+    The password for login in clear text
+    """
+    password: String
+  ): String @httpOperation(
+    subgraph: "petstore"
+    path: "/user/login"
+    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: GET
+    queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\""
+  ) @hidden @join__field(graph: PETSTORE) 
+  """
+  Logs out current logged in user session
+  """
+  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET)  @hidden @join__field(graph: PETSTORE) 
+  """
+  Get user by user name
+  """
+  getUserByName(
+    """
+    The name that needs to be fetched. Use user1 for testing.
+    """
+    username: String! @source(name: "username", type: "String", subgraph: "petstore") 
+  ): User @httpOperation(
+    subgraph: "petstore"
+    path: "/user/{args.username}"
+    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: GET
+  ) @hidden @join__field(graph: PETSTORE) 
+  petById(id: BigInt! @source(name: "id", type: "BigInt", subgraph: "vaccination") ) : Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination")  @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")  @join__field(graph: VACCINATION) 
+}
+
+"""
+Pet object that needs to be added to the store
+"""
+type Pet @join__type(graph: PETSTORE, key: "id")  @join__type(graph: VACCINATION, key: "id")  {
+  id: BigInt @join__field(graph: PETSTORE, type: "BigInt")  @join__field(graph: VACCINATION, type: "BigInt!") 
+  name: String! @join__field(graph: PETSTORE) 
+  category: Category @join__field(graph: PETSTORE) 
+  photoUrls: [String]! @join__field(graph: PETSTORE) 
+  tags: [Tag] @join__field(graph: PETSTORE) 
+  status: mutation_updatePet_status @join__field(graph: PETSTORE) 
+  vaccinated: Boolean! @join__field(graph: VACCINATION) 
+}
+
+type Category @join__type(graph: PETSTORE)  {
+  id: BigInt
+  name: String
+}
+
+type Tag @join__type(graph: PETSTORE)  {
+  id: BigInt
+  name: String
+}
+
+type Order @join__type(graph: PETSTORE, key: "id")  {
+  id: BigInt
+  petId: BigInt
+  quantity: Int
+  shipDate: DateTime
+  status: mutation_placeOrder_status
+  complete: Boolean
+}
+
+type User @join__type(graph: PETSTORE)  {
+  id: BigInt
+  username: String
+  firstName: String
+  lastName: String
+  email: EmailAddress
+  password: String
+  phone: String
+  """
+  User Status
+  """
+  userStatus: Int
+}
+
+type Mutation @join__type(graph: PETSTORE)  {
+  """
+  Update an existing pet by Id
+  """
+  updatePet(input: Pet_Input) : Pet @httpOperation(
+    subgraph: "petstore"
+    path: "/pet"
+    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: PUT
+  ) @hidden
+  """
+  Add a new pet to the store
+  """
+  addPet(input: Pet_Input) : Pet @httpOperation(
+    subgraph: "petstore"
+    path: "/pet"
+    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: POST
+  ) @hidden
+  """
+  Updates a pet in the store with form data
+  """
   updatePetWithForm(
-    """ID of pet that needs to be updated"""
-    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore")
-    """Name of pet that needs to be updated"""
-    name: String @source(name: "name", type: "String", subgraph: "petstore")
-    """Status of pet that needs to be updated"""
-    status: String @source(name: "status", type: "String", subgraph: "petstore")
-  ): JSON @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"name\\\\\\":\\\\\\"name\\\\\\",\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"name\\\\\\":\\\\\\"name\\\\\\",\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"name\\\\\\":\\\\\\"name\\\\\\",\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\"") @source(name: "updatePetWithForm", type: "JSON", subgraph: "petstore") @hidden
-  """Deletes a pet"""
+    """
+    ID of pet that needs to be updated
+    """
+    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore") 
+    """
+    Name of pet that needs to be updated
+    """
+    name: String
+    """
+    Status of pet that needs to be updated
+    """
+    status: String
+  ): JSON @httpOperation(
+    subgraph: "petstore"
+    path: "/pet/{args.petId}"
+    httpMethod: POST
+    queryParamArgMap: "\\"{\\\\\\"name\\\\\\":\\\\\\"name\\\\\\",\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\""
+  ) @hidden
+  """
+  Deletes a pet
+  """
   deletePet(
-    api_key: String @source(name: "api_key", type: "String", subgraph: "petstore")
-    """Pet id to delete"""
-    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore")
-  ): JSON @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\"", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\"", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\"", httpMethod: DELETE) @source(name: "deletePet", type: "JSON", subgraph: "petstore") @hidden
-  """uploads an image"""
+    api_key: String
+    """
+    Pet id to delete
+    """
+    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore") 
+  ): JSON @httpOperation(
+    subgraph: "petstore"
+    path: "/pet/{args.petId}"
+    operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\""
+    httpMethod: DELETE
+  ) @hidden
+  """
+  uploads an image
+  """
   uploadFile(
-    """ID of pet to update"""
-    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore")
-    """Additional Metadata"""
-    additionalMetadata: String @source(name: "additionalMetadata", type: "String", subgraph: "petstore")
-    input: File @source(name: "input", type: "File", subgraph: "petstore")
-  ): ApiResponse @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/octet-stream\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"additionalMetadata\\\\\\":\\\\\\"additionalMetadata\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/octet-stream\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"additionalMetadata\\\\\\":\\\\\\"additionalMetadata\\\\\\"}\\"") @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/octet-stream\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST, queryParamArgMap: "\\"{\\\\\\"additionalMetadata\\\\\\":\\\\\\"additionalMetadata\\\\\\"}\\"") @source(name: "uploadFile", type: "ApiResponse", subgraph: "petstore") @hidden
-  """Place a new order in the store"""
-  placeOrder(input: Order_Input @source(name: "input", type: "Order_Input", subgraph: "petstore")): Order @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(name: "placeOrder", type: "Order", subgraph: "petstore") @hidden
+    """
+    ID of pet to update
+    """
+    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore") 
+    """
+    Additional Metadata
+    """
+    additionalMetadata: String
+    input: File
+  ): ApiResponse @httpOperation(
+    subgraph: "petstore"
+    path: "/pet/{args.petId}/uploadImage"
+    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/octet-stream\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: POST
+    queryParamArgMap: "\\"{\\\\\\"additionalMetadata\\\\\\":\\\\\\"additionalMetadata\\\\\\"}\\""
+  ) @hidden
+  """
+  Place a new order in the store
+  """
+  placeOrder(input: Order_Input) : Order @httpOperation(
+    subgraph: "petstore"
+    path: "/store/order"
+    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: POST
+  ) @hidden
   """
   For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
   """
   deleteOrder(
-    """ID of the order that needs to be deleted"""
-    orderId: BigInt! @source(name: "orderId", type: "BigInt", subgraph: "petstore")
-  ): JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE) @source(name: "deleteOrder", type: "JSON", subgraph: "petstore") @hidden
-  """This can only be done by the logged in user."""
-  createUser(input: User_Input @source(name: "input", type: "User_Input", subgraph: "petstore")): User @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(name: "createUser", type: "User", subgraph: "petstore") @hidden
-  """Creates list of users with given input array"""
-  createUsersWithListInput(input: [User_Input] @source(name: "input", type: "User_Input", subgraph: "petstore")): User @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @source(name: "createUsersWithListInput", type: "User", subgraph: "petstore") @hidden
-  """This can only be done by the logged in user."""
+    """
+    ID of the order that needs to be deleted
+    """
+    orderId: BigInt! @source(name: "orderId", type: "BigInt", subgraph: "petstore") 
+  ): JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE)  @hidden
+  """
+  This can only be done by the logged in user.
+  """
+  createUser(input: User_Input) : User @httpOperation(
+    subgraph: "petstore"
+    path: "/user"
+    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: POST
+  ) @hidden
+  """
+  Creates list of users with given input array
+  """
+  createUsersWithListInput(
+    input: [User_Input] @source(name: "input", type: "User_Input", subgraph: "petstore") 
+  ): User @httpOperation(
+    subgraph: "petstore"
+    path: "/user/createWithList"
+    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: POST
+  ) @hidden
+  """
+  This can only be done by the logged in user.
+  """
   updateUser(
-    """name that need to be deleted"""
-    username: String! @source(name: "username", type: "String", subgraph: "petstore")
-    input: User_Input @source(name: "input", type: "User_Input", subgraph: "petstore")
-  ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: PUT) @source(name: "updateUser", type: "JSON", subgraph: "petstore") @hidden
-  """This can only be done by the logged in user."""
+    """
+    name that need to be deleted
+    """
+    username: String! @source(name: "username", type: "String", subgraph: "petstore") 
+    input: User_Input
+  ): JSON @httpOperation(
+    subgraph: "petstore"
+    path: "/user/{args.username}"
+    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    httpMethod: PUT
+  ) @hidden
+  """
+  This can only be done by the logged in user.
+  """
   deleteUser(
-    """The name that needs to be deleted"""
-    username: String! @source(name: "username", type: "String", subgraph: "petstore")
-  ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE) @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE) @source(name: "deleteUser", type: "JSON", subgraph: "petstore") @hidden
+    """
+    The name that needs to be deleted
+    """
+    username: String! @source(name: "username", type: "String", subgraph: "petstore") 
+  ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE)  @hidden
 }
 
-"""Pet object that needs to be added to the store"""
-input Pet_Input @source(name: "Pet_Input", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  name: String! @source(name: "name", type: "String!", subgraph: "petstore")
-  category: Category_Input @source(name: "category", type: "Category_Input", subgraph: "petstore")
-  photoUrls: [String]! @source(name: "photoUrls", type: "[String]!", subgraph: "petstore")
-  tags: [Tag_Input] @source(name: "tags", type: "[Tag_Input]", subgraph: "petstore")
-  status: mutation_updatePet_status @source(name: "status", type: "mutation_updatePet_status", subgraph: "petstore")
+type ApiResponse @join__type(graph: PETSTORE)  {
+  code: Int
+  type: String
+  message: String
 }
 
-input Category_Input @source(name: "Category_Input", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  name: String @source(name: "name", type: "String", subgraph: "petstore")
+"""
+Status values that need to be considered for filter
+"""
+enum queryInput_findPetsByStatus_status @join__type(graph: PETSTORE)  {
+  available @join__enumValue(graph: PETSTORE) 
+  pending @join__enumValue(graph: PETSTORE) 
+  sold @join__enumValue(graph: PETSTORE) 
 }
 
-input Tag_Input @source(name: "Tag_Input", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  name: String @source(name: "name", type: "String", subgraph: "petstore")
+"""
+pet status in the store
+"""
+enum mutation_updatePet_status @join__type(graph: PETSTORE)  {
+  available @join__enumValue(graph: PETSTORE) 
+  pending @join__enumValue(graph: PETSTORE) 
+  sold @join__enumValue(graph: PETSTORE) 
 }
 
-type ApiResponse @source(name: "ApiResponse", subgraph: "petstore") {
-  code: Int @source(name: "code", type: "Int", subgraph: "petstore")
-  type: String @source(name: "type", type: "String", subgraph: "petstore")
-  message: String @source(name: "message", type: "String", subgraph: "petstore")
+"""
+Order Status
+"""
+enum mutation_placeOrder_status @join__type(graph: PETSTORE)  {
+  placed @join__enumValue(graph: PETSTORE) 
+  approved @join__enumValue(graph: PETSTORE) 
+  delivered @join__enumValue(graph: PETSTORE) 
 }
 
-"""The \`File\` scalar type represents a file upload."""
-scalar File @source(name: "File", subgraph: "petstore") @source(name: "File", subgraph: "petstore")
-
-input Order_Input @source(name: "Order_Input", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  petId: BigInt @source(name: "petId", type: "BigInt", subgraph: "petstore")
-  quantity: Int @source(name: "quantity", type: "Int", subgraph: "petstore")
-  shipDate: DateTime @source(name: "shipDate", type: "DateTime", subgraph: "petstore")
-  status: mutation_placeOrder_status @source(name: "status", type: "mutation_placeOrder_status", subgraph: "petstore")
-  complete: Boolean @source(name: "complete", type: "Boolean", subgraph: "petstore")
+enum HTTPMethod @join__type(graph: PETSTORE)  {
+  GET @join__enumValue(graph: PETSTORE) 
+  HEAD @join__enumValue(graph: PETSTORE) 
+  POST @join__enumValue(graph: PETSTORE) 
+  PUT @join__enumValue(graph: PETSTORE) 
+  DELETE @join__enumValue(graph: PETSTORE) 
+  CONNECT @join__enumValue(graph: PETSTORE) 
+  OPTIONS @join__enumValue(graph: PETSTORE) 
+  TRACE @join__enumValue(graph: PETSTORE) 
+  PATCH @join__enumValue(graph: PETSTORE) 
 }
 
-input User_Input @source(name: "User_Input", subgraph: "petstore") {
-  id: BigInt @source(name: "id", type: "BigInt", subgraph: "petstore")
-  username: String @source(name: "username", type: "String", subgraph: "petstore")
-  firstName: String @source(name: "firstName", type: "String", subgraph: "petstore")
-  lastName: String @source(name: "lastName", type: "String", subgraph: "petstore")
-  email: EmailAddress @source(name: "email", type: "EmailAddress", subgraph: "petstore")
-  password: String @source(name: "password", type: "String", subgraph: "petstore")
-  phone: String @source(name: "phone", type: "String", subgraph: "petstore")
-  """User Status"""
-  userStatus: Int @source(name: "userStatus", type: "Int", subgraph: "petstore")
+"""
+Pet object that needs to be added to the store
+"""
+input Pet_Input @join__type(graph: PETSTORE)  {
+  id: BigInt
+  name: String!
+  category: Category_Input
+  photoUrls: [String]!
+  tags: [Tag_Input]
+  status: mutation_updatePet_status
 }
 
-scalar ObjMap @source(name: "ObjMap", subgraph: "petstore") @source(name: "ObjMap", subgraph: "petstore")
-
-enum HTTPMethod @source(name: "HTTPMethod", subgraph: "petstore") {
-  GET @source(name: "GET", subgraph: "petstore")
-  HEAD @source(name: "HEAD", subgraph: "petstore")
-  POST @source(name: "POST", subgraph: "petstore")
-  PUT @source(name: "PUT", subgraph: "petstore")
-  DELETE @source(name: "DELETE", subgraph: "petstore")
-  CONNECT @source(name: "CONNECT", subgraph: "petstore")
-  OPTIONS @source(name: "OPTIONS", subgraph: "petstore")
-  TRACE @source(name: "TRACE", subgraph: "petstore")
-  PATCH @source(name: "PATCH", subgraph: "petstore")
+input Category_Input @join__type(graph: PETSTORE)  {
+  id: BigInt
+  name: String
 }
+
+input Tag_Input @join__type(graph: PETSTORE)  {
+  id: BigInt
+  name: String
+}
+
+input Order_Input @join__type(graph: PETSTORE)  {
+  id: BigInt
+  petId: BigInt
+  quantity: Int
+  shipDate: DateTime
+  status: mutation_placeOrder_status
+  complete: Boolean
+}
+
+input User_Input @join__type(graph: PETSTORE)  {
+  id: BigInt
+  username: String
+  firstName: String
+  lastName: String
+  email: EmailAddress
+  password: String
+  phone: String
+  """
+  User Status
+  """
+  userStatus: Int
+}
+    
 "
 `;
 

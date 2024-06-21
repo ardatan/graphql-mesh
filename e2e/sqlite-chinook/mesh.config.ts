@@ -19,5 +19,5 @@ export const composeConfig = defineComposeConfig({
 
 export const serveConfig = defineServeConfig({
   port: args.getPort(),
-  fusiongraph: args.get('fusiongraph'),
+  supergraph: args.get('supergraph'),
 });

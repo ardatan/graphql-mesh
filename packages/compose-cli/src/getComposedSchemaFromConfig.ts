@@ -1,10 +1,12 @@
-import { DocumentNode, GraphQLSchema } from 'graphql';
+import { DocumentNode, GraphQLSchema, buildSchema, extendSchema, parse } from 'graphql';
 import { composeSubgraphs, SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { Logger } from '@graphql-mesh/types';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import { LoaderContext, MeshComposeCLIConfig } from './types.js';
+import { mergeSchemas } from '@graphql-tools/schema';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, logger: Logger) {
   const ctx: LoaderContext = {
@@ -40,14 +42,32 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
     });
     additionalTypeDefs = result.map(r => r.document || r.rawSDL);
   }
-  let composedSchema = composeSubgraphs(subgraphConfigsForComposition, {
-    typeDefs: additionalTypeDefs,
-  });
-  if (config.transforms?.length) {
-    logger.info('Applying transforms');
-    for (const transform of config.transforms) {
-      composedSchema = transform(composedSchema);
-    }
+  const result = composeSubgraphs(subgraphConfigsForComposition);
+  if (result.errors?.length) {
+    throw new Error(
+      `Failed to compose subgraphs; \n${result.errors.map(e => `- ${e.message}`).join('\n')}`,
+    );
   }
-  return composedSchema;
+  if (!result.supergraphSdl) {
+    throw new Error(`Unknown error: composed schema is empty`);
+  }
+  if (additionalTypeDefs?.length || config.transforms?.length) {
+    let composedSchema = buildSchema(result.supergraphSdl, { noLocation: true, assumeValid: true, assumeValidSDL: true });
+    if (additionalTypeDefs?.length) {
+      composedSchema = mergeSchemas({
+        schemas: [composedSchema],
+        typeDefs: additionalTypeDefs,
+        assumeValid: true,
+        assumeValidSDL: true,
+      });
+    }
+    if (config.transforms?.length) {
+      logger.info('Applying transforms');
+      for (const transform of config.transforms) {
+        composedSchema = transform(composedSchema);
+      }
+    }
+    return printSchemaWithDirectives(composedSchema);
+  }
+  return result.supergraphSdl;
 }

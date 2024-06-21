@@ -47,7 +47,7 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const serveConfig = defineServeConfig({
-  fusiongraph: './fusiongraphq.graphql',
+  supergraph: './supergraph.graphql',
   plugins: ctx => [
     useAuth0({
       ...ctx,

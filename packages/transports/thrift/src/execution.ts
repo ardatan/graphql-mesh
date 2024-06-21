@@ -103,7 +103,7 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
       fieldTypeMapDirectives?.forEach(fieldTypeMap => {
         requestPromises.push(
           client
-            .doRequest(fieldName, args, fieldTypeMap.args, {
+            .doRequest(fieldName, args, fieldTypeMap.args.fieldTypeMap, {
               headers: headersFactory({
                 root,
                 args,

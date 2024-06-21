@@ -1,29 +1,77 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @transport(kind: "http", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}) @transport(kind: "http", subgraph: "books", location: "http://localhost:<books_port>/graphql", options: {}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport", "@merge", "@extraSchemaDefinitionDirective", "@source"]) {
   query: Query
 }
 
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-type Query {
-  author(id: ID! @source(name: "id", type: "ID", subgraph: "authors") @source(name: "id", type: "ID", subgraph: "books")): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @source(name: "author", type: "Author", subgraph: "authors") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books")
-  authors(ids: [ID] @source(name: "ids", type: "ID", subgraph: "authors")): [Author] @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @source(name: "authors", type: "[Author]", subgraph: "authors")
-  book(id: ID! @source(name: "id", type: "ID", subgraph: "books")): Book @source(name: "book", type: "Book", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id")
-  books(ids: [ID] @source(name: "ids", type: "ID", subgraph: "books")): [Book!]! @source(name: "books", type: "[Book!]!", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids")
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+directive @transport(kind: String!, subgraph: String!, location: String!, headers: Headers, options: TransportOptions) repeatable on SCHEMA
+
+directive @merge(subgraph: String!, keyField: String!, keyArg: String!) repeatable on FIELD_DEFINITION
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
+
+directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+scalar join__FieldSet
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
 }
 
-type Author @source(name: "Author", subgraph: "authors") @source(name: "AuthorWithBooks", subgraph: "books") {
-  id: ID! @source(name: "id", type: "ID!", subgraph: "authors") @source(name: "id", type: "ID!", subgraph: "books")
-  name: String! @source(name: "name", type: "String!", subgraph: "authors")
-  books: [Book!]! @source(name: "books", type: "[Book!]!", subgraph: "books")
+enum join__Graph {
+  AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql")
+  BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql")
 }
 
-type Book @source(name: "Book", subgraph: "books") {
-  id: ID! @source(name: "id", type: "ID!", subgraph: "books")
-  title: String! @source(name: "title", type: "String!", subgraph: "books")
-  authorId: ID! @source(name: "authorId", type: "ID!", subgraph: "books")
+scalar Headers @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
+
+scalar TransportOptions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
+
+scalar _DirectiveExtensions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
+
+scalar _HoistConfig @join__type(graph: BOOKS)
+
+type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}}]}) @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "books", location: "http://localhost:<books_port>/graphql", options: {}}]}) @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
+  author(id: ID! @source(name: "id", type: "ID", subgraph: "books")): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "id")
+  authors(ids: [ID]): [Author] @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @join__field(graph: AUTHORS)
+  book(id: ID! @source(name: "id", type: "ID", subgraph: "books")): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id") @join__field(graph: BOOKS)
+  books(ids: [ID] @source(name: "ids", type: "ID", subgraph: "books")): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids") @join__field(graph: BOOKS)
+}
+
+type Author @source(name: "AuthorWithBooks", subgraph: "books") @join__type(graph: AUTHORS, key: "id") @join__type(graph: BOOKS, key: "id") {
+  id: ID!
+  name: String! @join__field(graph: AUTHORS)
+  books: [Book!]! @join__field(graph: BOOKS)
+}
+
+type Book @join__type(graph: BOOKS, key: "id") @join__type(graph: BOOKS, key: "authorId") {
+  id: ID!
+  authorId: ID!
+  title: String!
   author: Author @resolveTo(sourceName: "authors", sourceTypeName: "Query", sourceFieldName: "authors", keyField: "authorId", keysArg: "ids")
 }
 "

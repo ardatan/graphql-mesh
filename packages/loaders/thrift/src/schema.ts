@@ -1,5 +1,7 @@
 import {
+  DirectiveLocation,
   GraphQLBoolean,
+  GraphQLDirective,
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
   GraphQLFieldConfigArgumentMap,
@@ -12,6 +14,7 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLOutputType,
+  GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
@@ -49,6 +52,20 @@ export interface GraphQLThriftLoaderOptions {
   logger?: Logger;
   importFn?: ImportFn;
 }
+
+export const FieldTypeMapScalar = new GraphQLScalarType({ name: 'FieldTypeMap' });
+
+export const fieldTypeMapDirective = new GraphQLDirective({
+  name: 'fieldTypeMap',
+  locations: [
+    DirectiveLocation.FIELD_DEFINITION,
+  ],
+  args: {
+    fieldTypeMap: {
+      type: FieldTypeMapScalar,
+    },
+  }
+})
 
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,
@@ -309,7 +326,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               args,
               extensions: {
                 directives: {
-                  fieldTypeMap,
+                  fieldTypeMap: {
+                    fieldTypeMap,
+                  },
                 },
               },
             };
@@ -359,6 +378,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
 
   const schema = new GraphQLSchema({
     query: queryObjectType,
+    directives: [fieldTypeMapDirective],
     extensions: {
       directives: {
         transport: graphQLThriftAnnotations,

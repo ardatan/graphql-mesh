@@ -291,5 +291,5 @@ export const TransportDirective = new GraphQLDirective({
       type: ObjMapScalar,
     },
   },
-  locations: [DirectiveLocation.OBJECT],
+  locations: [DirectiveLocation.SCHEMA],
 });

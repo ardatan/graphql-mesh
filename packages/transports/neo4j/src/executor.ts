@@ -4,7 +4,7 @@ import { Driver } from 'neo4j-driver';
 import { DisposableExecutor } from '@graphql-mesh/transport-common';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { getDirective, getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { asArray, getDirective, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
@@ -119,8 +119,16 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
       },
     };
   }
+  const extendedTypeDefs = [
+    ...asArray(typeDefs),
+    /* GraphQL */ `
+      directive @introspection(
+        subgraph: String
+      ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+    `,
+  ]
   const neo4jGraphQL = new Neo4jGraphQL({
-    typeDefs,
+    typeDefs: extendedTypeDefs,
     driver,
     validate: false,
     debug: !!process.env.DEBUG,

@@ -15,17 +15,26 @@ export function filterHiddenPartsInSchema(schema: GraphQLSchema) {
         return null;
       }
     },
+    [MapperKind.ROOT_OBJECT](type) {
+      const fields = Object.values(type.getFields());
+      const availableFields = fields.filter(field => !isHidden(field));
+      if (!availableFields.length) {
+        return null;
+      }
+    },
+    [MapperKind.ROOT_FIELD](fieldConfig) {
+      if (isHidden(fieldConfig)) {
+        return null;
+      }
+    },
     [MapperKind.FIELD](fieldConfig) {
       if (isHidden(fieldConfig)) {
         return null;
       }
-      if ('args' in fieldConfig && fieldConfig.args) {
-        for (const argName in fieldConfig.args) {
-          if (isHidden(fieldConfig.args[argName])) {
-            delete fieldConfig.args[argName];
-          }
-        }
-        return fieldConfig;
+    },
+    [MapperKind.ARGUMENT](argConfig) {
+      if (isHidden(argConfig)) {
+        return null;
       }
     },
   });

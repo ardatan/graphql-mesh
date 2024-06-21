@@ -35,7 +35,7 @@ export const composeConfig = defineComposeConfig({
         },
       }),
       transforms: [
-        createRenameTypeTransform(type => (type.name === 'Error' ? 'WeatherError' : type.name)),
+        createRenameTypeTransform(({ typeName }) => (typeName === 'Error' ? 'WeatherError' : typeName)),
       ],
     },
   ],
@@ -74,7 +74,6 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const serveConfig = defineServeConfig({
-  fusiongraph: './fusiongraph.graphql',
   cache: new LocalforageCache(),
   plugins: ctx => {
     const { cache } = ctx;

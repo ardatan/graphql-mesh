@@ -27,14 +27,14 @@ describe('Prometheus', () => {
   let serveRuntime: ReturnType<typeof createServeRuntime>;
 
   function newTestRuntime() {
-    const fusiongraph = composeSubgraphs([
+    const supergraph = composeSubgraphs([
       {
-        name: 'TestSubgraph',
+        name: 'TEST_SUBGRAPH',
         schema: subgraphSchema,
       },
     ]);
     serveRuntime = createServeRuntime({
-      fusiongraph,
+      supergraph,
       transports() {
         return {
           getSubgraphExecutor() {
@@ -73,7 +73,7 @@ describe('Prometheus', () => {
     expect(await res.json()).toEqual({ data: { hello: 'Hello world!' } });
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_duration');
-    expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
   it('should track subgraph request errors', async () => {
@@ -97,7 +97,7 @@ describe('Prometheus', () => {
     });
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_errors');
-    expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
 
@@ -129,7 +129,7 @@ describe('Prometheus', () => {
 
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_duration');
-    expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
 });

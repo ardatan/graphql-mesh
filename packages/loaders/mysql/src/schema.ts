@@ -27,6 +27,7 @@ import { fs, process, util } from '@graphql-mesh/cross-helpers';
 import { getConnectionOptsFromEndpointUri, MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
+  MySQLCountDirective,
   MySQLDeleteDirective,
   MySQLInsertDirective,
   MySQLSelectDirective,
@@ -79,6 +80,7 @@ export async function loadGraphQLSchemaFromMySQL(
   schemaComposer.addDirective(MySQLUpdateDirective);
   schemaComposer.addDirective(MySQLDeleteDirective);
   schemaComposer.addDirective(MySQLTableForeignDirective);
+  schemaComposer.addDirective(MySQLCountDirective);
   schemaComposer.createEnumTC({
     name: 'OrderBy',
     values: {

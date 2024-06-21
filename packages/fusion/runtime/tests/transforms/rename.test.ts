@@ -1,11 +1,13 @@
-import { buildSchema, GraphQLNonNull, GraphQLObjectType, GraphQLScalarType } from 'graphql';
+import { buildSchema, GraphQLNonNull, GraphQLObjectType, GraphQLScalarType, GraphQLSchema } from 'graphql';
 import { createRenameTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
 
 describe('Rename', () => {
-  const schema = makeExecutableSchema({
-    typeDefs: /* GraphQL */ `
+  let schema: GraphQLSchema;
+  beforeEach(() => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
       type Query {
         my_user: MyUser!
         my_book: MyBook!
@@ -35,25 +37,26 @@ describe('Rename', () => {
         hits: Int!
       }
     `,
-    resolvers: {
-      Query: {
-        my_user: () => ({ id: 'userId' }),
-        profile: (_, args) => ({ id: `profile_${args.profile_id}` }),
-        my_node: (_, { id }) => ({ id }),
-      },
-      MyNode: {
-        __resolveType({ id }: any) {
-          if (id === '1') {
-            return 'MyUser';
-          } else if (id === '2') {
-            return 'Profile';
-          } else {
-            return 'MyBook';
-          }
+      resolvers: {
+        Query: {
+          my_user: () => ({ id: 'userId' }),
+          profile: (_, args) => ({ id: `profile_${args.profile_id}` }),
+          my_node: (_, { id }) => ({ id }),
+        },
+        MyNode: {
+          __resolveType({ id }: any) {
+            if (id === '1') {
+              return 'MyUser';
+            } else if (id === '2') {
+              return 'Profile';
+            } else {
+              return 'MyBook';
+            }
+          },
         },
       },
-    },
-  });
+    });
+  })
   it('changes the name of a type', async () => {
     const transform = createRenameTransform({
       renames: [
@@ -69,7 +72,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -96,7 +99,7 @@ describe('Rename', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -126,7 +129,7 @@ describe('Rename', () => {
 
     const executor = await composeAndGetExecutor([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -160,7 +163,7 @@ describe('Rename', () => {
     });
     const executor = await composeAndGetExecutor([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -212,7 +215,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -243,7 +246,7 @@ describe('Rename', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -287,7 +290,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -321,7 +324,7 @@ describe('Rename', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -360,7 +363,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -395,7 +398,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -432,7 +435,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -473,7 +476,7 @@ describe('Rename', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -503,7 +506,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -547,7 +550,7 @@ describe('Rename', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -583,7 +586,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -618,7 +621,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -654,7 +657,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -692,7 +695,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -729,7 +732,7 @@ describe('Rename', () => {
     });
     const executor = composeAndGetExecutor([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -762,7 +765,7 @@ describe('Rename', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -814,7 +817,7 @@ describe('Rename', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transforms],
       },
@@ -874,7 +877,7 @@ describe('Rename', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transforms],
       },
@@ -953,7 +956,7 @@ describe('Rename', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transforms],
       },

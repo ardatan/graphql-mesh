@@ -50,7 +50,7 @@ describe('Prefix', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -79,13 +79,17 @@ describe('Prefix', () => {
           id: ID!
           title: String!
         }
+
+        scalar _DirectiveExtensions
+
+        scalar _HoistConfig
       `,
     );
   });
   it('does not modify the root types', async () => {
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [
           createPrefixTransform({
@@ -100,7 +104,7 @@ describe('Prefix', () => {
   it('does not modify default scalar types', async () => {
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [
           createPrefixTransform({
@@ -129,7 +133,7 @@ describe('Prefix', () => {
   it('allows to ignore types', async () => {
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [
           createPrefixTransform({
@@ -145,7 +149,7 @@ describe('Prefix', () => {
   it('modifies fields', async () => {
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [
           createPrefixTransform({
@@ -167,7 +171,7 @@ describe('Prefix', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -190,7 +194,7 @@ describe('Prefix', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -214,7 +218,7 @@ describe('Prefix', () => {
 
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },
@@ -232,7 +236,7 @@ describe('Prefix', () => {
 
     const executor = composeAndGetExecutor([
       {
-        name: 'test',
+        name: 'TEST',
         schema,
         transforms: [transform],
       },

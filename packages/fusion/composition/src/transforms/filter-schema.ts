@@ -1,4 +1,13 @@
-import { GraphQLFieldConfig, GraphQLInputFieldConfig, GraphQLNamedType } from 'graphql';
+import {
+  DirectiveLocation,
+  extendSchema,
+  GraphQLDirective,
+  GraphQLFieldConfig,
+  GraphQLInputFieldConfig,
+  GraphQLNamedType,
+  GraphQLSchema,
+  parse,
+} from 'graphql';
 import { Minimatch } from 'minimatch';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema, SchemaMapper } from '@graphql-tools/utils';
@@ -11,6 +20,7 @@ export function addHiddenDirective(directableObj: Parameters<typeof getDirective
   directives.hidden = [{}];
   const extensions: any = (directableObj.extensions ||= {});
   extensions.directives = directives;
+  directableObj.astNode = undefined;
 }
 
 export interface CreateFilterTransformOpts {
@@ -127,7 +137,7 @@ export function createFilterTransform({
         const filterResult = filter(type);
         if (filterResult != null && !filterResult) {
           addHiddenDirective(type);
-          return null;
+          return type;
         }
       }
       return type;
@@ -139,7 +149,7 @@ export function createFilterTransform({
         const filterResult = filter(typeName, fieldName, fieldConfig);
         if (filterResult != null && !filterResult) {
           addHiddenDirective(fieldConfig);
-          return null;
+          return fieldConfig;
         }
       }
       if (argumentFilters.length && 'args' in fieldConfig && fieldConfig.args) {
@@ -149,7 +159,7 @@ export function createFilterTransform({
             const argFilterResult = argFilter(typeName, fieldName, argName);
             if (argFilterResult != null && !argFilterResult) {
               addHiddenDirective(argConfig);
-              continue;
+              break;
             }
           }
         }
@@ -162,8 +172,8 @@ export function createFilterTransform({
       const filterResult = programmaticFilters.objectFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
         addHiddenDirective(fieldConfig);
+        return [fieldName, fieldConfig];
       }
-      return [fieldName, fieldConfig];
     };
   }
   if (programmaticFilters.interfaceFieldFilter) {
@@ -171,8 +181,8 @@ export function createFilterTransform({
       const filterResult = programmaticFilters.interfaceFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
         addHiddenDirective(fieldConfig);
+        return [fieldName, fieldConfig];
       }
-      return [fieldName, fieldConfig];
     };
   }
   if (programmaticFilters.inputObjectFieldFilter) {
@@ -180,12 +190,33 @@ export function createFilterTransform({
       const filterResult = programmaticFilters.inputObjectFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
         addHiddenDirective(fieldConfig);
+        return fieldConfig;
       }
-      return fieldConfig;
     };
   }
 
   return function filterTransform(schema) {
-    return mapSchema(schema, schemaMapper);
+    const mappedSchema = mapSchema(schema, schemaMapper);
+    const mappedSchemaConfig = mappedSchema.toConfig();
+    return new GraphQLSchema({
+      ...mappedSchemaConfig,
+      directives: [
+        ...mappedSchemaConfig.directives,
+        hiddenDirective
+      ]
+    });
   };
 }
+
+export const hiddenDirective =
+  new GraphQLDirective({
+    name: 'hidden',
+    locations: [
+      DirectiveLocation.FIELD_DEFINITION,
+      DirectiveLocation.OBJECT,
+      DirectiveLocation.INTERFACE,
+      DirectiveLocation.INPUT_FIELD_DEFINITION,
+      DirectiveLocation.ARGUMENT_DEFINITION,
+      DirectiveLocation.INPUT_OBJECT
+    ],
+  });

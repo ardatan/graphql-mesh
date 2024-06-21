@@ -4800,6 +4800,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.98.8"
     "@graphql-tools/schema": "npm:^10.0.4"
     "@graphql-tools/utils": "npm:^10.2.1"
+    "@theguild/federation-composition": "npm:^0.11.2"
     "@types/minimatch": "npm:5.1.2"
     "@types/pluralize": "npm:^0.0.33"
     change-case: "npm:^4.1.2"
@@ -9876,6 +9877,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@theguild/federation-composition@npm:^0.11.2":
+  version: 0.11.2
+  resolution: "@theguild/federation-composition@npm:0.11.2"
+  dependencies:
+    constant-case: "npm:^3.0.0"
+    debug: "npm:4.3.4"
+    json5: "npm:^2.2.0"
+    lodash.sortby: "npm:^4.7.0"
+  peerDependencies:
+    graphql: ^16.0.0
+  checksum: 10c0/22e5ef32db7c5258a548a4077eb0f11cdca51fd11aacdfe732c89b7b3e8e31348f9cb91ee3801c52e0466d8b8c81e6316eeca089246bb8cec959e4a2a3277d02
+  languageName: node
+  linkType: hard
+
 "@theguild/prettier-config@npm:2.0.6":
   version: 2.0.6
   resolution: "@theguild/prettier-config@npm:2.0.6"
@@ -14535,7 +14550,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"constant-case@npm:^3.0.4":
+"constant-case@npm:^3.0.0, constant-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "constant-case@npm:3.0.4"
   dependencies:
@@ -15736,6 +15751,18 @@ __metadata:
     supports-color:
       optional: true
   checksum: 10c0/082c375a2bdc4f4469c99f325ff458adad62a3fc2c482d59923c260cb08152f34e2659f72b3767db8bb2f21ca81a60a42d1019605a412132d7b9f59363a005cc
+  languageName: node
+  linkType: hard
+
+"debug@npm:4.3.4":
+  version: 4.3.4
+  resolution: "debug@npm:4.3.4"
+  dependencies:
+    ms: "npm:2.1.2"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10c0/cedbec45298dd5c501d01b92b119cd3faebe5438c3917ff11ae1bff86a6c722930ac9c8659792824013168ba6db7c4668225d845c633fbdafbbf902a6389f736
   languageName: node
   linkType: hard
 

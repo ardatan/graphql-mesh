@@ -71,7 +71,7 @@ export const MySQLTableForeignDirective = new GraphQLDirective({
 
 export const TransportDirective = new GraphQLDirective({
   name: 'transport',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
+  locations: [DirectiveLocation.SCHEMA],
   args: {
     subgraph: {
       type: GraphQLString,

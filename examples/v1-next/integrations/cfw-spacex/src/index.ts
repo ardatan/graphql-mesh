@@ -7,7 +7,7 @@ import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 self.addEventListener(
   'fetch',
   createServeRuntime({
-    http: {
+    proxy: {
       endpoint: 'https://main--spacex-l4uc6p.apollographos.net/graphql',
     },
     cache: new CFWorkerKVCache({

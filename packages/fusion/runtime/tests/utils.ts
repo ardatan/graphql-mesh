@@ -6,7 +6,7 @@ import {
   printSchema,
   validate,
 } from 'graphql';
-import { composeSubgraphs, SubgraphConfig } from '@graphql-mesh/fusion-composition';
+import { getUnifiedGraphGracefully, SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { isAsyncIterable } from '@graphql-tools/utils';
@@ -14,7 +14,7 @@ import { UnifiedGraphManager } from '../src/unifiedGraphManager.js';
 
 export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
   const manager = new UnifiedGraphManager({
-    getUnifiedGraph: () => composeSubgraphs(subgraphs),
+    getUnifiedGraph: () => getUnifiedGraphGracefully(subgraphs),
     transports() {
       return {
         getSubgraphExecutor({ subgraphName }) {
@@ -29,14 +29,17 @@ export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
 }
 
 export function composeAndGetExecutor(subgraphs: SubgraphConfig[]) {
-  const fusiongraph = composeSubgraphs(subgraphs);
   const manager = new UnifiedGraphManager({
-    getUnifiedGraph: () => fusiongraph,
+    getUnifiedGraph: () => getUnifiedGraphGracefully(subgraphs),
     transports() {
       return {
         getSubgraphExecutor({ subgraphName }) {
+          const subgraph = subgraphs.find(subgraph => subgraph.name === subgraphName);
+          if (!subgraph) {
+            throw new Error(`Subgraph not found: ${subgraphName}`);
+          }
           return createDefaultExecutor(
-            subgraphs.find(subgraph => subgraph.name === subgraphName).schema,
+            subgraph.schema,
           );
         },
       };

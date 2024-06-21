@@ -36,8 +36,8 @@ describe('Serve Runtime', () => {
           },
         },
       }),
-      fusiongraphAPI: createServeRuntime({
-        fusiongraph: () => {
+      supergraphAPI: createServeRuntime({
+        supergraph: () => {
           if (!upstreamIsUp) {
             throw new Error('Upstream is down');
           }

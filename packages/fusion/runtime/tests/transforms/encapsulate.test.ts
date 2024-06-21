@@ -1,12 +1,15 @@
-import { execute, parse } from 'graphql';
+import { GraphQLSchema, execute, parse, printSchema } from 'graphql';
 import { createEncapsulateTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { Repeater } from '@repeaterjs/repeater';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('encapsulate', () => {
-  const schema = makeExecutableSchema({
-    typeDefs: /* GraphQL */ `
+  let schema: GraphQLSchema;
+  beforeEach(() => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
       type Query {
         getSomething: String
         getSomethingElse: String
@@ -21,30 +24,31 @@ describe('encapsulate', () => {
         notify: String!
       }
     `,
-    resolvers: {
-      Query: {
-        getSomething: () => 'boop',
-      },
-      Mutation: {
-        doSomething: () => 'noop',
-      },
-      Subscription: {
-        notify: {
-          subscribe: () =>
-            new Repeater((push, stop) => {
-              const interval = setInterval(
-                () =>
-                  push({
-                    notify: 'boop',
-                  }),
-                1000,
-              );
-              return stop.then(() => clearInterval(interval));
-            }),
+      resolvers: {
+        Query: {
+          getSomething: () => 'boop',
+        },
+        Mutation: {
+          doSomething: () => 'noop',
+        },
+        Subscription: {
+          notify: {
+            subscribe: () =>
+              new Repeater((push, stop) => {
+                const interval = setInterval(
+                  () =>
+                    push({
+                      notify: 'boop',
+                    }),
+                  1000,
+                );
+                return stop.then(() => clearInterval(interval));
+              }),
+          },
         },
       },
-    },
-  });
+    });
+  })
 
   it('groups Mutation correctly', async () => {
     const transform = createEncapsulateTransform();
@@ -52,12 +56,12 @@ describe('encapsulate', () => {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
-    expect(newSchema.getMutationType().getFields().test).toBeDefined();
+    expect(newSchema.getMutationType().getFields().TEST).toBeDefined();
     expect(newSchema.getMutationType().getFields().notify).not.toBeDefined();
-    expect(newSchema.getMutationType().getFields().test.type.toString()).toBe('testMutation!');
+    expect(newSchema.getMutationType().getFields().TEST.type.toString()).toBe('TESTMutation!');
   });
   it('groups Subscription correctly', async () => {
     const transform = createEncapsulateTransform();
@@ -65,13 +69,13 @@ describe('encapsulate', () => {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
-    expect(newSchema.getSubscriptionType().getFields().test).toBeDefined();
+    expect(newSchema.getSubscriptionType().getFields().TEST).toBeDefined();
     expect(newSchema.getSubscriptionType().getFields().getSomething).not.toBeDefined();
-    expect(newSchema.getSubscriptionType().getFields().test.type.toString()).toBe(
-      'testSubscription!',
+    expect(newSchema.getSubscriptionType().getFields().TEST.type.toString()).toBe(
+      'TESTSubscription!',
     );
   });
   it('groups Query correctly', async () => {
@@ -80,12 +84,12 @@ describe('encapsulate', () => {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
-    expect(newSchema.getQueryType().getFields().test).toBeDefined();
+    expect(newSchema.getQueryType().getFields().TEST).toBeDefined();
+    expect(newSchema.getQueryType().getFields().TEST.type.toString()).toBe('TESTQuery!');
     expect(newSchema.getQueryType().getFields().getSomething).not.toBeDefined();
-    expect(newSchema.getQueryType().getFields().test.type.toString()).toBe('testQuery!');
   });
   it('executes queries the same way and preserves the execution flow', async () => {
     const { data: resultBefore } = await execute({
@@ -98,14 +102,14 @@ describe('encapsulate', () => {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
 
     const resultAfter = await executor({
-      query: `{ test { getSomething } }`,
+      query: `{ TEST { getSomething } }`,
     });
 
-    expect(resultAfter.test.getSomething).toBe('boop');
+    expect(resultAfter.TEST.getSomething).toBe('boop');
   });
 });
