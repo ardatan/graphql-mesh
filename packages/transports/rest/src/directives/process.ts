@@ -133,7 +133,14 @@ export function processDirectives(
             case 'enum': {
               const realValue = JSON.parse(directiveAnnotation.args.value);
               enumValue.value = realValue;
-              (type as any)._valueLookup.set(realValue, enumValue);
+              let valueLookup = (type as any)._valueLookup;
+              if (!valueLookup) {
+                valueLookup = new Map(
+                  type.getValues().map(enumValue => [enumValue.value, enumValue]),
+                );
+                (type as any)._valueLookup = valueLookup;
+              }
+              valueLookup.set(realValue, enumValue);
               break;
             }
           }

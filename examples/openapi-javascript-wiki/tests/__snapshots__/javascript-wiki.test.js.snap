@@ -6,8 +6,6 @@ exports[`JavaScript Wiki should generate correct schema: javascript-wiki-schema 
   mutation: Mutation
 }
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
