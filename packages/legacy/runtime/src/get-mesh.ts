@@ -9,7 +9,6 @@ import {
   validate,
 } from 'graphql';
 import { envelop, Plugin, useEngine, useExtendContext, useSchema } from '@envelop/core';
-import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
 import { useGraphQlJit } from '@envelop/graphql-jit';
 import { process } from '@graphql-mesh/cross-helpers';
 import {
@@ -301,9 +300,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         );
       }
       return inContextSDK;
-    }),
-    useExtendedValidation({
-      rules: [OneOfInputObjectsRule],
     }),
     {
       onExecute() {

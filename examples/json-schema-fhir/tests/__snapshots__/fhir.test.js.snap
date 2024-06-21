@@ -5,8 +5,6 @@ exports[`FHIR should generate correct schema 1`] = `
   query: Query
 }
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM

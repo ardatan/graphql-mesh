@@ -5,8 +5,6 @@ exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
   query: Query
 }
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION

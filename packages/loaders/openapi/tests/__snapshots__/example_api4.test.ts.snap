@@ -5,8 +5,6 @@ exports[`OpenAPI loader: Handle anyOf and oneOf should generate the schema corre
   query: Query
 }
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION

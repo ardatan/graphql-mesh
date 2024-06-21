@@ -6,8 +6,6 @@ exports[`Basket should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR

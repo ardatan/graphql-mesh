@@ -8,8 +8,6 @@ exports[`should compose the appropriate schema 1`] = `
 
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION

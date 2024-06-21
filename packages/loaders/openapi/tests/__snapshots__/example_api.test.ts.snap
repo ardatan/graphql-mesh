@@ -8,8 +8,6 @@ exports[`example_api should generate the schema correctly 1`] = `
 
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION

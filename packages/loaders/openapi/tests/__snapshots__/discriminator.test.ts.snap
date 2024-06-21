@@ -5,8 +5,6 @@ exports[`Discriminator Mapping should generate correct schema: discriminator-map
   query: Query
 }
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @discriminator(subgraph: String, field: String, mapping: ObjMap) on INTERFACE | UNION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION

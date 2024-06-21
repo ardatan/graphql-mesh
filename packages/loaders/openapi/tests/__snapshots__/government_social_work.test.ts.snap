@@ -6,8 +6,6 @@ exports[`openAPI loader: government_social_work should generate the schema corre
   mutation: Mutation
 }
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
-
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION

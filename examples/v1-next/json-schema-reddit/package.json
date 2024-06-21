@@ -9,6 +9,6 @@
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
     "@omnigraph/json-schema": "workspace:*",
-    "graphql": "16.8.2"
+    "graphql": "16.9.0"
   }
 }
