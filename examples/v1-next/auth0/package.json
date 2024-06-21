@@ -15,7 +15,7 @@
     "@graphql-mesh/plugin-operation-field-permissions": "^0.98.8",
     "@graphql-mesh/serve-cli": "^0.5.0",
     "@omnigraph/json-schema": "^0.100.12",
-    "graphql": "16.8.2"
+    "graphql": "16.9.0"
   },
   "devDependencies": {
     "jest": "29.7.0"

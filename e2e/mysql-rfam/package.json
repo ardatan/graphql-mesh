@@ -6,6 +6,6 @@
     "@graphql-mesh/serve-cli": "workspace:*",
     "@graphql-mesh/utils": "workspace:*",
     "@omnigraph/mysql": "workspace:*",
-    "graphql": "16.8.2"
+    "graphql": "16.9.0"
   }
 }
