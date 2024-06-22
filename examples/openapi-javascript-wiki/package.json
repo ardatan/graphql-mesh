@@ -1,6 +1,6 @@
 {
   "name": "javascript-wiki",
-  "version": "0.16.15",
+  "version": "0.16.16",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.90.11",
-    "@graphql-mesh/openapi": "0.100.13",
+    "@graphql-mesh/cli": "0.90.12",
+    "@graphql-mesh/openapi": "0.100.14",
     "graphql": "16.9.0",
     "moment": "2.30.1",
     "typescript": "^5.4.2"

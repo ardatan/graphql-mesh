@@ -1,5 +1,13 @@
 # auth0-example
 
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/json-schema@0.100.13
+  - @graphql-mesh/serve-cli@0.5.1
+
 ## 0.14.0
 
 ### Patch Changes

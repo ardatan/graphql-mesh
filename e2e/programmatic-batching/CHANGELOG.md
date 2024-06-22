@@ -4,6 +4,14 @@
 
 ### Patch Changes
 
+- Updated dependencies []:
+  - @omnigraph/openapi@0.100.14
+  - @graphql-mesh/serve-cli@0.5.1
+
+## null
+
+### Patch Changes
+
 - Updated dependencies
   [[`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207),
   [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207),

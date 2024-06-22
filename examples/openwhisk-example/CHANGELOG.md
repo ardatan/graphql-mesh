@@ -1,5 +1,12 @@
 # openwhisk-example
 
+## 0.8.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.90.12
+
 ## 0.8.12
 
 ### Patch Changes
