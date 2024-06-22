@@ -1,5 +1,13 @@
 # cloudflare-workers
 
+## 0.12.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/json-schema@0.100.13
+  - @graphql-mesh/serve-runtime@0.3.12
+
 ## 0.12.0
 
 ### Patch Changes

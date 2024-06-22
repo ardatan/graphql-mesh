@@ -1,5 +1,12 @@
 # spacex-cfw
 
+## 0.9.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.3.12
+
 ## 0.9.12
 
 ### Patch Changes
