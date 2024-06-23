@@ -21,7 +21,7 @@ directive @link(url: String, as: String, for: link__Purpose, import: [link__Impo
 
 directive @transport(kind: String!, subgraph: String!, location: String!, headers: Headers, options: TransportOptions) repeatable on SCHEMA
 
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) repeatable on FIELD_DEFINITION
+directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
@@ -56,10 +56,10 @@ scalar _DirectiveExtensions @join__type(graph: AUTHORS) @join__type(graph: BOOKS
 scalar _HoistConfig @join__type(graph: BOOKS)
 
 type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}}]}) @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "books", location: "http://localhost:<books_port>/graphql", options: {}}]}) @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
-  author(id: ID! @source(name: "id", type: "ID", subgraph: "books")): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "id")
+  author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "id")
   authors(ids: [ID]): [Author] @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @join__field(graph: AUTHORS)
-  book(id: ID! @source(name: "id", type: "ID", subgraph: "books")): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id") @join__field(graph: BOOKS)
-  books(ids: [ID] @source(name: "ids", type: "ID", subgraph: "books")): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids") @join__field(graph: BOOKS)
+  book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id") @join__field(graph: BOOKS)
+  books(ids: [ID]): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids") @join__field(graph: BOOKS)
 }
 
 type Author @source(name: "AuthorWithBooks", subgraph: "books") @join__type(graph: AUTHORS, key: "id") @join__type(graph: BOOKS, key: "id") {

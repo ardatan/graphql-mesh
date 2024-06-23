@@ -29,7 +29,6 @@ it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
   const { output } = await compose({
     services: [petstore, await service('vaccination')],
     output: 'graphql',
-    pipeLogs: true,
   });
   const server = await serve({ supergraph: output });
   const result = await tbench.sustain({

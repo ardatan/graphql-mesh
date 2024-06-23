@@ -3595,6 +3595,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/federation-mixed@workspace:e2e/federation-mixed":
+  version: 0.0.0-use.local
+  resolution: "@e2e/federation-mixed@workspace:e2e/federation-mixed"
+  dependencies:
+    "@apollo/rover": "npm:^0.23.0"
+    "@apollo/server": "npm:^4.10.3"
+    "@apollo/subgraph": "npm:^2.7.2"
+    fets: "npm:^0.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions"
@@ -18298,7 +18309,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fets@npm:0.8.1, fets@npm:^0.8.0":
+"fets@npm:0.8.1, fets@npm:^0.8.0, fets@npm:^0.8.1":
   version: 0.8.1
   resolution: "fets@npm:0.8.1"
   dependencies:

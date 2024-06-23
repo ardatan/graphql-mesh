@@ -1,8 +1,9 @@
 import { DocumentNode, GraphQLSchema } from 'graphql';
 import { Logger } from '@graphql-mesh/types';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import { ComposeSubgraphsOptions } from '@graphql-mesh/fusion-composition';
 
-export interface MeshComposeCLIConfig {
+export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   /**
    * The output destination of the resulting composed GraphQL schema.
    * By default, the CLI will write the result to stdout.

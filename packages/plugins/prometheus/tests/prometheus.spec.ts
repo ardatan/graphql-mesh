@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema } from 'graphql-yoga';
 import { register as registry } from 'prom-client';
-import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
+import { composeSubgraphs, getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import usePrometheus from '../src/index.js';
@@ -27,14 +27,13 @@ describe('Prometheus', () => {
   let serveRuntime: ReturnType<typeof createServeRuntime>;
 
   function newTestRuntime() {
-    const supergraph = composeSubgraphs([
-      {
-        name: 'TEST_SUBGRAPH',
-        schema: subgraphSchema,
-      },
-    ]);
     serveRuntime = createServeRuntime({
-      supergraph,
+      supergraph: () => getUnifiedGraphGracefully([
+        {
+          name: 'TEST_SUBGRAPH',
+          schema: subgraphSchema,
+        },
+      ]),
       transports() {
         return {
           getSubgraphExecutor() {

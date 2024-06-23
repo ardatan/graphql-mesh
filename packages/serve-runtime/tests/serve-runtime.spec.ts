@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema, createYoga } from 'graphql-yoga';
-import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
+import { composeSubgraphs, getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
@@ -41,7 +41,7 @@ describe('Serve Runtime', () => {
           if (!upstreamIsUp) {
             throw new Error('Upstream is down');
           }
-          return composeSubgraphs([
+          return getUnifiedGraphGracefully([
             {
               name: 'upstream',
               schema: upstreamSchema,

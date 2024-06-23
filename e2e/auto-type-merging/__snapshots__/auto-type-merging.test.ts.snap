@@ -118,7 +118,7 @@ directive @merge(
   keyField: String
   key: [String!]
   additionalArgs: String
-) on FIELD_DEFINITION
+) repeatable on FIELD_DEFINITION
 
 directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
@@ -180,12 +180,10 @@ type Query @extraSchemaDefinitionDirective(
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
   """
-  findPetsByTags(
-    """
-    Tags to filter by
-    """
-    tags: [String] @source(name: "tags", type: "String", subgraph: "petstore") 
-  ): [Pet] @httpOperation(
+  findPetsByTags("""
+  Tags to filter by
+  """
+  tags: [String]) : [Pet] @httpOperation(
     subgraph: "petstore"
     path: "/pet/findByTags"
     operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
@@ -196,12 +194,10 @@ type Query @extraSchemaDefinitionDirective(
   """
   Returns a single pet
   """
-  getPetById(
-    """
-    ID of pet to return
-    """
-    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore") 
-  ): Pet @httpOperation(
+  getPetById("""
+  ID of pet to return
+  """
+  petId: BigInt!) : Pet @httpOperation(
     subgraph: "petstore"
     path: "/pet/{args.petId}"
     operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
@@ -219,12 +215,10 @@ type Query @extraSchemaDefinitionDirective(
   """
   For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
   """
-  getOrderById(
-    """
-    ID of order that needs to be fetched
-    """
-    orderId: BigInt! @source(name: "orderId", type: "BigInt", subgraph: "petstore") 
-  ): Order @httpOperation(
+  getOrderById("""
+  ID of order that needs to be fetched
+  """
+  orderId: BigInt!) : Order @httpOperation(
     subgraph: "petstore"
     path: "/store/order/{args.orderId}"
     operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
@@ -260,14 +254,14 @@ type Query @extraSchemaDefinitionDirective(
     """
     The name that needs to be fetched. Use user1 for testing.
     """
-    username: String! @source(name: "username", type: "String", subgraph: "petstore") 
+    username: String!
   ): User @httpOperation(
     subgraph: "petstore"
     path: "/user/{args.username}"
     operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
     httpMethod: GET
   ) @hidden @join__field(graph: PETSTORE) 
-  petById(id: BigInt! @source(name: "id", type: "BigInt", subgraph: "vaccination") ) : Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination")  @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")  @join__field(graph: VACCINATION) 
+  petById(id: BigInt!) : Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination")  @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")  @join__field(graph: VACCINATION) 
 }
 
 """
@@ -342,7 +336,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     """
     ID of pet that needs to be updated
     """
-    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore") 
+    petId: BigInt!
     """
     Name of pet that needs to be updated
     """
@@ -360,13 +354,10 @@ type Mutation @join__type(graph: PETSTORE)  {
   """
   Deletes a pet
   """
-  deletePet(
-    api_key: String
-    """
-    Pet id to delete
-    """
-    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore") 
-  ): JSON @httpOperation(
+  deletePet(api_key: String, """
+  Pet id to delete
+  """
+  petId: BigInt!) : JSON @httpOperation(
     subgraph: "petstore"
     path: "/pet/{args.petId}"
     operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\""
@@ -379,7 +370,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     """
     ID of pet to update
     """
-    petId: BigInt! @source(name: "petId", type: "BigInt", subgraph: "petstore") 
+    petId: BigInt!
     """
     Additional Metadata
     """
@@ -404,12 +395,10 @@ type Mutation @join__type(graph: PETSTORE)  {
   """
   For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
   """
-  deleteOrder(
-    """
-    ID of the order that needs to be deleted
-    """
-    orderId: BigInt! @source(name: "orderId", type: "BigInt", subgraph: "petstore") 
-  ): JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE)  @hidden
+  deleteOrder("""
+  ID of the order that needs to be deleted
+  """
+  orderId: BigInt!) : JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE)  @hidden
   """
   This can only be done by the logged in user.
   """
@@ -422,9 +411,7 @@ type Mutation @join__type(graph: PETSTORE)  {
   """
   Creates list of users with given input array
   """
-  createUsersWithListInput(
-    input: [User_Input] @source(name: "input", type: "User_Input", subgraph: "petstore") 
-  ): User @httpOperation(
+  createUsersWithListInput(input: [User_Input]) : User @httpOperation(
     subgraph: "petstore"
     path: "/user/createWithList"
     operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
@@ -433,13 +420,10 @@ type Mutation @join__type(graph: PETSTORE)  {
   """
   This can only be done by the logged in user.
   """
-  updateUser(
-    """
-    name that need to be deleted
-    """
-    username: String! @source(name: "username", type: "String", subgraph: "petstore") 
-    input: User_Input
-  ): JSON @httpOperation(
+  updateUser("""
+  name that need to be deleted
+  """
+  username: String!, input: User_Input) : JSON @httpOperation(
     subgraph: "petstore"
     path: "/user/{args.username}"
     operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\""
@@ -448,12 +432,10 @@ type Mutation @join__type(graph: PETSTORE)  {
   """
   This can only be done by the logged in user.
   """
-  deleteUser(
-    """
-    The name that needs to be deleted
-    """
-    username: String! @source(name: "username", type: "String", subgraph: "petstore") 
-  ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE)  @hidden
+  deleteUser("""
+  The name that needs to be deleted
+  """
+  username: String!) : JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE)  @hidden
 }
 
 type ApiResponse @join__type(graph: PETSTORE)  {

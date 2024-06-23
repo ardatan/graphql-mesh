@@ -12,6 +12,7 @@ import {
   isObjectType,
   isSpecifiedScalarType,
   parse,
+  print,
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
@@ -23,10 +24,12 @@ import {
   getDocumentNodeFromSchema,
   MapperKind,
   mapSchema,
+  printSchemaWithDirectives,
 } from '@graphql-tools/utils';
 import { composeServices, ServiceDefinition } from '@theguild/federation-composition';
 import {
   convertSubgraphToFederationv2,
+  detectAndAddMeshDirectives,
   importMeshDirectives,
 } from './federation-utils.js';
 
@@ -51,12 +54,27 @@ export interface GetMeshFederationTypeDefsForDirectivesOpts {
 export function getUnifiedGraphGracefully(subgraphs: SubgraphConfig[]) {
   const result = composeSubgraphs(subgraphs);
   if (result.errors?.length) {
-    throw new AggregateError(result.errors, `Failed to compose subgraphs; \n${result.errors.map(e => `- ${e.message}`).join('\n')}`);
+    throw new AggregateError(
+      result.errors,
+      `Failed to compose subgraphs; \n${result.errors.map(e => `- ${e.message}`).join('\n')}`,
+    );
   }
   return result.supergraphSdl;
 }
 
-export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
+export interface ComposeSubgraphsOptions {
+  /**
+   * If set to true, the composition will ignore the semantic conventions and will not add any automatic type merging configuration based on ById and ByIds naming conventions.
+   *
+   * @default false
+   */
+  ignoreSemanticConventions?: boolean;
+}
+
+export function composeSubgraphs(
+  subgraphs: SubgraphConfig[],
+  options: ComposeSubgraphsOptions = {},
+) {
   const annotatedSubgraphs: ServiceDefinition[] = [];
   for (const subgraphConfig of subgraphs) {
     const { name: subgraphName, schema, transforms } = subgraphConfig;
@@ -109,7 +127,6 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
         if ('args' in fieldConfig && fieldConfig.args) {
           for (const argName in fieldConfig.args) {
             const arg = fieldConfig.args[argName];
-            const argType = getNamedType(arg.type);
             const directives = getDirectiveExtensions(arg);
             const existingSourceDirectives = directives.source || [];
             if (existingSourceDirectives.length > 1) {
@@ -128,7 +145,7 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
                   ...directives,
                   source: {
                     name: argName,
-                    type: argType.toString(),
+                    type: arg.type.toString(),
                     ...existingSourceDirective,
                     subgraph: subgraphName,
                   },
@@ -198,7 +215,7 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
       },
       [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
         const directiveExtensions = getDirectiveExtensions(fieldConfig);
-        if (!transforms?.length) {
+        if (!transforms?.length && !options.ignoreSemanticConventions) {
           addAnnotationsForSemanticConventions({
             queryFieldName: fieldName,
             queryFieldConfig: fieldConfig,
@@ -221,7 +238,6 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
         if (fieldConfig.args) {
           for (const argName in fieldConfig.args) {
             const arg = fieldConfig.args[argName];
-            const argType = getNamedType(arg.type);
             const directives = getDirectiveExtensions(arg);
             const existingSourceDirectives = directives.source || [];
             if (existingSourceDirectives.length > 1) {
@@ -240,7 +256,7 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
                   ...directives,
                   source: {
                     name: argName,
-                    type: argType.toString(),
+                    type: arg.type.toString(),
                     ...existingSourceDirective,
                     subgraph: subgraphName,
                   },
@@ -289,27 +305,30 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
         [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
           // Automatic type merging configuration based on ById and ByIds naming conventions after transforms
           const directiveExtensions = getDirectiveExtensions(fieldConfig);
-          addAnnotationsForSemanticConventions({
-            queryFieldName: fieldName,
-            queryFieldConfig: fieldConfig,
-            directiveExtensions,
-            subgraphName,
-          });
-          if (directiveExtensions.merge) {
-            mergeDirectiveUsed = true;
+          if (!options.ignoreSemanticConventions) {
+            addAnnotationsForSemanticConventions({
+              queryFieldName: fieldName,
+              queryFieldConfig: fieldConfig,
+              directiveExtensions,
+              subgraphName,
+            });
+            if (directiveExtensions.merge) {
+              mergeDirectiveUsed = true;
+            }
+            return {
+              ...fieldConfig,
+              extensions: {
+                ...fieldConfig.extensions,
+                directives: directiveExtensions,
+              },
+              astNode: undefined,
+            };
           }
-          return {
-            ...fieldConfig,
-            extensions: {
-              ...fieldConfig.extensions,
-              directives: directiveExtensions,
-            },
-            astNode: undefined,
-          };
         },
       });
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
+    transformedSubgraph = detectAndAddMeshDirectives(transformedSubgraph);
     const importedDirectives = new Set<string>();
     if (mergeDirectiveUsed) {
       importedDirectives.add('@merge');
@@ -409,7 +428,7 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
     });
     // Workaround to keep directives on unsupported nodes since not all of them are supported by the composition library
     const extraTypeDirectivesMap = new Map<string, Record<string, any[]>>();
-    function saveDirectives<T extends GraphQLNamedType>(type: T, typeCtor: Constructor<T>) {
+    function saveDirectives<T extends GraphQLNamedType>(type: T, TypeCtor: Constructor<T>) {
       const typeConfig = type.toConfig();
 
       const directiveExtensions = getDirectiveExtensions(type);
@@ -417,7 +436,7 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
         extraTypeDirectivesMap.set(type.name, directiveExtensions);
 
         // Cleanup directives
-        return new typeCtor({
+        return new TypeCtor({
           ...typeConfig,
           extensions: {
             ...typeConfig.extensions,
@@ -469,8 +488,8 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
           extensions: {
             ...transformedSubgraph.extensions,
             directives: {
-              link: schemaDirectiveExtensions.link,
-              composeDirective: schemaDirectiveExtensions.composeDirective,
+              link: schemaDirectiveExtensions.link || [],
+              composeDirective: schemaDirectiveExtensions.composeDirective || [],
             },
           },
           // Cleanup AST Node to avoid conflicts with extensions
@@ -482,14 +501,20 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
 
     const importedDirectivesAST = new Set<string>();
     if (mergeDirectiveUsed) {
-      const { mergeDirectiveTypeDefs } = stitchingDirectives();
-      // Add subgraph argument to @merge directive
-      importedDirectivesAST.add(
-        mergeDirectiveTypeDefs.replace('@merge(', '@merge(subgraph: String, '),
-      );
+      if (!transformedSubgraph.getDirective('merge')) {
+        const { mergeDirectiveTypeDefs } = stitchingDirectives();
+        // Add subgraph argument to @merge directive
+        importedDirectivesAST.add(
+          mergeDirectiveTypeDefs
+            .replace('@merge(', '@merge(subgraph: String, ')
+            .replace('on ', 'repeatable on '),
+        );
+      }
     }
     if (sourceDirectiveUsed) {
-      importedDirectivesAST.add(/* GraphQL */ `scalar _HoistConfig`);
+      importedDirectivesAST.add(/* GraphQL */ `
+        scalar _HoistConfig
+      `);
       importedDirectivesAST.add(/* GraphQL */ `
         directive @source(
           name: String!
@@ -504,7 +529,9 @@ export function composeSubgraphs(subgraphs: SubgraphConfig[]) {
     const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
     if (extraTypeDirectivesMap.size) {
       importedDirectives.add('@extraTypeDirective');
-      importedDirectivesAST.add(/* GraphQL */ `scalar _DirectiveExtensions`);
+      importedDirectivesAST.add(/* GraphQL */ `
+        scalar _DirectiveExtensions
+      `);
       importedDirectivesAST.add(/* GraphQL */ `
         directive @extraTypeDirective(
           name: String!

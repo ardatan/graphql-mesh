@@ -575,6 +575,7 @@ function parseTypeNodeWithRenames(typeString: string, renameTypeNames: Record<st
 
 const mergeDirective = new GraphQLDirective({
   name: 'merge',
+  isRepeatable: true,
   locations: [DirectiveLocation.FIELD],
   args: {
     subgraph: {

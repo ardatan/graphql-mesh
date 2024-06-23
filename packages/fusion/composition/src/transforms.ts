@@ -1,28 +1,38 @@
 import {
   DocumentNode,
   extendSchema,
+  GraphQLOutputType,
   GraphQLSchema,
   GraphQLType,
+  isOutputType,
   parse,
   parseType,
   typeFromAST,
 } from 'graphql';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { SubgraphTransform } from './compose.js';
+import { TransformValidationError } from './transforms/utils.js';
 
 export function createTypeReplaceTransform(
-  replacerFn: (typeName: string, fieldName: string, existingType: GraphQLType) => string | void,
+  replacerFn: (
+    typeName: string,
+    fieldName: string,
+    existingType: GraphQLType,
+  ) => string | GraphQLOutputType | void,
 ): SubgraphTransform {
   return function typeReplaceTransform(schema: GraphQLSchema) {
     return mapSchema(schema, {
       [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
         const newTypeName = replacerFn(typeName, fieldName, fieldConfig.type);
-        if (newTypeName) {
+        if (typeof newTypeName === 'string' && newTypeName !== fieldConfig.type.toString()) {
           const newType = typeFromAST(schema, parseType(newTypeName)) as any;
           if (!newType) {
-            throw new Error(`No type found for ${newTypeName}`);
+            throw new TransformValidationError(`No type found for ${newTypeName} in the schema, use a type instance instead such as GraphQLString from 'graphql'`);
           }
           return [fieldName, { ...fieldConfig, type: newType }];
+        }
+        if (isOutputType(newTypeName)) {
+          return [fieldName, { ...fieldConfig, type: newTypeName }];
         }
         return undefined;
       },
@@ -48,3 +58,4 @@ export * from './transforms/rename.js';
 export * from './transforms/encapsulate.js';
 export * from './transforms/prune.js';
 export * from './transforms/hoist-field.js';
+export * from './transforms/federation.js';

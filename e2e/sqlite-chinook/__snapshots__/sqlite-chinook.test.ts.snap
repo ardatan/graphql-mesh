@@ -94,7 +94,7 @@ directive @merge(
   keyField: String
   key: [String!]
   additionalArgs: String
-) on FIELD_DEFINITION
+) repeatable on FIELD_DEFINITION
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 

@@ -201,8 +201,9 @@ export function loadGraphQLHTTPSubgraph(
         })
         .then(res => {
           assertResponseOk(res);
-          return res.text();
+          return res.json();
         })
+        .then((result: ExecutionResult) => result?.data?._service?.sdl)
         .then(sdl =>
           buildSchema(sdl, {
             assumeValidSDL: true,
@@ -236,6 +237,7 @@ interface GraphQLHTTPTransportEntry {
 
 const transportDirective = new GraphQLDirective({
   name: 'transport',
+  isRepeatable: true,
   locations: [DirectiveLocation.SCHEMA],
   args: {
     kind: { type: new GraphQLNonNull(GraphQLString) },
