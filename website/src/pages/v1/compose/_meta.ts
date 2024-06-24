@@ -7,4 +7,5 @@ export default {
   'response-caching': 'Response Caching',
   'rate-limit': 'Rate Limit',
   auth: 'Authentication',
+  'consume-in-other-routers': 'Consume in Other Routers',
 };

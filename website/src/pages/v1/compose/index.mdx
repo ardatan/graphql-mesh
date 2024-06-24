@@ -1,6 +1,6 @@
 ---
 description:
-  GraphQL Mesh Compose allows to compose non GraphQL and GraphQL sources into a unified graph
+  GraphQL Mesh Compose allows to compose non GraphQL and GraphQL sources into a supergraph
 ---
 
 import { Callout } from '@theguild/components'
@@ -8,10 +8,24 @@ import { Callout } from '@theguild/components'
 # Getting Started
 
 GraphQL Mesh Compose is a tool that allows you to compose non-GraphQL and GraphQL sources into a
-unified graph, so that you can serve it using GraphQL Mesh Serve.
+supergraph, so that you can serve it using [GraphQL Mesh Serve](/v1/serve/introduction).
 
-If you compose your sources by using Federation, you can directly use
-[GraphQL Mesh Serve](/v1/serve/introduction) to serve your unified graph.
+If you use other routers such as Apollo Gateway, Apollo Router or Cosmo Router, you can still use
+Mesh Compose to convert non-federated sources to a federated subgraph.
+[Learn more about consuming in other routers](/v1/compose/consume-in-other-routers).
+
+Basically GraphQL Mesh Compose allows you to do;
+
+- Convert non-GraphQL sources to a GraphQL subgraph
+- Convert non-federated GraphQL sources to a federated subgraph
+- Transform the subgraphs using [transforms](/v1/compose/transforms)
+- Extend the supergraph using
+  [additionalTypeDefs](/v1/compose/configuration#extending-the-supergraph-using-additionaltypedefs)
+- Adding an authentication layer using [`@auth` or `@skipAuth` directives](/v1/compose/auth)
+- Adding a security layer for rate limiting using [`@rateLimit` directives](/v1/compose/rate-limit)
+- Generate a subgraph that is fully compatible with Federation tools so you can use it with any
+  schema registry such as [Hive](/v1/serve/schema-registry/hive) or
+  [GraphOS](/v1/serve/schema-registry/graphos)
 
 ## Installation
 
@@ -97,9 +111,9 @@ export const composeConfig = defineConfig({
 })
 ```
 
-### Extending the unified graph using `additionalTypeDefs`
+### Extending the supergraph using `additionalTypeDefs`
 
-You can extend your unified graph, by adding additional type definitions to the schema. Using this
+You can extend your supergraph, by adding additional type definitions to the schema. Using this
 option, you can declare additional resolvers to stitch the subgraphs.
 
 <Callout>
@@ -136,10 +150,10 @@ export const composeConfig = defineConfig({
 })
 ```
 
-### Transforming the unified graph using `transforms`
+### Transforming the supergraph using `transforms`
 
-If you want to transform the unified graph instead of subgraphs, you can use the `transforms` option
-on higher level, instead of subgraph level.
+If you want to transform the supergraph instead of subgraphs, you can use the `transforms` option on
+higher level, instead of subgraph level.
 
 ### Replacing HTTP client using `fetch` (Advanced usage only)
 
@@ -172,17 +186,42 @@ export const composeConfig = defineConfig({
 })
 ```
 
-## Generating the Unified Graph
+## Generating the Supergraph
 
 Just like Federation's Supergraph document, Compose CLI outputs `unifiedgraph.graphql` file that
 contains all the annotations for the gateway.
 
-You can generate the unified graph by running the following command:
+You can generate the supergraph by running the following command:
 
 ```sh
-mesh-compose > unifiedgraph.graphql
+mesh-compose > supergraph.graphql
 ```
 
 <Callout>
-  [In order to serve the unified graph, you need to setup GraphQL Mesh Serve](/v1/serve).
+  [In order to serve the supergraph, you need to setup GraphQL Mesh Serve](/v1/serve).
+</Callout>
+
+## Generating the individual subgraphs for Schema Registry
+
+If you want to publish the subgraphs to a schema registry such as
+[Hive](/v1/serve/schema-registry/hive) or [GraphOS](/v1/serve/schema-registry/graphos), you can
+generate the subgraphs by running the following command:
+
+```sh
+mesh-compose --subgraph SUBGRAPH_NAME > subgraph.graphql
+```
+
+<Callout>
+For example, with GraphQL Hive CLI you can publish this subgraph with the following command:
+
+```sh
+hive schema:publish \
+  --registry.accessToken YOUR_TOKEN_HERE \
+  --service="reviews" \
+  --url="http://fake.com/reviews/graphql" \
+  --author "Me" \
+  --commit "Second" \
+  wiki-subgraph.graphql
+```
+
 </Callout>

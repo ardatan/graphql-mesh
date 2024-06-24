@@ -5,7 +5,7 @@ import { Callout } from '@theguild/components'
 `TODO: Test this feature with a real example`
 
 You can use the `auth` and `skipAuth` directives to control access to your GraphQL API. These
-directives are used to enforce authentication and authorization rules on your unified graph.
+directives are used to enforce authentication and authorization rules on your supergraph.
 
 <Callout>
   You need to configure your gateway to use specific authentication rules in order to use these directives.
@@ -43,8 +43,8 @@ type Query {
 
 ## Exclude fields from authentication by using schema field directive `@skipAuth`
 
-If you have completely protected unified graph but allow unauthenticated access for certain fields
-by annotating them.
+If you have completely protected supergraph but allow unauthenticated access for certain fields by
+annotating them.
 
 You need to define the `skipAuth` directive in your schema:
 

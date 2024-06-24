@@ -1,6 +1,6 @@
 ---
 description:
-  Extend your unified graph by combining multiple GraphQL schemas and resolvers with GraphQL Mesh
+  Extend your supergraph by combining multiple GraphQL schemas and resolvers with GraphQL Mesh
   schema extensions.
 ---
 
@@ -27,7 +27,7 @@ sources.
 
 ## Motivational Example
 
-Let's say we have a `subgraph A`, and the unified graph like below;
+Let's say we have a `subgraph A`, and the supergraph like below;
 
 ```graphql filename="subgraph-a.graphql"
 type Repository {
@@ -49,7 +49,7 @@ type Query {
 }
 ```
 
-And together with other composed subgraphs or extensions, we have the following unified graph;
+And together with other composed subgraphs or extensions, we have the following supergraph;
 
 ```graphql filename="unifiedgraph.graphql" {18-27}
 type Repository {
@@ -84,8 +84,8 @@ type Query {
 }
 ```
 
-Suppose we want the unified graph to delegate retrieval of `repositories` to the `subgraph A`, in
-order to execute queries such as this one:
+Suppose we want the supergraph to delegate retrieval of `repositories` to the `subgraph A`, in order
+to execute queries such as this one:
 
 ```graphql
 query {
@@ -169,7 +169,7 @@ corresponding root query:
 - `Post.userId -> userById(id)` gets a Post’s user.
 - `User.id -> postsByUserId(userId)` gets a User’s posts.
 
-To formalize this navigation within our unified graph, we can extend each type with a new field that
+To formalize this navigation within our supergraph, we can extend each type with a new field that
 will translate its respective key into an actual object association:
 
 ```ts filename="mesh.config.ts"

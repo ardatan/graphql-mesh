@@ -1,0 +1,78 @@
+import { Callout } from '@theguild/components'
+
+# Consume in other routers
+
+If you don't use Mesh Router, but still want to use Mesh Compose to convert non-federated sources to
+a federated subgraph. You can still do it but it has some limitations, you need to generate the
+subgraph, and serve the subgraph with [Mesh Serve](/v1/serve) But if you use Mesh Serve, you don't
+need to worry about this, then you can use the supergraph directly without having multiple servers.
+
+That's because other routers are not aware of Mesh Compose's additional directives to handle the
+non-federated sources.
+
+This means you can use non-federated sources in any Federation compliant gateway such as Apollo
+Gateway, Apollo Router or Cosmo Router.
+
+## Generate the subgraph
+
+First, you need to generate the subgraph with Mesh Compose, and then serve the subgraph with Mesh
+Serve.
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/runtime'
+
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('Wiki', {
+        source: 'https://wikimedia.org/api/rest_v1/?spec'
+      }),
+      transforms: [
+        /**.. **/
+      ]
+    }
+  ]
+})
+```
+
+Then you can run the following command to generate the subgraph:
+
+`TODO: Add the command to generate the subgraph`
+
+```sh
+npx mesh compose --subgraph Wiki > wiki-subgraph.graphql
+```
+
+You can also use this schema with any schema registry such as [Hive](/v1/serve/schema-registry/hive)
+or [GraphOS](/v1/serve/schema-registry/graphos).
+
+<Callout>
+For example, with GraphQL Hive CLI you can publish this subgraph with the following command:
+
+```sh
+hive schema:publish \
+  --registry.accessToken YOUR_TOKEN_HERE \
+  --service="reviews" \
+  --url="http://fake.com/reviews/graphql" \
+  --author "Me" \
+  --commit "Second" \
+  wiki-subgraph.graphql
+```
+
+</Callout>
+
+## Serve the subgraph
+
+Then you can serve the subgraph with Mesh Serve with the following command;
+
+`TODO: Add the command to serve the subgraph`
+
+```sh
+npx mesh serve --subgraph wiki-subgraph.graphql
+```
+
+Then you can use the supergraph in any Federation compliant gateway such as Apollo Gateway, Apollo
+Router or Cosmo Router.
