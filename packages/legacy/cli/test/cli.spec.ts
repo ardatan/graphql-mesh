@@ -25,8 +25,8 @@ describe('runtime', () => {
       // Check that the import of the main Mesh module has replaced the extension
       expect(builtMesh).toMatch(/import \* as importedModule(.*) from ".*\/\.meshrc.js";/);
 
-      // Check that the reference to the relative module in the "importFn" function has replaced the extension
-      expect(builtMesh).toMatch(/case "\.meshrc.js":/);
+      // Case should stay the same
+      expect(builtMesh).toMatch(/case "\.meshrc.ts":/);
     });
 
     it('Should keep the `.js` extension of a config file in the built Mesh index file', async () => {
