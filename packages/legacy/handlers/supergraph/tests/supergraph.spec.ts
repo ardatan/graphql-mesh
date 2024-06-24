@@ -37,9 +37,7 @@ describe('Supergraph', () => {
     },
   };
   const libcurl = globalThis.libcurl;
-  let disposableStack: AsyncDisposableStack;
   beforeEach(() => {
-    disposableStack = new AsyncDisposableStack();
     globalThis.libcurl = null;
     const baseDir = __dirname;
     const cache = new LocalforageCache();
@@ -77,7 +75,6 @@ describe('Supergraph', () => {
   });
   afterEach(() => {
     globalThis.libcurl = libcurl;
-    return disposableStack.disposeAsync();
   });
   it('supports individual headers for each subgraph with interpolation', async () => {
     const handler = new SupergraphHandler({
@@ -289,6 +286,7 @@ describe('Supergraph', () => {
  getaddrinfo ENOTFOUND down-sdl-source.com`);
   });
   it('configures WebSockets for subscriptions correctly', async () => {
+    await using disposableStack = new AsyncDisposableStack();
     const authorsHttpServer = createServer(authorsServer);
     disposableStack.defer(
       () =>
