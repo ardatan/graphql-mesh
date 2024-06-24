@@ -41,8 +41,9 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-tools/executor-http": "^1.0.2",
     "@graphql-tools/federation": "^2.0.0",
+    "@graphql-tools/url-loader": "^8.0.2",
+    "@graphql-tools/utils": "^10.2.2",
     "lodash.get": "^4.4.2"
   },
   "publishConfig": {

@@ -18,8 +18,9 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { isUrl, readFile, readUrl } from '@graphql-mesh/utils';
-import { buildHTTPExecutor, HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
+import { SubscriptionProtocol, UrlLoader } from '@graphql-tools/url-loader';
+import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
 
 export default class SupergraphHandler implements MeshHandler {
   private config: YamlConfig.Handler['supergraph'];
@@ -107,6 +108,7 @@ export default class SupergraphHandler implements MeshHandler {
         });
       });
     }
+    const urlLoader = new UrlLoader();
     const schema = getStitchedSchemaFromSupergraphSdl({
       supergraphSdl,
       onSubschemaConfig(subschemaConfig) {
@@ -120,39 +122,51 @@ export default class SupergraphHandler implements MeshHandler {
         };
         nonInterpolatedEndpoint = subgraphConfiguration.endpoint || nonInterpolatedEndpoint;
         const endpointFactory = getInterpolatedStringFactory(nonInterpolatedEndpoint);
-        subschemaConfig.executor = buildHTTPExecutor({
-          ...(subgraphConfiguration as any),
-          endpoint: nonInterpolatedEndpoint,
-          fetch(url: string, init: any, context: any, info: any) {
-            const endpoint = endpointFactory({
+        const connectionParamsFactory = getInterpolatedHeadersFactory(
+          subgraphConfiguration.connectionParams,
+        );
+
+        const subscriptionsEndpoint = subgraphConfiguration.subscriptionsEndpoint
+          ? stringInterpolator.parse(subgraphConfiguration.subscriptionsEndpoint, {
               env: process.env,
-              context,
-              info,
-            });
-            url = url.replace(nonInterpolatedEndpoint, endpoint);
-            return fetchFn(url, init, context, info);
-          },
-          headers(executorRequest) {
-            const headers = {};
-            const resolverData: ResolverData = {
-              root: executorRequest.rootValue,
-              env: process.env,
-              context: executorRequest.context,
-              info: executorRequest.info,
-              args: executorRequest.variables,
-            };
-            if (subgraphConfiguration?.operationHeaders) {
-              const headersFactory = getInterpolatedHeadersFactory(
-                subgraphConfiguration.operationHeaders,
-              );
-              Object.assign(headers, headersFactory(resolverData));
+            })
+          : undefined;
+
+        const subgraphExecutor = urlLoader.getExecutorAsync(nonInterpolatedEndpoint, {
+          ...subgraphConfiguration,
+          subscriptionsEndpoint,
+          subscriptionsProtocol:
+            subgraphConfiguration.subscriptionsProtocol as SubscriptionProtocol,
+          customFetch: fetchFn,
+        });
+        const subgraphOperationHeadersFactory =
+          subgraphConfiguration.operationHeaders != null
+            ? getInterpolatedHeadersFactory(subgraphConfiguration.operationHeaders)
+            : undefined;
+        subschemaConfig.executor = function subgraphExecutorWithInterpolations(params) {
+          const resolverData = getResolverData(params);
+          let headers: Record<string, string>;
+          if (operationHeadersFactory) {
+            headers = operationHeadersFactory(resolverData);
+          }
+          if (subgraphOperationHeadersFactory) {
+            const subgraphHeaders = subgraphOperationHeadersFactory(resolverData);
+            if (headers) {
+              Object.assign(headers, subgraphHeaders);
+            } else {
+              headers = subgraphHeaders;
             }
-            if (operationHeadersFactory) {
-              Object.assign(headers, operationHeadersFactory(resolverData));
-            }
-            return headers;
-          },
-        } as HTTPExecutorOptions);
+          }
+          return subgraphExecutor({
+            ...params,
+            extensions: {
+              ...(params.extensions || {}),
+              headers,
+              connectionParams: connectionParamsFactory(resolverData),
+              endpoint: endpointFactory(resolverData),
+            },
+          });
+        };
       },
       batch: this.config.batch == null ? true : this.config.batch,
     });
@@ -182,3 +196,12 @@ function handleSupergraphResponse(
   }
   return sdlOrDocumentNode;
 }
+
+const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
+  return {
+    root: params.rootValue,
+    args: params.variables,
+    context: params.context,
+    env: process.env,
+  };
+});

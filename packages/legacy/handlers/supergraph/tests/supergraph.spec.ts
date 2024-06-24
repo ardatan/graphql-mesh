@@ -1,4 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { createServer } from 'node:http';
+import { AddressInfo } from 'node:net';
+import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
+import { ServerOptions } from 'graphql-ws/lib/server';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { YogaServerInstance } from 'graphql-yoga';
+import { WebSocketServer } from 'ws';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import BareMerger from '@graphql-mesh/merger-bare';
 import { getMesh } from '@graphql-mesh/runtime';
@@ -278,4 +285,142 @@ describe('Supergraph', () => {
  Failed to load supergraph SDL from http://down-sdl-source.com/my-sdl.graphql:
  getaddrinfo ENOTFOUND down-sdl-source.com`);
   });
+  it('configures WebSockets for subscriptions correctly', async () => {
+    await using disposableStack = new AsyncDisposableStack();
+    const authorsHttpServer = createServer(authorsServer);
+    disposableStack.defer(
+      () =>
+        new Promise((resolve, reject) =>
+          authorsHttpServer.close(err => (err ? reject(err) : resolve())),
+        ),
+    );
+    useServer(
+      getGraphQLWSOptionsForYoga(authorsServer),
+      new WebSocketServer({
+        server: authorsHttpServer,
+        path: authorsServer.graphqlEndpoint,
+      }),
+    );
+    const booksHttpServer = createServer(booksServer);
+    disposableStack.defer(
+      () =>
+        new Promise((resolve, reject) =>
+          booksHttpServer.close(err => (err ? reject(err) : resolve())),
+        ),
+    );
+    useServer(
+      getGraphQLWSOptionsForYoga(booksServer),
+      new WebSocketServer({
+        server: booksHttpServer,
+        path: booksServer.graphqlEndpoint,
+      }),
+    );
+
+    await new Promise<void>(resolve => authorsHttpServer.listen(0, () => resolve()));
+    await new Promise<void>(resolve => booksHttpServer.listen(0, () => resolve()));
+    const handler = new SupergraphHandler({
+      ...baseHandlerConfig,
+      config: {
+        source: './fixtures/supergraph.graphql',
+        subgraphs: [
+          {
+            name: 'authors',
+            endpoint: `http://localhost:${(authorsHttpServer.address() as AddressInfo).port}${authorsServer.graphqlEndpoint}`,
+            operationHeaders: {
+              Authorization: AUTHORS_AUTH_HEADER,
+            },
+            subscriptionsProtocol: 'WS',
+          },
+          {
+            name: 'books',
+            endpoint: `http://localhost:${(booksHttpServer.address() as AddressInfo).port}${booksServer.graphqlEndpoint}`,
+            operationHeaders: {
+              Authorization: BOOKS_AUTH_HEADER,
+            },
+            subscriptionsProtocol: 'WS',
+          },
+        ],
+      },
+    });
+    const meshRuntime = await getMesh({
+      sources: [
+        {
+          name: 'supergraph',
+          handler,
+        },
+      ],
+      ...baseGetMeshConfig,
+    });
+    const subscriptionResult = await meshRuntime.subscribe(
+      /* GraphQL */ `
+        subscription {
+          bookCreated {
+            title
+            author {
+              name
+            }
+          }
+        }
+      `,
+      {},
+    );
+    if (!(Symbol.asyncIterator in subscriptionResult)) {
+      throw new Error('Subscription result is not an async iterable');
+    }
+    const subscriptionAsyncIterator = subscriptionResult[Symbol.asyncIterator]();
+    disposableStack.defer(() => subscriptionAsyncIterator.return() as Promise<any>);
+    const subscriptionIterationResult$ = subscriptionAsyncIterator.next();
+    // Wait for the subscription to be ready
+    await new Promise<void>(resolve => setTimeout(resolve, 30));
+    const mutationResult = await meshRuntime.execute(
+      /* GraphQL */ `
+        mutation {
+          createBook(title: "New Book", authorId: 1) {
+            title
+            author {
+              name
+            }
+          }
+        }
+      `,
+      {},
+    );
+    const subscriptionIterationResult = await subscriptionIterationResult$;
+    expect(subscriptionIterationResult.value.data).toEqual({
+      bookCreated: mutationResult?.data?.createBook,
+    });
+  });
 });
+
+function getGraphQLWSOptionsForYoga(
+  yogaApp: YogaServerInstance<any, any>,
+): ServerOptions<any, any> {
+  return {
+    execute: (args: any) => args.rootValue.execute(args),
+    subscribe: (args: any) => args.rootValue.subscribe(args),
+    onSubscribe: async (ctx, msg) => {
+      const { schema, execute, subscribe, contextFactory, parse, validate } = yogaApp.getEnveloped({
+        ...ctx,
+        req: ctx.extra.request,
+        socket: ctx.extra.socket,
+        params: msg.payload,
+      });
+
+      const args = {
+        schema,
+        operationName: msg.payload.operationName,
+        document: parse(msg.payload.query),
+        variableValues: msg.payload.variables,
+        contextValue: await contextFactory(),
+        rootValue: {
+          execute,
+          subscribe,
+        },
+      };
+
+      const errors = validate(args.schema, args.document);
+      if (errors.length) return errors;
+      return args;
+    },
+  };
+}

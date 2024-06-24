@@ -5459,8 +5459,9 @@ __metadata:
   resolution: "@graphql-mesh/supergraph@workspace:packages/legacy/handlers/supergraph"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
-    "@graphql-tools/executor-http": "npm:^1.0.2"
     "@graphql-tools/federation": "npm:^2.0.0"
+    "@graphql-tools/url-loader": "npm:^8.0.2"
+    "@graphql-tools/utils": "npm:^10.2.2"
     lodash.get: "npm:^4.4.2"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.3
@@ -6060,7 +6061,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor-http@npm:^1.0.2, @graphql-tools/executor-http@npm:^1.0.6, @graphql-tools/executor-http@npm:^1.0.9":
+"@graphql-tools/executor-http@npm:^1.0.6, @graphql-tools/executor-http@npm:^1.0.9":
   version: 1.0.9
   resolution: "@graphql-tools/executor-http@npm:1.0.9"
   dependencies:
@@ -6520,7 +6521,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/url-loader@npm:^8.0.0, @graphql-tools/url-loader@npm:~8.0.0":
+"@graphql-tools/url-loader@npm:^8.0.0, @graphql-tools/url-loader@npm:^8.0.2, @graphql-tools/url-loader@npm:~8.0.0":
   version: 8.0.2
   resolution: "@graphql-tools/url-loader@npm:8.0.2"
   dependencies:
