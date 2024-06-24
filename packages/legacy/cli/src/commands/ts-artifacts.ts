@@ -306,14 +306,15 @@ const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
     .map((importedModuleName, importedModuleIndex) => {
-      let moduleMapProp = importedModuleName;
+      const importPathRelativeToBaseDir = pathModule
+        .relative(baseDir, importedModuleName)
+        .split('\\')
+        .join('/');
       let importPath = importedModuleName;
       if (importPath.startsWith('.')) {
         importPath = pathModule.join(baseDir, importPath);
       }
       if (pathModule.isAbsolute(importPath)) {
-        moduleMapProp = pathModule.relative(baseDir, importedModuleName).split('\\').join('/');
-        moduleMapProp = replaceTypeScriptExtension(moduleMapProp);
         importPath = `./${pathModule
           .relative(artifactsDir, importedModuleName)
           .split('\\')
@@ -323,7 +324,7 @@ const importFn: ImportFn = <T>(moduleId: string) => {
       const importIdentifier = `importedModule$${importedModuleIndex}`;
       importCodes.add(`import * as ${importIdentifier} from ${JSON.stringify(importPath)};`);
       return `
-    case ${JSON.stringify(moduleMapProp)}:
+    case ${JSON.stringify(importPathRelativeToBaseDir)}:
       return Promise.resolve(${importIdentifier}) as T;
     `;
     })
