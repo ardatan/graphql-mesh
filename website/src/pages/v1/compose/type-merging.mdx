@@ -117,9 +117,6 @@ And then the gateway should merge the results from both subgraphs and return the
 }
 ```
 
-`TODO: Add recipes` See related [handbook example](/v1/compose/recipes/type-merging-single-records)
-for a working demonstration of this setup.
-
 ## Automatic Type Merging
 
 GraphQL Mesh Compose automatically enables Type Merging if you have the following patterns in your
@@ -135,32 +132,24 @@ configuration. If your schema doesn't match this pattern, you can use
 don't have `userById` in `Posts` but `postUserById` instead. You can use the `rename` transform to
 rename the field to match the pattern.
 
-## Stitching Directives
+You can disable this behavior in your configuration by setting `ignoreSemanticConventions: true` in
+your configuration;
 
-This can also be written schema-type definitions using the `@merge` directive of the
-[stitching SDL](https://the-guild.dev/graphql/stitching/docs/approaches/stitching-directives).
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
 
-```graphql
-type User {
-  id: ID!
-  email: String!
-}
-
-type Query {
-  userById(id: ID!): User @merge(keyField: "id")
-}
+export default defineComposeConfig({
+  ignoreSemanticConventions: true
+  // ...
+})
 ```
 
-Regardless of how this merge configuration is written, it allows type merging to smartly resolve a
-complete `User`, regardless of which service provides the initial representation of it. We now have
-a combined `User` type in the gateway schema:
+## Manual and Advanced Type Merging
 
-```graphql
-type User {
-  id: ID!
-  email: String!
-  posts: [Post]!
-}
-```
+If you have control over your schema, you can use Federation directives to configure Type Merging,
+using Federation directives;
+[Learn more here](https://www.apollographql.com/docs/federation/federated-types/federated-directives).
 
-`TODO: Extend this documentation by using https://the-guild.dev/graphql/stitching/docs/approaches/type-merging`
+If you don't have control over your schema, you can use
+[Federation Transform](/v1/compose/transforms/federation) to add the federation directives to your
+schema, and specify an entity resolver using extra annotations on the transform level.
