@@ -1,6 +1,6 @@
 {
   "name": "covid-mesh",
-  "version": "0.15.15",
+  "version": "0.16.0",
   "author": {
     "name": "JYC",
     "url": "https://github.com/jycouet"
@@ -12,7 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.90.12",
+    "@graphql-mesh/cli": "0.91.0",
     "@graphql-mesh/graphql": "0.98.9",
     "@graphql-mesh/json-schema": "0.100.13",
     "graphql": "16.9.0"

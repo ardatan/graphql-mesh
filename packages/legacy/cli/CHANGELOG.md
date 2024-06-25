@@ -1,5 +1,33 @@
 # @graphql-mesh/cli
 
+## 0.91.0
+
+### Minor Changes
+
+- [#7131](https://github.com/ardatan/graphql-mesh/pull/7131)
+  [`bc0c083`](https://github.com/ardatan/graphql-mesh/commit/bc0c083f36eb69517e3dc484a43ee8c01086719a)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - use tsx instead of ts-node
+
+### Patch Changes
+
+- [#7131](https://github.com/ardatan/graphql-mesh/pull/7131)
+  [`bc0c083`](https://github.com/ardatan/graphql-mesh/commit/bc0c083f36eb69517e3dc484a43ee8c01086719a)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (to
+    `dependencies`)
+  - Removed dependency [`json5@^2.2.3` ↗︎](https://www.npmjs.com/package/json5/v/2.2.3) (from
+    `dependencies`)
+  - Removed dependency [`ts-node@^10.9.2` ↗︎](https://www.npmjs.com/package/ts-node/v/10.9.2) (from
+    `dependencies`)
+  - Removed dependency
+    [`tsconfig-paths@^4.2.0` ↗︎](https://www.npmjs.com/package/tsconfig-paths/v/4.2.0) (from
+    `dependencies`)
+
+- [`92dc600`](https://github.com/ardatan/graphql-mesh/commit/92dc6000f82e0bf9b5800fe641ae7eb51c338281)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use user-defined paths for switch cases
+  matching
+
 ## 0.90.12
 
 ### Patch Changes
