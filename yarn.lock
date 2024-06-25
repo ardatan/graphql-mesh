@@ -4677,6 +4677,7 @@ __metadata:
     graphql-import-node: "npm:^0.0.5"
     graphql-ws: "npm:^5.12.1"
     json-bigint-patch: "npm:^0.0.8"
+    json5: "npm:^2.2.3"
     mkdirp: "npm:^3.0.0"
     node-libcurl: "npm:^4.0.0"
     open: "npm:^7.4.2"
