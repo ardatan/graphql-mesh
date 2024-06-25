@@ -1,10 +1,4 @@
-/* eslint-disable import/no-nodejs-modules */
-import { register } from 'node:module';
-import { pathToFileURL } from 'node:url';
 import { config as dotEnvRegister } from 'dotenv';
-import JSON5 from 'json5';
-import { register as tsNodeRegister } from 'ts-node';
-import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
@@ -24,11 +18,6 @@ import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
-
-// Note: required to make build command compatible with esm
-if (register) {
-  register('ts-node/esm', pathToFileURL('./'));
-}
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
 
@@ -66,12 +55,6 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   additionalPackagePrefixes: [],
 };
 
-function getTsConfigBaseDir(baseDir: string) {
-  const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
-  const tsConfigExists = fs.existsSync(tsConfigPath);
-  return tsConfigExists ? baseDir : process.cwd();
-}
-
 export async function graphqlMesh(
   cliParams = DEFAULT_CLI_PARAMS,
   args = hideBin(process.argv),
@@ -108,32 +91,6 @@ export async function graphqlMesh(
           baseDir = dir;
         } else {
           baseDir = pathModule.resolve(cwdPath, dir);
-        }
-        const tsConfigBaseDir = getTsConfigBaseDir(baseDir);
-        const tsConfigPath = pathModule.join(tsConfigBaseDir, 'tsconfig.json');
-        const tsConfigExists = fs.existsSync(tsConfigPath);
-        tsNodeRegister({
-          transpileOnly: true,
-          typeCheck: false,
-          dir: tsConfigBaseDir,
-          require: ['graphql-import-node/register'],
-          compilerOptions: {
-            module: 'commonjs',
-          },
-        });
-        if (tsConfigExists) {
-          try {
-            const tsConfigStr = fs.readFileSync(tsConfigPath, 'utf-8');
-            const tsConfig = JSON5.parse(tsConfigStr);
-            if (tsConfig.compilerOptions?.paths) {
-              tsConfigPathsRegister({
-                baseUrl: tsConfigBaseDir,
-                paths: tsConfig.compilerOptions.paths,
-              });
-            }
-          } catch (e) {
-            logger.warn(`Unable to read TSConfig file ${tsConfigPath};\n`, e);
-          }
         }
         if (fs.existsSync(pathModule.join(baseDir, '.env'))) {
           dotEnvRegister({
