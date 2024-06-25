@@ -1,5 +1,7 @@
 # openapi-react-weatherbit
 
+## 0.12.0
+
 ## 0.11.12
 
 ## 0.11.11

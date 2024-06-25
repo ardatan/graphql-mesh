@@ -1,5 +1,42 @@
 # @graphql-mesh/supergraph
 
+## 0.4.10
+
+### Patch Changes
+
+- [#7149](https://github.com/ardatan/graphql-mesh/pull/7149)
+  [`4e850b1`](https://github.com/ardatan/graphql-mesh/commit/4e850b1241130b30a97f34a43af50f859239e8db)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/url-loader@^8.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/8.0.2)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.2.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.2)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/executor-http@^1.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.0.2)
+    (from `dependencies`)
+
+- [#7149](https://github.com/ardatan/graphql-mesh/pull/7149)
+  [`4e850b1`](https://github.com/ardatan/graphql-mesh/commit/4e850b1241130b30a97f34a43af50f859239e8db)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the support for WebSockets configuration for
+  supergraph handler
+
+  For example;
+
+  ```yaml filename="mesh.config.yaml"
+  sources:
+    - name: MySupergraph
+      handler:
+        supergraph:
+          source: # ...
+          subgraphs:
+            - name: MySubgraph
+              subscriptionsEndpoint: ws://localhost:4000/graphql
+              subscriptionsProtocol: WS
+  ```
+
 ## 0.4.9
 
 ### Patch Changes

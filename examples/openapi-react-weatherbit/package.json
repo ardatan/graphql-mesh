@@ -1,6 +1,6 @@
 {
   "name": "openapi-react-weatherbit",
-  "version": "0.11.12",
+  "version": "0.12.0",
   "private": true,
   "scripts": {
     "build": "vite build",
@@ -16,7 +16,7 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.90.12",
+    "@graphql-mesh/cli": "0.91.0",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "4.3.1",
