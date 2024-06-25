@@ -8,13 +8,13 @@ import {
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { asArray, getRootTypeMap, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { SubgraphTransform } from '../compose';
+import { SubgraphTransform } from '../compose.js';
 import {
   addFederation2DirectivesToSubgraph,
   importFederationDirectives,
   importMeshDirectives,
-} from '../federation-utils';
-import { TransformValidationError } from './utils';
+} from '../federation-utils.js';
+import { TransformValidationError } from './utils.js';
 
 export interface FederationTransformConfig {
   [schemaCoordinate: string]: FederationCoordinateConfig;

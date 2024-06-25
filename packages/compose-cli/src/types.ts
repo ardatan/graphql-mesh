@@ -12,6 +12,7 @@ export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   subgraphs: MeshComposeCLISubgraphConfig[];
   transforms?: MeshComposeCLITransformConfig[];
   additionalTypeDefs?: string | DocumentNode | (string | DocumentNode)[];
+  subgraph?: string;
   fetch?: typeof defaultFetch;
   cwd?: string;
 }

@@ -612,6 +612,7 @@ export function composeSubgraphs(
   const composedSupergraphSdl = composeServices(annotatedSubgraphs);
   return {
     ...composedSupergraphSdl,
+    annotatedSubgraphs,
     subgraphs,
   };
 }
