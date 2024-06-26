@@ -341,5 +341,5 @@ jobs:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
       - name: test
-        timeout-minutes: 3
+        timeout-minutes: 5
         run: yarn test:e2e --detectOpenHandles

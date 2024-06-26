@@ -119,7 +119,10 @@ ${operationConfig.description || ''}
             queryParamArgMap: operationConfig.queryParamArgMap,
             queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
             jsonApiFields: operationConfig.jsonApiFields,
-            queryStringOptions: 'queryStringOptions' in operationConfig ? operationConfig.queryStringOptions : undefined,
+            queryStringOptions:
+              'queryStringOptions' in operationConfig
+                ? operationConfig.queryStringOptions
+                : undefined,
           }),
         ),
       });
