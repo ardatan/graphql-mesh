@@ -1,20 +1,24 @@
-import {
+import type {
   BatchingOptions,
   FetchAPI,
-  LogLevel,
   YogaInitialContext,
-  YogaLogger,
   YogaMaskedErrorOpts,
   Plugin as YogaPlugin,
   YogaServerOptions,
 } from 'graphql-yoga';
-import { Plugin as EnvelopPlugin } from '@envelop/core';
-import { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { KeyValueCache, Logger, MeshFetch, MeshPubSub, OnFetchHook } from '@graphql-mesh/types';
-import { HTTPExecutorOptions } from '@graphql-tools/executor-http';
-import { IResolvers } from '@graphql-tools/utils';
-import { CORSPluginOptions } from '@whatwg-node/server';
+import type { Plugin as EnvelopPlugin } from '@envelop/core';
+import type { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
+import type {
+  KeyValueCache,
+  Logger,
+  MeshFetch,
+  MeshPubSub,
+  OnFetchHook,
+} from '@graphql-mesh/types';
+import type { LogLevel } from '@graphql-mesh/utils';
+import type { HTTPExecutorOptions } from '@graphql-tools/executor-http';
+import type { IResolvers } from '@graphql-tools/utils';
+import type { CORSPluginOptions } from '@whatwg-node/server';
 import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
 export { UnifiedGraphConfig };
@@ -159,7 +163,7 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
    *
    * @default true
    */
-  logging?: boolean | YogaLogger | LogLevel | undefined;
+  logging?: boolean | Logger | LogLevel | undefined;
   /**
    * Endpoint of the GraphQL API.
    */
