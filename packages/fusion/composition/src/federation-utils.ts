@@ -1,6 +1,6 @@
 import { GraphQLDirective, isSpecifiedDirective, type GraphQLSchema } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
-import { MapperKind, mapSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { MapperKind, mapSchema } from '@graphql-tools/utils';
 
 export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
@@ -49,7 +49,7 @@ export function importFederationDirectives(subgraph: GraphQLSchema, directives: 
 }
 
 export function importMeshDirectives(subgraph: GraphQLSchema, directives: string[]) {
-  let schemaDirectives = getDirectiveExtensions(subgraph);
+  const schemaDirectives = getDirectiveExtensions(subgraph) || {};
   const linkDirectives = (schemaDirectives.link ||= []);
   let importStatement = linkDirectives.find(linkDirectiveArgs =>
     linkDirectiveArgs.url?.startsWith('https://the-guild.dev/graphql/mesh/spec/'),
