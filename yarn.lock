@@ -5100,7 +5100,6 @@ __metadata:
   dependencies:
     "@graphql-hive/client": "npm:^0.32.0"
     "@graphql-mesh/string-interpolation": "npm:0.5.4"
-    "@graphql-mesh/utils": "npm:^0.98.8"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.3
     "@graphql-mesh/types": ^0.98.8
