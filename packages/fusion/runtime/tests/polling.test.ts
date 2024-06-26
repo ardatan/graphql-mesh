@@ -1,5 +1,5 @@
 import { buildSchema } from 'graphql';
-import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
+import { composeSubgraphs, getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { UnifiedGraphManager } from '../src/unifiedGraphManager';
 
 describe('Polling', () => {
@@ -7,7 +7,7 @@ describe('Polling', () => {
     jest.useFakeTimers();
     const pollingInterval = 35_000;
     const unifiedGraphFetcher = () =>
-      composeSubgraphs([
+      getUnifiedGraphGracefully([
         {
           name: 'Test',
           schema: buildSchema(/* GraphQL */ `

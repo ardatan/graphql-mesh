@@ -12,7 +12,7 @@ it('should compose the appropriate schema', async () => {
 
 it('should listen for webhooks', async () => {
   const { output } = await compose({ output: 'graphql', services: [await service('api')] });
-  const { execute, port } = await serve({ fusiongraph: output });
+  const { execute, port } = await serve({ supergraph: output });
 
   const res = await execute({
     query: /* GraphQL */ `

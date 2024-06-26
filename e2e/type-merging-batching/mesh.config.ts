@@ -43,3 +43,5 @@ export const composeConfig = defineConfig({
     }
   `,
 });
+
+export const serveConfig = { maskedErrors: false }

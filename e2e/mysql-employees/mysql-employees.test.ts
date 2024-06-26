@@ -60,6 +60,6 @@ it.concurrent.each([
   },
 ])('should execute $name', async ({ query }) => {
   const { output } = await compose({ output: 'graphql', services: [mysql] });
-  const { execute } = await serve({ fusiongraph: output });
+  const { execute } = await serve({ supergraph: output });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });

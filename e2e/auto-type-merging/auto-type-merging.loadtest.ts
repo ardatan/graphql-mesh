@@ -30,7 +30,7 @@ it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
     services: [petstore, await service('vaccination')],
     output: 'graphql',
   });
-  const server = await serve({ fusiongraph: output });
+  const server = await serve({ supergraph: output });
   const result = await tbench.sustain({
     server,
     params: {

@@ -54,10 +54,10 @@ import {
   grpcConnectivityStateDirective,
   grpcMethodDirective,
   grpcRootJsonDirective,
-  ObjMapScalar,
 } from './directives.js';
 import './patchLongJs.js';
 import { resolvers as scalarResolvers } from 'graphql-scalars';
+import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { addExecutionLogicToScalar } from './scalars.js';
 import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
 

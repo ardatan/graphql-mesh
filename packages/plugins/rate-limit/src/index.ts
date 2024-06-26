@@ -2,7 +2,7 @@ import { GraphQLError, TypeInfo, visit, visitInParallel, visitWithTypeInfo } fro
 import { Minimatch } from 'minimatch';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { KeyValueCache, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
+import { KeyValueCache, Logger, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { createGraphQLError } from '@graphql-tools/utils';
 
 function deleteNode<T extends Record<string | number, any>>(

@@ -1,13 +1,12 @@
 import { createHive, HivePluginOptions, useYogaHive } from '@graphql-hive/client';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import { Logger, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 
 export default function useMeshHive(
   pluginOptions: YamlConfig.HivePlugin & {
     logger?: Logger;
-    pubsub?: PubSub;
+    pubsub?: MeshPubSub;
   },
   // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
@@ -71,7 +70,7 @@ export default function useMeshHive(
       }),
     };
   }
-  let agent: HivePluginOptions['agent'];
+  let agent: HivePluginOptions['agent'] = { logger: pluginOptions.logger };
   if (pluginOptions.agent) {
     agent = {
       name: pluginOptions.agent.name,

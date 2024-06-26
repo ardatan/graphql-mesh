@@ -1,7 +1,4 @@
 {
-  "extends": "../../../tsconfig.json",
-  "compilerOptions": {
-    "module": "commonjs"
-  },
+  "extends": "../../../../tsconfig.json",
   "files": ["src/index.ts"]
 }

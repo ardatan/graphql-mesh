@@ -1,7 +1,6 @@
 import {
   DocumentNode,
   getOperationAST,
-  GraphQLError,
   GraphQLObjectType,
   GraphQLSchema,
   OperationTypeNode,

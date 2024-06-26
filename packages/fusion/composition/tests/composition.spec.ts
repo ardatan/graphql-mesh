@@ -1,5 +1,4 @@
-import { buildSchema } from 'graphql';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { GraphQLSchema, buildSchema } from 'graphql';
 import {
   composeSubgraphs,
   createRenameFieldTransform,
@@ -7,7 +6,10 @@ import {
 } from '../src/index.js';
 
 describe('Composition', () => {
-  const aSchema = buildSchema(/* GraphQL */ `
+  let aSchema: GraphQLSchema;
+  let bSchema: GraphQLSchema;
+  beforeEach(() => {
+    aSchema = buildSchema(/* GraphQL */ `
     type Query {
       myFoo: Foo!
     }
@@ -17,7 +19,7 @@ describe('Composition', () => {
     }
   `);
 
-  const bSchema = buildSchema(/* GraphQL */ `
+    bSchema = buildSchema(/* GraphQL */ `
     type Query {
       foo(id: ID!): Foo!
       foos(ids: [ID!]!): [Foo!]!
@@ -34,8 +36,11 @@ describe('Composition', () => {
       bar: String!
     }
   `);
+  })
   it('composes basic schemas', () => {
-    const composedSchema = composeSubgraphs([
+    const {
+      supergraphSdl,
+    } = composeSubgraphs([
       {
         name: 'A',
         schema: aSchema,
@@ -46,7 +51,7 @@ describe('Composition', () => {
       },
     ]);
 
-    expect(printSchemaWithDirectives(composedSchema)).toMatchSnapshot();
+    expect(supergraphSdl).toMatchSnapshot();
   });
   it('composes with transforms', () => {
     const prefixTypeTransform = createRenameTypeTransform(
@@ -58,7 +63,9 @@ describe('Composition', () => {
           ? `${subgraphConfig.name}_${fieldName}`
           : fieldName,
     );
-    const composedSchema = composeSubgraphs([
+    const {
+      supergraphSdl,
+    } = composeSubgraphs([
       {
         name: 'A',
         schema: aSchema,
@@ -71,10 +78,12 @@ describe('Composition', () => {
       },
     ]);
 
-    expect(printSchemaWithDirectives(composedSchema)).toMatchSnapshot();
+    expect(supergraphSdl).toMatchSnapshot();
   });
   it('keeps the directives', () => {
-    const composedSchema = composeSubgraphs([
+    const {
+      supergraphSdl,
+    } = composeSubgraphs([
       {
         name: 'A',
         schema: aSchema,
@@ -98,48 +107,6 @@ describe('Composition', () => {
       },
     ]);
 
-    expect(printSchemaWithDirectives(composedSchema)).toMatchSnapshot();
-  });
-  it('respects the existing transforms done', async () => {
-    const aSchema = buildSchema(
-      /* GraphQL */ `
-        type Query {
-          foo(id: ID!): Foo! @source(name: "yourFoo") @merge
-        }
-
-        type Foo @key(selectionSet: "{ id }") {
-          id: ID!
-        }
-      `,
-      {
-        assumeValid: true,
-        assumeValidSDL: true,
-      },
-    );
-    const bSchema = buildSchema(
-      /* GraphQL */ `
-        type Query {
-          foo: Foo! @source(name: "bar", type: "Bar!")
-        }
-        type Foo @source(name: "Bar") {
-          id: ID!
-        }
-      `,
-      {
-        assumeValid: true,
-        assumeValidSDL: true,
-      },
-    );
-    const composedSchema = composeSubgraphs([
-      {
-        name: 'A',
-        schema: aSchema,
-      },
-      {
-        name: 'B',
-        schema: bSchema,
-      },
-    ]);
-    expect(printSchemaWithDirectives(composedSchema)).toMatchSnapshot();
+    expect(supergraphSdl).toMatchSnapshot();
   });
 });

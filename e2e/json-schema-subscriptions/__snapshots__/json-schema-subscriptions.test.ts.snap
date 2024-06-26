@@ -1,70 +1,107 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @transport(subgraph: "API", kind: "rest", location: "http://0.0.0.0:<api_port>", headers: "{\\"Content-Type\\":\\"application/json\\"}") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@example", "@httpOperation", "@pubsubOperation", "@transport", "@extraSchemaDefinitionDirective"]) {
   query: Query
   mutation: Mutation
   subscription: Subscription
 }
 
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) repeatable on FIELD_DEFINITION
 
-directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION
+directive @pubsubOperation(subgraph: String, pubsubTopic: String) repeatable on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
 directive @live on QUERY
 
-type Query {
-  todos: [query_todos_items] @httpOperation(subgraph: "API", path: "/todos", httpMethod: GET) @source(name: "todos", type: "[query_todos_items]", subgraph: "API")
+scalar join__FieldSet
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
 }
 
-type query_todos_items @source(name: "query_todos_items", subgraph: "API") {
-  id: Int @source(name: "id", type: "Int", subgraph: "API")
-  name: String @source(name: "name", type: "String", subgraph: "API")
-  content: String @source(name: "content", type: "String", subgraph: "API")
+enum join__Graph {
+  API @join__graph(name: "API", url: "http://0.0.0.0:<api_port>")
 }
 
-type Mutation {
-  addTodo(input: mutationInput_addTodo_input_Input @source(name: "input", type: "mutationInput_addTodo_input_Input", subgraph: "API")): mutation_addTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST) @source(name: "addTodo", type: "mutation_addTodo", subgraph: "API")
+scalar ObjMap @join__type(graph: API)
+
+scalar _DirectiveExtensions @join__type(graph: API)
+
+type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "API", kind: "rest", location: "http://0.0.0.0:<api_port>", headers: [["Content-Type", "application/json"]]}]}) @join__type(graph: API) {
+  todos: [query_todos_items] @httpOperation(subgraph: "API", path: "/todos", httpMethod: GET)
 }
 
-type mutation_addTodo @example(subgraph: "API", value: "\\"{\\\\\\"id\\\\\\":0,\\\\\\"name\\\\\\":\\\\\\"TodoName\\\\\\",\\\\\\"content\\\\\\":\\\\\\"TodoContent\\\\\\"}\\"") @source(name: "mutation_addTodo", subgraph: "API") {
-  id: Int @source(name: "id", type: "Int", subgraph: "API")
-  name: String @source(name: "name", type: "String", subgraph: "API")
-  content: String @source(name: "content", type: "String", subgraph: "API")
+type query_todos_items @join__type(graph: API) {
+  id: Int
+  name: String
+  content: String
 }
 
-input mutationInput_addTodo_input_Input @example(subgraph: "API", value: "\\"{\\\\\\"name\\\\\\":\\\\\\"TodoName\\\\\\",\\\\\\"content\\\\\\":\\\\\\"TodoContent\\\\\\"}\\"") @source(name: "mutationInput_addTodo_input_Input", subgraph: "API") {
-  name: String @source(name: "name", type: "String", subgraph: "API")
-  content: String @source(name: "content", type: "String", subgraph: "API")
+type Mutation @join__type(graph: API) {
+  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST)
 }
 
-type Subscription {
+type mutation_addTodo @example(subgraph: "API", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+  id: Int
+  name: String
+  content: String
+}
+
+type Subscription @join__type(graph: API) {
   """PubSub Topic: webhook:post:/webhooks/todo_added"""
-  todoAdded: subscription_todoAdded @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added") @source(name: "todoAdded", type: "subscription_todoAdded", subgraph: "API")
+  todoAdded: subscription_todoAdded @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added")
 }
 
-type subscription_todoAdded @example(subgraph: "API", value: "\\"{\\\\\\"id\\\\\\":0,\\\\\\"name\\\\\\":\\\\\\"TodoName\\\\\\",\\\\\\"content\\\\\\":\\\\\\"TodoContent\\\\\\"}\\"") @source(name: "subscription_todoAdded", subgraph: "API") {
-  id: Int @source(name: "id", type: "Int", subgraph: "API")
-  name: String @source(name: "name", type: "String", subgraph: "API")
-  content: String @source(name: "content", type: "String", subgraph: "API")
+type subscription_todoAdded @example(subgraph: "API", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+  id: Int
+  name: String
+  content: String
 }
 
-scalar ObjMap @source(name: "ObjMap", subgraph: "API") @source(name: "ObjMap", subgraph: "API")
+enum HTTPMethod @join__type(graph: API) {
+  GET @join__enumValue(graph: API)
+  HEAD @join__enumValue(graph: API)
+  POST @join__enumValue(graph: API)
+  PUT @join__enumValue(graph: API)
+  DELETE @join__enumValue(graph: API)
+  CONNECT @join__enumValue(graph: API)
+  OPTIONS @join__enumValue(graph: API)
+  TRACE @join__enumValue(graph: API)
+  PATCH @join__enumValue(graph: API)
+}
 
-enum HTTPMethod @source(name: "HTTPMethod", subgraph: "API") {
-  GET @source(name: "GET", subgraph: "API")
-  HEAD @source(name: "HEAD", subgraph: "API")
-  POST @source(name: "POST", subgraph: "API")
-  PUT @source(name: "PUT", subgraph: "API")
-  DELETE @source(name: "DELETE", subgraph: "API")
-  CONNECT @source(name: "CONNECT", subgraph: "API")
-  OPTIONS @source(name: "OPTIONS", subgraph: "API")
-  TRACE @source(name: "TRACE", subgraph: "API")
-  PATCH @source(name: "PATCH", subgraph: "API")
+input mutationInput_addTodo_input_Input @example(subgraph: "API", value: "{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+  name: String
+  content: String
 }
 "
 `;

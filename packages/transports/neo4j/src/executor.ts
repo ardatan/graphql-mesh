@@ -4,10 +4,11 @@ import { Driver } from 'neo4j-driver';
 import { DisposableExecutor } from '@graphql-mesh/transport-common';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { getDirective, getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { asArray, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
+import { getDirectiveExtensions } from '@graphql-mesh/utils';
 
 // TODO: Neo4jFeaturesSettings cannot be imported because of exports field in neo4j package.json
 // import type { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types/index.js';
@@ -30,7 +31,8 @@ function filterIntrospectionDefinitions<TASTNode extends { directives?: readonly
 }
 
 export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<DisposableExecutor> {
-  const transportDirectives = getDirective(opts.schema, opts.schema, 'transport');
+  const schemaDirectives = getDirectiveExtensions(opts.schema);
+  const transportDirectives = schemaDirectives?.transport;
   if (!transportDirectives?.length) {
     throw new Error('No transport directive found on the schema!');
   }
@@ -119,8 +121,16 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
       },
     };
   }
+  const extendedTypeDefs = [
+    ...asArray(typeDefs),
+    /* GraphQL */ `
+      directive @introspection(
+        subgraph: String
+      ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+    `,
+  ]
   const neo4jGraphQL = new Neo4jGraphQL({
-    typeDefs,
+    typeDefs: extendedTypeDefs,
     driver,
     validate: false,
     debug: !!process.env.DEBUG,

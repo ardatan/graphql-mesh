@@ -121,15 +121,17 @@ export async function loadGraphQLSchemaFromNeo4J(
 
   const schemaExtensions: any = (schema.extensions ||= {});
   schemaExtensions.directives = schemaExtensions.directives || {};
-  schemaExtensions.directives.transport = {
-    kind: 'neo4j',
-    subgraph: subgraphName,
-    location: endpoint,
-    options: {
-      database,
-      auth,
-    },
-  };
+  schemaExtensions.directives.transport = [
+    {
+      kind: 'neo4j',
+      subgraph: subgraphName,
+      location: endpoint,
+      options: {
+        database,
+        auth,
+      },
+    }
+  ];
   return mergeSchemas({
     schemas: [schema],
     typeDefs: [

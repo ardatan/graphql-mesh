@@ -109,7 +109,9 @@ ${operationConfig.description || ''}
           JSON.stringify({
             subgraph: subgraphName,
             path: operationConfig.path,
-            operationSpecificHeaders: operationConfig.headers,
+            operationSpecificHeaders: operationConfig.headers
+              ? Object.entries(operationConfig.headers)
+              : undefined,
             httpMethod,
             isBinary: 'binary' in operationConfig ? operationConfig.binary : undefined,
             requestBaseBody:
@@ -291,8 +293,8 @@ ${operationConfig.description || ''}
     subgraph: subgraphName,
     kind: handlerName,
     location: endpoint,
-    headers: operationHeaders,
-    queryParams,
+    headers: operationHeaders ? Object.entries(operationHeaders) : undefined,
+    queryParams: queryParams ? Object.entries(queryParams) : undefined,
     queryStringOptions,
   };
   // Fix orphaned interfaces

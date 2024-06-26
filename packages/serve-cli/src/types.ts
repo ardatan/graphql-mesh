@@ -7,7 +7,7 @@ export interface MeshServeCLIContext {
   res: HttpResponse;
 }
 
-export type MeshServeCLIConfig = MeshServeConfig<MeshServeCLIContext> & {
+export type MeshServeCLIConfig = MeshServeConfig<MeshServeCLIContext>  & {
   /**
    * Port to listen on (default: `4000`)
    */

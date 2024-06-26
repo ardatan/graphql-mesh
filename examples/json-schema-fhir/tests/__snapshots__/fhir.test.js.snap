@@ -13,9 +13,9 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) on SCHEMA
 
 directive @resolveTo(requiredSelectionSet: String, sourceName: String!, sourceTypeName: String!, sourceFieldName: String!, sourceSelectionSet: String, sourceArgs: ResolveToSourceArgs, keyField: String, keysArg: String, pubsubTopic: String, filterBy: String, additionalArgs: ResolveToSourceArgs, result: String, resultType: String) on FIELD_DEFINITION
 
@@ -81,7 +81,7 @@ type Account {
   partOf: Reference
 }
 
-enum Account_const @typescript(subgraph: "FHIR", type: "\\"Account\\"") @example(subgraph: "FHIR", value: "\\"Account\\"") {
+enum Account_const @typescript(subgraph: "FHIR", type: "\\"Account\\"") @example(subgraph: "FHIR", value: "Account") {
   Account @enum(subgraph: "FHIR", value: "\\"Account\\"")
 }
 
@@ -1547,7 +1547,7 @@ type ActivityDefinition {
   dynamicValue: [ActivityDefinition_DynamicValue]
 }
 
-enum ActivityDefinition_const @typescript(subgraph: "FHIR", type: "\\"ActivityDefinition\\"") @example(subgraph: "FHIR", value: "\\"ActivityDefinition\\"") {
+enum ActivityDefinition_const @typescript(subgraph: "FHIR", type: "\\"ActivityDefinition\\"") @example(subgraph: "FHIR", value: "ActivityDefinition") {
   ActivityDefinition @enum(subgraph: "FHIR", value: "\\"ActivityDefinition\\"")
 }
 
@@ -1650,7 +1650,7 @@ type AdministrableProductDefinition {
   routeOfAdministration: [AdministrableProductDefinition_RouteOfAdministration]!
 }
 
-enum AdministrableProductDefinition_const @typescript(subgraph: "FHIR", type: "\\"AdministrableProductDefinition\\"") @example(subgraph: "FHIR", value: "\\"AdministrableProductDefinition\\"") {
+enum AdministrableProductDefinition_const @typescript(subgraph: "FHIR", type: "\\"AdministrableProductDefinition\\"") @example(subgraph: "FHIR", value: "AdministrableProductDefinition") {
   AdministrableProductDefinition @enum(subgraph: "FHIR", value: "\\"AdministrableProductDefinition\\"")
 }
 
@@ -1816,7 +1816,7 @@ type AdverseEvent {
   study: [Reference]
 }
 
-enum AdverseEvent_const @typescript(subgraph: "FHIR", type: "\\"AdverseEvent\\"") @example(subgraph: "FHIR", value: "\\"AdverseEvent\\"") {
+enum AdverseEvent_const @typescript(subgraph: "FHIR", type: "\\"AdverseEvent\\"") @example(subgraph: "FHIR", value: "AdverseEvent") {
   AdverseEvent @enum(subgraph: "FHIR", value: "\\"AdverseEvent\\"")
 }
 
@@ -1928,7 +1928,7 @@ type AllergyIntolerance {
   reaction: [AllergyIntolerance_Reaction]
 }
 
-enum AllergyIntolerance_const @typescript(subgraph: "FHIR", type: "\\"AllergyIntolerance\\"") @example(subgraph: "FHIR", value: "\\"AllergyIntolerance\\"") {
+enum AllergyIntolerance_const @typescript(subgraph: "FHIR", type: "\\"AllergyIntolerance\\"") @example(subgraph: "FHIR", value: "AllergyIntolerance") {
   AllergyIntolerance @enum(subgraph: "FHIR", value: "\\"AllergyIntolerance\\"")
 }
 
@@ -2059,7 +2059,7 @@ type Appointment {
   requestedPeriod: [Period]
 }
 
-enum Appointment_const @typescript(subgraph: "FHIR", type: "\\"Appointment\\"") @example(subgraph: "FHIR", value: "\\"Appointment\\"") {
+enum Appointment_const @typescript(subgraph: "FHIR", type: "\\"Appointment\\"") @example(subgraph: "FHIR", value: "Appointment") {
   Appointment @enum(subgraph: "FHIR", value: "\\"Appointment\\"")
 }
 
@@ -2132,7 +2132,7 @@ type AppointmentResponse {
   _comment: Element
 }
 
-enum AppointmentResponse_const @typescript(subgraph: "FHIR", type: "\\"AppointmentResponse\\"") @example(subgraph: "FHIR", value: "\\"AppointmentResponse\\"") {
+enum AppointmentResponse_const @typescript(subgraph: "FHIR", type: "\\"AppointmentResponse\\"") @example(subgraph: "FHIR", value: "AppointmentResponse") {
   AppointmentResponse @enum(subgraph: "FHIR", value: "\\"AppointmentResponse\\"")
 }
 
@@ -2187,7 +2187,7 @@ type AuditEvent {
   entity: [AuditEvent_Entity]
 }
 
-enum AuditEvent_const @typescript(subgraph: "FHIR", type: "\\"AuditEvent\\"") @example(subgraph: "FHIR", value: "\\"AuditEvent\\"") {
+enum AuditEvent_const @typescript(subgraph: "FHIR", type: "\\"AuditEvent\\"") @example(subgraph: "FHIR", value: "AuditEvent") {
   AuditEvent @enum(subgraph: "FHIR", value: "\\"AuditEvent\\"")
 }
 
@@ -2374,7 +2374,7 @@ type Basic {
   author: Reference
 }
 
-enum Basic_const @typescript(subgraph: "FHIR", type: "\\"Basic\\"") @example(subgraph: "FHIR", value: "\\"Basic\\"") {
+enum Basic_const @typescript(subgraph: "FHIR", type: "\\"Basic\\"") @example(subgraph: "FHIR", value: "Basic") {
   Basic @enum(subgraph: "FHIR", value: "\\"Basic\\"")
 }
 
@@ -2397,7 +2397,7 @@ type Binary {
   _data: Element
 }
 
-enum Binary_const @typescript(subgraph: "FHIR", type: "\\"Binary\\"") @example(subgraph: "FHIR", value: "\\"Binary\\"") {
+enum Binary_const @typescript(subgraph: "FHIR", type: "\\"Binary\\"") @example(subgraph: "FHIR", value: "Binary") {
   Binary @enum(subgraph: "FHIR", value: "\\"Binary\\"")
 }
 
@@ -2453,7 +2453,7 @@ type BiologicallyDerivedProduct {
   storage: [BiologicallyDerivedProduct_Storage]
 }
 
-enum BiologicallyDerivedProduct_const @typescript(subgraph: "FHIR", type: "\\"BiologicallyDerivedProduct\\"") @example(subgraph: "FHIR", value: "\\"BiologicallyDerivedProduct\\"") {
+enum BiologicallyDerivedProduct_const @typescript(subgraph: "FHIR", type: "\\"BiologicallyDerivedProduct\\"") @example(subgraph: "FHIR", value: "BiologicallyDerivedProduct") {
   BiologicallyDerivedProduct @enum(subgraph: "FHIR", value: "\\"BiologicallyDerivedProduct\\"")
 }
 
@@ -2602,7 +2602,7 @@ type BodyStructure {
   patient: Reference!
 }
 
-enum BodyStructure_const @typescript(subgraph: "FHIR", type: "\\"BodyStructure\\"") @example(subgraph: "FHIR", value: "\\"BodyStructure\\"") {
+enum BodyStructure_const @typescript(subgraph: "FHIR", type: "\\"BodyStructure\\"") @example(subgraph: "FHIR", value: "BodyStructure") {
   BodyStructure @enum(subgraph: "FHIR", value: "\\"BodyStructure\\"")
 }
 
@@ -2631,7 +2631,7 @@ type Bundle {
   signature: Signature
 }
 
-enum Bundle_const @typescript(subgraph: "FHIR", type: "\\"Bundle\\"") @example(subgraph: "FHIR", value: "\\"Bundle\\"") {
+enum Bundle_const @typescript(subgraph: "FHIR", type: "\\"Bundle\\"") @example(subgraph: "FHIR", value: "Bundle") {
   Bundle @enum(subgraph: "FHIR", value: "\\"Bundle\\"")
 }
 
@@ -2845,7 +2845,7 @@ type CapabilityStatement {
   document: [CapabilityStatement_Document]
 }
 
-enum CapabilityStatement_const @typescript(subgraph: "FHIR", type: "\\"CapabilityStatement\\"") @example(subgraph: "FHIR", value: "\\"CapabilityStatement\\"") {
+enum CapabilityStatement_const @typescript(subgraph: "FHIR", type: "\\"CapabilityStatement\\"") @example(subgraph: "FHIR", value: "CapabilityStatement") {
   CapabilityStatement @enum(subgraph: "FHIR", value: "\\"CapabilityStatement\\"")
 }
 
@@ -3294,7 +3294,7 @@ type CarePlan {
   note: [Annotation]
 }
 
-enum CarePlan_const @typescript(subgraph: "FHIR", type: "\\"CarePlan\\"") @example(subgraph: "FHIR", value: "\\"CarePlan\\"") {
+enum CarePlan_const @typescript(subgraph: "FHIR", type: "\\"CarePlan\\"") @example(subgraph: "FHIR", value: "CarePlan") {
   CarePlan @enum(subgraph: "FHIR", value: "\\"CarePlan\\"")
 }
 
@@ -3448,7 +3448,7 @@ type CareTeam {
   note: [Annotation]
 }
 
-enum CareTeam_const @typescript(subgraph: "FHIR", type: "\\"CareTeam\\"") @example(subgraph: "FHIR", value: "\\"CareTeam\\"") {
+enum CareTeam_const @typescript(subgraph: "FHIR", type: "\\"CareTeam\\"") @example(subgraph: "FHIR", value: "CareTeam") {
   CareTeam @enum(subgraph: "FHIR", value: "\\"CareTeam\\"")
 }
 
@@ -3531,7 +3531,7 @@ type CatalogEntry {
   relatedEntry: [CatalogEntry_RelatedEntry]
 }
 
-enum CatalogEntry_const @typescript(subgraph: "FHIR", type: "\\"CatalogEntry\\"") @example(subgraph: "FHIR", value: "\\"CatalogEntry\\"") {
+enum CatalogEntry_const @typescript(subgraph: "FHIR", type: "\\"CatalogEntry\\"") @example(subgraph: "FHIR", value: "CatalogEntry") {
   CatalogEntry @enum(subgraph: "FHIR", value: "\\"CatalogEntry\\"")
 }
 
@@ -3640,7 +3640,7 @@ type ChargeItem {
   supportingInformation: [Reference]
 }
 
-enum ChargeItem_const @typescript(subgraph: "FHIR", type: "\\"ChargeItem\\"") @example(subgraph: "FHIR", value: "\\"ChargeItem\\"") {
+enum ChargeItem_const @typescript(subgraph: "FHIR", type: "\\"ChargeItem\\"") @example(subgraph: "FHIR", value: "ChargeItem") {
   ChargeItem @enum(subgraph: "FHIR", value: "\\"ChargeItem\\"")
 }
 
@@ -3757,7 +3757,7 @@ type ChargeItemDefinition {
   propertyGroup: [ChargeItemDefinition_PropertyGroup]
 }
 
-enum ChargeItemDefinition_const @typescript(subgraph: "FHIR", type: "\\"ChargeItemDefinition\\"") @example(subgraph: "FHIR", value: "\\"ChargeItemDefinition\\"") {
+enum ChargeItemDefinition_const @typescript(subgraph: "FHIR", type: "\\"ChargeItemDefinition\\"") @example(subgraph: "FHIR", value: "ChargeItemDefinition") {
   ChargeItemDefinition @enum(subgraph: "FHIR", value: "\\"ChargeItemDefinition\\"")
 }
 
@@ -3924,7 +3924,7 @@ type Citation {
   citedArtifact: Citation_CitedArtifact
 }
 
-enum Citation_const @typescript(subgraph: "FHIR", type: "\\"Citation\\"") @example(subgraph: "FHIR", value: "\\"Citation\\"") {
+enum Citation_const @typescript(subgraph: "FHIR", type: "\\"Citation\\"") @example(subgraph: "FHIR", value: "Citation") {
   Citation @enum(subgraph: "FHIR", value: "\\"Citation\\"")
 }
 
@@ -4588,7 +4588,7 @@ type Claim {
   total: Money
 }
 
-enum Claim_const @typescript(subgraph: "FHIR", type: "\\"Claim\\"") @example(subgraph: "FHIR", value: "\\"Claim\\"") {
+enum Claim_const @typescript(subgraph: "FHIR", type: "\\"Claim\\"") @example(subgraph: "FHIR", value: "Claim") {
   Claim @enum(subgraph: "FHIR", value: "\\"Claim\\"")
 }
 
@@ -5028,7 +5028,7 @@ type ClaimResponse {
   error: [ClaimResponse_Error]
 }
 
-enum ClaimResponse_const @typescript(subgraph: "FHIR", type: "\\"ClaimResponse\\"") @example(subgraph: "FHIR", value: "\\"ClaimResponse\\"") {
+enum ClaimResponse_const @typescript(subgraph: "FHIR", type: "\\"ClaimResponse\\"") @example(subgraph: "FHIR", value: "ClaimResponse") {
   ClaimResponse @enum(subgraph: "FHIR", value: "\\"ClaimResponse\\"")
 }
 
@@ -5478,7 +5478,7 @@ type ClinicalImpression {
   note: [Annotation]
 }
 
-enum ClinicalImpression_const @typescript(subgraph: "FHIR", type: "\\"ClinicalImpression\\"") @example(subgraph: "FHIR", value: "\\"ClinicalImpression\\"") {
+enum ClinicalImpression_const @typescript(subgraph: "FHIR", type: "\\"ClinicalImpression\\"") @example(subgraph: "FHIR", value: "ClinicalImpression") {
   ClinicalImpression @enum(subgraph: "FHIR", value: "\\"ClinicalImpression\\"")
 }
 
@@ -5571,7 +5571,7 @@ type ClinicalUseDefinition {
   warning: ClinicalUseDefinition_Warning
 }
 
-enum ClinicalUseDefinition_const @typescript(subgraph: "FHIR", type: "\\"ClinicalUseDefinition\\"") @example(subgraph: "FHIR", value: "\\"ClinicalUseDefinition\\"") {
+enum ClinicalUseDefinition_const @typescript(subgraph: "FHIR", type: "\\"ClinicalUseDefinition\\"") @example(subgraph: "FHIR", value: "ClinicalUseDefinition") {
   ClinicalUseDefinition @enum(subgraph: "FHIR", value: "\\"ClinicalUseDefinition\\"")
 }
 
@@ -5835,7 +5835,7 @@ type CodeSystem {
   concept: [CodeSystem_Concept]
 }
 
-enum CodeSystem_const @typescript(subgraph: "FHIR", type: "\\"CodeSystem\\"") @example(subgraph: "FHIR", value: "\\"CodeSystem\\"") {
+enum CodeSystem_const @typescript(subgraph: "FHIR", type: "\\"CodeSystem\\"") @example(subgraph: "FHIR", value: "CodeSystem") {
   CodeSystem @enum(subgraph: "FHIR", value: "\\"CodeSystem\\"")
 }
 
@@ -6080,7 +6080,7 @@ type Communication {
   note: [Annotation]
 }
 
-enum Communication_const @typescript(subgraph: "FHIR", type: "\\"Communication\\"") @example(subgraph: "FHIR", value: "\\"Communication\\"") {
+enum Communication_const @typescript(subgraph: "FHIR", type: "\\"Communication\\"") @example(subgraph: "FHIR", value: "Communication") {
   Communication @enum(subgraph: "FHIR", value: "\\"Communication\\"")
 }
 
@@ -6190,7 +6190,7 @@ type CommunicationRequest {
   note: [Annotation]
 }
 
-enum CommunicationRequest_const @typescript(subgraph: "FHIR", type: "\\"CommunicationRequest\\"") @example(subgraph: "FHIR", value: "\\"CommunicationRequest\\"") {
+enum CommunicationRequest_const @typescript(subgraph: "FHIR", type: "\\"CommunicationRequest\\"") @example(subgraph: "FHIR", value: "CommunicationRequest") {
   CommunicationRequest @enum(subgraph: "FHIR", value: "\\"CommunicationRequest\\"")
 }
 
@@ -6279,7 +6279,7 @@ type CompartmentDefinition {
   resource: [CompartmentDefinition_Resource]
 }
 
-enum CompartmentDefinition_const @typescript(subgraph: "FHIR", type: "\\"CompartmentDefinition\\"") @example(subgraph: "FHIR", value: "\\"CompartmentDefinition\\"") {
+enum CompartmentDefinition_const @typescript(subgraph: "FHIR", type: "\\"CompartmentDefinition\\"") @example(subgraph: "FHIR", value: "CompartmentDefinition") {
   CompartmentDefinition @enum(subgraph: "FHIR", value: "\\"CompartmentDefinition\\"")
 }
 
@@ -6373,7 +6373,7 @@ type Composition {
   section: [Composition_Section]
 }
 
-enum Composition_const @typescript(subgraph: "FHIR", type: "\\"Composition\\"") @example(subgraph: "FHIR", value: "\\"Composition\\"") {
+enum Composition_const @typescript(subgraph: "FHIR", type: "\\"Composition\\"") @example(subgraph: "FHIR", value: "Composition") {
   Composition @enum(subgraph: "FHIR", value: "\\"Composition\\"")
 }
 
@@ -6555,7 +6555,7 @@ type ConceptMap {
   group: [ConceptMap_Group]
 }
 
-enum ConceptMap_const @typescript(subgraph: "FHIR", type: "\\"ConceptMap\\"") @example(subgraph: "FHIR", value: "\\"ConceptMap\\"") {
+enum ConceptMap_const @typescript(subgraph: "FHIR", type: "\\"ConceptMap\\"") @example(subgraph: "FHIR", value: "ConceptMap") {
   ConceptMap @enum(subgraph: "FHIR", value: "\\"ConceptMap\\"")
 }
 
@@ -6773,7 +6773,7 @@ type Condition {
   note: [Annotation]
 }
 
-enum Condition_const @typescript(subgraph: "FHIR", type: "\\"Condition\\"") @example(subgraph: "FHIR", value: "\\"Condition\\"") {
+enum Condition_const @typescript(subgraph: "FHIR", type: "\\"Condition\\"") @example(subgraph: "FHIR", value: "Condition") {
   Condition @enum(subgraph: "FHIR", value: "\\"Condition\\"")
 }
 
@@ -6891,7 +6891,7 @@ type Consent {
   provision: Consent_Provision
 }
 
-enum Consent_const @typescript(subgraph: "FHIR", type: "\\"Consent\\"") @example(subgraph: "FHIR", value: "\\"Consent\\"") {
+enum Consent_const @typescript(subgraph: "FHIR", type: "\\"Consent\\"") @example(subgraph: "FHIR", value: "Consent") {
   Consent @enum(subgraph: "FHIR", value: "\\"Consent\\"")
 }
 
@@ -7135,7 +7135,7 @@ type Contract {
   legallyBindingReference: Reference
 }
 
-enum Contract_const @typescript(subgraph: "FHIR", type: "\\"Contract\\"") @example(subgraph: "FHIR", value: "\\"Contract\\"") {
+enum Contract_const @typescript(subgraph: "FHIR", type: "\\"Contract\\"") @example(subgraph: "FHIR", value: "Contract") {
   Contract @enum(subgraph: "FHIR", value: "\\"Contract\\"")
 }
 
@@ -7724,7 +7724,7 @@ type Coverage {
   contract: [Reference]
 }
 
-enum Coverage_const @typescript(subgraph: "FHIR", type: "\\"Coverage\\"") @example(subgraph: "FHIR", value: "\\"Coverage\\"") {
+enum Coverage_const @typescript(subgraph: "FHIR", type: "\\"Coverage\\"") @example(subgraph: "FHIR", value: "Coverage") {
   Coverage @enum(subgraph: "FHIR", value: "\\"Coverage\\"")
 }
 
@@ -7854,7 +7854,7 @@ type CoverageEligibilityRequest {
   item: [CoverageEligibilityRequest_Item]
 }
 
-enum CoverageEligibilityRequest_const @typescript(subgraph: "FHIR", type: "\\"CoverageEligibilityRequest\\"") @example(subgraph: "FHIR", value: "\\"CoverageEligibilityRequest\\"") {
+enum CoverageEligibilityRequest_const @typescript(subgraph: "FHIR", type: "\\"CoverageEligibilityRequest\\"") @example(subgraph: "FHIR", value: "CoverageEligibilityRequest") {
   CoverageEligibilityRequest @enum(subgraph: "FHIR", value: "\\"CoverageEligibilityRequest\\"")
 }
 
@@ -8020,7 +8020,7 @@ type CoverageEligibilityResponse {
   error: [CoverageEligibilityResponse_Error]
 }
 
-enum CoverageEligibilityResponse_const @typescript(subgraph: "FHIR", type: "\\"CoverageEligibilityResponse\\"") @example(subgraph: "FHIR", value: "\\"CoverageEligibilityResponse\\"") {
+enum CoverageEligibilityResponse_const @typescript(subgraph: "FHIR", type: "\\"CoverageEligibilityResponse\\"") @example(subgraph: "FHIR", value: "CoverageEligibilityResponse") {
   CoverageEligibilityResponse @enum(subgraph: "FHIR", value: "\\"CoverageEligibilityResponse\\"")
 }
 
@@ -8204,7 +8204,7 @@ type DetectedIssue {
   mitigation: [DetectedIssue_Mitigation]
 }
 
-enum DetectedIssue_const @typescript(subgraph: "FHIR", type: "\\"DetectedIssue\\"") @example(subgraph: "FHIR", value: "\\"DetectedIssue\\"") {
+enum DetectedIssue_const @typescript(subgraph: "FHIR", type: "\\"DetectedIssue\\"") @example(subgraph: "FHIR", value: "DetectedIssue") {
   DetectedIssue @enum(subgraph: "FHIR", value: "\\"DetectedIssue\\"")
 }
 
@@ -8346,7 +8346,7 @@ type Device {
   parent: Reference
 }
 
-enum Device_const @typescript(subgraph: "FHIR", type: "\\"Device\\"") @example(subgraph: "FHIR", value: "\\"Device\\"") {
+enum Device_const @typescript(subgraph: "FHIR", type: "\\"Device\\"") @example(subgraph: "FHIR", value: "Device") {
   Device @enum(subgraph: "FHIR", value: "\\"Device\\"")
 }
 
@@ -8550,7 +8550,7 @@ type DeviceDefinition {
   material: [DeviceDefinition_Material]
 }
 
-enum DeviceDefinition_const @typescript(subgraph: "FHIR", type: "\\"DeviceDefinition\\"") @example(subgraph: "FHIR", value: "\\"DeviceDefinition\\"") {
+enum DeviceDefinition_const @typescript(subgraph: "FHIR", type: "\\"DeviceDefinition\\"") @example(subgraph: "FHIR", value: "DeviceDefinition") {
   DeviceDefinition @enum(subgraph: "FHIR", value: "\\"DeviceDefinition\\"")
 }
 
@@ -8796,7 +8796,7 @@ type DeviceMetric {
   calibration: [DeviceMetric_Calibration]
 }
 
-enum DeviceMetric_const @typescript(subgraph: "FHIR", type: "\\"DeviceMetric\\"") @example(subgraph: "FHIR", value: "\\"DeviceMetric\\"") {
+enum DeviceMetric_const @typescript(subgraph: "FHIR", type: "\\"DeviceMetric\\"") @example(subgraph: "FHIR", value: "DeviceMetric") {
   DeviceMetric @enum(subgraph: "FHIR", value: "\\"DeviceMetric\\"")
 }
 
@@ -8911,7 +8911,7 @@ type DeviceRequest {
   relevantHistory: [Reference]
 }
 
-enum DeviceRequest_const @typescript(subgraph: "FHIR", type: "\\"DeviceRequest\\"") @example(subgraph: "FHIR", value: "\\"DeviceRequest\\"") {
+enum DeviceRequest_const @typescript(subgraph: "FHIR", type: "\\"DeviceRequest\\"") @example(subgraph: "FHIR", value: "DeviceRequest") {
   DeviceRequest @enum(subgraph: "FHIR", value: "\\"DeviceRequest\\"")
 }
 
@@ -9001,7 +9001,7 @@ type DeviceUseStatement {
   note: [Annotation]
 }
 
-enum DeviceUseStatement_const @typescript(subgraph: "FHIR", type: "\\"DeviceUseStatement\\"") @example(subgraph: "FHIR", value: "\\"DeviceUseStatement\\"") {
+enum DeviceUseStatement_const @typescript(subgraph: "FHIR", type: "\\"DeviceUseStatement\\"") @example(subgraph: "FHIR", value: "DeviceUseStatement") {
   DeviceUseStatement @enum(subgraph: "FHIR", value: "\\"DeviceUseStatement\\"")
 }
 
@@ -9083,7 +9083,7 @@ type DiagnosticReport {
   presentedForm: [Attachment]
 }
 
-enum DiagnosticReport_const @typescript(subgraph: "FHIR", type: "\\"DiagnosticReport\\"") @example(subgraph: "FHIR", value: "\\"DiagnosticReport\\"") {
+enum DiagnosticReport_const @typescript(subgraph: "FHIR", type: "\\"DiagnosticReport\\"") @example(subgraph: "FHIR", value: "DiagnosticReport") {
   DiagnosticReport @enum(subgraph: "FHIR", value: "\\"DiagnosticReport\\"")
 }
 
@@ -9164,7 +9164,7 @@ type DocumentManifest {
   related: [DocumentManifest_Related]
 }
 
-enum DocumentManifest_const @typescript(subgraph: "FHIR", type: "\\"DocumentManifest\\"") @example(subgraph: "FHIR", value: "\\"DocumentManifest\\"") {
+enum DocumentManifest_const @typescript(subgraph: "FHIR", type: "\\"DocumentManifest\\"") @example(subgraph: "FHIR", value: "DocumentManifest") {
   DocumentManifest @enum(subgraph: "FHIR", value: "\\"DocumentManifest\\"")
 }
 
@@ -9253,7 +9253,7 @@ type DocumentReference {
   context: DocumentReference_Context
 }
 
-enum DocumentReference_const @typescript(subgraph: "FHIR", type: "\\"DocumentReference\\"") @example(subgraph: "FHIR", value: "\\"DocumentReference\\"") {
+enum DocumentReference_const @typescript(subgraph: "FHIR", type: "\\"DocumentReference\\"") @example(subgraph: "FHIR", value: "DocumentReference") {
   DocumentReference @enum(subgraph: "FHIR", value: "\\"DocumentReference\\"")
 }
 
@@ -9408,7 +9408,7 @@ type Encounter {
   partOf: Reference
 }
 
-enum Encounter_const @typescript(subgraph: "FHIR", type: "\\"Encounter\\"") @example(subgraph: "FHIR", value: "\\"Encounter\\"") {
+enum Encounter_const @typescript(subgraph: "FHIR", type: "\\"Encounter\\"") @example(subgraph: "FHIR", value: "Encounter") {
   Encounter @enum(subgraph: "FHIR", value: "\\"Encounter\\"")
 }
 
@@ -9605,7 +9605,7 @@ type Endpoint {
   _header: [Element]
 }
 
-enum Endpoint_const @typescript(subgraph: "FHIR", type: "\\"Endpoint\\"") @example(subgraph: "FHIR", value: "\\"Endpoint\\"") {
+enum Endpoint_const @typescript(subgraph: "FHIR", type: "\\"Endpoint\\"") @example(subgraph: "FHIR", value: "Endpoint") {
   Endpoint @enum(subgraph: "FHIR", value: "\\"Endpoint\\"")
 }
 
@@ -9647,7 +9647,7 @@ type EnrollmentRequest {
   coverage: Reference
 }
 
-enum EnrollmentRequest_const @typescript(subgraph: "FHIR", type: "\\"EnrollmentRequest\\"") @example(subgraph: "FHIR", value: "\\"EnrollmentRequest\\"") {
+enum EnrollmentRequest_const @typescript(subgraph: "FHIR", type: "\\"EnrollmentRequest\\"") @example(subgraph: "FHIR", value: "EnrollmentRequest") {
   EnrollmentRequest @enum(subgraph: "FHIR", value: "\\"EnrollmentRequest\\"")
 }
 
@@ -9692,7 +9692,7 @@ type EnrollmentResponse {
   requestProvider: Reference
 }
 
-enum EnrollmentResponse_const @typescript(subgraph: "FHIR", type: "\\"EnrollmentResponse\\"") @example(subgraph: "FHIR", value: "\\"EnrollmentResponse\\"") {
+enum EnrollmentResponse_const @typescript(subgraph: "FHIR", type: "\\"EnrollmentResponse\\"") @example(subgraph: "FHIR", value: "EnrollmentResponse") {
   EnrollmentResponse @enum(subgraph: "FHIR", value: "\\"EnrollmentResponse\\"")
 }
 
@@ -9756,7 +9756,7 @@ type EpisodeOfCare {
   account: [Reference]
 }
 
-enum EpisodeOfCare_const @typescript(subgraph: "FHIR", type: "\\"EpisodeOfCare\\"") @example(subgraph: "FHIR", value: "\\"EpisodeOfCare\\"") {
+enum EpisodeOfCare_const @typescript(subgraph: "FHIR", type: "\\"EpisodeOfCare\\"") @example(subgraph: "FHIR", value: "EpisodeOfCare") {
   EpisodeOfCare @enum(subgraph: "FHIR", value: "\\"EpisodeOfCare\\"")
 }
 
@@ -9906,7 +9906,7 @@ type EventDefinition {
   trigger: [TriggerDefinition]!
 }
 
-enum EventDefinition_const @typescript(subgraph: "FHIR", type: "\\"EventDefinition\\"") @example(subgraph: "FHIR", value: "\\"EventDefinition\\"") {
+enum EventDefinition_const @typescript(subgraph: "FHIR", type: "\\"EventDefinition\\"") @example(subgraph: "FHIR", value: "EventDefinition") {
   EventDefinition @enum(subgraph: "FHIR", value: "\\"EventDefinition\\"")
 }
 
@@ -10003,7 +10003,7 @@ type Evidence {
   certainty: [Evidence_Certainty]
 }
 
-enum Evidence_const @typescript(subgraph: "FHIR", type: "\\"Evidence\\"") @example(subgraph: "FHIR", value: "\\"Evidence\\"") {
+enum Evidence_const @typescript(subgraph: "FHIR", type: "\\"Evidence\\"") @example(subgraph: "FHIR", value: "Evidence") {
   Evidence @enum(subgraph: "FHIR", value: "\\"Evidence\\"")
 }
 
@@ -10283,7 +10283,7 @@ type EvidenceReport {
   section: [EvidenceReport_Section]
 }
 
-enum EvidenceReport_const @typescript(subgraph: "FHIR", type: "\\"EvidenceReport\\"") @example(subgraph: "FHIR", value: "\\"EvidenceReport\\"") {
+enum EvidenceReport_const @typescript(subgraph: "FHIR", type: "\\"EvidenceReport\\"") @example(subgraph: "FHIR", value: "EvidenceReport") {
   EvidenceReport @enum(subgraph: "FHIR", value: "\\"EvidenceReport\\"")
 }
 
@@ -10497,7 +10497,7 @@ type EvidenceVariable {
   category: [EvidenceVariable_Category]
 }
 
-enum EvidenceVariable_const @typescript(subgraph: "FHIR", type: "\\"EvidenceVariable\\"") @example(subgraph: "FHIR", value: "\\"EvidenceVariable\\"") {
+enum EvidenceVariable_const @typescript(subgraph: "FHIR", type: "\\"EvidenceVariable\\"") @example(subgraph: "FHIR", value: "EvidenceVariable") {
   EvidenceVariable @enum(subgraph: "FHIR", value: "\\"EvidenceVariable\\"")
 }
 
@@ -10649,7 +10649,7 @@ type ExampleScenario {
   workflow: [canonical]
 }
 
-enum ExampleScenario_const @typescript(subgraph: "FHIR", type: "\\"ExampleScenario\\"") @example(subgraph: "FHIR", value: "\\"ExampleScenario\\"") {
+enum ExampleScenario_const @typescript(subgraph: "FHIR", type: "\\"ExampleScenario\\"") @example(subgraph: "FHIR", value: "ExampleScenario") {
   ExampleScenario @enum(subgraph: "FHIR", value: "\\"ExampleScenario\\"")
 }
 
@@ -10960,7 +10960,7 @@ type ExplanationOfBenefit {
   benefitBalance: [ExplanationOfBenefit_BenefitBalance]
 }
 
-enum ExplanationOfBenefit_const @typescript(subgraph: "FHIR", type: "\\"ExplanationOfBenefit\\"") @example(subgraph: "FHIR", value: "\\"ExplanationOfBenefit\\"") {
+enum ExplanationOfBenefit_const @typescript(subgraph: "FHIR", type: "\\"ExplanationOfBenefit\\"") @example(subgraph: "FHIR", value: "ExplanationOfBenefit") {
   ExplanationOfBenefit @enum(subgraph: "FHIR", value: "\\"ExplanationOfBenefit\\"")
 }
 
@@ -11720,7 +11720,7 @@ type FamilyMemberHistory {
   condition: [FamilyMemberHistory_Condition]
 }
 
-enum FamilyMemberHistory_const @typescript(subgraph: "FHIR", type: "\\"FamilyMemberHistory\\"") @example(subgraph: "FHIR", value: "\\"FamilyMemberHistory\\"") {
+enum FamilyMemberHistory_const @typescript(subgraph: "FHIR", type: "\\"FamilyMemberHistory\\"") @example(subgraph: "FHIR", value: "FamilyMemberHistory") {
   FamilyMemberHistory @enum(subgraph: "FHIR", value: "\\"FamilyMemberHistory\\"")
 }
 
@@ -11809,7 +11809,7 @@ type Flag {
   author: Reference
 }
 
-enum Flag_const @typescript(subgraph: "FHIR", type: "\\"Flag\\"") @example(subgraph: "FHIR", value: "\\"Flag\\"") {
+enum Flag_const @typescript(subgraph: "FHIR", type: "\\"Flag\\"") @example(subgraph: "FHIR", value: "Flag") {
   Flag @enum(subgraph: "FHIR", value: "\\"Flag\\"")
 }
 
@@ -11875,7 +11875,7 @@ type Goal {
   outcomeReference: [Reference]
 }
 
-enum Goal_const @typescript(subgraph: "FHIR", type: "\\"Goal\\"") @example(subgraph: "FHIR", value: "\\"Goal\\"") {
+enum Goal_const @typescript(subgraph: "FHIR", type: "\\"Goal\\"") @example(subgraph: "FHIR", value: "Goal") {
   Goal @enum(subgraph: "FHIR", value: "\\"Goal\\"")
 }
 
@@ -11984,7 +11984,7 @@ type GraphDefinition {
   link: [GraphDefinition_Link]
 }
 
-enum GraphDefinition_const @typescript(subgraph: "FHIR", type: "\\"GraphDefinition\\"") @example(subgraph: "FHIR", value: "\\"GraphDefinition\\"") {
+enum GraphDefinition_const @typescript(subgraph: "FHIR", type: "\\"GraphDefinition\\"") @example(subgraph: "FHIR", value: "GraphDefinition") {
   GraphDefinition @enum(subgraph: "FHIR", value: "\\"GraphDefinition\\"")
 }
 
@@ -12118,7 +12118,7 @@ type Group {
   member: [Group_Member]
 }
 
-enum Group_const @typescript(subgraph: "FHIR", type: "\\"Group\\"") @example(subgraph: "FHIR", value: "\\"Group\\"") {
+enum Group_const @typescript(subgraph: "FHIR", type: "\\"Group\\"") @example(subgraph: "FHIR", value: "Group") {
   Group @enum(subgraph: "FHIR", value: "\\"Group\\"")
 }
 
@@ -12240,7 +12240,7 @@ type GuidanceResponse {
   dataRequirement: [DataRequirement]
 }
 
-enum GuidanceResponse_const @typescript(subgraph: "FHIR", type: "\\"GuidanceResponse\\"") @example(subgraph: "FHIR", value: "\\"GuidanceResponse\\"") {
+enum GuidanceResponse_const @typescript(subgraph: "FHIR", type: "\\"GuidanceResponse\\"") @example(subgraph: "FHIR", value: "GuidanceResponse") {
   GuidanceResponse @enum(subgraph: "FHIR", value: "\\"GuidanceResponse\\"")
 }
 
@@ -12336,7 +12336,7 @@ type HealthcareService {
   endpoint: [Reference]
 }
 
-enum HealthcareService_const @typescript(subgraph: "FHIR", type: "\\"HealthcareService\\"") @example(subgraph: "FHIR", value: "\\"HealthcareService\\"") {
+enum HealthcareService_const @typescript(subgraph: "FHIR", type: "\\"HealthcareService\\"") @example(subgraph: "FHIR", value: "HealthcareService") {
   HealthcareService @enum(subgraph: "FHIR", value: "\\"HealthcareService\\"")
 }
 
@@ -12478,7 +12478,7 @@ type ImagingStudy {
   series: [ImagingStudy_Series]
 }
 
-enum ImagingStudy_const @typescript(subgraph: "FHIR", type: "\\"ImagingStudy\\"") @example(subgraph: "FHIR", value: "\\"ImagingStudy\\"") {
+enum ImagingStudy_const @typescript(subgraph: "FHIR", type: "\\"ImagingStudy\\"") @example(subgraph: "FHIR", value: "ImagingStudy") {
   ImagingStudy @enum(subgraph: "FHIR", value: "\\"ImagingStudy\\"")
 }
 
@@ -12652,7 +12652,7 @@ type Immunization {
   protocolApplied: [Immunization_ProtocolApplied]
 }
 
-enum Immunization_const @typescript(subgraph: "FHIR", type: "\\"Immunization\\"") @example(subgraph: "FHIR", value: "\\"Immunization\\"") {
+enum Immunization_const @typescript(subgraph: "FHIR", type: "\\"Immunization\\"") @example(subgraph: "FHIR", value: "Immunization") {
   Immunization @enum(subgraph: "FHIR", value: "\\"Immunization\\"")
 }
 
@@ -12821,7 +12821,7 @@ type ImmunizationEvaluation {
   _seriesDosesString: Element
 }
 
-enum ImmunizationEvaluation_const @typescript(subgraph: "FHIR", type: "\\"ImmunizationEvaluation\\"") @example(subgraph: "FHIR", value: "\\"ImmunizationEvaluation\\"") {
+enum ImmunizationEvaluation_const @typescript(subgraph: "FHIR", type: "\\"ImmunizationEvaluation\\"") @example(subgraph: "FHIR", value: "ImmunizationEvaluation") {
   ImmunizationEvaluation @enum(subgraph: "FHIR", value: "\\"ImmunizationEvaluation\\"")
 }
 
@@ -12869,7 +12869,7 @@ type ImmunizationRecommendation {
   recommendation: [ImmunizationRecommendation_Recommendation]!
 }
 
-enum ImmunizationRecommendation_const @typescript(subgraph: "FHIR", type: "\\"ImmunizationRecommendation\\"") @example(subgraph: "FHIR", value: "\\"ImmunizationRecommendation\\"") {
+enum ImmunizationRecommendation_const @typescript(subgraph: "FHIR", type: "\\"ImmunizationRecommendation\\"") @example(subgraph: "FHIR", value: "ImmunizationRecommendation") {
   ImmunizationRecommendation @enum(subgraph: "FHIR", value: "\\"ImmunizationRecommendation\\"")
 }
 
@@ -13030,7 +13030,7 @@ type ImplementationGuide {
   manifest: ImplementationGuide_Manifest
 }
 
-enum ImplementationGuide_const @typescript(subgraph: "FHIR", type: "\\"ImplementationGuide\\"") @example(subgraph: "FHIR", value: "\\"ImplementationGuide\\"") {
+enum ImplementationGuide_const @typescript(subgraph: "FHIR", type: "\\"ImplementationGuide\\"") @example(subgraph: "FHIR", value: "ImplementationGuide") {
   ImplementationGuide @enum(subgraph: "FHIR", value: "\\"ImplementationGuide\\"")
 }
 
@@ -13370,7 +13370,7 @@ type Ingredient {
   substance: Ingredient_Substance!
 }
 
-enum Ingredient_const @typescript(subgraph: "FHIR", type: "\\"Ingredient\\"") @example(subgraph: "FHIR", value: "\\"Ingredient\\"") {
+enum Ingredient_const @typescript(subgraph: "FHIR", type: "\\"Ingredient\\"") @example(subgraph: "FHIR", value: "Ingredient") {
   Ingredient @enum(subgraph: "FHIR", value: "\\"Ingredient\\"")
 }
 
@@ -13528,7 +13528,7 @@ type InsurancePlan {
   plan: [InsurancePlan_Plan]
 }
 
-enum InsurancePlan_const @typescript(subgraph: "FHIR", type: "\\"InsurancePlan\\"") @example(subgraph: "FHIR", value: "\\"InsurancePlan\\"") {
+enum InsurancePlan_const @typescript(subgraph: "FHIR", type: "\\"InsurancePlan\\"") @example(subgraph: "FHIR", value: "InsurancePlan") {
   InsurancePlan @enum(subgraph: "FHIR", value: "\\"InsurancePlan\\"")
 }
 
@@ -13801,7 +13801,7 @@ type Invoice {
   note: [Annotation]
 }
 
-enum Invoice_const @typescript(subgraph: "FHIR", type: "\\"Invoice\\"") @example(subgraph: "FHIR", value: "\\"Invoice\\"") {
+enum Invoice_const @typescript(subgraph: "FHIR", type: "\\"Invoice\\"") @example(subgraph: "FHIR", value: "Invoice") {
   Invoice @enum(subgraph: "FHIR", value: "\\"Invoice\\"")
 }
 
@@ -13984,7 +13984,7 @@ type Library {
   content: [Attachment]
 }
 
-enum Library_const @typescript(subgraph: "FHIR", type: "\\"Library\\"") @example(subgraph: "FHIR", value: "\\"Library\\"") {
+enum Library_const @typescript(subgraph: "FHIR", type: "\\"Library\\"") @example(subgraph: "FHIR", value: "Library") {
   Library @enum(subgraph: "FHIR", value: "\\"Library\\"")
 }
 
@@ -14023,7 +14023,7 @@ type Linkage {
   item: [Linkage_Item]!
 }
 
-enum Linkage_const @typescript(subgraph: "FHIR", type: "\\"Linkage\\"") @example(subgraph: "FHIR", value: "\\"Linkage\\"") {
+enum Linkage_const @typescript(subgraph: "FHIR", type: "\\"Linkage\\"") @example(subgraph: "FHIR", value: "Linkage") {
   Linkage @enum(subgraph: "FHIR", value: "\\"Linkage\\"")
 }
 
@@ -14095,7 +14095,7 @@ type List {
   emptyReason: CodeableConcept
 }
 
-enum List_const @typescript(subgraph: "FHIR", type: "\\"List\\"") @example(subgraph: "FHIR", value: "\\"List\\"") {
+enum List_const @typescript(subgraph: "FHIR", type: "\\"List\\"") @example(subgraph: "FHIR", value: "List") {
   List @enum(subgraph: "FHIR", value: "\\"List\\"")
 }
 
@@ -14184,7 +14184,7 @@ type Location {
   endpoint: [Reference]
 }
 
-enum Location_const @typescript(subgraph: "FHIR", type: "\\"Location\\"") @example(subgraph: "FHIR", value: "\\"Location\\"") {
+enum Location_const @typescript(subgraph: "FHIR", type: "\\"Location\\"") @example(subgraph: "FHIR", value: "Location") {
   Location @enum(subgraph: "FHIR", value: "\\"Location\\"")
 }
 
@@ -14284,7 +14284,7 @@ type ManufacturedItemDefinition {
   property: [ManufacturedItemDefinition_Property]
 }
 
-enum ManufacturedItemDefinition_const @typescript(subgraph: "FHIR", type: "\\"ManufacturedItemDefinition\\"") @example(subgraph: "FHIR", value: "\\"ManufacturedItemDefinition\\"") {
+enum ManufacturedItemDefinition_const @typescript(subgraph: "FHIR", type: "\\"ManufacturedItemDefinition\\"") @example(subgraph: "FHIR", value: "ManufacturedItemDefinition") {
   ManufacturedItemDefinition @enum(subgraph: "FHIR", value: "\\"ManufacturedItemDefinition\\"")
 }
 
@@ -14448,7 +14448,7 @@ type Measure {
   supplementalData: [Measure_SupplementalData]
 }
 
-enum Measure_const @typescript(subgraph: "FHIR", type: "\\"Measure\\"") @example(subgraph: "FHIR", value: "\\"Measure\\"") {
+enum Measure_const @typescript(subgraph: "FHIR", type: "\\"Measure\\"") @example(subgraph: "FHIR", value: "Measure") {
   Measure @enum(subgraph: "FHIR", value: "\\"Measure\\"")
 }
 
@@ -14611,7 +14611,7 @@ type MeasureReport {
   evaluatedResource: [Reference]
 }
 
-enum MeasureReport_const @typescript(subgraph: "FHIR", type: "\\"MeasureReport\\"") @example(subgraph: "FHIR", value: "\\"MeasureReport\\"") {
+enum MeasureReport_const @typescript(subgraph: "FHIR", type: "\\"MeasureReport\\"") @example(subgraph: "FHIR", value: "MeasureReport") {
   MeasureReport @enum(subgraph: "FHIR", value: "\\"MeasureReport\\"")
 }
 
@@ -14821,7 +14821,7 @@ type Media {
   note: [Annotation]
 }
 
-enum Media_const @typescript(subgraph: "FHIR", type: "\\"Media\\"") @example(subgraph: "FHIR", value: "\\"Media\\"") {
+enum Media_const @typescript(subgraph: "FHIR", type: "\\"Media\\"") @example(subgraph: "FHIR", value: "Media") {
   Media @enum(subgraph: "FHIR", value: "\\"Media\\"")
 }
 
@@ -14866,7 +14866,7 @@ type Medication {
   batch: Medication_Batch
 }
 
-enum Medication_const @typescript(subgraph: "FHIR", type: "\\"Medication\\"") @example(subgraph: "FHIR", value: "\\"Medication\\"") {
+enum Medication_const @typescript(subgraph: "FHIR", type: "\\"Medication\\"") @example(subgraph: "FHIR", value: "Medication") {
   Medication @enum(subgraph: "FHIR", value: "\\"Medication\\"")
 }
 
@@ -14993,7 +14993,7 @@ type MedicationAdministration {
   eventHistory: [Reference]
 }
 
-enum MedicationAdministration_const @typescript(subgraph: "FHIR", type: "\\"MedicationAdministration\\"") @example(subgraph: "FHIR", value: "\\"MedicationAdministration\\"") {
+enum MedicationAdministration_const @typescript(subgraph: "FHIR", type: "\\"MedicationAdministration\\"") @example(subgraph: "FHIR", value: "MedicationAdministration") {
   MedicationAdministration @enum(subgraph: "FHIR", value: "\\"MedicationAdministration\\"")
 }
 
@@ -15120,7 +15120,7 @@ type MedicationDispense {
   eventHistory: [Reference]
 }
 
-enum MedicationDispense_const @typescript(subgraph: "FHIR", type: "\\"MedicationDispense\\"") @example(subgraph: "FHIR", value: "\\"MedicationDispense\\"") {
+enum MedicationDispense_const @typescript(subgraph: "FHIR", type: "\\"MedicationDispense\\"") @example(subgraph: "FHIR", value: "MedicationDispense") {
   MedicationDispense @enum(subgraph: "FHIR", value: "\\"MedicationDispense\\"")
 }
 
@@ -15252,7 +15252,7 @@ type MedicationKnowledge {
   kinetics: [MedicationKnowledge_Kinetics]
 }
 
-enum MedicationKnowledge_const @typescript(subgraph: "FHIR", type: "\\"MedicationKnowledge\\"") @example(subgraph: "FHIR", value: "\\"MedicationKnowledge\\"") {
+enum MedicationKnowledge_const @typescript(subgraph: "FHIR", type: "\\"MedicationKnowledge\\"") @example(subgraph: "FHIR", value: "MedicationKnowledge") {
   MedicationKnowledge @enum(subgraph: "FHIR", value: "\\"MedicationKnowledge\\"")
 }
 
@@ -15677,7 +15677,7 @@ type MedicationRequest {
   eventHistory: [Reference]
 }
 
-enum MedicationRequest_const @typescript(subgraph: "FHIR", type: "\\"MedicationRequest\\"") @example(subgraph: "FHIR", value: "\\"MedicationRequest\\"") {
+enum MedicationRequest_const @typescript(subgraph: "FHIR", type: "\\"MedicationRequest\\"") @example(subgraph: "FHIR", value: "MedicationRequest") {
   MedicationRequest @enum(subgraph: "FHIR", value: "\\"MedicationRequest\\"")
 }
 
@@ -15820,7 +15820,7 @@ type MedicationStatement {
   dosage: [Dosage]
 }
 
-enum MedicationStatement_const @typescript(subgraph: "FHIR", type: "\\"MedicationStatement\\"") @example(subgraph: "FHIR", value: "\\"MedicationStatement\\"") {
+enum MedicationStatement_const @typescript(subgraph: "FHIR", type: "\\"MedicationStatement\\"") @example(subgraph: "FHIR", value: "MedicationStatement") {
   MedicationStatement @enum(subgraph: "FHIR", value: "\\"MedicationStatement\\"")
 }
 
@@ -15931,7 +15931,7 @@ type MedicinalProductDefinition {
   characteristic: [MedicinalProductDefinition_Characteristic]
 }
 
-enum MedicinalProductDefinition_const @typescript(subgraph: "FHIR", type: "\\"MedicinalProductDefinition\\"") @example(subgraph: "FHIR", value: "\\"MedicinalProductDefinition\\"") {
+enum MedicinalProductDefinition_const @typescript(subgraph: "FHIR", type: "\\"MedicinalProductDefinition\\"") @example(subgraph: "FHIR", value: "MedicinalProductDefinition") {
   MedicinalProductDefinition @enum(subgraph: "FHIR", value: "\\"MedicinalProductDefinition\\"")
 }
 
@@ -16206,7 +16206,7 @@ type MessageDefinition {
   graph: [canonical]
 }
 
-enum MessageDefinition_const @typescript(subgraph: "FHIR", type: "\\"MessageDefinition\\"") @example(subgraph: "FHIR", value: "\\"MessageDefinition\\"") {
+enum MessageDefinition_const @typescript(subgraph: "FHIR", type: "\\"MessageDefinition\\"") @example(subgraph: "FHIR", value: "MessageDefinition") {
   MessageDefinition @enum(subgraph: "FHIR", value: "\\"MessageDefinition\\"")
 }
 
@@ -16301,7 +16301,7 @@ type MessageHeader {
   definition: canonical
 }
 
-enum MessageHeader_const @typescript(subgraph: "FHIR", type: "\\"MessageHeader\\"") @example(subgraph: "FHIR", value: "\\"MessageHeader\\"") {
+enum MessageHeader_const @typescript(subgraph: "FHIR", type: "\\"MessageHeader\\"") @example(subgraph: "FHIR", value: "MessageHeader") {
   MessageHeader @enum(subgraph: "FHIR", value: "\\"MessageHeader\\"")
 }
 
@@ -16438,7 +16438,7 @@ type MolecularSequence {
   structureVariant: [MolecularSequence_StructureVariant]
 }
 
-enum MolecularSequence_const @typescript(subgraph: "FHIR", type: "\\"MolecularSequence\\"") @example(subgraph: "FHIR", value: "\\"MolecularSequence\\"") {
+enum MolecularSequence_const @typescript(subgraph: "FHIR", type: "\\"MolecularSequence\\"") @example(subgraph: "FHIR", value: "MolecularSequence") {
   MolecularSequence @enum(subgraph: "FHIR", value: "\\"MolecularSequence\\"")
 }
 
@@ -16744,7 +16744,7 @@ type NamingSystem {
   uniqueId: [NamingSystem_UniqueId]!
 }
 
-enum NamingSystem_const @typescript(subgraph: "FHIR", type: "\\"NamingSystem\\"") @example(subgraph: "FHIR", value: "\\"NamingSystem\\"") {
+enum NamingSystem_const @typescript(subgraph: "FHIR", type: "\\"NamingSystem\\"") @example(subgraph: "FHIR", value: "NamingSystem") {
   NamingSystem @enum(subgraph: "FHIR", value: "\\"NamingSystem\\"")
 }
 
@@ -16853,7 +16853,7 @@ type NutritionOrder {
   note: [Annotation]
 }
 
-enum NutritionOrder_const @typescript(subgraph: "FHIR", type: "\\"NutritionOrder\\"") @example(subgraph: "FHIR", value: "\\"NutritionOrder\\"") {
+enum NutritionOrder_const @typescript(subgraph: "FHIR", type: "\\"NutritionOrder\\"") @example(subgraph: "FHIR", value: "NutritionOrder") {
   NutritionOrder @enum(subgraph: "FHIR", value: "\\"NutritionOrder\\"")
 }
 
@@ -17064,7 +17064,7 @@ type NutritionProduct {
   note: [Annotation]
 }
 
-enum NutritionProduct_const @typescript(subgraph: "FHIR", type: "\\"NutritionProduct\\"") @example(subgraph: "FHIR", value: "\\"NutritionProduct\\"") {
+enum NutritionProduct_const @typescript(subgraph: "FHIR", type: "\\"NutritionProduct\\"") @example(subgraph: "FHIR", value: "NutritionProduct") {
   NutritionProduct @enum(subgraph: "FHIR", value: "\\"NutritionProduct\\"")
 }
 
@@ -17265,7 +17265,7 @@ type Observation {
   component: [Observation_Component]
 }
 
-enum Observation_const @typescript(subgraph: "FHIR", type: "\\"Observation\\"") @example(subgraph: "FHIR", value: "\\"Observation\\"") {
+enum Observation_const @typescript(subgraph: "FHIR", type: "\\"Observation\\"") @example(subgraph: "FHIR", value: "Observation") {
   Observation @enum(subgraph: "FHIR", value: "\\"Observation\\"")
 }
 
@@ -17415,7 +17415,7 @@ type ObservationDefinition {
   criticalCodedValueSet: Reference
 }
 
-enum ObservationDefinition_const @typescript(subgraph: "FHIR", type: "\\"ObservationDefinition\\"") @example(subgraph: "FHIR", value: "\\"ObservationDefinition\\"") {
+enum ObservationDefinition_const @typescript(subgraph: "FHIR", type: "\\"ObservationDefinition\\"") @example(subgraph: "FHIR", value: "ObservationDefinition") {
   ObservationDefinition @enum(subgraph: "FHIR", value: "\\"ObservationDefinition\\"")
 }
 
@@ -17560,7 +17560,7 @@ type OperationDefinition {
   overload: [OperationDefinition_Overload]
 }
 
-enum OperationDefinition_const @typescript(subgraph: "FHIR", type: "\\"OperationDefinition\\"") @example(subgraph: "FHIR", value: "\\"OperationDefinition\\"") {
+enum OperationDefinition_const @typescript(subgraph: "FHIR", type: "\\"OperationDefinition\\"") @example(subgraph: "FHIR", value: "OperationDefinition") {
   OperationDefinition @enum(subgraph: "FHIR", value: "\\"OperationDefinition\\"")
 }
 
@@ -17702,7 +17702,7 @@ type OperationOutcome {
   issue: [OperationOutcome_Issue]!
 }
 
-enum OperationOutcome_const @typescript(subgraph: "FHIR", type: "\\"OperationOutcome\\"") @example(subgraph: "FHIR", value: "\\"OperationOutcome\\"") {
+enum OperationOutcome_const @typescript(subgraph: "FHIR", type: "\\"OperationOutcome\\"") @example(subgraph: "FHIR", value: "OperationOutcome") {
   OperationOutcome @enum(subgraph: "FHIR", value: "\\"OperationOutcome\\"")
 }
 
@@ -17799,7 +17799,7 @@ type Organization {
   endpoint: [Reference]
 }
 
-enum Organization_const @typescript(subgraph: "FHIR", type: "\\"Organization\\"") @example(subgraph: "FHIR", value: "\\"Organization\\"") {
+enum Organization_const @typescript(subgraph: "FHIR", type: "\\"Organization\\"") @example(subgraph: "FHIR", value: "Organization") {
   Organization @enum(subgraph: "FHIR", value: "\\"Organization\\"")
 }
 
@@ -17886,7 +17886,7 @@ type OrganizationAffiliation {
   endpoint: [Reference]
 }
 
-enum OrganizationAffiliation_const @typescript(subgraph: "FHIR", type: "\\"OrganizationAffiliation\\"") @example(subgraph: "FHIR", value: "\\"OrganizationAffiliation\\"") {
+enum OrganizationAffiliation_const @typescript(subgraph: "FHIR", type: "\\"OrganizationAffiliation\\"") @example(subgraph: "FHIR", value: "OrganizationAffiliation") {
   OrganizationAffiliation @enum(subgraph: "FHIR", value: "\\"OrganizationAffiliation\\"")
 }
 
@@ -17953,7 +17953,7 @@ type PackagedProductDefinition {
   package: PackagedProductDefinition_Package
 }
 
-enum PackagedProductDefinition_const @typescript(subgraph: "FHIR", type: "\\"PackagedProductDefinition\\"") @example(subgraph: "FHIR", value: "\\"PackagedProductDefinition\\"") {
+enum PackagedProductDefinition_const @typescript(subgraph: "FHIR", type: "\\"PackagedProductDefinition\\"") @example(subgraph: "FHIR", value: "PackagedProductDefinition") {
   PackagedProductDefinition @enum(subgraph: "FHIR", value: "\\"PackagedProductDefinition\\"")
 }
 
@@ -18099,7 +18099,7 @@ type Parameters {
   parameter: [Parameters_Parameter]
 }
 
-enum Parameters_const @typescript(subgraph: "FHIR", type: "\\"Parameters\\"") @example(subgraph: "FHIR", value: "\\"Parameters\\"") {
+enum Parameters_const @typescript(subgraph: "FHIR", type: "\\"Parameters\\"") @example(subgraph: "FHIR", value: "Parameters") {
   Parameters @enum(subgraph: "FHIR", value: "\\"Parameters\\"")
 }
 
@@ -18303,7 +18303,7 @@ type Patient {
   link: [Patient_Link]
 }
 
-enum Patient_const @typescript(subgraph: "FHIR", type: "\\"Patient\\"") @example(subgraph: "FHIR", value: "\\"Patient\\"") {
+enum Patient_const @typescript(subgraph: "FHIR", type: "\\"Patient\\"") @example(subgraph: "FHIR", value: "Patient") {
   Patient @enum(subgraph: "FHIR", value: "\\"Patient\\"")
 }
 
@@ -18426,7 +18426,7 @@ type PaymentNotice {
   paymentStatus: CodeableConcept
 }
 
-enum PaymentNotice_const @typescript(subgraph: "FHIR", type: "\\"PaymentNotice\\"") @example(subgraph: "FHIR", value: "\\"PaymentNotice\\"") {
+enum PaymentNotice_const @typescript(subgraph: "FHIR", type: "\\"PaymentNotice\\"") @example(subgraph: "FHIR", value: "PaymentNotice") {
   PaymentNotice @enum(subgraph: "FHIR", value: "\\"PaymentNotice\\"")
 }
 
@@ -18485,7 +18485,7 @@ type PaymentReconciliation {
   processNote: [PaymentReconciliation_ProcessNote]
 }
 
-enum PaymentReconciliation_const @typescript(subgraph: "FHIR", type: "\\"PaymentReconciliation\\"") @example(subgraph: "FHIR", value: "\\"PaymentReconciliation\\"") {
+enum PaymentReconciliation_const @typescript(subgraph: "FHIR", type: "\\"PaymentReconciliation\\"") @example(subgraph: "FHIR", value: "PaymentReconciliation") {
   PaymentReconciliation @enum(subgraph: "FHIR", value: "\\"PaymentReconciliation\\"")
 }
 
@@ -18586,7 +18586,7 @@ type Person {
   link: [Person_Link]
 }
 
-enum Person_const @typescript(subgraph: "FHIR", type: "\\"Person\\"") @example(subgraph: "FHIR", value: "\\"Person\\"") {
+enum Person_const @typescript(subgraph: "FHIR", type: "\\"Person\\"") @example(subgraph: "FHIR", value: "Person") {
   Person @enum(subgraph: "FHIR", value: "\\"Person\\"")
 }
 
@@ -18726,7 +18726,7 @@ type PlanDefinition {
   action: [PlanDefinition_Action]
 }
 
-enum PlanDefinition_const @typescript(subgraph: "FHIR", type: "\\"PlanDefinition\\"") @example(subgraph: "FHIR", value: "\\"PlanDefinition\\"") {
+enum PlanDefinition_const @typescript(subgraph: "FHIR", type: "\\"PlanDefinition\\"") @example(subgraph: "FHIR", value: "PlanDefinition") {
   PlanDefinition @enum(subgraph: "FHIR", value: "\\"PlanDefinition\\"")
 }
 
@@ -19025,7 +19025,7 @@ Work addresses are not typically entered in this property as they are usually ro
   communication: [CodeableConcept]
 }
 
-enum Practitioner_const @typescript(subgraph: "FHIR", type: "\\"Practitioner\\"") @example(subgraph: "FHIR", value: "\\"Practitioner\\"") {
+enum Practitioner_const @typescript(subgraph: "FHIR", type: "\\"Practitioner\\"") @example(subgraph: "FHIR", value: "Practitioner") {
   Practitioner @enum(subgraph: "FHIR", value: "\\"Practitioner\\"")
 }
 
@@ -19116,7 +19116,7 @@ type PractitionerRole {
   endpoint: [Reference]
 }
 
-enum PractitionerRole_const @typescript(subgraph: "FHIR", type: "\\"PractitionerRole\\"") @example(subgraph: "FHIR", value: "\\"PractitionerRole\\"") {
+enum PractitionerRole_const @typescript(subgraph: "FHIR", type: "\\"PractitionerRole\\"") @example(subgraph: "FHIR", value: "PractitionerRole") {
   PractitionerRole @enum(subgraph: "FHIR", value: "\\"PractitionerRole\\"")
 }
 
@@ -19277,7 +19277,7 @@ type Procedure {
   usedCode: [CodeableConcept]
 }
 
-enum Procedure_const @typescript(subgraph: "FHIR", type: "\\"Procedure\\"") @example(subgraph: "FHIR", value: "\\"Procedure\\"") {
+enum Procedure_const @typescript(subgraph: "FHIR", type: "\\"Procedure\\"") @example(subgraph: "FHIR", value: "Procedure") {
   Procedure @enum(subgraph: "FHIR", value: "\\"Procedure\\"")
 }
 
@@ -19381,7 +19381,7 @@ type Provenance {
   signature: [Signature]
 }
 
-enum Provenance_const @typescript(subgraph: "FHIR", type: "\\"Provenance\\"") @example(subgraph: "FHIR", value: "\\"Provenance\\"") {
+enum Provenance_const @typescript(subgraph: "FHIR", type: "\\"Provenance\\"") @example(subgraph: "FHIR", value: "Provenance") {
   Provenance @enum(subgraph: "FHIR", value: "\\"Provenance\\"")
 }
 
@@ -19522,7 +19522,7 @@ type Questionnaire {
   item: [Questionnaire_Item]
 }
 
-enum Questionnaire_const @typescript(subgraph: "FHIR", type: "\\"Questionnaire\\"") @example(subgraph: "FHIR", value: "\\"Questionnaire\\"") {
+enum Questionnaire_const @typescript(subgraph: "FHIR", type: "\\"Questionnaire\\"") @example(subgraph: "FHIR", value: "Questionnaire") {
   Questionnaire @enum(subgraph: "FHIR", value: "\\"Questionnaire\\"")
 }
 
@@ -19774,7 +19774,7 @@ type QuestionnaireResponse {
   item: [QuestionnaireResponse_Item]
 }
 
-enum QuestionnaireResponse_const @typescript(subgraph: "FHIR", type: "\\"QuestionnaireResponse\\"") @example(subgraph: "FHIR", value: "\\"QuestionnaireResponse\\"") {
+enum QuestionnaireResponse_const @typescript(subgraph: "FHIR", type: "\\"QuestionnaireResponse\\"") @example(subgraph: "FHIR", value: "QuestionnaireResponse") {
   QuestionnaireResponse @enum(subgraph: "FHIR", value: "\\"QuestionnaireResponse\\"")
 }
 
@@ -19917,7 +19917,7 @@ type RegulatedAuthorization {
   case: RegulatedAuthorization_Case
 }
 
-enum RegulatedAuthorization_const @typescript(subgraph: "FHIR", type: "\\"RegulatedAuthorization\\"") @example(subgraph: "FHIR", value: "\\"RegulatedAuthorization\\"") {
+enum RegulatedAuthorization_const @typescript(subgraph: "FHIR", type: "\\"RegulatedAuthorization\\"") @example(subgraph: "FHIR", value: "RegulatedAuthorization") {
   RegulatedAuthorization @enum(subgraph: "FHIR", value: "\\"RegulatedAuthorization\\"")
 }
 
@@ -20006,7 +20006,7 @@ type RelatedPerson {
   communication: [RelatedPerson_Communication]
 }
 
-enum RelatedPerson_const @typescript(subgraph: "FHIR", type: "\\"RelatedPerson\\"") @example(subgraph: "FHIR", value: "\\"RelatedPerson\\"") {
+enum RelatedPerson_const @typescript(subgraph: "FHIR", type: "\\"RelatedPerson\\"") @example(subgraph: "FHIR", value: "RelatedPerson") {
   RelatedPerson @enum(subgraph: "FHIR", value: "\\"RelatedPerson\\"")
 }
 
@@ -20107,7 +20107,7 @@ type RequestGroup {
   action: [RequestGroup_Action]
 }
 
-enum RequestGroup_const @typescript(subgraph: "FHIR", type: "\\"RequestGroup\\"") @example(subgraph: "FHIR", value: "\\"RequestGroup\\"") {
+enum RequestGroup_const @typescript(subgraph: "FHIR", type: "\\"RequestGroup\\"") @example(subgraph: "FHIR", value: "RequestGroup") {
   RequestGroup @enum(subgraph: "FHIR", value: "\\"RequestGroup\\"")
 }
 
@@ -20339,7 +20339,7 @@ type ResearchDefinition {
   outcome: Reference
 }
 
-enum ResearchDefinition_const @typescript(subgraph: "FHIR", type: "\\"ResearchDefinition\\"") @example(subgraph: "FHIR", value: "\\"ResearchDefinition\\"") {
+enum ResearchDefinition_const @typescript(subgraph: "FHIR", type: "\\"ResearchDefinition\\"") @example(subgraph: "FHIR", value: "ResearchDefinition") {
   ResearchDefinition @enum(subgraph: "FHIR", value: "\\"ResearchDefinition\\"")
 }
 
@@ -20464,7 +20464,7 @@ type ResearchElementDefinition {
   characteristic: [ResearchElementDefinition_Characteristic]!
 }
 
-enum ResearchElementDefinition_const @typescript(subgraph: "FHIR", type: "\\"ResearchElementDefinition\\"") @example(subgraph: "FHIR", value: "\\"ResearchElementDefinition\\"") {
+enum ResearchElementDefinition_const @typescript(subgraph: "FHIR", type: "\\"ResearchElementDefinition\\"") @example(subgraph: "FHIR", value: "ResearchElementDefinition") {
   ResearchElementDefinition @enum(subgraph: "FHIR", value: "\\"ResearchElementDefinition\\"")
 }
 
@@ -20617,7 +20617,7 @@ type ResearchStudy {
   objective: [ResearchStudy_Objective]
 }
 
-enum ResearchStudy_const @typescript(subgraph: "FHIR", type: "\\"ResearchStudy\\"") @example(subgraph: "FHIR", value: "\\"ResearchStudy\\"") {
+enum ResearchStudy_const @typescript(subgraph: "FHIR", type: "\\"ResearchStudy\\"") @example(subgraph: "FHIR", value: "ResearchStudy") {
   ResearchStudy @enum(subgraph: "FHIR", value: "\\"ResearchStudy\\"")
 }
 
@@ -20703,7 +20703,7 @@ type ResearchSubject {
   consent: Reference
 }
 
-enum ResearchSubject_const @typescript(subgraph: "FHIR", type: "\\"ResearchSubject\\"") @example(subgraph: "FHIR", value: "\\"ResearchSubject\\"") {
+enum ResearchSubject_const @typescript(subgraph: "FHIR", type: "\\"ResearchSubject\\"") @example(subgraph: "FHIR", value: "ResearchSubject") {
   ResearchSubject @enum(subgraph: "FHIR", value: "\\"ResearchSubject\\"")
 }
 
@@ -20764,7 +20764,7 @@ type RiskAssessment {
   note: [Annotation]
 }
 
-enum RiskAssessment_const @typescript(subgraph: "FHIR", type: "\\"RiskAssessment\\"") @example(subgraph: "FHIR", value: "\\"RiskAssessment\\"") {
+enum RiskAssessment_const @typescript(subgraph: "FHIR", type: "\\"RiskAssessment\\"") @example(subgraph: "FHIR", value: "RiskAssessment") {
   RiskAssessment @enum(subgraph: "FHIR", value: "\\"RiskAssessment\\"")
 }
 
@@ -20849,7 +20849,7 @@ type Schedule {
   _comment: Element
 }
 
-enum Schedule_const @typescript(subgraph: "FHIR", type: "\\"Schedule\\"") @example(subgraph: "FHIR", value: "\\"Schedule\\"") {
+enum Schedule_const @typescript(subgraph: "FHIR", type: "\\"Schedule\\"") @example(subgraph: "FHIR", value: "Schedule") {
   Schedule @enum(subgraph: "FHIR", value: "\\"Schedule\\"")
 }
 
@@ -20952,7 +20952,7 @@ type SearchParameter {
   component: [SearchParameter_Component]
 }
 
-enum SearchParameter_const @typescript(subgraph: "FHIR", type: "\\"SearchParameter\\"") @example(subgraph: "FHIR", value: "\\"SearchParameter\\"") {
+enum SearchParameter_const @typescript(subgraph: "FHIR", type: "\\"SearchParameter\\"") @example(subgraph: "FHIR", value: "SearchParameter") {
   SearchParameter @enum(subgraph: "FHIR", value: "\\"SearchParameter\\"")
 }
 
@@ -21103,7 +21103,7 @@ type ServiceRequest {
   relevantHistory: [Reference]
 }
 
-enum ServiceRequest_const @typescript(subgraph: "FHIR", type: "\\"ServiceRequest\\"") @example(subgraph: "FHIR", value: "\\"ServiceRequest\\"") {
+enum ServiceRequest_const @typescript(subgraph: "FHIR", type: "\\"ServiceRequest\\"") @example(subgraph: "FHIR", value: "ServiceRequest") {
   ServiceRequest @enum(subgraph: "FHIR", value: "\\"ServiceRequest\\"")
 }
 
@@ -21163,7 +21163,7 @@ type Slot {
   _comment: Element
 }
 
-enum Slot_const @typescript(subgraph: "FHIR", type: "\\"Slot\\"") @example(subgraph: "FHIR", value: "\\"Slot\\"") {
+enum Slot_const @typescript(subgraph: "FHIR", type: "\\"Slot\\"") @example(subgraph: "FHIR", value: "Slot") {
   Slot @enum(subgraph: "FHIR", value: "\\"Slot\\"")
 }
 
@@ -21223,7 +21223,7 @@ type Specimen {
   note: [Annotation]
 }
 
-enum Specimen_const @typescript(subgraph: "FHIR", type: "\\"Specimen\\"") @example(subgraph: "FHIR", value: "\\"Specimen\\"") {
+enum Specimen_const @typescript(subgraph: "FHIR", type: "\\"Specimen\\"") @example(subgraph: "FHIR", value: "Specimen") {
   Specimen @enum(subgraph: "FHIR", value: "\\"Specimen\\"")
 }
 
@@ -21343,7 +21343,7 @@ type SpecimenDefinition {
   typeTested: [SpecimenDefinition_TypeTested]
 }
 
-enum SpecimenDefinition_const @typescript(subgraph: "FHIR", type: "\\"SpecimenDefinition\\"") @example(subgraph: "FHIR", value: "\\"SpecimenDefinition\\"") {
+enum SpecimenDefinition_const @typescript(subgraph: "FHIR", type: "\\"SpecimenDefinition\\"") @example(subgraph: "FHIR", value: "SpecimenDefinition") {
   SpecimenDefinition @enum(subgraph: "FHIR", value: "\\"SpecimenDefinition\\"")
 }
 
@@ -21543,7 +21543,7 @@ type StructureDefinition {
   differential: StructureDefinition_Differential
 }
 
-enum StructureDefinition_const @typescript(subgraph: "FHIR", type: "\\"StructureDefinition\\"") @example(subgraph: "FHIR", value: "\\"StructureDefinition\\"") {
+enum StructureDefinition_const @typescript(subgraph: "FHIR", type: "\\"StructureDefinition\\"") @example(subgraph: "FHIR", value: "StructureDefinition") {
   StructureDefinition @enum(subgraph: "FHIR", value: "\\"StructureDefinition\\"")
 }
 
@@ -22572,7 +22572,7 @@ type StructureMap {
   group: [StructureMap_Group]!
 }
 
-enum StructureMap_const @typescript(subgraph: "FHIR", type: "\\"StructureMap\\"") @example(subgraph: "FHIR", value: "\\"StructureMap\\"") {
+enum StructureMap_const @typescript(subgraph: "FHIR", type: "\\"StructureMap\\"") @example(subgraph: "FHIR", value: "StructureMap") {
   StructureMap @enum(subgraph: "FHIR", value: "\\"StructureMap\\"")
 }
 
@@ -22965,7 +22965,7 @@ type Subscription_ {
   channel: Subscription_Channel!
 }
 
-enum Subscription_const @typescript(subgraph: "FHIR", type: "\\"Subscription\\"") @example(subgraph: "FHIR", value: "\\"Subscription\\"") {
+enum Subscription_const @typescript(subgraph: "FHIR", type: "\\"Subscription\\"") @example(subgraph: "FHIR", value: "Subscription") {
   Subscription_ @enum(subgraph: "FHIR", value: "\\"Subscription\\"")
 }
 
@@ -23040,7 +23040,7 @@ type SubscriptionStatus {
   error: [CodeableConcept]
 }
 
-enum SubscriptionStatus_const @typescript(subgraph: "FHIR", type: "\\"SubscriptionStatus\\"") @example(subgraph: "FHIR", value: "\\"SubscriptionStatus\\"") {
+enum SubscriptionStatus_const @typescript(subgraph: "FHIR", type: "\\"SubscriptionStatus\\"") @example(subgraph: "FHIR", value: "SubscriptionStatus") {
   SubscriptionStatus @enum(subgraph: "FHIR", value: "\\"SubscriptionStatus\\"")
 }
 
@@ -23155,7 +23155,7 @@ type SubscriptionTopic {
   notificationShape: [SubscriptionTopic_NotificationShape]
 }
 
-enum SubscriptionTopic_const @typescript(subgraph: "FHIR", type: "\\"SubscriptionTopic\\"") @example(subgraph: "FHIR", value: "\\"SubscriptionTopic\\"") {
+enum SubscriptionTopic_const @typescript(subgraph: "FHIR", type: "\\"SubscriptionTopic\\"") @example(subgraph: "FHIR", value: "SubscriptionTopic") {
   SubscriptionTopic @enum(subgraph: "FHIR", value: "\\"SubscriptionTopic\\"")
 }
 
@@ -23343,7 +23343,7 @@ type Substance {
   ingredient: [Substance_Ingredient]
 }
 
-enum Substance_const @typescript(subgraph: "FHIR", type: "\\"Substance\\"") @example(subgraph: "FHIR", value: "\\"Substance\\"") {
+enum Substance_const @typescript(subgraph: "FHIR", type: "\\"Substance\\"") @example(subgraph: "FHIR", value: "Substance") {
   Substance @enum(subgraph: "FHIR", value: "\\"Substance\\"")
 }
 
@@ -23458,7 +23458,7 @@ type SubstanceDefinition {
   sourceMaterial: SubstanceDefinition_SourceMaterial
 }
 
-enum SubstanceDefinition_const @typescript(subgraph: "FHIR", type: "\\"SubstanceDefinition\\"") @example(subgraph: "FHIR", value: "\\"SubstanceDefinition\\"") {
+enum SubstanceDefinition_const @typescript(subgraph: "FHIR", type: "\\"SubstanceDefinition\\"") @example(subgraph: "FHIR", value: "SubstanceDefinition") {
   SubstanceDefinition @enum(subgraph: "FHIR", value: "\\"SubstanceDefinition\\"")
 }
 
@@ -23786,7 +23786,7 @@ type SupplyDelivery {
   receiver: [Reference]
 }
 
-enum SupplyDelivery_const @typescript(subgraph: "FHIR", type: "\\"SupplyDelivery\\"") @example(subgraph: "FHIR", value: "\\"SupplyDelivery\\"") {
+enum SupplyDelivery_const @typescript(subgraph: "FHIR", type: "\\"SupplyDelivery\\"") @example(subgraph: "FHIR", value: "SupplyDelivery") {
   SupplyDelivery @enum(subgraph: "FHIR", value: "\\"SupplyDelivery\\"")
 }
 
@@ -23869,7 +23869,7 @@ type SupplyRequest {
   deliverTo: Reference
 }
 
-enum SupplyRequest_const @typescript(subgraph: "FHIR", type: "\\"SupplyRequest\\"") @example(subgraph: "FHIR", value: "\\"SupplyRequest\\"") {
+enum SupplyRequest_const @typescript(subgraph: "FHIR", type: "\\"SupplyRequest\\"") @example(subgraph: "FHIR", value: "SupplyRequest") {
   SupplyRequest @enum(subgraph: "FHIR", value: "\\"SupplyRequest\\"")
 }
 
@@ -23980,7 +23980,7 @@ type Task {
   output: [Task_Output]
 }
 
-enum Task_const @typescript(subgraph: "FHIR", type: "\\"Task\\"") @example(subgraph: "FHIR", value: "\\"Task\\"") {
+enum Task_const @typescript(subgraph: "FHIR", type: "\\"Task\\"") @example(subgraph: "FHIR", value: "Task") {
   Task @enum(subgraph: "FHIR", value: "\\"Task\\"")
 }
 
@@ -24328,7 +24328,7 @@ type TerminologyCapabilities {
   closure: TerminologyCapabilities_Closure
 }
 
-enum TerminologyCapabilities_const @typescript(subgraph: "FHIR", type: "\\"TerminologyCapabilities\\"") @example(subgraph: "FHIR", value: "\\"TerminologyCapabilities\\"") {
+enum TerminologyCapabilities_const @typescript(subgraph: "FHIR", type: "\\"TerminologyCapabilities\\"") @example(subgraph: "FHIR", value: "TerminologyCapabilities") {
   TerminologyCapabilities @enum(subgraph: "FHIR", value: "\\"TerminologyCapabilities\\"")
 }
 
@@ -24609,7 +24609,7 @@ type TestReport {
   teardown: TestReport_Teardown
 }
 
-enum TestReport_const @typescript(subgraph: "FHIR", type: "\\"TestReport\\"") @example(subgraph: "FHIR", value: "\\"TestReport\\"") {
+enum TestReport_const @typescript(subgraph: "FHIR", type: "\\"TestReport\\"") @example(subgraph: "FHIR", value: "TestReport") {
   TestReport @enum(subgraph: "FHIR", value: "\\"TestReport\\"")
 }
 
@@ -24885,7 +24885,7 @@ type TestScript {
   teardown: TestScript_Teardown
 }
 
-enum TestScript_const @typescript(subgraph: "FHIR", type: "\\"TestScript\\"") @example(subgraph: "FHIR", value: "\\"TestScript\\"") {
+enum TestScript_const @typescript(subgraph: "FHIR", type: "\\"TestScript\\"") @example(subgraph: "FHIR", value: "TestScript") {
   TestScript @enum(subgraph: "FHIR", value: "\\"TestScript\\"")
 }
 
@@ -25383,7 +25383,7 @@ type ValueSet {
   expansion: ValueSet_Expansion
 }
 
-enum ValueSet_const @typescript(subgraph: "FHIR", type: "\\"ValueSet\\"") @example(subgraph: "FHIR", value: "\\"ValueSet\\"") {
+enum ValueSet_const @typescript(subgraph: "FHIR", type: "\\"ValueSet\\"") @example(subgraph: "FHIR", value: "ValueSet") {
   ValueSet @enum(subgraph: "FHIR", value: "\\"ValueSet\\"")
 }
 
@@ -25682,7 +25682,7 @@ type VerificationResult {
   validator: [VerificationResult_Validator]
 }
 
-enum VerificationResult_const @typescript(subgraph: "FHIR", type: "\\"VerificationResult\\"") @example(subgraph: "FHIR", value: "\\"VerificationResult\\"") {
+enum VerificationResult_const @typescript(subgraph: "FHIR", type: "\\"VerificationResult\\"") @example(subgraph: "FHIR", value: "VerificationResult") {
   VerificationResult @enum(subgraph: "FHIR", value: "\\"VerificationResult\\"")
 }
 
@@ -25810,7 +25810,7 @@ type VisionPrescription {
   lensSpecification: [VisionPrescription_LensSpecification]!
 }
 
-enum VisionPrescription_const @typescript(subgraph: "FHIR", type: "\\"VisionPrescription\\"") @example(subgraph: "FHIR", value: "\\"VisionPrescription\\"") {
+enum VisionPrescription_const @typescript(subgraph: "FHIR", type: "\\"VisionPrescription\\"") @example(subgraph: "FHIR", value: "VisionPrescription") {
   VisionPrescription @enum(subgraph: "FHIR", value: "\\"VisionPrescription\\"")
 }
 

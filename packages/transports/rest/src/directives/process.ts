@@ -10,7 +10,7 @@ import {
 } from 'graphql';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
-import { getDefDirectives } from '@graphql-mesh/utils';
+import { getDefDirectives, getDirectiveExtensions } from '@graphql-mesh/utils';
 import { getDirective } from '@graphql-tools/utils';
 import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
@@ -43,7 +43,7 @@ export function processDirectives(
   if (nonExecutableObjMapScalar && isScalarType(nonExecutableObjMapScalar)) {
     addExecutionLogicToScalar(nonExecutableObjMapScalar, ObjMapScalar);
   }
-  const transportDirectives = getDirective(schema, schema, 'transport');
+  const transportDirectives = getDirectiveExtensions(schema)?.transport;
   const currDirective = transportDirectives?.[0];
   const globalOptions = {
     endpoint: currDirective?.location,
@@ -55,8 +55,14 @@ export function processDirectives(
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);
   }
+  if (Array.isArray(globalOptions.operationHeaders)) {
+    globalOptions.operationHeaders = Object.fromEntries(globalOptions.operationHeaders);
+  }
   if (typeof globalOptions.queryParams === 'string') {
     globalOptions.queryParams = JSON.parse(globalOptions.queryParams);
+  }
+  if (Array.isArray(globalOptions.queryParams)) {
+    globalOptions.queryParams = Object.fromEntries(globalOptions.queryParams);
   }
   const typeMap = schema.getTypeMap();
   for (const typeName in typeMap) {
@@ -174,7 +180,18 @@ export function processDirectives(
                 logger,
               });
               break;
-            case 'httpOperation':
+            case 'httpOperation': {
+              let operationSpecificHeaders = directiveAnnotation.args.operationSpecificHeaders;
+              if (typeof directiveAnnotation.args.operationSpecificHeaders === 'string') {
+                operationSpecificHeaders = JSON.parse(
+                  directiveAnnotation.args.operationSpecificHeaders,
+                );
+              }
+              if (Array.isArray(directiveAnnotation.args.operationSpecificHeaders)) {
+                operationSpecificHeaders = Object.fromEntries(
+                  directiveAnnotation.args.operationSpecificHeaders,
+                );
+              }
               addHTTPRootFieldResolver(
                 schema,
                 field as GraphQLField<any, any>,
@@ -186,10 +203,7 @@ export function processDirectives(
                   endpoint: directiveAnnotation.args.endpoint,
                   path: directiveAnnotation.args.path,
                   httpMethod: directiveAnnotation.args.httpMethod,
-                  operationSpecificHeaders:
-                    typeof directiveAnnotation.args.operationSpecificHeaders === 'string'
-                      ? JSON.parse(directiveAnnotation.args.operationSpecificHeaders)
-                      : directiveAnnotation.args.operationSpecificHeaders,
+                  operationSpecificHeaders,
                   isBinary: directiveAnnotation.args.isBinary,
                   requestBaseBody:
                     typeof directiveAnnotation.args.requestBaseBody === 'string'
@@ -208,6 +222,7 @@ export function processDirectives(
                 globalOptions as GlobalOptions,
               );
               break;
+            }
             case 'responseMetadata':
               processResponseMetadataAnnotations(field as GraphQLField<any, any>);
               break;

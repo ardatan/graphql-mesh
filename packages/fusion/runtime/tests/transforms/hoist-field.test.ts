@@ -1,11 +1,13 @@
-import { GraphQLField, GraphQLObjectType, printSchema } from 'graphql';
+import { GraphQLField, GraphQLObjectType, printSchema, GraphQLSchema } from 'graphql';
 import { createHoistFieldTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
 
 describe('Hoist Field', () => {
-  const schema = makeExecutableSchema({
-    typeDefs: /* GraphQL */ `
+  let schema: GraphQLSchema;
+  beforeEach(() => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
       type Query {
         users(limit: Int!, page: Int): UserSearchResult
       }
@@ -20,20 +22,21 @@ describe('Hoist Field', () => {
         name: String!
       }
     `,
-    resolvers: {
-      Query: {
-        users: () => ({
-          page: 1,
-          results: [
-            {
-              id: '1',
-              name: 'Test',
-            },
-          ],
-        }),
+      resolvers: {
+        Query: {
+          users: () => ({
+            page: 1,
+            results: [
+              {
+                id: '1',
+                name: 'TEST',
+              },
+            ],
+          }),
+        },
       },
-    },
-  });
+    });
+  })
   it('hoists field with string pathConfig array', async () => {
     const transform = createHoistFieldTransform({
       mapping: [
@@ -49,7 +52,7 @@ describe('Hoist Field', () => {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
 
@@ -62,6 +65,12 @@ describe('Hoist Field', () => {
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
 "type Query {
   users(limit: Int!, page: Int): [User!]!
+}
+
+scalar _HoistConfig
+
+type UserSearchResult {
+  page: Int!
 }
 
 type User {
@@ -90,7 +99,7 @@ type User {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
@@ -102,6 +111,12 @@ type User {
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
 "type Query {
   users(limit: Int!, page: Int): [User!]!
+}
+
+scalar _HoistConfig
+
+type UserSearchResult {
+  page: Int!
 }
 
 type User {
@@ -125,7 +140,7 @@ type User {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
@@ -140,6 +155,12 @@ type User {
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
 "type Query {
   users: [User!]!
+}
+
+scalar _HoistConfig
+
+type UserSearchResult {
+  page: Int!
 }
 
 type User {
@@ -168,7 +189,7 @@ type User {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
@@ -184,6 +205,12 @@ type User {
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
 "type Query {
   users(page: Int): [User!]!
+}
+
+scalar _HoistConfig
+
+type UserSearchResult {
+  page: Int!
 }
 
 type User {
@@ -214,7 +241,7 @@ type User {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
 
@@ -231,6 +258,12 @@ type User {
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
 "type Query {
   users(page: Int): [User!]!
+}
+
+scalar _HoistConfig
+
+type UserSearchResult {
+  page: Int!
 }
 
 type User {
@@ -254,7 +287,7 @@ type User {
       {
         schema,
         transforms: [transform],
-        name: 'test',
+        name: 'TEST',
       },
     ]);
 
@@ -273,7 +306,7 @@ type User {
       users: [
         {
           id: '1',
-          name: 'Test',
+          name: 'TEST',
         },
       ],
     });

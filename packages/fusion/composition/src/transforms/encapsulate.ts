@@ -1,12 +1,18 @@
 import {
+  DirectiveLocation,
+  GraphQLDirective,
   GraphQLFieldConfigMap,
   GraphQLNonNull,
   GraphQLObjectType,
+  GraphQLScalarType,
   GraphQLSchema,
+  GraphQLString,
   OperationTypeNode,
+  extendSchema,
+  parse,
 } from 'graphql';
 import { SubgraphConfig, SubgraphTransform } from '../compose.js';
-import { addHiddenDirective } from './filter-schema.js';
+import { addHiddenDirective, hiddenDirective } from './filter-schema.js';
 
 const OPERATION_TYPE_SUFFIX_MAP = {
   query: 'Query',
@@ -95,10 +101,37 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
         newRootTypes[operationType] = originalType;
       }
     }
+    const schemaConfig = schema.toConfig();
     return new GraphQLSchema({
-      ...schema.toConfig(),
+      ...schemaConfig,
       types: undefined,
+      directives: [...schemaConfig.directives, hiddenDirective, resolveToDirective],
       ...newRootTypes,
     });
   };
 }
+
+export const resolveToSourceArgsScalar = new GraphQLScalarType({
+  name: 'ResolveToSourceArgs',
+});
+
+export const resolveToDirective = new GraphQLDirective({
+  name: 'resolveTo',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    additionalArgs: { type: resolveToSourceArgsScalar },
+    filterBy: { type: GraphQLString },
+    keyField: { type: GraphQLString },
+    keysArg: { type: GraphQLString },
+    pubsubTopic: { type: GraphQLString },
+    requiredSelectionSet: { type: GraphQLString },
+    result: { type: GraphQLString },
+    resultType: { type: GraphQLString },
+    sourceArgs: { type: resolveToSourceArgsScalar },
+    sourceFieldName: { type: new GraphQLNonNull(GraphQLString) },
+    sourceName: { type: new GraphQLNonNull(GraphQLString) },
+    sourceSelectionSet: { type: GraphQLString },
+    sourceTypeName: { type: new GraphQLNonNull(GraphQLString) },
+
+  },
+});

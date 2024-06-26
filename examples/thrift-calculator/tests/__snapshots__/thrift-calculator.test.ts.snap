@@ -5,15 +5,19 @@ exports[`Thrift Calculator should generate correct schema: thrift-calculator-sch
   query: Query
 }
 
+directive @fieldTypeMap(fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
+
 type Query {
-  add(request: AddRequestInput): Int @fieldTypeMap(request: {name: "AddRequest", type: "ref", id: 1})
-  subtract(left: Int, right: Int): Int @fieldTypeMap(left: {type: 8, id: 1}, right: {type: 8, id: 2})
+  add(request: AddRequestInput): Int @fieldTypeMap(fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
+  subtract(left: Int, right: Int): Int @fieldTypeMap(fieldTypeMap: {left: {type: 8, id: 1}, right: {type: 8, id: 2}})
 }
 
 input AddRequestInput {
   left: Int!
   right: Int!
-}"
+}
+
+scalar FieldTypeMap"
 `;
 
 exports[`Thrift Calculator should give correct response for example queries: example-query.graphql-thrift-calculator-result 1`] = `

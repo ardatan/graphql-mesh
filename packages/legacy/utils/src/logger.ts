@@ -124,7 +124,8 @@ export class DefaultLogger implements Logger {
       args,
     });
     const fullMessage = `${this.prefix} 💡 ${infoColor(message)}`;
-    if (process?.stderr?.write(fullMessage + '\n')) {
+    if (typeof process?.stderr?.write === 'function') {
+      process.stderr.write(fullMessage + '\n');
       return;
     }
     console.info(fullMessage);
@@ -139,7 +140,8 @@ export class DefaultLogger implements Logger {
       trim: false,
     });
     const fullMessage = `${this.prefix} 💥 ${errorColor(message)}`;
-    if (process?.stderr?.write(fullMessage + '\n')) {
+    if (typeof process?.stderr?.write === 'function') {
+      process.stderr.write(fullMessage + '\n');
       return;
     }
     console.error(fullMessage);
@@ -154,7 +156,8 @@ export class DefaultLogger implements Logger {
         lazyArgs,
       });
       const fullMessage = `${this.prefix} 🐛 ${debugColor(message)}`;
-      if (process?.stderr?.write(fullMessage + '\n')) {
+      if (typeof process?.stderr?.write === 'function') {
+        process.stderr.write(fullMessage + '\n');
         return;
       }
       console.debug(fullMessage);

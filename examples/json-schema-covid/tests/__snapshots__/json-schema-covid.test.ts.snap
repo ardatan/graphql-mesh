@@ -4,13 +4,13 @@ exports[`JSON Schema Covid should generate correct schema: json-schema-covid-sch
 """""""
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | INTERFACE | OBJECT
 
-directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: ObjMap, path: String, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
+directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: [[String]], path: String, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String!, sourceName: String!, sourceSelectionSet: String, sourceTypeName: String!) on FIELD_DEFINITION
 
 directive @responseMetadata(subgraph: String) on FIELD_DEFINITION
 
-directive @transport(headers: ObjMap, kind: String, location: String, queryParams: ObjMap, queryStringOptions: ObjMap, subgraph: String) on OBJECT
+directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) on SCHEMA
 
 """Desc Api Population"""
 type ApiPopulation {

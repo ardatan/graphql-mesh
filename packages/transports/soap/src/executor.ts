@@ -14,7 +14,8 @@ import {
   ResolverDataBasedFactory,
 } from '@graphql-mesh/string-interpolation';
 import { MeshFetch } from '@graphql-mesh/types';
-import { Executor, getDirective, getRootTypes } from '@graphql-tools/utils';
+import { getDirectiveExtensions } from '@graphql-mesh/utils';
+import { Executor, getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
 
@@ -159,20 +160,22 @@ function createRootValue(
   for (const rootType of rootTypes) {
     const rootFieldMap = rootType.getFields();
     for (const fieldName in rootFieldMap) {
-      const annotations = getDirective(schema, rootFieldMap[fieldName], 'soap');
-      if (!annotations) {
+      const fieldDirectives = getDirectiveExtensions(rootFieldMap[fieldName]);
+      const soapDirectives = fieldDirectives?.soap;
+      if (!soapDirectives?.length) {
         // skip fields without @soap directive
         // we have to skip Query.placeholder field when only mutations were created
         continue;
       }
-      const soapAnnotations: SoapAnnotations = Object.assign({}, ...annotations);
-      rootValue[fieldName] = createRootValueMethod({
-        soapAnnotations,
-        fetchFn,
-        jsonToXMLConverter,
-        xmlToJSONConverter,
-        operationHeadersFactory,
-      });
+      for (const soapAnnotations of soapDirectives) {
+        rootValue[fieldName] = createRootValueMethod({
+          soapAnnotations,
+          fetchFn,
+          jsonToXMLConverter,
+          xmlToJSONConverter,
+          operationHeadersFactory,
+        });
+      }
     }
   }
   return rootValue;

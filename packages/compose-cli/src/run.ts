@@ -20,6 +20,7 @@ let program = new Command()
       .env('CONFIG_PATH')
       .default('mesh.config.ts'),
   )
+  .option('--subgraph <name>', 'name of the subgraph to compose')
   .option('-o, --output <path>', 'path to the output file');
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
@@ -81,15 +82,14 @@ export async function run({
 
   log.info('Composing');
 
-  const fusiongraphSchema = await getComposedSchemaFromConfig(config, log);
-  const fusiongraph = printSchemaWithDirectives(fusiongraphSchema);
+  const supergraphSdl = await getComposedSchemaFromConfig(config, log);
 
   let output = config.output;
   if (!output) {
     if (typeof process === 'object') {
-      process.stdout.write(fusiongraph + '\n');
+      process.stdout.write(supergraphSdl + '\n');
     } else {
-      console.log(fusiongraph);
+      console.log(supergraphSdl);
     }
     log.info('Done!');
     return;
@@ -100,14 +100,14 @@ export async function run({
   output = isAbsolute(output) ? output : join(process.cwd(), output);
   let writtenData: string;
   if (output.endsWith('.json')) {
-    writtenData = JSON.stringify(parse(fusiongraph, { noLocation: true }), null, 2);
+    writtenData = JSON.stringify(parse(supergraphSdl, { noLocation: true }), null, 2);
   } else if (
     output.endsWith('.graphql') ||
     output.endsWith('.gql') ||
     output.endsWith('.graphqls') ||
     output.endsWith('.gqls')
   ) {
-    writtenData = fusiongraph;
+    writtenData = supergraphSdl;
   } else if (
     output.endsWith('.ts') ||
     output.endsWith('.cts') ||
@@ -116,7 +116,7 @@ export async function run({
     output.endsWith('.cjs') ||
     output.endsWith('.mjs')
   ) {
-    writtenData = `export default ${JSON.stringify(fusiongraph)}`;
+    writtenData = `export default ${JSON.stringify(supergraphSdl)}`;
   } else {
     throw new Error(`Unsupported file extension for ${output}`);
   }

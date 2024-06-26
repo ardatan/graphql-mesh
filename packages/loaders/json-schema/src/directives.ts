@@ -5,6 +5,7 @@ import {
   GraphQLEnumType,
   GraphQLID,
   GraphQLInt,
+  GraphQLList,
   GraphQLString,
 } from 'graphql';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
@@ -118,7 +119,7 @@ export const HTTPOperationDirective = new GraphQLDirective({
       type: GraphQLString,
     },
     operationSpecificHeaders: {
-      type: ObjMapScalar,
+      type: new GraphQLList(new GraphQLList(GraphQLString)),
     },
     httpMethod: {
       type: new GraphQLEnumType({
@@ -282,14 +283,14 @@ export const TransportDirective = new GraphQLDirective({
       type: GraphQLString,
     },
     headers: {
-      type: ObjMapScalar,
+      type: new GraphQLList(new GraphQLList(GraphQLString)),
     },
     queryStringOptions: {
       type: ObjMapScalar,
     },
     queryParams: {
-      type: ObjMapScalar,
+      type: new GraphQLList(new GraphQLList(GraphQLString)),
     },
   },
-  locations: [DirectiveLocation.OBJECT],
+  locations: [DirectiveLocation.SCHEMA],
 });

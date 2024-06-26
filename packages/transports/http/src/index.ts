@@ -16,9 +16,16 @@ function printFnForHTTPExecutor(document: DocumentNode) {
 
 export const getSubgraphExecutor: TransportExecutorFactoryFn<'http', HTTPTransportOptions> =
   function getHTTPSubgraphExecutor({ transportEntry, fetch }) {
+    let headers: Record<string, string> | undefined;
+    if (typeof transportEntry.headers === 'string') {
+      headers = JSON.parse(transportEntry.headers);
+    }
+    if (Array.isArray(transportEntry.headers)) {
+      headers = Object.fromEntries(transportEntry.headers);
+    }
     return buildHTTPExecutor({
       endpoint: transportEntry.location,
-      headers: transportEntry.headers,
+      headers,
       fetch,
       print: printFnForHTTPExecutor,
       ...transportEntry.options,

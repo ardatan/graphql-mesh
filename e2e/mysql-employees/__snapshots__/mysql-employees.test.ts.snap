@@ -1,485 +1,734 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @transport(subgraph: "Employees", kind: "mysql", location: "mysql://root:passwd@0.0.0.0:<employees_port>/employees") {
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@transport", "@mysqlSelect", "@mysqlInsert", "@mysqlUpdate", "@mysqlDelete", "@mysqlTableForeign", "@mysqlCount", "@extraSchemaDefinitionDirective"]
+)
+{
   query: Query
   mutation: Mutation
+  
 }
 
-directive @transport(subgraph: String, kind: String, location: String) on FIELD_DEFINITION
 
-directive @mysqlSelect(table: String, columnMap: [[String]]) on FIELD_DEFINITION
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-directive @mysqlInsert(table: String, primaryKeys: [String]) on FIELD_DEFINITION
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-directive @mysqlUpdate(table: String, columnMap: [[String]]) on FIELD_DEFINITION
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @mysqlDelete(table: String) on FIELD_DEFINITION
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
 
-directive @mysqlTableForeign(columnName: String) on FIELD_DEFINITION
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-type Query {
-  current_dept_emp(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: current_dept_emp_WhereInput @source(name: "where", type: "current_dept_emp_WhereInput", subgraph: "Employees"), orderBy: current_dept_emp_OrderByInput @source(name: "orderBy", type: "current_dept_emp_OrderByInput", subgraph: "Employees")): [current_dept_emp] @mysqlSelect(table: "current_dept_emp") @source(name: "current_dept_emp", type: "[current_dept_emp]", subgraph: "Employees")
-  count_current_dept_emp(where: current_dept_emp_WhereInput @source(name: "where", type: "current_dept_emp_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "current_dept_emp") @source(name: "count_current_dept_emp", type: "Int", subgraph: "Employees")
-  departments(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: departments_WhereInput @source(name: "where", type: "departments_WhereInput", subgraph: "Employees"), orderBy: departments_OrderByInput @source(name: "orderBy", type: "departments_OrderByInput", subgraph: "Employees")): [departments] @mysqlSelect(table: "departments") @source(name: "departments", type: "[departments]", subgraph: "Employees")
-  count_departments(where: departments_WhereInput @source(name: "where", type: "departments_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "departments") @source(name: "count_departments", type: "Int", subgraph: "Employees")
-  dept_emp(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: dept_emp_WhereInput @source(name: "where", type: "dept_emp_WhereInput", subgraph: "Employees"), orderBy: dept_emp_OrderByInput @source(name: "orderBy", type: "dept_emp_OrderByInput", subgraph: "Employees")): [dept_emp] @mysqlSelect(table: "dept_emp") @source(name: "dept_emp", type: "[dept_emp]", subgraph: "Employees")
-  count_dept_emp(where: dept_emp_WhereInput @source(name: "where", type: "dept_emp_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "dept_emp") @source(name: "count_dept_emp", type: "Int", subgraph: "Employees")
-  dept_emp_latest_date(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: dept_emp_latest_date_WhereInput @source(name: "where", type: "dept_emp_latest_date_WhereInput", subgraph: "Employees"), orderBy: dept_emp_latest_date_OrderByInput @source(name: "orderBy", type: "dept_emp_latest_date_OrderByInput", subgraph: "Employees")): [dept_emp_latest_date] @mysqlSelect(table: "dept_emp_latest_date") @source(name: "dept_emp_latest_date", type: "[dept_emp_latest_date]", subgraph: "Employees")
-  count_dept_emp_latest_date(where: dept_emp_latest_date_WhereInput @source(name: "where", type: "dept_emp_latest_date_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "dept_emp_latest_date") @source(name: "count_dept_emp_latest_date", type: "Int", subgraph: "Employees")
-  dept_manager(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: dept_manager_WhereInput @source(name: "where", type: "dept_manager_WhereInput", subgraph: "Employees"), orderBy: dept_manager_OrderByInput @source(name: "orderBy", type: "dept_manager_OrderByInput", subgraph: "Employees")): [dept_manager] @mysqlSelect(table: "dept_manager") @source(name: "dept_manager", type: "[dept_manager]", subgraph: "Employees")
-  count_dept_manager(where: dept_manager_WhereInput @source(name: "where", type: "dept_manager_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "dept_manager") @source(name: "count_dept_manager", type: "Int", subgraph: "Employees")
-  employees(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: employees_WhereInput @source(name: "where", type: "employees_WhereInput", subgraph: "Employees"), orderBy: employees_OrderByInput @source(name: "orderBy", type: "employees_OrderByInput", subgraph: "Employees")): [employees] @mysqlSelect(table: "employees") @source(name: "employees", type: "[employees]", subgraph: "Employees")
-  count_employees(where: employees_WhereInput @source(name: "where", type: "employees_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "employees") @source(name: "count_employees", type: "Int", subgraph: "Employees")
-  salaries(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: salaries_WhereInput @source(name: "where", type: "salaries_WhereInput", subgraph: "Employees"), orderBy: salaries_OrderByInput @source(name: "orderBy", type: "salaries_OrderByInput", subgraph: "Employees")): [salaries] @mysqlSelect(table: "salaries") @source(name: "salaries", type: "[salaries]", subgraph: "Employees")
-  count_salaries(where: salaries_WhereInput @source(name: "where", type: "salaries_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "salaries") @source(name: "count_salaries", type: "Int", subgraph: "Employees")
-  titles(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: titles_WhereInput @source(name: "where", type: "titles_WhereInput", subgraph: "Employees"), orderBy: titles_OrderByInput @source(name: "orderBy", type: "titles_OrderByInput", subgraph: "Employees")): [titles] @mysqlSelect(table: "titles") @source(name: "titles", type: "[titles]", subgraph: "Employees")
-  count_titles(where: titles_WhereInput @source(name: "where", type: "titles_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "titles") @source(name: "count_titles", type: "Int", subgraph: "Employees")
-  v_full_departments(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: v_full_departments_WhereInput @source(name: "where", type: "v_full_departments_WhereInput", subgraph: "Employees"), orderBy: v_full_departments_OrderByInput @source(name: "orderBy", type: "v_full_departments_OrderByInput", subgraph: "Employees")): [v_full_departments] @mysqlSelect(table: "v_full_departments") @source(name: "v_full_departments", type: "[v_full_departments]", subgraph: "Employees")
-  count_v_full_departments(where: v_full_departments_WhereInput @source(name: "where", type: "v_full_departments_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "v_full_departments") @source(name: "count_v_full_departments", type: "Int", subgraph: "Employees")
-  v_full_employees(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: v_full_employees_WhereInput @source(name: "where", type: "v_full_employees_WhereInput", subgraph: "Employees"), orderBy: v_full_employees_OrderByInput @source(name: "orderBy", type: "v_full_employees_OrderByInput", subgraph: "Employees")): [v_full_employees] @mysqlSelect(table: "v_full_employees") @source(name: "v_full_employees", type: "[v_full_employees]", subgraph: "Employees")
-  count_v_full_employees(where: v_full_employees_WhereInput @source(name: "where", type: "v_full_employees_WhereInput", subgraph: "Employees")): Int @mysqlCount(table: "v_full_employees") @source(name: "count_v_full_employees", type: "Int", subgraph: "Employees")
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  EMPLOYEES @join__graph(name: "Employees", url: "mysql://root:passwd@0.0.0.0:<employees_port>/employees") 
 }
 
-"""VIEW"""
-type current_dept_emp @source(name: "current_dept_emp", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
-}
+directive @transport(subgraph: String, kind: String, location: String)  repeatable on SCHEMA
+
+directive @mysqlSelect(table: String, columnMap: [[String]])  repeatable on FIELD_DEFINITION
+
+directive @mysqlInsert(table: String, primaryKeys: [String])  repeatable on FIELD_DEFINITION
+
+directive @mysqlUpdate(table: String, columnMap: [[String]])  repeatable on FIELD_DEFINITION
+
+directive @mysqlDelete(table: String)  repeatable on FIELD_DEFINITION
+
+directive @mysqlTableForeign(columnName: String)  repeatable on FIELD_DEFINITION
+
+directive @mysqlCount(table: String)  repeatable on FIELD_DEFINITION
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 """
 A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar Date @source(name: "Date", subgraph: "Employees") @source(name: "Date", subgraph: "Employees")
+scalar Date @join__type(graph: EMPLOYEES) 
 
-"""VIEW"""
-input current_dept_emp_WhereInput @source(name: "current_dept_emp_WhereInput", subgraph: "Employees") {
-  emp_no: String @source(name: "emp_no", type: "String", subgraph: "Employees")
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  from_date: String @source(name: "from_date", type: "String", subgraph: "Employees")
-  to_date: String @source(name: "to_date", type: "String", subgraph: "Employees")
+scalar _DirectiveExtensions @join__type(graph: EMPLOYEES) 
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "Employees", kind: "mysql", location: "mysql://root:passwd@0.0.0.0:<employees_port>/employees"}]}
+) @join__type(graph: EMPLOYEES)  {
+  current_dept_emp(
+    limit: Int
+    offset: Int
+    where: current_dept_emp_WhereInput
+    orderBy: current_dept_emp_OrderByInput
+  ): [current_dept_emp] @mysqlSelect(table: "current_dept_emp") 
+  count_current_dept_emp(where: current_dept_emp_WhereInput) : Int @mysqlCount(table: "current_dept_emp") 
+  departments(
+    limit: Int
+    offset: Int
+    where: departments_WhereInput
+    orderBy: departments_OrderByInput
+  ): [departments] @mysqlSelect(table: "departments") 
+  count_departments(where: departments_WhereInput) : Int @mysqlCount(table: "departments") 
+  dept_emp(
+    limit: Int
+    offset: Int
+    where: dept_emp_WhereInput
+    orderBy: dept_emp_OrderByInput
+  ): [dept_emp] @mysqlSelect(table: "dept_emp") 
+  count_dept_emp(where: dept_emp_WhereInput) : Int @mysqlCount(table: "dept_emp") 
+  dept_emp_latest_date(
+    limit: Int
+    offset: Int
+    where: dept_emp_latest_date_WhereInput
+    orderBy: dept_emp_latest_date_OrderByInput
+  ): [dept_emp_latest_date] @mysqlSelect(table: "dept_emp_latest_date") 
+  count_dept_emp_latest_date(where: dept_emp_latest_date_WhereInput) : Int @mysqlCount(table: "dept_emp_latest_date") 
+  dept_manager(
+    limit: Int
+    offset: Int
+    where: dept_manager_WhereInput
+    orderBy: dept_manager_OrderByInput
+  ): [dept_manager] @mysqlSelect(table: "dept_manager") 
+  count_dept_manager(where: dept_manager_WhereInput) : Int @mysqlCount(table: "dept_manager") 
+  employees(
+    limit: Int
+    offset: Int
+    where: employees_WhereInput
+    orderBy: employees_OrderByInput
+  ): [employees] @mysqlSelect(table: "employees") 
+  count_employees(where: employees_WhereInput) : Int @mysqlCount(table: "employees") 
+  salaries(
+    limit: Int
+    offset: Int
+    where: salaries_WhereInput
+    orderBy: salaries_OrderByInput
+  ): [salaries] @mysqlSelect(table: "salaries") 
+  count_salaries(where: salaries_WhereInput) : Int @mysqlCount(table: "salaries") 
+  titles(
+    limit: Int
+    offset: Int
+    where: titles_WhereInput
+    orderBy: titles_OrderByInput
+  ): [titles] @mysqlSelect(table: "titles") 
+  count_titles(where: titles_WhereInput) : Int @mysqlCount(table: "titles") 
+  v_full_departments(
+    limit: Int
+    offset: Int
+    where: v_full_departments_WhereInput
+    orderBy: v_full_departments_OrderByInput
+  ): [v_full_departments] @mysqlSelect(table: "v_full_departments") 
+  count_v_full_departments(where: v_full_departments_WhereInput) : Int @mysqlCount(table: "v_full_departments") 
+  v_full_employees(
+    limit: Int
+    offset: Int
+    where: v_full_employees_WhereInput
+    orderBy: v_full_employees_OrderByInput
+  ): [v_full_employees] @mysqlSelect(table: "v_full_employees") 
+  count_v_full_employees(where: v_full_employees_WhereInput) : Int @mysqlCount(table: "v_full_employees") 
 }
 
-"""VIEW"""
-input current_dept_emp_OrderByInput @source(name: "current_dept_emp_OrderByInput", subgraph: "Employees") {
-  emp_no: OrderBy @source(name: "emp_no", type: "OrderBy", subgraph: "Employees")
-  dept_no: OrderBy @source(name: "dept_no", type: "OrderBy", subgraph: "Employees")
-  from_date: OrderBy @source(name: "from_date", type: "OrderBy", subgraph: "Employees")
-  to_date: OrderBy @source(name: "to_date", type: "OrderBy", subgraph: "Employees")
+"""
+VIEW
+"""
+type current_dept_emp @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  dept_no: String!
+  from_date: Date
+  to_date: Date
 }
 
-enum OrderBy @source(name: "OrderBy", subgraph: "Employees") {
-  asc @source(name: "asc", subgraph: "Employees")
-  desc @source(name: "desc", subgraph: "Employees")
+type departments @join__type(graph: EMPLOYEES)  {
+  dept_no: String!
+  dept_name: String!
+  dept_emp(
+    limit: Int
+    offset: Int
+    where: dept_emp_WhereInput
+    orderBy: dept_emp_OrderByInput
+  ): [dept_emp] @mysqlSelect(table: "dept_emp", columnMap: [["dept_no", "dept_no"]]) 
+  dept_manager(
+    limit: Int
+    offset: Int
+    where: dept_manager_WhereInput
+    orderBy: dept_manager_OrderByInput
+  ): [dept_manager] @mysqlSelect(table: "dept_manager", columnMap: [["dept_no", "dept_no"]]) 
 }
 
-type departments @source(name: "departments", subgraph: "Employees") {
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  dept_name: String! @source(name: "dept_name", type: "String!", subgraph: "Employees")
-  dept_emp(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: dept_emp_WhereInput @source(name: "where", type: "dept_emp_WhereInput", subgraph: "Employees"), orderBy: dept_emp_OrderByInput @source(name: "orderBy", type: "dept_emp_OrderByInput", subgraph: "Employees")): [dept_emp] @mysqlSelect(table: "dept_emp", columnMap: [["dept_no", "dept_no"]]) @source(name: "dept_emp", type: "[dept_emp]", subgraph: "Employees")
-  dept_manager(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: dept_manager_WhereInput @source(name: "where", type: "dept_manager_WhereInput", subgraph: "Employees"), orderBy: dept_manager_OrderByInput @source(name: "orderBy", type: "dept_manager_OrderByInput", subgraph: "Employees")): [dept_manager] @mysqlSelect(table: "dept_manager", columnMap: [["dept_no", "dept_no"]]) @source(name: "dept_manager", type: "[dept_manager]", subgraph: "Employees")
+type dept_emp @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  dept_no: String!
+  from_date: Date!
+  to_date: Date!
+  departments(
+    where: departments_WhereInput
+    orderBy: departments_OrderByInput
+    limit: Int
+    offset: Int
+  ): [departments] @mysqlSelect(table: "departments", columnMap: [["dept_no", "dept_no"]])  @mysqlTableForeign(columnName: "dept_no") 
+  employees(
+    where: employees_WhereInput
+    orderBy: employees_OrderByInput
+    limit: Int
+    offset: Int
+  ): [employees] @mysqlSelect(table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(columnName: "emp_no") 
 }
 
-type dept_emp @source(name: "dept_emp", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  from_date: Date! @source(name: "from_date", type: "Date!", subgraph: "Employees")
-  to_date: Date! @source(name: "to_date", type: "Date!", subgraph: "Employees")
-  departments(where: departments_WhereInput @source(name: "where", type: "departments_WhereInput", subgraph: "Employees"), orderBy: departments_OrderByInput @source(name: "orderBy", type: "departments_OrderByInput", subgraph: "Employees"), limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees")): [departments] @mysqlSelect(table: "departments", columnMap: [["dept_no", "dept_no"]]) @mysqlTableForeign(columnName: "dept_no") @source(name: "departments", type: "[departments]", subgraph: "Employees")
-  employees(where: employees_WhereInput @source(name: "where", type: "employees_WhereInput", subgraph: "Employees"), orderBy: employees_OrderByInput @source(name: "orderBy", type: "employees_OrderByInput", subgraph: "Employees"), limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees")): [employees] @mysqlSelect(table: "employees", columnMap: [["emp_no", "emp_no"]]) @mysqlTableForeign(columnName: "emp_no") @source(name: "employees", type: "[employees]", subgraph: "Employees")
+type employees @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  birth_date: Date!
+  first_name: String!
+  last_name: String!
+  gender: employees_gender!
+  hire_date: Date!
+  dept_emp(
+    limit: Int
+    offset: Int
+    where: dept_emp_WhereInput
+    orderBy: dept_emp_OrderByInput
+  ): [dept_emp] @mysqlSelect(table: "dept_emp", columnMap: [["emp_no", "emp_no"]]) 
+  dept_manager(
+    limit: Int
+    offset: Int
+    where: dept_manager_WhereInput
+    orderBy: dept_manager_OrderByInput
+  ): [dept_manager] @mysqlSelect(table: "dept_manager", columnMap: [["emp_no", "emp_no"]]) 
+  salaries(
+    limit: Int
+    offset: Int
+    where: salaries_WhereInput
+    orderBy: salaries_OrderByInput
+  ): [salaries] @mysqlSelect(table: "salaries", columnMap: [["emp_no", "emp_no"]]) 
+  titles(
+    limit: Int
+    offset: Int
+    where: titles_WhereInput
+    orderBy: titles_OrderByInput
+  ): [titles] @mysqlSelect(table: "titles", columnMap: [["emp_no", "emp_no"]]) 
 }
 
-input departments_WhereInput @source(name: "departments_WhereInput", subgraph: "Employees") {
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  dept_name: String @source(name: "dept_name", type: "String", subgraph: "Employees")
+type dept_manager @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  dept_no: String!
+  from_date: Date!
+  to_date: Date!
+  departments(
+    where: departments_WhereInput
+    orderBy: departments_OrderByInput
+    limit: Int
+    offset: Int
+  ): [departments] @mysqlSelect(table: "departments", columnMap: [["dept_no", "dept_no"]])  @mysqlTableForeign(columnName: "dept_no") 
+  employees(
+    where: employees_WhereInput
+    orderBy: employees_OrderByInput
+    limit: Int
+    offset: Int
+  ): [employees] @mysqlSelect(table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(columnName: "emp_no") 
 }
 
-input departments_OrderByInput @source(name: "departments_OrderByInput", subgraph: "Employees") {
-  dept_no: OrderBy @source(name: "dept_no", type: "OrderBy", subgraph: "Employees")
-  dept_name: OrderBy @source(name: "dept_name", type: "OrderBy", subgraph: "Employees")
+type salaries @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  salary: Int!
+  from_date: Date!
+  to_date: Date!
+  employees(
+    where: employees_WhereInput
+    orderBy: employees_OrderByInput
+    limit: Int
+    offset: Int
+  ): [employees] @mysqlSelect(table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(columnName: "emp_no") 
 }
 
-type employees @source(name: "employees", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  birth_date: Date! @source(name: "birth_date", type: "Date!", subgraph: "Employees")
-  first_name: String! @source(name: "first_name", type: "String!", subgraph: "Employees")
-  last_name: String! @source(name: "last_name", type: "String!", subgraph: "Employees")
-  gender: employees_gender! @source(name: "gender", type: "employees_gender!", subgraph: "Employees")
-  hire_date: Date! @source(name: "hire_date", type: "Date!", subgraph: "Employees")
-  dept_emp(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: dept_emp_WhereInput @source(name: "where", type: "dept_emp_WhereInput", subgraph: "Employees"), orderBy: dept_emp_OrderByInput @source(name: "orderBy", type: "dept_emp_OrderByInput", subgraph: "Employees")): [dept_emp] @mysqlSelect(table: "dept_emp", columnMap: [["emp_no", "emp_no"]]) @source(name: "dept_emp", type: "[dept_emp]", subgraph: "Employees")
-  dept_manager(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: dept_manager_WhereInput @source(name: "where", type: "dept_manager_WhereInput", subgraph: "Employees"), orderBy: dept_manager_OrderByInput @source(name: "orderBy", type: "dept_manager_OrderByInput", subgraph: "Employees")): [dept_manager] @mysqlSelect(table: "dept_manager", columnMap: [["emp_no", "emp_no"]]) @source(name: "dept_manager", type: "[dept_manager]", subgraph: "Employees")
-  salaries(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: salaries_WhereInput @source(name: "where", type: "salaries_WhereInput", subgraph: "Employees"), orderBy: salaries_OrderByInput @source(name: "orderBy", type: "salaries_OrderByInput", subgraph: "Employees")): [salaries] @mysqlSelect(table: "salaries", columnMap: [["emp_no", "emp_no"]]) @source(name: "salaries", type: "[salaries]", subgraph: "Employees")
-  titles(limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees"), where: titles_WhereInput @source(name: "where", type: "titles_WhereInput", subgraph: "Employees"), orderBy: titles_OrderByInput @source(name: "orderBy", type: "titles_OrderByInput", subgraph: "Employees")): [titles] @mysqlSelect(table: "titles", columnMap: [["emp_no", "emp_no"]]) @source(name: "titles", type: "[titles]", subgraph: "Employees")
+type titles @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  title: String!
+  from_date: Date!
+  to_date: Date
+  employees(
+    where: employees_WhereInput
+    orderBy: employees_OrderByInput
+    limit: Int
+    offset: Int
+  ): [employees] @mysqlSelect(table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(columnName: "emp_no") 
 }
 
-enum employees_gender @source(name: "employees_gender", subgraph: "Employees") {
-  M @source(name: "M", subgraph: "Employees")
-  F @source(name: "F", subgraph: "Employees")
+"""
+VIEW
+"""
+type dept_emp_latest_date @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  from_date: Date
+  to_date: Date
 }
 
-input dept_emp_WhereInput @source(name: "dept_emp_WhereInput", subgraph: "Employees") {
-  emp_no: String @source(name: "emp_no", type: "String", subgraph: "Employees")
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  from_date: String @source(name: "from_date", type: "String", subgraph: "Employees")
-  to_date: String @source(name: "to_date", type: "String", subgraph: "Employees")
+"""
+VIEW
+"""
+type v_full_departments @join__type(graph: EMPLOYEES)  {
+  dept_no: String!
+  dept_name: String!
+  manager: String
 }
 
-input dept_emp_OrderByInput @source(name: "dept_emp_OrderByInput", subgraph: "Employees") {
-  emp_no: OrderBy @source(name: "emp_no", type: "OrderBy", subgraph: "Employees")
-  dept_no: OrderBy @source(name: "dept_no", type: "OrderBy", subgraph: "Employees")
-  from_date: OrderBy @source(name: "from_date", type: "OrderBy", subgraph: "Employees")
-  to_date: OrderBy @source(name: "to_date", type: "OrderBy", subgraph: "Employees")
+"""
+VIEW
+"""
+type v_full_employees @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  first_name: String!
+  last_name: String!
+  birth_date: Date!
+  gender: v_full_employees_gender!
+  hire_date: Date!
+  department: String
 }
 
-type dept_manager @source(name: "dept_manager", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  from_date: Date! @source(name: "from_date", type: "Date!", subgraph: "Employees")
-  to_date: Date! @source(name: "to_date", type: "Date!", subgraph: "Employees")
-  departments(where: departments_WhereInput @source(name: "where", type: "departments_WhereInput", subgraph: "Employees"), orderBy: departments_OrderByInput @source(name: "orderBy", type: "departments_OrderByInput", subgraph: "Employees"), limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees")): [departments] @mysqlSelect(table: "departments", columnMap: [["dept_no", "dept_no"]]) @mysqlTableForeign(columnName: "dept_no") @source(name: "departments", type: "[departments]", subgraph: "Employees")
-  employees(where: employees_WhereInput @source(name: "where", type: "employees_WhereInput", subgraph: "Employees"), orderBy: employees_OrderByInput @source(name: "orderBy", type: "employees_OrderByInput", subgraph: "Employees"), limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees")): [employees] @mysqlSelect(table: "employees", columnMap: [["emp_no", "emp_no"]]) @mysqlTableForeign(columnName: "emp_no") @source(name: "employees", type: "[employees]", subgraph: "Employees")
+type Mutation @join__type(graph: EMPLOYEES)  {
+  insert_current_dept_emp(current_dept_emp: current_dept_emp_InsertInput!) : current_dept_emp @mysqlInsert(table: "current_dept_emp", primaryKeys: []) 
+  update_current_dept_emp(
+    current_dept_emp: current_dept_emp_UpdateInput!
+    where: current_dept_emp_WhereInput
+  ): current_dept_emp @mysqlUpdate(table: "current_dept_emp") 
+  delete_current_dept_emp(where: current_dept_emp_WhereInput) : Boolean @mysqlDelete(table: "current_dept_emp") 
+  insert_departments(departments: departments_InsertInput!) : departments @mysqlInsert(table: "departments", primaryKeys: ["dept_no"]) 
+  update_departments(departments: departments_UpdateInput!, where: departments_WhereInput) : departments @mysqlUpdate(table: "departments") 
+  delete_departments(where: departments_WhereInput) : Boolean @mysqlDelete(table: "departments") 
+  insert_dept_emp(dept_emp: dept_emp_InsertInput!) : dept_emp @mysqlInsert(table: "dept_emp", primaryKeys: ["emp_no", "dept_no"]) 
+  update_dept_emp(dept_emp: dept_emp_UpdateInput!, where: dept_emp_WhereInput) : dept_emp @mysqlUpdate(table: "dept_emp") 
+  delete_dept_emp(where: dept_emp_WhereInput) : Boolean @mysqlDelete(table: "dept_emp") 
+  insert_dept_emp_latest_date(dept_emp_latest_date: dept_emp_latest_date_InsertInput!) : dept_emp_latest_date @mysqlInsert(table: "dept_emp_latest_date", primaryKeys: []) 
+  update_dept_emp_latest_date(
+    dept_emp_latest_date: dept_emp_latest_date_UpdateInput!
+    where: dept_emp_latest_date_WhereInput
+  ): dept_emp_latest_date @mysqlUpdate(table: "dept_emp_latest_date") 
+  delete_dept_emp_latest_date(where: dept_emp_latest_date_WhereInput) : Boolean @mysqlDelete(table: "dept_emp_latest_date") 
+  insert_dept_manager(dept_manager: dept_manager_InsertInput!) : dept_manager @mysqlInsert(table: "dept_manager", primaryKeys: ["emp_no", "dept_no"]) 
+  update_dept_manager(dept_manager: dept_manager_UpdateInput!, where: dept_manager_WhereInput) : dept_manager @mysqlUpdate(table: "dept_manager") 
+  delete_dept_manager(where: dept_manager_WhereInput) : Boolean @mysqlDelete(table: "dept_manager") 
+  insert_employees(employees: employees_InsertInput!) : employees @mysqlInsert(table: "employees", primaryKeys: ["emp_no"]) 
+  update_employees(employees: employees_UpdateInput!, where: employees_WhereInput) : employees @mysqlUpdate(table: "employees") 
+  delete_employees(where: employees_WhereInput) : Boolean @mysqlDelete(table: "employees") 
+  insert_salaries(salaries: salaries_InsertInput!) : salaries @mysqlInsert(table: "salaries", primaryKeys: ["emp_no", "from_date"]) 
+  update_salaries(salaries: salaries_UpdateInput!, where: salaries_WhereInput) : salaries @mysqlUpdate(table: "salaries") 
+  delete_salaries(where: salaries_WhereInput) : Boolean @mysqlDelete(table: "salaries") 
+  insert_titles(titles: titles_InsertInput!) : titles @mysqlInsert(table: "titles", primaryKeys: ["emp_no", "title", "from_date"]) 
+  update_titles(titles: titles_UpdateInput!, where: titles_WhereInput) : titles @mysqlUpdate(table: "titles") 
+  delete_titles(where: titles_WhereInput) : Boolean @mysqlDelete(table: "titles") 
+  insert_v_full_departments(v_full_departments: v_full_departments_InsertInput!) : v_full_departments @mysqlInsert(table: "v_full_departments", primaryKeys: []) 
+  update_v_full_departments(
+    v_full_departments: v_full_departments_UpdateInput!
+    where: v_full_departments_WhereInput
+  ): v_full_departments @mysqlUpdate(table: "v_full_departments") 
+  delete_v_full_departments(where: v_full_departments_WhereInput) : Boolean @mysqlDelete(table: "v_full_departments") 
+  insert_v_full_employees(v_full_employees: v_full_employees_InsertInput!) : v_full_employees @mysqlInsert(table: "v_full_employees", primaryKeys: []) 
+  update_v_full_employees(
+    v_full_employees: v_full_employees_UpdateInput!
+    where: v_full_employees_WhereInput
+  ): v_full_employees @mysqlUpdate(table: "v_full_employees") 
+  delete_v_full_employees(where: v_full_employees_WhereInput) : Boolean @mysqlDelete(table: "v_full_employees") 
 }
 
-input employees_WhereInput @source(name: "employees_WhereInput", subgraph: "Employees") {
-  emp_no: String @source(name: "emp_no", type: "String", subgraph: "Employees")
-  birth_date: String @source(name: "birth_date", type: "String", subgraph: "Employees")
-  first_name: String @source(name: "first_name", type: "String", subgraph: "Employees")
-  last_name: String @source(name: "last_name", type: "String", subgraph: "Employees")
-  gender: String @source(name: "gender", type: "String", subgraph: "Employees")
-  hire_date: String @source(name: "hire_date", type: "String", subgraph: "Employees")
+enum OrderBy @join__type(graph: EMPLOYEES)  {
+  asc @join__enumValue(graph: EMPLOYEES) 
+  desc @join__enumValue(graph: EMPLOYEES) 
 }
 
-input employees_OrderByInput @source(name: "employees_OrderByInput", subgraph: "Employees") {
-  emp_no: OrderBy @source(name: "emp_no", type: "OrderBy", subgraph: "Employees")
-  birth_date: OrderBy @source(name: "birth_date", type: "OrderBy", subgraph: "Employees")
-  first_name: OrderBy @source(name: "first_name", type: "OrderBy", subgraph: "Employees")
-  last_name: OrderBy @source(name: "last_name", type: "OrderBy", subgraph: "Employees")
-  gender: OrderBy @source(name: "gender", type: "OrderBy", subgraph: "Employees")
-  hire_date: OrderBy @source(name: "hire_date", type: "OrderBy", subgraph: "Employees")
+enum employees_gender @join__type(graph: EMPLOYEES)  {
+  M @join__enumValue(graph: EMPLOYEES) 
+  F @join__enumValue(graph: EMPLOYEES) 
 }
 
-input dept_manager_WhereInput @source(name: "dept_manager_WhereInput", subgraph: "Employees") {
-  emp_no: String @source(name: "emp_no", type: "String", subgraph: "Employees")
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  from_date: String @source(name: "from_date", type: "String", subgraph: "Employees")
-  to_date: String @source(name: "to_date", type: "String", subgraph: "Employees")
+enum v_full_employees_gender @join__type(graph: EMPLOYEES)  {
+  M @join__enumValue(graph: EMPLOYEES) 
+  F @join__enumValue(graph: EMPLOYEES) 
 }
 
-input dept_manager_OrderByInput @source(name: "dept_manager_OrderByInput", subgraph: "Employees") {
-  emp_no: OrderBy @source(name: "emp_no", type: "OrderBy", subgraph: "Employees")
-  dept_no: OrderBy @source(name: "dept_no", type: "OrderBy", subgraph: "Employees")
-  from_date: OrderBy @source(name: "from_date", type: "OrderBy", subgraph: "Employees")
-  to_date: OrderBy @source(name: "to_date", type: "OrderBy", subgraph: "Employees")
+"""
+VIEW
+"""
+input current_dept_emp_WhereInput @join__type(graph: EMPLOYEES)  {
+  emp_no: String
+  dept_no: String
+  from_date: String
+  to_date: String
 }
 
-type salaries @source(name: "salaries", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  salary: Int! @source(name: "salary", type: "Int!", subgraph: "Employees")
-  from_date: Date! @source(name: "from_date", type: "Date!", subgraph: "Employees")
-  to_date: Date! @source(name: "to_date", type: "Date!", subgraph: "Employees")
-  employees(where: employees_WhereInput @source(name: "where", type: "employees_WhereInput", subgraph: "Employees"), orderBy: employees_OrderByInput @source(name: "orderBy", type: "employees_OrderByInput", subgraph: "Employees"), limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees")): [employees] @mysqlSelect(table: "employees", columnMap: [["emp_no", "emp_no"]]) @mysqlTableForeign(columnName: "emp_no") @source(name: "employees", type: "[employees]", subgraph: "Employees")
+"""
+VIEW
+"""
+input current_dept_emp_OrderByInput @join__type(graph: EMPLOYEES)  {
+  emp_no: OrderBy
+  dept_no: OrderBy
+  from_date: OrderBy
+  to_date: OrderBy
 }
 
-input salaries_WhereInput @source(name: "salaries_WhereInput", subgraph: "Employees") {
-  emp_no: String @source(name: "emp_no", type: "String", subgraph: "Employees")
-  salary: String @source(name: "salary", type: "String", subgraph: "Employees")
-  from_date: String @source(name: "from_date", type: "String", subgraph: "Employees")
-  to_date: String @source(name: "to_date", type: "String", subgraph: "Employees")
+input departments_WhereInput @join__type(graph: EMPLOYEES)  {
+  dept_no: String
+  dept_name: String
 }
 
-input salaries_OrderByInput @source(name: "salaries_OrderByInput", subgraph: "Employees") {
-  emp_no: OrderBy @source(name: "emp_no", type: "OrderBy", subgraph: "Employees")
-  salary: OrderBy @source(name: "salary", type: "OrderBy", subgraph: "Employees")
-  from_date: OrderBy @source(name: "from_date", type: "OrderBy", subgraph: "Employees")
-  to_date: OrderBy @source(name: "to_date", type: "OrderBy", subgraph: "Employees")
+input departments_OrderByInput @join__type(graph: EMPLOYEES)  {
+  dept_no: OrderBy
+  dept_name: OrderBy
 }
 
-type titles @source(name: "titles", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  title: String! @source(name: "title", type: "String!", subgraph: "Employees")
-  from_date: Date! @source(name: "from_date", type: "Date!", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
-  employees(where: employees_WhereInput @source(name: "where", type: "employees_WhereInput", subgraph: "Employees"), orderBy: employees_OrderByInput @source(name: "orderBy", type: "employees_OrderByInput", subgraph: "Employees"), limit: Int @source(name: "limit", type: "Int", subgraph: "Employees"), offset: Int @source(name: "offset", type: "Int", subgraph: "Employees")): [employees] @mysqlSelect(table: "employees", columnMap: [["emp_no", "emp_no"]]) @mysqlTableForeign(columnName: "emp_no") @source(name: "employees", type: "[employees]", subgraph: "Employees")
+input dept_emp_WhereInput @join__type(graph: EMPLOYEES)  {
+  emp_no: String
+  dept_no: String
+  from_date: String
+  to_date: String
 }
 
-input titles_WhereInput @source(name: "titles_WhereInput", subgraph: "Employees") {
-  emp_no: String @source(name: "emp_no", type: "String", subgraph: "Employees")
-  title: String @source(name: "title", type: "String", subgraph: "Employees")
-  from_date: String @source(name: "from_date", type: "String", subgraph: "Employees")
-  to_date: String @source(name: "to_date", type: "String", subgraph: "Employees")
+input dept_emp_OrderByInput @join__type(graph: EMPLOYEES)  {
+  emp_no: OrderBy
+  dept_no: OrderBy
+  from_date: OrderBy
+  to_date: OrderBy
 }
 
-input titles_OrderByInput @source(name: "titles_OrderByInput", subgraph: "Employees") {
-  emp_no: OrderBy @source(name: "emp_no", type: "OrderBy", subgraph: "Employees")
-  title: OrderBy @source(name: "title", type: "OrderBy", subgraph: "Employees")
-  from_date: OrderBy @source(name: "from_date", type: "OrderBy", subgraph: "Employees")
-  to_date: OrderBy @source(name: "to_date", type: "OrderBy", subgraph: "Employees")
+input employees_WhereInput @join__type(graph: EMPLOYEES)  {
+  emp_no: String
+  birth_date: String
+  first_name: String
+  last_name: String
+  gender: String
+  hire_date: String
 }
 
-"""VIEW"""
-type dept_emp_latest_date @source(name: "dept_emp_latest_date", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+input employees_OrderByInput @join__type(graph: EMPLOYEES)  {
+  emp_no: OrderBy
+  birth_date: OrderBy
+  first_name: OrderBy
+  last_name: OrderBy
+  gender: OrderBy
+  hire_date: OrderBy
 }
 
-"""VIEW"""
-input dept_emp_latest_date_WhereInput @source(name: "dept_emp_latest_date_WhereInput", subgraph: "Employees") {
-  emp_no: String @source(name: "emp_no", type: "String", subgraph: "Employees")
-  from_date: String @source(name: "from_date", type: "String", subgraph: "Employees")
-  to_date: String @source(name: "to_date", type: "String", subgraph: "Employees")
+input dept_manager_WhereInput @join__type(graph: EMPLOYEES)  {
+  emp_no: String
+  dept_no: String
+  from_date: String
+  to_date: String
 }
 
-"""VIEW"""
-input dept_emp_latest_date_OrderByInput @source(name: "dept_emp_latest_date_OrderByInput", subgraph: "Employees") {
-  emp_no: OrderBy @source(name: "emp_no", type: "OrderBy", subgraph: "Employees")
-  from_date: OrderBy @source(name: "from_date", type: "OrderBy", subgraph: "Employees")
-  to_date: OrderBy @source(name: "to_date", type: "OrderBy", subgraph: "Employees")
+input dept_manager_OrderByInput @join__type(graph: EMPLOYEES)  {
+  emp_no: OrderBy
+  dept_no: OrderBy
+  from_date: OrderBy
+  to_date: OrderBy
 }
 
-"""VIEW"""
-type v_full_departments @source(name: "v_full_departments", subgraph: "Employees") {
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  dept_name: String! @source(name: "dept_name", type: "String!", subgraph: "Employees")
-  manager: String @source(name: "manager", type: "String", subgraph: "Employees")
+input salaries_WhereInput @join__type(graph: EMPLOYEES)  {
+  emp_no: String
+  salary: String
+  from_date: String
+  to_date: String
 }
 
-"""VIEW"""
-input v_full_departments_WhereInput @source(name: "v_full_departments_WhereInput", subgraph: "Employees") {
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  dept_name: String @source(name: "dept_name", type: "String", subgraph: "Employees")
-  manager: String @source(name: "manager", type: "String", subgraph: "Employees")
+input salaries_OrderByInput @join__type(graph: EMPLOYEES)  {
+  emp_no: OrderBy
+  salary: OrderBy
+  from_date: OrderBy
+  to_date: OrderBy
 }
 
-"""VIEW"""
-input v_full_departments_OrderByInput @source(name: "v_full_departments_OrderByInput", subgraph: "Employees") {
-  dept_no: OrderBy @source(name: "dept_no", type: "OrderBy", subgraph: "Employees")
-  dept_name: OrderBy @source(name: "dept_name", type: "OrderBy", subgraph: "Employees")
-  manager: OrderBy @source(name: "manager", type: "OrderBy", subgraph: "Employees")
+input titles_WhereInput @join__type(graph: EMPLOYEES)  {
+  emp_no: String
+  title: String
+  from_date: String
+  to_date: String
 }
 
-"""VIEW"""
-type v_full_employees @source(name: "v_full_employees", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  first_name: String! @source(name: "first_name", type: "String!", subgraph: "Employees")
-  last_name: String! @source(name: "last_name", type: "String!", subgraph: "Employees")
-  birth_date: Date! @source(name: "birth_date", type: "Date!", subgraph: "Employees")
-  gender: v_full_employees_gender! @source(name: "gender", type: "v_full_employees_gender!", subgraph: "Employees")
-  hire_date: Date! @source(name: "hire_date", type: "Date!", subgraph: "Employees")
-  department: String @source(name: "department", type: "String", subgraph: "Employees")
+input titles_OrderByInput @join__type(graph: EMPLOYEES)  {
+  emp_no: OrderBy
+  title: OrderBy
+  from_date: OrderBy
+  to_date: OrderBy
 }
 
-enum v_full_employees_gender @source(name: "v_full_employees_gender", subgraph: "Employees") {
-  M @source(name: "M", subgraph: "Employees")
-  F @source(name: "F", subgraph: "Employees")
+"""
+VIEW
+"""
+input dept_emp_latest_date_WhereInput @join__type(graph: EMPLOYEES)  {
+  emp_no: String
+  from_date: String
+  to_date: String
 }
 
-"""VIEW"""
-input v_full_employees_WhereInput @source(name: "v_full_employees_WhereInput", subgraph: "Employees") {
-  emp_no: String @source(name: "emp_no", type: "String", subgraph: "Employees")
-  first_name: String @source(name: "first_name", type: "String", subgraph: "Employees")
-  last_name: String @source(name: "last_name", type: "String", subgraph: "Employees")
-  birth_date: String @source(name: "birth_date", type: "String", subgraph: "Employees")
-  gender: String @source(name: "gender", type: "String", subgraph: "Employees")
-  hire_date: String @source(name: "hire_date", type: "String", subgraph: "Employees")
-  department: String @source(name: "department", type: "String", subgraph: "Employees")
+"""
+VIEW
+"""
+input dept_emp_latest_date_OrderByInput @join__type(graph: EMPLOYEES)  {
+  emp_no: OrderBy
+  from_date: OrderBy
+  to_date: OrderBy
 }
 
-"""VIEW"""
-input v_full_employees_OrderByInput @source(name: "v_full_employees_OrderByInput", subgraph: "Employees") {
-  emp_no: OrderBy @source(name: "emp_no", type: "OrderBy", subgraph: "Employees")
-  first_name: OrderBy @source(name: "first_name", type: "OrderBy", subgraph: "Employees")
-  last_name: OrderBy @source(name: "last_name", type: "OrderBy", subgraph: "Employees")
-  birth_date: OrderBy @source(name: "birth_date", type: "OrderBy", subgraph: "Employees")
-  gender: OrderBy @source(name: "gender", type: "OrderBy", subgraph: "Employees")
-  hire_date: OrderBy @source(name: "hire_date", type: "OrderBy", subgraph: "Employees")
-  department: OrderBy @source(name: "department", type: "OrderBy", subgraph: "Employees")
+"""
+VIEW
+"""
+input v_full_departments_WhereInput @join__type(graph: EMPLOYEES)  {
+  dept_no: String
+  dept_name: String
+  manager: String
 }
 
-type Mutation {
-  insert_current_dept_emp(current_dept_emp: current_dept_emp_InsertInput! @source(name: "current_dept_emp", type: "current_dept_emp_InsertInput", subgraph: "Employees")): current_dept_emp @mysqlInsert(table: "current_dept_emp", primaryKeys: []) @source(name: "insert_current_dept_emp", type: "current_dept_emp", subgraph: "Employees")
-  update_current_dept_emp(current_dept_emp: current_dept_emp_UpdateInput! @source(name: "current_dept_emp", type: "current_dept_emp_UpdateInput", subgraph: "Employees"), where: current_dept_emp_WhereInput @source(name: "where", type: "current_dept_emp_WhereInput", subgraph: "Employees")): current_dept_emp @mysqlUpdate(table: "current_dept_emp") @source(name: "update_current_dept_emp", type: "current_dept_emp", subgraph: "Employees")
-  delete_current_dept_emp(where: current_dept_emp_WhereInput @source(name: "where", type: "current_dept_emp_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "current_dept_emp") @source(name: "delete_current_dept_emp", type: "Boolean", subgraph: "Employees")
-  insert_departments(departments: departments_InsertInput! @source(name: "departments", type: "departments_InsertInput", subgraph: "Employees")): departments @mysqlInsert(table: "departments", primaryKeys: ["dept_no"]) @source(name: "insert_departments", type: "departments", subgraph: "Employees")
-  update_departments(departments: departments_UpdateInput! @source(name: "departments", type: "departments_UpdateInput", subgraph: "Employees"), where: departments_WhereInput @source(name: "where", type: "departments_WhereInput", subgraph: "Employees")): departments @mysqlUpdate(table: "departments") @source(name: "update_departments", type: "departments", subgraph: "Employees")
-  delete_departments(where: departments_WhereInput @source(name: "where", type: "departments_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "departments") @source(name: "delete_departments", type: "Boolean", subgraph: "Employees")
-  insert_dept_emp(dept_emp: dept_emp_InsertInput! @source(name: "dept_emp", type: "dept_emp_InsertInput", subgraph: "Employees")): dept_emp @mysqlInsert(table: "dept_emp", primaryKeys: ["emp_no", "dept_no"]) @source(name: "insert_dept_emp", type: "dept_emp", subgraph: "Employees")
-  update_dept_emp(dept_emp: dept_emp_UpdateInput! @source(name: "dept_emp", type: "dept_emp_UpdateInput", subgraph: "Employees"), where: dept_emp_WhereInput @source(name: "where", type: "dept_emp_WhereInput", subgraph: "Employees")): dept_emp @mysqlUpdate(table: "dept_emp") @source(name: "update_dept_emp", type: "dept_emp", subgraph: "Employees")
-  delete_dept_emp(where: dept_emp_WhereInput @source(name: "where", type: "dept_emp_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "dept_emp") @source(name: "delete_dept_emp", type: "Boolean", subgraph: "Employees")
-  insert_dept_emp_latest_date(dept_emp_latest_date: dept_emp_latest_date_InsertInput! @source(name: "dept_emp_latest_date", type: "dept_emp_latest_date_InsertInput", subgraph: "Employees")): dept_emp_latest_date @mysqlInsert(table: "dept_emp_latest_date", primaryKeys: []) @source(name: "insert_dept_emp_latest_date", type: "dept_emp_latest_date", subgraph: "Employees")
-  update_dept_emp_latest_date(dept_emp_latest_date: dept_emp_latest_date_UpdateInput! @source(name: "dept_emp_latest_date", type: "dept_emp_latest_date_UpdateInput", subgraph: "Employees"), where: dept_emp_latest_date_WhereInput @source(name: "where", type: "dept_emp_latest_date_WhereInput", subgraph: "Employees")): dept_emp_latest_date @mysqlUpdate(table: "dept_emp_latest_date") @source(name: "update_dept_emp_latest_date", type: "dept_emp_latest_date", subgraph: "Employees")
-  delete_dept_emp_latest_date(where: dept_emp_latest_date_WhereInput @source(name: "where", type: "dept_emp_latest_date_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "dept_emp_latest_date") @source(name: "delete_dept_emp_latest_date", type: "Boolean", subgraph: "Employees")
-  insert_dept_manager(dept_manager: dept_manager_InsertInput! @source(name: "dept_manager", type: "dept_manager_InsertInput", subgraph: "Employees")): dept_manager @mysqlInsert(table: "dept_manager", primaryKeys: ["emp_no", "dept_no"]) @source(name: "insert_dept_manager", type: "dept_manager", subgraph: "Employees")
-  update_dept_manager(dept_manager: dept_manager_UpdateInput! @source(name: "dept_manager", type: "dept_manager_UpdateInput", subgraph: "Employees"), where: dept_manager_WhereInput @source(name: "where", type: "dept_manager_WhereInput", subgraph: "Employees")): dept_manager @mysqlUpdate(table: "dept_manager") @source(name: "update_dept_manager", type: "dept_manager", subgraph: "Employees")
-  delete_dept_manager(where: dept_manager_WhereInput @source(name: "where", type: "dept_manager_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "dept_manager") @source(name: "delete_dept_manager", type: "Boolean", subgraph: "Employees")
-  insert_employees(employees: employees_InsertInput! @source(name: "employees", type: "employees_InsertInput", subgraph: "Employees")): employees @mysqlInsert(table: "employees", primaryKeys: ["emp_no"]) @source(name: "insert_employees", type: "employees", subgraph: "Employees")
-  update_employees(employees: employees_UpdateInput! @source(name: "employees", type: "employees_UpdateInput", subgraph: "Employees"), where: employees_WhereInput @source(name: "where", type: "employees_WhereInput", subgraph: "Employees")): employees @mysqlUpdate(table: "employees") @source(name: "update_employees", type: "employees", subgraph: "Employees")
-  delete_employees(where: employees_WhereInput @source(name: "where", type: "employees_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "employees") @source(name: "delete_employees", type: "Boolean", subgraph: "Employees")
-  insert_salaries(salaries: salaries_InsertInput! @source(name: "salaries", type: "salaries_InsertInput", subgraph: "Employees")): salaries @mysqlInsert(table: "salaries", primaryKeys: ["emp_no", "from_date"]) @source(name: "insert_salaries", type: "salaries", subgraph: "Employees")
-  update_salaries(salaries: salaries_UpdateInput! @source(name: "salaries", type: "salaries_UpdateInput", subgraph: "Employees"), where: salaries_WhereInput @source(name: "where", type: "salaries_WhereInput", subgraph: "Employees")): salaries @mysqlUpdate(table: "salaries") @source(name: "update_salaries", type: "salaries", subgraph: "Employees")
-  delete_salaries(where: salaries_WhereInput @source(name: "where", type: "salaries_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "salaries") @source(name: "delete_salaries", type: "Boolean", subgraph: "Employees")
-  insert_titles(titles: titles_InsertInput! @source(name: "titles", type: "titles_InsertInput", subgraph: "Employees")): titles @mysqlInsert(table: "titles", primaryKeys: ["emp_no", "title", "from_date"]) @source(name: "insert_titles", type: "titles", subgraph: "Employees")
-  update_titles(titles: titles_UpdateInput! @source(name: "titles", type: "titles_UpdateInput", subgraph: "Employees"), where: titles_WhereInput @source(name: "where", type: "titles_WhereInput", subgraph: "Employees")): titles @mysqlUpdate(table: "titles") @source(name: "update_titles", type: "titles", subgraph: "Employees")
-  delete_titles(where: titles_WhereInput @source(name: "where", type: "titles_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "titles") @source(name: "delete_titles", type: "Boolean", subgraph: "Employees")
-  insert_v_full_departments(v_full_departments: v_full_departments_InsertInput! @source(name: "v_full_departments", type: "v_full_departments_InsertInput", subgraph: "Employees")): v_full_departments @mysqlInsert(table: "v_full_departments", primaryKeys: []) @source(name: "insert_v_full_departments", type: "v_full_departments", subgraph: "Employees")
-  update_v_full_departments(v_full_departments: v_full_departments_UpdateInput! @source(name: "v_full_departments", type: "v_full_departments_UpdateInput", subgraph: "Employees"), where: v_full_departments_WhereInput @source(name: "where", type: "v_full_departments_WhereInput", subgraph: "Employees")): v_full_departments @mysqlUpdate(table: "v_full_departments") @source(name: "update_v_full_departments", type: "v_full_departments", subgraph: "Employees")
-  delete_v_full_departments(where: v_full_departments_WhereInput @source(name: "where", type: "v_full_departments_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "v_full_departments") @source(name: "delete_v_full_departments", type: "Boolean", subgraph: "Employees")
-  insert_v_full_employees(v_full_employees: v_full_employees_InsertInput! @source(name: "v_full_employees", type: "v_full_employees_InsertInput", subgraph: "Employees")): v_full_employees @mysqlInsert(table: "v_full_employees", primaryKeys: []) @source(name: "insert_v_full_employees", type: "v_full_employees", subgraph: "Employees")
-  update_v_full_employees(v_full_employees: v_full_employees_UpdateInput! @source(name: "v_full_employees", type: "v_full_employees_UpdateInput", subgraph: "Employees"), where: v_full_employees_WhereInput @source(name: "where", type: "v_full_employees_WhereInput", subgraph: "Employees")): v_full_employees @mysqlUpdate(table: "v_full_employees") @source(name: "update_v_full_employees", type: "v_full_employees", subgraph: "Employees")
-  delete_v_full_employees(where: v_full_employees_WhereInput @source(name: "where", type: "v_full_employees_WhereInput", subgraph: "Employees")): Boolean @mysqlDelete(table: "v_full_employees") @source(name: "delete_v_full_employees", type: "Boolean", subgraph: "Employees")
+"""
+VIEW
+"""
+input v_full_departments_OrderByInput @join__type(graph: EMPLOYEES)  {
+  dept_no: OrderBy
+  dept_name: OrderBy
+  manager: OrderBy
 }
 
-"""VIEW"""
-input current_dept_emp_InsertInput @source(name: "current_dept_emp_InsertInput", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+"""
+VIEW
+"""
+input v_full_employees_WhereInput @join__type(graph: EMPLOYEES)  {
+  emp_no: String
+  first_name: String
+  last_name: String
+  birth_date: String
+  gender: String
+  hire_date: String
+  department: String
 }
 
-"""VIEW"""
-input current_dept_emp_UpdateInput @source(name: "current_dept_emp_UpdateInput", subgraph: "Employees") {
-  emp_no: Int @source(name: "emp_no", type: "Int", subgraph: "Employees")
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+"""
+VIEW
+"""
+input v_full_employees_OrderByInput @join__type(graph: EMPLOYEES)  {
+  emp_no: OrderBy
+  first_name: OrderBy
+  last_name: OrderBy
+  birth_date: OrderBy
+  gender: OrderBy
+  hire_date: OrderBy
+  department: OrderBy
 }
 
-input departments_InsertInput @source(name: "departments_InsertInput", subgraph: "Employees") {
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  dept_name: String! @source(name: "dept_name", type: "String!", subgraph: "Employees")
+"""
+VIEW
+"""
+input current_dept_emp_InsertInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  dept_no: String!
+  from_date: Date
+  to_date: Date
 }
 
-input departments_UpdateInput @source(name: "departments_UpdateInput", subgraph: "Employees") {
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  dept_name: String @source(name: "dept_name", type: "String", subgraph: "Employees")
+"""
+VIEW
+"""
+input current_dept_emp_UpdateInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int
+  dept_no: String
+  from_date: Date
+  to_date: Date
 }
 
-input dept_emp_InsertInput @source(name: "dept_emp_InsertInput", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  from_date: Date! @source(name: "from_date", type: "Date!", subgraph: "Employees")
-  to_date: Date! @source(name: "to_date", type: "Date!", subgraph: "Employees")
+input departments_InsertInput @join__type(graph: EMPLOYEES)  {
+  dept_no: String!
+  dept_name: String!
 }
 
-input dept_emp_UpdateInput @source(name: "dept_emp_UpdateInput", subgraph: "Employees") {
-  emp_no: Int @source(name: "emp_no", type: "Int", subgraph: "Employees")
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+input departments_UpdateInput @join__type(graph: EMPLOYEES)  {
+  dept_no: String
+  dept_name: String
 }
 
-"""VIEW"""
-input dept_emp_latest_date_InsertInput @source(name: "dept_emp_latest_date_InsertInput", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+input dept_emp_InsertInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  dept_no: String!
+  from_date: Date!
+  to_date: Date!
 }
 
-"""VIEW"""
-input dept_emp_latest_date_UpdateInput @source(name: "dept_emp_latest_date_UpdateInput", subgraph: "Employees") {
-  emp_no: Int @source(name: "emp_no", type: "Int", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+input dept_emp_UpdateInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int
+  dept_no: String
+  from_date: Date
+  to_date: Date
 }
 
-input dept_manager_InsertInput @source(name: "dept_manager_InsertInput", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  from_date: Date! @source(name: "from_date", type: "Date!", subgraph: "Employees")
-  to_date: Date! @source(name: "to_date", type: "Date!", subgraph: "Employees")
+"""
+VIEW
+"""
+input dept_emp_latest_date_InsertInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  from_date: Date
+  to_date: Date
 }
 
-input dept_manager_UpdateInput @source(name: "dept_manager_UpdateInput", subgraph: "Employees") {
-  emp_no: Int @source(name: "emp_no", type: "Int", subgraph: "Employees")
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+"""
+VIEW
+"""
+input dept_emp_latest_date_UpdateInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int
+  from_date: Date
+  to_date: Date
 }
 
-input employees_InsertInput @source(name: "employees_InsertInput", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  birth_date: Date! @source(name: "birth_date", type: "Date!", subgraph: "Employees")
-  first_name: String! @source(name: "first_name", type: "String!", subgraph: "Employees")
-  last_name: String! @source(name: "last_name", type: "String!", subgraph: "Employees")
-  gender: employees_gender! @source(name: "gender", type: "employees_gender!", subgraph: "Employees")
-  hire_date: Date! @source(name: "hire_date", type: "Date!", subgraph: "Employees")
+input dept_manager_InsertInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  dept_no: String!
+  from_date: Date!
+  to_date: Date!
 }
 
-input employees_UpdateInput @source(name: "employees_UpdateInput", subgraph: "Employees") {
-  emp_no: Int @source(name: "emp_no", type: "Int", subgraph: "Employees")
-  birth_date: Date @source(name: "birth_date", type: "Date", subgraph: "Employees")
-  first_name: String @source(name: "first_name", type: "String", subgraph: "Employees")
-  last_name: String @source(name: "last_name", type: "String", subgraph: "Employees")
-  gender: employees_gender @source(name: "gender", type: "employees_gender", subgraph: "Employees")
-  hire_date: Date @source(name: "hire_date", type: "Date", subgraph: "Employees")
+input dept_manager_UpdateInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int
+  dept_no: String
+  from_date: Date
+  to_date: Date
 }
 
-input salaries_InsertInput @source(name: "salaries_InsertInput", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  salary: Int! @source(name: "salary", type: "Int!", subgraph: "Employees")
-  from_date: Date! @source(name: "from_date", type: "Date!", subgraph: "Employees")
-  to_date: Date! @source(name: "to_date", type: "Date!", subgraph: "Employees")
+input employees_InsertInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  birth_date: Date!
+  first_name: String!
+  last_name: String!
+  gender: employees_gender!
+  hire_date: Date!
 }
 
-input salaries_UpdateInput @source(name: "salaries_UpdateInput", subgraph: "Employees") {
-  emp_no: Int @source(name: "emp_no", type: "Int", subgraph: "Employees")
-  salary: Int @source(name: "salary", type: "Int", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+input employees_UpdateInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int
+  birth_date: Date
+  first_name: String
+  last_name: String
+  gender: employees_gender
+  hire_date: Date
 }
 
-input titles_InsertInput @source(name: "titles_InsertInput", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  title: String! @source(name: "title", type: "String!", subgraph: "Employees")
-  from_date: Date! @source(name: "from_date", type: "Date!", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+input salaries_InsertInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  salary: Int!
+  from_date: Date!
+  to_date: Date!
 }
 
-input titles_UpdateInput @source(name: "titles_UpdateInput", subgraph: "Employees") {
-  emp_no: Int @source(name: "emp_no", type: "Int", subgraph: "Employees")
-  title: String @source(name: "title", type: "String", subgraph: "Employees")
-  from_date: Date @source(name: "from_date", type: "Date", subgraph: "Employees")
-  to_date: Date @source(name: "to_date", type: "Date", subgraph: "Employees")
+input salaries_UpdateInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int
+  salary: Int
+  from_date: Date
+  to_date: Date
 }
 
-"""VIEW"""
-input v_full_departments_InsertInput @source(name: "v_full_departments_InsertInput", subgraph: "Employees") {
-  dept_no: String! @source(name: "dept_no", type: "String!", subgraph: "Employees")
-  dept_name: String! @source(name: "dept_name", type: "String!", subgraph: "Employees")
-  manager: String @source(name: "manager", type: "String", subgraph: "Employees")
+input titles_InsertInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  title: String!
+  from_date: Date!
+  to_date: Date
 }
 
-"""VIEW"""
-input v_full_departments_UpdateInput @source(name: "v_full_departments_UpdateInput", subgraph: "Employees") {
-  dept_no: String @source(name: "dept_no", type: "String", subgraph: "Employees")
-  dept_name: String @source(name: "dept_name", type: "String", subgraph: "Employees")
-  manager: String @source(name: "manager", type: "String", subgraph: "Employees")
+input titles_UpdateInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int
+  title: String
+  from_date: Date
+  to_date: Date
 }
 
-"""VIEW"""
-input v_full_employees_InsertInput @source(name: "v_full_employees_InsertInput", subgraph: "Employees") {
-  emp_no: Int! @source(name: "emp_no", type: "Int!", subgraph: "Employees")
-  first_name: String! @source(name: "first_name", type: "String!", subgraph: "Employees")
-  last_name: String! @source(name: "last_name", type: "String!", subgraph: "Employees")
-  birth_date: Date! @source(name: "birth_date", type: "Date!", subgraph: "Employees")
-  gender: v_full_employees_gender! @source(name: "gender", type: "v_full_employees_gender!", subgraph: "Employees")
-  hire_date: Date! @source(name: "hire_date", type: "Date!", subgraph: "Employees")
-  department: String @source(name: "department", type: "String", subgraph: "Employees")
+"""
+VIEW
+"""
+input v_full_departments_InsertInput @join__type(graph: EMPLOYEES)  {
+  dept_no: String!
+  dept_name: String!
+  manager: String
 }
 
-"""VIEW"""
-input v_full_employees_UpdateInput @source(name: "v_full_employees_UpdateInput", subgraph: "Employees") {
-  emp_no: Int @source(name: "emp_no", type: "Int", subgraph: "Employees")
-  first_name: String @source(name: "first_name", type: "String", subgraph: "Employees")
-  last_name: String @source(name: "last_name", type: "String", subgraph: "Employees")
-  birth_date: Date @source(name: "birth_date", type: "Date", subgraph: "Employees")
-  gender: v_full_employees_gender @source(name: "gender", type: "v_full_employees_gender", subgraph: "Employees")
-  hire_date: Date @source(name: "hire_date", type: "Date", subgraph: "Employees")
-  department: String @source(name: "department", type: "String", subgraph: "Employees")
+"""
+VIEW
+"""
+input v_full_departments_UpdateInput @join__type(graph: EMPLOYEES)  {
+  dept_no: String
+  dept_name: String
+  manager: String
 }
+
+"""
+VIEW
+"""
+input v_full_employees_InsertInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int!
+  first_name: String!
+  last_name: String!
+  birth_date: Date!
+  gender: v_full_employees_gender!
+  hire_date: Date!
+  department: String
+}
+
+"""
+VIEW
+"""
+input v_full_employees_UpdateInput @join__type(graph: EMPLOYEES)  {
+  emp_no: Int
+  first_name: String
+  last_name: String
+  birth_date: Date
+  gender: v_full_employees_gender
+  hire_date: Date
+  department: String
+}
+    
 "
 `;
 

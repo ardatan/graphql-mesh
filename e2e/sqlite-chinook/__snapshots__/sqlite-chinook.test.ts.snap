@@ -1,403 +1,602 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @transport(kind: "sqlite", subgraph: "chinook", location: "e2e/sqlite-chinook/chinook.db", options: {type: "db"}) {
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@merge", "@extraSchemaDefinitionDirective"]
+)
+{
   query: Query
   mutation: Mutation
+  
 }
 
-directive @merge(subgraph: String!, keyField: String!, keyArg: String!) on FIELD_DEFINITION
 
-type Query {
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  CHINOOK @join__graph(
+    name: "chinook"
+    url: "e2e/sqlite-chinook/chinook.db"
+  )
+}
+
+directive @merge(
+  subgraph: String
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String!]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+"""
+The \`JSON\` scalar type represents raw JSON as values.
+"""
+scalar SequelizeJSON @join__type(graph: CHINOOK) 
+
+scalar _DirectiveExtensions @join__type(graph: CHINOOK) 
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{kind: "sqlite", subgraph: "chinook", location: "e2e/sqlite-chinook/chinook.db", options: {type: "db"}}]}
+) @join__type(graph: CHINOOK)  {
   albums(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Album] @source(name: "albums", type: "[Album]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Album]
   album(
-    albumId: Int @source(name: "albumId", type: "Int", subgraph: "chinook")
+    albumId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): Album @merge(subgraph: "chinook", keyField: "albumId", keyArg: "albumId") @source(name: "album", type: "Album", subgraph: "chinook")
+    where: SequelizeJSON
+  ): Album @merge(subgraph: "chinook", keyField: "albumId", keyArg: "albumId") 
   artists(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Artist] @source(name: "artists", type: "[Artist]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Artist]
   artist(
-    artistId: Int @source(name: "artistId", type: "Int", subgraph: "chinook")
+    artistId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): Artist @merge(subgraph: "chinook", keyField: "artistId", keyArg: "artistId") @source(name: "artist", type: "Artist", subgraph: "chinook")
+    where: SequelizeJSON
+  ): Artist @merge(subgraph: "chinook", keyField: "artistId", keyArg: "artistId") 
   customers(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Customer] @source(name: "customers", type: "[Customer]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Customer]
   customer(
-    customerId: Int @source(name: "customerId", type: "Int", subgraph: "chinook")
+    customerId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): Customer @merge(subgraph: "chinook", keyField: "customerId", keyArg: "customerId") @source(name: "customer", type: "Customer", subgraph: "chinook")
+    where: SequelizeJSON
+  ): Customer @merge(subgraph: "chinook", keyField: "customerId", keyArg: "customerId") 
   employees(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Employee] @source(name: "employees", type: "[Employee]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Employee]
   employee(
-    employeeId: Int @source(name: "employeeId", type: "Int", subgraph: "chinook")
+    employeeId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): Employee @merge(subgraph: "chinook", keyField: "employeeId", keyArg: "employeeId") @source(name: "employee", type: "Employee", subgraph: "chinook")
+    where: SequelizeJSON
+  ): Employee @merge(subgraph: "chinook", keyField: "employeeId", keyArg: "employeeId") 
   genres(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Genre] @source(name: "genres", type: "[Genre]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Genre]
   genre(
-    genreId: Int @source(name: "genreId", type: "Int", subgraph: "chinook")
+    genreId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): Genre @merge(subgraph: "chinook", keyField: "genreId", keyArg: "genreId") @source(name: "genre", type: "Genre", subgraph: "chinook")
+    where: SequelizeJSON
+  ): Genre @merge(subgraph: "chinook", keyField: "genreId", keyArg: "genreId") 
   invoices(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Invoice] @source(name: "invoices", type: "[Invoice]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Invoice]
   invoice(
-    invoiceId: Int @source(name: "invoiceId", type: "Int", subgraph: "chinook")
+    invoiceId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): Invoice @merge(subgraph: "chinook", keyField: "invoiceId", keyArg: "invoiceId") @source(name: "invoice", type: "Invoice", subgraph: "chinook")
+    where: SequelizeJSON
+  ): Invoice @merge(subgraph: "chinook", keyField: "invoiceId", keyArg: "invoiceId") 
   invoiceItems(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [InvoiceItem] @source(name: "invoiceItems", type: "[InvoiceItem]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem]
   invoiceItem(
-    invoiceLineId: Int @source(name: "invoiceLineId", type: "Int", subgraph: "chinook")
+    invoiceLineId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): InvoiceItem @merge(subgraph: "chinook", keyField: "invoiceLineId", keyArg: "invoiceLineId") @source(name: "invoiceItem", type: "InvoiceItem", subgraph: "chinook")
+    where: SequelizeJSON
+  ): InvoiceItem @merge(subgraph: "chinook", keyField: "invoiceLineId", keyArg: "invoiceLineId") 
   mediaTypes(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [MediaType] @source(name: "mediaTypes", type: "[MediaType]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [MediaType]
   mediaType(
-    mediaTypeId: Int @source(name: "mediaTypeId", type: "Int", subgraph: "chinook")
+    mediaTypeId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): MediaType @merge(subgraph: "chinook", keyField: "mediaTypeId", keyArg: "mediaTypeId") @source(name: "mediaType", type: "MediaType", subgraph: "chinook")
+    where: SequelizeJSON
+  ): MediaType @merge(subgraph: "chinook", keyField: "mediaTypeId", keyArg: "mediaTypeId") 
   playlists(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Playlist] @source(name: "playlists", type: "[Playlist]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Playlist]
   playlist(
-    playlistId: Int @source(name: "playlistId", type: "Int", subgraph: "chinook")
+    playlistId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): Playlist @merge(subgraph: "chinook", keyField: "playlistId", keyArg: "playlistId") @source(name: "playlist", type: "Playlist", subgraph: "chinook")
+    where: SequelizeJSON
+  ): Playlist @merge(subgraph: "chinook", keyField: "playlistId", keyArg: "playlistId") 
   tracks(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Track] @source(name: "tracks", type: "[Track]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Track]
   track(
-    trackId: Int @source(name: "trackId", type: "Int", subgraph: "chinook")
+    trackId: Int
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-  ): Track @merge(subgraph: "chinook", keyField: "trackId", keyArg: "trackId") @source(name: "track", type: "Track", subgraph: "chinook")
+    where: SequelizeJSON
+  ): Track @merge(subgraph: "chinook", keyField: "trackId", keyArg: "trackId") 
 }
 
-type Album @source(name: "Album", subgraph: "chinook") {
-  albumId: Int! @source(name: "albumId", type: "Int!", subgraph: "chinook")
-  title: String! @source(name: "title", type: "String!", subgraph: "chinook")
-  artistId: Int! @source(name: "artistId", type: "Int!", subgraph: "chinook")
+type Album @join__type(graph: CHINOOK, key: "albumId")  {
+  albumId: Int!
+  title: String!
+  artistId: Int!
   tracks(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Track] @source(name: "tracks", type: "[Track]", subgraph: "chinook")
-  artist: Artist @source(name: "artist", type: "Artist", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Track]
+  artist: Artist
 }
 
-type Track @source(name: "Track", subgraph: "chinook") {
-  trackId: Int! @source(name: "trackId", type: "Int!", subgraph: "chinook")
-  name: String! @source(name: "name", type: "String!", subgraph: "chinook")
-  albumId: Int @source(name: "albumId", type: "Int", subgraph: "chinook")
-  mediaTypeId: Int! @source(name: "mediaTypeId", type: "Int!", subgraph: "chinook")
-  genreId: Int @source(name: "genreId", type: "Int", subgraph: "chinook")
-  composer: String @source(name: "composer", type: "String", subgraph: "chinook")
-  milliseconds: Int! @source(name: "milliseconds", type: "Int!", subgraph: "chinook")
-  bytes: Int @source(name: "bytes", type: "Int", subgraph: "chinook")
-  unitPrice: String! @source(name: "unitPrice", type: "String!", subgraph: "chinook")
+type Track @join__type(graph: CHINOOK, key: "trackId")  {
+  trackId: Int!
+  name: String!
+  albumId: Int
+  mediaTypeId: Int!
+  genreId: Int
+  composer: String
+  milliseconds: Int!
+  bytes: Int
+  unitPrice: String!
   invoiceItems(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [InvoiceItem] @source(name: "invoiceItems", type: "[InvoiceItem]", subgraph: "chinook")
-  mediaType: MediaType @source(name: "mediaType", type: "MediaType", subgraph: "chinook")
-  genre: Genre @source(name: "genre", type: "Genre", subgraph: "chinook")
-  album: Album @source(name: "album", type: "Album", subgraph: "chinook")
-  playlists: [Playlist] @source(name: "playlists", type: "[Playlist]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem]
+  mediaType: MediaType
+  genre: Genre
+  album: Album
+  playlists: [Playlist]
 }
 
-type InvoiceItem @source(name: "InvoiceItem", subgraph: "chinook") {
-  invoiceLineId: Int! @source(name: "invoiceLineId", type: "Int!", subgraph: "chinook")
-  invoiceId: Int! @source(name: "invoiceId", type: "Int!", subgraph: "chinook")
-  trackId: Int! @source(name: "trackId", type: "Int!", subgraph: "chinook")
-  unitPrice: String! @source(name: "unitPrice", type: "String!", subgraph: "chinook")
-  quantity: Int! @source(name: "quantity", type: "Int!", subgraph: "chinook")
-  track: Track @source(name: "track", type: "Track", subgraph: "chinook")
-  invoice: Invoice @source(name: "invoice", type: "Invoice", subgraph: "chinook")
+type InvoiceItem @join__type(graph: CHINOOK, key: "invoiceLineId")  {
+  invoiceLineId: Int!
+  invoiceId: Int!
+  trackId: Int!
+  unitPrice: String!
+  quantity: Int!
+  track: Track
+  invoice: Invoice
 }
 
-type Invoice @source(name: "Invoice", subgraph: "chinook") {
-  invoiceId: Int! @source(name: "invoiceId", type: "Int!", subgraph: "chinook")
-  customerId: Int! @source(name: "customerId", type: "Int!", subgraph: "chinook")
-  invoiceDate: String! @source(name: "invoiceDate", type: "String!", subgraph: "chinook")
-  billingAddress: String @source(name: "billingAddress", type: "String", subgraph: "chinook")
-  billingCity: String @source(name: "billingCity", type: "String", subgraph: "chinook")
-  billingState: String @source(name: "billingState", type: "String", subgraph: "chinook")
-  billingCountry: String @source(name: "billingCountry", type: "String", subgraph: "chinook")
-  billingPostalCode: String @source(name: "billingPostalCode", type: "String", subgraph: "chinook")
-  total: String! @source(name: "total", type: "String!", subgraph: "chinook")
+type Invoice @join__type(graph: CHINOOK, key: "invoiceId")  {
+  invoiceId: Int!
+  customerId: Int!
+  invoiceDate: String!
+  billingAddress: String
+  billingCity: String
+  billingState: String
+  billingCountry: String
+  billingPostalCode: String
+  total: String!
   invoiceItems(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [InvoiceItem] @source(name: "invoiceItems", type: "[InvoiceItem]", subgraph: "chinook")
-  customer: Customer @source(name: "customer", type: "Customer", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem]
+  customer: Customer
 }
 
-"""The \`JSON\` scalar type represents raw JSON as values."""
-scalar SequelizeJSON @source(name: "SequelizeJSON", subgraph: "chinook") @source(name: "SequelizeJSON", subgraph: "chinook")
-
-type Customer @source(name: "Customer", subgraph: "chinook") {
-  customerId: Int! @source(name: "customerId", type: "Int!", subgraph: "chinook")
-  firstName: String! @source(name: "firstName", type: "String!", subgraph: "chinook")
-  lastName: String! @source(name: "lastName", type: "String!", subgraph: "chinook")
-  company: String @source(name: "company", type: "String", subgraph: "chinook")
-  address: String @source(name: "address", type: "String", subgraph: "chinook")
-  city: String @source(name: "city", type: "String", subgraph: "chinook")
-  state: String @source(name: "state", type: "String", subgraph: "chinook")
-  country: String @source(name: "country", type: "String", subgraph: "chinook")
-  postalCode: String @source(name: "postalCode", type: "String", subgraph: "chinook")
-  phone: String @source(name: "phone", type: "String", subgraph: "chinook")
-  fax: String @source(name: "fax", type: "String", subgraph: "chinook")
-  email: String! @source(name: "email", type: "String!", subgraph: "chinook")
-  supportRepId: Int @source(name: "supportRepId", type: "Int", subgraph: "chinook")
+type Customer @join__type(graph: CHINOOK, key: "customerId")  {
+  customerId: Int!
+  firstName: String!
+  lastName: String!
+  company: String
+  address: String
+  city: String
+  state: String
+  country: String
+  postalCode: String
+  phone: String
+  fax: String
+  email: String!
+  supportRepId: Int
   invoices(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Invoice] @source(name: "invoices", type: "[Invoice]", subgraph: "chinook")
-  employee: Employee @source(name: "employee", type: "Employee", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Invoice]
+  employee: Employee
 }
 
-type Employee @source(name: "Employee", subgraph: "chinook") {
-  employeeId: Int! @source(name: "employeeId", type: "Int!", subgraph: "chinook")
-  lastName: String! @source(name: "lastName", type: "String!", subgraph: "chinook")
-  firstName: String! @source(name: "firstName", type: "String!", subgraph: "chinook")
-  title: String @source(name: "title", type: "String", subgraph: "chinook")
-  reportsTo: Int @source(name: "reportsTo", type: "Int", subgraph: "chinook")
-  birthDate: String @source(name: "birthDate", type: "String", subgraph: "chinook")
-  hireDate: String @source(name: "hireDate", type: "String", subgraph: "chinook")
-  address: String @source(name: "address", type: "String", subgraph: "chinook")
-  city: String @source(name: "city", type: "String", subgraph: "chinook")
-  state: String @source(name: "state", type: "String", subgraph: "chinook")
-  country: String @source(name: "country", type: "String", subgraph: "chinook")
-  postalCode: String @source(name: "postalCode", type: "String", subgraph: "chinook")
-  phone: String @source(name: "phone", type: "String", subgraph: "chinook")
-  fax: String @source(name: "fax", type: "String", subgraph: "chinook")
-  email: String @source(name: "email", type: "String", subgraph: "chinook")
+type Employee @join__type(graph: CHINOOK, key: "employeeId")  {
+  employeeId: Int!
+  lastName: String!
+  firstName: String!
+  title: String
+  reportsTo: Int
+  birthDate: String
+  hireDate: String
+  address: String
+  city: String
+  state: String
+  country: String
+  postalCode: String
+  phone: String
+  fax: String
+  email: String
   customers(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Customer] @source(name: "customers", type: "[Customer]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Customer]
   employees(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Employee] @source(name: "employees", type: "[Employee]", subgraph: "chinook")
-  employee: Employee @source(name: "employee", type: "Employee", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Employee]
+  employee: Employee
 }
 
-type MediaType @source(name: "MediaType", subgraph: "chinook") {
-  mediaTypeId: Int! @source(name: "mediaTypeId", type: "Int!", subgraph: "chinook")
-  name: String @source(name: "name", type: "String", subgraph: "chinook")
+type MediaType @join__type(graph: CHINOOK, key: "mediaTypeId")  {
+  mediaTypeId: Int!
+  name: String
   tracks(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Track] @source(name: "tracks", type: "[Track]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Track]
 }
 
-type Genre @source(name: "Genre", subgraph: "chinook") {
-  genreId: Int! @source(name: "genreId", type: "Int!", subgraph: "chinook")
-  name: String @source(name: "name", type: "String", subgraph: "chinook")
+type Genre @join__type(graph: CHINOOK, key: "genreId")  {
+  genreId: Int!
+  name: String
   tracks(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Track] @source(name: "tracks", type: "[Track]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Track]
 }
 
-type Playlist @source(name: "Playlist", subgraph: "chinook") {
-  playlistId: Int! @source(name: "playlistId", type: "Int!", subgraph: "chinook")
-  name: String @source(name: "name", type: "String", subgraph: "chinook")
-  tracks: [Track] @source(name: "tracks", type: "[Track]", subgraph: "chinook")
+type Playlist @join__type(graph: CHINOOK, key: "playlistId")  {
+  playlistId: Int!
+  name: String
+  tracks: [Track]
 }
 
-type Artist @source(name: "Artist", subgraph: "chinook") {
-  artistId: Int! @source(name: "artistId", type: "Int!", subgraph: "chinook")
-  name: String @source(name: "name", type: "String", subgraph: "chinook")
+type Artist @join__type(graph: CHINOOK, key: "artistId")  {
+  artistId: Int!
+  name: String
   albums(
-    limit: Int @source(name: "limit", type: "Int", subgraph: "chinook")
-    order: String @source(name: "order", type: "String", subgraph: "chinook")
+    limit: Int
+    order: String
     """
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
-    where: SequelizeJSON @source(name: "where", type: "SequelizeJSON", subgraph: "chinook")
-    offset: Int @source(name: "offset", type: "Int", subgraph: "chinook")
-  ): [Album] @source(name: "albums", type: "[Album]", subgraph: "chinook")
+    where: SequelizeJSON
+    offset: Int
+  ): [Album]
 }
 
-type Mutation {
-  createAlbum(title: String! @source(name: "title", type: "String", subgraph: "chinook"), artistId: Int! @source(name: "artistId", type: "Int", subgraph: "chinook")): Album @source(name: "createAlbum", type: "Album", subgraph: "chinook")
-  updateAlbum(albumId: Int @source(name: "albumId", type: "Int", subgraph: "chinook"), title: String @source(name: "title", type: "String", subgraph: "chinook"), artistId: Int @source(name: "artistId", type: "Int", subgraph: "chinook")): Album @source(name: "updateAlbum", type: "Album", subgraph: "chinook")
-  deleteAlbum(albumId: Int! @source(name: "albumId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteAlbum", type: "GenericResponse", subgraph: "chinook")
-  createArtist(name: String @source(name: "name", type: "String", subgraph: "chinook")): Artist @source(name: "createArtist", type: "Artist", subgraph: "chinook")
-  updateArtist(artistId: Int @source(name: "artistId", type: "Int", subgraph: "chinook"), name: String @source(name: "name", type: "String", subgraph: "chinook")): Artist @source(name: "updateArtist", type: "Artist", subgraph: "chinook")
-  deleteArtist(artistId: Int! @source(name: "artistId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteArtist", type: "GenericResponse", subgraph: "chinook")
-  createCustomer(firstName: String! @source(name: "firstName", type: "String", subgraph: "chinook"), lastName: String! @source(name: "lastName", type: "String", subgraph: "chinook"), company: String @source(name: "company", type: "String", subgraph: "chinook"), address: String @source(name: "address", type: "String", subgraph: "chinook"), city: String @source(name: "city", type: "String", subgraph: "chinook"), state: String @source(name: "state", type: "String", subgraph: "chinook"), country: String @source(name: "country", type: "String", subgraph: "chinook"), postalCode: String @source(name: "postalCode", type: "String", subgraph: "chinook"), phone: String @source(name: "phone", type: "String", subgraph: "chinook"), fax: String @source(name: "fax", type: "String", subgraph: "chinook"), email: String! @source(name: "email", type: "String", subgraph: "chinook"), supportRepId: Int @source(name: "supportRepId", type: "Int", subgraph: "chinook")): Customer @source(name: "createCustomer", type: "Customer", subgraph: "chinook")
-  updateCustomer(customerId: Int @source(name: "customerId", type: "Int", subgraph: "chinook"), firstName: String @source(name: "firstName", type: "String", subgraph: "chinook"), lastName: String @source(name: "lastName", type: "String", subgraph: "chinook"), company: String @source(name: "company", type: "String", subgraph: "chinook"), address: String @source(name: "address", type: "String", subgraph: "chinook"), city: String @source(name: "city", type: "String", subgraph: "chinook"), state: String @source(name: "state", type: "String", subgraph: "chinook"), country: String @source(name: "country", type: "String", subgraph: "chinook"), postalCode: String @source(name: "postalCode", type: "String", subgraph: "chinook"), phone: String @source(name: "phone", type: "String", subgraph: "chinook"), fax: String @source(name: "fax", type: "String", subgraph: "chinook"), email: String @source(name: "email", type: "String", subgraph: "chinook"), supportRepId: Int @source(name: "supportRepId", type: "Int", subgraph: "chinook")): Customer @source(name: "updateCustomer", type: "Customer", subgraph: "chinook")
-  deleteCustomer(customerId: Int! @source(name: "customerId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteCustomer", type: "GenericResponse", subgraph: "chinook")
-  createEmployee(lastName: String! @source(name: "lastName", type: "String", subgraph: "chinook"), firstName: String! @source(name: "firstName", type: "String", subgraph: "chinook"), title: String @source(name: "title", type: "String", subgraph: "chinook"), reportsTo: Int @source(name: "reportsTo", type: "Int", subgraph: "chinook"), birthDate: String @source(name: "birthDate", type: "String", subgraph: "chinook"), hireDate: String @source(name: "hireDate", type: "String", subgraph: "chinook"), address: String @source(name: "address", type: "String", subgraph: "chinook"), city: String @source(name: "city", type: "String", subgraph: "chinook"), state: String @source(name: "state", type: "String", subgraph: "chinook"), country: String @source(name: "country", type: "String", subgraph: "chinook"), postalCode: String @source(name: "postalCode", type: "String", subgraph: "chinook"), phone: String @source(name: "phone", type: "String", subgraph: "chinook"), fax: String @source(name: "fax", type: "String", subgraph: "chinook"), email: String @source(name: "email", type: "String", subgraph: "chinook")): Employee @source(name: "createEmployee", type: "Employee", subgraph: "chinook")
-  updateEmployee(employeeId: Int @source(name: "employeeId", type: "Int", subgraph: "chinook"), lastName: String @source(name: "lastName", type: "String", subgraph: "chinook"), firstName: String @source(name: "firstName", type: "String", subgraph: "chinook"), title: String @source(name: "title", type: "String", subgraph: "chinook"), reportsTo: Int @source(name: "reportsTo", type: "Int", subgraph: "chinook"), birthDate: String @source(name: "birthDate", type: "String", subgraph: "chinook"), hireDate: String @source(name: "hireDate", type: "String", subgraph: "chinook"), address: String @source(name: "address", type: "String", subgraph: "chinook"), city: String @source(name: "city", type: "String", subgraph: "chinook"), state: String @source(name: "state", type: "String", subgraph: "chinook"), country: String @source(name: "country", type: "String", subgraph: "chinook"), postalCode: String @source(name: "postalCode", type: "String", subgraph: "chinook"), phone: String @source(name: "phone", type: "String", subgraph: "chinook"), fax: String @source(name: "fax", type: "String", subgraph: "chinook"), email: String @source(name: "email", type: "String", subgraph: "chinook")): Employee @source(name: "updateEmployee", type: "Employee", subgraph: "chinook")
-  deleteEmployee(employeeId: Int! @source(name: "employeeId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteEmployee", type: "GenericResponse", subgraph: "chinook")
-  createGenre(name: String @source(name: "name", type: "String", subgraph: "chinook")): Genre @source(name: "createGenre", type: "Genre", subgraph: "chinook")
-  updateGenre(genreId: Int @source(name: "genreId", type: "Int", subgraph: "chinook"), name: String @source(name: "name", type: "String", subgraph: "chinook")): Genre @source(name: "updateGenre", type: "Genre", subgraph: "chinook")
-  deleteGenre(genreId: Int! @source(name: "genreId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteGenre", type: "GenericResponse", subgraph: "chinook")
-  createInvoice(customerId: Int! @source(name: "customerId", type: "Int", subgraph: "chinook"), invoiceDate: String! @source(name: "invoiceDate", type: "String", subgraph: "chinook"), billingAddress: String @source(name: "billingAddress", type: "String", subgraph: "chinook"), billingCity: String @source(name: "billingCity", type: "String", subgraph: "chinook"), billingState: String @source(name: "billingState", type: "String", subgraph: "chinook"), billingCountry: String @source(name: "billingCountry", type: "String", subgraph: "chinook"), billingPostalCode: String @source(name: "billingPostalCode", type: "String", subgraph: "chinook"), total: String! @source(name: "total", type: "String", subgraph: "chinook")): Invoice @source(name: "createInvoice", type: "Invoice", subgraph: "chinook")
-  updateInvoice(invoiceId: Int @source(name: "invoiceId", type: "Int", subgraph: "chinook"), customerId: Int @source(name: "customerId", type: "Int", subgraph: "chinook"), invoiceDate: String @source(name: "invoiceDate", type: "String", subgraph: "chinook"), billingAddress: String @source(name: "billingAddress", type: "String", subgraph: "chinook"), billingCity: String @source(name: "billingCity", type: "String", subgraph: "chinook"), billingState: String @source(name: "billingState", type: "String", subgraph: "chinook"), billingCountry: String @source(name: "billingCountry", type: "String", subgraph: "chinook"), billingPostalCode: String @source(name: "billingPostalCode", type: "String", subgraph: "chinook"), total: String @source(name: "total", type: "String", subgraph: "chinook")): Invoice @source(name: "updateInvoice", type: "Invoice", subgraph: "chinook")
-  deleteInvoice(invoiceId: Int! @source(name: "invoiceId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteInvoice", type: "GenericResponse", subgraph: "chinook")
-  createInvoiceItem(invoiceId: Int! @source(name: "invoiceId", type: "Int", subgraph: "chinook"), trackId: Int! @source(name: "trackId", type: "Int", subgraph: "chinook"), unitPrice: String! @source(name: "unitPrice", type: "String", subgraph: "chinook"), quantity: Int! @source(name: "quantity", type: "Int", subgraph: "chinook")): InvoiceItem @source(name: "createInvoiceItem", type: "InvoiceItem", subgraph: "chinook")
-  updateInvoiceItem(invoiceLineId: Int @source(name: "invoiceLineId", type: "Int", subgraph: "chinook"), invoiceId: Int @source(name: "invoiceId", type: "Int", subgraph: "chinook"), trackId: Int @source(name: "trackId", type: "Int", subgraph: "chinook"), unitPrice: String @source(name: "unitPrice", type: "String", subgraph: "chinook"), quantity: Int @source(name: "quantity", type: "Int", subgraph: "chinook")): InvoiceItem @source(name: "updateInvoiceItem", type: "InvoiceItem", subgraph: "chinook")
-  deleteInvoiceItem(invoiceLineId: Int! @source(name: "invoiceLineId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteInvoiceItem", type: "GenericResponse", subgraph: "chinook")
-  createMediaType(name: String @source(name: "name", type: "String", subgraph: "chinook")): MediaType @source(name: "createMediaType", type: "MediaType", subgraph: "chinook")
-  updateMediaType(mediaTypeId: Int @source(name: "mediaTypeId", type: "Int", subgraph: "chinook"), name: String @source(name: "name", type: "String", subgraph: "chinook")): MediaType @source(name: "updateMediaType", type: "MediaType", subgraph: "chinook")
-  deleteMediaType(mediaTypeId: Int! @source(name: "mediaTypeId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteMediaType", type: "GenericResponse", subgraph: "chinook")
-  createPlaylist(name: String @source(name: "name", type: "String", subgraph: "chinook")): Playlist @source(name: "createPlaylist", type: "Playlist", subgraph: "chinook")
-  updatePlaylist(playlistId: Int @source(name: "playlistId", type: "Int", subgraph: "chinook"), name: String @source(name: "name", type: "String", subgraph: "chinook")): Playlist @source(name: "updatePlaylist", type: "Playlist", subgraph: "chinook")
-  deletePlaylist(playlistId: Int! @source(name: "playlistId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deletePlaylist", type: "GenericResponse", subgraph: "chinook")
-  addPlaylistToTrack(playlistId: Int! @source(name: "playlistId", type: "Int", subgraph: "chinook"), trackId: Int! @source(name: "trackId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "addPlaylistToTrack", type: "GenericResponse", subgraph: "chinook")
-  removePlaylistFromTrack(playlistId: Int! @source(name: "playlistId", type: "Int", subgraph: "chinook"), trackId: Int! @source(name: "trackId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "removePlaylistFromTrack", type: "GenericResponse", subgraph: "chinook")
-  createTrack(name: String! @source(name: "name", type: "String", subgraph: "chinook"), albumId: Int @source(name: "albumId", type: "Int", subgraph: "chinook"), mediaTypeId: Int! @source(name: "mediaTypeId", type: "Int", subgraph: "chinook"), genreId: Int @source(name: "genreId", type: "Int", subgraph: "chinook"), composer: String @source(name: "composer", type: "String", subgraph: "chinook"), milliseconds: Int! @source(name: "milliseconds", type: "Int", subgraph: "chinook"), bytes: Int @source(name: "bytes", type: "Int", subgraph: "chinook"), unitPrice: String! @source(name: "unitPrice", type: "String", subgraph: "chinook")): Track @source(name: "createTrack", type: "Track", subgraph: "chinook")
-  updateTrack(trackId: Int @source(name: "trackId", type: "Int", subgraph: "chinook"), name: String @source(name: "name", type: "String", subgraph: "chinook"), albumId: Int @source(name: "albumId", type: "Int", subgraph: "chinook"), mediaTypeId: Int @source(name: "mediaTypeId", type: "Int", subgraph: "chinook"), genreId: Int @source(name: "genreId", type: "Int", subgraph: "chinook"), composer: String @source(name: "composer", type: "String", subgraph: "chinook"), milliseconds: Int @source(name: "milliseconds", type: "Int", subgraph: "chinook"), bytes: Int @source(name: "bytes", type: "Int", subgraph: "chinook"), unitPrice: String @source(name: "unitPrice", type: "String", subgraph: "chinook")): Track @source(name: "updateTrack", type: "Track", subgraph: "chinook")
-  deleteTrack(trackId: Int! @source(name: "trackId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "deleteTrack", type: "GenericResponse", subgraph: "chinook")
-  addTrackToPlaylist(trackId: Int! @source(name: "trackId", type: "Int", subgraph: "chinook"), playlistId: Int! @source(name: "playlistId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "addTrackToPlaylist", type: "GenericResponse", subgraph: "chinook")
-  removeTrackFromPlaylist(trackId: Int! @source(name: "trackId", type: "Int", subgraph: "chinook"), playlistId: Int! @source(name: "playlistId", type: "Int", subgraph: "chinook")): GenericResponse @source(name: "removeTrackFromPlaylist", type: "GenericResponse", subgraph: "chinook")
+type Mutation @join__type(graph: CHINOOK)  {
+  createAlbum(title: String!, artistId: Int!) : Album
+  updateAlbum(albumId: Int, title: String, artistId: Int) : Album
+  deleteAlbum(albumId: Int!) : GenericResponse
+  createArtist(name: String) : Artist
+  updateArtist(artistId: Int, name: String) : Artist
+  deleteArtist(artistId: Int!) : GenericResponse
+  createCustomer(
+    firstName: String!
+    lastName: String!
+    company: String
+    address: String
+    city: String
+    state: String
+    country: String
+    postalCode: String
+    phone: String
+    fax: String
+    email: String!
+    supportRepId: Int
+  ): Customer
+  updateCustomer(
+    customerId: Int
+    firstName: String
+    lastName: String
+    company: String
+    address: String
+    city: String
+    state: String
+    country: String
+    postalCode: String
+    phone: String
+    fax: String
+    email: String
+    supportRepId: Int
+  ): Customer
+  deleteCustomer(customerId: Int!) : GenericResponse
+  createEmployee(
+    lastName: String!
+    firstName: String!
+    title: String
+    reportsTo: Int
+    birthDate: String
+    hireDate: String
+    address: String
+    city: String
+    state: String
+    country: String
+    postalCode: String
+    phone: String
+    fax: String
+    email: String
+  ): Employee
+  updateEmployee(
+    employeeId: Int
+    lastName: String
+    firstName: String
+    title: String
+    reportsTo: Int
+    birthDate: String
+    hireDate: String
+    address: String
+    city: String
+    state: String
+    country: String
+    postalCode: String
+    phone: String
+    fax: String
+    email: String
+  ): Employee
+  deleteEmployee(employeeId: Int!) : GenericResponse
+  createGenre(name: String) : Genre
+  updateGenre(genreId: Int, name: String) : Genre
+  deleteGenre(genreId: Int!) : GenericResponse
+  createInvoice(
+    customerId: Int!
+    invoiceDate: String!
+    billingAddress: String
+    billingCity: String
+    billingState: String
+    billingCountry: String
+    billingPostalCode: String
+    total: String!
+  ): Invoice
+  updateInvoice(
+    invoiceId: Int
+    customerId: Int
+    invoiceDate: String
+    billingAddress: String
+    billingCity: String
+    billingState: String
+    billingCountry: String
+    billingPostalCode: String
+    total: String
+  ): Invoice
+  deleteInvoice(invoiceId: Int!) : GenericResponse
+  createInvoiceItem(invoiceId: Int!, trackId: Int!, unitPrice: String!, quantity: Int!) : InvoiceItem
+  updateInvoiceItem(
+    invoiceLineId: Int
+    invoiceId: Int
+    trackId: Int
+    unitPrice: String
+    quantity: Int
+  ): InvoiceItem
+  deleteInvoiceItem(invoiceLineId: Int!) : GenericResponse
+  createMediaType(name: String) : MediaType
+  updateMediaType(mediaTypeId: Int, name: String) : MediaType
+  deleteMediaType(mediaTypeId: Int!) : GenericResponse
+  createPlaylist(name: String) : Playlist
+  updatePlaylist(playlistId: Int, name: String) : Playlist
+  deletePlaylist(playlistId: Int!) : GenericResponse
+  addPlaylistToTrack(playlistId: Int!, trackId: Int!) : GenericResponse
+  removePlaylistFromTrack(playlistId: Int!, trackId: Int!) : GenericResponse
+  createTrack(
+    name: String!
+    albumId: Int
+    mediaTypeId: Int!
+    genreId: Int
+    composer: String
+    milliseconds: Int!
+    bytes: Int
+    unitPrice: String!
+  ): Track
+  updateTrack(
+    trackId: Int
+    name: String
+    albumId: Int
+    mediaTypeId: Int
+    genreId: Int
+    composer: String
+    milliseconds: Int
+    bytes: Int
+    unitPrice: String
+  ): Track
+  deleteTrack(trackId: Int!) : GenericResponse
+  addTrackToPlaylist(trackId: Int!, playlistId: Int!) : GenericResponse
+  removeTrackFromPlaylist(trackId: Int!, playlistId: Int!) : GenericResponse
 }
 
-type GenericResponse @source(name: "GenericResponse", subgraph: "chinook") {
-  success: Boolean @source(name: "success", type: "Boolean", subgraph: "chinook")
+type GenericResponse @join__type(graph: CHINOOK)  {
+  success: Boolean
 }
+    
 "
 `;
 

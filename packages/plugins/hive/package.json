@@ -39,8 +39,7 @@
   },
   "dependencies": {
     "@graphql-hive/client": "^0.32.0",
-    "@graphql-mesh/string-interpolation": "0.5.4",
-    "@graphql-mesh/utils": "^0.98.8"
+    "@graphql-mesh/string-interpolation": "0.5.4"
   },
   "publishConfig": {
     "access": "public",

@@ -86,6 +86,7 @@ describe('useForwardHeaders', () => {
         fetch: upstream.fetch as any,
       },
       plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
+      maskedErrors: false,
     });
     const response = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',

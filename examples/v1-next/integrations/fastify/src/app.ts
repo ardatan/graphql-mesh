@@ -5,7 +5,7 @@ import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 export const app = fastify();
 
 const meshHttp = createServeRuntime({
-  fusiongraph: join(__dirname, '..', 'fusiongraph.graphql'),
+  supergraph: join(__dirname, '..', 'supergraph.graphql'),
 });
 
 app.route({

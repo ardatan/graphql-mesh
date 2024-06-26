@@ -23,7 +23,7 @@ it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
     services: [await service('authors'), await service('books')],
     output: 'graphql',
   });
-  const server = await serve({ fusiongraph: output });
+  const server = await serve({ supergraph: output });
   const result = await tbench.sustain({
     server,
     params: {

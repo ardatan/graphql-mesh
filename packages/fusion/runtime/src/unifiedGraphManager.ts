@@ -5,22 +5,19 @@ import { TransportBaseContext, TransportEntry } from '@graphql-mesh/transport-co
 import { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import { SubschemaConfig } from '@graphql-tools/delegate';
-import { stitchSchemas } from '@graphql-tools/stitch';
 import {
   IResolvers,
   isDocumentNode,
   MaybePromise,
-  pruneSchema,
   TypeSource,
 } from '@graphql-tools/utils';
-import { filterHiddenPartsInSchema } from './filterHiddenPartsInSchema.js';
-import { extractSubgraphsFromFusiongraph } from './getSubschemasFromFusiongraph.js';
 import {
   compareSchemas,
   getOnSubgraphExecute,
   OnSubgraphExecuteHook,
   TransportsOption,
 } from './utils.js';
+import { compareSubgraphNames, handleFederationSupergraph } from './federation.js';
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   if (isSchema(source)) {
@@ -35,7 +32,7 @@ function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   return source;
 }
 
-export interface GetExecutableSchemaFromFusiongraphOptions<TContext extends Record<string, any>> {
+export interface GetExecutableSchemaFromSupergraphOptions<TContext extends Record<string, any>> {
   additionalTypeDefs?: DocumentNode | string | DocumentNode[] | string[];
   additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
   transportBaseContext?: TransportBaseContext;
@@ -73,34 +70,6 @@ export interface UnifiedGraphManagerOptions<TContext> {
   onDelegateHooks?: OnDelegateHook<unknown>[];
 }
 
-export const handleFusiongraph: UnifiedGraphHandler = function handleFusiongraph(opts) {
-  const { subschemas, transportEntryMap, additionalTypeDefs, additionalResolvers } =
-    extractSubgraphsFromFusiongraph(opts.unifiedGraph, function (subschemaConfig) {
-      subschemaConfig.executor = function executor(execReq) {
-        return opts.onSubgraphExecute(subschemaConfig.name, execReq);
-      };
-    });
-  const unifiedGraph = pruneSchema(
-    filterHiddenPartsInSchema(
-      stitchSchemas({
-        subschemas,
-        assumeValid: true,
-        assumeValidSDL: true,
-        typeDefs: [opts.additionalTypeDefs, ...additionalTypeDefs],
-        resolvers: [opts.additionalResolvers as any, ...additionalResolvers],
-      }),
-    ),
-  );
-
-  return {
-    unifiedGraph,
-    transportEntryMap,
-    subschemas,
-    additionalTypeDefs,
-    additionalResolvers,
-  };
-};
-
 export class UnifiedGraphManager<TContext> {
   private handleUnifiedGraph: UnifiedGraphHandler;
   private unifiedGraph: GraphQLSchema;
@@ -111,7 +80,7 @@ export class UnifiedGraphManager<TContext> {
   private initialUnifiedGraph$: MaybePromise<void>;
   private disposableStack = new AsyncDisposableStack();
   constructor(private opts: UnifiedGraphManagerOptions<TContext>) {
-    this.handleUnifiedGraph = opts.handleUnifiedGraph || handleFusiongraph;
+    this.handleUnifiedGraph = opts.handleUnifiedGraph || handleFederationSupergraph;
     this.onSubgraphExecuteHooks = opts?.onSubgraphExecuteHooks || [];
     this.disposableStack.defer(() => {
       this.unifiedGraph = undefined;
@@ -187,7 +156,7 @@ export class UnifiedGraphManager<TContext> {
           transportBaseContext: this.opts.transportBaseContext,
           transportEntryMap,
           getSubgraphSchema(subgraphName) {
-            const subgraph = subschemas.find(s => s.name === subgraphName);
+            const subgraph = subschemas.find(s => compareSubgraphNames(s.name, subgraphName));
             if (!subgraph) {
               throw new Error(`Subgraph ${subgraphName} not found`);
             }

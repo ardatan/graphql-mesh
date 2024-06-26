@@ -59,12 +59,7 @@ let program = new Command()
     4000,
   )
   .addOption(
-    new Option('--fusiongraph <path>', 'path to the fusiongraph schema')
-      .conflicts('supergraph')
-      .default('fusiongraph.graphql'),
-  )
-  .addOption(
-    new Option('--supergraph <path>', 'path to the supergraph schema').conflicts('fusiongraph'),
+    new Option('--supergraph <path>', 'path to the supergraph schema'),
   );
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
@@ -128,49 +123,21 @@ export async function run({
   };
 
   let unifiedGraphPath: UnifiedGraphConfig;
-  let spec: 'federation' | 'fusion';
-
   if ('supergraph' in config) {
     unifiedGraphPath = config.supergraph;
-    spec = 'federation';
-    // the program defaults to fusiongraph, remove it
-    // from the config if a supergraph is provided
-    // @ts-expect-error fusiongraph _can_ be in the config
-    delete config.fusiongraph;
-  } else if ('fusiongraph' in config) {
-    unifiedGraphPath = config.fusiongraph;
-    spec = 'fusion';
-  } else if (!('http' in config)) {
-    unifiedGraphPath = './fusiongraph.graphql';
+  } if (!('http' in config)) {
+    unifiedGraphPath = './supergraph.graphql';
   }
 
   let loadingMessage: string;
-  switch (spec) {
-    case 'fusion':
-      if (typeof unifiedGraphPath === 'string') {
-        loadingMessage = `Loading Fusiongraph from ${unifiedGraphPath}`;
-      } else {
-        loadingMessage = `Loading Fusiongraph`;
-      }
-      break;
-    case 'federation':
-      if (typeof unifiedGraphPath === 'string') {
-        loadingMessage = `Loading Supergraph from ${unifiedGraphPath}`;
-      } else {
-        loadingMessage = `Loading Supergraph`;
-      }
-      break;
-    default:
-      if (typeof unifiedGraphPath === 'string') {
-        loadingMessage = `Loading schema from ${unifiedGraphPath}`;
-      } else {
-        loadingMessage = `Loading schema`;
-      }
+
+  if (typeof unifiedGraphPath === 'string') {
+    loadingMessage = `Loading Supergraph from ${unifiedGraphPath}`;
+  } else {
+    loadingMessage = `Loading Supergraph`;
   }
 
   log.info(loadingMessage);
-
-  const unifiedGraphName = spec === 'fusion' ? 'fusiongraph' : 'supergraph';
 
   if (cluster.isPrimary) {
     const fork = opts.fork === true ? defaultFork : opts.fork;
@@ -196,7 +163,7 @@ export async function run({
               return;
             }
             if (events.some(event => event.path === absoluteUnifiedGraphPath)) {
-              log.info(`${unifiedGraphName} changed`);
+              log.info(`Supergraph changed`);
               if (fork > 1) {
                 for (const workerId in cluster.workers) {
                   cluster.workers[workerId].send('invalidateUnifiedGraph');
@@ -246,7 +213,7 @@ export async function run({
   terminateStack.use(handler);
   process.on('message', message => {
     if (message === 'invalidateUnifiedGraph') {
-      log.info(`Invalidating ${unifiedGraphName}`);
+      log.info(`Invalidating Supergraph`);
       handler.invalidateUnifiedGraph();
     }
   });

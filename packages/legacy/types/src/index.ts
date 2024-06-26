@@ -154,6 +154,10 @@ export type OnDelegateHookDonePayload = {
 
 export type OnDelegateHookDone = (payload: OnDelegateHookDonePayload) => PromiseOrValue<void>;
 
+interface AsyncDisposable {
+  [Symbol.asyncDispose](): PromiseLike<void>;
+}
+
 export type MeshPlugin<TContext> = Plugin<TContext> & {
   onFetch?: OnFetchHook<TContext>;
   onDelegate?: OnDelegateHook<TContext>;

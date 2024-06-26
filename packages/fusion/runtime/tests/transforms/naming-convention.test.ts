@@ -2,6 +2,7 @@ import { buildSchema, GraphQLEnumType, GraphQLObjectType, GraphQLUnionType } fro
 import { createNamingConventionTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('Naming Convention', () => {
   it('changes the name of a types, enums, fields and fieldArguments', async () => {
@@ -36,7 +37,7 @@ describe('Naming Convention', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'subgraph1',
+        name: 'SUBGRAPH1',
         schema,
         transforms: [transform],
       },
@@ -89,6 +90,10 @@ describe('Naming Convention', () => {
           MODERATOR
           NEWBIE
         }
+
+        scalar _DirectiveExtensions
+
+        scalar _HoistConfig
       `,
     );
   });
@@ -180,7 +185,7 @@ describe('Naming Convention', () => {
     });
     const executor = composeAndGetExecutor([
       {
-        name: 'subgraph1',
+        name: 'SUBGRAPH1',
         schema: subgraphSchema,
         transforms: [transform],
       },
@@ -278,7 +283,7 @@ describe('Naming Convention', () => {
     });
     const executor = composeAndGetExecutor([
       {
-        name: 'subgraph1',
+        name: 'SUBGRAPH1',
         schema: subgraph,
         transforms: [transform],
       },
@@ -327,7 +332,7 @@ describe('Naming Convention', () => {
     });
     const newSchema = await composeAndGetPublicSchema([
       {
-        name: 'subgraph1',
+        name: 'SUBGRAPH1',
         schema: subgraph,
         transforms: [transform],
       },
@@ -384,7 +389,7 @@ describe('Naming Convention', () => {
     });
     const executor = composeAndGetExecutor([
       {
-        name: 'subgraph1',
+        name: 'SUBGRAPH1',
         schema,
         transforms: [transform],
       },

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema } from 'graphql-yoga';
 import { register as registry } from 'prom-client';
-import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
+import { composeSubgraphs, getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import usePrometheus from '../src/index.js';
@@ -27,14 +27,13 @@ describe('Prometheus', () => {
   let serveRuntime: ReturnType<typeof createServeRuntime>;
 
   function newTestRuntime() {
-    const fusiongraph = composeSubgraphs([
-      {
-        name: 'TestSubgraph',
-        schema: subgraphSchema,
-      },
-    ]);
     serveRuntime = createServeRuntime({
-      fusiongraph,
+      supergraph: () => getUnifiedGraphGracefully([
+        {
+          name: 'TEST_SUBGRAPH',
+          schema: subgraphSchema,
+        },
+      ]),
       transports() {
         return {
           getSubgraphExecutor() {
@@ -73,7 +72,7 @@ describe('Prometheus', () => {
     expect(await res.json()).toEqual({ data: { hello: 'Hello world!' } });
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_duration');
-    expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
   it('should track subgraph request errors', async () => {
@@ -97,7 +96,7 @@ describe('Prometheus', () => {
     });
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_errors');
-    expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
 
@@ -129,7 +128,7 @@ describe('Prometheus', () => {
 
     const metrics = await registry.metrics();
     expect(metrics).toContain('graphql_mesh_subgraph_execute_duration');
-    expect(metrics).toContain('subgraphName="TestSubgraph"');
+    expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
 });

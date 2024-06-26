@@ -38,7 +38,7 @@ const threshold: TbenchResult = {
 
 it(`should perform within threshold ${JSON.stringify(threshold)}`, async () => {
   const { output } = await compose({ output: 'graphql', services: [mysql] });
-  const server = await serve({ fusiongraph: output });
+  const server = await serve({ supergraph: output });
   const result = await tbench.sustain({
     server,
     params: {

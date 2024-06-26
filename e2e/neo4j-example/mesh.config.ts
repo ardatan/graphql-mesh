@@ -16,3 +16,7 @@ export const composeConfig = defineComposeConfig({
     },
   ],
 });
+
+export const serveConfig = {
+  maskedErrors: false,
+}
