@@ -94,6 +94,7 @@ directive @httpOperation(
   queryParamArgMap: ObjMap
   queryStringOptionsByParam: ObjMap
   jsonApiFields: Boolean
+  queryStringOptions: ObjMap
 ) repeatable on FIELD_DEFINITION
 
 directive @pubsubOperation(subgraph: String, pubsubTopic: String)  repeatable on FIELD_DEFINITION
