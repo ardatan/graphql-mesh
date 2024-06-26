@@ -23,6 +23,7 @@ import { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
+  LogLevel,
   mapMaybePromise,
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
@@ -41,16 +42,23 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   config: MeshServeConfig<TContext>,
 ) {
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
-  // eslint-disable-next-line prefer-const
   let logger: Logger;
+  if (config.logging == null) {
+    logger = new DefaultLogger();
+  } else if (typeof config.logging === 'boolean') {
+    logger = config.logging ? new DefaultLogger() : new DefaultLogger('', LogLevel.silent);
+  }
+  if (typeof config.logging === 'number') {
+    logger = new DefaultLogger(undefined, config.logging);
+  } else if (typeof config.logging === 'object') {
+    logger = config.logging;
+  }
   const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
   const wrappedFetchFn = wrapFetchWithHooks(onFetchHooks);
 
   const configContext: MeshServeConfigContext = {
     fetch: wrappedFetchFn,
-    get logger() {
-      return logger;
-    },
+    logger,
     cwd: globalThis.process?.cwd(),
     cache: 'cache' in config ? config.cache : undefined,
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
@@ -153,7 +161,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     // @ts-expect-error PromiseLike is not compatible with Promise
     schema: schemaFetcher,
     fetchAPI: config.fetchAPI,
-    logging: config.logging == null ? new DefaultLogger() : config.logging,
+    logging: logger,
     plugins: [
       defaultMeshPlugin,
       unifiedGraphPlugin,
@@ -197,7 +205,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   });
 
   fetchAPI ||= yoga.fetchAPI;
-  logger = yoga.logger as Logger;
 
   Object.defineProperties(yoga, {
     invalidateUnifiedGraph: {

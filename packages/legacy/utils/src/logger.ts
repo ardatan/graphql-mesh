@@ -23,8 +23,21 @@ export const errorColor: MessageTransformer = msg => ANSI_CODES.red + msg + ANSI
 export const debugColor: MessageTransformer = msg => ANSI_CODES.magenta + msg + ANSI_CODES.reset;
 export const titleBold: MessageTransformer = msg => ANSI_CODES.bold + msg + ANSI_CODES.reset;
 
+export enum LogLevel {
+  debug = 0,
+  info = 1,
+  warn = 2,
+  error = 3,
+  silent = 4,
+}
+
+const noop: VoidFunction = () => {};
+
 export class DefaultLogger implements Logger {
-  constructor(public name?: string) {}
+  constructor(
+    public name?: string,
+    public logLevel = process.env.DEBUG === '1' ? LogLevel.debug : LogLevel.info,
+  ) {}
 
   private getLoggerMessage({ args = [], trim = !this.isDebug }: { args: any[]; trim?: boolean }) {
     return args
@@ -76,70 +89,80 @@ export class DefaultLogger implements Logger {
   }
 
   log(...args: any[]) {
+    if (this.logLevel > LogLevel.info) {
+      return noop;
+    }
     const message = this.getLoggerMessage({
       args,
     });
     const fullMessage = `${this.prefix} ${message}`;
-    if (typeof process === 'object') {
-      process.stderr.write(fullMessage + '\n');
-    } else {
-      console.log(fullMessage);
+    if (process?.stderr?.write(fullMessage + '\n')) {
+      return;
     }
+    console.log(fullMessage);
   }
 
   warn(...args: any[]) {
+    if (this.logLevel > LogLevel.warn) {
+      return noop;
+    }
     const message = this.getLoggerMessage({
       args,
     });
     const fullMessage = `${this.prefix} ⚠️ ${warnColor(message)}`;
-    if (typeof process === 'object') {
-      process.stderr.write(fullMessage + '\n');
-    } else {
-      console.warn(fullMessage);
+    if (process?.stderr?.write(fullMessage + '\n')) {
+      return;
     }
+    console.warn(fullMessage);
   }
 
   info(...args: any[]) {
+    if (this.logLevel > LogLevel.info) {
+      return noop;
+    }
     const message = this.getLoggerMessage({
       args,
     });
     const fullMessage = `${this.prefix} 💡 ${infoColor(message)}`;
-    if (typeof process === 'object') {
-      process.stderr.write(fullMessage + '\n');
-    } else {
-      console.info(fullMessage);
+    if (process?.stderr?.write(fullMessage + '\n')) {
+      return;
     }
+    console.info(fullMessage);
   }
 
   error(...args: any[]) {
+    if (this.logLevel > LogLevel.error) {
+      return noop;
+    }
     const message = this.getLoggerMessage({
       args,
       trim: false,
     });
     const fullMessage = `${this.prefix} 💥 ${errorColor(message)}`;
-    if (typeof process === 'object') {
-      process.stderr.write(fullMessage + '\n');
-    } else {
-      console.error(fullMessage);
+    if (process?.stderr?.write(fullMessage + '\n')) {
+      return;
     }
+    console.error(fullMessage);
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
+    if (this.logLevel > LogLevel.debug) {
+      return noop;
+    }
     if (this.isDebug) {
       const message = this.handleLazyMessage({
         lazyArgs,
       });
       const fullMessage = `${this.prefix} 🐛 ${debugColor(message)}`;
-      if (typeof process === 'object') {
-        process.stderr.write(fullMessage + '\n');
-      } else {
-        console.debug(fullMessage);
+      if (process?.stderr?.write(fullMessage + '\n')) {
+        return;
       }
+      console.debug(fullMessage);
     }
   }
 
   child(name: string): Logger {
-    return new DefaultLogger(this.name ? `${this.name} - ${name}` : name);
+    return new DefaultLogger(this.name ? `${this.name} - ${name}` : name, this.logLevel);
   }
 
   addPrefix(prefix: string): Logger {
