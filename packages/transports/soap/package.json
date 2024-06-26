@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.4",
+    "@graphql-mesh/utils": "^0.98.8",
     "fast-xml-parser": "^4.3.2"
   },
   "publishConfig": {

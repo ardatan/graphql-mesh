@@ -4205,12 +4205,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@examples/hive-example@workspace:examples/v1-next/hive-example":
-  version: 0.0.0-use.local
-  resolution: "@examples/hive-example@workspace:examples/v1-next/hive-example"
-  languageName: unknown
-  linkType: soft
-
 "@examples/reddit-example@workspace:examples/v1-next/json-schema-reddit":
   version: 0.0.0-use.local
   resolution: "@examples/reddit-example@workspace:examples/v1-next/json-schema-reddit"
@@ -4730,6 +4724,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.98.8"
     "@graphql-tools/graphql-file-loader": "npm:8.0.1"
     "@graphql-tools/load": "npm:^8.0.1"
+    "@graphql-tools/schema": "npm:^10.0.4"
     "@graphql-tools/utils": "npm:^10.2.1"
     "@whatwg-node/fetch": "npm:^0.9.14"
     commander: "npm:^12.0.0"
@@ -4882,11 +4877,12 @@ __metadata:
   dependencies:
     "@ardatan/grpc-reflection-js": "npm:^0.0.2"
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
+    "@graphql-mesh/transport-common": "npm:^0.2.8"
     "@grpc/grpc-js": "npm:^1.1.7"
     "@grpc/proto-loader": "npm:^0.7.8"
     "@types/lodash.has": "npm:4.5.9"
     globby: "npm:^11.1.0"
-    graphql-compose: "npm:^9.0.10"
+    graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
     lodash.get: "npm:^4.4.2"
     lodash.has: "npm:^4.5.2"
@@ -4999,7 +4995,7 @@ __metadata:
   resolution: "@graphql-mesh/mongoose@workspace:packages/legacy/handlers/mongoose"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
-    graphql-compose: "npm:^9.0.10"
+    graphql-compose: "npm:^9.0.11"
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
@@ -5053,7 +5049,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.9.0"
     dataloader: "npm:^2.2.2"
     fast-xml-parser: "npm:^4.2.1"
-    graphql-compose: "npm:^9.0.10"
+    graphql-compose: "npm:^9.0.11"
     graphql-parse-resolve-info: "npm:^4.13.0"
     graphql-scalars: "npm:^1.22.4"
     http-string-parser: "npm:^0.0.6"
@@ -5866,6 +5862,7 @@ __metadata:
   resolution: "@graphql-mesh/transport-soap@workspace:packages/transports/soap"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
+    "@graphql-mesh/utils": "npm:^0.98.8"
     fast-xml-parser: "npm:^4.3.2"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.3
@@ -8371,7 +8368,7 @@ __metadata:
     ajv: "npm:8.16.0"
     ajv-formats: "npm:2.1.1"
     dset: "npm:3.1.3"
-    graphql-compose: "npm:9.0.11"
+    graphql-compose: "npm:^9.0.11"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^1.22.4"
     json-machete: "npm:0.97.3"
@@ -8401,7 +8398,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.2.1"
     "@types/graphql-fields": "npm:1.3.9"
     "@types/mysql": "npm:2.15.26"
-    graphql-compose: "npm:^9.0.10"
+    graphql-compose: "npm:^9.0.11"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^1.22.4"
     mysql: "npm:^2.18.1"
@@ -8483,7 +8480,7 @@ __metadata:
     "@graphql-mesh/transport-soap": "npm:^0.2.8"
     "@whatwg-node/fetch": "npm:^0.9.15"
     fast-xml-parser: "npm:^4.3.4"
-    graphql-compose: "npm:^9.0.10"
+    graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
     soap: "npm:1.0.4"
   peerDependencies:
@@ -18927,16 +18924,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gateway-d4a6d9@workspace:examples/v1-next/hive-example/gateway":
-  version: 0.0.0-use.local
-  resolution: "gateway-d4a6d9@workspace:examples/v1-next/hive-example/gateway"
-  dependencies:
-    "@graphql-mesh/serve-cli": "workspace:*"
-    graphql: "npm:16.8.2"
-    tsx: "npm:4.15.7"
-  languageName: unknown
-  linkType: soft
-
 "gateway-example@workspace:examples/hive-example/gateway":
   version: 0.0.0-use.local
   resolution: "gateway-example@workspace:examples/hive-example/gateway"
@@ -19467,7 +19454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-compose@npm:9.0.11, graphql-compose@npm:^9.0.10, graphql-compose@npm:^9.0.8":
+"graphql-compose@npm:9.0.11, graphql-compose@npm:^9.0.11, graphql-compose@npm:^9.0.8":
   version: 9.0.11
   resolution: "graphql-compose@npm:9.0.11"
   dependencies:
@@ -25703,30 +25690,6 @@ __metadata:
   checksum: 10c0/cfdd3c6429aad170014892f7934ff60a4418b32e4c14db10f0d3cfb7743f37385e2a3a8c58c65b7c4fbfe44838d9e8cf8c93897b9763a08224c32957a72621c0
   languageName: node
   linkType: hard
-
-"my-graphql-b6826b@workspace:examples/v1-next/hive-example/my-graphql":
-  version: 0.0.0-use.local
-  resolution: "my-graphql-b6826b@workspace:examples/v1-next/hive-example/my-graphql"
-  dependencies:
-    "@graphql-hive/cli": "npm:0.38.3"
-    graphql: "npm:16.8.2"
-    graphql-yoga: "npm:5.4.0"
-    tsx: "npm:4.15.7"
-  languageName: unknown
-  linkType: soft
-
-"my-rest-aa36ae@workspace:examples/v1-next/hive-example/my-rest":
-  version: 0.0.0-use.local
-  resolution: "my-rest-aa36ae@workspace:examples/v1-next/hive-example/my-rest"
-  dependencies:
-    "@graphql-hive/cli": "npm:0.38.3"
-    "@graphql-mesh/compose-cli": "workspace:*"
-    "@omnigraph/openapi": "workspace:*"
-    fets: "npm:0.8.1"
-    graphql: "npm:16.8.2"
-    tsx: "npm:4.15.7"
-  languageName: unknown
-  linkType: soft
 
 "mysql-employees@workspace:examples/mysql-employees":
   version: 0.0.0-use.local
@@ -33368,22 +33331,6 @@ __metadata:
   peerDependencies:
     typescript: ">=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta"
   checksum: 10c0/02f19e458ec78ead8fffbf711f834ad8ecd2cc6ade4ec0320790713dccc0a412b99e7fd907c4cda2a1dc602c75db6f12e0108e87a5afad4b2f9e90a24cabd5a2
-  languageName: node
-  linkType: hard
-
-"tsx@npm:4.15.7":
-  version: 4.15.7
-  resolution: "tsx@npm:4.15.7"
-  dependencies:
-    esbuild: "npm:~0.21.4"
-    fsevents: "npm:~2.3.3"
-    get-tsconfig: "npm:^4.7.5"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    tsx: dist/cli.mjs
-  checksum: 10c0/e960f4ee084b48cd3183e65946725fd9b0de4afae32a0fd9cd47416a41259fb2c72838b7aeba26adaecc2d89d70e976add9722e72ea5c876b3b493f137cbbf12
   languageName: node
   linkType: hard
 

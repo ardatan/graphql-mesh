@@ -6,7 +6,7 @@ export type TransportEntry<TTransportKind extends string = string, TTransportOpt
   kind: TTransportKind;
   subgraph: string;
   location?: string;
-  headers?: Record<string, string>;
+  headers?: [string, string][];
   options?: TTransportOptions;
 };
 

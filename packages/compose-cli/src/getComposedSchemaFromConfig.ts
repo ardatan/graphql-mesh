@@ -1,12 +1,12 @@
-import { DocumentNode, GraphQLSchema, buildSchema, extendSchema, parse, print } from 'graphql';
+import { buildSchema, DocumentNode, extendSchema, GraphQLSchema, parse, print } from 'graphql';
 import { composeSubgraphs, SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { Logger } from '@graphql-mesh/types';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
-import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { LoaderContext, MeshComposeCLIConfig } from './types.js';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, logger: Logger) {
   const ctx: LoaderContext = {
@@ -23,7 +23,8 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       try {
         subgraphSchema = await schema$;
       } catch (e) {
-        throw new Error(`Failed to load subgraph ${subgraphName} - ${e.stack}`);
+        log.error(`Failed to load subgraph ${subgraphName}`);
+        throw e;
       }
       return {
         name: subgraphName,
@@ -59,7 +60,11 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
     throw new Error(`Unknown error: composed schema is empty`);
   }
   if (additionalTypeDefs?.length || config.transforms?.length) {
-    let composedSchema = buildSchema(result.supergraphSdl, { noLocation: true, assumeValid: true, assumeValidSDL: true });
+    let composedSchema = buildSchema(result.supergraphSdl, {
+      noLocation: true,
+      assumeValid: true,
+      assumeValidSDL: true,
+    });
     if (additionalTypeDefs?.length) {
       composedSchema = mergeSchemas({
         schemas: [composedSchema],

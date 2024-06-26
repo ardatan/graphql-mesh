@@ -19,7 +19,7 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-directive @transport(kind: String!, subgraph: String!, location: String!, headers: Headers, options: TransportOptions) repeatable on SCHEMA
+directive @transport(kind: String!, subgraph: String!, location: String!, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
 
@@ -46,8 +46,6 @@ enum join__Graph {
   AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql")
   BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql")
 }
-
-scalar Headers @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
 
 scalar TransportOptions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
 

@@ -5,6 +5,7 @@ import {
   getIntrospectionQuery,
   getNamedType,
   GraphQLDirective,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
   GraphQLSchema,
@@ -113,7 +114,7 @@ export function loadGraphQLHTTPSubgraph(
           kind: transportKind,
           subgraph: subgraphName,
           location: endpoint,
-          headers: operationHeaders,
+          headers: operationHeaders ? Object.entries(operationHeaders) : undefined,
           options: {
             method,
             useGETForQueries,
@@ -144,7 +145,7 @@ export function loadGraphQLHTTPSubgraph(
               kind: transportKind,
               subgraph: subgraphName,
               location: endpoint,
-              headers: operationHeaders,
+              headers: operationHeaders ? Object.entries(operationHeaders) : undefined,
               options: {
                 method,
                 useGETForQueries,
@@ -157,60 +158,63 @@ export function loadGraphQLHTTPSubgraph(
           ),
         );
     } else {
-      const fetchAsRegular = () => ctx
-        .fetch(endpoint, {
-          method: method || (useGETForQueries ? 'GET' : 'POST'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query: getIntrospectionQuery(),
-          }),
-        })
-        .then(res => {
-          assertResponseOk(res);
-          return res.json();
-        })
-        .then((result: ExecutionResult<IntrospectionQuery>) =>
-          buildClientSchema(result.data, {
-            assumeValid: true,
-          }),
-        ).then(schema => {
-          const queryType = schema.getQueryType();
-          const queryFields = queryType?.getFields();
-          if (queryFields._service) {
-            const serviceType = getNamedType(queryFields._service.type);
-            if (isObjectType(serviceType)) {
-              const serviceTypeFields = serviceType.getFields();
-              if (serviceTypeFields.sdl) {
-                return fetchAsFederation();
+      const fetchAsRegular = () =>
+        ctx
+          .fetch(endpoint, {
+            method: method || (useGETForQueries ? 'GET' : 'POST'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query: getIntrospectionQuery(),
+            }),
+          })
+          .then(res => {
+            assertResponseOk(res);
+            return res.json();
+          })
+          .then((result: ExecutionResult<IntrospectionQuery>) =>
+            buildClientSchema(result.data, {
+              assumeValid: true,
+            }),
+          )
+          .then(schema => {
+            const queryType = schema.getQueryType();
+            const queryFields = queryType?.getFields();
+            if (queryFields._service) {
+              const serviceType = getNamedType(queryFields._service.type);
+              if (isObjectType(serviceType)) {
+                const serviceTypeFields = serviceType.getFields();
+                if (serviceTypeFields.sdl) {
+                  return fetchAsFederation();
+                }
               }
             }
-          }
-          return schema;
-        });
-      const fetchAsFederation = () => ctx
-        .fetch(endpoint, {
-          method: method || (useGETForQueries ? 'GET' : 'POST'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query: federationIntrospectionQuery,
-          }),
-        })
-        .then(res => {
-          assertResponseOk(res);
-          return res.json();
-        })
-        .then((result: ExecutionResult) => result?.data?._service?.sdl)
-        .then(sdl =>
-          buildSchema(sdl, {
-            assumeValidSDL: true,
-            assumeValid: true,
-            noLocation: true,
-          }),
-        );
+            return schema;
+          });
+      const fetchAsFederation = () =>
+        ctx
+          .fetch(endpoint, {
+            method: method || (useGETForQueries ? 'GET' : 'POST'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query: federationIntrospectionQuery,
+            }),
+          })
+          .then(res => {
+            assertResponseOk(res);
+            return res.json();
+          })
+          .then((result: ExecutionResult) => result?.data?._service?.sdl)
+          .then(sdl =>
+            buildSchema(sdl, {
+              assumeValidSDL: true,
+              assumeValid: true,
+              noLocation: true,
+            }),
+          );
       schema$ = federation ? fetchAsFederation() : fetchAsRegular();
     }
     schema$ = schema$.then(handleFetchedSchema);
@@ -225,7 +229,7 @@ interface GraphQLHTTPTransportEntry {
   kind: 'http';
   subgraph: string;
   location: string;
-  headers: Record<string, string>;
+  headers: [string, string][];
   options: {
     method: 'GET' | 'POST';
     useGETForQueries: boolean;
@@ -243,7 +247,7 @@ const transportDirective = new GraphQLDirective({
     kind: { type: new GraphQLNonNull(GraphQLString) },
     subgraph: { type: new GraphQLNonNull(GraphQLString) },
     location: { type: new GraphQLNonNull(GraphQLString) },
-    headers: { type: new GraphQLScalarType({ name: 'Headers' }) },
+    headers: { type: new GraphQLList(new GraphQLList(GraphQLString)) },
     options: { type: new GraphQLScalarType({ name: 'TransportOptions' }) },
   },
 });

@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Cloudfunction should generate correct schema: cloudfunction-schema 1`] = `
-"schema @transport(subgraph: "test", kind: "rest", location: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions", headers: "{\\"Authorization\\":\\"Basic {args.usernamePassword|base64}\\"}") {
+"schema @transport(subgraph: "test", kind: "rest", location: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions", headers: [["Authorization", "Basic {args.usernamePassword|base64}"]]) {
   query: Query
   mutation: Mutation
 }
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on SCHEMA
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) on SCHEMA
 
 type Query {
   dummy: String
@@ -16,7 +16,7 @@ type Query {
 
 type Mutation {
   """Description of the action"""
-  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @httpOperation(subgraph: "test", path: "/test-action-2", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/vnd.experimental+json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST, queryParamArgMap: "{\\"blocking\\":\\"blocking\\",\\"result\\":\\"result\\"}")
+  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @httpOperation(subgraph: "test", path: "/test-action-2", operationSpecificHeaders: [["Content-Type", "application/vnd.experimental+json"], ["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"blocking\\":\\"blocking\\",\\"result\\":\\"result\\"}")
 }
 
 type Response {
@@ -29,8 +29,6 @@ input Payload_Input {
   age: Float!
 }
 
-scalar ObjMap
-
 enum HTTPMethod {
   GET
   HEAD
@@ -41,5 +39,7 @@ enum HTTPMethod {
   OPTIONS
   TRACE
   PATCH
-}"
+}
+
+scalar ObjMap"
 `;

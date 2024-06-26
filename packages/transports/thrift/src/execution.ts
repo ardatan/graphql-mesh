@@ -7,6 +7,7 @@ import {
 } from 'graphql';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
+  getDirectiveExtensions,
   getOperationsAndFragments,
   getRootFieldsWithArgs,
   projectResultBySelectionSet,
@@ -15,58 +16,23 @@ import { ExecutionRequest, ExecutionResult, Executor, getRootTypeMap } from '@gr
 import { createGraphQLThriftClient } from './client.js';
 import { GraphQLThriftAnnotations } from './types.js';
 
-interface DirectiveAnnotation {
-  name: string;
-  args: any;
-}
-
-function getDirectiveAnnotations(directableObj: {
-  astNode?: ASTNode & { directives?: readonly ConstDirectiveNode[] };
-  extensions?: any;
-}): DirectiveAnnotation[] {
-  const directiveAnnotations: DirectiveAnnotation[] = [];
-  if (directableObj.astNode?.directives?.length) {
-    directableObj.astNode.directives.forEach(directive => {
-      directiveAnnotations.push({
-        name: directive.name.value,
-        args: directive.arguments
-          ? Object.fromEntries(
-              directive.arguments.map(arg => [arg.name.value, valueFromASTUntyped(arg.value)]),
-            )
-          : {},
-      });
-    });
-  }
-  if (directableObj.extensions?.directives) {
-    for (const directiveName in directableObj.extensions.directives) {
-      const directiveObjs = directableObj.extensions.directives[directiveName];
-      if (Array.isArray(directiveObjs)) {
-        directiveObjs.forEach(directiveObj => {
-          directiveAnnotations.push({
-            name: directiveName,
-            args: directiveObj,
-          });
-        });
-      } else {
-        directiveAnnotations.push({
-          name: directiveName,
-          args: directiveObjs,
-        });
-      }
-    }
-  }
-  return directiveAnnotations;
-}
-
 export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
-  const schemaDefDirectives = getDirectiveAnnotations(subgraph);
-  const graphqlAnnotations = schemaDefDirectives.find(directive => directive.name === 'transport')
-    ?.args as GraphQLThriftAnnotations;
-  if (!graphqlAnnotations) throw new Error('No @transport directive found on schema definition');
+  const schemaDefDirectives = getDirectiveExtensions(subgraph);
+  const transportDirectives = schemaDefDirectives?.transport;
+  if (!transportDirectives?.length)
+    throw new Error('No @transport directive found on schema definition');
+  const graphqlAnnotations = transportDirectives[0];
   const client = createGraphQLThriftClient(graphqlAnnotations);
-  const headersFactory = getInterpolatedHeadersFactory(graphqlAnnotations.headers);
+  let headers: Record<string, string> | undefined;
+  if (typeof graphqlAnnotations.headers === 'string') {
+    headers = JSON.parse(graphqlAnnotations.headers);
+  }
+  if (Array.isArray(graphqlAnnotations.headers)) {
+    headers = Object.fromEntries(graphqlAnnotations.headers);
+  }
+  const headersFactory = getInterpolatedHeadersFactory(headers);
   const rootTypeMap = getRootTypeMap(subgraph);
-  const fieldTypeMapDirectivesByField = new Map<string, DirectiveAnnotation[]>();
+  const fieldTypeMapDirectivesByField = new Map<string, any[]>();
 
   return async function thriftExecutor(
     executionRequest: ExecutionRequest,
@@ -95,15 +61,13 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
       }
       let fieldTypeMapDirectives = fieldTypeMapDirectivesByField.get(fieldName);
       if (fieldTypeMapDirectives == null) {
-        fieldTypeMapDirectives = getDirectiveAnnotations(field).filter(
-          directive => directive.name === 'fieldTypeMap',
-        );
-        fieldTypeMapDirectivesByField.set(fieldName, fieldTypeMapDirectives || []);
+        fieldTypeMapDirectives = getDirectiveExtensions(field)?.fieldTypeMap || [];
+        fieldTypeMapDirectivesByField.set(fieldName, fieldTypeMapDirectives);
       }
-      fieldTypeMapDirectives?.forEach(fieldTypeMap => {
+      fieldTypeMapDirectives?.forEach(fieldTypeMapDirective => {
         requestPromises.push(
           client
-            .doRequest(fieldName, args, fieldTypeMap.args.fieldTypeMap, {
+            .doRequest(fieldName, args, fieldTypeMapDirective?.fieldTypeMap, {
               headers: headersFactory({
                 root,
                 args,

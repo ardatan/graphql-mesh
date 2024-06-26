@@ -14,10 +14,10 @@ import {
   ResolverDataBasedFactory,
 } from '@graphql-mesh/string-interpolation';
 import { MeshFetch } from '@graphql-mesh/types';
-import { Executor, getDirective, getRootTypes } from '@graphql-tools/utils';
+import { getDirectiveExtensions } from '@graphql-mesh/utils';
+import { Executor, getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
-import { getDirectiveExtensions } from '@graphql-mesh/utils';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {
   if (isNonNullType(type)) {

@@ -89,7 +89,7 @@ directive @merge(
   keyField: String
   key: [String!]
   additionalArgs: String
-) on FIELD_DEFINITION
+) repeatable on FIELD_DEFINITION
 
 type Query @join__type(graph: A)  @join__type(graph: B)  {
   myFoo: Foo! @join__field(graph: A) 
@@ -204,15 +204,17 @@ directive @merge(
   keyField: String
   key: [String!]
   additionalArgs: String
-) on FIELD_DEFINITION
+) repeatable on FIELD_DEFINITION
 
 scalar _HoistConfig @join__type(graph: A)  @join__type(graph: B) 
 
 type Query @source(name: "Query", subgraph: "A")  @source(name: "Query", subgraph: "B")  @join__type(graph: A)  @join__type(graph: B)  {
   A_myFoo: A_Foo! @source(name: "myFoo", type: "Foo!", subgraph: "A")  @join__field(graph: A) 
-  B_foo(id: ID! @source(name: "id", type: "ID", subgraph: "B") ) : B_Foo! @source(name: "foo", type: "Foo!", subgraph: "B")  @merge(subgraph: "B", keyField: "id", keyArg: "id")  @join__field(graph: B) 
-  B_foos(ids: [ID!]! @source(name: "ids", type: "ID", subgraph: "B") ) : [B_Foo!]! @source(name: "foos", type: "[Foo!]!", subgraph: "B")  @merge(subgraph: "B", keyField: "id", keyArg: "ids")  @join__field(graph: B) 
-  B_foosByFilter(where: B_FooFilter! @source(name: "where", type: "FooFilter", subgraph: "B") ) : [B_Foo!]! @source(name: "foosByFilter", type: "[Foo!]!", subgraph: "B")  @join__field(graph: B) 
+  B_foo(id: ID!) : B_Foo! @source(name: "foo", type: "Foo!", subgraph: "B")  @merge(subgraph: "B", keyField: "id", keyArg: "id")  @join__field(graph: B) 
+  B_foos(ids: [ID!]!) : [B_Foo!]! @source(name: "foos", type: "[Foo!]!", subgraph: "B")  @merge(subgraph: "B", keyField: "id", keyArg: "ids")  @join__field(graph: B) 
+  B_foosByFilter(
+    where: B_FooFilter! @source(name: "where", type: "FooFilter!", subgraph: "B") 
+  ): [B_Foo!]! @source(name: "foosByFilter", type: "[Foo!]!", subgraph: "B")  @join__field(graph: B) 
 }
 
 type A_Foo @source(name: "Foo", subgraph: "A")  @join__type(graph: A)  {
@@ -324,7 +326,7 @@ directive @merge(
   keyField: String
   key: [String!]
   additionalArgs: String
-) on FIELD_DEFINITION
+) repeatable on FIELD_DEFINITION
 
 directive @foo repeatable on FIELD_DEFINITION
 

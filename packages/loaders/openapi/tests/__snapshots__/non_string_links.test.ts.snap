@@ -5,19 +5,19 @@ exports[`Links on non-object fields should generate the correct schema 1`] = `
   query: Query
 }
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on SCHEMA
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) on SCHEMA
 
 directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFINITION
 
 directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
 
 type Query {
-  test: test_200_response @httpOperation(subgraph: "toto", path: "/test", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(subgraph: "toto", linkResolverMap: "{\\"testLink\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"testLink\\"}}")
-  testLink: testLink_200_response @httpOperation(subgraph: "toto", path: "/test-link", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  test: test_200_response @httpOperation(subgraph: "toto", path: "/test", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "toto", linkResolverMap: "{\\"testLink\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"testLink\\"}}")
+  testLink: testLink_200_response @httpOperation(subgraph: "toto", path: "/test-link", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
 }
 
 type test_200_response {
@@ -29,8 +29,6 @@ type testLink_200_response {
   foo: String
 }
 
-scalar ObjMap
-
 enum HTTPMethod {
   GET
   HEAD
@@ -41,5 +39,7 @@ enum HTTPMethod {
   OPTIONS
   TRACE
   PATCH
-}"
+}
+
+scalar ObjMap"
 `;

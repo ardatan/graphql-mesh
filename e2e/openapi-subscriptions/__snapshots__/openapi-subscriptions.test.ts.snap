@@ -87,7 +87,7 @@ enum join__Graph {
 directive @httpOperation(
   subgraph: String
   path: String
-  operationSpecificHeaders: ObjMap
+  operationSpecificHeaders: [[String]]
   httpMethod: HTTPMethod
   isBinary: Boolean
   requestBaseBody: ObjMap
@@ -102,9 +102,9 @@ directive @transport(
   subgraph: String
   kind: String
   location: String
-  headers: ObjMap
+  headers: [[String]]
   queryStringOptions: ObjMap
-  queryParams: ObjMap
+  queryParams: [[String]]
 ) repeatable on SCHEMA
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
@@ -136,7 +136,7 @@ type Mutation @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)  {
   post_streams(input: post_streams_request_Input) : SubscriptionInfo @httpOperation(
     subgraph: "OpenAPICallbackExample"
     path: "/streams"
-    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
   )
 }

@@ -20,9 +20,9 @@ directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on SCHEMA
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) on SCHEMA
 
 type Query {
   """Returns a list of Invitees for an event."""
@@ -41,7 +41,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getInvitees_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}/invitees", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
+  ): getInvitees_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}/invitees", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
   """
   Returns a list of  Events.
   
@@ -87,7 +87,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getScheduledEvents_response @httpOperation(subgraph: "calendly", path: "/scheduled_events", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user\\":\\"user\\",\\"organization\\":\\"organization\\",\\"invitee_email\\":\\"invitee_email\\",\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"min_start_time\\":\\"min_start_time\\",\\"max_start_time\\":\\"max_start_time\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
+  ): getScheduledEvents_response @httpOperation(subgraph: "calendly", path: "/scheduled_events", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"user\\":\\"user\\",\\"organization\\":\\"organization\\",\\"invitee_email\\":\\"invitee_email\\",\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"min_start_time\\":\\"min_start_time\\",\\"max_start_time\\":\\"max_start_time\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
   """
   Returns all Event Types associated with a specified User. Use:
   
@@ -122,14 +122,14 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getEventTypes_response @httpOperation(subgraph: "calendly", path: "/event_types", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"active\\":\\"active\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"sort\\":\\"sort\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
+  ): getEventTypes_response @httpOperation(subgraph: "calendly", path: "/event_types", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"active\\":\\"active\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"sort\\":\\"sort\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
   """Returns information about a specified User."""
   getUser(
     """User unique identifier, or the constant "me" to reference the caller"""
     uuid: String!
-  ): getUser_response @httpOperation(subgraph: "calendly", path: "/users/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): getUser_response @httpOperation(subgraph: "calendly", path: "/users/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """Returns basic information about your user account."""
-  getMyUserAccount: getMyUserAccount_response @httpOperation(subgraph: "calendly", path: "/users/me", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getMyUserAccount: getMyUserAccount_response @httpOperation(subgraph: "calendly", path: "/users/me", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """
   Returns information about a specified Invitee (person invited to an event).
   """
@@ -138,14 +138,14 @@ type Query {
     event_uuid: String!
     """The invitee's unique identifier"""
     invitee_uuid: String!
-  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.event_uuid}/invitees/{args.invitee_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.event_uuid}/invitees/{args.invitee_uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """Returns information about a specified Event."""
   get_scheduled_events_uuid(
     """The event's unique identifier"""
     uuid: String!
-  ): get_scheduled_events_uuid_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): get_scheduled_events_uuid_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """Returns information about a specified Event Type."""
-  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @httpOperation(subgraph: "calendly", path: "/event_types/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @httpOperation(subgraph: "calendly", path: "/event_types/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """
   Returns a list of Organization Invitations that were sent to the organization's members.
   """
@@ -165,7 +165,7 @@ type Query {
     """Indicates if the results should be filtered by email address"""
     email: EmailAddress
     status: queryInput_get_organizations_uuid_invitations_status
-  ): get_organizations_uuid_invitations_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"status\\":\\"status\\"}")
+  ): get_organizations_uuid_invitations_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"status\\":\\"status\\"}")
   """
   Returns an Organization Invitation that was sent to the organization's members.
   """
@@ -174,12 +174,12 @@ type Query {
     org_uuid: String!
     """The organization invitation's unique identifier"""
     uuid: String!
-  ): get_organizations_org_uuid_invitations_uuid_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): get_organizations_org_uuid_invitations_uuid_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """Returns information about a user's Organization Membership"""
   get_organizations_uuid_memberships(
     """The organization membership's unique identifier"""
     uuid: String!
-  ): get_organizations_uuid_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): get_organizations_uuid_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """
   Use this to list the Organization Memberships for all users belonging to an organization, use:
   
@@ -202,7 +202,7 @@ type Query {
     organization: URL
     """Indicates if the results should be filtered by user"""
     user: URL
-  ): get_organization_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"email\\":\\"email\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\"}")
+  ): get_organization_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"email\\":\\"email\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\"}")
   """
   Get a list of Webhook Subscriptions for a specified Organization or User.
   """
@@ -226,11 +226,11 @@ type Query {
     """
     sort: String
     scope: queryInput_get_webhooks_scope!
-  ): get_webhooks_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"sort\\":\\"sort\\",\\"scope\\":\\"scope\\"}")
+  ): get_webhooks_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"sort\\":\\"sort\\",\\"scope\\":\\"scope\\"}")
   """Get a specified Webhook Subscription."""
-  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """Returns information about a specified Invitee No Show."""
-  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """Get a list of Routing Forms for a specified Organization."""
   get_routing_forms(
     """
@@ -247,9 +247,9 @@ type Query {
     Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
     """
     sort: String
-  ): get_routing_forms_response @httpOperation(subgraph: "calendly", path: "/routing_forms", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
+  ): get_routing_forms_response @httpOperation(subgraph: "calendly", path: "/routing_forms", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
   """Get a specified Routing Form."""
-  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @httpOperation(subgraph: "calendly", path: "/routing_forms/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @httpOperation(subgraph: "calendly", path: "/routing_forms/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """Get a list of Routing Form Submissions for a specified Routing Form."""
   get_routing_form_submissions(
     """View routing form submissions associated with the routing form's URI."""
@@ -264,9 +264,9 @@ type Query {
     Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
     """
     sort: String
-  ): get_routing_form_submissions_response @httpOperation(subgraph: "calendly", path: "/routing_form_submissions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"form\\":\\"form\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
+  ): get_routing_form_submissions_response @httpOperation(subgraph: "calendly", path: "/routing_form_submissions", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"form\\":\\"form\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
   """Get a specified Routing Form Submission."""
-  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @httpOperation(subgraph: "calendly", path: "/routing_form_submissions/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @httpOperation(subgraph: "calendly", path: "/routing_form_submissions/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """
   Returns a list of available times for an event type within a specified date range.
   
@@ -282,7 +282,7 @@ type Query {
     start_time: String
     """End time of the requested availability range."""
     end_time: String
-  ): getEventTypeAvailableTimes_response @httpOperation(subgraph: "calendly", path: "/event_type_available_times", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"event_type\\":\\"event_type\\",\\"start_time\\":\\"start_time\\",\\"end_time\\":\\"end_time\\"}")
+  ): getEventTypeAvailableTimes_response @httpOperation(subgraph: "calendly", path: "/event_type_available_times", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"event_type\\":\\"event_type\\",\\"start_time\\":\\"start_time\\",\\"end_time\\":\\"end_time\\"}")
   """
   <!-- theme: info -->
     > This endpoint requires an <strong>Enterprise</strong> subscription.
@@ -328,7 +328,7 @@ type Query {
     namespace: [String]
     """The action(s) associated with the entries"""
     action: [String]
-  ): activityLog_response @httpOperation(subgraph: "calendly", path: "/activity_log_entries", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"search_term\\":\\"search_term\\",\\"actor\\":\\"actor\\",\\"sort\\":\\"sort\\",\\"min_occurred_at\\":\\"min_occurred_at\\",\\"max_occurred_at\\":\\"max_occurred_at\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"namespace\\":\\"namespace\\",\\"action\\":\\"action\\"}", queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): activityLog_response @httpOperation(subgraph: "calendly", path: "/activity_log_entries", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"search_term\\":\\"search_term\\",\\"actor\\":\\"actor\\",\\"sort\\":\\"sort\\",\\"min_occurred_at\\":\\"min_occurred_at\\",\\"max_occurred_at\\":\\"max_occurred_at\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"namespace\\":\\"namespace\\",\\"action\\":\\"action\\"}", queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
 }
 
 union getInvitees_response @statusCodeTypeName(subgraph: "calendly", statusCode: 200, typeName: "getInvitees_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 500, typeName: "UNKNOWN_response") = getInvitees_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
@@ -540,11 +540,11 @@ type INVALID_ARGUMENT_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Invalid_Argument_const @typescript(subgraph: "calendly", type: "\\"Invalid Argument\\"") @example(subgraph: "calendly", value: "\\"Invalid Argument\\"") {
+enum Invalid_Argument_const @typescript(subgraph: "calendly", type: "\\"Invalid Argument\\"") @example(subgraph: "calendly", value: "Invalid Argument") {
   Invalid_Argument @enum(subgraph: "calendly", value: "\\"Invalid Argument\\"")
 }
 
-enum The_supplied_parameters_are_invalid__const @typescript(subgraph: "calendly", type: "\\"The supplied parameters are invalid.\\"") @example(subgraph: "calendly", value: "\\"The supplied parameters are invalid.\\"") {
+enum The_supplied_parameters_are_invalid__const @typescript(subgraph: "calendly", type: "\\"The supplied parameters are invalid.\\"") @example(subgraph: "calendly", value: "The supplied parameters are invalid.") {
   The_supplied_parameters_are_invalid_ @enum(subgraph: "calendly", value: "\\"The supplied parameters are invalid.\\"")
 }
 
@@ -560,7 +560,7 @@ type UNAUTHENTICATED_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Unauthenticated_const @typescript(subgraph: "calendly", type: "\\"Unauthenticated\\"") @example(subgraph: "calendly", value: "\\"Unauthenticated\\"") {
+enum Unauthenticated_const @typescript(subgraph: "calendly", type: "\\"Unauthenticated\\"") @example(subgraph: "calendly", value: "Unauthenticated") {
   Unauthenticated @enum(subgraph: "calendly", value: "\\"Unauthenticated\\"")
 }
 
@@ -577,7 +577,7 @@ type PERMISSION_DENIED_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Permission_Denied_const @typescript(subgraph: "calendly", type: "\\"Permission Denied\\"") @example(subgraph: "calendly", value: "\\"Permission Denied\\"") {
+enum Permission_Denied_const @typescript(subgraph: "calendly", type: "\\"Permission Denied\\"") @example(subgraph: "calendly", value: "Permission Denied") {
   Permission_Denied @enum(subgraph: "calendly", value: "\\"Permission Denied\\"")
 }
 
@@ -600,11 +600,11 @@ type NOT_FOUND_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Resource_Not_Found_const @typescript(subgraph: "calendly", type: "\\"Resource Not Found\\"") @example(subgraph: "calendly", value: "\\"Resource Not Found\\"") {
+enum Resource_Not_Found_const @typescript(subgraph: "calendly", type: "\\"Resource Not Found\\"") @example(subgraph: "calendly", value: "Resource Not Found") {
   Resource_Not_Found @enum(subgraph: "calendly", value: "\\"Resource Not Found\\"")
 }
 
-enum The_server_could_not_find_the_requested_resource__const @typescript(subgraph: "calendly", type: "\\"The server could not find the requested resource.\\"") @example(subgraph: "calendly", value: "\\"The server could not find the requested resource.\\"") {
+enum The_server_could_not_find_the_requested_resource__const @typescript(subgraph: "calendly", type: "\\"The server could not find the requested resource.\\"") @example(subgraph: "calendly", value: "The server could not find the requested resource.") {
   The_server_could_not_find_the_requested_resource_ @enum(subgraph: "calendly", value: "\\"The server could not find the requested resource.\\"")
 }
 
@@ -615,11 +615,11 @@ type UNKNOWN_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Internal_Server_Error_const @typescript(subgraph: "calendly", type: "\\"Internal Server Error\\"") @example(subgraph: "calendly", value: "\\"Internal Server Error\\"") {
+enum Internal_Server_Error_const @typescript(subgraph: "calendly", type: "\\"Internal Server Error\\"") @example(subgraph: "calendly", value: "Internal Server Error") {
   Internal_Server_Error @enum(subgraph: "calendly", value: "\\"Internal Server Error\\"")
 }
 
-enum The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request__const @typescript(subgraph: "calendly", type: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"") @example(subgraph: "calendly", value: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"") {
+enum The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request__const @typescript(subgraph: "calendly", type: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"") @example(subgraph: "calendly", value: "The server encountered an unexpected condition that prevented it from fulfilling the request.") {
   The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request_ @enum(subgraph: "calendly", value: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"")
 }
 
@@ -695,7 +695,7 @@ type In_Person_Meeting {
   location: String!
 }
 
-enum physical_const @typescript(subgraph: "calendly", type: "\\"physical\\"") @example(subgraph: "calendly", value: "\\"physical\\"") {
+enum physical_const @typescript(subgraph: "calendly", type: "\\"physical\\"") @example(subgraph: "calendly", value: "physical") {
   physical @enum(subgraph: "calendly", value: "\\"physical\\"")
 }
 
@@ -708,7 +708,7 @@ type Outbound_Call {
   location: String
 }
 
-enum outbound_call_const @typescript(subgraph: "calendly", type: "\\"outbound_call\\"") @example(subgraph: "calendly", value: "\\"outbound_call\\"") {
+enum outbound_call_const @typescript(subgraph: "calendly", type: "\\"outbound_call\\"") @example(subgraph: "calendly", value: "outbound_call") {
   outbound_call @enum(subgraph: "calendly", value: "\\"outbound_call\\"")
 }
 
@@ -721,7 +721,7 @@ type Inbound_Call {
   location: String!
 }
 
-enum inbound_call_const @typescript(subgraph: "calendly", type: "\\"inbound_call\\"") @example(subgraph: "calendly", value: "\\"inbound_call\\"") {
+enum inbound_call_const @typescript(subgraph: "calendly", type: "\\"inbound_call\\"") @example(subgraph: "calendly", value: "inbound_call") {
   inbound_call @enum(subgraph: "calendly", value: "\\"inbound_call\\"")
 }
 
@@ -735,7 +735,7 @@ type Google_Conference {
   join_url: URL
 }
 
-enum google_conference_const @typescript(subgraph: "calendly", type: "\\"google_conference\\"") @example(subgraph: "calendly", value: "\\"google_conference\\"") {
+enum google_conference_const @typescript(subgraph: "calendly", type: "\\"google_conference\\"") @example(subgraph: "calendly", value: "google_conference") {
   google_conference @enum(subgraph: "calendly", value: "\\"google_conference\\"")
 }
 
@@ -756,7 +756,7 @@ type Zoom_Conference {
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data
 }
 
-enum zoom_conference_const @typescript(subgraph: "calendly", type: "\\"zoom_conference\\"") @example(subgraph: "calendly", value: "\\"zoom_conference\\"") {
+enum zoom_conference_const @typescript(subgraph: "calendly", type: "\\"zoom_conference\\"") @example(subgraph: "calendly", value: "zoom_conference") {
   zoom_conference @enum(subgraph: "calendly", value: "\\"zoom_conference\\"")
 }
 
@@ -808,7 +808,7 @@ type GoToMeeting_Conference {
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data
 }
 
-enum gotomeeting_const @typescript(subgraph: "calendly", type: "\\"gotomeeting\\"") @example(subgraph: "calendly", value: "\\"gotomeeting\\"") {
+enum gotomeeting_const @typescript(subgraph: "calendly", type: "\\"gotomeeting\\"") @example(subgraph: "calendly", value: "gotomeeting") {
   gotomeeting @enum(subgraph: "calendly", value: "\\"gotomeeting\\"")
 }
 
@@ -836,7 +836,7 @@ type Microsoft_Teams_Conference {
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data
 }
 
-enum microsoft_teams_conference_const @typescript(subgraph: "calendly", type: "\\"microsoft_teams_conference\\"") @example(subgraph: "calendly", value: "\\"microsoft_teams_conference\\"") {
+enum microsoft_teams_conference_const @typescript(subgraph: "calendly", type: "\\"microsoft_teams_conference\\"") @example(subgraph: "calendly", value: "microsoft_teams_conference") {
   microsoft_teams_conference @enum(subgraph: "calendly", value: "\\"microsoft_teams_conference\\"")
 }
 
@@ -868,7 +868,7 @@ type Custom_Location {
   location: String
 }
 
-enum custom_const @typescript(subgraph: "calendly", type: "\\"custom\\"") @example(subgraph: "calendly", value: "\\"custom\\"") {
+enum custom_const @typescript(subgraph: "calendly", type: "\\"custom\\"") @example(subgraph: "calendly", value: "custom") {
   custom @enum(subgraph: "calendly", value: "\\"custom\\"")
 }
 
@@ -879,7 +879,7 @@ type Invitee_Specified_Location {
   location: String!
 }
 
-enum ask_invitee_const @typescript(subgraph: "calendly", type: "\\"ask_invitee\\"") @example(subgraph: "calendly", value: "\\"ask_invitee\\"") {
+enum ask_invitee_const @typescript(subgraph: "calendly", type: "\\"ask_invitee\\"") @example(subgraph: "calendly", value: "ask_invitee") {
   ask_invitee @enum(subgraph: "calendly", value: "\\"ask_invitee\\"")
 }
 
@@ -892,7 +892,7 @@ type WebEx_Conference {
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data
 }
 
-enum webex_conference_const @typescript(subgraph: "calendly", type: "\\"webex_conference\\"") @example(subgraph: "calendly", value: "\\"webex_conference\\"") {
+enum webex_conference_const @typescript(subgraph: "calendly", type: "\\"webex_conference\\"") @example(subgraph: "calendly", value: "webex_conference") {
   webex_conference @enum(subgraph: "calendly", value: "\\"webex_conference\\"")
 }
 
@@ -1525,7 +1525,7 @@ type Routing_Form_Submission_Event_Type_Result {
   value: URL!
 }
 
-enum event_type_const @typescript(subgraph: "calendly", type: "\\"event_type\\"") @example(subgraph: "calendly", value: "\\"event_type\\"") {
+enum event_type_const @typescript(subgraph: "calendly", type: "\\"event_type\\"") @example(subgraph: "calendly", value: "event_type") {
   event_type @enum(subgraph: "calendly", value: "\\"event_type\\"")
 }
 
@@ -1536,7 +1536,7 @@ type Routing_Form_Submission_External_URL_Result {
   value: URL!
 }
 
-enum external_url_const @typescript(subgraph: "calendly", type: "\\"external_url\\"") @example(subgraph: "calendly", value: "\\"external_url\\"") {
+enum external_url_const @typescript(subgraph: "calendly", type: "\\"external_url\\"") @example(subgraph: "calendly", value: "external_url") {
   external_url @enum(subgraph: "calendly", value: "\\"external_url\\"")
 }
 
@@ -1546,7 +1546,7 @@ type Routing_Form_Submission_Custom_Message_Result {
   value: query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_value!
 }
 
-enum custom_message_const @typescript(subgraph: "calendly", type: "\\"custom_message\\"") @example(subgraph: "calendly", value: "\\"custom_message\\"") {
+enum custom_message_const @typescript(subgraph: "calendly", type: "\\"custom_message\\"") @example(subgraph: "calendly", value: "custom_message") {
   custom_message @enum(subgraph: "calendly", value: "\\"custom_message\\"")
 }
 
@@ -1558,7 +1558,7 @@ type query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_
   body: String!
 }
 
-enum Invitee_const @typescript(subgraph: "calendly", type: "\\"Invitee\\"") @example(subgraph: "calendly", value: "\\"Invitee\\"") {
+enum Invitee_const @typescript(subgraph: "calendly", type: "\\"Invitee\\"") @example(subgraph: "calendly", value: "Invitee") {
   Invitee @enum(subgraph: "calendly", value: "\\"Invitee\\"")
 }
 
@@ -1747,7 +1747,7 @@ type Mutation {
     """The organization's unique identifier"""
     uuid: String!
     input: post_organizations_uuid_invitations_request_Input
-  ): post_organizations_uuid_invitations_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  ): post_organizations_uuid_invitations_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
   """
   Use this to revoke an Organization Invitation to an organization. Once revoked, the invitation link that was sent to the invitee is no longer valid.
   """
@@ -1756,7 +1756,7 @@ type Mutation {
     org_uuid: String!
     """The organization invitation's unique identifier"""
     uuid: String!
-  ): revoke_users_organization_invitation_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
+  ): revoke_users_organization_invitation_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
   """
   Removes a user from an organization.
   
@@ -1769,7 +1769,7 @@ type Mutation {
   delete_organizations_uuid_memberships(
     """The organization membership's unique identifier"""
     uuid: String!
-  ): delete_organizations_uuid_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
+  ): delete_organizations_uuid_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
   """
   Create a Webhook Subscription for an Organization or User.
   
@@ -1782,28 +1782,28 @@ type Mutation {
   | <pre>invitee.canceled</pre> | \`organization\` \`user\` |
   | <pre>routing_form_submission.created</pre> | \`organization\` <br /> <small>Create separate Webhook Subscriptions for events with different subscription scopes.</small> |
   """
-  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
   """Delete a Webhook Subscription."""
-  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
+  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
   """Creates a single-use scheduling link."""
-  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @httpOperation(subgraph: "calendly", path: "/scheduling_links", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @httpOperation(subgraph: "calendly", path: "/scheduling_links", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
   """
   <!-- theme: info -->
     > This endpoint requires an <strong>Enterprise</strong> subscription.
   
   To submit a request to remove invitee data from all previously booked events in your organization, use this endpoint. Requests for data deletion can take up to 7 days to complete.
   """
-  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @httpOperation(subgraph: "calendly", path: "/data_compliance/deletion/invitees", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @httpOperation(subgraph: "calendly", path: "/data_compliance/deletion/invitees", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
   """Undoes marking an Invitee as a No Show."""
-  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
+  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
   """Marks an Invitee as a No Show."""
-  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
   """Cancels specified event."""
   post_scheduled_events_uuid_cancellation(
     """The event's unique indentifier"""
     uuid: String!
     input: post_scheduled_events_uuid_cancellation_request_Input
-  ): post_scheduled_events_uuid_cancellation_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}/cancellation", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  ): post_scheduled_events_uuid_cancellation_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}/cancellation", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
 }
 
 union post_organizations_uuid_invitations_response @statusCodeTypeName(subgraph: "calendly", statusCode: 201, typeName: "post_organizations_uuid_invitations_201_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 400, typeName: "Error_Response") @statusCodeTypeName(subgraph: "calendly", statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 403, typeName: "post_organizations_uuid_invitations_403_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: 500, typeName: "UNKNOWN_response") = post_organizations_uuid_invitations_201_response | Error_Response | UNAUTHENTICATED_response | post_organizations_uuid_invitations_403_response | NOT_FOUND_response | UNKNOWN_response
@@ -1852,11 +1852,11 @@ type post_users_uuid_webhooks_409_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Already_Exists_const @typescript(subgraph: "calendly", type: "\\"Already Exists\\"") @example(subgraph: "calendly", value: "\\"Already Exists\\"") {
+enum Already_Exists_const @typescript(subgraph: "calendly", type: "\\"Already Exists\\"") @example(subgraph: "calendly", value: "Already Exists") {
   Already_Exists @enum(subgraph: "calendly", value: "\\"Already Exists\\"")
 }
 
-enum Hook_with_this_url_already_exists_const @typescript(subgraph: "calendly", type: "\\"Hook with this url already exists\\"") @example(subgraph: "calendly", value: "\\"Hook with this url already exists\\"") {
+enum Hook_with_this_url_already_exists_const @typescript(subgraph: "calendly", type: "\\"Hook with this url already exists\\"") @example(subgraph: "calendly", value: "Hook with this url already exists") {
   Hook_with_this_url_already_exists @enum(subgraph: "calendly", value: "\\"Hook with this url already exists\\"")
 }
 
@@ -1912,7 +1912,7 @@ type mutation_post_scheduling_links_oneOf_0_resource {
   owner_type: EventType_const
 }
 
-enum EventType_const @typescript(subgraph: "calendly", type: "\\"EventType\\"") @example(subgraph: "calendly", value: "\\"EventType\\"") {
+enum EventType_const @typescript(subgraph: "calendly", type: "\\"EventType\\"") @example(subgraph: "calendly", value: "EventType") {
   EventType @enum(subgraph: "calendly", value: "\\"EventType\\"")
 }
 

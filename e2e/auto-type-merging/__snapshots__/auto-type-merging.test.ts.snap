@@ -90,7 +90,7 @@ directive @enum(subgraph: String, value: String)  repeatable on ENUM_VALUE
 directive @httpOperation(
   subgraph: String
   path: String
-  operationSpecificHeaders: ObjMap
+  operationSpecificHeaders: [[String]]
   httpMethod: HTTPMethod
   isBinary: Boolean
   requestBaseBody: ObjMap
@@ -103,9 +103,9 @@ directive @transport(
   subgraph: String!
   kind: String!
   location: String!
-  headers: ObjMap
+  headers: [[String]]
   queryStringOptions: ObjMap
-  queryParams: ObjMap
+  queryParams: [[String]]
   options: TransportOptions
 ) repeatable on SCHEMA
 
@@ -157,8 +157,6 @@ scalar _HoistConfig @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION
 
 scalar _DirectiveExtensions @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION) 
 
-scalar Headers @join__type(graph: VACCINATION) 
-
 scalar TransportOptions @join__type(graph: VACCINATION) 
 
 type Query @extraSchemaDefinitionDirective(
@@ -172,10 +170,10 @@ type Query @extraSchemaDefinitionDirective(
   findPetsByStatus(status: queryInput_findPetsByStatus_status = available) : [Pet] @httpOperation(
     subgraph: "petstore"
     path: "/pet/findByStatus"
-    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-    queryParamArgMap: "\\"{\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\""
-    queryStringOptionsByParam: "\\"{\\\\\\"status\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\""
+    queryParamArgMap: "{\\"status\\":\\"status\\"}"
+    queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}"
   ) @hidden @join__field(graph: PETSTORE) 
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
@@ -186,10 +184,10 @@ type Query @extraSchemaDefinitionDirective(
   tags: [String]) : [Pet] @httpOperation(
     subgraph: "petstore"
     path: "/pet/findByTags"
-    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-    queryParamArgMap: "\\"{\\\\\\"tags\\\\\\":\\\\\\"tags\\\\\\"}\\""
-    queryStringOptionsByParam: "\\"{\\\\\\"tags\\\\\\":{\\\\\\"arrayFormat\\\\\\":\\\\\\"repeat\\\\\\",\\\\\\"destructObject\\\\\\":true}}\\""
+    queryParamArgMap: "{\\"tags\\":\\"tags\\"}"
+    queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}"
   ) @hidden @join__field(graph: PETSTORE) 
   """
   Returns a single pet
@@ -200,7 +198,7 @@ type Query @extraSchemaDefinitionDirective(
   petId: BigInt!) : Pet @httpOperation(
     subgraph: "petstore"
     path: "/pet/{args.petId}"
-    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
   ) @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")  @join__field(graph: PETSTORE) 
   """
@@ -209,7 +207,7 @@ type Query @extraSchemaDefinitionDirective(
   getInventory: JSON @httpOperation(
     subgraph: "petstore"
     path: "/store/inventory"
-    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
   ) @hidden @join__field(graph: PETSTORE) 
   """
@@ -221,7 +219,7 @@ type Query @extraSchemaDefinitionDirective(
   orderId: BigInt!) : Order @httpOperation(
     subgraph: "petstore"
     path: "/store/order/{args.orderId}"
-    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
   ) @hidden @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")  @join__field(graph: PETSTORE) 
   """
@@ -239,9 +237,9 @@ type Query @extraSchemaDefinitionDirective(
   ): String @httpOperation(
     subgraph: "petstore"
     path: "/user/login"
-    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-    queryParamArgMap: "\\"{\\\\\\"username\\\\\\":\\\\\\"username\\\\\\",\\\\\\"password\\\\\\":\\\\\\"password\\\\\\"}\\""
+    queryParamArgMap: "{\\"username\\":\\"username\\",\\"password\\":\\"password\\"}"
   ) @hidden @join__field(graph: PETSTORE) 
   """
   Logs out current logged in user session
@@ -258,7 +256,7 @@ type Query @extraSchemaDefinitionDirective(
   ): User @httpOperation(
     subgraph: "petstore"
     path: "/user/{args.username}"
-    operationSpecificHeaders: "\\"{\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
   ) @hidden @join__field(graph: PETSTORE) 
   petById(id: BigInt!) : Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination")  @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")  @join__field(graph: VACCINATION) 
@@ -317,7 +315,7 @@ type Mutation @join__type(graph: PETSTORE)  {
   updatePet(input: Pet_Input) : Pet @httpOperation(
     subgraph: "petstore"
     path: "/pet"
-    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: PUT
   ) @hidden
   """
@@ -326,7 +324,7 @@ type Mutation @join__type(graph: PETSTORE)  {
   addPet(input: Pet_Input) : Pet @httpOperation(
     subgraph: "petstore"
     path: "/pet"
-    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
   ) @hidden
   """
@@ -349,7 +347,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     subgraph: "petstore"
     path: "/pet/{args.petId}"
     httpMethod: POST
-    queryParamArgMap: "\\"{\\\\\\"name\\\\\\":\\\\\\"name\\\\\\",\\\\\\"status\\\\\\":\\\\\\"status\\\\\\"}\\""
+    queryParamArgMap: "{\\"name\\":\\"name\\",\\"status\\":\\"status\\"}"
   ) @hidden
   """
   Deletes a pet
@@ -360,7 +358,7 @@ type Mutation @join__type(graph: PETSTORE)  {
   petId: BigInt!) : JSON @httpOperation(
     subgraph: "petstore"
     path: "/pet/{args.petId}"
-    operationSpecificHeaders: "\\"{\\\\\\"api_key\\\\\\":\\\\\\"{args.api_key}\\\\\\"}\\""
+    operationSpecificHeaders: [["api_key", "{args.api_key}"]]
     httpMethod: DELETE
   ) @hidden
   """
@@ -379,9 +377,9 @@ type Mutation @join__type(graph: PETSTORE)  {
   ): ApiResponse @httpOperation(
     subgraph: "petstore"
     path: "/pet/{args.petId}/uploadImage"
-    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/octet-stream\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["Content-Type", "application/octet-stream"], ["accept", "application/json"]]
     httpMethod: POST
-    queryParamArgMap: "\\"{\\\\\\"additionalMetadata\\\\\\":\\\\\\"additionalMetadata\\\\\\"}\\""
+    queryParamArgMap: "{\\"additionalMetadata\\":\\"additionalMetadata\\"}"
   ) @hidden
   """
   Place a new order in the store
@@ -389,7 +387,7 @@ type Mutation @join__type(graph: PETSTORE)  {
   placeOrder(input: Order_Input) : Order @httpOperation(
     subgraph: "petstore"
     path: "/store/order"
-    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
   ) @hidden
   """
@@ -405,7 +403,7 @@ type Mutation @join__type(graph: PETSTORE)  {
   createUser(input: User_Input) : User @httpOperation(
     subgraph: "petstore"
     path: "/user"
-    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
   ) @hidden
   """
@@ -414,7 +412,7 @@ type Mutation @join__type(graph: PETSTORE)  {
   createUsersWithListInput(input: [User_Input]) : User @httpOperation(
     subgraph: "petstore"
     path: "/user/createWithList"
-    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
   ) @hidden
   """
@@ -426,7 +424,7 @@ type Mutation @join__type(graph: PETSTORE)  {
   username: String!, input: User_Input) : JSON @httpOperation(
     subgraph: "petstore"
     path: "/user/{args.username}"
-    operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\"}\\""
+    operationSpecificHeaders: [["Content-Type", "application/json"]]
     httpMethod: PUT
   ) @hidden
   """
