@@ -1,5 +1,18 @@
 # @graphql-mesh/plugin-hive
 
+## 0.98.9
+
+### Patch Changes
+
+- [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Removed dependency
+    [`@graphql-mesh/utils@^0.98.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.98.8)
+    (from `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.98.9
+
 ## 0.98.8
 
 ### Patch Changes

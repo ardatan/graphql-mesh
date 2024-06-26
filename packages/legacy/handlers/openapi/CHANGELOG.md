@@ -1,5 +1,52 @@
 # @graphql-mesh/openapi
 
+## 0.101.0
+
+### Minor Changes
+
+- [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
+  Thanks [@ardatan](https://github.com/ardatan)! - POTENTIAL BREAKING CHANGE:
+
+  Now `@httpOperation` and `@transport` directive serializes headers as `[string, string][]` instead
+  of stringified JSON.
+
+  ```diff
+  @httpOperation(
+  -  operationSpecificHeaders: [["Authorization", "Bearer 123"], ["X-Api-Key", "123"]]
+  +  operationSpecificHeaders: "{\"Authorization\": \"Bearer 123\", \"X-Api-Key\": \"123\"}"
+  )
+  ```
+
+  ```diff
+  @transport(
+  -  headers: [["Authorization, "Bearer 123"], ["X-Api-Key", "123"]]
+  +  headers: "{\"Authorization, \"Bearer 123\", \"X-Api-Key\": \"123\"}"
+  )
+  ```
+
+  Also incorrect placement of `@transport` has been fixed to `SCHEMA`
+
+  ```diff
+  directive @transport on
+  -  FIELD_DEFINITION
+  +  SCHEMA
+  ```
+
+  There is still backwards compatibility but this might look like a breaking change for some users
+  during schema validation.
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f985978`](https://github.com/ardatan/graphql-mesh/commit/f9859784ad854207e4d32bda11c904b5301610ee),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)]:
+  - @graphql-mesh/utils@0.98.9
+  - @omnigraph/openapi@0.101.0
+  - @graphql-mesh/store@0.98.9
+  - @graphql-mesh/types@0.98.9
+
 ## 0.100.14
 
 ### Patch Changes

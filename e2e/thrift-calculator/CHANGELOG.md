@@ -4,6 +4,18 @@
 
 ### Patch Changes
 
+- Updated dependencies
+  [[`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)]:
+  - @graphql-mesh/compose-cli@0.4.1
+  - @graphql-mesh/fusion-runtime@0.4.0
+  - @omnigraph/thrift@0.3.0
+  - @graphql-mesh/serve-cli@0.6.0
+
+## null
+
+### Patch Changes
+
 - Updated dependencies []:
   - @graphql-mesh/fusion-runtime@0.3.10
   - @graphql-mesh/serve-cli@0.5.1

@@ -1,5 +1,21 @@
 # example-gcp
 
+## 0.13.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`f985978`](https://github.com/ardatan/graphql-mesh/commit/f9859784ad854207e4d32bda11c904b5301610ee),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`ac77ce9`](https://github.com/ardatan/graphql-mesh/commit/ac77ce94f1e9a78e2dace14128ea1d6843732d19)]:
+  - @graphql-mesh/compose-cli@0.4.1
+  - @graphql-mesh/serve-runtime@0.4.0
+  - @omnigraph/json-schema@0.101.0
+
 ## 0.12.1
 
 ### Patch Changes

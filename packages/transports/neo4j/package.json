@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-neo4j",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,9 +36,9 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/transport-common": "^0.2.8",
-    "@graphql-mesh/types": "^0.98.8",
-    "@graphql-mesh/utils": "^0.98.8",
+    "@graphql-mesh/transport-common": "^0.3.0",
+    "@graphql-mesh/types": "^0.98.9",
+    "@graphql-mesh/utils": "^0.98.9",
     "@graphql-tools/delegate": "^10.0.11",
     "@graphql-tools/utils": "^10.2.1",
     "@neo4j/graphql": "^5.0.0",
