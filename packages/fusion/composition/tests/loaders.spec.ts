@@ -25,24 +25,22 @@ describe('Loaders', () => {
       fetch,
       cwd: process.cwd(),
     });
-    const {
-      supergraphSdl,
-    } = composeSubgraphs([
+    const { supergraphSdl } = composeSubgraphs([
       {
         name: loadedSubgraph.name,
         schema: await loadedSubgraph.schema$,
       },
     ]);
-    const mockFetch = jest.fn(() => runtime.fetchAPI.Response.json({
-      id: 1,
-      name: 'Test',
-    }));
+    const mockFetch = jest.fn(async (_url: string) =>
+      Response.json({
+        id: 1,
+        name: 'Test',
+      }),
+    );
     const runtime = createServeRuntime({
       supergraph: supergraphSdl,
       plugins() {
-        return [
-          useCustomFetch(mockFetch),
-        ];
+        return [useCustomFetch(mockFetch)];
       },
     });
     const res = await runtime.fetch('/graphql', {
@@ -62,10 +60,8 @@ describe('Loaders', () => {
           name: 'Test',
         },
       },
-    })
+    });
 
-    expect(mockFetch.mock.calls[0][0]).toBe(
-      'http://localhost/my-test-api/test',
-    );
+    expect(mockFetch.mock.calls[0][0]).toBe('http://localhost/my-test-api/test');
   });
 });

@@ -31,4 +31,12 @@ Now `@httpOperation` and `@transport` directive serializes headers as `[string, 
 )
 ```
 
+Also incorrect placement of `@transport` has been fixed to `SCHEMA`
+
+```diff
+directive @transport on
+-  FIELD_DEFINITION
++  SCHEMA
+```
+
 There is still backwards compatibility but this might look like a breaking change for some users during schema validation.

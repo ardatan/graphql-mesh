@@ -6,7 +6,7 @@ exports[`MySQL Employees should generate correct schema: schema 1`] = `
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String) on SCHEMA
 
 directive @mysqlSelect(table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
