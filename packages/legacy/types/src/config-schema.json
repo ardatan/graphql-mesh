@@ -1024,6 +1024,10 @@
         "commaRoundTrip": {
           "type": "boolean",
           "description": "Even if there is a single item in an array, this option treats them as arrays\n(default: false)"
+        },
+        "jsonStringify": {
+          "type": "boolean",
+          "description": "Stringify the nested objects as JSON\n(default: false)"
         }
       }
     },

@@ -346,6 +346,74 @@ describe('Execution', () => {
         },
       });
     });
+    it('jsonStringify', async () => {
+      const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
+        async fetch(info: RequestInfo, init?: RequestInit) {
+          let request: Request;
+          if (typeof info !== 'object') {
+            request = new Request(info, init);
+          } else {
+            request = info;
+          }
+          return new Response(
+            JSON.stringify({
+              url: request.url,
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+        },
+        endpoint: 'http://localhost:3000',
+        queryStringOptions: {
+          jsonStringify: true,
+        },
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'test',
+            method: 'GET',
+            path: '/test',
+            queryParamArgMap: {
+              foo: 'foo',
+            },
+            argTypeMap: {
+              foo: {
+                type: 'object',
+                properties: {
+                  bar: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+            responseSample: {
+              url: 'http://localhost:3000/test?foo={"bar":"baz"}',
+            },
+          },
+        ],
+      });
+      const query = /* GraphQL */ `
+        query Test {
+          test(foo: { bar: "baz" }) {
+            url
+          }
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      expect(result).toEqual({
+        data: {
+          test: {
+            url: `http://localhost:3000/test?foo=${encodeURIComponent('{"bar":"baz"}')}`,
+          },
+        },
+      });
+    });
   });
   describe('Sanization', () => {
     it('should recover escaped input field names before preparing the request for GET', async () => {

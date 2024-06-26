@@ -18,7 +18,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   fetch?: MeshFetch;
   ignoreErrorResponses?: boolean;
   queryParams?: Record<string, string | number | boolean>;
-  queryStringOptions?: IStringifyOptions;
+  queryStringOptions?: IStringifyOptions & { jsonStringify?: boolean };
   handlerName?: string;
   bundle?: boolean;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
@@ -75,7 +75,10 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
 
   headers?: Record<string, string>;
   queryParamArgMap?: Record<string, string>;
-  queryStringOptionsByParam?: Record<string, IStringifyOptions & { destructObject?: boolean }>;
+  queryStringOptionsByParam?: Record<
+    string,
+    IStringifyOptions & { destructObject?: boolean; jsonStringify?: boolean }
+  >;
   queryParamsSample?: any;
 
   jsonApiFields?: boolean;

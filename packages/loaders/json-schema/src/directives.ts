@@ -152,6 +152,9 @@ export const HTTPOperationDirective = new GraphQLDirective({
     jsonApiFields: {
       type: GraphQLBoolean,
     },
+    queryStringOptions: {
+      type: ObjMapScalar,
+    },
   },
 });
 

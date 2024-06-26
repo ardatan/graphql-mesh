@@ -17,7 +17,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
-import { Blob, File, FormData } from '@whatwg-node/fetch';
+import { Blob, File, FormData, URLSearchParams } from '@whatwg-node/fetch';
 import { isFileUpload } from './isFileUpload.js';
 import { getJsonApiFieldsQuery } from './jsonApiFields.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
@@ -55,7 +55,11 @@ export interface HTTPRootFieldResolverOpts {
   isBinary: boolean;
   requestBaseBody: any;
   queryParamArgMap: Record<string, string>;
-  queryStringOptionsByParam: Record<string, IStringifyOptions & { destructObject?: boolean }>;
+  queryStringOptionsByParam: Record<
+    string,
+    IStringifyOptions & { destructObject?: boolean; jsonStringify?: boolean }
+  >;
+  queryStringOptions: IStringifyOptions & { destructObject?: boolean; jsonStringify?: boolean };
   jsonApiFields: boolean;
 }
 
@@ -81,6 +85,7 @@ export function addHTTPRootFieldResolver(
     requestBaseBody,
     queryParamArgMap,
     queryStringOptionsByParam,
+    queryStringOptions,
     jsonApiFields,
   }: HTTPRootFieldResolverOpts,
   {
@@ -95,6 +100,7 @@ export function addHTTPRootFieldResolver(
   globalQueryStringOptions = {
     ...defaultQsOptions,
     ...globalQueryStringOptions,
+    ...queryStringOptions,
   };
   const returnNamedGraphQLType = getNamedType(field.type);
   field.resolve = async (root, args, context, info) => {
@@ -263,7 +269,29 @@ export function addHTTPRootFieldResolver(
               schema,
             );
           }
-          const queryParamsString = qsStringify(queryParamObj, opts);
+          let queryParamsString: string;
+          if (opts.jsonStringify) {
+            const searchParams = new URLSearchParams();
+            for (const key in queryParamObj) {
+              const queryParamVal = queryParamObj[key];
+              if (Array.isArray(queryParamVal)) {
+                for (const value of queryParamVal) {
+                  if (typeof value === 'object') {
+                    searchParams.append(key, JSON.stringify(value));
+                  } else {
+                    searchParams.append(key, value);
+                  }
+                }
+              } else if (typeof queryParamVal === 'object') {
+                searchParams.append(key, JSON.stringify(queryParamVal));
+              } else if (typeof queryParamVal === 'string') {
+                searchParams.append(key, queryParamVal);
+              }
+            }
+            queryParamsString = searchParams.toString();
+          } else {
+            queryParamsString = qsStringify(queryParamObj, opts);
+          }
           fullPath += fullPath.includes('?') ? '&' : '?';
           fullPath += queryParamsString;
         }

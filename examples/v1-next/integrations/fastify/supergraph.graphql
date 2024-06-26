@@ -74,6 +74,7 @@ directive @httpOperation(
   queryParamArgMap: ObjMap
   queryStringOptionsByParam: ObjMap
   jsonApiFields: Boolean
+  queryStringOptions: ObjMap
 ) repeatable on FIELD_DEFINITION
 
 directive @transport(

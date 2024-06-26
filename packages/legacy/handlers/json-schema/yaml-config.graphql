@@ -25,6 +25,11 @@ type QueryStringOptions @md {
   (default: false)
   """
   commaRoundTrip: Boolean
+  """
+  Stringify the nested objects as JSON
+  (default: false)
+  """
+  jsonStringify: Boolean
 }
 
 enum QueryStringArrayFormat {
