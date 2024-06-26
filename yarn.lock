@@ -5094,7 +5094,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-hive@npm:0.98.8, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
+"@graphql-mesh/plugin-hive@npm:0.98.8, @graphql-mesh/plugin-hive@npm:^0.98.7, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
@@ -5404,8 +5404,10 @@ __metadata:
   resolution: "@graphql-mesh/serve-runtime@workspace:packages/serve-runtime"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
+    "@graphql-hive/client": "npm:^0.32.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.3"
     "@graphql-mesh/fusion-runtime": "npm:^0.3.10"
+    "@graphql-mesh/plugin-hive": "npm:^0.98.7"
     "@graphql-mesh/transport-common": "npm:^0.2.8"
     "@graphql-mesh/utils": "npm:^0.98.8"
     "@graphql-tools/delegate": "npm:^10.0.11"

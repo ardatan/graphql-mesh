@@ -7,6 +7,7 @@ import type {
   YogaServerOptions,
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
+import { SupergraphSDLFetcherOptions } from '@graphql-hive/client/typings/internal/types.js';
 import type { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
 import type {
   KeyValueCache,
@@ -14,6 +15,7 @@ import type {
   MeshFetch,
   MeshPubSub,
   OnFetchHook,
+  YamlConfig,
 } from '@graphql-mesh/types';
 import type { LogLevel } from '@graphql-mesh/utils';
 import type { HTTPExecutorOptions } from '@graphql-tools/executor-http';
@@ -25,7 +27,8 @@ export { UnifiedGraphConfig };
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithSupergraph<TContext>
-  | MeshServeConfigWithProxy<TContext>;
+  | MeshServeConfigWithProxy<TContext>
+  | MeshServeConfigWithHive<TContext>;
 
 export interface MeshServeConfigContext {
   /**
@@ -66,11 +69,21 @@ export type MeshServePlugin<
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
 
-interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
+interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigForSupergraph<TContext> {
   /**
    * Path to the Apollo Federation unified schema.
    */
   supergraph?: UnifiedGraphConfig;
+}
+
+interface MeshServeConfigWithHive<TContext> extends MeshServeConfigForSupergraph<TContext> {
+  /**
+   * Integration options with GraphQL Hive.
+   */
+  hive: YamlConfig.HivePlugin & SupergraphSDLFetcherOptions;
+}
+
+interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
   /**
    * Polling interval in milliseconds.
    */

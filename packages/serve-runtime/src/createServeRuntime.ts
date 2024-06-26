@@ -10,14 +10,17 @@ import {
   YogaServerInstance,
   type Plugin,
 } from 'graphql-yoga';
+import { createSupergraphSDLFetcher } from '@graphql-hive/client';
 import {
   handleFederationSupergraph,
   isDisposable,
   OnSubgraphExecuteHook,
   UnifiedGraphManager,
+  UnifiedGraphManagerOptions,
 } from '@graphql-mesh/fusion-runtime';
+import useMeshHive from '@graphql-mesh/plugin-hive';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
+import { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
@@ -74,6 +77,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let schemaFetcher: () => MaybePromise<GraphQLSchema>;
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
+  let registryPlugin: MeshPlugin<unknown> = {};
 
   const disposableStack = new AsyncDisposableStack();
 
@@ -86,6 +90,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       disposableStack,
     });
     const executorPlugin = useExecutor(proxyExecutor);
+    executorPlugin.onSchemaChange = function onSchemaChange(payload) {
+      unifiedGraph = payload.schema;
+    };
     unifiedGraphPlugin = executorPlugin;
     readinessChecker = () => {
       const res$ = proxyExecutor({
@@ -94,9 +101,22 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
     };
     schemaInvalidator = () => executorPlugin.invalidateUnifiedGraph();
-  } else if ('supergraph' in config) {
+  } else {
+    let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
+    if ('supergraph' in config) {
+      unifiedGraphFetcher = () => handleUnifiedGraphConfig(config.supergraph, configContext);
+    } else if ('hive' in config) {
+      const fetcher = createSupergraphSDLFetcher(config.hive);
+      unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
+      registryPlugin = useMeshHive({
+        enabled: true,
+        ...config.hive,
+        ...configContext,
+        logger: configContext.logger.child('Hive'),
+      });
+    }
     const unifiedGraphManager = new UnifiedGraphManager({
-      getUnifiedGraph: () => handleUnifiedGraphConfig(config.supergraph, configContext),
+      getUnifiedGraph: unifiedGraphFetcher,
       handleUnifiedGraph: handleFederationSupergraph,
       transports: config.transports,
       polling: config.polling,
@@ -155,6 +175,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       defaultMeshPlugin,
       unifiedGraphPlugin,
       readinessCheckPlugin,
+      registryPlugin,
       ...(config.plugins?.(configContext) || []),
     ],
     // @ts-expect-error PromiseLike is not compatible with Promise

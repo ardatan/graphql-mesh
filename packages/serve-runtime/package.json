@@ -36,8 +36,10 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.0",
+    "@graphql-hive/client": "^0.32.0",
     "@graphql-mesh/cross-helpers": "^0.4.3",
     "@graphql-mesh/fusion-runtime": "^0.3.10",
+    "@graphql-mesh/plugin-hive": "^0.98.7",
     "@graphql-mesh/transport-common": "^0.2.8",
     "@graphql-mesh/utils": "^0.98.8",
     "@graphql-tools/delegate": "^10.0.11",
