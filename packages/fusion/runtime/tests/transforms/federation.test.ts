@@ -1,6 +1,6 @@
-import { createSchema } from "graphql-yoga"
-import { composeAndGetExecutor } from "../utils";
-import { createFederationTransform } from "@graphql-mesh/fusion-composition";
+import { createSchema } from 'graphql-yoga';
+import { createFederationTransform } from '@graphql-mesh/fusion-composition';
+import { composeAndGetExecutor } from '../utils';
 
 describe('Federation', () => {
   it('works', async () => {
@@ -52,8 +52,8 @@ describe('Federation', () => {
                   keyArg: 'idForA',
                 },
               },
-            }
-          })
+            },
+          }),
         ],
       },
       {
@@ -69,11 +69,11 @@ describe('Federation', () => {
                   keyArg: 'idForB',
                 },
               },
-            }
-          })
+            },
+          }),
         ],
       },
-    ])
+    ]);
     const result = await executor({
       query: /* GraphQL */ `
         fragment Foo on Foo {
@@ -89,7 +89,7 @@ describe('Federation', () => {
             ...Foo
           }
         }
-      `
+      `,
     });
     expect(result).toEqual({
       fooFromA: {
@@ -102,6 +102,6 @@ describe('Federation', () => {
         fieldFromA: 'A',
         fieldFromB: 'B',
       },
-    })
-  })
-})
+    });
+  });
+});

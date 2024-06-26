@@ -27,7 +27,9 @@ export function createTypeReplaceTransform(
         if (typeof newTypeName === 'string' && newTypeName !== fieldConfig.type.toString()) {
           const newType = typeFromAST(schema, parseType(newTypeName)) as any;
           if (!newType) {
-            throw new TransformValidationError(`No type found for ${newTypeName} in the schema, use a type instance instead such as GraphQLString from 'graphql'`);
+            throw new TransformValidationError(
+              `No type found for ${newTypeName} in the schema, use a type instance instead such as GraphQLString from 'graphql'`,
+            );
           }
           return [fieldName, { ...fieldConfig, type: newType }];
         }

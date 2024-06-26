@@ -57,15 +57,13 @@ export const FieldTypeMapScalar = new GraphQLScalarType({ name: 'FieldTypeMap' }
 
 export const fieldTypeMapDirective = new GraphQLDirective({
   name: 'fieldTypeMap',
-  locations: [
-    DirectiveLocation.FIELD_DEFINITION,
-  ],
+  locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
     fieldTypeMap: {
       type: FieldTypeMapScalar,
     },
-  }
-})
+  },
+});
 
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,

@@ -38,9 +38,7 @@ export function composeAndGetExecutor(subgraphs: SubgraphConfig[]) {
           if (!subgraph) {
             throw new Error(`Subgraph not found: ${subgraphName}`);
           }
-          return createDefaultExecutor(
-            subgraph.schema,
-          );
+          return createDefaultExecutor(subgraph.schema);
         },
       };
     },

@@ -8,8 +8,6 @@ import {
   GraphQLSchema,
   GraphQLString,
   OperationTypeNode,
-  extendSchema,
-  parse,
 } from 'graphql';
 import { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { addHiddenDirective, hiddenDirective } from './filter-schema.js';
@@ -132,6 +130,5 @@ export const resolveToDirective = new GraphQLDirective({
     sourceName: { type: new GraphQLNonNull(GraphQLString) },
     sourceSelectionSet: { type: GraphQLString },
     sourceTypeName: { type: new GraphQLNonNull(GraphQLString) },
-
   },
 });

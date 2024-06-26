@@ -1,4 +1,4 @@
-import { GraphQLSchema, buildSchema } from 'graphql';
+import { buildSchema, GraphQLSchema } from 'graphql';
 import {
   composeSubgraphs,
   createRenameFieldTransform,
@@ -10,37 +10,35 @@ describe('Composition', () => {
   let bSchema: GraphQLSchema;
   beforeEach(() => {
     aSchema = buildSchema(/* GraphQL */ `
-    type Query {
-      myFoo: Foo!
-    }
+      type Query {
+        myFoo: Foo!
+      }
 
-    type Foo {
-      id: ID!
-    }
-  `);
+      type Foo {
+        id: ID!
+      }
+    `);
 
     bSchema = buildSchema(/* GraphQL */ `
-    type Query {
-      foo(id: ID!): Foo!
-      foos(ids: [ID!]!): [Foo!]!
-      foosByFilter(where: FooFilter!): [Foo!]!
-    }
+      type Query {
+        foo(id: ID!): Foo!
+        foos(ids: [ID!]!): [Foo!]!
+        foosByFilter(where: FooFilter!): [Foo!]!
+      }
 
-    input FooFilter {
-      id: ID
-      id_in: [ID!]
-    }
+      input FooFilter {
+        id: ID
+        id_in: [ID!]
+      }
 
-    type Foo {
-      id: ID!
-      bar: String!
-    }
-  `);
-  })
+      type Foo {
+        id: ID!
+        bar: String!
+      }
+    `);
+  });
   it('composes basic schemas', () => {
-    const {
-      supergraphSdl,
-    } = composeSubgraphs([
+    const { supergraphSdl } = composeSubgraphs([
       {
         name: 'A',
         schema: aSchema,
@@ -63,9 +61,7 @@ describe('Composition', () => {
           ? `${subgraphConfig.name}_${fieldName}`
           : fieldName,
     );
-    const {
-      supergraphSdl,
-    } = composeSubgraphs([
+    const { supergraphSdl } = composeSubgraphs([
       {
         name: 'A',
         schema: aSchema,
@@ -81,9 +77,7 @@ describe('Composition', () => {
     expect(supergraphSdl).toMatchSnapshot();
   });
   it('keeps the directives', () => {
-    const {
-      supergraphSdl,
-    } = composeSubgraphs([
+    const { supergraphSdl } = composeSubgraphs([
       {
         name: 'A',
         schema: aSchema,

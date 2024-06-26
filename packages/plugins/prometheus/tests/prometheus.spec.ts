@@ -28,12 +28,13 @@ describe('Prometheus', () => {
 
   function newTestRuntime() {
     serveRuntime = createServeRuntime({
-      supergraph: () => getUnifiedGraphGracefully([
-        {
-          name: 'TEST_SUBGRAPH',
-          schema: subgraphSchema,
-        },
-      ]),
+      supergraph: () =>
+        getUnifiedGraphGracefully([
+          {
+            name: 'TEST_SUBGRAPH',
+            schema: subgraphSchema,
+          },
+        ]),
       transports() {
         return {
           getSubgraphExecutor() {

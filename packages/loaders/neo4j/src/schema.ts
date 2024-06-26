@@ -130,7 +130,7 @@ export async function loadGraphQLSchemaFromNeo4J(
         database,
         auth,
       },
-    }
+    },
   ];
   return mergeSchemas({
     schemas: [schema],

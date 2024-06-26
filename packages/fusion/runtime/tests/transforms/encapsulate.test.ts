@@ -1,29 +1,29 @@
-import { GraphQLSchema, execute, parse, printSchema } from 'graphql';
+import { execute, GraphQLSchema, parse, printSchema } from 'graphql';
 import { createEncapsulateTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('encapsulate', () => {
   let schema: GraphQLSchema;
   beforeEach(() => {
     schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
-      type Query {
-        getSomething: String
-        getSomethingElse: String
-      }
+        type Query {
+          getSomething: String
+          getSomethingElse: String
+        }
 
-      type Mutation {
-        doSomething: String
-        doSomethingElse: String
-      }
+        type Mutation {
+          doSomething: String
+          doSomethingElse: String
+        }
 
-      type Subscription {
-        notify: String!
-      }
-    `,
+        type Subscription {
+          notify: String!
+        }
+      `,
       resolvers: {
         Query: {
           getSomething: () => 'boop',
@@ -48,7 +48,7 @@ describe('encapsulate', () => {
         },
       },
     });
-  })
+  });
 
   it('groups Mutation correctly', async () => {
     const transform = createEncapsulateTransform();

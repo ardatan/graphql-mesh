@@ -1,4 +1,10 @@
-import { buildSchema, GraphQLNonNull, GraphQLObjectType, GraphQLScalarType, GraphQLSchema } from 'graphql';
+import {
+  buildSchema,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLScalarType,
+  GraphQLSchema,
+} from 'graphql';
 import { createRenameTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
@@ -8,35 +14,35 @@ describe('Rename', () => {
   beforeEach(() => {
     schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
-      type Query {
-        my_user: MyUser!
-        my_book: MyBook!
-        profile(
-          profile_id: ID!
-          role: String
-          some_argument: String
-          another_argument: Int
-        ): Profile
-        my_node(id: ID!): MyNode
-      }
+        type Query {
+          my_user: MyUser!
+          my_book: MyBook!
+          profile(
+            profile_id: ID!
+            role: String
+            some_argument: String
+            another_argument: Int
+          ): Profile
+          my_node(id: ID!): MyNode
+        }
 
-      union MyNode = MyUser | MyBook | Profile
+        union MyNode = MyUser | MyBook | Profile
 
-      type MyUser {
-        id: ID!
-        name: String!
-      }
+        type MyUser {
+          id: ID!
+          name: String!
+        }
 
-      type Profile {
-        id: ID!
-        isActive: Boolean!
-      }
+        type Profile {
+          id: ID!
+          isActive: Boolean!
+        }
 
-      type MyBook {
-        id: ID!
-        hits: Int!
-      }
-    `,
+        type MyBook {
+          id: ID!
+          hits: Int!
+        }
+      `,
       resolvers: {
         Query: {
           my_user: () => ({ id: 'userId' }),
@@ -56,7 +62,7 @@ describe('Rename', () => {
         },
       },
     });
-  })
+  });
   it('changes the name of a type', async () => {
     const transform = createRenameTransform({
       renames: [

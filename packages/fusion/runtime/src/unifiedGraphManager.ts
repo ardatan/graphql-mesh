@@ -5,19 +5,14 @@ import { TransportBaseContext, TransportEntry } from '@graphql-mesh/transport-co
 import { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import { SubschemaConfig } from '@graphql-tools/delegate';
-import {
-  IResolvers,
-  isDocumentNode,
-  MaybePromise,
-  TypeSource,
-} from '@graphql-tools/utils';
+import { IResolvers, isDocumentNode, MaybePromise, TypeSource } from '@graphql-tools/utils';
+import { compareSubgraphNames, handleFederationSupergraph } from './federation.js';
 import {
   compareSchemas,
   getOnSubgraphExecute,
   OnSubgraphExecuteHook,
   TransportsOption,
 } from './utils.js';
-import { compareSubgraphNames, handleFederationSupergraph } from './federation.js';
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   if (isSchema(source)) {

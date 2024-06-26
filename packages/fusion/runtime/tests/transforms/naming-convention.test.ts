@@ -1,8 +1,8 @@
 import { buildSchema, GraphQLEnumType, GraphQLObjectType, GraphQLUnionType } from 'graphql';
 import { createNamingConventionTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils';
 
 describe('Naming Convention', () => {
   it('changes the name of a types, enums, fields and fieldArguments', async () => {

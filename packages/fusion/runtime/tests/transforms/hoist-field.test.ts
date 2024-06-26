@@ -1,4 +1,4 @@
-import { GraphQLField, GraphQLObjectType, printSchema, GraphQLSchema } from 'graphql';
+import { GraphQLField, GraphQLObjectType, GraphQLSchema, printSchema } from 'graphql';
 import { createHoistFieldTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
@@ -8,20 +8,20 @@ describe('Hoist Field', () => {
   beforeEach(() => {
     schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
-      type Query {
-        users(limit: Int!, page: Int): UserSearchResult
-      }
+        type Query {
+          users(limit: Int!, page: Int): UserSearchResult
+        }
 
-      type UserSearchResult {
-        page: Int!
-        results: [User!]!
-      }
+        type UserSearchResult {
+          page: Int!
+          results: [User!]!
+        }
 
-      type User {
-        id: ID!
-        name: String!
-      }
-    `,
+        type User {
+          id: ID!
+          name: String!
+        }
+      `,
       resolvers: {
         Query: {
           users: () => ({
@@ -36,7 +36,7 @@ describe('Hoist Field', () => {
         },
       },
     });
-  })
+  });
   it('hoists field with string pathConfig array', async () => {
     const transform = createHoistFieldTransform({
       mapping: [

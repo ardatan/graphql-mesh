@@ -62,6 +62,7 @@
     "@graphql-tools/stitching-directives": "^3.0.2",
     "@graphql-tools/utils": "^10.2.1",
     "@graphql-tools/wrap": "^10.0.5",
+    "change-case": "^4.1.2",
     "disposablestack": "^1.1.6",
     "graphql-yoga": "^5.3.0",
     "tslib": "^2.4.0"

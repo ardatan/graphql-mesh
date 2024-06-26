@@ -1,7 +1,7 @@
 import { DocumentNode, GraphQLSchema } from 'graphql';
+import { ComposeSubgraphsOptions } from '@graphql-mesh/fusion-composition';
 import { Logger } from '@graphql-mesh/types';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { ComposeSubgraphsOptions } from '@graphql-mesh/fusion-composition';
 
 export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   /**

@@ -1,12 +1,10 @@
 import {
   DirectiveLocation,
-  extendSchema,
   GraphQLDirective,
   GraphQLFieldConfig,
   GraphQLInputFieldConfig,
   GraphQLNamedType,
   GraphQLSchema,
-  parse,
 } from 'graphql';
 import { Minimatch } from 'minimatch';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
@@ -200,23 +198,19 @@ export function createFilterTransform({
     const mappedSchemaConfig = mappedSchema.toConfig();
     return new GraphQLSchema({
       ...mappedSchemaConfig,
-      directives: [
-        ...mappedSchemaConfig.directives,
-        hiddenDirective
-      ]
+      directives: [...mappedSchemaConfig.directives, hiddenDirective],
     });
   };
 }
 
-export const hiddenDirective =
-  new GraphQLDirective({
-    name: 'hidden',
-    locations: [
-      DirectiveLocation.FIELD_DEFINITION,
-      DirectiveLocation.OBJECT,
-      DirectiveLocation.INTERFACE,
-      DirectiveLocation.INPUT_FIELD_DEFINITION,
-      DirectiveLocation.ARGUMENT_DEFINITION,
-      DirectiveLocation.INPUT_OBJECT
-    ],
-  });
+export const hiddenDirective = new GraphQLDirective({
+  name: 'hidden',
+  locations: [
+    DirectiveLocation.FIELD_DEFINITION,
+    DirectiveLocation.OBJECT,
+    DirectiveLocation.INTERFACE,
+    DirectiveLocation.INPUT_FIELD_DEFINITION,
+    DirectiveLocation.ARGUMENT_DEFINITION,
+    DirectiveLocation.INPUT_OBJECT,
+  ],
+});

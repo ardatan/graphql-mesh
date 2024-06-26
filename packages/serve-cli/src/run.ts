@@ -58,9 +58,7 @@ let program = new Command()
     },
     4000,
   )
-  .addOption(
-    new Option('--supergraph <path>', 'path to the supergraph schema'),
-  );
+  .addOption(new Option('--supergraph <path>', 'path to the supergraph schema'));
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */
@@ -125,7 +123,8 @@ export async function run({
   let unifiedGraphPath: UnifiedGraphConfig;
   if ('supergraph' in config) {
     unifiedGraphPath = config.supergraph;
-  } if (!('http' in config)) {
+  }
+  if (!('http' in config)) {
     unifiedGraphPath = './supergraph.graphql';
   }
 

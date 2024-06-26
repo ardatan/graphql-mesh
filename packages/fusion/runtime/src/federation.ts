@@ -1,32 +1,25 @@
+import { constantCase } from 'change-case';
 import {
-  ASTNode,
   DirectiveLocation,
-  DocumentNode,
   GraphQLArgument,
   GraphQLDirective,
   GraphQLFieldConfigArgumentMap,
-  GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
   isEnumType,
   isObjectType,
   isOutputType,
-  isSchema,
   Kind,
-  parse,
   parseType,
-  SchemaDefinitionNode,
   typeFromAST,
   visit,
 } from 'graphql';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { TransportEntry } from '@graphql-mesh/transport-common';
 import {
   getDirectiveExtensions,
   resolveAdditionalResolversWithoutImport,
 } from '@graphql-mesh/utils';
 import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
@@ -36,7 +29,6 @@ import {
   MapperKind,
   mapSchema,
   memoize1,
-  printSchemaWithDirectives,
 } from '@graphql-tools/utils';
 import {
   HoistField,
@@ -49,8 +41,6 @@ import {
 } from '@graphql-tools/wrap';
 import { filterHiddenPartsInSchema } from './filterHiddenPartsInSchema.js';
 import { UnifiedGraphHandler } from './unifiedGraphManager.js';
-import { constantCase } from '@graphql-mesh/fusion-composition';
-import { addResolversToSchema } from '@graphql-tools/schema';
 
 // Memoize to avoid re-parsing the same schema AST
 // Workaround for unsupported directives on composition: restore extra directives
@@ -89,11 +79,11 @@ const restoreExtraDirectives = memoize1(function restoreExtraDirectives(schema: 
     schema = mapSchema(schema, {
       [MapperKind.TYPE]: type => {
         const typeDirectiveExtensions = getDirectiveExtensions(type) || {};
-        const typeCtor = Object.getPrototypeOf(type).constructor;
-        if (type.name == queryType.name) {
+        const TypeCtor = Object.getPrototypeOf(type).constructor;
+        if (type.name === queryType.name) {
           const typeConfig = type.toConfig();
           // Cleanup extra directives on Query type
-          return new typeCtor({
+          return new TypeCtor({
             ...typeConfig,
             extensions: {
               ...(type.extensions || {}),
@@ -117,7 +107,7 @@ const restoreExtraDirectives = memoize1(function restoreExtraDirectives(schema: 
               typeDirectiveExtensions[directiveName].push(...extraDirectiveArgs);
             }
           }
-          return new typeCtor({
+          return new TypeCtor({
             ...type.toConfig(),
             extensions: {
               ...(type.extensions || {}),
@@ -204,7 +194,8 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
     supergraphSdl: getDocumentNodeFromSchema(unifiedGraph),
     onSubschemaConfig(subschemaConfig) {
       // Fix name
-      const subgraphName = subschemaConfig.name = realSubgraphNameMap.get(subschemaConfig.name) || subschemaConfig.name;
+      const subgraphName = (subschemaConfig.name =
+        realSubgraphNameMap.get(subschemaConfig.name) || subschemaConfig.name);
       const subgraphDirectives = getDirectiveExtensions(subschemaConfig.schema);
       for (const directiveName in schemaDirectives) {
         if (!subgraphDirectives[directiveName]?.length && schemaDirectives[directiveName]?.length) {
@@ -248,8 +239,8 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         [MapperKind.TYPE]: type => {
           const typeDirectives = getDirectiveExtensions(type);
           const sourceDirectives = typeDirectives.source;
-          const sourceDirective = sourceDirectives?.find(
-            directive => compareSubgraphNames(directive.subgraph, subgraphName),
+          const sourceDirective = sourceDirectives?.find(directive =>
+            compareSubgraphNames(directive.subgraph, subgraphName),
           );
           if (sourceDirective != null) {
             const realName = sourceDirective.name || type.name;
@@ -286,8 +277,8 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
                   kind: Kind.OBJECT_TYPE_DEFINITION,
                   name: { kind: Kind.NAME, value: typeName },
                   fields: [astFromField(field, schema)],
-                }
-              ]
+                },
+              ],
             });
             for (const resolveToDirective of resolveToDirectives) {
               additionalResolvers.push(
@@ -301,8 +292,8 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
             return null;
           }
           const sourceDirectives = fieldDirectives.source;
-          const sourceDirective = sourceDirectives?.find(
-            directive => compareSubgraphNames(directive.subgraph, subgraphName),
+          const sourceDirective = sourceDirectives?.find(directive =>
+            compareSubgraphNames(directive.subgraph, subgraphName),
           );
           const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
           const realName = sourceDirective?.name ?? fieldName;
@@ -345,8 +336,8 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
               const argConfig = fieldConfig.args[argName];
               const argDirectives = getDirectiveExtensions(argConfig);
               const argSourceDirectives = argDirectives.source;
-              const argSourceDirective = argSourceDirectives?.find(
-                directive => compareSubgraphNames(directive.subgraph, subgraphName),
+              const argSourceDirective = argSourceDirectives?.find(directive =>
+                compareSubgraphNames(directive.subgraph, subgraphName),
               );
               if (argSourceDirective != null) {
                 const realArgName = argSourceDirective.name ?? argName;
@@ -393,8 +384,8 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         [MapperKind.INPUT_OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
           const fieldDirectives = getDirectiveExtensions(fieldConfig);
           const sourceDirectives = fieldDirectives.source;
-          const sourceDirective = sourceDirectives?.find(
-            directive => compareSubgraphNames(directive.subgraph, subgraphName),
+          const sourceDirective = sourceDirectives?.find(directive =>
+            compareSubgraphNames(directive.subgraph, subgraphName),
           );
           if (sourceDirective != null) {
             const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
@@ -411,8 +402,8 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         [MapperKind.INTERFACE_FIELD]: (fieldConfig, fieldName, typeName) => {
           const fieldDirectives = getDirectiveExtensions(fieldConfig);
           const sourceDirectives = fieldDirectives.source;
-          const sourceDirective = sourceDirectives?.find(
-            directive => compareSubgraphNames(directive.subgraph, subgraphName),
+          const sourceDirective = sourceDirectives?.find(directive =>
+            compareSubgraphNames(directive.subgraph, subgraphName),
           );
           if (sourceDirective != null) {
             const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
@@ -429,8 +420,8 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         [MapperKind.ENUM_VALUE]: (enumValueConfig, typeName, _schema, externalValue) => {
           const enumDirectives = getDirectiveExtensions(enumValueConfig);
           const sourceDirectives = enumDirectives.source;
-          const sourceDirective = sourceDirectives?.find(
-            directive => compareSubgraphNames(directive.subgraph, subgraphName),
+          const sourceDirective = sourceDirectives?.find(directive =>
+            compareSubgraphNames(directive.subgraph, subgraphName),
           );
           if (sourceDirective != null) {
             const realValue = sourceDirective.name ?? externalValue;
@@ -504,11 +495,9 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         const subgraphSchemaConfig = subschemaConfig.schema.toConfig();
         subschemaConfig.schema = new GraphQLSchema({
           ...subgraphSchemaConfig,
-          directives: [...subgraphSchemaConfig.directives,
-            mergeDirective
-          ],
+          directives: [...subgraphSchemaConfig.directives, mergeDirective],
           assumeValid: true,
-        })
+        });
 
         subschemaConfig.merge = stitchingDirectivesTransformer(subschemaConfig).merge;
         const queryType = subschemaConfig.schema.getQueryType();
@@ -586,14 +575,11 @@ const mergeDirective = new GraphQLDirective({
     },
     keyArg: {
       type: GraphQLString,
-    }
+    },
   },
 });
 
 // TODO: Fix this in GraphQL Tools
-export function compareSubgraphNames(
-  name1: string,
-  name2: string,
-) {
+export function compareSubgraphNames(name1: string, name2: string) {
   return constantCase(name1) === constantCase(name2);
 }
