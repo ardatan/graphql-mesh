@@ -18,6 +18,8 @@ directive @mysqlDelete(table: String) on FIELD_DEFINITION
 
 directive @mysqlTableForeign(columnName: String) on FIELD_DEFINITION
 
+directive @mysqlCount(table: String) on FIELD_DEFINITION
+
 type Query {
   current_dept_emp(limit: Int, offset: Int, where: current_dept_emp_WhereInput, orderBy: current_dept_emp_OrderByInput): [current_dept_emp] @mysqlSelect(table: "current_dept_emp")
   count_current_dept_emp(where: current_dept_emp_WhereInput): Int @mysqlCount(table: "current_dept_emp")
