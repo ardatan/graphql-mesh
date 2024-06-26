@@ -1,5 +1,58 @@
 # @omnigraph/soap
 
+## 0.100.0
+
+### Minor Changes
+
+- [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
+  Thanks [@ardatan](https://github.com/ardatan)! - POTENTIAL BREAKING CHANGE:
+
+  Now `@httpOperation` and `@transport` directive serializes headers as `[string, string][]` instead
+  of stringified JSON.
+
+  ```diff
+  @httpOperation(
+  -  operationSpecificHeaders: [["Authorization", "Bearer 123"], ["X-Api-Key", "123"]]
+  +  operationSpecificHeaders: "{\"Authorization\": \"Bearer 123\", \"X-Api-Key\": \"123\"}"
+  )
+  ```
+
+  ```diff
+  @transport(
+  -  headers: [["Authorization, "Bearer 123"], ["X-Api-Key", "123"]]
+  +  headers: "{\"Authorization, \"Bearer 123\", \"X-Api-Key\": \"123\"}"
+  )
+  ```
+
+  Also incorrect placement of `@transport` has been fixed to `SCHEMA`
+
+  ```diff
+  directive @transport on
+  -  FIELD_DEFINITION
+  +  SCHEMA
+  ```
+
+  There is still backwards compatibility but this might look like a breaking change for some users
+  during schema validation.
+
+### Patch Changes
+
+- [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`graphql-compose@^9.0.11` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.11) (from
+    `^9.0.10`, in `dependencies`)
+- Updated dependencies
+  [[`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`f985978`](https://github.com/ardatan/graphql-mesh/commit/f9859784ad854207e4d32bda11c904b5301610ee),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)]:
+  - @graphql-mesh/transport-soap@0.3.0
+  - @graphql-mesh/utils@0.98.9
+  - @graphql-mesh/types@0.98.9
+
 ## 0.99.4
 
 ### Patch Changes

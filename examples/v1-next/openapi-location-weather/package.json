@@ -1,6 +1,6 @@
 {
   "name": "location-weather-example",
-  "version": "0.18.1",
+  "version": "0.19.0",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,11 +8,11 @@
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/cache-localforage": "^0.98.8",
-    "@graphql-mesh/compose-cli": "^0.4.0",
-    "@graphql-mesh/plugin-response-cache": "^0.98.9",
-    "@graphql-mesh/serve-cli": "^0.5.1",
-    "@omnigraph/openapi": "^0.100.14",
+    "@graphql-mesh/cache-localforage": "^0.98.9",
+    "@graphql-mesh/compose-cli": "^0.4.1",
+    "@graphql-mesh/plugin-response-cache": "^0.98.10",
+    "@graphql-mesh/serve-cli": "^0.6.0",
+    "@omnigraph/openapi": "^0.101.0",
     "graphql": "^16.8.1"
   }
 }

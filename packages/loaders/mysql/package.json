@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/mysql",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -27,14 +27,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.98.8",
+    "@graphql-mesh/types": "^0.98.9",
     "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.3",
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-mesh/transport-mysql": "^0.2.8",
-    "@graphql-mesh/utils": "^0.98.8",
+    "@graphql-mesh/transport-mysql": "^0.3.0",
+    "@graphql-mesh/utils": "^0.98.9",
     "@graphql-tools/delegate": "^10.0.11",
     "@graphql-tools/utils": "^10.2.1",
     "graphql-compose": "^9.0.11",

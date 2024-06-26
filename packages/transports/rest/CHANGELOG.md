@@ -1,5 +1,87 @@
 # @graphql-mesh/transport-rest
 
+## 0.3.0
+
+### Minor Changes
+
+- [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
+  Thanks [@ardatan](https://github.com/ardatan)! - POTENTIAL BREAKING CHANGE:
+
+  Now `@httpOperation` and `@transport` directive serializes headers as `[string, string][]` instead
+  of stringified JSON.
+
+  ```diff
+  @httpOperation(
+  -  operationSpecificHeaders: [["Authorization", "Bearer 123"], ["X-Api-Key", "123"]]
+  +  operationSpecificHeaders: "{\"Authorization\": \"Bearer 123\", \"X-Api-Key\": \"123\"}"
+  )
+  ```
+
+  ```diff
+  @transport(
+  -  headers: [["Authorization, "Bearer 123"], ["X-Api-Key", "123"]]
+  +  headers: "{\"Authorization, \"Bearer 123\", \"X-Api-Key\": \"123\"}"
+  )
+  ```
+
+  Also incorrect placement of `@transport` has been fixed to `SCHEMA`
+
+  ```diff
+  directive @transport on
+  -  FIELD_DEFINITION
+  +  SCHEMA
+  ```
+
+  There is still backwards compatibility but this might look like a breaking change for some users
+  during schema validation.
+
+### Patch Changes
+
+- [#7046](https://github.com/ardatan/graphql-mesh/pull/7046)
+  [`ac77ce9`](https://github.com/ardatan/graphql-mesh/commit/ac77ce94f1e9a78e2dace14128ea1d6843732d19)
+  Thanks [@ardatan](https://github.com/ardatan)! - New option for query string parameters
+  `jsonStringify`;
+
+  Now either under the operation or globally, you can set `jsonStringify` to `true` to stringify
+  nested query string parameters as JSON.
+
+  ```yaml
+  operations:
+    - type: Query
+      field: books
+      method: GET
+      path: /books
+      queryStringOptions:
+        jsonStringify: true
+      queryParamArgMap:
+        page: page
+      argTypeMap:
+        page:
+          type: object
+          additionalProperties: false
+          properties:
+            limit:
+              type: integer
+            offset:
+              type: integer
+      responseSample:
+        books:
+          - title: 'Book 1'
+          - title: 'Book 2'
+  ```
+
+  Then the URL will be `/books?page={"limit":10,"offset":0}`, as you can see `page` is stringified
+  as JSON.
+
+- Updated dependencies
+  [[`f985978`](https://github.com/ardatan/graphql-mesh/commit/f9859784ad854207e4d32bda11c904b5301610ee),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)]:
+  - @graphql-mesh/utils@0.98.9
+  - @graphql-mesh/transport-common@0.3.0
+  - @graphql-mesh/types@0.98.9
+
 ## 0.2.9
 
 ### Patch Changes
