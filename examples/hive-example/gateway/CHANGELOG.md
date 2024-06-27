@@ -1,5 +1,13 @@
 # gateway-example
 
+## 0.12.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d68c464`](https://github.com/ardatan/graphql-mesh/commit/d68c4642c9993c37a48004fc0d1f0574f557ca43)]:
+  - @graphql-mesh/plugin-hive@0.98.10
+
 ## 0.12.0
 
 ### Patch Changes

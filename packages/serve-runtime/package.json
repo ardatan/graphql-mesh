@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/serve-runtime",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
     "@graphql-hive/client": "^0.32.0",
     "@graphql-mesh/cross-helpers": "^0.4.3",
     "@graphql-mesh/fusion-runtime": "^0.4.0",
-    "@graphql-mesh/plugin-hive": "^0.98.9",
+    "@graphql-mesh/plugin-hive": "^0.98.10",
     "@graphql-mesh/transport-common": "^0.3.0",
     "@graphql-mesh/utils": "^0.98.9",
     "@graphql-tools/delegate": "^10.0.11",
