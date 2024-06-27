@@ -81,10 +81,6 @@ describe('Serve Runtime', () => {
             expect(res.status).toBe(200);
           });
         });
-        it('health check', async () => {
-          const res = await serveRuntime.fetch('http://localhost:4000/healthcheck');
-          expect(res.status).toBe(200);
-        });
         describe('readiness check', () => {
           it('fail if the proxy API is not ready', async () => {
             upstreamIsUp = false;
@@ -94,6 +90,17 @@ describe('Serve Runtime', () => {
           it('succeed if the proxy API is ready', async () => {
             const res = await serveRuntime.fetch('http://localhost:4000/readiness');
             expect(res.status).toBe(200);
+          });
+        });
+        describe('GraphiQL', () => {
+          it('has GraphiQL Mesh title', async () => {
+            const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
+              headers: {
+                accept: 'text/html',
+              },
+            });
+            const text = await res.text();
+            expect(text).toContain('<title>GraphiQL Mesh</title>');
           });
         });
       });

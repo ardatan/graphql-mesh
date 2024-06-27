@@ -5,11 +5,13 @@ import { GraphQLSchema, parse } from 'graphql';
 import {
   createYoga,
   FetchAPI,
+  GraphiQLOptions,
   isAsyncIterable,
   useReadinessCheck,
   YogaServerInstance,
   type Plugin,
 } from 'graphql-yoga';
+import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
 import { createSupergraphSDLFetcher } from '@graphql-hive/client';
 import {
   handleFederationSupergraph,
@@ -166,6 +168,41 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     },
   };
 
+  let graphiqlOptionsOrFactory: GraphiQLOptionsOrFactory<unknown> | false;
+
+  if (config.graphiql == null || config.graphiql === true) {
+    graphiqlOptionsOrFactory = {
+      title: 'GraphiQL Mesh',
+    };
+  } else if (config.graphiql === false) {
+    graphiqlOptionsOrFactory = false;
+  } else if (typeof config.graphiql === 'object') {
+    graphiqlOptionsOrFactory = {
+      title: 'GraphiQL Mesh',
+      ...config.graphiql,
+    };
+  } else if (typeof config.graphiql === 'function') {
+    const userGraphiqlFactory = config.graphiql;
+    // @ts-expect-error PromiseLike is not compatible with Promise
+    graphiqlOptionsOrFactory = function graphiqlOptionsFactoryForMesh(...args) {
+      const options = userGraphiqlFactory(...args);
+      return mapMaybePromise(options, resolvedOpts => {
+        if (resolvedOpts === false) {
+          return false;
+        }
+        if (resolvedOpts === true) {
+          return {
+            title: 'GraphiQL Mesh',
+          };
+        }
+        return {
+          title: 'GraphiQL Mesh',
+          ...resolvedOpts,
+        };
+      });
+    };
+  }
+
   const yoga = createYoga<unknown, MeshServeContext>({
     // @ts-expect-error PromiseLike is not compatible with Promise
     schema: schemaFetcher,
@@ -206,7 +243,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       return baseContext;
     },
     cors: config.cors,
-    graphiql: config.graphiql,
+    graphiql: graphiqlOptionsOrFactory,
     batching: config.batching,
     graphqlEndpoint: config.graphqlEndpoint,
     maskedErrors: config.maskedErrors,
