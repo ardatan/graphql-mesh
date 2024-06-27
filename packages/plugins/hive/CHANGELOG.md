@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-hive
 
+## 0.98.11
+
+### Patch Changes
+
+- [`a7e8a9c`](https://github.com/ardatan/graphql-mesh/commit/a7e8a9cea8ef31c0418bc0ad2c5d536b75eebab0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Enable usage reporting by default, and configure
+  the agent
+
 ## 0.98.10
 
 ### Patch Changes

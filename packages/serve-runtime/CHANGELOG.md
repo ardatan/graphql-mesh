@@ -1,5 +1,13 @@
 # @graphql-mesh/serve-runtime
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a7e8a9c`](https://github.com/ardatan/graphql-mesh/commit/a7e8a9cea8ef31c0418bc0ad2c5d536b75eebab0)]:
+  - @graphql-mesh/plugin-hive@0.98.11
+
 ## 0.4.2
 
 ### Patch Changes

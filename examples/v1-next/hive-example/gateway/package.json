@@ -1,5 +1,6 @@
 {
   "name": "@examples/hive-example-gateway",
+  "version": null,
   "private": true,
   "scripts": {
     "gateway:start": "yarn mesh-serve"
