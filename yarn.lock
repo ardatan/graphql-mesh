@@ -4242,6 +4242,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@examples/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway":
+  version: 0.0.0-use.local
+  resolution: "@examples/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway"
+  dependencies:
+    "@graphql-mesh/serve-cli": "workspace:*"
+    dotenv: "npm:^16.4.5"
+    graphql: "npm:16.8.2"
+    tsx: "npm:4.15.7"
+  languageName: unknown
+  linkType: soft
+
+"@examples/hive-example-graphql-service@workspace:examples/v1-next/hive-example/my-graphql":
+  version: 0.0.0-use.local
+  resolution: "@examples/hive-example-graphql-service@workspace:examples/v1-next/hive-example/my-graphql"
+  dependencies:
+    "@graphql-hive/cli": "npm:0.38.3"
+    graphql: "npm:16.8.2"
+    graphql-yoga: "npm:5.4.0"
+    tsx: "npm:4.15.7"
+  languageName: unknown
+  linkType: soft
+
+"@examples/hive-example-rest-service@workspace:examples/v1-next/hive-example/my-rest":
+  version: 0.0.0-use.local
+  resolution: "@examples/hive-example-rest-service@workspace:examples/v1-next/hive-example/my-rest"
+  dependencies:
+    "@graphql-hive/cli": "npm:0.38.3"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fets: "npm:0.8.1"
+    graphql: "npm:16.8.2"
+    tsx: "npm:4.15.7"
+  languageName: unknown
+  linkType: soft
+
 "@examples/hive-example@workspace:examples/v1-next/hive-example":
   version: 0.0.0-use.local
   resolution: "@examples/hive-example@workspace:examples/v1-next/hive-example"
@@ -18970,17 +19005,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gateway-d4a6d9@workspace:examples/v1-next/hive-example/gateway":
-  version: 0.0.0-use.local
-  resolution: "gateway-d4a6d9@workspace:examples/v1-next/hive-example/gateway"
-  dependencies:
-    "@graphql-mesh/serve-cli": "workspace:*"
-    dotenv: "npm:^16.4.5"
-    graphql: "npm:16.8.2"
-    tsx: "npm:4.15.7"
-  languageName: unknown
-  linkType: soft
-
 "gateway-example@workspace:examples/hive-example/gateway":
   version: 0.0.0-use.local
   resolution: "gateway-example@workspace:examples/hive-example/gateway"
@@ -25747,30 +25771,6 @@ __metadata:
   checksum: 10c0/cfdd3c6429aad170014892f7934ff60a4418b32e4c14db10f0d3cfb7743f37385e2a3a8c58c65b7c4fbfe44838d9e8cf8c93897b9763a08224c32957a72621c0
   languageName: node
   linkType: hard
-
-"my-graphql-b6826b@workspace:examples/v1-next/hive-example/my-graphql":
-  version: 0.0.0-use.local
-  resolution: "my-graphql-b6826b@workspace:examples/v1-next/hive-example/my-graphql"
-  dependencies:
-    "@graphql-hive/cli": "npm:0.38.3"
-    graphql: "npm:16.8.2"
-    graphql-yoga: "npm:5.4.0"
-    tsx: "npm:4.15.7"
-  languageName: unknown
-  linkType: soft
-
-"my-rest-aa36ae@workspace:examples/v1-next/hive-example/my-rest":
-  version: 0.0.0-use.local
-  resolution: "my-rest-aa36ae@workspace:examples/v1-next/hive-example/my-rest"
-  dependencies:
-    "@graphql-hive/cli": "npm:0.38.3"
-    "@graphql-mesh/compose-cli": "workspace:*"
-    "@omnigraph/openapi": "workspace:*"
-    fets: "npm:0.8.1"
-    graphql: "npm:16.8.2"
-    tsx: "npm:4.15.7"
-  languageName: unknown
-  linkType: soft
 
 "mysql-employees@workspace:examples/mysql-employees":
   version: 0.0.0-use.local
