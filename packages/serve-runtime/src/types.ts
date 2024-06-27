@@ -7,7 +7,7 @@ import type {
   YogaServerOptions,
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
-import { SupergraphSDLFetcherOptions } from '@graphql-hive/client/typings/internal/types.js';
+import { createSupergraphSDLFetcher } from '@graphql-hive/client';
 import type { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
 import type {
   KeyValueCache,
@@ -80,7 +80,7 @@ interface MeshServeConfigWithHive<TContext> extends MeshServeConfigForSupergraph
   /**
    * Integration options with GraphQL Hive.
    */
-  hive: YamlConfig.HivePlugin & SupergraphSDLFetcherOptions;
+  hive: YamlConfig.HivePlugin & Parameters<typeof createSupergraphSDLFetcher>[0];
 }
 
 interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {

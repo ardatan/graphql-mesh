@@ -4242,6 +4242,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@examples/hive-example@workspace:examples/v1-next/hive-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/hive-example@workspace:examples/v1-next/hive-example"
+  languageName: unknown
+  linkType: soft
+
 "@examples/reddit-example@workspace:examples/v1-next/json-schema-reddit":
   version: 0.0.0-use.local
   resolution: "@examples/reddit-example@workspace:examples/v1-next/json-schema-reddit"
@@ -16456,7 +16462,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.3, dotenv@npm:^16.3.1":
+"dotenv@npm:^16.0.3, dotenv@npm:^16.3.1, dotenv@npm:^16.4.5":
   version: 16.4.5
   resolution: "dotenv@npm:16.4.5"
   checksum: 10c0/48d92870076832af0418b13acd6e5a5a3e83bb00df690d9812e94b24aff62b88ade955ac99a05501305b8dc8f1b0ee7638b18493deb6fe93d680e5220936292f
@@ -18963,6 +18969,17 @@ __metadata:
   checksum: 10c0/584fcd57a03431707a6d0c1c4a41f17368cdb23d37dcb176d6cbbeeaecaac51be15dec229b3547acfb7db052cb066fcd86db907d40112ac4a3d3a368f88e7105
   languageName: node
   linkType: hard
+
+"gateway-d4a6d9@workspace:examples/v1-next/hive-example/gateway":
+  version: 0.0.0-use.local
+  resolution: "gateway-d4a6d9@workspace:examples/v1-next/hive-example/gateway"
+  dependencies:
+    "@graphql-mesh/serve-cli": "workspace:*"
+    dotenv: "npm:^16.4.5"
+    graphql: "npm:16.8.2"
+    tsx: "npm:4.15.7"
+  languageName: unknown
+  linkType: soft
 
 "gateway-example@workspace:examples/hive-example/gateway":
   version: 0.0.0-use.local
@@ -25730,6 +25747,30 @@ __metadata:
   checksum: 10c0/cfdd3c6429aad170014892f7934ff60a4418b32e4c14db10f0d3cfb7743f37385e2a3a8c58c65b7c4fbfe44838d9e8cf8c93897b9763a08224c32957a72621c0
   languageName: node
   linkType: hard
+
+"my-graphql-b6826b@workspace:examples/v1-next/hive-example/my-graphql":
+  version: 0.0.0-use.local
+  resolution: "my-graphql-b6826b@workspace:examples/v1-next/hive-example/my-graphql"
+  dependencies:
+    "@graphql-hive/cli": "npm:0.38.3"
+    graphql: "npm:16.8.2"
+    graphql-yoga: "npm:5.4.0"
+    tsx: "npm:4.15.7"
+  languageName: unknown
+  linkType: soft
+
+"my-rest-aa36ae@workspace:examples/v1-next/hive-example/my-rest":
+  version: 0.0.0-use.local
+  resolution: "my-rest-aa36ae@workspace:examples/v1-next/hive-example/my-rest"
+  dependencies:
+    "@graphql-hive/cli": "npm:0.38.3"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fets: "npm:0.8.1"
+    graphql: "npm:16.8.2"
+    tsx: "npm:4.15.7"
+  languageName: unknown
+  linkType: soft
 
 "mysql-employees@workspace:examples/mysql-employees":
   version: 0.0.0-use.local
@@ -33374,7 +33415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.7.1":
+"tsx@npm:4.15.7, tsx@npm:^4.7.1":
   version: 4.15.7
   resolution: "tsx@npm:4.15.7"
   dependencies:

@@ -1,0 +1,28 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "feTS API", "description": "An API written with feTS", "version": "1.0.0" },
+  "paths": {
+    "/greetings/{name}": {
+      "get": {
+        "operationId": "greetingsFromREST",
+        "parameters": [
+          { "name": "name", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "message": { "type": "string" } },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

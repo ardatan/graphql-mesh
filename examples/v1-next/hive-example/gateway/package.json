@@ -1,0 +1,13 @@
+{
+  "name": "@examples/hive-example-gateway",
+  "private": true,
+  "scripts": {
+    "gateway:start": "yarn mesh-serve"
+  },
+  "dependencies": {
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "dotenv": "^16.4.5",
+    "graphql": "16.8.2",
+    "tsx": "4.15.7"
+  }
+}

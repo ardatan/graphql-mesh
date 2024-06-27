@@ -1,0 +1,14 @@
+{
+  "name": "@examples/hive-example-graphql-service",
+  "private": true,
+  "scripts": {
+    "publish": "hive schema:publish --service mygraphql --url http://localhost:4001/graphql typeDefs.graphql",
+    "start": "node --import tsx index.ts"
+  },
+  "dependencies": {
+    "@graphql-hive/cli": "0.38.3",
+    "graphql": "16.8.2",
+    "graphql-yoga": "5.4.0",
+    "tsx": "4.15.7"
+  }
+}

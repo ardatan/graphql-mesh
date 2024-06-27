@@ -114,7 +114,7 @@ export default function useMeshHive(
       .dispose()
       .catch(e => pluginOptions.logger?.error(`Hive client failed to dispose`, e));
   }
-  const id: number = pluginOptions.pubsub.subscribe('destroy', () =>
+  const id: number = pluginOptions.pubsub?.subscribe('destroy', () =>
     onTerminate().finally(() => pluginOptions.pubsub.unsubscribe(id)),
   );
 
