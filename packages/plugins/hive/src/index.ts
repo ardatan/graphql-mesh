@@ -29,7 +29,7 @@ export default function useMeshHive(
     return {};
   }
 
-  let usage: HivePluginOptions['usage'];
+  let usage: HivePluginOptions['usage'] = true;
   if (pluginOptions.usage) {
     usage = {
       max: pluginOptions.usage.max,
@@ -70,10 +70,13 @@ export default function useMeshHive(
       }),
     };
   }
-  let agent: HivePluginOptions['agent'] = { logger: pluginOptions.logger };
+  let agent: HivePluginOptions['agent'] = {
+    name: 'graphql-mesh',
+    logger: pluginOptions.logger,
+  };
   if (pluginOptions.agent) {
     agent = {
-      name: pluginOptions.agent.name,
+      name: pluginOptions.agent.name || 'graphql-mesh',
       timeout: pluginOptions.agent.timeout,
       maxRetries: pluginOptions.agent.maxRetries,
       minTimeout: pluginOptions.agent.minTimeout,
