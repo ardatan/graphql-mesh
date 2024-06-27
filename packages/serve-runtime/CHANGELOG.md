@@ -1,5 +1,12 @@
 # @graphql-mesh/serve-runtime
 
+## 0.4.2
+
+### Patch Changes
+
+- [`141c3a6`](https://github.com/ardatan/graphql-mesh/commit/141c3a6664afdbe4202986cdc06f5fe018d5863a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add http transport by default
+
 ## 0.4.1
 
 ### Patch Changes

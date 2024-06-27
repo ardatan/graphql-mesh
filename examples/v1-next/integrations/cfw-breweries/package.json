@@ -1,6 +1,6 @@
 {
   "name": "cfw-breweries",
-  "version": "0.13.1",
+  "version": "0.13.2",
   "private": true,
   "scripts": {
     "compose": "node ../../../../packages/compose-cli/dist/esm/bin.js > ./src/supergraph.graphql.ts",
@@ -11,7 +11,7 @@
     "@graphql-mesh/cache-localforage": "^0.98.9",
     "@graphql-mesh/compose-cli": "^0.4.1",
     "@graphql-mesh/plugin-response-cache": "^0.98.10",
-    "@graphql-mesh/serve-runtime": "^0.4.1",
+    "@graphql-mesh/serve-runtime": "^0.4.2",
     "@omnigraph/json-schema": "^0.101.0",
     "graphql": "16.9.0"
   },
