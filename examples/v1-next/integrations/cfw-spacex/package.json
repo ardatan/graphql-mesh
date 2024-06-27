@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/cfw-spacex",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "private": true,
   "scripts": {
     "start": "wrangler dev"
@@ -10,7 +10,7 @@
     "@graphql-mesh/cache-cfw-kv": "^0.98.9",
     "@graphql-mesh/plugin-rate-limit": "^0.98.9",
     "@graphql-mesh/plugin-response-cache": "^0.98.10",
-    "@graphql-mesh/serve-runtime": "^0.4.1",
+    "@graphql-mesh/serve-runtime": "^0.4.2",
     "graphql": "16.9.0"
   },
   "devDependencies": {
