@@ -41,6 +41,7 @@
     "@graphql-mesh/fusion-runtime": "^0.4.0",
     "@graphql-mesh/plugin-hive": "^0.98.10",
     "@graphql-mesh/transport-common": "^0.3.0",
+    "@graphql-mesh/transport-http": "^0.2.0",
     "@graphql-mesh/utils": "^0.98.9",
     "@graphql-tools/delegate": "^10.0.11",
     "@graphql-tools/executor-http": "^1.0.6",
