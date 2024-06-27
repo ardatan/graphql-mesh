@@ -4257,7 +4257,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-graphql-service@workspace:examples/v1-next/hive-example/my-graphql"
   dependencies:
-    "@graphql-hive/cli": "npm:0.38.3"
+    "@graphql-hive/cli": "npm:0.38.4"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.4.0"
     tsx: "npm:4.15.7"
@@ -4268,7 +4268,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-rest-service@workspace:examples/v1-next/hive-example/my-rest"
   dependencies:
-    "@graphql-hive/cli": "npm:0.38.3"
+    "@graphql-hive/cli": "npm:0.38.4"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.1"
@@ -4561,23 +4561,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/cli@npm:0.38.3":
-  version: 0.38.3
-  resolution: "@graphql-hive/cli@npm:0.38.3"
+"@graphql-hive/cli@npm:0.38.4":
+  version: 0.38.4
+  resolution: "@graphql-hive/cli@npm:0.38.4"
   dependencies:
-    "@graphql-hive/core": "npm:0.3.1"
+    "@graphql-hive/core": "npm:0.4.0"
     "@graphql-inspector/core": "npm:5.1.0-alpha-20231208113249-34700c8a"
     "@graphql-tools/code-file-loader": "npm:~8.1.0"
     "@graphql-tools/graphql-file-loader": "npm:~8.0.0"
     "@graphql-tools/json-file-loader": "npm:~8.0.0"
     "@graphql-tools/load": "npm:~8.0.0"
     "@graphql-tools/url-loader": "npm:~8.0.0"
-    "@graphql-tools/utils": "npm:10.2.1"
+    "@graphql-tools/utils": "npm:10.2.2"
     "@graphql-typed-document-node/core": "npm:3.2.0"
     "@oclif/core": "npm:^3.26.6"
     "@oclif/plugin-help": "npm:6.0.22"
     "@oclif/plugin-update": "npm:4.2.13"
-    "@whatwg-node/fetch": "npm:0.9.18"
     colors: "npm:1.4.0"
     env-ci: "npm:7.3.0"
     graphql: "npm:^16.8.1"
@@ -4587,7 +4586,7 @@ __metadata:
     zod: "npm:3.23.8"
   bin:
     hive: bin/run
-  checksum: 10c0/fb66a8d76ee68a282cdbd9c284ec4cc5f617f37fece95e0f0bf210edfef5dcfb12be636bbf56f21e1a2155659ec2101a911e322c2dadbfcfb2c6c4bb4ff42ee4
+  checksum: 10c0/2e7b5c5c3e8a653c761ba1352f8d22be737108b493e4e5cd35f15da27f68efe7b15a50ed6a6a5c44404c2e68fbb10be9ed4fe001e5c39e2c2e16c7dd992804e4
   languageName: node
   linkType: hard
 
@@ -4613,9 +4612,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/core@npm:0.3.1":
-  version: 0.3.1
-  resolution: "@graphql-hive/core@npm:0.3.1"
+"@graphql-hive/core@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@graphql-hive/core@npm:0.4.0"
   dependencies:
     "@graphql-tools/utils": "npm:^10.0.0"
     "@whatwg-node/fetch": "npm:0.9.18"
@@ -4624,7 +4623,7 @@ __metadata:
     tiny-lru: "npm:8.0.2"
   peerDependencies:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/474aa39df2aa99cc86dbf53a2c1354e2d3a24d6e233484f5460127dab9e079753fbf250ed1d048c12faef09719f250f235a2c533c8c4db2f5b5848c454a40de1
+  checksum: 10c0/2154aaa9e764e6c4ea6cd67502535c73674668d50002cd100e30e4a7c80c9fa54df0f395be73ec5f6b6821e235f54c5b9f00674b300f0502ad8ea993443ee99f
   languageName: node
   linkType: hard
 
@@ -6638,20 +6637,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/7ae1084bb2218c0b085cfc6c70a6a488225e4154873495a768bbcc6f3b9537384eb5062400b784e3558645ee95384d5aa44a634d60246809bb3604f2ac4ffa84
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/utils@npm:10.2.1":
-  version: 10.2.1
-  resolution: "@graphql-tools/utils@npm:10.2.1"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    cross-inspect: "npm:1.0.0"
-    dset: "npm:^3.1.2"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/725cfe00c3cedf9d2519f7750eb06c7487c3719f9a6abd3ff510393164b1dbdc5035eda5ef1612704141ff63ca504c3af051a7356ca1ea0563819c227217bbe3
   languageName: node
   linkType: hard
 
@@ -12803,7 +12788,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "authors-service@workspace:examples/hive-example/sources/authors"
   dependencies:
-    "@graphql-hive/cli": "npm:0.38.3"
+    "@graphql-hive/cli": "npm:0.38.4"
     "@graphql-mesh/cli": "npm:0.91.1"
     "@graphql-mesh/openapi": "npm:0.101.0"
     fets: "npm:^0.8.0"
@@ -13391,7 +13376,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "books-service@workspace:examples/hive-example/sources/books"
   dependencies:
-    "@graphql-hive/cli": "npm:0.38.3"
+    "@graphql-hive/cli": "npm:0.38.4"
     "@graphql-mesh/cli": "npm:0.91.1"
     "@graphql-mesh/openapi": "npm:0.101.0"
     fets: "npm:^0.8.0"
@@ -25901,32 +25886,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"neo4j-driver-bolt-connection@npm:5.21.0":
-  version: 5.21.0
-  resolution: "neo4j-driver-bolt-connection@npm:5.21.0"
+"neo4j-driver-bolt-connection@npm:5.22.0":
+  version: 5.22.0
+  resolution: "neo4j-driver-bolt-connection@npm:5.22.0"
   dependencies:
     buffer: "npm:^6.0.3"
-    neo4j-driver-core: "npm:5.21.0"
+    neo4j-driver-core: "npm:5.22.0"
     string_decoder: "npm:^1.3.0"
-  checksum: 10c0/429d1936d6e3b50fc2857cedc2919ad09bce9a2ff026dc9eee9c7d9baa80cc412352794d7d55661e8f88069fdd2e94ef6de828b2bdf75cb05c534d45269a6ba9
+  checksum: 10c0/48344b7573d87fb1940a3e5a51f752c8c038ddeaad7c1634a38c11c4754973202315806b7425ba2ede7bac6c992d239efba26ca57776937f0076c52ad273ddcc
   languageName: node
   linkType: hard
 
-"neo4j-driver-core@npm:5.21.0":
-  version: 5.21.0
-  resolution: "neo4j-driver-core@npm:5.21.0"
-  checksum: 10c0/03a574ee3b7781196586343e8d8cf97d92f13a1c3b550259c4f99896f8f912819c90e154813e2b7504d8a885667c1cb80514fb792638b38e862028b076490166
+"neo4j-driver-core@npm:5.22.0":
+  version: 5.22.0
+  resolution: "neo4j-driver-core@npm:5.22.0"
+  checksum: 10c0/a928f29601e11dbcd8cfafa212adde98b15d2d2dec5b7f6009f6fa9a321e7d7250a83e7857f5024aba9981264e144938c323eb21d5176bc7ccb5434882bb9447
   languageName: node
   linkType: hard
 
 "neo4j-driver@npm:^5.17.0, neo4j-driver@npm:^5.9.2":
-  version: 5.21.0
-  resolution: "neo4j-driver@npm:5.21.0"
+  version: 5.22.0
+  resolution: "neo4j-driver@npm:5.22.0"
   dependencies:
-    neo4j-driver-bolt-connection: "npm:5.21.0"
-    neo4j-driver-core: "npm:5.21.0"
+    neo4j-driver-bolt-connection: "npm:5.22.0"
+    neo4j-driver-core: "npm:5.22.0"
     rxjs: "npm:^7.8.1"
-  checksum: 10c0/278d719a669189f4d756ebc76996c7027331a44567ff187507c12fb749d426f63648bef1c2c36c5c7ee68d52e881445ae9d7c69a1a25dd261f566a491b82d58d
+  checksum: 10c0/39a30392d57876c933b818edd8c895e51a60703c5edeec9f945555586fe31658e6f5492f7149ecba828b679aaf6dcf383cb0b3cce2e2fa171ab7cc6b5f7222bf
   languageName: node
   linkType: hard
 
@@ -26898,7 +26883,7 @@ __metadata:
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.3.1"
+    vite: "npm:5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -34456,9 +34441,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.3.1":
-  version: 5.3.1
-  resolution: "vite@npm:5.3.1"
+"vite@npm:5.3.2":
+  version: 5.3.2
+  resolution: "vite@npm:5.3.2"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
@@ -34492,7 +34477,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/9317262c02ea2dc324dfdbc20c3c450cd89cc9a16399a41a4bf820a3a1f31cf400878c015135e355ee034853cc2399b5499899d5b1bc462d57642d71083e74b6
+  checksum: 10c0/3ed576d18c6c008ae92be68f9c79bf7556dae10978a3e8b4c4b42199424755e5c99836e6d4f81fb8b533b957d7f4e351abc60b8a93f4c4b5eb9890b5b6450926
   languageName: node
   linkType: hard
 
