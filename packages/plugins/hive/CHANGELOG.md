@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-hive
 
+## 0.98.10
+
+### Patch Changes
+
+- [`d68c464`](https://github.com/ardatan/graphql-mesh/commit/d68c4642c9993c37a48004fc0d1f0574f557ca43)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix Hive integration
+
 ## 0.98.9
 
 ### Patch Changes
