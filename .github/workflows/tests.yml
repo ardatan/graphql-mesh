@@ -113,6 +113,9 @@ jobs:
       - name: Remove node-libcurl
         run: rm -rf node_modules/node-libcurl
 
+      - name: Build packages
+        run: yarn build
+
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -340,6 +343,8 @@ jobs:
         with:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
+      - name: Build packages
+        run: yarn build
       - name: test
         timeout-minutes: 5
         run: yarn test:e2e --detectOpenHandles

@@ -7,6 +7,7 @@ import {
   FetchAPI,
   GraphiQLOptions,
   isAsyncIterable,
+  LandingPageRenderer,
   useReadinessCheck,
   YogaServerInstance,
   type Plugin,
@@ -18,6 +19,7 @@ import {
   handleFederationSupergraph,
   isDisposable,
   OnSubgraphExecuteHook,
+  TransportEntry,
   UnifiedGraphManager,
   UnifiedGraphManagerOptions,
 } from '@graphql-mesh/fusion-runtime';
@@ -35,6 +37,7 @@ import { useExecutor } from '@graphql-tools/executor-yoga';
 import { MaybePromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
+import landingPageHtml from './landing-page-html.js';
 import {
   MeshServeConfig,
   MeshServeConfigContext,
@@ -81,6 +84,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
   let registryPlugin: MeshPlugin<unknown> = {};
+  let subgraphInformationHTMLRenderer: () => MaybePromise<string> = () => '';
 
   const disposableStack = new AsyncDisposableStack();
 
@@ -174,6 +178,51 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     schemaInvalidator = () => unifiedGraphManager.invalidateUnifiedGraph();
     contextBuilder = base => unifiedGraphManager.getContext(base);
     disposableStack.use(unifiedGraphManager);
+    subgraphInformationHTMLRenderer = async () => {
+      const htmlParts: string[] = [];
+      let supergraphLoadedPlace: string;
+      if ('hive' in config && config.hive.endpoint) {
+        supergraphLoadedPlace = 'Hive CDN <br>' + config.hive.endpoint;
+      } else if ('supergraph' in config) {
+        if (typeof config.supergraph === 'function') {
+          const fnName = config.supergraph.name || '';
+          supergraphLoadedPlace = `a custom loader ${fnName}`;
+        }
+      }
+      let loaded = false;
+      let loadError: Error;
+      let transportEntryMap: Record<string, TransportEntry>;
+      try {
+        transportEntryMap = await unifiedGraphManager.getTransportEntryMap();
+        loaded = true;
+      } catch (e) {
+        loaded = false;
+        loadError = e;
+      }
+      if (loaded) {
+        htmlParts.push(`<h3>Supergraph Status: Loaded ✅</h3>`);
+        htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        htmlParts.push(`<table>`);
+        htmlParts.push(`<tr><th>Subgraph</th><th>Transport</th><th>Location</th></tr>`);
+        for (const subgraphName in transportEntryMap) {
+          const transportEntry = transportEntryMap[subgraphName];
+          htmlParts.push(`<tr>`);
+          htmlParts.push(`<td>${subgraphName}</td>`);
+          htmlParts.push(`<td>${transportEntry.kind}</td>`);
+          htmlParts.push(
+            `<td><a href="${transportEntry.location}">${transportEntry.location}</a></td>`,
+          );
+          htmlParts.push(`</tr>`);
+        }
+        htmlParts.push(`</table>`);
+      } else {
+        htmlParts.push(`<h3>Status: Failed ❌</h3>`);
+        htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        htmlParts.push(`<h3>Error:</h3>`);
+        htmlParts.push(`<pre>${loadError.stack}</pre>`);
+      }
+      return `<section class="supergraph-information">${htmlParts.join('')}</section>`;
+    };
   }
 
   const readinessCheckPlugin = useReadinessCheck({
@@ -244,6 +293,30 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     };
   }
 
+  let landingPageRenderer: LandingPageRenderer | boolean;
+
+  if (config.landingPage == null || config.landingPage === true) {
+    landingPageRenderer = async function meshLandingPageRenderer(opts) {
+      return new opts.fetchAPI.Response(
+        landingPageHtml
+          .replace(/__GRAPHIQL_LINK__/g, opts.graphqlEndpoint)
+          .replace(/__REQUEST_PATH__/g, opts.url.pathname)
+          .replace(/__SUBGRAPH_HTML__/g, await subgraphInformationHTMLRenderer()),
+        {
+          status: 200,
+          statusText: 'OK',
+          headers: {
+            'Content-Type': 'text/html',
+          },
+        },
+      );
+    };
+  } else if (typeof config.landingPage === 'function') {
+    landingPageRenderer = config.landingPage;
+  } else if (config.landingPage === false) {
+    landingPageRenderer = false;
+  }
+
   const yoga = createYoga<unknown, MeshServeContext>({
     // @ts-expect-error PromiseLike is not compatible with Promise
     schema: schemaFetcher,
@@ -289,7 +362,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     graphqlEndpoint: config.graphqlEndpoint,
     maskedErrors: config.maskedErrors,
     healthCheckEndpoint: config.healthCheckEndpoint || '/healthcheck',
-    landingPage: config.landingPage,
+    landingPage: landingPageRenderer,
   });
 
   fetchAPI ||= yoga.fetchAPI;

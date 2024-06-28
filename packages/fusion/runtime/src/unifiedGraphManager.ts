@@ -74,6 +74,7 @@ export class UnifiedGraphManager<TContext> {
   private inContextSDK;
   private initialUnifiedGraph$: MaybePromise<void>;
   private disposableStack = new AsyncDisposableStack();
+  private _transportEntryMap: Record<string, TransportEntry>;
   constructor(private opts: UnifiedGraphManagerOptions<TContext>) {
     this.handleUnifiedGraph = opts.handleUnifiedGraph || handleFederationSupergraph;
     this.onSubgraphExecuteHooks = opts?.onSubgraphExecuteHooks || [];
@@ -169,8 +170,13 @@ export class UnifiedGraphManager<TContext> {
           );
         }
         this.continuePolling();
+        this._transportEntryMap = transportEntryMap;
       },
     );
+  }
+
+  public getTransportEntryMap() {
+    return mapMaybePromise(this.ensureUnifiedGraph(), () => this._transportEntryMap);
   }
 
   public getUnifiedGraph() {

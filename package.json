@@ -51,7 +51,7 @@
     "postchangeset": "yarn install ---no-frozen-lockfile",
     "postgenerate-config-schema": "node scripts/create-config-schema-ts.js && npx prettier --write ./packages/legacy/types/src",
     "postinstall": "husky install",
-    "prebuild": "yarn clean && yarn generate-config-schema",
+    "prebuild": "yarn clean && yarn generate-config-schema && yarn workspace @graphql-mesh/serve-runtime generate-landing-page-html",
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "yarn build && changeset publish",
@@ -105,6 +105,7 @@
     "es5-ext": "0.10.64",
     "esbuild": "^0.23.0",
     "graphql": "16.9.0",
+    "graphql-yoga": "5.5.0-alpha-20240627183239-75345028",
     "tslib": "2.6.3",
     "undici": "6.19.2",
     "uuid": "10.0.0"
