@@ -41,6 +41,11 @@ export default defineServeConfig({
 <Callout>
   Instead of providing `endpoint` and `key`, you can provide these two using environment variables
   `HIVE_CDN_ENDPOINT` and `HIVE_CDN_KEY` without any configuration file needed.
+
+```sh
+HIVE_CDN_ENDPOINT=CDN_ENDPOINT HIVE_CDN_KEY=API_KEY npx mesh-serve
+```
+
 </Callout>
 
 ## Publishing subgraphs to Hive CDN
@@ -91,7 +96,7 @@ import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
 export default defineServeConfig({
   hive: {
     // The registry token provided by GraphQL Hive
-    token: 'REGISTRY_TOKEN'
+    token: 'MY-REGISTRY-TOKEN'
   }
 })
 ```
@@ -99,6 +104,11 @@ export default defineServeConfig({
 <Callout>
   Instead of providing `token`, you can provide it using environment variable `HIVE_REGISTRY_TOKEN`
   without any configuration file needed.
+
+```sh
+HIVE_REGISTRY_TOKEN=MY-REGISTRY-TOKEN npx mesh-serve
+```
+
 </Callout>
 
 [You can refer to the official documentation of Hive Client to learn more about the all options](https://the-guild.dev/graphql/hive/docs/api-reference/client#configuration)
