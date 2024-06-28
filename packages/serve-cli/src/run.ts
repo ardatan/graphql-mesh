@@ -124,8 +124,13 @@ export async function run({
   if ('supergraph' in config) {
     unifiedGraphPath = config.supergraph;
   }
-  if (!('http' in config)) {
+
+  if (!('proxy' in config) && !('hive' in config)) {
     unifiedGraphPath = './supergraph.graphql';
+  }
+
+  if ('hive' in config || process.env.HIVE_CDN_ENDPOINT) {
+    unifiedGraphPath = 'Hive CDN';
   }
 
   let loadingMessage: string;
