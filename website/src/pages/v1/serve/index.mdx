@@ -289,6 +289,24 @@ Retry attempts in case of a failure. Default is 0.
 Request Credentials (default: 'same-origin')
 [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
 
+#### `skipValidation`
+
+By default, Mesh validates the operations on the gateway against the introspected schema. This is
+recommended to keep it enabled for security reasons. But it brings a performance overhead. If you
+want to disable this validation and send the operations directly to the upstream service, you can
+set this option to `true`.
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  proxy: {
+    endpoint: 'https://example.com/graphql'
+  },
+  skipValidation: true
+})
+```
+
 ### Configure Server
 
 #### `sslCredentials` for HTTPS
