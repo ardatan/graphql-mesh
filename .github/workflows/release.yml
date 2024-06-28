@@ -3,42 +3,55 @@ on:
   push:
     branches:
       - master
+  # TODO: uncomment before merging
+  pull_request:
 
 jobs:
-  stable:
-    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
-    with:
-      releaseScript: release
-      nodeVersion: 18
-      packageManagerVersion: modern
-    secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
-      npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
+  # TODO: uncomment before merging
+  # stable:
+  #   uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
+  #   with:
+  #     releaseScript: release
+  #     nodeVersion: 18
+  #     packageManagerVersion: modern
+  #   secrets:
+  #     githubToken: ${{ secrets.GITHUB_TOKEN }}
+  #     npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
-  docker-image:
-    needs: stable
-    if: needs.stable.outputs.published == 'true'
+  serve-with-hive-docker-image:
+    # needs: stable
+    # TODO: uncomment before merging
+    # if: needs.stable.outputs.published == 'true'
     runs-on: ubuntu-latest
+
     steps:
       - name: checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
+        uses: docker/setup-buildx-action@v2
+
+      - name: Create Docker Buildx builder
+        run: docker buildx create --name mybuilder --use
+
+      - name: Inspect Docker Buildx builder
+        run: docker buildx inspect --bootstrap
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build & Publish Docker Image
-        id: docker_build
+
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
+          context: ./docker
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
-            theguild/graphql-mesh:latest
-            theguild/graphql-mesh:${{ github.sha }}
-          context: ./packages/container
-          file: ./packages/container/Dockerfile
+            theguild/graphql-mesh-v1:latest
+            theguild/graphql-mesh-v1:${{ github.sha }}
+
+      - name: Log out of DockerHub
+        run: docker logout
