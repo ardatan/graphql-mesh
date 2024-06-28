@@ -4249,7 +4249,7 @@ __metadata:
     "@graphql-mesh/serve-cli": "workspace:*"
     dotenv: "npm:^16.4.5"
     graphql: "npm:16.9.0"
-    tsx: "npm:4.15.7"
+    tsx: "npm:4.15.8"
   languageName: unknown
   linkType: soft
 
@@ -4260,7 +4260,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.38.4"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.4.0"
-    tsx: "npm:4.15.7"
+    tsx: "npm:4.15.8"
   languageName: unknown
   linkType: soft
 
@@ -4273,7 +4273,7 @@ __metadata:
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.1"
     graphql: "npm:16.9.0"
-    tsx: "npm:4.15.7"
+    tsx: "npm:4.15.8"
   languageName: unknown
   linkType: soft
 
@@ -4538,26 +4538,6 @@ __metadata:
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 10c0/9dfc4893599721eba988103d4456345f915cab75c9a754e78a21bd7d05c49b00a01f38ffb70355d758626da0396ae3bb6d44fc98d5c8f9f36a1b122aea0063c4
-  languageName: node
-  linkType: hard
-
-"@graphql-codegen/visitor-plugin-common@npm:5.2.0":
-  version: 5.2.0
-  resolution: "@graphql-codegen/visitor-plugin-common@npm:5.2.0"
-  dependencies:
-    "@graphql-codegen/plugin-helpers": "npm:^5.0.4"
-    "@graphql-tools/optimize": "npm:^2.0.0"
-    "@graphql-tools/relay-operation-optimizer": "npm:^7.0.0"
-    "@graphql-tools/utils": "npm:^10.0.0"
-    auto-bind: "npm:~4.0.0"
-    change-case-all: "npm:1.0.15"
-    dependency-graph: "npm:^0.11.0"
-    graphql-tag: "npm:^2.11.0"
-    parse-filepath: "npm:^1.0.2"
-    tslib: "npm:~2.6.0"
-  peerDependencies:
-    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/86ca3f7dd68e308b014040534dff7393122974c32e14d8453ff9cf52449b168aac49fcf65c42b5788b9571528b1b948c593f16d48d0513fea9da44c2c841e9be
   languageName: node
   linkType: hard
 
@@ -33421,9 +33401,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.15.7, tsx@npm:^4.7.1":
-  version: 4.15.7
-  resolution: "tsx@npm:4.15.7"
+"tsx@npm:4.15.8, tsx@npm:^4.7.1":
+  version: 4.15.8
+  resolution: "tsx@npm:4.15.8"
   dependencies:
     esbuild: "npm:~0.21.4"
     fsevents: "npm:~2.3.3"
@@ -33433,7 +33413,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/e960f4ee084b48cd3183e65946725fd9b0de4afae32a0fd9cd47416a41259fb2c72838b7aeba26adaecc2d89d70e976add9722e72ea5c876b3b493f137cbbf12
+  checksum: 10c0/2e4e077e05e9ec324246f30be0b61e85c5a9c61e4dca160eec542eee410cc0fbcccf26f4d529a8d977d470dd0e13f6897cee5d5ebc3cbf6c2cdfbc5e4033b26c
   languageName: node
   linkType: hard
 
