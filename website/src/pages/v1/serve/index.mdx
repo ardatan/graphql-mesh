@@ -67,6 +67,27 @@ mesh-serve --supergraph=supergraph.graphql
 - `--subgraph`: Path to the subgraph file in Federation Subgraph format (conflicts with
   `--supergraph`)
 
+## Environment Variables
+
+These are usually used for easier usage with these two schema registry services. You don't need any
+configuration file if you provide these environment variables.
+
+For GraphQL Hive;
+
+- `HIVE_CDN_ENDPOINT`: The endpoint of the Hive CDN to fetch the supergraph.
+  [See here](/v1/serve/schema-registry/hive#fetching-supergraph-from-hive-cdn)
+- `HIVE_CDN_KEY`: The API key provided by GraphQL Hive for Hive CDN.
+  [See here](/v1/serve/schema-registry/hive#fetching-supergraph-from-hive-cdn)
+- `HIVE_REGISTRY_TOKEN`: The token to push the metrics to GraphQL Hive.
+  [See here](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
+
+For Apollo GraphOS;
+
+- `APOLLO_KEY`: The API key provided by Apollo GraphOS to fetch the supergraph.
+  [See here](/v1/serve/schema-registry/graphos)
+- `APOLLO_GRAPH_REF`: The API key provided by Apollo GraphOS to fetch the supergraph.
+  [See here](/v1/serve/schema-registry/graphos)
+
 ## Configuration
 
 If you need to configure the Serve runtime, you need to create or modify the `mesh.config.ts` file
@@ -103,6 +124,14 @@ export const serveConfig = defineServeConfig({
     }).then(res => res.text())
 })
 ```
+
+<Callout>
+  For GraphQL Hive and Apollo GraphOS, you probably don't need to provide the `supergraph` option.
+  If you use GraphQL Hive, please refer to the dedicated section for [Fetching Supergraph from Hive
+  CDN](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn) If you use Apollo GraphOS,
+  please refer to the dedicated section for [Fetching Supergraph from Apollo
+  GraphOS](/v1/serve/schema-registry/apollo-graphos)
+</Callout>
 
 #### `polling`
 
