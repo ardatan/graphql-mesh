@@ -1,9 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { buildSchema, GraphQLSchema, introspectionFromSchema, printSchema } from 'graphql';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { composeSubgraphs, getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
+import { MeshServePlugin } from '../src/types.js';
 
 describe('Serve Runtime', () => {
   describe('Health and Readiness checks', () => {
@@ -26,6 +28,7 @@ describe('Serve Runtime', () => {
     let upstreamIsUp = true;
     const serveRuntimes = {
       proxyAPI: createServeRuntime({
+        logging: false,
         proxy: {
           endpoint: 'http://localhost:4000/graphql',
           fetch(info, init, ...args) {
@@ -37,6 +40,7 @@ describe('Serve Runtime', () => {
         },
       }),
       supergraphAPI: createServeRuntime({
+        logging: false,
         supergraph: () => {
           if (!upstreamIsUp) {
             throw new Error('Upstream is down');
@@ -105,5 +109,74 @@ describe('Serve Runtime', () => {
         });
       });
     });
+  });
+  it('skips validation when disabled', async () => {
+    const schema = buildSchema(
+      /* GraphQL */ `
+        type Query {
+          foo: String
+        }
+      `,
+      { noLocation: true },
+    );
+    const fetchFn = (async (_url: string, options: RequestInit) => {
+      // Return a schema
+      if (typeof options.body === 'string') {
+        if (options.body?.includes('__schema')) {
+          return Response.json({
+            data: introspectionFromSchema(schema),
+          });
+        }
+        // But respect the invalid query
+        if (options.body?.includes('bar')) {
+          return Response.json({ data: { bar: 'baz' } });
+        }
+      }
+      return Response.error();
+    }) as typeof fetch;
+    let mockValidateFn;
+    let fetchedSchema: GraphQLSchema;
+    const mockPlugin: MeshServePlugin = {
+      onSchemaChange({ schema }) {
+        fetchedSchema = schema;
+      },
+      onValidate({ validateFn, setValidationFn }) {
+        mockValidateFn = jest.fn(validateFn);
+        setValidationFn(mockValidateFn);
+      },
+    };
+    const serveRuntime = createServeRuntime({
+      skipValidation: true,
+      proxy: {
+        endpoint: 'http://localhost:4000/graphql',
+      },
+      fetchAPI: {
+        fetch: fetchFn,
+      },
+      plugins: () => [mockPlugin],
+      logging: false,
+    });
+    const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query {
+            bar
+          }
+        `,
+      }),
+    });
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toEqual({
+      data: {
+        bar: 'baz',
+      },
+    });
+    expect(mockValidateFn).toHaveBeenCalledTimes(0);
+    expect(printSchema(fetchedSchema)).toBe(printSchema(schema));
   });
 });
