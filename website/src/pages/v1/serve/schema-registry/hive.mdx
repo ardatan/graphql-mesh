@@ -15,8 +15,8 @@ By using the built-in Hive plugin, it allows you to monitor and analyze the oper
 
 ## Fetching Supergraph from Hive CDN
 
-If you are using a federated project, GraphQL Mesh can fetch the supergraph directly from GraphQL
-Hive CDN by a few lines of configuration.
+GraphQL Mesh can fetch the supergraph directly from GraphQL Hive CDN by a few lines of configuration
+without any additional setup for Federation projects.
 
 [Learn more about how to setup an Federation project on Hive](https://the-guild.dev/graphql/hive/docs/get-started/apollo-federation)
 
@@ -51,7 +51,7 @@ like `schema.graphql`. Basically you can export a subgraph by using the followin
 Compose;
 
 ```sh
-npx mesh compose --subgraph SUBGRAPH_NAME > SUBGRAPH_NAME.graphql
+npx mesh-compose --subgraph SUBGRAPH_NAME > SUBGRAPH_NAME.graphql
 ```
 
 Then you can publish the subgraph to Hive CDN by using the following command;
