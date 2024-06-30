@@ -5,20 +5,17 @@ import { Client, createClient, OperationResult } from '@urql/core';
 import { getTestMesh } from '../../testing/getTestMesh.js';
 import { meshExchange } from '../src/index.js';
 
+function getUrqlClientFromMesh(mesh: MeshInstance) {
+  return createClient({
+    url: 'http://mesh.com',
+    exchanges: [meshExchange(mesh)],
+  });
+}
+
 describe('Mesh Exchange', () => {
-  let client: Client;
-  let mesh: MeshInstance;
-  beforeEach(async () => {
-    mesh = await getTestMesh();
-    client = createClient({
-      url: 'http://mesh.com',
-      exchanges: [meshExchange(mesh)],
-    });
-  });
-  afterEach(() => {
-    mesh?.destroy();
-  });
   it('should handle queries correctly', async () => {
+    await using mesh = await getTestMesh();
+    const client = getUrqlClientFromMesh(mesh);
     const result = await client
       .query(
         /* GraphQL */ `
@@ -35,6 +32,8 @@ describe('Mesh Exchange', () => {
     });
   });
   it('should handle subscriptions correctly', async () => {
+    await using mesh = await getTestMesh();
+    const client = getUrqlClientFromMesh(mesh);
     const observable = pipe(
       client.subscription(
         /* GraphQL */ `

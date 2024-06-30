@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { setTimeout } from 'timers/promises';
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
@@ -143,7 +144,7 @@ describe('Rate Limit Plugin', () => {
         },
       });
     }
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await setTimeout(1000);
     const result = await executeQuery();
 
     expect(result.errors?.length).toBeFalsy();

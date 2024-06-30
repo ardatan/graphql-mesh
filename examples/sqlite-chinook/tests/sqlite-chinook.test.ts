@@ -20,8 +20,11 @@ describe('SQLite Chinook', () => {
   });
   it('should give correct response for example queries', async () => {
     for (const source of config.documents || []) {
-      const result = await mesh.execute(source.document!, undefined);
-      expect(result).toMatchSnapshot(basename(source.location!) + '-sqlite-chinook-result');
+      if (!source.document || !source.location) {
+        throw new Error(`Invalid source: ${source.location}`);
+      }
+      const result = await mesh.execute(source.document, undefined);
+      expect(result).toMatchSnapshot(basename(source.location) + '-sqlite-chinook-result');
     }
   });
   afterAll(async () => {

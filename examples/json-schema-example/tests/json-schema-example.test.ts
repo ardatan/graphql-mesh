@@ -1,23 +1,23 @@
-const { findAndParseConfig } = require('@graphql-mesh/cli');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { readFile } = require('fs-extra');
-const { join } = require('path');
-
-const { printSchemaWithDirectives } = require('@graphql-tools/utils');
-
-const mesh$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-}).then(config => getMesh(config));
+import { promises as fsPromises } from 'fs';
+import { join } from 'path';
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('JSON Schema Example', () => {
+  let mesh: MeshInstance;
+  beforeAll(async () => {
+    const config = await findAndParseConfig({
+      dir: join(__dirname, '..'),
+    });
+    mesh = await getMesh(config);
+  });
   it('should generate correct schema', async () => {
-    const { schema } = await mesh$;
-    expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(mesh.schema)).toMatchSnapshot();
   });
   it('should give correct response', async () => {
-    const { execute } = await mesh$;
-    const query = await readFile(join(__dirname, '../example-query.graphql'), 'utf8');
-    const result = await execute(query);
+    const query = await fsPromises.readFile(join(__dirname, '../example-query.graphql'), 'utf8');
+    const result = await mesh.execute(query, {});
     expect(result?.data?.me?.firstName).toBeDefined();
     expect(result?.data?.me?.jobTitle).toBeDefined();
     expect(result?.data?.me?.lastName).toBeDefined();
@@ -28,5 +28,5 @@ describe('JSON Schema Example', () => {
     expect(result?.data?.me?.company?.employers[0]?.jobTitle).toBeDefined();
     expect(result?.data?.me?.company?.employers[0]?.lastName).toBeDefined();
   });
-  afterAll(() => mesh$.then(mesh => mesh.destroy()));
+  afterAll(() => mesh?.destroy());
 });

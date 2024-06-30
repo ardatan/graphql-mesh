@@ -3,11 +3,10 @@ import { createTenv } from '@e2e/tenv';
 const { serve, compose } = createTenv(__dirname);
 
 it('should write serve logs to stderr', async () => {
-  const { getStd, dispose } = await serve();
-  await dispose();
+  await using serveInstance = await serve();
 
-  expect(getStd('out')).toBeFalsy();
-  expect(getStd('err')).toContain('Starting server on');
+  expect(serveInstance.getStd('out')).toBeFalsy();
+  expect(serveInstance.getStd('err')).toContain('Starting server on');
 });
 
 it('should write compose output to stdout and logs to stderr', async () => {

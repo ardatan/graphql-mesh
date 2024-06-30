@@ -97,7 +97,7 @@ describe('Supergraph', () => {
         ],
       },
     });
-    const meshRuntime = await getMesh({
+    await using meshRuntime = await getMesh({
       sources: [
         {
           name: 'supergraph',
@@ -151,7 +151,7 @@ describe('Supergraph', () => {
         ],
       },
     });
-    const meshRuntime = await getMesh({
+    await using meshRuntime = await getMesh({
       sources: [
         {
           name: 'supergraph',
@@ -202,7 +202,7 @@ describe('Supergraph', () => {
         ],
       },
     });
-    const meshRuntime = await getMesh({
+    await using meshRuntime = await getMesh({
       sources: [
         {
           name: 'supergraph',
@@ -342,7 +342,7 @@ describe('Supergraph', () => {
         ],
       },
     });
-    const meshRuntime = await getMesh({
+    await using meshRuntime = await getMesh({
       sources: [
         {
           name: 'supergraph',

@@ -30,6 +30,7 @@ describe('OpenAPI Loader: example_api7', () => {
   });
 
   it('Receive data from the subscription after creating a new instance', async () => {
+    expect.assertions(2);
     const userName = 'Carlos';
     const deviceName = 'Bot';
 
