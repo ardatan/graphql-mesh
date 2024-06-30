@@ -67,6 +67,9 @@ jobs:
       - name: Generate config schema
         run: yarn generate-config-schema
 
+      - name: Build
+        run: yarn build
+
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:

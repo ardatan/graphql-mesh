@@ -22,5 +22,7 @@ jobs:
         with:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
+      - name: Build
+        run: yarn build
       - name: loadtest
         run: yarn loadtest:e2e
