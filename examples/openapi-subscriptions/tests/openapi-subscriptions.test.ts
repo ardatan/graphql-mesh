@@ -99,24 +99,29 @@ describe('OpenAPI Subscriptions', () => {
 
     const reader = listenWebhookResponse.body.getReader();
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) {
-        break;
-      }
-      const chunkStr = Buffer.from(value).toString('utf8').trim();
-      if (chunkStr.includes('data: ')) {
-        expect(chunkStr).toContain(
-          `data: ${JSON.stringify({
-            data: {
-              onData: {
-                userData: 'RANDOM_DATA',
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+        const chunkStr = Buffer.from(value).toString('utf8').trim();
+        if (chunkStr.includes('data: ')) {
+          expect(chunkStr).toContain(
+            `data: ${JSON.stringify({
+              data: {
+                onData: {
+                  userData: 'RANDOM_DATA',
+                },
               },
-            },
-          })}`,
-        );
-        break;
+            })}`,
+          );
+          break;
+        }
       }
+    } finally {
+      await reader.cancel();
+      reader.releaseLock();
     }
   });
 });
