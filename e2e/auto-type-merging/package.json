@@ -6,6 +6,6 @@
     "@graphql-mesh/serve-cli": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
     "graphql": "^16.8.1",
-    "graphql-yoga": "^5.3.0"
+    "graphql-yoga": "^5.6.0"
   }
 }

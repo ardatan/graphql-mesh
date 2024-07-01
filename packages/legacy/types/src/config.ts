@@ -125,6 +125,16 @@ export interface ServeConfig {
    * Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)
    */
   healthCheckEndpoint?: string;
+  /**
+   * By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.
+   *
+   * This option allows you to specify additional parameters that are allowed in the request body.
+   *
+   * @default []
+   *
+   * @example ['doc_id', 'id']
+   */
+  extraParamNames?: string[];
 }
 /**
  * Configuration for CORS
