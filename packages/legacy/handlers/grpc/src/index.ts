@@ -466,6 +466,13 @@ export default class GrpcHandler implements MeshHandler {
               if (enumSerializedValue) {
                 const serializedValue = JSON.parse(enumSerializedValue);
                 value.value = serializedValue;
+                let valueLookup = (type as any)._valueLookup;
+                if (!valueLookup) {
+                  valueLookup = new Map(
+                    type.getValues().map(enumValue => [enumValue.value, enumValue]),
+                  );
+                  (type as any)._valueLookup = valueLookup;
+                }
                 (type as any)._valueLookup.set(serializedValue, value);
               }
             }
