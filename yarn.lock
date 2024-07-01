@@ -5894,7 +5894,7 @@ __metadata:
     dset: "npm:^3.1.3"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^1.22.4"
-    qs: "npm:6.12.1"
+    qs: "npm:6.12.2"
     url-join: "npm:4.0.1"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.4
@@ -8424,7 +8424,7 @@ __metadata:
     graphql-scalars: "npm:^1.22.4"
     json-machete: "npm:0.97.3"
     pascal-case: "npm:3.1.2"
-    qs: "npm:6.12.1"
+    qs: "npm:6.12.2"
     to-json-schema: "npm:0.2.5"
     url-join: "npm:4.0.1"
   peerDependencies:
@@ -29354,7 +29354,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:6.12.1, qs@npm:^6.11.2, qs@npm:^6.4.0":
+"qs@npm:6.12.2":
+  version: 6.12.2
+  resolution: "qs@npm:6.12.2"
+  dependencies:
+    side-channel: "npm:^1.0.6"
+  checksum: 10c0/d431fe6914aea026794c047b9c5ac5d29e96cc13dc14f3ca838f5f3061b0f1ed435d3f616508bc0e8a64fc29d13359f08bfe723aabc5f80f36d11057b2de6ebf
+  languageName: node
+  linkType: hard
+
+"qs@npm:^6.11.2, qs@npm:^6.4.0":
   version: 6.12.1
   resolution: "qs@npm:6.12.1"
   dependencies:
