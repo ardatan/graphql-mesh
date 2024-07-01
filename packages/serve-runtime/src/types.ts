@@ -31,6 +31,7 @@ export type TransportEntryAdditions = {
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithSupergraph<TContext>
+  | MeshServeConfigWithSubgraph<TContext>
   | MeshServeConfigWithProxy<TContext>
   | MeshServeConfigWithHive<TContext>;
 
@@ -87,6 +88,15 @@ interface MeshServeConfigWithHive<TContext> extends MeshServeConfigForSupergraph
   hive: YamlConfig.HivePlugin & HiveCDNOptions;
 }
 
+interface MeshServeConfigWithSubgraph<TContext>
+  extends MeshServeConfigForSupergraph<TContext>,
+    TransportRelatedConfig {
+  /**
+   * Path to the subgraph schema.
+   */
+  subgraph: UnifiedGraphConfig;
+}
+
 type HiveCDNFetcherOptions = Parameters<typeof createSupergraphSDLFetcher>[0];
 
 interface HiveCDNOptions extends Partial<HiveCDNFetcherOptions> {
@@ -110,17 +120,7 @@ interface HiveCDNOptions extends Partial<HiveCDNFetcherOptions> {
   key?: string;
 }
 
-interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
-  /**
-   * Polling interval in milliseconds.
-   */
-  polling?: number;
-  /**
-   * Additional GraphQL schema resolvers.
-   */
-  additionalResolvers?:
-    | IResolvers<unknown, MeshServeContext & TContext>
-    | IResolvers<unknown, MeshServeContext>[];
+interface TransportRelatedConfig {
   /**
    * A map, or factory function, of transport kinds to their implementations.
    *
@@ -163,18 +163,34 @@ interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutS
    * ```
    */
   transportEntries?: TransportEntryAdditions;
+}
+
+interface MeshServeConfigForSupergraph<TContext>
+  extends MeshServeConfigWithoutSource<TContext>,
+    TransportRelatedConfig {
+  /**
+   * Polling interval in milliseconds.
+   */
+  polling?: number;
+  /**
+   * Additional GraphQL schema resolvers.
+   */
+  additionalResolvers?:
+    | IResolvers<unknown, MeshServeContext & TContext>
+    | IResolvers<unknown, MeshServeContext>[];
   /**
    * Current working directory.
    */
   cwd?: string;
 }
 
-export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {
+export interface MeshServeConfigWithProxy<TContext>
+  extends MeshServeConfigWithoutSource<TContext>,
+    TransportRelatedConfig {
   /**
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
   proxy: HTTPExecutorOptions;
-  transport?: Transport;
   /**
    * Disable GraphQL validation on the gateway
    *

@@ -1,7 +1,9 @@
-import type { DocumentNode, GraphQLSchema } from 'graphql';
-import { buildSchema, Kind, parse, print, visit } from 'graphql';
-import type { SubgraphConfig } from '@graphql-mesh/fusion-composition';
-import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
+import { buildSchema, type DocumentNode, GraphQLSchema, Kind, parse, print, visit } from 'graphql';
+import {
+  composeSubgraphs,
+  getAnnotatedSubgraphs,
+  type SubgraphConfig,
+} from '@graphql-mesh/fusion-composition';
 import type { Logger } from '@graphql-mesh/types';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
@@ -71,18 +73,19 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       );
     }
   }
+  if (config.subgraph) {
+    const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphConfigsForComposition);
+    const subgraph = annotatedSubgraphs.find(sg => sg.name === config.subgraph);
+    if (!subgraph) {
+      throw new Error(`Subgraph ${config.subgraph} not found`);
+    }
+    return print(subgraph.typeDefs);
+  }
   const result = composeSubgraphs(subgraphConfigsForComposition);
   if (result.errors?.length) {
     throw new Error(
       `Failed to compose subgraphs; \n${result.errors.map(e => `- ${e.message}`).join('\n')}`,
     );
-  }
-  if (config.subgraph) {
-    const subgraph = result.annotatedSubgraphs.find(sg => sg.name === config.subgraph);
-    if (!subgraph) {
-      throw new Error(`Subgraph ${config.subgraph} not found`);
-    }
-    return print(subgraph.typeDefs);
   }
   if (!result.supergraphSdl) {
     throw new Error(`Unknown error: composed schema is empty`);

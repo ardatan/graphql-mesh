@@ -1,3 +1,4 @@
+import { constantCase } from 'change-case';
 import { print, type DocumentNode, type ExecutionResult, type GraphQLSchema } from 'graphql';
 import type { GraphQLResolveInfo } from 'graphql/type';
 import type { TransportEntryAdditions } from '@graphql-mesh/serve-runtime';
@@ -399,4 +400,13 @@ export function compareSchemas(
     bStr = printSchemaWithDirectives(b);
   }
   return aStr === bStr;
+}
+
+export function isDisposable(obj: any): obj is Disposable | AsyncDisposable {
+  return obj?.[Symbol.dispose] != null || obj?.[Symbol.asyncDispose] != null;
+}
+
+// TODO: Fix this in GraphQL Tools
+export function compareSubgraphNames(name1: string, name2: string) {
+  return constantCase(name1) === constantCase(name2);
 }

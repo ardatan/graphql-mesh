@@ -46,13 +46,16 @@
     "@graphql-mesh/transport-common": "^0.4.5",
     "@graphql-mesh/transport-http": "^0.3.5",
     "@graphql-mesh/utils": "^0.99.5",
+    "@graphql-tools/batch-delegate": "^9.0.3",
     "@graphql-tools/delegate": "^10.0.16",
     "@graphql-tools/executor-http": "^1.1.5",
     "@graphql-tools/executor-yoga": "^3.0.0",
     "@graphql-tools/federation": "^2.2.1",
     "@graphql-tools/stitch": "^9.2.10",
     "@graphql-tools/utils": "^10.2.3",
+    "@graphql-tools/wrap": "^10.0.5",
     "@whatwg-node/disposablestack": "^0.0.1",
+    "@whatwg-node/server": "^0.9.34",
     "graphql-yoga": "^5.6.0"
   },
   "devDependencies": {

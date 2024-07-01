@@ -77,7 +77,8 @@ let program = new Command()
         return interval;
       }),
   )
-  .option('--masked-errors', 'mask unexpected errors in responses');
+  .option('--masked-errors', 'mask unexpected errors in responses')
+  .option('--subgraph <path>', 'path to the subgraph schema');
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */
