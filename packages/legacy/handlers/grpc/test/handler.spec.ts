@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { GraphQLSchema, validateSchema } from 'graphql';
+import { buildSchema, GraphQLSchema, validateSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
@@ -60,12 +60,16 @@ describe('gRPC Handler', () => {
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
-
       const { schema } = await handler.getMeshSource({ fetchFn });
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);
-      expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
+      const printedSDL = printSchemaWithDirectives(schema);
+      expect(printedSDL).toMatchSnapshot();
+      const loadedFromPrintedSDL = buildSchema(printedSDL, { noLocation: true });
+      expect(validateSchema(loadedFromPrintedSDL)).toHaveLength(0);
+      const creds = await handler.getCredentials();
+      handler.processDirectives({ schema: loadedFromPrintedSDL, creds });
     });
   });
 
