@@ -21,7 +21,7 @@ type Mutation {
 }
 
 type NumberConversion_NumberToWordsResponse {
-  NumberToWordsResult: String!
+  NumberToWordsResult: String
 }
 
 input NumberConversion_NumberToWords_Input {
@@ -34,7 +34,7 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 type NumberConversion_NumberToDollarsResponse {
-  NumberToDollarsResult: String!
+  NumberToDollarsResult: String
 }
 
 input NumberConversion_NumberToDollars_Input {
@@ -67,7 +67,7 @@ type Mutation {
 }
 
 type tns_FahrenheitToCelsiusResponse {
-  FahrenheitToCelsiusResult: String!
+  FahrenheitToCelsiusResult: String
 }
 
 input tns_FahrenheitToCelsius_Input {
@@ -75,7 +75,7 @@ input tns_FahrenheitToCelsius_Input {
 }
 
 type tns_CelsiusToFahrenheitResponse {
-  CelsiusToFahrenheitResult: String!
+  CelsiusToFahrenheitResult: String
 }
 
 input tns_CelsiusToFahrenheit_Input {

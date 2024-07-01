@@ -936,7 +936,7 @@ export class SOAPLoader {
                   if (isPlural) {
                     outputTC = outputTC.getTypePlural();
                   }
-                  if (isNullable) {
+                  if (!isNullable) {
                     outputTC = outputTC.getTypeNonNull();
                   }
                   return outputTC;
@@ -1026,7 +1026,7 @@ export class SOAPLoader {
                     if (isPlural) {
                       outputTC = outputTC.getTypePlural();
                     }
-                    if (isNullable) {
+                    if (!isNullable) {
                       outputTC = outputTC.getTypeNonNull();
                     }
                     return outputTC;

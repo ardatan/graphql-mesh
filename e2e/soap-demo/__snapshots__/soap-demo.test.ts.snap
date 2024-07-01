@@ -144,78 +144,78 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap
 }
 
 type s0_FindPersonResponse @join__type(graph: SOAP_DEMO)  {
-  FindPersonResult: s0_Person!
+  FindPersonResult: s0_Person
 }
 
 type s0_Person @join__type(graph: SOAP_DEMO)  {
-  Name: String!
-  SSN: String!
-  DOB: Date!
-  Home: s0_Address!
-  Office: s0_Address!
-  Spouse: s0_Person!
-  FavoriteColors: s0_ArrayOfFavoriteColorsItemString!
-  Age: BigInt!
+  Name: String
+  SSN: String
+  DOB: Date
+  Home: s0_Address
+  Office: s0_Address
+  Spouse: s0_Person
+  FavoriteColors: s0_ArrayOfFavoriteColorsItemString
+  Age: BigInt
 }
 
 type s0_Address @join__type(graph: SOAP_DEMO)  {
-  Street: String!
-  City: String!
-  State: String!
-  Zip: String!
+  Street: String
+  City: String
+  State: String
+  Zip: String
 }
 
 type s0_ArrayOfFavoriteColorsItemString @join__type(graph: SOAP_DEMO)  {
-  FavoriteColorsItem: [String]!
+  FavoriteColorsItem: [String]
 }
 
 type s0_GetByNameResponse @join__type(graph: SOAP_DEMO)  {
-  GetByNameResult: JSON!
+  GetByNameResult: JSON
 }
 
 type s0_GetDataSetByNameResponse @join__type(graph: SOAP_DEMO)  {
-  GetDataSetByNameResult: s0_ByNameDataSet!
+  GetDataSetByNameResult: s0_ByNameDataSet
 }
 
 type s0_ByNameDataSet @join__type(graph: SOAP_DEMO)  {
-  ByName: [ByNameDataSet_ByName]!
+  ByName: [ByNameDataSet_ByName]
 }
 
 type ByNameDataSet_ByName @join__type(graph: SOAP_DEMO)  {
-  ID: BigInt!
-  Name: String!
-  DOB: Date!
-  SSN: String!
+  ID: BigInt
+  Name: String
+  DOB: Date
+  SSN: String
 }
 
 type s0_GetListByNameResponse @join__type(graph: SOAP_DEMO)  {
-  GetListByNameResult: s0_ArrayOfPersonIdentificationPersonIdentification!
+  GetListByNameResult: s0_ArrayOfPersonIdentificationPersonIdentification
 }
 
 type s0_ArrayOfPersonIdentificationPersonIdentification @join__type(graph: SOAP_DEMO)  {
-  PersonIdentification: [s0_PersonIdentification]!
+  PersonIdentification: [s0_PersonIdentification]
 }
 
 type s0_PersonIdentification @join__type(graph: SOAP_DEMO)  {
-  ID: String!
-  Name: String!
-  SSN: String!
-  DOB: Date!
+  ID: String
+  Name: String
+  SSN: String
+  DOB: Date
 }
 
 type s0_QueryByNameResponse @join__type(graph: SOAP_DEMO)  {
-  QueryByNameResult: s0_QueryByName_DataSet!
+  QueryByNameResult: s0_QueryByName_DataSet
 }
 
 type s0_QueryByName_DataSet @join__type(graph: SOAP_DEMO)  {
-  QueryByName: [QueryByName_DataSet_QueryByName]!
+  QueryByName: [QueryByName_DataSet_QueryByName]
 }
 
 type QueryByName_DataSet_QueryByName @join__type(graph: SOAP_DEMO)  {
-  ID: BigInt!
-  Name: String!
-  DOB: Date!
-  SSN: String!
+  ID: BigInt
+  Name: String
+  DOB: Date
+  SSN: String
 }
 
 type Mutation @join__type(graph: SOAP_DEMO)  {
@@ -246,19 +246,19 @@ type Mutation @join__type(graph: SOAP_DEMO)  {
 }
 
 type s0_AddIntegerResponse @join__type(graph: SOAP_DEMO)  {
-  AddIntegerResult: BigInt!
+  AddIntegerResult: BigInt
 }
 
 type s0_DivideIntegerResponse @join__type(graph: SOAP_DEMO)  {
-  DivideIntegerResult: BigInt!
+  DivideIntegerResult: BigInt
 }
 
 type s0_LookupCityResponse @join__type(graph: SOAP_DEMO)  {
-  LookupCityResult: s0_Address!
+  LookupCityResult: s0_Address
 }
 
 type s0_MissionResponse @join__type(graph: SOAP_DEMO)  {
-  MissionResult: String!
+  MissionResult: String
 }
 
 input s0_FindPerson_Input @join__type(graph: SOAP_DEMO)  {
