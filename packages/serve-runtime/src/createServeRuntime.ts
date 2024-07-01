@@ -123,6 +123,8 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       });
       unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
     } else {
+      const errorMessage =
+        'You must provide a supergraph schema in the `supergraph` config or point to a supergraph file with `--supergraph` parameter or `HIVE_CDN_ENDPOINT` environment variable or `./supergraph.graphql` file';
       // Falls back to `./supergraph.graphql` by default
       unifiedGraphFetcher = () => {
         try {
@@ -130,9 +132,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           if ('catch' in res$ && typeof res$.catch === 'function') {
             return res$.catch(e => {
               if (e.code === 'ENOENT') {
-                throw new Error(
-                  'You must provide a supergraph schema in the `supergraph` config or `HIVE_CDN_ENDPOINT` environment variable or `./supergraph.graphql` file',
-                );
+                throw new Error(errorMessage);
               }
               throw e;
             });
@@ -140,9 +140,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           return res$;
         } catch (e) {
           if (e.code === 'ENOENT') {
-            throw new Error(
-              'You must provide a supergraph schema in the `supergraph` config or `HIVE_CDN_ENDPOINT` environment variable or `./supergraph.graphql` file',
-            );
+            throw new Error(errorMessage);
           }
           throw e;
         }
