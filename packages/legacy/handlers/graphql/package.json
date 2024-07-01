@@ -36,14 +36,14 @@
     "@graphql-mesh/store": "^0.98.9",
     "@graphql-mesh/types": "^0.98.9",
     "@graphql-mesh/utils": "^0.98.9",
-    "@graphql-tools/utils": "^10.2.1",
+    "@graphql-tools/utils": "^10.2.3",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-tools/delegate": "^10.0.11",
-    "@graphql-tools/federation": "^2.0.0",
+    "@graphql-tools/delegate": "^10.0.12",
+    "@graphql-tools/federation": "^2.1.1",
     "@graphql-tools/url-loader": "^8.0.0",
     "lodash.get": "^4.4.2"
   },
