@@ -7,7 +7,7 @@ import type {
   YogaServerOptions,
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
-import { createSupergraphSDLFetcher } from '@graphql-hive/client';
+import type { createSupergraphSDLFetcher } from '@graphql-hive/client';
 import type { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
 import type {
   KeyValueCache,
@@ -80,7 +80,30 @@ interface MeshServeConfigWithHive<TContext> extends MeshServeConfigForSupergraph
   /**
    * Integration options with GraphQL Hive.
    */
-  hive: YamlConfig.HivePlugin & Parameters<typeof createSupergraphSDLFetcher>[0];
+  hive: YamlConfig.HivePlugin & HiveCDNOptions;
+}
+
+type HiveCDNFetcherOptions = Parameters<typeof createSupergraphSDLFetcher>[0];
+
+interface HiveCDNOptions extends Partial<HiveCDNFetcherOptions> {
+  /**
+   * The endpoint of the CDN you obtained from GraphQL Hive.
+   *
+   * You can provide an environment variable (HIVE_CDN_ENDPOINT) to set this value.
+   *
+   * @example https://cdn.graphql-hive.com/artifacts/v1/AAA-AAA-AAA/supergraph
+   *
+   * @default process.env.HIVE_CDN_ENDPOINT
+   */
+  endpoint?: string;
+  /**
+   * The key you obtained from GraphQL Hive for the CDN.
+   *
+   * You can provide an environment variable (HIVE_CDN_KEY) to set this value.
+   *
+   * @default process.env.HIVE_CDN_KEY
+   */
+  key?: string;
 }
 
 interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutSource<TContext> {
@@ -98,6 +121,10 @@ interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutS
    * Implement custom executors for transports.
    */
   transports?: TransportsOption;
+  /**
+   * Current working directory.
+   */
+  cwd?: string;
 }
 
 export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWithoutSource<TContext> {

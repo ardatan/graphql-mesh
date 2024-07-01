@@ -13,6 +13,7 @@ import {
 } from 'graphql-yoga';
 import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
 import { createSupergraphSDLFetcher } from '@graphql-hive/client';
+import { process } from '@graphql-mesh/cross-helpers';
 import {
   handleFederationSupergraph,
   isDisposable,
@@ -42,7 +43,7 @@ import {
 } from './types.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
-  config: MeshServeConfig<TContext>,
+  config: MeshServeConfig<TContext> = {},
 ) {
   let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
   let logger: Logger;
@@ -62,7 +63,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   const configContext: MeshServeConfigContext = {
     fetch: wrappedFetchFn,
     logger,
-    cwd: globalThis.process?.cwd(),
+    cwd: 'cwd' in config ? config.cwd : process.cwd?.(),
     cache: 'cache' in config ? config.cache : undefined,
     pubsub: 'pubsub' in config ? config.pubsub : undefined,
   };
@@ -105,18 +106,58 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     schemaInvalidator = () => executorPlugin.invalidateUnifiedGraph();
   } else {
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
+
     if ('supergraph' in config) {
       unifiedGraphFetcher = () => handleUnifiedGraphConfig(config.supergraph, configContext);
-    } else if ('hive' in config) {
-      const fetcher = createSupergraphSDLFetcher(config.hive);
+    } else if (('hive' in config && config.hive.endpoint) || process.env.HIVE_CDN_ENDPOINT) {
+      const cdnEndpoint = 'hive' in config ? config.hive.endpoint : process.env.HIVE_CDN_ENDPOINT;
+      const cdnKey = 'hive' in config ? config.hive.key : process.env.HIVE_CDN_KEY;
+      if (!cdnKey) {
+        throw new Error(
+          'You must provide HIVE_CDN_KEY environment variables or `key` in the hive config',
+        );
+      }
+      const fetcher = createSupergraphSDLFetcher({
+        endpoint: cdnEndpoint,
+        key: cdnKey,
+      });
       unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
+    } else {
+      const errorMessage =
+        'You must provide a supergraph schema in the `supergraph` config or point to a supergraph file with `--supergraph` parameter or `HIVE_CDN_ENDPOINT` environment variable or `./supergraph.graphql` file';
+      // Falls back to `./supergraph.graphql` by default
+      unifiedGraphFetcher = () => {
+        try {
+          const res$ = handleUnifiedGraphConfig('./supergraph.graphql', configContext);
+          if ('catch' in res$ && typeof res$.catch === 'function') {
+            return res$.catch(e => {
+              if (e.code === 'ENOENT') {
+                throw new Error(errorMessage);
+              }
+              throw e;
+            });
+          }
+          return res$;
+        } catch (e) {
+          if (e.code === 'ENOENT') {
+            throw new Error(errorMessage);
+          }
+          throw e;
+        }
+      };
+    }
+
+    const hiveToken = 'hive' in config ? config.hive.token : process.env.HIVE_REGISTRY_TOKEN;
+    if (hiveToken) {
       registryPlugin = useMeshHive({
         enabled: true,
-        ...config.hive,
         ...configContext,
         logger: configContext.logger.child('Hive'),
+        ...('hive' in config ? config.hive : {}),
+        token: hiveToken,
       });
     }
+
     const unifiedGraphManager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
       handleUnifiedGraph: handleFederationSupergraph,
