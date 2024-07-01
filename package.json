@@ -46,7 +46,7 @@
     "fix-bin": "node scripts/fix-bin.js",
     "generate-config-schema": "yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/src/generated-markdown && yarn postgenerate-config-schema",
     "lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --ext .ts \"./packages/**/src/**/*.ts\"",
-    "loadtest:e2e": "cross-env \"JEST=1\" \"E2E_TEST=true\" jest --no-watchman --runInBand --config=jest.config.loadtest.js",
+    "loadtest:e2e": "cross-env \"JEST=1\" \"E2E_TEST=true\" jest --no-watchman --runInBand --bail --config=jest.config.loadtest.js",
     "postbuild": "yarn copy-config-schema && yarn fix-bin",
     "postchangeset": "yarn install ---no-frozen-lockfile",
     "postgenerate-config-schema": "node scripts/create-config-schema-ts.js && npx prettier --write ./packages/legacy/types/src",
