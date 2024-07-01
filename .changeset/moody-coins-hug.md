@@ -2,4 +2,4 @@
 '@graphql-mesh/grpc': patch
 ---
 
-#7174
+Support graphql-js@16.9.0
