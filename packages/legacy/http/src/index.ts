@@ -31,6 +31,7 @@ export function createMeshHTTPHandler<TServerContext>({
     healthCheckEndpoint = '/healthcheck',
     // TODO
     // trustProxy = 'loopback',
+    extraParamNames,
   } = rawServeConfig;
 
   getBuiltMesh()
@@ -50,6 +51,7 @@ export function createMeshHTTPHandler<TServerContext>({
       graphqlEndpoint: graphqlPath,
       corsConfig,
       batchingLimit,
+      extraParamNames,
     }),
     {
       plugins: [

@@ -1,3 +1,4 @@
+import { ExecutionResult } from 'graphql';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { getTestMesh } from '../../testing/getTestMesh.js';
@@ -55,6 +56,76 @@ describe('http', () => {
       });
       const response = await httpHandler.fetch('http://localhost:4000/custom-health-check');
       expect(response.status).toBe(200);
+    });
+    it('throws when unprovided extra parameters are given in the request', async () => {
+      await using mesh = await getTestMesh();
+      const httpHandler = createMeshHTTPHandler({
+        baseDir: __dirname,
+        getBuiltMesh: async () => mesh,
+      });
+      const response = await httpHandler.fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `query { __typename }`,
+          extraParam: 'extraParamValue',
+        }),
+      });
+      expect(response.status).toBe(400);
+      const result: ExecutionResult = await response.json();
+      expect(result.errors[0].message).toBe(
+        'Unexpected parameter "extraParam" in the request body.',
+      );
+    });
+    it('respects the extra parameters given in the config', async () => {
+      await using mesh = await getTestMesh();
+      const httpHandler = createMeshHTTPHandler({
+        baseDir: __dirname,
+        getBuiltMesh: async () => mesh,
+        rawServeConfig: {
+          extraParamNames: ['extraParam'],
+        },
+      });
+      const response = await httpHandler.fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `query { __typename }`,
+          extraParam: 'extraParamValue',
+        }),
+      });
+      expect(response.status).toBe(200);
+      const result: ExecutionResult = await response.json();
+      expect(result.data.__typename).toBe('Query');
+    });
+    it('throws when unprovided extra parameters are given in the request while there are provided some', async () => {
+      await using mesh = await getTestMesh();
+      const httpHandler = createMeshHTTPHandler({
+        baseDir: __dirname,
+        getBuiltMesh: async () => mesh,
+        rawServeConfig: {
+          extraParamNames: ['extraParam'],
+        },
+      });
+      const response = await httpHandler.fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `query { __typename }`,
+          extraParam1: 'extraParamValue',
+        }),
+      });
+      expect(response.status).toBe(400);
+      const result: ExecutionResult = await response.json();
+      expect(result.errors[0].message).toBe(
+        'Unexpected parameter "extraParam1" in the request body.',
+      );
     });
   });
 });

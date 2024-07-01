@@ -173,6 +173,14 @@
         "healthCheckEndpoint": {
           "type": "string",
           "description": "Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)"
+        },
+        "extraParamNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.\n\nThis option allows you to specify additional parameters that are allowed in the request body.\n\n@default []\n\n@example ['doc_id', 'id']"
         }
       }
     },
