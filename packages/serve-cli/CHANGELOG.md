@@ -1,5 +1,41 @@
 # @graphql-mesh/serve-cli
 
+## 0.6.4
+
+### Patch Changes
+
+- [#7185](https://github.com/ardatan/graphql-mesh/pull/7185)
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@^10.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.3)
+    (from `^10.2.1`, in `dependencies`)
+
+- [#7173](https://github.com/ardatan/graphql-mesh/pull/7173)
+  [`25fd39a`](https://github.com/ardatan/graphql-mesh/commit/25fd39abc37fdad867707073604150b40eace062)
+  Thanks [@ardatan](https://github.com/ardatan)! - Change the default behavior of Serve Runtime
+
+  If no `supergraph` or `hive` or `proxy` is provided
+
+  - If `HIVE_CDN_ENDPOINT` and `HIVE_CDN_TOKEN` are provided, use them to fetch the supergraph from
+    the Hive CDN
+  - If not, check for a local supergraph file at `./supergraph.graphql`
+
+- Updated dependencies
+  [[`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`28961ed`](https://github.com/ardatan/graphql-mesh/commit/28961edfb6b4ef998fff1af6759c892c3481ba7a),
+  [`25fd39a`](https://github.com/ardatan/graphql-mesh/commit/25fd39abc37fdad867707073604150b40eace062),
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b)]:
+  - @graphql-mesh/cross-helpers@0.4.4
+  - @graphql-mesh/serve-runtime@0.4.4
+  - @graphql-mesh/types@0.98.10
+  - @graphql-mesh/utils@0.98.10
+
 ## 0.6.3
 
 ### Patch Changes

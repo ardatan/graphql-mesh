@@ -1,5 +1,17 @@
 # grpc-reflection-example
 
+## 0.16.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)]:
+  - @graphql-mesh/cli@0.91.2
+  - @graphql-mesh/grpc@0.100.1
+  - @graphql-mesh/transform-naming-convention@0.98.10
+
 ## 0.16.0
 
 ### Patch Changes
