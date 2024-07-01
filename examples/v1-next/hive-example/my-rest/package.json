@@ -12,6 +12,6 @@
     "@omnigraph/openapi": "workspace:*",
     "fets": "0.8.1",
     "graphql": "16.9.0",
-    "tsx": "4.15.8"
+    "tsx": "4.16.0"
   }
 }
