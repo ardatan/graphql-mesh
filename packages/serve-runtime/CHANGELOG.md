@@ -1,5 +1,61 @@
 # @graphql-mesh/serve-runtime
 
+## 0.4.4
+
+### Patch Changes
+
+- [#7183](https://github.com/ardatan/graphql-mesh/pull/7183)
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`graphql-yoga@^5.6.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.6.0) (from `^5.3.0`,
+    in `dependencies`)
+
+- [#7185](https://github.com/ardatan/graphql-mesh/pull/7185)
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.12)
+    (from `^10.0.11`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.1.1)
+    (from `^2.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitch@^9.2.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.2.10)
+    (from `^9.2.9`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.3)
+    (from `^10.2.1`, in `dependencies`)
+
+- [#7165](https://github.com/ardatan/graphql-mesh/pull/7165)
+  [`28961ed`](https://github.com/ardatan/graphql-mesh/commit/28961edfb6b4ef998fff1af6759c892c3481ba7a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Rename the title of GraphiQL to GraphiQL Mesh
+
+- [#7173](https://github.com/ardatan/graphql-mesh/pull/7173)
+  [`25fd39a`](https://github.com/ardatan/graphql-mesh/commit/25fd39abc37fdad867707073604150b40eace062)
+  Thanks [@ardatan](https://github.com/ardatan)! - Change the default behavior of Serve Runtime
+
+  If no `supergraph` or `hive` or `proxy` is provided
+
+  - If `HIVE_CDN_ENDPOINT` and `HIVE_CDN_TOKEN` are provided, use them to fetch the supergraph from
+    the Hive CDN
+  - If not, check for a local supergraph file at `./supergraph.graphql`
+
+- Updated dependencies
+  [[`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)]:
+  - @graphql-mesh/cross-helpers@0.4.4
+  - @graphql-mesh/fusion-runtime@0.4.1
+  - @graphql-mesh/transport-common@0.3.1
+  - @graphql-mesh/utils@0.98.10
+  - @graphql-mesh/plugin-hive@0.98.12
+  - @graphql-mesh/transport-http@0.2.1
+
 ## 0.4.3
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # cloudflare-workers
 
+## 0.13.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b),
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`28961ed`](https://github.com/ardatan/graphql-mesh/commit/28961edfb6b4ef998fff1af6759c892c3481ba7a),
+  [`25fd39a`](https://github.com/ardatan/graphql-mesh/commit/25fd39abc37fdad867707073604150b40eace062)]:
+  - @graphql-mesh/compose-cli@0.4.2
+  - @graphql-mesh/plugin-response-cache@0.98.11
+  - @graphql-mesh/serve-runtime@0.4.4
+  - @omnigraph/json-schema@0.101.1
+  - @graphql-mesh/cache-cfw-kv@0.98.10
+  - @graphql-mesh/cache-localforage@0.98.10
+
 ## 0.13.3
 
 ### Patch Changes

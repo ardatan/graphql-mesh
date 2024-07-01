@@ -1,5 +1,54 @@
 # @graphql-mesh/types
 
+## 0.98.10
+
+### Patch Changes
+
+- [#7185](https://github.com/ardatan/graphql-mesh/pull/7185)
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.12)
+    (from `^10.0.11`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.3)
+    (from `^10.2.1`, in `peerDependencies`)
+
+- [#7183](https://github.com/ardatan/graphql-mesh/pull/7183)
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b)
+  Thanks [@ardatan](https://github.com/ardatan)! - By default, Mesh does not allow extra parameters
+  in the request body other than `query`, `operationName`, `extensions`, and `variables`, then
+  throws 400 HTTP Error. This change adds a new option called `extraParamNames` to allow extra
+  parameters in the request body.
+
+  ```yaml
+  serve:
+    extraParamNames:
+      - extraParam1
+      - extraParam2
+  ```
+
+  ```ts
+  const res = await fetch('/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: 'query { __typename }',
+      extraParam1: 'value1',
+      extraParam2: 'value2'
+    })
+  })
+
+  console.assert(res.status === 200)
+  ```
+
+- Updated dependencies
+  [[`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)]:
+  - @graphql-mesh/store@0.98.10
+
 ## 0.98.9
 
 ### Patch Changes

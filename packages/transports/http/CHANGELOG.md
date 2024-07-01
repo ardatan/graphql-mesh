@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-http
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)]:
+  - @graphql-mesh/transport-common@0.3.1
+
 ## 0.2.0
 
 ### Minor Changes
