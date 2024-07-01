@@ -34,14 +34,14 @@
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.3",
     "@graphql-mesh/types": "^0.98.9",
-    "@graphql-tools/utils": "^10.2.1",
+    "@graphql-tools/utils": "^10.2.3",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-hive/client": "^0.32.0",
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-tools/delegate": "^10.0.11"
+    "@graphql-tools/delegate": "^10.0.12"
   },
   "publishConfig": {
     "access": "public",

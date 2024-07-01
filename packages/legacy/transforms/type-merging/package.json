@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.11",
+    "@graphql-tools/delegate": "^10.0.12",
     "@graphql-tools/stitching-directives": "^3.0.0"
   },
   "publishConfig": {
