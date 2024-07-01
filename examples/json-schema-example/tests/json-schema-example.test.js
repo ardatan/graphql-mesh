@@ -21,6 +21,8 @@ describe('JSON Schema Example', () => {
     expect(result?.data?.me?.firstName).toBeDefined();
     expect(result?.data?.me?.jobTitle).toBeDefined();
     expect(result?.data?.me?.lastName).toBeDefined();
+    expect(result?.data?.me?.code).toBeDefined();
+    expect(typeof result.data.me.code).toBe('number');
     expect(result?.data?.me?.company?.name).toBeDefined();
     expect(result?.data?.me?.company?.type).toBeDefined();
     expect(result?.data?.me?.company?.employers).toHaveLength(2);
