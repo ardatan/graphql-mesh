@@ -5428,7 +5428,7 @@ __metadata:
     json-bigint-patch: "npm:^0.0.8"
     node-libcurl: "npm:^4.0.0"
     spinnies: "npm:^0.5.1"
-    tsx: "npm:^4.7.1"
+    tsx: "npm:4.15.8"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
@@ -33385,6 +33385,22 @@ __metadata:
   peerDependencies:
     typescript: ">=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta"
   checksum: 10c0/02f19e458ec78ead8fffbf711f834ad8ecd2cc6ade4ec0320790713dccc0a412b99e7fd907c4cda2a1dc602c75db6f12e0108e87a5afad4b2f9e90a24cabd5a2
+  languageName: node
+  linkType: hard
+
+"tsx@npm:4.15.8":
+  version: 4.15.8
+  resolution: "tsx@npm:4.15.8"
+  dependencies:
+    esbuild: "npm:~0.21.4"
+    fsevents: "npm:~2.3.3"
+    get-tsconfig: "npm:^4.7.5"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    tsx: dist/cli.mjs
+  checksum: 10c0/2e4e077e05e9ec324246f30be0b61e85c5a9c61e4dca160eec542eee410cc0fbcccf26f4d529a8d977d470dd0e13f6897cee5d5ebc3cbf6c2cdfbc5e4033b26c
   languageName: node
   linkType: hard
 
