@@ -14,7 +14,7 @@ export const retries = 120,
   timeout = retries * interval; // 1min
 jest.setTimeout(timeout);
 
-const leftovers = new Set<Disposable | string>();
+const leftovers = new Set<AsyncDisposable | string>();
 afterAll(async () => {
   await Promise.allSettled(
     Array.from(leftovers.values()).map(leftover => {
@@ -23,7 +23,7 @@ afterAll(async () => {
         return fs.rm(leftover, { recursive: true });
       }
       // process
-      return leftover.dispose();
+      return leftover[Symbol.asyncDispose]();
     }),
   ).finally(() => {
     leftovers.clear();
@@ -34,10 +34,6 @@ const __project = path.resolve(__dirname, '..', '..') + '/';
 
 const docker = new Dockerode();
 
-export interface Disposable {
-  dispose(): Promise<void>;
-}
-
 export interface ProcOptions {
   /**
    * Pipe the logs from the spawned process to the current process.
@@ -46,7 +42,7 @@ export interface ProcOptions {
   pipeLogs?: boolean;
 }
 
-export interface Proc extends Disposable {
+export interface Proc extends AsyncDisposable {
   getStd(o: 'out' | 'err' | 'both'): string;
   getStats(): Promise<{
     // Total CPU utilization (of all cores) as a percentage.
@@ -358,7 +354,7 @@ export function createTenv(cwd: string): Tenv {
         getStats() {
           throw new Error('Cannot get stats of a container.');
         },
-        async dispose() {
+        async [Symbol.asyncDispose]() {
           if (ctrl.signal.aborted) {
             // noop if already disposed
             return;
@@ -396,13 +392,13 @@ export function createTenv(cwd: string): Tenv {
         }
 
         if (status === 'none') {
-          await container.dispose();
+          await container[Symbol.asyncDispose]();
           throw new DockerError(
             'Container has "none" health status, but has a healthcheck',
             container,
           );
         } else if (status === 'unhealthy') {
-          await container.dispose();
+          await container[Symbol.asyncDispose]();
           throw new DockerError('Container is unhealthy', container);
         } else if (status === 'healthy') {
           break;
@@ -476,7 +472,7 @@ function spawn(
         mem: parseFloat(mem) * 0.001, // KB to MB
       };
     },
-    dispose: () => (child.kill(), waitForExit),
+    [Symbol.asyncDispose]: () => (child.kill(), waitForExit),
   };
   leftovers.add(proc);
 

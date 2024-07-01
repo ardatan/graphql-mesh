@@ -3,11 +3,8 @@ import { MeshInstance } from '@graphql-mesh/runtime';
 import { getTestMesh } from '../../testing/getTestMesh.js';
 
 describe('http', () => {
-  let mesh: MeshInstance;
-  beforeEach(async () => {
-    mesh = await getTestMesh();
-  });
   it('should not allow upper directory access when `staticFiles` is set', async () => {
+    await using mesh = await getTestMesh();
     const httpHandler = createMeshHTTPHandler({
       baseDir: __dirname,
       getBuiltMesh: async () => mesh,
@@ -20,11 +17,9 @@ describe('http', () => {
     );
     expect(response.status).toBe(404);
   });
-  afterEach(() => {
-    mesh.destroy();
-  });
   describe('health check', () => {
     it('should return 200', async () => {
+      await using mesh = await getTestMesh();
       const httpHandler = createMeshHTTPHandler({
         baseDir: __dirname,
         getBuiltMesh: async () => mesh,
@@ -33,6 +28,7 @@ describe('http', () => {
       expect(response.status).toBe(200);
     });
     it('should return 503 when not ready', async () => {
+      await using mesh = await getTestMesh();
       let resolve: VoidFunction;
       const readyPromise = new Promise<void>(r => {
         resolve = r;
@@ -49,6 +45,7 @@ describe('http', () => {
       resolve();
     });
     it('should be able to customize health check endpoint', async () => {
+      await using mesh = await getTestMesh();
       const httpHandler = createMeshHTTPHandler({
         baseDir: __dirname,
         getBuiltMesh: async () => mesh,

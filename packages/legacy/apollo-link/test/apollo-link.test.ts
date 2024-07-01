@@ -5,21 +5,22 @@ import { observableToAsyncIterable } from '@graphql-tools/utils';
 import { getTestMesh } from '../../testing/getTestMesh.js';
 import { MeshApolloLink } from '../src/index.js';
 
+function getApolloClientFromMesh(mesh: MeshInstance) {
+  const client = new ApolloClient({
+    link: new MeshApolloLink(mesh),
+    cache: new InMemoryCache(),
+  });
+  return {
+    client,
+    [Symbol.dispose]: () => client.stop(),
+  };
+}
+
 describe('GraphApolloLink', () => {
-  let client: ApolloClient<any>;
-  let mesh: MeshInstance;
-  beforeEach(async () => {
-    mesh = await getTestMesh();
-    client = new ApolloClient({
-      link: new MeshApolloLink(mesh),
-      cache: new InMemoryCache(),
-    });
-  });
-  afterEach(() => {
-    mesh?.destroy();
-  });
   it('should handle queries correctly', async () => {
-    const result = await client.query({
+    await using mesh = await getTestMesh();
+    await using clientWithDispose = getApolloClientFromMesh(mesh);
+    const result = await clientWithDispose.client.query({
       query: parse(/* GraphQL */ `
         query Greetings {
           greetings
@@ -33,7 +34,9 @@ describe('GraphApolloLink', () => {
     });
   });
   it('should handle subscriptions correctly', async () => {
-    const observable = client.subscribe({
+    await using mesh = await getTestMesh();
+    await using clientWithDispose = getApolloClientFromMesh(mesh);
+    const observable = clientWithDispose.client.subscribe({
       query: parse(/* GraphQL */ `
         subscription Time {
           time

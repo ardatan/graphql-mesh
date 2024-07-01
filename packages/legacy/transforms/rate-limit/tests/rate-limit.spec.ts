@@ -1,3 +1,4 @@
+import { setTimeout } from 'timers/promises';
 import { execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
@@ -147,7 +148,7 @@ describe('Rate Limit Transform', () => {
         },
       });
     }
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await setTimeout(1000);
     const result = await executeQuery();
 
     expect(result.errors?.length).toBeFalsy();

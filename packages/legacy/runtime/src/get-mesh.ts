@@ -52,7 +52,7 @@ import { getOriginalError, isGraphQLJitCompatible, isStreamOperation } from './u
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
-export interface MeshInstance {
+export interface MeshInstance extends Disposable {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
@@ -414,6 +414,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       return createExecutor();
     },
     sdkRequesterFactory,
+    [Symbol.dispose]: meshDestroy,
   };
 }
 
