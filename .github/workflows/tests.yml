@@ -31,6 +31,9 @@ jobs:
         name: setup env
         with:
           packageManagerVersion: modern
+
+      - name: Prepare for build
+        run: yarn prebuild
       - name: typecheck
         run: yarn typecheck
 
@@ -66,6 +69,9 @@ jobs:
 
       - name: Generate config schema
         run: yarn generate-config-schema
+
+      - name: Prepare for build
+        run: yarn prebuild
 
       - name: Run Tests
         uses: nick-fields/retry@v3
@@ -112,6 +118,9 @@ jobs:
 
       - name: Remove node-libcurl
         run: rm -rf node_modules/node-libcurl
+
+      - name: Prepare for build
+        run: yarn prebuild
 
       - name: Run Tests
         uses: nick-fields/retry@v3
@@ -340,6 +349,8 @@ jobs:
         with:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
+      - name: Prepare for build
+        run: yarn prebuild
       - name: test
         timeout-minutes: 5
         run: yarn test:e2e --detectOpenHandles

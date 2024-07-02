@@ -51,7 +51,7 @@
     "postchangeset": "yarn install ---no-frozen-lockfile",
     "postgenerate-config-schema": "node scripts/create-config-schema-ts.js && npx prettier --write ./packages/legacy/types/src",
     "postinstall": "husky install",
-    "prebuild": "yarn clean && yarn generate-config-schema",
+    "prebuild": "yarn clean && yarn generate-config-schema && yarn workspace @graphql-mesh/serve-runtime generate-landing-page-html",
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "yarn build && changeset publish",
