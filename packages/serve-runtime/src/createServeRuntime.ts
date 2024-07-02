@@ -108,6 +108,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
     };
     schemaInvalidator = () => executorPlugin.invalidateUnifiedGraph();
+    subgraphInformationHTMLRenderer = () => {
+      const endpoint = config.proxy.endpoint || '#';
+      return `<section class="supergraph-information"><h3>Proxy (<a href="${endpoint}">${endpoint}</a>): ${unifiedGraph ? 'Loaded ✅' : 'Not yet ❌'}</h3></section>`;
+    };
   } else {
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
 
