@@ -1,5 +1,12 @@
 # typescript-location-weather-example
 
+## 0.19.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/openapi@0.101.2
+
 ## 0.19.4
 
 ### Patch Changes

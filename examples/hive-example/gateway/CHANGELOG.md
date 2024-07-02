@@ -1,5 +1,12 @@
 # gateway-example
 
+## 0.12.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.101.2
+
 ## 0.12.3
 
 ### Patch Changes
