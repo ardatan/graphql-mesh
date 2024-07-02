@@ -16,7 +16,7 @@ directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFI
 
 directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) on SCHEMA
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 type Query {
   """Return a list of users."""
