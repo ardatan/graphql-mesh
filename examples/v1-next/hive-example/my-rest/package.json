@@ -1,5 +1,6 @@
 {
   "name": "@examples/hive-example-rest-service",
+  "version": null,
   "private": true,
   "scripts": {
     "compose": "yarn mesh-compose --subgraph myrest > typeDefs.graphql",

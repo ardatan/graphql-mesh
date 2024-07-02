@@ -1,5 +1,12 @@
 # json-schema-file-upload
 
+## 0.12.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.101.2
+
 ## 0.12.1
 
 ### Patch Changes

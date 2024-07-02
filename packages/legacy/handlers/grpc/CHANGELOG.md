@@ -1,5 +1,13 @@
 # @graphql-mesh/grpc
 
+## 0.100.2
+
+### Patch Changes
+
+- [#7184](https://github.com/ardatan/graphql-mesh/pull/7184)
+  [`987e9cc`](https://github.com/ardatan/graphql-mesh/commit/987e9ccfae27ab1b4a1ea33e8ce336c810e5be14)
+  Thanks [@adam-sevenai](https://github.com/adam-sevenai)! - Support graphql-js@16.9.0
+
 ## 0.100.1
 
 ### Patch Changes

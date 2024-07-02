@@ -1,5 +1,15 @@
 # @omnigraph/soap
 
+## 0.100.2
+
+### Patch Changes
+
+- [`da0c516`](https://github.com/ardatan/graphql-mesh/commit/da0c51659cc622082a04799cffb69dd8bd99f954)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the inverted nullability generation
+
+  If SOAP has `nillable: true`, the generated type was non-nullable, and now it has been fixed to be
+  nullable as expected.
+
 ## 0.100.1
 
 ### Patch Changes

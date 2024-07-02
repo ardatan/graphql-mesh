@@ -1,5 +1,13 @@
 # grpc-example
 
+## 0.16.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`987e9cc`](https://github.com/ardatan/graphql-mesh/commit/987e9ccfae27ab1b4a1ea33e8ce336c810e5be14)]:
+  - @graphql-mesh/grpc@0.100.2
+
 ## 0.16.1
 
 ### Patch Changes
