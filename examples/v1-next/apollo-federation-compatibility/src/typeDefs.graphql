@@ -1,0 +1,63 @@
+directive @custom on OBJECT
+
+type Product @custom {
+  id: ID!
+  sku: String
+  package: String
+  variation: ProductVariation
+  dimensions: ProductDimension
+  createdBy: User
+  notes: String
+  research: [ProductResearch!]!
+}
+
+type DeprecatedProduct {
+  sku: String!
+  package: String!
+  reason: String
+  createdBy: User
+}
+
+type ProductVariation {
+  id: ID!
+}
+
+type ProductResearch {
+  study: CaseStudy!
+  outcome: String
+}
+
+type CaseStudy {
+  caseNumber: ID!
+  description: String
+}
+
+type ProductDimension {
+  size: String
+  weight: Float
+  unit: String
+}
+
+type Query {
+  product(id: ID!): Product
+  deprecatedProduct(sku: String!, package: String!): DeprecatedProduct
+    @deprecated(reason: "Use product query instead")
+  productBySkuAndPackage(sku: String!, package: String!): Product
+  productBySkuAndVariationId(sku: String!, variationId: ID!): Product
+  productResearch(caseNumber: ID!): ProductResearch
+  user(email: ID!, totalProductsCreated: Int, yearsOfEmployment: Int): User
+  inventory(id: ID!): Inventory
+}
+
+type User {
+  averageProductsCreatedPerYear: Int
+  email: ID!
+  name: String
+  totalProductsCreated: Int
+  yearsOfEmployment: Int!
+}
+
+type Inventory {
+  id: ID!
+  deprecatedProducts: [DeprecatedProduct!]!
+}

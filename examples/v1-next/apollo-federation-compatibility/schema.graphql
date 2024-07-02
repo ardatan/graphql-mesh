@@ -1,0 +1,148 @@
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.3"
+    import: [
+      "key"
+      "shareable"
+      "extends"
+      "interfaceObject"
+      "provides"
+      "tag"
+      "inaccessible"
+      "requires"
+      "external"
+      "override"
+      "@composeDirective"
+    ]
+  )
+  @link(
+    url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+    import: ["@merge", "@custom", "@transport", "@source", "@extraSchemaDefinitionDirective"]
+  )
+  @composeDirective(name: "@merge")
+  @composeDirective(name: "@custom")
+  @composeDirective(name: "@transport")
+  @composeDirective(name: "@source")
+  @composeDirective(name: "@extraSchemaDefinitionDirective") {
+  query: Query
+}
+
+directive @custom repeatable on OBJECT
+
+directive @transport(
+  kind: String!
+  subgraph: String!
+  location: String!
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+directive @transport(
+  kind: String!
+  subgraph: String!
+  location: String!
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+directive @merge(subgraph: String!, keyField: String, keyArg: String) repeatable on FIELD_DEFINITION
+
+type Product
+  @custom
+  @key(fields: "id")
+  @key(fields: "sku package")
+  @key(fields: "sku variation { id }") {
+  id: ID!
+  sku: String
+  package: String
+  variation: ProductVariation
+  dimensions: ProductDimension
+  createdBy: User @provides(fields: "totalProductsCreated")
+  notes: String @tag(name: "internal")
+  research: [ProductResearch!]!
+}
+
+type DeprecatedProduct @key(fields: "sku package") {
+  sku: String!
+  package: String!
+  reason: String
+  createdBy: User
+}
+
+type ProductVariation {
+  id: ID!
+}
+
+type ProductResearch @key(fields: "study { caseNumber }") {
+  study: CaseStudy!
+  outcome: String
+}
+
+type CaseStudy {
+  caseNumber: ID!
+  description: String
+}
+
+type ProductDimension @shareable {
+  size: String
+  weight: Float
+  unit: String @inaccessible
+}
+
+type Query
+  @extends
+  @extraSchemaDefinitionDirective(
+    directives: {
+      transport: [
+        {
+          kind: "http"
+          subgraph: "products"
+          location: "http://localhost:4444/graphql"
+          options: {}
+        }
+      ]
+    }
+  ) {
+  product(id: ID!): Product @merge(subgraph: "products", keyField: "id")
+  deprecatedProduct(sku: String!, package: String!): DeprecatedProduct
+    @deprecated(reason: "Use product query instead")
+    @merge(subgraph: "products", keyField: "sku package")
+  productBySkuAndPackage(sku: String!, package: String!): Product
+    @merge(subgraph: "products", keyField: "sku package")
+  productBySkuAndVariationId(sku: String!, variationId: ID!): Product
+    @merge(subgraph: "products", keyField: "sku variation { id }")
+  productResearch(caseNumber: ID!): ProductResearch
+    @merge(subgraph: "products", keyField: "study { caseNumber }")
+  user(email: ID!, totalProductsCreated: Int, yearsOfEmployment: Int): User
+    @merge(subgraph: "products", keyField: "email")
+  inventory(id: ID!): Inventory @merge(subgraph: "products", keyField: "id")
+}
+
+type User @extends @key(fields: "email") {
+  averageProductsCreatedPerYear: Int @requires(fields: "totalProductsCreated yearsOfEmployment")
+  email: ID! @external
+  name: String @override(from: "users")
+  totalProductsCreated: Int @external
+  yearsOfEmployment: Int! @external
+}
+
+type Inventory @key(fields: "id") @interfaceObject {
+  id: ID!
+  deprecatedProducts: [DeprecatedProduct!]!
+}
+
+scalar TransportOptions
+
+scalar _HoistConfig
+
+directive @source(
+  name: String!
+  type: String
+  subgraph: String!
+  hoist: _HoistConfig
+) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+scalar _DirectiveExtensions
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT

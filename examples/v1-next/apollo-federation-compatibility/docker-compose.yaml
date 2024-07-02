@@ -1,0 +1,12 @@
+services:
+  products:
+    image: 'node:22'
+    user: 'node'
+    working_dir: /web
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - .:/web
+    command: 'npm i && npm start'
+    ports:
+      - 4001:4001

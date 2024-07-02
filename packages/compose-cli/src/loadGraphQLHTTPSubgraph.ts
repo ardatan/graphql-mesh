@@ -13,7 +13,8 @@ import {
   isObjectType,
   type IntrospectionQuery,
 } from 'graphql';
-import type { ExecutionResult } from '@graphql-tools/utils';
+import { isUrl, readFile } from '@graphql-mesh/utils';
+import { isValidPath, type ExecutionResult } from '@graphql-tools/utils';
 import type { LoaderContext, MeshComposeCLISourceHandlerDef } from './types.js';
 
 export interface GraphQLSubgraphLoaderHTTPConfiguration {
@@ -127,11 +128,23 @@ export function loadGraphQLHTTPSubgraph(
       );
     }
     if (source) {
-      schema$ = ctx
-        .fetch(source, {
-          headers: schemaHeaders,
-        })
-        .then(res => res.text())
+      let source$: Promise<string>;
+      if (isUrl(source)) {
+        source$ = ctx
+          .fetch(source, {
+            headers: schemaHeaders,
+          })
+          .then(res => res.text());
+      } else if (isValidPath(source)) {
+        source$ = readFile(source, {
+          allowUnknownExtensions: true,
+          cwd: ctx.cwd,
+          fetch: ctx.fetch,
+          importFn: (p: string) => import(p),
+          logger: ctx.logger,
+        });
+      }
+      schema$ = source$
         .then(sdl =>
           buildSchema(sdl, {
             assumeValidSDL: true,
