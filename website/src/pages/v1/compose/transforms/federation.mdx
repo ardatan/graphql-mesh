@@ -3,3 +3,75 @@ description: Convert non federation subgraphs to federation subgraphs
 ---
 
 # Federation Transform
+
+If the original subgraph is not a federated subgraph that includes annotations and directives that
+conform to the Federation specification. You can use this transform to provide them and convert the
+subgraph to a federated subgraph.
+
+<Callout>
+  If you want to add `@key` directive in your subgraph, you need to be aware of [Type
+  Merging](/v1/compose/type-merging)
+</Callout>
+
+## How to use?
+
+Let's say you have the following subgraph;
+
+```graphql
+type Product {
+  id: ID!
+  name: String!
+  price: Float!
+}
+
+type Query {
+  productById(id: ID!): Product
+}
+```
+
+And you want to add `@key` directive to the `Product` type. Then you can add the following
+configuration to your `mesh.config.ts` file. But you need `resolveReference` to be able to resolve
+the reference, which is equivalent of `__resolveReference` resolver in regular Federation.
+
+```ts filename="mesh.config.ts" {13-17}
+import {
+  createFederationTransform,
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('myApi', {
+        endpoint: 'http://localhost:4001/my-api'
+      }),
+      transforms: [
+        createFederationTransform({
+          // Schema Coordinates
+          Product: {
+            // Directive name
+            key: {
+              // Directive arguments
+              fields: 'id',
+              // Reference resolver (only for @key directive)
+              resolveReference: {
+                fieldName: 'productById'
+              }
+            }
+          },
+          // You can also add other directives
+          Query: {
+            extends: true
+          }
+        })
+      ]
+    }
+  ]
+})
+```
+
+<Callout>
+  [Learn more](https://www.apollographql.com/docs/federation/federated-types/federated-directives/)
+  about other directives in Federation
+</Callout>

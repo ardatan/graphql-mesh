@@ -21,11 +21,4 @@ export default {
       layout: 'raw',
     },
   },
-  v1: {
-    title: 'v1',
-    type: 'page',
-    theme: {
-      toc: true,
-    },
-  },
 };
