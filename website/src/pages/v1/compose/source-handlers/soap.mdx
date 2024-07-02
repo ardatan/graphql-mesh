@@ -1,0 +1,45 @@
+---
+description:
+  Generate executable schema for SOAP services with GraphQL Mesh SOAP handler. Consume WSDL files
+  and get started easily.
+---
+
+import { Callout } from '@theguild/components'
+
+# SOAP
+
+![image](https://user-images.githubusercontent.com/20847995/79220083-0a1d3a00-7e5c-11ea-9ac5-855428121143.png)
+
+This handler allows you to consume [SOAP](https://soapui.org) `WSDL` files and generate a remote
+executable schema for those services.
+
+## How to use?
+
+To get started, install the handler library:
+
+```sh npm2yarn
+npm i @omnigraph/soap
+```
+
+Then you can import the library in your configuration file, and define your SOAP source;
+
+```ts filename="mesh.config.ts" {2,7-9}
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSOAPSubgraph } from '@omnigraph/soap'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSOAPSubgraph('CountryInfo', {
+        source:
+          'http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL'
+      })
+    }
+  ]
+})
+```
+
+<Callout>
+  [You can find a working example here](
+  https://github.com/ardatan/graphql-mesh/tree/main/examples/v1-next/soap-demo )
+</Callout>

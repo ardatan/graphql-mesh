@@ -1,0 +1,46 @@
+# Cost Limit
+
+**Limit** the **complexity** of a GraphQL document by using
+[GraphQL Armor](https://escape.tech/graphql-armor/docs/plugins/cost-limit)
+
+## How to use?
+
+```sh npm2yarn
+npm install @escape.tech/graphql-armor-cost-limit
+```
+
+Then, add it to your plugins:
+
+```ts filename="mesh.config.ts"
+import {defineConfig as defineServeConfig} from '@graphql-mesh/serve-cli';
+import { costLimitPlugin } from '@escape.tech/graphql-armor-cost-limit';
+
+export default defineServeConfig({
+  plugins: () => [
+    costLimitPlugin({
+        // Toogle the plugin | default: true
+        enabled: true,
+        // Cost allowed for the query | default: 5000
+        maxCost: 5000,
+        // Static cost of an object | default: 2
+        objectCost: 2,
+        // Static cost of a field | default: 1
+        scalarCost: 1,
+        // Factorial applied to nested operator | default: 1.5
+        depthCostFactor: 1.5,
+        // Ignore the cost of introspection queries | default: true
+        ignoreIntrospection: true,
+        // Do you want to propagate the rejection to the client? | default: true
+        propagateOnRejection: true,
+
+        /* Advanced options (use here on your own risk) */
+
+        // Callbacks that are ran whenever a Query is accepted
+        onAccept: []
+
+        // Callbacks that are ran whenever a Query is rejected
+        onReject: []
+    }),
+  ]
+});
+```

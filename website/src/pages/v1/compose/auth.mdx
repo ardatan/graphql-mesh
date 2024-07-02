@@ -1,0 +1,69 @@
+import { Callout } from '@theguild/components'
+
+# Authentication through `auth` and `skipAuth` directives
+
+`TODO: Test this feature with a real example`
+
+You can use the `auth` and `skipAuth` directives to control access to your GraphQL API. These
+directives are used to enforce authentication and authorization rules on your supergraph.
+
+<Callout>
+  You need to configure your gateway to use specific authentication rules in order to use these directives.
+
+[See here to configure Generic Auth plugin for GraphQL Mesh Serve](/v1/serve/features/auth/generic-auth)
+
+</Callout>
+
+## Granular field access by using schema field directive `@auth`
+
+You can use the `auth` directive to enforce authentication rules on specific fields. This directive
+can be used to restrict access to certain fields based on the viewer's session.
+
+You need to define the `auth` directive in your schema:
+
+```graphql
+directive @auth on FIELD_DEFINITION
+```
+
+Then, you can use the `auth` directive to set authentication rules on fields:
+
+```graphql
+type Query {
+  me: User! @auth
+  protectedField: String @auth
+  # publicField: String
+}
+```
+
+<Callout>
+  In order to use this directive, you need to configure [Generic
+  Auth](/v1/serve/features/auth/generic-auth) plugin to use **Granular field access by using schema
+  field directives or field extensions** in your GraphQL Mesh Gateway.
+</Callout>
+
+## Exclude fields from authentication by using schema field directive `@skipAuth`
+
+If you have completely protected supergraph but allow unauthenticated access for certain fields by
+annotating them.
+
+You need to define the `skipAuth` directive in your schema:
+
+```graphql
+directive @skipAuth on FIELD_DEFINITION
+```
+
+Then, you can use the `skipAuth` directive to exclude fields from authentication:
+
+```graphql
+type Query {
+  me: User!
+  protectedField: String
+  publicField: String @skipAuth
+}
+```
+
+<Callout>
+  In order to use this directive, you need to configure [Generic
+  Auth](/v1/serve/features/auth/generic-auth) plugin to use **Complete Protection** in your GraphQL
+  Mesh Gateway.
+</Callout>

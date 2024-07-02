@@ -1,0 +1,111 @@
+---
+description:
+  GraphQL Mesh gRPC Handler allows loading gRPC definition files and using reflection, with custom
+  metadata for authorization. Learn more now!
+---
+
+import { Callout } from '@theguild/components'
+
+# gRPC / Protobuf
+
+<div className="bg-[#244c5a]/90 rounded-md dark:bg-transparent inline-block">
+  ![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
+</div>
+
+This Handler allows you to load [gRPC](https://grpc.io) definition files (`.proto`).
+
+`TODO: Implement the loader and the transport`
+
+```sh npm2yarn
+npm i @omnigraph/grpc
+```
+
+Then you can use it in your Mesh configuration:
+
+```ts filename="mesh.config.ts"
+import loadGRPCSubgraph from '@omnigraph/grpc'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGRPCSubgraph('MyGrpcApi', {
+        // gRPC Endpoint
+        endpoint: 'localhost:50051',
+        // Path to the proto file
+        source: 'grpc/proto/Example.proto',
+        // or
+        source: {
+          file: 'grpc/proto/Example.proto',
+          load: {
+            defaults: true,
+            includeDirs: ['grpc/proto']
+          }
+        }
+
+        // Request timeout in milliseconds
+        requestTimeout: 200_000,
+
+        // Use HTTPS instead HTTP for gRPC connection
+        useHTTPS: false,
+
+        // Use SSL credentials for gRPC connection
+        credentialsSsl: {
+          rootCA: 'path/to/rootCA.pem',
+          certChain: 'path/to/certChain.pem',
+        },
+
+        // Prefix to collect Query method default: list, get
+        prefixQueryMethod: ['list', 'get'],
+
+        // Headers for the protobuf if URL is provided
+        schemaHeaders: {
+          'x-api-key': 'my-api-key'
+        }
+      })
+    }
+  ]
+})
+```
+
+## Use Reflection instead of proto files
+
+If you have configured reflection in your gRPC server, you don't need to provide `source`.
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import loadGRPCSubgraph from '@omnigraph/grpc'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGRPCSubgraph('MyGrpcApi', {
+        endpoint: 'localhost:50051'
+      })
+    }
+  ]
+})
+```
+
+## Custom Metadata for Authorization
+
+Here you can use `metaData` field to pass some custom metadata from the context.
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import loadGRPCSubgraph from '@omnigraph/grpc'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGRPCSubgraph('MyGrpcApi', {
+        endpoint: 'localhost:50051',
+        metaData: {
+          authorization: "Bearer {context.headers['x-my-token']}",
+          someStaticValue: 'MyStaticValue'
+        }
+      })
+    }
+  ]
+})
+```

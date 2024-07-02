@@ -1,0 +1,57 @@
+# Integration with Apollo GraphOS
+
+import { Callout } from '@theguild/components'
+
+Apollo GraphOS is a schema registry that allows you to store and manage your supergraph schemas. You
+can use GraphQL Mesh to serve your supergraph schemas stored in Apollo GraphOS, or send usage data
+to Apollo GraphOS.
+
+## How to use?
+
+By default, Mesh will use standard Apollo GraphOS environment variables.
+
+```sh
+APOLLO_KEY='<YOU_APOLLO_API_KEY>' APOLLO_GRAPH_REF='<YOUR_GRAPH_ID>[@<VARIANT>]' mesh-serve
+```
+
+<Callout>
+  If you don’t know where to find these values, please refer to the [Apollo GraphOS
+  documentation](https://www.apollographql.com/docs/federation/managed-federation/setup/#4-connect-your-router-to-graphos).
+</Callout>
+
+You can also provide this configuration programaitically by providing a configuration object, along
+with other options to customize the polling/retry behavior.
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export default defineServeConfig({
+  graphos: {
+    /**
+     * The graph ref of the managed federation graph.
+     * It is composed of the graph ID and the variant (`<YOUR_GRAPH_ID>@<VARIANT>`).
+     *
+     * If not provided, `APOLLO_GRAPH_REF` environment variable is used.
+     *
+     * You can find a a graph's ref at the top of its Schema Reference page in Apollo Studio.
+     */
+    graphRef: '<YOUR_GRAPH_ID>[@<VARIANT>]',
+    /**
+     * The API key to use to authenticate with the managed federation up link.
+     * It needs at least the `service:read` permission.
+     *
+     * If not provided, `APOLLO_KEY` environment variable will be used instead.
+     *
+     * [Learn how to create an API key](https://www.apollographql.com/docs/federation/v1/managed-federation/setup#4-connect-the-gateway-to-studio)
+     */
+    apiKey: '<YOUR_APOLLO_API_KEY>'
+  }
+})
+```
+
+Other more advanced options are available, please refer to the type definitions for more
+information.
+
+## Persisted Operations
+
+`TODO: Add information about persisted operations with GraphOS`

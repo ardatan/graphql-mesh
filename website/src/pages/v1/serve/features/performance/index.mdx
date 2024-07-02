@@ -1,0 +1,164 @@
+---
+description:
+  Performance is a critical aspect of any application. GraphQL Mesh Serve Runtime provides a set of
+  features to help you optimize the performance of your gateway.
+---
+
+import { Callout } from '@theguild/components'
+
+# Performance & Caching
+
+GraphQL Mesh Serve Runtime provides a set of features to help you optimize the performance of your
+GraphQL Mesh Gateway. GraphQL Mesh provides a shared caching storage that can be used across
+plugins, transforms and subgraph execution.
+
+## Providing Cache Storage
+
+In order to enable features that need a storage to keep the data, you need to define a cache storage
+implementation, and pass it to the `serveConfig`.
+
+You can choose the best-fit cache storage for your use case.
+
+### LocalForage
+
+LocalForage is a library that improves the existing storage mechanism in the browser by using
+`IndexedDB`, `WebSQL` and `localStorage`, [see more](https://github.com/localForage/localForage).
+
+Even if it is known as a browser storage, GraphQL Mesh provides you as a platform-agnostic cache
+storage to leverage the well-known storage APIs that are available in most JavaScript environments.
+
+```sh npm2yarn
+npm i @graphql-mesh/cache-localforage
+```
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import LocalForageCacheStorage from '@graphql-mesh/cache-localforage'
+
+export const serveConfig = defineServeConfig({
+  cache: new LocalForageCacheStorage({
+    // All of the following options are listed with default values, you don't need to provide them
+    driver: ['WEBSQL', 'INDEXEDDB', 'LOCALSTORAGE'] // The order of the drivers to use
+    name: 'GraphQLMesh', // The name of the database
+    version: 1.0, // The version of the database
+    size: 4980736, // The size of the database
+    storeName: 'keyvaluepairs', // The name of the store
+    description: 'Cache storage for GraphQL Mesh', // The description of the database
+  }),
+  plugins: pluginCtx => ([
+    // Your plugins here
+    useResponseCache({
+      ...pluginCtx, // To pass the shared cache storage
+      // other configuration
+    })
+  ])
+})
+```
+
+### Redis
+
+Redis is an in-memory data structure store, used as a database, cache, and message broker. You can
+use Redis as a cache storage for your GraphQL Mesh Gateway.
+
+<Callout>The Redis cache currently only works in Node.js environments.</Callout>
+
+```sh npm2yarn
+npm i @graphql-mesh/cache-redis
+```
+
+```ts filename="mesh.config.ts"
+import RedisCacheStorage from '@graphql-mesh/cache-redis'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  cache: new RedisCacheStorage({
+    host: 'localhost', // The host of the Redis server
+    port: 6379, // The port of the Redis server
+    password: undefined, // The password of the Redis server
+    lazyConnect: true, // If true, the connection will be established when the first operation is executed
+    // or
+    url: 'redis://localhost:6379' // The URL of the Redis server
+  }),
+  plugins: pluginCtx => [
+    // Your plugins here
+    useResponseCache({
+      ...pluginCtx // To pass the shared cache storage
+      // other configuration
+    })
+  ]
+})
+```
+
+### Cloudflare Workers KV
+
+Cloudflare Workers KV is a distributed, eventually consistent key-value store available in the
+Cloudflare Workers runtime. You can use Cloudflare Workers KV as a cache storage for your GraphQL
+Mesh Gateway. [Learn more about KV](https://developers.cloudflare.com/workers/runtime-apis/kv/)
+
+<Callout>
+  This is only available for Cloudflare Workers runtime. If you want to learn how to deploy your
+  GraphQL Mesh Gateway to Cloudflare Workers, you can check the [deployment
+  documentation](/v1/serve/deployment/cloudflare-workers).
+</Callout>
+
+```sh npm2yarn
+npm i @graphql-mesh/cache-cf-kw
+```
+
+```ts filename="mesh.config.ts"
+import CloudflareKVCacheStorage from '@graphql-mesh/cache-cf-kw'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  cache: new CloudflareKVCacheStorage({
+    namespace: 'GraphQLMesh' // The namespace of the KV
+  }),
+  plugins: pluginCtx => [
+    // Your plugins here
+    useResponseCache({
+      ...pluginCtx // To pass the shared cache storage
+      // other configuration
+    })
+  ]
+})
+```
+
+## Custom Cache Storage
+
+You can also implement your own cache storage by extending the `CacheStorage` class. It needs to
+match `KeyValueCache` interface from `@graphql-mesh/serve-runtime`.
+
+```ts filename="my-cache-storage.ts"
+import { LRUCache } from 'lru-cache'
+import { KeyValueCache } from '@graphql-mesh/serve-runtime'
+
+export class MyKeyValueCache<V = any> implements KeyValueCache<V> {
+  // Your cache implementation here
+  private cache = new LRUCache<string, V>()
+
+  // Get the value of the key
+  async get(key: string) {
+    return this.cache.get(key)
+  }
+
+  // Set the key with the value and optional options
+  async set(key: string, value: V, options?: { ttl?: number }) {
+    this.cache.set(key, value, options?.ttl)
+  }
+
+  // Delete the key from the cache
+  async delete(key: string) {
+    this.cache.del(key)
+  }
+
+  // Get all keys that match the given prefix
+  async getKeysByPrefix(prefix: string) {
+    return Array.from(this.cache.keys()).filter(key => key.startsWith(prefix))
+  }
+
+  // This should be implemented if you want to clear the cache on shutdown
+  [Symbol.asyncDispose]() {
+    this.cache.reset()
+  }
+}
+```

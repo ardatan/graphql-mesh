@@ -1,0 +1,75 @@
+---
+description:
+  Improve your GraphQL schema organization with encapsulate transform. Easily encapsulate a specific
+  schema into a single field with GraphQL Mesh.
+---
+
+# Encapsulate Transform
+
+The encapsulate transform allows to easily encapsulate a specific schema into a single field under
+the root type.
+
+For instance, if your handler created a schema like this, named `mySchema`:
+
+```graphql
+type Query {
+  something: String
+}
+
+type Mutation {
+  doSomething: String
+}
+```
+
+The `encapsulate` transform will change your schema to this:
+
+```graphql
+type Query {
+  mySchema: mySchemaQuery!
+}
+
+type Mutation {
+  mySchema: mySchemaMutation!
+}
+
+type mySchemaQuery {
+  something: String
+}
+
+type mySchemaMutation {
+  doSomething: String
+}
+```
+
+This transformer is useful when you have multiple APIs in your Mesh Gateway and you wish to have it
+wrapped with a name to better understand where each field is coming from.
+
+## How to use?
+
+```ts filename="mesh.config.ts" {13-17}
+import {
+  createEncapsulateTransform,
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('mySchema', {
+        endpoint: 'http://localhost:4001/my-schema'
+      }),
+      transforms: [
+        createEncapsulateTransform({
+          applyTo: {
+            // This will apply the encapsulate transform only to query fields
+            query: true,
+            mutation: false,
+            subscription: false
+          }
+        })
+      ]
+    }
+  ]
+})
+```

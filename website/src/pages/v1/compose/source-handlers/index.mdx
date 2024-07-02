@@ -1,0 +1,151 @@
+---
+description:
+  Maximize your GraphQL API capabilities with GraphQL Mesh! Seamlessly consume various data sources
+  like PostgreSQL, MongoDB, Neo4j, and more.
+---
+
+# Source Handlers Introduction
+
+GraphQL Mesh can consume different data source types inside GraphQL while composing your unified
+graph.
+
+The example below loads a GraphQL subgraph. You can see available source handlers on the menu.
+
+```ts filename="mesh-config.ts"
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4001/users'
+      })
+    }
+  ]
+})
+```
+
+## Setting Headers
+
+import { Callout } from '@theguild/components'
+
+<Callout emoji="⚠️" type="warning">
+  This method is not relevant to all handlers!
+
+Please make sure the handler you are using supports this method: You can do it by checking if
+handler's config reference (appearing on it's designated doc) includes the header fields mentioned
+in this doc.
+
+</Callout>
+
+<Callout emoji="⚠️" type="warning">
+  Using (very) long headers?
+
+Under the hood, Mesh is using `uWebSockets` to serve the GraphQL API. `uWebSockets` has a length
+limit, and responds with 431 code if the header is too long. In case you are using long headers, you
+may need to set `UWS_HTTP_MAX_HEADERS_SIZE` environment variable with a higher value. For example,
+you can set it to 16384 (16KB).
+
+</Callout>
+
+### Setting configurations
+
+There are two headers-designated configuration fields under each handler - `schemaHeaders` and
+`operationHeaders`:
+
+#### `operationHeaders`
+
+Optional field. Used to set the Headers for _operation execution_. Expects JSON object representing
+the Headers.
+
+In this example `operationHeaders` is used to defined the content of the request as Json:
+
+```ts filename="mesh-config.ts" {9-11}
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4001/users',
+
+        operationHeaders: {
+          'Content-Type': 'application/json'
+        }
+      })
+    }
+  ]
+})
+```
+
+#### `schemaHeaders`
+
+Optional field. Used to set the Headers for _schema introspection_. Expects JSON object representing
+the Headers.
+
+### Dynamic Header Values (e.g., for Authorization)
+
+Mesh can take dynamic values from the GraphQL Context or the environmental variables.
+
+The expression inside dynamic values should be as in JS.
+
+#### From Context
+
+```ts filename="mesh-config.ts" {9-15}
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4001/users',
+
+        operationHeaders: {
+          // Please do not use capital letters while getting the headers
+          // Use "{context.headers['x-my-api-token']}" if you want just the value of the header
+          Authorization: 'Bearer {context.headers["x-my-api-token"]}'
+          // You can also access to the cookies like below;
+          // Authorization: Bearer {context.cookies.myApiToken}
+        }
+      })
+    }
+  ]
+})
+```
+
+#### From Environment Variables
+
+Set up the variable on your environment, e.g `VERY_SECRET_TOKEN=12345`. Then you can use it using
+`{env.VERY_SECRET_TOKEN}`.
+
+The config wil look something like:
+
+```ts filename="mesh-config.ts" {9-11}
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4001/users',
+
+        operationHeaders: {
+          Authorization: 'Bearer {env.VERY_SECRET_TOKEN}'
+        }
+      })
+    }
+  ]
+})
+```

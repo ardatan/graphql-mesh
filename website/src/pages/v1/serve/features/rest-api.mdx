@@ -1,0 +1,55 @@
+# Generate REST API using SOFA
+
+GraphQL SOFA allows you to generate a fully documented REST API from your GraphQL schema. This is
+useful when you need to support REST clients or when you want to expose a REST API to the public.
+
+import { Callout } from '@theguild/components'
+
+- **Don’t choose between REST and GraphQL**
+- Get most of the **benefits of GraphQL** on the backend and frontend, while using and **exposing
+  REST**
+- **Support all your existing clients** with REST while improving your backend stack with GraphQL
+- Create custom, perfectly client-aligned REST endpoints for your frontend simply by naming a route
+  and attaching a query
+- In the other way around (REST to GraphQL) you won’t get the best of both worlds. Instead just less
+  powerful, harder-to-maintain server implementations with a some of the benefits of GraphQL. It can
+  be a good and fast start for a migration though.
+- Fully **generated documentation** that is always up-to-date
+- **GraphQL Subscriptions as Webhooks**
+
+## Installation
+
+```sh npm2yarn
+npm i @graphql-yoga/plugin-sofa
+```
+
+## Quick Start
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { useSOFA } from '@graphql-yoga/plugin-sofa'
+
+export const serveConfig = defineServeConfig({
+  plugins: pluginCtx => [
+    useSOFA({
+      // The path where the REST API will be served
+      basePath: '/rest',
+      // The path where the Swagger UI will be served
+      swaggerUIEndpoint: '/rest/docs',
+      // OpenAPI Document details
+      info: {
+        title: 'My API',
+        description: 'My API Description',
+        version: '1.0.0'
+      }
+    })
+  ]
+})
+```
+
+[Learn more about SOFA](https://the-guild.dev/graphql/sofa-api/docs)
+
+<Callout>
+  You can consume the API using [feTS Client](https://the-guild.dev/openapi/fets/client/quick-start)
+  without any code generation!
+</Callout>

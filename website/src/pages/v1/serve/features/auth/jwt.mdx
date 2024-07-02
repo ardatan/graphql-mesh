@@ -1,0 +1,51 @@
+# JSON Web Tokens (JWT)
+
+A [JSON Web Tokens (JWT)](https://jwt.io/) is a signed token containing arbitrary informations,
+commonly used for authentication. By being signed by the issuer of the token, it can be verified
+that the token is valid and has not been tampered with.
+
+GraphQL Mesh provides a plugin to easily integrate JWT into your API.
+
+## How to use?
+
+Install the plugin:
+
+```sh npm2yarn
+npm install @graphql-yoga/plugin-jwt
+```
+
+Then, add it to your plugins:
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { useJWT } from '@graphql-yoga/plugin-jwt'
+
+export default defineServeConfig({
+  plugins: () => [
+    useJWT({
+      issuer: 'http://graphql-yoga.com',
+      signingKey
+    })
+  ]
+})
+```
+
+Then during Authorization, for example within a plugin like
+[Operation Field Permissions](/v1/serve/features/security/auth/operation-field-permissions), you can
+use the `jwt` property of the context to access the decoded JWT token:
+
+```ts filename="mesh.config.ts"
+import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
+
+useOperationFieldPermissions({
+  getPermissions: async context => {
+    const { jwt } = context
+    if (jwt?.role === 'admin') {
+      return new Set(['Query.*'])
+    }
+    return new Set(['Query.greetings'])
+  }
+})
+```
+
+`TODO: Improve this`

@@ -1,0 +1,155 @@
+---
+description:
+  Extend your supergraph by combining multiple GraphQL schemas and resolvers with GraphQL Mesh
+  schema extensions.
+---
+
+# Type Merging
+
+Type merging allows _partial definitions_ of a type to exist in any subschema, all of which are
+merged into one unified type in the gateway schema. When querying for a merged type, the gateway
+smartly delegates portions of a request to each relevant subschema in dependency order and then
+combines all results for the final return.
+
+Type merging is now the preferred method of including GraphQL types across subschemas, replacing the
+need for [schema extensions](/v1/compose/schema-extensions) (though does not preclude their use). To
+migrate from schema extensions, simply enable type merging and then start replacing extensions one
+by one with merges.
+
+This concept today is the most preferred one to combine multiple subgraphs in GraphQL such as Apollo
+Federation.
+
+## Motivational Example
+
+Let's talk about the use case we want without any configuration or setup to understand the concept.
+
+Type merging allows each subschema to provide subsets of a type that it has data for.
+
+Given the following subschemas;
+
+```graphql filename="posts.graphql"
+type Post {
+  id: ID!
+  message: String!
+  author: User!
+}
+
+type User {
+  id: ID!
+  posts: [Post]!
+}
+
+type Query {
+  postById(id: ID!): Post
+  userById(id: ID!): User
+}
+```
+
+```graphql filename="users.graphql"
+type User {
+  id: ID!
+  email: String!
+}
+
+type Query {
+  userById(id: ID!): User
+}
+```
+
+Note that both services define a _different_ `User` type. While the users service manages
+information about user accounts, the posts service simply provides posts associated with a user ID.
+Now we just have to configure the `User` type to be merged. Type merging requires a query from each
+subschema to provide its version of a merged type:
+
+When we send the following query to the gateway;
+
+```graphql
+query {
+  postById(id: "1") {
+    id
+    message
+    author {
+      id
+      email
+    }
+  }
+}
+```
+
+We want `Posts` subgraph to receive the following query;
+
+```graphql
+query {
+  postById(id: "1") {
+    id
+    message
+    author {
+      id
+    }
+  }
+}
+```
+
+And `Users` subgraph to receive the following query;
+
+```graphql
+query {
+  userById(id: "1") {
+    email
+  }
+}
+```
+
+And then the gateway should merge the results from both subgraphs and return the following result;
+
+```json
+{
+  "data": {
+    "postById": {
+      "id": "1",
+      "message": "Hello World",
+      "author": {
+        "id": "1",
+        "email": "john@doe.com"
+      }
+    }
+  }
+}
+```
+
+## Automatic Type Merging
+
+GraphQL Mesh Compose automatically enables Type Merging if you have the following patterns in your
+subgraphs;
+
+- The same type is defined in multiple subgraphs.
+- Query fields with `TYPENAMEbyKEYNAME(KEYNAME: KEYTYPE): TYPENAME` pattern, and the `KEYNAME` is
+  the same as the `KEYNAME` field of the type.
+
+So actually the example above can do the expected work automatically by default without any
+configuration. If your schema doesn't match this pattern, you can use
+[transforms](/v1/compose/transforms) to manipulate the schema to match this pattern. Let's say you
+don't have `userById` in `Posts` but `postUserById` instead. You can use the `rename` transform to
+rename the field to match the pattern.
+
+You can disable this behavior in your configuration by setting `ignoreSemanticConventions: true` in
+your configuration;
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+
+export default defineComposeConfig({
+  ignoreSemanticConventions: true
+  // ...
+})
+```
+
+## Manual and Advanced Type Merging
+
+If you have control over your schema, you can use Federation directives to configure Type Merging,
+using Federation directives;
+[Learn more here](https://www.apollographql.com/docs/federation/federated-types/federated-directives).
+
+If you don't have control over your schema, you can use
+[Federation Transform](/v1/compose/transforms/federation) to add the federation directives to your
+schema, and specify an entity resolver using extra annotations on the transform level.

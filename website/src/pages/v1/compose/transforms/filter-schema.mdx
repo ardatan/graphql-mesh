@@ -1,0 +1,65 @@
+---
+description:
+  Learn how to filter your GraphQL schema elements with GraphQL Mesh filterSchema transform. Exclude
+  deprecated entities and more!
+---
+
+# Filter Schema Transform
+
+The filter schema transform allows you to specify which schema elements to include or exclude in
+your mesh. You can include or exclude entire queries and mutations, place restrictions on which
+types can appear in your calls or which fields can appear in specific types.
+
+For example, you might want to exclude deprecated queries, mutations, and types from your schema so
+that your integration is not affected when these entities are removed.
+
+## How to use?
+
+In the configuration, you can use regular function to filter the specific types, fields and
+arguments.
+
+```ts filename="mesh.config.ts" {13-17}
+import {
+  createFilterTransform,
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Countries', {
+        endpoint: 'https://countries.trevorblades.com'
+      }),
+      transforms: [
+        createFilterTransform({
+          rootFieldFilter(typeName, fieldName) {
+            if (typeName === 'Query' && fieldName === 'countries') {
+              return false
+            }
+            return true
+          },
+          typeFilter(typeName) {
+            if (typeName === 'Country') {
+              return false
+            }
+            return true
+          },
+          fieldFilter(typeName, fieldName) {
+            if (typeName === 'Country' && fieldName === 'name') {
+              return false
+            }
+            return true
+          },
+          argumentFilter(typeName, fieldName, argName) {
+            if (typeName === 'Country' && fieldName === 'name' && argName === 'lang') {
+              return false
+            }
+            return true
+          }
+        })
+      ]
+    }
+  ]
+})
+```
