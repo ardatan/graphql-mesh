@@ -10,7 +10,7 @@ directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyF
 
 directive @responseMetadata(subgraph: String) on FIELD_DEFINITION
 
-directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) on SCHEMA
+directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) repeatable on SCHEMA
 
 """Desc Api Population"""
 type ApiPopulation {
