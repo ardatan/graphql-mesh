@@ -1,0 +1,11 @@
+import { useData } from '@theguild/components'
+import { ProductUpdates } from '../../components/product-updates'
+
+export { getStaticProps } from '../../components/product-updates'
+
+export const ProductUpdatesPage = () => {
+  const { changelogs } = useData()
+  return <ProductUpdates changelogs={changelogs} />
+}
+
+<ProductUpdatesPage />

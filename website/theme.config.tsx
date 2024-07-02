@@ -1,6 +1,7 @@
 /* eslint sort-keys: error */
 import { useRouter } from 'next/router';
-import { defineConfig, Giscus, PRODUCTS, useTheme } from '@theguild/components';
+import { defineConfig, Giscus, PRODUCTS, useConfig, useTheme } from '@theguild/components';
+import { ProductUpdateBlogPostHeader } from './src/components/product-update-blog-post-header';
 
 export default defineConfig({
   description: 'GraphQL Gateway Framework and anything-to-GraphQL',
@@ -9,6 +10,20 @@ export default defineConfig({
   main: function Main({ children }) {
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
+    const config = useConfig();
+
+    if (route === '/product-updates') {
+      return <>{children}</>;
+    }
+
+    if (route.startsWith('/product-updates')) {
+      children = (
+        <>
+          <ProductUpdateBlogPostHeader meta={config.frontMatter as any} />
+          {children}
+        </>
+      );
+    }
 
     const comments = route !== '/' && (
       <Giscus
