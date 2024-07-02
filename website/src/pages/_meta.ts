@@ -21,4 +21,14 @@ export default {
       layout: 'raw',
     },
   },
+  'product-updates': {
+    type: 'page',
+    title: 'Product Updates',
+    theme: {
+      sidebar: false,
+      toc: true,
+      breadcrumb: false,
+      typesetting: 'article',
+    },
+  },
 };
