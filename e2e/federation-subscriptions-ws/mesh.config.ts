@@ -1,7 +1,7 @@
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig } from '@graphql-mesh/serve-cli';
 import { HTTPTransportOptions } from '@graphql-mesh/transport-http';
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   transports: {
     http: {
       subscriptions: {
