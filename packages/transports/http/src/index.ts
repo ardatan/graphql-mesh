@@ -78,6 +78,8 @@ export const getSubgraphExecutor: TransportGetSubgraphExecutor<'http', HTTPTrans
             )?.[1];
           }
 
+          // TODO: pass through connection params from the WS connection to the GW (once https://github.com/ardatan/graphql-mesh/issues/7208 lands)
+
           const hash = url + token;
           const executor = (wsExecutors[hash] ??= buildGraphQLWSExecutor({
             url: `${protocol}://${hostname}${wsOpts.path}`,
