@@ -4,6 +4,7 @@ import { getDocumentString } from '@envelop/core';
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
 import { buildGraphQLWSExecutor } from '@graphql-tools/executor-graphql-ws';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
+import type { Executor } from '@graphql-tools/utils';
 
 export type HTTPTransportOptions = Pick<
   HTTPExecutorOptions,
@@ -43,6 +44,7 @@ export const getSubgraphExecutor: TransportGetSubgraphExecutor<'http', HTTPTrans
       print: printFnForHTTPExecutor,
       ...transportEntry.options,
     });
+    const wsExecutors: { [hash: string]: Executor } = {};
 
     return function HTTPExecutor(request) {
       if (request.operationType === 'subscription') {
@@ -59,6 +61,7 @@ export const getSubgraphExecutor: TransportGetSubgraphExecutor<'http', HTTPTrans
           if (transportEntry.location.startsWith('https')) {
             protocol = 'wss';
           }
+          const url = `${protocol}://${hostname}${wsOpts.path}`;
 
           // apollo federation passes the HTTP `Authorization` header through `connectionParams.token`
           // see https://www.apollographql.com/docs/router/executing-operations/subscription-support/#websocket-auth-support
@@ -69,12 +72,21 @@ export const getSubgraphExecutor: TransportGetSubgraphExecutor<'http', HTTPTrans
             token = headers.get('authorization');
           }
 
-          // TODO: dont recreate on each execute
-          return buildGraphQLWSExecutor({
+          const hash = url + token;
+          const executor = (wsExecutors[hash] ??= buildGraphQLWSExecutor({
             url: `${protocol}://${hostname}${wsOpts.path}`,
             connectionParams: token ? { token } : undefined,
             retryAttempts: transportEntry.options?.retry,
-          })(request);
+            lazy: true,
+            lazyCloseTimeout: 3_000,
+            on: {
+              closed() {
+                // no subscriptions and the lazy close timeout has passed - remove the client
+                delete wsExecutors[hash];
+              },
+            },
+          }));
+          return executor(request);
         }
       }
 

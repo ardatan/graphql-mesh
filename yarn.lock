@@ -5862,6 +5862,7 @@ __metadata:
     "@graphql-mesh/transport-common": "npm:^0.3.1"
     "@graphql-tools/executor-graphql-ws": "npm:^1.1.2"
     "@graphql-tools/executor-http": "npm:^1.1.2"
+    "@graphql-tools/utils": "npm:^10.2.3"
   peerDependencies:
     graphql: "*"
     tslib: ^2.4.0
