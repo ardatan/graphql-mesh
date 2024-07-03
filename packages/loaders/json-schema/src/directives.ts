@@ -296,4 +296,5 @@ export const TransportDirective = new GraphQLDirective({
     },
   },
   locations: [DirectiveLocation.SCHEMA],
+  isRepeatable: true,
 });
