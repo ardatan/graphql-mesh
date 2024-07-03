@@ -122,7 +122,28 @@ interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutS
   /**
    * Provide custom options or executors for transports.
    *
+   * @example Adding subscriptions support for Apollo Federation v2 subgraphs.
    * ```ts
+   * import { defineConfig } from '@graphql-mesh/serve-cli';
+   * import { HTTPTransportOptions } from '@graphql-mesh/transport-http';
+   *
+   * export const serveConfig = defineConfig({
+   *   transports: {
+   *     http: {
+   *       // by defining the subscriptions property, you indicate that there's support
+   *       subscriptions: {
+   *         ws: {
+   *           subgraphs: {
+   *             // all subgraphs have WebSocket subscriptions support at `/subscriptions` path
+   *             '*': {
+   *               path: '/subscriptions',
+   *             },
+   *           },
+   *         },
+   *       },
+   *     } satisfies HTTPTransportOptions,
+   *   },
+   * });
    * ```
    */
   transports?: TransportsConfig;
