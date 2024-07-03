@@ -3606,9 +3606,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/federation-subscriptions@workspace:e2e/federation-subscriptions":
+"@e2e/federation-subscriptions-ws@workspace:e2e/federation-subscriptions-ws":
   version: 0.0.0-use.local
-  resolution: "@e2e/federation-subscriptions@workspace:e2e/federation-subscriptions"
+  resolution: "@e2e/federation-subscriptions-ws@workspace:e2e/federation-subscriptions-ws"
   dependencies:
     "@apollo/rover": "npm:^0.23.0"
     "@apollo/server": "npm:^4.10.3"

@@ -1,5 +1,5 @@
 {
-  "name": "@e2e/federation-subscriptions",
+  "name": "@e2e/federation-subscriptions-ws",
   "private": true,
   "devDependencies": {
     "@apollo/rover": "^0.23.0",
