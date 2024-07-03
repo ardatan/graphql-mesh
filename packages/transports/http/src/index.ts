@@ -71,6 +71,12 @@ export const getSubgraphExecutor: TransportGetSubgraphExecutor<'http', HTTPTrans
             // TODO: why do I have to do this for graphql-sse? shouldnt headers be normalised?
             token = headers.get('authorization');
           }
+          if (!token) {
+            // still no token, maybe it's hard-coded in the config
+            token = transportEntry.headers?.find(
+              ([key]) => key.toLowerCase() === 'authorization',
+            )?.[1];
+          }
 
           const hash = url + token;
           const executor = (wsExecutors[hash] ??= buildGraphQLWSExecutor({
