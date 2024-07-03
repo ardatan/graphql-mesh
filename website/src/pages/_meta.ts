@@ -21,4 +21,8 @@ export default {
       layout: 'raw',
     },
   },
+  v1: {
+    title: ' ',
+    type: 'page',
+  },
 };
