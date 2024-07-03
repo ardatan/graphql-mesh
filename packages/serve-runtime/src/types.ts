@@ -8,7 +8,9 @@ import type {
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
 import type { createSupergraphSDLFetcher } from '@graphql-hive/client';
-import type { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
+import type { TransportsConfig, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
+import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
+import type { HTTPTransportOptions } from '@graphql-mesh/transport-http';
 import type {
   KeyValueCache,
   Logger,
@@ -19,7 +21,7 @@ import type {
 } from '@graphql-mesh/types';
 import type { LogLevel } from '@graphql-mesh/utils';
 import type { HTTPExecutorOptions } from '@graphql-tools/executor-http';
-import type { IResolvers } from '@graphql-tools/utils';
+import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
 import type { CORSPluginOptions } from '@whatwg-node/server';
 import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
@@ -118,9 +120,12 @@ interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutS
     | IResolvers<unknown, MeshServeContext & TContext>
     | IResolvers<unknown, MeshServeContext>[];
   /**
-   * Implement custom executors for transports.
+   * Provide custom options or executors for transports.
+   *
+   * ```ts
+   * ```
    */
-  transports?: TransportsOption;
+  transports?: TransportsConfig;
   /**
    * Current working directory.
    */
@@ -134,9 +139,16 @@ export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWitho
   proxy: HTTPExecutorOptions;
 
   transport?:
-    | Transport<'http'>
-    | Promise<Transport<'http'>>
-    | (() => Transport<'http'> | Promise<Transport<'http'>>);
+    | MaybePromise<
+        HTTPTransportOptions & {
+          getSubgraphExecutor?: TransportGetSubgraphExecutor<'http', HTTPTransportOptions>;
+        }
+      >
+    | (() => MaybePromise<
+        HTTPTransportOptions & {
+          getSubgraphExecutor?: TransportGetSubgraphExecutor<'http', HTTPTransportOptions>;
+        }
+      >);
 
   /**
    * Disable GraphQL validation on the gateway

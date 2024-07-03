@@ -193,7 +193,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
-      transportBaseContext: configContext,
+      transportContext: configContext,
       onDelegateHooks,
       onSubgraphExecuteHooks,
     });

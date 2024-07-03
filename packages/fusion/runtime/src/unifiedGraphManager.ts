@@ -2,15 +2,19 @@ import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import type { DocumentNode, GraphQLSchema } from 'graphql';
 import { buildASTSchema, buildSchema, isSchema } from 'graphql';
 import { getInContextSDK } from '@graphql-mesh/runtime';
-import type { TransportBaseContext, TransportEntry } from '@graphql-mesh/transport-common';
+import type { TransportContext, TransportEntry } from '@graphql-mesh/transport-common';
 import type { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import type { IResolvers, MaybePromise, TypeSource } from '@graphql-tools/utils';
 import { isDocumentNode } from '@graphql-tools/utils';
 import { compareSubgraphNames, handleFederationSupergraph } from './federation.js';
-import type { OnSubgraphExecuteHook, TransportsOption } from './utils.js';
-import { compareSchemas, getOnSubgraphExecute } from './utils.js';
+import {
+  compareSchemas,
+  getOnSubgraphExecute,
+  type OnSubgraphExecuteHook,
+  type TransportsConfig,
+} from './utils.js';
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   if (isSchema(source)) {
@@ -28,7 +32,7 @@ function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
 export interface GetExecutableSchemaFromSupergraphOptions<TContext extends Record<string, any>> {
   additionalTypeDefs?: DocumentNode | string | DocumentNode[] | string[];
   additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
-  transportBaseContext?: TransportBaseContext;
+  transportContext?: TransportContext;
 }
 
 export type UnifiedGraphHandler = (opts: UnifiedGraphHandlerOpts) => UnifiedGraphHandlerResult;
@@ -48,16 +52,14 @@ export interface UnifiedGraphHandlerResult {
 }
 
 export interface UnifiedGraphManagerOptions<TContext> {
-  getUnifiedGraph(
-    baseCtx: TransportBaseContext,
-  ): MaybePromise<GraphQLSchema | string | DocumentNode>;
+  getUnifiedGraph(ctx: TransportContext): MaybePromise<GraphQLSchema | string | DocumentNode>;
   // Handle the unified graph by any specification
   handleUnifiedGraph?: UnifiedGraphHandler;
-  transports?: TransportsOption;
+  transports?: TransportsConfig;
   polling?: number;
   additionalTypeDefs?: TypeSource;
   additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
-  transportBaseContext?: TransportBaseContext;
+  transportContext?: TransportContext;
   onSubgraphExecuteHooks?: OnSubgraphExecuteHook[];
   // TODO: Will be removed later once we get rid of v0
   onDelegateHooks?: OnDelegateHook<unknown>[];
@@ -113,21 +115,19 @@ export class UnifiedGraphManager<TContext> {
   private getAndSetUnifiedGraph() {
     this.pausePolling();
     return mapMaybePromise(
-      this.opts.getUnifiedGraph(this.opts.transportBaseContext),
+      this.opts.getUnifiedGraph(this.opts.transportContext),
       (loadedUnifiedGraph: string | GraphQLSchema | DocumentNode) => {
         if (
           loadedUnifiedGraph != null &&
           this.lastLoadedUnifiedGraph != null &&
           compareSchemas(loadedUnifiedGraph, this.lastLoadedUnifiedGraph)
         ) {
-          this.opts.transportBaseContext?.logger?.debug(
-            'Unified Graph has not changed, skipping...',
-          );
+          this.opts.transportContext?.logger?.debug('Unified Graph has not changed, skipping...');
           this.continuePolling();
           return;
         }
         if (this.lastLoadedUnifiedGraph != null) {
-          this.opts.transportBaseContext?.logger?.debug('Unified Graph changed, updating...');
+          this.opts.transportContext?.logger?.debug('Unified Graph changed, updating...');
         }
         let cleanupJob$: Promise<true>;
         if (this._transportExecutorStack) {
@@ -154,7 +154,7 @@ export class UnifiedGraphManager<TContext> {
         const onSubgraphExecute = getOnSubgraphExecute({
           onSubgraphExecuteHooks: this.onSubgraphExecuteHooks,
           transports: this.opts.transports,
-          transportBaseContext: this.opts.transportBaseContext,
+          transportContext: this.opts.transportContext,
           transportEntryMap,
           getSubgraphSchema(subgraphName) {
             const subgraph = subschemas.find(s => compareSubgraphNames(s.name, subgraphName));
@@ -170,7 +170,7 @@ export class UnifiedGraphManager<TContext> {
             this.unifiedGraph,
             // @ts-expect-error Legacy Mesh RawSource is not compatible with new Mesh
             subschemas,
-            this.opts.transportBaseContext?.logger,
+            this.opts.transportContext?.logger,
             this.opts.onDelegateHooks || [],
           );
         }
@@ -194,7 +194,7 @@ export class UnifiedGraphManager<TContext> {
       if (this.inContextSDK) {
         Object.assign(base, this.inContextSDK);
       }
-      Object.assign(base, this.opts.transportBaseContext);
+      Object.assign(base, this.opts.transportContext);
       return base;
     });
   }

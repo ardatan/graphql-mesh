@@ -36,7 +36,7 @@ export function getProxyExecutor<TContext>({
         return fakeTransportEntryMap[subgraphNameProp];
       },
     }),
-    transportBaseContext: configContext,
+    transportContext: configContext,
     getSubgraphSchema: getSchema,
     transportExecutorStack: disposableStack,
   });

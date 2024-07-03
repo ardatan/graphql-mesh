@@ -1,11 +1,10 @@
 import type { DocumentNode, ExecutionResult, GraphQLSchema } from 'graphql';
 import { print } from 'graphql';
 import type {
-  Transport,
-  TransportBaseContext,
+  TransportContext,
   TransportEntry,
-  TransportExecutorFactoryFn,
-  TransportExecutorFactoryOpts,
+  TransportGetSubgraphExecutor,
+  TransportGetSubgraphExecutorOptions,
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
 import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
@@ -20,60 +19,97 @@ import {
   type MaybePromise,
 } from '@graphql-tools/utils';
 
-export type { Transport, TransportEntry, TransportExecutorFactoryFn, TransportExecutorFactoryOpts };
+export type {
+  TransportEntry,
+  TransportGetSubgraphExecutor as TransportExecutorFactoryFn,
+  TransportGetSubgraphExecutorOptions as TransportExecutorFactoryOpts,
+};
 
-export type TransportsOption =
+export type TransportsConfig =
   | {
-      [TTransportKind in string]: Transport<TTransportKind>;
+      [Kind in string]: {
+        getSubgraphExecutor?: TransportGetSubgraphExecutor<Kind>;
+      } & Record<string, any> /** satisfies TransportOptions */;
     }
-  | (<TTransportKind extends string>(
-      transportKind: TTransportKind,
-    ) => Promise<Transport<TTransportKind>> | Transport<TTransportKind>);
+  | (<Kind extends string>(
+      kind: Kind,
+    ) => MaybePromise<
+      {
+        getSubgraphExecutor?: TransportGetSubgraphExecutor<Kind>;
+      } & Record<string, any> /** or satisfies TransportOptions */
+    >);
 
-export function createDefaultTransportsOption(logger?: Logger) {
-  return function defaultTransportsOption(transportKind: string): Promise<Transport<string>> {
-    const childLogger = logger?.child?.(transportKind);
-    return import(`@graphql-mesh/transport-${transportKind}`).catch(err => {
-      childLogger?.error(err);
+export type TransportExecutorFactoryGetter = (
+  kind: string,
+) => MaybePromise<TransportGetSubgraphExecutor>;
+
+function createDefaultTransportExecutorFactoryGetter(
+  logger?: Logger,
+): TransportExecutorFactoryGetter {
+  return async function defaultTransportExecutorFactoryGetter(
+    kind: string,
+  ): Promise<TransportGetSubgraphExecutor> {
+    const childLogger = logger?.child?.(kind);
+    let module;
+    try {
+      module = await import(`@graphql-mesh/transport-${kind}`);
+    } catch (err) {
+      childLogger.error(err);
       throw new Error(
-        `No transport found for ${transportKind}. Please make sure you have installed @graphql-mesh/transport-${transportKind}`,
+        `No transport found for ${kind}. Please make sure you have installed @graphql-mesh/transport-${kind}`,
       );
-    });
-  };
-}
-
-export type TransportGetter = <TTransportKind extends string>(
-  transportKind: TTransportKind,
-) => MaybePromise<Transport<TTransportKind>>;
-
-/**
- * Creates a function that returns the transport object for the given `transports` config option
- */
-export function createTransportGetter(transports: TransportsOption): TransportGetter {
-  if (typeof transports === 'function') {
-    return transports;
-  }
-  return function getTransport<TTransportKind extends string>(
-    transportKind: TTransportKind,
-  ): Transport<TTransportKind> {
-    const transport = transports[transportKind];
-    if (!transport) {
-      throw new Error(`No transport found for ${transportKind}`);
     }
-    return transport;
+    if (!module.getSubgraphExecutor) {
+      throw new Error(
+        `@graphql-mesh/transport-${kind} module does not have a named export for the "getSubgraphExecutor" function`,
+      );
+    }
+    return module.getSubgraphExecutor;
   };
 }
 
-export function getTransportExecutor(
-  transportGetter: TransportGetter,
-  transportContext: TransportExecutorFactoryOpts,
+function createTransportExecutorFactoryGetter(
+  transportsConfig: TransportsConfig,
+  defaultTransportExecutoFactoryGetter: TransportExecutorFactoryGetter,
+): TransportExecutorFactoryGetter {
+  return async function getTransport(kind) {
+    const transportConfig =
+      typeof transportsConfig === 'function'
+        ? await transportsConfig(kind)
+        : transportsConfig[kind];
+    if (!transportConfig) {
+      throw new Error(`No transport found for ${kind}`);
+    }
+    const { getSubgraphExecutor, ...options } = transportConfig;
+    if (!getSubgraphExecutor) {
+      const defaultGetSubgraphExecutor = await defaultTransportExecutoFactoryGetter(kind);
+      return function getSubgraphExecutor(opts) {
+        return defaultGetSubgraphExecutor({
+          ...opts,
+          transportEntry: {
+            ...opts.transportEntry,
+            options: {
+              ...options,
+              ...opts.transportEntry.options,
+            },
+          },
+        });
+      };
+    }
+    return transportConfig.getSubgraphExecutor;
+  };
+}
+
+function getTransportExecutor(
+  transportExecutorFactoryGetter: TransportExecutorFactoryGetter,
+  transportContext: TransportGetSubgraphExecutorOptions,
   transportExecutorStack: AsyncDisposableStack,
 ): MaybePromise<Executor> {
-  const transportKind = transportContext.transportEntry?.kind || '';
+  const kind = transportContext.transportEntry?.kind || '';
   const subgraphName = transportContext.subgraphName || '';
-  transportContext.logger?.info(`Loading transport ${transportKind} for subgraph ${subgraphName}`);
-  return mapMaybePromise(transportGetter(transportKind), transport =>
-    mapMaybePromise(transport.getSubgraphExecutor(transportContext), executor => {
+  transportContext.logger?.info(`Loading transport ${kind} for subgraph ${subgraphName}`);
+  return mapMaybePromise(transportExecutorFactoryGetter(kind), executor =>
+    mapMaybePromise(executor(transportContext), executor => {
       if (isDisposable(executor)) {
         transportExecutorStack.use(executor);
       }
@@ -88,22 +124,24 @@ export function getTransportExecutor(
  */
 export function getOnSubgraphExecute({
   onSubgraphExecuteHooks,
-  transportBaseContext,
+  transportContext: transportBaseContext,
   transportEntryMap,
   getSubgraphSchema,
   transportExecutorStack,
-  transports = createDefaultTransportsOption(transportBaseContext?.logger),
+  transports,
 }: {
   onSubgraphExecuteHooks: OnSubgraphExecuteHook[];
-  transports?: TransportsOption;
-  transportBaseContext?: TransportBaseContext;
+  transports?: TransportsConfig;
+  transportContext?: TransportContext;
   transportEntryMap?: Record<string, TransportEntry>;
   getSubgraphSchema(subgraphName: string): GraphQLSchema;
   transportExecutorStack: AsyncDisposableStack;
 }) {
   const subgraphExecutorMap = new Map<string, Executor>();
-  const transportGetter = createTransportGetter(transports);
-
+  const transportExecutorFactoryGetter = createTransportExecutorFactoryGetter(
+    transports,
+    createDefaultTransportExecutorFactoryGetter(transportBaseContext?.logger),
+  );
   return function onSubgraphExecute(subgraphName: string, executionRequest: ExecutionRequest) {
     let executor: Executor = subgraphExecutorMap.get(subgraphName);
     // If the executor is not initialized yet, initialize it
@@ -114,7 +152,7 @@ export function getOnSubgraphExecute({
         return mapMaybePromise(
           // Gets the transport executor for the given subgraph
           getTransportExecutor(
-            transportGetter,
+            transportExecutorFactoryGetter,
             transportBaseContext
               ? {
                   ...transportBaseContext,

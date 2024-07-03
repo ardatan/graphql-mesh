@@ -5,7 +5,6 @@
     "@apollo/rover": "^0.23.0",
     "@apollo/server": "^4.10.3",
     "@apollo/subgraph": "^2.7.2",
-    "@graphql-tools/executor-graphql-ws": "^1.1.2",
     "@repeaterjs/repeater": "^3.0.6",
     "@types/express": "^4",
     "@types/ws": "^8",

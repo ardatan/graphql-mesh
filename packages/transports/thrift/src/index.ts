@@ -1,7 +1,7 @@
-import type { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
+import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
 import { getThriftExecutor } from './execution.js';
 
-export const getSubgraphExecutor: TransportExecutorFactoryFn<'thrift', never> =
+export const getSubgraphExecutor: TransportGetSubgraphExecutor<'thrift', never> =
   function getThriftSubgraphExecutor({ subgraph }) {
     return getThriftExecutor(subgraph);
   };
