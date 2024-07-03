@@ -1,6 +1,6 @@
 export default {
   index: 'Introduction',
-  node: 'Node.js',
+  nodejs: 'Node.js',
   bun: 'Bun',
   deno: 'Deno',
 };

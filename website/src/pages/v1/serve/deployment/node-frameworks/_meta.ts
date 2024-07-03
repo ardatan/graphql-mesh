@@ -6,4 +6,5 @@ export default {
   hapi: 'Hapi',
   nestjs: 'NestJS',
   uwebsockets: 'µWebSockets.js',
+  nextjs: 'Next.js',
 };
