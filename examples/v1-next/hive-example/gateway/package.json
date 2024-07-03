@@ -8,6 +8,6 @@
     "@graphql-mesh/serve-cli": "workspace:*",
     "dotenv": "^16.4.5",
     "graphql": "16.9.0",
-    "tsx": "4.16.0"
+    "tsx": "4.16.2"
   }
 }
