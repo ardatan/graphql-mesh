@@ -11,6 +11,8 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { Repeater } from '@repeaterjs/repeater';
 
+export const TOKEN = 'wowmuchsecret';
+
 const schema = buildSubgraphSchema([
   {
     typeDefs: parse(readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf8')),
@@ -63,7 +65,18 @@ const wsServer = new WebSocketServer({
   path: '/graphql',
 });
 
-const graphqlWsServer = useServer({ schema }, wsServer);
+const graphqlWsServer = useServer(
+  {
+    schema,
+    onConnect({ connectionParams }) {
+      // make sure the authorization header is propagated by the gateway
+      if (connectionParams.token !== TOKEN) {
+        return false;
+      }
+    },
+  },
+  wsServer,
+);
 
 const server = new ApolloServer({
   schema,

@@ -11,8 +11,16 @@ export const serveConfig = defineServeConfig({
 const MyPlugin: MeshServePlugin = {
   onSubgraphExecute({ executionRequest, transportEntry, setExecutor }) {
     if (executionRequest.operationType === 'subscription') {
+      const token = executionRequest.context.request?.headers?.authorization;
       const executor = buildGraphQLWSExecutor({
         url: transportEntry.location.replace('http', 'ws'),
+        connectionParams: token
+          ? {
+              // apollo federation passes the HTTP `Authorization` header through `connectionParams.token`
+              // see https://www.apollographql.com/docs/router/executing-operations/subscription-support/#websocket-auth-support
+              token,
+            }
+          : undefined,
       });
       setExecutor(executor);
     }
