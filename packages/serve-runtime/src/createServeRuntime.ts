@@ -342,12 +342,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     landingPageRenderer = false;
   }
 
-  // TODO: there is no "onRequest" invokes when using WebSockets with uWS, so we cannot set a schema for request
-  // TODO: createServeRuntime is not async, how to wait for set schema?
-  let schema: GraphQLSchema;
-  (async () => (schema = await schemaFetcher()))();
-
   const yoga = createYoga<unknown, MeshServeContext>({
+    // @ts-expect-error PromiseLike is not compatible with Promise
+    schema: schemaFetcher,
     fetchAPI: config.fetchAPI,
     logging: logger,
     plugins: [
@@ -358,11 +355,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       useChangingSchema(getSchema, cb => (schemaChanged = cb)),
       useCompleteSubscriptionsOnDispose(disposableStack),
       useCompleteSubscriptionsOnSchemaChange(),
-      {
-        onEnveloped({ setSchema }) {
-          setSchema(schema);
-        },
-      },
       ...(config.plugins?.(configContext) || []),
     ],
     // @ts-expect-error PromiseLike is not compatible with Promise

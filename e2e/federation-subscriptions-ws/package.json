@@ -9,6 +9,7 @@
     "@types/express": "^4",
     "@types/ws": "^8",
     "express": "^4.19.2",
+    "graphql-sse": "^2.5.3",
     "graphql-ws": "^5.16.0",
     "ws": "^8.17.1"
   }

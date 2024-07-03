@@ -1,6 +1,5 @@
 import path from 'path';
-import { createClient } from 'graphql-ws';
-import { WebSocket } from 'ws';
+import { createClient } from 'graphql-sse';
 import { createTenv, Service } from '@e2e/tenv';
 import { TOKEN } from './services/products/server';
 
@@ -40,19 +39,11 @@ it('should subscribe and resolve', async () => {
   await fs.write(supergraphFile, supergraph);
   const { port } = await serve({ supergraph: supergraphFile });
 
-  class AuthenticatedWebSocket extends WebSocket {
-    constructor(address, protocols) {
-      super(address, protocols, {
-        headers: {
-          Authorization: TOKEN,
-        },
-      });
-    }
-  }
-
   const client = createClient({
-    url: `ws://0.0.0.0:${port}/graphql`,
-    webSocketImpl: AuthenticatedWebSocket,
+    url: `http://0.0.0.0:${port}/graphql`,
+    headers: {
+      Authorization: TOKEN,
+    },
   });
   const sub = client.iterate({
     query: /* GraphQL */ `

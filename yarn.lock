@@ -3617,6 +3617,7 @@ __metadata:
     "@types/express": "npm:^4"
     "@types/ws": "npm:^8"
     express: "npm:^4.19.2"
+    graphql-sse: "npm:^2.5.3"
     graphql-ws: "npm:^5.16.0"
     ws: "npm:^8.17.1"
   languageName: unknown
@@ -5441,7 +5442,6 @@ __metadata:
     "@types/spinnies": "npm:^0.5.3"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
-    graphql-ws: "npm:^5.16.0"
     json-bigint-patch: "npm:^0.0.8"
     node-libcurl: "npm:^4.0.0"
     spinnies: "npm:^0.5.1"

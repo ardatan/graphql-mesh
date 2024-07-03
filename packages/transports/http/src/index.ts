@@ -62,7 +62,12 @@ export const getSubgraphExecutor: TransportGetSubgraphExecutor<'http', HTTPTrans
 
           // apollo federation passes the HTTP `Authorization` header through `connectionParams.token`
           // see https://www.apollographql.com/docs/router/executing-operations/subscription-support/#websocket-auth-support
-          const token = request.context?.request?.headers?.authorization;
+          const headers = request.context?.request?.headers;
+          let token = headers.authorization;
+          if (!token && 'get' in headers && typeof headers.get === 'function') {
+            // TODO: why do I have to do this for graphql-sse? shouldnt headers be normalised?
+            token = headers.get('authorization');
+          }
 
           // TODO: dont recreate on each execute
           return buildGraphQLWSExecutor({
