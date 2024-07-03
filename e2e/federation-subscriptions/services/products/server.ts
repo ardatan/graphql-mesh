@@ -42,7 +42,7 @@ const schema = buildSubgraphSchema([
                 if (i >= products.length) {
                   i = 0;
                 }
-              }, 1000);
+              }, 100);
 
               await stop;
 
