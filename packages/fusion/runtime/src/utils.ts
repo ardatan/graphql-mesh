@@ -19,11 +19,7 @@ import {
   type MaybePromise,
 } from '@graphql-tools/utils';
 
-export type {
-  TransportEntry,
-  TransportGetSubgraphExecutor as TransportExecutorFactoryFn,
-  TransportGetSubgraphExecutorOptions as TransportExecutorFactoryOpts,
-};
+export type { TransportEntry, TransportGetSubgraphExecutor, TransportGetSubgraphExecutorOptions };
 
 export type TransportsConfig =
   | {
