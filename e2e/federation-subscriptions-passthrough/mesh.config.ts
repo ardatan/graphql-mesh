@@ -7,7 +7,7 @@ export const serveConfig = defineConfig({
       subscriptions: {
         ws: {
           subgraphs: {
-            '*': {
+            products: {
               path: '/subscriptions',
             },
           },
