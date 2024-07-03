@@ -4219,7 +4219,7 @@ __metadata:
     "@graphql-mesh/serve-cli": "workspace:*"
     dotenv: "npm:^16.4.5"
     graphql: "npm:16.9.0"
-    tsx: "npm:4.16.0"
+    tsx: "npm:4.16.2"
   languageName: unknown
   linkType: soft
 
@@ -4230,7 +4230,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.38.4"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.6.0"
-    tsx: "npm:4.16.0"
+    tsx: "npm:4.16.2"
   languageName: unknown
   linkType: soft
 
@@ -4243,7 +4243,7 @@ __metadata:
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.1"
     graphql: "npm:16.9.0"
-    tsx: "npm:4.16.0"
+    tsx: "npm:4.16.2"
   languageName: unknown
   linkType: soft
 
@@ -33433,9 +33433,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.16.0":
-  version: 4.16.0
-  resolution: "tsx@npm:4.16.0"
+"tsx@npm:4.16.2":
+  version: 4.16.2
+  resolution: "tsx@npm:4.16.2"
   dependencies:
     esbuild: "npm:~0.21.5"
     fsevents: "npm:~2.3.3"
@@ -33445,7 +33445,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/b9afc19d40d60d13bab408800be79e3279862ead2b17dc47fadddd41cca06f25be55fcd3a033c6205fa190bb52c8485ed842593a4292246d2501a9ee3d7b0ae3
+  checksum: 10c0/9df52264f88be00ca473e7d7eda43bb038cc09028514996b864db78645e9cd297c71485f0fdd4985464d6dc46424f8bef9f8c4bd56692c4fcf4d71621ae21763
   languageName: node
   linkType: hard
 
