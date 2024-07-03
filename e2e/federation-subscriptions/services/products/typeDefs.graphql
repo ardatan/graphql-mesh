@@ -1,0 +1,13 @@
+extend type Query {
+  topProducts(first: Int = 3): [Product]
+}
+
+type Subscription {
+  productPriceChanged: Product!
+}
+
+type Product @key(fields: "id") {
+  id: ID!
+  name: String!
+  price: Int!
+}

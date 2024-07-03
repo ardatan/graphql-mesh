@@ -3606,6 +3606,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/federation-subscriptions@workspace:e2e/federation-subscriptions":
+  version: 0.0.0-use.local
+  resolution: "@e2e/federation-subscriptions@workspace:e2e/federation-subscriptions"
+  dependencies:
+    "@apollo/rover": "npm:^0.23.0"
+    "@apollo/server": "npm:^4.10.3"
+    "@apollo/subgraph": "npm:^2.7.2"
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@types/express": "npm:^4"
+    "@types/ws": "npm:^8"
+    express: "npm:^4.19.2"
+    graphql-ws: "npm:^5.16.0"
+    ws: "npm:^8.17.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions"
@@ -8851,7 +8867,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.5":
+"@repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.5, @repeaterjs/repeater@npm:^3.0.6":
   version: 3.0.6
   resolution: "@repeaterjs/repeater@npm:3.0.6"
   checksum: 10c0/c3915e2603927c7d6a9eb09673bc28fc49ab3a86947ec191a74663b33deebee2fcc4b03c31cc663ff27bd6db9e6c9487639b6935e265d601ce71b8c497f5f4a8
@@ -10314,7 +10330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*, @types/express@npm:4.17.21, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
+"@types/express@npm:*, @types/express@npm:4.17.21, @types/express@npm:^4, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -11110,7 +11126,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:8.5.10, @types/ws@npm:^8.0.0, @types/ws@npm:^8.5.5":
+"@types/ws@npm:8.5.10, @types/ws@npm:^8, @types/ws@npm:^8.0.0, @types/ws@npm:^8.5.5":
   version: 8.5.10
   resolution: "@types/ws@npm:8.5.10"
   dependencies:
@@ -18001,7 +18017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:4.19.2, express@npm:^4.16.4, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.2":
+"express@npm:4.19.2, express@npm:^4.16.4, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.2, express@npm:^4.19.2":
   version: 4.19.2
   resolution: "express@npm:4.19.2"
   dependencies:
@@ -19759,7 +19775,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:^5.12.1, graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.6.2":
+"graphql-ws@npm:^5.12.1, graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.16.0, graphql-ws@npm:^5.6.2":
   version: 5.16.0
   resolution: "graphql-ws@npm:5.16.0"
   peerDependencies:
