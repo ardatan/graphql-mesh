@@ -74,7 +74,7 @@ function createTransportExecutorFactoryGetter(
         ? await transportsConfig(kind)
         : transportsConfig?.[kind];
     if (!transportConfig) {
-      return await defaultTransportExecutoFactoryGetter(kind);
+      return defaultTransportExecutoFactoryGetter(kind);
     }
     const { getSubgraphExecutor, ...options } = transportConfig;
     if (!getSubgraphExecutor) {
