@@ -52,7 +52,7 @@ function createDefaultTransportExecutorFactoryGetter(
     } catch (err) {
       childLogger.error(err);
       throw new Error(
-        `No transport found for ${kind}. Please make sure you have installed @graphql-mesh/transport-${kind}`,
+        `No transport found for ${kind}. Please make sure you have installed @graphql-mesh/transport-${kind} or defined the transport config in "mesh.config.ts"`,
       );
     }
     if (!module.getSubgraphExecutor) {
@@ -72,9 +72,9 @@ function createTransportExecutorFactoryGetter(
     const transportConfig =
       typeof transportsConfig === 'function'
         ? await transportsConfig(kind)
-        : transportsConfig[kind];
+        : transportsConfig?.[kind];
     if (!transportConfig) {
-      throw new Error(`No transport found for ${kind}`);
+      return await defaultTransportExecutoFactoryGetter(kind);
     }
     const { getSubgraphExecutor, ...options } = transportConfig;
     if (!getSubgraphExecutor) {
