@@ -148,5 +148,5 @@ it('should recycle websocket connections', async () => {
     await setTimeout(300); // wait a bit and subscribe again (lazyCloseTimeout is 3 seconds)
   }
 
-  // the "products" service will crash if multiple websockets were connected
+  // the "products" service will crash if multiple websockets were connected breaking the loop above with an error
 });
