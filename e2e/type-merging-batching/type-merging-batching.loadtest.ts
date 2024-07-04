@@ -1,5 +1,5 @@
 import os from 'os';
-import { createTbench, Tbench, TbenchResult } from '@e2e/tbench';
+import { createTbench, type Tbench, type TbenchResult } from '@e2e/tbench';
 import { createTenv } from '@e2e/tenv';
 
 const { serve, compose, service } = createTenv(__dirname);

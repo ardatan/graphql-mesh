@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/return-await */
 import { path } from '@graphql-mesh/cross-helpers';
-import { ImportFn } from '@graphql-mesh/types';
+import type { ImportFn } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn.js';
 
 type LoadFromModuleExportExpressionOptions = {

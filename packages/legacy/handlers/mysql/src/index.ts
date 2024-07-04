@@ -1,9 +1,9 @@
-import { GraphQLSchema } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
 import type { Pool } from 'mysql';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import {
+import type { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import type {
   ImportFn,
-  Logger,
   MeshHandler,
   MeshHandlerOptions,
   MeshPubSub,

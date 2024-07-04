@@ -1,11 +1,11 @@
-import { MeshFetch } from '@graphql-mesh/types';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { loadGraphQLSchemaFromRAML } from './loadGraphQLSchemaFromRAML.js';
-import { RAMLLoaderOptions } from './types.js';
+import type { RAMLLoaderOptions } from './types.js';
 
 export { loadGraphQLSchemaFromRAML as default } from './loadGraphQLSchemaFromRAML.js';
 export * from './loadGraphQLSchemaFromRAML.js';
 export { getJSONSchemaOptionsFromRAMLOptions } from './getJSONSchemaOptionsFromRAMLOptions.js';
-export { RAMLLoaderOptions } from './types.js';
+export type { RAMLLoaderOptions } from './types.js';
 
 export function loadRAMLSubgraph(name: string, options: RAMLLoaderOptions) {
   return (ctx: { fetch: MeshFetch; cwd: string }) => ({

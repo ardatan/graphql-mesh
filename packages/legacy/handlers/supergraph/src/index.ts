@@ -1,13 +1,14 @@
-import { DocumentNode, EnumTypeDefinitionNode, parse } from 'graphql';
+import type { DocumentNode, EnumTypeDefinitionNode } from 'graphql';
+import { parse } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import type { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
-  ResolverData,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   GetMeshSourcePayload,
   ImportFn,
   Logger,
@@ -19,8 +20,10 @@ import {
 } from '@graphql-mesh/types';
 import { isUrl, readFile, readUrl } from '@graphql-mesh/utils';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
-import { SubscriptionProtocol, UrlLoader } from '@graphql-tools/url-loader';
-import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
+import type { SubscriptionProtocol } from '@graphql-tools/url-loader';
+import { UrlLoader } from '@graphql-tools/url-loader';
+import type { ExecutionRequest } from '@graphql-tools/utils';
+import { memoize1 } from '@graphql-tools/utils';
 
 export default class SupergraphHandler implements MeshHandler {
   private config: YamlConfig.Handler['supergraph'];

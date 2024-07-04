@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Plugin } from 'graphql-yoga';
-import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import type { Plugin } from 'graphql-yoga';
+import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 
 // TODO: Use Yoga PubSub later
 export interface MeshWebhooksPluginOptions {

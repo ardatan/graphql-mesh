@@ -1,4 +1,5 @@
-import { loadGraphQLSchemaFromMySQL, LoadGraphQLSchemaFromMySQLOpts } from './schema.js';
+import type { LoadGraphQLSchemaFromMySQLOpts } from './schema.js';
+import { loadGraphQLSchemaFromMySQL } from './schema.js';
 
 export * from './schema.js';
 

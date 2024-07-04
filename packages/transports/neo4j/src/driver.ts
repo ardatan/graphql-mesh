@@ -1,6 +1,7 @@
 import neo4j from 'neo4j-driver';
-import { Logger } from '@graphql-mesh/types';
-import { getAuthFromOpts, Neo4JAuthOpts } from './auth.js';
+import type { Logger } from '@graphql-mesh/types';
+import type { Neo4JAuthOpts } from './auth.js';
+import { getAuthFromOpts } from './auth.js';
 
 export interface Neo4JDriverOpts {
   endpoint: string;

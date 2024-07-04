@@ -3,7 +3,7 @@ import { DefaultLogger } from '@graphql-mesh/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations.js';
 import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema.js';
-import { JSONSchemaLoaderOptions } from './types.js';
+import type { JSONSchemaLoaderOptions } from './types.js';
 
 export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
   name: string,

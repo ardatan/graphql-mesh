@@ -1,17 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createServer } from 'node:http';
-import { AddressInfo } from 'node:net';
+import type { AddressInfo } from 'node:net';
 import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
-import { ServerOptions } from 'graphql-ws/lib/server';
+import type { ServerOptions } from 'graphql-ws/lib/server';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { YogaServerInstance } from 'graphql-yoga';
+import type { YogaServerInstance } from 'graphql-yoga';
 import { WebSocketServer } from 'ws';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import BareMerger from '@graphql-mesh/merger-bare';
 import { getMesh } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import SupergraphHandler from '@graphql-mesh/supergraph';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn as importFn, PubSub } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import {

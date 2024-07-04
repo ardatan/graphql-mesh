@@ -1,5 +1,5 @@
-import { execute, ExecutionArgs, subscribe } from 'graphql';
-import { MeshInstance } from '@graphql-mesh/runtime';
+import type { execute, ExecutionArgs, subscribe } from 'graphql';
+import type { MeshInstance } from '@graphql-mesh/runtime';
 
 export function getGraphQLWSOptions(getBuiltMesh: () => Promise<MeshInstance>) {
   // yoga's envelop may augment the `execute` and `subscribe` operations

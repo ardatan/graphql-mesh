@@ -1,7 +1,7 @@
 import os from 'os';
 import path from 'path';
-import { createTbench, Tbench, TbenchResult } from '@e2e/tbench';
-import { createTenv, Service } from '@e2e/tenv';
+import { createTbench, type Tbench, type TbenchResult } from '@e2e/tbench';
+import { createTenv, type Service } from '@e2e/tenv';
 
 const { fs, serve, service, spawn } = createTenv(__dirname);
 

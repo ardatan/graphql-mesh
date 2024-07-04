@@ -3,7 +3,7 @@ import {
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
 } from '@omnigraph/json-schema';
 import { getJSONSchemaOptionsFromRAMLOptions } from './getJSONSchemaOptionsFromRAMLOptions.js';
-import { RAMLLoaderOptions } from './types.js';
+import type { RAMLLoaderOptions } from './types.js';
 
 export async function loadGraphQLSchemaFromRAML(name: string, options: RAMLLoaderOptions) {
   const extraJSONSchemaOptions = await getJSONSchemaOptionsFromRAMLOptions(options);

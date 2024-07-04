@@ -1,10 +1,11 @@
-import { ExecutionResult, GraphQLSchema } from 'graphql';
-import { createHive, HiveClient, HivePluginOptions } from '@graphql-hive/client';
+import type { ExecutionResult, GraphQLSchema } from 'graphql';
+import type { HiveClient, HivePluginOptions } from '@graphql-hive/client';
+import { createHive } from '@graphql-hive/client';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { DelegationContext } from '@graphql-tools/delegate';
-import { ExecutionRequest } from '@graphql-tools/utils';
+import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { DelegationContext } from '@graphql-tools/delegate';
+import type { ExecutionRequest } from '@graphql-tools/utils';
 
 interface TransformationContext {
   collectUsageCallback: ReturnType<HiveClient['collectUsage']>;

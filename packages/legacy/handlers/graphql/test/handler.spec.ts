@@ -3,7 +3,7 @@
 /* eslint-disable import/no-nodejs-modules */
 import { promises as fsPromises } from 'fs';
 import { createServer, Server } from 'http';
-import { AddressInfo, Socket } from 'net';
+import { Socket, type AddressInfo } from 'net';
 import { join } from 'path';
 import { buildASTSchema, buildSchema, introspectionFromSchema, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';

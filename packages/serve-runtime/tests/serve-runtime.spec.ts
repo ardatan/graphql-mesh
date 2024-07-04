@@ -1,20 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createServer } from 'http';
-import { AddressInfo } from 'net';
+import type { AddressInfo } from 'net';
 import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import {
   buildClientSchema,
   buildSchema,
-  ExecutionResult,
   getIntrospectionQuery,
   GraphQLSchema,
   introspectionFromSchema,
-  IntrospectionQuery,
   printSchema,
+  type ExecutionResult,
+  type IntrospectionQuery,
 } from 'graphql';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
-import { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';

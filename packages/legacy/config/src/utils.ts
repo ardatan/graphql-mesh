@@ -1,7 +1,7 @@
 import { paramCase } from 'param-case';
 import { path } from '@graphql-mesh/cross-helpers';
-import { MeshStore } from '@graphql-mesh/store';
-import {
+import type { MeshStore } from '@graphql-mesh/store';
+import type {
   ImportFn,
   KeyValueCache,
   Logger,
@@ -13,7 +13,8 @@ import { DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
-import { Source as GraphQLToolsSource, printSchemaWithDirectives } from '@graphql-tools/utils';
+import type { Source as GraphQLToolsSource } from '@graphql-tools/utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { crypto, fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
 
 type ResolvedPackage<T> = {

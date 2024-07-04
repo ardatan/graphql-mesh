@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
+import type { GraphQLObjectType, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
 import { createGraphQLError, getDirective } from '@graphql-tools/utils';
 
 export function getTypeResolverForAbstractType({

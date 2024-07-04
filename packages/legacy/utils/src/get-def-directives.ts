@@ -1,6 +1,7 @@
-import { GraphQLSchema, valueFromASTUntyped } from 'graphql';
-import type { ASTNode } from 'graphql';
-import { DirectiveAnnotation, getArgumentValues } from '@graphql-tools/utils';
+import { valueFromASTUntyped } from 'graphql';
+import type { ASTNode, GraphQLSchema } from 'graphql';
+import type { DirectiveAnnotation } from '@graphql-tools/utils';
+import { getArgumentValues } from '@graphql-tools/utils';
 
 export function getDefDirectives(
   schema: GraphQLSchema,

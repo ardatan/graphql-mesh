@@ -2,12 +2,13 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { tmpdir } from 'os';
 import pg from 'pg';
-import { Plugin, withPostGraphileContext } from 'postgraphile';
+import type { Plugin } from 'postgraphile';
+import { withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   ImportFn,
   Logger,
   MeshHandler,

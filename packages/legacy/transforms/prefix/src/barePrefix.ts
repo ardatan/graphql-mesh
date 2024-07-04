@@ -1,11 +1,11 @@
-import {
+import type {
   GraphQLAbstractType,
   GraphQLFieldConfig,
   GraphQLNamedType,
   GraphQLSchema,
-  isSpecifiedScalarType,
 } from 'graphql';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { isSpecifiedScalarType } from 'graphql';
+import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 import { ignoreList as defaultIgnoreList } from './shared.js';
 

@@ -1,8 +1,9 @@
-import { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema, parse, visit } from 'graphql';
+import type { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema } from 'graphql';
+import { parse, visit } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
-import { Driver } from 'neo4j-driver';
-import { DisposableExecutor } from '@graphql-mesh/transport-common';
-import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import type { Driver } from 'neo4j-driver';
+import type { DisposableExecutor } from '@graphql-mesh/transport-common';
+import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { asArray, getDocumentNodeFromSchema } from '@graphql-tools/utils';

@@ -1,17 +1,14 @@
-import { GraphQLSchema, Kind, OperationTypeNode } from 'graphql';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { GraphQLSchema, OperationTypeNode } from 'graphql';
+import { Kind } from 'graphql';
+import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
   applyResultTransforms,
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
-import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import {
-  ExecutionRequest,
-  ExecutionResult,
-  getRootTypeMap,
-  selectObjectFields,
-} from '@graphql-tools/utils';
+import type { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import type { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import { getRootTypeMap, selectObjectFields } from '@graphql-tools/utils';
 import { WrapType } from '@graphql-tools/wrap';
 
 const OPERATION_TYPE_SUFFIX_MAP = {

@@ -1,4 +1,4 @@
-import { FragmentDefinitionNode, SelectionSetNode } from 'graphql';
+import type { FragmentDefinitionNode, SelectionSetNode } from 'graphql';
 
 export function projectResultBySelectionSet({
   result,

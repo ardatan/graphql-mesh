@@ -1,11 +1,8 @@
-import { GraphQLSchema } from 'graphql';
-import {
-  getOnSubgraphExecute,
-  OnSubgraphExecuteHook,
-  TransportEntry,
-} from '@graphql-mesh/fusion-runtime';
-import { Executor } from '@graphql-tools/utils';
-import { MeshServeConfigContext, MeshServeConfigWithProxy } from './types.js';
+import type { GraphQLSchema } from 'graphql';
+import type { OnSubgraphExecuteHook, TransportEntry } from '@graphql-mesh/fusion-runtime';
+import { getOnSubgraphExecute } from '@graphql-mesh/fusion-runtime';
+import type { Executor } from '@graphql-tools/utils';
+import type { MeshServeConfigContext, MeshServeConfigWithProxy } from './types.js';
 
 export function getProxyExecutor<TContext>({
   config,

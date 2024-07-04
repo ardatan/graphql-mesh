@@ -5,7 +5,7 @@ import { createSchema, createYoga, Repeater } from 'graphql-yoga';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
-import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
+import { getMesh, type GetMeshOptions } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 

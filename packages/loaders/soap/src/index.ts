@@ -1,4 +1,4 @@
-import { Logger, MeshFetch } from '@graphql-mesh/types';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
 import { SOAPLoader } from './SOAPLoader.js';
 

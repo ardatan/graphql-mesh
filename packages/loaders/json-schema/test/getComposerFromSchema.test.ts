@@ -30,12 +30,12 @@ import {
   GraphQLTime,
   GraphQLURL,
 } from 'graphql-scalars';
-import { JSONSchemaObject } from 'json-machete';
+import type { JSONSchemaObject } from 'json-machete';
 import { processDirectives, processScalarType } from '@graphql-mesh/transport-rest';
-import { MeshPubSub } from '@graphql-mesh/types';
+import type { MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { JSONSchema } from '@json-schema-tools/meta-schema';
+import type { JSONSchema } from '@json-schema-tools/meta-schema';
 import { fetch } from '@whatwg-node/fetch';
 import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema.js';
 

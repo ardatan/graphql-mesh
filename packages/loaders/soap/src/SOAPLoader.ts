@@ -1,25 +1,24 @@
 import { XMLParser } from 'fast-xml-parser';
+import type { GraphQLScalarType } from 'graphql';
 import {
   DirectiveLocation,
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLFloat,
   GraphQLInt,
-  GraphQLScalarType,
   GraphQLString,
 } from 'graphql';
-import {
+import type {
   AnyTypeComposer,
   EnumTypeComposer,
   EnumTypeComposerValueConfigDefinition,
-  GraphQLJSON,
   InputTypeComposer,
   InputTypeComposerFieldConfigMapDefinition,
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfigDefinition,
   ScalarTypeComposer,
-  SchemaComposer,
 } from 'graphql-compose';
+import { GraphQLJSON, SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
   GraphQLByte,
@@ -38,14 +37,12 @@ import {
   RegularExpression,
 } from 'graphql-scalars';
 import { process } from '@graphql-mesh/cross-helpers';
-import {
-  getInterpolatedHeadersFactory,
-  ResolverDataBasedFactory,
-} from '@graphql-mesh/string-interpolation';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
+import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import { DefaultLogger, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
-import {
+import type {
   WSDLBinding,
   WSDLDefinition,
   WSDLMessage,
@@ -60,7 +57,8 @@ import {
   XSSchema,
   XSSimpleType,
 } from './types.js';
-import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
+import type { SoapAnnotations } from './utils.js';
+import { PARSE_XML_OPTIONS } from './utils.js';
 
 export interface SOAPLoaderOptions {
   subgraphName: string;

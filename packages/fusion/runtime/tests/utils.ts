@@ -6,7 +6,7 @@ import {
   printSchema,
   validate,
 } from 'graphql';
-import { getUnifiedGraphGracefully, SubgraphConfig } from '@graphql-mesh/fusion-composition';
+import { getUnifiedGraphGracefully, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { isAsyncIterable } from '@graphql-tools/utils';

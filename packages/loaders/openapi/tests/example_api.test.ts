@@ -10,7 +10,7 @@ import {
 } from 'graphql';
 import 'json-bigint-patch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { OpenAPILoaderOptions } from '../src/index.js';
+import type { OpenAPILoaderOptions } from '../src/index.js';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { exampleApi } from './example_api_server.js';
 

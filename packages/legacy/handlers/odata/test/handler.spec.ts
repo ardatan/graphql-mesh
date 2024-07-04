@@ -1,9 +1,9 @@
-import { ExecutionResult, GraphQLInterfaceType, parse, printSchema } from 'graphql';
+import { GraphQLInterfaceType, parse, printSchema, type ExecutionResult } from 'graphql';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { KeyValueCache, Logger, MeshPubSub } from '@graphql-mesh/types';
+import type { KeyValueCache, Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';

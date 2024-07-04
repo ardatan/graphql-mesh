@@ -1,5 +1,5 @@
-import { GraphQLSchema } from 'graphql';
-import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import type { GraphQLSchema } from 'graphql';
+import type { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import type { Executor } from '@graphql-tools/utils';
 
 export type TransportEntry<TTransportKind extends string = string, TTransportOptions = any> = {

@@ -1,6 +1,8 @@
-import { buildSchema, GraphQLSchema } from 'graphql';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import {
+import type { GraphQLSchema } from 'graphql';
+import { buildSchema } from 'graphql';
+import type { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import type {
   GetMeshSourcePayload,
   ImportFn,
   Logger,

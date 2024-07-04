@@ -1,4 +1,8 @@
-import { IMethodAnnotations, IThriftAnnotations, TType } from '@creditkarma/thrift-server-core';
+import type {
+  IMethodAnnotations,
+  IThriftAnnotations,
+  TType,
+} from '@creditkarma/thrift-server-core';
 
 export type TypeVal =
   | BaseTypeVal

@@ -3,7 +3,7 @@ import { execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import ResolversCompositionTransform, { ResolversComposition } from '../src/index.js';
+import ResolversCompositionTransform, { type ResolversComposition } from '../src/index.js';
 
 describe('transform', () => {
   const baseDir: string = undefined;

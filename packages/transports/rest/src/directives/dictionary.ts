@@ -1,4 +1,4 @@
-import { GraphQLField } from 'graphql';
+import type { GraphQLField } from 'graphql';
 
 export function processDictionaryDirective(
   fieldMap: Record<string, GraphQLField<any, any>>,

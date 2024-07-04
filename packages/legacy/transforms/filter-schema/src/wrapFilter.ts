@@ -1,13 +1,14 @@
-import { GraphQLSchema } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
 import { Minimatch } from 'minimatch';
-import { YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
   applyResultTransforms,
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
-import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionRequest, ExecutionResult, MapperKind, mapSchema } from '@graphql-tools/utils';
+import type { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import type { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   FilterInputObjectFields,
   FilterInterfaceFields,

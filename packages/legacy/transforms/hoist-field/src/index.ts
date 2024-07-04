@@ -1,12 +1,12 @@
-import { GraphQLSchema } from 'graphql';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { GraphQLSchema } from 'graphql';
+import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
   applyResultTransforms,
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
-import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import type { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import type { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
 import { HoistField } from '@graphql-tools/wrap';
 
 type HoistFieldCtorPathConfigItem = ConstructorParameters<typeof HoistField>[1][0];

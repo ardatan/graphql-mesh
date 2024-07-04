@@ -1,13 +1,14 @@
 import { isAsyncIterable, type Plugin as YogaPlugin } from 'graphql-yoga';
-import { register as defaultRegistry, Registry } from 'prom-client';
-import { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import type { Registry } from 'prom-client';
+import { register as defaultRegistry } from 'prom-client';
+import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
-import {
+import type {
+  ImportFn,
   Logger,
+  MeshFetchRequestInit,
   MeshPlugin,
-  type ImportFn,
-  type MeshFetchRequestInit,
-  type OnDelegateHookPayload,
+  OnDelegateHookPayload,
 } from '@graphql-mesh/types';
 import {
   defaultImportFn,
@@ -29,15 +30,8 @@ import {
   usePrometheus,
 } from '@graphql-yoga/plugin-prometheus';
 
-export {
-  CounterAndLabels,
-  FillLabelsFnParams,
-  HistogramAndLabels,
-  SummaryAndLabels,
-  createCounter,
-  createHistogram,
-  createSummary,
-};
+export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryAndLabels };
+export { createCounter, createHistogram, createSummary };
 
 type MeshMetricsConfig = {
   delegation?:

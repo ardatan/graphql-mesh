@@ -1,6 +1,6 @@
 import { inspect } from 'cross-inspect';
 import toJsonSchema from 'to-json-schema';
-import { JSONSchema, JSONSchemaObject } from './types.js';
+import type { JSONSchema, JSONSchemaObject } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);

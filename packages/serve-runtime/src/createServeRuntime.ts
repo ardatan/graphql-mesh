@@ -1,31 +1,33 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
 import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
-import { GraphQLSchema, parse } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
+import { parse } from 'graphql';
 import {
   createYoga,
-  FetchAPI,
-  GraphiQLOptions,
   isAsyncIterable,
-  LandingPageRenderer,
   useReadinessCheck,
-  YogaServerInstance,
+  type FetchAPI,
+  type LandingPageRenderer,
   type Plugin,
+  type YogaServerInstance,
 } from 'graphql-yoga';
-import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
+import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
 import { createSupergraphSDLFetcher } from '@graphql-hive/client';
 import { process } from '@graphql-mesh/cross-helpers';
+import type {
+  OnSubgraphExecuteHook,
+  TransportEntry,
+  UnifiedGraphManagerOptions,
+} from '@graphql-mesh/fusion-runtime';
 import {
   handleFederationSupergraph,
   isDisposable,
-  OnSubgraphExecuteHook,
-  TransportEntry,
   UnifiedGraphManager,
-  UnifiedGraphManagerOptions,
 } from '@graphql-mesh/fusion-runtime';
 import useMeshHive from '@graphql-mesh/plugin-hive';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
+import type { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
@@ -34,11 +36,11 @@ import {
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import { MaybePromise } from '@graphql-tools/utils';
+import type { MaybePromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
-import {
+import type {
   MeshServeConfig,
   MeshServeConfigContext,
   MeshServeContext,

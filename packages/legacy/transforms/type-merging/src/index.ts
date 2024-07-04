@@ -1,6 +1,11 @@
-import { GraphQLSchema } from 'graphql';
-import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { SubschemaConfig } from '@graphql-tools/delegate';
+import type { GraphQLSchema } from 'graphql';
+import type {
+  ImportFn,
+  MeshTransform,
+  MeshTransformOptions,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import type { SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 export default class TypeMerging implements MeshTransform {

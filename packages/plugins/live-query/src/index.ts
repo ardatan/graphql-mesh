@@ -1,8 +1,8 @@
-import { Plugin } from '@envelop/core';
+import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import {
   defaultResourceIdentifierNormalizer,

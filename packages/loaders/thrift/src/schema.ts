@@ -1,41 +1,43 @@
+import type {
+  GraphQLEnumValueConfigMap,
+  GraphQLFieldConfigArgumentMap,
+  GraphQLFieldConfigMap,
+  GraphQLInputType,
+  GraphQLOutputType,
+} from 'graphql';
 import {
   DirectiveLocation,
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLEnumType,
-  GraphQLEnumValueConfigMap,
-  GraphQLFieldConfigArgumentMap,
-  GraphQLFieldConfigMap,
   GraphQLFloat,
   GraphQLInputObjectType,
-  GraphQLInputType,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLOutputType,
   GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
 import { GraphQLBigInt, GraphQLByte, GraphQLJSON, GraphQLVoid } from 'graphql-scalars';
-import {
+import type {
   Comment,
   FunctionType,
   IncludeDefinition,
-  parse,
-  SyntaxType,
   ThriftDocument,
 } from '@creditkarma/thrift-parser';
-import { IMethodAnnotations, IThriftAnnotations, TType } from '@creditkarma/thrift-server-core';
+import { parse, SyntaxType } from '@creditkarma/thrift-parser';
+import type { IMethodAnnotations, IThriftAnnotations } from '@creditkarma/thrift-server-core';
+import { TType } from '@creditkarma/thrift-server-core';
 import { path } from '@graphql-mesh/cross-helpers';
-import {
+import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
   TypeMap,
   TypeVal,
 } from '@graphql-mesh/transport-thrift';
-import { ImportFn, Logger } from '@graphql-mesh/types';
+import type { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
 
 export interface GraphQLThriftLoaderOptions {

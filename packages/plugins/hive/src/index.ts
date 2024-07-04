@@ -1,7 +1,8 @@
-import { createHive, HivePluginOptions, useYogaHive } from '@graphql-hive/client';
+import type { HivePluginOptions } from '@graphql-hive/client';
+import { createHive, useYogaHive } from '@graphql-hive/client';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 
 export default function useMeshHive(
   pluginOptions: YamlConfig.HivePlugin & {

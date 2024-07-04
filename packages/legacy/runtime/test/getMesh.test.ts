@@ -6,12 +6,12 @@ import JsonSchemaHandler from '@graphql-mesh/json-schema';
 import BareMerger from '@graphql-mesh/merger-bare';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { getMesh } from '../src/get-mesh.js';
-import { MeshResolvedSource } from '../src/types.js';
+import type { MeshResolvedSource } from '../src/types.js';
 
 describe('getMesh', () => {
   const baseDir = __dirname;

@@ -1,4 +1,4 @@
-import { X2jOptions } from 'fast-xml-parser';
+import type { X2jOptions } from 'fast-xml-parser';
 
 export interface SoapAnnotations {
   subgraph: string;

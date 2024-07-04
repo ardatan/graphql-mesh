@@ -1,10 +1,4 @@
-import {
-  ASTNode,
-  ConstDirectiveNode,
-  GraphQLError,
-  valueFromASTUntyped,
-  type GraphQLSchema,
-} from 'graphql';
+import type { GraphQLError, GraphQLSchema } from 'graphql';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
   getDirectiveExtensions,
@@ -12,9 +6,9 @@ import {
   getRootFieldsWithArgs,
   projectResultBySelectionSet,
 } from '@graphql-mesh/utils';
-import { ExecutionRequest, ExecutionResult, Executor, getRootTypeMap } from '@graphql-tools/utils';
+import type { ExecutionRequest, ExecutionResult, Executor } from '@graphql-tools/utils';
+import { getRootTypeMap } from '@graphql-tools/utils';
 import { createGraphQLThriftClient } from './client.js';
-import { GraphQLThriftAnnotations } from './types.js';
 
 export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   const schemaDefDirectives = getDirectiveExtensions(subgraph);

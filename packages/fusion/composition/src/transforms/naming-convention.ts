@@ -13,14 +13,14 @@ import {
 } from 'change-case';
 import {
   getNamedType,
-  GraphQLFieldConfigArgumentMap,
   isEnumType,
   isSpecifiedScalarType,
+  type GraphQLFieldConfigArgumentMap,
   type GraphQLSchema,
 } from 'graphql';
 import { resolvers } from 'graphql-scalars';
-import { MapperKind, mapSchema, SchemaMapper } from '@graphql-tools/utils';
-import { SubgraphTransform } from '../compose.js';
+import { MapperKind, mapSchema, type SchemaMapper } from '@graphql-tools/utils';
+import type { SubgraphTransform } from '../compose.js';
 
 function isFromGraphQLScalars(name: string) {
   return Object.keys(resolvers).includes(name);

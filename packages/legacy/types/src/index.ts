@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
-import { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
+import type { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
+import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { Plugin } from '@envelop/core';
-import { MeshStore } from '@graphql-mesh/store';
+import type { MeshStore } from '@graphql-mesh/store';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
-import {
+import type {
   CreateProxyingResolverFn,
   IDelegateToSchemaOptions,
   MergedTypeConfig,
   SubschemaConfig,
   Transform,
 } from '@graphql-tools/delegate';
-import { Executor, IResolvers, MaybePromise } from '@graphql-tools/utils';
-import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import type { Executor, IResolvers, MaybePromise } from '@graphql-tools/utils';
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import * as YamlConfig from './config.js';
 
 export { jsonSchema } from './config-schema.js';

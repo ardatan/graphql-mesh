@@ -1,4 +1,5 @@
-import { GraphQLThriftLoaderOptions, loadNonExecutableGraphQLSchemaFromIDL } from './schema.js';
+import type { GraphQLThriftLoaderOptions } from './schema.js';
+import { loadNonExecutableGraphQLSchemaFromIDL } from './schema.js';
 
 export function loadThriftSubgraph(
   name: string,

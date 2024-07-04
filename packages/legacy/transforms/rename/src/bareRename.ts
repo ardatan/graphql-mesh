@@ -1,10 +1,6 @@
-import {
-  defaultFieldResolver,
-  GraphQLAbstractType,
-  GraphQLFieldConfig,
-  GraphQLSchema,
-} from 'graphql';
-import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
+import type { GraphQLAbstractType, GraphQLFieldConfig, GraphQLSchema } from 'graphql';
+import { defaultFieldResolver } from 'graphql';
+import type { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 import { ignoreList } from './shared.js';
 

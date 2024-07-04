@@ -1,4 +1,4 @@
-import { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
+import type { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
 import { getMySQLExecutor } from './execution.js';
 
 export * from './types.js';

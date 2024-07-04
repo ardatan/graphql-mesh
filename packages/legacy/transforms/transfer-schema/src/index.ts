@@ -1,11 +1,7 @@
-import {
-  GraphQLArgumentConfig,
-  GraphQLFieldConfig,
-  GraphQLObjectType,
-  GraphQLSchema,
-} from 'graphql';
+import type { GraphQLArgumentConfig, GraphQLFieldConfig, GraphQLSchema } from 'graphql';
+import { GraphQLObjectType } from 'graphql';
 import micromatch from 'micromatch';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, pruneSchema } from '@graphql-tools/utils';
 
 export default class TransferSchemaTransform implements MeshTransform {

@@ -1,6 +1,7 @@
-import { GraphQLResolveInfo } from 'graphql';
-import { isAsyncIterable, Path } from '@envelop/core';
-import { MeshPlugin } from '@graphql-mesh/types';
+import type { GraphQLResolveInfo } from 'graphql';
+import type { Path } from '@envelop/core';
+import { isAsyncIterable } from '@envelop/core';
+import type { MeshPlugin } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 
 export interface MeshFetchHTTPInformation {

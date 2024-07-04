@@ -1,18 +1,15 @@
-import {
-  getNamedType,
+import type {
   GraphQLField,
   GraphQLFieldConfigArgumentMap,
   GraphQLInterfaceType,
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLSchema,
-  isInterfaceType,
-  isObjectType,
-  isOutputType,
 } from 'graphql';
+import { getNamedType, isInterfaceType, isObjectType, isOutputType } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { TransformValidationError } from './utils.js';
 
 export interface CreateHoistFieldTransformOpts {

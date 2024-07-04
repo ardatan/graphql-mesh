@@ -1,18 +1,16 @@
 import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
-import { buildASTSchema, buildSchema, DocumentNode, GraphQLSchema, isSchema } from 'graphql';
+import type { DocumentNode, GraphQLSchema } from 'graphql';
+import { buildASTSchema, buildSchema, isSchema } from 'graphql';
 import { getInContextSDK } from '@graphql-mesh/runtime';
-import { TransportBaseContext, TransportEntry } from '@graphql-mesh/transport-common';
-import { OnDelegateHook } from '@graphql-mesh/types';
+import type { TransportBaseContext, TransportEntry } from '@graphql-mesh/transport-common';
+import type { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
-import { SubschemaConfig } from '@graphql-tools/delegate';
-import { IResolvers, isDocumentNode, MaybePromise, TypeSource } from '@graphql-tools/utils';
+import type { SubschemaConfig } from '@graphql-tools/delegate';
+import type { IResolvers, MaybePromise, TypeSource } from '@graphql-tools/utils';
+import { isDocumentNode } from '@graphql-tools/utils';
 import { compareSubgraphNames, handleFederationSupergraph } from './federation.js';
-import {
-  compareSchemas,
-  getOnSubgraphExecute,
-  OnSubgraphExecuteHook,
-  TransportsOption,
-} from './utils.js';
+import type { OnSubgraphExecuteHook, TransportsOption } from './utils.js';
+import { compareSchemas, getOnSubgraphExecute } from './utils.js';
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   if (isSchema(source)) {

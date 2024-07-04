@@ -2,7 +2,7 @@
 import { promises } from 'fs';
 import { join } from 'path';
 import { printSchema } from 'graphql';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import { fetch } from '@whatwg-node/fetch';
 import { SOAPLoader } from '../src/index.js';
 

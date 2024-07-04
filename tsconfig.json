@@ -24,6 +24,8 @@
     "strictNullChecks": false, // TODO: fix
     "strictPropertyInitialization": false, // TODO: fix (goes together with strictNullChecks)
 
+    "verbatimModuleSyntax": true,
+
     "paths": {
       "@graphql-mesh/cli": ["packages/legacy/cli/src/index.ts"],
       "@graphql-mesh/runtime": ["packages/legacy/runtime/src/index.ts"],

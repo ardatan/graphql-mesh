@@ -1,4 +1,5 @@
-import { createDefaultExecutor, TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
+import type { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
+import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import { processDirectives, type ProcessDirectiveArgs } from './directives/process.js';
 
 export interface RESTTransportOptions {

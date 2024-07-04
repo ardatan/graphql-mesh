@@ -8,11 +8,11 @@ import { promises as fsPromises } from 'fs';
 import { isAbsolute, join, resolve } from 'path';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { getComposedSchemaFromConfig } from './getComposedSchemaFromConfig.js';
-import { MeshComposeCLIConfig } from './types.js';
+import type { MeshComposeCLIConfig } from './types.js';
 
 let program = new Command()
   .addOption(

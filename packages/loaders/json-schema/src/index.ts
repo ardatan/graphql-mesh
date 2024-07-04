@@ -1,9 +1,9 @@
-import { MeshFetch } from '@graphql-mesh/types';
+import type { MeshFetch } from '@graphql-mesh/types';
 import {
   loadGraphQLSchemaFromJSONSchemas,
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
 } from './loadGraphQLSchemaFromJSONSchemas.js';
-import { JSONSchemaLoaderOptions } from './types.js';
+import type { JSONSchemaLoaderOptions } from './types.js';
 
 export default loadGraphQLSchemaFromJSONSchemas;
 export * from './loadGraphQLSchemaFromJSONSchemas.js';

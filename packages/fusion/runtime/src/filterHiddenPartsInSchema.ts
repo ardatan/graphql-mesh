@@ -1,6 +1,8 @@
-import { GraphQLSchema, isNamedType } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
+import { isNamedType } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
-import { DirectableGraphQLObject, MapperKind, mapSchema } from '@graphql-tools/utils';
+import type { DirectableGraphQLObject } from '@graphql-tools/utils';
+import { MapperKind, mapSchema } from '@graphql-tools/utils';
 
 function isHidden(directableObj: DirectableGraphQLObject) {
   const directiveExtensions = getDirectiveExtensions(directableObj);
