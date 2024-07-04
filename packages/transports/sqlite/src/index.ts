@@ -1,5 +1,5 @@
-import { createDefaultExecutor, Transport } from '@graphql-mesh/transport-common';
-import { GraphQLSQLiteLoaderOpts, loadGraphQLSchemaFromOptions } from '@omnigraph/sqlite';
+import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
+import { loadGraphQLSchemaFromOptions, type GraphQLSQLiteLoaderOpts } from '@omnigraph/sqlite';
 
 export interface SQLiteTransportOptions {
   type: 'infile' | 'db';
