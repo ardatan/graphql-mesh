@@ -1,15 +1,13 @@
 import path from 'path';
 import { setTimeout } from 'timers/promises';
 import { createClient } from 'graphql-sse';
-import { createTenv, type Service } from '@e2e/tenv';
+import { createTenv } from '@e2e/tenv';
 import { TOKEN } from './services/products/server';
 
 const { fs, spawn, service, serve } = createTenv(__dirname);
 
-let services!: Service[];
-let supergraph!: string;
-beforeAll(async () => {
-  services = [await service('products'), await service('reviews')];
+async function startServicesAndCreateSupergraphFile() {
+  const services = [await service('products'), await service('reviews')];
 
   const supergraphConfig = {
     federation_version: '2',
@@ -32,12 +30,13 @@ beforeAll(async () => {
   );
   await waitForExit;
 
-  supergraph = proc.getStd('out');
-});
+  const supergraphFile = await fs.tempfile('supergraph.graphql');
+  await fs.write(supergraphFile, proc.getStd('out'));
+  return supergraphFile;
+}
 
 it('should subscribe and resolve', async () => {
-  const supergraphFile = await fs.tempfile('supergraph.graphql');
-  await fs.write(supergraphFile, supergraph);
+  const supergraphFile = await startServicesAndCreateSupergraphFile();
   const { port } = await serve({ supergraph: supergraphFile });
 
   const client = createClient({
@@ -120,8 +119,7 @@ it('should subscribe and resolve', async () => {
 });
 
 it('should recycle websocket connections', async () => {
-  const supergraphFile = await fs.tempfile('supergraph.graphql');
-  await fs.write(supergraphFile, supergraph);
+  const supergraphFile = await startServicesAndCreateSupergraphFile();
   const { port } = await serve({ supergraph: supergraphFile });
 
   const client = createClient({
