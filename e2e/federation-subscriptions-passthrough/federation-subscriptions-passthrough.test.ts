@@ -42,6 +42,7 @@ it('should subscribe and resolve', async () => {
 
   const client = createClient({
     url: `http://0.0.0.0:${port}/graphql`,
+    retryAttempts: 0,
     headers: {
       Authorization: TOKEN,
     },
@@ -125,6 +126,7 @@ it.only('should recycle websocket connections', async () => {
 
   const client = createClient({
     url: `http://0.0.0.0:${port}/graphql`,
+    retryAttempts: 0,
     headers: {
       Authorization: TOKEN,
     },
