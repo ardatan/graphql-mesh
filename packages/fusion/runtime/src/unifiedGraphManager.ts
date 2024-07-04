@@ -73,6 +73,7 @@ export class UnifiedGraphManager<TContext> {
   private initialUnifiedGraph$: MaybePromise<void>;
   private disposableStack = new AsyncDisposableStack();
   private _transportEntryMap: Record<string, TransportEntry>;
+  private _transportExecutorStack: AsyncDisposableStack;
   constructor(private opts: UnifiedGraphManagerOptions<TContext>) {
     this.handleUnifiedGraph = opts.handleUnifiedGraph || handleFederationSupergraph;
     this.onSubgraphExecuteHooks = opts?.onSubgraphExecuteHooks || [];
@@ -127,6 +128,11 @@ export class UnifiedGraphManager<TContext> {
         if (this.lastLoadedUnifiedGraph != null) {
           this.opts.transportBaseContext?.logger?.debug('Unified Graph changed, updating...');
         }
+        let cleanupJob$: Promise<void>;
+        if (this._transportExecutorStack) {
+          cleanupJob$ = this._transportExecutorStack.disposeAsync();
+        }
+        this._transportExecutorStack = new AsyncDisposableStack();
         this.lastLoadedUnifiedGraph ||= loadedUnifiedGraph;
         this.lastLoadedUnifiedGraph = loadedUnifiedGraph;
         this.unifiedGraph = ensureSchema(loadedUnifiedGraph);
@@ -156,7 +162,7 @@ export class UnifiedGraphManager<TContext> {
             }
             return subgraph.schema;
           },
-          disposableStack: this.disposableStack,
+          transportExecutorStack: this._transportExecutorStack,
         });
         if (this.opts.additionalResolvers || additionalResolvers.length) {
           this.inContextSDK = getInContextSDK(
@@ -169,6 +175,7 @@ export class UnifiedGraphManager<TContext> {
         }
         this.continuePolling();
         this._transportEntryMap = transportEntryMap;
+        return cleanupJob$;
       },
     );
   }

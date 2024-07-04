@@ -67,7 +67,7 @@ export function createTransportGetter(transports: TransportsOption): TransportGe
 export function getTransportExecutor(
   transportGetter: TransportGetter,
   transportContext: TransportExecutorFactoryOpts,
-  disposableStack: AsyncDisposableStack,
+  transportExecutorStack: AsyncDisposableStack,
 ): MaybePromise<Executor> {
   const transportKind = transportContext.transportEntry?.kind || '';
   const subgraphName = transportContext.subgraphName || '';
@@ -75,7 +75,7 @@ export function getTransportExecutor(
   return mapMaybePromise(transportGetter(transportKind), transport =>
     mapMaybePromise(transport.getSubgraphExecutor(transportContext), executor => {
       if (isDisposable(executor)) {
-        disposableStack.use(executor);
+        transportExecutorStack.use(executor);
       }
       return executor;
     }),
@@ -91,7 +91,7 @@ export function getOnSubgraphExecute({
   transportBaseContext,
   transportEntryMap,
   getSubgraphSchema,
-  disposableStack,
+  transportExecutorStack,
   transports = createDefaultTransportsOption(transportBaseContext?.logger),
 }: {
   onSubgraphExecuteHooks: OnSubgraphExecuteHook[];
@@ -99,7 +99,7 @@ export function getOnSubgraphExecute({
   transportBaseContext?: TransportBaseContext;
   transportEntryMap?: Record<string, TransportEntry>;
   getSubgraphSchema(subgraphName: string): GraphQLSchema;
-  disposableStack: AsyncDisposableStack;
+  transportExecutorStack: AsyncDisposableStack;
 }) {
   const subgraphExecutorMap = new Map<string, Executor>();
   const transportGetter = createTransportGetter(transports);
@@ -135,7 +135,7 @@ export function getOnSubgraphExecute({
                   },
                   subgraphName,
                 },
-            disposableStack,
+            transportExecutorStack,
           ),
           executor_ => {
             // Wraps the transport executor with hooks
