@@ -23,7 +23,6 @@ export function useChangingSchema(
           if (!currentSchema) {
             // only if the schema is not already set do we want to get it
             const schema = await getSchema();
-            currentSchema = schema;
             schemaByRequest.set(request, schema);
           }
         },
@@ -31,10 +30,11 @@ export function useChangingSchema(
     },
     onEnveloped({ context, setSchema }) {
       const schema = context?.request && schemaByRequest.get(context.request);
-      if (schema && schema !== currentSchema) {
+      if (schema && currentSchema !== schema) {
         // the schema will be available in the request only if schemaChanged was never invoked
         // also avoid setting the schema multiple times by checking whether it was already set
         setSchema(schema);
+        currentSchema = schema;
       }
     },
   };

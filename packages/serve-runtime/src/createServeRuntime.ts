@@ -87,7 +87,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
   let onUnifiedGraphDispose: (callback: () => MaybePromise<void>) => void;
-  let getSchema: () => MaybePromise<GraphQLSchema>;
+  let getSchema: () => MaybePromise<GraphQLSchema> = () => unifiedGraph;
   let schemaChanged = (_schema: GraphQLSchema): void => {
     throw new Error('Schema changed too early');
   };
@@ -110,7 +110,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     executorPlugin.onSchemaChange = function onSchemaChange(payload) {
       unifiedGraph = payload.schema;
     };
-    getSchema = () => unifiedGraph;
     if (config.skipValidation) {
       executorPlugin.onValidate = function ({ setResult }) {
         setResult([]);
