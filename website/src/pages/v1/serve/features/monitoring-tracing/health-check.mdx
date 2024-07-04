@@ -16,8 +16,8 @@ is accepting requests (alive), but the read replica it uses is still unavailable
 
 ### Liveliness
 
-By default, you can check whether Mesh is alive by issuing a request to the `/health` endpoint and
-expecting the response `200 OK`.
+By default, you can check whether Mesh is alive by issuing a request to the `/healthcheck` endpoint
+and expecting the response `200 OK`.
 
 Of course, you can change this endpoint through the `healthCheckEndpoint` option.
 
@@ -25,7 +25,7 @@ Of course, you can change this endpoint through the `healthCheckEndpoint` option
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
 
 export const serveConfig = defineServeConfig({
-  healthCheckEndpoint: '/health'
+  healthCheckEndpoint: '/healthcheck'
 })
 ```
 

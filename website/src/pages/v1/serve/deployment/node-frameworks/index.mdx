@@ -1,0 +1,17 @@
+# Node.js Frameworks
+
+We highly recommend to use Mesh with Serve CLI in Node.js as described in
+[Node.js guide](/v1/serve/deployment/runtimes/nodejs). But if you want to use Mesh with a Node.js
+framework, you can use the `createServeRuntime` function from `@graphql-mesh/serve-runtime` package.
+
+In this case, you have to pass your serve configuration inside `createServeRuntime` instead of
+exporting it `serveConfig` from `mesh.config.ts` file.
+
+It handles Node.js request and response types which are
+[IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage) and
+[ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse).
+
+If your framework has middlewares and so on, you can handle the response by yourself as in
+[Fastify example](/v1/serve/deployment/node-frameworks/fastify).
+
+Choose your framework from the list on the left to see an example.

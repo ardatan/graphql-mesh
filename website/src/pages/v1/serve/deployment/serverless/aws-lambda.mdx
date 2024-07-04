@@ -1,0 +1,49 @@
+# Deploying Mesh to AWS Lambda
+
+import { Callout } from '@theguild/components'
+
+AWS Lambda is a serverless computing platform that makes it easy to build applications that run on
+the AWS cloud. Mesh Serve is platform agnostic so they can fit together easily.
+
+<Callout>
+  Before you start, make sure you read the [Serverless / On the
+  Edge](/v1/serve/deployment/serverless) page.
+</Callout>
+
+```ts
+import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+const serveRuntime = createServeRuntime(/* Your configuration */)
+
+export async function handler(
+  event: APIGatewayEvent,
+  lambdaContext: Context
+): Promise<APIGatewayProxyResult> {
+  const response = await serveRuntime.fetch(
+    event.path +
+      '?' +
+      new URLSearchParams((event.queryStringParameters as Record<string, string>) || {}).toString(),
+    {
+      method: event.httpMethod,
+      headers: event.headers as HeadersInit,
+      body: event.body
+        ? Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8')
+        : undefined
+    },
+    {
+      event,
+      lambdaContext
+    }
+  )
+
+  const responseHeaders = Object.fromEntries(response.headers.entries())
+
+  return {
+    statusCode: response.status,
+    headers: responseHeaders,
+    body: await response.text(),
+    isBase64Encoded: false
+  }
+}
+```
