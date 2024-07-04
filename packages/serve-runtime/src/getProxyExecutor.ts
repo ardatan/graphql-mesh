@@ -38,7 +38,7 @@ export function getProxyExecutor<TContext>({
     }),
     transportBaseContext: configContext,
     getSubgraphSchema: getSchema,
-    disposableStack,
+    transportExecutorStack: disposableStack,
   });
   return function proxyExecutor(executionRequest) {
     return onSubgraphExecute(subgraphName, executionRequest);
