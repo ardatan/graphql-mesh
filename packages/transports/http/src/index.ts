@@ -35,9 +35,9 @@ export default {
       ...transportEntry.options,
     });
     const wsExecutors: { [hash: string]: DisposableExecutor } = {};
+    const wsOpts = transportEntry.options?.subscriptions?.ws;
 
     return function HTTPExecutor(request) {
-      const wsOpts = transportEntry.options?.subscriptions?.ws;
       if (wsOpts && request.operationType === 'subscription') {
         const hostname = /\/\/(.+?)\//.exec(transportEntry.location)[1];
         if (!hostname) {
