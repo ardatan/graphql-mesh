@@ -65,14 +65,23 @@ const wsServer = new WebSocketServer({
   path: '/subscriptions',
 });
 
+let hasConnectedWebSocket = false;
 const graphqlWsServer = useServer(
   {
     schema,
     onConnect({ connectionParams }) {
+      if (hasConnectedWebSocket) {
+        console.error('Multiple WebSocket connections attempted');
+        process.exit(1);
+      }
       // make sure the authorization header is propagated by the gateway
       if (connectionParams.token !== TOKEN) {
         return false;
       }
+      hasConnectedWebSocket = true;
+    },
+    onClose() {
+      hasConnectedWebSocket = false;
     },
   },
   wsServer,

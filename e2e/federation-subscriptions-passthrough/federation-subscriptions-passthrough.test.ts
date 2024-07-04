@@ -1,4 +1,5 @@
 import path from 'path';
+import { setTimeout } from 'timers/promises';
 import { createClient } from 'graphql-sse';
 import { createTenv, type Service } from '@e2e/tenv';
 import { TOKEN } from './services/products/server';
@@ -115,4 +116,37 @@ it('should subscribe and resolve', async () => {
   },
 ]
 `);
+});
+
+it.only('should recycle websocket connections', async () => {
+  const supergraphFile = await fs.tempfile('supergraph.graphql');
+  await fs.write(supergraphFile, supergraph);
+  const { port } = await serve({ supergraph: supergraphFile });
+
+  const client = createClient({
+    url: `http://0.0.0.0:${port}/graphql`,
+    headers: {
+      Authorization: TOKEN,
+    },
+  });
+
+  const query = /* GraphQL */ `
+    subscription OnProductPriceChanged {
+      productPriceChanged {
+        price
+      }
+    }
+  `;
+  for (let i = 0; i < 5; i++) {
+    // connect
+    for await (const msg of client.iterate({ query })) {
+      expect(msg.data).toBeDefined();
+      break; // complete subscription on first received message
+    }
+    // disconnect
+
+    await setTimeout(300); // wait a bit and subscribe again (lazyCloseTimeout is 3 seconds)
+  }
+
+  // the "products" service will crash if multiple websockets were connected
 });
