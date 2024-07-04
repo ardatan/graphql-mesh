@@ -4,8 +4,10 @@ import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import type { GraphQLSchema } from 'graphql';
 import { parse } from 'graphql';
 import {
+  createGraphQLError,
   createYoga,
   isAsyncIterable,
+  Repeater,
   useReadinessCheck,
   type FetchAPI,
   type LandingPageRenderer,
@@ -82,6 +84,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
+  let onUnifiedGraphDispose: (callback: () => MaybePromise<void>) => void;
   let schemaFetcher: () => MaybePromise<GraphQLSchema>;
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
@@ -119,6 +122,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       const endpoint = config.proxy.endpoint || '#';
       return `<section class="supergraph-information"><h3>Proxy (<a href="${endpoint}">${endpoint}</a>): ${unifiedGraph ? 'Loaded ✅' : 'Not yet ❌'}</h3></section>`;
     };
+    onUnifiedGraphDispose = callback => disposableStack.defer(callback);
   } else {
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
 
@@ -183,6 +187,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       onDelegateHooks,
       onSubgraphExecuteHooks,
     });
+    onUnifiedGraphDispose = callback => unifiedGraphManager.onUnifiedGraphDispose(callback);
     schemaFetcher = () => unifiedGraphManager.getUnifiedGraph();
     readinessChecker = () =>
       mapMaybePromise(unifiedGraphManager.getUnifiedGraph(), schema => !!schema);
@@ -266,6 +271,31 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           disposableStack.use(plugin);
         }
       }
+    },
+    onSubscribe() {
+      return {
+        onSubscribeResult({ result, setResult }) {
+          if (isAsyncIterable(result) && result.return) {
+            const repeater = new Repeater(function repeaterExecutor(_push, stop) {
+              // eslint-disable-next-line @typescript-eslint/no-floating-promises
+              stop.then(() => {
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                result.return!();
+              });
+              onUnifiedGraphDispose(() => {
+                stop(
+                  createGraphQLError('subscription has been closed due to a schema reload', {
+                    extensions: {
+                      code: 'SUBSCRIPTION_SCHEMA_RELOAD',
+                    },
+                  }),
+                );
+              });
+            });
+            setResult(Repeater.race([result, repeater]));
+          }
+        },
+      };
     },
   };
 
