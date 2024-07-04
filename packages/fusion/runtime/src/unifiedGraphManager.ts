@@ -83,6 +83,7 @@ export class UnifiedGraphManager<TContext> {
       this.inContextSDK = undefined;
       this.initialUnifiedGraph$ = undefined;
       this.pausePolling();
+      return this._transportExecutorStack?.disposeAsync();
     });
   }
 

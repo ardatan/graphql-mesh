@@ -38,7 +38,7 @@ describe('Polling', () => {
       ]);
     };
     const disposeFn = jest.fn();
-    await using manager = new UnifiedGraphManager({
+    const manager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
       polling: pollingInterval,
       transports() {
@@ -95,5 +95,9 @@ describe('Polling', () => {
 
     // Check if transport executor is disposed per schema change
     expect(disposeFn).toHaveBeenCalledTimes(2);
+
+    await manager[Symbol.asyncDispose]();
+    // Check if transport executor is disposed on global shutdown
+    expect(disposeFn).toHaveBeenCalledTimes(3);
   });
 });
