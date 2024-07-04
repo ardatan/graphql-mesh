@@ -119,7 +119,7 @@ it('should subscribe and resolve', async () => {
 `);
 });
 
-it.only('should recycle websocket connections', async () => {
+it('should recycle websocket connections', async () => {
   const supergraphFile = await fs.tempfile('supergraph.graphql');
   await fs.write(supergraphFile, supergraph);
   const { port } = await serve({ supergraph: supergraphFile });
