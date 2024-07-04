@@ -1,8 +1,7 @@
 import type { GraphQLSchema } from 'graphql';
 import { path, process } from '@graphql-mesh/cross-helpers';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
 
-interface GraphQLSQLiteLoaderOpts {
+export interface GraphQLSQLiteLoaderOpts {
   infile?: string;
   db?: string;
   cwd?: string;
@@ -31,7 +30,7 @@ export function loadGraphQLSchemaFromOptions(
 }
 
 export function loadSQLiteSubgraph(name: string, opts: GraphQLSQLiteLoaderOpts) {
-  return ({ cwd }: { cwd: string }) => ({
+  return () => ({
     name,
     schema$: loadGraphQLSchemaFromOptions(opts).then(schema => {
       const extensionsObj: any = (schema.extensions = schema.extensions || {});
@@ -47,27 +46,4 @@ export function loadSQLiteSubgraph(name: string, opts: GraphQLSQLiteLoaderOpts) 
       return schema;
     }),
   });
-}
-
-interface SqliteTransportEntry {
-  kind: 'sqlite';
-  location: string;
-  options: {
-    type: 'infile' | 'db';
-  };
-  cwd?: string;
-}
-
-export function getSubgraphExecutor(transportContext: {
-  transportEntry: SqliteTransportEntry;
-  cwd: string;
-}) {
-  const loaderOpts: GraphQLSQLiteLoaderOpts = {};
-  if (transportContext.transportEntry.options.type === 'infile') {
-    loaderOpts.infile = transportContext.transportEntry.location;
-  } else {
-    loaderOpts.db = transportContext.transportEntry.location;
-  }
-  loaderOpts.cwd = transportContext.cwd;
-  return loadGraphQLSchemaFromOptions(loaderOpts).then(schema => createDefaultExecutor(schema));
 }

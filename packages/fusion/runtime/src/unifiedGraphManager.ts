@@ -2,6 +2,7 @@ import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import type { DocumentNode, GraphQLSchema } from 'graphql';
 import { buildASTSchema, buildSchema, isSchema } from 'graphql';
 import { getInContextSDK } from '@graphql-mesh/runtime';
+import type { TransportOptions } from '@graphql-mesh/serve-runtime';
 import type { TransportContext, TransportEntry } from '@graphql-mesh/transport-common';
 import type { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
@@ -13,7 +14,7 @@ import {
   compareSchemas,
   getOnSubgraphExecute,
   type OnSubgraphExecuteHook,
-  type TransportsConfig,
+  type Transports,
 } from './utils.js';
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
@@ -55,7 +56,8 @@ export interface UnifiedGraphManagerOptions<TContext> {
   getUnifiedGraph(ctx: TransportContext): MaybePromise<GraphQLSchema | string | DocumentNode>;
   // Handle the unified graph by any specification
   handleUnifiedGraph?: UnifiedGraphHandler;
-  transports?: TransportsConfig;
+  transports?: Transports;
+  transportOptions?: TransportOptions;
   polling?: number;
   additionalTypeDefs?: TypeSource;
   additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
@@ -154,6 +156,7 @@ export class UnifiedGraphManager<TContext> {
         const onSubgraphExecute = getOnSubgraphExecute({
           onSubgraphExecuteHooks: this.onSubgraphExecuteHooks,
           transports: this.opts.transports,
+          transportOptions: this.opts.transportOptions,
           transportContext: this.opts.transportContext,
           transportEntryMap,
           getSubgraphSchema(subgraphName) {

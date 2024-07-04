@@ -2,17 +2,15 @@ import { defineConfig } from '@graphql-mesh/serve-cli';
 import { HTTPTransportOptions } from '@graphql-mesh/transport-http';
 
 export const serveConfig = defineConfig({
-  transports: {
-    http: {
-      subscriptions: {
-        ws: {
-          subgraphs: {
-            products: {
-              path: '/subscriptions',
-            },
+  transportOptions: {
+    '*': {
+      http: {
+        subscriptions: {
+          ws: {
+            path: '/subscriptions',
           },
         },
-      },
-    } satisfies HTTPTransportOptions,
+      } satisfies HTTPTransportOptions,
+    },
   },
 });

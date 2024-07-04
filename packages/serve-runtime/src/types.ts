@@ -8,9 +8,8 @@ import type {
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
 import type { createSupergraphSDLFetcher } from '@graphql-hive/client';
-import type { TransportsConfig, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
-import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
-import type { HTTPTransportOptions } from '@graphql-mesh/transport-http';
+import type { Transports, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
+import type { Transport } from '@graphql-mesh/transport-common';
 import type {
   KeyValueCache,
   Logger,
@@ -21,11 +20,15 @@ import type {
 } from '@graphql-mesh/types';
 import type { LogLevel } from '@graphql-mesh/utils';
 import type { HTTPExecutorOptions } from '@graphql-tools/executor-http';
-import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
+import type { IResolvers } from '@graphql-tools/utils';
 import type { CORSPluginOptions } from '@whatwg-node/server';
 import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
 export type { UnifiedGraphConfig };
+
+export type TransportOptions = {
+  [subgraph: '*' | string]: Record<string, any> /** satisfies TransportOptions */;
+};
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithSupergraph<TContext>
@@ -120,33 +123,46 @@ interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutS
     | IResolvers<unknown, MeshServeContext & TContext>
     | IResolvers<unknown, MeshServeContext>[];
   /**
-   * Provide custom options or executors for transports.
+   * A map, or factory function, of transport kinds to their implementations.
+   *
+   * @example Providing a module exporting a transport.
+   *
+   * ```ts
+   * import { defineConfig } from '@graphql-mesh/serve-cli';
+   *
+   * export const serveConfig = defineConfig({
+   *   transports: {
+   *     http: import('@graphql-mesh/transport-http'),
+   *   },
+   * });
+   * ```
+   */
+  transports?: Transports;
+  /**
+   * Provide custom options for transports.
    *
    * @example Adding subscriptions support for Apollo Federation v2 subgraphs.
+   *
    * ```ts
    * import { defineConfig } from '@graphql-mesh/serve-cli';
    * import { HTTPTransportOptions } from '@graphql-mesh/transport-http';
    *
    * export const serveConfig = defineConfig({
-   *   transports: {
-   *     http: {
-   *       // by defining the subscriptions property, you indicate that there's support
-   *       subscriptions: {
-   *         ws: {
-   *           subgraphs: {
-   *             // all subgraphs have WebSocket subscriptions support at `/subscriptions` path
-   *             '*': {
-   *               path: '/subscriptions',
-   *             },
+   *   transportOptions: {
+   *     '*': {
+   *       http: {
+   *         subscriptions: {
+   *           ws: {
+   *             path: '/subscriptions',
    *           },
    *         },
-   *       },
-   *     } satisfies HTTPTransportOptions,
+   *       } satisfies HTTPTransportOptions,
+   *     },
    *   },
    * });
    * ```
    */
-  transports?: TransportsConfig;
+  transportOptions?: TransportOptions;
   /**
    * Current working directory.
    */
@@ -158,19 +174,7 @@ export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWitho
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
   proxy: HTTPExecutorOptions;
-
-  transport?:
-    | MaybePromise<
-        HTTPTransportOptions & {
-          getSubgraphExecutor?: TransportGetSubgraphExecutor<'http', HTTPTransportOptions>;
-        }
-      >
-    | (() => MaybePromise<
-        HTTPTransportOptions & {
-          getSubgraphExecutor?: TransportGetSubgraphExecutor<'http', HTTPTransportOptions>;
-        }
-      >);
-
+  transport?: Transport;
   /**
    * Disable GraphQL validation on the gateway
    *
