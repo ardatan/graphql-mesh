@@ -1,4 +1,4 @@
-import { GraphQLSchema, print, type DocumentNode, type ExecutionResult } from 'graphql';
+import { print, type DocumentNode, type ExecutionResult, type GraphQLSchema } from 'graphql';
 import type { TransportOptions } from '@graphql-mesh/serve-runtime';
 import type {
   Transport,
