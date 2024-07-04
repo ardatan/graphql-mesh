@@ -70,7 +70,7 @@ export class UnifiedGraphManager<TContext> {
   private onSubgraphExecuteHooks: OnSubgraphExecuteHook[];
   private currentTimeout: NodeJS.Timeout | undefined;
   private inContextSDK;
-  private initialUnifiedGraph$: MaybePromise<void>;
+  private initialUnifiedGraph$: MaybePromise<true>;
   private disposableStack = new AsyncDisposableStack();
   private _transportEntryMap: Record<string, TransportEntry>;
   private _transportExecutorStack: AsyncDisposableStack;
@@ -108,7 +108,7 @@ export class UnifiedGraphManager<TContext> {
   }
 
   private ensureUnifiedGraph() {
-    if (!this.initialUnifiedGraph$ && !this.unifiedGraph) {
+    if (!this.initialUnifiedGraph$) {
       this.initialUnifiedGraph$ = this.getAndSetUnifiedGraph();
     }
     return this.initialUnifiedGraph$;
@@ -133,9 +133,9 @@ export class UnifiedGraphManager<TContext> {
         if (this.lastLoadedUnifiedGraph != null) {
           this.opts.transportBaseContext?.logger?.debug('Unified Graph changed, updating...');
         }
-        let cleanupJob$: Promise<void>;
+        let cleanupJob$: Promise<true>;
         if (this._transportExecutorStack) {
-          cleanupJob$ = this._transportExecutorStack.disposeAsync();
+          cleanupJob$ = this._transportExecutorStack.disposeAsync().then(() => true);
         }
         this._transportExecutorStack = new AsyncDisposableStack();
         this.lastLoadedUnifiedGraph ||= loadedUnifiedGraph;
@@ -180,7 +180,7 @@ export class UnifiedGraphManager<TContext> {
         }
         this.continuePolling();
         this._transportEntryMap = transportEntryMap;
-        return cleanupJob$;
+        return cleanupJob$ || true;
       },
     );
   }
