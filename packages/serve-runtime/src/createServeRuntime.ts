@@ -15,6 +15,7 @@ import {
   type YogaServerInstance,
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
+import type { AsyncIterableIteratorOrValue } from '@envelop/core';
 import { createSupergraphSDLFetcher } from '@graphql-hive/client';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
@@ -38,7 +39,7 @@ import {
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import type { MaybePromise } from '@graphql-tools/utils';
+import type { ExecutionResult, MaybePromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
@@ -247,6 +248,31 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     check: readinessChecker,
   });
 
+  function handleSubscriptionTerminationOnUnifiedGraphChange(
+    result: AsyncIterableIteratorOrValue<ExecutionResult>,
+    setResult: (result: AsyncIterableIteratorOrValue<ExecutionResult>) => void,
+  ) {
+    if (isAsyncIterable(result) && result.return) {
+      const subTerminateRepeater = new Repeater(function repeaterExecutor(_push, stop) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        stop.then(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          result.return!();
+        });
+        onUnifiedGraphDispose(() => {
+          stop(
+            createGraphQLError('subscription has been closed due to a schema reload', {
+              extensions: {
+                code: 'SUBSCRIPTION_SCHEMA_RELOAD',
+              },
+            }),
+          );
+        });
+      });
+      setResult(Repeater.race([result, subTerminateRepeater]));
+    }
+  }
+
   const defaultMeshPlugin: MeshServePlugin = {
     onFetch({ setFetchFn }) {
       setFetchFn(fetchAPI.fetch);
@@ -272,28 +298,17 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         }
       }
     },
+    onExecute() {
+      return {
+        onExecuteDone({ result, setResult }) {
+          handleSubscriptionTerminationOnUnifiedGraphChange(result, setResult);
+        },
+      };
+    },
     onSubscribe() {
       return {
         onSubscribeResult({ result, setResult }) {
-          if (isAsyncIterable(result) && result.return) {
-            const repeater = new Repeater(function repeaterExecutor(_push, stop) {
-              // eslint-disable-next-line @typescript-eslint/no-floating-promises
-              stop.then(() => {
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                result.return!();
-              });
-              onUnifiedGraphDispose(() => {
-                stop(
-                  createGraphQLError('subscription has been closed due to a schema reload', {
-                    extensions: {
-                      code: 'SUBSCRIPTION_SCHEMA_RELOAD',
-                    },
-                  }),
-                );
-              });
-            });
-            setResult(Repeater.race([result, repeater]));
-          }
+          handleSubscriptionTerminationOnUnifiedGraphChange(result, setResult);
         },
       };
     },
