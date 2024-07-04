@@ -1,10 +1,10 @@
 import {
-  type GraphQLSchema,
   isSpecifiedScalarType,
   type GraphQLFieldConfig,
   type GraphQLFieldConfigArgumentMap,
   type GraphQLInputFieldConfig,
   type GraphQLNamedType,
+  type GraphQLSchema,
 } from 'graphql';
 import { resolvers as scalarsResolversMap } from 'graphql-scalars';
 import { getRootTypes, MapperKind, mapSchema, type SchemaMapper } from '@graphql-tools/utils';
