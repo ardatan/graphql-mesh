@@ -1,6 +1,7 @@
 import { buildSchema, GraphQLSchema, parse } from 'graphql';
 import { createSchema } from 'graphql-yoga';
 import { composeSubgraphs, getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
+import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { isAsyncIterable } from '@graphql-tools/utils';
@@ -99,5 +100,42 @@ describe('Polling', () => {
     await manager[Symbol.asyncDispose]();
     // Check if transport executor is disposed on global shutdown
     expect(disposeFn).toHaveBeenCalledTimes(3);
+  });
+
+  it('should invoke onSchemaChange hooks when schema changes', done => {
+    let onSchemaChangeCalls = 0;
+    const serve = createServeRuntime({
+      polling: 500,
+      supergraph() {
+        if (onSchemaChangeCalls > 0) {
+          // change schema after onSchemaChange was invoked
+          return /* GraphQL */ `
+            type Query {
+              hello: Int!
+            }
+          `;
+        }
+
+        return /* GraphQL */ `
+          type Query {
+            world: String!
+          }
+        `;
+      },
+      plugins: () => [
+        {
+          onSchemaChange() {
+            if (onSchemaChangeCalls > 0) {
+              // schema changed for the second time
+              done();
+            }
+            onSchemaChangeCalls++;
+          },
+        },
+      ],
+    });
+
+    // trigger mesh
+    serve.fetch('http://mesh/graphql?query={__typename}');
   });
 });
