@@ -8064,8 +8064,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^5.0.0":
-  version: 5.4.4
-  resolution: "@neo4j/graphql@npm:5.4.4"
+  version: 5.4.5
+  resolution: "@neo4j/graphql@npm:5.4.5"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -8086,7 +8086,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/4da1b4022141435cbfac4d2e6349521a3d3a39e76476487654686cb0792627e23a121d69bc4b3275f6d0ad046fb2e52031edbbca25c7d597fc9b02848e6819d7
+  checksum: 10c0/a83edf6edfefc7c729e993e1f3f2817569666fc41e999401a40db331ebbf0c4d8979bfeed36be1b650cfee09201ddcfc747db8abc2de6498f638b5682ea2237e
   languageName: node
   linkType: hard
 
@@ -11523,7 +11523,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.98.11"
     "@graphql-mesh/serve-runtime": "npm:^0.4.4"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.63.0"
+    wrangler: "npm:3.63.1"
   languageName: unknown
   linkType: soft
 
@@ -13792,7 +13792,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.4.4"
     "@omnigraph/json-schema": "npm:^0.101.2"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.63.0"
+    wrangler: "npm:3.63.1"
   languageName: unknown
   linkType: soft
 
@@ -14239,7 +14239,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.101.2"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.11"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.63.0"
+    wrangler: "npm:3.63.1"
   languageName: unknown
   linkType: soft
 
@@ -31733,7 +31733,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.98.10"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.11"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.63.0"
+    wrangler: "npm:3.63.1"
   languageName: unknown
   linkType: soft
 
@@ -35337,9 +35337,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.63.0":
-  version: 3.63.0
-  resolution: "wrangler@npm:3.63.0"
+"wrangler@npm:3.63.1":
+  version: 3.63.1
+  resolution: "wrangler@npm:3.63.1"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35369,7 +35369,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/a3663e0c66b216bc13bd9017821e601cbc77198b22f1f740d37b3efc53939796c8bc04c14a475f0b92eb79399c5ae80c7107e72e3d11f2b22b7b39ce239339ff
+  checksum: 10c0/8440b0a59aa9f491d19429742d9f14d44ff5a4eb9061d511f907cac294548f71d44b3c70401bf4cdc0fc01ef9e1e69e310d1ddaa7724a9b1ec59ff2a7cae8e69
   languageName: node
   linkType: hard
 
