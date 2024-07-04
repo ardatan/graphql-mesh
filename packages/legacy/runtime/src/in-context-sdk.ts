@@ -1,18 +1,15 @@
-import {
+import type {
   DocumentNode,
   FieldNode,
-  getNamedType,
   GraphQLObjectType,
   GraphQLResolveInfo,
   GraphQLSchema,
-  isLeafType,
-  Kind,
   OperationDefinitionNode,
   OperationTypeNode,
-  print,
   SelectionSetNode,
 } from 'graphql';
-import {
+import { getNamedType, isLeafType, Kind, print } from 'graphql';
+import type {
   Logger,
   OnDelegateHook,
   OnDelegateHookDone,
@@ -22,13 +19,14 @@ import {
   SelectionSetParamOrFactory,
 } from '@graphql-mesh/types';
 import { iterateAsync, mapMaybePromise, parseWithCache } from '@graphql-mesh/utils';
-import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
-import {
-  delegateToSchema,
+import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
+import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
+import type {
   IDelegateToSchemaOptions,
   StitchingInfo,
   SubschemaConfig,
 } from '@graphql-tools/delegate';
+import { delegateToSchema } from '@graphql-tools/delegate';
 import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { MESH_API_CONTEXT_SYMBOL } from './constants.js';

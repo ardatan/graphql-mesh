@@ -1,6 +1,5 @@
+import type { GraphQLField, GraphQLSchema } from 'graphql';
 import {
-  GraphQLField,
-  GraphQLSchema,
   isEnumType,
   isInterfaceType,
   isIntrospectionType,
@@ -8,16 +7,16 @@ import {
   isSpecifiedScalarType,
   isUnionType,
 } from 'graphql';
-import { IStringifyOptions } from 'qs';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
-import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import type { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import { getDefDirectives, getDirectiveExtensions } from '@graphql-mesh/utils';
 import { getDirective } from '@graphql-tools/utils';
 import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
 import { processFlattenAnnotations } from './flatten.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
-import { addHTTPRootFieldResolver, GlobalOptions } from './httpOperation.js';
+import type { GlobalOptions } from './httpOperation.js';
+import { addHTTPRootFieldResolver } from './httpOperation.js';
 import { processLinkFieldAnnotations } from './link.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { processResolveRootAnnotations } from './resolveRoot.js';

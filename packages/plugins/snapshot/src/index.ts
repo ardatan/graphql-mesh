@@ -1,7 +1,7 @@
 import { Minimatch } from 'minimatch';
 import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { hashObject } from '@graphql-mesh/string-interpolation';
-import { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
+import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj, pathExists, writeJSON } from '@graphql-mesh/utils';
 import { Response } from '@whatwg-node/fetch';
 

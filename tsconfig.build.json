@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "importHelpers": true,
-    "declaration": true
+    "declaration": true,
+    "verbatimModuleSyntax": false
   },
   "exclude": [
     "**/node_modules",
@@ -10,6 +11,8 @@
     "**/test/*.ts",
     "**/tests/*.ts",
     "*.spec.ts",
+    "*.test.ts",
+    "*.loadtest.ts",
     "examples/**/*",
     "e2e/**/*"
   ]

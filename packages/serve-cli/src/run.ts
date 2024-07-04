@@ -10,12 +10,13 @@ import { availableParallelism, release } from 'os';
 // eslint-disable-next-line import/no-nodejs-modules
 import { dirname, isAbsolute, resolve } from 'path';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
-import { createServeRuntime, UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
-import { Logger } from '@graphql-mesh/types';
+import type { UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
+import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger, getTerminateStack, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import { startNodeHttpServer } from './nodeHttp.js';
-import { MeshServeCLIConfig } from './types.js';
+import type { MeshServeCLIConfig } from './types.js';
 import { startuWebSocketsServer } from './uWebSockets.js';
 
 const defaultFork = process.env.NODE_ENV === 'production' ? availableParallelism() : 1;
@@ -147,6 +148,7 @@ export async function run({
     const fork = opts.fork === true ? defaultFork : opts.fork;
 
     if (isValidPath(unifiedGraphPath)) {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-imports
       let watcher: typeof import('@parcel/watcher') | undefined;
       try {
         watcher = await import('@parcel/watcher');

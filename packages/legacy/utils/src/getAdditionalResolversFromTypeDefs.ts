@@ -1,12 +1,11 @@
-import {
+import type {
   ConstObjectValueNode,
   ConstValueNode,
   DocumentNode,
   FieldDefinitionNode,
-  Kind,
-  visit,
 } from 'graphql';
-import { resolveAdditionalResolvers } from './resolve-additional-resolvers.js';
+import { Kind, visit } from 'graphql';
+import type { resolveAdditionalResolvers } from './resolve-additional-resolvers.js';
 
 function parseObject(ast: ConstObjectValueNode): any {
   const value = Object.create(null);

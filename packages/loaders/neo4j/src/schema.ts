@@ -1,11 +1,13 @@
-import { ASTNode, ConstDirectiveNode, DefinitionNode, parse, visit } from 'graphql';
-import neo4j, { Driver } from 'neo4j-driver';
+import type { ASTNode, ConstDirectiveNode, DefinitionNode } from 'graphql';
+import { parse, visit } from 'graphql';
+import type { Driver } from 'neo4j-driver';
+import neo4j from 'neo4j-driver';
+import type { Neo4JAuthOpts } from '@graphql-mesh/transport-neo4j';
 import {
   getDriverFromOpts,
   getExecutableSchemaFromTypeDefsAndDriver,
-  Neo4JAuthOpts,
 } from '@graphql-mesh/transport-neo4j';
-import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';

@@ -1,8 +1,10 @@
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
+import type { ConfigProcessOptions } from '@graphql-mesh/config';
+import { processConfig } from '@graphql-mesh/config';
 import { path, process } from '@graphql-mesh/cross-helpers';
-import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { jsonSchema } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, loadYaml } from '@graphql-mesh/utils';
 
 export function validateConfig(

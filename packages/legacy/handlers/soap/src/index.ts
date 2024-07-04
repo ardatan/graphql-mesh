@@ -1,8 +1,9 @@
-import { GraphQLSchema } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import type { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   GetMeshSourcePayload,
   ImportFn,
   Logger,
@@ -12,7 +13,7 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { Executor } from '@graphql-tools/utils';
+import type { Executor } from '@graphql-tools/utils';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 
 export default class SoapHandler implements MeshHandler {

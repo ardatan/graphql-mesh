@@ -2,7 +2,7 @@ import { execute, getIntrospectionQuery, parse, subscribe } from 'graphql';
 import { envelop } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { useSubschema } from '@graphql-mesh/runtime';
-import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { Subschema } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';

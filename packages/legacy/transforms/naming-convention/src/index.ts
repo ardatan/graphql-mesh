@@ -1,4 +1,4 @@
-import { MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import BareNamingConvention from './bareNamingConvention.js';
 import WrapNamingConvention from './wrapNamingConvention.js';
 

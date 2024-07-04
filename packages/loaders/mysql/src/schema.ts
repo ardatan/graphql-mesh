@@ -1,9 +1,9 @@
-import {
+import type {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
   ObjectTypeComposer,
-  SchemaComposer,
 } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
   GraphQLDate,
@@ -14,17 +14,12 @@ import {
   GraphQLUnsignedFloat,
   GraphQLUnsignedInt,
 } from 'graphql-scalars';
-import {
-  Connection,
-  createConnection,
-  DatabaseTable,
-  MysqlError,
-  TableField,
-  TableForeign,
-} from 'mysql';
+import type { Connection, DatabaseTable, MysqlError, TableField, TableForeign } from 'mysql';
+import { createConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { fs, process, util } from '@graphql-mesh/cross-helpers';
-import { getConnectionOptsFromEndpointUri, MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
+import type { MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
+import { getConnectionOptsFromEndpointUri } from '@graphql-mesh/transport-mysql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
   MySQLCountDirective,
@@ -35,7 +30,7 @@ import {
   MySQLUpdateDirective,
   TransportDirective,
 } from './directives.js';
-import { TableFieldConfig } from './types.js';
+import type { TableFieldConfig } from './types.js';
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;

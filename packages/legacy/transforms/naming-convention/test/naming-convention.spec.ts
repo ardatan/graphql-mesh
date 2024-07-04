@@ -7,7 +7,7 @@ import {
   parse,
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';

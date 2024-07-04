@@ -1,4 +1,4 @@
-import { createSchema, createYoga, Plugin } from 'graphql-yoga';
+import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import { createServeRuntime } from '../src/createServeRuntime';
 import { useForwardHeaders } from '../src/useForwardHeaders';
 

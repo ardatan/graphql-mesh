@@ -1,4 +1,4 @@
-import { YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
 import BareFilter from './bareFilter.js';
 import WrapFilter from './wrapFilter.js';
 

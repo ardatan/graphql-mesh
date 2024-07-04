@@ -1,12 +1,12 @@
 import childProcess from 'child_process';
 import fs from 'fs/promises';
 import { createServer } from 'http';
-import { AddressInfo } from 'net';
+import type { AddressInfo } from 'net';
 import os from 'os';
 import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
-import { ExecutionResult } from 'graphql';
+import type { ExecutionResult } from 'graphql';
 import { createArg, createPortArg, createServicePortArg } from './args';
 
 export const retries = 120,

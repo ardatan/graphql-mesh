@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { execute, GraphQLObjectType, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { pruneSchema } from '@graphql-tools/utils';

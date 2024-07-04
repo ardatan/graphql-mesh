@@ -1,4 +1,4 @@
-import { GraphQLScalarType } from 'graphql';
+import type { GraphQLScalarType } from 'graphql';
 
 type ScalarMap = Map<string, string>;
 

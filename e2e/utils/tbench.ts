@@ -1,6 +1,6 @@
 import { setTimeout } from 'timers/promises';
 import { spawn, Thread, Worker } from 'threads';
-import { timeout as jestTimeout, Server } from './tenv';
+import { timeout as jestTimeout, type Server } from './tenv';
 import type { benchGraphQLServer } from './workers/benchGraphQLServer';
 
 const leftovers = new Set<Thread>();

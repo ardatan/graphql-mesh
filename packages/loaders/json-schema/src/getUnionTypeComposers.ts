@@ -1,18 +1,17 @@
-import {
+import type {
   AnyTypeComposer,
   ComposeInputType,
   Directive,
   InputTypeComposer,
-  isSomeInputTypeComposer,
-  ListComposer,
   ObjectTypeComposer,
   SchemaComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
-import { Logger } from '@graphql-mesh/types';
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import { isSomeInputTypeComposer, ListComposer } from 'graphql-compose';
+import type { Logger } from '@graphql-mesh/types';
+import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { ResolveRootDirective, StatusCodeTypeNameDirective } from './directives.js';
-import { TypeComposers } from './getComposerFromJSONSchema.js';
+import type { TypeComposers } from './getComposerFromJSONSchema.js';
 
 export interface GetUnionTypeComposersOpts {
   subgraphName: string;

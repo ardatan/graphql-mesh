@@ -1,9 +1,8 @@
 import { constantCase } from 'change-case';
+import type { GraphQLArgument, GraphQLFieldConfigArgumentMap } from 'graphql';
 import {
   DirectiveLocation,
-  GraphQLArgument,
   GraphQLDirective,
-  GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
   GraphQLString,
   isEnumType,
@@ -14,12 +13,12 @@ import {
   typeFromAST,
   visit,
 } from 'graphql';
-import { TransportEntry } from '@graphql-mesh/transport-common';
+import type { TransportEntry } from '@graphql-mesh/transport-common';
 import {
   getDirectiveExtensions,
   resolveAdditionalResolversWithoutImport,
 } from '@graphql-mesh/utils';
-import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import type { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
@@ -40,7 +39,7 @@ import {
   TransformEnumValues,
 } from '@graphql-tools/wrap';
 import { filterHiddenPartsInSchema } from './filterHiddenPartsInSchema.js';
-import { UnifiedGraphHandler } from './unifiedGraphManager.js';
+import type { UnifiedGraphHandler } from './unifiedGraphManager.js';
 
 // Memoize to avoid re-parsing the same schema AST
 // Workaround for unsupported directives on composition: restore extra directives

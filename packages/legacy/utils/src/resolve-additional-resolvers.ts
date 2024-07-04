@@ -1,23 +1,20 @@
 import { dset } from 'dset';
-import {
-  getNamedType,
+import type {
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLResolveInfo,
   GraphQLSchema,
   GraphQLType,
-  isAbstractType,
-  isInterfaceType,
-  isObjectType,
-  Kind,
   SelectionSetNode,
 } from 'graphql';
+import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind } from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { ImportFn, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
-import { IResolvers, parseSelectionSet } from '@graphql-tools/utils';
+import type { ImportFn, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import type { IResolvers } from '@graphql-tools/utils';
+import { parseSelectionSet } from '@graphql-tools/utils';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
 

@@ -1,8 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { buildASTSchema, buildSchema, DocumentNode, GraphQLSchema, isSchema } from 'graphql';
+import type { DocumentNode, GraphQLSchema } from 'graphql';
+import { buildASTSchema, buildSchema, isSchema } from 'graphql';
 import { defaultImportFn, isUrl, mapMaybePromise, readFileOrUrl } from '@graphql-mesh/utils';
-import { isDocumentNode, isValidPath, MaybePromise } from '@graphql-tools/utils';
-import { MeshServeConfigContext } from './types.js';
+import type { MaybePromise } from '@graphql-tools/utils';
+import { isDocumentNode, isValidPath } from '@graphql-tools/utils';
+import type { MeshServeConfigContext } from './types.js';
 
 export type UnifiedGraphSchema = GraphQLSchema | DocumentNode | string;
 

@@ -1,6 +1,6 @@
 import type { AppOptions, HttpRequest, HttpResponse } from 'uWebSockets.js';
 import type { MeshServeConfig } from '@graphql-mesh/serve-runtime';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 
 export interface MeshServeCLIContext {
   req: HttpRequest;

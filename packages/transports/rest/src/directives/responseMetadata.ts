@@ -1,4 +1,4 @@
-import { GraphQLField } from 'graphql';
+import type { GraphQLField } from 'graphql';
 
 export function processResponseMetadataAnnotations(field: GraphQLField<any, any>) {
   field.resolve = function responseMetadataResolver(root) {

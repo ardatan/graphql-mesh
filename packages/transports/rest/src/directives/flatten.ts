@@ -1,4 +1,4 @@
-import { GraphQLField } from 'graphql';
+import type { GraphQLField } from 'graphql';
 
 export function processFlattenAnnotations(field: GraphQLField<any, any>) {
   if (!field.resolve || field.resolve.name === 'defaultFieldResolver') {

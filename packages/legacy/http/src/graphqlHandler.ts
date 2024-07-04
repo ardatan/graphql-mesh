@@ -1,5 +1,6 @@
-import { CORSOptions, createYoga, useLogger } from 'graphql-yoga';
-import { MeshInstance } from '@graphql-mesh/runtime';
+import type { CORSOptions } from 'graphql-yoga';
+import { createYoga, useLogger } from 'graphql-yoga';
+import type { MeshInstance } from '@graphql-mesh/runtime';
 import { memoize1 } from '@graphql-tools/utils';
 
 export const graphqlHandler = ({

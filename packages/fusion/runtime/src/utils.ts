@@ -1,4 +1,5 @@
-import { DocumentNode, ExecutionResult, GraphQLSchema, print } from 'graphql';
+import type { DocumentNode, ExecutionResult, GraphQLSchema } from 'graphql';
+import { print } from 'graphql';
 import type {
   Transport,
   TransportBaseContext,
@@ -6,20 +7,20 @@ import type {
   TransportExecutorFactoryFn,
   TransportExecutorFactoryOpts,
 } from '@graphql-mesh/transport-common';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
 import {
-  ExecutionRequest,
-  Executor,
   isAsyncIterable,
   isDocumentNode,
   mapAsyncIterator,
   printSchemaWithDirectives,
+  type ExecutionRequest,
+  type Executor,
   type Maybe,
   type MaybePromise,
 } from '@graphql-tools/utils';
 
-export { Transport, TransportEntry, TransportExecutorFactoryFn, TransportExecutorFactoryOpts };
+export type { Transport, TransportEntry, TransportExecutorFactoryFn, TransportExecutorFactoryOpts };
 
 export type TransportsOption =
   | {

@@ -1,26 +1,27 @@
-import { BREAK, DocumentNode, execute, FieldNode, OperationDefinitionNode, visit } from 'graphql';
-import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
-import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
-import { ExecutionResultWithSerializer } from '@envelop/graphql-jit';
+import type { DocumentNode, FieldNode, OperationDefinitionNode } from 'graphql';
+import { BREAK, execute, visit } from 'graphql';
+import type { CompiledQuery } from 'graphql-jit';
+import { compileQuery, isCompiledQuery } from 'graphql-jit';
+import type { Plugin, TypedExecutionArgs } from '@envelop/core';
+import { mapAsyncIterator } from '@envelop/core';
+import type { ExecutionResultWithSerializer } from '@envelop/graphql-jit';
 import {
   applyRequestTransforms,
   applyResultTransforms,
   mapMaybePromise,
 } from '@graphql-mesh/utils';
-import {
-  applySchemaTransforms,
-  createDefaultExecutor,
-  DelegationContext,
-  Subschema,
-} from '@graphql-tools/delegate';
-import {
+import type { DelegationContext, Subschema } from '@graphql-tools/delegate';
+import { applySchemaTransforms, createDefaultExecutor } from '@graphql-tools/delegate';
+import type {
   ExecutionRequest,
   ExecutionResult,
+  MaybeAsyncIterable,
+  MaybePromise,
+} from '@graphql-tools/utils';
+import {
   getDefinedRootType,
   getOperationASTFromRequest,
   isAsyncIterable,
-  MaybeAsyncIterable,
-  MaybePromise,
   memoize1,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';

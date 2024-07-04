@@ -23,7 +23,7 @@ import type { IResolvers } from '@graphql-tools/utils';
 import type { CORSPluginOptions } from '@whatwg-node/server';
 import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
-export { UnifiedGraphConfig };
+export type { UnifiedGraphConfig };
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithSupergraph<TContext>

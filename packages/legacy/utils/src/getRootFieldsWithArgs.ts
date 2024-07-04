@@ -1,15 +1,13 @@
-import {
+import type {
   FieldNode,
   FragmentDefinitionNode,
-  getArgumentValues,
-  getVariableValues,
-  GraphQLError,
   GraphQLFieldMap,
   GraphQLSchema,
-  Kind,
   SelectionNode,
 } from 'graphql';
-import { ExecutionRequest, getRootTypeMap } from '@graphql-tools/utils';
+import { getArgumentValues, getVariableValues, GraphQLError, Kind } from 'graphql';
+import type { ExecutionRequest } from '@graphql-tools/utils';
+import { getRootTypeMap } from '@graphql-tools/utils';
 import { getOperationsAndFragments } from './getOperationsAndFragments.js';
 
 export function getRootFieldsWithArgs(schema: GraphQLSchema, executionRequest: ExecutionRequest) {

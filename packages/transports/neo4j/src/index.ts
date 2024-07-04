@@ -1,4 +1,4 @@
-import { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
+import type { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
 import { getNeo4JExecutor } from './executor.js';
 
 export * from './auth.js';

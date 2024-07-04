@@ -1,24 +1,20 @@
 import { OperationTypeNode } from 'graphql';
-import {
-  dereferenceObject,
-  handleUntitledDefinitions,
-  JSONSchemaObject,
-  resolvePath,
-} from 'json-machete';
-import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import type { JSONSchemaObject } from 'json-machete';
+import { dereferenceObject, handleUntitledDefinitions, resolvePath } from 'json-machete';
+import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { process } from '@graphql-mesh/cross-helpers';
 import {
   getInterpolatedHeadersFactory,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   DefaultLogger,
   readFileOrUrl,
   sanitizeNameForGraphQL,
 } from '@graphql-mesh/utils';
-import {
+import type {
   HTTPMethod,
   JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaOperationConfig,
@@ -26,7 +22,7 @@ import {
   JSONSchemaPubSubOperationConfig,
   OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
-import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types.js';
+import type { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {

@@ -1,4 +1,5 @@
-import { ASTNode, ConstDirectiveNode, valueFromASTUntyped } from 'graphql';
+import type { ASTNode, ConstDirectiveNode } from 'graphql';
+import { valueFromASTUntyped } from 'graphql';
 
 export function getDirectiveExtensions(directableObj: {
   astNode?: ASTNode & { directives?: readonly ConstDirectiveNode[] };

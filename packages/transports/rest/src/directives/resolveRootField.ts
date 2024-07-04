@@ -1,4 +1,5 @@
-import { GraphQLField, GraphQLOutputType, isListType, isNonNullType } from 'graphql';
+import type { GraphQLField, GraphQLOutputType } from 'graphql';
+import { isListType, isNonNullType } from 'graphql';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {
   if (isNonNullType(type)) {

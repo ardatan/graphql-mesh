@@ -1,4 +1,4 @@
-import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import type { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { healJSONSchema } from '../src/healJSONSchema.js';
 
 describe('healJSONSchema', () => {

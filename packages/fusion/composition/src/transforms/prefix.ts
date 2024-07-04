@@ -1,6 +1,6 @@
-import { GraphQLSchema } from 'graphql';
-import { getRootTypes, MapperKind } from '@graphql-tools/utils';
-import { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import type { GraphQLSchema } from 'graphql';
+import { MapperKind } from '@graphql-tools/utils';
+import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { createRenameFieldTransform, createRenameTypeTransform } from './rename.js';
 
 export interface PrefixTransformConfig {

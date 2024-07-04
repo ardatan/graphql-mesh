@@ -1,20 +1,20 @@
+import type { GraphQLScalarType } from 'graphql';
 import {
   getNamedType,
   GraphQLInt,
   GraphQLObjectType,
-  GraphQLScalarType,
   GraphQLString,
   isInterfaceType,
 } from 'graphql';
-import {
-  GraphQLJSON,
+import type {
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfig,
   SchemaComposer,
 } from 'graphql-compose';
-import { IStringifyOptions } from 'qs';
+import { GraphQLJSON } from 'graphql-compose';
+import type { IStringifyOptions } from 'qs';
 import { process } from '@graphql-mesh/cross-helpers';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   HTTPOperationDirective,
@@ -25,7 +25,7 @@ import {
   ResponseMetadataDirective,
   TransportDirective,
 } from './directives.js';
-import {
+import type {
   JSONSchemaLinkConfig,
   JSONSchemaOperationConfig,
   OperationHeadersConfiguration,

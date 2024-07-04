@@ -1,17 +1,17 @@
 import dayjs from 'dayjs';
 import {
   buildSchema,
-  DocumentNode,
   execute,
-  FieldNode,
   GraphQLObjectType,
   GraphQLSchema,
-  OperationDefinitionNode,
   parse,
+  type DocumentNode,
+  type FieldNode,
+  type OperationDefinitionNode,
 } from 'graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { hashObject } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   ImportFn,
   KeyValueCache,
   MeshPubSub,

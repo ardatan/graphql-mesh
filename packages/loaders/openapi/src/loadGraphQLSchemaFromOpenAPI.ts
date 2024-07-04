@@ -3,7 +3,7 @@ import {
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
 } from '@omnigraph/json-schema';
 import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions.js';
-import { OpenAPILoaderOptions } from './types.js';
+import type { OpenAPILoaderOptions } from './types.js';
 
 /**
  * Creates a local GraphQLSchema instance from a OpenAPI Document.

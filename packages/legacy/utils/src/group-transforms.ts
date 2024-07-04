@@ -1,4 +1,4 @@
-import { MeshTransform } from '@graphql-mesh/types';
+import type { MeshTransform } from '@graphql-mesh/types';
 
 export function groupTransforms(transforms: MeshTransform[]) {
   const wrapTransforms: MeshTransform[] = [];

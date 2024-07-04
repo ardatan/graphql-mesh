@@ -1,20 +1,12 @@
 import { dset } from 'dset';
-import {
-  getNamedType,
-  GraphQLField,
-  GraphQLOutputType,
-  GraphQLResolveInfo,
-  GraphQLSchema,
-  isListType,
-  isNonNullType,
-  isScalarType,
-  isUnionType,
-} from 'graphql';
-import { IStringifyOptions, parse as qsParse, stringify as qsStringify } from 'qs';
+import type { GraphQLField, GraphQLOutputType, GraphQLResolveInfo, GraphQLSchema } from 'graphql';
+import { getNamedType, isListType, isNonNullType, isScalarType, isUnionType } from 'graphql';
+import type { IStringifyOptions } from 'qs';
+import { parse as qsParse, stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
+import type { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
 import { Blob, File, FormData, URLSearchParams } from '@whatwg-node/fetch';

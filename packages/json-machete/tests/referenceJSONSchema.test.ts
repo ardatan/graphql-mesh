@@ -1,4 +1,4 @@
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { referenceJSONSchema } from '../src/referenceJSONSchema.js';
 
 describe('referenceJSONSchema', () => {

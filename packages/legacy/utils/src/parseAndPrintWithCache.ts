@@ -1,4 +1,5 @@
-import { DocumentNode, parse, print } from 'graphql';
+import type { DocumentNode } from 'graphql';
+import { parse, print } from 'graphql';
 import { memoize1 } from '@graphql-tools/utils';
 import { createLruCache } from './global-lru-cache.js';
 

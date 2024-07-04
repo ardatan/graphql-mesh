@@ -1,12 +1,14 @@
-import { buildSchema, DocumentNode, extendSchema, GraphQLSchema, parse, print } from 'graphql';
-import { composeSubgraphs, SubgraphConfig } from '@graphql-mesh/fusion-composition';
-import { Logger } from '@graphql-mesh/types';
+import type { DocumentNode, GraphQLSchema } from 'graphql';
+import { buildSchema, extendSchema, parse, print } from 'graphql';
+import type { SubgraphConfig } from '@graphql-mesh/fusion-composition';
+import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
+import type { Logger } from '@graphql-mesh/types';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { LoaderContext, MeshComposeCLIConfig } from './types.js';
+import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, logger: Logger) {
   const ctx: LoaderContext = {

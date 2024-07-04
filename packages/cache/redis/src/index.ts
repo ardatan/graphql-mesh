@@ -2,7 +2,7 @@ import Redis from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   KeyValueCache,
   KeyValueCacheSetOptions,
   Logger,

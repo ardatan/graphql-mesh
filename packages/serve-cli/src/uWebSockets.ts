@@ -1,4 +1,4 @@
-import { ServerOptions } from './types.js';
+import type { ServerOptions } from './types.js';
 
 export async function startuWebSocketsServer({
   handler,

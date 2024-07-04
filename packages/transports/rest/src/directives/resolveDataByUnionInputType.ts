@@ -1,10 +1,5 @@
-import {
-  GraphQLInputType,
-  GraphQLSchema,
-  isInputObjectType,
-  isListType,
-  isNonNullType,
-} from 'graphql';
+import type { GraphQLInputType, GraphQLSchema } from 'graphql';
+import { isInputObjectType, isListType, isNonNullType } from 'graphql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { asArray, getDirective } from '@graphql-tools/utils';
 

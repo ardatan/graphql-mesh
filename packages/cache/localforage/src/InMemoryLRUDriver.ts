@@ -1,4 +1,5 @@
-import { createLruCache, LRUCache } from '@graphql-mesh/utils';
+import type { LRUCache } from '@graphql-mesh/utils';
+import { createLruCache } from '@graphql-mesh/utils';
 
 function nextTick() {
   // Make sure this is scheduled for next tick because LRU Cache is synchronous

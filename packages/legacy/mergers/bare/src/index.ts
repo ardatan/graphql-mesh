@@ -1,6 +1,7 @@
-import { extendSchema, GraphQLSchema } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
+import { extendSchema } from 'graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
-import {
+import type {
   MeshMerger,
   MeshMergerContext,
   MeshMergerOptions,

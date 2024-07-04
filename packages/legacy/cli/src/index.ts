@@ -2,9 +2,10 @@ import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
-import { getMesh, GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
+import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
+import { getMesh } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { Logger, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, YamlConfig } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   DefaultLogger,

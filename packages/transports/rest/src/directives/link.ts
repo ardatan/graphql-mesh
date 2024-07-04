@@ -1,6 +1,7 @@
 import { dset } from 'dset';
-import { GraphQLField, GraphQLObjectType, GraphQLSchema, OperationTypeNode } from 'graphql';
-import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import type { GraphQLField, GraphQLObjectType, GraphQLSchema, OperationTypeNode } from 'graphql';
+import type { ResolverData } from '@graphql-mesh/string-interpolation';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { getDirective } from '@graphql-tools/utils';
 
 export function processLinkFieldAnnotations(

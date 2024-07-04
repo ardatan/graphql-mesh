@@ -1,7 +1,7 @@
 import { pipe, toObservable } from 'wonka';
-import { MeshInstance } from '@graphql-mesh/runtime';
+import type { MeshInstance } from '@graphql-mesh/runtime';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
-import { Client, createClient, OperationResult } from '@urql/core';
+import { createClient, type OperationResult } from '@urql/core';
 import { getTestMesh } from '../../testing/getTestMesh.js';
 import { meshExchange } from '../src/index.js';
 

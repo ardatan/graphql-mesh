@@ -1,7 +1,9 @@
-import { DocumentNode, print } from 'graphql';
+import type { DocumentNode } from 'graphql';
+import { print } from 'graphql';
 import { getDocumentString } from '@envelop/core';
-import { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
-import { buildHTTPExecutor, HTTPExecutorOptions } from '@graphql-tools/executor-http';
+import type { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
+import type { HTTPExecutorOptions } from '@graphql-tools/executor-http';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
 export type HTTPTransportOptions = Pick<
   HTTPExecutorOptions,

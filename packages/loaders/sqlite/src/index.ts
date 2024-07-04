@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 

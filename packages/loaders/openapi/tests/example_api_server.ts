@@ -5,7 +5,7 @@
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
-import { createRouter, HTTPError, Response, RouterRequest } from 'fets';
+import { createRouter, HTTPError, Response, type RouterRequest } from 'fets';
 import { withCookies } from '@graphql-mesh/utils';
 
 interface User {

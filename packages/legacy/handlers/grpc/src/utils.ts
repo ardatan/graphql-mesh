@@ -1,16 +1,17 @@
-import { SchemaComposer } from 'graphql-compose';
+import type { SchemaComposer } from 'graphql-compose';
 import lodashGet from 'lodash.get';
-import { Root } from 'protobufjs';
+import type { Root } from 'protobufjs';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import type { ResolverData } from '@graphql-mesh/string-interpolation';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { withCancel } from '@graphql-mesh/utils';
-import {
+import type {
   ClientDuplexStream,
   ClientReadableStream,
   ClientUnaryCall,
-  Metadata,
   MetadataValue,
 } from '@grpc/grpc-js';
+import { Metadata } from '@grpc/grpc-js';
 import { getGraphQLScalar, isScalarType } from './scalars.js';
 
 export function getTypeName(

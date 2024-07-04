@@ -2,28 +2,24 @@
 import EventEmitter from 'events';
 import DataLoader from 'dataloader';
 import { XMLParser } from 'fast-xml-parser';
-import {
+import type {
   ExecutionResult,
-  getNamedType,
   GraphQLObjectType,
   GraphQLResolveInfo,
   GraphQLSchema,
-  isAbstractType,
-  isListType,
-  specifiedDirectives,
 } from 'graphql';
-import {
+import { getNamedType, isAbstractType, isListType, specifiedDirectives } from 'graphql';
+import type {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
-  InterfaceTypeComposer,
   ObjectTypeComposer,
   ObjectTypeComposerArgumentConfigMapDefinition,
   ObjectTypeComposerFieldConfigDefinition,
-  SchemaComposer,
 } from 'graphql-compose';
+import { InterfaceTypeComposer, SchemaComposer } from 'graphql-compose';
+import type { ResolveTree } from 'graphql-parse-resolve-info';
 import {
   parseResolveInfo,
-  ResolveTree,
   simplifyParsedResolveInfoFragmentWithType,
 } from 'graphql-parse-resolve-info';
 import {
@@ -40,13 +36,13 @@ import { pascalCase } from 'pascal-case';
 import urljoin from 'url-join';
 import { process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import {
   getInterpolatedHeadersFactory,
   parseInterpolationStrings,
-  ResolverData,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   GetMeshSourcePayload,
   ImportFn,
   Logger,
@@ -58,7 +54,8 @@ import {
 } from '@graphql-mesh/types';
 import { getHeadersObj, readFileOrUrl } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
+import type { ExecutionRequest } from '@graphql-tools/utils';
+import { memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from '@whatwg-node/fetch';
 
 const SCALARS = new Map<string, string>([

@@ -1,31 +1,32 @@
 /* eslint-disable no-case-declarations */
+import type { GraphQLScalarType, GraphQLType } from 'graphql';
 import {
   getNamedType,
   GraphQLBoolean,
   GraphQLFloat,
   GraphQLInt,
-  GraphQLScalarType,
   GraphQLString,
-  GraphQLType,
   isNonNullType,
 } from 'graphql';
-import {
+import type {
   AnyTypeComposer,
   ComposeInputType,
   ComposeOutputType,
   Directive,
-  EnumTypeComposer,
   EnumTypeComposerValueConfigDefinition,
-  InputTypeComposer,
   InputTypeComposerFieldConfigAsObjectDefinition,
+  ObjectTypeComposerFieldConfigMapDefinition,
+  ThunkComposer,
+} from 'graphql-compose';
+import {
+  EnumTypeComposer,
+  InputTypeComposer,
   InterfaceTypeComposer,
   isSomeInputTypeComposer,
   ListComposer,
   ObjectTypeComposer,
-  ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
   SchemaComposer,
-  ThunkComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
 import {
@@ -50,8 +51,9 @@ import {
   GraphQLURL,
   GraphQLUUID,
 } from 'graphql-scalars';
-import { JSONSchema, JSONSchemaObject, visitJSONSchema } from 'json-machete';
-import { Logger } from '@graphql-mesh/types';
+import type { JSONSchema, JSONSchemaObject } from 'json-machete';
+import { visitJSONSchema } from 'json-machete';
+import type { Logger } from '@graphql-mesh/types';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
   DictionaryDirective,

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-nodejs-modules */
 import { createServer, Server } from 'http';
-import { AddressInfo } from 'net';
+import type { AddressInfo } from 'net';
 import { execute, OperationTypeNode, parse } from 'graphql';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 

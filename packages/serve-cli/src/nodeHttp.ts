@@ -5,9 +5,9 @@ import { createServer as createHTTPServer } from 'http';
 // eslint-disable-next-line import/no-nodejs-modules
 import { createServer as createHTTPSServer } from 'https';
 // eslint-disable-next-line import/no-nodejs-modules
-import { SecureContextOptions } from 'tls';
-import { RecognizedString } from 'uWebSockets.js';
-import { ServerOptions } from './types.js';
+import type { SecureContextOptions } from 'tls';
+import type { RecognizedString } from 'uWebSockets.js';
+import type { ServerOptions } from './types.js';
 
 export function readRecognizedString(recognizedString: RecognizedString) {
   if (typeof recognizedString === 'string') {
