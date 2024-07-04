@@ -137,6 +137,16 @@ export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWitho
     | Transport<'http'>
     | Promise<Transport<'http'>>
     | (() => Transport<'http'> | Promise<Transport<'http'>>);
+
+  /**
+   * Disable GraphQL validation on the gateway
+   *
+   * By default, the gateway will validate the query against the schema before sending it to the executor.
+   * This is recommended to be enabled, but can be disabled for performance reasons.
+   *
+   * @default false
+   */
+  skipValidation?: boolean;
 }
 
 interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {

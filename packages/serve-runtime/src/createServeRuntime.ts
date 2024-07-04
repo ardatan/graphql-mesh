@@ -100,6 +100,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     executorPlugin.onSchemaChange = function onSchemaChange(payload) {
       unifiedGraph = payload.schema;
     };
+    if (config.skipValidation) {
+      executorPlugin.onValidate = function ({ setResult }) {
+        setResult([]);
+      };
+    }
     unifiedGraphPlugin = executorPlugin;
     readinessChecker = () => {
       const res$ = proxyExecutor({
