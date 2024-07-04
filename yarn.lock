@@ -5863,6 +5863,9 @@ __metadata:
     "@graphql-tools/executor-graphql-ws": "npm:^1.1.2"
     "@graphql-tools/executor-http": "npm:^1.1.2"
     "@graphql-tools/utils": "npm:^10.2.3"
+    "@types/ws": "npm:^8"
+    graphql-ws: "npm:^5.16.0"
+    ws: "npm:^8.18.0"
   peerDependencies:
     graphql: "*"
     tslib: ^2.4.0
@@ -35563,7 +35566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.15.0, ws@npm:^8.17.0, ws@npm:^8.17.1":
+"ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.15.0, ws@npm:^8.17.0, ws@npm:^8.17.1, ws@npm:^8.18.0":
   version: 8.18.0
   resolution: "ws@npm:8.18.0"
   peerDependencies:
