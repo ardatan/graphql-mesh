@@ -14,10 +14,10 @@ import {
 } from 'graphql';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
+import { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
-import { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 
 describe('Serve Runtime', () => {
   const upstreamSchema = createSchema({
