@@ -47,7 +47,7 @@
     "@graphql-mesh/transport-http": "^0.2.1",
     "@graphql-mesh/utils": "^0.98.10",
     "@graphql-tools/delegate": "^10.0.12",
-    "@graphql-tools/executor-http": "^1.1.1",
+    "@graphql-tools/executor-http": "^1.1.2",
     "@graphql-tools/executor-yoga": "^3.0.0",
     "@graphql-tools/federation": "^2.1.1",
     "@graphql-tools/stitch": "^9.2.10",
