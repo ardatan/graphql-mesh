@@ -50,6 +50,8 @@ import type {
   MeshServePlugin,
 } from './types.js';
 import { useChangingSchema } from './useChangingSchema.js';
+import { useCompleteSubscriptionsOnSchemaChange } from './useCompleteSubscriptionsOnSchemaChange.js';
+import { useCompleteSubscriptionsOnUnifiedGraphDispose } from './useCompleteSubscriptionsOnUnifiedGraphDispose.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
@@ -257,31 +259,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     check: readinessChecker,
   });
 
-  function handleSubscriptionTerminationOnUnifiedGraphDispose(
-    result: AsyncIterableIteratorOrValue<ExecutionResult>,
-    setResult: (result: AsyncIterableIteratorOrValue<ExecutionResult>) => void,
-  ) {
-    if (isAsyncIterable(result) && result.return) {
-      const subTerminateRepeater = new Repeater(function repeaterExecutor(_push, stop) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        stop.then(() => {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          result.return!();
-        });
-        onUnifiedGraphDispose(() => {
-          stop(
-            createGraphQLError('subscription has been closed because the server is shutting down', {
-              extensions: {
-                code: 'SHUTTING_DOWN',
-              },
-            }),
-          );
-        });
-      });
-      setResult(Repeater.race([result, subTerminateRepeater]));
-    }
-  }
-
   const defaultMeshPlugin: MeshServePlugin = {
     onFetch({ setFetchFn }) {
       setFetchFn(fetchAPI.fetch);
@@ -306,20 +283,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           disposableStack.use(plugin);
         }
       }
-    },
-    onExecute() {
-      return {
-        onExecuteDone({ result, setResult }) {
-          handleSubscriptionTerminationOnUnifiedGraphDispose(result, setResult);
-        },
-      };
-    },
-    onSubscribe() {
-      return {
-        onSubscribeResult({ result, setResult }) {
-          handleSubscriptionTerminationOnUnifiedGraphDispose(result, setResult);
-        },
-      };
     },
   };
 
@@ -391,6 +354,8 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       readinessCheckPlugin,
       registryPlugin,
       useChangingSchema(getSchema, cb => (schemaChanged = cb)),
+      useCompleteSubscriptionsOnUnifiedGraphDispose(onUnifiedGraphDispose),
+      useCompleteSubscriptionsOnSchemaChange(),
       ...(config.plugins?.(configContext) || []),
     ],
     // @ts-expect-error PromiseLike is not compatible with Promise

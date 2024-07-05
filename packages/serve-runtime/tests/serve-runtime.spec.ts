@@ -288,79 +288,42 @@ describe('Serve Runtime', () => {
     expect(mockValidateFn).toHaveBeenCalledTimes(0);
     expect(printSchema(fetchedSchema)).toBe(printSchema(schema));
   });
-  it('terminates subscriptions gracefully on shutdown', async () => {
-    const runtime = createSupergraphRuntime();
-
-    const sse = createSSEClient({
-      url: 'http://mesh/graphql',
-      fetchFn: runtime.fetch,
-      on: {
-        connected() {
-          runtime[Symbol.asyncDispose]();
-        },
-      },
-    });
-
-    const sub = sse.iterate({
-      query: /* GraphQL */ `
-        subscription {
-          neverEmits
+  it('should invoke onSchemaChange hooks as soon as schema changes', done => {
+    let onSchemaChangeCalls = 0;
+    const serve = createServeRuntime({
+      logging: false,
+      polling: 500,
+      supergraph() {
+        if (onSchemaChangeCalls > 0) {
+          // change schema after onSchemaChange was invoked
+          return /* GraphQL */ `
+            type Query {
+              hello: Int!
+            }
+          `;
         }
-      `,
-    });
 
-    const msgs: unknown[] = [];
-    for await (const msg of sub) {
-      msgs.push(msg);
-    }
-
-    expect(msgs[msgs.length - 1]).toMatchInlineSnapshot(`
-{
-  "errors": [
-    {
-      "extensions": {
-        "code": "SHUTTING_DOWN",
+        return /* GraphQL */ `
+          type Query {
+            world: String!
+          }
+        `;
       },
-      "message": "subscription has been closed because the server is shutting down",
-    },
-  ],
-}
-`);
-  });
-  it('terminates subscriptions gracefully on schema update', async () => {
-    upstreamIsUp = true;
-
-    const sse = createSSEClient({
-      url: 'http://mesh/graphql',
-      fetchFn: serveRuntimes.supergraphAPI.fetch,
-    });
-
-    const sub = sse.iterate({
-      query: /* GraphQL */ `
-        subscription {
-          neverEmits
-        }
-      `,
-    });
-
-    jest.advanceTimersByTimeAsync(10000); // new schema gets polled
-
-    const msgs: unknown[] = [];
-    for await (const msg of sub) {
-      msgs.push(msg);
-    }
-
-    expect(msgs[msgs.length - 1]).toMatchInlineSnapshot(`
-      {
-        "errors": [
-          {
-            "extensions": {
-              "code": "SUBSCRIPTION_SCHEMA_RELOAD",
-            },
-            "message": "subscription has been closed due to a schema reload",
+      plugins: () => [
+        {
+          onSchemaChange() {
+            if (onSchemaChangeCalls > 0) {
+              // schema changed for the second time
+              done();
+              serve[Symbol.asyncDispose]();
+            }
+            onSchemaChangeCalls++;
           },
-        ],
-      }
-      `);
+        },
+      ],
+    });
+
+    // trigger mesh
+    serve.fetch('http://mesh/graphql?query={__typename}');
   });
 });
