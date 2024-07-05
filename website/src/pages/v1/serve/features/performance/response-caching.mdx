@@ -1,4 +1,5 @@
-import { Callout } from '@theguild/components'
+import { Code } from 'nextra/components'
+import { Callout, Tabs } from '@theguild/components'
 
 # Response Caching
 
@@ -38,8 +39,10 @@ After starting the server we can execute a GraphQL Query operation, that selects
 field.
 
 ```sh filename="Execute slow GraphQL Query Operation with cUrl"
-curl -X POST -H 'Content-Type: application/json' http://localhost:4000/graphql \
-  -d '{"query":"{slow}"}' -w '\nTotal time : %{time_total}'
+curl -X POST http://localhost:4000/graphql \
+  -H 'Content-Type: application/json' \
+  -d '{ "query" : "{ slow }" }' \
+  -w '\nTotal time : %{time_total}'
 ```
 
 The output will look similar to the following:
@@ -56,13 +59,31 @@ After executing the same curl statement a second time, the duration is significa
 Total time:0.007571%
 ```
 
-`TODO: Later allow programmatic API`
+## Configuration
+
+The behaviour of this plugin can be configured by passing an object at the gateway level or by using
+`@cacheControl` directive at schema defintion level.
+
+The `@cacheControl` directive can be used to give to subgraphs the control over the cache behavior
+for the fields and types they are defining. You can add this directive during composition.
+
+- [See here for Federation to learn more about the `@cacheControl` directive](https://www.apollographql.com/docs/federation/performance/caching/#using-cache-hints-with-subgraphs)
+- [See here for Mesh Compose to learn more about the `@cacheControl` in subgraph definitions](/v1/compose/response-caching)
 
 ## Session based caching
 
 If your GraphQL API returns specific data depending on the viewer's session, you can use the session
 option to cache the response per session. Usually, the session is determined by an HTTP header, e.g.
 an user id within the encoded access token.
+
+<Callout type="warning">
+  Don't forget to validate the authentication token before using it as a session key.
+  Allowing cached responses to be returned with unverified tokens can lead to data leaks.
+
+Please see the [Authorization/Auhtentication](/v1/serve/features/authy) section for more
+information.
+
+</Callout>
 
 ```ts filename="mesh.config.ts"
 import useResponseCache from '@graphql-mesh/plugin-response-cache'
@@ -84,29 +105,61 @@ export const serveConfig = defineServeConfig({
 In some cases, a type or a field should only be cached if their is a session. For this, you can use
 the `scope` to indicate that the cache should only be used if a session is present.
 
-```ts filename="Response Cache configuration with scope"
-useResponseCache({
-  ...pluginCtx,
-  // cache based on the authentication header
-  session: request => request.headers.get('authentication')
+This can be useful to prevent exposure of sensitive data to unauthorized users.
 
-  // You can use configuration object to define the scope
-  scopePerSchemaCoordinate: {
-    'Query.me': 'PRIVATE', // on a field
-    'User: 'PRIVATE', // or a type
-  }
+<Tabs items={[
+  "Programatically using options",
+  <span>Declaratively using <Code>@cacheControl</Code></span>
+]}>
+  <Tabs.Tab>
+    ```ts filename="Response Cache configuration with scope"
+    useResponseCache({
+      ...pluginCtx,
+      // cache based on the authentication header
+      session: request => request.headers.get('authentication')
+
+      // You can use configuration object to define the scope
+      scopePerSchemaCoordinate: {
+        'Query.me': 'PRIVATE', // on a field
+        User: 'PRIVATE', // or a type
+      }
+    })
+    ```
+
+  </Tabs.Tab >
+  <Tabs.Tab>
+    ```graphql filename="GraphQL schema with @cacheControl directive"
+    type Query {
+      me: User @cacheControl(scope: PRIVATE)   # on a field
+    }
+
+    type User @cacheControl(scope: PRIVATE) {  # on a type
+      id: ID!
+      name: String!
+    }
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+### Group based caching
+
+The `session` option can also be used to cache responses based for a group of users. This can be
+useful if data exposed by your API is the same for a group of users sharing the same characteristic.
+
+For example, if data returned by an API is always the same for every users with the same role, you
+can use the role as a session key.
+
+```ts filename="Role based caching"
+useResponseCache({
+  session: request => request.headers.get('x-user-role')
 })
 ```
 
-### Control over subgraphs with `@cacheControl` directive
-
-It is also possible to use the `@cacheControl` directive to define the scope. You can add this
-directive during composition.
-
-- [See here for Federation to learn more about the `@cacheControl` directive](https://www.apollographql.com/docs/federation/performance/caching/#using-cache-hints-with-subgraphs)
-- [See here for Mesh Compose to learn more about the `@cacheControl` in subgraph definitions](/v1/compose/response-caching)
-
 ## Time to Live (TTL)
+
+By default, all cached operations are stored indefinitely. This can lead to stale data being
+returned.
 
 It is possible to give cached operations a time to live. Either globally, based on
 [schema coordinates](https://github.com/graphql/graphql-wg/blob/main/rfcs/SchemaCoordinates.md) or
@@ -115,22 +168,114 @@ object types.
 If a query operation result contains multiple objects of the same or different types, the lowest TTL
 is picked.
 
-````ts filename="Response Cache configuration with TTL"
+<Tabs items={[
+  "Programatically using options",
+  <span>Declaratively using <Code>@cacheControl</Code></span>
+]}>
+  <Tabs.Tab>
+    ```ts filename="Response Cache configuration with TTL"
+    useResponseCache({
+      ...pluginCtx,
+      session: () => null,
+      // by default cache all operations for 2 seconds
+      ttl: 2_000,
+      ttlPerSchemaCoordinate: {
+        // only cache query operations containing User for 500ms
+        User: 500
+        // cache operations selecting Query.lazy for 10 seconds
+        'Query.lazy': 10_000
+      }
+    })
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```graphql filename="GraphQL schema with @cacheControl directive"
+    type Query {
+      me: User @cacheControl(maxAge: 500)   # only cache query operations containing User for 500ms
+    }
+
+    type User @cacheControl(maxAge: 10000) {  # cache operations selecting Query.lazy for 10 seconds
+      id: ID!
+      name: String!
+    }
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## Control which responses are cached
+
+By default, all successful operations influences the cache.
+
+You can globaly disable caching using the `enabled` option. This can be useful for local
+development.
+
+```ts filename="Disabling caching"
 useResponseCache({
   ...pluginCtx,
-  session: () => null,
-  // by default cache all operations for 2 seconds
-  ttl: 2_000,
-  ttlPerType: {
-    // only cache query operations containing User for 500ms
-    User: 500
-  },
-  ttlPerSchemaCoordinate: {
-    // cache operations selecting Query.lazy for 10 seconds
-    'Query.lazy': 10_000
-  }
+  session: request => null,
+  enabled: () => process.env.NODE_ENV !== 'development'
 })
+```
 
+### Ingore a specific request
+
+You can entirely disable caching (both caching and invalidation) for a specific request by using the
+`enabled` option.
+
+Be aware that this means that if the response contains entities that are part of other cached
+responses, those responses will not be invalidated.
+
+```ts filename="Disabling caching for a specific request"
+useResponseCache({
+  ...pluginCtx,
+  session: request => null,
+  enabled: request => request.headers.get('x-no-cache') !== 'true'
+})
+```
+
+### Disable caching of specific types and fields
+
+Some types or fields contains data that should never be cached. For example, a field that returns
+the current time.
+
+You can disable caching for specific types or fields by setting it's TTL to `0`. This will prevent
+the response from being cached, but will not prevent cache invalidation for other entities contained
+in the response.
+
+<Tabs items={[
+  "Programatically using options",
+  <span>Declaratively using <Code>@cacheControl</Code></span>
+]}>
+  <Tabs.Tab title="Programatically using options">
+    ```ts filename="Disabling caching for a specific type"
+    useResponseCache({
+      ...pluginCtx,
+      session: request => null,
+      ttlPerSchemaCoordinate: {
+        // for a entire type
+        Date: 0
+        // for a specific field
+        'Query.time': 0
+      }
+    })
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab title="Declaratively using @cacheControl">
+    ```graphql filename="GraphQL schema with @cacheControl directive"
+    type Query {
+      time: String @cacheControl(maxAge: 0)  # on a field
+    }
+
+    type Date @cacheControl(maxAge: 0) {     # on a type
+      day: Int!
+      month: Int!
+      year: Int!
+    }
+    ```
+
+  </Tabs.Tab>
+</Tabs>
 
 ## Invalidations via Mutation
 
@@ -145,7 +290,7 @@ mutation UpdateUser {
     name
   }
 }
-````
+```
 
 ```json filename="GraphQL operation execution result"
 {
@@ -172,7 +317,41 @@ useResponseCache({
 })
 ```
 
-## HTTP Caching via `ETag` and `If-None-Match` headers
+### Entity identity
+
+Automatic cache invalidation works by instpecting the result of each query and mutation operations,
+and keeping track of the entities that are part of it.
+
+By default, the identity of entities is based on the `id` field.
+
+You can customize the identity field by setting the `idFields` options.
+
+```ts filename="Customizing entity identity"
+useResponseCache({
+  ...pluginCtx,
+  session: request => null,
+  idFields: ['id', 'email']
+})
+```
+
+```graphql
+type User {
+  email: String!
+  username: String!
+  profile: Profile!
+}
+
+type Profile {
+  id: ID!
+  bio: String
+  picture: String
+}
+```
+
+In this example, `User`'s identity will be based on `email` field, and `Profile`'s identity will be
+based on `id` field.
+
+## HTTP Caching
 
 Response Caching plugin sends `ETag` headers to the client, and respects `If-None-Match` headers in
 the HTTP request.
