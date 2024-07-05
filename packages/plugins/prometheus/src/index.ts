@@ -30,15 +30,21 @@ import {
   usePrometheus,
 } from '@graphql-yoga/plugin-prometheus';
 
-export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryAndLabels };
 export { createCounter, createHistogram, createSummary };
+export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryAndLabels };
 
 type MeshMetricsConfig = {
   delegation?:
     | boolean
     | string
     | HistogramAndLabels<string, Omit<OnDelegateHookPayload<unknown>, 'context'> | undefined>;
+  /**
+   * @deprecated Use `labels.delegationArgs` instead
+   */
   delegationArgs?: boolean;
+  /**
+   * @deprecated Use `labels.delegationKey` instead
+   */
   delegationKey?: boolean;
 
   subgraphExecute?:
@@ -58,8 +64,23 @@ type MeshMetricsConfig = {
         string,
         { url: string; options: MeshFetchRequestInit; response: Response }
       >;
+
+  /**
+   * @deprecated Use `labels.fetchRequestHeaders` instead
+   */
   fetchRequestHeaders?: boolean;
+  /**
+   * @deprecated Use `labels.fetchResponseHeaders` instead
+   */
   fetchResponseHeaders?: boolean;
+
+  labels?: {
+    delegationArgs?: boolean;
+    delegationKey?: boolean;
+
+    fetchRequestHeaders?: boolean;
+    fetchResponseHeaders?: boolean;
+  };
 };
 
 type PrometheusPluginOptions = Omit<
@@ -105,10 +126,14 @@ export default function useMeshPrometheus(
 
   if (pluginOptions.fetchMetrics) {
     const labelNames = ['url', 'method', 'statusCode', 'statusText'];
-    if (pluginOptions.fetchRequestHeaders) {
+    const {
+      fetchRequestHeaders = pluginOptions.fetchRequestHeaders,
+      fetchResponseHeaders = pluginOptions.fetchResponseHeaders,
+    } = pluginOptions.labels || {};
+    if (fetchRequestHeaders) {
       labelNames.push('requestHeaders');
     }
-    if (pluginOptions.fetchResponseHeaders) {
+    if (fetchResponseHeaders) {
       labelNames.push('responseHeaders');
     }
 
@@ -133,10 +158,10 @@ export default function useMeshPrometheus(
                 statusText: response.statusText,
               };
 
-              if (pluginOptions.fetchRequestHeaders) {
+              if (fetchRequestHeaders) {
                 labels.requestHeaders = JSON.stringify(options.headers);
               }
-              if (pluginOptions.fetchResponseHeaders) {
+              if (fetchResponseHeaders) {
                 labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
               }
               return labels;
@@ -151,10 +176,14 @@ export default function useMeshPrometheus(
 
   if (pluginOptions.delegation) {
     const delegationLabelNames = ['sourceName', 'typeName', 'fieldName'];
-    if (pluginOptions.delegationArgs) {
+    const {
+      delegationArgs = pluginOptions.delegationArgs,
+      delegationKey = pluginOptions.delegationKey,
+    } = pluginOptions.labels || {};
+    if (delegationArgs) {
       delegationLabelNames.push('args');
     }
-    if (pluginOptions.delegationKey) {
+    if (delegationKey) {
       delegationLabelNames.push('key');
     }
     delegateHistogram =
@@ -175,8 +204,8 @@ export default function useMeshPrometheus(
                 sourceName,
                 typeName,
                 fieldName,
-                args: pluginOptions.delegationArgs ? JSON.stringify(args) : undefined,
-                key: pluginOptions.delegationKey ? JSON.stringify(key) : undefined,
+                args: delegationArgs ? JSON.stringify(args) : undefined,
+                key: delegationKey ? JSON.stringify(key) : undefined,
               };
             },
           });
