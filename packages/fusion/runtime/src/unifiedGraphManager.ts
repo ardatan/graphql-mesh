@@ -87,10 +87,6 @@ export class UnifiedGraphManager<TContext> {
     });
   }
 
-  public onUnifiedGraphDispose(fn: () => MaybePromise<void>) {
-    this._transportExecutorStack?.defer(fn);
-  }
-
   private pausePolling() {
     if (this.currentTimeout) {
       clearTimeout(this.currentTimeout);
