@@ -1,4 +1,5 @@
 import type { GraphQLSchema } from 'graphql';
+import { mapMaybePromise } from '@graphql-mesh/utils';
 import type { MaybePromise } from '@graphql-tools/utils';
 import type { MeshServePlugin } from './types';
 
@@ -19,11 +20,12 @@ export function useChangingSchema(
     },
     onRequestParse({ request }) {
       return {
-        async onRequestParseDone() {
+        onRequestParseDone() {
           if (!currentSchema) {
             // only if the schema is not already set do we want to get it
-            const schema = await getSchema();
-            schemaByRequest.set(request, schema);
+            return mapMaybePromise(getSchema(), schema => {
+              schemaByRequest.set(request, schema);
+            }) as any; // TODO: PromiseLike in Mesh MaybePromise is not assignable to type Yoga's PromiseOrValue
           }
         },
       };
