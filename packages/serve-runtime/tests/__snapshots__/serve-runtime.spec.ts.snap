@@ -13,5 +13,6 @@ exports[`Serve Runtime Hive CDN respects env vars: hive-cdn 1`] = `
 
 type Subscription {
   pull: String
+  neverEmits: String
 }"
 `;

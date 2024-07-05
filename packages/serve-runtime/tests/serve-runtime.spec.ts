@@ -17,8 +17,12 @@ import { createSchema, createYoga, Repeater } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import type { MaybePromise } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
+
+const leftovers: (() => MaybePromise<void>)[] = [];
+afterAll(() => Promise.all(leftovers.map(l => l())));
 
 describe('Serve Runtime', () => {
   jest.useFakeTimers();
@@ -66,7 +70,7 @@ describe('Serve Runtime', () => {
 
           type Subscription {
             pull: String
-            wait: String
+            neverEmits: String
           }
         `,
       resolvers: {
@@ -80,10 +84,12 @@ describe('Serve Runtime', () => {
                 push({ pull: 'push' });
               }),
           },
-          wait: {
+          neverEmits: {
             subscribe: () =>
-              new Repeater(push => {
-                return new Promise(() => {});
+              new Repeater(() => {
+                return new Promise<void>(resolve => {
+                  leftovers.push(() => resolve());
+                });
               }),
           },
         },
@@ -305,7 +311,7 @@ describe('Serve Runtime', () => {
     const sub = sse.iterate({
       query: /* GraphQL */ `
         subscription {
-          wait
+          neverEmits
         }
       `,
     });
