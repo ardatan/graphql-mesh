@@ -1,0 +1,224 @@
+import { Callout } from '@theguild/components'
+
+# Subscriptions
+
+GraphQL Mesh fully supports federated subscriptions and behaves just like
+[Apollo Federation GraphQL subscriptions](https://www.apollographql.com/docs/router/executing-operations/subscription-support).
+
+Subgraphs providing subscriptions can communicate with Mesh through one of the following protocols:
+
+- [GraphQL over SSE](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md)
+- [GraphQL over WebSocket](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md)
+- ~[HTTP Callback](https://www.apollographql.com/docs/router/executing-operations/subscription-callback-protocol/)~
+  ([coming soon!](https://github.com/ardatan/graphql-mesh/issues/7209))
+
+## Example
+
+We'll implement two
+[GraphQL Yoga federation services](https://the-guild.dev/graphql/yoga-server/docs/features/apollo-federation#federation-service)
+behaving as subgraphs. The "products" service exposes a subscription operation type for subscribing
+to product changes, while the "reviews" service simply exposes review stats about products.
+
+The example is somewhat similar to
+[Apollo's documentation](https://www.apollographql.com/docs/router/executing-operations/subscription-support/#example-execution),
+except for that we use GraphQL Yoga here and significantly reduce the setup requirements.
+
+### Install dependencies
+
+```ssh npm2yarn
+npm i graphql-yoga @apollo/subgraph graphql
+```
+
+### Products service
+
+```ts filename="products.ts"
+import { createServer } from 'http'
+import { parse } from 'graphql'
+import { createYoga } from 'graphql-yoga'
+import { buildSubgraphSchema } from '@apollo/subgraph'
+import { resolvers } from './my-resolvers'
+
+const typeDefs = parse(/* GraphQL */ `
+  type Product @key(fields: "id") {
+    id: ID!
+    name: String!
+    price: Int!
+  }
+
+  type Subscription {
+    productPriceChanged: Product!
+  }
+`)
+
+const yoga = createYoga({ schema: buildSubgraphSchema([{ typeDefs, resolvers }]) })
+
+const server = createServer(yoga)
+
+server.listen(40001, () => {
+  console.log('Products subgraph ready at http://localhost:40001')
+})
+```
+
+### Reviews service
+
+```ts filename="reviews.ts"
+import { createServer } from 'http'
+import { parse } from 'graphql'
+import { createYoga } from 'graphql-yoga'
+import { buildSubgraphSchema } from '@apollo/subgraph'
+import { resolvers } from './my-resolvers'
+
+const typeDefs = parse(/* GraphQL */ `
+  extend type Product @key(fields: "id") {
+    id: ID! @external
+    reviews: [Review!]!
+  }
+
+  type Review {
+    score: Int!
+  }
+`)
+
+const yoga = createYoga({ schema: buildSubgraphSchema([{ typeDefs, resolvers }]) })
+
+const server = createServer(yoga)
+
+server.listen(40002, () => {
+  console.log('Reviews subgraph ready at http://localhost:40002')
+})
+```
+
+### Start Gateway
+
+After having generated a supergraph file `supergraph.graphql` for the two subgraphs, either using
+[Mesh Compose](/v1/compose) or [Apollo Rover](https://www.apollographql.com/docs/rover/), simply run
+Mesh Serve without any additional configuration!
+
+```sh
+mesh-serve --supergraph=supergraph.graphql
+```
+
+### Subscribe
+
+Let's now subscribe to the product price changes by executing the following query:
+
+```graphql
+subscription {
+  productPriceChanged {
+    # Defined in Products subgraph
+    name
+    price
+    reviews {
+      # Defined in Reviews subgraph
+      score
+    }
+  }
+}
+```
+
+Mesh will inteligently resolve all fields on subscription events and deliver you the complete
+result.
+
+You can subscribe to the gateway through Server-Sent Events (SSE) (in JavaScript, using
+[EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) or
+[graphql-sse](https://the-guild.dev/graphql/sse)). For the sake of brevity, we'll subscribe using
+`curl`:
+
+```sh
+curl 'http://localhost:4000/graphql' \
+  -H 'accept: text/event-stream' \
+  -H 'content-type: application/json' \
+  --data-raw '{"query":"subscription OnProductPriceChanged { productPriceChanged { name price reviews { score } } }","operationName":"OnProductPriceChanged"}'
+```
+
+## Subgraphs using WebSockets
+
+If your subgraph uses WebSockets for subscriptions support
+([like with Apollo Server](https://www.apollographql.com/docs/apollo-server/data/subscriptions/)),
+Mesh Serve will need additional configuration pointing to the WebSocket server path on the subgraph.
+
+We'll optionally install `@graphql-mesh/transport-http` first to have type-safety when defining the
+transport options.
+
+```sh npm2yarn
+npm i @graphql-mesh/transport-http
+```
+
+And configure Mesh Serve to use the `/subscriptions` path on the "products" subgraph for WebSocket
+connections:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+import type { HTTPTransportOptions } from '@graphql-mesh/transport-http'
+
+export const serveConfig = defineConfig({
+  supergraph: 'supergraph.graphql',
+  transportOptions: {
+    // use "*" to apply options to all subgraphs
+    products: {
+      http: {
+        subscriptions: {
+          ws: {
+            // the location of the WS server is ws://<location>/subscriptions
+            path: '/subscriptions'
+          }
+        }
+      } satisfies HTTPTransportOptions
+    }
+  }
+})
+```
+
+Now simply start Mesh Serve with:
+
+```sh
+mesh-serve
+```
+
+Downstream clients are still subscribing to Mesh Serve gateway through any supported subscriptions
+protocol, but upstream Mesh Serve will use long-living WebSocket connections to the "products"
+service.
+
+### `Authorization` header
+
+Mesh Server will propagate the downstream client's `Authorization` header contents to the upstream
+WebSocket connections through the
+[`ConnectionInit` message payload](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md#connectioninit).
+
+The contents of the payload will be available in `graphql-ws` connectionParams:
+
+```json
+{
+  "connectionParams": {
+    "token": "<CONTENTS_OF_AUTHORIZATION_HEADER>"
+  }
+}
+```
+
+<Callout>
+  This is also what Apollo Router when [propagating auth on
+  WebSockets](https://www.apollographql.com/docs/router/executing-operations/subscription-support/#websocket-auth-support).
+</Callout>
+
+## Closing active subscriptions on schema change
+
+When the schema changes in Mesh, all active subscriptions will be completed after emitting the
+following execution error:
+
+```json
+{
+  "errors": [
+    {
+      "message": "subscription has been closed due to a schema reload",
+      "extensions": {
+        "code": "SUBSCRIPTION_SCHEMA_RELOAD"
+      }
+    }
+  ]
+}
+```
+
+<Callout>
+  This is also what Apollo Router when [terminating subscriptions on schema
+  update](https://www.apollographql.com/docs/router/executing-operations/subscription-support/#termination-on-schema-update).
+</Callout>
