@@ -12,7 +12,7 @@ import {
   type ExecutionResult,
   type IntrospectionQuery,
 } from 'graphql';
-import { createSchema, createYoga, Repeater } from 'graphql-yoga';
+import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
@@ -21,54 +21,8 @@ import { createServeRuntime } from '../src/createServeRuntime.js';
 
 describe('Serve Runtime', () => {
   jest.useFakeTimers();
-  function createUpstreamSchema() {
-    return createSchema({
-      typeDefs: /* GraphQL */ `
-          """
-          Fetched on ${new Date().toISOString()}
-          """
-          type Query {
-            foo: String
-          }
-
-          type Subscription {
-            pull: String
-          }
-        `,
-      resolvers: {
-        Query: {
-          foo: () => 'bar',
-        },
-        Subscription: {
-          pull: {
-            subscribe: () =>
-              new Repeater(push => {
-                push({ pull: 'push' });
-              }),
-          },
-        },
-      },
-    });
-  }
-  const upstreamAPI = createYoga({
-    schema: createUpstreamSchema(),
-    logging: false,
-  });
-  let upstreamIsUp = true;
-  const serveRuntimes = {
-    proxyAPI: createServeRuntime({
-      logging: false,
-      proxy: {
-        endpoint: 'http://localhost:4000/graphql',
-        fetch(info, init, ...args) {
-          if (!upstreamIsUp) {
-            return Response.error();
-          }
-          return upstreamAPI.fetch(info, init, ...args);
-        },
-      },
-    }),
-    supergraphAPI: createServeRuntime({
+  function createSupergraphRuntime() {
+    return createServeRuntime({
       logging: false,
       supergraph: () => {
         if (!upstreamIsUp) {
@@ -97,7 +51,44 @@ describe('Serve Runtime', () => {
           },
         };
       },
+    });
+  }
+  function createUpstreamSchema() {
+    return createSchema({
+      typeDefs: /* GraphQL */ `
+          """
+          Fetched on ${new Date().toISOString()}
+          """
+          type Query {
+            foo: String
+          }
+        `,
+      resolvers: {
+        Query: {
+          foo: () => 'bar',
+        },
+      },
+    });
+  }
+  const upstreamAPI = createYoga({
+    schema: createUpstreamSchema(),
+    logging: false,
+  });
+  let upstreamIsUp = true;
+  const serveRuntimes = {
+    proxyAPI: createServeRuntime({
+      logging: false,
+      proxy: {
+        endpoint: 'http://localhost:4000/graphql',
+        fetch(info, init, ...args) {
+          if (!upstreamIsUp) {
+            return Response.error();
+          }
+          return upstreamAPI.fetch(info, init, ...args);
+        },
+      },
     }),
+    supergraphAPI: createSupergraphRuntime(),
   };
   describe('Endpoints', () => {
     beforeEach(() => {
@@ -278,43 +269,42 @@ describe('Serve Runtime', () => {
     expect(mockValidateFn).toHaveBeenCalledTimes(0);
     expect(printSchema(fetchedSchema)).toBe(printSchema(schema));
   });
-  it('terminates subscriptions gracefully on schema update', async () => {
-    upstreamIsUp = true;
-    const res = await serveRuntimes.supergraphAPI.fetch('http://localhost:4000/graphql', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: /* GraphQL */ `
-          subscription {
-            pull
+  it('should invoke onSchemaChange hooks as soon as schema changes', done => {
+    let onSchemaChangeCalls = 0;
+    const serve = createServeRuntime({
+      logging: false,
+      polling: 500,
+      supergraph() {
+        if (onSchemaChangeCalls > 0) {
+          // change schema after onSchemaChange was invoked
+          return /* GraphQL */ `
+            type Query {
+              hello: Int!
+            }
+          `;
+        }
+
+        return /* GraphQL */ `
+          type Query {
+            world: String!
           }
-        `,
-      }),
+        `;
+      },
+      plugins: () => [
+        {
+          onSchemaChange() {
+            if (onSchemaChangeCalls > 0) {
+              // schema changed for the second time
+              done();
+              serve[Symbol.asyncDispose]();
+            }
+            onSchemaChangeCalls++;
+          },
+        },
+      ],
     });
 
-    let firstValPushed = false;
-    let terminated = false;
-    for await (const chunk of res.body) {
-      const chunkStr = chunk.toString();
-      if (terminated) {
-        expect(chunkStr).toContain('event: complete');
-        continue;
-      }
-      if (chunkStr.includes('data')) {
-        if (chunkStr.includes('push')) {
-          jest.advanceTimersByTimeAsync(10000);
-          continue;
-        }
-        expect(chunkStr).toContain(`SUBSCRIPTION_SCHEMA_RELOAD`);
-        terminated = true;
-        continue;
-      }
-      if (!firstValPushed) {
-        firstValPushed = true;
-        continue;
-      }
-    }
+    // trigger mesh
+    serve.fetch('http://mesh/graphql?query={__typename}');
   });
 });

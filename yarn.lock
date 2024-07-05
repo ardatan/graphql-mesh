@@ -5466,6 +5466,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.2.3"
     "@whatwg-node/server": "npm:^0.9.34"
     disposablestack: "npm:^1.1.6"
+    graphql-sse: "npm:^2.5.3"
     graphql-yoga: "npm:^5.6.0"
     html-minifier-terser: "npm:7.2.0"
   peerDependencies:
@@ -19700,6 +19701,15 @@ __metadata:
     graphql-relay: ^0.4.2 || ^0.5.0 || ^0.7.0 || ^0.8.0 || ^0.9.0 || ^0.10.0
     sequelize: ">=3.0.0"
   checksum: 10c0/a4d2ba73c332ddf63439f84ca04496d5bd927ef28e1e85834857661c94450b13463015b303d03ad720fd53e62d44fcb3a95c3995b8c3d0ef389c18345244a188
+  languageName: node
+  linkType: hard
+
+"graphql-sse@npm:^2.5.3":
+  version: 2.5.3
+  resolution: "graphql-sse@npm:2.5.3"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: 10c0/b556564aaddd8dfcc4e7fd25da37cfe95dbf5e100fca287b1b15ab6874a772fda96088b66e7d02739076fb769d60279c17afe54d5ab196eeca67972247c6c73e
   languageName: node
   linkType: hard
 
