@@ -329,19 +329,6 @@ describe('Serve Runtime', () => {
   });
   it('terminates subscriptions gracefully on schema update', async () => {
     upstreamIsUp = true;
-    const res = await serveRuntimes.supergraphAPI.fetch('http://localhost:4000/graphql', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: /* GraphQL */ `
-          subscription {
-            pull
-          }
-        `,
-      }),
-    });
 
     const sse = createSSEClient({
       url: 'http://mesh/graphql',
