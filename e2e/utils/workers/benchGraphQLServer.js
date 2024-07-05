@@ -1,6 +1,7 @@
 // @ts-check
 
 import { expose } from 'threads/worker';
+import { fetch } from '@whatwg-node/fetch';
 
 /**
  * @param {number} port Port of the server to benchmark.

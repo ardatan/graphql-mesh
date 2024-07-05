@@ -1,7 +1,8 @@
-import { exec, execSync } from 'child_process';
-import { createReadStream, readFile, readFileSync, write, writeFileSync } from 'fs';
+import { exec } from 'child_process';
+import { readFileSync } from 'fs';
 import { createServer } from 'http';
 import { join } from 'path';
+import { fetch } from '@whatwg-node/fetch';
 
 jest.setTimeout(30000);
 async function findAvailableHostName() {

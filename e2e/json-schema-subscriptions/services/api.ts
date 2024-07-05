@@ -1,6 +1,7 @@
 import { createServer } from 'http';
 import { createRouter, Response } from 'fets';
 import { Args } from '@e2e/args';
+import { fetch } from '@whatwg-node/fetch';
 
 const args = Args(process.argv);
 

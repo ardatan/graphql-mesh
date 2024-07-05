@@ -1,4 +1,5 @@
 import { createTenv } from '@e2e/tenv';
+import { fetch } from '@whatwg-node/fetch';
 
 const { serve, compose } = createTenv(__dirname);
 
@@ -15,16 +16,16 @@ it('should compose', async () => {
 schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
 {
   query: Query
-  
-  
+
+
 }
 
 
@@ -88,13 +89,13 @@ schema
 
 
 enum join__Graph {
-  HELLOWORLD @join__graph(name: "helloworld", url: "") 
+  HELLOWORLD @join__graph(name: "helloworld", url: "")
 }
 
 type Query @join__type(graph: HELLOWORLD)  {
   hello: String
 }
-    
+
 "
 `);
 });

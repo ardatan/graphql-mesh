@@ -7,6 +7,7 @@ import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
 import type { ExecutionResult } from 'graphql';
+import { fetch } from '@whatwg-node/fetch';
 import { createArg, createPortArg, createServicePortArg } from './args';
 
 export const retries = 120,

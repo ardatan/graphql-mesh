@@ -1,4 +1,5 @@
 import { createTenv, getAvailablePort } from '@e2e/tenv';
+import { fetch } from '@whatwg-node/fetch';
 
 const { compose, serve, service } = createTenv(__dirname);
 
