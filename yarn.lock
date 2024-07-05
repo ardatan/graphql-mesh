@@ -6130,10 +6130,10 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor-http@npm:^1.0.6, @graphql-tools/executor-http@npm:^1.0.9":
-  version: 1.0.9
-  resolution: "@graphql-tools/executor-http@npm:1.0.9"
+  version: 1.1.0
+  resolution: "@graphql-tools/executor-http@npm:1.1.0"
   dependencies:
-    "@graphql-tools/utils": "npm:^10.0.13"
+    "@graphql-tools/utils": "npm:^10.3.0"
     "@repeaterjs/repeater": "npm:^3.0.4"
     "@whatwg-node/fetch": "npm:^0.9.0"
     extract-files: "npm:^11.0.0"
@@ -6142,7 +6142,7 @@ __metadata:
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/d1e5bea39ca4c2d6069f097ebbe6f96690a7497b384766a8616fb26cb59ae4a0a2fff31ceb1a4f682dc0d78772d157a786cf680d2ac2ac3fbc2eb18b8813e8f3
+  checksum: 10c0/f8b920e05922eff4a4593ee8eac4d8afd9433d8dbd2f93d06145c3abc537286e8f747ad3392e12d223856eb8c97a1b6bc98d4d75b663d7457684de1728e10704
   languageName: node
   linkType: hard
 
@@ -6626,9 +6626,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.2.3, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3":
-  version: 10.2.3
-  resolution: "@graphql-tools/utils@npm:10.2.3"
+"@graphql-tools/utils@npm:10.3.0, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3, @graphql-tools/utils@npm:^10.3.0":
+  version: 10.3.0
+  resolution: "@graphql-tools/utils@npm:10.3.0"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     cross-inspect: "npm:1.0.0"
@@ -6636,7 +6636,7 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/97cfe0fedd97105c952dd9e51c383ffa25d3dcee187b7f5156462c79633fbed2ece631388d3b8198e7f678057077b519844cba2d21be59cc286d3b2c6ebe1c73
+  checksum: 10c0/01248a4333bbd9a23b7304e9ea3a498d284cc9f2718209529c8263f5ff629c2800a6347fcd005b37f1b61c5efbf50b594e0dc53d6de776cad6c367d963687950
   languageName: node
   linkType: hard
 
@@ -8484,7 +8484,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
     "@graphql-tools/delegate": "npm:^10.0.12"
-    "@graphql-tools/utils": "npm:10.2.3"
+    "@graphql-tools/utils": "npm:10.3.0"
     "@omnigraph/json-schema": "npm:^0.101.2"
     "@whatwg-node/fetch": "npm:0.9.18"
     change-case: "npm:^4.1.2"
@@ -8571,7 +8571,7 @@ __metadata:
     "@graphql-mesh/transport-thrift": "npm:^0.3.1"
     "@graphql-mesh/types": "npm:^0.98.10"
     "@graphql-mesh/utils": "npm:^0.98.10"
-    "@graphql-tools/utils": "npm:10.2.3"
+    "@graphql-tools/utils": "npm:10.3.0"
     graphql-scalars: "npm:^1.22.4"
     thrift: "npm:^0.20.0"
   peerDependencies:
