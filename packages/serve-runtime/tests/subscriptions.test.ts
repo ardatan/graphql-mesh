@@ -39,8 +39,8 @@ describe('Subscriptions', () => {
   const upstream = createYoga({ schema: upstreamSchema });
 
   it('should terminate subscriptions gracefully on shutdown', async () => {
-    await using serve = createServeRuntime({
-      logging: false,
+    const serve = createServeRuntime({
+      logging: true,
       supergraph() {
         return getUnifiedGraphGracefully([
           {
@@ -66,7 +66,9 @@ describe('Subscriptions', () => {
       fetchFn: serve.fetch,
       on: {
         connected() {
-          serve[Symbol.asyncDispose]();
+          setImmediate(() => {
+            serve[Symbol.asyncDispose]();
+          });
         },
       },
     });

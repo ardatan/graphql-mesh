@@ -1,8 +1,9 @@
-import { createGraphQLError, isAsyncIterable, Repeater } from 'graphql-yoga';
+import { isAsyncIterable, Repeater } from 'graphql-yoga';
 import type { MeshServePlugin } from './types';
 
-export function useCompleteSubscriptionsOnUnifiedGraphDispose(
+export function useCompleteSubscriptionsOnDispose(
   onDispose: (cb: () => void) => void,
+  createError: () => Error,
 ): MeshServePlugin {
   return {
     onSubscribe() {
@@ -16,16 +17,7 @@ export function useCompleteSubscriptionsOnUnifiedGraphDispose(
                   // eslint-disable-next-line @typescript-eslint/no-floating-promises
                   stop.then(() => result.return?.());
                   onDispose(() => {
-                    stop(
-                      createGraphQLError(
-                        'subscription has been closed because the server is shutting down',
-                        {
-                          extensions: {
-                            code: 'SHUTTING_DOWN',
-                          },
-                        },
-                      ),
-                    );
+                    stop(createError());
                   });
                 }),
               ]),

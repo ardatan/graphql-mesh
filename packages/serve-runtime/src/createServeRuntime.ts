@@ -39,7 +39,7 @@ import {
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import type { ExecutionResult, MaybePromise } from '@graphql-tools/utils';
+import type { MaybePromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
@@ -50,8 +50,8 @@ import type {
   MeshServePlugin,
 } from './types.js';
 import { useChangingSchema } from './useChangingSchema.js';
+import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
 import { useCompleteSubscriptionsOnSchemaChange } from './useCompleteSubscriptionsOnSchemaChange.js';
-import { useCompleteSubscriptionsOnUnifiedGraphDispose } from './useCompleteSubscriptionsOnUnifiedGraphDispose.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
@@ -88,7 +88,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
-  let onUnifiedGraphDispose: (callback: () => MaybePromise<void>) => void;
   let getSchema: () => MaybePromise<GraphQLSchema> = () => unifiedGraph;
   let schemaChanged = (_schema: GraphQLSchema): void => {
     throw new Error('Schema changed too early');
@@ -129,7 +128,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       const endpoint = config.proxy.endpoint || '#';
       return `<section class="supergraph-information"><h3>Proxy (<a href="${endpoint}">${endpoint}</a>): ${unifiedGraph ? 'Loaded ✅' : 'Not yet ❌'}</h3></section>`;
     };
-    onUnifiedGraphDispose = callback => disposableStack.defer(callback);
   } else {
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
 
@@ -199,7 +197,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       onDelegateHooks,
       onSubgraphExecuteHooks,
     });
-    onUnifiedGraphDispose = callback => unifiedGraphManager.onUnifiedGraphDispose(callback);
     getSchema = () => unifiedGraphManager.getUnifiedGraph();
     readinessChecker = () =>
       mapMaybePromise(unifiedGraphManager.getUnifiedGraph(), schema => !!schema);
@@ -354,7 +351,21 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       readinessCheckPlugin,
       registryPlugin,
       useChangingSchema(getSchema, cb => (schemaChanged = cb)),
-      useCompleteSubscriptionsOnUnifiedGraphDispose(onUnifiedGraphDispose),
+      useCompleteSubscriptionsOnDispose(
+        cb => {
+          if (disposableStack.disposed) {
+            cb();
+          } else {
+            disposableStack.defer(cb);
+          }
+        },
+        () =>
+          createGraphQLError('subscription has been closed because the server is shutting down', {
+            extensions: {
+              code: 'SHUTTING_DOWN',
+            },
+          }),
+      ),
       useCompleteSubscriptionsOnSchemaChange(),
       ...(config.plugins?.(configContext) || []),
     ],
