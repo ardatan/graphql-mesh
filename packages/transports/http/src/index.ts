@@ -81,6 +81,14 @@ export default {
             },
           },
         }));
+
+        const origDispose = executor[Symbol.asyncDispose];
+        executor[Symbol.asyncDispose] = () => {
+          // the executor is being disposed - remove the client
+          delete wsExecutors[hash];
+          return origDispose();
+        };
+
         return executor(request);
       }
 
