@@ -4,6 +4,26 @@ import { createServer } from 'http';
 import { join } from 'path';
 
 jest.setTimeout(30000);
+async function findAvailableHostName() {
+  const hostnames = ['localhost', '127.0.0.1', '0.0.0.0'];
+  for (const hostname of hostnames) {
+    console.log('Trying to connect to ' + hostname);
+    try {
+      const res = await fetch(`http://${hostname}:4000/graphql`, {
+        headers: {
+          accept: 'text/html',
+        },
+      });
+      await res.text();
+    } catch (e) {
+      console.error('Failed to connect to ' + hostname);
+      continue;
+    }
+    console.log('Connected to ' + hostname);
+    return hostname;
+  }
+  throw new Error('No available hostname found');
+}
 describe('Polling Test', () => {
   let cleanupCallbacks: (() => void)[] = [];
   afterAll(() => {
@@ -60,7 +80,8 @@ describe('Polling Test', () => {
         }
       });
     });
-    const resp = await fetch('http://127.0.0.1:4000/graphql', {
+    const hostname = await findAvailableHostName();
+    const resp = await fetch(`http://${hostname}:4000/graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
