@@ -1,7 +1,5 @@
 import type { DocumentNode } from 'graphql';
 import { print } from 'graphql';
-import { createClient as createGraphQLWSClient, type Client as GraphQLWSClient } from 'graphql-ws';
-import { WebSocket } from 'ws';
 import { getDocumentString } from '@envelop/core';
 import type { DisposableExecutor, Transport } from '@graphql-mesh/transport-common';
 import { buildGraphQLWSExecutor } from '@graphql-tools/executor-graphql-ws';
@@ -36,7 +34,7 @@ export default {
       print: printFnForHTTPExecutor,
       ...transportEntry.options,
     });
-    let wsConns: { [hash: string]: { client: GraphQLWSClient; executor: DisposableExecutor } } = {};
+    const wsExecutors: { [hash: string]: DisposableExecutor } = {};
     const wsOpts = transportEntry.options?.subscriptions?.ws;
 
     return function HTTPExecutor(request) {
@@ -70,39 +68,20 @@ export default {
         // TODO: pass through connection params from the WS connection to the GW (once https://github.com/ardatan/graphql-mesh/issues/7208 lands)
 
         const hash = url + token;
-        let wsConn = wsConns[hash];
-        if (!wsConn) {
-          const client = createGraphQLWSClient({
-            webSocketImpl: WebSocket,
-            url: `${protocol}://${hostname}${wsOpts.path}`,
-            connectionParams: token ? { token } : undefined,
-            retryAttempts: transportEntry.options?.retry,
-            lazy: true,
-            lazyCloseTimeout: 3_000,
-            on: {
-              closed() {
-                // no subscriptions and the lazy close timeout has passed - remove the client
-                delete wsConns[hash];
-              },
+        const executor = (wsExecutors[hash] ??= buildGraphQLWSExecutor({
+          url: `${protocol}://${hostname}${wsOpts.path}`,
+          connectionParams: token ? { token } : undefined,
+          retryAttempts: transportEntry.options?.retry,
+          lazy: true,
+          lazyCloseTimeout: 3_000,
+          on: {
+            closed() {
+              // no subscriptions and the lazy close timeout has passed - remove the client
+              delete wsExecutors[hash];
             },
-          });
-          wsConn = wsConns[hash] = {
-            client,
-            executor: buildGraphQLWSExecutor(client),
-          };
-        }
-        wsConn.executor[Symbol.asyncDispose] = async () => {
-          if (!Object.keys(wsConn).length) {
-            // nothing to dispose or already disposed
-            return;
-          }
-          const disposingWsExecutors = { ...wsConns };
-          wsConns = {};
-          await Promise.all(
-            Object.values(disposingWsExecutors).map(({ client }) => client.dispose()),
-          );
-        };
-        return wsConn.executor(request);
+          },
+        }));
+        return executor(request);
       }
 
       return httpExecutor(request);
