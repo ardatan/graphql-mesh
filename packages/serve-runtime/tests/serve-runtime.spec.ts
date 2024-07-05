@@ -21,8 +21,6 @@ import { createServeRuntime } from '../src/createServeRuntime.js';
 
 describe('Serve Runtime', () => {
   jest.useFakeTimers();
-  let pushStr: (value: string) => void;
-  let stopSub: () => void;
   function createUpstreamSchema() {
     return createSchema({
       typeDefs: /* GraphQL */ `
@@ -43,11 +41,7 @@ describe('Serve Runtime', () => {
         },
         Subscription: {
           pull: {
-            subscribe: () =>
-              new Repeater((push, stop) => {
-                pushStr = val => push({ pull: val });
-                stopSub = stop;
-              }),
+            subscribe: () => new Repeater(() => {}),
           },
         },
       },
@@ -315,7 +309,6 @@ describe('Serve Runtime', () => {
         continue;
       }
       if (!firstValPushed) {
-        pushStr('foo');
         firstValPushed = true;
         continue;
       }
