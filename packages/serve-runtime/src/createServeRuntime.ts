@@ -351,21 +351,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       readinessCheckPlugin,
       registryPlugin,
       useChangingSchema(getSchema, cb => (schemaChanged = cb)),
-      useCompleteSubscriptionsOnDispose(
-        cb => {
-          if (disposableStack.disposed) {
-            cb();
-          } else {
-            disposableStack.defer(cb);
-          }
-        },
-        () =>
-          createGraphQLError('subscription has been closed because the server is shutting down', {
-            extensions: {
-              code: 'SHUTTING_DOWN',
-            },
-          }),
-      ),
+      useCompleteSubscriptionsOnDispose(disposableStack),
       useCompleteSubscriptionsOnSchemaChange(),
       ...(config.plugins?.(configContext) || []),
     ],
