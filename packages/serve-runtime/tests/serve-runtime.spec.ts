@@ -12,17 +12,12 @@ import {
   type ExecutionResult,
   type IntrospectionQuery,
 } from 'graphql';
-import { createClient as createSSEClient } from 'graphql-sse';
-import { createSchema, createYoga, Repeater } from 'graphql-yoga';
+import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
-import type { MaybePromise } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
-
-const leftovers: (() => MaybePromise<void>)[] = [];
-afterAll(() => Promise.all(leftovers.map(l => l())));
 
 describe('Serve Runtime', () => {
   jest.useFakeTimers();
@@ -67,24 +62,10 @@ describe('Serve Runtime', () => {
           type Query {
             foo: String
           }
-
-          type Subscription {
-            neverEmits: String
-          }
         `,
       resolvers: {
         Query: {
           foo: () => 'bar',
-        },
-        Subscription: {
-          neverEmits: {
-            subscribe: () =>
-              new Repeater(() => {
-                return new Promise<void>(resolve => {
-                  leftovers.push(() => resolve());
-                });
-              }),
-          },
         },
       },
     });
