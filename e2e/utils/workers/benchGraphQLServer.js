@@ -1,7 +1,7 @@
 // @ts-check
 
+import fetch from 'node-fetch';
 import { expose } from 'threads/worker';
-import { fetch } from '@whatwg-node/fetch';
 
 /**
  * @param {number} port Port of the server to benchmark.
@@ -22,7 +22,7 @@ export async function benchGraphQLServer(port, duration, parallelCount, params) 
     },
     body: JSON.stringify(params),
   };
-  let slowestRequest = 0;
+  let slowestRequest = -1;
   const signal = AbortSignal.timeout(duration);
   while (!signal.aborted) {
     await Promise.all(
@@ -30,7 +30,7 @@ export async function benchGraphQLServer(port, duration, parallelCount, params) 
         .fill(null)
         .map(() =>
           (async () => {
-            const start = Date.now();
+            const start = performance.now();
             const res = await fetch(url, init);
             if (!res.ok) {
               const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
@@ -41,7 +41,11 @@ export async function benchGraphQLServer(port, duration, parallelCount, params) 
             if (result.errors?.length) {
               throw new Error(`GraphQL result has errors\n${JSON.stringify(result.errors)}`);
             }
-            const duration = Date.now() - start;
+            if (slowestRequest < 0) {
+              slowestRequest = 0;
+              return;
+            }
+            const duration = performance.now() - start;
             if (duration > slowestRequest) {
               slowestRequest = duration;
             }
