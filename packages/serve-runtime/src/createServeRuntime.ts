@@ -49,6 +49,7 @@ import type {
   MeshServeContext,
   MeshServePlugin,
 } from './types.js';
+import { useChangingSchema } from './useChangingSchema.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
@@ -86,7 +87,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
   let onUnifiedGraphDispose: (callback: () => MaybePromise<void>) => void;
-  let schemaFetcher: () => MaybePromise<GraphQLSchema>;
+  let getSchema: () => MaybePromise<GraphQLSchema> = () => unifiedGraph;
+  let schemaChanged = (_schema: GraphQLSchema): void => {
+    throw new Error('Schema changed too early');
+  };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
   let registryPlugin: MeshPlugin<unknown> = {};
@@ -180,7 +184,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
     const unifiedGraphManager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
-      handleUnifiedGraph: handleFederationSupergraph,
+      handleUnifiedGraph: opts => {
+        // when handleUnifiedGraph is called, we're sure that the schema
+        // _really_ changed, we can therefore confidently notify about the schema change
+        schemaChanged(opts.unifiedGraph);
+        return handleFederationSupergraph(opts);
+      },
       transports: config.transports,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
@@ -189,7 +198,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       onSubgraphExecuteHooks,
     });
     onUnifiedGraphDispose = callback => unifiedGraphManager.onUnifiedGraphDispose(callback);
-    schemaFetcher = () => unifiedGraphManager.getUnifiedGraph();
+    getSchema = () => unifiedGraphManager.getUnifiedGraph();
     readinessChecker = () =>
       mapMaybePromise(unifiedGraphManager.getUnifiedGraph(), schema => !!schema);
     schemaInvalidator = () => unifiedGraphManager.invalidateUnifiedGraph();
@@ -374,8 +383,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   }
 
   const yoga = createYoga<unknown, MeshServeContext>({
-    // @ts-expect-error PromiseLike is not compatible with Promise
-    schema: schemaFetcher,
     fetchAPI: config.fetchAPI,
     logging: logger,
     plugins: [
@@ -383,6 +390,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       unifiedGraphPlugin,
       readinessCheckPlugin,
       registryPlugin,
+      useChangingSchema(getSchema, cb => (schemaChanged = cb)),
       ...(config.plugins?.(configContext) || []),
     ],
     // @ts-expect-error PromiseLike is not compatible with Promise
