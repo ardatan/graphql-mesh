@@ -9,5 +9,9 @@ exports[`Serve Runtime Defaults falls back to "./supergraph.graphql" by default:
 exports[`Serve Runtime Hive CDN respects env vars: hive-cdn 1`] = `
 "type Query {
   foo: String
+}
+
+type Subscription {
+  pull: String
 }"
 `;

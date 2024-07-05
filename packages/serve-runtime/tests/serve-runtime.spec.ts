@@ -12,7 +12,7 @@ import {
   type ExecutionResult,
   type IntrospectionQuery,
 } from 'graphql';
-import { createSchema, createYoga } from 'graphql-yoga';
+import { createSchema, createYoga, Repeater } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
@@ -20,20 +20,41 @@ import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
 
 describe('Serve Runtime', () => {
-  const upstreamSchema = createSchema({
-    typeDefs: `
+  jest.useFakeTimers();
+  let pushStr: (value: string) => void;
+  let stopSub: () => void;
+  function createUpstreamSchema() {
+    return createSchema({
+      typeDefs: /* GraphQL */ `
+          """
+          Fetched on ${new Date().toISOString()}
+          """
           type Query {
             foo: String
           }
+
+          type Subscription {
+            pull: String
+          }
         `,
-    resolvers: {
-      Query: {
-        foo: () => 'bar',
+      resolvers: {
+        Query: {
+          foo: () => 'bar',
+        },
+        Subscription: {
+          pull: {
+            subscribe: () =>
+              new Repeater((push, stop) => {
+                pushStr = val => push({ pull: val });
+                stopSub = stop;
+              }),
+          },
+        },
       },
-    },
-  });
+    });
+  }
   const upstreamAPI = createYoga({
-    schema: upstreamSchema,
+    schema: createUpstreamSchema(),
     logging: false,
   });
   let upstreamIsUp = true;
@@ -59,10 +80,11 @@ describe('Serve Runtime', () => {
         return getUnifiedGraphGracefully([
           {
             name: 'upstream',
-            schema: upstreamSchema,
+            schema: createUpstreamSchema(),
           },
         ]);
       },
+      polling: 10000,
       transports() {
         return {
           getSubgraphExecutor() {
@@ -133,7 +155,7 @@ describe('Serve Runtime', () => {
         const supergraph = getUnifiedGraphGracefully([
           {
             name: 'upstream',
-            schema: upstreamSchema,
+            schema: createUpstreamSchema(),
           },
         ]);
         res.end(supergraph);
@@ -157,7 +179,9 @@ describe('Serve Runtime', () => {
           'content-type': 'application/json',
         },
         body: JSON.stringify({
-          query: getIntrospectionQuery(),
+          query: getIntrospectionQuery({
+            descriptions: false,
+          }),
         }),
       });
 
@@ -256,5 +280,45 @@ describe('Serve Runtime', () => {
     });
     expect(mockValidateFn).toHaveBeenCalledTimes(0);
     expect(printSchema(fetchedSchema)).toBe(printSchema(schema));
+  });
+  it('terminates subscriptions gracefully on schema update', async () => {
+    upstreamIsUp = true;
+    const res = await serveRuntimes.supergraphAPI.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          subscription {
+            pull
+          }
+        `,
+      }),
+    });
+
+    let firstValPushed = false;
+    let terminated = false;
+    for await (const chunk of res.body) {
+      const chunkStr = chunk.toString();
+      if (terminated) {
+        expect(chunkStr).toContain('event: complete');
+        continue;
+      }
+      if (chunkStr.includes('data')) {
+        if (chunkStr.includes('foo')) {
+          jest.advanceTimersByTimeAsync(10000);
+          continue;
+        }
+        expect(chunkStr).toContain(`SUBSCRIPTION_SCHEMA_RELOAD`);
+        terminated = true;
+        continue;
+      }
+      if (!firstValPushed) {
+        pushStr('foo');
+        firstValPushed = true;
+        continue;
+      }
+    }
   });
 });

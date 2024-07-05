@@ -4,8 +4,10 @@ import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import type { GraphQLSchema } from 'graphql';
 import { parse } from 'graphql';
 import {
+  createGraphQLError,
   createYoga,
   isAsyncIterable,
+  Repeater,
   useReadinessCheck,
   type FetchAPI,
   type LandingPageRenderer,
@@ -13,6 +15,7 @@ import {
   type YogaServerInstance,
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
+import type { AsyncIterableIteratorOrValue } from '@envelop/core';
 import { createSupergraphSDLFetcher } from '@graphql-hive/client';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
@@ -36,7 +39,7 @@ import {
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import type { MaybePromise } from '@graphql-tools/utils';
+import type { ExecutionResult, MaybePromise } from '@graphql-tools/utils';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
@@ -82,6 +85,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
+  let onUnifiedGraphDispose: (callback: () => MaybePromise<void>) => void;
   let schemaFetcher: () => MaybePromise<GraphQLSchema>;
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
@@ -119,6 +123,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       const endpoint = config.proxy.endpoint || '#';
       return `<section class="supergraph-information"><h3>Proxy (<a href="${endpoint}">${endpoint}</a>): ${unifiedGraph ? 'Loaded ✅' : 'Not yet ❌'}</h3></section>`;
     };
+    onUnifiedGraphDispose = callback => disposableStack.defer(callback);
   } else {
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
 
@@ -183,6 +188,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       onDelegateHooks,
       onSubgraphExecuteHooks,
     });
+    onUnifiedGraphDispose = callback => unifiedGraphManager.onUnifiedGraphDispose(callback);
     schemaFetcher = () => unifiedGraphManager.getUnifiedGraph();
     readinessChecker = () =>
       mapMaybePromise(unifiedGraphManager.getUnifiedGraph(), schema => !!schema);
@@ -242,6 +248,31 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     check: readinessChecker,
   });
 
+  function handleSubscriptionTerminationOnUnifiedGraphChange(
+    result: AsyncIterableIteratorOrValue<ExecutionResult>,
+    setResult: (result: AsyncIterableIteratorOrValue<ExecutionResult>) => void,
+  ) {
+    if (isAsyncIterable(result) && result.return) {
+      const subTerminateRepeater = new Repeater(function repeaterExecutor(_push, stop) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        stop.then(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          result.return!();
+        });
+        onUnifiedGraphDispose(() => {
+          stop(
+            createGraphQLError('subscription has been closed due to a schema reload', {
+              extensions: {
+                code: 'SUBSCRIPTION_SCHEMA_RELOAD',
+              },
+            }),
+          );
+        });
+      });
+      setResult(Repeater.race([result, subTerminateRepeater]));
+    }
+  }
+
   const defaultMeshPlugin: MeshServePlugin = {
     onFetch({ setFetchFn }) {
       setFetchFn(fetchAPI.fetch);
@@ -266,6 +297,20 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           disposableStack.use(plugin);
         }
       }
+    },
+    onExecute() {
+      return {
+        onExecuteDone({ result, setResult }) {
+          handleSubscriptionTerminationOnUnifiedGraphChange(result, setResult);
+        },
+      };
+    },
+    onSubscribe() {
+      return {
+        onSubscribeResult({ result, setResult }) {
+          handleSubscriptionTerminationOnUnifiedGraphChange(result, setResult);
+        },
+      };
     },
   };
 
