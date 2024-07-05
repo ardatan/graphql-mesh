@@ -1,84 +1,184 @@
+import { Table, Td, Th, Tr } from 'nextra/components'
+
 ---
-description:
-  Learn how to track and analyze GraphQL execution metrics using @graphql-mesh/plugin-prometheus.
-  Expose and collect data to optimize your gateway.
+
+description: Learn how to track and analyze GraphQL execution metrics using
+@graphql-mesh/plugin-prometheus. Expose and collect data to optimize your gateway.
+
 ---
 
 # Prometheus
 
-Prometheus is a platform for scraping metrics from services and utilities. You can use
-`@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your
-GraphQL execution including internal query planning and outgoing HTTP requests.
+[Prometheus](https://www.prometheus.io/) is a platform for scraping metrics from services and
+utilities. You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from
+all phases of your GraphQL execution including internal query planning and outgoing HTTP requests.
 
-This plugin tracks the complete gateway execution flow and exposes the following metrics:
+This plugin tracks the complete gateway execution flow.
 
-- Successful requests (`requestCount`)
-- Request summary (`requestSummary`)
-- errors (categorized by `phase`)
-- resolvers tracing and runtime
-- deprecated fields usage
-- count of graphql operations
-- `parse` execution time
-- `validate` execution time
-- `contextBuilding` execution time
-- `execute` execution time
-- Latency of outgoing HTTP request
-- Latency of the delegation to the individual sources
+The metrics gathered are then exposed in a format that Prometheus can scrape on a regular basis on
+an HTTP endpoint (`/metrics` by default).
 
 ## Getting Started
+
+First, please install the Mesh prometheus plugin and the community prometheus client for Node.js.
 
 ```sh npm2yarn
 npm i @graphql-mesh/plugin-prometheus prom-client
 ```
 
-## Example Configuration
+You can then add the plugin and its configuration to your `mesh.config.ts` file.
 
 ```ts filename="mesh.config.ts"
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
 
 export const serveConfig = defineServeConfig({
+  // ...other options
+
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
 
-      // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
-
-      // requires `execute` to be true
-      requestCount: true,
-      // requires `execute` to be true
-      requestSummary: true,
-      parse: true,
-      validate: true,
-      contextBuilding: true,
-      execute: true,
-      errors: true,
-
-      // reports metrics for the delegation to the individual sources
-      delegation: true,
-
-      // reports metrics for the outgoing HTTP requests
-      fetchMetrics: true,
-      // Adds the request headers to the metrics
-      fetchRequestHeaders: true,
-      // Adds the response headers to the metrics
-      fetchResponseHeaders: true,
-
-      // Reports metrics for the incoming HTTP requests (this sets a custom name for http)
-      // If you pass a string instead of boolean, it will be used as the name of the metric
-      http: 'my-http-duration-metric',
-      // Adds the request headers to the metrics
-      httpRequestHeaders: true,
-      // Adds the response headers to the metrics
-      httpResponseHeaders: true,
-
-      // by default all fields are reported
-      deprecatedFields: true,
-      // the path of the endpoint to expose the metrics, default is /metrics
-      endpoint: '/metrics'
+      // Enable the metrics you want to expose
+      // In this example, we enable incoming and outgoing HTTP request durations metrics
+      http: true
+      fetchMetrics: true
     })
   ]
 })
+```
+
+You can now start your Mesh gateway and make some requests to it. The plugin will start collecting
+metrics, and you can access them by visiting the `/metrics` endpoint.
+
+## Exposed metrics
+
+By default, the plugin will not expose any metrics. You need to opt-in to the metrics you wish to
+export.
+
+To enable a metric, set the corresponding option to `true`. You can also provide a string to
+customize the metric name, or an object to provide more options (see
+[`siimon/prom-client` documentation](https://github.com/siimon/prom-client#custom-metrics)).
+
+| Default Name                                                                        |   Type    | Option                  |
+| ----------------------------------------------------------------------------------- | :-------: | ----------------------- |
+| [`graphql_yoga_http_duration`](#graphql_yoga_http_duration)                         | Histogram | `http`                  |
+| [`graphql_envelop_phase_parse`](#graphql_envelop_phase_parse)                       | Histogram | `parse`                 |
+| [`graphql_envelop_phase_validate`](#graphql_envelop_phase_validate)                 | Histogram | `validate`              |
+| [`graphql_envelop_phase_context`](#graphql_envelop_phase_context)                   | Histogram | `contextBuilding`       |
+| [`graphql_envelop_phase_execute`](#graphql_envelop_phase_execute)                   | Histogram | `execute`               |
+| [`graphql_envelop_phase_subscribe`](#graphql_envelop_phase_subscribe)               | Histogram | `subscribe`             |
+| [`graphql_envelop_execute_resolver`](#graphql_envelop_execute_resolver)             | Histogram | `resolvers`             |
+| [`graphql_envelop_request_duration`](#graphql_envelop_request_duration)             | Histogram | `requestTotalDuration`  |
+| [`graphql_envelop_request_time_summary`](#graphql_envelop_request_time_summary)     |  Summary  | `requestSummary`        |
+| [`graphql_envelop_error_result`](#graphql_envelop_error_result)                     |  Counter  | `errors`                |
+| [`graphql_envelop_request`](#graphql_envelop_request)                               |  Counter  | `requestCount`          |
+| [`graphql_envelop_deprecated_field`](#graphql_envelop_deprecated_field)             |  Counter  | `deprecatedFields`      |
+| [`graphql_envelop_schema_change`](#graphql_envelop_schema_change)                   |  Counter  | `schemaChangeCount`     |
+| [`graphql_mesh_delegate_duration`](#graphql_mesh_delegate_duration)                 | Histogram | `delegation`            |
+| [`graphql_mesh_fetch_duration`](#graphql_mesh_fetch_duration)                       | Histogram | `fetchMetrics`          |
+| [`graphql_mesh_subgraph_execute_duration`](#graphql_mesh_subgraph_execute_duration) | Histogram | `subgraphExecute`       |
+| [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors)     |  Counter  | `subgraphExecuteErrors` |
+
+### `graphql_mesh_fetch_duration`
+
+This metric tracks the duration of outgoing (upstream) HTTP requests. It reports the time spent on
+each request made during the execution of the GraphQL operation as an histogram.
+
+This metric can provide insights into which upstream service is slowing down your queries.
+
+To enable this metric, set the `fetchMetrics` option to `true`.
+
+#### Labels
+
+This metrics includes some useful labels to help you identify requests and group them together.
+
+##### `url`
+
+The URL of the upstream request.
+
+##### `method`
+
+The HTTP method of the upstream request.
+
+##### `statusCode`
+
+The status code of the upstream response.
+
+##### `statusText`
+
+The status text of the upstream response.
+
+##### `requestHeaders`
+
+A JSON encoded object containing the headers of the upstream request. This is disabled by default,
+set `fetchRequestHeaders` option to `true` to enable it.
+
+##### `responseHeaders`
+
+A JSON encoded object containing the headers of the upstream response. This is disabled by default,
+set `fetchResponseHeaders` option to `true` to enable it.
+
+#### Sample output
+
+```
+# HELP graphql_mesh_fetch_duration Time spent on outgoing HTTP calls
+# TYPE graphql_mesh_fetch_duration histogram
+graphql_mesh_fetch_duration_bucket{le="0.005",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.01",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.025",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.05",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.1",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.25",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="1",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="2.5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="10",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="+Inf",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 2
+graphql_mesh_fetch_duration_sum{url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 502
+graphql_mesh_fetch_duration_count{url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 2
+```
+
+### `graphql_mesh_subgraph_execute_duration`
+
+This metric tracks the duration of subgraph execution. It reports the time spent on each subgraph
+queries made to resolve incoming operations as an histogram.
+
+This metric can provide insights into which subgraph is slowing down your queries.
+
+To enable this metric, set the `subgraphExecute` option to `true`.
+
+#### Labels
+
+##### `subgraphName`
+
+The name of the targeted subgraph.
+
+##### `operationType`
+
+The type of the graphql operation requested. This can be one of `query`, `mutation`, or
+`subscription`.
+
+#### Sample output
+
+```
+# HELP graphql_mesh_subgraph_execute_duration Time spent on subgraph execution
+# TYPE graphql_mesh_subgraph_execute_duration histogram
+graphql_mesh_subgraph_execute_duration_bucket{le="0.005",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.01",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.025",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.05",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.1",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.25",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.5",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="1",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="2.5",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="5",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="10",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="+Inf",subgraphName="upstream",operationType="query"} 2
+graphql_mesh_subgraph_execute_duration_sum{subgraphName="upstream",operationType="query"} 889
+graphql_mesh_subgraph_execute_duration_count{subgraphName="upstream",operationType="query"} 2
 ```
 
 ## Custom Registry
@@ -100,4 +200,97 @@ export const serveConfig = defineServeConfig({
     })
   ]
 })
+```
+
+## Examples
+
+### All metrics enabled
+
+```ts filename="mesh.config.ts"
+import usePrometheus from '@graphql-mesh/plugin-prometheus'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  plugins: pluginCtx => [
+    usePrometheus({
+      ...pluginCtx,
+
+      // Enable all available metrics
+      requestCount: true,
+      requestSummary: true,
+      parse: true,
+      validate: true,
+      contextBuilding: true,
+      execute: true,
+      subscribe: true,
+      errors: true,
+      delegation: true,
+      fetchMetrics: true,
+      http: true
+      deprecatedFields: true,
+      requestTotalDuration: true,
+      schemaChangeCount: true,
+      subgraphExecute: true,
+      subgraphExecuteErrors: true
+
+      // Warning: enabling resolvers level metrics will introduce significant overhead
+      resolvers: true,
+    })
+  ]
+})
+```
+
+### Prometheus metrics output
+
+```
+# HELP graphql_mesh_fetch_duration Time spent on outgoing HTTP calls
+# TYPE graphql_mesh_fetch_duration histogram
+
+# HELP graphql_mesh_delegate_duration Time spent on delegate execution
+# TYPE graphql_mesh_delegate_duration histogram
+
+# HELP graphql_mesh_subgraph_execute_duration Time spent on subgraph execution
+# TYPE graphql_mesh_subgraph_execute_duration histogram
+
+# HELP graphql_mesh_subgraph_execute_errors Number of errors on subgraph execution
+# TYPE graphql_mesh_subgraph_execute_errors counter
+
+# HELP graphql_yoga_http_duration Time spent on HTTP connection
+# TYPE graphql_yoga_http_duration histogram
+
+# HELP graphql_envelop_phase_parse Time spent on running GraphQL "parse" function
+# TYPE graphql_envelop_phase_parse histogram
+
+# HELP graphql_envelop_phase_validate Time spent on running GraphQL "validate" function
+# TYPE graphql_envelop_phase_validate histogram
+
+# HELP graphql_envelop_phase_context Time spent on building the GraphQL context
+# TYPE graphql_envelop_phase_context histogram
+
+# HELP graphql_envelop_phase_execute Time spent on running the GraphQL "execute" function
+# TYPE graphql_envelop_phase_execute histogram
+
+# HELP graphql_envelop_phase_subscribe Time spent on running the GraphQL "subscribe" function
+# TYPE graphql_envelop_phase_subscribe histogram
+
+# HELP graphql_envelop_execute_resolver Time spent on running the GraphQL resolvers
+# TYPE graphql_envelop_execute_resolver histogram
+
+# HELP graphql_envelop_request_duration Time spent on running the GraphQL operation from parse to execute
+# TYPE graphql_envelop_request_duration histogram
+
+# HELP graphql_envelop_request_time_summary Summary to measure the time to complete GraphQL operations
+# TYPE graphql_envelop_request_time_summary summary
+
+# HELP graphql_envelop_error_result Counts the amount of errors reported from all phases
+# TYPE graphql_envelop_error_result counter
+
+# HELP graphql_envelop_request Counts the amount of GraphQL requests executed through Envelop
+# TYPE graphql_envelop_request counter
+
+# HELP graphql_envelop_deprecated_field Counts the amount of deprecated fields used in selection sets
+# TYPE graphql_envelop_deprecated_field counter
+
+# HELP graphql_envelop_schema_change Counts the amount of schema changes
+# TYPE graphql_envelop_schema_change counter
 ```
