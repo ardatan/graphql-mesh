@@ -40,7 +40,6 @@ describe('Subscriptions', () => {
 
   it('should terminate subscriptions gracefully on shutdown', async () => {
     const serve = createServeRuntime({
-      logging: true,
       supergraph() {
         return getUnifiedGraphGracefully([
           {
