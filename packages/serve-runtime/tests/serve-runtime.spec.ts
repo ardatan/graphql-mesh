@@ -41,7 +41,10 @@ describe('Serve Runtime', () => {
         },
         Subscription: {
           pull: {
-            subscribe: () => new Repeater(() => {}),
+            subscribe: () =>
+              new Repeater(push => {
+                push({ pull: 'push' });
+              }),
           },
         },
       },
@@ -300,7 +303,7 @@ describe('Serve Runtime', () => {
         continue;
       }
       if (chunkStr.includes('data')) {
-        if (chunkStr.includes('foo')) {
+        if (chunkStr.includes('push')) {
           jest.advanceTimersByTimeAsync(10000);
           continue;
         }
