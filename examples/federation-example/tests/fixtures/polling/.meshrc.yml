@@ -6,5 +6,6 @@ sources:
 
 serve:
   fork: 0
+  hostname: '0.0.0.0'
 
 pollingInterval: 2_000
