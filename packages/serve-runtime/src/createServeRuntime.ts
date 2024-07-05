@@ -344,8 +344,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   }
 
   const yoga = createYoga<unknown, MeshServeContext>({
-    // @ts-expect-error PromiseLike is not compatible with Promise
-    schema: schemaFetcher,
     fetchAPI: config.fetchAPI,
     logging: logger,
     plugins: [
