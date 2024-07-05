@@ -12,6 +12,7 @@ import {
   type ExecutionResult,
   type IntrospectionQuery,
 } from 'graphql';
+import { createClient as createSSEClient } from 'graphql-sse';
 import { createSchema, createYoga, Repeater } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
@@ -21,54 +22,8 @@ import { createServeRuntime } from '../src/createServeRuntime.js';
 
 describe('Serve Runtime', () => {
   jest.useFakeTimers();
-  function createUpstreamSchema() {
-    return createSchema({
-      typeDefs: /* GraphQL */ `
-          """
-          Fetched on ${new Date().toISOString()}
-          """
-          type Query {
-            foo: String
-          }
-
-          type Subscription {
-            pull: String
-          }
-        `,
-      resolvers: {
-        Query: {
-          foo: () => 'bar',
-        },
-        Subscription: {
-          pull: {
-            subscribe: () =>
-              new Repeater(push => {
-                push({ pull: 'push' });
-              }),
-          },
-        },
-      },
-    });
-  }
-  const upstreamAPI = createYoga({
-    schema: createUpstreamSchema(),
-    logging: false,
-  });
-  let upstreamIsUp = true;
-  const serveRuntimes = {
-    proxyAPI: createServeRuntime({
-      logging: false,
-      proxy: {
-        endpoint: 'http://localhost:4000/graphql',
-        fetch(info, init, ...args) {
-          if (!upstreamIsUp) {
-            return Response.error();
-          }
-          return upstreamAPI.fetch(info, init, ...args);
-        },
-      },
-    }),
-    supergraphAPI: createServeRuntime({
+  function createSupergraphRuntime() {
+    return createServeRuntime({
       logging: false,
       supergraph: () => {
         if (!upstreamIsUp) {
@@ -97,7 +52,63 @@ describe('Serve Runtime', () => {
           },
         };
       },
+    });
+  }
+  function createUpstreamSchema() {
+    return createSchema({
+      typeDefs: /* GraphQL */ `
+          """
+          Fetched on ${new Date().toISOString()}
+          """
+          type Query {
+            foo: String
+          }
+
+          type Subscription {
+            pull: String
+            wait: String
+          }
+        `,
+      resolvers: {
+        Query: {
+          foo: () => 'bar',
+        },
+        Subscription: {
+          pull: {
+            subscribe: () =>
+              new Repeater(push => {
+                push({ pull: 'push' });
+              }),
+          },
+          wait: {
+            subscribe: () =>
+              new Repeater(push => {
+                return new Promise(() => {});
+              }),
+          },
+        },
+      },
+    });
+  }
+  const upstreamAPI = createYoga({
+    schema: createUpstreamSchema(),
+    logging: false,
+  });
+  let upstreamIsUp = true;
+  const serveRuntimes = {
+    proxyAPI: createServeRuntime({
+      logging: false,
+      proxy: {
+        endpoint: 'http://localhost:4000/graphql',
+        fetch(info, init, ...args) {
+          if (!upstreamIsUp) {
+            return Response.error();
+          }
+          return upstreamAPI.fetch(info, init, ...args);
+        },
+      },
     }),
+    supergraphAPI: createSupergraphRuntime(),
   };
   describe('Endpoints', () => {
     beforeEach(() => {
@@ -277,6 +288,45 @@ describe('Serve Runtime', () => {
     });
     expect(mockValidateFn).toHaveBeenCalledTimes(0);
     expect(printSchema(fetchedSchema)).toBe(printSchema(schema));
+  });
+  it('terminates subscriptions gracefully on shutdown', async () => {
+    const runtime = createSupergraphRuntime();
+
+    const sse = createSSEClient({
+      url: 'http://mesh/graphql',
+      fetchFn: runtime.fetch,
+      on: {
+        connected() {
+          runtime[Symbol.asyncDispose]();
+        },
+      },
+    });
+
+    const sub = sse.iterate({
+      query: /* GraphQL */ `
+        subscription {
+          wait
+        }
+      `,
+    });
+
+    const msgs: unknown[] = [];
+    for await (const msg of sub) {
+      msgs.push(msg);
+    }
+
+    expect(msgs[msgs.length - 1]).toMatchInlineSnapshot(`
+{
+  "errors": [
+    {
+      "extensions": {
+        "code": "SHUTTING_DOWN",
+      },
+      "message": "subscription has been closed because the server is shutting down",
+    },
+  ],
+}
+`);
   });
   it('terminates subscriptions gracefully on schema update', async () => {
     upstreamIsUp = true;
