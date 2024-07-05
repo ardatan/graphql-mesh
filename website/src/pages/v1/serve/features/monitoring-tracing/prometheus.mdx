@@ -59,6 +59,10 @@ To enable a metric, set the corresponding option to `true`. You can also provide
 customize the metric name, or an object to provide more options (see
 [`siimon/prom-client` documentation](https://github.com/siimon/prom-client#custom-metrics)).
 
+Each metrics also exposes some labels to give more context. Please see details section of each
+metric to see the available labels. Some labels can be enabled or disabled using the `labels`
+option.
+
 | Default Name                                                                        |   Type    | Option                  |
 | ----------------------------------------------------------------------------------- | :-------: | ----------------------- |
 | [`graphql_yoga_http_duration`](#graphql_yoga_http_duration)                         | Histogram | `http`                  |
@@ -78,6 +82,67 @@ customize the metric name, or an object to provide more options (see
 | [`graphql_mesh_fetch_duration`](#graphql_mesh_fetch_duration)                       | Histogram | `fetchMetrics`          |
 | [`graphql_mesh_subgraph_execute_duration`](#graphql_mesh_subgraph_execute_duration) | Histogram | `subgraphExecute`       |
 | [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors)     |  Counter  | `subgraphExecuteErrors` |
+
+### `graphql_yoga_http_duration`
+
+This metric tracks the duration of incoming (downstream) HTTP requests. It reports the time spent to
+process each incoming request as an histogram.
+
+This is useful to track the responsiveness of your gateway. A spike in this metric could indicate a
+performance issue and that further investigation is needed.
+
+To enable this metric, set the `http` option to `true`.
+
+#### Labels
+
+This metrics includes some useful labels to help you identify requests and group them together.
+
+##### `method`
+
+The HTTP method used to request the gateway endpoint. Since GraphQL usualy only uses `POST`
+requests, this can be used to filetr out GraphiQL related requests.
+
+This can be any HTTP verbs, including unallowed ones. Which means this metrics can also be used to
+track malformed or malicious requests.
+
+##### `statusCode`
+
+The HTTP status code returned by the gateway. You probably want to filter out non-`200` responses to
+have a view of the successful requests.
+
+This can help you identify which requests are failing and why. Since GraphQL errors are returned as
+`200 OK` responses, this can be useful to track errors that are not related to the GraphQL, like
+malformed requests.
+
+##### `operationName`
+
+If available, the name of the GraphQL operation requested, otherwise `Anonymous`.
+
+This can help you identify which operations are slow or failing. We recommend you to always provide
+an operation name to your queries and mutations to help performance analysis and bug tracking.
+
+This label is enabled by default, but can be disable by setting `labels.operationName` to false.
+
+#### Sample output
+
+```
+# HELP graphql_yoga_http_duration Time spent on HTTP connection
+# TYPE graphql_yoga_http_duration histogram
+graphql_yoga_http_duration_bucket{le="0.005",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.01",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.025",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.05",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.1",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.25",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.5",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="1",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_bucket{le="2.5",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_bucket{le="5",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_bucket{le="10",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_bucket{le="+Inf",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_sum{method="GET",statusCode="200",operationName="Anonymous"} 3
+graphql_yoga_http_duration_count{method="GET",statusCode="200",operationName="Anonymous"} 4
+```
 
 ### `graphql_mesh_fetch_duration`
 
@@ -111,12 +176,12 @@ The status text of the upstream response.
 ##### `requestHeaders`
 
 A JSON encoded object containing the headers of the upstream request. This is disabled by default,
-set `fetchRequestHeaders` option to `true` to enable it.
+set `labels.fetchRequestHeaders` option to `true` to enable it.
 
 ##### `responseHeaders`
 
 A JSON encoded object containing the headers of the upstream response. This is disabled by default,
-set `fetchResponseHeaders` option to `true` to enable it.
+set `labels.fetchResponseHeaders` option to `true` to enable it.
 
 #### Sample output
 
