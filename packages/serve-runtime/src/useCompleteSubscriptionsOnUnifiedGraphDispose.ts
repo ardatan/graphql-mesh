@@ -13,6 +13,7 @@ export function useCompleteSubscriptionsOnUnifiedGraphDispose(
               Repeater.race([
                 result,
                 new Repeater((_push, stop) => {
+                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
                   stop.then(() => result.return?.());
                   onDispose(() => {
                     stop(
