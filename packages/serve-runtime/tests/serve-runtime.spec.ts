@@ -69,7 +69,6 @@ describe('Serve Runtime', () => {
           }
 
           type Subscription {
-            pull: String
             neverEmits: String
           }
         `,
@@ -78,12 +77,6 @@ describe('Serve Runtime', () => {
           foo: () => 'bar',
         },
         Subscription: {
-          pull: {
-            subscribe: () =>
-              new Repeater(push => {
-                push({ pull: 'push' });
-              }),
-          },
           neverEmits: {
             subscribe: () =>
               new Repeater(() => {
@@ -350,27 +343,37 @@ describe('Serve Runtime', () => {
       }),
     });
 
-    let firstValPushed = false;
-    let terminated = false;
-    for await (const chunk of res.body) {
-      const chunkStr = chunk.toString();
-      if (terminated) {
-        expect(chunkStr).toContain('event: complete');
-        continue;
-      }
-      if (chunkStr.includes('data')) {
-        if (chunkStr.includes('push')) {
-          jest.advanceTimersByTimeAsync(10000);
-          continue;
+    const sse = createSSEClient({
+      url: 'http://mesh/graphql',
+      fetchFn: serveRuntimes.supergraphAPI.fetch,
+    });
+
+    const sub = sse.iterate({
+      query: /* GraphQL */ `
+        subscription {
+          neverEmits
         }
-        expect(chunkStr).toContain(`SUBSCRIPTION_SCHEMA_RELOAD`);
-        terminated = true;
-        continue;
-      }
-      if (!firstValPushed) {
-        firstValPushed = true;
-        continue;
-      }
+      `,
+    });
+
+    jest.advanceTimersByTimeAsync(10000); // new schema gets polled
+
+    const msgs: unknown[] = [];
+    for await (const msg of sub) {
+      msgs.push(msg);
     }
+
+    expect(msgs[msgs.length - 1]).toMatchInlineSnapshot(`
+      {
+        "errors": [
+          {
+            "extensions": {
+              "code": "SUBSCRIPTION_SCHEMA_RELOAD",
+            },
+            "message": "subscription has been closed due to a schema reload",
+          },
+        ],
+      }
+      `);
   });
 });

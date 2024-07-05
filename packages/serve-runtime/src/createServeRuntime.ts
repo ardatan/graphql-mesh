@@ -257,7 +257,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     check: readinessChecker,
   });
 
-  function handleSubscriptionTerminationOnUnifiedGraphChange(
+  function handleSubscriptionTerminationOnUnifiedGraphDispose(
     result: AsyncIterableIteratorOrValue<ExecutionResult>,
     setResult: (result: AsyncIterableIteratorOrValue<ExecutionResult>) => void,
   ) {
@@ -270,9 +270,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         });
         onUnifiedGraphDispose(() => {
           stop(
-            createGraphQLError('subscription has been closed due to a schema reload', {
+            createGraphQLError('subscription has been closed because the server is shutting down', {
               extensions: {
-                code: 'SUBSCRIPTION_SCHEMA_RELOAD',
+                code: 'SHUTTING_DOWN',
               },
             }),
           );
@@ -310,14 +310,14 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     onExecute() {
       return {
         onExecuteDone({ result, setResult }) {
-          handleSubscriptionTerminationOnUnifiedGraphChange(result, setResult);
+          handleSubscriptionTerminationOnUnifiedGraphDispose(result, setResult);
         },
       };
     },
     onSubscribe() {
       return {
         onSubscribeResult({ result, setResult }) {
-          handleSubscriptionTerminationOnUnifiedGraphChange(result, setResult);
+          handleSubscriptionTerminationOnUnifiedGraphDispose(result, setResult);
         },
       };
     },
