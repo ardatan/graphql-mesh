@@ -30617,13 +30617,13 @@ __metadata:
   linkType: hard
 
 "rimraf@npm:*, rimraf@npm:^5.0.0":
-  version: 5.0.7
-  resolution: "rimraf@npm:5.0.7"
+  version: 5.0.8
+  resolution: "rimraf@npm:5.0.8"
   dependencies:
     glob: "npm:^10.3.7"
   bin:
     rimraf: dist/esm/bin.mjs
-  checksum: 10c0/bd6dbfaa98ae34ce1e54d1e06045d2d63e8859d9a1979bb4a4628b652b459a2d17b17dc20ee072b034bd2d09bd691e801d24c4d9cfe94e16fdbcc8470a1d4807
+  checksum: 10c0/b8782c0443f67814ed29c83f9b34743977535f7228c62885c2db0d2552f94940ef2d6e54056c3344ccc574c1366f768ab62198deafbb61a93eb849d28ced9daa
   languageName: node
   linkType: hard
 
@@ -32995,9 +32995,9 @@ __metadata:
   linkType: hard
 
 "tiny-lru@npm:^11.0.0":
-  version: 11.2.6
-  resolution: "tiny-lru@npm:11.2.6"
-  checksum: 10c0/d59b2047edae1b4b79708070463ed27ddb1daa64563b74eedaa571e555c47f8de3a7cc19171f47dc46c01f1b7283d9afd2c682dddb4832552ed747d52cd297a6
+  version: 11.2.11
+  resolution: "tiny-lru@npm:11.2.11"
+  checksum: 10c0/6fe45e477e198f204752cb83bb02c963e9cdcabfb0083a723b498e6a7661143641be36a3d7170df6e4a0b5d5ac6a06533b8cccc98cbdfddacec826016a5dab97
   languageName: node
   linkType: hard
 
