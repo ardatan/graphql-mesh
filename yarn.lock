@@ -3704,6 +3704,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/openapi-arg-rename@workspace:e2e/openapi-arg-rename":
+  version: 0.0.0-use.local
+  resolution: "@e2e/openapi-arg-rename@workspace:e2e/openapi-arg-rename"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fastify: "npm:^4.28.1"
+    graphql: "npm:16.9.0"
+    moment: "npm:2.30.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki"
@@ -18350,7 +18363,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify@npm:4.28.1, fastify@npm:^4.26.0":
+"fastify@npm:4.28.1, fastify@npm:^4.26.0, fastify@npm:^4.28.1":
   version: 4.28.1
   resolution: "fastify@npm:4.28.1"
   dependencies:
