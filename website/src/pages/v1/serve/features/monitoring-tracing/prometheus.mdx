@@ -88,40 +88,27 @@ option.
 This metric tracks the duration of incoming (downstream) HTTP requests. It reports the time spent to
 process each incoming request as an histogram.
 
-This is useful to track the responsiveness of your gateway. A spike in this metric could indicate a
+It is useful to track the responsiveness of your gateway. A spike in this metric could indicate a
 performance issue and that further investigation is needed.
+
+Please not that this metric is not specific to GraphQL, it tracks all incoming HTTP requests.
+
+You can use labels to have a better understanding of the requests and group them together. A common
+filter is to include only `statusCode` with `200` value and `method` with `POST` value to get
+execution time of successful GraphQL requests only.
 
 To enable this metric, set the `http` option to `true`.
 
 #### Labels
 
-This metrics includes some useful labels to help you identify requests and group them together.
+This metric includes some useful labels to help you identify requests and group them together.
 
-##### `method`
-
-The HTTP method used to request the gateway endpoint. Since GraphQL usualy only uses `POST`
-requests, this can be used to filetr out GraphiQL related requests.
-
-This can be any HTTP verbs, including unallowed ones. Which means this metrics can also be used to
-track malformed or malicious requests.
-
-##### `statusCode`
-
-The HTTP status code returned by the gateway. You probably want to filter out non-`200` responses to
-have a view of the successful requests.
-
-This can help you identify which requests are failing and why. Since GraphQL errors are returned as
-`200 OK` responses, this can be useful to track errors that are not related to the GraphQL, like
-malformed requests.
-
-##### `operationName`
-
-If available, the name of the GraphQL operation requested, otherwise `Anonymous`.
-
-This can help you identify which operations are slow or failing. We recommend you to always provide
-an operation name to your queries and mutations to help performance analysis and bug tracking.
-
-This label is enabled by default, but can be disable by setting `labels.operationName` to false.
+| Label           | Enabled                        | Descirption                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `method`        | Always on                      | The HTTP method used to request the gateway endpoint.<br/><br/> Since GraphQL usually only uses `POST` requests, this can be used to filter out GraphiQL related requests. <br/><br/> It can be any HTTP verb, including unallowed ones. Which means this metric can also be used to track malformed or malicious requests.                                                             |
+| `statusCode`    | Always on                      | The HTTP status code returned by the gateway.<br/><br/>You probably want to filter out non-`200` responses to have a view of the successful requests.<br/><br/>This can help you identify which requests are failing and why. Since GraphQL errors are returned as `200 OK` responses, this can be useful to track errors that are not related to the GraphQL, like malformed requests. |
+| `operationName` | Configurable<br/>On by default | If available, the name of the GraphQL operation requested, otherwise `Anonymous`.<br/><br/>This can help you identify which operations are slow or failing.<br/><br/>We recommend you always provide an operation name to your queries and mutations to help performance analysis and bug tracking.                                                                                     |
+| `operationType` | Configurable<br/>On by default | The type of the GraphQL operation requested. It can be one of `query`, `mutation`, or `subscription`.<br/><br/>This can help you differentiate read and write performance of the system. It can for example help understand cache impact.                                                                                                                                               |
 
 #### Sample output
 
