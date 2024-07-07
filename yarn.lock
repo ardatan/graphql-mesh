@@ -3716,6 +3716,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/openapi-naming-convention@workspace:e2e/openapi-naming-convention":
+  version: 0.0.0-use.local
+  resolution: "@e2e/openapi-naming-convention@workspace:e2e/openapi-naming-convention"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    graphql: "npm:16.9.0"
+    moment: "npm:2.30.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions"

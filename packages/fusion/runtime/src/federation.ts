@@ -442,7 +442,13 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
               }
               renameEnumValueByEnumTypeNames[realTypeName][realValue] = externalValue;
             }
-            return [realValue, enumValueConfig];
+            return [
+              realValue,
+              {
+                ...enumValueConfig,
+                value: realValue,
+              },
+            ];
           }
         },
       });

@@ -10,7 +10,10 @@ export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
    */
   output?: string;
   subgraphs: MeshComposeCLISubgraphConfig[];
+  /**
+   * TODO: Implement root level transforms later
   transforms?: MeshComposeCLITransformConfig[];
+   */
   additionalTypeDefs?: string | DocumentNode | (string | DocumentNode)[];
   subgraph?: string;
   fetch?: typeof defaultFetch;
