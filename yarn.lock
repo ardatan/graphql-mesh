@@ -19555,7 +19555,7 @@ __metadata:
     graphql-yoga: "npm:^5.6.0"
     jest: "npm:29.7.0"
     sharp: "npm:0.33.4"
-    ts-jest: "npm:29.1.5"
+    ts-jest: "npm:29.2.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -19641,7 +19641,7 @@ __metadata:
     minimatch: "npm:9.0.5"
     prettier: "npm:3.3.2"
     threads: "npm:^1.7.0"
-    ts-jest: "npm:29.1.5"
+    ts-jest: "npm:29.2.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -19805,7 +19805,7 @@ __metadata:
     google-protobuf: "npm:3.21.2"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
-    ts-jest: "npm:29.1.5"
+    ts-jest: "npm:29.2.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -33257,9 +33257,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.1.5":
-  version: 29.1.5
-  resolution: "ts-jest@npm:29.1.5"
+"ts-jest@npm:29.2.0":
+  version: 29.2.0
+  resolution: "ts-jest@npm:29.2.0"
   dependencies:
     bs-logger: "npm:0.x"
     fast-json-stable-stringify: "npm:2.x"
@@ -33289,7 +33289,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/5c1baf4d23342e138745d6283ae530b07957b779b103abc99fd6713e1fd7fc65d4a4638695d5a76e177f78c46c80ec53598b365f245997db5d3d00617940bf87
+  checksum: 10c0/a20fb23f1b54cbdb3d793bf527df81fa212c4a9e0dbad00f73923f94c199eea7d3b6f88de208ecaf5ddd52c781119a958af045fc807e10f0d37f5a1c4fcee7fb
   languageName: node
   linkType: hard
 
