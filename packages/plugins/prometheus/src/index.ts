@@ -34,16 +34,19 @@ export { createCounter, createHistogram, createSummary };
 export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryAndLabels };
 
 type MeshMetricsConfig = {
+  /**
+   * @deprecated Graph delegation is no longer a concept in Mesh v1, use `subgraphExecute` instead
+   */
   delegation?:
     | boolean
     | string
     | HistogramAndLabels<string, Omit<OnDelegateHookPayload<unknown>, 'context'> | undefined>;
   /**
-   * @deprecated Use `labels.delegationArgs` instead
+   * @deprecated Graph delegation is no longer a concept in Mesh v1
    */
   delegationArgs?: boolean;
   /**
-   * @deprecated Use `labels.delegationKey` instead
+   * @deprecated Graph delegation is no longer a concept in Mesh v1
    */
   delegationKey?: boolean;
 
@@ -75,9 +78,6 @@ type MeshMetricsConfig = {
   fetchResponseHeaders?: boolean;
 
   labels?: {
-    delegationArgs?: boolean;
-    delegationKey?: boolean;
-
     fetchRequestHeaders?: boolean;
     fetchResponseHeaders?: boolean;
   };
@@ -176,10 +176,7 @@ export default function useMeshPrometheus(
 
   if (pluginOptions.delegation) {
     const delegationLabelNames = ['sourceName', 'typeName', 'fieldName'];
-    const {
-      delegationArgs = pluginOptions.delegationArgs,
-      delegationKey = pluginOptions.delegationKey,
-    } = pluginOptions.labels || {};
+    const { delegationArgs, delegationKey } = pluginOptions;
     if (delegationArgs) {
       delegationLabelNames.push('args');
     }
@@ -242,7 +239,9 @@ export default function useMeshPrometheus(
               operationType:
                 pluginOptions.labels?.operationType !== false ? operationType : undefined,
               operationName:
-                pluginOptions.labels?.operationName !== false ? operationName : undefined,
+                pluginOptions.labels?.operationName !== false
+                  ? operationName || 'Anonymous'
+                  : undefined,
             }),
           });
   }
@@ -277,7 +276,9 @@ export default function useMeshPrometheus(
               operationType:
                 pluginOptions.labels?.operationType !== false ? operationType : undefined,
               operationName:
-                pluginOptions.labels?.operationName !== false ? operationName : undefined,
+                pluginOptions.labels?.operationName !== false
+                  ? operationName || 'Anonymous'
+                  : undefined,
             }),
           });
   }
