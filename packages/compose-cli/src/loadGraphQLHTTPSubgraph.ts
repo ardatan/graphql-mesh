@@ -164,6 +164,7 @@ export function loadGraphQLHTTPSubgraph(
             method: method || (useGETForQueries ? 'GET' : 'POST'),
             headers: {
               'Content-Type': 'application/json',
+              ...schemaHeaders,
             },
             body: JSON.stringify({
               query: getIntrospectionQuery(),
@@ -198,6 +199,7 @@ export function loadGraphQLHTTPSubgraph(
             method: method || (useGETForQueries ? 'GET' : 'POST'),
             headers: {
               'Content-Type': 'application/json',
+              ...schemaHeaders,
             },
             body: JSON.stringify({
               query: federationIntrospectionQuery,
