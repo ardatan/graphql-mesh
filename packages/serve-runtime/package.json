@@ -53,7 +53,7 @@
     "@graphql-tools/stitch": "^9.2.10",
     "@graphql-tools/utils": "^10.2.3",
     "@whatwg-node/server": "^0.9.34",
-    "disposablestack": "^1.1.6",
+    "core-js-pure": "^3.37.1",
     "graphql-yoga": "^5.6.0"
   },
   "devDependencies": {

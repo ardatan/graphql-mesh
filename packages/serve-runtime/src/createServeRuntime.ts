@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
+import AsyncDisposableStack from 'core-js-pure/actual/async-disposable-stack';
 import type { GraphQLSchema } from 'graphql';
 import { parse } from 'graphql';
 import {

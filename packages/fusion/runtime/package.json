@@ -63,7 +63,7 @@
     "@graphql-tools/utils": "^10.2.3",
     "@graphql-tools/wrap": "^10.0.5",
     "change-case": "^4.1.2",
-    "disposablestack": "^1.1.6",
+    "core-js-pure": "^3.37.1",
     "graphql-yoga": "^5.6.0",
     "tslib": "^2.4.0"
   },

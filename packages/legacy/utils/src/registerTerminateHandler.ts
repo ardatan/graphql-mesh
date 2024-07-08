@@ -1,4 +1,4 @@
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
+import AsyncDisposableStack from 'core-js-pure/actual/async-disposable-stack';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'] as const;
 

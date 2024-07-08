@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createServer } from 'http';
 import type { AddressInfo } from 'net';
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import {
   buildClientSchema,
   getIntrospectionQuery,

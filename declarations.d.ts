@@ -18,7 +18,7 @@ declare module '@newrelic/test-utilities' {
   export const TestAgent: any;
 }
 
-declare module 'disposablestack/AsyncDisposableStack' {
+declare module 'core-js-pure/actual/async-disposable-stack' {
   declare var AsyncDisposableStackCtor: typeof AsyncDisposableStack;
   export = AsyncDisposableStackCtor;
 }
