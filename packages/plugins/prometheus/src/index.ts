@@ -247,11 +247,15 @@ export default function useMeshPrometheus(
           });
   }
 
-  let subgraphExecuteErrorCounter: CounterAndLabels<
-    'subgraphName' | 'operationType',
-    SubgraphMetricsLabelParams
-  >;
+  let subgraphExecuteErrorCounter: CounterAndLabels<string, SubgraphMetricsLabelParams>;
   if (pluginOptions.subgraphExecuteErrors !== false) {
+    const subgraphExecuteErrorLabels = ['subgraphName'];
+    if (pluginOptions.labels?.operationName !== false) {
+      subgraphExecuteErrorLabels.push('operationName');
+    }
+    if (pluginOptions.labels?.operationType !== false) {
+      subgraphExecuteErrorLabels.push('operationType');
+    }
     subgraphExecuteErrorCounter =
       typeof pluginOptions.subgraphExecuteErrors === 'object'
         ? pluginOptions.subgraphExecuteErrors
@@ -263,11 +267,17 @@ export default function useMeshPrometheus(
                   ? pluginOptions.subgraphExecuteErrors
                   : `graphql_mesh_subgraph_execute_errors`,
               help: 'Number of errors on subgraph execution',
-              labelNames: ['subgraphName', 'operationType'],
+              labelNames: subgraphExecuteErrorLabels,
             },
-            fillLabelsFn: ({ subgraphName, executionRequest: { operationType = 'query' } }) => ({
+            fillLabelsFn: ({
               subgraphName,
-              operationType,
+              executionRequest: { operationType = 'query', operationName },
+            }) => ({
+              subgraphName,
+              operationType:
+                pluginOptions.labels?.operationType !== false ? operationType : undefined,
+              operationName:
+                pluginOptions.labels?.operationName !== false ? operationName : undefined,
             }),
           });
   }
