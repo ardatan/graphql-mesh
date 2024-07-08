@@ -1,15 +1,17 @@
-# Integration with GraphQL Hive
+---
+description:
+  Mesh Server can fetch the supergraph from GraphQL Hive and report usage data to Hive's registry.
+---
+
+# GraphQL Hive Integration
 
 import { Callout } from '@theguild/components'
 
 [GraphQL Hive](https://the-guild.dev/graphql/hive) is a schema registry, monitoring and analytics
-tool for your GraphQL API, and it is possible to integrate your GraphQL Mesh application to GraphQL
-Hive.
+tool for your GraphQL API.
 
-GraphQL Mesh Serve can fetch the supergraph from Hive's High-Availablity CDN, and serve it with a
-few lines of configuration.
-
-By using the built-in Hive plugin, it allows you to monitor and analyze the operation performance.
+GraphQL Mesh Serve can be configured to fetch the supergraph from Hive's High-Availablity CDN and
+report usage data to Hive's registry.
 
 [Learn more about GraphQL Hive](https://the-guild.dev/graphql/hive/docs)
 
@@ -25,6 +27,16 @@ the supergraph from Hive CDN.
 
 ### Configuration
 
+For running Mesh Serve with the Hive CDN, you need to provide the `HIVE_CDN_ENDPOINT` and
+`HIVE_CDN_KEY` environment variables.
+
+```sh filename="Run the Mesh Serve CLI"
+HIVE_CDN_ENDPOINT="CDN_ENDPOINT" HIVE_CDN_KEY="API_KEY" npx mesh-serve
+```
+
+Instead of providing the environment variables `HIVE_CDN_ENDPOINT` and `HIVE_CDN_KEY`, you can also
+provide them using a configuration file.
+
 ```ts filename="mesh.config.ts"
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
 
@@ -38,57 +50,25 @@ export default defineServeConfig({
 })
 ```
 
-<Callout>
-  Instead of providing `endpoint` and `key`, you can provide these two using environment variables
-  `HIVE_CDN_ENDPOINT` and `HIVE_CDN_KEY` without any configuration file needed.
-
-```sh
-HIVE_CDN_ENDPOINT=CDN_ENDPOINT HIVE_CDN_KEY=API_KEY npx mesh-serve
-```
-
-</Callout>
-
-## Publishing subgraphs to Hive CDN
-
-If you generate a subgraph using [Mesh Compose](/v1/serve/compose), you can publish the subgraph to
-Hive CDN. Before publishing the subgraph, you need to output your subgraph as a GraphQL SDL file
-like `schema.graphql`. Basically you can export a subgraph by using the following command of Mesh
-Compose;
-
-```sh
-npx mesh-compose --subgraph SUBGRAPH_NAME > SUBGRAPH_NAME.graphql
-```
-
-Then you can publish the subgraph to Hive CDN by using the following command;
-
-```sh
-npx hive schema:publish \
-  --registry.accessToken YOUR_TOKEN_HERE \
-  --service="SUBGRAPH_NAME" \
-  --url="http://my-subgraph.com" \
-  --author "Me" \
-  --commit "First" \
-  SUBGRAPH_NAME.graphql
-```
-
-[Learn more about how to export a subgraph using Mesh Compose](v1/compose#generating-the-individual-subgraphs-for-schema-registry)
-
-[Learn more about how to publish a subgraph to Hive](https://the-guild.dev/graphql/hive/docs/get-started/apollo-federation#publish-your-schemas)
-
 ## Usage Reporting and Monitoring
 
 Hive allow you to collect usage data from your GraphQL operations and use the data collected for
-**Monitoring, Observability, Schema Usage and Coverage and Schema Evolution**.
+[**Monitoring, Observability, Schema Usage and Coverage and Schema Evolution**](https://the-guild.dev/graphql/hive/docs/features/usage-reporting).
 
-[Learn more about Usage Reporting and Monitoring in Hive](https://the-guild.dev/graphql/hive/docs/features/usage-reporting)
-
-In order to get started, you need to make sure you have a registry token from Hive.
-
-[Learn more about how to get a registry token](https://the-guild.dev/graphql/hive/docs/get-started/apollo-federation#hive-cli-access-token)
-
-Then you can setup your GraphQL Mesh configuration to send the usage data to Hive.
+In order to get started, you need to make sure you
+[obtained a registry token from Hive](https://the-guild.dev/graphql/hive/docs/get-started/apollo-federation#hive-cli-access-token).
 
 ### Configuration
+
+Instead of providing `token`, you can provide it using environment variable `HIVE_REGISTRY_TOKEN`
+without any configuration file needed.
+
+```sh filename="Run the Mesh Serve CLI"
+HIVE_REGISTRY_TOKEN="MY_REGISTRY_TOKEN" npx mesh-serve
+```
+
+Instead of using environment variables, you can also use a configuration file, which allows further
+customization for the configuration.
 
 ```ts filename="mesh.config.ts"
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
@@ -101,18 +81,6 @@ export default defineServeConfig({
 })
 ```
 
-<Callout>
-  Instead of providing `token`, you can provide it using environment variable `HIVE_REGISTRY_TOKEN`
-  without any configuration file needed.
-
-```sh
-HIVE_REGISTRY_TOKEN=MY-REGISTRY-TOKEN npx mesh-serve
-```
-
-</Callout>
-
-[You can refer to the official documentation of Hive Client to learn more about the all options](https://the-guild.dev/graphql/hive/docs/api-reference/client#configuration)
-
-## Persisted Operations
-
-`TODO: Add documentation for Persisted Operations with Hive`
+Refer to to the
+[Hive Client documentation](https://the-guild.dev/graphql/hive/docs/api-reference/client#configuration)
+for further customization, such as usage reporting sampling and more.

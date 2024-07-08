@@ -1,25 +1,27 @@
 # Schema Registry
 
-import { Callout } from '@theguild/components'
+import { Callout, Cards } from '@theguild/components'
 
-GraphQL Schema Registry is a service that allows you to store and manage your GraphQL schemas. You
-can use GraphQL Mesh to serve your supergraph schemas stored in a schema registry, or send usage
-data to a schema registry.
+A GraphQL schema registry is a centralized service that stores, manages, and versions GraphQL
+schemas, ensuring consistency and compatibility across different services and teams.
 
-A schema registry is usually recommended for;
+The benefits of using a schema registry include:
 
 - Observability for operation performance
 - Schema usage and coverage to understand which fields are used and how often.
 - Breaking changes, validation and schema evolution to understand the impact of changes on the
   client
 
+Mesh Serve can serve the supergraph from a schema registry and report usage data to the registry.
+
 ## Built-in Integration
 
-GraphQL Mesh supports the following schema registry integrations without any additional
-configuration:
+GraphQL Mesh has built in support for the following schema registries.
 
-- [GraphQL Hive](/v1/serve/schema-registry/hive)
-- [Apollo GraphOS](/v1/serve/schema-registry/graphos)
+<Cards>
+  <Cards.Card arrow title="GraphQL Hive" href="/v1/serve/schema-registry/hive" />
+  <Cards.Card arrow title="Apollo GraphOS" href="/v1/serve/schema-registry/graphos" />
+</Cards>
 
 ## Custom Integration
 
@@ -46,7 +48,4 @@ export default defineServeConfig({
 })
 ```
 
-<Callout>
-  Refer to the [custom plugins docs](/v1/serve/features/custom-plugins) for more information on how
-  to write custom plugins.
-</Callout>
+Refer to the [custom plugins docs](/v1/serve/features/custom-plugins) for more information.
