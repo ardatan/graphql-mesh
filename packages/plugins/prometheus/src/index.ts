@@ -211,12 +211,16 @@ export default function useMeshPrometheus(
           });
   }
 
-  let subgraphExecuteHistogram: HistogramAndLabels<
-    'subgraphName' | 'operationType',
-    SubgraphMetricsLabelParams
-  >;
+  let subgraphExecuteHistogram: HistogramAndLabels<string, SubgraphMetricsLabelParams>;
 
   if (pluginOptions.subgraphExecute !== false) {
+    const subgraphExecuteLabels = ['subgraphName'];
+    if (pluginOptions.labels?.operationName !== false) {
+      subgraphExecuteLabels.push('operationName');
+    }
+    if (pluginOptions.labels?.operationType !== false) {
+      subgraphExecuteLabels.push('operationType');
+    }
     subgraphExecuteHistogram =
       typeof pluginOptions.subgraphExecute === 'object'
         ? pluginOptions.subgraphExecute
@@ -228,11 +232,17 @@ export default function useMeshPrometheus(
                   ? pluginOptions.subgraphExecute
                   : 'graphql_mesh_subgraph_execute_duration',
               help: 'Time spent on subgraph execution',
-              labelNames: ['subgraphName', 'operationType'],
+              labelNames: subgraphExecuteLabels,
             },
-            fillLabelsFn: ({ subgraphName, executionRequest: { operationType = 'query' } }) => ({
+            fillLabelsFn: ({
               subgraphName,
-              operationType,
+              executionRequest: { operationType = 'query', operationName },
+            }) => ({
+              subgraphName,
+              operationType:
+                pluginOptions.labels?.operationType !== false ? operationType : undefined,
+              operationName:
+                pluginOptions.labels?.operationName !== false ? operationName : undefined,
             }),
           });
   }
