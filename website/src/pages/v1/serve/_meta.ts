@@ -3,4 +3,5 @@ export default {
   'schema-registry': 'Schema Registry',
   features: 'Features',
   deployment: 'Deployment',
+  references: 'References',
 };

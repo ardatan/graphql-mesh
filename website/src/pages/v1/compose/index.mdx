@@ -14,13 +14,13 @@ If you use other routers such as Apollo Gateway, Apollo Router or Cosmo Router, 
 Mesh Compose to convert non-federated sources to a federated subgraph.
 [Learn more about consuming in other routers](/v1/compose/consume-in-other-routers).
 
-Basically GraphQL Mesh Compose allows you to do;
+Features of GraphQL Mesh Compose:
 
 - Convert non-GraphQL sources to a GraphQL subgraph
-- Convert non-federated GraphQL sources to a federated subgraph
-- Transform the subgraphs using [transforms](/v1/compose/transforms)
-- Extend the supergraph using
-  [additionalTypeDefs](/v1/compose/configuration#extending-the-supergraph-using-additionaltypedefs)
+- Convert non-federation GraphQL sources to a federated subgraph
+- [Transform subgraphs](/v1/compose/transforms) (rename, prefix, suffix fields and types etc.)
+- Extend the supergraph with
+  [additional types](/v1/compose/configuration#extending-the-supergraph-using-additionaltypedefs)
 - Adding an authentication layer using [`@auth` or `@skipAuth` directives](/v1/compose/auth)
 - Adding a security layer for rate limiting using [`@rateLimit` directives](/v1/compose/rate-limit)
 - Generate a subgraph that is fully compatible with Federation tools so you can use it with any
