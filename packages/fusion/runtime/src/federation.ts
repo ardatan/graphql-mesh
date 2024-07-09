@@ -290,6 +290,10 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
             }
             return null;
           }
+          const additionalFieldDirectives = fieldDirectives.additionalField;
+          if (additionalFieldDirectives?.length > 0) {
+            return null;
+          }
           const sourceDirectives = fieldDirectives.source;
           const sourceDirective = sourceDirectives?.find(directive =>
             compareSubgraphNames(directive.subgraph, subgraphName),
@@ -397,6 +401,10 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
             }
             return [realName, fieldConfig];
           }
+          const additionalFieldDirectives = fieldDirectives.additionalField;
+          if (additionalFieldDirectives?.length > 0) {
+            return null;
+          }
         },
         [MapperKind.INTERFACE_FIELD]: (fieldConfig, fieldName, typeName) => {
           const fieldDirectives = getDirectiveExtensions(fieldConfig);
@@ -414,6 +422,10 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
               renameFieldByInterfaceTypeNames[realTypeName][realName] = fieldName;
             }
             return [realName, fieldConfig];
+          }
+          const additionalFieldDirectives = fieldDirectives.additionalField;
+          if (additionalFieldDirectives?.length > 0) {
+            return null;
           }
         },
         [MapperKind.ENUM_VALUE]: (enumValueConfig, typeName, _schema, externalValue) => {

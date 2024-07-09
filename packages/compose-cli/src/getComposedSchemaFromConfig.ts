@@ -1,5 +1,5 @@
 import type { DocumentNode, GraphQLSchema } from 'graphql';
-import { buildSchema, extendSchema, parse, print } from 'graphql';
+import { buildSchema, Kind, parse, print, visit } from 'graphql';
 import type { SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
 import type { Logger } from '@graphql-mesh/types';
@@ -35,7 +35,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       };
     }),
   );
-  let additionalTypeDefs: (DocumentNode | string)[] | undefined;
+  let additionalTypeDefs: DocumentNode[] | undefined;
   if (config.additionalTypeDefs != null) {
     const result = await loadTypedefs(config.additionalTypeDefs, {
       noLocation: true,
@@ -43,7 +43,33 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       assumeValidSDL: true,
       loaders: [new GraphQLFileLoader()],
     });
-    additionalTypeDefs = result.map(r => r.document || r.rawSDL);
+    let directiveUsed = false;
+    additionalTypeDefs = result
+      .map(r => r.document || parse(r.rawSDL, { noLocation: true }))
+      .map(doc =>
+        visit(doc, {
+          [Kind.FIELD_DEFINITION](node) {
+            directiveUsed = true;
+            return {
+              ...node,
+              directives: [
+                ...(node.directives || []),
+                {
+                  kind: Kind.DIRECTIVE,
+                  name: { kind: Kind.NAME, value: 'additionalField' },
+                },
+              ],
+            };
+          },
+        }),
+      );
+    if (directiveUsed) {
+      additionalTypeDefs.unshift(
+        parse(/* GraphQL */ `
+          directive @additionalField on FIELD_DEFINITION
+        `),
+      );
+    }
   }
   const result = composeSubgraphs(subgraphConfigsForComposition);
   if (result.errors?.length) {
