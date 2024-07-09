@@ -124,7 +124,7 @@ This metric includes some useful labels to help you identify requests and group 
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_yoga_http_duration Time spent on HTTP connection
 # TYPE graphql_yoga_http_duration histogram
 graphql_yoga_http_duration_bucket{le="0.005",method="GET",statusCode="200",operationName="Anonymous"} 1
@@ -171,7 +171,7 @@ These metrics include some useful labels to help you identify requests and group
 
 #### Sample output
 
-```
+```text
 # HELP graphql_mesh_fetch_duration Time spent on outgoing HTTP calls
 # TYPE graphql_mesh_fetch_duration histogram
 graphql_mesh_fetch_duration_bucket{le="0.005",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
@@ -211,7 +211,7 @@ To enable this metric, set the `subgraphExecute` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_mesh_subgraph_execute_duration Time spent on subgraph execution
 # TYPE graphql_mesh_subgraph_execute_duration histogram
 graphql_mesh_subgraph_execute_duration_bucket{le="0.005",subgraphName="upstream",operationType="query"} 0
@@ -251,7 +251,7 @@ To enable this metric, set the `subgraphExecuteErrors` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_mesh_subgraph_execute_errors Number of errors on subgraph execution
 # TYPE graphql_mesh_subgraph_execute_errors counter
 graphql_mesh_subgraph_execute_errors{subgraphName="upstream",operationType="query",operationName="Anonymous"} 1
@@ -278,7 +278,7 @@ To enable this metric, set the `parse` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_envelop_phase_parse Time spent on running GraphQL "parse" function
 # TYPE graphql_envelop_phase_parse histogram
 graphql_envelop_phase_parse_bucket{le="0.005",operationName="Anonymous",operationType="query"} 1
@@ -314,7 +314,7 @@ To enable this metric, set the `validate` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_envelop_phase_validate Time spent on running GraphQL "validate" function
 # TYPE graphql_envelop_phase_validate histogram
 graphql_envelop_phase_validate_bucket{le="0.005",operationName="Anonymous",operationType="query"} 1
@@ -350,7 +350,7 @@ To enable this metric, set the `contextBuilding` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_envelop_phase_context Time spent on building the GraphQL context
 # TYPE graphql_envelop_phase_context histogram
 graphql_envelop_phase_context_bucket{le="0.005",operationName="Anonymous",operationType="query"} 1
@@ -390,7 +390,7 @@ To enable this metric, set the `execute` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_envelop_phase_execute Time spent on running the GraphQL "execute" function
 # TYPE graphql_envelop_phase_execute histogram
 graphql_envelop_phase_execute_bucket{le="0.005",operationName="Anonymous",operationType="query"} 1
@@ -429,7 +429,7 @@ To enable this metric, set the `subscribe` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_envelop_phase_subscribe Time spent on running the GraphQL "subscribe" function
 # TYPE graphql_envelop_phase_subscribe histogram
 graphql_envelop_phase_subscribe_bucket{le="0.005",operationName="Anonymous",operationType="subscription"} 0
@@ -465,7 +465,7 @@ To enable this metric, set the `requestTotalDuration` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_envelop_request_duration Time spent on running the GraphQL operation from parse to execute
 # TYPE graphql_envelop_request_duration histogram
 graphql_envelop_request_duration_bucket{le="0.005",operationName="Anonymous",operationType="subscription"} 0
@@ -501,7 +501,7 @@ To enable this metric, set the `requestSummary` option to `true`.
 
 #### Sample output
 
-```
+```text
 # HELP graphql_envelop_request_time_summary Summary to measure the time to complete GraphQL operations
 # TYPE graphql_envelop_request_time_summary summary
 graphql_envelop_request_time_summary{quantile="0.01",operationName="Anonymous",operationType="subscription"} 0.022
@@ -541,7 +541,7 @@ error occurred during the context phase, only the `phase` label will be present.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_envelop_error_result Counts the amount of errors reported from all phases
 # TYPE graphql_envelop_error_result counter
 graphql_envelop_error_result{operationName="Anonymous",operationType="query",path="undefined",phase="execute"} 1
@@ -579,7 +579,7 @@ root queries, you would use `Query.*`.
 
 #### Sample output
 
-```
+```text
 # HELP graphql_envelop_request Counts the amount of GraphQL requests executed through Envelop
 # TYPE graphql_envelop_request counter
 graphql_envelop_request{operationName="Anonymous",operationType="query"} 1
@@ -602,7 +602,7 @@ To enable this metric, set the `deprecatedFields` option to `true`.
 
 #### Sample Output
 
-```
+```text
 # HELP graphql_envelop_deprecated_field Counts the amount of deprecated fields used in selection sets
 # TYPE graphql_envelop_deprecated_field counter
 graphql_envelop_deprecated_field{operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query"} 1
@@ -625,7 +625,7 @@ This metric does not include any labels.
 
 #### Sample output
 
-```
+```text
 # HELP graphql_envelop_schema_change Counts the amount of schema changes
 # TYPE graphql_envelop_schema_change counter
 graphql_envelop_schema_change 1
@@ -654,7 +654,7 @@ to implement resolver level metrics, the gateway can't remotely track their exec
 
 #### Sample output
 
-```
+```text
 # HELP graphql_envelop_execute_resolver Time spent on running the GraphQL resolvers
 # TYPE graphql_envelop_execute_resolver histogram
 graphql_envelop_execute_resolver_bucket{le="0.005",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
@@ -816,7 +816,7 @@ export const serveConfig = defineServeConfig({
 
 ### Prometheus metrics output
 
-```
+```text
 # HELP graphql_mesh_fetch_duration Time spent on outgoing HTTP calls
 # TYPE graphql_mesh_fetch_duration histogram
 
