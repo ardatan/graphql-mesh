@@ -4740,7 +4740,7 @@ __metadata:
     node-libcurl: "npm:^4.0.0"
     open: "npm:^7.4.2"
     pascal-case: "npm:^3.1.2"
-    rimraf: "npm:^5.0.0"
+    rimraf: "npm:^6.0.0"
     tslib: "npm:^2.4.0"
     tsx: "npm:^4.7.1"
     typescript: "npm:^5.4.2"
@@ -30680,7 +30680,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:*":
+"rimraf@npm:*, rimraf@npm:^6.0.0":
   version: 6.0.0
   resolution: "rimraf@npm:6.0.0"
   dependencies:
@@ -30721,17 +30721,6 @@ __metadata:
   bin:
     rimraf: bin.js
   checksum: 10c0/9cb7757acb489bd83757ba1a274ab545eafd75598a9d817e0c3f8b164238dd90eba50d6b848bd4dcc5f3040912e882dc7ba71653e35af660d77b25c381d402e8
-  languageName: node
-  linkType: hard
-
-"rimraf@npm:^5.0.0":
-  version: 5.0.9
-  resolution: "rimraf@npm:5.0.9"
-  dependencies:
-    glob: "npm:^10.3.7"
-  bin:
-    rimraf: dist/esm/bin.mjs
-  checksum: 10c0/87374682492b9e64de9c6fcbf2c8f209c7a2cd0e9749b3732eef8a62c6f859a9ed996d46f662d9ad5dd38c2c469f8e88de56b6c509026070ee3f06369cac1bc8
   languageName: node
   linkType: hard
 
