@@ -8,6 +8,11 @@ import { Callout } from '@theguild/components'
 
 # Schema Extensions
 
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
 Schema extensions add gateway-level type definitions and resolvers into a combined API, which is
 useful for establishing connections between types that exist in separate subgraphs.
 
@@ -335,7 +340,7 @@ values must correspond to the same index in the Array of keys.
 
 If the query you’re delegating to don’t conform to these expectations, you can provide a custom
 resolver function in `additionalResolvers` in `serve-runtime` configuration.
-`TODO: Add example for custom resolver function programmatically`
+{/* `TODO: Add example for custom resolver function programmatically` */}
 
 Batch delegation is generally preferable over plain delegation because it eliminates the redundancy
 of requesting the same field across an array of parent objects. Even so, delegation costs can add up
