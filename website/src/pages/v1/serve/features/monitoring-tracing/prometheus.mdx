@@ -673,6 +673,12 @@ graphql_envelop_execute_resolver_sum{operationName="Anonymous",operationType="qu
 graphql_envelop_execute_resolver_count{operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
 ```
 
+## Skip introspection queries
+
+By default, all operations are instrumented, including introspection queries. It is possible to
+ignore introspection queries for all metrics prefixed by `graphql_envelop_` by setting the
+`skipIntrospection` option to `true`.
+
 ## Custom Registry
 
 You can customize the client’s registry by passing a custom registry to the `registry` option.
