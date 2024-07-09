@@ -559,6 +559,17 @@ contain multiple GraphQL operations if batching has been enabled.
 
 To enable this metric, set the `requestCount` option to `true`.
 
+#### Filter resolvers to instrument
+
+To mitigate the cost of instumenting all resolvers, you can explicitly list the fields that should
+be instrumented by providing a list of field names to the `instrumentResolvers` option.
+
+It is a list of strings in the form of `TypeName.fieldName`. For example, to instrument the `hello`
+root query, you would use `Query.hello`.
+
+You can also use wildcards to instrument all the fields for a type. For example, to instrument all
+root queries, you would use `Query.*`.
+
 #### Labels
 
 | Label           | Enabled by default | Description                                                                                             |
