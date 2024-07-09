@@ -191,9 +191,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         return handleFederationSupergraph(opts);
       },
       transports: config.transports,
+      transportOptions: config.transportOptions,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
-      transportBaseContext: configContext,
+      transportContext: configContext,
       onDelegateHooks,
       onSubgraphExecuteHooks,
     });

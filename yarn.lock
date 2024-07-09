@@ -3606,6 +3606,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/federation-subscriptions-passthrough@workspace:e2e/federation-subscriptions-passthrough":
+  version: 0.0.0-use.local
+  resolution: "@e2e/federation-subscriptions-passthrough@workspace:e2e/federation-subscriptions-passthrough"
+  dependencies:
+    "@apollo/rover": "npm:^0.23.0"
+    "@apollo/server": "npm:^4.10.3"
+    "@apollo/subgraph": "npm:^2.7.2"
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@types/express": "npm:^4"
+    "@types/ws": "npm:^8"
+    express: "npm:^4.19.2"
+    graphql-sse: "npm:^2.5.3"
+    graphql-ws: "npm:^5.16.0"
+    ws: "npm:^8.17.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions"
@@ -5828,6 +5845,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-common@workspace:packages/transports/common"
   dependencies:
+    "@envelop/core": "npm:^5.0.1"
     "@graphql-tools/delegate": "npm:^10.0.12"
     "@graphql-tools/utils": "npm:^10.2.3"
   peerDependencies:
@@ -5841,9 +5859,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-http@workspace:packages/transports/http"
   dependencies:
-    "@envelop/core": "npm:^5.0.0"
     "@graphql-mesh/transport-common": "npm:^0.3.1"
+    "@graphql-tools/executor-graphql-ws": "npm:^1.2.0"
     "@graphql-tools/executor-http": "npm:^1.1.2"
+    "@graphql-tools/utils": "npm:^10.2.3"
+    "@types/ws": "npm:^8"
+    graphql-ws: "npm:^5.16.0"
+    ws: "npm:^8.18.0"
   peerDependencies:
     graphql: "*"
     tslib: ^2.4.0
@@ -6126,6 +6148,22 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/ba7546bf7a4edbf89fd4076ed5cfd0f272415dfc1714c4b3c4595e5e25346afd777db8c8260591ade4da01b2ffaceeae3ad817f8799a647787c0f2ca9d3ede12
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/executor-graphql-ws@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@graphql-tools/executor-graphql-ws@npm:1.2.0"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.3.0"
+    "@types/ws": "npm:^8.0.0"
+    graphql-ws: "npm:^5.14.0"
+    isomorphic-ws: "npm:^5.0.0"
+    tslib: "npm:^2.4.0"
+    ws: "npm:^8.17.1"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/3faae1d0239d4d4ec7a000f946a8e82eead8028bcfe8599693cb4bfb85414e03b6bf5ba181360a7a2377274fc9e190aa30ce4a0ebcdfbe06539d5e1eb535d3da
   languageName: node
   linkType: hard
 
@@ -6626,7 +6664,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.3.1, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3, @graphql-tools/utils@npm:^10.3.1":
+"@graphql-tools/utils@npm:10.3.1, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3, @graphql-tools/utils@npm:^10.3.0, @graphql-tools/utils@npm:^10.3.1":
   version: 10.3.1
   resolution: "@graphql-tools/utils@npm:10.3.1"
   dependencies:
@@ -8851,7 +8889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.5":
+"@repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.5, @repeaterjs/repeater@npm:^3.0.6":
   version: 3.0.6
   resolution: "@repeaterjs/repeater@npm:3.0.6"
   checksum: 10c0/c3915e2603927c7d6a9eb09673bc28fc49ab3a86947ec191a74663b33deebee2fcc4b03c31cc663ff27bd6db9e6c9487639b6935e265d601ce71b8c497f5f4a8
@@ -10314,7 +10352,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*, @types/express@npm:4.17.21, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
+"@types/express@npm:*, @types/express@npm:4.17.21, @types/express@npm:^4, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -10751,7 +10789,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.14.10, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6, @types/node@npm:^20.14.6":
+"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^20.10.6, @types/node@npm:^20.14.6":
+  version: 20.14.9
+  resolution: "@types/node@npm:20.14.9"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/911ffa444dc032897f4a23ed580c67903bd38ea1c5ec99b1d00fa10b83537a3adddef8e1f29710cbdd8e556a61407ed008e06537d834e48caf449ce59f87d387
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.14.10":
   version: 20.14.10
   resolution: "@types/node@npm:20.14.10"
   dependencies:
@@ -11110,7 +11157,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:8.5.10, @types/ws@npm:^8.0.0, @types/ws@npm:^8.5.5":
+"@types/ws@npm:8.5.10, @types/ws@npm:^8, @types/ws@npm:^8.0.0, @types/ws@npm:^8.5.5":
   version: 8.5.10
   resolution: "@types/ws@npm:8.5.10"
   dependencies:
@@ -18001,7 +18048,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:4.19.2, express@npm:^4.16.4, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.2":
+"express@npm:4.19.2, express@npm:^4.16.4, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.2, express@npm:^4.19.2":
   version: 4.19.2
   resolution: "express@npm:4.19.2"
   dependencies:
@@ -19759,7 +19806,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:^5.12.1, graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.6.2":
+"graphql-ws@npm:^5.12.1, graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.16.0, graphql-ws@npm:^5.6.2":
   version: 5.16.0
   resolution: "graphql-ws@npm:5.16.0"
   peerDependencies:
@@ -28914,7 +28961,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.3.5, postcss@npm:^8.4.23, postcss@npm:^8.4.33, postcss@npm:^8.4.38, postcss@npm:^8.4.39, postcss@npm:^8.4.4":
+"postcss@npm:^8.3.5, postcss@npm:^8.4.23, postcss@npm:^8.4.33, postcss@npm:^8.4.38, postcss@npm:^8.4.4":
+  version: 8.4.38
+  resolution: "postcss@npm:8.4.38"
+  dependencies:
+    nanoid: "npm:^3.3.7"
+    picocolors: "npm:^1.0.0"
+    source-map-js: "npm:^1.2.0"
+  checksum: 10c0/955407b8f70cf0c14acf35dab3615899a2a60a26718a63c848cf3c29f2467b0533991b985a2b994430d890bd7ec2b1963e36352b0774a19143b5f591540f7c06
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.39":
   version: 8.4.39
   resolution: "postcss@npm:8.4.39"
   dependencies:
@@ -35524,7 +35582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.15.0, ws@npm:^8.17.0, ws@npm:^8.17.1":
+"ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.15.0, ws@npm:^8.17.0, ws@npm:^8.17.1, ws@npm:^8.18.0":
   version: 8.18.0
   resolution: "ws@npm:8.18.0"
   peerDependencies:

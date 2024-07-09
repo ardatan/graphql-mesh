@@ -1,5 +1,4 @@
-import type { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
-import { createDefaultExecutor } from '@graphql-mesh/transport-common';
+import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
 import { processDirectives, type ProcessDirectiveArgs } from './directives/process.js';
 
 export interface RESTTransportOptions {
@@ -7,8 +6,8 @@ export interface RESTTransportOptions {
   queryParams?: Record<string, string>;
 }
 
-export const getSubgraphExecutor: TransportExecutorFactoryFn<'rest', RESTTransportOptions> =
-  function getRESTSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, logger }) {
+export default {
+  getSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, logger }) {
     const processDirectiveOpts: ProcessDirectiveArgs = {
       globalFetch: fetch,
       pubsub,
@@ -18,7 +17,8 @@ export const getSubgraphExecutor: TransportExecutorFactoryFn<'rest', RESTTranspo
     const processedSchema = processDirectives(subgraph, processDirectiveOpts);
     const executor = createDefaultExecutor(processedSchema);
     return executor;
-  };
+  },
+} satisfies Transport<'rest', RESTTransportOptions>;
 
 export { processDirectives } from './directives/process.js';
 export type { ProcessDirectiveArgs } from './directives/process.js';

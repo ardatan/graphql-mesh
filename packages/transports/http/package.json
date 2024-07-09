@@ -36,9 +36,15 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/core": "^5.0.0",
     "@graphql-mesh/transport-common": "^0.3.1",
-    "@graphql-tools/executor-http": "^1.1.2"
+    "@graphql-tools/executor-graphql-ws": "^1.2.0",
+    "@graphql-tools/executor-http": "^1.1.2",
+    "@graphql-tools/utils": "^10.2.3",
+    "graphql-ws": "^5.16.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8"
   },
   "publishConfig": {
     "access": "public",

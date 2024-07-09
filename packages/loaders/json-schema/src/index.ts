@@ -1,3 +1,5 @@
+import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
+import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transport-rest';
 import type { MeshFetch } from '@graphql-mesh/types';
 import {
   loadGraphQLSchemaFromJSONSchemas,
@@ -23,4 +25,11 @@ export function loadJSONSchemaSubgraph(name: string, options: JSONSchemaLoaderOp
   });
 }
 
-export { getSubgraphExecutor, processDirectives } from '@graphql-mesh/transport-rest';
+export { processDirectives } from '@graphql-mesh/transport-rest';
+
+export const getSubgraphExecutor: TransportGetSubgraphExecutor<
+  'rest',
+  RESTTransportOptions
+> = opts => {
+  return transportRest.getSubgraphExecutor(opts);
+};

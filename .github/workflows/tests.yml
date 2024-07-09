@@ -12,6 +12,7 @@ env:
   LC_ALL: en-US
   REDIS_HOST: localhost
   REDIS_PORT: 6379
+  APOLLO_ELV2_LICENSE: accept
 jobs:
   lint:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
