@@ -3660,6 +3660,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/js-config@workspace:e2e/js-config":
+  version: 0.0.0-use.local
+  resolution: "@e2e/js-config@workspace:e2e/js-config"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions"
