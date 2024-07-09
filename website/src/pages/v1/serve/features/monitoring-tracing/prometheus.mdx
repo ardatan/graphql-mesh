@@ -4,34 +4,691 @@ description:
   Expose and collect data to optimize your gateway.
 ---
 
+import { Table, Td, Th, Tr } from 'nextra/components'
+import { Callout } from '@theguild/components'
+
 # Prometheus
 
-Prometheus is a platform for scraping metrics from services and utilities. You can use
-`@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your
-GraphQL execution including internal query planning and outgoing HTTP requests.
+[Prometheus](https://www.prometheus.io/) is a platform for scraping metrics from services and
+utilities. You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from
+all phases of your GraphQL execution including internal query planning and outgoing HTTP requests.
 
-This plugin tracks the complete gateway execution flow and exposes the following metrics:
+This plugin tracks the complete gateway execution flow.
 
-- Successful requests (`requestCount`)
-- Request summary (`requestSummary`)
-- errors (categorized by `phase`)
-- resolvers tracing and runtime
-- deprecated fields usage
-- count of graphql operations
-- `parse` execution time
-- `validate` execution time
-- `contextBuilding` execution time
-- `execute` execution time
-- Latency of outgoing HTTP request
-- Latency of the delegation to the individual sources
+The metrics gathered are then exposed in a format that Prometheus can scrape on a regular basis on
+an HTTP endpoint (`/metrics` by default).
 
 ## Getting Started
+
+First, please install the Mesh prometheus plugin and the community prometheus client for Node.js.
 
 ```sh npm2yarn
 npm i @graphql-mesh/plugin-prometheus prom-client
 ```
 
-## Example Configuration
+You can then add the plugin and its configuration to your `mesh.config.ts` file.
+
+```ts filename="mesh.config.ts"
+import usePrometheus from '@graphql-mesh/plugin-prometheus'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  // ...other options
+
+  plugins: pluginCtx => [
+    usePrometheus({
+      ...pluginCtx,
+
+      // Enable the metrics you want to expose
+      // In this example, we enable incoming and outgoing HTTP request durations metrics
+      http: true
+      fetchMetrics: true
+    })
+  ]
+})
+```
+
+You can now start your Mesh gateway and make some requests to it. The plugin will start collecting
+metrics, and you can access them by visiting the `/metrics` endpoint.
+
+## Exposed Metrics
+
+By default, the plugin will not expose any metrics. You need to opt in to the metrics you wish to
+export.
+
+In the metrics, you will find the timing of each phase of the GraphQL execution. If you are not
+familiar with the lifecycle of a GraphQL operation in Mesh, please refer to the
+[Plugin Lifecycle page](/v1/serve/features/custom-plugins#plugin-lifecycle). Each plugin hook has a
+corresponding metric which tracks timings as
+[histograms](https://prometheus.io/docs/concepts/metric_types/#histogram) or
+[summary](https://prometheus.io/docs/concepts/metric_types/#summary). You will also find some
+[counters](https://prometheus.io/docs/concepts/metric_types/#counter) to track the number of
+requests, errors, and other useful information.
+
+To enable a metric, set the corresponding option to `true`. You can also provide a string to
+customize the metric name, or an object to provide more options (see
+[`siimon/prom-client` documentation](https://github.com/siimon/prom-client#custom-metrics)).
+
+Each metric also exposes some labels to give more context. Please see details sections of each
+metric to see the available labels. Some labels can be enabled or disabled using the `labels`
+option.
+
+| Default Name                                                                        |   Type    | Option                  |
+| ----------------------------------------------------------------------------------- | :-------: | ----------------------- |
+| [`graphql_yoga_http_duration`](#graphql_yoga_http_duration)                         | Histogram | `http`                  |
+| [`graphql_envelop_phase_parse`](#graphql_envelop_phase_parse)                       | Histogram | `parse`                 |
+| [`graphql_envelop_phase_validate`](#graphql_envelop_phase_validate)                 | Histogram | `validate`              |
+| [`graphql_envelop_phase_context`](#graphql_envelop_phase_context)                   | Histogram | `contextBuilding`       |
+| [`graphql_envelop_phase_execute`](#graphql_envelop_phase_execute)                   | Histogram | `execute`               |
+| [`graphql_envelop_phase_subscribe`](#graphql_envelop_phase_subscribe)               | Histogram | `subscribe`             |
+| [`graphql_envelop_execute_resolver`](#graphql_envelop_execute_resolver)             | Histogram | `resolvers`             |
+| [`graphql_envelop_request_duration`](#graphql_envelop_request_duration)             | Histogram | `requestTotalDuration`  |
+| [`graphql_envelop_request_time_summary`](#graphql_envelop_request_time_summary)     |  Summary  | `requestSummary`        |
+| [`graphql_envelop_error_result`](#graphql_envelop_error_result)                     |  Counter  | `errors`                |
+| [`graphql_envelop_request`](#graphql_envelop_request)                               |  Counter  | `requestCount`          |
+| [`graphql_envelop_deprecated_field`](#graphql_envelop_deprecated_field)             |  Counter  | `deprecatedFields`      |
+| [`graphql_envelop_schema_change`](#graphql_envelop_schema_change)                   |  Counter  | `schemaChangeCount`     |
+| [`graphql_mesh_delegate_duration`](#graphql_mesh_delegate_duration)                 | Histogram | `delegation`            |
+| [`graphql_mesh_fetch_duration`](#graphql_mesh_fetch_duration)                       | Histogram | `fetchMetrics`          |
+| [`graphql_mesh_subgraph_execute_duration`](#graphql_mesh_subgraph_execute_duration) | Histogram | `subgraphExecute`       |
+| [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors)     |  Counter  | `subgraphExecuteErrors` |
+
+### `graphql_yoga_http_duration`
+
+This metric tracks the duration of incoming (downstream) HTTP requests. It reports the time spent to
+process each incoming request as a
+[histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+It is useful to track the responsiveness of your gateway. A spike in this metric could indicate a
+performance issue and that further investigation is needed.
+
+Please note that this metric is not specific to GraphQL, it tracks all incoming HTTP requests.
+
+You can use labels to have a better understanding of the requests and group them together. A common
+filter is to include only `statusCode` with `200` value and `method` with `POST` (the default method
+for GraphQL requests, but it can also be `GET` depending on your client setup) value to get
+execution time of successful GraphQL requests only.
+
+To enable this metric, set the `http` option to `true`.
+
+#### Labels
+
+This metric includes some useful labels to help you identify requests and group them together.
+
+| Label           | Enabled by default | Description                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------- | :----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `method`        |  Not configurable  | The HTTP method used to request the gateway endpoint.<br/><br/> Since GraphQL usually only uses `POST` requests, this can be used to filter out GraphiQL-related requests. <br/><br/> It can be any HTTP verb, including disallowed ones. Which means this metric can also be used to track malformed or malicious requests.                                                            |
+| `statusCode`    |  Not configurable  | The HTTP status code returned by the gateway.<br/><br/>You probably want to filter out non-`200` responses to have a view of the successful requests.<br/><br/>This can help you identify which requests are failing and why. Since GraphQL errors are returned as `200 OK` responses, this can be useful to track errors that are not related to the GraphQL, like malformed requests. |
+| `operationName` |       `true`       | If available, the name of the GraphQL operation requested, otherwise `Anonymous`.<br/><br/>This can help you identify which operations are slow or failing.<br/><br/>We recommend you always provide an operation name to your queries and mutations to help performance analysis and bug tracking.                                                                                     |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. It can be one of `query`, `mutation`, or `subscription`.<br/><br/>This can help you differentiate read and write performance of the system. It can for example help understand cache impact.                                                                                                                                               |
+
+#### Sample Output
+
+```text
+# HELP graphql_yoga_http_duration Time spent on HTTP connection
+# TYPE graphql_yoga_http_duration histogram
+graphql_yoga_http_duration_bucket{le="0.005",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.01",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.025",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.05",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.1",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.25",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="0.5",method="GET",statusCode="200",operationName="Anonymous"} 1
+graphql_yoga_http_duration_bucket{le="1",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_bucket{le="2.5",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_bucket{le="5",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_bucket{le="10",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_bucket{le="+Inf",method="GET",statusCode="200",operationName="Anonymous"} 4
+graphql_yoga_http_duration_sum{method="GET",statusCode="200",operationName="Anonymous"} 3
+graphql_yoga_http_duration_count{method="GET",statusCode="200",operationName="Anonymous"} 4
+```
+
+### `graphql_mesh_fetch_duration`
+
+This metric tracks the duration of outgoing HTTP requests. It reports the time spent on each request
+made using the `fetch` function provided by Mesh. It is reported as a
+[histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+This metric can provide insights into the network usage of your gateway. It does not only include
+requests made to resolve GraphQL operation responses, but also include any other outgoing HTTP
+requests made by Mesh or one of its plugins. It will for example include requests made to fetch the
+supergraph schema from the configured Schema Registry.
+
+To enable this metric, set the `fetchMetrics` option to `true`.
+
+#### Labels
+
+These metrics include some useful labels to help you identify requests and group them together.
+
+| Label             | Enabled by default | Description                                                            |
+| ----------------- | ------------------ | ---------------------------------------------------------------------- |
+| `url`             | Not configurable   | The URL of the upstream request.                                       |
+| `method`          | Not configurable   | The HTTP method of the upstream request.                               |
+| `statusCode`      | Not configurable   | The status code of the upstream response.                              |
+| `statusText`      | Not configurable   | The status text of the upstream response.                              |
+| `requestHeaders`  | `false`            | A JSON encoded object containing the headers of the upstream request.  |
+| `responseHeaders` | `fasle`            | A JSON encoded object containing the headers of the upstream response. |
+
+#### Sample output
+
+```text
+# HELP graphql_mesh_fetch_duration Time spent on outgoing HTTP calls
+# TYPE graphql_mesh_fetch_duration histogram
+graphql_mesh_fetch_duration_bucket{le="0.005",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.01",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.025",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.05",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.1",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.25",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="0.5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="1",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="2.5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="10",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_mesh_fetch_duration_bucket{le="+Inf",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 2
+graphql_mesh_fetch_duration_sum{url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 502
+graphql_mesh_fetch_duration_count{url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 2
+```
+
+### `graphql_mesh_subgraph_execute_duration`
+
+This metric tracks the duration of subgraph execution. It reports the time spent on each subgraph
+queries made to resolve incoming operations as a
+[histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+This metric can provide insights into how the time is spent to resolve queries. It can help you
+identify bottlenecks in your subgraphs.
+
+To enable this metric, set the `subgraphExecute` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                                            |
+| --------------- | :----------------: | ---------------------------------------------------------------------------------------------------------------------- |
+| `subgraphName`  |  Not configurable  | The name of the targeted subgraph.                                                                                     |
+| `operationType` |       `true`       | The type of the GraphQL operation executed by the subgraph. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation executed by the subgraph. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_mesh_subgraph_execute_duration Time spent on subgraph execution
+# TYPE graphql_mesh_subgraph_execute_duration histogram
+graphql_mesh_subgraph_execute_duration_bucket{le="0.005",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.01",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.025",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.05",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.1",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.25",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="0.5",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="1",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="2.5",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="5",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="10",subgraphName="upstream",operationType="query"} 0
+graphql_mesh_subgraph_execute_duration_bucket{le="+Inf",subgraphName="upstream",operationType="query"} 2
+graphql_mesh_subgraph_execute_duration_sum{subgraphName="upstream",operationType="query"} 889
+graphql_mesh_subgraph_execute_duration_count{subgraphName="upstream",operationType="query"} 2
+```
+
+### `graphql_mesh_subgraph_execute_errors`
+
+This metric tracks the number of errors that occurred during the subgraph execution. It counts all
+errors found in the response returned by the subgraph execution. It is exposed as a
+[counter](https://prometheus.io/docs/concepts/metric_types/#counter).
+
+This metric can help you identify subgraphs that are failing to execute operations. It can help
+identify issues with the subgraph itself or the communication between the gateway and the subgraph.
+
+To enable this metric, set the `subgraphExecuteErrors` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                                            |
+| --------------- | :----------------: | ---------------------------------------------------------------------------------------------------------------------- |
+| `subgraphName`  |  Not configurable  | The name of the targeted subgraph.                                                                                     |
+| `operationType` |       `true`       | The type of the GraphQL operation executed by the subgraph. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation executed by the subgraph. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_mesh_subgraph_execute_errors Number of errors on subgraph execution
+# TYPE graphql_mesh_subgraph_execute_errors counter
+graphql_mesh_subgraph_execute_errors{subgraphName="upstream",operationType="query",operationName="Anonymous"} 1
+```
+
+### `graphql_envelop_phase_parse`
+
+This metric tracks the duration of the `parse` phase of the GraphQL execution. It reports the time
+spent parsing the incoming GraphQL operation. It is reported as a
+[histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+Since you don't have control over the parsing phase, this metric is mostly useful to track potential
+attacks. A spike in this metric could indicate someone is trying to send malicious operations to
+your gateway.
+
+To enable this metric, set the `parse` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_envelop_phase_parse Time spent on running GraphQL "parse" function
+# TYPE graphql_envelop_phase_parse histogram
+graphql_envelop_phase_parse_bucket{le="0.005",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="0.01",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="0.025",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="0.05",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="0.1",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="0.25",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="0.5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="1",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="2.5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="10",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_bucket{le="+Inf",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_parse_sum{operationName="Anonymous",operationType="query"} 0.001
+graphql_envelop_phase_parse_count{operationName="Anonymous",operationType="query"} 1
+```
+
+### `graphql_envelop_phase_validate`
+
+This metric tracks the duration of the `validate` phase of the GraphQL execution. It reports the
+time spent validating the incoming GraphQL operation. It is reported as a
+[histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+To enable this metric, set the `validate` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_envelop_phase_validate Time spent on running GraphQL "validate" function
+# TYPE graphql_envelop_phase_validate histogram
+graphql_envelop_phase_validate_bucket{le="0.005",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="0.01",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="0.025",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="0.05",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="0.1",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="0.25",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="0.5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="1",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="2.5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="10",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_bucket{le="+Inf",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_validate_sum{operationName="Anonymous",operationType="query"} 0.004
+graphql_envelop_phase_validate_count{operationName="Anonymous",operationType="query"} 1
+```
+
+### `graphql_envelop_phase_context`
+
+This metric tracks the duration of the `context` phase of the GraphQL execution. It reports the time
+spent building the context object that will be passed to the executors. It is reported as a
+[histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+To enable this metric, set the `contextBuilding` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_envelop_phase_context Time spent on building the GraphQL context
+# TYPE graphql_envelop_phase_context histogram
+graphql_envelop_phase_context_bucket{le="0.005",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="0.01",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="0.025",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="0.05",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="0.1",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="0.25",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="0.5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="1",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="2.5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="10",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_bucket{le="+Inf",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_context_sum{operationName="Anonymous",operationType="query"} 0
+graphql_envelop_phase_context_count{operationName="Anonymous",operationType="query"} 1
+```
+
+### `graphql_envelop_phase_execute`
+
+This metric tracks the duration of the `execute` phase of the GraphQL execution. It reports the time
+spent actually resolving the response of the incoming operation. This includes the gathering of all
+the data from all sources required to construct the final response. It is reported as a
+[histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+It is the metric that will give you the most insights into the performance of your gateway, since
+this is where most of the work is done.
+
+To enable this metric, set the `execute` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_envelop_phase_execute Time spent on running the GraphQL "execute" function
+# TYPE graphql_envelop_phase_execute histogram
+graphql_envelop_phase_execute_bucket{le="0.005",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="0.01",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="0.025",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="0.05",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="0.1",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="0.25",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="0.5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="1",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="2.5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="5",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="10",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_bucket{le="+Inf",operationName="Anonymous",operationType="query"} 1
+graphql_envelop_phase_execute_sum{operationName="Anonymous",operationType="query"} 0.002
+graphql_envelop_phase_execute_count{operationName="Anonymous",operationType="query"} 1
+```
+
+### `graphql_envelop_phase_subscribe`
+
+This metric tracks the duration of the `subscribe` phase of the GraphQL execution. It reports the
+time spent initiating a subscription (which doesn't include actually sending the first response). It
+is reported as a [histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+It will notably include the time spent to setup upstream subscriptions with appropriate transport
+for each source.
+
+To enable this metric, set the `subscribe` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_envelop_phase_subscribe Time spent on running the GraphQL "subscribe" function
+# TYPE graphql_envelop_phase_subscribe histogram
+graphql_envelop_phase_subscribe_bucket{le="0.005",operationName="Anonymous",operationType="subscription"} 0
+graphql_envelop_phase_subscribe_bucket{le="0.01",operationName="Anonymous",operationType="subscription"} 0
+graphql_envelop_phase_subscribe_bucket{le="0.025",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="0.05",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="0.1",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="0.25",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="0.5",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="1",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="2.5",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="5",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="10",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_bucket{le="+Inf",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_phase_subscribe_sum{operationName="Anonymous",operationType="subscription"} 0.011
+graphql_envelop_phase_subscribe_count{operationName="Anonymous",operationType="subscription"} 1
+```
+
+### `graphql_envelop_request_duration`
+
+This metric tracks the duration of the complete GraphQL operation execution. It reports the time
+spent in the GraphQL specific processing, excluding the HTTP-level processing. It is reported as a
+[histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
+
+To enable this metric, set the `requestTotalDuration` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_envelop_request_duration Time spent on running the GraphQL operation from parse to execute
+# TYPE graphql_envelop_request_duration histogram
+graphql_envelop_request_duration_bucket{le="0.005",operationName="Anonymous",operationType="subscription"} 0
+graphql_envelop_request_duration_bucket{le="0.01",operationName="Anonymous",operationType="subscription"} 0
+graphql_envelop_request_duration_bucket{le="0.025",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="0.05",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="0.1",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="0.25",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="0.5",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="1",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="2.5",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="5",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="10",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_bucket{le="+Inf",operationName="Anonymous",operationType="subscription"} 1
+graphql_envelop_request_duration_sum{operationName="Anonymous",operationType="subscription"} 0.011
+graphql_envelop_request_duration_count{operationName="Anonymous",operationType="subscription"} 1
+```
+
+### `graphql_envelop_request_time_summary`
+
+This metric provides a summary of the time spent on the GraphQL operation execution. It reports the
+same timing than [`graphql_envelop_request_duration`](#graphql_envelop_request_duration) but as a
+[summary](https://prometheus.io/docs/concepts/metric_types/#summary).
+
+To enable this metric, set the `requestSummary` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample output
+
+```text
+# HELP graphql_envelop_request_time_summary Summary to measure the time to complete GraphQL operations
+# TYPE graphql_envelop_request_time_summary summary
+graphql_envelop_request_time_summary{quantile="0.01",operationName="Anonymous",operationType="subscription"} 0.022
+graphql_envelop_request_time_summary{quantile="0.05",operationName="Anonymous",operationType="subscription"} 0.022
+graphql_envelop_request_time_summary{quantile="0.5",operationName="Anonymous",operationType="subscription"} 0.022
+graphql_envelop_request_time_summary{quantile="0.9",operationName="Anonymous",operationType="subscription"} 0.022
+graphql_envelop_request_time_summary{quantile="0.95",operationName="Anonymous",operationType="subscription"} 0.022
+graphql_envelop_request_time_summary{quantile="0.99",operationName="Anonymous",operationType="subscription"} 0.022
+graphql_envelop_request_time_summary{quantile="0.999",operationName="Anonymous",operationType="subscription"} 0.022
+graphql_envelop_request_time_summary_sum{operationName="Anonymous",operationType="subscription"} 0.022
+graphql_envelop_request_time_summary_count{operationName="Anonymous",operationType="subscription"} 1
+```
+
+### `graphql_envelop_error_result`
+
+This metric tracks the number of errors that occurred returned by the GraphQL execution.
+
+Similarly to [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors), it
+counts all errors found in the final response constructed by Mesh after it gathered all subgraph
+responses, but it also includes errors from other GraphQL processing phases (parsing, validation and
+context building). It is exposed as a
+[counter](https://prometheus.io/docs/concepts/metric_types/#counter).
+
+To enable this metric, set the `errors` option to `true`.
+
+#### Labels
+
+Depending on the phase when the error occurred, some labels may be missing. For example, if the
+error occurred during the context phase, only the `phase` label will be present.
+
+| Label           | Enabled by default | Description                                                                                                                                                           |
+| --------------- | :----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `path`          |       `true`       | The path of the field that caused the error. It can be `undefined` if the error is not related to a given field.                                                      |
+| `phase`         |       `true`       | The phase of the GraphQL execution where the error occurred. It can be `parse`, `validate`, `context`, `execute` (for every operation types including subscriptions). |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`.                                                               |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.                                                                   |
+
+#### Sample Output
+
+```text
+# HELP graphql_envelop_error_result Counts the amount of errors reported from all phases
+# TYPE graphql_envelop_error_result counter
+graphql_envelop_error_result{operationName="Anonymous",operationType="query",path="undefined",phase="execute"} 1
+```
+
+### `graphql_envelop_request`
+
+This metric tracks the number of GraphQL operations executed. It counts all operations, either
+failed or successful, including subscriptions. It is exposed as a
+[counter](https://prometheus.io/docs/concepts/metric_types/#counter).
+
+It can differ from the number reported by
+[`graphql_yoga_http_duration_sum`](#graphql_yoga_http_duration) because a single HTTP request can
+contain multiple GraphQL operations if batching has been enabled.
+
+To enable this metric, set the `requestCount` option to `true`.
+
+#### Filter resolvers to instrument
+
+To mitigate the cost of instrumenting all resolvers, you can explicitly list the fields that should
+be instrumented by providing a list of field names to the `instrumentResolvers` option.
+
+It is a list of strings in the form of `TypeName.fieldName`. For example, to instrument the `hello`
+root query, you would use `Query.hello`.
+
+You can also use wildcards to instrument all the fields for a type. For example, to instrument all
+root queries, you would use `Query.*`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample output
+
+```text
+# HELP graphql_envelop_request Counts the amount of GraphQL requests executed through Envelop
+# TYPE graphql_envelop_request counter
+graphql_envelop_request{operationName="Anonymous",operationType="query"} 1
+```
+
+### `graphql_envelop_deprecated_field`
+
+This metric tracks the number of deprecated fields used in the GraphQL operation.
+
+To enable this metric, set the `deprecatedFields` option to `true`.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `fieldName`     |       `true`       | The name of the deprecated field that has been used.                                                    |
+| `typeName`      |       `true`       | The name of the parent type of the deprecated field that has been used.                                 |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+
+#### Sample Output
+
+```text
+# HELP graphql_envelop_deprecated_field Counts the amount of deprecated fields used in selection sets
+# TYPE graphql_envelop_deprecated_field counter
+graphql_envelop_deprecated_field{operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query"} 1
+```
+
+### `graphql_envelop_schema_change`
+
+This metric tracks the number of schema changes that have occurred since the gateway started. When
+polling is enabled, this will include the schema reloads.
+
+If you are using a plugin that modifies the schema on the fly, be aware that this metric will also
+include updates made by those plugins. Which means that one schema update can actually trigger
+multiple schema changes.
+
+To enable this metric, set the `schemaChangeCount` option to `true`.
+
+#### Labels
+
+This metric does not include any labels.
+
+#### Sample output
+
+```text
+# HELP graphql_envelop_schema_change Counts the amount of schema changes
+# TYPE graphql_envelop_schema_change counter
+graphql_envelop_schema_change 1
+```
+
+### `graphql_envelop_execute_resolver`
+
+<Callout type="warning">
+  Enabling resolvers level metrics will introduce significant overhead. It is recommended to enable
+  this metric only for debugging purposes.
+</Callout>
+
+This metric tracks the duration of each resolver execution. It reports the time spent only on
+additional resolvers, not on fields that are resolved by a subgraph. It is up to the subgraph server
+to implement resolver level metrics, the gateway can't remotely track their execution time.
+
+#### Labels
+
+| Label           | Enabled by default | Description                                                                                             |
+| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
+| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| `fieldName`     |       `true`       | The name of the field being resolved.                                                                   |
+| `typeName`      |       `true`       | The name of the parent type of the field being resolved.                                                |
+| `returnType`    |       `true`       | The name of the return type of the field being resolved.                                                |
+
+#### Sample output
+
+```text
+# HELP graphql_envelop_execute_resolver Time spent on running the GraphQL resolvers
+# TYPE graphql_envelop_execute_resolver histogram
+graphql_envelop_execute_resolver_bucket{le="0.005",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="0.01",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="0.025",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="0.05",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="0.1",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="0.25",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="0.5",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="1",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="2.5",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="5",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="10",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_bucket{le="+Inf",operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+graphql_envelop_execute_resolver_sum{operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 0
+graphql_envelop_execute_resolver_count{operationName="Anonymous",operationType="query",fieldName="hello",typeName="Query",returnType="String!"} 1
+```
+
+## Skip introspection queries
+
+By default, all operations are instrumented, including introspection queries. It is possible to
+ignore introspection queries for all metrics prefixed by `graphql_envelop_` by setting the
+`skipIntrospection` option to `true`.
+
+## Custom metric configuration
+
+Each metric can be enabled or disabled by setting the corresponding option to `true` or `false`.
+
+But you can also customize their configuration by providing a string or an object.
+
+### Customizing metric names
+
+By providing a string, you can change the name of the metric. For example, to change the name of the
+name of the `graphql_yoga_http_duration` metric to `http_request_duration`, you would use:
 
 ```ts filename="mesh.config.ts"
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
@@ -41,41 +698,58 @@ export const serveConfig = defineServeConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
+      http: 'http_request_duration'
+    })
+  ]
+})
+```
 
-      // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
+### Customizing metric configuration
 
-      // requires `execute` to be true
-      requestCount: true,
-      // requires `execute` to be true
-      requestSummary: true,
-      parse: true,
-      validate: true,
-      contextBuilding: true,
-      execute: true,
-      errors: true,
+By providing an object, you can customize the metric configuration. These configuration objects
+should be created using the provided factories for each metric type (`createCounter`,
+`createHistogram`, `createSummary`).
 
-      // reports metrics for the delegation to the individual sources
-      delegation: true,
+<Callout type="info">
+  By providing a custom configuration, the default configuration is completely overridden. This means
+  you need to provide all options, including the name and the labels.
 
-      // reports metrics for the outgoing HTTP requests
-      fetchMetrics: true,
-      // Adds the request headers to the metrics
-      fetchRequestHeaders: true,
-      // Adds the response headers to the metrics
-      fetchResponseHeaders: true,
+You can look at the source code of the plugin to see the default configuration for each metric to
+use it as a base.
 
-      // Reports metrics for the incoming HTTP requests (this sets a custom name for http)
-      // If you pass a string instead of boolean, it will be used as the name of the metric
-      http: 'my-http-duration-metric',
-      // Adds the request headers to the metrics
-      httpRequestHeaders: true,
-      // Adds the response headers to the metrics
-      httpResponseHeaders: true,
+</Callout>
 
-      // by default all fields are reported
-      deprecatedFields: true,
-      // the path of the endpoint to expose the metrics, default is /metrics
-      endpoint: '/metrics'
+Available options depend on the metric type, and full details about them can be found in the
+[`siimon/prom-client` documentation](https://github.com/siimon/prom-client#custom-metric).
+
+For example, you can customize the buckets of the `graphql_yoga_http_duration` histogram metric:
+
+```ts filename="mesh.config.ts"
+import usePrometheus, { createHistogram } from '@graphql-mesh/plugin-prometheus'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { register as registry } from 'prom-client'
+
+export const serveConfig = defineServeConfig({
+  plugins: pluginCtx => [
+    usePrometheus({
+      ...pluginCtx,
+      http: createHistogram({
+        registry,
+        histogram: {
+          name: 'graphql_yoga_http_duration',
+          help: 'Time spent on HTTP connection',
+          labels: ['method', 'statusCode', 'operationName', 'operationType'],
+          buckets: [0.1, 5, 15, 50, 100, 500],
+        }
+        fillLabelsFn(params, { request, response }) {
+          return {
+            method: request.method,
+            statusCode: response.status,
+            operationType: params.operationType,
+            operationName: params.operationName || 'Anonymous',
+          };
+        }
+      })
     })
   ]
 })
@@ -100,4 +774,97 @@ export const serveConfig = defineServeConfig({
     })
   ]
 })
+```
+
+## Examples
+
+### All metrics enabled
+
+```ts filename="mesh.config.ts"
+import usePrometheus from '@graphql-mesh/plugin-prometheus'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  plugins: pluginCtx => [
+    usePrometheus({
+      ...pluginCtx,
+
+      // Enable all available metrics
+      requestCount: true,
+      requestSummary: true,
+      parse: true,
+      validate: true,
+      contextBuilding: true,
+      execute: true,
+      subscribe: true,
+      errors: true,
+      delegation: true,
+      fetchMetrics: true,
+      http: true
+      deprecatedFields: true,
+      requestTotalDuration: true,
+      schemaChangeCount: true,
+      subgraphExecute: true,
+      subgraphExecuteErrors: true
+
+      // Warning: enabling resolvers level metrics will introduce significant overhead
+      resolvers: true,
+    })
+  ]
+})
+```
+
+### Prometheus metrics output
+
+```text
+# HELP graphql_mesh_fetch_duration Time spent on outgoing HTTP calls
+# TYPE graphql_mesh_fetch_duration histogram
+
+# HELP graphql_mesh_delegate_duration Time spent on delegate execution
+# TYPE graphql_mesh_delegate_duration histogram
+
+# HELP graphql_mesh_subgraph_execute_duration Time spent on subgraph execution
+# TYPE graphql_mesh_subgraph_execute_duration histogram
+
+# HELP graphql_mesh_subgraph_execute_errors Number of errors on subgraph execution
+# TYPE graphql_mesh_subgraph_execute_errors counter
+
+# HELP graphql_yoga_http_duration Time spent on HTTP connection
+# TYPE graphql_yoga_http_duration histogram
+
+# HELP graphql_envelop_phase_parse Time spent on running GraphQL "parse" function
+# TYPE graphql_envelop_phase_parse histogram
+
+# HELP graphql_envelop_phase_validate Time spent on running GraphQL "validate" function
+# TYPE graphql_envelop_phase_validate histogram
+
+# HELP graphql_envelop_phase_context Time spent on building the GraphQL context
+# TYPE graphql_envelop_phase_context histogram
+
+# HELP graphql_envelop_phase_execute Time spent on running the GraphQL "execute" function
+# TYPE graphql_envelop_phase_execute histogram
+
+# HELP graphql_envelop_phase_subscribe Time spent on running the GraphQL "subscribe" function
+# TYPE graphql_envelop_phase_subscribe histogram
+
+# HELP graphql_envelop_execute_resolver Time spent on running the GraphQL resolvers
+# TYPE graphql_envelop_execute_resolver histogram
+
+# HELP graphql_envelop_request_duration Time spent on running the GraphQL operation from parse to execute
+# TYPE graphql_envelop_request_duration histogram
+
+# HELP graphql_envelop_request_time_summary Summary to measure the time to complete GraphQL operations
+# TYPE graphql_envelop_request_time_summary summary
+
+# HELP graphql_envelop_error_result Counts the amount of errors reported from all phases
+# TYPE graphql_envelop_error_result counter
+
+# HELP graphql_envelop_request Counts the amount of GraphQL requests executed through Envelop
+# TYPE graphql_envelop_request counter
+
+# HELP graphql_envelop_deprecated_field Counts the amount of deprecated fields used in selection sets
+# TYPE graphql_envelop_deprecated_field counter
+
+# HELP graphql_envelop_schema_change Counts the amount of schema changes
+# TYPE graphql_envelop_schema_change counter
 ```
