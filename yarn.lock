@@ -4921,7 +4921,7 @@ __metadata:
     "@graphql-tools/schema": "npm:^10.0.4"
     "@graphql-tools/stitching-directives": "npm:^3.0.2"
     "@graphql-tools/utils": "npm:^10.2.3"
-    "@theguild/federation-composition": "npm:^0.11.2"
+    "@theguild/federation-composition": "npm:^0.12.0"
     "@types/minimatch": "npm:5.1.2"
     "@types/pluralize": "npm:^0.0.33"
     change-case: "npm:^4.1.2"
@@ -10058,9 +10058,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/federation-composition@npm:^0.11.2":
-  version: 0.11.4
-  resolution: "@theguild/federation-composition@npm:0.11.4"
+"@theguild/federation-composition@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "@theguild/federation-composition@npm:0.12.0"
   dependencies:
     constant-case: "npm:^3.0.0"
     debug: "npm:4.3.4"
@@ -10068,7 +10068,7 @@ __metadata:
     lodash.sortby: "npm:^4.7.0"
   peerDependencies:
     graphql: ^16.0.0
-  checksum: 10c0/7bd2786d2025ade4e1945199a4f85849de820c88decec98a386712f9ff5640a73462662458dfaa11fa336678e4a20d461eab251d9beb8696a627d9999555cee6
+  checksum: 10c0/287acb60cc115323cd862e6e95be672eda032ed909c6c3491f09a94147ed8160a235283172a1147d58ddeaf5014e379dd29ac604f68c84f85db3bc045ec15179
   languageName: node
   linkType: hard
 
