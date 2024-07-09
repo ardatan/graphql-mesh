@@ -26,7 +26,7 @@ async function startServicesAndCreateSupergraphFile() {
   await fs.write(supergraphConfigFile, JSON.stringify(supergraphConfig));
 
   const [proc, waitForExit] = await spawn(
-    `yarn rover supergraph compose --config ${supergraphConfigFile}`,
+    `yarn rover supergraph compose --config ${supergraphConfigFile} --elv2-license=accept`,
   );
   await waitForExit;
 

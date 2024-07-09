@@ -1,7 +1,10 @@
 import type { DocumentNode } from 'graphql';
 import { print } from 'graphql';
-import { getDocumentString } from '@envelop/core';
-import type { DisposableExecutor, Transport } from '@graphql-mesh/transport-common';
+import {
+  getDocumentString,
+  type DisposableExecutor,
+  type Transport,
+} from '@graphql-mesh/transport-common';
 import { buildGraphQLWSExecutor } from '@graphql-tools/executor-graphql-ws';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 
@@ -31,74 +34,70 @@ export default {
       endpoint: transportEntry.location,
       headers,
       fetch,
-      print: printFnForHTTPExecutor,
+      print: printFnForExecutor,
       ...transportEntry.options,
     });
-    const wsExecutors: { [hash: string]: DisposableExecutor } = {};
     const wsOpts = transportEntry.options?.subscriptions?.ws;
-
-    return function HTTPExecutor(request) {
-      if (wsOpts && request.operationType === 'subscription') {
-        const hostname = /\/\/(.+?)\//.exec(transportEntry.location)[1];
-        if (!hostname) {
-          throw new Error(`Unable to extract hostname from "${transportEntry.location}"`);
-        }
-
-        let protocol = 'ws';
-        if (transportEntry.location.startsWith('https')) {
-          protocol = 'wss';
-        }
-        const url = `${protocol}://${hostname}${wsOpts.path}`;
-
-        // apollo federation passes the HTTP `Authorization` header through `connectionParams.token`
-        // see https://www.apollographql.com/docs/router/executing-operations/subscription-support/#websocket-auth-support
-        const headers = request.context?.request?.headers;
-        let token = headers.authorization;
-        if (!token && 'get' in headers && typeof headers.get === 'function') {
-          // TODO: why do I have to do this for graphql-sse? shouldnt headers be normalised?
-          token = headers.get('authorization');
-        }
-        if (!token) {
-          // still no token, maybe it's hard-coded in the config
-          token = transportEntry.headers?.find(
-            ([key]) => key.toLowerCase() === 'authorization',
-          )?.[1];
-        }
-
-        // TODO: pass through connection params from the WS connection to the GW (once https://github.com/ardatan/graphql-mesh/issues/7208 lands)
-
-        const hash = url + token;
-        const executor = (wsExecutors[hash] ??= buildGraphQLWSExecutor({
-          url: `${protocol}://${hostname}${wsOpts.path}`,
-          connectionParams: token ? { token } : undefined,
-          retryAttempts: transportEntry.options?.retry,
-          lazy: true,
-          lazyCloseTimeout: 3_000,
-          on: {
-            closed() {
-              // no subscriptions and the lazy close timeout has passed - remove the client
-              delete wsExecutors[hash];
-            },
-          },
-        }));
-
-        const origDispose = executor[Symbol.asyncDispose];
-        executor[Symbol.asyncDispose] = () => {
-          // the executor is being disposed - remove the client
-          delete wsExecutors[hash];
-          return origDispose();
-        };
-
-        return executor(request);
+    if (wsOpts) {
+      const wsExecutorMap = new Map<string, DisposableExecutor>();
+      const hostname = /\/\/(.+?)\//.exec(transportEntry.location)[1];
+      if (!hostname) {
+        throw new Error(`Unable to extract hostname from "${transportEntry.location}"`);
       }
+      let protocol = 'ws';
+      if (transportEntry.location.startsWith('https')) {
+        protocol = 'wss';
+      }
+      const wsUrl = `${protocol}://${hostname}${wsOpts.path}`;
+      const hybridExecutor: DisposableExecutor = function hybridExecutor(request) {
+        if (request.operationType === 'subscription') {
+          // apollo federation passes the HTTP `Authorization` header through `connectionParams.token`
+          // see https://www.apollographql.com/docs/router/executing-operations/subscription-support/#websocket-auth-support
+          const token =
+            request.context?.headers?.authorization ||
+            request.context?.request?.headers?.get('authorization') ||
+            undefined;
 
-      return httpExecutor(request);
-    };
+          // TODO: pass through connection params from the WS connection to the GW (once https://github.com/ardatan/graphql-mesh/issues/7208 lands)
+
+          const hash = wsUrl + token;
+          let wsExecutor = wsExecutorMap.get(hash);
+          if (!wsExecutor) {
+            wsExecutor = buildGraphQLWSExecutor({
+              url: wsUrl,
+              connectionParams: token ? { token } : undefined,
+              retryAttempts: transportEntry.options?.retry,
+              lazy: true,
+              lazyCloseTimeout: 3_000,
+              on: {
+                closed() {
+                  // no subscriptions and the lazy close timeout has passed - remove the client
+                  wsExecutorMap.delete(hash);
+                },
+              },
+              // @ts-expect-error wrong typings for print fn
+              print: printFnForExecutor,
+            });
+            wsExecutorMap.set(hash, wsExecutor);
+          }
+          return wsExecutor(request);
+        }
+        return httpExecutor(request);
+      };
+      hybridExecutor[Symbol.asyncDispose] = () =>
+        Promise.all([
+          ...Array.from(wsExecutorMap.values()).map(executor => executor[Symbol.asyncDispose]()),
+          httpExecutor[Symbol.asyncDispose](),
+        ]);
+      return hybridExecutor;
+    }
+
+    return httpExecutor;
   },
 } satisfies Transport<'http', HTTPTransportOptions>;
 
 // Use Envelop's print/parse cache to avoid parsing the same document multiple times
 // TODO: Maybe a shared print/parse cache in the future?
-function printFnForHTTPExecutor(document: DocumentNode) {
+function printFnForExecutor(document: DocumentNode) {
   return getDocumentString(document, print);
 }
