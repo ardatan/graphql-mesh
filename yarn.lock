@@ -4373,9 +4373,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/functions-framework@npm:3.4.0, @google-cloud/functions-framework@npm:^3.3.0":
-  version: 3.4.0
-  resolution: "@google-cloud/functions-framework@npm:3.4.0"
+"@google-cloud/functions-framework@npm:3.4.1, @google-cloud/functions-framework@npm:^3.3.0":
+  version: 3.4.1
+  resolution: "@google-cloud/functions-framework@npm:3.4.1"
   dependencies:
     "@types/express": "npm:4.17.21"
     body-parser: "npm:^1.18.3"
@@ -4388,7 +4388,7 @@ __metadata:
   bin:
     functions-framework: build/src/main.js
     functions-framework-nodejs: build/src/main.js
-  checksum: 10c0/ebf986e4a2aaeb6724e0404aa6efe389443e9603d30e5a7fe70be40e974f7fd08a882a4bc6fda9883015094715eca1437c1ef6eb323c6d1374a8b81a0e2ef3ac
+  checksum: 10c0/7a50ad9bbc443c81d55a9a199299c346e7253ad0ef7cab84ab4ab0fbe1ea2ff74bf89ce9e423a7f762dc741129d25ae221d832172e65e04697dc5fe6aa63b610
   languageName: node
   linkType: hard
 
@@ -11637,7 +11637,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.98.11"
     "@graphql-mesh/serve-runtime": "npm:^0.4.4"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.63.1"
+    wrangler: "npm:3.63.2"
   languageName: unknown
   linkType: soft
 
@@ -13915,7 +13915,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.4.4"
     "@omnigraph/json-schema": "npm:^0.101.2"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.63.1"
+    wrangler: "npm:3.63.2"
   languageName: unknown
   linkType: soft
 
@@ -14362,7 +14362,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.101.2"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.11"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.63.1"
+    wrangler: "npm:3.63.2"
   languageName: unknown
   linkType: soft
 
@@ -18033,7 +18033,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-gcp@workspace:examples/gcp-functions"
   dependencies:
-    "@google-cloud/functions-framework": "npm:3.4.0"
+    "@google-cloud/functions-framework": "npm:3.4.1"
     "@graphql-mesh/cli": "npm:0.91.2"
     "@graphql-mesh/json-schema": "npm:0.101.2"
     "@types/node": "npm:20.14.10"
@@ -32036,7 +32036,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.98.10"
     "@graphql-mesh/plugin-response-cache": "npm:0.98.11"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.63.1"
+    wrangler: "npm:3.63.2"
   languageName: unknown
   linkType: soft
 
@@ -35673,9 +35673,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.63.1":
-  version: 3.63.1
-  resolution: "wrangler@npm:3.63.1"
+"wrangler@npm:3.63.2":
+  version: 3.63.2
+  resolution: "wrangler@npm:3.63.2"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -35705,7 +35705,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/8440b0a59aa9f491d19429742d9f14d44ff5a4eb9061d511f907cac294548f71d44b3c70401bf4cdc0fc01ef9e1e69e310d1ddaa7724a9b1ec59ff2a7cae8e69
+  checksum: 10c0/846093938c49321556561555a958d40cc99445ff962c7428a03c711a9b49c5b7a7cc208ad3f3140c96d05cb1e4a9df8c0a947cb7c010c71ac3798e0710a3bcee
   languageName: node
   linkType: hard
 
