@@ -113,6 +113,19 @@ HIVE_REGISTRY_TOKEN=MY-REGISTRY-TOKEN npx mesh-serve
 
 [You can refer to the official documentation of Hive Client to learn more about the all options](https://the-guild.dev/graphql/hive/docs/api-reference/client#configuration)
 
+## Schema Extensions
+
+You can use [Schema Extensions](/v1/compose/schema-extensions) with Hive. Since we don't have a
+composition configuration of supergraph when we use a Hive project, we have to use Hive's settings
+to configure `additionalTypeDefs`.
+
+All you need to do is to provide the `additionalTypeDefs` in the `Base Schema` section of your
+project's `Settings` tab, like below.
+
+![image](https://github.com/ardatan/graphql-mesh/assets/20847995/c7171c04-24c2-47d7-b885-c04ea3c20a67)
+
+[Learn more about Schema Extensions in Mesh Compose](/v1/compose/schema-extensions)
+
 ## Persisted Operations
 
 `TODO: Add documentation for Persisted Operations with Hive`
