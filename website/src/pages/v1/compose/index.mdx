@@ -38,9 +38,18 @@ npm i @graphql-mesh/compose-cli
 
 ## Compose Configuration
 
-You need to create a `mesh.config.ts` file in the root of your project directory. The following
-example loads a GraphQL subgraph from the [Countries API](https://countries.trevorblades.com). Then
-the compose configuration should be exported as `composeConfig`.
+You need to create a Mesh config file in the root of your project directory. The following list of
+files are loaded by default, sorted by priority:
+
+- `mesh.config.ts` _(recommended)_
+- `mesh.config.mts`
+- `mesh.config.cts`
+- `mesh.config.js`
+- `mesh.config.mjs`
+- `mesh.config.cjs`
+
+This example loads a GraphQL subgraph from the [Countries API](https://countries.trevorblades.com).
+Then the compose configuration should be exported as `composeConfig`.
 
 ```ts filename="mesh.config.ts"
 import {
