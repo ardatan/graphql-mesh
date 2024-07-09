@@ -62,7 +62,7 @@ export async function run({
 
   let importedConfig: MeshComposeCLIConfig;
   if (opts.configPath === joinedDefaultConfigPaths) {
-    log.info(`Searching for default configuration`);
+    log.info(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
       importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
       if (importedConfig) {
@@ -71,7 +71,7 @@ export async function run({
     }
     if (!importedConfig) {
       throw new Error(
-        `Cannot find default configuration at ${joinedDefaultConfigPaths} in the current working directory`,
+        `Cannot find default config file at ${joinedDefaultConfigPaths} in the current working directory`,
       );
     }
   } else {
@@ -79,13 +79,13 @@ export async function run({
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
       : resolve(process.cwd(), opts.configPath);
-    log.info(`Loading configuration at path ${configPath}`);
+    log.info(`Loading config file at path ${configPath}`);
     importedConfig = await importConfig(log, configPath);
     if (!importedConfig) {
-      throw new Error(`Cannot find configuration at ${joinedDefaultConfigPaths}`);
+      throw new Error(`Cannot find config file at ${joinedDefaultConfigPaths}`);
     }
   }
-  log.info('Loaded configuration');
+  log.info('Loaded config file');
 
   const config: MeshComposeCLIConfig = {
     ...importedConfig,

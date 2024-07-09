@@ -102,30 +102,29 @@ export async function run({
 
   let importedConfig: MeshServeCLIConfig;
   if (opts.configPath === joinedDefaultConfigPaths) {
-    log.info(`Searching for default configuration`);
+    log.info(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
       importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
       if (importedConfig) {
         break;
       }
     }
-    if (!importedConfig) {
-      throw new Error(
-        `Cannot find default configuration at ${joinedDefaultConfigPaths} in the current working directory`,
-      );
-    }
   } else {
     // using user-provided config
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
       : resolve(process.cwd(), opts.configPath);
-    log.info(`Loading configuration at path ${configPath}`);
+    log.info(`Loading config file at path ${configPath}`);
     importedConfig = await importConfig(log, configPath);
     if (!importedConfig) {
-      throw new Error(`Cannot find configuration at ${joinedDefaultConfigPaths}`);
+      throw new Error(`Cannot find config file at ${joinedDefaultConfigPaths}`);
     }
   }
-  log.info('Loaded configuration');
+  if (importedConfig) {
+    log.info('Loaded config file');
+  } else {
+    log.debug('No config file loaded, using defaults');
+  }
 
   const config: MeshServeCLIConfig = {
     ...importedConfig,
