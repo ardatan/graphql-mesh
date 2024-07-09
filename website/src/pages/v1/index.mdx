@@ -4,20 +4,54 @@ description:
   sources
 ---
 
+import { Callout, Cards } from '@theguild/components'
+
 # Introduction
 
-GraphQL Mesh is a framework to **build GraphQL Gateways on top of GraphQL and non-GraphQL services**
-including REST, gRPC, and more.
+Mesh is a GraphQL composition framework and gateway for both GraphQL Federation and non-GraphQL
+Federation subgraphs, non-GraphQL services, such as REST and gRPC, and also databases such as
+MongoDB, MySQL, and PostgreSQL.
 
-You can either compose your sources by using GraphQL Mesh Compose, and then serve it using GraphQL
-Mesh Serve, or you can serve your existing supergraph by using GraphQL Mesh Serve, or you can use
-GraphQL Mesh Serve as a proxy to your existing GraphQL API by extending it with additional layer of
-features such as caching, rate limiting, auth, etc.
+```mermaid
+graph TD
+    subgraph Client
+        A[iOS, Android or Web App]
+    end
 
-**Start with any of the following paths;**
+    subgraph Gateway
+        B[GraphQL Mesh]
+    end
 
-- [Combine GraphQL and non-GraphQL sources with GraphQL Mesh Compose](/v1/compose)
-- [Use GraphQL Mesh with your supergraph stored in somewhere](/v1/serve)
-- [Use GraphQL Mesh with your Supergraph managed by GraphQL Hive](/v1/serve/schema-registry/hive)
-- [Use GraphQL Mesh with your Supergraph managed by Apollo GraphOS](/v1/serve/schema-registry/hive)
-- [Use GraphQL Mesh as a proxy to your existing GraphQL API](/v1/serve#configure-mesh-as-a-graphql-proxy)
+    subgraph Backend Services
+        C1["User Service (GraphQL)"]
+        C2["Product Service (REST)"]
+        C3["Order Database (PostgreSQL)"]
+    end
+
+    A --> B
+    B --> C1
+    B --> C2
+    B --> C3
+```
+
+The GraphQL Mesh framework consists of two main components.
+
+- **Mesh Compose.** Combine muliple API sources (GraphQL, Federation, REST, gRPC, PostgreSQL, MySql
+  and co) into a single GraphQL supegraph.
+
+- **Mesh Serve.** The Gateway to serve your existing supergraph as provided by either Mesh Compose,
+  GraphQL Hive, Apollo GraphOS, or a proxy to your existing GraphQL API. Flexible support for
+  authentication, authorization, caching, rate-limiting and observability.
+
+### Next steps
+
+Want to turn existing services into a GraphQL supergraph? Continue with Mesh Compose.
+
+Already have a supergraph from a schema registry such as GraphQL Hive or Apollo GraphOS and want to
+spin up a gateway? Continue with Mesh Serve.
+
+<Cards>
+  <Cards.Card arrow title="Get Started with Mesh Compose" href="/v1/compose" />
+  <Cards.Card arrow title="Get Started with Mesh Serve" href="/v1/serve" />
+
+</Cards>
