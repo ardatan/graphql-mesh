@@ -679,6 +679,82 @@ By default, all operations are instrumented, including introspection queries. It
 ignore introspection queries for all metrics prefixed by `graphql_envelop_` by setting the
 `skipIntrospection` option to `true`.
 
+## Custom metric configuration
+
+Each metric can be enabled or disabled by setting the corresponding option to `true` or `false`.
+
+But you can also customize their configuration by providing a string or an object.
+
+### Customizing metric names
+
+By providing a string, you can change the name of the metric. For example, to change the name of the
+name of the `graphql_yoga_http_duration` metric to `http_request_duration`, you would use:
+
+```ts filename="mesh.config.ts"
+import usePrometheus from '@graphql-mesh/plugin-prometheus'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineServeConfig({
+  plugins: pluginCtx => [
+    usePrometheus({
+      ...pluginCtx,
+      http: 'http_request_duration'
+    })
+  ]
+})
+```
+
+### Customizing metric configuration
+
+By providing an object, you can customize the metric configuration. These configuration objects
+should be created using the provided factories for each metric type (`createCounter`,
+`createHistogram`, `createSummary`).
+
+<Callout type="info">
+  By providing a custom configuration, the default configuration is completely overridden. This means
+  you need to provide all options, including the name and the labels.
+
+You can look at the source code of the plugin to see the default configuration for each metric to
+use it as a base.
+
+</Callout>
+
+Available options depend on the metric type, and full details about them can be found in the
+[`siimon/prom-client` documentation](https://github.com/siimon/prom-client#custom-metric).
+
+For example, you can customize the buckets of the `graphql_yoga_http_duration` histogram metric:
+
+```ts filename="mesh.config.ts"
+import usePrometheus, { createHistogram } from '@graphql-mesh/plugin-prometheus'
+import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { register as registry } from 'prom-client'
+
+export const serveConfig = defineServeConfig({
+  plugins: pluginCtx => [
+    usePrometheus({
+      ...pluginCtx,
+      http: createHistogram({
+        registry,
+        histogram: {
+          name: 'graphql_yoga_http_duration',
+          help: 'Time spent on HTTP connection',
+          labels: ['method', 'statusCode', 'operationName', 'operationType'],
+          buckets: [0.1, 5, 15, 50, 100, 500],
+        }
+        fillLabelsFn(params, { request, response }) {
+          return {
+            method: request.method,
+            statusCode: response.status,
+            operationType: params.operationType,
+            operationName: params.operationName || 'Anonymous',
+          };
+        }
+      })
+    })
+  ]
+})
+```
+
 ## Custom Registry
 
 You can customize the client’s registry by passing a custom registry to the `registry` option.
