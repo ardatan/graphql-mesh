@@ -66,6 +66,19 @@ plugins:
 ```
 
 <Callout>You have to create a project on GraphQL Hive and get an access token.</Callout>
+<Callout>If you want to collect usage data for the [Insights tab](https://the-guild.dev/graphql/hive/product-updates/2023-09-28-introducing-graphql-api-consumer-insights-page) in hive, you must include the `usage` attribute in the hive section of the configuration.
+
+For example:
+
+```yaml filename=".meshrc.yaml"
+plugins:
+  - hive:
+      token: '{env.HIVE_TOKEN}'
+      usage: {}
+```
+
+See the config section below for more usage configuration options.
+</Callout>
 
 ## Publish and check the gateway schema
 
