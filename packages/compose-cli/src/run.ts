@@ -13,7 +13,7 @@ import { DefaultLogger } from '@graphql-mesh/utils';
 import { getComposedSchemaFromConfig } from './getComposedSchemaFromConfig.js';
 import type { MeshComposeCLIConfig } from './types.js';
 
-/** Default config paths sorted by priority.*/
+/** Default config paths sorted by priority. */
 const defaultConfigPaths = [
   'mesh.config.ts',
   'mesh.config.mts',

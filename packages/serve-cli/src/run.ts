@@ -21,7 +21,7 @@ import { startuWebSocketsServer } from './uWebSockets.js';
 
 const defaultFork = process.env.NODE_ENV === 'production' ? availableParallelism() : 1;
 
-/** Default config paths sorted by priority.*/
+/** Default config paths sorted by priority. */
 const defaultConfigPaths = [
   'mesh.config.ts',
   'mesh.config.mts',
