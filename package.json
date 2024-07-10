@@ -97,7 +97,7 @@
     "minimatch": "9.0.5",
     "prettier": "3.3.2",
     "threads": "^1.7.0",
-    "ts-jest": "29.2.0",
+    "ts-jest": "29.2.1",
     "typescript": "^5.4.2"
   },
   "resolutions": {
