@@ -1,0 +1,41 @@
+---
+description:
+  SvelteKit is a framework for rapidly developing robust, performant web applications using Svelte.
+---
+
+import { Callout } from '@theguild/components'
+
+# Integration with SvelteKit
+
+[SvelteKit](https://kit.svelte.dev/) is a framework for rapidly developing robust, performant web
+applications using [Svelte](https://svelte.dev/). You can easily integrate Mesh Serve into your
+SvelteKit powered application.
+
+## Example
+
+SvelteKit is typically used together with [Vite](https://vitejs.dev/) with the project structure
+[looking like this](https://kit.svelte.dev/docs/project-structure). We also assume that you have
+composed a `supergraph.graphql` with [Mesh Compose](/v1/compose).
+
+In this example, we want to integrate Mesh Serve into Vite's routes, we'll therefore use the
+runtime.
+
+```sh npm2yarn
+npm i @graphql-mesh/serve-runtime
+```
+
+Keeping the [aforementioned project layout](https://kit.svelte.dev/docs/project-structure) in mind,
+create a new server route in `my-project/src/routes/graphql/+server.ts` to expose the GraphQL server
+at `/graphql` and implement using the Mesh Serve runtime like this:
+
+```ts filename="my-project/src/routes/graphql/+server.ts"
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+const serve = createServeRuntime({
+  supergraph: 'supergraph.graphql', // working directory is root of the project
+  graphqlEndpoint: '/graphql', // matches the server route path
+  fetchAPI: { Response } // use the native `Response`
+})
+
+export { serve as GET, serve as POST }
+```
