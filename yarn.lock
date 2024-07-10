@@ -6097,6 +6097,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.9.13"
     disposablestack: "npm:^1.1.6"
     dset: "npm:^3.1.2"
+    jiti: "npm:^1.21.6"
     js-yaml: "npm:^4.1.0"
     lodash.get: "npm:^4.4.2"
     lodash.topath: "npm:^4.5.2"
