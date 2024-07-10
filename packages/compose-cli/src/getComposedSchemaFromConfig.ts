@@ -43,13 +43,13 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       assumeValidSDL: true,
       loaders: [new GraphQLFileLoader()],
     });
-    let directiveUsed = false;
+    let additionalFieldDirectiveUsed = false;
     additionalTypeDefs = result
       .map(r => r.document || parse(r.rawSDL, { noLocation: true }))
       .map(doc =>
         visit(doc, {
           [Kind.FIELD_DEFINITION](node) {
-            directiveUsed = true;
+            additionalFieldDirectiveUsed = true;
             return {
               ...node,
               directives: [
@@ -63,7 +63,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
           },
         }),
       );
-    if (directiveUsed) {
+    if (additionalFieldDirectiveUsed) {
       additionalTypeDefs.unshift(
         parse(/* GraphQL */ `
           directive @additionalField on FIELD_DEFINITION

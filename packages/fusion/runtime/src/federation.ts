@@ -288,7 +288,6 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
                 }),
               );
             }
-            return null;
           }
           const additionalFieldDirectives = fieldDirectives.additionalField;
           if (additionalFieldDirectives?.length > 0) {
