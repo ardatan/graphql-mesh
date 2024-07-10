@@ -21,6 +21,16 @@ import { startuWebSocketsServer } from './uWebSockets.js';
 
 const defaultFork = process.env.NODE_ENV === 'production' ? availableParallelism() : 1;
 
+/** Default config paths sorted by priority. */
+const defaultConfigPaths = [
+  'mesh.config.ts',
+  'mesh.config.mts',
+  'mesh.config.cts',
+  'mesh.config.js',
+  'mesh.config.mjs',
+  'mesh.config.cjs',
+];
+
 let program = new Command()
   .addOption(
     new Option(
@@ -38,9 +48,10 @@ let program = new Command()
       .default(defaultFork),
   )
   .addOption(
-    new Option('-c, --config-path <path>', 'path to the configuration file')
-      .env('CONFIG_PATH')
-      .default('mesh.config.ts'),
+    new Option(
+      '-c, --config-path <path>',
+      `path to the configuration file. defaults to the following files respectively in the current working directory: ${defaultConfigPaths.join(', ')}`,
+    ).env('CONFIG_PATH'),
   )
   .option(
     '-h, --host <hostname>',
@@ -74,8 +85,6 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
   version?: string;
 }
 
-export type ImportedModule<T> = T | { default: T };
-
 export async function run({
   log: rootLog = new DefaultLogger(),
   productName = 'Mesh',
@@ -91,29 +100,30 @@ export async function run({
     cluster.worker?.id ? `🕸️  ${productName} Worker#${cluster.worker.id}` : `🕸️  ${productName}`,
   );
 
-  const configPath = isAbsolute(opts.configPath)
-    ? opts.configPath
-    : resolve(process.cwd(), opts.configPath);
-  log.info(`Checking configuration at ${configPath}`);
-  const importedConfigModule: ImportedModule<{ serveConfig?: MeshServeCLIConfig }> = await import(
-    configPath
-  ).catch(err => {
-    if (err.code === 'ERR_MODULE_NOT_FOUND') {
-      return {}; // no config is ok
-    }
-    log.error('Loading configuration failed!');
-    throw err;
-  });
   let importedConfig: MeshServeCLIConfig;
-  if ('default' in importedConfigModule) {
-    log.info('Loaded configuration');
-    importedConfig = importedConfigModule.default.serveConfig;
-  } else if ('serveConfig' in importedConfigModule) {
-    log.info('Loaded configuration');
-    importedConfig = importedConfigModule.serveConfig;
+  if (!opts.configPath) {
+    log.info(`Searching for default config files`);
+    for (const configPath of defaultConfigPaths) {
+      importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
+      if (importedConfig) {
+        break;
+      }
+    }
   } else {
-    importedConfig = {};
-    log.info('No configuration found');
+    // using user-provided config
+    const configPath = isAbsolute(opts.configPath)
+      ? opts.configPath
+      : resolve(process.cwd(), opts.configPath);
+    log.info(`Loading config file at path ${configPath}`);
+    importedConfig = await importConfig(log, configPath);
+    if (!importedConfig) {
+      throw new Error(`Cannot find config file at ${configPath}`);
+    }
+  }
+  if (importedConfig) {
+    log.info('Loaded config file');
+  } else {
+    log.debug('No config file loaded, using defaults');
   }
 
   const config: MeshServeCLIConfig = {
@@ -241,4 +251,21 @@ export async function run({
     sslCredentials: config.sslCredentials,
   });
   terminateStack.use(server);
+}
+
+async function importConfig(log: Logger, path: string): Promise<MeshServeCLIConfig | null> {
+  try {
+    const importedConfigModule = await import(path);
+    if ('default' in importedConfigModule) {
+      return importedConfigModule.default.serveConfig;
+    } else if ('serveConfig' in importedConfigModule) {
+      return importedConfigModule.serveConfig;
+    }
+  } catch (err) {
+    if (err.code !== 'ERR_MODULE_NOT_FOUND') {
+      log.error('Importing configuration failed!');
+      throw err;
+    }
+  }
+  return null;
 }

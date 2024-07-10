@@ -1,11 +1,10 @@
 {
-  "name": "@e2e/sqlite-chinook",
+  "name": "@e2e/js-config",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
-    "@omnigraph/sqlite": "workspace:*",
-    "graphql": "^16.8.1",
-    "sqlite3": "^5.1.7"
+    "graphql": "16.9.0"
   }
 }
