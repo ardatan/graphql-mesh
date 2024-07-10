@@ -4821,7 +4821,6 @@ __metadata:
     pascal-case: "npm:^3.1.2"
     rimraf: "npm:^6.0.0"
     tslib: "npm:^2.4.0"
-    tsx: "npm:^4.7.1"
     typescript: "npm:^5.4.2"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
     ws: "npm:^8.17.0"
