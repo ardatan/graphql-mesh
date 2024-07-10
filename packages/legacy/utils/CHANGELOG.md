@@ -1,5 +1,23 @@
 # @graphql-mesh/utils
 
+## 0.99.0
+
+### Minor Changes
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use jiti as the default import implementation
+
+### Patch Changes
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency [`jiti@^1.21.6` ↗︎](https://www.npmjs.com/package/jiti/v/1.21.6) (to
+    `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.0
+
 ## 0.98.10
 
 ### Patch Changes

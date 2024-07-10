@@ -1,5 +1,37 @@
 # @graphql-mesh/compose-cli
 
+## 0.5.0
+
+### Minor Changes
+
+- [#7257](https://github.com/ardatan/graphql-mesh/pull/7257)
+  [`798ed17`](https://github.com/ardatan/graphql-mesh/commit/798ed17c8e00b199596d9f9c35863c815bf4e151)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support mesh.config.ts or mesh.config.mts or
+  mesh.config.cts or mesh.config.js or mesh.config.mjs or mesh.config.cjs configuration files
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use jiti instead of tsx for importig config
+  files
+
+### Patch Changes
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency [`jiti@^1.21.6` ↗︎](https://www.npmjs.com/package/jiti/v/1.21.6) (to
+    `dependencies`)
+  - Removed dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (from
+    `dependencies`)
+- Updated dependencies
+  [[`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`94245c7`](https://github.com/ardatan/graphql-mesh/commit/94245c708850ce643e395ea559b65d4897f05936),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)]:
+  - @graphql-mesh/fusion-composition@0.1.0
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.4.2
 
 ### Patch Changes

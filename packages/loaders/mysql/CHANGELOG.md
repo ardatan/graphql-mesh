@@ -1,5 +1,21 @@
 # @omnigraph/mysql
 
+## 0.4.0
+
+### Patch Changes
+
+- [#7198](https://github.com/ardatan/graphql-mesh/pull/7198)
+  [`bdefa6f`](https://github.com/ardatan/graphql-mesh/commit/bdefa6ff98a1b67ee7458e9ed233f261f523baae)
+  Thanks [@ardatan](https://github.com/ardatan)! - Make `@transport` directive repeatable so a
+  merged schema can have multiple `@transport` definitions
+
+- Updated dependencies
+  [[`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)]:
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/transport-mysql@0.4.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.3.1
 
 ### Patch Changes

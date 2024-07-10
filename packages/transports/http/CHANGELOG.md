@@ -1,5 +1,75 @@
 # @graphql-mesh/transport-http
 
+## 0.3.0
+
+### Minor Changes
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support subscriptions over WebSockets
+
+### Patch Changes
+
+- [#6772](https://github.com/ardatan/graphql-mesh/pull/6772)
+  [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/executor-graphql-ws@^1.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-graphql-ws/v/1.2.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.3)
+    (to `dependencies`)
+  - Added dependency [`graphql-ws@^5.16.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.16.0)
+    (to `dependencies`)
+  - Added dependency [`ws@^8.18.0` ↗︎](https://www.npmjs.com/package/ws/v/8.18.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@envelop/core@^5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.0) (from
+    `dependencies`)
+
+- [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+  - Added dependency
+    [`@graphql-tools/executor-graphql-ws@^1.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-graphql-ws/v/1.2.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.3)
+    (to `dependencies`)
+  - Added dependency [`graphql-ws@^5.16.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.16.0)
+    (to `dependencies`)
+  - Added dependency [`ws@^8.18.0` ↗︎](https://www.npmjs.com/package/ws/v/8.18.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@envelop/core@^5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.0) (from
+    `dependencies`)
+
+- [#7223](https://github.com/ardatan/graphql-mesh/pull/7223)
+  [`26549a9`](https://github.com/ardatan/graphql-mesh/commit/26549a9832b4e18afdb22e4615a9951d69a5922b)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+- Updated dependencies
+  [[`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)]:
+  - @graphql-mesh/transport-common@0.4.0
+
 ## 0.2.1
 
 ### Patch Changes

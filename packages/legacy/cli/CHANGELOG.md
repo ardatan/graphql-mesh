@@ -1,5 +1,45 @@
 # @graphql-mesh/cli
 
+## 0.92.0
+
+### Minor Changes
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use jiti import from @graphql-mesh/utils
+  instead of tsx
+
+### Patch Changes
+
+- [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency [`rimraf@^6.0.0` ↗︎](https://www.npmjs.com/package/rimraf/v/6.0.0) (from
+    `^5.0.0`, in `dependencies`)
+
+- [#7244](https://github.com/ardatan/graphql-mesh/pull/7244)
+  [`522788e`](https://github.com/ardatan/graphql-mesh/commit/522788ef35f7ae415d16e08e53c25eb51d9078d8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`rimraf@^6.0.0` ↗︎](https://www.npmjs.com/package/rimraf/v/6.0.0) (from
+    `^5.0.0`, in `dependencies`)
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Removed dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (from
+    `dependencies`)
+- Updated dependencies
+  [[`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)]:
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/config@0.101.0
+  - @graphql-mesh/http@0.100.0
+  - @graphql-mesh/runtime@0.100.0
+  - @graphql-mesh/store@0.99.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.91.2
 
 ### Patch Changes
