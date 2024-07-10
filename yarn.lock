@@ -6903,13 +6903,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.10.10":
-  version: 1.10.10
-  resolution: "@grpc/grpc-js@npm:1.10.10"
+"@grpc/grpc-js@npm:1.10.11":
+  version: 1.10.11
+  resolution: "@grpc/grpc-js@npm:1.10.11"
   dependencies:
     "@grpc/proto-loader": "npm:^0.7.13"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10c0/bc55b5d51f2c93af2c0076f3fed92ebcd936ade2c120d33455fc120d8a96197dfe412cff3e452788ab51bff0f9b58eebbafe8403516912693a41324c5cf45862
+  checksum: 10c0/28f9447baa9dd099f72e1d3ecf68ad6e6994104614b03f436a5b78564dc2644c7225c46641b150d01c7259b6ac37e9b847e3069e0a433518fe1a856de8240384
   languageName: node
   linkType: hard
 
@@ -20104,7 +20104,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.92.0"
     "@graphql-mesh/grpc": "npm:0.101.0"
     "@graphql-mesh/transform-naming-convention": "npm:0.99.0"
-    "@grpc/grpc-js": "npm:1.10.10"
+    "@grpc/grpc-js": "npm:1.10.11"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.2"
@@ -20134,7 +20134,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.92.0"
     "@graphql-mesh/grpc": "npm:0.101.0"
     "@graphql-mesh/transform-naming-convention": "npm:0.99.0"
-    "@grpc/grpc-js": "npm:1.10.10"
+    "@grpc/grpc-js": "npm:1.10.11"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.2"
@@ -31155,13 +31155,14 @@ __metadata:
   linkType: hard
 
 "rimraf@npm:*, rimraf@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "rimraf@npm:6.0.0"
+  version: 6.0.1
+  resolution: "rimraf@npm:6.0.1"
   dependencies:
     glob: "npm:^11.0.0"
+    package-json-from-dist: "npm:^1.0.0"
   bin:
     rimraf: dist/esm/bin.mjs
-  checksum: 10c0/32d07c542490db96efd515b27f857f45b71b2169a1b533052630d119034450d3afcf766adc2df43314378f9168407ef222d7d1104c48cc9d385e97b17964b3bf
+  checksum: 10c0/b30b6b072771f0d1e73b4ca5f37bb2944ee09375be9db5f558fcd3310000d29dfcfa93cf7734d75295ad5a7486dc8e40f63089ced1722a664539ffc0c3ece8c6
   languageName: node
   linkType: hard
 
