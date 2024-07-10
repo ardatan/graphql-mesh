@@ -1,6 +1,4 @@
 import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
-import 'tsx/cjs'; // support importing typescript configs in CommonJS
-import 'tsx/esm'; // support importing typescript configs in ESM
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
@@ -9,6 +7,8 @@ import cluster from 'cluster';
 import { availableParallelism, release } from 'os';
 // eslint-disable-next-line import/no-nodejs-modules
 import { dirname, isAbsolute, resolve } from 'path';
+import createJITI from 'jiti';
+// import { tsImport } from 'tsx/dist/esm/api/index.mjs';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
@@ -253,16 +253,29 @@ export async function run({
   terminateStack.use(server);
 }
 
+const jiti = createJITI(
+  // import.meta.url is not available in CJS (and cant even be in the syntax) and __filename is not available in ESM
+  // instead, we dont care about the file path because we'll require config imports to have absolute paths
+  '',
+);
+
 async function importConfig(log: Logger, path: string): Promise<MeshServeCLIConfig | null> {
+  if (!isAbsolute(path)) {
+    throw new Error('Configs can be imported using absolute paths only'); // see createJITI for explanation
+  }
   try {
-    const importedConfigModule = await import(path);
+    const importedConfigModule = await jiti.import(path, {});
+    if (!importedConfigModule || typeof importedConfigModule !== 'object') {
+      throw new Error('Invalid imported config module!');
+    }
     if ('default' in importedConfigModule) {
-      return importedConfigModule.default.serveConfig;
+      // eslint-disable-next-line dot-notation
+      return importedConfigModule.default['serveConfig'];
     } else if ('serveConfig' in importedConfigModule) {
-      return importedConfigModule.serveConfig;
+      return importedConfigModule.serveConfig as MeshServeCLIConfig;
     }
   } catch (err) {
-    if (err.code !== 'ERR_MODULE_NOT_FOUND') {
+    if (!String(err.code).includes('MODULE_NOT_FOUND')) {
       log.error('Importing configuration failed!');
       throw err;
     }

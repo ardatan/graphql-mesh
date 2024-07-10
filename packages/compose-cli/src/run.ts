@@ -1,5 +1,3 @@
-import 'tsx/cjs'; // support importing typescript configs in CommonJS
-import 'tsx/esm'; // support importing typescript configs in ESM
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
@@ -7,6 +5,7 @@ import { promises as fsPromises } from 'fs';
 // eslint-disable-next-line import/no-nodejs-modules
 import { isAbsolute, join, resolve } from 'path';
 import { parse } from 'graphql';
+import createJITI from 'jiti';
 import { Command, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
@@ -137,16 +136,29 @@ export async function run({
   log.info('Done!');
 }
 
+const jiti = createJITI(
+  // import.meta.url is not available in CJS (and cant even be in the syntax) and __filename is not available in ESM
+  // instead, we dont care about the file path because we'll require config imports to have absolute paths
+  '',
+);
+
 async function importConfig(log: Logger, path: string): Promise<MeshComposeCLIConfig | null> {
+  if (!isAbsolute(path)) {
+    throw new Error('Configs can be imported using absolute paths only'); // see createJITI for explanation
+  }
   try {
-    const importedConfigModule = await import(path);
+    const importedConfigModule = await jiti.import(path, {});
+    if (!importedConfigModule || typeof importedConfigModule !== 'object') {
+      throw new Error('Invalid imported config module!');
+    }
     if ('default' in importedConfigModule) {
-      return importedConfigModule.default.composeConfig;
+      // eslint-disable-next-line dot-notation
+      return importedConfigModule.default['composeConfig'];
     } else if ('composeConfig' in importedConfigModule) {
-      return importedConfigModule.composeConfig;
+      return importedConfigModule.composeConfig as MeshComposeCLIConfig;
     }
   } catch (err) {
-    if (err.code !== 'ERR_MODULE_NOT_FOUND') {
+    if (!String(err.code).includes('MODULE_NOT_FOUND')) {
       log.error('Importing configuration failed!');
       throw err;
     }

@@ -1,20 +1,17 @@
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
+import createJITI, { type JITI } from 'jiti';
+import type { ImportFn } from '@graphql-mesh/types';
+
+let jiti: JITI;
+function getOrCreateImportFn(): ImportFn {
+  if (!jiti) {
+    // we instantiate on demand because sometimes jiti is not used
+    jiti = createJITI(__filename);
+  }
+  return module => jiti.import(module, {}) as Promise<any>;
+}
 
 async function defaultImportFn(path: string): Promise<any> {
-  let module = await import(/* @vite-ignore */ path)
-    .catch(e => {
-      if (e.code === 'ERR_REQUIRE_ESM') {
-        // eslint-disable-next-line no-new-func
-        return new Function(`return import(${JSON.stringify(path)})`)();
-      }
-      throw e;
-    })
-    .catch(e => {
-      if (pathModule.isAbsolute(path) && !path.endsWith('.js') && !path.endsWith('.ts')) {
-        return defaultImportFn(`${path}.ts`);
-      }
-      throw e;
-    });
+  let module: any = await getOrCreateImportFn()(path);
   if (module.default != null) {
     module = module.default;
   }

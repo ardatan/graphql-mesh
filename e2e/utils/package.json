@@ -5,6 +5,6 @@
   "dependencies": {
     "@types/dockerode": "^3.3.28",
     "dockerode": "^4.0.2",
-    "tsx": "^4.7.1"
+    "tsx": "^4.16.2"
   }
 }
