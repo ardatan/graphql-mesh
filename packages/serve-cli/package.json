@@ -52,9 +52,9 @@
     "@graphql-tools/utils": "^10.2.3",
     "commander": "^12.0.0",
     "dotenv": "^16.3.1",
+    "jiti": "^1.21.6",
     "json-bigint-patch": "^0.0.8",
-    "spinnies": "^0.5.1",
-    "tsx": "^4.7.1"
+    "spinnies": "^0.5.1"
   },
   "optionalDependencies": {
     "node-libcurl": "^4.0.0",

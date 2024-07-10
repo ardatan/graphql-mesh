@@ -4855,7 +4855,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.9.14"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
-    tsx: "npm:^4.7.1"
+    jiti: "npm:^1.21.6"
   peerDependencies:
     "@graphql-mesh/types": ^0.98.10
     graphql: "*"
@@ -5504,10 +5504,10 @@ __metadata:
     "@types/spinnies": "npm:^0.5.3"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
+    jiti: "npm:^1.21.6"
     json-bigint-patch: "npm:^0.0.8"
     node-libcurl: "npm:^4.0.0"
     spinnies: "npm:^0.5.1"
-    tsx: "npm:^4.7.1"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
@@ -23034,7 +23034,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.21.0":
+"jiti@npm:^1.21.0, jiti@npm:^1.21.6":
   version: 1.21.6
   resolution: "jiti@npm:1.21.6"
   bin:
