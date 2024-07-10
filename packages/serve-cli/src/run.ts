@@ -5,8 +5,8 @@ import 'dotenv/config'; // inject dotenv options to process.env
 import cluster from 'cluster';
 // eslint-disable-next-line import/no-nodejs-modules
 import { availableParallelism, release } from 'os';
-import { dirname, isAbsolute, resolve } from 'path';
 // eslint-disable-next-line import/no-nodejs-modules
+import { dirname, isAbsolute, resolve } from 'path';
 import createJITI from 'jiti';
 // import { tsImport } from 'tsx/dist/esm/api/index.mjs';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
@@ -262,6 +262,7 @@ async function importConfig(log: Logger, path: string): Promise<MeshServeCLIConf
       throw new Error('Invalid imported config module!');
     }
     if ('default' in importedConfigModule) {
+      // eslint-disable-next-line dot-notation
       return importedConfigModule.default['serveConfig'];
     } else if ('serveConfig' in importedConfigModule) {
       return importedConfigModule.serveConfig as MeshServeCLIConfig;

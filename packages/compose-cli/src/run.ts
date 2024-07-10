@@ -145,6 +145,7 @@ async function importConfig(log: Logger, path: string): Promise<MeshComposeCLICo
       throw new Error('Invalid imported config module!');
     }
     if ('default' in importedConfigModule) {
+      // eslint-disable-next-line dot-notation
       return importedConfigModule.default['composeConfig'];
     } else if ('composeConfig' in importedConfigModule) {
       return importedConfigModule.composeConfig as MeshComposeCLIConfig;
