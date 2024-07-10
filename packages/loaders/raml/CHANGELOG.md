@@ -1,5 +1,20 @@
 # @omnigraph/raml
 
+## 0.102.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a),
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`3aa1583`](https://github.com/ardatan/graphql-mesh/commit/3aa1583db989ef79a706873e9e5786d1cf61de89),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`bdefa6f`](https://github.com/ardatan/graphql-mesh/commit/bdefa6ff98a1b67ee7458e9ed233f261f523baae)]:
+  - @graphql-mesh/utils@0.99.0
+  - @omnigraph/json-schema@0.102.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.101.2
 
 ### Patch Changes

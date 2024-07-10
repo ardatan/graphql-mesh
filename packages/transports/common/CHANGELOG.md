@@ -1,5 +1,87 @@
 # @graphql-mesh/transport-common
 
+## 0.4.0
+
+### Minor Changes
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Define transports using a default export
+  satisfying the `Transport` generic
+
+  For example, a custom http transport implementation looks like this:
+
+  ```ts
+  // http-transport.ts
+
+  import { Transport } from '@graphql-mesh/transport-common'
+
+  export interface HTTPTransportOptions {
+    cache?: boolean
+  }
+
+  export default {
+    getSubgraphExecutor(opts) {
+      // <the implementation of your executor getter>
+    }
+  } satisfies Transport<'http', HTTPTransportOptions>
+  ```
+
+  and is used for Mesh serve like this:
+
+  ```ts
+  // mesh.config.ts
+
+  import { defineConfig } from '@graphql-mesh/serve-cli'
+
+  export const serveConfig = defineConfig({
+    transport: {
+      http: import('./http-transport')
+    }
+  })
+  ```
+
+  or like this:
+
+  ```ts
+  // mesh.config.ts
+
+  import { defineConfig } from '@graphql-mesh/serve-cli'
+  import httpTransport from './http-transport'
+
+  export const serveConfig = defineConfig({
+    transport: {
+      http: httpTransport
+    }
+  })
+  ```
+
+### Patch Changes
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@envelop/core@^5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.1) (to
+    `dependencies`)
+
+- [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Added dependency
+    [`@envelop/core@^5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.1) (to
+    `dependencies`)
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Improved typings and rename
+  `TransportBaseContext` to `TransportContext`
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.0
+
 ## 0.3.1
 
 ### Patch Changes
