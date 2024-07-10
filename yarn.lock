@@ -3824,7 +3824,7 @@ __metadata:
   dependencies:
     "@types/dockerode": "npm:^3.3.28"
     dockerode: "npm:^4.0.2"
-    tsx: "npm:^4.7.1"
+    tsx: "npm:^4.16.2"
   languageName: unknown
   linkType: soft
 
@@ -4291,7 +4291,6 @@ __metadata:
     "@graphql-mesh/serve-cli": "workspace:*"
     dotenv: "npm:^16.4.5"
     graphql: "npm:16.9.0"
-    tsx: "npm:4.16.2"
   languageName: unknown
   linkType: soft
 
@@ -4302,7 +4301,6 @@ __metadata:
     "@graphql-hive/cli": "npm:0.38.5"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.6.0"
-    tsx: "npm:4.16.2"
   languageName: unknown
   linkType: soft
 
@@ -4315,7 +4313,6 @@ __metadata:
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.1"
     graphql: "npm:16.9.0"
-    tsx: "npm:4.16.2"
   languageName: unknown
   linkType: soft
 
@@ -34057,7 +34054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.16.2":
+"tsx@npm:^4.16.2":
   version: 4.16.2
   resolution: "tsx@npm:4.16.2"
   dependencies:
@@ -34070,22 +34067,6 @@ __metadata:
   bin:
     tsx: dist/cli.mjs
   checksum: 10c0/9df52264f88be00ca473e7d7eda43bb038cc09028514996b864db78645e9cd297c71485f0fdd4985464d6dc46424f8bef9f8c4bd56692c4fcf4d71621ae21763
-  languageName: node
-  linkType: hard
-
-"tsx@npm:^4.7.1":
-  version: 4.15.8
-  resolution: "tsx@npm:4.15.8"
-  dependencies:
-    esbuild: "npm:~0.21.4"
-    fsevents: "npm:~2.3.3"
-    get-tsconfig: "npm:^4.7.5"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    tsx: dist/cli.mjs
-  checksum: 10c0/2e4e077e05e9ec324246f30be0b61e85c5a9c61e4dca160eec542eee410cc0fbcccf26f4d529a8d977d470dd0e13f6897cee5d5ebc3cbf6c2cdfbc5e4033b26c
   languageName: node
   linkType: hard
 
