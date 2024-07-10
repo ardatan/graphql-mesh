@@ -22,13 +22,13 @@ const defaultConfigPaths = [
   'mesh.config.mjs',
   'mesh.config.cjs',
 ];
-const joinedDefaultConfigPaths = defaultConfigPaths.join(' or ');
 
 let program = new Command()
   .addOption(
-    new Option('-c, --config-path <path>', 'path to the configuration file')
-      .env('CONFIG_PATH')
-      .default(joinedDefaultConfigPaths),
+    new Option(
+      '-c, --config-path <path>',
+      `path to the configuration file. defaults to the following files respectively in the current working directory: ${defaultConfigPaths.join(', ')}`,
+    ).env('CONFIG_PATH'),
   )
   .option('--subgraph <name>', 'name of the subgraph to compose')
   .option('-o, --output <path>', 'path to the output file');
@@ -61,7 +61,7 @@ export async function run({
   const log = rootLog.child(`🕸️  ${productName}`);
 
   let importedConfig: MeshComposeCLIConfig;
-  if (opts.configPath === joinedDefaultConfigPaths) {
+  if (!opts.configPath) {
     log.info(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
       importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
@@ -71,7 +71,7 @@ export async function run({
     }
     if (!importedConfig) {
       throw new Error(
-        `Cannot find default config file at ${joinedDefaultConfigPaths} in the current working directory`,
+        `Cannot find default config file at ${defaultConfigPaths.join(' or ')} in the current working directory`,
       );
     }
   } else {
@@ -82,7 +82,7 @@ export async function run({
     log.info(`Loading config file at path ${configPath}`);
     importedConfig = await importConfig(log, configPath);
     if (!importedConfig) {
-      throw new Error(`Cannot find config file at ${joinedDefaultConfigPaths}`);
+      throw new Error(`Cannot find config file at ${configPath}`);
     }
   }
   log.info('Loaded config file');

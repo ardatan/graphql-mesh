@@ -30,7 +30,6 @@ const defaultConfigPaths = [
   'mesh.config.mjs',
   'mesh.config.cjs',
 ];
-const joinedDefaultConfigPaths = defaultConfigPaths.join(' or ');
 
 let program = new Command()
   .addOption(
@@ -49,9 +48,10 @@ let program = new Command()
       .default(defaultFork),
   )
   .addOption(
-    new Option('-c, --config-path <path>', 'path to the configuration file')
-      .env('CONFIG_PATH')
-      .default(joinedDefaultConfigPaths),
+    new Option(
+      '-c, --config-path <path>',
+      `path to the configuration file. defaults to the following files respectively in the current working directory: ${defaultConfigPaths.join(', ')}`,
+    ).env('CONFIG_PATH'),
   )
   .option(
     '-h, --host <hostname>',
@@ -101,7 +101,7 @@ export async function run({
   );
 
   let importedConfig: MeshServeCLIConfig;
-  if (opts.configPath === joinedDefaultConfigPaths) {
+  if (!opts.configPath) {
     log.info(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
       importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
@@ -117,7 +117,7 @@ export async function run({
     log.info(`Loading config file at path ${configPath}`);
     importedConfig = await importConfig(log, configPath);
     if (!importedConfig) {
-      throw new Error(`Cannot find config file at ${joinedDefaultConfigPaths}`);
+      throw new Error(`Cannot find config file at ${configPath}`);
     }
   }
   if (importedConfig) {
