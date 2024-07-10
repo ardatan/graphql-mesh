@@ -1,6 +1,6 @@
 import createJITI from 'jiti';
 
-const jiti = createJITI(import.meta.url);
+const jiti = createJITI(__filename);
 
 async function defaultImportFn(path: string): Promise<any> {
   let module: any = await jiti.import(path, {});
