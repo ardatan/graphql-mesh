@@ -136,9 +136,16 @@ export async function run({
   log.info('Done!');
 }
 
-const jiti = createJITI(import.meta.url);
+const jiti = createJITI(
+  // import.meta.url is not available in CJS (and cant even be in the syntax) and __filename is not available in ESM
+  // instead, we dont care about the file path because we'll require config imports to have absolute paths
+  '',
+);
 
 async function importConfig(log: Logger, path: string): Promise<MeshComposeCLIConfig | null> {
+  if (!isAbsolute(path)) {
+    throw new Error('Configs can be imported using absolute paths only'); // see createJITI for explanation
+  }
   try {
     const importedConfigModule = await jiti.import(path, {});
     if (!importedConfigModule || typeof importedConfigModule !== 'object') {
