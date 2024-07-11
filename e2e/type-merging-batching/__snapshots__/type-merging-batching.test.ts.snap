@@ -27,6 +27,8 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repe
 
 directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
+directive @additionalField on FIELD_DEFINITION
+
 scalar join__FieldSet
 
 scalar link__Import
@@ -70,7 +72,7 @@ type Book @join__type(graph: BOOKS, key: "id") @join__type(graph: BOOKS, key: "a
   id: ID!
   authorId: ID!
   title: String!
-  author: Author @resolveTo(sourceName: "authors", sourceTypeName: "Query", sourceFieldName: "authors", keyField: "authorId", keysArg: "ids")
+  author: Author @resolveTo(sourceName: "authors", sourceTypeName: "Query", sourceFieldName: "authors", keyField: "authorId", keysArg: "ids") @additionalField
 }
 "
 `;

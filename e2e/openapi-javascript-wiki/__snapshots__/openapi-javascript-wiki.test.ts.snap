@@ -34,6 +34,8 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repe
 
 directive @extraEnumValueDirective(name: String!, value: String!, directives: _DirectiveExtensions) repeatable on OBJECT
 
+directive @additionalField on FIELD_DEFINITION
+
 scalar join__FieldSet
 
 scalar link__Import
@@ -984,7 +986,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "
   Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
   """
   feed_availability: availability @httpOperation(subgraph: "Wiki", path: "/feed/availability", operationSpecificHeaders: [["accept", "application/problem+json"]], httpMethod: GET)
-  viewsInPastMonth(project: String!): BigInt!
+  viewsInPastMonth(project: String!): BigInt! @additionalField
 }
 
 type pageview_article @join__type(graph: WIKI) {
