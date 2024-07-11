@@ -19,6 +19,7 @@ export default {
     type: 'page',
     theme: {
       layout: 'raw',
+      footer: false,
     },
   },
   v1: {
