@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  graphql-mesh:
+    image: theguild/graphql-mesh:v1
+    ports:
+      - '4000:4000'
+    environment:
+      HIVE_CDN_ENDPOINT: SECRET
+      HIVE_CDN_KEY: SECRET
+      HIVE_REGISTRY_TOKEN: SECRET
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+    read_only: true
+    volumes:
+      - /tmp # make /tmp writable

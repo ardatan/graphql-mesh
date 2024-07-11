@@ -24,8 +24,33 @@ Mesh Serve supports two different modes:
 
 ## CLI Installation
 
-Mesh Serve CLI requires [Node.js](https://nodejs.org) installed in your environment. You can install
-Serve CLI with your favorite package manager:
+You can install Serve CLI with your favorite package manager: ======= To summarize, GraphQL Mesh
+Serve allows you to:
+
+- Serve your supergraph in any environment that runs JavaScript
+- Act as an HTTP proxy to enhance an existing GraphQL API
+- Adds an extra layer of security, performance, and monitoring to your API
+
+## Getting Started
+
+### Option 1: Running with docker
+
+Ensure you have Docker installed on your machine. If not, you can download and install it from the
+official Docker website.
+
+```sh
+# make sure to change the path for your local mesh.config.ts
+docker run -p 4000:4000 -v $(pwd)/local/path/mesh.config.ts:/app/mesh.config.ts:ro ghcr.io/ardatan/graphql-mesh:v1
+```
+
+For more advanced Docker configurations, including using Docker Compose and creating custom Docker
+images, refer to the detailed
+[Docker guide under the deployment section](/v1/serve/deployment/docker).
+
+### Option 2: Installation of CLI
+
+To use the CLI, you need to have [Node.js](https://nodejs.org) installed in your environment. Then,
+you can install Serve CLI with your favorite package manager:
 
 ```sh npm2yarn
 npm i @graphql-mesh/serve-cli
@@ -43,6 +68,8 @@ mesh-serve --supergraph=supergraph.graphql
 
 **Note:** If you use GraphQL Hive or Apollo GraphOS, you can also configure Mesh Serve to poll the
 supergraph from the corresponding schema registry.
+
+## CLI Arguments
 
 For a full list of CLI arguments, please refer to the [CLI Reference](./references/cli).
 
