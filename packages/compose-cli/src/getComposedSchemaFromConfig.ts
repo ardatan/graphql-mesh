@@ -87,7 +87,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
   if (!result.supergraphSdl) {
     throw new Error(`Unknown error: composed schema is empty`);
   }
-  if (additionalTypeDefs?.length || config.transforms?.length) {
+  if (additionalTypeDefs?.length /* TODO || config.transforms?.length */) {
     let composedSchema = buildSchema(result.supergraphSdl, {
       noLocation: true,
       assumeValid: true,
@@ -101,12 +101,14 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
         assumeValidSDL: true,
       });
     }
+    /* TODO
     if (config.transforms?.length) {
       logger.info('Applying transforms');
       for (const transform of config.transforms) {
         composedSchema = transform(composedSchema);
       }
     }
+    */
     return printSchemaWithDirectives(composedSchema);
   }
   return result.supergraphSdl;

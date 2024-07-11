@@ -1,0 +1,53 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Chuck Norris v1",
+    "version": "1"
+  },
+  "paths": {
+    "/jokes/categories": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Category": {
+        "enum": [
+          "animal",
+          "career",
+          "celebrity",
+          "dev",
+          "explicit",
+          "fashion",
+          "food",
+          "history",
+          "money",
+          "movie",
+          "music",
+          "political",
+          "religion",
+          "science",
+          "sport",
+          "travel"
+        ],
+        "type": "string"
+      }
+    }
+  }
+}

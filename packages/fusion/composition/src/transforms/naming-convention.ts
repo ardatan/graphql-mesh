@@ -43,8 +43,8 @@ export const NamingConventionMap = {
   pathCase,
   sentenceCase,
   snakeCase,
-  upperCase: (name: string) => name.toUpperCase(),
-  lowerCase: (name: string) => name.toLowerCase(),
+  upperCase,
+  lowerCase,
 } as const;
 
 export interface NamingConventionTransform {
@@ -134,3 +134,9 @@ export function createNamingConventionTransform(
 }
 
 export * from 'change-case';
+export function upperCase(str: string) {
+  return str.toUpperCase();
+}
+export function lowerCase(str: string) {
+  return str.toLowerCase();
+}
