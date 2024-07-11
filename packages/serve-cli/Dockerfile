@@ -1,10 +1,9 @@
-# make sure mesh is built with `yarn build`
+# make sure bundle is ready with `yarn bundle`
 
 FROM node:22-slim
 
-RUN apt-get update && \
-  apt-get install -y \
-  # for healtchecks
+RUN apt-get update && apt-get install -y \
+  # for healthchecks
   wget \
   # for installing uWS
   git \
@@ -15,11 +14,11 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY dist/package.json package.json
-RUN yarn set version stable
-RUN yarn
-
-COPY dist .
+# these two cannot be bundled so we install them as deps
+# TODO: node-libcurl
+RUN npm i uNetworking/uWebSockets.js#v20.44.0
+RUN npm pkg set type=module
+COPY bundle .
 
 USER node
-ENTRYPOINT ["dumb-init", "node", "./esm/bin.js"]
+ENTRYPOINT ["dumb-init", "node", "bin.js"]
