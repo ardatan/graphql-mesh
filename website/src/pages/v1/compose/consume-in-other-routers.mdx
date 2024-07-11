@@ -24,10 +24,10 @@ First, you need to generate the subgraph with Mesh Compose, and then serve the s
 Serve.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadOpenAPISubgraph } from '@omnigraph/openapi'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Wiki', {

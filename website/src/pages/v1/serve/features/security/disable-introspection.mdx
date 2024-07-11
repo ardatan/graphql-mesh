@@ -38,9 +38,9 @@ and determine based on that whether introspection should be enabled or not. E.g.
 headers.
 
 ```ts filename="mesh.config.ts" {7}
-import { defineConfig as defineServeConfig, useDisableIntrospection } from '@graphql-mesh/serve-cli'
+import { defineConfig, useDisableIntrospection } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useDisableIntrospection({
       isDisabled: request => request.headers.get('x-allow-introspection') !== 'secret-access-key'
@@ -84,9 +84,9 @@ npm i @escape.tech/graphql-armor-block-field-suggestions
 
 ```ts filename="Disabling the 'did you mean x' suggestion feature with a plugin" {2, 7}
 import { blockFieldSuggestionsPlugin } from '@escape.tech/graphql-armor-block-field-suggestions'
-import { defineConfig as defineServeConfig, useDisableIntrospection } from '@graphql-mesh/serve-cli'
+import { defineConfig, useDisableIntrospection } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [useDisableIntrospection(), blockFieldSuggestionsPlugin()]
 })
 ```

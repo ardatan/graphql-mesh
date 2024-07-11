@@ -29,9 +29,9 @@ Then you can use it in your Mesh configuration:
 
 ```ts filename="mesh.config.ts"
 import loadGRPCSubgraph from '@omnigraph/grpc'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGRPCSubgraph('MyGrpcApi', {
@@ -78,10 +78,10 @@ export const composeConfig = defineComposeConfig({
 If you have configured reflection in your gRPC server, you don't need to provide `source`.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import loadGRPCSubgraph from '@omnigraph/grpc'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGRPCSubgraph('MyGrpcApi', {
@@ -97,10 +97,10 @@ export const composeConfig = defineComposeConfig({
 Here you can use `metaData` field to pass some custom metadata from the context.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import loadGRPCSubgraph from '@omnigraph/grpc'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGRPCSubgraph('MyGrpcApi', {

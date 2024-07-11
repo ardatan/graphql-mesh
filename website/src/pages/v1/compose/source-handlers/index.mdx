@@ -19,12 +19,9 @@ graph.
 The example below loads a GraphQL subgraph. You can see available source handlers on the menu.
 
 ```ts filename="mesh-config.ts"
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {
@@ -69,12 +66,9 @@ the Headers.
 In this example `operationHeaders` is used to defined the content of the request as Json:
 
 ```ts filename="mesh-config.ts" {9-11}
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {
@@ -103,12 +97,9 @@ The expression inside dynamic values should be as in JS.
 #### From Context
 
 ```ts filename="mesh-config.ts" {9-15}
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {
@@ -135,12 +126,9 @@ Set up the variable on your environment, e.g `VERY_SECRET_TOKEN=12345`. Then you
 The config wil look something like:
 
 ```ts filename="mesh-config.ts" {9-11}
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {

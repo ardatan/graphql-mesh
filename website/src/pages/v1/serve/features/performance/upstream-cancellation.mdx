@@ -18,9 +18,9 @@ the HTTP requests by hooking into
 ## Enable Upstream Cancellation
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig, useUpstreamCancellation } from '@graphql-mesh/serve-cli'
+import { defineConfig, useUpstreamCancellation } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [useUpstreamCancellation()]
 })
 ```

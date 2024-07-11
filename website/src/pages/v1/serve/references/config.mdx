@@ -22,9 +22,9 @@ You can provide `GraphQLSchema`, `DocumentNode` which has the AST of the supergr
 which is the `SDL` representation of the supergraph.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   supergraph: './supergraph.graphql',
   // or
   supergraph: 'https://example.com/supergraph.graphql',
@@ -59,9 +59,9 @@ If a function is provided as in the example above, that function will be called 
 polling interval is reached.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   polling: 5_000 // Polling interval in milliseconds
 })
 ```
@@ -72,9 +72,9 @@ You can provide additional resolvers to the supergraph. This can be useful if yo
 custom resolver to the supergraph, or override the existing one.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   additionalResolvers: {
     Query: {
       hello: () => 'Hello World'
@@ -120,9 +120,9 @@ You can provide `GraphQLSchema`, `DocumentNode` which has the AST of the subgrap
 is the `SDL` representation of the subgraph
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   subgraph: './subgraph.graphql',
   // or
   subgraph: 'https://example.com/subgraph.graphql',
@@ -147,9 +147,9 @@ export const serveConfig = defineServeConfig({
 HTTP executor options to proxy all incoming requests to another HTTP endpoint.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   proxy: {
     endpoint: 'https://example.com/graphql'
   }
@@ -166,9 +166,9 @@ Additional headers to include when querying the original schema It can be a plai
 function that returns a plain object.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   proxy: {
     endpoint: 'https://example.com/graphql',
     headers: execReq => ({
@@ -209,9 +209,9 @@ want to disable this validation and send the operations directly to the upstream
 set this option to `true`.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   proxy: {
     endpoint: 'https://example.com/graphql'
   },
@@ -227,9 +227,9 @@ This is the option to provide SSL Credentials for HTTPS Server. If this is provi
 served via HTTPS instead of HTTP.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   sslCredentials: {
     key_file_name: 'path/to/key.pem',
     cert_file_name: 'path/to/cert.pem',
@@ -248,9 +248,9 @@ export const serveConfig = defineServeConfig({
 This is the option to open the browser automatically when the server is started.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   /**
    * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
    * This feature can be disabled by passing `false`
@@ -265,9 +265,9 @@ These are the options to configure the port and host of the server in the config
 than passing them as CLI arguments.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   port: 4000,
   host: 'localhost'
 })
@@ -291,9 +291,9 @@ different phases of the GraphQL execution to manipulate or track the entire work
 You can configure GraphiQL playground that allows you to play with your GraphQL API.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   graphiql: {
     defaultQuery: 'query { hello }'
   }
@@ -309,9 +309,9 @@ export const serveConfig = defineServeConfig({
 If you want to disable the landing page, you can set this option to `false`.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   landingPage: false
 })
 ```
@@ -334,9 +334,9 @@ Fetch API implementation, you can provide it here.
 
 ```ts filename="mesh.config.ts"
 import fetch from 'node-fetch'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   fetchAPI: {
     fetch
   }
@@ -354,10 +354,10 @@ Using this option, you can do;
 - Choose a log level
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { createLogger } from 'some-logger-library'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   logger: createLogger()
   // or
   logger: 'info' // or 'debug' or 'warn' or 'error'
@@ -375,9 +375,9 @@ This is the option to provide a custom GraphQL endpoint for the server. By defau
 `/graphql`.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   graphqlEndpoint: '/my-graphql-endpoint'
 })
 ```

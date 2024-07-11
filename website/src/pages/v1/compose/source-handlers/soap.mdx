@@ -27,10 +27,10 @@ npm i @omnigraph/soap
 Then you can import the library in your configuration file, and define your SOAP source;
 
 ```ts filename="mesh.config.ts" {2,7-9}
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadSOAPSubgraph } from '@omnigraph/soap'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadSOAPSubgraph('CountryInfo', {

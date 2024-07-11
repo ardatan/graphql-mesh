@@ -143,9 +143,9 @@ You can disable this behavior in your configuration by setting `ignoreSemanticCo
 your configuration;
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 
-export default defineComposeConfig({
+export const composeConfig = defineConfig({
   ignoreSemanticConventions: true
   // ...
 })

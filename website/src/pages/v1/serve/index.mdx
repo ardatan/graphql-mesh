@@ -64,9 +64,9 @@ authorization, authentication caching, rate limiting, and more.
 You need to place the Mesh config file within the working directory from which you run the CLI.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   // Configuration here
   supergraph: './supergraph.graphql'
 })
@@ -83,9 +83,9 @@ You can configure Mesh Serve to proxy a GraphQL API by providing the URL of the 
 configuration file.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   proxy: {
     endpoint: 'https://example.com/graphql'
   }

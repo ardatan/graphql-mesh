@@ -32,9 +32,9 @@ Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
 import { useOperationFieldPermission } from '@envelop/operation-field-permissions'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useOperationFieldPermission({
       // we can access graphql context here

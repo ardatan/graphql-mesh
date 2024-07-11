@@ -19,10 +19,10 @@ npm install @escape.tech/graphql-armor-cost-limit
 Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
-import {defineConfig as defineServeConfig} from '@graphql-mesh/serve-cli';
+import {defineConfig} from '@graphql-mesh/serve-cli';
 import { costLimitPlugin } from '@escape.tech/graphql-armor-cost-limit';
 
-export default defineServeConfig({
+export default defineConfig({
   plugins: () => [
     costLimitPlugin({
         // Toogle the plugin | default: true

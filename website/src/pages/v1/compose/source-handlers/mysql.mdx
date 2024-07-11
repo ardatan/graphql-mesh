@@ -26,10 +26,10 @@ npm i @omnigraph/mysql
 Now, you can use it directly in your Mesh config file:
 
 ```ts filename="mesh.config.ts" {2,7-9}
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadMySQLSubgraph } from '@omnigraph/mysql'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadMySQLSubgraph('Employees', {

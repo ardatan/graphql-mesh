@@ -30,10 +30,10 @@ npm i @omnigraph/openapi
 Then you can import the library in your configuration file, and define your OpenAPI/Swagger source;
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadOpenAPISubgraph } from '@omnigraph/openapi'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Wiki', {
@@ -53,10 +53,10 @@ OAS title, the path of the operation, the method of the operation and finally, t
 (e.g., Query or Mutation). See the example below:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadOpenAPISubgraph } from '@omnigraph/openapi'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Wiki', {
