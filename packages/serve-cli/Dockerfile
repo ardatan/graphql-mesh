@@ -1,15 +1,25 @@
+# make sure mesh is built with `yarn build`
+
 FROM node:22-slim
 
 RUN apt-get update && \
-  apt-get install -y dumb-init wget && \
-  rm -rf /var/lib/apt/lists/*
+  apt-get install -y \
+  # for healtchecks
+  wget \
+  # for installing uWS
+  git \
+  # for proper signal propagation
+  dumb-init \
+  # cleanup
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# make sure mesh is built with `yarn build`
-COPY dist .
+COPY dist/package.json package.json
+RUN yarn set version stable
+RUN yarn
 
-RUN npm i
+COPY dist .
 
 USER node
 ENTRYPOINT ["dumb-init", "node", "./esm/bin.js"]
