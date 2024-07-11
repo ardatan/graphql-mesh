@@ -326,19 +326,6 @@ app.use(async ctx => {
 })
 ```
 
-### Mesh and SvelteKit
-
-Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the
-build step.
-
-```ts filename="index.ts"
-import { createBuiltMeshHTTPHandler } from './.mesh'
-
-const meshHttp = createBuiltMeshHTTPHandler()
-
-export { meshHttp as get, meshHttp as post }
-```
-
 ## Mesh and Docker
 
 A GraphQL Mesh Gateway should be treated like any Node.js project while keeping in mind that a
