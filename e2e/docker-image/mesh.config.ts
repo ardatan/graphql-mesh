@@ -1,6 +1,6 @@
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig } from '@graphql-mesh/serve-cli';
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   proxy: {
     endpoint: 'https://countries.trevorblades.com',
   },

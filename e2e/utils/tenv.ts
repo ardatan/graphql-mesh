@@ -113,13 +113,21 @@ export interface Compose extends Proc {
   result: string;
 }
 
+export const CONTAINER_PROJECTS = ['serve-cli'] as const;
+
 export interface ContainerOptions extends ProcOptions {
   /**
    * Name of the service.
    * Note that the actual Docker container will have a unique suffix.
    */
   name: string;
-  image: string;
+  /**
+   * Name of the image to pull.
+   *
+   * When supplying one of the {@link CONTAINER_PROJECTS}, the relevant
+   * project in the repo will be built with the context set its directory.
+   */
+  image: string | (typeof CONTAINER_PROJECTS)[0];
   /**
    * Port that the container uses.
    * Will be bound to an available port on the host in {@link Container.port}.
@@ -132,15 +140,8 @@ export interface ContainerOptions extends ProcOptions {
    * If provided, the run function will wait for the container to become healthy.
    */
   healthcheck: string[];
-  /**
-   * An option to skip pulling the docker image, docker.pull fails to use a local image, as it forcefully tries to login and fetch it even though it's available locally
-   */
-  skipImagePulling?: boolean;
-  /**
-   * Volume bindings for the container.
-   * Each volume should be specified as a string in the format 'host_path:container_path'.
-   */
-  volumes?: string[];
+  /** Volume bindings for the container relative to the cwd of Tenv. */
+  volumes?: { host: string; container: string }[];
 }
 
 export interface Container extends Service {
@@ -310,16 +311,7 @@ export function createTenv(cwd: string): Tenv {
       ]);
       return service;
     },
-    async container({
-      name,
-      image,
-      env = {},
-      containerPort,
-      healthcheck,
-      pipeLogs,
-      skipImagePulling,
-      volumes = [],
-    }) {
+    async container({ name, image, env = {}, containerPort, healthcheck, pipeLogs, volumes = [] }) {
       const uniqueName = `${name}_${Math.random().toString(32).slice(2)}`;
 
       const hostPort = await getAvailablePort();
@@ -328,22 +320,50 @@ export function createTenv(cwd: string): Tenv {
         return ms * 1000000;
       }
 
-      // start the image pull and wait for complete, always pull the image (will load from cache if exists)
-      if (!skipImagePulling) {
-        const imageStream = await docker.pull(image);
-        await new Promise(resolve => docker.modem.followProgress(imageStream, resolve));
-      }
+      // start the image pull or build and wait for complete.
+      // always pull the image (will load from cache if exists)
+      const imageStream = CONTAINER_PROJECTS.includes(image as any)
+        ? await docker.buildImage(
+            {
+              context: path.resolve(__project, 'packages', image),
+              src: ['Dockerfile'],
+            },
+            {
+              t: image,
+            },
+          )
+        : await docker.pull(image);
+
+      // wait for pull or build to finish
+      await new Promise((resolve, reject) => {
+        docker.modem.followProgress(
+          imageStream,
+          (err, res) => (err ? reject(err) : resolve(res)),
+          pipeLogs
+            ? ({ stream }) => {
+                if (stream) {
+                  process.stderr.write(String(stream));
+                }
+              }
+            : undefined,
+        );
+      });
 
       const ctr = await docker.createContainer({
         name: uniqueName,
         Image: image,
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
+        ExposedPorts: {
+          [containerPort + '/tcp']: {},
+        },
         HostConfig: {
           AutoRemove: true,
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
           },
-          Binds: volumes,
+          Binds: Object.values(volumes).map(
+            ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
+          ),
         },
         Healthcheck: {
           Test: healthcheck,
