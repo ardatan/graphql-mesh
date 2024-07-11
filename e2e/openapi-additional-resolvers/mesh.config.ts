@@ -27,7 +27,7 @@ export const serveConfig = defineServeConfig({
       },
       apple() {
         return '🍎';
-      }
+      },
     },
   },
 });
