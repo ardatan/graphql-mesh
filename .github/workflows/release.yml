@@ -21,7 +21,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     env:
-      VERSION: ${{ github.sha }} # TODO: actual versions to publish
+      VERSION: ${{ github.ref == 'refs/heads/master' && 'latest' || github.sha }} # TODO: actual versions to publish
     steps:
       - name: checkout
         uses: actions/checkout@v4
