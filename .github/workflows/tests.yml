@@ -358,11 +358,12 @@ jobs:
         with:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
-      - name: build
-        run: yarn build
+      - name: prepare
+        run: yarn prebuild
+      # we only bundle and bake to speed up e2es and avoid timeouts
       - name: bundle
         run: yarn bundle
-      - name: bake # we only bake to avoid timing out e2e's that bake too
+      - name: bake
         uses: docker/bake-action@v4
         with:
           set: |

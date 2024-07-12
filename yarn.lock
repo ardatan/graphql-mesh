@@ -5844,6 +5844,7 @@ __metadata:
     json-bigint-patch: "npm:^0.0.8"
     node-libcurl: "npm:^4.0.0"
     rollup: "npm:^4.18.1"
+    rollup-plugin-tsconfig-paths: "npm:^1.5.2"
     spinnies: "npm:^0.5.1"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
@@ -31633,6 +31634,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-tsconfig-paths@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "rollup-plugin-tsconfig-paths@npm:1.5.2"
+  dependencies:
+    typescript-paths: "npm:^1.5.1"
+  peerDependencies:
+    rollup: ^2 || ^3 || ^4
+  checksum: 10c0/14b0e60b2a6b32a7581a52bfa4dabfc71a5e15a68107f12a1b7e7986343676a869e454d43283c758cb45770369be661bf3df43f8c03d0944a09804e53b281333
+  languageName: node
+  linkType: hard
+
 "rollup-pluginutils@npm:^2.8.1":
   version: 2.8.2
   resolution: "rollup-pluginutils@npm:2.8.2"
@@ -34717,6 +34729,15 @@ __metadata:
   version: 1.1.1
   resolution: "typescript-memoize@npm:1.1.1"
   checksum: 10c0/685f49c200fb94b461869f4945f50da2682541f745410bf548d79f41627dde23be8065854fe7e05793b0a3655c1e3583b96ee987486597620a6175010b6c42f8
+  languageName: node
+  linkType: hard
+
+"typescript-paths@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "typescript-paths@npm:1.5.1"
+  peerDependencies:
+    typescript: ^4.7.2 || ^5
+  checksum: 10c0/68b7cdf0c8a11e4555e172ccec85fb342d1e19029cce761979087b3509a1b320ccbce4be666cea7acac03ecdce23cc69b2afb8a4847f1bfc25bb49201fdbe5ad
   languageName: node
   linkType: hard
 

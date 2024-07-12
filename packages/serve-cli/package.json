@@ -71,7 +71,8 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-sucrase": "^5.0.2",
-    "@types/spinnies": "^0.5.3"
+    "@types/spinnies": "^0.5.3",
+    "rollup-plugin-tsconfig-paths": "^1.5.2"
   },
   "publishConfig": {
     "access": "public",

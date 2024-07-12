@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { defineConfig } from 'rollup';
+import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
@@ -32,6 +33,7 @@ export default defineConfig({
   },
   external: ['uWebSockets.js', 'node-libcurl'],
   plugins: [
+    tsConfigPaths(), // use tsconfig paths to resolve modules
     nodeResolve({ preferBuiltins: true }), // resolve node_modules and bundle them too
     commonjs(), // convert commonjs to esm
     json(), // support importing json files to esm (needed for commonjs() plugin)
