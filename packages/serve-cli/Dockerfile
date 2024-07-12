@@ -18,7 +18,8 @@ WORKDIR /app
 # TODO: node-libcurl
 RUN npm i uNetworking/uWebSockets.js#v20.44.0
 RUN npm pkg set type=module
+RUN npm pkg set main=bin.js
 COPY bundle .
 
 USER node
-ENTRYPOINT ["dumb-init", "node", "bin.js"]
+ENTRYPOINT ["dumb-init", "node", "."]

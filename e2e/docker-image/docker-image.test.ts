@@ -1,11 +1,16 @@
 import { createTenv } from '@e2e/tenv';
 
-const { container } = createTenv(__dirname);
+const { container, spawn } = createTenv(__dirname);
 
 it('should build, start and pass healthchecks', async () => {
+  const [, waitForBundle] = await spawn('yarn workspace @graphql-mesh/serve-cli bundle');
+  await waitForBundle;
+
+  // SUGGESTION: bake project first so that the tests dont time during build phase
+
   const { port } = await container({
     name: 'serve-cli-e2e-docker-image',
-    image: 'serve-cli',
+    image: 'ghcr.io/ardatan/mesh-serve',
     containerPort: 4000,
     healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:4000/healthcheck'],
     volumes: [

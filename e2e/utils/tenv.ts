@@ -113,7 +113,10 @@ export interface Compose extends Proc {
   result: string;
 }
 
-export const CONTAINER_PROJECTS = ['serve-cli'] as const;
+/** A map of image names to build bake targets. */
+export const CONTAINER_IMAGE_TARGETS = {
+  'ghcr.io/ardatan/mesh-serve': 'mesh-serve',
+} as const;
 
 export interface ContainerOptions extends ProcOptions {
   /**
@@ -124,10 +127,10 @@ export interface ContainerOptions extends ProcOptions {
   /**
    * Name of the image to pull.
    *
-   * When supplying one of the {@link CONTAINER_PROJECTS}, the relevant
+   * When supplying one of the {@link CONTAINER_IMAGE_TARGETS}, the relevant
    * project in the repo will be built with the context set its directory.
    */
-  image: string | (typeof CONTAINER_PROJECTS)[0];
+  image: string | keyof typeof CONTAINER_IMAGE_TARGETS;
   /**
    * Port that the container uses.
    * Will be bound to an available port on the host in {@link Container.port}.
@@ -320,38 +323,52 @@ export function createTenv(cwd: string): Tenv {
         return ms * 1000000;
       }
 
-      // start the image pull or build and wait for complete.
-      // always pull the image (will load from cache if exists)
-      const imageStream = CONTAINER_PROJECTS.includes(image as any)
-        ? await docker.buildImage(
-            {
-              context: path.resolve(__project, 'packages', image),
-              src: ['Dockerfile'],
-            },
-            {
-              t: image,
-            },
-          )
-        : await docker.pull(image);
+      const target = CONTAINER_IMAGE_TARGETS[image];
+      if (target) {
+        // build bake target
 
-      // wait for pull or build to finish
-      await new Promise((resolve, reject) => {
-        docker.modem.followProgress(
-          imageStream,
-          (err, res) => (err ? reject(err) : resolve(res)),
-          pipeLogs
-            ? ({ stream }) => {
-                if (stream) {
-                  process.stderr.write(String(stream));
-                }
-              }
-            : undefined,
+        // prefer building just for the os arch instead of multi-platform builds
+        const [archProc, waitForArch] = await spawn(
+          { cwd: __project, shell: true, pipeLogs },
+          'docker',
+          'system',
+          'info',
+          '--format="{{.OSType}}/{{.Architecture}}"',
         );
-      });
+        await waitForArch;
+        const arch = archProc.getStd('out').trim();
+
+        // TODO: dockerode does not support BuildKit which we use for building and caching
+        const [, waitForBake] = await spawn(
+          { cwd: __project, shell: true, env: { VERSION: 'e2e' }, pipeLogs },
+          'docker',
+          'buildx',
+          'bake',
+          `--set="*.platform=${arch}"`,
+          target,
+        );
+        await waitForBake;
+      } else {
+        // pull image and wait for finish
+        const imageStream = await docker.pull(image);
+        await new Promise((resolve, reject) => {
+          docker.modem.followProgress(
+            imageStream,
+            (err, res) => (err ? reject(err) : resolve(res)),
+            pipeLogs
+              ? ({ stream }) => {
+                  if (stream) {
+                    process.stderr.write(String(stream));
+                  }
+                }
+              : undefined,
+          );
+        });
+      }
 
       const ctr = await docker.createContainer({
         name: uniqueName,
-        Image: image,
+        Image: target ? `${image}:e2e` : image,
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
         ExposedPorts: {
           [containerPort + '/tcp']: {},
@@ -459,10 +476,12 @@ export function createTenv(cwd: string): Tenv {
 
 interface SpawnOptions extends ProcOptions {
   cwd: string;
+  env?: Record<string, string>;
+  shell?: boolean;
 }
 
 function spawn(
-  { cwd, pipeLogs }: SpawnOptions,
+  { cwd, pipeLogs, env, shell }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<[proc: Proc, waitForExit: Promise<void>]> {
@@ -470,6 +489,8 @@ function spawn(
     cwd,
     // ignore stdin, pipe stdout and stderr
     stdio: ['ignore', 'pipe', 'pipe'],
+    env,
+    shell,
   });
 
   let exit: (err: Error | null) => void;
