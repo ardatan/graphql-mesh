@@ -5250,34 +5250,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/container@workspace:packages/legacy/container":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/container@workspace:packages/legacy/container"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.0"
-    "@graphql-mesh/config": "npm:0.101.0"
-    "@graphql-mesh/graphql": "npm:0.99.0"
-    "@graphql-mesh/grpc": "npm:0.101.0"
-    "@graphql-mesh/json-schema": "npm:0.102.0"
-    "@graphql-mesh/odata": "npm:0.100.0"
-    "@graphql-mesh/openapi": "npm:0.102.0"
-    "@graphql-mesh/plugin-mock": "npm:0.99.0"
-    "@graphql-mesh/postgraphile": "npm:0.99.0"
-    "@graphql-mesh/runtime": "npm:0.100.0"
-    "@graphql-mesh/soap": "npm:0.101.0"
-    "@graphql-mesh/transform-cache": "npm:0.99.0"
-    "@graphql-mesh/transform-encapsulate": "npm:0.99.0"
-    "@graphql-mesh/transform-extend": "npm:0.99.0"
-    "@graphql-mesh/transform-filter-schema": "npm:0.99.0"
-    "@graphql-mesh/transform-prefix": "npm:0.99.0"
-    "@graphql-mesh/transform-rename": "npm:0.99.0"
-    "@graphql-mesh/transform-resolvers-composition": "npm:0.99.0"
-  peerDependencies:
-    graphql: ^16.6.0
-    tslib: ^2.5.0
-  languageName: unknown
-  linkType: soft
-
 "@graphql-mesh/cross-helpers@npm:^0.4.4, @graphql-mesh/cross-helpers@workspace:packages/cross-helpers":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cross-helpers@workspace:packages/cross-helpers"
@@ -6020,7 +5992,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transform-encapsulate@npm:0.99.0, @graphql-mesh/transform-encapsulate@workspace:packages/legacy/transforms/encapsulate":
+"@graphql-mesh/transform-encapsulate@workspace:packages/legacy/transforms/encapsulate":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-encapsulate@workspace:packages/legacy/transforms/encapsulate"
   dependencies:
@@ -6036,7 +6008,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transform-extend@npm:0.99.0, @graphql-mesh/transform-extend@workspace:packages/legacy/transforms/extend":
+"@graphql-mesh/transform-extend@workspace:packages/legacy/transforms/extend":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-extend@workspace:packages/legacy/transforms/extend"
   dependencies:
@@ -6073,7 +6045,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transform-filter-schema@npm:0.99.0, @graphql-mesh/transform-filter-schema@workspace:packages/legacy/transforms/filter-schema":
+"@graphql-mesh/transform-filter-schema@workspace:packages/legacy/transforms/filter-schema":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-filter-schema@workspace:packages/legacy/transforms/filter-schema"
   dependencies:
