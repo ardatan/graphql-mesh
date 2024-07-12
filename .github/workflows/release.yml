@@ -49,7 +49,7 @@ jobs:
           tags: ghcr.io/ardatan/mesh-serve:test
 
       - name: Use Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'yarn'
