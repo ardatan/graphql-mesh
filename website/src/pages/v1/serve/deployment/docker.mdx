@@ -1,94 +1,172 @@
-# Containerization with Docker
-
 import { Callout } from '@theguild/components'
+
+# Docker
 
 Docker is a tool that allows you to package an application and its dependencies into a container
 that can run on any system. This makes it easy to deploy applications in a consistent and
 reproducible way, regardless of the underlying infrastructure.
 
-## Running with Docker
-
 To simplify running GraphQL Mesh, you can use the Docker image and the Docker Compose template we
 provide. This setup allows you to easily configure and run the gateway without the need to install
 Node.js and the required mesh npm packages.
 
-### Prerequisites
+## Prerequisites
 
-Ensure you have Docker and Docker Compose installed on your machine. If not, you can download and
-install them from the official Docker website.
+Make sure you have Docker installed on your system.
 
-### Docker Compose Setup
+You can follow [the official Docker Engine install manual](https://docs.docker.com/engine/install/)
+in case you don't have Docker installed already.
 
-1. Create a `docker-compose.yml` file with the following:
+## Configuration
+
+### Arguments
+
+Mesh Serve can be configured with [CLI arguments](/v1/serve/references/cli#arguments) even when
+running the image!
+
+For example, changing the supergraph to use the `my-schema.graphql` schema instead looks like this:
+
+```sh
+docker run \
+  -p 4000:4000 \
+  -v "$(pwd)/my-schema.graphql:/serve/my-schema.graphql" \
+  ghcr.io/ardatan/mesh-serve --supergraph=my-schema.graphql
+```
+
+For a full list of CLI arguments, please refer to the [CLI arguments](./references/cli#arguments).
+
+### Config File
+
+Instead of configuring Mesh Serve with CLI arguments, we support configuring with a config file.
+
+You're recommended to use the `mesh.config.ts` file to configure Mesh Serve. Simply mount the config
+file when running the image.
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  proxy: {
+    endpoint: 'https://example.com/graphql'
+  }
+})
+```
+
+```sh
+docker run \
+  -p 4000:4000 \
+  -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
+  ghcr.io/ardatan/mesh-serve
+```
+
+For a full list of CLI arguments, please refer to the [Config Reference](./references/config).
+
+### Changing port in container
+
+The default port where Mesh Serve listens is `4000`; however, maybe the container is running inside
+a network (like when using [Networking in Compose](https://docs.docker.com/compose/networking/)) and
+you wish to change the port of Mesh Serve in the image.
+
+You can use the `mesh.config.ts` to change the port, or simply pass in the `--port` argument when
+running the image:
+
+```sh
+docker run \
+  -p 8080:8080 \
+  -v "$(pwd)/supergraph.graphql:/serve/supergraph.graphql" \
+  ghcr.io/ardatan/mesh-serve --port=8080
+```
+
+## Running
+
+Having a `supergraph.graphql` already composed with [Mesh Compose](/v1/compose), running the Docker
+image is as easy as:
+
+```sh
+docker run \
+  -p 4000:4000 \
+  -v "$(pwd)/supergraph.graphql:/serve/mesh.config.ts" \
+  ghcr.io/ardatan/mesh-serve
+```
+
+## Docker Compose
+
+You may have an environment where you want to use [Docker Compose](https://docs.docker.com/compose/)
+and would like to add Mesh Serve there.
+
+Start by defining the `docker-compose.yml`
 
 ```yaml
-version: '3.8'
-
 services:
   mesh-serve:
     image: ghcr.io/ardatan/mesh-serve:v1
     ports:
       - '4000:4000'
-    # Uncomment the line below to add environment variables (ex: for using Graphql Hive integration)
+    # Add GraphQL Hive environment variables in case you use it
     # environment:
-    #   HIVE_CDN_ENDPOINT: SECRET
-    #   HIVE_CDN_KEY: SECRET
-    #   HIVE_REGISTRY_TOKEN: SECRET
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    cap_add:
-      - CHOWN
-    read_only: true
+    #   HIVE_CDN_ENDPOINT: <secret>
+    #   HIVE_CDN_KEY: <secret>
+    #   HIVE_REGISTRY_TOKEN: <secret>
     volumes:
-      - /tmp # make /tmp writable
-      # IMPORTANT: Inject your custom mesh.config.ts to configure the gateway
-      # - ./path/to/local/mesh.config.ts:/app/mesh.config.ts:ro
+      - ./mesh.config.ts:/serve/mesh.config.ts
 ```
 
-2. Run Docker Compose:
-
-In the directory containing your `docker-compose.yml` file, run the following command:
+And then simply start the services with:
 
 ```sh
 docker compose up
 ```
 
-This command will:
+## Extend Docker Image
 
-- Pull the GraphQL Mesh Gateway image if it is not already available locally.
-- Pull the supergraph from your Hive registry using the provided environment variables.
-- Start the Mesh Gateway service on port `4000`.
+For cases where you want to add additional functionality, or plugins to the base image - you just
+need to create a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve`.
 
-## Custom Docker Image
+For example, adding [Rate Limiting](/v1/serve/features/security/rate-limiting) to the container
+would look like this:
 
-You can create a custom Docker image that inherits from the `ghcr.io/ardatan/mesh-serve:v1` base
-image.
+```dockerfile filename="Dockerfile"
+FROM ghcr.io/ardatan/mesh-serve
 
-```dockerfile
-FROM ghcr.io/ardatan/mesh-serve:v1
-
-# Extend here
+RUN npm i @graphql-mesh/plugin-rate-limit
 ```
 
-Then build your image:
+Build your image:
 
 ```sh
-docker build -t graphql-mesh-gateway .
+docker build -t mesh-serve-w-rate-limit .
 ```
 
-### Running the Docker Container
+Configure to use the rate limiting plugin:
 
-To run the Docker container with your custom image, use the following command:
+```ts filename="mesh.config.ts"
+import useRateLimit from '@graphql-mesh/plugin-rate-limit'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  plugins: pluginCtx => [
+    useRateLimit({
+      ...pluginCtx,
+      rules: [
+        {
+          type: 'Query',
+          field: 'foo',
+          max: 5, // requests limit for a time period
+          ttl: 5000, // time period
+          // You can use any value from the context
+          identifier: '{context.headers.authorization}'
+        }
+      ]
+    })
+  ]
+})
+```
+
+And then simply start the new image with the config file mounted:
 
 ```sh
-# make sure to change the path for your local mesh.config.ts
-docker run -p 4000:4000 -v $(pwd)/local/path/mesh.config.ts:/app/mesh.config.ts:ro graphql-mesh-gateway
+docker run \
+  -p 4000:4000 \
+  -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
+  mesh-serve-w-rate-limit
 ```
-
-## Security Configuration
-
-You can check the below resources:
-[https://spacelift.io/blog/docker-security](https://spacelift.io/blog/docker-security)
-[https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html)
