@@ -358,8 +358,8 @@ jobs:
         with:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
-      - name: prepare
-        run: yarn prebuild
+      - name: build
+        run: yarn build
       - name: bundle
         run: yarn bundle
       - name: bake # we only bake to avoid timing out e2e's that bake too

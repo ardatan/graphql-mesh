@@ -38,6 +38,8 @@ jobs:
         with:
           nodeVersion: 18
           packageManagerVersion: modern
+      - name: build
+        run: yarn build
       - name: bundle
         run: yarn bundle
       - name: bake and push
