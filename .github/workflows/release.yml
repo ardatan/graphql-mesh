@@ -3,9 +3,10 @@ on:
   push:
     branches:
       - master
-
+  pull_request:
 jobs:
   stable:
+    if: github.ref == 'refs/heads/master'
     uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
     with:
       releaseScript: release
@@ -15,30 +16,99 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
-  docker-image:
-    needs: stable
-    if: needs.stable.outputs.published == 'true'
+  docker-build:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
+        uses: docker/setup-buildx-action@v2
+
+      - name: Create Docker Buildx builder
+        run: docker buildx create --name mybuilder --use
+
+      - name: Inspect Docker Buildx builder
+        run: docker buildx inspect --bootstrap
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build & Publish Docker Image
-        id: docker_build
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image for local testing
+        id: build-single
         uses: docker/build-push-action@v6
         with:
+          context: ./docker
+          push: false
+          load: true
+          platforms: linux/amd64
+          tags: ghcr.io/ardatan/mesh-serve:test
+
+      - name: Use Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run E2E tests
+        run: yarn test:e2e -- docker-image
+
+      - name: Prepare Bake inputs
+        id: docker-bake-inputs
+        run: |
+          targets=$(docker buildx bake -f docker/docker.hcl --print default | jq -r '.group.default.targets[]')
+          input_set=""
+          first=0
+
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+
+          echo "set<<$EOF" >> "$GITHUB_ENV"
+          for target in $targets
+          do
+              echo "$target.cache-from=type=gha,ignore-error=true,scope=$GITHUB_REF-$target" >> "$GITHUB_ENV"
+              echo "$target.cache-to=type=gha,ignore-error=true,mode=max,scope=$GITHUB_REF-$target" >> "$GITHUB_ENV"
+          done
+          echo "$EOF" >> "$GITHUB_ENV"
+
+      - name: Build docker images
+        timeout-minutes: 360
+        id: docker-bake
+        env:
+          DOCKER_REGISTRY: ghcr.io/ardatan/
+          COMMIT_SHA: ${{ github.sha }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          BUILD_TYPE: 'publish'
+          PWD: ${{ github.workspace }}
+          BUILD_STABLE: ${{ github.event_name == 'push' && '1' || '' }}
+        uses: docker/bake-action@v5
+        with:
+          provenance: false
           push: true
-          tags: |
-            theguild/graphql-mesh:latest
-            theguild/graphql-mesh:${{ github.sha }}
-          context: ./packages/container
-          file: ./packages/container/Dockerfile
+          files: docker/docker.hcl
+          targets: default
+          set: |
+            ${{ steps.docker-bake-inputs.outputs.set }}
+            graphql-mesh.args.COMMIT_SHA=${{ github.sha }}
+            graphql-mesh.args.BRANCH_NAME=${{ github.ref_name }}
+
+      - name: Log out of GitHub Container Registry
+        run: docker logout ghcr.io
+
+      - name: Comment on PR with Docker image
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          token: ${{ secrets.GH_API_TOKEN }}
+          header: Docker Image
+          message: |
+            The Docker image for this PR is available at:
+            ```
+            ghcr.io/ardatan/mesh-serve:${{ github.sha }}
+            ```

@@ -132,6 +132,15 @@ export interface ContainerOptions extends ProcOptions {
    * If provided, the run function will wait for the container to become healthy.
    */
   healthcheck: string[];
+  /**
+   * An option to skip pulling the docker image, docker.pull fails to use a local image, as it forcefully tries to login and fetch it even though it's available locally
+   */
+  skipImagePulling?: boolean;
+  /**
+   * Volume bindings for the container.
+   * Each volume should be specified as a string in the format 'host_path:container_path'.
+   */
+  volumes?: string[];
 }
 
 export interface Container extends Service {
@@ -301,7 +310,16 @@ export function createTenv(cwd: string): Tenv {
       ]);
       return service;
     },
-    async container({ name, image, env = {}, containerPort, healthcheck, pipeLogs }) {
+    async container({
+      name,
+      image,
+      env = {},
+      containerPort,
+      healthcheck,
+      pipeLogs,
+      skipImagePulling,
+      volumes = [],
+    }) {
       const uniqueName = `${name}_${Math.random().toString(32).slice(2)}`;
 
       const hostPort = await getAvailablePort();
@@ -311,8 +329,10 @@ export function createTenv(cwd: string): Tenv {
       }
 
       // start the image pull and wait for complete, always pull the image (will load from cache if exists)
-      const imageStream = await docker.pull(image);
-      await new Promise(resolve => docker.modem.followProgress(imageStream, resolve));
+      if (!skipImagePulling) {
+        const imageStream = await docker.pull(image);
+        await new Promise(resolve => docker.modem.followProgress(imageStream, resolve));
+      }
 
       const ctr = await docker.createContainer({
         name: uniqueName,
@@ -323,6 +343,7 @@ export function createTenv(cwd: string): Tenv {
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
           },
+          Binds: volumes,
         },
         Healthcheck: {
           Test: healthcheck,

@@ -354,4 +354,4 @@ jobs:
         run: yarn prebuild
       - name: test
         timeout-minutes: 5
-        run: yarn test:e2e --detectOpenHandles
+        run: yarn test:e2e --detectOpenHandles --testPathIgnorePatterns="e2e/docker-image/"
