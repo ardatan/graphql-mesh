@@ -98,7 +98,7 @@ jobs:
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - name: Use Node
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
@@ -263,7 +263,7 @@ jobs:
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - name: Use Node
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
