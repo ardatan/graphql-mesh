@@ -53,7 +53,7 @@ jobs:
         with:
           header: Docker Images
           message: |
-            Docker images for this PR are available at:
+            Published images for this PR are available at:
             ```
             ghcr.io/ardatan/mesh-serve:${{ env.VERSION }}
             ```
