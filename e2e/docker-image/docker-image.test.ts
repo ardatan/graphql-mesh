@@ -16,7 +16,7 @@ it('should build, start and pass healthchecks', async () => {
     volumes: [
       {
         host: 'mesh.config.ts',
-        container: '/app/mesh.config.ts',
+        container: '/serve/mesh.config.ts',
       },
     ],
   });

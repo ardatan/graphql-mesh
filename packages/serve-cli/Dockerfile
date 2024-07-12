@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
   # cleanup
   && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /serve
 
 COPY bundle/package.json package.json
 RUN npm i

@@ -39,8 +39,7 @@ Ensure you have Docker installed on your machine. If not, you can download and i
 official Docker website.
 
 ```sh
-# make sure to change the path for your local mesh.config.ts
-docker run -p 4000:4000 -v $(pwd)/local/path/mesh.config.ts:/app/mesh.config.ts:ro ghcr.io/ardatan/mesh-serve:v1
+docker run -p 4000:4000 -v $(pwd)/mesh.config.ts:/serve/mesh.config.ts ghcr.io/ardatan/mesh-serve
 ```
 
 For more advanced Docker configurations, including using Docker Compose and creating custom Docker
