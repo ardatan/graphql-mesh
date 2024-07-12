@@ -27,7 +27,7 @@ export default defineConfig({
   },
   external: ['uWebSockets.js', 'node-libcurl'],
   plugins: [
-    nodeResolve(), // resolve node_modules and bundle them too
+    nodeResolve({ preferBuiltins: true }), // resolve node_modules and bundle them too
     commonjs(), // convert commonjs to esm
     json(), // support importing json files to esm (needed for commonjs() plugin)
     sucrase({ transforms: ['typescript'] }), // transpile typescript
@@ -48,7 +48,6 @@ function packagejson() {
         const dir = path.dirname(bundle.fileName);
         const bundledFile = path.basename(bundle.fileName);
         const pkg = { type: 'module', main: bundledFile };
-        console.log(bundle.name);
         if (bundle.name === 'bin') {
           pkg.dependencies = {
             'uWebSockets.js': 'uNetworking/uWebSockets.js#semver:^20',
