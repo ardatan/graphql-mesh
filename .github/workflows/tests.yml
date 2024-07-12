@@ -361,7 +361,7 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
-        run: yarn workspaces foreach --all run bundle
+        run: yarn bundle
       - name: bake # we only bake to avoid timing out e2e's that bake too
         uses: docker/bake-action@v4
         with:

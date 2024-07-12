@@ -39,7 +39,7 @@ jobs:
           nodeVersion: 18
           packageManagerVersion: modern
       - name: bundle
-        run: yarn workspaces foreach --all run bundle
+        run: yarn bundle
       - name: bake and push
         uses: docker/bake-action@v4
         with:
