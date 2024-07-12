@@ -53,7 +53,7 @@ jobs:
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
           push: true
-      - name: Comment on PR with Docker image
+      - name: comment on pr
         if: github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
