@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.title="Mesh Serve"
 LABEL org.opencontainers.image.description="GraphQL Gateway by The Guild for anything-to-GraphQL"
 LABEL org.opencontainers.image.licenses=MIT
 LABEL org.opencontainers.image.source=https://github.com/ardatan/graphql-mesh/tree/master/packages/serve-cli
-LABEL org.opencontainers.image.documentation=https://the-guild.dev/graphql/mesh/v1/serve/deployment/docke
+LABEL org.opencontainers.image.documentation=https://the-guild.dev/graphql/mesh/v1/serve/deployment/docker
 
 RUN apt-get update && apt-get install -y \
   # for healthchecks
