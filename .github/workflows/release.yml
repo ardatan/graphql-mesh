@@ -17,6 +17,8 @@ jobs:
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   docker-build:
+    # disable publishing images on master until #7283 lands (has better image that should be used instead)
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: checkout
