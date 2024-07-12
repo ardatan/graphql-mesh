@@ -60,7 +60,7 @@ function packagejson() {
         if (bundle.name === 'bin') {
           pkg.dependencies = {
             'uWebSockets.js': 'uNetworking/uWebSockets.js#semver:^20',
-            // TODO: node-libcurl has issues with being built in the docker
+            // TODO: node-libcurl has issues while building docker image
           };
         }
         this.emitFile({
