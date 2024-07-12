@@ -35,9 +35,9 @@ save the supergraph as a code file (`supergraph.js` or `supergraph.ts`) and impo
 For example, in Mesh Compose you need to save the supergraph as a TypeScript file:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   output: 'supergraph.ts',
   subgraph: [
     //...

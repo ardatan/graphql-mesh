@@ -27,7 +27,7 @@ Then, you can use it in your Mesh configuration:
 import loadMongooseSubgraph from '@omnigraph/mongoose'
 import { User } from './models.ts'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadMongooseSubgraph('MyMongooseApi', {

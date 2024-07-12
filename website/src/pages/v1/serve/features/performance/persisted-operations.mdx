@@ -39,14 +39,14 @@ npm i @graphql-yoga/plugin-persisted-operations
 ```
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations'
 
 const store = {
   ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38: '{__typename}'
 }
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     usePersistedOperations({
       getPersistedOperation(sha256Hash: string) {
@@ -112,12 +112,12 @@ This map can then be used to persist the GraphQL documents in the server.
 
 ```ts filename="mesh.config.ts"
 import { readFileSync } from 'node:fs'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations'
 
 const persistedOperations = JSON.parse(readFileSync('./persistedOperations.json', 'utf-8'))
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     usePersistedOperations({
       getPersistedOperation(sha256Hash: string) {
@@ -313,14 +313,14 @@ This combination is powerful as it allows you to use the persisted operation id 
 combined with any type of HTTP proxy cache.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations'
 
 const store = {
   ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38: '{__typename}'
 }
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   graphqlEndpoint: '/graphql/:document_id?',
   plugins: pluginCtx => [
     usePersistedOperations({

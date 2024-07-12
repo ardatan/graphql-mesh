@@ -52,10 +52,7 @@ This example loads a GraphQL subgraph from the [Countries API](https://countries
 Then the compose configuration should be exported as `composeConfig`.
 
 ```ts filename="mesh.config.ts"
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineConfig({
   subgraphs: [
@@ -99,10 +96,7 @@ For example, the following configuration adds `Countries_` to the types and fiel
 by using [Prefix Transform](/v1/compose/transforms/prefix).
 
 ```ts filename="mesh.config.ts" {12-16}
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineConfig({
   subgraphs: [

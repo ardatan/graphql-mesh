@@ -59,9 +59,9 @@ exports.config = {
 
 ```ts filename="mesh.config.ts"
 import useNewRelic from '@graphql-mesh/plugin-newrelic'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useNewRelic({
       ...pluginCtx,

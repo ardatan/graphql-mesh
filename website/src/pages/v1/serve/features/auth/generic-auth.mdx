@@ -99,6 +99,7 @@ To setup this mode, use the following config:
 
 ```ts filename="mesh.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -110,7 +111,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 }
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useGenericAuth({
       resolveUserFn,
@@ -148,7 +149,7 @@ verify it in your resolvers and plugin during authentication.
 
 ```ts filename="mesh.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -160,7 +161,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 }
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useGenericAuth({
       resolveUserFn,
@@ -196,7 +197,7 @@ for protecting specific GraphQL fields.
 
 ```ts filename="mesh.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -208,7 +209,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 }
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useGenericAuth({
       resolveUserFn,

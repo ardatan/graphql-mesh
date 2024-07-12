@@ -27,10 +27,10 @@ npm i @omnigraph/sqlite
 Then you can import the library in your configuration file, and define your Tuql source;
 
 ```ts filename="mesh.config.ts" {2,7-9}
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadSQLiteSubgraph } from '@omnigraph/sqlite'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadSQLiteSubgraph('MyDb', {
@@ -49,10 +49,10 @@ export const composeConfig = defineComposeConfig({
 And also you can create an in-memory database using an SQL dump file;
 
 ```ts filename="mesh.config.ts" {8}
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadSQLiteSubgraph } from '@omnigraph/sqlite'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadSQLiteSubgraph('MyDb', {

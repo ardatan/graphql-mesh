@@ -31,10 +31,10 @@ npm i @graphql-yoga/plugin-sofa
 ## Quick Start
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useSOFA } from '@graphql-yoga/plugin-sofa'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useSOFA({
       // The path where the REST API will be served

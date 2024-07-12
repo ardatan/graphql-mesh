@@ -24,10 +24,10 @@ npm install @graphql-yoga/plugin-jwt
 Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useJWT } from '@graphql-yoga/plugin-jwt'
 
-export default defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: () => [
     useJWT({
       issuer: 'http://graphql-yoga.com',

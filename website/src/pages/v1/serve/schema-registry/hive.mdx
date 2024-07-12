@@ -37,9 +37,9 @@ Instead of providing the environment variables `HIVE_CDN_ENDPOINT` and `HIVE_CDN
 provide them using a configuration file.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineServeConfig({
+export default defineConfig({
   hive: {
     // The endpoint of CDN
     endpoint: 'CDN_ENDPOINT',
@@ -70,9 +70,9 @@ Instead of using environment variables, you can also use a configuration file, w
 customization for the configuration.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineServeConfig({
+export default defineConfig({
   hive: {
     // The registry token provided by GraphQL Hive
     token: 'MY-REGISTRY-TOKEN'

@@ -48,9 +48,9 @@ npm i @graphql-mesh/plugin-statsd hot-shots
 ```ts filename="mesh.config.ts"
 import { StatsD } from 'hot-shots'
 import useStatsD from '@graphql-mesh/plugin-statsd'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useStatsD({
       ...pluginCtx,

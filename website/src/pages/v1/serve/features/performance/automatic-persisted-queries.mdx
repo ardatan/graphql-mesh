@@ -45,10 +45,10 @@ npm i @graphql-yoga/plugin-apq
 ```
 
 ```ts filename="Automatic Persisted Queries Mesh setup" {3, 13}
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useAPQ } from '@graphql-yoga/plugin-apq'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [useAPQ()]
 })
 ```

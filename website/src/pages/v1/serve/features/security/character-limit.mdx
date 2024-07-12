@@ -25,9 +25,9 @@ Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
 import { characterLimitPlugin } from '@escape.tech/graphql-armor-character-limit'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineServeConfig({
+export default defineConfig({
   plugins: () => [
     characterLimitPlugin({
       maxLength: 15000 // Number of characters allowed | Default: 15000

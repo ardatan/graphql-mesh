@@ -30,9 +30,9 @@ You can then add the plugin and its configuration to your `mesh.config.ts` file.
 
 ```ts filename="mesh.config.ts"
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   // ...other options
 
   plugins: pluginCtx => [
@@ -692,9 +692,9 @@ name of the `graphql_yoga_http_duration` metric to `http_request_duration`, you 
 
 ```ts filename="mesh.config.ts"
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
@@ -726,10 +726,10 @@ For example, you can customize the buckets of the `graphql_yoga_http_duration` h
 
 ```ts filename="mesh.config.ts"
 import usePrometheus, { createHistogram } from '@graphql-mesh/plugin-prometheus'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { register as registry } from 'prom-client'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
@@ -762,11 +762,11 @@ You can customize the client’s registry by passing a custom registry to the `r
 ```ts filename="mesh.config.ts"
 import { Registry } from 'prom-client'
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 const myRegistry = new Registry()
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
@@ -782,9 +782,9 @@ export const serveConfig = defineServeConfig({
 
 ```ts filename="mesh.config.ts"
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
