@@ -10,7 +10,7 @@ it('should compose', async () => {
 it('should execute Metrics with banana', async () => {
   const { output } = await compose({ output: 'graphql' });
 
-  const { execute } = await serve({ supergraph: output, pipeLogs: true });
+  const { execute } = await serve({ supergraph: output });
   const queryResult = await execute({
     query: /* GraphQL */ `
       query Categories {
