@@ -12,8 +12,12 @@ import sucrase from '@rollup/plugin-sucrase';
  */
 const deps = {
   'node_modules/@graphql-mesh/serve-cli/index': 'src/index.ts',
+  'node_modules/@graphql-mesh/serve-runtime/index': '../serve-runtime/src/index.ts',
   'node_modules/@graphql-mesh/transport-http/index': '../transports/http/src/index.ts',
-  // TODO: rest of deps
+  // extras for docker only
+  'node_modules/@graphql-mesh/plugin-prometheus/index': '../plugins/prometheus/src/index.ts',
+  'node_modules/@envelop/opentelemetry/index':
+    '../../node_modules/@envelop/opentelemetry/esm/index.js', // TODO: maybe have a Mesh plugin for OTEL to bundle
 };
 
 export default defineConfig({
