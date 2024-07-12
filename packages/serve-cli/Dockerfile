@@ -14,11 +14,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# these two cannot be bundled so we install them as deps
-# TODO: node-libcurl
-RUN npm i uNetworking/uWebSockets.js#v20.44.0
-RUN npm pkg set type=module
-RUN npm pkg set main=bin.js
+COPY bundle/package.json package.json
+RUN npm i
+
 COPY bundle .
 
 USER node

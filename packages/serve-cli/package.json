@@ -35,7 +35,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "scripts": {
-    "bundle": "rollup -c"
+    "bundle": "(rm -rf bundle || true) && rollup -c"
   },
   "peerDependencies": {
     "@parcel/watcher": "^2.1.0",
@@ -69,7 +69,7 @@
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.6",
+    "@rollup/plugin-sucrase": "^5.0.2",
     "@types/spinnies": "^0.5.3"
   },
   "publishConfig": {
