@@ -154,9 +154,9 @@ async function importConfig(log: Logger, path: string): Promise<MeshComposeCLICo
     }
     if ('default' in importedConfigModule) {
       // eslint-disable-next-line dot-notation
-      return importedConfigModule.default['serveConfig'];
-    } else if ('serveConfig' in importedConfigModule) {
-      return importedConfigModule.serveConfig as MeshComposeCLIConfig;
+      return importedConfigModule.default['composeConfig'];
+    } else if ('composeConfig' in importedConfigModule) {
+      return importedConfigModule.composeConfig as MeshComposeCLIConfig;
     }
   } catch (err) {
     // NOTE: we dont use the err.code because maybe the config itself is importing a module that does not exist.
