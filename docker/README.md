@@ -17,8 +17,8 @@ install them from the official Docker website.
    version: '3.8'
 
    services:
-     graphql-mesh:
-       image: theguild/graphql-mesh:v1
+     mesh-serve:
+       image: theguild/mesh-serve:v1
        ports:
          - '4000:4000'
        environment:
@@ -59,10 +59,10 @@ install them from the official Docker website.
 
 ### Custom Docker Image
 
-You can create a custom Docker image that inherits from the theguild/graphql-mesh:v1 base image.
+You can create a custom Docker image that inherits from the theguild/mesh-serve:v1 base image.
 
 ```dockerfile
-FROM theguild/graphql-mesh:v1
+FROM theguild/mesh-serve:v1
 
 # Extend here
 ```

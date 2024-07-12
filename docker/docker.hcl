@@ -28,8 +28,8 @@ target "graphql-mesh" {
   dockerfile = "${PWD}/docker/Dockerfile"
   platforms = ["linux/amd64", "linux/arm64"]
   tags = compact([
-    "ghcr.io/ardatan/graphql-mesh:${COMMIT_SHA}",
-    is_master_branch() ? "ghcr.io/ardatan/graphql-mesh:v1-preview" : null
+    "ghcr.io/ardatan/mesh-serve:${COMMIT_SHA}",
+    is_master_branch() ? "ghcr.io/ardatan/mesh-serve:v1-preview" : null
   ])
   args = {
     GITHUB_TOKEN = ""

@@ -46,7 +46,7 @@ jobs:
           push: false
           load: true
           platforms: linux/amd64
-          tags: ghcr.io/ardatan/graphql-mesh:test
+          tags: ghcr.io/ardatan/mesh-serve:test
 
       - name: Use Node
         uses: actions/setup-node@v2
@@ -110,5 +110,5 @@ jobs:
           message: |
             The Docker image for this PR is available at:
             ```
-            ghcr.io/ardatan/graphql-mesh:${{ github.sha }}
+            ghcr.io/ardatan/mesh-serve:${{ github.sha }}
             ```

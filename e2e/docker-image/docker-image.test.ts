@@ -5,7 +5,7 @@ const { container } = createTenv(__dirname);
 let mesh!: Container;
 beforeAll(async () => {
   const isCI = !!process.env.CI;
-  const image = isCI ? 'ghcr.io/ardatan/graphql-mesh:test' : 'graphql-mesh-gateway';
+  const image = isCI ? 'ghcr.io/ardatan/mesh-serve:test' : 'graphql-mesh-gateway';
 
   mesh = await container({
     name: 'graphql-mesh-test',

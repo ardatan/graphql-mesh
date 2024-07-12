@@ -25,8 +25,8 @@ install them from the official Docker website.
 version: '3.8'
 
 services:
-  graphql-mesh:
-    image: ghcr.io/ardatan/graphql-mesh:v1
+  mesh-serve:
+    image: ghcr.io/ardatan/mesh-serve:v1
     ports:
       - '4000:4000'
     # Uncomment the line below to add environment variables (ex: for using Graphql Hive integration)
@@ -63,11 +63,11 @@ This command will:
 
 ## Custom Docker Image
 
-You can create a custom Docker image that inherits from the `ghcr.io/ardatan/graphql-mesh:v1` base
+You can create a custom Docker image that inherits from the `ghcr.io/ardatan/mesh-serve:v1` base
 image.
 
 ```dockerfile
-FROM ghcr.io/ardatan/graphql-mesh:v1
+FROM ghcr.io/ardatan/mesh-serve:v1
 
 # Extend here
 ```
