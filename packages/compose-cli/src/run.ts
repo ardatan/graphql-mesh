@@ -65,6 +65,7 @@ export async function run({
     for (const configPath of defaultConfigPaths) {
       importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
       if (importedConfig) {
+        log.info(`Found default config file ${configPath}`);
         break;
       }
     }
@@ -153,13 +154,17 @@ async function importConfig(log: Logger, path: string): Promise<MeshComposeCLICo
     }
     if ('default' in importedConfigModule) {
       // eslint-disable-next-line dot-notation
-      return importedConfigModule.default['composeConfig'];
-    } else if ('composeConfig' in importedConfigModule) {
-      return importedConfigModule.composeConfig as MeshComposeCLIConfig;
+      return importedConfigModule.default['serveConfig'];
+    } else if ('serveConfig' in importedConfigModule) {
+      return importedConfigModule.serveConfig as MeshComposeCLIConfig;
     }
   } catch (err) {
-    if (!String(err.code).includes('MODULE_NOT_FOUND')) {
-      log.error('Importing configuration failed!');
+    // NOTE: we dont use the err.code because maybe the config itself is importing a module that does not exist.
+    //       if we were to use the MODULE_NOT_FOUND code, then those configs will fail silently
+    if (String(err).includes(`Cannot find module '${path}'`)) {
+      // config at path not found
+    } else {
+      log.error(`Importing config at ${path} failed!`);
       throw err;
     }
   }

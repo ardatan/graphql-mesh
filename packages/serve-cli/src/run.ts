@@ -106,6 +106,7 @@ export async function run({
     for (const configPath of defaultConfigPaths) {
       importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
       if (importedConfig) {
+        log.info(`Found default config file ${configPath}`);
         break;
       }
     }
@@ -123,7 +124,7 @@ export async function run({
   if (importedConfig) {
     log.info('Loaded config file');
   } else {
-    log.debug('No config file loaded, using defaults');
+    log.info('No config file loaded, using defaults');
   }
 
   const config: MeshServeCLIConfig = {
@@ -275,8 +276,12 @@ async function importConfig(log: Logger, path: string): Promise<MeshServeCLIConf
       return importedConfigModule.serveConfig as MeshServeCLIConfig;
     }
   } catch (err) {
-    if (!String(err.code).includes('MODULE_NOT_FOUND')) {
-      log.error('Importing configuration failed!');
+    // NOTE: we dont use the err.code because maybe the config itself is importing a module that does not exist.
+    //       if we were to use the MODULE_NOT_FOUND code, then those configs will fail silently
+    if (String(err).includes(`Cannot find module '${path}'`)) {
+      // config at path not found
+    } else {
+      log.error(`Importing config at ${path} failed!`);
       throw err;
     }
   }
