@@ -12,7 +12,19 @@ import { Callout } from '@theguild/components'
 </Callout>
 
 An overview of all the configuration options for the `mesh.config.ts` used by the `mesh-serve` CLI.
-Get started with the
+
+Both TypeScript (`*.ts`) and JavaScript (`*.js`) config filetypes are supported.
+
+## Default config files
+
+The following list of files are loaded by default, sorted by priority:
+
+- `mesh.config.ts` _(recommended)_
+- `mesh.config.mts`
+- `mesh.config.cts`
+- `mesh.config.js`
+- `mesh.config.mjs`
+- `mesh.config.cjs`
 
 ### Supergraph Related
 

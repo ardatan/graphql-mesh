@@ -73,22 +73,13 @@ supergraph from the corresponding schema registry.
 
 For a full list of CLI arguments, please refer to the [CLI Reference](./references/cli).
 
-## Serve Configuration
-
 Instead of providing the supergraph via a CLI parameter, you can also provide it via a configuration
-file. The following list of files are loaded by default, sorted by priority:
-
-- `mesh.config.ts` _(recommended)_
-- `mesh.config.mts`
-- `mesh.config.cts`
-- `mesh.config.js`
-- `mesh.config.mjs`
-- `mesh.config.cjs`
+file.
 
 The Mesh Serve configuration file is furthermore used for enabling additional features such as
 authorization, authentication caching, rate limiting, and more.
 
-You need to place the Mesh config file within the working directory from which you run the CLI.
+You need to place the `mesh.config.ts` file within the working directory from which you run the CLI.
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
