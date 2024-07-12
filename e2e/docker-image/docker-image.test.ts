@@ -6,7 +6,7 @@ it('should build, start and pass healthchecks', async () => {
   const [, waitForBundle] = await spawn('yarn workspace @graphql-mesh/serve-cli bundle');
   await waitForBundle;
 
-  // SUGGESTION: bake project first so that the tests dont time during build phase
+  // SUGGESTION: bake project first so that the tests dont time out during build phase
 
   const { port } = await container({
     name: 'serve-cli-e2e-docker-image',
