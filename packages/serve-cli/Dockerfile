@@ -3,12 +3,6 @@
 # we build with node 21 because node-libcurl has published prebuilt releases (building from source fails)
 FROM node:21 AS build
 
-LABEL org.opencontainers.image.title="Mesh Serve"
-LABEL org.opencontainers.image.description="GraphQL Gateway by The Guild for anything-to-GraphQL"
-LABEL org.opencontainers.image.licenses=MIT
-LABEL org.opencontainers.image.source=https://github.com/ardatan/graphql-mesh/tree/master/packages/serve-cli
-LABEL org.opencontainers.image.documentation=https://the-guild.dev/graphql/mesh/v1/serve/deployment/docker
-
 WORKDIR /build
 
 COPY bundle/package.json package.json
