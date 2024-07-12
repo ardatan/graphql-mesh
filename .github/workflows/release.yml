@@ -1,9 +1,11 @@
 name: release
+
 on:
   push:
     branches:
       - master
   pull_request:
+
 jobs:
   stable:
     if: github.ref == 'refs/heads/master'
@@ -16,18 +18,13 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
-  docker-build:
-    # disable publishing images on master until #7283 lands (has better image that should be used instead)
-    if: false
+  docker:
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.sha }} # TODO: actual versions to publish
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
-        with:
-          nodeVersion: ${{matrix.node-version}}
-          packageManagerVersion: modern
       - name: set up docker buildx
         uses: docker/setup-buildx-action@v3
       - name: log in to ghcr
@@ -36,6 +33,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: setup env
+        uses: the-guild-org/shared-config/setup@main
+        with:
+          nodeVersion: 18
+          packageManagerVersion: modern
       - name: bundle
         run: yarn workspaces foreach --all run bundle
       - name: bake and push
@@ -49,10 +51,9 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          token: ${{ secrets.GH_API_TOKEN }}
-          header: Docker Image
+          header: Docker Images
           message: |
-            The Docker image for this PR is available at:
+            Docker images for this PR are available at:
             ```
-            ghcr.io/ardatan/mesh-serve:${{ github.sha }}
+            ghcr.io/ardatan/mesh-serve:${{ env.VERSION }}
             ```

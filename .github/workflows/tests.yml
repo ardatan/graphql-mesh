@@ -345,13 +345,29 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+        - name: set up docker buildx
+        uses: docker/setup-buildx-action@v3
+      - name: log in to ghcr
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: setup env
+        uses: the-guild-org/shared-config/setup@main
         with:
           nodeVersion: ${{matrix.node-version}}
           packageManagerVersion: modern
-      - name: Prepare for build
+      - name: prepare
         run: yarn prebuild
+      - name: bundle
+        run: yarn workspaces foreach --all run bundle
+      - name: bake # we only bake to avoid timing out e2e's that bake too
+        uses: docker/bake-action@v4
+        with:
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
       - name: test
         timeout-minutes: 5
-        run: yarn test:e2e --detectOpenHandles --testPathIgnorePatterns="e2e/docker-image/"
+        run: yarn test:e2e --detectOpenHandles
