@@ -6,7 +6,8 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import sucrase from '@rollup/plugin-sucrase';
 
 /**
- * Dependencies that need to be bundled and placed in the node_modules for usage by Mesh Config.
+ * Dependencies that need to be bundled and placed in the node_modules. Modules that
+ * are imported by the `mesh.config.ts` file need to exist in the `node_modules`.
  *
  * Is a map of destination path to the source file to bundle.
  */
