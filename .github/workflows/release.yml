@@ -48,6 +48,7 @@ jobs:
       - name: bake and push
         uses: docker/bake-action@v4
         with:
+          provenance: false
           set: |
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
