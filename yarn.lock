@@ -6529,8 +6529,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor-http@npm:^1.0.9, @graphql-tools/executor-http@npm:^1.1.2":
-  version: 1.1.3
-  resolution: "@graphql-tools/executor-http@npm:1.1.3"
+  version: 1.1.4
+  resolution: "@graphql-tools/executor-http@npm:1.1.4"
   dependencies:
     "@graphql-tools/utils": "npm:^10.3.2"
     "@repeaterjs/repeater": "npm:^3.0.4"
@@ -6541,7 +6541,7 @@ __metadata:
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/2becd723935b107d55343a3e329055b18f17c5997953290ed1e4225f3c2317847b9c15e7321011e07b19df8e181d0f4bc6249f356bb5ddb0b7b9a3b0ba7e97d4
+  checksum: 10c0/7d8541cbdc3ff9fe6c25ed3afcf600896fc8622e7b62a3ed4d734124d9a61fd41e8f54c45d0a9bc38270aa357ea78ebf814087300b3ede6f92d8b03a8f4a1f33
   languageName: node
   linkType: hard
 
