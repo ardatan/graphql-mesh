@@ -226,7 +226,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       if (fieldName) {
         const graphQLFieldName = sanitizeNameForGraphQL(fieldName);
         const operationType: any =
-          fieldTypeMap[graphQLFieldName] ?? method === 'GET' ? 'query' : 'mutation';
+          (fieldTypeMap[graphQLFieldName] ?? method === 'GET') ? 'query' : 'mutation';
         operations.push({
           type: operationType,
           field: graphQLFieldName,

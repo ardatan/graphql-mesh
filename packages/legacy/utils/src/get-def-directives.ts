@@ -17,13 +17,13 @@ export function getDefDirectives(
         name: directiveNode.name.value,
         args: schemaDirective
           ? getArgumentValues(schemaDirective, directiveNode)
-          : directiveNode.arguments?.reduce(
+          : (directiveNode.arguments?.reduce(
               (acc, arg) => {
                 acc[arg.name.value] = valueFromASTUntyped(arg.value);
                 return acc;
               },
               {} as Record<string, any>,
-            ) ?? {},
+            ) ?? {}),
       };
       if (
         subgraph &&

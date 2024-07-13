@@ -76,7 +76,7 @@ export type MeshServePlugin<
 
 interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigForSupergraph<TContext> {
   /**
-   * Path to the Apollo Federation unified schema.
+   * Path to the Federation Supergraph.
    */
   supergraph?: UnifiedGraphConfig;
 }
@@ -141,7 +141,7 @@ interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutS
   /**
    * Provide custom options for transports.
    *
-   * @example Adding subscriptions support for Apollo Federation v2 subgraphs.
+   * @example Adding subscriptions support for Federation v2 subgraphs.
    *
    * ```ts
    * import { defineConfig } from '@graphql-mesh/serve-cli';
