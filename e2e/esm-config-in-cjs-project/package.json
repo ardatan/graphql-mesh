@@ -1,5 +1,6 @@
 {
   "name": "@e2e/esm-config-in-cjs-project",
+  "version": "0.0.0",
   "type": "commonjs",
   "private": true,
   "dependencies": {

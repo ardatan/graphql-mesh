@@ -1,5 +1,6 @@
 {
   "name": "@e2e/federation-example",
+  "version": "0.0.0",
   "private": true,
   "devDependencies": {
     "@apollo/rover": "^0.23.0",
