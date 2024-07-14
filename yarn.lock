@@ -10346,8 +10346,8 @@ __metadata:
   linkType: hard
 
 "@theguild/components@npm:^6.5.3":
-  version: 6.6.0
-  resolution: "@theguild/components@npm:6.6.0"
+  version: 6.6.1
+  resolution: "@theguild/components@npm:6.6.1"
   dependencies:
     "@giscus/react": "npm:3.0.0"
     "@next/bundle-analyzer": "npm:14.2.5"
@@ -10364,7 +10364,7 @@ __metadata:
     next: ^13 || ^14
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/d9b5bc83284656fe4b705bca29c4bc8165cf5e97f26b6e1f7da820900480fb4998264d7432a38e65e66eda20fc27f1c325e4d7004c5a40374bf1beda987a2c6d
+  checksum: 10c0/4cdc726f7436ebc01ab53dec721c8383c8fc301a55343cdbde1293f2669da4b135d0928cfbba826df531b464430b55e6cfaae22228c80e3058027949e69d253c
   languageName: node
   linkType: hard
 
