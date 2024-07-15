@@ -43,6 +43,7 @@ export interface UnifiedGraphHandlerOpts {
   additionalTypeDefs?: TypeSource;
   additionalResolvers?: IResolvers<unknown, any> | IResolvers<unknown, any>[];
   onSubgraphExecute: ReturnType<typeof getOnSubgraphExecute>;
+  transportOptions?: TransportOptions;
 }
 
 export interface UnifiedGraphHandlerResult {
@@ -151,12 +152,12 @@ export class UnifiedGraphManager<TContext> {
           onSubgraphExecute(subgraphName, execReq) {
             return onSubgraphExecute(subgraphName, execReq);
           },
+          transportOptions: this.opts.transportOptions,
         });
         this.unifiedGraph = newUnifiedGraph;
         const onSubgraphExecute = getOnSubgraphExecute({
           onSubgraphExecuteHooks: this.onSubgraphExecuteHooks,
           transports: this.opts.transports,
-          transportOptions: this.opts.transportOptions,
           transportContext: this.opts.transportContext,
           transportEntryMap,
           getSubgraphSchema(subgraphName) {

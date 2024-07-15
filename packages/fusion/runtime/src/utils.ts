@@ -4,6 +4,7 @@ import type {
   Transport,
   TransportContext,
   TransportEntry,
+  TransportExecutorFactoryGetter,
   TransportGetSubgraphExecutor,
   TransportGetSubgraphExecutorOptions,
 } from '@graphql-mesh/transport-common';
@@ -40,13 +41,8 @@ export type Transports =
         }
     >);
 
-export type TransportExecutorFactoryGetter = (
-  kind: string,
-) => MaybePromise<TransportGetSubgraphExecutor>;
-
 function createTransportExecutorFactoryGetter(
   transports: Transports,
-  transportOptions: TransportOptions,
   logger: Logger,
 ): TransportExecutorFactoryGetter {
   return async function getTransport(kind) {
@@ -83,19 +79,7 @@ function createTransportExecutorFactoryGetter(
         );
       }
     }
-    return function getSubgraphExecutor(opts) {
-      return transportGetSubgraphExecutor({
-        ...opts,
-        transportEntry: {
-          ...opts.transportEntry,
-          options: {
-            ...opts.transportEntry.options,
-            ...transportOptions?.['*']?.[kind],
-            ...transportOptions?.[opts.transportEntry.subgraph]?.[kind],
-          },
-        },
-      });
-    };
+    return transportGetSubgraphExecutor;
   };
 }
 
@@ -128,11 +112,9 @@ export function getOnSubgraphExecute({
   getSubgraphSchema,
   transportExecutorStack,
   transports,
-  transportOptions,
 }: {
   onSubgraphExecuteHooks: OnSubgraphExecuteHook[];
   transports?: Transports;
-  transportOptions?: TransportOptions;
   transportContext?: TransportContext;
   transportEntryMap?: Record<string, TransportEntry>;
   getSubgraphSchema(subgraphName: string): GraphQLSchema;
@@ -141,7 +123,6 @@ export function getOnSubgraphExecute({
   const subgraphExecutorMap = new Map<string, Executor>();
   const transportExecutorFactoryGetter = createTransportExecutorFactoryGetter(
     transports,
-    transportOptions,
     transportContext?.logger,
   );
   return function onSubgraphExecute(subgraphName: string, executionRequest: ExecutionRequest) {
@@ -165,6 +146,7 @@ export function getOnSubgraphExecute({
                   get transportEntry() {
                     return transportEntryMap?.[subgraphName];
                   },
+                  transportExecutorFactoryGetter,
                 }
               : {
                   get subgraph() {
@@ -174,6 +156,7 @@ export function getOnSubgraphExecute({
                     return transportEntryMap?.[subgraphName];
                   },
                   subgraphName,
+                  transportExecutorFactoryGetter,
                 },
             transportExecutorStack,
           ),

@@ -1,41 +1,42 @@
-import path from 'path';
 import { setTimeout } from 'timers/promises';
 import { createClient } from 'graphql-sse';
+import {
+  IntrospectAndCompose,
+  RemoteGraphQLDataSource,
+  type ServiceEndpointDefinition,
+} from '@apollo/gateway';
 import { createTenv } from '@e2e/tenv';
 import { TOKEN } from './services/products/server';
 
-const { fs, spawn, service, serve } = createTenv(__dirname);
+const { fs, service, serve } = createTenv(__dirname);
 
 async function startServicesAndCreateSupergraphFile() {
-  const services = [await service('products'), await service('reviews')];
+  const services = [await service('products'), await service('reviews', { pipeLogs: true })];
 
-  const supergraphConfig = {
-    federation_version: '2',
-    subgraphs: {},
-  };
+  const subgraphs: ServiceEndpointDefinition[] = [];
   for (const service of services) {
-    supergraphConfig.subgraphs[service.name] = {
-      routing_url: `http://0.0.0.0:${service.port}/graphql`,
-      schema: {
-        file: path.join(__dirname, 'services', service.name, 'typeDefs.graphql'),
-      },
-    };
+    subgraphs.push({
+      name: service.name,
+      url: `http://0.0.0.0:${service.port}/graphql`,
+    });
   }
 
-  const supergraphConfigFile = await fs.tempfile('supergraph.json');
-  await fs.write(supergraphConfigFile, JSON.stringify(supergraphConfig));
-
-  const [proc, waitForExit] = await spawn(
-    `yarn rover supergraph compose --config ${supergraphConfigFile} --elv2-license=accept`,
-  );
-  await waitForExit;
+  const { supergraphSdl } = await new IntrospectAndCompose({
+    subgraphs,
+  }).initialize({
+    getDataSource(opts) {
+      return new RemoteGraphQLDataSource(opts);
+    },
+    update() {},
+    async healthCheck() {},
+  });
 
   const supergraphFile = await fs.tempfile('supergraph.graphql');
-  await fs.write(supergraphFile, proc.getStd('out'));
+  await fs.write(supergraphFile, supergraphSdl);
   return supergraphFile;
 }
 
-it('should subscribe and resolve', async () => {
+it('should subscribe and resolve via websockets', async () => {
   const supergraphFile = await startServicesAndCreateSupergraphFile();
   const { port } = await serve({ supergraph: supergraphFile });
 
@@ -140,7 +141,9 @@ it('should recycle websocket connections', async () => {
   for (let i = 0; i < 5; i++) {
     // connect
     for await (const msg of client.iterate({ query })) {
-      expect(msg.data).toBeDefined();
+      expect(msg).toMatchObject({
+        data: expect.any(Object),
+      });
       break; // complete subscription on first received message
     }
     // disconnect
@@ -149,4 +152,55 @@ it('should recycle websocket connections', async () => {
   }
 
   // the "products" service will crash if multiple websockets were connected breaking the loop above with an error
+});
+
+it('should subscribe and resolve via http callbacks', async () => {
+  const supergraphFile = await startServicesAndCreateSupergraphFile();
+  await serve({ supergraph: supergraphFile, port: 4000, pipeLogs: true });
+
+  const client = createClient({
+    url: `http://0.0.0.0:4000/graphql`,
+    retryAttempts: 0,
+  });
+  const sub = client.iterate({
+    query: /* GraphQL */ `
+      subscription CountDown {
+        countdown(from: 4)
+      }
+    `,
+  });
+
+  const msgs = [];
+  for await (const msg of sub) {
+    expect(msg).toMatchObject({
+      data: expect.any(Object),
+    });
+    msgs.push(msg);
+    if (msgs.length >= 4) {
+      break;
+    }
+  }
+
+  expect(msgs).toMatchObject([
+    {
+      data: {
+        countdown: 4,
+      },
+    },
+    {
+      data: {
+        countdown: 3,
+      },
+    },
+    {
+      data: {
+        countdown: 2,
+      },
+    },
+    {
+      data: {
+        countdown: 1,
+      },
+    },
+  ]);
 });

@@ -9,7 +9,7 @@ import type {
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
 import type { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
 import type { Transports, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
-import type { Transport } from '@graphql-mesh/transport-common';
+import type { Transport, TransportEntry } from '@graphql-mesh/transport-common';
 import type {
   KeyValueCache,
   Logger,
@@ -27,7 +27,7 @@ import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 export type { UnifiedGraphConfig };
 
 export type TransportOptions = {
-  [subgraph: '*' | string]: Record<string, any> /** satisfies TransportOptions */;
+  [subgraph: '*' | string]: Partial<TransportEntry> /** satisfies TransportOptions */;
 };
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =

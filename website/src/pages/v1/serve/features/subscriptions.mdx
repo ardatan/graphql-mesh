@@ -9,8 +9,7 @@ Subgraphs providing subscriptions can communicate with Mesh through one of the f
 
 - [GraphQL over SSE](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md)
 - [GraphQL over WebSocket](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md)
-- ~[HTTP Callback](https://www.apollographql.com/docs/router/executing-operations/subscription-callback-protocol/)~
-  ([coming soon!](https://github.com/ardatan/graphql-mesh/issues/7209))
+- [HTTP Callback](https://www.apollographql.com/docs/router/executing-operations/subscription-callback-protocol/)
 
 ## Example
 
@@ -137,11 +136,10 @@ If your subgraph uses WebSockets for subscriptions support
 ([like with Apollo Server](https://www.apollographql.com/docs/apollo-server/data/subscriptions/)),
 Mesh Serve will need additional configuration pointing to the WebSocket server path on the subgraph.
 
-We'll optionally install `@graphql-mesh/transport-http` first to have type-safety when defining the
-transport options.
+We'll install `@graphql-mesh/transport-ws` to add WebSockets support.
 
 ```sh npm2yarn
-npm i @graphql-mesh/transport-http
+npm i @graphql-mesh/transport-ws
 ```
 
 And configure Mesh Serve to use the `/subscriptions` path on the "products" subgraph for WebSocket
@@ -149,21 +147,19 @@ connections:
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
-import type { HTTPTransportOptions } from '@graphql-mesh/transport-http'
+import type { WSTransportOptions } from '@graphql-mesh/transport-http'
 
 export const serveConfig = defineConfig({
   supergraph: 'supergraph.graphql',
   transportOptions: {
-    // use "*" to apply options to all subgraphs
-    products: {
-      http: {
+    // use "*.http" to apply options to all subgraphs with HTTP
+    '*.http': {
+      options: {
         subscriptions: {
-          ws: {
-            // the location of the WS server is ws://<location>/subscriptions
-            path: '/subscriptions'
-          }
-        }
-      } satisfies HTTPTransportOptions
+          kind: 'ws',
+          location: '/subscriptions'
+        } satisfies WSTransportOptions
+      }
     }
   }
 })
@@ -181,9 +177,34 @@ service.
 
 ### `Authorization` header
 
-Mesh Server will propagate the downstream client's `Authorization` header contents to the upstream
+Mesh Server can propagate the downstream client's `Authorization` header contents to the upstream
 WebSocket connections through the
 [`ConnectionInit` message payload](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md#connectioninit).
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+import type { WSTransportOptions } from '@graphql-mesh/transport-ws'
+
+export const serveConfig = defineConfig({
+  supergraph: 'supergraph.graphql',
+  transportOptions: {
+    // use "*.http" to apply options to all subgraphs with HTTP
+    '*.http': {
+      options: {
+        subscriptions: {
+          kind: 'ws',
+          location: '/subscriptions',
+          options: {
+            connectionParams: {
+              token: '{context.headers.authorization}'
+            }
+          } satisfies WSTransportOptions
+        }
+      }
+    }
+  }
+})
+```
 
 The contents of the payload will be available in `graphql-ws` connectionParams:
 
@@ -199,6 +220,49 @@ The contents of the payload will be available in `graphql-ws` connectionParams:
   This is also what Apollo Router when [propagating auth on
   WebSockets](https://www.apollographql.com/docs/router/executing-operations/subscription-support/#websocket-auth-support).
 </Callout>
+
+## Subscriptions using HTTP Callback
+
+If your subgraph uses
+[HTTP Callback protocol for subscriptions](https://www.apollographql.com/docs/router/executing-operations/subscription-callback-protocol/),
+Mesh Serve will need additional configuration.
+
+We'll install `@graphql-mesh/transport-http-callback` to add HTTP Callback support.
+
+```sh npm2yarn
+npm i @graphql-mesh/transport-http-callback
+```
+
+```ts filename="mesh.config.ts"
+import { defineConfig, PubSub, useWebhooks } from '@graphql-mesh/serve-cli'
+import type { HTTPCallbackTransportOptions } from '@graphql-mesh/transport-http-callback'
+
+export const serveConfig = defineConfig({
+  supergraph: 'supergraph.graphql',
+  // Setup a PubSub engine to handle webhooks between different instances of Mesh for scalability
+  pubsub: new PubSub(),
+  // Setup Mesh to listen for webhook callbacks, and emit the payloads through PubSub engine
+  plugins: ctx => [useWebhooks()],
+  transportOptions: {
+    // use "*.http" to apply options to all subgraphs with HTTP
+    '*.http': {
+      options: {
+        subscriptions: {
+          kind: 'http-callback',
+          options: {
+            // The gateway's public URL, which your subgraphs access, must include the path configured on the gateway.
+            public_url: 'http://localhost:4000/callback',
+            // The path of the router's callback endpoint
+            path: '/callback',
+            // Heartbeat interval to make sure the subgraph is still alive, and avoid hanging requests
+            heartbeat_interval: 5000
+          } satisfies HTTPCallbackTransportOptions
+        }
+      }
+    }
+  }
+})
+```
 
 ## Closing active subscriptions on schema change
 
