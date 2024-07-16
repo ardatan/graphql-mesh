@@ -7204,13 +7204,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.10.11, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.8.10":
+"@grpc/grpc-js@npm:1.10.11":
   version: 1.10.11
   resolution: "@grpc/grpc-js@npm:1.10.11"
   dependencies:
     "@grpc/proto-loader": "npm:^0.7.13"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
   checksum: 10c0/28f9447baa9dd099f72e1d3ecf68ad6e6994104614b03f436a5b78564dc2644c7225c46641b150d01c7259b6ac37e9b847e3069e0a433518fe1a856de8240384
+  languageName: node
+  linkType: hard
+
+"@grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.8.10":
+  version: 1.11.0
+  resolution: "@grpc/grpc-js@npm:1.11.0"
+  dependencies:
+    "@grpc/proto-loader": "npm:^0.7.13"
+    "@js-sdsl/ordered-map": "npm:^4.4.2"
+  checksum: 10c0/937cd02802e376e4a84b0a912828b50ff6365b075b40f3ee8128d47a78be2a3bda77045bc9066682c59f8f30b03218c729b561bcfdcdbfc9aa4ea9a7dc9dabbc
   languageName: node
   linkType: hard
 
@@ -10672,13 +10682,13 @@ __metadata:
   linkType: hard
 
 "@types/dockerode@npm:^3.3.28":
-  version: 3.3.29
-  resolution: "@types/dockerode@npm:3.3.29"
+  version: 3.3.30
+  resolution: "@types/dockerode@npm:3.3.30"
   dependencies:
     "@types/docker-modem": "npm:*"
     "@types/node": "npm:*"
     "@types/ssh2": "npm:*"
-  checksum: 10c0/1c51a9f7d9a2ab81ecdf9e56b9a8e25400a97ed5f0701c583ed030b4518dee4b3d2ecc7d927fe1ff618c06747f3b285168adac5293aa3cdafafa1914db595cc2
+  checksum: 10c0/0428218c3f83374361e62516cec6ad35a2e7d62a2c9fde0bd99da6d8b9932bc0ca57dda0372832f72276126ca2f95ff923acac668ac54debf4fd6851e936ae5d
   languageName: node
   linkType: hard
 
