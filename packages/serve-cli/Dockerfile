@@ -1,6 +1,6 @@
 # IMPORTANT: make sure bundle is ready with `yarn bundle`
 
-# we build with node 21 because node-libcurl has published prebuilt releases (building from source fails)
+# we build with Node 21 because node-libcurl has published prebuilt releases (building from source fails when using Node 22)
 FROM node:21 AS build
 
 WORKDIR /build
