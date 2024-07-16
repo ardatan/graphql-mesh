@@ -345,6 +345,7 @@ export function createTenv(cwd: string): Tenv {
           'buildx',
           'bake',
           `--set="*.platform=${arch}"`,
+          '--load', // necessary for the ci to load the built image to the local docker for starting
           target,
         );
         await waitForBake;
