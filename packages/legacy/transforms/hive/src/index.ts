@@ -1,6 +1,6 @@
 import type { ExecutionResult, GraphQLSchema } from 'graphql';
-import type { HiveClient, HivePluginOptions } from '@graphql-hive/client';
-import { createHive } from '@graphql-hive/client';
+import type { HiveClient, HivePluginOptions } from '@graphql-hive/core';
+import { createHive } from '@graphql-hive/yoga';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
@@ -105,6 +105,7 @@ export default class HiveTransform implements MeshTransform {
     delegationContext: DelegationContext,
     transformationContext: TransformationContext,
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises -- we dont really care about usage reporting result
     transformationContext.collectUsageCallback(
       {
         schema: delegationContext.transformedSchema,

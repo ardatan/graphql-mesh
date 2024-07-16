@@ -16,7 +16,7 @@ import {
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
 import type { AsyncIterableIteratorOrValue } from '@envelop/core';
-import { createSupergraphSDLFetcher } from '@graphql-hive/client';
+import { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
   OnSubgraphExecuteHook,

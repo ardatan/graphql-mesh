@@ -7,7 +7,7 @@ import type {
   YogaServerOptions,
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
-import type { createSupergraphSDLFetcher } from '@graphql-hive/client';
+import type { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
 import type { Transports, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
 import type { Transport } from '@graphql-mesh/transport-common';
 import type {

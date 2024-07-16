@@ -260,7 +260,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:4.10.4, @apollo/server@npm:^4.0.0, @apollo/server@npm:^4.10.3":
+"@apollo/server@npm:4.10.4, @apollo/server@npm:^4.10.3":
   version: 4.10.4
   resolution: "@apollo/server@npm:4.10.4"
   dependencies:
@@ -4350,7 +4350,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/types@npm:5.0.0, @envelop/types@npm:^5.0.0":
+"@envelop/types@npm:5.0.0":
   version: 5.0.0
   resolution: "@envelop/types@npm:5.0.0"
   dependencies:
@@ -4962,6 +4962,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-hive/apollo@npm:^0.33.4":
+  version: 0.33.4
+  resolution: "@graphql-hive/apollo@npm:0.33.4"
+  dependencies:
+    "@graphql-hive/core": "npm:0.5.0"
+  peerDependencies:
+    "@apollo/server": ^4.0.0
+    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/8b43f82ad77a234fd7e6dd6bcca3578b1edda1e58590567249e6789df4a3afb9f085f313b432a457c9a13af7e86b784e8bcde2f66224aa658db5b07325ba9d67
+  languageName: node
+  linkType: hard
+
 "@graphql-hive/cli@npm:0.38.5":
   version: 0.38.5
   resolution: "@graphql-hive/cli@npm:0.38.5"
@@ -4991,29 +5003,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/client@npm:^0.32.0":
-  version: 0.32.0
-  resolution: "@graphql-hive/client@npm:0.32.0"
-  dependencies:
-    "@apollo/server": "npm:^4.0.0"
-    "@envelop/types": "npm:^5.0.0"
-    "@graphql-hive/core": "npm:^0.2.4"
-    "@graphql-tools/utils": "npm:^10.0.0"
-    async-retry: "npm:1.3.3"
-    axios: "npm:^1.6.0"
-    tiny-lru: "npm:8.0.2"
-  peerDependencies:
-    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  dependenciesMeta:
-    "@apollo/server":
-      optional: true
-    "@envelop/types":
-      optional: true
-  checksum: 10c0/85e5436658573f82bb7d6a032a8a5445e0039013203c600dc7cdd0cd86b50a90df5c3c82660ae04bef240542569d34a6552afa0f6f49c6e70538692dcafe4ba8
-  languageName: node
-  linkType: hard
-
-"@graphql-hive/core@npm:0.5.0":
+"@graphql-hive/core@npm:0.5.0, @graphql-hive/core@npm:^0.5.0":
   version: 0.5.0
   resolution: "@graphql-hive/core@npm:0.5.0"
   dependencies:
@@ -5028,14 +5018,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/core@npm:^0.2.4":
-  version: 0.2.4
-  resolution: "@graphql-hive/core@npm:0.2.4"
+"@graphql-hive/yoga@npm:^0.33.3":
+  version: 0.33.3
+  resolution: "@graphql-hive/yoga@npm:0.33.3"
   dependencies:
-    lodash.sortby: "npm:4.7.0"
+    "@graphql-hive/core": "npm:0.5.0"
+    tiny-lru: "npm:8.0.2"
   peerDependencies:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/e3e57c670866a3f590c83fbc75f26682d749a3ebf3ef17f0f0ac109c9601157c1506a751dfc1976e93c8fc85e6489f038679a84f1b8e9e85b410fa93d0ab0e04
+    graphql-yoga: ^5.0.0
+  checksum: 10c0/b43b0a617bccd5dc037bdbee83a542226e85094749dd5d8371e3f91cf9d3d105290ad45cdc93cb7ad4cb4610459c606d690532193cdbb8516bccf3177d0ce665
   languageName: node
   linkType: hard
 
@@ -5576,7 +5568,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
-    "@graphql-hive/client": "npm:^0.32.0"
+    "@graphql-hive/core": "npm:^0.5.0"
+    "@graphql-hive/yoga": "npm:^0.33.3"
     "@graphql-mesh/string-interpolation": "npm:0.5.4"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.4
@@ -5881,7 +5874,7 @@ __metadata:
   resolution: "@graphql-mesh/serve-runtime@workspace:packages/serve-runtime"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
-    "@graphql-hive/client": "npm:^0.32.0"
+    "@graphql-hive/apollo": "npm:^0.33.4"
     "@graphql-mesh/cross-helpers": "npm:^0.4.4"
     "@graphql-mesh/fusion-runtime": "npm:^0.5.0"
     "@graphql-mesh/plugin-hive": "npm:^0.99.0"
@@ -6080,7 +6073,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive"
   dependencies:
-    "@graphql-hive/client": "npm:^0.32.0"
+    "@graphql-hive/core": "npm:^0.5.0"
+    "@graphql-hive/yoga": "npm:^0.33.3"
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
     "@graphql-tools/delegate": "npm:^10.0.12"
   peerDependencies:
@@ -13353,7 +13347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.6.5, axios@npm:^1.7.2":
+"axios@npm:^1.6.1, axios@npm:^1.6.5, axios@npm:^1.7.2":
   version: 1.7.2
   resolution: "axios@npm:1.7.2"
   dependencies:
