@@ -16,7 +16,7 @@ import {
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
 import type { AsyncIterableIteratorOrValue } from '@envelop/core';
-import { createSchemaFetcher } from '@graphql-hive/yoga';
+import { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
   OnSubgraphExecuteHook,
@@ -141,11 +141,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           'You must provide HIVE_CDN_KEY environment variables or `key` in the hive config',
         );
       }
-      const fetcher = createSchemaFetcher({
+      const fetcher = createSupergraphSDLFetcher({
         endpoint: cdnEndpoint,
         key: cdnKey,
       });
-      unifiedGraphFetcher = () => fetcher().then(({ sdl }) => sdl);
+      unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
     } else {
       const errorMessage =
         'You must provide a supergraph schema in the `supergraph` config or point to a supergraph file with `--supergraph` parameter or `HIVE_CDN_ENDPOINT` environment variable or `./supergraph.graphql` file';

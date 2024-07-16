@@ -4962,6 +4962,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-hive/apollo@npm:^0.33.4":
+  version: 0.33.4
+  resolution: "@graphql-hive/apollo@npm:0.33.4"
+  dependencies:
+    "@graphql-hive/core": "npm:0.5.0"
+  peerDependencies:
+    "@apollo/server": ^4.0.0
+    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/8b43f82ad77a234fd7e6dd6bcca3578b1edda1e58590567249e6789df4a3afb9f085f313b432a457c9a13af7e86b784e8bcde2f66224aa658db5b07325ba9d67
+  languageName: node
+  linkType: hard
+
 "@graphql-hive/cli@npm:0.38.5":
   version: 0.38.5
   resolution: "@graphql-hive/cli@npm:0.38.5"
@@ -5862,7 +5874,7 @@ __metadata:
   resolution: "@graphql-mesh/serve-runtime@workspace:packages/serve-runtime"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
-    "@graphql-hive/yoga": "npm:^0.33.3"
+    "@graphql-hive/apollo": "npm:^0.33.4"
     "@graphql-mesh/cross-helpers": "npm:^0.4.4"
     "@graphql-mesh/fusion-runtime": "npm:^0.5.0"
     "@graphql-mesh/plugin-hive": "npm:^0.99.0"
