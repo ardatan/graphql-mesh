@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MIME Type with Version generates the schema correctly 1`] = `
-"schema @transport(subgraph: "test", kind: "rest", location: "https://app.orbit.love/api/v1", headers: [["accept", "application/json;v=2"]]) {
+"schema @transport(subgraph: "test", kind: "rest", location: "", headers: [["accept", "application/json;v=2"]]) {
   query: Query
   mutation: Mutation
 }
