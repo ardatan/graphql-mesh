@@ -37,8 +37,9 @@ import type {
   TypeMap,
   TypeVal,
 } from '@graphql-mesh/transport-thrift';
-import type { ImportFn, Logger } from '@graphql-mesh/types';
+import type { ImportFn, Logger, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
 export interface GraphQLThriftLoaderOptions {
   subgraphName: string;
@@ -50,7 +51,7 @@ export interface GraphQLThriftLoaderOptions {
 
   baseDir?: string;
   schemaHeaders?: Record<string, string>;
-  fetchFn?: typeof fetch;
+  fetchFn?: MeshFetch;
   logger?: Logger;
   importFn?: ImportFn;
 }
@@ -76,7 +77,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
 
   baseDir = process.cwd(),
   schemaHeaders = {},
-  fetchFn = globalThis.fetch,
+  fetchFn = defaultFetch,
   logger = new DefaultLogger('Thrift'),
   importFn = defaultImportFn,
 }: GraphQLThriftLoaderOptions) {
@@ -106,7 +107,7 @@ interface ParseWithIncludesOpts {
   includesMap: Record<string, ThriftDocument>;
   baseDir: string;
   schemaHeaders: Record<string, string>;
-  fetchFn: typeof fetch;
+  fetchFn: MeshFetch;
   logger: Logger;
   importFn: ImportFn;
 }

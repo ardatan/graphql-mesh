@@ -9040,6 +9040,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.99.0"
     "@graphql-mesh/utils": "npm:^0.99.0"
     "@graphql-tools/utils": "npm:10.3.2"
+    "@whatwg-node/fetch": "npm:^0.9.18"
     graphql-scalars: "npm:^1.22.4"
     thrift: "npm:^0.20.0"
   peerDependencies:
@@ -12232,7 +12233,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/fetch@npm:0.9.18, @whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.4":
+"@whatwg-node/fetch@npm:0.9.18, @whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.18, @whatwg-node/fetch@npm:^0.9.4":
   version: 0.9.18
   resolution: "@whatwg-node/fetch@npm:0.9.18"
   dependencies:

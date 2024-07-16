@@ -54,7 +54,6 @@ export default class ThriftHandler implements MeshHandler {
         operationHeaders: this.config.operationHeaders,
         serviceName: this.config.serviceName,
         baseDir: this.baseDir,
-        // @ts-expect-error TODO: MeshFetch doesnt match the whatwg fetch
         fetchFn,
         logger: this.logger,
         importFn: this.importFn,
