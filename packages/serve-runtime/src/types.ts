@@ -7,7 +7,7 @@ import type {
   YogaServerOptions,
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
-import type { createSupergraphSDLFetcher } from '@graphql-hive/client';
+import type { createSchemaFetcher } from '@graphql-hive/yoga';
 import type { Transports, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
 import type { Transport } from '@graphql-mesh/transport-common';
 import type {
@@ -88,7 +88,7 @@ interface MeshServeConfigWithHive<TContext> extends MeshServeConfigForSupergraph
   hive: YamlConfig.HivePlugin & HiveCDNOptions;
 }
 
-type HiveCDNFetcherOptions = Parameters<typeof createSupergraphSDLFetcher>[0];
+type HiveCDNFetcherOptions = Parameters<typeof createSchemaFetcher>[0];
 
 interface HiveCDNOptions extends Partial<HiveCDNFetcherOptions> {
   /**
