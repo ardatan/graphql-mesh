@@ -364,7 +364,7 @@ jobs:
             *.platform=linux/amd64
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
-          load: true
+          load: true # so that the e2e tests can use the cached image
       - name: test
         timeout-minutes: 5
         run: yarn test:e2e docker --detectOpenHandles
