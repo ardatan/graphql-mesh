@@ -105,6 +105,7 @@ export default class HiveTransform implements MeshTransform {
     delegationContext: DelegationContext,
     transformationContext: TransformationContext,
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises -- we dont really care about usage reporting result
     transformationContext.collectUsageCallback(
       {
         schema: delegationContext.transformedSchema,
