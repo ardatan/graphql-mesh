@@ -361,6 +361,7 @@ jobs:
         uses: docker/bake-action@v4
         with:
           set: |
+            *.platform=linux/amd64
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
           load: true
