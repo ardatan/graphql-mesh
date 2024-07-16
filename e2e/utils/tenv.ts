@@ -345,6 +345,7 @@ export function createTenv(cwd: string): Tenv {
           'buildx',
           'bake',
           `--set="*.platform=${arch}"`,
+          '--load',
           target,
         );
         await waitForBake;
