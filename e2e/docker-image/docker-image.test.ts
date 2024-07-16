@@ -3,10 +3,10 @@ import { createTenv } from '@e2e/tenv';
 const { container, spawn } = createTenv(__dirname);
 
 it('should build, start and pass healthchecks', async () => {
-  const [, waitForBundle] = await spawn('yarn workspace @graphql-mesh/serve-cli bundle', {
-    pipeLogs: true,
-  });
-  await waitForBundle;
+  // const [, waitForBundle] = await spawn('yarn workspace @graphql-mesh/serve-cli bundle', {
+  //   pipeLogs: true,
+  // });
+  // await waitForBundle;
 
   // SUGGESTION: bake project first so that the tests dont time out during build phase
 

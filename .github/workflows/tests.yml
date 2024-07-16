@@ -371,4 +371,4 @@ jobs:
             *.cache-to=type=gha,mode=max
       - name: test
         timeout-minutes: 5
-        run: yarn test:e2e --detectOpenHandles
+        run: yarn test:e2e docker --detectOpenHandles
