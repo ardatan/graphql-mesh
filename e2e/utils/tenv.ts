@@ -347,7 +347,6 @@ export function createTenv(cwd: string): Tenv {
           `--set="*.platform=${arch}"`,
           ...(isCI()
             ? [
-                '--set="*.cache-from=type=gha"', // use github actions cache for speeding up the build
                 '--load', // load the built image to the local docker for starting (without this, the image wont be available for running locally)
               ]
             : []),
