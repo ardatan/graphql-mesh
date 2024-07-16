@@ -26,7 +26,6 @@ const schemas: Record<string, string> = {
   'Relative Dereference': 'relative_dereference/api.yml',
   'Default Value as Integer': 'default-int-value.yml',
   'algolia-refs-subset': 'algolia-refs-subset/search/spec.yml', // test case for refs in path and responses
-  Orbit: 'https://app.orbit.love/api-docs/v1/swagger.json',
   StackExchange:
     'https://raw.githubusercontent.com/grokify/api-specs/master/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml',
   YouTrack: 'youtrack.json',
