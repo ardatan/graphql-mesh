@@ -369,4 +369,4 @@ jobs:
           load: true
       - name: test
         timeout-minutes: 5
-        run: yarn test:e2e docker --detectOpenHandles
+        run: yarn test:e2e --detectOpenHandles
