@@ -273,8 +273,18 @@ export function createTenv(cwd: string): Tenv {
       let proc: Proc,
         waitForExit: Promise<void> | null = null;
       if (serveRunner === 'docker') {
-        // TODO: changing port from within mesh.config.ts wont work in docker runner
-        const supergraphFile = supergraph ? path.basename(supergraph) : null;
+        let supergraphFile = '';
+        if (supergraph) {
+          // we need to replace all local servers in the supergraph to use docker's local hostname.
+          // without this, the services running on the host wont be accessible by the docker container
+          await fs.writeFile(
+            supergraph,
+            (await fs.readFile(supergraph, 'utf8'))
+              .replaceAll('0.0.0.0', 'host.docker.internal')
+              .replaceAll('localhost', 'host.docker.internal'),
+          );
+          supergraphFile = path.basename(supergraph);
+        }
         const meshConfigContents = await fs
           .readFile(path.resolve(cwd, 'mesh.config.ts'), 'utf8')
           .catch(() => ''); // ignore if there is no mesh config
@@ -282,7 +292,7 @@ export function createTenv(cwd: string): Tenv {
           env,
           name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
           image: 'ghcr.io/ardatan/mesh-serve',
-          containerPort: port,
+          containerPort: port, // TODO: changing port from within mesh.config.ts wont work in docker runner
           healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
           cmd: [createPortArg(port), supergraph && createArg('supergraph', supergraphFile)],
           volumes: [
