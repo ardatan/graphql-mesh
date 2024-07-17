@@ -137,6 +137,9 @@ async function buildContainerImageTargetOnce(
   target: keyof typeof CONTAINER_IMAGE_TARGETS,
   { pipeLogs }: { pipeLogs?: boolean },
 ) {
+  if (['1', 't', 'true', 'y', 'yes'].includes(process.env.E2E_SKIP_BUILD_CONTAINER)) {
+    return;
+  }
   if (!buildingContainerImageTarget) {
     buildingContainerImageTarget = (async function buildContainerImageTarget() {
       // bundle
