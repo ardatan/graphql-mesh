@@ -137,18 +137,20 @@ async function buildContainerImageTargetOnce(
   target: keyof typeof CONTAINER_IMAGE_TARGETS,
   { pipeLogs }: { pipeLogs?: boolean },
 ) {
-  if (['1', 't', 'true', 'y', 'yes'].includes(process.env.E2E_SKIP_BUILD_CONTAINER)) {
+  if (boolEnv('E2E_SKIP_BUILD_CONTAINER')) {
     return;
   }
   if (!buildingContainerImageTarget) {
     buildingContainerImageTarget = (async function buildContainerImageTarget() {
-      // bundle
-      const [, waitForBundle] = await spawn(
-        { cwd: __project, shell: true, pipeLogs },
-        'yarn',
-        'bundle',
-      );
-      await waitForBundle;
+      if (!boolEnv('E2E_SKIP_BUNDLE')) {
+        // bundle
+        const [, waitForBundle] = await spawn(
+          { cwd: __project, shell: true, pipeLogs },
+          'yarn',
+          'bundle',
+        );
+        await waitForBundle;
+      }
 
       // prefer building just for the os arch instead of multi-platform builds
       const [archProc, waitForArch] = await spawn(
@@ -729,4 +731,8 @@ class DockerError extends Error {
     this.name = 'DockerError';
     this.message = message + '\n' + container.getStd('both');
   }
+}
+
+function boolEnv(name: string): boolean {
+  return ['1', 't', 'true', 'y', 'yes'].includes(process.env[name]);
 }
