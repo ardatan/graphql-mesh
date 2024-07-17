@@ -20,8 +20,6 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ github.ref == 'refs/heads/master' && 'latest' || github.sha }} # TODO: actual versions to publish
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -44,7 +42,9 @@ jobs:
         run: yarn bundle
       - name: version
         run: |
-          echo "VERSION=${{ github.ref == 'refs/heads/master' && 'latest' || '$(git rev-parse --short HEAD)' }}" >> $GITHUB_ENV
+          export VERSIONS="$(git rev-parse --short HEAD),${{ github.ref_name }}"
+          ${{ github.ref == 'refs/heads/master' && 'export VERSIONS="$VERSIONS,latest"' || '' }}
+          echo VERSIONS="$VERSIONS" >> $GITHUB_ENV
       - name: bake and push
         uses: docker/bake-action@v4
         with:
@@ -61,5 +61,5 @@ jobs:
           message: |
             Published images for this PR are available at:
             ```
-            ghcr.io/ardatan/mesh-serve:${{ env.VERSION }}
+            ghcr.io/ardatan/mesh-serve:${{ github.ref_name }}
             ```
