@@ -502,6 +502,7 @@ export function createTenv(cwd: string): Tenv {
           Binds: Object.values(volumes).map(
             ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
           ),
+          ExtraHosts: networkModeHost ? ['host.docker.internal:host-gateway'] : [],
         },
         Healthcheck: {
           Test: healthcheck,
