@@ -340,7 +340,7 @@ export function createTenv(cwd: string): Tenv {
 
         // TODO: dockerode does not support BuildKit which we use for building and caching
         const [, waitForBake] = await spawn(
-          { cwd: __project, shell: true, env: { VERSION: 'e2e' }, pipeLogs },
+          { cwd: __project, shell: true, env: { VERSIONS: 'e2e' }, pipeLogs },
           'docker',
           'buildx',
           'bake',

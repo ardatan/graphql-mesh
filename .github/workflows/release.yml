@@ -42,7 +42,7 @@ jobs:
         run: yarn bundle
       - name: version
         run: |
-          export VERSIONS="$(git rev-parse --short HEAD),${{ github.ref_name }}"
+          export VERSIONS="$(git rev-parse --short HEAD),${{ github.head_ref || github.ref_name }}"
           ${{ github.ref == 'refs/heads/master' && 'export VERSIONS="$VERSIONS,latest"' || '' }}
           echo VERSIONS="$VERSIONS" >> $GITHUB_ENV
       - name: bake and push
