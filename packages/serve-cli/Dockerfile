@@ -27,4 +27,4 @@ WORKDIR /serve
 COPY --from=build /build .
 
 USER node
-ENTRYPOINT ["dumb-init", "node", "."]
+ENTRYPOINT ["dumb-init", "node", "--enable-source-maps", "."]

@@ -30,6 +30,7 @@ export default defineConfig({
   output: {
     dir: 'bundle',
     format: 'esm',
+    sourcemap: true,
   },
   external: ['uWebSockets.js', 'node-libcurl'],
   plugins: [
