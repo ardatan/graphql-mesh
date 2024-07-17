@@ -31,13 +31,15 @@ function createUpstreamSchema() {
   });
 }
 
+const leftovers = new Set<() => PromiseLike<void>>();
+afterAll(() => Promise.all(Array.from(leftovers).map(l => l())).finally(() => leftovers.clear()));
+
 describe('Hive CDN', () => {
   afterEach(() => {
     delete process.env.HIVE_CDN_ENDPOINT;
     delete process.env.HIVE_CDN_KEY;
   });
   it('respects env vars', async () => {
-    await using disposableStack = new AsyncDisposableStack();
     const cdnServer = createServer((_req, res) => {
       const supergraph = getUnifiedGraphGracefully([
         {
@@ -47,10 +49,8 @@ describe('Hive CDN', () => {
       ]);
       res.end(supergraph);
     });
-    await new Promise<void>(resolve => {
-      cdnServer.listen(0, resolve);
-    });
-    disposableStack.defer(
+    cdnServer.listen();
+    leftovers.add(
       () =>
         new Promise<void>((resolve, reject) => {
           cdnServer.close(err => (err ? reject(err) : resolve()));
@@ -59,7 +59,7 @@ describe('Hive CDN', () => {
     process.env.HIVE_CDN_ENDPOINT = `http://localhost:${(cdnServer.address() as AddressInfo).port}`;
     process.env.HIVE_CDN_KEY = 'key';
     const serveRuntime = createServeRuntime();
-    disposableStack.use(serveRuntime);
+    leftovers.add(() => serveRuntime[Symbol.asyncDispose]());
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
