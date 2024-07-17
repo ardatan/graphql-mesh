@@ -13,6 +13,20 @@ import sucrase from '@rollup/plugin-sucrase';
  * Needs to be used with the {@link packagejson} rollup plugin.
  *
  * Is a map of destination path to the source file to bundle.
+ *
+ * Include a plugin by adding to the {@link deps}:
+ * ```json
+ * {
+ *   "node_modules/<package name>/index": "<relative path to main source file>"
+ * }
+ * ```
+ *
+ * For example, include the `@graphql-mesh/plugin-http-cache` plugin by adding:
+ * ```json
+ * {
+ *   "node_modules/@graphql-mesh/plugin-http-cache/index": "../plugins/http-cache/src/index.ts"
+ * }
+ * ```
  */
 const deps = {
   'node_modules/@graphql-mesh/serve-cli/index': 'src/index.ts',
@@ -20,6 +34,7 @@ const deps = {
   'node_modules/@graphql-mesh/transport-http/index': '../transports/http/src/index.ts',
   // extras for docker only
   'node_modules/@graphql-mesh/plugin-prometheus/index': '../plugins/prometheus/src/index.ts',
+  'node_modules/@graphql-mesh/plugin-http-cache/index': '../plugins/http-cache/src/index.ts',
 };
 
 export default defineConfig({
