@@ -261,7 +261,8 @@ export function createTenv(cwd: string): Tenv {
     async serve(opts) {
       let { port = await getAvailablePort(), supergraph, pipeLogs, env } = opts || {};
 
-      let proc: Proc, waitForExit: Promise<void>;
+      let proc: Proc,
+        waitForExit: Promise<void> | null = null;
       if (serveRunner === 'docker') {
         // TODO: changing port from within mesh.config.ts wont work in docker runner
         const cont = await tenv.container({
@@ -280,7 +281,6 @@ export function createTenv(cwd: string): Tenv {
           ],
           pipeLogs,
         });
-        waitForExit = Promise.resolve(); // no wait for exit in containers
         proc = cont;
         port = cont.port;
       } /* serveRunner === 'node' */ else {
@@ -318,7 +318,7 @@ export function createTenv(cwd: string): Tenv {
       const ctrl = new AbortController();
       await Promise.race([
         waitForExit
-          .then(() =>
+          ?.then(() =>
             Promise.reject(
               new Error(`Serve exited successfully, but shouldn't have\n${proc.getStd('both')}`),
             ),
