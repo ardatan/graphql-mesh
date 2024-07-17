@@ -345,15 +345,22 @@ jobs:
         run: yarn bob check
 
   e2e:
-    name: e2e / node ${{matrix.node-version}}
+    name: e2e / runner ${{matrix.serve-runner}} / node ${{matrix.node-version}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node-version:
-          - 18
-          - 20
-          - 22
+        serve-runner: [node, docker]
+        include:
+          - serve-runner: node
+            node-version: 18
+          - serve-runner: node
+            node-version: 20
+          - serve-runner: node
+            node-version: 22
+          - serve-runner: docker
+            node-version: 22
+
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -381,4 +388,6 @@ jobs:
           load: true
       - name: test
         timeout-minutes: 5
+        env:
+          E2E_SERVE_RUNNER: ${{matrix.serve-runner}}
         run: yarn test:e2e --detectOpenHandles
