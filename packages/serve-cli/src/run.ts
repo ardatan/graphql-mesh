@@ -132,33 +132,24 @@ export async function run({
     ...opts,
   };
 
-  let unifiedGraphPath: UnifiedGraphConfig;
+  let unifiedGraphPath: UnifiedGraphConfig | null = null;
   if ('supergraph' in config) {
+    // path
     unifiedGraphPath = config.supergraph;
+    log.info(`Loading Supergraph from ${unifiedGraphPath}`);
+  } else if ('hive' in config || process.env.HIVE_CDN_ENDPOINT) {
+    // hive
+    log.info('Loading Supergraph from Hive CDN');
+  } else if (!('proxy' in config)) {
+    // default
+    unifiedGraphPath = 'supergraph.graphql';
+    log.info(`Loading Supergraph from ${unifiedGraphPath}`);
   }
-
-  if (!('proxy' in config) && !('hive' in config)) {
-    unifiedGraphPath = './supergraph.graphql';
-  }
-
-  if ('hive' in config || process.env.HIVE_CDN_ENDPOINT) {
-    unifiedGraphPath = 'Hive CDN';
-  }
-
-  let loadingMessage: string;
-
-  if (typeof unifiedGraphPath === 'string') {
-    loadingMessage = `Loading Supergraph from ${unifiedGraphPath}`;
-  } else {
-    loadingMessage = `Loading Supergraph`;
-  }
-
-  log.info(loadingMessage);
 
   if (cluster.isPrimary) {
     const fork = opts.fork === true ? defaultFork : opts.fork;
 
-    if (isValidPath(unifiedGraphPath)) {
+    if (unifiedGraphPath) {
       // eslint-disable-next-line @typescript-eslint/consistent-type-imports
       let watcher: typeof import('@parcel/watcher') | undefined;
       try {
