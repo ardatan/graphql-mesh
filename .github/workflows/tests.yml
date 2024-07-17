@@ -345,13 +345,12 @@ jobs:
         run: yarn bob check
 
   e2e:
-    name: e2e / runner ${{matrix.serve-runner}} / node ${{matrix.node-version}}
+    name: e2e / runner ${{matrix.setup.serve-runner}} / node ${{matrix.setup.node-version}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        serve-runner: [node, docker]
-        include:
+        setup:
           - serve-runner: node
             node-version: 18
           - serve-runner: node
@@ -369,7 +368,7 @@ jobs:
       - name: setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: ${{matrix.node-version}}
+          nodeVersion: ${{matrix.setup.node-version}}
           packageManagerVersion: modern
       - name: prepare
         run: yarn prebuild
@@ -389,5 +388,5 @@ jobs:
       - name: test
         timeout-minutes: 5
         env:
-          E2E_SERVE_RUNNER: ${{matrix.serve-runner}}
+          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn test:e2e --detectOpenHandles
