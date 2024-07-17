@@ -37,7 +37,6 @@ describe('Hive CDN', () => {
     delete process.env.HIVE_CDN_KEY;
   });
   it('respects env vars', async () => {
-    jest.useRealTimers();
     await using disposableStack = new AsyncDisposableStack();
     const cdnServer = createServer((_req, res) => {
       const supergraph = getUnifiedGraphGracefully([
