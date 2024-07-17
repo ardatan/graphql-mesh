@@ -280,8 +280,8 @@ export function createTenv(cwd: string): Tenv {
           await fs.writeFile(
             supergraph,
             (await fs.readFile(supergraph, 'utf8'))
-              .replaceAll('0.0.0.0', 'host.docker.internal')
-              .replaceAll('localhost', 'host.docker.internal'),
+              .replaceAll('0.0.0.0', boolEnv('CI') ? 'localhost' : 'host.docker.internal')
+              .replaceAll('localhost', boolEnv('CI') ? 'localhost' : 'host.docker.internal'),
           );
           supergraphFile = path.basename(supergraph);
         }
@@ -502,7 +502,6 @@ export function createTenv(cwd: string): Tenv {
           Binds: Object.values(volumes).map(
             ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
           ),
-          ExtraHosts: networkModeHost ? ['host.docker.internal:host-gateway'] : [],
         },
         Healthcheck: {
           Test: healthcheck,
