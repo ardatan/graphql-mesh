@@ -10,3 +10,4 @@ supergraph-invalid.graphql
 __generated__/
 .changeset
 CHANGELOG.md
+Dockerfile
