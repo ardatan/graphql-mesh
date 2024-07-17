@@ -285,8 +285,11 @@ export function createTenv(cwd: string): Tenv {
           );
           supergraphFile = path.basename(supergraph);
         }
-        const meshConfigContents = await fs
+        const meshConfigTSContents = await fs
           .readFile(path.resolve(cwd, 'mesh.config.ts'), 'utf8')
+          .catch(() => ''); // ignore if there is no mesh config
+        const meshConfigJSContents = await fs
+          .readFile(path.resolve(cwd, 'mesh.config.js'), 'utf8')
           .catch(() => ''); // ignore if there is no mesh config
         const cont = await tenv.container({
           env,
@@ -296,10 +299,16 @@ export function createTenv(cwd: string): Tenv {
           healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
           cmd: [createPortArg(port), supergraph && createArg('supergraph', supergraphFile)],
           volumes: [
-            ...(meshConfigContents.includes('@graphql-mesh/serve-cli')
+            ...(meshConfigTSContents.includes('@graphql-mesh/serve-cli')
               ? [
-                  // mount config only if defines something for serve-cli
+                  // mount TS config only if defines something for serve-cli
                   { host: 'mesh.config.ts', container: '/serve/mesh.config.ts' },
+                ]
+              : []),
+            ...(meshConfigJSContents.includes('@graphql-mesh/serve-cli')
+              ? [
+                  // mount JS config only if defines something for serve-cli
+                  { host: 'mesh.config.js', container: '/serve/mesh.config.js' },
                 ]
               : []),
             ...(supergraph
