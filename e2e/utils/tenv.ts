@@ -201,6 +201,13 @@ export interface ContainerOptions extends ProcOptions {
    */
   containerPort: number;
   /**
+   * If set to true, the network mode for the running container will be set to "host".
+   *
+   * This means that the container will be running in the same network as the host and
+   * will be able to access all services as well as expose all of its ports to the host.
+   */
+  networkModeHost?: boolean;
+  /**
    * The healtcheck test command to run on the container.
    * If provided, the run function will wait for the container to become healthy.
    */
@@ -266,20 +273,26 @@ export function createTenv(cwd: string): Tenv {
       if (serveRunner === 'docker') {
         // TODO: changing port from within mesh.config.ts wont work in docker runner
         const supergraphBasename = path.basename(supergraph);
+        const meshConfigContents = await fs.readFile(path.resolve(cwd, 'mesh.config.ts'), 'utf8');
         const cont = await tenv.container({
           env,
           name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
           image: 'ghcr.io/ardatan/mesh-serve',
-          containerPort: 4000,
-          healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:4000/healthcheck'],
-          cmd: [supergraph && createArg('supergraph', supergraphBasename)],
+          containerPort: port,
+          healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
+          cmd: [createPortArg(port), supergraph && createArg('supergraph', supergraphBasename)],
           volumes: [
-            {
-              host: 'mesh.config.ts',
-              container: '/serve/mesh.config.ts',
-            },
+            ...(meshConfigContents.includes('@graphql-mesh/serve-cli')
+              ? [
+                  // mount config only if defines something for serve-cli
+                  { host: 'mesh.config.ts', container: '/serve/mesh.config.ts' },
+                ]
+              : []),
             ...(supergraph
-              ? [{ host: supergraph, container: `/serve/${supergraphBasename}` }]
+              ? [
+                  // mount supergraph only if available
+                  { host: supergraph, container: `/serve/${supergraphBasename}` },
+                ]
               : []),
           ],
           pipeLogs,
@@ -413,6 +426,7 @@ export function createTenv(cwd: string): Tenv {
       image,
       env = {},
       containerPort,
+      networkModeHost,
       healthcheck,
       pipeLogs,
       cmd,
@@ -458,6 +472,7 @@ export function createTenv(cwd: string): Tenv {
         Cmd: cmd?.filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
+          NetworkMode: networkModeHost ? 'host' : 'bridge',
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
           },
