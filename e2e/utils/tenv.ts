@@ -265,19 +265,22 @@ export function createTenv(cwd: string): Tenv {
         waitForExit: Promise<void> | null = null;
       if (serveRunner === 'docker') {
         // TODO: changing port from within mesh.config.ts wont work in docker runner
+        const supergraphBasename = path.basename(supergraph);
         const cont = await tenv.container({
           env,
           name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
           image: 'ghcr.io/ardatan/mesh-serve',
           containerPort: 4000,
           healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:4000/healthcheck'],
-          cmd: [supergraph && createArg('supergraph', supergraph)],
+          cmd: [supergraph && createArg('supergraph', supergraphBasename)],
           volumes: [
             {
               host: 'mesh.config.ts',
               container: '/serve/mesh.config.ts',
             },
-            ...(supergraph ? [{ host: supergraph, container: path.basename(supergraph) }] : []),
+            ...(supergraph
+              ? [{ host: supergraph, container: `/serve/${supergraphBasename}` }]
+              : []),
           ],
           pipeLogs,
         });
