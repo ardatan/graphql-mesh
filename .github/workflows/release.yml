@@ -61,5 +61,5 @@ jobs:
           message: |
             Published images for this PR are available at:
             ```
-            ghcr.io/ardatan/mesh-serve:${{ github.ref_name }}
+            ghcr.io/ardatan/mesh-serve:${{ github.head_ref  }}
             ```
