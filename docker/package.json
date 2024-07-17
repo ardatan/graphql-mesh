@@ -1,7 +1,0 @@
-{
-  "name": "mesh-serve-docker",
-  "dependencies": {
-    "@graphql-mesh/serve-cli": "0.7.0",
-    "graphql": "16.9.0"
-  }
-}

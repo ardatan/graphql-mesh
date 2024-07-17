@@ -5,7 +5,7 @@
   "access": "restricted",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["website", "@graphql-mesh/container"],
+  "ignore": ["website"],
   "changelog": ["@changesets/changelog-github", { "repo": "urigo/graphql-mesh" }],
   "snapshot": {
     "useCalculatedVersion": true,

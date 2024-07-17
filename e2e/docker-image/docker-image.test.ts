@@ -1,27 +1,29 @@
-import { createTenv, type Container } from '@e2e/tenv';
+import { createTenv } from '@e2e/tenv';
 
-const { container } = createTenv(__dirname);
+const { container, spawn } = createTenv(__dirname);
 
-let mesh!: Container;
-beforeAll(async () => {
-  const isCI = !!process.env.CI;
-  const image = isCI ? 'ghcr.io/ardatan/mesh-serve:test' : 'graphql-mesh-gateway';
+it('should build, start and pass healthchecks', async () => {
+  const [, waitForBundle] = await spawn('yarn workspace @graphql-mesh/serve-cli bundle');
+  await waitForBundle;
 
-  mesh = await container({
-    name: 'graphql-mesh-test',
-    image,
+  // SUGGESTION: bake project first so that the tests dont time out during build phase
+
+  const { port } = await container({
+    name: 'serve-cli-e2e-docker-image',
+    image: 'ghcr.io/ardatan/mesh-serve',
     containerPort: 4000,
     healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:4000/healthcheck'],
-    pipeLogs: true,
-    skipImagePulling: true,
-    volumes: [`${process.cwd()}/e2e/docker-image/mesh.config.ts:/app/mesh.config.ts:ro`],
+    volumes: [
+      {
+        host: 'mesh.config.ts',
+        container: '/serve/mesh.config.ts',
+      },
+    ],
   });
-});
 
-it('should pass health checks', async () => {
-  const healthcheckResponse = await fetch(`http://0.0.0.0:${mesh.port}/healthcheck`);
+  const healthcheckResponse = await fetch(`http://0.0.0.0:${port}/healthcheck`);
   expect(healthcheckResponse.status).toBe(200);
 
-  const readinessResponse = await fetch(`http://0.0.0.0:${mesh.port}/readiness`);
+  const readinessResponse = await fetch(`http://0.0.0.0:${port}/readiness`);
   expect(readinessResponse.status).toBe(200);
 });

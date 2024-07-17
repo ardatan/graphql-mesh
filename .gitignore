@@ -1,6 +1,7 @@
 node_modules/
 temp
 dist/
+bundle/
 out
 build
 generated
