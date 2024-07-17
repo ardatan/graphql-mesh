@@ -20,7 +20,9 @@ import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
 
 describe('Serve Runtime', () => {
-  jest.useFakeTimers();
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
   function createSupergraphRuntime() {
     return createServeRuntime({
       logging: false,
@@ -138,6 +140,7 @@ describe('Serve Runtime', () => {
       delete process.env.HIVE_CDN_KEY;
     });
     it('respects env vars', async () => {
+      jest.useRealTimers();
       await using disposableStack = new AsyncDisposableStack();
       const cdnServer = createServer((req, res) => {
         const supergraph = getUnifiedGraphGracefully([
