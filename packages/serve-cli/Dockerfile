@@ -18,9 +18,9 @@ RUN apt-get update && apt-get install -y \
   # for healthchecks
   wget curl \
   # for proper signal propagation
-  dumb-init \
+  dumb-init && \
   # clean
-  && apt-get clean
+  apt-get clean
 
 WORKDIR /serve
 
