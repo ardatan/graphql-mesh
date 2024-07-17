@@ -496,13 +496,18 @@ export function createTenv(cwd: string): Tenv {
         HostConfig: {
           AutoRemove: true,
           NetworkMode: networkModeHost ? 'host' : 'bridge',
+          ExtraHosts:
+            networkModeHost && boolEnv('CI')
+              ? // docker for linux (which is used in the CI) will have the host be on 172.17.0.1 always
+                ['host.docker.internal:172.17.0.1']
+              : // locally the host.docker.internal should just work when using the "host" network mode
+                [],
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
           },
           Binds: Object.values(volumes).map(
             ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
           ),
-          ExtraHosts: networkModeHost ? ['host.docker.internal:localhost'] : [],
         },
         Healthcheck: {
           Test: healthcheck,
