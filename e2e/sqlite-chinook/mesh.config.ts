@@ -1,12 +1,11 @@
 import { resolve } from 'path';
 import { Args } from '@e2e/args';
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadSQLiteSubgraph } from '@omnigraph/sqlite';
 
 const args = Args(process.argv);
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   output: args.get('output'),
   subgraphs: [
     {
@@ -15,9 +14,4 @@ export const composeConfig = defineComposeConfig({
       }),
     },
   ],
-});
-
-export const serveConfig = defineServeConfig({
-  port: args.getPort(),
-  supergraph: args.get('supergraph'),
 });
