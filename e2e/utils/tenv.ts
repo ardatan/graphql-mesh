@@ -280,8 +280,10 @@ export function createTenv(cwd: string): Tenv {
           await fs.writeFile(
             supergraph,
             (await fs.readFile(supergraph, 'utf8'))
-              .replaceAll('0.0.0.0', 'host.docker.internal')
-              .replaceAll('localhost', 'host.docker.internal'),
+              // docker for linux (which is used in the CI) will have the host be on 172.17.0.1 always
+              // locally the host.docker.internal should just work when using the "host" network mode
+              .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
+              .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
           );
           supergraphFile = path.basename(supergraph);
         }
@@ -496,12 +498,6 @@ export function createTenv(cwd: string): Tenv {
         HostConfig: {
           AutoRemove: true,
           NetworkMode: networkModeHost ? 'host' : 'bridge',
-          ExtraHosts:
-            networkModeHost && boolEnv('CI')
-              ? // docker for linux (which is used in the CI) will have the host be on 172.17.0.1 always
-                ['host.docker.internal:172.17.0.1']
-              : // locally the host.docker.internal should just work when using the "host" network mode
-                [],
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
           },
