@@ -58,19 +58,19 @@ let program = new Command()
     'host to use for serving',
     release().toLowerCase().includes('microsoft') ? '127.0.0.1' : '0.0.0.0',
   )
-  .option(
-    '-p, --port <number>',
-    'port to use for serving',
-    v => {
-      const port = parseInt(v);
-      if (isNaN(port)) {
-        throw new InvalidArgumentError('not a number.');
-      }
-      return port;
-    },
-    4000,
+  .addOption(
+    new Option('-p, --port <number>', 'port to use for serving')
+      .env('PORT')
+      .default(4000)
+      .argParser(v => {
+        const port = parseInt(v);
+        if (isNaN(port)) {
+          throw new InvalidArgumentError('not a number.');
+        }
+        return port;
+      }),
   )
-  .addOption(new Option('--supergraph <path>', 'path to the supergraph schema'));
+  .option('--supergraph <path>', 'path to the supergraph schema');
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */
