@@ -372,11 +372,12 @@ jobs:
           packageManagerVersion: modern
       - name: prepare
         run: yarn prebuild
-      # we only bundle and bake to speed up e2es and avoid timeouts
       - name: bundle
         run: yarn bundle
       - name: bake
         uses: docker/bake-action@v5
+        env:
+          VERSION: e2e
         with:
           set: |
             *.platform=linux/amd64
@@ -388,5 +389,6 @@ jobs:
       - name: test
         timeout-minutes: 5
         env:
+          E2E_SKIP_BUILD_CONTAINER: 1 # because we already bundled, baked and tagged with version matching the tests
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn test:e2e --detectOpenHandles
