@@ -26,5 +26,7 @@ WORKDIR /serve
 
 COPY --from=build /build .
 
+RUN chown -R node .
+
 USER node
 ENTRYPOINT ["dumb-init", "node", "--enable-source-maps", "."]
