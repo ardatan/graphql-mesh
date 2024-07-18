@@ -11,3 +11,4 @@ __generated__/
 .changeset
 CHANGELOG.md
 Dockerfile
+bundle/
