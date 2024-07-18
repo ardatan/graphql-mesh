@@ -376,8 +376,6 @@ jobs:
         run: yarn bundle
       - name: bake
         uses: docker/bake-action@v5
-        env:
-          VERSION: e2e
         with:
           targets: e2e
           set: |
