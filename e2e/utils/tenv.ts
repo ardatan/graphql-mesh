@@ -6,6 +6,7 @@ import os from 'os';
 import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
+import { glob } from 'glob';
 import type { ExecutionResult } from 'graphql';
 import {
   IntrospectAndCompose,
@@ -273,7 +274,8 @@ export function createTenv(cwd: string): Tenv {
       let proc: Proc,
         waitForExit: Promise<void> | null = null;
       if (serveRunner === 'docker') {
-        let supergraphFile = '';
+        const volumes: ContainerOptions['volumes'] = [];
+
         if (supergraph) {
           // we need to replace all local servers in the supergraph to use docker's local hostname.
           // without this, the services running on the host wont be accessible by the docker container
@@ -285,41 +287,29 @@ export function createTenv(cwd: string): Tenv {
               .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
               .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
           );
-          supergraphFile = path.basename(supergraph);
+          volumes.push({ host: supergraph, container: `/serve/${path.basename(supergraph)}` });
         }
-        const meshConfigTSContents = await fs
-          .readFile(path.resolve(cwd, 'mesh.config.ts'), 'utf8')
-          .catch(() => ''); // ignore if there is no mesh config
-        const meshConfigJSContents = await fs
-          .readFile(path.resolve(cwd, 'mesh.config.js'), 'utf8')
-          .catch(() => ''); // ignore if there is no mesh config
+        for (const configfile of await glob('mesh.config.*', { cwd })) {
+          const contents = await fs.readFile(path.join(cwd, configfile), 'utf8');
+          if (contents.includes('@graphql-mesh/serve-cli')) {
+            volumes.push({ host: configfile, container: `/serve/${path.basename(configfile)}` });
+          }
+        }
+        for (const dbfile of await glob('*.db', { cwd })) {
+          volumes.push({ host: dbfile, container: `/serve/${path.basename(dbfile)}` });
+        }
+
         const cont = await tenv.container({
           env,
           name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
           image: 'ghcr.io/ardatan/mesh-serve',
           containerPort: port, // TODO: changing port from within mesh.config.ts wont work in docker runner
           healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
-          cmd: [createPortArg(port), supergraph && createArg('supergraph', supergraphFile)],
-          volumes: [
-            ...(meshConfigTSContents.includes('@graphql-mesh/serve-cli')
-              ? [
-                  // mount TS config only if defines something for serve-cli
-                  { host: 'mesh.config.ts', container: '/serve/mesh.config.ts' },
-                ]
-              : []),
-            ...(meshConfigJSContents.includes('@graphql-mesh/serve-cli')
-              ? [
-                  // mount JS config only if defines something for serve-cli
-                  { host: 'mesh.config.js', container: '/serve/mesh.config.js' },
-                ]
-              : []),
-            ...(supergraph
-              ? [
-                  // mount supergraph only if available
-                  { host: supergraph, container: `/serve/${supergraphFile}` },
-                ]
-              : []),
+          cmd: [
+            createPortArg(port),
+            supergraph && createArg('supergraph', path.basename(supergraph)),
           ],
+          volumes,
           pipeLogs,
         });
         proc = cont;
@@ -487,9 +477,35 @@ export function createTenv(cwd: string): Tenv {
         });
       }
 
+      let imageToUse = target ? `${image}:e2e` : image;
+
+      // build and run the dockerfile in the test's folder for serve, if there is one
+      if (image === 'ghcr.io/ardatan/mesh-serve') {
+        const serveDockerfileName = 'serve.Dockerfile';
+        const serveDockerfileExists = await fs
+          .stat(path.join(cwd, serveDockerfileName))
+          .then(() => true)
+          .catch(() => false);
+
+        if (serveDockerfileExists) {
+          imageToUse = `${image}:e2e.${path.basename(cwd)}`; // <image>:<test>
+          const [, waitForBuild] = await spawn(
+            { cwd: cwd, shell: true, env: { VERSIONS: 'e2e' }, pipeLogs },
+            'docker',
+            'buildx',
+            'build',
+            `--file="${serveDockerfileName}"`,
+            `--tag="${imageToUse}"`,
+            '--load',
+            '.',
+          );
+          await waitForBuild;
+        }
+      }
+
       const ctr = await docker.createContainer({
         name: uniqueName,
-        Image: target ? `${image}:e2e` : image,
+        Image: imageToUse,
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
         ExposedPorts: {
           [containerPort + '/tcp']: {},
