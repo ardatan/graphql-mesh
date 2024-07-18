@@ -1,5 +1,19 @@
 # @graphql-mesh/transport-sqlite
 
+## 0.3.1
+
+### Patch Changes
+
+- [`b069200`](https://github.com/ardatan/graphql-mesh/commit/b06920033a5fc95688b747182dd929e1bdb5af30)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use actual version of common transport
+  package instead of workspace path
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/transport-common@0.4.1
+  - @omnigraph/sqlite@0.3.1
+
 ## 0.3.0
 
 ### Patch Changes

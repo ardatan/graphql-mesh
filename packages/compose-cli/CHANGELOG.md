@@ -1,5 +1,71 @@
 # @graphql-mesh/compose-cli
 
+## 0.6.0
+
+### Minor Changes
+
+- [#7266](https://github.com/ardatan/graphql-mesh/pull/7266)
+  [`26deb92`](https://github.com/ardatan/graphql-mesh/commit/26deb92dc1d405847289bf28344511f143f94ff4)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: Remove root-level transforms, please
+  use source-level transforms instead
+
+### Patch Changes
+
+- [#7272](https://github.com/ardatan/graphql-mesh/pull/7272)
+  [`a486cab`](https://github.com/ardatan/graphql-mesh/commit/a486cab84e757b47f2a07240508d6d586e5abfdd)
+  Thanks [@beeequeue](https://github.com/beeequeue)! - `loadGraphQLHTTPSubgraph`: Added
+  `schemaHeaders` to introspection requests
+
+- [#7253](https://github.com/ardatan/graphql-mesh/pull/7253)
+  [`2b8e52f`](https://github.com/ardatan/graphql-mesh/commit/2b8e52fdc40e8a0aa7c48ffb92de1b29b90b3c4e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the bug; When a non-nullable field is added
+  through `additionalTypeDefs` in the compose config, then the gateway fails to resolve it even if a
+  resolver defined in `additionalResolvers`;
+
+  ```ts
+  export const composeConfig = defineComposeConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadOpenAPISubgraph('Wiki', {
+          source: 'https://wikimedia.org/api/rest_v1/?spec',
+          endpoint: 'https://wikimedia.org/api/rest_v1'
+        })
+      }
+    ],
+    additionalTypeDefs: /* GraphQL */ `
+      extend type pageview_project {
+        banana: String
+        apple: String!
+      }
+    `
+  })
+
+  export const serveConfig = defineServeConfig({
+    additionalResolvers: {
+      pageview_project: {
+        banana() {
+          return '🍌'
+        },
+        apple() {
+          return '🍎' // This is ignored
+        }
+      }
+    }
+  })
+  ```
+
+- [`ae8dbdc`](https://github.com/ardatan/graphql-mesh/commit/ae8dbdcf43ee0fdfdd93100c0759bee010c506c3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Reject config files that import modules which
+  are missing
+
+- Updated dependencies
+  [[`e3714fb`](https://github.com/ardatan/graphql-mesh/commit/e3714fb2e91309e515e9c09a7b1c3c15b17fff3d),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/fusion-composition@0.1.1
+  - @graphql-mesh/types@0.99.1
+  - @graphql-mesh/utils@0.99.1
+
 ## 0.5.0
 
 ### Minor Changes

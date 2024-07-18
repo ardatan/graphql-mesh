@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-mysql",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,9 +38,9 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.4",
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-mesh/transport-common": "^0.4.0",
-    "@graphql-mesh/types": "^0.99.0",
-    "@graphql-mesh/utils": "^0.99.0",
+    "@graphql-mesh/transport-common": "^0.4.1",
+    "@graphql-mesh/types": "^0.99.1",
+    "@graphql-mesh/utils": "^0.99.1",
     "@graphql-tools/delegate": "^10.0.14",
     "@graphql-tools/utils": "^10.2.3",
     "graphql-fields": "^2.0.3",
