@@ -1,5 +1,53 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.1
+
+### Patch Changes
+
+- [#7300](https://github.com/ardatan/graphql-mesh/pull/7300)
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-hive/apollo@^0.33.4` ↗︎](https://www.npmjs.com/package/@graphql-hive/apollo/v/0.33.4)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-hive/client@^0.32.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.32.0)
+    (from `dependencies`)
+
+- [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.14)
+    (from `^10.0.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.5)
+    (from `^1.1.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.1.2)
+    (from `^2.1.1`, in `dependencies`)
+
+- [#7300](https://github.com/ardatan/graphql-mesh/pull/7300)
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Upgrade Hive SDK to use latest
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`2b8e52f`](https://github.com/ardatan/graphql-mesh/commit/2b8e52fdc40e8a0aa7c48ffb92de1b29b90b3c4e),
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770),
+  [`26deb92`](https://github.com/ardatan/graphql-mesh/commit/26deb92dc1d405847289bf28344511f143f94ff4)]:
+  - @graphql-mesh/fusion-runtime@0.5.1
+  - @graphql-mesh/plugin-hive@0.99.1
+  - @graphql-mesh/transport-common@0.4.1
+  - @graphql-mesh/transport-http@0.3.1
+  - @graphql-mesh/utils@0.99.1
+
 ## 0.5.0
 
 ### Minor Changes

@@ -1,5 +1,72 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.5.1
+
+### Patch Changes
+
+- [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.14)
+    (from `^10.0.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.1.2)
+    (from `^2.1.1`, in `dependencies`)
+
+- [#7253](https://github.com/ardatan/graphql-mesh/pull/7253)
+  [`2b8e52f`](https://github.com/ardatan/graphql-mesh/commit/2b8e52fdc40e8a0aa7c48ffb92de1b29b90b3c4e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the bug; When a non-nullable field is added
+  through `additionalTypeDefs` in the compose config, then the gateway fails to resolve it even if a
+  resolver defined in `additionalResolvers`;
+
+  ```ts
+  export const composeConfig = defineComposeConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadOpenAPISubgraph('Wiki', {
+          source: 'https://wikimedia.org/api/rest_v1/?spec',
+          endpoint: 'https://wikimedia.org/api/rest_v1'
+        })
+      }
+    ],
+    additionalTypeDefs: /* GraphQL */ `
+      extend type pageview_project {
+        banana: String
+        apple: String!
+      }
+    `
+  })
+
+  export const serveConfig = defineServeConfig({
+    additionalResolvers: {
+      pageview_project: {
+        banana() {
+          return '🍌'
+        },
+        apple() {
+          return '🍎' // This is ignored
+        }
+      }
+    }
+  })
+  ```
+
+- [#7266](https://github.com/ardatan/graphql-mesh/pull/7266)
+  [`26deb92`](https://github.com/ardatan/graphql-mesh/commit/26deb92dc1d405847289bf28344511f143f94ff4)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix transformations on enum values
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/runtime@0.100.1
+  - @graphql-mesh/transport-common@0.4.1
+  - @graphql-mesh/types@0.99.1
+  - @graphql-mesh/utils@0.99.1
+
 ## 0.5.0
 
 ### Patch Changes
