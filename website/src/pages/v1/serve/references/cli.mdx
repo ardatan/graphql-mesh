@@ -49,10 +49,12 @@ Options:
 
 ### Environment Variables
 
+In addition to the env vars showcased in the [CLI usage](#usage), more are available.
+
 These are usually used for easier usage with these two schema registry services. You don't need any
 configuration file if you provide these environment variables.
 
-For GraphQL Hive;
+#### GraphQL Hive
 
 - `HIVE_CDN_ENDPOINT`: The endpoint of the Hive CDN to fetch the supergraph.
   [See here](/v1/serve/schema-registry/hive#fetching-supergraph-from-hive-cdn)
@@ -61,7 +63,7 @@ For GraphQL Hive;
 - `HIVE_REGISTRY_TOKEN`: The token to push the metrics to GraphQL Hive.
   [See here](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
 
-For Apollo GraphOS;
+#### Apollo GraphOS
 
 - `APOLLO_KEY`: The API key provided by Apollo GraphOS to fetch the supergraph.
   [See here](/v1/serve/schema-registry/graphos)
