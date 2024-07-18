@@ -133,14 +133,6 @@ export interface Compose extends Proc {
   result: string;
 }
 
-/** A list of available images in the docker bake file for the "e2e" group. */
-export const AVAILABLE_CONTAINER_IMAGES = [
-  'ghcr.io/ardatan/mesh-serve:e2e',
-  'ghcr.io/ardatan/mesh-serve:e2e.sqlite-chinook',
-] as const;
-
-let buildingContainerImageTarget: Promise<void> | null = null;
-
 export interface ContainerOptions extends ProcOptions {
   /**
    * Name of the service.
@@ -148,12 +140,15 @@ export interface ContainerOptions extends ProcOptions {
    */
   name: string;
   /**
-   * Name of the image to pull.
+   * Name of the image to use for the container.
    *
-   * When supplying one of the {@link AVAILABLE_CONTAINER_IMAGES}, the relevant
-   * project in the repo will be built with the context set its directory.
+   * If the image name exists as a literal in any of the tags in the docker-bake.hcl
+   * file, that local image baked image will be used. So dont forget to bake before
+   * running the tests.
+   *
+   * Otherwise, the image gets pulled.
    */
-  image: string | (typeof AVAILABLE_CONTAINER_IMAGES)[number];
+  image: string;
   /**
    * Port that the container uses.
    * Will be bound to an available port on the host in {@link Container.port}.
@@ -421,7 +416,11 @@ export function createTenv(cwd: string): Tenv {
         return ms * 1000000;
       }
 
-      if (!AVAILABLE_CONTAINER_IMAGES.includes(image as any)) {
+      const bakedImage = await fs
+        .readFile(path.join(__project, 'docker-bake.hcl'))
+        .then(c => c.includes(`"${image}"`));
+
+      if (!bakedImage) {
         // pull image and wait for finish
         const imageStream = await docker.pull(image);
         await new Promise((resolve, reject) => {
