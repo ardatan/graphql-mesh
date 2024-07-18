@@ -71,13 +71,17 @@ let program = new Command()
       }),
   )
   .option('--supergraph <path>', 'path to the supergraph schema')
-  .option('--polling <intervalInMs>', 'schema polling interval in milliseconds', v => {
-    const port = parseInt(v);
-    if (isNaN(port)) {
-      throw new InvalidArgumentError('not a number.');
-    }
-    return port;
-  })
+  .addOption(
+    new Option('--polling <intervalInMs>', 'schema polling interval in milliseconds')
+      .env('POLLING')
+      .argParser(v => {
+        const interval = parseInt(v);
+        if (isNaN(interval)) {
+          throw new InvalidArgumentError('not a number.');
+        }
+        return interval;
+      }),
+  )
   .option('--masked-errors', 'mask unexpected errors in responses', true)
   .option('--no-masked-errors', "don't mask unexpected errors in responses", false);
 
