@@ -36,7 +36,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/transport-common": "workspace:*",
+    "@graphql-mesh/transport-common": "^0.4.0",
     "@omnigraph/sqlite": "^0.3.0"
   },
   "publishConfig": {

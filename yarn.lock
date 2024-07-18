@@ -6226,7 +6226,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-common@npm:^0.4.0, @graphql-mesh/transport-common@workspace:*, @graphql-mesh/transport-common@workspace:packages/transports/common":
+"@graphql-mesh/transport-common@npm:^0.4.0, @graphql-mesh/transport-common@workspace:packages/transports/common":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-common@workspace:packages/transports/common"
   dependencies:
@@ -6339,7 +6339,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-sqlite@workspace:packages/transports/sqlite"
   dependencies:
-    "@graphql-mesh/transport-common": "workspace:*"
+    "@graphql-mesh/transport-common": "npm:^0.4.0"
     "@omnigraph/sqlite": "npm:^0.3.0"
   peerDependencies:
     graphql: "*"
