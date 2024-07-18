@@ -30,8 +30,14 @@ import sucrase from '@rollup/plugin-sucrase';
  */
 const deps = {
   'node_modules/@graphql-mesh/serve-cli/index': 'src/index.ts',
+  'node_modules/@graphql-mesh/compose-cli/index': '../compose-cli/src/types.ts', // we bundle compose types ONLY. adding support for configs with both serve and compose
   'node_modules/@graphql-mesh/serve-runtime/index': '../serve-runtime/src/index.ts',
+  'node_modules/graphql/index': '../../node_modules/graphql/index.mjs',
+  // we want often used transports in the container
+  'node_modules/@graphql-mesh/transport-common/index': '../transports/common/src/index.ts',
   'node_modules/@graphql-mesh/transport-http/index': '../transports/http/src/index.ts',
+  'node_modules/@graphql-mesh/transport-rest/index': '../transports/rest/src/index.ts',
+  'node_modules/@graphql-mesh/transport-soap/index': '../transports/soap/src/index.ts',
   // extras for docker only
   'node_modules/@graphql-mesh/plugin-prometheus/index': '../plugins/prometheus/src/index.ts',
   'node_modules/@graphql-mesh/plugin-http-cache/index': '../plugins/http-cache/src/index.ts',
