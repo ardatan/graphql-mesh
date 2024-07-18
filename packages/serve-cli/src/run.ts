@@ -70,7 +70,20 @@ let program = new Command()
         return port;
       }),
   )
-  .option('--supergraph <path>', 'path to the supergraph schema');
+  .option('--supergraph <path>', 'path to the supergraph schema')
+  .addOption(
+    new Option('--polling <intervalInMs>', 'schema polling interval in milliseconds')
+      .env('POLLING')
+      .argParser(v => {
+        const interval = parseInt(v);
+        if (isNaN(interval)) {
+          throw new InvalidArgumentError('not a number.');
+        }
+        return interval;
+      }),
+  )
+  .option('--masked-errors', 'mask unexpected errors in responses', true)
+  .option('--no-masked-errors', "don't mask unexpected errors in responses", false);
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */

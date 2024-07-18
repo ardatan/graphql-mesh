@@ -14,27 +14,47 @@ import { Callout } from '@theguild/components'
 An overview of all the CLI arguments and environment variables for the `mesh-serve` CLI.
 [Get started with the CLI](/v1/serve/introduction).
 
-### Arguments
+### Usage
 
-<Callout>All of those can be passed in the configuration file as well</Callout>
+You can get help with using the CLI by appending the `--help` argument:
 
-- `--supergraph`: Path to the supergraph file in Federation Supergraph format
-- `--port` or `-p`: Port to serve the supergraph (default: 4000)
-- `--host` or `-h`: Host to serve the supergraph (default: localhost)
-- `--fork`: Count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is
-  "production", otherwise only one (the main) worker
+```sh
+mesh-serve --help
+```
 
-**If you want to serve a single subgraph, you can use the parameter below and _NOT_ the one above:**
+which will print out the following:
 
-- `--subgraph`: Path to the subgraph file in Federation Subgraph format (conflicts with
-  `--supergraph`)
+{/* IMPORTANT: please dont forget to update the following when arguments change. simply run `node --import tsx packages/serve-cli/src/bin.ts --help` and copy over the text */}
+
+```
+Usage: mesh-serve [options]
+
+serve GraphQL federated architecture for any API service(s)
+
+Options:
+  --fork [count]            count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is "production", otherwise only one (the main)
+                            worker (default: 1, env: FORK)
+  -c, --config-path <path>  path to the configuration file. defaults to the following files respectively in the current working directory: mesh.config.ts,
+                            mesh.config.mts, mesh.config.cts, mesh.config.js, mesh.config.mjs, mesh.config.cjs (env: CONFIG_PATH)
+  -h, --host <hostname>     host to use for serving (default: "0.0.0.0")
+  -p, --port <number>       port to use for serving (default: 4000, env: PORT)
+  --supergraph <path>       path to the supergraph schema
+  --polling <intervalInMs>  schema polling interval in milliseconds (env: POLLING)
+  --masked-errors           mask unexpected errors in responses (default: true)
+  --no-masked-errors        don't mask unexpected errors in responses
+  --help                    display help for command
+```
+
+<Callout>All arguments can also be configured in the config file.</Callout>
 
 ### Environment Variables
+
+In addition to the env vars showcased in the [CLI usage](#usage), more are available.
 
 These are usually used for easier usage with these two schema registry services. You don't need any
 configuration file if you provide these environment variables.
 
-For GraphQL Hive;
+#### GraphQL Hive
 
 - `HIVE_CDN_ENDPOINT`: The endpoint of the Hive CDN to fetch the supergraph.
   [See here](/v1/serve/schema-registry/hive#fetching-supergraph-from-hive-cdn)
@@ -43,7 +63,7 @@ For GraphQL Hive;
 - `HIVE_REGISTRY_TOKEN`: The token to push the metrics to GraphQL Hive.
   [See here](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
 
-For Apollo GraphOS;
+#### Apollo GraphOS
 
 - `APOLLO_KEY`: The API key provided by Apollo GraphOS to fetch the supergraph.
   [See here](/v1/serve/schema-registry/graphos)
