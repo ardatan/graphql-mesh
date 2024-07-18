@@ -11,6 +11,6 @@ RUN npm i sqlite3 tuql @graphql-mesh/transport-sqlite
 # tuql should use main graphql
 RUN rm -rf node_modules/tuql/node_modules/graphql
 
-FROM ghcr.io/ardatan/mesh-serve:e2e
+FROM mesh-serve_e2e
 
 COPY --from=build /build/node_modules node_modules

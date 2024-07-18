@@ -39,6 +39,12 @@ const serveRunner = (function getServeRunner() {
   ) {
     throw new Error(`Unsupported E2E serve runner "${runner}"`);
   }
+  if (runner === 'docker') {
+    process.stderr.write(`
+⚠️ Using docker serve runner! Make sure you have built the containers with:
+yarn bundle && docker buildx bake e2e
+`);
+  }
   return runner as ServeRunner;
 })();
 
@@ -127,63 +133,13 @@ export interface Compose extends Proc {
   result: string;
 }
 
-/** A map of image names to build bake targets. */
-export const CONTAINER_IMAGE_TARGETS = {
-  'ghcr.io/ardatan/mesh-serve': 'mesh-serve',
-} as const;
+/** A list of available images in the docker bake file for the "e2e" group. */
+export const AVAILABLE_CONTAINER_IMAGES = [
+  'ghcr.io/ardatan/mesh-serve:e2e',
+  'ghcr.io/ardatan/mesh-serve:e2e.sqlite-chinook',
+] as const;
 
 let buildingContainerImageTarget: Promise<void> | null = null;
-
-async function buildContainerImageTargetOnce(
-  target: keyof typeof CONTAINER_IMAGE_TARGETS,
-  { pipeLogs }: { pipeLogs?: boolean },
-) {
-  if (boolEnv('E2E_SKIP_BUILD_CONTAINER')) {
-    return;
-  }
-  if (!buildingContainerImageTarget) {
-    buildingContainerImageTarget = (async function buildContainerImageTarget() {
-      if (!boolEnv('E2E_SKIP_BUNDLE')) {
-        // bundle
-        const [, waitForBundle] = await spawn(
-          { cwd: __project, shell: true, pipeLogs },
-          'yarn',
-          'bundle',
-        );
-        await waitForBundle;
-      }
-
-      // prefer building just for the os arch instead of multi-platform builds
-      const [archProc, waitForArch] = await spawn(
-        { cwd: __project, shell: true, pipeLogs },
-        'docker',
-        'system',
-        'info',
-        '--format="{{.OSType}}/{{.Architecture}}"',
-      );
-      await waitForArch;
-      const arch = archProc.getStd('out').trim();
-
-      // TODO: dockerode does not support BuildKit which we use for building and caching
-      const [, waitForBake] = await spawn(
-        { cwd: __project, shell: true, env: { VERSIONS: 'e2e' }, pipeLogs },
-        'docker',
-        'buildx',
-        'bake',
-        `--set="*.platform=${arch}"`,
-        '--load',
-        target,
-      );
-      await waitForBake;
-    })();
-
-    // we want to rebuild the container on each run
-    leftoverStack.defer(() => {
-      buildingContainerImageTarget = null;
-    });
-  }
-  return buildingContainerImageTarget;
-}
 
 export interface ContainerOptions extends ProcOptions {
   /**
@@ -194,10 +150,10 @@ export interface ContainerOptions extends ProcOptions {
   /**
    * Name of the image to pull.
    *
-   * When supplying one of the {@link CONTAINER_IMAGE_TARGETS}, the relevant
+   * When supplying one of the {@link AVAILABLE_CONTAINER_IMAGES}, the relevant
    * project in the repo will be built with the context set its directory.
    */
-  image: string | keyof typeof CONTAINER_IMAGE_TARGETS;
+  image: string | (typeof AVAILABLE_CONTAINER_IMAGES)[number];
   /**
    * Port that the container uses.
    * Will be bound to an available port on the host in {@link Container.port}.
@@ -299,10 +255,20 @@ export function createTenv(cwd: string): Tenv {
           volumes.push({ host: dbfile, container: `/serve/${path.basename(dbfile)}` });
         }
 
+        const dockerfileExists = await fs
+          .stat(path.join(cwd, 'serve.Dockerfile'))
+          .then(() => true)
+          .catch(() => false);
+
         const cont = await tenv.container({
           env,
           name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
-          image: 'ghcr.io/ardatan/mesh-serve',
+          image:
+            'ghcr.io/ardatan/mesh-serve:' +
+            (dockerfileExists
+              ? // if the test contains a serve dockerfile, use it instead of the default e2e image
+                `e2e.${path.basename(cwd)}`
+              : 'e2e'),
           containerPort: port, // TODO: changing port from within mesh.config.ts wont work in docker runner
           healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
           cmd: [
@@ -455,11 +421,7 @@ export function createTenv(cwd: string): Tenv {
         return ms * 1000000;
       }
 
-      const target = CONTAINER_IMAGE_TARGETS[image];
-      if (target) {
-        // build bake target but once per run
-        await buildContainerImageTargetOnce(target, { pipeLogs });
-      } else {
+      if (!AVAILABLE_CONTAINER_IMAGES.includes(image as any)) {
         // pull image and wait for finish
         const imageStream = await docker.pull(image);
         await new Promise((resolve, reject) => {
@@ -477,35 +439,9 @@ export function createTenv(cwd: string): Tenv {
         });
       }
 
-      let imageToUse = target ? `${image}:e2e` : image;
-
-      // build and run the dockerfile in the test's folder for serve, if there is one
-      if (image === 'ghcr.io/ardatan/mesh-serve') {
-        const serveDockerfileName = 'serve.Dockerfile';
-        const serveDockerfileExists = await fs
-          .stat(path.join(cwd, serveDockerfileName))
-          .then(() => true)
-          .catch(() => false);
-
-        if (serveDockerfileExists) {
-          imageToUse = `${image}:e2e.${path.basename(cwd)}`; // <image>:<test>
-          const [, waitForBuild] = await spawn(
-            { cwd: cwd, shell: true, env: { VERSIONS: 'e2e' }, pipeLogs },
-            'docker',
-            'buildx',
-            'build',
-            `--file="${serveDockerfileName}"`,
-            `--tag="${imageToUse}"`,
-            '--load',
-            '.',
-          );
-          await waitForBuild;
-        }
-      }
-
       const ctr = await docker.createContainer({
         name: uniqueName,
-        Image: imageToUse,
+        Image: image,
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
         ExposedPorts: {
           [containerPort + '/tcp']: {},

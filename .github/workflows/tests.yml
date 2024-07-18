@@ -379,8 +379,8 @@ jobs:
         env:
           VERSION: e2e
         with:
+          targets: e2e
           set: |
-            *.platform=linux/amd64
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
           # we must load so that the e2e tests can use the cached image
@@ -389,6 +389,5 @@ jobs:
       - name: test
         timeout-minutes: 5
         env:
-          E2E_SKIP_BUILD_CONTAINER: 1 # because we already bundled, baked and tagged with version matching the tests
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn test:e2e --detectOpenHandles
