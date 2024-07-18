@@ -42,7 +42,7 @@
   "dependencies": {
     "@ardatan/raml-1-parser": "1.1.69",
     "@graphql-mesh/string-interpolation": "0.5.4",
-    "@graphql-tools/delegate": "^10.0.14",
+    "@graphql-tools/delegate": "^10.0.12",
     "@omnigraph/json-schema": "0.102.0",
     "@whatwg-node/fetch": "^0.9.0",
     "change-case": "4.1.2",

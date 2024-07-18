@@ -40,7 +40,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.14",
+    "@graphql-tools/delegate": "^10.0.12",
     "@graphql-tools/schema": "^10.0.0",
     "@graphql-tools/stitch": "^9.2.10"
   },
