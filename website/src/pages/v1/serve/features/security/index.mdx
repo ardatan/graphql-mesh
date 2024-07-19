@@ -123,6 +123,23 @@ processing of a GraphQL operation document that exceeds the limit with the
 Also this can be combined with [Character Limit](/v1/serve/features/security/character-limit) that
 limits the number of characters in the query and mutation documents.
 
+### Gateway -> Subgraph HMAC Signing
+
+When you have multiple subgraphs and a gateway, you might want to ensure that the requests to the
+subgraphs are trusted and signed by the gateway. This is handy in case your want to ensure that the
+requests to the subgraphs are trusted and signed by the gateway, and no other entity can execute
+requests to the subgraph.
+
+In case of any missing signature, tampering or unauthorized access, the subgraph services will
+reject the request.
+
+We recommend using HMAC signing for requests between the GraphQL Mesh gateway and the upstream in
+cases where authentication plugins are involved, in order to ensure the gateway is the only entity
+that can execute requests to the subgraph on behalf of the end-users.
+
+You can use the [HMAC Signature plugin](/v1/serve/features/security/hmac-signature) to perform
+requesting signing and verification.
+
 ### Query Depth Limiting
 
 Sometimes persisted operations cannot be used. E.g. if you are building an API that is used by third

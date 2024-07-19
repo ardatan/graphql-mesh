@@ -5014,6 +5014,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@graphql-mesh/hmac-upstream-signature@workspace:packages/plugins/hmac-upstream-signature":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/hmac-upstream-signature@workspace:packages/plugins/hmac-upstream-signature"
+  dependencies:
+    "@graphql-mesh/serve-runtime": "npm:^0.5.0"
+    "@graphql-mesh/transport-common": "npm:^0.4.1"
+    graphql-yoga: "npm:^5.6.0"
+    json-stable-stringify: "npm:^1.1.1"
+  peerDependencies:
+    "@graphql-mesh/types": ^0.99.0
+    "@graphql-mesh/utils": ^0.99.0
+    graphql: "*"
+    tslib: ^2.4.0
+  languageName: unknown
+  linkType: soft
+
 "@graphql-mesh/http@npm:^0.100.2, @graphql-mesh/http@workspace:packages/legacy/http":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/http@workspace:packages/legacy/http"
@@ -5537,7 +5553,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/serve-runtime@npm:^0.5.3, @graphql-mesh/serve-runtime@workspace:packages/serve-runtime":
+"@graphql-mesh/serve-runtime@npm:^0.5.0, @graphql-mesh/serve-runtime@npm:^0.5.3, @graphql-mesh/serve-runtime@workspace:packages/serve-runtime":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-runtime@workspace:packages/serve-runtime"
   dependencies:
@@ -5916,7 +5932,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-common@npm:^0.4.2, @graphql-mesh/transport-common@workspace:packages/transports/common":
+"@graphql-mesh/transport-common@npm:^0.4.1, @graphql-mesh/transport-common@npm:^0.4.2, @graphql-mesh/transport-common@workspace:packages/transports/common":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-common@workspace:packages/transports/common"
   dependencies:
@@ -23506,7 +23522,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-stable-stringify@npm:^1.0.2":
+"json-stable-stringify@npm:^1.0.2, json-stable-stringify@npm:^1.1.1":
   version: 1.1.1
   resolution: "json-stable-stringify@npm:1.1.1"
   dependencies:

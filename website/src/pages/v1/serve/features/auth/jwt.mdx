@@ -1,3 +1,5 @@
+import { Callout } from '@theguild/components'
+
 # JSON Web Tokens (JWT)
 
 A [JSON Web Tokens (JWT)](https://jwt.io/) is a signed token containing arbitrary informations,
@@ -10,6 +12,15 @@ validate, decode and use the token (for identity and authorization).
 Once you have the JWT token extract and validated, the JWT claims (and optionally, the full token)
 are injected to the GraphQL Mesh execution context, and forwarded to upstream GraphQL subgraphs,
 using the `extensions` field.
+
+<Callout type="warning">
+
+When JWT is enabled and claims are forwarded to the upstream GraphQL subgraphs, you might want to
+use [HMAC Signature](/v1/serve/features/security/hmac-signature) between your Mesh Gateway and the
+subgraphs. This will ensure that the requests to the subgraphs are trusted and signed by the
+gateway, and no other entity can execute requests to the subgraph on behalf of the end-users.
+
+</Callout>
 
 ## How to use?
 
@@ -340,7 +351,7 @@ plugin to look for the token in a different header or with a different prefix.
 The prefix is being validated along with the token (for example: `Bearer my-token`).
 
 ```ts
-imoprt { extractFromHeader, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { extractFromHeader, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const serveConfig = defineConfig({
@@ -362,7 +373,7 @@ You can configure the plugin to look for the token in a cookie. To do so, you'll
 
 ```ts
 import { useCookies } from '@whatwg-node/server-plugin-cookies'
-imoprt { extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const serveConfig = defineConfig({
@@ -405,7 +416,7 @@ You can configure the plugin to look for the token in multiple locations. The pl
 the token in the order you provide.
 
 ```ts
-imoprt { extractFromHeader, extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { extractFromHeader, extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const serveConfig = defineConfig({
@@ -565,5 +576,3 @@ export const serveConfig = defineConfig({
 > In case you want to handle the error yourself, you can set
 > `reject: { missingToken: false, invalidToken: false }` and handle the error in your resolvers. The
 > `context.jwt` will be `undefined` in case of missing or invalid token.
-
-{/* TODO: Add instructions regarding interaction with HMAC plugin and recommended security setup */}
