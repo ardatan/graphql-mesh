@@ -70,7 +70,7 @@ export type MeshServePlugin<
   TPluginContext extends Record<string, any> = Record<string, any>,
   TContext extends Record<string, any> = Record<string, any>,
 > = YogaPlugin<Partial<TPluginContext> & MeshServeContext & TContext> &
-  UnifiedGraphPlugin & {
+  UnifiedGraphPlugin<Partial<TPluginContext> & MeshServeContext & TContext> & {
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
 

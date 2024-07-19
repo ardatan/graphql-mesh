@@ -3,6 +3,7 @@ export default {
   'response-caching': 'Response Caching',
   'http-caching': 'Upstream HTTP Caching',
   'deduplicate-request': 'Deduplicate HTTP Requests',
+  'jwt-auth': 'JWT Authentication',
   'persisted-operations': 'Persisted Operations',
   'automatic-persisted-queries': 'Automatic Persisted Queries',
   'defer-stream': 'Defer & Stream',
