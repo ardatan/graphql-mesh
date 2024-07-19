@@ -106,8 +106,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    expect(source.schema).toBeTruthy();
-    // expect(printSchema(source.schema)).toMatchSnapshot();
+    expect(printSchema(source.schema)).toMatchSnapshot();
   });
   it('should declare arguments for fields created from bound functions', async () => {
     addMock(
