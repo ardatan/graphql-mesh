@@ -15,6 +15,9 @@ const TripPinMetadata = fs.readFileSync(
 const PersonMockData = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'),
 );
+const SimplePersonMockData = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, './fixtures/alice.json'), 'utf-8'),
+);
 const TripMockData = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, './fixtures/trip.json'), 'utf-8'),
 );
@@ -777,6 +780,57 @@ describe('odata', () => {
         mutation {
           PeopleByUserName(UserName: "russellwhyte") {
             ShareTrip(userName: "scottketchum", tripId: 0)
+          }
+        }
+      `),
+    })) as ExecutionResult;
+
+    expect(graphqlResult.errors).toBeFalsy();
+    expect(sentRequest!.method).toBe(correctMethod);
+    expect(sentRequest!.url).toBe(correctUrl);
+    expect(await sentRequest!.text()).toBe(JSON.stringify(correctBody));
+  });
+  it('should generate correct HTTP request for invoking action bound to entity set', async () => {
+    addMock(
+      'https://sample.service.com/$metadata',
+      async () => new MockResponse(BoundActionMetadata),
+    );
+    const correctUrl = `https://sample.service.com/People/alice/Sample.Service.SendMessage`;
+    const correctMethod = 'POST';
+    const correctBody = {
+      UserName: 'bob',
+      Message: 'hello',
+    };
+    let sentRequest: Request;
+    addMock(`https://sample.service.com/People/alice/?$select=UserName`, async () => {
+      return new MockResponse(JSON.stringify(SimplePersonMockData));
+    });
+    addMock(correctUrl, async request => {
+      sentRequest = request;
+      return new MockResponse(JSON.stringify(true));
+    });
+    const handler = new ODataHandler({
+      name: 'Sample.Service',
+      config: {
+        endpoint: 'https://sample.service.com/',
+      },
+      pubsub,
+      cache,
+      store,
+      baseDir,
+      importFn,
+      logger,
+    });
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
+
+    const graphqlResult = (await source.executor({
+      context: {},
+      document: parse(/* GraphQL */ `
+        mutation {
+          PeopleByUserName(UserName: "alice") {
+            SendMessage(UserName: "bob", Message: "hello")
           }
         }
       `),
