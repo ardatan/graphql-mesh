@@ -22,6 +22,10 @@ const BasicMetadata = fs.readFileSync(
   path.resolve(__dirname, './fixtures/simple-metadata.xml'),
   'utf-8',
 );
+const BoundActionMetadata = fs.readFileSync(
+  path.resolve(__dirname, './fixtures/bound-action.xml'),
+  'utf-8',
+);
 
 const baseDir = __dirname;
 const importFn = (id: string) => require(id);
@@ -81,6 +85,29 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
     expect(printSchema(source.schema)).toMatchSnapshot();
+  });
+  it('should create correct GraphQL schema for actions bound to entity set', async () => {
+    addMock(
+      'http://sample.service.com/$metadata',
+      async () => new MockResponse(BoundActionMetadata),
+    );
+    const handler = new ODataHandler({
+      name: 'SampleService',
+      config: {
+        endpoint: 'http://sample.service.com',
+      },
+      pubsub,
+      cache,
+      store,
+      baseDir,
+      importFn,
+      logger,
+    });
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
+    expect(source.schema).toBeTruthy();
+    // expect(printSchema(source.schema)).toMatchSnapshot();
   });
   it('should declare arguments for fields created from bound functions', async () => {
     addMock(

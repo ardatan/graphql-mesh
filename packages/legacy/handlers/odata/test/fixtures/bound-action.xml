@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<DataServices>
+		<Schema Namespace="Sample.Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="Person">
+				<Key>
+					<PropertyRef Name="UserName" />
+				</Key>
+				<Property Name="UserName" Type="Edm.String" Nullable="false" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="People" EntityType="Sample.Service.Person">
+				</EntitySet>
+			</EntityContainer>
+      <Action Name="SendMessage" EntitySetPath="People" IsBound="true">
+        <Parameter Name="UserName" Type="Edm.String" Nullable="false" />
+        <Parameter Name="Message" Type="Edm.String" Nullable="false" />
+      </Action>
+		</Schema>
+	</DataServices>
+</Edmx>
