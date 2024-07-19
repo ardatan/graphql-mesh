@@ -1180,10 +1180,13 @@ export default class ODataHandler implements MeshHandler {
           (parameterObj: any) => !entitySetPath || parameterObj.attributes.Name === entitySetPath,
         );
         // Try to find EntitySet matching entitySetPath:
-        const entitySetObj = schemaObj.EntityContainer?.flatMap(
-          entityContainerObj =>
-            entityContainerObj.EntitySet?.flatMap(entitySetObj =>
-              entitySetObj.attributes.Name === entitySetPath ? [entitySetObj] : [],
+        const entitySetObj = schemas.flatMap(
+          schemaObj =>
+            schemaObj.EntityContainer?.flatMap(
+              entityContainerObj =>
+                entityContainerObj.EntitySet?.flatMap(entitySetObj =>
+                  entitySetObj.attributes.Name === entitySetPath ? [entitySetObj] : [],
+                ) ?? [],
             ) ?? [],
         )?.[0];
         const { boundEntityTypeName, argName, argType } = entitySetObj
