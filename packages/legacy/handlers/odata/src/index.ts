@@ -1137,66 +1137,109 @@ export default class ODataHandler implements MeshHandler {
         });
       };
 
+      const boundActionEntityParameterDetails = (parameterObj: any) => {
+        const parameterName = parameterObj.attributes.Name;
+        const parameterTypeRef = parameterObj.attributes.Type;
+        const isRequired = parameterObj.attributes.Nullable === 'false';
+        const parameterTypeName = getTypeNameFromRef({
+          typeRef: parameterTypeRef,
+          isInput: true,
+          isRequired,
+        });
+        const boundEntityTypeName = getTypeNameFromRef({
+          typeRef: parameterTypeRef,
+          isInput: false,
+          isRequired: false,
+        })
+          .replace('[', '')
+          .replace(']', ''); // Todo temp workaround
+        return { boundEntityTypeName, argName: parameterName, argType: parameterTypeName };
+      };
+      const boundActionEntitySetDetails = (entitySetObj: any) => {
+        const entitySetTypeRef = entitySetObj.attributes.EntityType;
+        const boundEntityTypeName = getTypeNameFromRef({
+          typeRef: entitySetTypeRef,
+          isInput: false,
+          isRequired: false,
+        });
+
+        const entityOutputTC = getTCByTypeNames('I' + boundEntityTypeName, boundEntityTypeName) as
+          | InterfaceTypeComposer
+          | ObjectTypeComposer;
+        const { entityInfo } = entityOutputTC.getExtensions() as EntityTypeExtensions;
+        const argName = entityInfo.identifierFieldName;
+        const argType = entityOutputTC.getFieldTypeName(argName);
+        return { boundEntityTypeName, argName, argType };
+      };
       const handleBoundActionObj = (boundActionObj: any) => {
         const actionName = boundActionObj.attributes.Name;
         const actionRef = schemaNamespace + '.' + actionName;
+        const entitySetPath = boundActionObj.attributes.EntitySetPath;
+        // If entitySetPath is not specified, take first parameter as entity
+        const entityParameterObj = boundActionObj.Parameter?.find(
+          (parameterObj: any) => !entitySetPath || parameterObj.attributes.Name === entitySetPath,
+        );
+        // Try to find EntitySet matching entitySetPath:
+        const entitySetObj = schemas.flatMap(
+          schemaObj =>
+            schemaObj.EntityContainer?.flatMap(
+              entityContainerObj =>
+                entityContainerObj.EntitySet?.flatMap(entitySetObj =>
+                  entitySetObj.attributes.Name === entitySetPath ? [entitySetObj] : [],
+                ) ?? [],
+            ) ?? [],
+        )?.[0];
+        const { boundEntityTypeName, argName, argType } = entitySetObj
+          ? boundActionEntitySetDetails(entitySetObj)
+          : entityParameterObj
+            ? boundActionEntityParameterDetails(entityParameterObj)
+            : (() => {
+                throw new Error(
+                  `EntitySet ${entitySetPath} not found in schema ${schemaNamespace}`,
+                );
+              })();
+
         const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
           ...commonArgs,
+          [argName]: {
+            type: argType,
+          },
         };
-        let entitySetPath = boundActionObj.attributes.EntitySetPath;
-        let boundField: ObjectTypeComposerFieldConfigDefinition<any, any, any>;
-        let boundEntityTypeName: string;
+        // add remaining parameters to args:
         boundActionObj.Parameter?.forEach((parameterObj: any) => {
-          const parameterName = parameterObj.attributes.Name;
-          const parameterTypeRef = parameterObj.attributes.Type;
-          const isRequired = parameterObj.attributes.Nullable === 'false';
-          const parameterTypeName = getTypeNameFromRef({
-            typeRef: parameterTypeRef,
-            isInput: true,
-            isRequired,
-          });
-          // If entitySetPath is not available, take first parameter as entity
-          entitySetPath = entitySetPath || parameterName;
-          if (entitySetPath === parameterName) {
-            boundEntityTypeName = getTypeNameFromRef({
-              typeRef: parameterTypeRef,
-              isInput: false,
-              isRequired: false,
-            })
-              .replace('[', '')
-              .replace(']', ''); // Todo temp workaround
-            boundField = {
-              type: 'JSON',
-              args,
-              resolve: async (root, args, context, info) => {
-                const url = new URL(root['@odata.id']);
-                url.href = urljoin(url.href, '/' + actionRef);
-                const urlString = getUrlString(url);
-                const method = 'POST';
-                const request = new Request(urlString, {
-                  method,
-                  headers: headersFactory(
-                    {
-                      root,
-                      args,
-                      context,
-                      info,
-                      env: process.env,
-                    },
-                    method,
-                  ),
-                  body: JSON.stringify(args),
-                });
-                const response = await context[contextDataloaderName].load(request);
-                const responseText = await response.text();
-                return handleResponseText(responseText, urlString, info);
-              },
-            };
-          }
-          args[parameterName] = {
-            type: parameterTypeName,
+          const { argName, argType } = boundActionEntityParameterDetails(parameterObj);
+          args[argName] = {
+            type: argType,
           };
         });
+
+        const boundField: ObjectTypeComposerFieldConfigDefinition<any, any, any> = {
+          type: 'JSON',
+          args,
+          resolve: async (root, args, context, info) => {
+            const url = new URL(root['@odata.id']);
+            url.href = urljoin(url.href, '/' + actionRef);
+            const urlString = getUrlString(url);
+            const method = 'POST';
+            const request = new Request(urlString, {
+              method,
+              headers: headersFactory(
+                {
+                  root,
+                  args,
+                  context,
+                  info,
+                  env: process.env,
+                },
+                method,
+              ),
+              body: JSON.stringify(args),
+            });
+            const response = await context[contextDataloaderName].load(request);
+            const responseText = await response.text();
+            return handleResponseText(responseText, urlString, info);
+          },
+        };
         const boundEntityType = schemaComposer.getAnyTC(
           boundEntityTypeName,
         ) as InterfaceTypeComposer;
