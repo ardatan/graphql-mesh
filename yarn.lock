@@ -10138,16 +10138,16 @@ __metadata:
   linkType: hard
 
 "@theguild/components@npm:^6.5.3":
-  version: 6.6.1
-  resolution: "@theguild/components@npm:6.6.1"
+  version: 6.6.2
+  resolution: "@theguild/components@npm:6.6.2"
   dependencies:
     "@giscus/react": "npm:3.0.0"
     "@next/bundle-analyzer": "npm:14.2.5"
     clsx: "npm:2.1.1"
     fuzzy: "npm:0.1.3"
     next-videos: "npm:1.5.0"
-    nextra: "npm:3.0.0-alpha.25"
-    nextra-theme-docs: "npm:3.0.0-alpha.25"
+    nextra: "npm:3.0.0-alpha.27"
+    nextra-theme-docs: "npm:3.0.0-alpha.27"
     react-paginate: "npm:8.2.0"
     react-player: "npm:2.16.0"
     remark-mdx-disable-explicit-jsx: "npm:0.1.0"
@@ -10156,7 +10156,7 @@ __metadata:
     next: ^13 || ^14
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/4cdc726f7436ebc01ab53dec721c8383c8fc301a55343cdbde1293f2669da4b135d0928cfbba826df531b464430b55e6cfaae22228c80e3058027949e69d253c
+  checksum: 10c0/c6d6819b31b4f79f7353c041887be182ec837844d9f08ab1b9bf5d8e5fa06628cd52afb44ba54787e4253635a7059d65c85e9133e8b07ebff1066927d156591c
   languageName: node
   linkType: hard
 
@@ -26611,9 +26611,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"nextra-theme-docs@npm:3.0.0-alpha.25":
-  version: 3.0.0-alpha.25
-  resolution: "nextra-theme-docs@npm:3.0.0-alpha.25"
+"nextra-theme-docs@npm:3.0.0-alpha.27":
+  version: 3.0.0-alpha.27
+  resolution: "nextra-theme-docs@npm:3.0.0-alpha.27"
   dependencies:
     "@headlessui/react": "npm:^1.7.17"
     "@popperjs/core": "npm:^2.11.8"
@@ -26627,16 +26627,16 @@ __metadata:
     zod: "npm:^3.22.3"
   peerDependencies:
     next: ">=13"
-    nextra: 3.0.0-alpha.25
+    nextra: 3.0.0-alpha.27
     react: ">=16.13.1"
     react-dom: ">=16.13.1"
-  checksum: 10c0/62ec27b751016fb6ec4df729e6ceeb458d21ba3b60fbbdfa15176e7a062dade79b7420dbdcd83239da6fa5144eccdd657eb768f50d7d27dea315bd7f89499213
+  checksum: 10c0/44acec5d3f2d59f25f7f0a2708e9e8e176966126d854cf5ad481bbcd85def136419ad58e8a1cae8866b742d855109092b93b6321be2004707f4d2e317dffe169
   languageName: node
   linkType: hard
 
-"nextra@npm:3.0.0-alpha.25":
-  version: 3.0.0-alpha.25
-  resolution: "nextra@npm:3.0.0-alpha.25"
+"nextra@npm:3.0.0-alpha.27":
+  version: 3.0.0-alpha.27
+  resolution: "nextra@npm:3.0.0-alpha.27"
   dependencies:
     "@headlessui/react": "npm:^1.7.17"
     "@mdx-js/mdx": "npm:^3.0.0"
@@ -26675,7 +26675,7 @@ __metadata:
     next: ">=13"
     react: ">=16.13.1"
     react-dom: ">=16.13.1"
-  checksum: 10c0/30e8af565c12b14ef06912b7bf3f67c836c102fda73f5ddc2d501437d6fdcbd895a899e90b565e14f8c52e33cf176d4165184a980d55778419266366a458473e
+  checksum: 10c0/434d41835472ee6a9fa126e9e2d993a25629925d4d3f2c591a30cae931cb90d31a22eb9213a7a1a16dd302c14db0311802de06bc1aea7c6e43f596660cc82587
   languageName: node
   linkType: hard
 
