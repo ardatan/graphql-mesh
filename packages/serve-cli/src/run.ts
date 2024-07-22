@@ -102,19 +102,9 @@ export async function run({
   productName = 'Mesh',
   productDescription = 'serve GraphQL federated architecture for any API service(s)',
   binName = 'mesh-serve',
-  version,
+  version = 'MESH_VERSION',
 }: RunOptions) {
-  program = program.name(binName).description(productDescription);
-  if (!version) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore - we're using dynamic import here
-    version = await import('../package.json', { with: { type: 'json' } })
-      .then(packageJsonModule => packageJsonModule.default.version || packageJsonModule.version)
-      .catch(() => undefined);
-  }
-  if (version) {
-    program = program.version(version);
-  }
+  program = program.name(binName).description(productDescription).version(version);
   const opts = program.parse().opts();
 
   const log = rootLog.child(

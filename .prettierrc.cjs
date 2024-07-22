@@ -4,7 +4,6 @@ module.exports = {
   overrides: [{ files: '*.json', options: { trailingComma: 'none' } }, ...guildConfig.overrides],
   importOrderParserPlugins: [
     'explicitResourceManagement',
-    'importAttributes',
     ...guildConfig.importOrderParserPlugins,
   ],
 };
