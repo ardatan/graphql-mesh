@@ -1,4 +1,3 @@
-#! /usr/bin/env node --import tsx
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 // @ts-expect-error tsx will allow this to work
