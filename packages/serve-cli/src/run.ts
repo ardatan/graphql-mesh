@@ -106,6 +106,8 @@ export async function run({
 }: RunOptions) {
   program = program.name(binName).description(productDescription);
   if (!version) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore - we're using dynamic import here
     version = await import('../package.json', { with: { type: 'json' } })
       .then(packageJsonModule => packageJsonModule.default.version || packageJsonModule.version)
       .catch(() => undefined);
