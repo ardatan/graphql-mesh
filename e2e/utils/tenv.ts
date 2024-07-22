@@ -33,7 +33,7 @@ export interface ProcOptions {
   /**
    * Additional environment variables to pass to the spawned process.
    */
-  env?: Record<string, string>;
+  env?: Record<string, string | number>;
 }
 
 export interface Proc extends AsyncDisposable {
@@ -130,8 +130,6 @@ export interface ContainerOptions extends ProcOptions {
    * Will be bound to an available port on the host in {@link Container.port}.
    */
   containerPort: number;
-  /** A map of environment variable names to values. */
-  env?: Record<string, string>;
   /**
    * The healtcheck test command to run on the container.
    * If provided, the run function will wait for the container to become healthy.
@@ -496,12 +494,11 @@ export function createTenv(cwd: string): Tenv {
 
 interface SpawnOptions extends ProcOptions {
   cwd: string;
-  env?: Record<string, string>;
   shell?: boolean;
 }
 
 function spawn(
-  { cwd, pipeLogs, env, shell }: SpawnOptions,
+  { cwd, pipeLogs, env = {}, shell }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<[proc: Proc, waitForExit: Promise<void>]> {
@@ -509,7 +506,7 @@ function spawn(
     cwd,
     // ignore stdin, pipe stdout and stderr
     stdio: ['ignore', 'pipe', 'pipe'],
-    env,
+    env: Object.entries(env).reduce((acc, [key, val]) => ({ ...acc, [key]: String(val) }), {}),
     shell,
   });
 
