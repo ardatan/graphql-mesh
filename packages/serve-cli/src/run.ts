@@ -14,7 +14,6 @@ import type { UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger, getTerminateStack, registerTerminateHandler } from '@graphql-mesh/utils';
-import { isValidPath } from '@graphql-tools/utils';
 import { startNodeHttpServer } from './nodeHttp.js';
 import type { MeshServeCLIConfig } from './types.js';
 import { startuWebSocketsServer } from './uWebSockets.js';
@@ -94,7 +93,7 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
   productDescription?: string;
   /** @default mesh-serve */
   binName?: string;
-  /** @default undefined */
+  /** @default globalThis.__VERSION__ */
   version?: string;
 }
 
@@ -103,10 +102,11 @@ export async function run({
   productName = 'Mesh',
   productDescription = 'serve GraphQL federated architecture for any API service(s)',
   binName = 'mesh-serve',
-  version,
+  version = globalThis.__VERSION__,
 }: RunOptions) {
   program = program.name(binName).description(productDescription);
-  if (version) program = program.version(version);
+  if (version) program.version(version);
+
   const opts = program.parse().opts();
 
   const log = rootLog.child(
