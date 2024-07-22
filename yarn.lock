@@ -231,9 +231,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/rover@npm:^0.24.0":
-  version: 0.24.0
-  resolution: "@apollo/rover@npm:0.24.0"
+"@apollo/rover@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "@apollo/rover@npm:0.25.0"
   dependencies:
     axios: "npm:^1.6.5"
     axios-proxy-builder: "npm:^0.1.1"
@@ -242,7 +242,7 @@ __metadata:
     tar: "npm:^7.0.0"
   bin:
     rover: run.js
-  checksum: 10c0/20a081a33876cb8197fbef37e7d450ec6dddfea46cff18292dd0d2b5c0c88ea62cd8d4497d0cad81d3d74a21c64805d3595cf87a1ae20625893692c34bb3c0b1
+  checksum: 10c0/2a541628967b6e23e5f79ba0ed6001d32a41ea57a59d5abcb15fb26a03f92ac5c99ea9541d73a3a5b1e3459f4b9babb217bc74e30b235661c6ba22e63b407c18
   languageName: node
   linkType: hard
 
@@ -3207,45 +3207,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-darwin-64@npm:1.20240712.0":
-  version: 1.20240712.0
-  resolution: "@cloudflare/workerd-darwin-64@npm:1.20240712.0"
+"@cloudflare/workerd-darwin-64@npm:1.20240718.0":
+  version: 1.20240718.0
+  resolution: "@cloudflare/workerd-darwin-64@npm:1.20240718.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-darwin-arm64@npm:1.20240712.0":
-  version: 1.20240712.0
-  resolution: "@cloudflare/workerd-darwin-arm64@npm:1.20240712.0"
+"@cloudflare/workerd-darwin-arm64@npm:1.20240718.0":
+  version: 1.20240718.0
+  resolution: "@cloudflare/workerd-darwin-arm64@npm:1.20240718.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-linux-64@npm:1.20240712.0":
-  version: 1.20240712.0
-  resolution: "@cloudflare/workerd-linux-64@npm:1.20240712.0"
+"@cloudflare/workerd-linux-64@npm:1.20240718.0":
+  version: 1.20240718.0
+  resolution: "@cloudflare/workerd-linux-64@npm:1.20240718.0"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-linux-arm64@npm:1.20240712.0":
-  version: 1.20240712.0
-  resolution: "@cloudflare/workerd-linux-arm64@npm:1.20240712.0"
+"@cloudflare/workerd-linux-arm64@npm:1.20240718.0":
+  version: 1.20240718.0
+  resolution: "@cloudflare/workerd-linux-arm64@npm:1.20240718.0"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-windows-64@npm:1.20240712.0":
-  version: 1.20240712.0
-  resolution: "@cloudflare/workerd-windows-64@npm:1.20240712.0"
+"@cloudflare/workerd-windows-64@npm:1.20240718.0":
+  version: 1.20240718.0
+  resolution: "@cloudflare/workerd-windows-64@npm:1.20240718.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20240712.0":
-  version: 4.20240712.0
-  resolution: "@cloudflare/workers-types@npm:4.20240712.0"
-  checksum: 10c0/4a6c283c98699474f64ad87d8795596ecfd8fd1c22cfdb9be534c8cebdfd3e212d8a5881ecd9631c0cfdd2c1bca5b274e1a66f225f128fb5722efc65fd4e7341
+"@cloudflare/workers-types@npm:4.20240718.0":
+  version: 4.20240718.0
+  resolution: "@cloudflare/workers-types@npm:4.20240718.0"
+  checksum: 10c0/7e7ad922bd4ef404572328b6999fdf98ab8863225d529bc452b1ca14e57114d8dc12fb065fb7087c1b226aff6274e3f3a5471b9bb740e441e19a7d8ab09fe4ef
   languageName: node
   linkType: hard
 
@@ -3597,7 +3597,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/federation-example@workspace:e2e/federation-example"
   dependencies:
-    "@apollo/rover": "npm:^0.24.0"
+    "@apollo/rover": "npm:^0.25.0"
     "@apollo/server": "npm:^4.10.3"
     "@apollo/subgraph": "npm:^2.7.2"
   languageName: unknown
@@ -3607,7 +3607,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/federation-mixed@workspace:e2e/federation-mixed"
   dependencies:
-    "@apollo/rover": "npm:^0.24.0"
+    "@apollo/rover": "npm:^0.25.0"
     "@apollo/server": "npm:^4.10.3"
     "@apollo/subgraph": "npm:^2.7.2"
     fets: "npm:^0.8.1"
@@ -3618,7 +3618,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/federation-subscriptions-passthrough@workspace:e2e/federation-subscriptions-passthrough"
   dependencies:
-    "@apollo/rover": "npm:^0.24.0"
+    "@apollo/rover": "npm:^0.25.0"
     "@apollo/server": "npm:^4.10.3"
     "@apollo/subgraph": "npm:^2.7.2"
     "@repeaterjs/repeater": "npm:^3.0.6"
@@ -4315,7 +4315,7 @@ __metadata:
   dependencies:
     "@graphql-hive/cli": "npm:0.38.5"
     graphql: "npm:16.9.0"
-    graphql-yoga: "npm:5.6.0"
+    graphql-yoga: "npm:5.6.1"
   languageName: unknown
   linkType: soft
 
@@ -4735,7 +4735,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20240712.0"
+    "@cloudflare/workers-types": "npm:4.20240718.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.1
     "@graphql-mesh/utils": ^0.99.1
@@ -5288,7 +5288,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
     "@newrelic/test-utilities": "npm:6.5.5"
     "@types/newrelic": "npm:9.14.4"
-    graphql-yoga: "npm:5.6.0"
+    graphql-yoga: "npm:5.6.1"
     newrelic: "npm:10.6.2"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.4
@@ -5573,7 +5573,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/string-interpolation@workspace:packages/string-interpolation"
   dependencies:
-    dayjs: "npm:1.11.11"
+    dayjs: "npm:1.11.12"
     json-pointer: "npm:0.6.2"
     lodash.get: "npm:4.4.2"
   peerDependencies:
@@ -6190,9 +6190,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/delegate@npm:^10.0.11, @graphql-tools/delegate@npm:^10.0.12, @graphql-tools/delegate@npm:^10.0.14, @graphql-tools/delegate@npm:^10.0.4":
-  version: 10.0.14
-  resolution: "@graphql-tools/delegate@npm:10.0.14"
+"@graphql-tools/delegate@npm:^10.0.11, @graphql-tools/delegate@npm:^10.0.12, @graphql-tools/delegate@npm:^10.0.14, @graphql-tools/delegate@npm:^10.0.15, @graphql-tools/delegate@npm:^10.0.4":
+  version: 10.0.15
+  resolution: "@graphql-tools/delegate@npm:10.0.15"
   dependencies:
     "@graphql-tools/batch-execute": "npm:^9.0.4"
     "@graphql-tools/executor": "npm:^1.2.8"
@@ -6202,7 +6202,7 @@ __metadata:
     tslib: "npm:^2.5.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/266931e142a74af12e687a5da05a16125896d6d909fb231bf6addd0fb9e05dbecbaa0a453a637e94ebec68d96a4c4568538046dd5b0e0d3d8e4fb232d5dc164a
+  checksum: 10c0/153b959b2666bd4e1c5b48cc91691d10a5a42f708a603c83deea01b84f2a122911fdf0a860ac89aa9053b84c91a05191c950b2a9a1b5de4e496d96d6710b0f6f
   languageName: node
   linkType: hard
 
@@ -6297,11 +6297,11 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^2.1.2":
-  version: 2.1.2
-  resolution: "@graphql-tools/federation@npm:2.1.2"
+  version: 2.1.3
+  resolution: "@graphql-tools/federation@npm:2.1.3"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0"
-    "@graphql-tools/delegate": "npm:^10.0.14"
+    "@graphql-tools/delegate": "npm:^10.0.15"
     "@graphql-tools/executor-http": "npm:^1.1.5"
     "@graphql-tools/merge": "npm:^9.0.3"
     "@graphql-tools/schema": "npm:^10.0.4"
@@ -6316,7 +6316,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/65e6274f68a0c4a60b28196b2c2784d36d1da28534fe450c3887d480723d8a8fdf1f660c19aafb6213a36178e32b5774984140e19632502abd998cc24a429b3e
+  checksum: 10c0/f6901d0870ec35512ddd0fcc1a112210e9ee5a3475c791b9412ff734bcad788fc7a1ecdca02d37581f23d555c6b8a29c0631b6d819bc7fc5dafe18d18e7ceedf
   languageName: node
   linkType: hard
 
@@ -6877,15 +6877,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-sofa@npm:3.6.0":
-  version: 3.6.0
-  resolution: "@graphql-yoga/plugin-sofa@npm:3.6.0"
+"@graphql-yoga/plugin-sofa@npm:3.6.1":
+  version: 3.6.1
+  resolution: "@graphql-yoga/plugin-sofa@npm:3.6.1"
   dependencies:
     sofa-api: "npm:^0.18.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.6.0
-  checksum: 10c0/5327406cfbc7c52ecb69ce97716037dc7639ab66d9fec7fa6931bc029ddf3998850243e06179a74978fd8dd8b9675508a586b40226941def63b7f7302d904379
+    graphql-yoga: ^5.6.1
+  checksum: 10c0/4fdd64299e2f5990058f0e05dc0d35b9d61c701a09ecee296a381cf6060ded2cd15c738130f1933b5e50664954c6f5b290bcf1cc31f8de34da5281ffbc45b8bc
   languageName: node
   linkType: hard
 
@@ -8656,7 +8656,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:0.9.18"
     change-case: "npm:^4.1.2"
     fets: "npm:0.8.1"
-    graphql-yoga: "npm:5.6.0"
+    graphql-yoga: "npm:5.6.1"
     json-bigint-patch: "npm:0.0.8"
     json-machete: "npm:^0.97.3"
     openapi-types: "npm:^12.1.0"
@@ -9167,114 +9167,114 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/rollup-android-arm-eabi@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-android-arm-eabi@npm:4.18.1"
+"@rollup/rollup-android-arm-eabi@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-android-arm-eabi@npm:4.19.0"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@rollup/rollup-android-arm64@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-android-arm64@npm:4.18.1"
+"@rollup/rollup-android-arm64@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-android-arm64@npm:4.19.0"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-darwin-arm64@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-darwin-arm64@npm:4.18.1"
+"@rollup/rollup-darwin-arm64@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-darwin-arm64@npm:4.19.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-darwin-x64@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-darwin-x64@npm:4.18.1"
+"@rollup/rollup-darwin-x64@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-darwin-x64@npm:4.19.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm-gnueabihf@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.18.1"
+"@rollup/rollup-linux-arm-gnueabihf@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.19.0"
   conditions: os=linux & cpu=arm & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm-musleabihf@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-arm-musleabihf@npm:4.18.1"
+"@rollup/rollup-linux-arm-musleabihf@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-arm-musleabihf@npm:4.19.0"
   conditions: os=linux & cpu=arm & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm64-gnu@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.18.1"
+"@rollup/rollup-linux-arm64-gnu@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.19.0"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm64-musl@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.18.1"
+"@rollup/rollup-linux-arm64-musl@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.19.0"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-powerpc64le-gnu@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-powerpc64le-gnu@npm:4.18.1"
+"@rollup/rollup-linux-powerpc64le-gnu@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-powerpc64le-gnu@npm:4.19.0"
   conditions: os=linux & cpu=ppc64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-riscv64-gnu@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.18.1"
+"@rollup/rollup-linux-riscv64-gnu@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.19.0"
   conditions: os=linux & cpu=riscv64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-s390x-gnu@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-s390x-gnu@npm:4.18.1"
+"@rollup/rollup-linux-s390x-gnu@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-s390x-gnu@npm:4.19.0"
   conditions: os=linux & cpu=s390x & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-x64-gnu@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.18.1"
+"@rollup/rollup-linux-x64-gnu@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.19.0"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-x64-musl@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-linux-x64-musl@npm:4.18.1"
+"@rollup/rollup-linux-x64-musl@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-linux-x64-musl@npm:4.19.0"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-arm64-msvc@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.18.1"
+"@rollup/rollup-win32-arm64-msvc@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.19.0"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-ia32-msvc@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.18.1"
+"@rollup/rollup-win32-ia32-msvc@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.19.0"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-x64-msvc@npm:4.18.1":
-  version: 4.18.1
-  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.18.1"
+"@rollup/rollup-win32-x64-msvc@npm:4.19.0":
+  version: 4.19.0
+  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.19.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -11784,7 +11784,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.99.1"
     "@graphql-mesh/serve-runtime": "npm:^0.5.1"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.65.0"
+    wrangler: "npm:3.65.1"
   languageName: unknown
   linkType: soft
 
@@ -12045,7 +12045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/server@npm:^0.9.15, @whatwg-node/server@npm:^0.9.33, @whatwg-node/server@npm:^0.9.34, @whatwg-node/server@npm:^0.9.36":
+"@whatwg-node/server@npm:^0.9.15, @whatwg-node/server@npm:^0.9.34, @whatwg-node/server@npm:^0.9.36":
   version: 0.9.36
   resolution: "@whatwg-node/server@npm:0.9.36"
   dependencies:
@@ -14096,7 +14096,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.5.1"
     "@omnigraph/json-schema": "npm:^0.102.1"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.65.0"
+    wrangler: "npm:3.65.1"
   languageName: unknown
   linkType: soft
 
@@ -14550,7 +14550,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.102.1"
     "@graphql-mesh/plugin-response-cache": "npm:0.99.1"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.65.0"
+    wrangler: "npm:3.65.1"
   languageName: unknown
   linkType: soft
 
@@ -16104,14 +16104,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.11":
-  version: 1.11.11
-  resolution: "dayjs@npm:1.11.11"
-  checksum: 10c0/0131d10516b9945f05a57e13f4af49a6814de5573a494824e103131a3bbe4cc470b1aefe8e17e51f9a478a22cd116084be1ee5725cedb66ec4c3f9091202dc4b
-  languageName: node
-  linkType: hard
-
-"dayjs@npm:^1.11.7":
+"dayjs@npm:1.11.12, dayjs@npm:^1.11.7":
   version: 1.11.12
   resolution: "dayjs@npm:1.11.12"
   checksum: 10c0/9673d37f3f9ad8a91caaeae9b3fea9a0010c81c7f58599fb9d860bc3359b86632fbff8eb7dddc86c2acaab01c5e6860bc672952f17b58c9286140c52b077c8e4
@@ -16872,7 +16865,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ejs@npm:^3.0.0, ejs@npm:^3.1.10, ejs@npm:^3.1.6":
+"ejs@npm:^3.1.10, ejs@npm:^3.1.6":
   version: 3.1.10
   resolution: "ejs@npm:3.1.10"
   dependencies:
@@ -17662,12 +17655,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-promise@npm:6.4.0":
-  version: 6.4.0
-  resolution: "eslint-plugin-promise@npm:6.4.0"
+"eslint-plugin-promise@npm:6.6.0":
+  version: 6.6.0
+  resolution: "eslint-plugin-promise@npm:6.6.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/5d07be976504f92d1d91756b0b0588a4c65e379af2520dd77c8655203085c0ab43e24d4698d1ac4b50926430cd8eb81cd1cc4c3653aae8386c805577bdf57b6c
+  checksum: 10c0/93a667dbc9ff15c4d586b0d40a31c7828314cbbb31b2b9a75802aa4ef536e9457bb3e1a89b384b07aa336dd61b315ae8b0aadc0870210378023dd018819b59b3
   languageName: node
   linkType: hard
 
@@ -18187,7 +18180,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.92.1"
     "@graphql-mesh/json-schema": "npm:0.102.1"
     "@graphql-mesh/plugin-mock": "npm:0.99.1"
-    "@graphql-yoga/plugin-sofa": "npm:3.6.0"
+    "@graphql-yoga/plugin-sofa": "npm:3.6.1"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
   languageName: unknown
@@ -19143,7 +19136,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     react-scripts: "npm:5.0.1"
     typescript: "npm:^5.4.2"
-    web-vitals: "npm:4.2.1"
+    web-vitals: "npm:4.2.2"
   languageName: unknown
   linkType: soft
 
@@ -19933,7 +19926,7 @@ __metadata:
     graphql-yoga: "npm:^5.6.0"
     jest: "npm:29.7.0"
     sharp: "npm:0.33.4"
-    ts-jest: "npm:29.2.2"
+    ts-jest: "npm:29.2.3"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -20009,7 +20002,7 @@ __metadata:
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.29.1"
     eslint-plugin-n: "npm:17.9.0"
-    eslint-plugin-promise: "npm:6.4.0"
+    eslint-plugin-promise: "npm:6.6.0"
     eslint-plugin-standard: "npm:5.0.0"
     globby: "npm:11.1.0"
     graphql: "npm:16.9.0"
@@ -20019,7 +20012,7 @@ __metadata:
     minimatch: "npm:9.0.5"
     prettier: "npm:3.3.3"
     threads: "npm:^1.7.0"
-    ts-jest: "npm:29.2.2"
+    ts-jest: "npm:29.2.3"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -20130,28 +20123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:5.6.0":
-  version: 5.6.0
-  resolution: "graphql-yoga@npm:5.6.0"
-  dependencies:
-    "@envelop/core": "npm:^5.0.0"
-    "@graphql-tools/executor": "npm:^1.2.5"
-    "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/utils": "npm:^10.1.0"
-    "@graphql-yoga/logger": "npm:^2.0.0"
-    "@graphql-yoga/subscription": "npm:^5.0.1"
-    "@whatwg-node/fetch": "npm:^0.9.17"
-    "@whatwg-node/server": "npm:^0.9.33"
-    dset: "npm:^3.1.1"
-    lru-cache: "npm:^10.0.0"
-    tslib: "npm:^2.5.2"
-  peerDependencies:
-    graphql: ^15.2.0 || ^16.0.0
-  checksum: 10c0/bcacd9ed6a29721bdd142d0e9199e142ba20b4057fb5aea960ddbd760075d295d92230eb7fffe671217d4fb6dcd13249f5d28795dfe787716b6a4979b80062d8
-  languageName: node
-  linkType: hard
-
-"graphql-yoga@npm:^5.6.0":
+"graphql-yoga@npm:5.6.1, graphql-yoga@npm:^5.6.0":
   version: 5.6.1
   resolution: "graphql-yoga@npm:5.6.1"
   dependencies:
@@ -20204,7 +20176,7 @@ __metadata:
     google-protobuf: "npm:3.21.4"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
-    ts-jest: "npm:29.2.2"
+    ts-jest: "npm:29.2.3"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -23390,7 +23362,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.92.1"
     "@graphql-mesh/json-schema": "npm:0.102.1"
     "@graphql-mesh/plugin-mock": "npm:0.99.1"
-    "@graphql-yoga/plugin-sofa": "npm:3.6.0"
+    "@graphql-yoga/plugin-sofa": "npm:3.6.1"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
   languageName: unknown
@@ -25851,9 +25823,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20240712.0":
-  version: 3.20240712.0
-  resolution: "miniflare@npm:3.20240712.0"
+"miniflare@npm:3.20240718.0":
+  version: 3.20240718.0
+  resolution: "miniflare@npm:3.20240718.0"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
@@ -25863,13 +25835,13 @@ __metadata:
     glob-to-regexp: "npm:^0.4.1"
     stoppable: "npm:^1.1.0"
     undici: "npm:^5.28.4"
-    workerd: "npm:1.20240712.0"
+    workerd: "npm:1.20240718.0"
     ws: "npm:^8.17.1"
     youch: "npm:^3.2.2"
     zod: "npm:^3.22.3"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/b458813348da463f911794216b96ad5169f78663977e052922b4e786448a6d9c0a426cfee3526c1f58676bdaeb34b9944ac95a984dea736a9e709f059de94a67
+  checksum: 10c0/bea17491a2d2515f8e308660ef99795842fc33d702af1b2aa89abd9e2c9e8c32f186252306f64b7230717cd94c3eaa1c9330157d4b8c2eda0d6761940b0fc441
   languageName: node
   linkType: hard
 
@@ -31366,25 +31338,25 @@ __metadata:
   linkType: hard
 
 "rollup@npm:^4.13.0, rollup@npm:^4.18.1":
-  version: 4.18.1
-  resolution: "rollup@npm:4.18.1"
+  version: 4.19.0
+  resolution: "rollup@npm:4.19.0"
   dependencies:
-    "@rollup/rollup-android-arm-eabi": "npm:4.18.1"
-    "@rollup/rollup-android-arm64": "npm:4.18.1"
-    "@rollup/rollup-darwin-arm64": "npm:4.18.1"
-    "@rollup/rollup-darwin-x64": "npm:4.18.1"
-    "@rollup/rollup-linux-arm-gnueabihf": "npm:4.18.1"
-    "@rollup/rollup-linux-arm-musleabihf": "npm:4.18.1"
-    "@rollup/rollup-linux-arm64-gnu": "npm:4.18.1"
-    "@rollup/rollup-linux-arm64-musl": "npm:4.18.1"
-    "@rollup/rollup-linux-powerpc64le-gnu": "npm:4.18.1"
-    "@rollup/rollup-linux-riscv64-gnu": "npm:4.18.1"
-    "@rollup/rollup-linux-s390x-gnu": "npm:4.18.1"
-    "@rollup/rollup-linux-x64-gnu": "npm:4.18.1"
-    "@rollup/rollup-linux-x64-musl": "npm:4.18.1"
-    "@rollup/rollup-win32-arm64-msvc": "npm:4.18.1"
-    "@rollup/rollup-win32-ia32-msvc": "npm:4.18.1"
-    "@rollup/rollup-win32-x64-msvc": "npm:4.18.1"
+    "@rollup/rollup-android-arm-eabi": "npm:4.19.0"
+    "@rollup/rollup-android-arm64": "npm:4.19.0"
+    "@rollup/rollup-darwin-arm64": "npm:4.19.0"
+    "@rollup/rollup-darwin-x64": "npm:4.19.0"
+    "@rollup/rollup-linux-arm-gnueabihf": "npm:4.19.0"
+    "@rollup/rollup-linux-arm-musleabihf": "npm:4.19.0"
+    "@rollup/rollup-linux-arm64-gnu": "npm:4.19.0"
+    "@rollup/rollup-linux-arm64-musl": "npm:4.19.0"
+    "@rollup/rollup-linux-powerpc64le-gnu": "npm:4.19.0"
+    "@rollup/rollup-linux-riscv64-gnu": "npm:4.19.0"
+    "@rollup/rollup-linux-s390x-gnu": "npm:4.19.0"
+    "@rollup/rollup-linux-x64-gnu": "npm:4.19.0"
+    "@rollup/rollup-linux-x64-musl": "npm:4.19.0"
+    "@rollup/rollup-win32-arm64-msvc": "npm:4.19.0"
+    "@rollup/rollup-win32-ia32-msvc": "npm:4.19.0"
+    "@rollup/rollup-win32-x64-msvc": "npm:4.19.0"
     "@types/estree": "npm:1.0.5"
     fsevents: "npm:~2.3.2"
   dependenciesMeta:
@@ -31424,7 +31396,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 10c0/c3c73252fd9f1d39eaeb44aa860141d9daf10d6eada73791a0ef453d38fe8f2c2dfef103ac1f387ed192dd5a2994534f91c026eed9ba1cfb50f5781f48c1f44f
+  checksum: 10c0/1c656853895f6c7d55492db4661c79d37a3046cff465f4924ac5f053b0f80a079e36f901b154dbe819d9e94dcd83e90e51c7f95e7158bef1a07ceb60df736285
   languageName: node
   linkType: hard
 
@@ -32386,7 +32358,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.99.1"
     "@graphql-mesh/plugin-response-cache": "npm:0.99.1"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.65.0"
+    wrangler: "npm:3.65.1"
   languageName: unknown
   linkType: soft
 
@@ -33974,12 +33946,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.2.2":
-  version: 29.2.2
-  resolution: "ts-jest@npm:29.2.2"
+"ts-jest@npm:29.2.3":
+  version: 29.2.3
+  resolution: "ts-jest@npm:29.2.3"
   dependencies:
     bs-logger: "npm:0.x"
-    ejs: "npm:^3.0.0"
+    ejs: "npm:^3.1.10"
     fast-json-stable-stringify: "npm:2.x"
     jest-util: "npm:^29.0.0"
     json5: "npm:^2.2.3"
@@ -34007,7 +33979,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/833afe98f6aef7c46abbfb6bc84ce2431bcd82d614380e54ccd73cfc4c7c015ecdf058ad53edc48d575816b35c3db044de5fe1a579336a75f9a8c6651b6f7b50
+  checksum: 10c0/3be57a9f0e9cf0d0de235f5543dc1f2a33da4380bf46e660f79d050a15a6e7bab71a7a80ba9559761ce1203248b40d0f9386c19356718165575f32192e32140e
   languageName: node
   linkType: hard
 
@@ -34537,10 +34509,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:6.19.2":
-  version: 6.19.2
-  resolution: "undici@npm:6.19.2"
-  checksum: 10c0/3b7b9238c0c84fd90742422fb12844a29e33e922d2c5f722f626090ca1f1ec93596ccec9be1814bb0e923e28682d2080a17d17a4afe373897b9770ef25a64d97
+"undici@npm:6.19.3":
+  version: 6.19.3
+  resolution: "undici@npm:6.19.3"
+  checksum: 10c0/b4f361243fb83a23024a7616da2dd55aafa02afaa477eef85b62ba87c1daac72e4a008d92c3987fdb0786c877714364476117c61db6d5810e28dd6a946b31f1b
   languageName: node
   linkType: hard
 
@@ -35312,10 +35284,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-vitals@npm:4.2.1":
-  version: 4.2.1
-  resolution: "web-vitals@npm:4.2.1"
-  checksum: 10c0/e31bdd5f872ed47a2eb2e0e2b69ea035effc4bb8b9df98a17a39a4e82d2bfda0e67f45a4fd8ec956714d853ba34d9a1f2bcda83617f08983dadb96ec36feb918
+"web-vitals@npm:4.2.2":
+  version: 4.2.2
+  resolution: "web-vitals@npm:4.2.2"
+  checksum: 10c0/0e41d016a80d8f48e00c95f3d8405a4cb8c6a12a83ac6677ce49447c85ca6fb2325f40915ae5460bb59f07d1b7d65b66b8b42ea50135594ae7dc892453775004
   languageName: node
   linkType: hard
 
@@ -36043,15 +36015,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workerd@npm:1.20240712.0":
-  version: 1.20240712.0
-  resolution: "workerd@npm:1.20240712.0"
+"workerd@npm:1.20240718.0":
+  version: 1.20240718.0
+  resolution: "workerd@npm:1.20240718.0"
   dependencies:
-    "@cloudflare/workerd-darwin-64": "npm:1.20240712.0"
-    "@cloudflare/workerd-darwin-arm64": "npm:1.20240712.0"
-    "@cloudflare/workerd-linux-64": "npm:1.20240712.0"
-    "@cloudflare/workerd-linux-arm64": "npm:1.20240712.0"
-    "@cloudflare/workerd-windows-64": "npm:1.20240712.0"
+    "@cloudflare/workerd-darwin-64": "npm:1.20240718.0"
+    "@cloudflare/workerd-darwin-arm64": "npm:1.20240718.0"
+    "@cloudflare/workerd-linux-64": "npm:1.20240718.0"
+    "@cloudflare/workerd-linux-arm64": "npm:1.20240718.0"
+    "@cloudflare/workerd-windows-64": "npm:1.20240718.0"
   dependenciesMeta:
     "@cloudflare/workerd-darwin-64":
       optional: true
@@ -36065,13 +36037,13 @@ __metadata:
       optional: true
   bin:
     workerd: bin/workerd
-  checksum: 10c0/01df3d2ef164125a96eb538e9897f6e6d9fbadbf773ced10fcb56758dee2c72b4fdeebbce516e0cbb51d87b9814e97a743bf495be87a21dc4b2e26f640711adb
+  checksum: 10c0/e943ad68317bfb10e7599a3cef07e851396d32acae64ab39c02bcb4fafe45d635ac7166afc1274611e92ee37cf6dcff0db36bcb0728fde06ef7538231f418f90
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.65.0":
-  version: 3.65.0
-  resolution: "wrangler@npm:3.65.0"
+"wrangler@npm:3.65.1":
+  version: 3.65.1
+  resolution: "wrangler@npm:3.65.1"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -36081,7 +36053,7 @@ __metadata:
     date-fns: "npm:^3.6.0"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20240712.0"
+    miniflare: "npm:3.20240718.0"
     nanoid: "npm:^3.3.3"
     path-to-regexp: "npm:^6.2.0"
     resolve: "npm:^1.22.8"
@@ -36091,7 +36063,7 @@ __metadata:
     unenv: "npm:unenv-nightly@1.10.0-1717606461.a117952"
     xxhash-wasm: "npm:^1.0.1"
   peerDependencies:
-    "@cloudflare/workers-types": ^4.20240712.0
+    "@cloudflare/workers-types": ^4.20240718.0
   dependenciesMeta:
     fsevents:
       optional: true
@@ -36101,7 +36073,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/f7e73f107a0cb2b27e17035b4d3b78ac86d953e90fde196d0149799d550c0f5714918beae53ef2506f142bba47eca801b14c26ea16bfa4289ba0b6d31f6d239d
+  checksum: 10c0/4091cead4cc461e3aa4398a685d39584db22a3127d6cf38a9a5313f1c54b9f243875c619ee377623d1a6fb2a5099d3546be4dc9c13c6af58f2569c89507a609c
   languageName: node
   linkType: hard
 
