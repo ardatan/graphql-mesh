@@ -249,7 +249,7 @@ FROM ghcr.io/ardatan/mesh-serve
 # we dont install dev deps because:
 #   1. we need them for type checking only
 #   2. Mesh Serve is already available in the docker image
-COPY package.json .
+COPY package*.json .
 RUN npm i --omit=dev
 
 COPY my-time.ts .
@@ -328,7 +328,7 @@ FROM ghcr.io/ardatan/mesh-serve
 # we dont install dev deps because:
 #   1. we need them for type checking only
 #   2. Mesh Serve is already available in the docker image
-COPY package.json .
+COPY package*.json .
 RUN npm i --omit=dev
 
 COPY my-time.ts .
