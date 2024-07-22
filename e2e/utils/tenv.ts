@@ -186,6 +186,7 @@ export interface Tenv {
     write(path: string, content: string): Promise<void>;
   };
   spawn(command: string, opts?: ProcOptions): Promise<[proc: Proc, waitForExit: Promise<void>]>;
+  serveRunner: ServeRunner;
   serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
@@ -220,6 +221,7 @@ export function createTenv(cwd: string): Tenv {
       const [cmd, ...args] = command.split(' ');
       return spawn({ ...opts, cwd }, cmd, ...args);
     },
+    serveRunner,
     async serve(opts) {
       let { port = await getAvailablePort(), supergraph, pipeLogs, env } = opts || {};
 

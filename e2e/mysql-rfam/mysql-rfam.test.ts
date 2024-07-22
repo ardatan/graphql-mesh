@@ -1,6 +1,6 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve } = createTenv(__dirname);
+const { compose, serve, serveRunner } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose();
@@ -25,6 +25,10 @@ it.concurrent.each([
     `,
   },
 ])('should execute $name', async ({ query }) => {
+  if (serveRunner === 'docker') {
+    console.warn('TODO: "docker" serve runner not supported yet');
+    return;
+  }
   const { output } = await compose({ output: 'graphql' });
   const { execute } = await serve({ supergraph: output });
   await expect(execute({ query })).resolves.toMatchSnapshot();
