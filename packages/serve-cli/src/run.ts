@@ -14,7 +14,6 @@ import type { UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger, getTerminateStack, registerTerminateHandler } from '@graphql-mesh/utils';
-import { isValidPath } from '@graphql-tools/utils';
 import { startNodeHttpServer } from './nodeHttp.js';
 import type { MeshServeCLIConfig } from './types.js';
 import { startuWebSocketsServer } from './uWebSockets.js';
@@ -106,7 +105,14 @@ export async function run({
   version,
 }: RunOptions) {
   program = program.name(binName).description(productDescription);
-  if (version) program = program.version(version);
+  if (!version) {
+    version = await import('../package.json', { with: { type: 'json' } })
+      .then(packageJsonModule => packageJsonModule.default.version || packageJsonModule.version)
+      .catch(() => undefined);
+  }
+  if (version) {
+    program = program.version(version);
+  }
   const opts = program.parse().opts();
 
   const log = rootLog.child(

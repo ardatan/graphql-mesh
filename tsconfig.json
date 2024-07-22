@@ -10,6 +10,8 @@
     "lib": ["ESNext"],
     //
 
+    "resolveJsonModule": true,
+
     "outDir": "dist",
 
     "baseUrl": ".",
