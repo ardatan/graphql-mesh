@@ -386,7 +386,7 @@ jobs:
           # also, in order for loading to work - we must define the platform above
           load: true
       - name: test
-        timeout-minutes: 5
+        timeout-minutes: 10
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn test:e2e --detectOpenHandles
