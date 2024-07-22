@@ -9,7 +9,8 @@ WORKDIR /install
 
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
-  node-libcurl
+  node-libcurl@^4 \
+  graphql@^16.9.0
 
 #
 
@@ -26,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /serve
 
 COPY --chown=root --from=install /install/node_modules /node_modules
-COPY --chown=root --exclude=dist bundle /
+COPY --chown=root bundle/node_modules /node_modules
 COPY --chown=root bundle/dist .
 
 # node user can create files and install modules, but not modify the bundle (existing contents)

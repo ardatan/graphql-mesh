@@ -72,7 +72,6 @@
     "@rollup/plugin-sucrase": "^5.0.2",
     "@types/spinnies": "^0.5.3",
     "rollup": "^4.18.1",
-    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-tsconfig-paths": "^1.5.2",
     "tsx": "^4.16.2"
   },

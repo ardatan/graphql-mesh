@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { defineConfig } from 'rollup';
-import copy from 'rollup-plugin-copy';
 import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -63,7 +62,6 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   deps['node_modules/@graphql-mesh/transport-thrift/index'] = '../transports/thrift/src/index.ts';
   deps['node_modules/@omnigraph/sqlite/index'] = '../loaders/sqlite/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-sqlite/index'] = '../transports/sqlite/src/index.ts';
-  // TODO: bundling these creates duplicate graphql modules
   deps['node_modules/@omnigraph/json-schema/index'] = '../loaders/json-schema/src/index.ts';
   deps['node_modules/@graphql-mesh/plugin-live-query/index'] = '../plugins/live-query/src/index.ts';
 }
@@ -88,7 +86,7 @@ export default defineConfig({
     'uWebSockets.js',
     'node-libcurl',
     'tuql',
-    'graphql', // graphql will be a bundled dependency
+    'graphql',
     'graphql/execution/values.js', // because of https://github.com/n1ru4l/graphql-live-query/blob/beda6eb5a002e9d3b638af185f235951ed8f646d/packages/in-memory-live-query-store/src/extractLiveQueryRootFieldCoordinates.ts#L10
   ],
   plugins: [
@@ -102,9 +100,6 @@ export default defineConfig({
     json(), // support importing json files to esm (needed for commonjs() plugin)
     sucrase({ transforms: ['typescript'] }), // transpile typescript
     packagejson(), // add package jsons
-    copy({
-      targets: [{ src: '../../node_modules/graphql', dest: 'bundle/node_modules' }],
-    }),
   ],
 });
 
