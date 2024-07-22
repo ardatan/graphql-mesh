@@ -105,10 +105,7 @@ export async function run({
   version = globalThis.__VERSION__,
 }: RunOptions) {
   program = program.name(binName).description(productDescription);
-
-  if (version) {
-    program.version(version);
-  }
+  if (version) program.version(version);
 
   const opts = program.parse().opts();
 
