@@ -53,6 +53,9 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   deps['node_modules/@e2e/args/index'] = '../../e2e/utils/args.ts';
   deps['node_modules/@graphql-mesh/utils/index'] = '../legacy/utils/src/index.ts';
   deps['node_modules/@omnigraph/openapi/index'] = '../loaders/openapi/src/index.ts';
+  deps['node_modules/@graphql-mesh/transport-ws/index'] = '../transports/ws/src/index.ts';
+  deps['node_modules/@graphql-mesh/transport-http-callback/index'] =
+    '../transports/http-callback/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-rest/index'] = '../transports/rest/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-soap/index'] = '../transports/soap/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-neo4j/index'] = '../transports/neo4j/src/index.ts';
