@@ -359,7 +359,6 @@ jobs:
             node-version: 22
           - serve-runner: docker
             node-version: 22
-
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -373,6 +372,8 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
+        env:
+          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn bundle
       - name: bake
         uses: docker/bake-action@v5

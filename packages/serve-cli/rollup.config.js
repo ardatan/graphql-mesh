@@ -46,6 +46,16 @@ const deps = {
   'node_modules/@graphql-mesh/plugin-http-cache/index': '../plugins/http-cache/src/index.ts',
 };
 
+if (process.env.E2E_SERVE_RUNNER === 'docker') {
+  console.warn('⚠️ Bundling extra modules for e2e tests!');
+  // extras specific to the docker serve runner in e2e tests
+  deps['node_modules/@graphql-mesh/compose-cli/index'] = '../compose-cli/src/index.ts';
+  deps['node_modules/@e2e/args/index'] = '../../e2e/utils/args.ts';
+  deps['node_modules/@omnigraph/openapi/index'] = '../loaders/openapi/src/index.ts';
+  deps['node_modules/@graphql-mesh/transport-rest/index'] = '../transports/rest/src/index.ts';
+  deps['node_modules/@graphql-mesh/transport-soap/index'] = '../transports/soap/src/index.ts';
+}
+
 export default defineConfig({
   input: {
     'dist/bin': 'src/bin.ts',
