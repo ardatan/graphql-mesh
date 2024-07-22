@@ -10,6 +10,6 @@ const runFilePaths = [
 
 for (const runFilePath of runFilePaths) {
   const runFileContent = readFileSync(runFilePath, 'utf-8');
-  const newRunFileContent = `__VERSION__ = '${version}';\n${runFileContent}`;
+  const newRunFileContent = `globalThis.__VERSION__ = '${version}';\n${runFileContent}`;
   writeFileSync(runFilePath, newRunFileContent);
 }

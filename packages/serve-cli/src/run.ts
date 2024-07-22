@@ -102,7 +102,7 @@ export async function run({
   productName = 'Mesh',
   productDescription = 'serve GraphQL federated architecture for any API service(s)',
   binName = 'mesh-serve',
-  version = __VERSION__,
+  version = globalThis.__VERSION__,
 }: RunOptions) {
   program = program.name(binName).description(productDescription);
 
