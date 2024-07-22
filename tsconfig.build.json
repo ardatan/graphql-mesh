@@ -9,6 +9,7 @@
     "**/node_modules",
     "**/dist",
     "**/bundle",
+    "**/scripts",
     "**/test/*.ts",
     "**/tests/*.ts",
     "*.spec.ts",
