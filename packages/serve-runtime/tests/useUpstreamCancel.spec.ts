@@ -66,7 +66,7 @@ describe('useUpstreamCancel', () => {
         resolve();
       }),
     );
-    const serveRuntime = createServeRuntime({
+    await using serveRuntime = createServeRuntime({
       proxy: {
         endpoint: `http://localhost:${(upstreamGraphQLServer.address() as AddressInfo).port}/graphql`,
       },

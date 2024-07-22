@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import type { ExecutionResult, GraphQLError } from 'graphql';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
+import {
+  getInterpolatedHeadersFactory,
+  getInterpolatedStringFactory,
+} from '@graphql-mesh/string-interpolation';
 import {
   defaultPrintFn,
   type DisposableExecutor,
@@ -80,19 +84,18 @@ export default {
       }
     See documentation: https://the-guild.dev/docs/mesh/pubsub`);
     }
+    const reqAbortCtrls = new Set<AbortController>();
     const heartbeats = new Map<string, ReturnType<typeof setTimeout>>();
     const stopFnSet = new Set<VoidFunction>();
+    const publicUrl = transportEntry.options?.public_url || 'http://localhost:4000';
+    const callbackPath = transportEntry.options?.path || '/callback';
+    const heartbeatIntervalMs = transportEntry.options.heartbeat_interval || 50000;
     const httpCallbackExecutor: DisposableExecutor = function httpCallbackExecutor(execReq) {
       const query = defaultPrintFn(execReq.document);
       const subscriptionId = crypto.randomUUID();
       const subscriptionLogger = logger.child(subscriptionId);
-      const callbackPath = transportEntry.options?.path || '/callback';
-      const callbackUrlObj = new URL(
-        transportEntry.options.public_url || `http://localhost:4000${callbackPath}`,
-      );
-      callbackUrlObj.pathname += `/${subscriptionId}`;
+      const callbackUrl = `${publicUrl}${callbackPath}/${subscriptionId}`;
       const subscriptionCallbackPath = `${callbackPath}/${subscriptionId}`;
-      const heartbeatIntervalMs = transportEntry.options.heartbeat_interval || 50000;
       const fetchBody = JSON.stringify({
         query,
         variables: execReq.variables,
@@ -100,7 +103,7 @@ export default {
         extensions: {
           ...(execReq.extensions || {}),
           subscription: {
-            callbackUrl: callbackUrlObj.toString(),
+            callbackUrl,
             subscriptionId,
             verifier,
             heartbeatIntervalMs,
@@ -119,37 +122,38 @@ export default {
         }, heartbeatIntervalMs),
       );
       subscriptionLogger.debug(
-        `Subscribing to ${transportEntry.location} with callbackUrl: ${callbackUrlObj.toString()}`,
+        `Subscribing to ${transportEntry.location} with callbackUrl: ${callbackUrl}`,
       );
       let pushFn: Push<ExecutionResult> = () => {
-        throw createGraphQLError(
+        throw new Error(
           `Subgraph does not look like configured correctly. Check your subgraph setup.`,
         );
       };
-      const res$ = fetch(transportEntry.location, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...headersFactory({
-            env: process.env,
-            root: execReq.rootValue,
-            context: execReq.context,
-            info: execReq.info,
-          }),
-          Accept: 'application/json;callbackSpec=1.0; charset=utf-8',
+      const reqAbortCtrl = new AbortController();
+      const res$ = fetch(
+        transportEntry.location,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...headersFactory({
+              env: process.env,
+              root: execReq.rootValue,
+              context: execReq.context,
+              info: execReq.info,
+            }),
+            Accept: 'application/json;callbackSpec=1.0; charset=utf-8',
+          },
+          body: fetchBody,
+          signal: reqAbortCtrl.signal,
         },
-        body: fetchBody,
-      })
+        execReq.context,
+        execReq.info,
+      )
         .then(res => {
           if (!res.ok) {
             stopSubscription(
-              createGraphQLError(`HTTP Error`, {
-                extensions: {
-                  http: {
-                    status: res.status,
-                  },
-                },
-              }),
+              new Error(`Subscription request failed with an HTTP Error: ${res.status}`),
             );
           }
           return res.json();
@@ -208,13 +212,28 @@ export default {
               case 'complete':
                 if (message.errors) {
                   if (message.errors.length === 1) {
+                    const error = message.errors[0];
                     stopSubscription(
-                      createGraphQLError(message.errors[0].message, message.errors[0]),
+                      createGraphQLError(error.message, {
+                        ...error,
+                        extensions: {
+                          ...error.extensions,
+                          code: 'DOWNSTREAM_SERVICE_ERROR',
+                        },
+                      }),
                     );
                   } else {
                     stopSubscription(
                       new AggregateError(
-                        message.errors.map(err => createGraphQLError(err.message, err)),
+                        message.errors.map(err =>
+                          createGraphQLError(err.message, {
+                            ...err,
+                            extensions: {
+                              ...err.extensions,
+                              code: 'DOWNSTREAM_SERVICE_ERROR',
+                            },
+                          }),
+                        ),
                       ),
                     );
                   }
@@ -230,17 +249,27 @@ export default {
           clearTimeout(heartbeats.get(subscriptionId));
           heartbeats.delete(subscriptionId);
           stopFnSet.delete(stop);
+          if (!reqAbortCtrl.signal.aborted) {
+            reqAbortCtrl.abort();
+          }
         });
       });
     };
-    httpCallbackExecutor[Symbol.asyncDispose] = function () {
+    function disposeFn() {
       for (const stop of stopFnSet) {
         stop();
       }
       for (const interval of heartbeats.values()) {
         clearTimeout(interval);
       }
-    };
+      for (const ctrl of reqAbortCtrls) {
+        if (!ctrl.signal.aborted) {
+          ctrl.abort();
+        }
+      }
+    }
+    httpCallbackExecutor[Symbol.asyncDispose] = disposeFn;
+    httpCallbackExecutor[Symbol.dispose] = disposeFn;
     return httpCallbackExecutor;
   },
 } satisfies Transport<'http-callback', HTTPCallbackTransportOptions>;

@@ -126,7 +126,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/gateway@npm:^2.4.1":
+"@apollo/gateway@npm:^2.4.1, @apollo/gateway@npm:^2.8.3":
   version: 2.8.3
   resolution: "@apollo/gateway@npm:2.8.3"
   dependencies:
@@ -3843,6 +3843,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/utils@workspace:e2e/utils"
   dependencies:
+    "@apollo/gateway": "npm:^2.8.3"
     "@types/dockerode": "npm:^3.3.28"
     dockerode: "npm:^4.0.2"
     tsx: "npm:^4.16.2"
@@ -5904,6 +5905,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-http-callback@workspace:packages/transports/http-callback"
   dependencies:
+    "@graphql-mesh/cross-helpers": "npm:^0.4.4"
     "@graphql-mesh/string-interpolation": "npm:^0.5.4"
     "@graphql-mesh/transport-common": "npm:^0.4.0"
     "@graphql-tools/utils": "npm:^10.2.3"

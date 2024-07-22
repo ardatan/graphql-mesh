@@ -26,7 +26,7 @@ describe('useForwardHeaders', () => {
     requestTrackerPlugin.onParams.mockClear();
   });
   it('forwards specified headers', async () => {
-    const serveRuntime = createServeRuntime({
+    await using serveRuntime = createServeRuntime({
       proxy: {
         endpoint: 'http://localhost:4001/graphql',
       },
@@ -75,7 +75,7 @@ describe('useForwardHeaders', () => {
     expect(headersObj['x-extra-header']).toBeUndefined();
   });
   it("forwards specified headers but doesn't override the provided headers", async () => {
-    const serveRuntime = createServeRuntime({
+    await using serveRuntime = createServeRuntime({
       logging: false,
       proxy: {
         endpoint: 'http://localhost:4001/graphql',

@@ -1,4 +1,5 @@
 import { defineConfig, PubSub, useWebhooks } from '@graphql-mesh/serve-cli';
+import type { HTTPCallbackTransportOptions } from '@graphql-mesh/transport-http-callback';
 import type { WSTransportOptions } from '@graphql-mesh/transport-ws';
 
 export const serveConfig = defineConfig({
@@ -23,6 +24,9 @@ export const serveConfig = defineConfig({
       options: {
         subscriptions: {
           kind: 'http-callback',
+          options: {
+            public_url: process.env.PUBLIC_URL,
+          } satisfies HTTPCallbackTransportOptions,
         },
       },
     },

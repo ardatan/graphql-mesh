@@ -1,46 +1,24 @@
+import { createServer } from 'http';
+import type { AddressInfo } from 'net';
 import { setTimeout } from 'timers/promises';
-import { createClient } from 'graphql-sse';
-import {
-  IntrospectAndCompose,
-  RemoteGraphQLDataSource,
-  type ServiceEndpointDefinition,
-} from '@apollo/gateway';
+import { createClient, type Client } from 'graphql-sse';
 import { createTenv } from '@e2e/tenv';
 import { TOKEN } from './services/products/server';
 
-const { fs, service, serve } = createTenv(__dirname);
+const { composeWithApollo, service, serve } = createTenv(__dirname);
 
-async function startServicesAndCreateSupergraphFile() {
-  const services = [await service('products'), await service('reviews', { pipeLogs: true })];
+let client: Client | null = null;
 
-  const subgraphs: ServiceEndpointDefinition[] = [];
-  for (const service of services) {
-    subgraphs.push({
-      name: service.name,
-      url: `http://0.0.0.0:${service.port}/graphql`,
-    });
-  }
-
-  const { supergraphSdl } = await new IntrospectAndCompose({
-    subgraphs,
-  }).initialize({
-    getDataSource(opts) {
-      return new RemoteGraphQLDataSource(opts);
-    },
-    update() {},
-    async healthCheck() {},
-  });
-
-  const supergraphFile = await fs.tempfile('supergraph.graphql');
-  await fs.write(supergraphFile, supergraphSdl);
-  return supergraphFile;
-}
+afterEach(() => client?.dispose());
 
 it('should subscribe and resolve via websockets', async () => {
-  const supergraphFile = await startServicesAndCreateSupergraphFile();
+  const supergraphFile = await composeWithApollo([
+    await service('products'),
+    await service('reviews'),
+  ]);
   const { port } = await serve({ supergraph: supergraphFile });
 
-  const client = createClient({
+  client = createClient({
     url: `http://0.0.0.0:${port}/graphql`,
     retryAttempts: 0,
     headers: {
@@ -120,10 +98,13 @@ it('should subscribe and resolve via websockets', async () => {
 });
 
 it('should recycle websocket connections', async () => {
-  const supergraphFile = await startServicesAndCreateSupergraphFile();
+  const supergraphFile = await composeWithApollo([
+    await service('products'),
+    await service('reviews'),
+  ]);
   const { port } = await serve({ supergraph: supergraphFile });
 
-  const client = createClient({
+  client = createClient({
     url: `http://0.0.0.0:${port}/graphql`,
     retryAttempts: 0,
     headers: {
@@ -155,11 +136,28 @@ it('should recycle websocket connections', async () => {
 });
 
 it('should subscribe and resolve via http callbacks', async () => {
-  const supergraphFile = await startServicesAndCreateSupergraphFile();
-  await serve({ supergraph: supergraphFile, port: 4000, pipeLogs: true });
+  const supergraphFile = await composeWithApollo([
+    await service('products'),
+    await service('reviews'),
+  ]);
 
-  const client = createClient({
-    url: `http://0.0.0.0:4000/graphql`,
+  // Get a random available port
+  const dummyServer = createServer();
+  await new Promise<void>(resolve => dummyServer.listen(0, resolve));
+  const availablePort = (dummyServer.address() as AddressInfo).port;
+  await new Promise(resolve => dummyServer.close(resolve));
+
+  const publicUrl = `http://0.0.0.0:${availablePort}`;
+  await serve({
+    supergraph: supergraphFile,
+    port: availablePort,
+    env: {
+      ...process.env,
+      PUBLIC_URL: publicUrl,
+    },
+  });
+  client = createClient({
+    url: `${publicUrl}/graphql`,
     retryAttempts: 0,
   });
   const sub = client.iterate({

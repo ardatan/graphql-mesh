@@ -39,7 +39,7 @@ describe('Subscriptions', () => {
   const upstream = createYoga({ schema: upstreamSchema });
 
   it('should terminate subscriptions gracefully on shutdown', async () => {
-    const serve = createServeRuntime({
+    await using serve = createServeRuntime({
       supergraph() {
         return getUnifiedGraphGracefully([
           {
