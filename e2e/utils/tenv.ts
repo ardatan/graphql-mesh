@@ -43,6 +43,7 @@ const serveRunner = (function getServeRunner() {
     process.stderr.write(`
 ⚠️ Using docker serve runner! Make sure you have built the containers with:
 yarn bundle && docker buildx bake e2e
+
 `);
   }
   return runner as ServeRunner;
