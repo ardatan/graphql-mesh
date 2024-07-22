@@ -87,22 +87,13 @@ export default {
     const reqAbortCtrls = new Set<AbortController>();
     const heartbeats = new Map<string, ReturnType<typeof setTimeout>>();
     const stopFnSet = new Set<VoidFunction>();
-    const publicUrlFactory = getInterpolatedStringFactory(
-      transportEntry.options?.public_url || 'http://localhost:4000',
-    );
+    const publicUrl = transportEntry.options?.public_url || 'http://localhost:4000';
     const callbackPath = transportEntry.options?.path || '/callback';
     const heartbeatIntervalMs = transportEntry.options.heartbeat_interval || 50000;
     const httpCallbackExecutor: DisposableExecutor = function httpCallbackExecutor(execReq) {
       const query = defaultPrintFn(execReq.document);
       const subscriptionId = crypto.randomUUID();
       const subscriptionLogger = logger.child(subscriptionId);
-      const publicUrl = publicUrlFactory({
-        root: execReq.rootValue,
-        context: execReq.context,
-        info: execReq.info,
-        env: process.env,
-      });
-      logger.info(`Public URL: ${publicUrl}`);
       const callbackUrl = `${publicUrl}${callbackPath}/${subscriptionId}`;
       const subscriptionCallbackPath = `${callbackPath}/${subscriptionId}`;
       const fetchBody = JSON.stringify({

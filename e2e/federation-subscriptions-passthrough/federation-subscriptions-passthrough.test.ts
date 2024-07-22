@@ -13,10 +13,10 @@ afterEach(() => client?.dispose());
 
 it('should subscribe and resolve via websockets', async () => {
   const supergraphFile = await composeWithApollo([
-    await service('products', { pipeLogs: true }),
-    await service('reviews', { pipeLogs: true }),
+    await service('products'),
+    await service('reviews'),
   ]);
-  const { port } = await serve({ supergraph: supergraphFile, pipeLogs: true });
+  const { port } = await serve({ supergraph: supergraphFile });
 
   client = createClient({
     url: `http://0.0.0.0:${port}/graphql`,
@@ -99,10 +99,10 @@ it('should subscribe and resolve via websockets', async () => {
 
 it('should recycle websocket connections', async () => {
   const supergraphFile = await composeWithApollo([
-    await service('products', { pipeLogs: true }),
-    await service('reviews', { pipeLogs: true }),
+    await service('products'),
+    await service('reviews'),
   ]);
-  const { port } = await serve({ supergraph: supergraphFile, pipeLogs: true });
+  const { port } = await serve({ supergraph: supergraphFile });
 
   client = createClient({
     url: `http://0.0.0.0:${port}/graphql`,
@@ -137,8 +137,8 @@ it('should recycle websocket connections', async () => {
 
 it('should subscribe and resolve via http callbacks', async () => {
   const supergraphFile = await composeWithApollo([
-    await service('products', { pipeLogs: true }),
-    await service('reviews', { pipeLogs: true }),
+    await service('products'),
+    await service('reviews'),
   ]);
 
   // Get a random available port
@@ -155,7 +155,6 @@ it('should subscribe and resolve via http callbacks', async () => {
       ...process.env,
       PUBLIC_URL: publicUrl,
     },
-    pipeLogs: true,
   });
   client = createClient({
     url: `${publicUrl}/graphql`,

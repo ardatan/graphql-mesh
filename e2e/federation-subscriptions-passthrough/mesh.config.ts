@@ -25,7 +25,7 @@ export const serveConfig = defineConfig({
         subscriptions: {
           kind: 'http-callback',
           options: {
-            public_url: '{env.PUBLIC_URL}',
+            public_url: process.env.PUBLIC_URL,
           } satisfies HTTPCallbackTransportOptions,
         },
       },
