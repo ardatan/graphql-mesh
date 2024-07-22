@@ -280,3 +280,69 @@ docker run -p 4000:4000 \
 ```
 
 </Callout>
+
+### Additional Resolvers
+
+Instead maybe you need to define additional resolvers that depend on other dependencies. Similarily
+to the [Develop Plugin](#develop-plugin) approach, you can just copy the project code over and build
+another image.
+
+Say you have the following files:
+
+```json filename="package.json"
+{
+  "name": "my-time",
+  "dependencies": {
+    "moment": "^2"
+  },
+  "devDependencies": {
+    "@graphql-mesh/serve-cli": "latest"
+  }
+}
+```
+
+```js filename="my-time.ts"
+import moment from 'moment'
+
+export const additionalResolvers = {
+  Query: {
+    formattedToday() {
+      return moment().format('DD.MM.YYYY')
+    }
+  }
+}
+```
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+import { additionalResolvers } from './my-time'
+
+export const serveConfig = defineConfig({ additionalResolvers })
+```
+
+Your Dockerfile should then look something like this:
+
+```dockerfile filename="Dockerfile"
+FROM ghcr.io/ardatan/mesh-serve
+
+# we dont install dev deps because:
+#   1. we need them for type checking only
+#   2. Mesh Serve is already available in the docker image
+COPY package.json .
+RUN npm i --omit=dev
+
+COPY my-time.ts .
+COPY mesh.config.ts .
+```
+
+Then build your image:
+
+```sh
+docker build -t mesh-serve-w-add-res .
+```
+
+And finally start it (the config file is in the image and doesn't need to be mounted):
+
+```sh
+docker run -p 4000:4000 mesh-serve-w-add-res
+```
