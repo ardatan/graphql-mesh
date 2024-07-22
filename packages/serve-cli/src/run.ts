@@ -102,9 +102,14 @@ export async function run({
   productName = 'Mesh',
   productDescription = 'serve GraphQL federated architecture for any API service(s)',
   binName = 'mesh-serve',
-  version = 'MESH_VERSION',
+  version = __VERSION__,
 }: RunOptions) {
-  program = program.name(binName).description(productDescription).version(version);
+  program = program.name(binName).description(productDescription);
+
+  if (version) {
+    program.version(version);
+  }
+
   const opts = program.parse().opts();
 
   const log = rootLog.child(

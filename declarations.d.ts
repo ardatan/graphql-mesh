@@ -22,3 +22,5 @@ declare module 'disposablestack/AsyncDisposableStack' {
   declare var AsyncDisposableStackCtor: typeof AsyncDisposableStack;
   export = AsyncDisposableStackCtor;
 }
+
+declare var __VERSION__: string;
