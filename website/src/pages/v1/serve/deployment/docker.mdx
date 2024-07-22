@@ -61,7 +61,7 @@ docker run \
 
 For a full list of CLI arguments, please refer to the [Config Reference](./references/config).
 
-### Changing port in container
+### Changing Port in Container
 
 The default port where Mesh Serve listens is `4000`; however, maybe the container is running inside
 a network (like when using [Networking in Compose](https://docs.docker.com/compose/networking/)) and
@@ -119,7 +119,7 @@ docker compose up
 
 ## Extend Docker Image
 
-### Install plugin
+### Install Plugin
 
 You may want to add additional functionality, or plugins to the base image - you just need to create
 a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve`.
@@ -174,7 +174,7 @@ docker run \
   mesh-serve-w-rate-limit
 ```
 
-### Develop plugin
+### Develop Plugin
 
 However, you may be developing a plugin and have a setup with some dependencies and source code,
 copying over your project's files is the way to go.
