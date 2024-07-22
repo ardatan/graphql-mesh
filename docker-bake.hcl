@@ -22,7 +22,7 @@ target "mesh-serve" {
 //
 
 group "e2e" {
-  targets = ["mesh-serve_e2e", "mesh-serve_e2e_sqlite-chinook"]
+  targets = ["mesh-serve_e2e", "mesh-serve_e2e_sqlite-chinook", "mesh-serve_e2e_openapi-javascript-wiki"]
 }
 
 target "mesh-serve_e2e" {
@@ -34,6 +34,15 @@ target "mesh-serve_e2e_sqlite-chinook" {
   context = "e2e/sqlite-chinook"
   dockerfile = "serve.Dockerfile"
   tags = ["ghcr.io/ardatan/mesh-serve:e2e.sqlite-chinook"]
+  contexts = {
+    "mesh-serve_e2e": "target:mesh-serve_e2e"
+  }
+}
+
+target "mesh-serve_e2e_openapi-javascript-wiki" {
+  context = "e2e/openapi-javascript-wiki"
+  dockerfile = "serve.Dockerfile"
+  tags = ["ghcr.io/ardatan/mesh-serve:e2e.openapi-javascript-wiki"]
   contexts = {
     "mesh-serve_e2e": "target:mesh-serve_e2e"
   }
