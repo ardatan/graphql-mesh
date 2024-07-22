@@ -55,6 +55,7 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   deps['node_modules/@graphql-mesh/transport-rest/index'] = '../transports/rest/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-soap/index'] = '../transports/soap/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-sqlite/index'] = '../transports/sqlite/src/index.ts';
+  deps['node_modules/@graphql-mesh/utils/index'] = '../legacy/utils/src/index.ts';
 }
 
 export default defineConfig({
