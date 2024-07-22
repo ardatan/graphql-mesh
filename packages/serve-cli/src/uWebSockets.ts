@@ -7,7 +7,9 @@ export async function startuWebSocketsServer({
   host,
   port,
   sslCredentials,
+  maxHeaderSize,
 }: ServerOptions): Promise<Disposable> {
+  process.env.UWS_HTTP_MAX_HEADERS_SIZE = maxHeaderSize.toString();
   return import('uWebSockets.js').then(uWS => {
     const app = sslCredentials ? uWS.SSLApp(sslCredentials) : uWS.App();
     app.any('/*', handler);

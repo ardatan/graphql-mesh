@@ -1,11 +1,7 @@
-// eslint-disable-next-line import/no-nodejs-modules
-import { promises as fsPromises } from 'fs';
-// eslint-disable-next-line import/no-nodejs-modules
-import { createServer as createHTTPServer } from 'http';
-// eslint-disable-next-line import/no-nodejs-modules
-import { createServer as createHTTPSServer } from 'https';
-// eslint-disable-next-line import/no-nodejs-modules
-import type { SecureContextOptions } from 'tls';
+import { promises as fsPromises } from 'node:fs';
+import { createServer as createHTTPServer } from 'node:http';
+import { createServer as createHTTPSServer } from 'node:https';
+import type { SecureContextOptions } from 'node:tls';
 import type { RecognizedString } from 'uWebSockets.js';
 import type { ServerOptions } from './types.js';
 
@@ -26,6 +22,7 @@ export async function startNodeHttpServer({
   host,
   port,
   sslCredentials,
+  maxHeaderSize,
 }: ServerOptions): Promise<AsyncDisposable> {
   if (sslCredentials) {
     const sslOptionsForNodeHttp: SecureContextOptions = {};
@@ -77,7 +74,12 @@ export async function startNodeHttpServer({
       });
     });
   }
-  const server = createHTTPServer(handler);
+  const server = createHTTPServer(
+    {
+      maxHeaderSize,
+    },
+    handler,
+  );
   log.info(`Starting server on ${protocol}://${host}:${port}`);
   return new Promise((resolve, reject) => {
     server.once('error', reject);

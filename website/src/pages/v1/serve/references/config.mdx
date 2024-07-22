@@ -285,6 +285,19 @@ export const serveConfig = defineConfig({
 })
 ```
 
+#### `maxHeaderSize`
+
+This is the option to configure the maximum header size of the server. By default, it is 16KB. If
+longer headers are sent, the server will respond with a 431 status code.
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  maxHeaderSize: 32 * 1024 // 32KB
+})
+```
+
 #### `plugins`
 
 This is the option to extend your Mesh Gateway with plugins. GraphQL Mesh uses

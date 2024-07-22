@@ -1,14 +1,10 @@
 import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 import 'dotenv/config'; // inject dotenv options to process.env
 
-// eslint-disable-next-line import/no-nodejs-modules
-import cluster from 'cluster';
-// eslint-disable-next-line import/no-nodejs-modules
-import { availableParallelism, release } from 'os';
-// eslint-disable-next-line import/no-nodejs-modules
-import { dirname, isAbsolute, resolve } from 'path';
+import cluster from 'node:cluster';
+import { availableParallelism, release } from 'node:os';
+import { dirname, isAbsolute, resolve } from 'node:path';
 import createJITI from 'jiti';
-// import { tsImport } from 'tsx/dist/esm/api/index.mjs';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
@@ -253,6 +249,7 @@ export async function run({
     host,
     port,
     sslCredentials: config.sslCredentials,
+    maxHeaderSize: config.maxHeaderSize || 16_384,
   });
   terminateStack.use(server);
 }
