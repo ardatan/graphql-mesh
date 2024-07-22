@@ -7,8 +7,13 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import sucrase from '@rollup/plugin-sucrase';
 
 /**
- * Dependencies that need to be bundled and placed in the node_modules. Modules that
- * are imported by the `mesh.config.ts` file need to exist in the `node_modules`.
+ * Dependencies that need to be bundled and placed in the bundled node_modules. Modules that
+ * are imported by the `mesh.config.ts` file need to exist here.
+ *
+ * Please note that the node_modules will not be in the WORKDIR of the docker image,
+ * it will instead be one level up. This is because we want to keep the
+ * bundled node_modules isolated from npm so that managing additional dependencies
+ * wont have npm remove bundled ones.
  *
  * Needs to be used with the {@link packagejson} rollup plugin.
  *
@@ -33,11 +38,9 @@ const deps = {
   'node_modules/@graphql-mesh/compose-cli/index': '../compose-cli/src/types.ts', // we bundle compose types ONLY. adding support for configs with both serve and compose
   'node_modules/@graphql-mesh/serve-runtime/index': '../serve-runtime/src/index.ts',
   'node_modules/graphql/index': '../../node_modules/graphql/index.mjs',
-  // we want often used transports in the container
+  // default transports should be in the container
   'node_modules/@graphql-mesh/transport-common/index': '../transports/common/src/index.ts',
   'node_modules/@graphql-mesh/transport-http/index': '../transports/http/src/index.ts',
-  'node_modules/@graphql-mesh/transport-rest/index': '../transports/rest/src/index.ts',
-  'node_modules/@graphql-mesh/transport-soap/index': '../transports/soap/src/index.ts',
   // extras for docker only
   'node_modules/@graphql-mesh/plugin-prometheus/index': '../plugins/prometheus/src/index.ts',
   'node_modules/@graphql-mesh/plugin-http-cache/index': '../plugins/http-cache/src/index.ts',
@@ -45,13 +48,19 @@ const deps = {
 
 export default defineConfig({
   input: {
-    bin: 'src/bin.ts',
+    'dist/bin': 'src/bin.ts',
     ...deps,
   },
   output: {
     dir: 'bundle',
-    format: 'esm',
     sourcemap: true,
+    format: 'esm',
+    // having an .mjs extension will make sure that node treats the files as ES modules always
+    entryFileNames: '[name].mjs',
+    // we want the chunks (common files) to be in the node_modules to avoid name
+    // collisions with system files. the node_modules will be in the root of the
+    // system (`/node_modules`)
+    chunkFileNames: 'node_modules/.chunk/[name]-[hash].mjs',
   },
   external: ['uWebSockets.js', 'node-libcurl'],
   plugins: [
@@ -73,16 +82,10 @@ function packagejson() {
   return {
     name: 'packagejson',
     generateBundle(_outputs, bundles) {
-      for (const bundle of Object.values(bundles)) {
+      for (const bundle of Object.values(bundles).filter(bundle => !!deps[bundle.name])) {
         const dir = path.dirname(bundle.fileName);
         const bundledFile = path.basename(bundle.fileName);
         const pkg = { type: 'module', main: bundledFile };
-        if (bundle.name === 'bin') {
-          pkg.dependencies = {
-            'uWebSockets.js': 'uNetworking/uWebSockets.js#semver:^20',
-            'node-libcurl': '^4.0.0',
-          };
-        }
         this.emitFile({
           type: 'asset',
           fileName: path.join(dir, 'package.json'),

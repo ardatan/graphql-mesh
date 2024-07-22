@@ -1,14 +1,15 @@
+# syntax=docker/dockerfile:1.7-labs
+
 # IMPORTANT: make sure bundle is ready with `yarn bundle`
 
 # we build with Node 21 because node-libcurl has published prebuilt releases (building from source fails when using Node 22)
-FROM node:21 AS build
+FROM node:21 AS install
 
-WORKDIR /build
+WORKDIR /install
 
-COPY bundle/package.json package.json
-RUN npm i
-
-COPY bundle .
+RUN npm i \
+  uNetworking/uWebSockets.js#semver:^20 \
+  node-libcurl
 
 #
 
@@ -24,9 +25,13 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /serve
 
-COPY --from=build /build .
+COPY --chown=root --from=install /install/node_modules /node_modules
+COPY --chown=root --exclude=dist bundle /
+COPY --chown=root bundle/dist .
 
-RUN chown -R node .
+# node user can create files and install modules, but not modify the bundle (existing contents)
+RUN chown node . && \
+  echo "{}" > package.json && chown node package.json
 
 USER node
-ENTRYPOINT ["dumb-init", "node", "--enable-source-maps", "."]
+ENTRYPOINT ["dumb-init", "node", "--enable-source-maps", "bin.mjs"]
