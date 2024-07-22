@@ -31,7 +31,7 @@ COPY --chown=root bundle/dist .
 
 # node user can create files and install modules, but not modify the bundle (existing contents)
 RUN chown node . && \
-  echo "{}" > package.json && chown node package.json && chown -R node node_modules
+  echo "{}" > package.json && chown node package.json
 
 USER node
 ENTRYPOINT ["dumb-init", "node", "--enable-source-maps", "bin.mjs"]
