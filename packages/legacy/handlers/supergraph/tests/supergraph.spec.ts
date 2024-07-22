@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import AsyncDisposableStack from 'core-js-pure/actual/async-disposable-stack';
+import AsyncDisposableStack from 'core-js-pure/actual/async-disposable-stack/index.js';
 import type { ServerOptions } from 'graphql-ws/lib/server';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import type { YogaServerInstance } from 'graphql-yoga';

@@ -1,4 +1,4 @@
-import AsyncDisposableStack from 'core-js-pure/actual/async-disposable-stack';
+import AsyncDisposableStack from 'core-js-pure/actual/async-disposable-stack/index.js';
 import type { DocumentNode, GraphQLSchema } from 'graphql';
 import { buildASTSchema, buildSchema, isSchema } from 'graphql';
 import { getInContextSDK } from '@graphql-mesh/runtime';
