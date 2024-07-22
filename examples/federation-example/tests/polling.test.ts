@@ -51,6 +51,7 @@ describe('Polling Test', () => {
     const buildCmd = exec(`${join(__dirname, '../node_modules/.bin/mesh')} build`, {
       cwd,
       env: {
+        ...process.env,
         SUPERGRAPH_SOURCE,
       },
     });
@@ -65,6 +66,7 @@ describe('Polling Test', () => {
     const serveCmd = exec(`${join(__dirname, '../node_modules/.bin/mesh')} start`, {
       cwd,
       env: {
+        ...process.env,
         SUPERGRAPH_SOURCE,
       },
     });
