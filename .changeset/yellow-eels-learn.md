@@ -5,12 +5,12 @@
 '@graphql-mesh/serve-runtime': patch
 ---
 
-Ability to manipulate transport entry through `transportOptions`.
+Ability to manipulate transport entry through `transportEntries`.
 
 For example, you can add extra headers to a subgraph
 
 ```ts
-transportOptions: {
+transportEntries: {
   products: {
     // This adds extra headers to the subgraph configuration
     headers: [

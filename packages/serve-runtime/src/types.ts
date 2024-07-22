@@ -26,8 +26,8 @@ import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
 export type { UnifiedGraphConfig };
 
-export type TransportOptions = {
-  [subgraph: '*' | string]: Partial<TransportEntry> /** satisfies TransportOptions */;
+export type TransportEntryAdditions = {
+  [subgraph: '*' | string]: Partial<TransportEntry>;
 };
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
@@ -139,30 +139,31 @@ interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutS
    */
   transports?: Transports;
   /**
-   * Provide custom options for transports.
+   * Configure Transport options for each subgraph.
    *
    * @example Adding subscriptions support for Federation v2 subgraphs.
    *
    * ```ts
    * import { defineConfig } from '@graphql-mesh/serve-cli';
-   * import { HTTPTransportOptions } from '@graphql-mesh/transport-http';
    *
    * export const serveConfig = defineConfig({
-   *   transportOptions: {
+   *   transportEntries: {
    *     '*': {
    *       http: {
-   *         subscriptions: {
-   *           ws: {
-   *             path: '/subscriptions',
-   *           },
+   *          options: {
+   *            subscriptions: {
+   *              ws: {
+   *                endpoint: '/subscriptions',
+   *              },
+   *          },
    *         },
-   *       } satisfies HTTPTransportOptions,
+   *       },
    *     },
    *   },
    * });
    * ```
    */
-  transportOptions?: TransportOptions;
+  transportEntries?: TransportEntryAdditions;
   /**
    * Current working directory.
    */

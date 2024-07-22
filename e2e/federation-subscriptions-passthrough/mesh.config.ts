@@ -5,7 +5,7 @@ export const serveConfig = defineConfig({
   pubsub: new PubSub(),
   plugins: ctx => [useWebhooks(ctx)],
   maskedErrors: false,
-  transportOptions: {
+  transportEntries: {
     products: {
       options: {
         subscriptions: {

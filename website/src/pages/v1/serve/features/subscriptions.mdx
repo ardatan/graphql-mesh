@@ -151,7 +151,7 @@ import type { WSTransportOptions } from '@graphql-mesh/transport-http'
 
 export const serveConfig = defineConfig({
   supergraph: 'supergraph.graphql',
-  transportOptions: {
+  transportEntries: {
     // use "*.http" to apply options to all subgraphs with HTTP
     '*.http': {
       options: {
@@ -187,7 +187,7 @@ import type { WSTransportOptions } from '@graphql-mesh/transport-ws'
 
 export const serveConfig = defineConfig({
   supergraph: 'supergraph.graphql',
-  transportOptions: {
+  transportEntries: {
     // use "*.http" to apply options to all subgraphs with HTTP
     '*.http': {
       options: {
@@ -243,7 +243,7 @@ export const serveConfig = defineConfig({
   pubsub: new PubSub(),
   // Setup Mesh to listen for webhook callbacks, and emit the payloads through PubSub engine
   plugins: ctx => [useWebhooks()],
-  transportOptions: {
+  transportEntries: {
     // use "*.http" to apply options to all subgraphs with HTTP
     '*.http': {
       options: {

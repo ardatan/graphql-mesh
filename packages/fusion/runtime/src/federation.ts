@@ -162,7 +162,7 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
   onSubgraphExecute,
   additionalTypeDefs: additionalTypeDefsFromConfig = [],
   additionalResolvers: additionalResolversFromConfig = [],
-  transportOptions,
+  transportEntryAdditions,
 }) {
   const additionalTypeDefs = [...asArray(additionalTypeDefsFromConfig)];
   const additionalResolvers = [...asArray(additionalResolversFromConfig)];
@@ -557,19 +557,19 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
 
   executableUnifiedGraph = filterHiddenPartsInSchema(executableUnifiedGraph);
 
-  if (transportOptions) {
-    const wildcardTransportOptions = transportOptions['*'];
+  if (transportEntryAdditions) {
+    const wildcardTransportOptions = transportEntryAdditions['*'];
     for (const subgraphName in transportEntryMap) {
       const toBeMerged: Partial<TransportEntry>[] = [];
       const transportEntry = transportEntryMap[subgraphName];
       if (transportEntry) {
         toBeMerged.push(transportEntry);
       }
-      const transportOptionBySubgraph = transportOptions[subgraphName];
+      const transportOptionBySubgraph = transportEntryAdditions[subgraphName];
       if (transportOptionBySubgraph) {
         toBeMerged.push(transportOptionBySubgraph);
       }
-      const transportOptionByKind = transportOptions['*.' + transportEntry?.kind];
+      const transportOptionByKind = transportEntryAdditions['*.' + transportEntry?.kind];
       if (transportOptionByKind) {
         toBeMerged.push(transportOptionByKind);
       }
