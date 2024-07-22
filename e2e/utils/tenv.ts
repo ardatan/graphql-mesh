@@ -32,6 +32,8 @@ export interface ProcOptions {
   pipeLogs?: boolean;
   /**
    * Additional environment variables to pass to the spawned process.
+   *
+   * They will be merged with `process.env` overriding any existing value.
    */
   env?: Record<string, string | number>;
 }
@@ -506,7 +508,10 @@ function spawn(
     cwd,
     // ignore stdin, pipe stdout and stderr
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: Object.entries(env).reduce((acc, [key, val]) => ({ ...acc, [key]: String(val) }), {}),
+    env: Object.entries(env).reduce(
+      (acc, [key, val]) => ({ ...acc, [key]: String(val) }),
+      process.env,
+    ),
     shell,
   });
 

@@ -152,7 +152,6 @@ it('should subscribe and resolve via http callbacks', async () => {
     supergraph: supergraphFile,
     port: availablePort,
     env: {
-      ...process.env,
       PUBLIC_URL: publicUrl,
     },
   });
