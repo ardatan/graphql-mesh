@@ -119,21 +119,59 @@ docker compose up
 
 ## Extend Docker Image
 
-For cases where you want to add additional functionality, or plugins to the base image - you just
-need to create a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve`.
+### Install plugin
+
+You may want to add additional functionality, or plugins to the base image - you just need to create
+a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve`.
+
+If need only a handful of plugins (or some other dependencies), you can simply extend the image and
+install the modules with `npm i`:
 
 For example, adding [Rate Limiting](/v1/serve/features/security/rate-limiting) to the container
 would look like this:
-
-### Install plugin
-
-If you want to only add a plugin (or some other dependencies), you can simply extend the image and
-install the modules with `npm i`:
 
 ```dockerfile filename="Dockerfile"
 FROM ghcr.io/ardatan/mesh-serve
 
 RUN npm i @graphql-mesh/plugin-rate-limit
+```
+
+```sh
+docker build -t mesh-serve-w-rate-limit .
+```
+
+Configure to use the rate limiting plugin:
+
+```ts filename="mesh.config.ts"
+import useRateLimit from '@graphql-mesh/plugin-rate-limit'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  plugins: pluginCtx => [
+    useRateLimit({
+      ...pluginCtx,
+      rules: [
+        {
+          type: 'Query',
+          field: 'foo',
+          max: 5, // requests limit for a time period
+          ttl: 5000, // time period
+          // You can use any value from the context
+          identifier: '{context.headers.authorization}'
+        }
+      ]
+    })
+  ]
+})
+```
+
+And then simply start the new image with the config file mounted:
+
+```sh
+docker run \
+  -p 4000:4000 \
+  -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
+  mesh-serve-w-rate-limit
 ```
 
 ### Develop plugin
