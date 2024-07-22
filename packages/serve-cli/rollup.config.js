@@ -57,6 +57,10 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   deps['node_modules/@graphql-mesh/transport-sqlite/index'] = '../transports/sqlite/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-thrift/index'] = '../transports/thrift/src/index.ts';
   deps['node_modules/@graphql-mesh/utils/index'] = '../legacy/utils/src/index.ts';
+  // installed in dist because it'll depend on optional dependencies
+  deps['dist/node_modules/@omnigraph/sqlite/index'] = '../loaders/sqlite/src/index.ts';
+  deps['dist/node_modules/@graphql-mesh/transport-sqlite/index'] =
+    '../transports/sqlite/src/index.ts';
 }
 
 export default defineConfig({
@@ -75,7 +79,7 @@ export default defineConfig({
     // system (`/node_modules`)
     chunkFileNames: 'node_modules/.chunk/[name]-[hash].mjs',
   },
-  external: ['uWebSockets.js', 'node-libcurl'],
+  external: ['uWebSockets.js', 'node-libcurl', 'tuql'],
   plugins: [
     tsConfigPaths(), // use tsconfig paths to resolve modules
     nodeResolve({ preferBuiltins: true }), // resolve node_modules and bundle them too
