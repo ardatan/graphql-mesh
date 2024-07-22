@@ -17,7 +17,7 @@ describe('OpenAPI Arg Rename', () => {
       services: [await service('Wiki')],
     });
 
-    const { execute } = await serve({ supergraph: output });
+    const { execute } = await serve({ supergraph: output, pipeLogs: true });
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Good {
@@ -43,7 +43,7 @@ describe('OpenAPI Arg Rename', () => {
       services: [await service('Wiki')],
     });
 
-    const { execute } = await serve({ supergraph: output });
+    const { execute } = await serve({ supergraph: output, pipeLogs: true });
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Bad {

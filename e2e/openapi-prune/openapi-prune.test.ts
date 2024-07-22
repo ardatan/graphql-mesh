@@ -17,7 +17,7 @@ describe('OpenAPI w/ Prune Transform', () => {
       services: [await service('Wiki')],
     });
 
-    const { execute } = await serve({ supergraph: output });
+    const { execute } = await serve({ supergraph: output, pipeLogs: true });
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Main {
