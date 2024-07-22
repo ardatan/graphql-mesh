@@ -86,7 +86,11 @@ export default defineConfig({
   plugins: [
     tsConfigPaths(), // use tsconfig paths to resolve modules
     nodeResolve({ preferBuiltins: true }), // resolve node_modules and bundle them too
-    commonjs(), // convert commonjs to esm
+    commonjs({
+      esmExternals: [
+        'graphql', // bundled dependency is an esm module
+      ],
+    }), // convert commonjs to esm
     json(), // support importing json files to esm (needed for commonjs() plugin)
     sucrase({ transforms: ['typescript'] }), // transpile typescript
     packagejson(), // add package jsons
