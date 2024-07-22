@@ -152,16 +152,16 @@ export interface ContainerOptions extends ProcOptions {
   image: string;
   /**
    * Port that the container uses.
-   * Will be bound to an available port on the host in {@link Container.port}.
+   *
+   * Will be bound to the {@link hostPort}.
    */
   containerPort: number;
   /**
-   * If set to true, the network mode for the running container will be set to "host".
+   * Port that will be bound to the {@link containerPort}.
    *
-   * This means that the container will be running in the same network as the host and
-   * will be able to access all services as well as expose all of its ports to the host.
+   * @default getAvailablePort()
    */
-  networkModeHost?: boolean;
+  hostPort?: number;
   /**
    * The healtcheck test command to run on the container.
    * If provided, the run function will wait for the container to become healthy.
@@ -265,7 +265,9 @@ export function createTenv(cwd: string): Tenv {
               ? // if the test contains a serve dockerfile, use it instead of the default e2e image
                 `e2e.${path.basename(cwd)}`
               : 'e2e'),
-          containerPort: port, // TODO: changing port from within mesh.config.ts wont work in docker runner
+          // TODO: changing port from within mesh.config.ts wont work in docker runner
+          hostPort: port,
+          containerPort: port,
           healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
           cmd: [
             createPortArg(port),
@@ -275,7 +277,6 @@ export function createTenv(cwd: string): Tenv {
           pipeLogs,
         });
         proc = cont;
-        port = cont.port;
       } /* serveRunner === 'node' */ else {
         [proc, waitForExit] = await spawn(
           { env, cwd, pipeLogs },
@@ -403,7 +404,7 @@ export function createTenv(cwd: string): Tenv {
       image,
       env = {},
       containerPort,
-      networkModeHost,
+      hostPort,
       healthcheck,
       pipeLogs,
       cmd,
@@ -411,7 +412,9 @@ export function createTenv(cwd: string): Tenv {
     }) {
       const uniqueName = `${name}_${Math.random().toString(32).slice(2)}`;
 
-      const hostPort = await getAvailablePort();
+      if (!hostPort) {
+        hostPort = await getAvailablePort();
+      }
 
       function msToNs(ms: number): number {
         return ms * 1000000;
@@ -449,7 +452,6 @@ export function createTenv(cwd: string): Tenv {
         Cmd: cmd?.filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
-          NetworkMode: networkModeHost ? 'host' : 'bridge',
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
           },
