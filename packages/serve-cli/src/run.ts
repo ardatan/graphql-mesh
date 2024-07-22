@@ -18,6 +18,8 @@ import { startNodeHttpServer } from './nodeHttp.js';
 import type { MeshServeCLIConfig } from './types.js';
 import { startuWebSocketsServer } from './uWebSockets.js';
 
+// @inject-version globalThis.__VERSION__ here
+
 const defaultFork = process.env.NODE_ENV === 'production' ? availableParallelism() : 1;
 
 /** Default config paths sorted by priority. */
@@ -93,7 +95,7 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
   productDescription?: string;
   /** @default mesh-serve */
   binName?: string;
-  /** @default undefined */
+  /** @default globalThis.__VERSION__ */
   version?: string;
 }
 
@@ -102,7 +104,7 @@ export async function run({
   productName = 'Mesh',
   productDescription = 'serve GraphQL federated architecture for any API service(s)',
   binName = 'mesh-serve',
-  version,
+  version = globalThis.__VERSION__,
 }: RunOptions) {
   program = program.name(binName).description(productDescription);
   if (version) program.version(version);

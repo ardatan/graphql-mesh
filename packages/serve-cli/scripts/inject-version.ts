@@ -6,20 +6,20 @@ import { version } from '../package.json';
 
 console.log(`Injecting version ${version} to build and bundle`);
 
-const inject = `globalThis.__VERSION__ = '${version}'`;
+const source = '// @inject-version globalThis.__VERSION__ here';
+const inject = `globalThis.__VERSION__ = '${version}';`;
 
 for (const file of [
   // build
-  resolve(import.meta.dirname, '../dist/cjs/bin.js'),
-  resolve(import.meta.dirname, '../dist/esm/bin.js'),
+  resolve(import.meta.dirname, '../dist/cjs/run.js'),
+  resolve(import.meta.dirname, '../dist/esm/run.js'),
   // bundle
   resolve(import.meta.dirname, '../bundle/bin.js'),
 ]) {
   try {
     const content = await readFile(file, 'utf-8');
-    // avoid re-injecting when build doesnt change
-    if (!content.includes(inject)) {
-      await writeFile(file, content.replace('globalThis.__VERSION__', `(${inject})`));
+    if (content.includes(source)) {
+      await writeFile(file, content.replace(source, inject));
     }
   } catch (e) {
     if (e.code === 'ENOENT') {
