@@ -61,7 +61,7 @@ docker run \
 
 For a full list of CLI arguments, please refer to the [Config Reference](./references/config).
 
-### Changing port in container
+### Changing Port in Container
 
 The default port where Mesh Serve listens is `4000`; however, maybe the container is running inside
 a network (like when using [Networking in Compose](https://docs.docker.com/compose/networking/)) and
@@ -119,8 +119,13 @@ docker compose up
 
 ## Extend Docker Image
 
-For cases where you want to add additional functionality, or plugins to the base image - you just
-need to create a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve`.
+### Install Plugin
+
+You may want to add additional functionality, or plugins to the base image - you just need to create
+a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve`.
+
+If need only a handful of plugins (or some other dependencies), you can simply extend the image and
+install the modules with `npm i`:
 
 For example, adding [Rate Limiting](/v1/serve/features/security/rate-limiting) to the container
 would look like this:
@@ -130,8 +135,6 @@ FROM ghcr.io/ardatan/mesh-serve
 
 RUN npm i @graphql-mesh/plugin-rate-limit
 ```
-
-Build your image:
 
 ```sh
 docker build -t mesh-serve-w-rate-limit .
@@ -169,4 +172,177 @@ docker run \
   -p 4000:4000 \
   -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
   mesh-serve-w-rate-limit
+```
+
+### Develop Plugin
+
+However, you may be developing a plugin and have a setup with some dependencies and source code,
+copying over your project's files is the way to go.
+
+In the following example, we're developing a `useTiming` plugin that will add a human readable
+execution duration to the GraphQL result `extensions` property.
+
+```json filename="package.json"
+{
+  "name": "my-timing",
+  "dependencies": {
+    "moment": "^2"
+  },
+  "devDependencies": {
+    "@graphql-mesh/serve-cli": "latest",
+    "@graphql-mesh/serve-runtime": "latest"
+  }
+}
+```
+
+```ts filename="my-timing.ts"
+import moment from 'moment'
+import type { MeshServePlugin } from '@graphql-mesh/serve-runtime'
+
+export function useTiming(): MeshServePlugin {
+  return {
+    onExecute() {
+      const start = Date.now()
+      return {
+        onExecuteDone({ result, setResult }) {
+          const duration = moment.duration(Date.now() - start)
+          if (isAsyncIterable(result)) {
+            setResult(
+              mapAsyncIterator(result, result => ({
+                ...result,
+                extensions: {
+                  ...result?.extensions,
+                  duration: duration.humanize()
+                }
+              }))
+            )
+            return
+          }
+          setResult({
+            ...result,
+            extensions: {
+              ...result?.extensions,
+              duration: duration.humanize()
+            }
+          })
+        }
+      }
+    }
+  }
+}
+```
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+import { useTiming } from './my-timing'
+
+export const serveConfig = defineConfig({
+  plugins: () => [useTiming()]
+})
+```
+
+Your Dockerfile should then look something like this:
+
+```dockerfile filename="Dockerfile"
+FROM ghcr.io/ardatan/mesh-serve
+
+# we dont install dev deps because:
+#   1. we need them for type checking only
+#   2. Mesh Serve is already available in the docker image
+COPY package*.json .
+RUN npm i --omit=dev
+
+COPY my-time.ts .
+COPY mesh.config.ts .
+```
+
+Then build your image:
+
+```sh
+docker build -t mesh-serve-w-my-timing .
+```
+
+And finally start it (the config file is in the image and doesn't need to be mounted):
+
+```sh
+docker run -p 4000:4000 mesh-serve-w-my-timing
+```
+
+<Callout>
+  For faster development, you can mount the source code as volumes so that you don't have to rebuild
+  the image on each run.
+
+```sh
+docker run -p 4000:4000 \
+  -v "$(pwd)/mesh.config.ts":/serve/mesh.config.ts \
+  -v "$(pwd)/my-timing.ts":/serve/my-timing.ts \
+  mesh-serve-w-my-timing
+```
+
+</Callout>
+
+### Additional Resolvers
+
+Instead maybe you need to define additional resolvers that depend on other dependencies. Similarily
+to the [Develop Plugin](#develop-plugin) approach, you can just copy the project code over and build
+another image.
+
+Say you have the following files:
+
+```json filename="package.json"
+{
+  "name": "my-time",
+  "dependencies": {
+    "moment": "^2"
+  },
+  "devDependencies": {
+    "@graphql-mesh/serve-cli": "latest"
+  }
+}
+```
+
+```js filename="my-time.ts"
+import moment from 'moment'
+
+export const additionalResolvers = {
+  Query: {
+    formattedToday() {
+      return moment().format('DD.MM.YYYY')
+    }
+  }
+}
+```
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+import { additionalResolvers } from './my-time'
+
+export const serveConfig = defineConfig({ additionalResolvers })
+```
+
+Your Dockerfile should then look something like this:
+
+```dockerfile filename="Dockerfile"
+FROM ghcr.io/ardatan/mesh-serve
+
+# we dont install dev deps because:
+#   1. we need them for type checking only
+#   2. Mesh Serve is already available in the docker image
+COPY package*.json .
+RUN npm i --omit=dev
+
+COPY my-time.ts .
+COPY mesh.config.ts .
+```
+
+Then build your image:
+
+```sh
+docker build -t mesh-serve-w-add-res .
+```
+
+And finally start it (the config file is in the image and doesn't need to be mounted):
+
+```sh
+docker run -p 4000:4000 mesh-serve-w-add-res
 ```
