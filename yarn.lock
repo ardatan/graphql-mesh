@@ -5909,6 +5909,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.2.3"
     "@repeaterjs/repeater": "npm:^3.0.6"
     "@types/ws": "npm:^8"
+    "@whatwg-node/fetch": "npm:^0.9.18"
   peerDependencies:
     graphql: "*"
     tslib: ^2.4.0
