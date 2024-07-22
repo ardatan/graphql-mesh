@@ -259,13 +259,13 @@ COPY mesh.config.ts .
 Then build your image:
 
 ```sh
-docker build -t mesh-serve-w-add-res .
+docker build -t mesh-serve-w-my-timing .
 ```
 
 And finally start it (the config file is in the image and doesn't need to be mounted):
 
 ```sh
-docker run -p 4000:4000 mesh-serve-w-add-res
+docker run -p 4000:4000 mesh-serve-w-my-timing
 ```
 
 <Callout>
@@ -276,7 +276,7 @@ docker run -p 4000:4000 mesh-serve-w-add-res
 docker run -p 4000:4000 \
   -v "$(pwd)/mesh.config.ts":/serve/mesh.config.ts \
   -v "$(pwd)/my-timing.ts":/serve/my-timing.ts \
-  mesh-serve-w-add-res
+  mesh-serve-w-my-timing
 ```
 
 </Callout>
