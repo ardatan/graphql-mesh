@@ -186,7 +186,7 @@ describe('Serve Runtime', () => {
         setValidationFn(mockValidateFn);
       },
     };
-    const serveRuntime = createServeRuntime({
+    await using serveRuntime = createServeRuntime({
       skipValidation: true,
       proxy: {
         endpoint: 'http://localhost:4000/graphql',

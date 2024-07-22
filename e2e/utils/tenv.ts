@@ -7,28 +7,18 @@ import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
 import type { ExecutionResult } from 'graphql';
+import {
+  IntrospectAndCompose,
+  RemoteGraphQLDataSource,
+  type ServiceEndpointDefinition,
+} from '@apollo/gateway';
 import { createArg, createPortArg, createServicePortArg } from './args';
+import { leftoverStack } from './leftoverStack';
 
 export const retries = 120,
   interval = 500,
   timeout = retries * interval; // 1min
 jest.setTimeout(timeout);
-
-const leftovers = new Set<AsyncDisposable | string>();
-afterAll(async () => {
-  await Promise.allSettled(
-    Array.from(leftovers.values()).map(leftover => {
-      if (typeof leftover === 'string') {
-        // file
-        return fs.rm(leftover, { recursive: true });
-      }
-      // process
-      return leftover[Symbol.asyncDispose]();
-    }),
-  ).finally(() => {
-    leftovers.clear();
-  });
-});
 
 const __project = path.resolve(__dirname, '..', '..') + '/';
 
@@ -40,6 +30,10 @@ export interface ProcOptions {
    * Useful for debugging.
    */
   pipeLogs?: boolean;
+  /**
+   * Additional environment variables to pass to the spawned process.
+   */
+  env?: Record<string, string>;
 }
 
 export interface Proc extends AsyncDisposable {
@@ -137,7 +131,7 @@ export interface ContainerOptions extends ProcOptions {
    */
   containerPort: number;
   /** A map of environment variable names to values. */
-  env?: Record<string, string | number>;
+  env?: Record<string, string>;
   /**
    * The healtcheck test command to run on the container.
    * If provided, the run function will wait for the container to become healthy.
@@ -169,10 +163,11 @@ export interface Tenv {
    */
   service(name: string, opts?: ServiceOptions): Promise<Service>;
   container(opts: ContainerOptions): Promise<Container>;
+  composeWithApollo(services: Service[]): Promise<string>;
 }
 
 export function createTenv(cwd: string): Tenv {
-  return {
+  const tenv: Tenv = {
     fs: {
       read(filePath) {
         return fs.readFile(isAbsolute(filePath) ? filePath : path.join(cwd, filePath), 'utf8');
@@ -182,7 +177,7 @@ export function createTenv(cwd: string): Tenv {
       },
       async tempfile(name) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_fs'));
-        leftovers.add(tempDir);
+        leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
         return path.join(tempDir, name);
       },
       write(filePath, content) {
@@ -194,9 +189,9 @@ export function createTenv(cwd: string): Tenv {
       return spawn({ ...opts, cwd }, cmd, ...args);
     },
     async serve(opts) {
-      const { port = await getAvailablePort(), supergraph, pipeLogs } = opts || {};
+      const { port = await getAvailablePort(), supergraph, pipeLogs, env } = opts || {};
       const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs },
+        { cwd, pipeLogs, env },
         'node',
         '--import',
         'tsx',
@@ -243,7 +238,7 @@ export function createTenv(cwd: string): Tenv {
       let output = '';
       if (opts?.output) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
-        leftovers.add(tempDir);
+        leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
         output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
       }
       const [proc, waitForExit] = await spawn(
@@ -422,7 +417,7 @@ export function createTenv(cwd: string): Tenv {
           await ctr.stop({ t: 0 });
         },
       };
-      leftovers.add(container);
+      leftoverStack.use(container);
 
       // verify that the container has started
       await setTimeout(interval);
@@ -472,7 +467,31 @@ export function createTenv(cwd: string): Tenv {
 
       return container;
     },
+    async composeWithApollo(services) {
+      const subgraphs: ServiceEndpointDefinition[] = [];
+      for (const service of services) {
+        subgraphs.push({
+          name: service.name,
+          url: `http://0.0.0.0:${service.port}/graphql`,
+        });
+      }
+
+      const { supergraphSdl } = await new IntrospectAndCompose({
+        subgraphs,
+      }).initialize({
+        getDataSource(opts) {
+          return new RemoteGraphQLDataSource(opts);
+        },
+        update() {},
+        async healthCheck() {},
+      });
+
+      const supergraphFile = await tenv.fs.tempfile('supergraph.graphql');
+      await tenv.fs.write(supergraphFile, supergraphSdl);
+      return supergraphFile;
+    },
   };
+  return tenv;
 }
 
 interface SpawnOptions extends ProcOptions {
@@ -537,7 +556,7 @@ function spawn(
     },
     [Symbol.asyncDispose]: () => (child.kill(), waitForExit),
   };
-  leftovers.add(proc);
+  leftoverStack.use(proc);
 
   child.stdout.on('data', x => {
     stdout += x.toString();

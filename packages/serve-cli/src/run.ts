@@ -81,8 +81,7 @@ let program = new Command()
         return interval;
       }),
   )
-  .option('--masked-errors', 'mask unexpected errors in responses', true)
-  .option('--no-masked-errors', "don't mask unexpected errors in responses", false);
+  .option('--masked-errors', 'mask unexpected errors in responses');
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */

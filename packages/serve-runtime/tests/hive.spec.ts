@@ -58,7 +58,7 @@ describe('Hive CDN', () => {
     );
     process.env.HIVE_CDN_ENDPOINT = `http://localhost:${(cdnServer.address() as AddressInfo).port}`;
     process.env.HIVE_CDN_KEY = 'key';
-    const serveRuntime = createServeRuntime();
+    await using serveRuntime = createServeRuntime();
     leftovers.add(() => serveRuntime[Symbol.asyncDispose]());
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
