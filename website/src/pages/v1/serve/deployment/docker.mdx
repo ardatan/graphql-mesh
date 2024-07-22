@@ -125,48 +125,76 @@ need to create a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve
 For example, adding [Rate Limiting](/v1/serve/features/security/rate-limiting) to the container
 would look like this:
 
+### Install plugin
+
+If you want to only add a plugin (or some other dependencies), you can simply extend the image and
+install the modules with `npm i`:
+
 ```dockerfile filename="Dockerfile"
 FROM ghcr.io/ardatan/mesh-serve
 
 RUN npm i @graphql-mesh/plugin-rate-limit
 ```
 
-Build your image:
+### Develop additional resolvers
 
-```sh
-docker build -t mesh-serve-w-rate-limit .
+However, you may have additional resolvers and have a more sophisticated setup with some
+dependencies and source code, copying over your project's files is the way to go.
+
+Say you have the following files:
+
+```json filename="package.json"
+{
+  "name": "my-time",
+  "dependencies": {
+    "moment": "^2"
+  },
+  "devDependencies": {
+    "@graphql-mesh/serve-cli": "latest"
+  }
+}
 ```
 
-Configure to use the rate limiting plugin:
+```js filename="my-time.ts"
+import moment from 'moment'
+
+export const additionalResolvers = {
+  Query: {
+    formattedToday() {
+      return moment().format('DD.MM.YYYY')
+    }
+  }
+}
+```
 
 ```ts filename="mesh.config.ts"
-import useRateLimit from '@graphql-mesh/plugin-rate-limit'
 import { defineConfig } from '@graphql-mesh/serve-cli'
+import { additionalResolvers } from './my-time'
 
-export const serveConfig = defineConfig({
-  plugins: pluginCtx => [
-    useRateLimit({
-      ...pluginCtx,
-      rules: [
-        {
-          type: 'Query',
-          field: 'foo',
-          max: 5, // requests limit for a time period
-          ttl: 5000, // time period
-          // You can use any value from the context
-          identifier: '{context.headers.authorization}'
-        }
-      ]
-    })
-  ]
-})
+export const serveConfig = defineConfig({ additionalResolvers })
 ```
 
-And then simply start the new image with the config file mounted:
+Your Dockerfile should then look something like this:
+
+```dockerfile filename="Dockerfile"
+FROM ghcr.io/ardatan/mesh-serve
+
+# we dont install dev deps because we need them for types only
+COPY package.json .
+RUN npm i --omit=dev
+
+COPY my-time.ts .
+COPY mesh.config.ts .
+```
+
+Then build your image:
 
 ```sh
-docker run \
-  -p 4000:4000 \
-  -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
-  mesh-serve-w-rate-limit
+docker build -t mesh-serve-w-add-res .
+```
+
+And finally start it (the config file is in the image and doesn't need to be mounted):
+
+```sh
+docker run -p 4000:4000 mesh-serve-w-add-res
 ```
