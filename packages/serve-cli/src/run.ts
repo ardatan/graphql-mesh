@@ -18,8 +18,6 @@ import { startNodeHttpServer } from './nodeHttp.js';
 import type { MeshServeCLIConfig } from './types.js';
 import { startuWebSocketsServer } from './uWebSockets.js';
 
-// @inject-version globalThis.__VERSION__ here
-
 const defaultFork = process.env.NODE_ENV === 'production' ? availableParallelism() : 1;
 
 /** Default config paths sorted by priority. */

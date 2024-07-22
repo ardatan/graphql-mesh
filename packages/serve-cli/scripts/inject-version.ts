@@ -11,8 +11,8 @@ const inject = `globalThis.__VERSION__ = '${version}';`;
 
 for (const file of [
   // build
-  resolve(import.meta.dirname, '../dist/cjs/run.js'),
-  resolve(import.meta.dirname, '../dist/esm/run.js'),
+  resolve(import.meta.dirname, '../dist/cjs/bin.js'),
+  resolve(import.meta.dirname, '../dist/esm/bin.js'),
   // bundle
   resolve(import.meta.dirname, '../bundle/bin.js'),
 ]) {
