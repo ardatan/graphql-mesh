@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { defineConfig } from 'rollup';
+import copy from 'rollup-plugin-copy';
 import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -37,7 +38,6 @@ const deps = {
   'node_modules/@graphql-mesh/serve-cli/index': 'src/index.ts',
   'node_modules/@graphql-mesh/compose-cli/index': '../compose-cli/src/types.ts', // we bundle compose types ONLY. adding support for configs with both serve and compose
   'node_modules/@graphql-mesh/serve-runtime/index': '../serve-runtime/src/index.ts',
-  'node_modules/graphql/index': '../../node_modules/graphql/index.mjs',
   // default transports should be in the container
   'node_modules/@graphql-mesh/transport-common/index': '../transports/common/src/index.ts',
   'node_modules/@graphql-mesh/transport-http/index': '../transports/http/src/index.ts',
@@ -60,6 +60,9 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   deps['node_modules/@graphql-mesh/transport-thrift/index'] = '../transports/thrift/src/index.ts';
   deps['node_modules/@omnigraph/sqlite/index'] = '../loaders/sqlite/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-sqlite/index'] = '../transports/sqlite/src/index.ts';
+  // TODO: bundling these creates duplicate graphql modules
+  deps['node_modules/@omnigraph/json-schema/index'] = '../loaders/json-schema/src/index.ts';
+  deps['node_modules/@graphql-mesh/plugin-live-query/index'] = '../plugins/live-query/src/index.ts';
 }
 
 export default defineConfig({
@@ -83,6 +86,7 @@ export default defineConfig({
     'node-libcurl',
     'tuql',
     'graphql', // graphql will be a bundled dependency
+    'graphql/execution/values.js', // because of https://github.com/n1ru4l/graphql-live-query/blob/beda6eb5a002e9d3b638af185f235951ed8f646d/packages/in-memory-live-query-store/src/extractLiveQueryRootFieldCoordinates.ts#L10
   ],
   plugins: [
     tsConfigPaths(), // use tsconfig paths to resolve modules
@@ -95,6 +99,9 @@ export default defineConfig({
     json(), // support importing json files to esm (needed for commonjs() plugin)
     sucrase({ transforms: ['typescript'] }), // transpile typescript
     packagejson(), // add package jsons
+    copy({
+      targets: [{ src: '../../node_modules/graphql', dest: 'bundle/node_modules' }],
+    }),
   ],
 });
 
@@ -107,7 +114,9 @@ function packagejson() {
   return {
     name: 'packagejson',
     generateBundle(_outputs, bundles) {
-      for (const bundle of Object.values(bundles).filter(bundle => !!deps[bundle.name])) {
+      for (const bundle of Object.values(bundles).filter(
+        bundle => !!deps[bundle.name] && bundle.name.endsWith('/index'),
+      )) {
         const dir = path.dirname(bundle.fileName);
         const bundledFile = path.basename(bundle.fileName);
         const pkg = { type: 'module', main: bundledFile };
