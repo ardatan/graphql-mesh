@@ -39,7 +39,8 @@
     "@graphql-mesh/string-interpolation": "^0.5.4",
     "@graphql-mesh/transport-common": "^0.4.0",
     "@graphql-tools/utils": "^10.2.3",
-    "@repeaterjs/repeater": "^3.0.6"
+    "@repeaterjs/repeater": "^3.0.6",
+    "@whatwg-node/fetch": "^0.9.18"
   },
   "devDependencies": {
     "@types/ws": "^8"

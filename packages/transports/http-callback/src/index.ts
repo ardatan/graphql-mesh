@@ -8,6 +8,7 @@ import {
 } from '@graphql-mesh/transport-common';
 import { createGraphQLError } from '@graphql-tools/utils';
 import { Repeater, type Push } from '@repeaterjs/repeater';
+import { crypto } from '@whatwg-node/fetch';
 
 export interface HTTPCallbackTransportOptions {
   /**
