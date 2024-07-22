@@ -9305,10 +9305,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.34, @sinclair/typebox@npm:^0.32.0":
-  version: 0.32.34
-  resolution: "@sinclair/typebox@npm:0.32.34"
-  checksum: 10c0/7d0e2e950c8f7aed74501c1abc59171f1090e521b58700cf24a47c6a4e2c3b6da5b6b0e0f7c0878e64eaa811ae4c65ceca34ca396f000d254601638393b8dad6
+"@sinclair/typebox@npm:0.32.35":
+  version: 0.32.35
+  resolution: "@sinclair/typebox@npm:0.32.35"
+  checksum: 10c0/601b9e7e7bdf67f7b79be95c4eeb97ceace0e1429dd9ce9a78213d61a65b50c14caa46ba0aeed77cd8cfaf61ba13874b69af467ac14d7352844e5cceba1b718d
   languageName: node
   linkType: hard
 
@@ -9323,6 +9323,13 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+  languageName: node
+  linkType: hard
+
+"@sinclair/typebox@npm:^0.32.0":
+  version: 0.32.34
+  resolution: "@sinclair/typebox@npm:0.32.34"
+  checksum: 10c0/7d0e2e950c8f7aed74501c1abc59171f1090e521b58700cf24a47c6a4e2c3b6da5b6b0e0f7c0878e64eaa811ae4c65ceca34ca396f000d254601638393b8dad6
   languageName: node
   linkType: hard
 
@@ -29769,7 +29776,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.92.1"
     "@graphql-mesh/openapi": "npm:0.102.1"
-    "@sinclair/typebox": "npm:0.32.34"
+    "@sinclair/typebox": "npm:0.32.35"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.1"
     graphql: "npm:16.9.0"
@@ -34509,10 +34516,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:6.19.3":
-  version: 6.19.3
-  resolution: "undici@npm:6.19.3"
-  checksum: 10c0/b4f361243fb83a23024a7616da2dd55aafa02afaa477eef85b62ba87c1daac72e4a008d92c3987fdb0786c877714364476117c61db6d5810e28dd6a946b31f1b
+"undici@npm:6.19.4":
+  version: 6.19.4
+  resolution: "undici@npm:6.19.4"
+  checksum: 10c0/d6cb7227893140abab3c216bd2817f24a34270b23be316ff9ddbdbb18e3b528e29e0a20cd33ab1bc0d3f604d652e7baf3f39f6760470b3027d83bc6270f90e43
   languageName: node
   linkType: hard
 

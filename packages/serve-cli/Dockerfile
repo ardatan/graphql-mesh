@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.7-labs
+# syntax=docker/dockerfile:1.9-labs
 
 # IMPORTANT: make sure bundle is ready with `yarn bundle`
 
