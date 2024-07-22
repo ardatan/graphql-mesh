@@ -28,10 +28,11 @@ describe('useForwardHeaders', () => {
   it('forwards specified headers', async () => {
     const serveRuntime = createServeRuntime({
       proxy: {
-        endpoint: 'https://example.com/graphql',
+        endpoint: 'http://localhost:4001/graphql',
       },
       fetchAPI: {
-        fetch: upstream.fetch as any,
+        // @ts-expect-error: TODO: fix this
+        fetch: upstream.fetch,
       },
       plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
       logging: false,
@@ -77,15 +78,15 @@ describe('useForwardHeaders', () => {
     const serveRuntime = createServeRuntime({
       logging: false,
       proxy: {
-        endpoint: 'https://example.com/graphql',
+        endpoint: 'http://localhost:4001/graphql',
         headers: {
           'x-my-header': 'my-value',
           'x-extra-header': 'extra-value',
         },
       },
       fetchAPI: {
-        // TODO: Fix the type mismatch
-        fetch: upstream.fetch as any,
+        // @ts-expect-error: TODO: fix this
+        fetch: upstream.fetch,
       },
       plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
       maskedErrors: false,

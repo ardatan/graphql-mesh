@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import type { ExecutionResult, GraphQLError } from 'graphql';
-import {
-  getInterpolatedHeadersFactory,
-} from '@graphql-mesh/string-interpolation';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
   defaultPrintFn,
   type DisposableExecutor,
@@ -168,9 +166,7 @@ export default {
                 ),
               );
             }
-            stopSubscription(new AggregateError(resJson.errors));
-          }
-          if (resJson.data != null) {
+          } else if (resJson.data != null) {
             pushFn(resJson.data);
             stopSubscription();
           }

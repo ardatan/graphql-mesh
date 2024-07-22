@@ -21,7 +21,8 @@ describe('HTTP Transport', () => {
         headers: [['x-test', '{context.myToken}']],
       },
       fetch,
-      transportExecutorFactoryGetter: () => httpTransport.getSubgraphExecutor as any,
+      // @ts-expect-error - transport kind is const in httpTransport but string is expected
+      transportExecutorFactoryGetter: () => httpTransport.getSubgraphExecutor,
       subgraph: buildSchema(/* GraphQL */ `
         type Query {
           test: String

@@ -7,6 +7,7 @@ import {
 } from '@graphql-mesh/transport-common';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
+import type { DisposableAsyncExecutor } from '@graphql-tools/utils';
 
 export type HTTPTransportOptions<
   TSubscriptionTransportKind = string,
@@ -39,7 +40,7 @@ export default {
           context: execReq.context,
           info: execReq.info,
         }),
-      fetch,
+      fetch: payload.fetch,
       print: defaultPrintFn,
       ...payload.transportEntry.options,
     });
@@ -77,7 +78,7 @@ export default {
             ),
         );
       };
-      const hybridExecutor: DisposableExecutor = function hybridExecutor(executionRequest) {
+      const hybridExecutor: DisposableAsyncExecutor = function hybridExecutor(executionRequest) {
         if (subscriptionsExecutor && executionRequest.operationType === 'subscription') {
           return subscriptionsExecutor(executionRequest);
         }
