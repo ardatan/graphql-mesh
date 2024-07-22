@@ -55,6 +55,7 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   deps['node_modules/@omnigraph/openapi/index'] = '../loaders/openapi/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-rest/index'] = '../transports/rest/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-soap/index'] = '../transports/soap/src/index.ts';
+  deps['node_modules/@graphql-mesh/transport-neo4j/index'] = '../transports/neo4j/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-sqlite/index'] = '../transports/sqlite/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-thrift/index'] = '../transports/thrift/src/index.ts';
   deps['node_modules/@omnigraph/sqlite/index'] = '../loaders/sqlite/src/index.ts';
