@@ -143,7 +143,7 @@ export default {
         .then(res => {
           if (!res.ok) {
             stopSubscription(
-              createGraphQLError(`HTTP Error`, {
+              createGraphQLError(`Subscription request failed with an HTTP Error: ${res.status}`, {
                 extensions: {
                   http: {
                     status: res.status,
