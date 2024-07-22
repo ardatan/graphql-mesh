@@ -63,7 +63,7 @@
       }
     },
     {
-      "files": ["e2e/**/*"],
+      "files": ["e2e/**/*", "packages/serve-cli/**/*"],
       "rules": {
         "import/no-nodejs-modules": "off"
       }
