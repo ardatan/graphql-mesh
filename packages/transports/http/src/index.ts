@@ -1,103 +1,98 @@
-import type { DocumentNode } from 'graphql';
-import { print } from 'graphql';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
-  getDocumentString,
+  defaultPrintFn,
   type DisposableExecutor,
   type Transport,
+  type TransportEntry,
 } from '@graphql-mesh/transport-common';
-import { buildGraphQLWSExecutor } from '@graphql-tools/executor-graphql-ws';
+import { mapMaybePromise } from '@graphql-mesh/utils';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
+import type { DisposableAsyncExecutor } from '@graphql-tools/utils';
 
-export type HTTPTransportOptions = Pick<
-  HTTPExecutorOptions,
-  'useGETForQueries' | 'method' | 'timeout' | 'credentials' | 'retry'
-> & {
-  subscriptions?: {
-    ws: {
-      path: string;
-    };
-    // TODO: http-callback-based protocol
-  };
-};
+export type HTTPTransportOptions<
+  TSubscriptionTransportKind = string,
+  TSubscriptionTransportOptions = {},
+> = Pick<HTTPExecutorOptions, 'useGETForQueries' | 'method' | 'timeout' | 'credentials' | 'retry'> &
+  (TSubscriptionTransportKind extends string
+    ? {
+        subscriptions?: TransportEntry<TSubscriptionTransportKind, TSubscriptionTransportOptions>;
+      }
+    : {});
 
 export default {
-  getSubgraphExecutor({ transportEntry, fetch }) {
-    let headers: Record<string, string> | undefined;
-    if (typeof transportEntry.headers === 'string') {
-      headers = JSON.parse(transportEntry.headers);
+  getSubgraphExecutor(payload) {
+    let headersInConfig: Record<string, string> | undefined;
+    if (typeof payload.transportEntry.headers === 'string') {
+      headersInConfig = JSON.parse(payload.transportEntry.headers);
     }
-    if (Array.isArray(transportEntry.headers)) {
-      headers = Object.fromEntries(transportEntry.headers);
+    if (Array.isArray(payload.transportEntry.headers)) {
+      headersInConfig = Object.fromEntries(payload.transportEntry.headers);
     }
+
+    const headersFactory = getInterpolatedHeadersFactory(headersInConfig);
 
     const httpExecutor = buildHTTPExecutor({
-      endpoint: transportEntry.location,
-      headers,
-      fetch,
-      print: printFnForExecutor,
-      ...transportEntry.options,
+      endpoint: payload.transportEntry.location,
+      headers: execReq =>
+        headersFactory({
+          env: process.env,
+          root: execReq.rootValue,
+          context: execReq.context,
+          info: execReq.info,
+        }),
+      fetch: payload.fetch,
+      print: defaultPrintFn,
+      ...payload.transportEntry.options,
     });
-    const wsOpts = transportEntry.options?.subscriptions?.ws;
-    if (wsOpts) {
-      const wsExecutorMap = new Map<string, DisposableExecutor>();
-      const hostname = /\/\/(.+?)\//.exec(transportEntry.location)[1];
-      if (!hostname) {
-        throw new Error(`Unable to extract hostname from "${transportEntry.location}"`);
-      }
-      let protocol = 'ws';
-      if (transportEntry.location.startsWith('https')) {
-        protocol = 'wss';
-      }
-      const wsUrl = `${protocol}://${hostname}${wsOpts.path}`;
-      const hybridExecutor: DisposableExecutor = function hybridExecutor(request) {
-        if (request.operationType === 'subscription') {
-          // apollo federation passes the HTTP `Authorization` header through `connectionParams.token`
-          // see https://www.apollographql.com/docs/router/executing-operations/subscription-support/#websocket-auth-support
-          const token =
-            request.context?.headers?.authorization ||
-            request.context?.request?.headers?.get('authorization') ||
-            undefined;
 
-          // TODO: pass through connection params from the WS connection to the GW (once https://github.com/ardatan/graphql-mesh/issues/7208 lands)
-
-          const hash = wsUrl + token;
-          let wsExecutor = wsExecutorMap.get(hash);
-          if (!wsExecutor) {
-            wsExecutor = buildGraphQLWSExecutor({
-              url: wsUrl,
-              connectionParams: token ? { token } : undefined,
-              retryAttempts: transportEntry.options?.retry,
-              lazy: true,
-              lazyCloseTimeout: 3_000,
-              on: {
-                closed() {
-                  // no subscriptions and the lazy close timeout has passed - remove the client
-                  wsExecutorMap.delete(hash);
+    if (payload.transportEntry.options && 'subscriptions' in payload.transportEntry.options) {
+      let subscriptionsExecutor = function (execReq) {
+        const subscriptionsKind =
+          payload.transportEntry.options?.subscriptions?.kind || payload.transportEntry.kind;
+        const subscriptionsLocation = payload.transportEntry.options?.subscriptions?.location
+          ? new URL(
+              payload.transportEntry.options.subscriptions.location,
+              payload.transportEntry.location,
+            ).toString()
+          : payload.transportEntry.location;
+        return mapMaybePromise(
+          payload.transportExecutorFactoryGetter(subscriptionsKind),
+          transportExecutorFactory =>
+            mapMaybePromise(
+              transportExecutorFactory({
+                ...payload,
+                transportEntry: {
+                  ...payload.transportEntry,
+                  kind: subscriptionsKind,
+                  location: subscriptionsLocation,
+                  options: {
+                    ...payload.transportEntry.options,
+                    ...payload.transportEntry.options?.subscriptions?.options,
+                  },
                 },
+              }),
+              resolvedSubscriptionsExecutor => {
+                subscriptionsExecutor = resolvedSubscriptionsExecutor;
+                return subscriptionsExecutor(execReq);
               },
-              // @ts-expect-error wrong typings for print fn
-              print: printFnForExecutor,
-            });
-            wsExecutorMap.set(hash, wsExecutor);
-          }
-          return wsExecutor(request);
-        }
-        return httpExecutor(request);
+            ),
+        );
       };
-      hybridExecutor[Symbol.asyncDispose] = () =>
-        Promise.all([
-          ...Array.from(wsExecutorMap.values()).map(executor => executor[Symbol.asyncDispose]()),
-          httpExecutor[Symbol.asyncDispose](),
+      const hybridExecutor: DisposableAsyncExecutor = function hybridExecutor(executionRequest) {
+        if (subscriptionsExecutor && executionRequest.operationType === 'subscription') {
+          return subscriptionsExecutor(executionRequest);
+        }
+        return httpExecutor(executionRequest);
+      };
+      hybridExecutor[Symbol.asyncDispose] = function executorDisposeFn() {
+        return Promise.all([
+          httpExecutor[Symbol.asyncDispose]?.(),
+          subscriptionsExecutor?.[Symbol.asyncDispose]?.(),
         ]);
+      };
       return hybridExecutor;
     }
 
     return httpExecutor;
   },
 } satisfies Transport<'http', HTTPTransportOptions>;
-
-// Use Envelop's print/parse cache to avoid parsing the same document multiple times
-// TODO: Maybe a shared print/parse cache in the future?
-function printFnForExecutor(document: DocumentNode) {
-  return getDocumentString(document, print);
-}

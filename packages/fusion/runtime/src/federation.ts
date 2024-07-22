@@ -28,6 +28,7 @@ import {
   MapperKind,
   mapSchema,
   memoize1,
+  mergeDeep,
 } from '@graphql-tools/utils';
 import {
   HoistField,
@@ -161,6 +162,7 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
   onSubgraphExecute,
   additionalTypeDefs: additionalTypeDefsFromConfig = [],
   additionalResolvers: additionalResolversFromConfig = [],
+  transportEntryAdditions,
 }) {
   const additionalTypeDefs = [...asArray(additionalTypeDefsFromConfig)];
   const additionalResolvers = [...asArray(additionalResolversFromConfig)];
@@ -554,6 +556,29 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
   });
 
   executableUnifiedGraph = filterHiddenPartsInSchema(executableUnifiedGraph);
+
+  if (transportEntryAdditions) {
+    const wildcardTransportOptions = transportEntryAdditions['*'];
+    for (const subgraphName in transportEntryMap) {
+      const toBeMerged: Partial<TransportEntry>[] = [];
+      const transportEntry = transportEntryMap[subgraphName];
+      if (transportEntry) {
+        toBeMerged.push(transportEntry);
+      }
+      const transportOptionBySubgraph = transportEntryAdditions[subgraphName];
+      if (transportOptionBySubgraph) {
+        toBeMerged.push(transportOptionBySubgraph);
+      }
+      const transportOptionByKind = transportEntryAdditions['*.' + transportEntry?.kind];
+      if (transportOptionByKind) {
+        toBeMerged.push(transportOptionByKind);
+      }
+      if (wildcardTransportOptions) {
+        toBeMerged.push(wildcardTransportOptions);
+      }
+      transportEntryMap[subgraphName] = mergeDeep(toBeMerged);
+    }
+  }
 
   return {
     unifiedGraph: executableUnifiedGraph,

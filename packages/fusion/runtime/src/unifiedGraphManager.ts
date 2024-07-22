@@ -2,7 +2,7 @@ import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import type { DocumentNode, GraphQLSchema } from 'graphql';
 import { buildASTSchema, buildSchema, isSchema } from 'graphql';
 import { getInContextSDK } from '@graphql-mesh/runtime';
-import type { TransportOptions } from '@graphql-mesh/serve-runtime';
+import type { TransportEntryAdditions } from '@graphql-mesh/serve-runtime';
 import type { TransportContext, TransportEntry } from '@graphql-mesh/transport-common';
 import type { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
@@ -43,6 +43,7 @@ export interface UnifiedGraphHandlerOpts {
   additionalTypeDefs?: TypeSource;
   additionalResolvers?: IResolvers<unknown, any> | IResolvers<unknown, any>[];
   onSubgraphExecute: ReturnType<typeof getOnSubgraphExecute>;
+  transportEntryAdditions?: TransportEntryAdditions;
 }
 
 export interface UnifiedGraphHandlerResult {
@@ -57,7 +58,7 @@ export interface UnifiedGraphManagerOptions<TContext> {
   // Handle the unified graph by any specification
   handleUnifiedGraph?: UnifiedGraphHandler;
   transports?: Transports;
-  transportOptions?: TransportOptions;
+  transportEntryAdditions?: TransportEntryAdditions;
   polling?: number;
   additionalTypeDefs?: TypeSource;
   additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
@@ -151,12 +152,12 @@ export class UnifiedGraphManager<TContext> {
           onSubgraphExecute(subgraphName, execReq) {
             return onSubgraphExecute(subgraphName, execReq);
           },
+          transportEntryAdditions: this.opts.transportEntryAdditions,
         });
         this.unifiedGraph = newUnifiedGraph;
         const onSubgraphExecute = getOnSubgraphExecute({
           onSubgraphExecuteHooks: this.onSubgraphExecuteHooks,
           transports: this.opts.transports,
-          transportOptions: this.opts.transportOptions,
           transportContext: this.opts.transportContext,
           transportEntryMap,
           getSubgraphSchema(subgraphName) {

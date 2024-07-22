@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/transport-http",
-  "version": "0.3.1",
+  "name": "@graphql-mesh/transport-http-callback",
+  "version": "0.0.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "ardatan/graphql-mesh",
-    "directory": "packages/transports/http"
+    "directory": "packages/transports/http-callback"
   },
   "license": "MIT",
   "engines": {
@@ -37,12 +37,9 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-mesh/transport-common": "^0.4.1",
-    "@graphql-mesh/utils": "^0.99.0",
-    "@graphql-tools/executor-http": "^1.1.5",
+    "@graphql-mesh/transport-common": "^0.4.0",
     "@graphql-tools/utils": "^10.2.3",
-    "graphql-ws": "^5.16.0",
-    "ws": "^8.18.0"
+    "@repeaterjs/repeater": "^3.0.6"
   },
   "devDependencies": {
     "@types/ws": "^8"

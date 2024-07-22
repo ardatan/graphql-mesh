@@ -1,16 +1,30 @@
-import { defineConfig } from '@graphql-mesh/serve-cli';
-import type { HTTPTransportOptions } from '@graphql-mesh/transport-http';
+import { defineConfig, PubSub, useWebhooks } from '@graphql-mesh/serve-cli';
+import type { WSTransportOptions } from '@graphql-mesh/transport-ws';
 
 export const serveConfig = defineConfig({
-  transportOptions: {
-    '*': {
-      http: {
+  pubsub: new PubSub(),
+  plugins: ctx => [useWebhooks(ctx)],
+  maskedErrors: false,
+  transportEntries: {
+    products: {
+      options: {
         subscriptions: {
-          ws: {
-            path: '/subscriptions',
-          },
+          kind: 'ws',
+          location: '/subscriptions',
+          options: {
+            connectionParams: {
+              token: '{context.headers.authorization}',
+            },
+          } satisfies WSTransportOptions,
         },
-      } satisfies HTTPTransportOptions,
+      },
+    },
+    reviews: {
+      options: {
+        subscriptions: {
+          kind: 'http-callback',
+        },
+      },
     },
   },
 });

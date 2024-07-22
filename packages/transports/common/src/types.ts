@@ -1,6 +1,6 @@
 import type { GraphQLSchema } from 'graphql';
 import type { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
-import type { Executor } from '@graphql-tools/utils';
+import type { Executor, MaybePromise } from '@graphql-tools/utils';
 
 export interface Transport<Kind extends string = string, Options = Record<string, any>> {
   getSubgraphExecutor: TransportGetSubgraphExecutor<Kind, Options>;
@@ -27,8 +27,13 @@ export interface TransportGetSubgraphExecutorOptions<
 > extends TransportContext {
   subgraphName: string;
   transportEntry: TransportEntry<Kind, Options>;
+  transportExecutorFactoryGetter: TransportExecutorFactoryGetter;
   subgraph: GraphQLSchema;
 }
+
+export type TransportExecutorFactoryGetter = (
+  kind: string,
+) => MaybePromise<TransportGetSubgraphExecutor>;
 
 export type TransportGetSubgraphExecutor<
   Kind extends string = string,

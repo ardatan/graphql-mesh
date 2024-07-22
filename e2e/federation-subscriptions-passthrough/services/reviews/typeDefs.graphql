@@ -6,3 +6,7 @@ extend type Product @key(fields: "id") {
 type Review {
   score: Int!
 }
+
+type Subscription {
+  countdown(from: Int!): Int
+}
