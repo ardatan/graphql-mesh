@@ -503,7 +503,9 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         transforms.push(
           new RenameObjectFieldArguments((typeName, fieldName, argName) => {
             const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
-            return renameArgByFieldByTypeNames[realTypeName]?.[fieldName]?.[argName] ?? argName;
+            const realFieldName =
+              renameFieldByTypeNamesReversed[realTypeName]?.[fieldName] ?? fieldName;
+            return renameArgByFieldByTypeNames[realTypeName]?.[realFieldName]?.[argName] ?? argName;
           }),
         );
       }

@@ -1,8 +1,7 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve, service } = createTenv(__dirname);
-
-describe('OpenAPI Additional Resolvers', () => {
+describe('OpenAPI Arg Rename', () => {
+  const { compose, serve, service } = createTenv(__dirname);
   it('composes the schema', async () => {
     const { result } = await compose({
       output: 'graphql',
