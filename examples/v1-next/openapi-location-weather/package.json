@@ -1,6 +1,6 @@
 {
   "name": "location-weather-example",
-  "version": "0.21.1",
+  "version": "0.21.2",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
     "@graphql-mesh/compose-cli": "^0.6.1",
     "@graphql-mesh/plugin-response-cache": "^0.99.2",
     "@graphql-mesh/serve-cli": "^0.8.1",
-    "@omnigraph/openapi": "^0.102.2",
+    "@omnigraph/openapi": "^0.102.3",
     "graphql": "^16.8.1"
   }
 }

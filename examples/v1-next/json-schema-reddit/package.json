@@ -1,5 +1,6 @@
 {
   "name": "@examples/reddit-example",
+  "version": null,
   "private": true,
   "scripts": {
     "compose": "yarn mesh-compose",

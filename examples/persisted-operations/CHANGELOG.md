@@ -1,5 +1,12 @@
 # example-persisted-operations
 
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.102.3
+
 ## 0.6.2
 
 ### Patch Changes
