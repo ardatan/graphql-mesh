@@ -6552,8 +6552,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/mock@npm:^9.0.3":
-  version: 9.0.3
-  resolution: "@graphql-tools/mock@npm:9.0.3"
+  version: 9.0.4
+  resolution: "@graphql-tools/mock@npm:9.0.4"
   dependencies:
     "@graphql-tools/schema": "npm:^10.0.4"
     "@graphql-tools/utils": "npm:^10.2.1"
@@ -6561,7 +6561,7 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/73ee008f703bcd57da3c4585965a8624c7c308fbda5269db2afe71a83c1f62345bdf62a80fd1c6f3df29683f5c5fcb4780c36a7624e4c0e000b381a194102ea8
+  checksum: 10c0/21bc2904822de82ac4122835e11170a670e1a1232ca319a776954e207210a47817ed1d13cd58e2c0f01aca98c2167c2fb377406280cb304a9b4a9aa2259c64b2
   languageName: node
   linkType: hard
 
@@ -10157,9 +10157,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:6.4.7":
-  version: 6.4.7
-  resolution: "@testing-library/jest-dom@npm:6.4.7"
+"@testing-library/jest-dom@npm:6.4.8":
+  version: 6.4.8
+  resolution: "@testing-library/jest-dom@npm:6.4.8"
   dependencies:
     "@adobe/css-tools": "npm:^4.4.0"
     "@babel/runtime": "npm:^7.9.2"
@@ -10169,24 +10169,7 @@ __metadata:
     dom-accessibility-api: "npm:^0.6.3"
     lodash: "npm:^4.17.21"
     redent: "npm:^3.0.0"
-  peerDependencies:
-    "@jest/globals": ">= 28"
-    "@types/bun": "*"
-    "@types/jest": ">= 28"
-    jest: ">= 28"
-    vitest: ">= 0.32"
-  peerDependenciesMeta:
-    "@jest/globals":
-      optional: true
-    "@types/bun":
-      optional: true
-    "@types/jest":
-      optional: true
-    jest:
-      optional: true
-    vitest:
-      optional: true
-  checksum: 10c0/e5b225d047c30291c5806a958c2ea67919c67756549c5b25424bacf3c766f1d535d1fe6ebd342da47e7297def13d829ffd515dd84d504ca86a822300ddcff91f
+  checksum: 10c0/8eececcac1ec7728c038b9d9eabfc8b8dcf4dc1e997c959450bff16d946e3344275862b84bfe0e1d1beb3817368e782464816aca47ab5c94f0ebf66db71df55d
   languageName: node
   linkType: hard
 
@@ -19163,7 +19146,7 @@ __metadata:
   resolution: "frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
     "@apollo/client": "npm:3.11.0"
-    "@testing-library/jest-dom": "npm:6.4.7"
+    "@testing-library/jest-dom": "npm:6.4.8"
     "@testing-library/react": "npm:16.0.0"
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
