@@ -30,7 +30,7 @@ interface User @discriminator(subgraph: "test", field: "type") {
 }
 
 """The Name."""
-scalar query_getAdmin_allOf_0_name @length(subgraph: "test", min: null, max: 100)
+scalar query_getAdmin_allOf_0_name @length(subgraph: "test", max: 100)
 
 type Editor implements User {
   """The Name."""
