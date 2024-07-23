@@ -1,5 +1,15 @@
 # odata-trippin-example
 
+## 0.19.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`11e09c8`](https://github.com/ardatan/graphql-mesh/commit/11e09c8c5783bb2454531ba4c1dae83a6216dece)]:
+  - @graphql-mesh/odata@0.101.0
+  - @graphql-mesh/cli@0.92.2
+
 ## 0.18.1
 
 ### Patch Changes

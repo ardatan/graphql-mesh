@@ -1,5 +1,54 @@
 # @graphql-mesh/transport-http
 
+## 0.3.2
+
+### Patch Changes
+
+- [#7294](https://github.com/ardatan/graphql-mesh/pull/7294)
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/string-interpolation@^0.5.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/utils@^0.99.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.99.0)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/executor-graphql-ws@^1.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-graphql-ws/v/1.2.0)
+    (from `dependencies`)
+
+- [#7294](https://github.com/ardatan/graphql-mesh/pull/7294)
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to manipulate transport entry through
+  `transportEntries`.
+
+  For example, you can add extra headers to a subgraph
+
+  ```ts
+  transportEntries: {
+    products: {
+      // This adds extra headers to the subgraph configuration
+      headers: [
+        // This forwards `authorization` from the upstream to downstream
+        ['authorization', '{context.headers.authorization}'],
+        // Or some static value
+        ['x-extra', process.env.SOME_THING]
+      ]
+    }
+  }
+  ```
+
+- Updated dependencies
+  [[`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033),
+  [`0bdc18d`](https://github.com/ardatan/graphql-mesh/commit/0bdc18df3d150a61abf987b8829934ed4ca02eed),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)]:
+  - @graphql-mesh/string-interpolation@0.5.5
+  - @graphql-mesh/transport-common@0.4.2
+  - @graphql-mesh/utils@0.99.2
+
 ## 0.3.1
 
 ### Patch Changes

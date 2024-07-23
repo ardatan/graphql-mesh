@@ -1,5 +1,27 @@
 # @graphql-mesh/runtime
 
+## 0.100.2
+
+### Patch Changes
+
+- [#7352](https://github.com/ardatan/graphql-mesh/pull/7352)
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.16)
+    (from `^10.0.14`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/executor@^1.3.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.0)
+    (from `^1.2.8`, in `dependencies`)
+- Updated dependencies
+  [[`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033),
+  [`0bdc18d`](https://github.com/ardatan/graphql-mesh/commit/0bdc18df3d150a61abf987b8829934ed4ca02eed),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/string-interpolation@0.5.5
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+
 ## 0.100.1
 
 ### Patch Changes

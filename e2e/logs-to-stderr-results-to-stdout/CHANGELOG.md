@@ -1,5 +1,15 @@
 # @e2e/logs-to-stderr-results-to-stdout
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`cfe779a`](https://github.com/ardatan/graphql-mesh/commit/cfe779a55421ee1064c6778db760bdef8ffb2d3b),
+  [`bfaeffa`](https://github.com/ardatan/graphql-mesh/commit/bfaeffa9881f3bf7faac07ecc39667793f347b83)]:
+  - @graphql-mesh/serve-cli@0.8.1
+  - @graphql-mesh/compose-cli@0.6.1
+
 ## 0.1.0
 
 ### Patch Changes
