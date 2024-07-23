@@ -13,6 +13,7 @@ import {
   typeFromAST,
   visit,
 } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
 import {
   getDirectiveExtensions,
@@ -549,7 +550,7 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         return onSubgraphExecute(subgraphName, req);
       };
     },
-    batch: true,
+    batch: !process.env.JEST,
     onStitchingOptions(opts: any) {
       subschemas = opts.subschemas;
       opts.typeDefs = [opts.typeDefs, additionalTypeDefs];
