@@ -5517,6 +5517,7 @@ __metadata:
     "@rollup/plugin-json": "npm:^6.1.0"
     "@rollup/plugin-node-resolve": "npm:^15.2.3"
     "@rollup/plugin-sucrase": "npm:^5.0.2"
+    "@types/shortid": "npm:^0.0.32"
     "@types/spinnies": "npm:^0.5.3"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
@@ -5525,6 +5526,7 @@ __metadata:
     node-libcurl: "npm:^4.0.0"
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
+    shortid: "npm:^2.2.16"
     spinnies: "npm:^0.5.1"
     tsx: "npm:^4.16.2"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
@@ -11271,6 +11273,13 @@ __metadata:
     "@types/node": "npm:*"
     "@types/send": "npm:*"
   checksum: 10c0/26ec864d3a626ea627f8b09c122b623499d2221bbf2f470127f4c9ebfe92bd8a6bb5157001372d4c4bd0dd37a1691620217d9dc4df5aa8f779f3fd996b1c60ae
+  languageName: node
+  linkType: hard
+
+"@types/shortid@npm:^0.0.32":
+  version: 0.0.32
+  resolution: "@types/shortid@npm:0.0.32"
+  checksum: 10c0/2aa6dbe3e0b28f102e34c1a45ce2d87f0cd856ea3ed6361c042a4d0ed91a00870d6fb22ec37ee1439080e5cb50586f600ee363783ef5ff877d96e36ede958c80
   languageName: node
   linkType: hard
 
@@ -26388,6 +26397,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^2.1.0":
+  version: 2.1.11
+  resolution: "nanoid@npm:2.1.11"
+  checksum: 10c0/8640d17698633ff78b2549ec8d5dffd8f56909bad1cf0da08bf3a4012f98553b1b9f2327a2d7fb3613084f33189a8ab4b889eb4c7939f3f9e242d9fd8ff059d5
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^3.3.3, nanoid@npm:^3.3.6, nanoid@npm:^3.3.7":
   version: 3.3.7
   resolution: "nanoid@npm:3.3.7"
@@ -32024,6 +32040,15 @@ __metadata:
   version: 1.2.1
   resolution: "shimmer@npm:1.2.1"
   checksum: 10c0/ae8b27c389db2a00acfc8da90240f11577685a8f3e40008f826a3bea8b4f3b3ecd305c26be024b4a0fd3b123d132c1569d6e238097960a9a543b6c60760fb46a
+  languageName: node
+  linkType: hard
+
+"shortid@npm:^2.2.16":
+  version: 2.2.16
+  resolution: "shortid@npm:2.2.16"
+  dependencies:
+    nanoid: "npm:^2.1.0"
+  checksum: 10c0/7f389eb96cc11b569ac02655b861290a194f3a5402b3e3c86d21b9d016ac964683bdd6aac03b61fb6ddc5a727641442f56b70266742cf0911eee3bdc61be99eb
   languageName: node
   linkType: hard
 
