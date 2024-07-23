@@ -30,3 +30,5 @@ newrelic_agent.log
 !.yarn/versions
 .mise.toml
 docker/supergraph.graphql
+sea-prep.blob
+mesh-serve
