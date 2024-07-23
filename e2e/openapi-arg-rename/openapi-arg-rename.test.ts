@@ -22,7 +22,7 @@ describe('OpenAPI Additional Resolvers', () => {
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Good {
-          post_good(input: { banana: true }) {
+          postGood(input: { banana: true }) {
             apple
           }
         }
@@ -30,7 +30,7 @@ describe('OpenAPI Additional Resolvers', () => {
     });
 
     expect(queryResult.data).toEqual({
-      post_good: [
+      postGood: [
         {
           apple: '{"banana":true}',
         },
@@ -48,7 +48,7 @@ describe('OpenAPI Additional Resolvers', () => {
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Bad {
-          post_bad(requestBody: { banana: true }) {
+          postBad(requestBody: { banana: true }) {
             apple
           }
         }
@@ -56,7 +56,7 @@ describe('OpenAPI Additional Resolvers', () => {
     });
 
     expect(queryResult.data).toEqual({
-      post_bad: [
+      postBad: [
         {
           apple: '{"banana":true}',
         },
