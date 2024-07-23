@@ -631,8 +631,21 @@ export function getComposerFromJSONSchema({
               deprecated: subSchema.deprecated,
             };
           }
-          if (subSchema.minLength || subSchema.maxLength) {
+          if (subSchema.minLength != null || subSchema.maxLength != null) {
             schemaComposer.addDirective(LengthDirective);
+            const lengthArgs: {
+              subgraph: string;
+              min?: number;
+              max?: number;
+            } = {
+              subgraph: subgraphName,
+            };
+            if (subSchema.minLength != null) {
+              lengthArgs.min = subSchema.minLength;
+            }
+            if (subSchema.maxLength != null) {
+              lengthArgs.max = subSchema.maxLength;
+            }
             const typeComposer = schemaComposer.createScalarTC({
               name: getValidTypeName({
                 schemaComposer,
@@ -643,11 +656,7 @@ export function getComposerFromJSONSchema({
               directives: [
                 {
                   name: 'length',
-                  args: {
-                    subgraph: subgraphName,
-                    min: subSchema.minLength,
-                    max: subSchema.maxLength,
-                  },
+                  args: lengthArgs,
                 },
               ],
             });

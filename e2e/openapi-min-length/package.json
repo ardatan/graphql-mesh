@@ -1,0 +1,12 @@
+{
+  "name": "@e2e/openapi-min-length",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@omnigraph/openapi": "workspace:*",
+    "graphql": "16.9.0",
+    "moment": "2.30.1"
+  }
+}
