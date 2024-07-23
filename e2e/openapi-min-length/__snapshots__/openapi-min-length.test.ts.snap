@@ -12,7 +12,7 @@ schema
   
   @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
+  import: ["@length", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
 )
 {
   query: Query
@@ -84,6 +84,8 @@ enum join__Graph {
   WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io") 
 }
 
+directive @length(subgraph: String, min: Int, max: Int)  repeatable on SCALAR
+
 directive @httpOperation(
   subgraph: String
   path: String
@@ -108,6 +110,8 @@ directive @transport(
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
+scalar Category @length(subgraph: "Wiki", max: 100)  @join__type(graph: WIKI) 
+
 scalar ObjMap @join__type(graph: WIKI) 
 
 scalar _DirectiveExtensions @join__type(graph: WIKI) 
@@ -115,7 +119,7 @@ scalar _DirectiveExtensions @join__type(graph: WIKI)
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io"}]}
 ) @join__type(graph: WIKI)  {
-  jokes_categories: [String] @httpOperation(
+  jokes_categories: [Category] @httpOperation(
     subgraph: "Wiki"
     path: "/jokes/categories"
     operationSpecificHeaders: [["accept", "application/json"]]
