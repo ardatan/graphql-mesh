@@ -56,7 +56,7 @@ export default /* GraphQL */ `
 Then you need to import the supergraph in your serverless function:
 
 ```ts
-import { createServeRuntime } from '@graphql-mesh/serve'
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
 // Let's say you are using REST transport
 import rest from '@graphql-mesh/transport-rest'
 import supergraph from './supergraph.js'
