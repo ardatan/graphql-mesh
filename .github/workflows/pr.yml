@@ -9,6 +9,9 @@ jobs:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 
   release:
+    permissions:
+      contents: read
+      id-token: write
     uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
     with:
       npmTag: alpha
