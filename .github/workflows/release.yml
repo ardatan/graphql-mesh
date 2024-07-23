@@ -8,6 +8,9 @@ on:
 
 jobs:
   stable:
+    permissions:
+      contents: read
+      id-token: write
     if: github.ref == 'refs/heads/master'
     uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
     with:
