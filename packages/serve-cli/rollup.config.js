@@ -76,7 +76,6 @@ export default defineConfig({
   output: {
     dir: 'bundle',
     format: 'esm',
-    interop: 'auto',
     // having an .mjs extension will make sure that node treats the files as ES modules always
     entryFileNames: '[name].mjs',
     // we want the chunks (common files) to be in the node_modules to avoid name
@@ -89,7 +88,7 @@ export default defineConfig({
     tsConfigPaths(), // use tsconfig paths to resolve modules
     nodeResolve({ preferBuiltins: true }), // resolve node_modules and bundle them too
     graphql(), // handle graphql imports
-    commonjs(), // convert commonjs to esm
+    commonjs({ strictRequires: true }), // convert commonjs to esm
     json(), // support importing json files to esm (needed for commonjs() plugin)
     sucrase({ transforms: ['typescript'] }), // transpile typescript
     packagejson(), // add package jsons
