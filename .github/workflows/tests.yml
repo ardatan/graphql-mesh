@@ -370,7 +370,7 @@ jobs:
       - name: bundle
         run: yarn bundle
       - name: bake
-        uses: docker/bake-action@v4
+        uses: docker/bake-action@v5
         with:
           set: |
             *.platform=linux/amd64

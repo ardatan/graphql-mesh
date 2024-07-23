@@ -48,7 +48,7 @@ jobs:
           ${{ github.ref == 'refs/heads/master' && 'export VERSIONS="$VERSIONS,latest"' || '' }}
           echo VERSIONS="$VERSIONS" >> $GITHUB_ENV
       - name: bake and push
-        uses: docker/bake-action@v4
+        uses: docker/bake-action@v5
         with:
           provenance: false
           set: |
