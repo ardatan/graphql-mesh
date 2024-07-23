@@ -1,6 +1,6 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve, serveRunner } = createTenv(__dirname);
+const { compose, serve } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose();
