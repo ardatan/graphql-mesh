@@ -77,6 +77,7 @@ export default defineConfig({
     dir: 'bundle',
     sourcemap: true,
     format: 'esm',
+    interop: 'auto',
     // having an .mjs extension will make sure that node treats the files as ES modules always
     entryFileNames: '[name].mjs',
     // we want the chunks (common files) to be in the node_modules to avoid name
