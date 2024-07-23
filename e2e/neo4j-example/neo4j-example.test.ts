@@ -29,6 +29,6 @@ it.concurrent.each([
     return;
   }
   const { output } = await compose({ output: 'graphql' });
-  const { execute } = await serve({ supergraph: output, pipeLogs: true });
+  const { execute } = await serve({ supergraph: output });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });
