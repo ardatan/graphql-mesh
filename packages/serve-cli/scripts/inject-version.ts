@@ -16,7 +16,7 @@ for (const file of [
   resolve(__dirname, '../dist/cjs/bin.js'),
   resolve(__dirname, '../dist/esm/bin.js'),
   // bundle
-  resolve(__dirname, '../bundle/bin.js'),
+  resolve(__dirname, '../bundle/dist/bin.mjs'),
 ]) {
   try {
     const content = await readFile(file, 'utf-8');
