@@ -1,5 +1,12 @@
 import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 
-export const leftoverStack = new AsyncDisposableStack();
+let leftoverStack = new AsyncDisposableStack();
+
+export function getLeftoverStack() {
+  if (leftoverStack.disposed) {
+    leftoverStack = new AsyncDisposableStack();
+  }
+  return leftoverStack;
+}
 
 afterAll(() => leftoverStack.disposeAsync());
