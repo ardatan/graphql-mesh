@@ -128,7 +128,7 @@ export function getOnSubgraphExecute({
   return function onSubgraphExecute(subgraphName: string, executionRequest: ExecutionRequest) {
     let executor: Executor = subgraphExecutorMap.get(subgraphName);
 
-    transportContext.logger.debug(`Fetching subgraph "${subgraphName}" at ${new Date()}`);
+    transportContext.logger.debug(`Fetching subgraph "${subgraphName}"`);
     transportContext.logger.debug(executionRequest.context.request._text);
     transportContext.logger.debug(executionRequest.context.request.method);
     transportContext.logger.debug(executionRequest.context.request.headers);
