@@ -42,7 +42,7 @@
     "@graphql-hive/core": "^0.5.0",
     "@graphql-hive/yoga": "^0.33.3",
     "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-tools/delegate": "^10.0.14"
+    "@graphql-tools/delegate": "^10.0.16"
   },
   "publishConfig": {
     "access": "public",
