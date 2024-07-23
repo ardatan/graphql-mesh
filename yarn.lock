@@ -63,7 +63,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.11.0, @apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
+"@apollo/client@npm:3.11.1":
+  version: 3.11.1
+  resolution: "@apollo/client@npm:3.11.1"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@wry/caches": "npm:^1.0.0"
+    "@wry/equality": "npm:^0.5.6"
+    "@wry/trie": "npm:^0.5.0"
+    graphql-tag: "npm:^2.12.6"
+    hoist-non-react-statics: "npm:^3.3.2"
+    optimism: "npm:^0.18.0"
+    prop-types: "npm:^15.7.2"
+    rehackt: "npm:^0.1.0"
+    response-iterator: "npm:^0.2.6"
+    symbol-observable: "npm:^4.0.0"
+    ts-invariant: "npm:^0.10.3"
+    tslib: "npm:^2.3.0"
+    zen-observable-ts: "npm:^1.2.5"
+  peerDependencies:
+    graphql: ^15.0.0 || ^16.0.0
+    graphql-ws: ^5.5.5
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
+    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+  peerDependenciesMeta:
+    graphql-ws:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    subscriptions-transport-ws:
+      optional: true
+  checksum: 10c0/d3a1f30d44d5a84e01538772396e93db4921fcdf99919785688464d487ea00dabfb6ae63ca7e2ebd373eed5d24c134dec6eb4f4d13920044b2ea1f105fa044c4
+  languageName: node
+  linkType: hard
+
+"@apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
   version: 3.11.0
   resolution: "@apollo/client@npm:3.11.0"
   dependencies:
@@ -4720,7 +4757,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:3.11.0"
+    "@apollo/client": "npm:3.11.1"
   peerDependencies:
     "@apollo/client": ^3.5.9
     "@graphql-mesh/runtime": ^0.100.2
@@ -11777,7 +11814,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.99.2"
     "@graphql-mesh/serve-runtime": "npm:^0.5.2"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.65.1"
+    wrangler: "npm:3.66.0"
   languageName: unknown
   linkType: soft
 
@@ -14077,7 +14114,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.5.2"
     "@omnigraph/json-schema": "npm:^0.102.2"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.65.1"
+    wrangler: "npm:3.66.0"
   languageName: unknown
   linkType: soft
 
@@ -14531,7 +14568,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.102.2"
     "@graphql-mesh/plugin-response-cache": "npm:0.99.2"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.65.1"
+    wrangler: "npm:3.66.0"
   languageName: unknown
   linkType: soft
 
@@ -19101,7 +19138,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:3.11.0"
+    "@apollo/client": "npm:3.11.1"
     "@testing-library/jest-dom": "npm:6.4.8"
     "@testing-library/react": "npm:16.0.0"
     "@testing-library/user-event": "npm:14.5.2"
@@ -32338,7 +32375,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.99.2"
     "@graphql-mesh/plugin-response-cache": "npm:0.99.2"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.65.1"
+    wrangler: "npm:3.66.0"
   languageName: unknown
   linkType: soft
 
@@ -36021,9 +36058,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.65.1":
-  version: 3.65.1
-  resolution: "wrangler@npm:3.65.1"
+"wrangler@npm:3.66.0":
+  version: 3.66.0
+  resolution: "wrangler@npm:3.66.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -36041,6 +36078,7 @@ __metadata:
     selfsigned: "npm:^2.0.1"
     source-map: "npm:^0.6.1"
     unenv: "npm:unenv-nightly@1.10.0-1717606461.a117952"
+    workerd: "npm:1.20240718.0"
     xxhash-wasm: "npm:^1.0.1"
   peerDependencies:
     "@cloudflare/workers-types": ^4.20240718.0
@@ -36053,7 +36091,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/4091cead4cc461e3aa4398a685d39584db22a3127d6cf38a9a5313f1c54b9f243875c619ee377623d1a6fb2a5099d3546be4dc9c13c6af58f2569c89507a609c
+  checksum: 10c0/5c672b157ebc1f6ff1c64bd540e8008b0794bf5c6406b4b8613b0d3a707d91ef07da66446d3256485333884e307d407d0486af3ad9d862d32df3b445641e51a9
   languageName: node
   linkType: hard
 
