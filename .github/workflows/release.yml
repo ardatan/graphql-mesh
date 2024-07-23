@@ -18,7 +18,7 @@ jobs:
       nodeVersion: 18
       packageManagerVersion: modern
     secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
+      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   docker:
