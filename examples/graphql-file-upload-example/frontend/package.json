@@ -9,7 +9,7 @@
     "test": "react-scripts test"
   },
   "dependencies": {
-    "@apollo/client": "3.11.0",
+    "@apollo/client": "3.11.1",
     "@testing-library/jest-dom": "6.4.8",
     "@testing-library/react": "16.0.0",
     "@testing-library/user-event": "14.5.2",
