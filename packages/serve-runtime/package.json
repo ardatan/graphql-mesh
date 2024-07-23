@@ -49,7 +49,7 @@
     "@graphql-tools/delegate": "^10.0.14",
     "@graphql-tools/executor-http": "^1.1.5",
     "@graphql-tools/executor-yoga": "^3.0.0",
-    "@graphql-tools/federation": "^2.1.2",
+    "@graphql-tools/federation": "^2.2.0",
     "@graphql-tools/stitch": "^9.2.10",
     "@graphql-tools/utils": "^10.2.3",
     "@whatwg-node/server": "^0.9.34",
