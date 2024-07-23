@@ -127,6 +127,12 @@ export function getOnSubgraphExecute({
   );
   return function onSubgraphExecute(subgraphName: string, executionRequest: ExecutionRequest) {
     let executor: Executor = subgraphExecutorMap.get(subgraphName);
+
+    transportContext.logger.debug(`Fetching subgraph "${subgraphName}" at ${new Date()}`);
+    transportContext.logger.debug(executionRequest.context.request._text);
+    transportContext.logger.debug(executionRequest.context.request.method);
+    transportContext.logger.debug(executionRequest.context.request.headers);
+
     // If the executor is not initialized yet, initialize it
     if (executor == null) {
       transportContext?.logger?.info(`Initializing executor for subgraph ${subgraphName}`);
@@ -201,11 +207,15 @@ export function wrapExecutorWithHooks({
   transportEntryMap,
   getSubgraphSchema,
 }: WrapExecuteWithHooksOptions): Executor {
-  if (onSubgraphExecuteHooks.length === 0) {
-    return executor;
-  }
   return function executorWithHooks(executionRequest: ExecutionRequest) {
-    const onSubgraphExecuteDoneHooks: OnSubgraphExecuteDoneHook[] = [];
+    const onSubgraphExecuteDoneHooks: OnSubgraphExecuteDoneHook[] = [
+      payload => {
+        if (process.env.DEBUG) {
+          console.log(`🕸️  Mesh 🐛 Response: ${JSON.stringify(payload, null, 0)}`);
+        }
+      },
+    ];
+
     return mapMaybePromise(
       iterateAsync(
         onSubgraphExecuteHooks,
