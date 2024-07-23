@@ -1,5 +1,4 @@
 import { print, type DocumentNode, type ExecutionResult, type GraphQLSchema } from 'graphql';
-import shortid from 'shortid';
 import type { TransportEntryAdditions } from '@graphql-mesh/serve-runtime';
 import type {
   Transport,
