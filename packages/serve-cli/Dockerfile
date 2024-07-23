@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.9-labs
-
 # IMPORTANT: make sure bundle is ready with `yarn bundle`
 
 # we build with Node 21 because node-libcurl has published prebuilt releases (building from source fails when using Node 22)
