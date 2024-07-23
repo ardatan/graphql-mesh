@@ -4969,6 +4969,7 @@ __metadata:
   resolution: "@graphql-mesh/fusion-runtime@workspace:packages/fusion/runtime"
   dependencies:
     "@envelop/core": "npm:^5.0.1"
+    "@graphql-mesh/cross-helpers": "npm:^0.4.4"
     "@graphql-mesh/runtime": "npm:^0.100.1"
     "@graphql-mesh/transport-common": "npm:^0.4.1"
     "@graphql-mesh/types": "npm:^0.99.1"

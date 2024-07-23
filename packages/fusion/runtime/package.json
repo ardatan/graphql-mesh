@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.1",
+    "@graphql-mesh/cross-helpers": "^0.4.4",
     "@graphql-mesh/runtime": "^0.100.1",
     "@graphql-mesh/transport-common": "^0.4.1",
     "@graphql-mesh/types": "^0.99.1",
