@@ -1,5 +1,12 @@
 # example-fastify
 
+## 0.14.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/openapi@0.102.3
+
 ## 0.14.1
 
 ### Patch Changes

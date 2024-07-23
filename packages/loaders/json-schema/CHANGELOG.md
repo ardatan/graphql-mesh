@@ -1,5 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.102.3
+
+### Patch Changes
+
+- [#7350](https://github.com/ardatan/graphql-mesh/pull/7350)
+  [`ffe0346`](https://github.com/ardatan/graphql-mesh/commit/ffe0346c3378523cb5fcd00d58ae4ca688438d23)
+  Thanks [@dr3](https://github.com/dr3)! - Do not set null for `@length` directive
+
 ## 0.102.2
 
 ### Patch Changes

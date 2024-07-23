@@ -1,5 +1,12 @@
 # @e2e/openapi-javascript-wiki
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/openapi@0.102.3
+
 ## 0.1.1
 
 ### Patch Changes
