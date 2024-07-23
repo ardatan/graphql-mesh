@@ -15,7 +15,10 @@ export function loadGraphQLSchemaFromOptions(
   opts: GraphQLSQLiteLoaderOpts,
 ): Promise<GraphQLSchema> {
   const tuql$ = import('tuql').catch(e => {
-    throw new Error('You need to install `tuql` package in order to use SQLite data source.');
+    console.error(e);
+    throw new Error(
+      'Cannot import `tuql` packages necessary for SQLite data source. Have you installed it?',
+    );
   });
   const cwd = opts.cwd || process.cwd();
   if (opts.infile != null) {

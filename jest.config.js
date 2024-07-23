@@ -44,6 +44,11 @@ if (process.env.E2E_TEST) {
 }
 /** @type {import('jest').Config} */
 module.exports = {
+  ...(process.env.E2E_SERVE_RUNNER === 'docker'
+    ? {
+        maxWorkers: 5, // TODO: running with more than 5 workers breaks docker
+      }
+    : {}),
   prettierPath: null, // not supported before Jest v30 https://github.com/jestjs/jest/issues/14305
   testEnvironment: 'node',
   rootDir: ROOT_DIR,

@@ -6,6 +6,7 @@ import os from 'os';
 import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
+import { glob } from 'glob';
 import type { ExecutionResult } from 'graphql';
 import {
   IntrospectAndCompose,
@@ -23,6 +24,30 @@ jest.setTimeout(timeout);
 const __project = path.resolve(__dirname, '..', '..') + '/';
 
 const docker = new Dockerode();
+
+const E2E_SERVE_RUNNERS = ['node', 'docker'] as const;
+
+type ServeRunner = (typeof E2E_SERVE_RUNNERS)[number];
+
+const serveRunner = (function getServeRunner() {
+  const runner = (process.env.E2E_SERVE_RUNNER || 'node').trim().toLowerCase();
+  if (
+    !E2E_SERVE_RUNNERS.includes(
+      // @ts-expect-error
+      runner,
+    )
+  ) {
+    throw new Error(`Unsupported E2E serve runner "${runner}"`);
+  }
+  if (runner === 'docker') {
+    process.stderr.write(`
+⚠️ Using docker serve runner! Make sure you have built the containers with:
+yarn bundle && docker buildx bake e2e
+
+`);
+  }
+  return runner as ServeRunner;
+})();
 
 export interface ProcOptions {
   /**
@@ -109,11 +134,6 @@ export interface Compose extends Proc {
   result: string;
 }
 
-/** A map of image names to build bake targets. */
-export const CONTAINER_IMAGE_TARGETS = {
-  'ghcr.io/ardatan/mesh-serve': 'mesh-serve',
-} as const;
-
 export interface ContainerOptions extends ProcOptions {
   /**
    * Name of the service.
@@ -121,22 +141,34 @@ export interface ContainerOptions extends ProcOptions {
    */
   name: string;
   /**
-   * Name of the image to pull.
+   * Name of the image to use for the container.
    *
-   * When supplying one of the {@link CONTAINER_IMAGE_TARGETS}, the relevant
-   * project in the repo will be built with the context set its directory.
+   * If the image name exists as a literal in any of the tags in the docker-bake.hcl
+   * file, that local image baked image will be used. So dont forget to bake before
+   * running the tests.
+   *
+   * Otherwise, the image gets pulled.
    */
-  image: string | keyof typeof CONTAINER_IMAGE_TARGETS;
+  image: string;
   /**
    * Port that the container uses.
-   * Will be bound to an available port on the host in {@link Container.port}.
+   *
+   * Will be bound to the {@link hostPort}.
    */
   containerPort: number;
+  /**
+   * Port that will be bound to the {@link containerPort}.
+   *
+   * @default getAvailablePort()
+   */
+  hostPort?: number;
   /**
    * The healtcheck test command to run on the container.
    * If provided, the run function will wait for the container to become healthy.
    */
   healthcheck: string[];
+  /** Docker CMD to pass to the container when running. */
+  cmd?: (string | number | boolean)[];
   /** Volume bindings for the container relative to the cwd of Tenv. */
   volumes?: { host: string; container: string }[];
 }
@@ -154,6 +186,7 @@ export interface Tenv {
     write(path: string, content: string): Promise<void>;
   };
   spawn(command: string, opts?: ProcOptions): Promise<[proc: Proc, waitForExit: Promise<void>]>;
+  serveRunner: ServeRunner;
   serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
@@ -188,17 +221,76 @@ export function createTenv(cwd: string): Tenv {
       const [cmd, ...args] = command.split(' ');
       return spawn({ ...opts, cwd }, cmd, ...args);
     },
+    serveRunner,
     async serve(opts) {
-      const { port = await getAvailablePort(), supergraph, pipeLogs, env } = opts || {};
-      const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs, env },
-        'node',
-        '--import',
-        'tsx',
-        path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
-        createPortArg(port),
-        supergraph && createArg('supergraph', supergraph),
-      );
+      let { port = await getAvailablePort(), supergraph, pipeLogs, env } = opts || {};
+
+      let proc: Proc,
+        waitForExit: Promise<void> | null = null;
+      if (serveRunner === 'docker') {
+        const volumes: ContainerOptions['volumes'] = [];
+
+        if (supergraph) {
+          // we need to replace all local servers in the supergraph to use docker's local hostname.
+          // without this, the services running on the host wont be accessible by the docker container
+          await fs.writeFile(
+            supergraph,
+            (await fs.readFile(supergraph, 'utf8'))
+              // docker for linux (which is used in the CI) will have the host be on 172.17.0.1 always
+              // locally the host.docker.internal should just work when using the "host" network mode
+              .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
+              .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
+          );
+          volumes.push({ host: supergraph, container: `/serve/${path.basename(supergraph)}` });
+        }
+        for (const configfile of await glob('mesh.config.*', { cwd })) {
+          const contents = await fs.readFile(path.join(cwd, configfile), 'utf8');
+          if (contents.includes('@graphql-mesh/serve-cli')) {
+            volumes.push({ host: configfile, container: `/serve/${path.basename(configfile)}` });
+          }
+        }
+        for (const dbfile of await glob('*.db', { cwd })) {
+          volumes.push({ host: dbfile, container: `/serve/${path.basename(dbfile)}` });
+        }
+
+        const dockerfileExists = await fs
+          .stat(path.join(cwd, 'serve.Dockerfile'))
+          .then(() => true)
+          .catch(() => false);
+
+        const cont = await tenv.container({
+          env,
+          name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
+          image:
+            'ghcr.io/ardatan/mesh-serve:' +
+            (dockerfileExists
+              ? // if the test contains a serve dockerfile, use it instead of the default e2e image
+                `e2e.${path.basename(cwd)}`
+              : 'e2e'),
+          // TODO: changing port from within mesh.config.ts wont work in docker runner
+          hostPort: port,
+          containerPort: port,
+          healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
+          cmd: [
+            createPortArg(port),
+            supergraph && createArg('supergraph', path.basename(supergraph)),
+          ],
+          volumes,
+          pipeLogs,
+        });
+        proc = cont;
+      } /* serveRunner === 'node' */ else {
+        [proc, waitForExit] = await spawn(
+          { env, cwd, pipeLogs },
+          'node',
+          '--import',
+          'tsx',
+          path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
+          createPortArg(port),
+          supergraph && createArg('supergraph', supergraph),
+        );
+      }
+
       const serve: Serve = {
         ...proc,
         port,
@@ -222,7 +314,7 @@ export function createTenv(cwd: string): Tenv {
       const ctrl = new AbortController();
       await Promise.race([
         waitForExit
-          .then(() =>
+          ?.then(() =>
             Promise.reject(
               new Error(`Serve exited successfully, but shouldn't have\n${proc.getStd('both')}`),
             ),
@@ -309,42 +401,32 @@ export function createTenv(cwd: string): Tenv {
       ]);
       return service;
     },
-    async container({ name, image, env = {}, containerPort, healthcheck, pipeLogs, volumes = [] }) {
+    async container({
+      name,
+      image,
+      env = {},
+      containerPort,
+      hostPort,
+      healthcheck,
+      pipeLogs,
+      cmd,
+      volumes = [],
+    }) {
       const uniqueName = `${name}_${Math.random().toString(32).slice(2)}`;
 
-      const hostPort = await getAvailablePort();
+      if (!hostPort) {
+        hostPort = await getAvailablePort();
+      }
 
       function msToNs(ms: number): number {
         return ms * 1000000;
       }
 
-      const target = CONTAINER_IMAGE_TARGETS[image];
-      if (target) {
-        // build bake target
+      const bakedImage = await fs
+        .readFile(path.join(__project, 'docker-bake.hcl'))
+        .then(c => c.includes(`"${image}"`));
 
-        // prefer building just for the os arch instead of multi-platform builds
-        const [archProc, waitForArch] = await spawn(
-          { cwd: __project, shell: true, pipeLogs },
-          'docker',
-          'system',
-          'info',
-          '--format="{{.OSType}}/{{.Architecture}}"',
-        );
-        await waitForArch;
-        const arch = archProc.getStd('out').trim();
-
-        // TODO: dockerode does not support BuildKit which we use for building and caching
-        const [, waitForBake] = await spawn(
-          { cwd: __project, shell: true, env: { VERSIONS: 'e2e' }, pipeLogs },
-          'docker',
-          'buildx',
-          'bake',
-          `--set="*.platform=${arch}"`,
-          '--load',
-          target,
-        );
-        await waitForBake;
-      } else {
+      if (!bakedImage) {
         // pull image and wait for finish
         const imageStream = await docker.pull(image);
         await new Promise((resolve, reject) => {
@@ -364,11 +446,12 @@ export function createTenv(cwd: string): Tenv {
 
       const ctr = await docker.createContainer({
         name: uniqueName,
-        Image: target ? `${image}:e2e` : image,
+        Image: image,
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
         ExposedPorts: {
           [containerPort + '/tcp']: {},
         },
+        Cmd: cmd?.filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
           PortBindings: {
@@ -625,4 +708,8 @@ class DockerError extends Error {
     this.name = 'DockerError';
     this.message = message + '\n' + container.getStd('both');
   }
+}
+
+function boolEnv(name: string): boolean {
+  return ['1', 't', 'true', 'y', 'yes'].includes(process.env[name]);
 }

@@ -345,15 +345,20 @@ jobs:
         run: yarn bob check
 
   e2e:
-    name: e2e / node ${{matrix.node-version}}
+    name: e2e / runner ${{matrix.setup.serve-runner}} / node ${{matrix.setup.node-version}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node-version:
-          - 18
-          - 20
-          - 22
+        setup:
+          - serve-runner: node
+            node-version: 18
+          - serve-runner: node
+            node-version: 20
+          - serve-runner: node
+            node-version: 22
+          - serve-runner: docker
+            node-version: 22
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -362,23 +367,26 @@ jobs:
       - name: setup env
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: ${{matrix.node-version}}
+          nodeVersion: ${{matrix.setup.node-version}}
           packageManagerVersion: modern
       - name: prepare
         run: yarn prebuild
-      # we only bundle and bake to speed up e2es and avoid timeouts
       - name: bundle
+        env:
+          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn bundle
       - name: bake
         uses: docker/bake-action@v5
         with:
+          targets: e2e
           set: |
-            *.platform=linux/amd64
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
           # we must load so that the e2e tests can use the cached image
           # also, in order for loading to work - we must define the platform above
           load: true
       - name: test
-        timeout-minutes: 5
+        timeout-minutes: 10
+        env:
+          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn test:e2e --detectOpenHandles

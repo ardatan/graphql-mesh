@@ -81,10 +81,7 @@ schema
 
 
 enum join__Graph {
-  CHINOOK @join__graph(
-    name: "chinook"
-    url: "e2e/sqlite-chinook/chinook.db"
-  )
+  CHINOOK @join__graph(name: "chinook", url: "chinook.db") 
 }
 
 directive @merge(
@@ -106,7 +103,7 @@ scalar SequelizeJSON @join__type(graph: CHINOOK)
 scalar _DirectiveExtensions @join__type(graph: CHINOOK) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "sqlite", subgraph: "chinook", location: "e2e/sqlite-chinook/chinook.db", options: {type: "db"}}]}
+  directives: {transport: [{kind: "sqlite", subgraph: "chinook", location: "chinook.db", options: {type: "db"}}]}
 ) @join__type(graph: CHINOOK)  {
   albums(
     limit: Int
