@@ -57,6 +57,7 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
     '../transports/http-callback/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-rest/index'] = '../transports/rest/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-soap/index'] = '../transports/soap/src/index.ts';
+  deps['node_modules/@graphql-mesh/transport-mysql/index'] = '../transports/mysql/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-neo4j/index'] = '../transports/neo4j/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-sqlite/index'] = '../transports/sqlite/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-thrift/index'] = '../transports/thrift/src/index.ts';

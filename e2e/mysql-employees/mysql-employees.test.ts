@@ -1,6 +1,6 @@
 import { createTenv, type Container } from '@e2e/tenv';
 
-const { compose, serve, serveRunner, container } = createTenv(__dirname);
+const { compose, serve, container } = createTenv(__dirname);
 
 let mysql!: Container;
 beforeAll(async () => {
@@ -59,10 +59,6 @@ it.concurrent.each([
     `,
   },
 ])('should execute $name', async ({ query }) => {
-  if (serveRunner === 'docker') {
-    console.warn('TODO: "docker" serve runner not supported yet');
-    return;
-  }
   const { output } = await compose({ output: 'graphql', services: [mysql] });
   const { execute } = await serve({ supergraph: output });
   await expect(execute({ query })).resolves.toMatchSnapshot();
