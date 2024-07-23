@@ -30,9 +30,7 @@ export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>
       ),
       function handleIterationResult() {
         const res$ = fetchFn(url, options, context, info);
-        if (onFetchDoneHooks.length === 0) {
-          return res$;
-        }
+
         return mapMaybePromise(res$, function (response: Response) {
           return mapMaybePromise(
             iterateAsync(onFetchDoneHooks, onFetchDone =>
