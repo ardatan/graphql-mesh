@@ -75,7 +75,6 @@ export default defineConfig({
   },
   output: {
     dir: 'bundle',
-    sourcemap: true,
     format: 'esm',
     interop: 'auto',
     // having an .mjs extension will make sure that node treats the files as ES modules always

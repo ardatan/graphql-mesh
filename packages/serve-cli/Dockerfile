@@ -35,4 +35,4 @@ RUN chown node . && \
   echo "{}" > package.json && chown node package.json
 
 USER node
-ENTRYPOINT ["dumb-init", "node", "--enable-source-maps", "bin.mjs"]
+ENTRYPOINT ["dumb-init", "node", "bin.mjs"]
