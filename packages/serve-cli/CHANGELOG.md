@@ -1,5 +1,30 @@
 # @graphql-mesh/serve-cli
 
+## 0.8.1
+
+### Patch Changes
+
+- [#7327](https://github.com/ardatan/graphql-mesh/pull/7327)
+  [`cfe779a`](https://github.com/ardatan/graphql-mesh/commit/cfe779a55421ee1064c6778db760bdef8ffb2d3b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add \`--version\` param to Serve CLI to print the
+  version
+
+  Additionally, the version will be available in `globalThis.__VERSION__` during the CLI's runtime.
+
+- [#7333](https://github.com/ardatan/graphql-mesh/pull/7333)
+  [`bfaeffa`](https://github.com/ardatan/graphql-mesh/commit/bfaeffa9881f3bf7faac07ecc39667793f347b83)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to configure max header size if you get
+  431 with headers payload longer than 16kb which is default value for Node.js
+- Updated dependencies
+  [[`9f6624e`](https://github.com/ardatan/graphql-mesh/commit/9f6624e327a555b3de201e67ca9f5dabca44e238),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)]:
+  - @graphql-mesh/serve-runtime@0.5.2
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+
 ## 0.8.0
 
 ### Minor Changes

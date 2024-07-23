@@ -1,5 +1,17 @@
 # @graphql-mesh/thrift
 
+## 0.101.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+  - @graphql-mesh/store@0.99.2
+  - @omnigraph/thrift@0.4.2
+
 ## 0.101.1
 
 ### Patch Changes

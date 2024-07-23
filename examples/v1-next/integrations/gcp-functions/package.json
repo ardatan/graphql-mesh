@@ -1,6 +1,6 @@
 {
   "name": "@v1-next/example-gcp",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "private": true,
   "main": "dist/index.js",
   "scripts": {
@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.3.0",
-    "@graphql-mesh/compose-cli": "^0.6.0",
-    "@graphql-mesh/serve-runtime": "^0.5.1",
-    "@omnigraph/json-schema": "^0.102.1",
+    "@graphql-mesh/compose-cli": "^0.6.1",
+    "@graphql-mesh/serve-runtime": "^0.5.2",
+    "@omnigraph/json-schema": "^0.102.2",
     "@types/node": "^20.10.6",
     "graphql": "^16.8.1",
     "typescript": "^5.4.2"

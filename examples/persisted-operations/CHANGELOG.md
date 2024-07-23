@@ -1,5 +1,14 @@
 # example-persisted-operations
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.92.2
+  - @graphql-mesh/json-schema@0.102.2
+  - @graphql-mesh/plugin-mock@0.99.2
+
 ## 0.6.1
 
 ### Patch Changes

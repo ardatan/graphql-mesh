@@ -1,6 +1,6 @@
 {
   "name": "@e2e/openapi-additional-resolvers",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
