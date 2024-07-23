@@ -1,8 +1,7 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve, service } = createTenv(__dirname);
-
-describe('OpenAPI Additional Resolvers', () => {
+describe('OpenAPI Arg Rename', () => {
+  const { compose, serve, service } = createTenv(__dirname);
   it('composes the schema', async () => {
     const { result } = await compose({
       output: 'graphql',
@@ -22,7 +21,7 @@ describe('OpenAPI Additional Resolvers', () => {
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Good {
-          post_good(input: { banana: true }) {
+          postGood(input: { banana: true }) {
             apple
           }
         }
@@ -30,7 +29,7 @@ describe('OpenAPI Additional Resolvers', () => {
     });
 
     expect(queryResult.data).toEqual({
-      post_good: [
+      postGood: [
         {
           apple: '{"banana":true}',
         },
@@ -48,7 +47,7 @@ describe('OpenAPI Additional Resolvers', () => {
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Bad {
-          post_bad(requestBody: { banana: true }) {
+          postBad(requestBody: { banana: true }) {
             apple
           }
         }
@@ -56,7 +55,7 @@ describe('OpenAPI Additional Resolvers', () => {
     });
 
     expect(queryResult.data).toEqual({
-      post_bad: [
+      postBad: [
         {
           apple: '{"banana":true}',
         },

@@ -1,5 +1,7 @@
 import { Args } from '@e2e/args';
 import {
+  camelCase,
+  createNamingConventionTransform,
   createRenameTransform,
   defineConfig as defineComposeConfig,
 } from '@graphql-mesh/compose-cli';
@@ -16,9 +18,12 @@ export const composeConfig = defineComposeConfig({
         endpoint: 'http://localhost:' + args.getServicePort('Wiki'),
       }),
       transforms: [
+        createNamingConventionTransform({
+          fieldNames: camelCase,
+        }),
         createRenameTransform({
           argRenamer: ({ argName, fieldName }) => {
-            if (fieldName === 'post_bad' && argName === 'input') {
+            if (fieldName === 'postBad' && argName === 'input') {
               return 'requestBody';
             }
 

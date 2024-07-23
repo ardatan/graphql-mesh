@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`OpenAPI Additional Resolvers composes the schema 1`] = `
+exports[`OpenAPI Arg Rename composes the schema 1`] = `
 "
 schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
@@ -123,20 +123,20 @@ type Query @extraSchemaDefinitionDirective(
 }
 
 type Mutation @join__type(graph: WIKI)  {
-  post_good(input: RequestBody_Input) : [ResponseBody] @httpOperation(
+  postGood(input: RequestBody_Input) : [ResponseBody] @httpOperation(
     subgraph: "Wiki"
     path: "/good"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
-  )
-  post_bad(
+  ) @source(name: "post_good", type: "[ResponseBody]", subgraph: "Wiki") 
+  postBad(
     requestBody: RequestBody_Input @source(name: "input", type: "RequestBody_Input", subgraph: "Wiki") 
   ): [ResponseBody] @httpOperation(
     subgraph: "Wiki"
     path: "/bad"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
-  )
+  ) @source(name: "post_bad", type: "[ResponseBody]", subgraph: "Wiki") 
 }
 
 type ResponseBody @join__type(graph: WIKI)  {
