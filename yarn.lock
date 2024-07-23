@@ -63,7 +63,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.11.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
+"@apollo/client@npm:3.11.0, @apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
   version: 3.11.0
   resolution: "@apollo/client@npm:3.11.0"
   dependencies:
@@ -97,43 +97,6 @@ __metadata:
     subscriptions-transport-ws:
       optional: true
   checksum: 10c0/9f04e4d68fdced767278840d1cbf5887b5321111ddbe38d7ee436674515a576c5b5735aad15d35ac43e3659dd111778e2d09e1ba2bca5809106fc78cfbf8e15a
-  languageName: node
-  linkType: hard
-
-"@apollo/client@npm:^3.8.0":
-  version: 3.10.8
-  resolution: "@apollo/client@npm:3.10.8"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    "@wry/caches": "npm:^1.0.0"
-    "@wry/equality": "npm:^0.5.6"
-    "@wry/trie": "npm:^0.5.0"
-    graphql-tag: "npm:^2.12.6"
-    hoist-non-react-statics: "npm:^3.3.2"
-    optimism: "npm:^0.18.0"
-    prop-types: "npm:^15.7.2"
-    rehackt: "npm:^0.1.0"
-    response-iterator: "npm:^0.2.6"
-    symbol-observable: "npm:^4.0.0"
-    ts-invariant: "npm:^0.10.3"
-    tslib: "npm:^2.3.0"
-    zen-observable-ts: "npm:^1.2.5"
-  peerDependencies:
-    graphql: ^15.0.0 || ^16.0.0
-    graphql-ws: ^5.5.5
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
-  peerDependenciesMeta:
-    graphql-ws:
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-    subscriptions-transport-ws:
-      optional: true
-  checksum: 10c0/38f69040c8bbed78dc3b7c18de8ede1aacdf0501e5a7340171d95d4c339b72857c6ef3cb233038cc3e69bc44f1917c4c1a01cfaae3a130285eafbf89f96b290a
   languageName: node
   linkType: hard
 
@@ -6227,23 +6190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/delegate@npm:^10.0.11, @graphql-tools/delegate@npm:^10.0.12, @graphql-tools/delegate@npm:^10.0.4":
-  version: 10.0.15
-  resolution: "@graphql-tools/delegate@npm:10.0.15"
-  dependencies:
-    "@graphql-tools/batch-execute": "npm:^9.0.4"
-    "@graphql-tools/executor": "npm:^1.2.8"
-    "@graphql-tools/schema": "npm:^10.0.4"
-    "@graphql-tools/utils": "npm:^10.2.3"
-    dataloader: "npm:^2.2.2"
-    tslib: "npm:^2.5.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/153b959b2666bd4e1c5b48cc91691d10a5a42f708a603c83deea01b84f2a122911fdf0a860ac89aa9053b84c91a05191c950b2a9a1b5de4e496d96d6710b0f6f
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/delegate@npm:^10.0.16":
+"@graphql-tools/delegate@npm:^10.0.11, @graphql-tools/delegate@npm:^10.0.12, @graphql-tools/delegate@npm:^10.0.16, @graphql-tools/delegate@npm:^10.0.4":
   version: 10.0.16
   resolution: "@graphql-tools/delegate@npm:10.0.16"
   dependencies:
@@ -6334,22 +6281,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor@npm:^1.2.5, @graphql-tools/executor@npm:^1.2.8":
-  version: 1.2.8
-  resolution: "@graphql-tools/executor@npm:1.2.8"
-  dependencies:
-    "@graphql-tools/utils": "npm:^10.2.3"
-    "@graphql-typed-document-node/core": "npm:3.2.0"
-    "@repeaterjs/repeater": "npm:^3.0.4"
-    tslib: "npm:^2.4.0"
-    value-or-promise: "npm:^1.0.12"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/ce3233e2902000454090521a971a8860d28a7f4b42c57767c100dee7d2e369cba9d72866804193f666256a49800910b29acb0d961c42712a776889e47738c3ec
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/executor@npm:^1.3.0":
+"@graphql-tools/executor@npm:^1.2.5, @graphql-tools/executor@npm:^1.2.8, @graphql-tools/executor@npm:^1.3.0":
   version: 1.3.0
   resolution: "@graphql-tools/executor@npm:1.3.0"
   dependencies:
@@ -9373,7 +9305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.35":
+"@sinclair/typebox@npm:0.32.35, @sinclair/typebox@npm:^0.32.0":
   version: 0.32.35
   resolution: "@sinclair/typebox@npm:0.32.35"
   checksum: 10c0/601b9e7e7bdf67f7b79be95c4eeb97ceace0e1429dd9ce9a78213d61a65b50c14caa46ba0aeed77cd8cfaf61ba13874b69af467ac14d7352844e5cceba1b718d
@@ -9391,13 +9323,6 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
-  languageName: node
-  linkType: hard
-
-"@sinclair/typebox@npm:^0.32.0":
-  version: 0.32.34
-  resolution: "@sinclair/typebox@npm:0.32.34"
-  checksum: 10c0/7d0e2e950c8f7aed74501c1abc59171f1090e521b58700cf24a47c6a4e2c3b6da5b6b0e0f7c0878e64eaa811ae4c65ceca34ca396f000d254601638393b8dad6
   languageName: node
   linkType: hard
 
