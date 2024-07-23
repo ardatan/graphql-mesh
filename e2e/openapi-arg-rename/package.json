@@ -6,7 +6,6 @@
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
-    "fastify": "^4.28.1",
     "graphql": "16.9.0",
     "moment": "2.30.1"
   }

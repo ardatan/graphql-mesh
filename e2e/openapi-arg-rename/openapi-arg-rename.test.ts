@@ -31,7 +31,7 @@ describe('OpenAPI Arg Rename', () => {
     expect(queryResult.data).toEqual({
       postGood: [
         {
-          apple: '{"banana":true}',
+          apple: 'good',
         },
       ],
     });
@@ -57,7 +57,7 @@ describe('OpenAPI Arg Rename', () => {
     expect(queryResult.data).toEqual({
       postBad: [
         {
-          apple: '{"banana":true}',
+          apple: 'bad',
         },
       ],
     });

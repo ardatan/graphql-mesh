@@ -1,19 +1,22 @@
-import fastify from 'fastify';
+import http from 'node:http';
 import { Args } from '@e2e/args';
 
 const args = Args(process.argv);
 
-const app = fastify();
-
-app.post('/main', function (request, reply) {
-  reply.send({
-    apple: 'correct',
-  });
+const server = http.createServer((req, res) => {
+  const u = new URL(req.url, 'http://localhost');
+  if (u.pathname === '/main') {
+    if (req.method === 'POST') {
+      return res
+        .setHeader('content-type', 'application/json')
+        .end(JSON.stringify({ apple: 'correct' }));
+    } else {
+      return res
+        .setHeader('content-type', 'application/json')
+        .end(JSON.stringify({ apple: 'bad' }));
+    }
+  }
+  return res.writeHead(404).end();
 });
 
-app.get('/main', function (request, reply) {
-  reply.send({
-    apple: 'bad',
-  });
-});
-app.listen({ port: args.getServicePort('Wiki') });
+server.listen(args.getServicePort('Wiki'));
