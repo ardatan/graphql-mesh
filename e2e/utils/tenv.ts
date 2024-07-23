@@ -13,7 +13,7 @@ import {
   type ServiceEndpointDefinition,
 } from '@apollo/gateway';
 import { createArg, createPortArg, createServicePortArg } from './args';
-import { leftoverStack } from './leftoverStack';
+import { getLeftoverStack } from './leftoverStack';
 
 export const retries = 120,
   interval = 500,
@@ -177,7 +177,7 @@ export function createTenv(cwd: string): Tenv {
       },
       async tempfile(name) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_fs'));
-        leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
+        getLeftoverStack().defer(() => fs.rm(tempDir, { recursive: true }));
         return path.join(tempDir, name);
       },
       write(filePath, content) {
@@ -238,7 +238,7 @@ export function createTenv(cwd: string): Tenv {
       let output = '';
       if (opts?.output) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
-        leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
+        getLeftoverStack().defer(() => fs.rm(tempDir, { recursive: true }));
         output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
       }
       const [proc, waitForExit] = await spawn(
@@ -417,7 +417,7 @@ export function createTenv(cwd: string): Tenv {
           await ctr.stop({ t: 0 });
         },
       };
-      leftoverStack.use(container);
+      getLeftoverStack().use(container);
 
       // verify that the container has started
       await setTimeout(interval);
@@ -558,7 +558,7 @@ function spawn(
     },
     [Symbol.asyncDispose]: () => (child.kill(), waitForExit),
   };
-  leftoverStack.use(proc);
+  getLeftoverStack().use(proc);
 
   child.stdout.on('data', x => {
     stdout += x.toString();
