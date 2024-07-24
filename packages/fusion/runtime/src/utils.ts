@@ -299,19 +299,19 @@ export function wrapExecutorWithHooks({
   };
 }
 
-export interface UnifiedGraphPlugin {
-  onSubgraphExecute?: OnSubgraphExecuteHook;
+export interface UnifiedGraphPlugin<TContext> {
+  onSubgraphExecute?: OnSubgraphExecuteHook<TContext>;
 }
 
-export type OnSubgraphExecuteHook = (
-  payload: OnSubgraphExecutePayload,
+export type OnSubgraphExecuteHook<TContext = any> = (
+  payload: OnSubgraphExecutePayload<TContext>,
 ) => Promise<Maybe<OnSubgraphExecuteDoneHook | void>> | Maybe<OnSubgraphExecuteDoneHook | void>;
 
-export interface OnSubgraphExecutePayload {
+export interface OnSubgraphExecutePayload<TContext> {
   subgraph: GraphQLSchema;
   subgraphName: string;
   transportEntry?: TransportEntry;
-  executionRequest: ExecutionRequest;
+  executionRequest: ExecutionRequest<any, TContext>;
   setExecutionRequest(executionRequest: ExecutionRequest): void;
   executor: Executor;
   setExecutor(executor: Executor): void;

@@ -63,7 +63,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.11.1":
+"@apollo/client@npm:3.11.1, @apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
   version: 3.11.1
   resolution: "@apollo/client@npm:3.11.1"
   dependencies:
@@ -97,43 +97,6 @@ __metadata:
     subscriptions-transport-ws:
       optional: true
   checksum: 10c0/d3a1f30d44d5a84e01538772396e93db4921fcdf99919785688464d487ea00dabfb6ae63ca7e2ebd373eed5d24c134dec6eb4f4d13920044b2ea1f105fa044c4
-  languageName: node
-  linkType: hard
-
-"@apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
-  version: 3.11.0
-  resolution: "@apollo/client@npm:3.11.0"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    "@wry/caches": "npm:^1.0.0"
-    "@wry/equality": "npm:^0.5.6"
-    "@wry/trie": "npm:^0.5.0"
-    graphql-tag: "npm:^2.12.6"
-    hoist-non-react-statics: "npm:^3.3.2"
-    optimism: "npm:^0.18.0"
-    prop-types: "npm:^15.7.2"
-    rehackt: "npm:^0.1.0"
-    response-iterator: "npm:^0.2.6"
-    symbol-observable: "npm:^4.0.0"
-    ts-invariant: "npm:^0.10.3"
-    tslib: "npm:^2.3.0"
-    zen-observable-ts: "npm:^1.2.5"
-  peerDependencies:
-    graphql: ^15.0.0 || ^16.0.0
-    graphql-ws: ^5.5.5
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
-    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
-  peerDependenciesMeta:
-    graphql-ws:
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-    subscriptions-transport-ws:
-      optional: true
-  checksum: 10c0/9f04e4d68fdced767278840d1cbf5887b5321111ddbe38d7ee436674515a576c5b5735aad15d35ac43e3659dd111778e2d09e1ba2bca5809106fc78cfbf8e15a
   languageName: node
   linkType: hard
 
@@ -5289,6 +5252,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth"
+  dependencies:
+    "@graphql-mesh/serve-runtime": "npm:^0.5.0"
+    "@graphql-yoga/plugin-jwt": "npm:3.0.0"
+    graphql-yoga: "npm:^5.6.0"
+    jsonwebtoken: "npm:9.0.2"
+  peerDependencies:
+    "@graphql-mesh/types": ^0.99.0
+    "@graphql-mesh/utils": ^0.99.0
+    graphql: "*"
+    tslib: ^2.4.0
+  languageName: unknown
+  linkType: soft
+
 "@graphql-mesh/plugin-live-query@npm:0.99.2, @graphql-mesh/plugin-live-query@workspace:*, @graphql-mesh/plugin-live-query@workspace:packages/plugins/live-query":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-live-query@workspace:packages/plugins/live-query"
@@ -5557,7 +5536,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/serve-runtime@npm:^0.5.2, @graphql-mesh/serve-runtime@workspace:packages/serve-runtime":
+"@graphql-mesh/serve-runtime@npm:^0.5.0, @graphql-mesh/serve-runtime@npm:^0.5.2, @graphql-mesh/serve-runtime@workspace:packages/serve-runtime":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-runtime@workspace:packages/serve-runtime"
   dependencies:
@@ -6873,6 +6852,21 @@ __metadata:
   dependencies:
     tslib: "npm:^2.5.2"
   checksum: 10c0/1489588485c9974aba66c0e5002a1251085771b0703ac1aaa2a3df93b895fc57f7cf6203680ff453b304d4ba438ea6a4cc9999d13a4bf6fd5128f3f088ff927b
+  languageName: node
+  linkType: hard
+
+"@graphql-yoga/plugin-jwt@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@graphql-yoga/plugin-jwt@npm:3.0.0"
+  dependencies:
+    "@whatwg-node/server-plugin-cookies": "npm:1.0.2"
+    jsonwebtoken: "npm:^9.0.0"
+    jwks-rsa: "npm:^3.0.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^16.5.0
+    graphql-yoga: ^5.6.1
+  checksum: 10c0/9c5e8976a3a69685fff056db7a3aec88c959d2e0f40a8452dba2951692bbf73b1cb76536a35b88e9dadbac6042ed9196afbbcc041030beeb5215eb9deb3104b2
   languageName: node
   linkType: hard
 
@@ -10541,17 +10535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint@npm:*":
-  version: 9.6.0
-  resolution: "@types/eslint@npm:9.6.0"
-  dependencies:
-    "@types/estree": "npm:*"
-    "@types/json-schema": "npm:*"
-  checksum: 10c0/69301356bc73b85e381ae00931291de2e96d1cc49a112c592c74ee32b2f85412203dea6a333b4315fd9839bb14f364f265cbfe7743fc5a78492ee0326dd6a2c1
-  languageName: node
-  linkType: hard
-
-"@types/eslint@npm:^7.29.0 || ^8.4.1":
+"@types/eslint@npm:*, @types/eslint@npm:^7.29.0 || ^8.4.1":
   version: 8.56.11
   resolution: "@types/eslint@npm:8.56.11"
   dependencies:
@@ -12035,7 +12019,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/cookie-store@npm:^0.2.0":
+"@whatwg-node/cookie-store@npm:0.2.2, @whatwg-node/cookie-store@npm:^0.2.0":
   version: 0.2.2
   resolution: "@whatwg-node/cookie-store@npm:0.2.2"
   dependencies:
@@ -12071,6 +12055,18 @@ __metadata:
     fast-querystring: "npm:^1.1.1"
     tslib: "npm:^2.6.3"
   checksum: 10c0/009827a06ac9e068a0347864ec657061d6be9155e4496a47098e9da661f2e615ef669a682e5e1c6d2f7a199358ca5c84871534a6ecb9629c17b9b779097f5378
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/server-plugin-cookies@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@whatwg-node/server-plugin-cookies@npm:1.0.2"
+  dependencies:
+    "@whatwg-node/cookie-store": "npm:0.2.2"
+    tslib: "npm:^2.3.1"
+  peerDependencies:
+    "@whatwg-node/server": ^0.9.0
+  checksum: 10c0/7329afa606a296ef07e9b636cb9bd96ca006b70dfa2d8b6618430d25af13ab122bde6e882300d28bde4fd2b82b0f07dd9717ac25b6565bd39255ce5ac616b59b
   languageName: node
   linkType: hard
 
@@ -23613,7 +23609,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonwebtoken@npm:^9.0.0":
+"jsonwebtoken@npm:9.0.2, jsonwebtoken@npm:^9.0.0":
   version: 9.0.2
   resolution: "jsonwebtoken@npm:9.0.2"
   dependencies:
@@ -23654,7 +23650,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jwks-rsa@npm:^3.0.1":
+"jwks-rsa@npm:^3.0.0, jwks-rsa@npm:^3.0.1":
   version: 3.1.0
   resolution: "jwks-rsa@npm:3.1.0"
   dependencies:
