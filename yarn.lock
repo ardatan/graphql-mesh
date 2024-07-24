@@ -4864,6 +4864,7 @@ __metadata:
     dotenv: "npm:^16.0.3"
     graphql-import-node: "npm:^0.0.5"
     graphql-ws: "npm:^5.12.1"
+    jiti: "npm:^1.21.6"
     json-bigint-patch: "npm:^0.0.8"
     json5: "npm:^2.2.3"
     mkdirp: "npm:^3.0.0"
