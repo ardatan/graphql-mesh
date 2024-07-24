@@ -49,6 +49,10 @@ function createCryptoKey({
 }
 
 export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions): MeshServePlugin {
+  if (!options.secret) {
+    throw new Error('Property "secret" is required for HMACUpstreamSignature plugin');
+  }
+
   const shouldSign = options.shouldSign || DEFAULT_SHOULD_SIGN_FN;
   const extensionName = options.extensionName || DEFAULT_EXTENSION_NAME;
   const serializeExecutionRequest =
