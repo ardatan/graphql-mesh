@@ -1,10 +1,17 @@
-import createJITI from 'jiti';
+import createJITI, { type JITI } from 'jiti';
 import type { ImportFn } from '@graphql-mesh/types';
 
-const jiti = createJITI(__filename);
+let jiti: JITI;
+function getOrCreateImportFn(): ImportFn {
+  if (!jiti) {
+    // we instantiate on demand because sometimes jiti is not used
+    jiti = createJITI(__filename);
+  }
+  return id => jiti.import(id, {}) as Promise<any>;
+}
 
 export const defaultImportFn: ImportFn = async id => {
-  let module: any = await jiti.import(id, {});
+  let module: any = await getOrCreateImportFn()(id);
   if (module.default != null) {
     module = module.default;
   }
