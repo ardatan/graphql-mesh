@@ -6109,7 +6109,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/tuql@npm:0.100.3, @graphql-mesh/tuql@workspace:packages/legacy/handlers/tuql":
+"@graphql-mesh/tuql@npm:0.100.4, @graphql-mesh/tuql@workspace:packages/legacy/handlers/tuql":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/tuql@workspace:packages/legacy/handlers/tuql"
   dependencies:
@@ -14332,7 +14332,7 @@ __metadata:
   resolution: "chinook@workspace:examples/sqlite-chinook"
   dependencies:
     "@graphql-mesh/cli": "npm:0.92.2"
-    "@graphql-mesh/tuql": "npm:0.100.3"
+    "@graphql-mesh/tuql": "npm:0.100.4"
     graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
