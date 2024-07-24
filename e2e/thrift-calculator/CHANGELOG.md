@@ -1,5 +1,14 @@
 # @e2e/thrift-calculator
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f47c900`](https://github.com/ardatan/graphql-mesh/commit/f47c900d19e8c634d39e9dd90bfb1acc4f892a1f)]:
+  - @graphql-mesh/fusion-runtime@0.5.3
+  - @graphql-mesh/serve-cli@0.8.2
+
 ## 0.1.1
 
 ### Patch Changes

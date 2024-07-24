@@ -1,5 +1,12 @@
 # @e2e/openapi-arg-rename
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.8.2
+
 ## 0.1.2
 
 ### Patch Changes
