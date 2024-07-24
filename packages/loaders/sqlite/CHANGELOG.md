@@ -1,5 +1,13 @@
 # @omnigraph/sqlite
 
+## 0.3.3
+
+### Patch Changes
+
+- [#7310](https://github.com/ardatan/graphql-mesh/pull/7310)
+  [`f5d8d0f`](https://github.com/ardatan/graphql-mesh/commit/f5d8d0f12bf331bcced836dabf66e68786a0aaad)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Log why import of "tuql" did not work
+
 ## 0.3.2
 
 ### Patch Changes
