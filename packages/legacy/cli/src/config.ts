@@ -6,7 +6,7 @@ import { path, process } from '@graphql-mesh/cross-helpers';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { jsonSchema } from '@graphql-mesh/types';
 import { DefaultLogger, loadYaml } from '@graphql-mesh/utils';
-import { defaultImportFn } from './defaultImportFn';
+import { defaultImportFn } from './defaultImportFn.js';
 
 export function validateConfig(
   config: any,

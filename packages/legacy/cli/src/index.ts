@@ -17,7 +17,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
-import { defaultImportFn } from './defaultImportFn';
+import { defaultImportFn } from './defaultImportFn.js';
 import { handleFatalError } from './handleFatalError.js';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
