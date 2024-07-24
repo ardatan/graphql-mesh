@@ -358,9 +358,7 @@ export const serveConfig = defineConfig({
   // ...
   plugins: () => [
     useJWT({
-      lookupLocations: [
-        extractFromHeader({ name: 'x-auth-token', prefix: 'Bearer' }),
-      ]
+      lookupLocations: [extractFromHeader({ name: 'x-auth-token', prefix: 'Bearer' })]
     })
   ]
 })
@@ -372,9 +370,9 @@ You can configure the plugin to look for the token in a cookie. To do so, you'll
 `@whatwg-node/server-plugin-cookies` package and add `useCookies` plugin to your Yoga plugins:
 
 ```ts
-import { useCookies } from '@whatwg-node/server-plugin-cookies'
 import { extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
+import { useCookies } from '@whatwg-node/server-plugin-cookies'
 
 export const serveConfig = defineConfig({
   // ...
@@ -416,7 +414,7 @@ You can configure the plugin to look for the token in multiple locations. The pl
 the token in the order you provide.
 
 ```ts
-import { extractFromHeader, extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { extractFromCookie, extractFromHeader, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const serveConfig = defineConfig({
