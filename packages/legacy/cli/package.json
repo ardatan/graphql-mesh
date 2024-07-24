@@ -61,6 +61,7 @@
     "dotenv": "^16.0.3",
     "graphql-import-node": "^0.0.5",
     "graphql-ws": "^5.12.1",
+    "jiti": "^1.21.6",
     "json-bigint-patch": "^0.0.8",
     "json5": "^2.2.3",
     "mkdirp": "^3.0.0",
