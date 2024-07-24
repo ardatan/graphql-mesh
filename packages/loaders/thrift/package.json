@@ -2,6 +2,11 @@
   "name": "@omnigraph/thrift",
   "version": "0.4.2",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/loaders/thrift"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"

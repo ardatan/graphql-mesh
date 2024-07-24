@@ -2,6 +2,11 @@
   "name": "@omnigraph/soap",
   "version": "0.101.2",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/loaders/soap"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"
