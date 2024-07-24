@@ -5,18 +5,18 @@ import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import {
   defaultParamsSerializer,
-  useHMACSignatureValidation,
-  useHMACUpstreamSignature,
+  useHmacSignatureValidation,
+  useHmacUpstreamSignature,
 } from './index';
 
-describe('useHMACSignatureValidation', () => {
+describe('useHmacSignatureValidation', () => {
   test('should throw when header is missing or invalid', async () => {
     const serveRuntime = createServeRuntime({
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
       plugins: () => [
-        useHMACSignatureValidation({
+        useHmacSignatureValidation({
           secret: 'topSecret',
         }),
       ],
@@ -92,7 +92,7 @@ describe('useHMACSignatureValidation', () => {
         },
       }),
       plugins: [
-        useHMACSignatureValidation({
+        useHmacSignatureValidation({
           secret: sharedSecret,
         }),
       ],
@@ -113,7 +113,7 @@ describe('useHMACSignatureValidation', () => {
             payload.executionRequest.extensions.addedToPayload = true;
           },
         },
-        useHMACUpstreamSignature({
+        useHmacUpstreamSignature({
           secret: sharedSecret,
         }),
       ],
@@ -138,7 +138,7 @@ describe('useHMACSignatureValidation', () => {
   });
 });
 
-describe('useHMACUpstreamSignature', () => {
+describe('useHmacUpstreamSignature', () => {
   const requestTrackerPlugin = {
     onParams: jest.fn((() => {}) as Plugin['onParams']),
   };
@@ -179,7 +179,7 @@ describe('useHMACUpstreamSignature', () => {
             payload.executionRequest.extensions.addedToPayload = true;
           },
         },
-        useHMACUpstreamSignature({
+        useHmacUpstreamSignature({
           secret,
         }),
       ],
@@ -223,7 +223,7 @@ describe('useHMACUpstreamSignature', () => {
         fetch: upstream.fetch as any,
       },
       plugins: () => [
-        useHMACUpstreamSignature({
+        useHmacUpstreamSignature({
           secret,
         }),
       ],
@@ -268,7 +268,7 @@ describe('useHMACUpstreamSignature', () => {
         fetch: upstream.fetch as any,
       },
       plugins: () => [
-        useHMACUpstreamSignature({
+        useHmacUpstreamSignature({
           secret,
           extensionName: customExtensionName,
         }),
@@ -313,7 +313,7 @@ describe('useHMACUpstreamSignature', () => {
         fetch: upstream.fetch as any,
       },
       plugins: () => [
-        useHMACUpstreamSignature({
+        useHmacUpstreamSignature({
           secret,
           shouldSign: () => {
             return false;

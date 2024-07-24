@@ -48,7 +48,7 @@ function createCryptoKey({
   );
 }
 
-export function useHMACUpstreamSignature(options: HMACUpstreamSignatureOptions): MeshServePlugin {
+export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions): MeshServePlugin {
   const shouldSign = options.shouldSign || DEFAULT_SHOULD_SIGN_FN;
   const extensionName = options.extensionName || DEFAULT_EXTENSION_NAME;
   const serializeExecutionRequest =
@@ -94,7 +94,7 @@ export type HMACUpstreamSignatureValidationOptions = {
   serializeParams?: (params: GraphQLParams) => string;
 };
 
-export function useHMACSignatureValidation(
+export function useHmacSignatureValidation(
   options: HMACUpstreamSignatureValidationOptions,
 ): YogaPlugin {
   const extensionName = options.extensionName || DEFAULT_EXTENSION_NAME;

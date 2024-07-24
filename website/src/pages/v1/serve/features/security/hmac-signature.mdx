@@ -20,19 +20,19 @@ flowchart LR
 
     subgraph Mesh Gateway
     2["Mesh Engine"]
-    3["useHMACUpstreamSignature"]
+    3["useHmacUpstreamSignature"]
     4["Query Planner"]
     2--->3
     2--->4
     end
 
     subgraph "Users Subgraph"
-        5["useHMACSignatureValidation"]
+        5["useHmacSignatureValidation"]
         4--->|"query { _entities(representations: $r) { ... on User { name }} }\nextensions: { hmac-signature: AbC123 }"|5
     end
 
     subgraph "Comments Subgraph"
-        6["useHMACSignatureValidation"]
+        6["useHmacSignatureValidation"]
 
         4--->|"query { comments { id author { id }} }\nextensions: { hmac-signature: AbC123 }"|6
     end
@@ -59,11 +59,11 @@ npm i @graphql-mesh/hmac-upstream-signature
 ```
 
 <Callout>
-  Make sure to add `useHMACUpstreamSignature` last in the plugins list in your Mesh configuration.
+  Make sure to add `useHmacUpstreamSignature` last in the plugins list in your Mesh configuration.
 </Callout>
 
 ```ts
-import { useHMACUpstreamSignature } from '@graphql-mesh/hmac-upstream-signature'
+import { useHmacUpstreamSignature } from '@graphql-mesh/hmac-upstream-signature'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const serveConfig = defineConfig({
@@ -73,7 +73,7 @@ export const serveConfig = defineConfig({
     // ...
     // ...
     // ...
-    useHMACUpstreamSignature({
+    useHmacUpstreamSignature({
       secret: myHMACSecret // see step 1 for the secret key
     })
   ]
@@ -99,12 +99,12 @@ npm i @graphql-mesh/hmac-upstream-signature
 
 ```ts
 import { createYoga } from 'graphql-yoga'
-import { useHMACSignatureValidation } from '@graphql-mesh/hmac-upstream-signature'
+import { useHmacSignatureValidation } from '@graphql-mesh/hmac-upstream-signature'
 
 const myYogaSubgraphServer = createYoga({
   // ...
   plugins: () => [
-    useHMACSignatureValidation({
+    useHmacSignatureValidation({
       secret: myHMACSecret // see step 1 for the secret key
     })
     // other Yoga plugins
@@ -114,7 +114,7 @@ const myYogaSubgraphServer = createYoga({
 ```
 
 <Callout>
-  Make sure to add `useHMACSignatureValidation` first in the plugins list in your Yoga
+  Make sure to add `useHmacSignatureValidation` first in the plugins list in your Yoga
   configuration. This will ensure the request is verified before processing the other plugins.
 </Callout>
 
@@ -210,9 +210,9 @@ Here's an example of an incoming subgraph request with the HMAC signature:
 
 ## Plugins Configuration
 
-### `useHMACUpstreamSignature`
+### `useHmacUpstreamSignature`
 
-The `useHMACUpstreamSignature` plugin allow you to customize the HMAC signing behavior in the Mesh
+The `useHmacUpstreamSignature` plugin allow you to customize the HMAC signing behavior in the Mesh
 gateway:
 
 - `secret`: The secret key used for HMAC signing and verification. It should be a random, opaque
@@ -226,9 +226,9 @@ gateway:
 - `shouldSign`: A function to determine if the request should be signed or not. By default, it signs
   all requests.
 
-### `useHMACSignatureValidation`
+### `useHmacSignatureValidation`
 
-The `useHMACSignatureValidation` plugin allow you to customize the HMAC verification behavior in the
+The `useHmacSignatureValidation` plugin allow you to customize the HMAC verification behavior in the
 subgraph.
 
 - `secret`: The secret key used for HMAC signing and verification. It should be a random, opaque
