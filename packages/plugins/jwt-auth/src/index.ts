@@ -45,7 +45,7 @@ export function useExtractedJWT(config: {
   };
 }
 
-export default function useJWTAuth(
+export function useJWT(
   options: JWTAuthPluginOptions,
 ): MeshServePlugin<{ jwt?: JWTExtendContextFields }> {
   const forwardClaims = options?.forward?.claims ?? true;
@@ -79,3 +79,5 @@ export default function useJWTAuth(
     },
   };
 }
+
+export default useJWT;

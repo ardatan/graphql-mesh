@@ -11,10 +11,6 @@ Once you have the JWT token extract and validated, the JWT claims (and optionall
 are injected to the GraphQL Mesh execution context, and forwarded to upstream GraphQL subgraphs,
 using the `extensions` field.
 
-> The GraphQL Mesh plugin for JWT is based in the
-> [GraphQL Yoga JWT plugin (`@graphql-yoga/plugin-jwt`)](https://github.com/dotansimha/graphql-yoga/tree/main/packages/plugins/jwt),
-> with adjustments and improvements to easily work with GraphQL Mesh.
-
 ## How to use?
 
 Install the plugin:
@@ -221,6 +217,8 @@ to allow to the user based on identity or token claims:
 
 ```ts filename="mesh.config.ts"
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
+import useJWTAuth from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const serveConfig = defineConfig({
   plugins: () => [
@@ -327,5 +325,245 @@ the Mesh gateway, following this structure:
   }
 }
 ```
+
+## Additional Configuration
+
+### Token lookup
+
+The plugin can be configured to look for the JWT token in different locations:
+
+#### HTTP Header
+
+By default, the plugin will look for the token in the `authorization` header. You can configure the
+plugin to look for the token in a different header or with a different prefix.
+
+The prefix is being validated along with the token (for example: `Bearer my-token`).
+
+```ts
+imoprt { extractFromHeader, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    useJWT({
+      lookupLocations: [
+        extractFromHeader({ name: 'x-auth-token', prefix: 'Bearer' }),
+      ]
+    })
+  ]
+})
+```
+
+#### HTTP Cookie
+
+You can configure the plugin to look for the token in a cookie. To do so, you'll need to add the
+`@whatwg-node/server-plugin-cookies` package and add `useCookies` plugin to your Yoga plugins:
+
+```ts
+import { useCookies } from '@whatwg-node/server-plugin-cookies'
+imoprt { extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    // Make sure to add the useCookies plugin before the useJWT plugin.
+    useCookies(),
+    useJWT({
+      lookupLocations: [extractFromCookie({ name: 'my-cookie' })]
+    })
+  ]
+})
+```
+
+#### Custom Function
+
+You can configure the plugin to use a custom function to look for the token:
+
+```ts
+import useJWT from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+const getToken = ({ request, serverContext, url }) => {
+  return request.headers.get('x-my-token')
+}
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    useJWT({
+      lookupLocations: [getToken]
+    })
+  ]
+})
+```
+
+#### Multiple locations
+
+You can configure the plugin to look for the token in multiple locations. The plugin will look for
+the token in the order you provide.
+
+```ts
+imoprt { extractFromHeader, extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    useCookies(),
+    useJWT({
+      lookupLocations: [
+        extractFromHeader({ name: 'authorization', prefix: 'Bearer' }),
+        extractFromHeader({ name: 'x-legacy-auth' }),
+        extractFromHeader({ name: 'x-api-key', prefix: 'API-Access' }),
+        extractFromCookie({ name: 'browserAuth' })
+      ]
+    })
+  ]
+})
+```
+
+---
+
+### Signing Key providers
+
+The plugin can be configured to use different signing key providers:
+
+#### Inline
+
+You can provide the signing key directly in the configuration.
+
+> Do not hardcode the signing key in your code. Use environment variables, local encrypted file or a
+> secret store!
+
+```ts
+import { createInlineSigningKeyProvider, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    useJWT({
+      singingKeyProviders: [createInlineSigningKeyProvider(process.env.MY_JWT_SECRET)]
+    })
+  ]
+})
+```
+
+> In case you are using an inline signing key provider, all `keyid` / `kid` will be allowed in
+> tokens.
+
+#### Remote JWKS
+
+You can configure the plugin to fetch the signing key from a remote JWKS endpoint.
+
+Provide a `jwksClientOptions` object (see
+[node-jwks-rsa documentation](https://github.com/auth0/node-jwks-rsa/blob/master/EXAMPLES.md)].
+
+```ts
+import { createRemoteJwksSigningKeyProvider, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    useJWT({
+      singingKeyProviders: [
+        createRemoteJwksSigningKeyProvider({
+          jwksUri: 'https://example.com/.well-known/jwks.json'
+        })
+      ]
+    })
+  ]
+})
+```
+
+#### Multiple providers
+
+When using multiple providers, the plugin will try to use the first available signing key.
+
+```ts
+import {
+  createInlineSigningKeyProvider,
+  createRemoteJwksSigningKeyProvider,
+  useJWT
+} from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    useJWT({
+      singingKeyProviders: [
+        // In case your remote provider is not available, the plugin will try use the inline provider.
+        createRemoteJwksSigningKeyProvider({
+          jwksUri: 'https://example.com/.well-known/jwks.json'
+        }),
+        createInlineSigningKeyProvider(process.env.MY_JWT_SECRET)
+      ]
+    })
+  ]
+})
+```
+
+---
+
+### Token Verification
+
+The plugin verification process can be customized to match the JWT token `issuer`, `audience`, and
+algorithms.
+
+> Note that the verification options should match the JWT signer's configuration.
+
+You can find
+[here the complete list of verification options](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/jsonwebtoken/index.d.ts#L58-L77)
+for this plugin.
+
+```ts
+import useJWT from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    useJWT({
+      tokenVerification: {
+        issuer: ['http://yoga'],
+        audience: 'my-audience',
+        algorithms: ['HS256', 'RS256']
+      }
+    })
+  ]
+})
+```
+
+### Execution Rejection
+
+The plugin can be configured to reject the request if the token is missing or invalid.
+
+By default, an authentication error will be thrown if the token is missing or invalid, and the
+request will be reject with status code `401`.
+
+```ts
+import useJWT from '@graphql-mesh/plugin-jwt-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  // ...
+  plugins: () => [
+    useJWT({
+      reject: {
+        missingToken: true,
+        invalidToken: true
+      }
+    })
+  ]
+})
+```
+
+> In case you want to handle the error yourself, you can set
+> `reject: { missingToken: false, invalidToken: false }` and handle the error in your resolvers. The
+> `context.jwt` will be `undefined` in case of missing or invalid token.
 
 {/* TODO: Add instructions regarding interaction with HMAC plugin and recommended security setup */}
