@@ -25,13 +25,13 @@ import { createServeRuntime } from '@graphql-mesh/serve-runtime'
 
 const serveRuntime = createServeRuntime(/* Your configuration */)
 
-const serveRuntime = Bun.serve({
-  fetch: mesh
+const server = Bun.serve({
+  fetch: serveRuntime
 })
 
 console.info(
   `Server is running on ${new URL(
-    serveRuntime.graphqlEndpoint,
+    server.graphqlEndpoint,
     `http://${server.hostname}:${server.port}`
   )}`
 )
