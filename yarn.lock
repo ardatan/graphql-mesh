@@ -4360,7 +4360,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-graphql-service@workspace:examples/v1-next/hive-example/my-graphql"
   dependencies:
-    "@graphql-hive/cli": "npm:0.38.5"
+    "@graphql-hive/cli": "npm:0.39.0"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.6.1"
   languageName: unknown
@@ -4370,7 +4370,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-rest-service@workspace:examples/v1-next/hive-example/my-rest"
   dependencies:
-    "@graphql-hive/cli": "npm:0.38.5"
+    "@graphql-hive/cli": "npm:0.39.0"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.1"
@@ -4681,9 +4681,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/cli@npm:0.38.5":
-  version: 0.38.5
-  resolution: "@graphql-hive/cli@npm:0.38.5"
+"@graphql-hive/cli@npm:0.39.0":
+  version: 0.39.0
+  resolution: "@graphql-hive/cli@npm:0.39.0"
   dependencies:
     "@graphql-hive/core": "npm:0.5.0"
     "@graphql-inspector/core": "npm:5.1.0-alpha-20231208113249-34700c8a"
@@ -4692,11 +4692,12 @@ __metadata:
     "@graphql-tools/json-file-loader": "npm:~8.0.0"
     "@graphql-tools/load": "npm:~8.0.0"
     "@graphql-tools/url-loader": "npm:~8.0.0"
-    "@graphql-tools/utils": "npm:10.2.2"
+    "@graphql-tools/utils": "npm:10.3.2"
     "@graphql-typed-document-node/core": "npm:3.2.0"
     "@oclif/core": "npm:^3.26.6"
     "@oclif/plugin-help": "npm:6.0.22"
     "@oclif/plugin-update": "npm:4.2.13"
+    "@theguild/federation-composition": "npm:0.12.1"
     colors: "npm:1.4.0"
     env-ci: "npm:7.3.0"
     graphql: "npm:^16.8.1"
@@ -4706,7 +4707,7 @@ __metadata:
     zod: "npm:3.23.8"
   bin:
     hive: bin/run
-  checksum: 10c0/912fd2f2b7175cfabbf7e41127eea2d0ea3fe3ccb7cb6eba95162419157247c3c115e4e1500194ec10d0a99c9cde55f01cd0c990cd6b000b3ff6b33625fe014d
+  checksum: 10c0/fce73dd8f2ecdc3b6687adabdf8e46442d1d2d67beaf4f9411456325e43ab84b3fbf87e5a072b0c60045e3d3fa94bae183e7689c52976e58893d46c5436ca543
   languageName: node
   linkType: hard
 
@@ -6766,20 +6767,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.2.2":
-  version: 10.2.2
-  resolution: "@graphql-tools/utils@npm:10.2.2"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    cross-inspect: "npm:1.0.0"
-    dset: "npm:^3.1.2"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/64cf157181c4151d68e7bd16789afe58696ef41d106ea0460ac51f2c095eaa5072c4f4fd53d4c4c4ccc09c78c2b904f6e70c2d3d45142b6e4e93024a8e4b3ada
-  languageName: node
-  linkType: hard
-
 "@graphql-tools/utils@npm:10.3.2, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.0, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3, @graphql-tools/utils@npm:^10.3.0, @graphql-tools/utils@npm:^10.3.2":
   version: 10.3.2
   resolution: "@graphql-tools/utils@npm:10.3.2"
@@ -6925,15 +6912,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-sofa@npm:3.6.1":
-  version: 3.6.1
-  resolution: "@graphql-yoga/plugin-sofa@npm:3.6.1"
+"@graphql-yoga/plugin-sofa@npm:3.6.2":
+  version: 3.6.2
+  resolution: "@graphql-yoga/plugin-sofa@npm:3.6.2"
   dependencies:
+    "@graphql-tools/utils": "npm:^10.3.2"
     sofa-api: "npm:^0.18.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
     graphql-yoga: ^5.6.1
-  checksum: 10c0/4fdd64299e2f5990058f0e05dc0d35b9d61c701a09ecee296a381cf6060ded2cd15c738130f1933b5e50664954c6f5b290bcf1cc31f8de34da5281ffbc45b8bc
+  checksum: 10c0/c645f88c033417f6c90f6161d3fec70b8830c90f17dc0120c87f7ed9d9dead3aba2991da50771879a1807806e841951d914f69a6bf38ae9c51138c6c7f7c5e47
   languageName: node
   linkType: hard
 
@@ -10229,7 +10217,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/federation-composition@npm:^0.12.0":
+"@theguild/federation-composition@npm:0.12.1, @theguild/federation-composition@npm:^0.12.0":
   version: 0.12.1
   resolution: "@theguild/federation-composition@npm:0.12.1"
   dependencies:
@@ -13087,7 +13075,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "authors-service@workspace:examples/hive-example/sources/authors"
   dependencies:
-    "@graphql-hive/cli": "npm:0.38.5"
+    "@graphql-hive/cli": "npm:0.39.0"
     "@graphql-mesh/cli": "npm:0.92.2"
     "@graphql-mesh/openapi": "npm:0.102.3"
     fets: "npm:^0.8.0"
@@ -13675,7 +13663,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "books-service@workspace:examples/hive-example/sources/books"
   dependencies:
-    "@graphql-hive/cli": "npm:0.38.5"
+    "@graphql-hive/cli": "npm:0.39.0"
     "@graphql-mesh/cli": "npm:0.92.2"
     "@graphql-mesh/openapi": "npm:0.102.3"
     fets: "npm:^0.8.0"
@@ -18215,7 +18203,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.92.2"
     "@graphql-mesh/json-schema": "npm:0.102.3"
     "@graphql-mesh/plugin-mock": "npm:0.99.2"
-    "@graphql-yoga/plugin-sofa": "npm:3.6.1"
+    "@graphql-yoga/plugin-sofa": "npm:3.6.2"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
   languageName: unknown
@@ -23407,7 +23395,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.92.2"
     "@graphql-mesh/json-schema": "npm:0.102.3"
     "@graphql-mesh/plugin-mock": "npm:0.99.2"
-    "@graphql-yoga/plugin-sofa": "npm:3.6.1"
+    "@graphql-yoga/plugin-sofa": "npm:3.6.2"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
   languageName: unknown
