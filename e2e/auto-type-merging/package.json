@@ -1,6 +1,6 @@
 {
   "name": "@e2e/auto-type-merging",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "devDependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",

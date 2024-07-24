@@ -1,5 +1,13 @@
 # openwhisk-example
 
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.8.3
+  - @graphql-mesh/serve-runtime@0.5.4
+
 ## 0.14.2
 
 ### Patch Changes

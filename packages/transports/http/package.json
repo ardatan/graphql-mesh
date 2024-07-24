@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-http",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.5",
-    "@graphql-mesh/transport-common": "^0.4.2",
-    "@graphql-mesh/utils": "^0.99.2",
+    "@graphql-mesh/transport-common": "^0.4.3",
+    "@graphql-mesh/utils": "^0.99.3",
     "@graphql-tools/executor-http": "^1.1.5",
     "@graphql-tools/utils": "^10.2.3",
     "graphql-ws": "^5.16.0",

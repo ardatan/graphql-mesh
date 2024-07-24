@@ -1,5 +1,14 @@
 # @e2e/openapi-arg-rename
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.6.2
+  - @omnigraph/openapi@0.102.4
+  - @graphql-mesh/serve-cli@0.8.3
+
 ## 0.1.3
 
 ### Patch Changes
