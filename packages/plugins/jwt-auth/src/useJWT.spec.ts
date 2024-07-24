@@ -37,7 +37,7 @@ describe('useExtractedJWT', () => {
       plugins: () => [
         useJWTAuth({
           forward: {
-            claims: true,
+            payload: true,
             token: true,
           },
           singingKeyProviders: [createInlineSigningKeyProvider(secret)],
@@ -106,7 +106,7 @@ describe('useJWTAuth', () => {
         plugins: () => [
           useJWTAuth({
             forward: {
-              claims: true,
+              payload: true,
               token: true,
             },
             singingKeyProviders: [createInlineSigningKeyProvider(secret)],

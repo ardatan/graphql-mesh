@@ -19,7 +19,7 @@ export {
 
 export type JWTAuthPluginOptions = Omit<JwtPluginOptions, 'extendContext'> & {
   forward?: {
-    claims?: boolean | string;
+    payload?: boolean | string;
     token?: boolean | string;
     extensionsFieldName?: string;
   };
@@ -50,14 +50,14 @@ export function useForwardedJWT(config: {
 }
 
 /**
- * This Mesh Gateway plugin is used to extract the JWT token and claims from the request and forward it to the subgraph.
+ * This Mesh Gateway plugin is used to extract the JWT token and payload from the request and forward it to the subgraph.
  */
 export function useJWT(
   options: JWTAuthPluginOptions,
 ): MeshServePlugin<{ jwt?: JWTExtendContextFields }> {
-  const forwardClaims = options?.forward?.claims ?? true;
+  const forwardPayload = options?.forward?.payload ?? true;
   const forwardToken = options?.forward?.token ?? false;
-  const shouldForward = forwardClaims || forwardToken;
+  const shouldForward = forwardPayload || forwardToken;
   const fieldName = options?.forward?.extensionsFieldName ?? 'jwt';
 
   return {
@@ -66,12 +66,12 @@ export function useJWT(
       addPlugin(useYogaJWT(options) as any);
     },
     // When a subgraph is about to be executed, we check if the initial request has a JWT token
-    // that needs to be passed. At the moment, only GraphQL subgraphs will have the option to forward tokens/claims.
+    // that needs to be passed. At the moment, only GraphQL subgraphs will have the option to forward tokens/payload.
     // The JWT info will be passed to the subgraph execution request.
     onSubgraphExecute({ executionRequest, setExecutionRequest }) {
       if (shouldForward && executionRequest.context.jwt) {
         const jwtData: Partial<JWTExtendContextFields> = {
-          payload: forwardClaims ? executionRequest.context.jwt.payload : undefined,
+          payload: forwardPayload ? executionRequest.context.jwt.payload : undefined,
           token: forwardToken ? executionRequest.context.jwt.token : undefined,
         };
 

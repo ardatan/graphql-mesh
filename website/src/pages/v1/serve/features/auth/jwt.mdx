@@ -40,9 +40,9 @@ export const serveConfig = defineConfig({
     singingKeyProviders: [
       createInlineSigningKeyProvider(signingKey),
     ],
-    // Forward the extracted token and claims to the upstream GraphQL subgraphs.
+    // Forward the verified token payload to the upstream GraphQL subgraphs.
     forwared: {
-      claims: true,
+      payload: true,
     }
   ]
 });
@@ -60,7 +60,7 @@ export const serveConfig = defineConfig({
     useJWTAuth({
       // Forward the extracted token and claims to the upstream GraphQL subgraphs.
       forwared: {
-        claims: true, // optional, defualt is "true"
+        payload: true, // optional, defualt is "true"
         token: false, // optional, defualt is "false"
         extensionsFieldName: "jwt", // optional, defualt is "jwt"
       },
@@ -102,7 +102,7 @@ for complete details and examples.
 
 ## Forwarding the JWT token and payload
 
-The JWT token and claims can be forwarded to the upstream GraphQL subgraphs, using the `extensions`
+The JWT token and payload can be forwarded to the upstream GraphQL subgraphs, using the `extensions`
 field of the request body.
 
 This workflow can allow you to easily delegate the authentication process to the GraphQL Mesh
@@ -133,12 +133,12 @@ flowchart LR
     end
 ```
 
-To pass the full token claims/payload, you can use the `forwared.claims` option:
+To pass the full token payload, you can use the `forwared.claims` option:
 
 ```ts
 useJWTAuth({
   forwared: {
-    claims: true // optional, defualt is "true"
+    payload: true // optional, defualt is "true"
   }
 })
 ```
@@ -163,7 +163,7 @@ You can also pass the full token, using the `forwared.token` option:
 ```ts
 useJWTAuth({
   forwared: {
-    claims: true, // optional, defualt is "true"
+    payload: true, // optional, defualt is "true"
     token: true // optional, defualt is "false"
   }
 })
@@ -204,7 +204,7 @@ useJWTAuth({
 
 ### Within Mesh
 
-The JWT plugin will inject the decoded token and claims into the context of the GraphQL Mesh
+The JWT plugin will inject the decoded token and payload into the context of the GraphQL Mesh
 gateway.
 
 You can use the injected payload with other plugins, to implement things like authorization or
