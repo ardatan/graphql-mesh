@@ -15,6 +15,7 @@ jobs:
     uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
     with:
       releaseScript: release
+      versionScript: 'changeset version && yarn postchangeset'
       nodeVersion: 18
       packageManagerVersion: modern
     secrets:
