@@ -4,11 +4,13 @@ on:
 
 jobs:
   dependencies:
+    if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@main
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 
   release:
+    if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     permissions:
       contents: read
       id-token: write
