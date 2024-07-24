@@ -5,7 +5,7 @@ import {
   createInlineSigningKeyProvider,
   type JWTExtendContextFields,
 } from '@graphql-yoga/plugin-jwt';
-import useJWTAuth, { useExtractedJWT } from './index';
+import useJWTAuth, { useForwardedJWT } from './index';
 
 describe('useExtractedJWT', () => {
   it('full flow with extraction on Yoga subgraph', async () => {
@@ -22,7 +22,7 @@ describe('useExtractedJWT', () => {
           },
         },
       }),
-      plugins: [useExtractedJWT({})],
+      plugins: [useForwardedJWT({})],
       logging: false,
     });
 

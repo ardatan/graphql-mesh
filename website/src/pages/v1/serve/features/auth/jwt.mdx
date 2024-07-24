@@ -259,12 +259,12 @@ If you are using [GraphQL-Yoga](the-guild.dev/graphql/yoga-server) for your upst
 implementation, you can use a built-in utility for extracting it for you in an easy way:
 
 ```ts filename="yoga-subgraph.ts"
-import { useExtractedJWT } from '@graphql-mesh/plugin-jwt-auth'
+import { useForwardedJWT } from '@graphql-mesh/plugin-jwt-auth'
 
 const myYogaSubgraphServer = createYoga({
   schema: mySchema,
   plugins: [
-    useExtractedJWT({
+    useForwardedJWT({
       // The name of the field in the extensions object, default is "jwt"
       extensionsFieldName: 'jwt',
       // The name of the field to inject into the local context object, default is "jwt"
