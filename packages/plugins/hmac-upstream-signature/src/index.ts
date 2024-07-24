@@ -50,7 +50,7 @@ function createCryptoKey({
 
 export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions): MeshServePlugin {
   if (!options.secret) {
-    throw new Error('Property "secret" is required for HMACUpstreamSignature plugin');
+    throw new Error('Property "secret" is required for useHmacUpstreamSignature plugin');
   }
 
   const shouldSign = options.shouldSign || DEFAULT_SHOULD_SIGN_FN;
@@ -101,6 +101,10 @@ export type HMACUpstreamSignatureValidationOptions = {
 export function useHmacSignatureValidation(
   options: HMACUpstreamSignatureValidationOptions,
 ): YogaPlugin {
+  if (!options.secret) {
+    throw new Error('Property "secret" is required for useHmacSignatureValidation plugin');
+  }
+
   const extensionName = options.extensionName || DEFAULT_EXTENSION_NAME;
   let key$: Promise<CryptoKey>;
   let textEncoder: TextEncoder;
