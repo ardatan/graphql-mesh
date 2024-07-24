@@ -1,5 +1,13 @@
 # chinook
 
+## 0.16.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`04f1c6e`](https://github.com/ardatan/graphql-mesh/commit/04f1c6e5014fec4715e12b84914e5cd89618faa5)]:
+  - @graphql-mesh/tuql@0.100.4
+
 ## 0.16.3
 
 ### Patch Changes
