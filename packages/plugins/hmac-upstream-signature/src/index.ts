@@ -3,7 +3,8 @@ import jsonStableStringify from 'json-stable-stringify';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { defaultPrintFn } from '@graphql-mesh/transport-common';
-import type { ExecutionRequest } from '@graphql-tools/utils';
+import { mapMaybePromise } from '@graphql-mesh/utils';
+import type { ExecutionRequest, MaybePromise } from '@graphql-tools/utils';
 
 export type HMACUpstreamSignatureOptions = {
   secret: string;
@@ -57,7 +58,7 @@ export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions):
   const extensionName = options.extensionName || DEFAULT_EXTENSION_NAME;
   const serializeExecutionRequest =
     options.serializeExecutionRequest || defaultExecutionRequestSerializer;
-  let key$: Promise<CryptoKey>;
+  let key$: MaybePromise<CryptoKey>;
   let fetchAPI: FetchAPI;
   let textEncoder: TextEncoder;
 
@@ -74,7 +75,8 @@ export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions):
           secret: options.secret,
           usages: ['sign'],
         });
-        return key$.then(async key => {
+        return mapMaybePromise(key$, async key => {
+          key$ = key;
           const serializedExecutionRequest = serializeExecutionRequest(executionRequest);
           const encodedContent = textEncoder.encode(serializedExecutionRequest);
           const signature = await fetchAPI.crypto.subtle.sign('HMAC', key, encodedContent);
