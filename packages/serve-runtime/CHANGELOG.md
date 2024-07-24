@@ -1,5 +1,18 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/fusion-runtime@0.5.4
+  - @graphql-mesh/transport-http@0.3.3
+  - @graphql-mesh/plugin-hive@0.99.3
+  - @graphql-mesh/transport-common@0.4.3
+
 ## 0.5.3
 
 ### Patch Changes

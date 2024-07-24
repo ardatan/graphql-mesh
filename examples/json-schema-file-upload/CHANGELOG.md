@@ -1,5 +1,15 @@
 # json-schema-file-upload
 
+## 0.13.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/cli@0.92.3
+  - @graphql-mesh/json-schema@0.102.4
+
 ## 0.13.3
 
 ### Patch Changes

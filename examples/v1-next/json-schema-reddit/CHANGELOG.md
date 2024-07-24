@@ -5,6 +5,15 @@
 ### Patch Changes
 
 - Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.6.2
+  - @omnigraph/json-schema@0.102.4
+  - @graphql-mesh/serve-cli@0.8.3
+
+## null
+
+### Patch Changes
+
+- Updated dependencies []:
   - @graphql-mesh/serve-cli@0.8.2
 
 ## null

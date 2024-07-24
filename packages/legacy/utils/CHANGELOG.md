@@ -1,5 +1,23 @@
 # @graphql-mesh/utils
 
+## 0.99.3
+
+### Patch Changes
+
+- [#7360](https://github.com/ardatan/graphql-mesh/pull/7360)
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Removed dependency [`jiti@^1.21.6` ↗︎](https://www.npmjs.com/package/jiti/v/1.21.6) (from
+    `dependencies`)
+
+- [#7360](https://github.com/ardatan/graphql-mesh/pull/7360)
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - No jiti, keep the utils JS env agnostic
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.3
+
 ## 0.99.2
 
 ### Patch Changes

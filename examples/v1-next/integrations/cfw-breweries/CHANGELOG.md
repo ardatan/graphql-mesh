@@ -1,5 +1,17 @@
 # cloudflare-workers
 
+## 0.15.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.99.3
+  - @graphql-mesh/cache-localforage@0.99.3
+  - @graphql-mesh/compose-cli@0.6.2
+  - @omnigraph/json-schema@0.102.4
+  - @graphql-mesh/plugin-response-cache@0.99.3
+  - @graphql-mesh/serve-runtime@0.5.4
+
 ## 0.15.3
 
 ### Patch Changes

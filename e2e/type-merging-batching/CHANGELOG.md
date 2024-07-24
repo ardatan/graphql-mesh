@@ -1,5 +1,14 @@
 # @e2e/type-merging-batching
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@0.6.2
+  - @graphql-mesh/fusion-runtime@0.5.4
+  - @graphql-mesh/serve-cli@0.8.3
+
 ## 0.1.2
 
 ### Patch Changes
