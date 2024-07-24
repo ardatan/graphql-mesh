@@ -47,6 +47,7 @@ jobs:
       - name: version
         run: |
           export SHORT_REF="$(git rev-parse --short HEAD)"
+          export SHORT_REF=$(echo "$SHORT_REF" | sed 's/\//_/g')
           echo SHORT_REF="$SHORT_REF" >> $GITHUB_ENV
           export VERSIONS="$SHORT_REF,${{ github.head_ref || github.ref_name }}"
           ${{ github.ref == 'refs/heads/master' && 'export VERSIONS="$VERSIONS,latest"' || '' }}
