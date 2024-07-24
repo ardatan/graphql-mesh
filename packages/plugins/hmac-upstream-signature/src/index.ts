@@ -60,16 +60,16 @@ export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions):
   return {
     onYogaInit({ yoga }) {
       fetchAPI = yoga.fetchAPI;
-      textEncoder ||= new fetchAPI.TextEncoder();
-      key$ ||= createCryptoKey({
-        textEncoder,
-        crypto: fetchAPI.crypto,
-        secret: options.secret,
-        usages: ['sign'],
-      });
     },
     onSubgraphExecute({ subgraphName, subgraph, executionRequest, setExecutionRequest }) {
       if (shouldSign({ subgraphName, subgraph, executionRequest })) {
+        textEncoder ||= new fetchAPI.TextEncoder();
+        key$ ||= createCryptoKey({
+          textEncoder,
+          crypto: fetchAPI.crypto,
+          secret: options.secret,
+          usages: ['sign'],
+        });
         return key$.then(async key => {
           const serializedExecutionRequest = serializeExecutionRequest(executionRequest);
           const encodedContent = textEncoder.encode(serializedExecutionRequest);
