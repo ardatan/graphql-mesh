@@ -118,6 +118,9 @@
     "**/*.{ts,tsx,graphql,yml,json,md,js,mdx}": [
       "prettier --write"
     ],
+    "**/package.json": [
+      "sh -c \"yarn install --no-immutable\" && git add yarn.lock"
+    ],
     "yarn.lock": [
       "yarn dedupe"
     ]
