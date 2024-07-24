@@ -305,7 +305,7 @@ export interface UnifiedGraphPlugin<TContext> {
 
 export type OnSubgraphExecuteHook<TContext = any> = (
   payload: OnSubgraphExecutePayload<TContext>,
-) => Promise<Maybe<OnSubgraphExecuteDoneHook | void>> | Maybe<OnSubgraphExecuteDoneHook | void>;
+) => MaybePromise<Maybe<OnSubgraphExecuteDoneHook | void>>;
 
 export interface OnSubgraphExecutePayload<TContext> {
   subgraph: GraphQLSchema;

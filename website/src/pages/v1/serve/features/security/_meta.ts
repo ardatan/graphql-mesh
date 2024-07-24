@@ -5,6 +5,7 @@ export default {
   'csrf-prevention': 'CSRF Prevention',
   'rate-limiting': 'Rate Limiting',
   'disable-introspection': 'Introspection',
+  'hmac-signature': 'HMAC Signature',
   'audit-documents': 'Audit Documents',
   'block-field-suggestions': 'Block Field Suggestions',
   'character-limit': 'Character Limit',
