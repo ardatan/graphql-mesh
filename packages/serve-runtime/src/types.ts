@@ -21,7 +21,6 @@ import type {
 import type { LogLevel } from '@graphql-mesh/utils';
 import type { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import type { IResolvers } from '@graphql-tools/utils';
-import type { CORSPluginOptions } from '@whatwg-node/server';
 import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
 export type { UnifiedGraphConfig };
@@ -207,7 +206,7 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Enable, disable or configure CORS.
    */
-  cors?: CORSPluginOptions<unknown>;
+  cors?: YogaServerOptions<unknown, MeshServeContext & TContext>['cors'];
   /**
    * Show, hide or configure GraphiQL.
    */

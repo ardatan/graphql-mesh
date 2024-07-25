@@ -43,6 +43,7 @@ describe('useUpstreamCancel', () => {
       }),
     );
     const upstreamGraphQL = createYoga({
+      logging: false,
       schema: createSchema({
         typeDefs: /* GraphQL */ `
           type Query {
@@ -71,6 +72,7 @@ describe('useUpstreamCancel', () => {
         endpoint: `http://localhost:${(upstreamGraphQLServer.address() as AddressInfo).port}/graphql`,
       },
       plugins: () => [useUpstreamCancel()],
+      logging: false,
     });
     const serveRuntimeServer = createServer(serveRuntime);
     await new Promise<void>(resolve =>

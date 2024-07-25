@@ -5571,7 +5571,6 @@ __metadata:
     "@graphql-tools/federation": "npm:^2.2.1"
     "@graphql-tools/stitch": "npm:^9.2.10"
     "@graphql-tools/utils": "npm:^10.2.3"
-    "@whatwg-node/server": "npm:^0.9.34"
     disposablestack: "npm:^1.1.6"
     graphql-sse: "npm:^2.5.3"
     graphql-yoga: "npm:^5.6.0"
@@ -10531,13 +10530,13 @@ __metadata:
   linkType: hard
 
 "@types/dockerode@npm:^3.3.28":
-  version: 3.3.30
-  resolution: "@types/dockerode@npm:3.3.30"
+  version: 3.3.31
+  resolution: "@types/dockerode@npm:3.3.31"
   dependencies:
     "@types/docker-modem": "npm:*"
     "@types/node": "npm:*"
     "@types/ssh2": "npm:*"
-  checksum: 10c0/0428218c3f83374361e62516cec6ad35a2e7d62a2c9fde0bd99da6d8b9932bc0ca57dda0372832f72276126ca2f95ff923acac668ac54debf4fd6851e936ae5d
+  checksum: 10c0/e0b85edcb7065c24d6d8140b90ea3be128451d4ef25d44fe07ef653e931f3ff4ce86ba0fbb0d7037f51296eb5055d17d8d3ac373028c9e13861b3baf249578d8
   languageName: node
   linkType: hard
 
