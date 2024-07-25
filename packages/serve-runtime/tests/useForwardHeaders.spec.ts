@@ -1,4 +1,5 @@
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
+import { useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '../src/createServeRuntime';
 import { useForwardHeaders } from '../src/useForwardHeaders';
 
@@ -30,11 +31,11 @@ describe('useForwardHeaders', () => {
       proxy: {
         endpoint: 'http://localhost:4001/graphql',
       },
-      fetchAPI: {
+      plugins: () => [
         // @ts-expect-error: TODO: fix this
-        fetch: upstream.fetch,
-      },
-      plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
+        useCustomFetch(upstream.fetch),
+        useForwardHeaders(['x-my-header', 'x-my-other']),
+      ],
       logging: !!process.env.DEBUG,
     });
     const response = await serveRuntime.fetch('http://localhost:4000/graphql', {
@@ -84,11 +85,11 @@ describe('useForwardHeaders', () => {
           'x-extra-header': 'extra-value',
         },
       },
-      fetchAPI: {
+      plugins: () => [
         // @ts-expect-error: TODO: fix this
-        fetch: upstream.fetch,
-      },
-      plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
+        useCustomFetch(upstream.fetch),
+        useForwardHeaders(['x-my-header', 'x-my-other']),
+      ],
       maskedErrors: false,
     });
     const response = await serveRuntime.fetch('http://localhost:4000/graphql', {

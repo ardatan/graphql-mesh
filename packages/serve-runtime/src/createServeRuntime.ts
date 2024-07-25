@@ -361,7 +361,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       useChangingSchema(getSchema, cb => (schemaChanged = cb)),
       useCompleteSubscriptionsOnDispose(disposableStack),
       useCompleteSubscriptionsOnSchemaChange(),
-      useRequestId(configContext),
+      useRequestId(),
       useSubgraphExecuteDebug(configContext),
       useFetchDebug(configContext),
       ...(config.plugins?.(configContext) || []),

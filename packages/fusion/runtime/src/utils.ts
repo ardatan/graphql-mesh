@@ -10,7 +10,7 @@ import type {
   TransportGetSubgraphExecutorOptions,
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
-import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
+import { iterateAsync, mapMaybePromise, requestIdByRequest } from '@graphql-mesh/utils';
 import {
   isAsyncIterable,
   isDocumentNode,
@@ -216,8 +216,13 @@ export function wrapExecutorWithHooks({
   return function executorWithHooks(executionRequest: ExecutionRequest) {
     executionRequest.info = executionRequest.info || ({} as GraphQLResolveInfo);
     executionRequest.info.executionRequest = executionRequest;
-    const execReqLogger = transportContext?.logger?.child?.(subgraphName);
+    const requestId =
+      executionRequest.context?.request && requestIdByRequest.get(executionRequest.context.request);
+    let execReqLogger = transportContext?.logger?.child?.(subgraphName);
     if (execReqLogger) {
+      if (requestId) {
+        execReqLogger = execReqLogger.child(requestId);
+      }
       loggerForExecutionRequest.set(executionRequest, execReqLogger);
     }
     if (onSubgraphExecuteHooks.length === 0) {
@@ -244,6 +249,8 @@ export function wrapExecutorWithHooks({
             setExecutor(newExecutor) {
               executor = newExecutor;
             },
+            requestId,
+            logger: execReqLogger,
           }),
         onSubgraphExecuteDoneHooks,
       ),
@@ -333,6 +340,8 @@ export interface OnSubgraphExecutePayload<TContext> {
   setExecutionRequest(executionRequest: ExecutionRequest): void;
   executor: Executor;
   setExecutor(executor: Executor): void;
+  requestId?: string;
+  logger?: Logger;
 }
 
 export interface OnSubgraphExecuteDonePayload {
