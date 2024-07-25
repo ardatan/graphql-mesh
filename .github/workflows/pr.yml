@@ -10,20 +10,27 @@ jobs:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 
   release:
-    if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
-    permissions:
-      contents: read
-      id-token: write
-      pull-requests: write
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
-    with:
-      npmTag: alpha
-      buildScript: build
-      nodeVersion: 18
-      packageManagerVersion: modern
-    secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
-      npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: set output
+        run: |
+          echo 'publishedPackages=[{"name":"@graphql-mesh/serve-cli","version":"0.8.3"}]' >>
+          $GITHUB_OUTPUT
+  # release:
+  #   if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
+  #   permissions:
+  #     contents: read
+  #     id-token: write
+  #     pull-requests: write
+  #   uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+  #   with:
+  #     npmTag: alpha
+  #     buildScript: build
+  #     nodeVersion: 18
+  #     packageManagerVersion: modern
+  #   secrets:
+  #     githubToken: ${{ secrets.GITHUB_TOKEN }}
+  #     npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   # TODO: use versions from snapshot
   ghcr:

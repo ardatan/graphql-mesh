@@ -8,20 +8,26 @@ on:
 
 jobs:
   stable:
-    permissions:
-      contents: read
-      id-token: write
-      pull-requests: write
-    if: github.ref == 'refs/heads/master'
-    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
-    with:
-      releaseScript: release
-      versionScript: 'changeset-version'
-      nodeVersion: 18
-      packageManagerVersion: modern
-    secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
-      npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: set output
+        run: |
+          echo 'publishedPackages=[{"name":"@graphql-mesh/serve-cli","version":"0.8.3"}]' >>
+          $GITHUB_OUTPUT
+    # permissions:
+    #   contents: read
+    #   id-token: write
+    #   pull-requests: write
+    # if: github.ref == 'refs/heads/master'
+    # uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
+    # with:
+    #   releaseScript: release
+    #   versionScript: 'changeset-version'
+    #   nodeVersion: 18
+    #   packageManagerVersion: modern
+    # secrets:
+    #   githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+    #   npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   ghcr:
     runs-on: ubuntu-latest
