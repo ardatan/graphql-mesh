@@ -372,10 +372,12 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
+        if: matrix.setup.serve-runner == 'docker'
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn bundle
       - name: bake
+        if: matrix.setup.serve-runner == 'docker'
         uses: docker/bake-action@v5
         with:
           targets: e2e
