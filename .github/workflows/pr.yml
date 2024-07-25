@@ -34,13 +34,14 @@ jobs:
         uses: actions/github-script@v7
         id: ver-mesh-serve
         with:
+          result-encoding: string
           script: |
             const publishedPackages = ${{ needs.release.outputs.publishedPackages }};
             const meshServe = publishedPackages.find((p) => p.name === '@graphql-mesh/serve-cli');
             if (!meshServe) {
               return core.setFailed('@graphql-mesh/serve-cli was not published!');
             }
-            return { version: meshServe.version };
+            return meshServe.version;
       - name: checkout
         uses: actions/checkout@v4
       - name: set up docker buildx
@@ -62,11 +63,11 @@ jobs:
         run: yarn bundle
       - name: inject mesh-serve version
         run: |
-          yarn workspace @graphql-mesh/serve-cli inject-version ${{ steps.ver-mesh-serve.outputs.result.version }}
+          yarn workspace @graphql-mesh/serve-cli inject-version ${{ steps.ver-mesh-serve.outputs.result }}
       - name: bake and push
         uses: docker/bake-action@v5
         env:
-          MESH_SERVE_TAGS: ${{ steps.ver-mesh-serve.outputs.result.version }}
+          MESH_SERVE_TAGS: ${{ steps.ver-mesh-serve.outputs.result }}
         with:
           set: |
             *.cache-from=type=gha
@@ -79,5 +80,5 @@ jobs:
           message: |
             Published images for this PR are available at:
             ```
-            ghcr.io/ardatan/mesh-serve:${{ steps.ver-mesh-serve.outputs.result.version }}
+            ghcr.io/ardatan/mesh-serve:${{ steps.ver-mesh-serve.outputs.result }}
             ```
