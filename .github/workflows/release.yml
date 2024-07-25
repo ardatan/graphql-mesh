@@ -36,6 +36,11 @@ jobs:
         id: latest-version-tag
         run: |
           echo "serve-cli=$(git tag -l --sort=-creatordate "@graphql-mesh/serve-cli@*" | head -n 1)" >> "$GITHUB_OUTPUT"
+      - name: assert latest version tag
+        if: steps.latest-version-tag.outputs.serve-cli == ''
+        run: |
+          echo "::error Latest version tag cannot be empty"
+          exit 1
       - name: checkout latest version tag
         uses: actions/checkout@v4
         with:
