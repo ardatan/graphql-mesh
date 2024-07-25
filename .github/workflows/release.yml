@@ -10,9 +10,10 @@ jobs:
   stable:
     runs-on: ubuntu-latest
     outputs:
-      publishedPackages: string
+      publishedPackages: ${{ steps.o.outputs.publishedPackages }}
     steps:
       - name: set output
+        id: o
         uses: actions/github-script@v7
         with:
           script: |
