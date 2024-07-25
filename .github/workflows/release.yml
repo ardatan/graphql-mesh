@@ -75,11 +75,11 @@ jobs:
         run: yarn bundle
       - name: inject mesh-serve version
         run: |
-          yarn workspace @graphql-mesh/serve-cli inject-version ${{ steps.ver-mesh-serve.outputs.version }}
+          yarn workspace @graphql-mesh/serve-cli inject-version ${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
       - name: bake and push
         uses: docker/bake-action@v5
         env:
-          MESH_SERVE_TAGS: ${{ steps.ver-mesh-serve.outputs.tags }}
+          MESH_SERVE_TAGS: ${{ fromJSON(steps.ver-mesh-serve.outputs.result).tags }}
         with:
           set: |
             *.cache-from=type=gha
