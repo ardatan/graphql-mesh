@@ -72,6 +72,9 @@ jobs:
           script: |
             const { version } = require('./packages/serve-cli/package.json');
             const [major, minor] = String(version).split('.');
+            if (!major || !minor) {
+              core.setFailed(`Missing major or minor in version "${version}"!`);
+            }
             return `latest,${major},${major}.${minor},${version}`;
       - name: bake and push
         uses: docker/bake-action@v5
