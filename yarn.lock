@@ -20049,7 +20049,7 @@ __metadata:
     eslint-plugin-standard: "npm:5.0.0"
     globby: "npm:11.1.0"
     graphql: "npm:16.9.0"
-    husky: "npm:9.0.11"
+    husky: "npm:9.1.2"
     jest: "npm:29.7.0"
     lint-staged: "npm:15.2.7"
     minimatch: "npm:9.0.5"
@@ -21003,12 +21003,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:9.0.11":
-  version: 9.0.11
-  resolution: "husky@npm:9.0.11"
+"husky@npm:9.1.2":
+  version: 9.1.2
+  resolution: "husky@npm:9.1.2"
   bin:
-    husky: bin.mjs
-  checksum: 10c0/2c787dcf74a837fc9a4fea7da907509d4bd9a289f4ea10ecc9d86279e4d4542b0f5f6443a619bccae19e265f2677172cc2b86aae5c932a35a330cc227d914605
+    husky: bin.js
+  checksum: 10c0/7e25c31ef98ac35d357147005d6e5d87db2abca7297e7c5aac931de3699acd32a3f1a9f8e53f101daeab818f0cfe9d18fa7e34f7cf5c9c4437c3665123456dea
   languageName: node
   linkType: hard
 
