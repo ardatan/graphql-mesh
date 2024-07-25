@@ -2,7 +2,9 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 // @ts-expect-error tsx will allow this to work
-import { version } from '../package.json';
+import pkg from '../package.json';
+
+const version = process.argv[2] || pkg.version;
 
 console.log(`Injecting version ${version} to build and bundle`);
 
