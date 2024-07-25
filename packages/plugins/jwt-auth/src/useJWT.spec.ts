@@ -1,6 +1,6 @@
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import {
   createInlineSigningKeyProvider,
   type JWTExtendContextFields,
@@ -31,10 +31,9 @@ describe('useExtractedJWT', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      fetchAPI: {
-        fetch: upstream.fetch as any,
-      },
       plugins: () => [
+        // @ts-expect-error - signature mismatch
+        useCustomFetch(upstream.fetch),
         useJWTAuth({
           forward: {
             payload: true,
@@ -100,10 +99,9 @@ describe('useJWTAuth', () => {
         proxy: {
           endpoint: 'https://example.com/graphql',
         },
-        fetchAPI: {
-          fetch: upstream.fetch as any,
-        },
         plugins: () => [
+          // @ts-expect-error - signature mismatch
+          useCustomFetch(upstream.fetch),
           useJWTAuth({
             forward: {
               payload: true,

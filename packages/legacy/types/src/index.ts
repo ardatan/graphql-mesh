@@ -11,7 +11,7 @@ import type {
   SubschemaConfig,
   Transform,
 } from '@graphql-tools/delegate';
-import type { Executor, IResolvers, MaybePromise } from '@graphql-tools/utils';
+import type { ExecutionRequest, Executor, IResolvers, MaybePromise } from '@graphql-tools/utils';
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import * as YamlConfig from './config.js';
 
@@ -183,6 +183,9 @@ export interface OnFetchHookPayload<TContext> {
   info: GraphQLResolveInfo;
   fetchFn: MeshFetch;
   setFetchFn: (fetchFn: MeshFetch) => void;
+  executionRequest?: ExecutionRequest;
+  logger: Logger;
+  requestId?: string;
 }
 
 export interface OnFetchHookDonePayload {

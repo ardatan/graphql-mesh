@@ -16,7 +16,7 @@ beforeAll(async () => {
   createdSchemaYoga = createYoga({
     schema: createdSchema,
     maskedErrors: false,
-    logging: false,
+    logging: !!process.env.DEBUG,
   });
 });
 

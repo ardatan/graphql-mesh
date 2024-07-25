@@ -1,4 +1,5 @@
 import { print, type DocumentNode, type ExecutionResult, type GraphQLSchema } from 'graphql';
+import type { GraphQLResolveInfo } from 'graphql/type';
 import type { TransportEntryAdditions } from '@graphql-mesh/serve-runtime';
 import type {
   Transport,
@@ -9,7 +10,12 @@ import type {
   TransportGetSubgraphExecutorOptions,
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
-import { iterateAsync, mapMaybePromise } from '@graphql-mesh/utils';
+import {
+  iterateAsync,
+  loggerForExecutionRequest,
+  mapMaybePromise,
+  requestIdByRequest,
+} from '@graphql-mesh/utils';
 import {
   isAsyncIterable,
   isDocumentNode,
@@ -167,6 +173,7 @@ export function getOnSubgraphExecute({
               onSubgraphExecuteHooks,
               subgraphName,
               transportEntryMap,
+              transportContext,
               getSubgraphSchema,
             });
             // Caches the executor for future use
@@ -188,6 +195,13 @@ export interface WrapExecuteWithHooksOptions {
   subgraphName: string;
   transportEntryMap?: Record<string, TransportEntry>;
   getSubgraphSchema: (subgraphName: string) => GraphQLSchema;
+  transportContext?: TransportContext;
+}
+
+declare module 'graphql' {
+  interface GraphQLResolveInfo {
+    executionRequest?: ExecutionRequest;
+  }
 }
 
 /**
@@ -200,11 +214,23 @@ export function wrapExecutorWithHooks({
   subgraphName,
   transportEntryMap,
   getSubgraphSchema,
+  transportContext,
 }: WrapExecuteWithHooksOptions): Executor {
-  if (onSubgraphExecuteHooks.length === 0) {
-    return executor;
-  }
   return function executorWithHooks(executionRequest: ExecutionRequest) {
+    executionRequest.info = executionRequest.info || ({} as GraphQLResolveInfo);
+    executionRequest.info.executionRequest = executionRequest;
+    const requestId =
+      executionRequest.context?.request && requestIdByRequest.get(executionRequest.context.request);
+    let execReqLogger = transportContext?.logger?.child?.(subgraphName);
+    if (execReqLogger) {
+      if (requestId) {
+        execReqLogger = execReqLogger.child(requestId);
+      }
+      loggerForExecutionRequest.set(executionRequest, execReqLogger);
+    }
+    if (onSubgraphExecuteHooks.length === 0) {
+      return executor(executionRequest);
+    }
     const onSubgraphExecuteDoneHooks: OnSubgraphExecuteDoneHook[] = [];
     return mapMaybePromise(
       iterateAsync(
@@ -220,12 +246,16 @@ export function wrapExecutorWithHooks({
             },
             executionRequest,
             setExecutionRequest(newExecutionRequest) {
+              execReqLogger.debug('Updating execution request to: ', newExecutionRequest);
               executionRequest = newExecutionRequest;
             },
             executor,
             setExecutor(newExecutor) {
+              execReqLogger.debug('executor has been updated');
               executor = newExecutor;
             },
+            requestId,
+            logger: execReqLogger,
           }),
         onSubgraphExecuteDoneHooks,
       ),
@@ -242,6 +272,7 @@ export function wrapExecutorWithHooks({
                 onSubgraphExecuteDoneHook({
                   result: currentResult,
                   setResult(newResult: ExecutionResult) {
+                    execReqLogger.debug('overriding result with: ', newResult);
                     currentResult = newResult;
                   },
                 }),
@@ -281,6 +312,8 @@ export function wrapExecutorWithHooks({
                       onNext({
                         result: currentResult,
                         setResult: res => {
+                          execReqLogger.debug('overriding result with: ', res);
+
                           currentResult = res;
                         },
                       }),
@@ -315,6 +348,8 @@ export interface OnSubgraphExecutePayload<TContext> {
   setExecutionRequest(executionRequest: ExecutionRequest): void;
   executor: Executor;
   setExecutor(executor: Executor): void;
+  requestId?: string;
+  logger?: Logger;
 }
 
 export interface OnSubgraphExecuteDonePayload {

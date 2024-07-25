@@ -2,7 +2,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { createHmac } from 'node:crypto';
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import {
   defaultParamsSerializer,
   useHmacSignatureValidation,
@@ -102,11 +102,9 @@ describe('useHmacSignatureValidation', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      fetchAPI: {
-        // @ts-expect-error - signature mismatch
-        fetch: upstream.fetch,
-      },
       plugins: () => [
+        // @ts-expect-error - signature mismatch
+        useCustomFetch(upstream.fetch),
         {
           onSubgraphExecute(payload) {
             payload.executionRequest.extensions ||= {};
@@ -168,11 +166,9 @@ describe('useHmacUpstreamSignature', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      fetchAPI: {
-        // @ts-expect-error - signature mismatch
-        fetch: upstream.fetch,
-      },
       plugins: () => [
+        // @ts-expect-error - signature mismatch
+        useCustomFetch(upstream.fetch),
         {
           onSubgraphExecute(payload) {
             payload.executionRequest.extensions ||= {};
@@ -219,10 +215,9 @@ describe('useHmacUpstreamSignature', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      fetchAPI: {
-        fetch: upstream.fetch as any,
-      },
       plugins: () => [
+        // @ts-expect-error - signature mismatch
+        useCustomFetch(upstream.fetch),
         useHmacUpstreamSignature({
           secret,
         }),
@@ -264,10 +259,9 @@ describe('useHmacUpstreamSignature', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      fetchAPI: {
-        fetch: upstream.fetch as any,
-      },
       plugins: () => [
+        // @ts-expect-error - signature mismatch
+        useCustomFetch(upstream.fetch),
         useHmacUpstreamSignature({
           secret,
           extensionName: customExtensionName,
@@ -309,10 +303,9 @@ describe('useHmacUpstreamSignature', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      fetchAPI: {
-        fetch: upstream.fetch as any,
-      },
       plugins: () => [
+        // @ts-expect-error - signature mismatch
+        useCustomFetch(upstream.fetch),
         useHmacUpstreamSignature({
           secret,
           shouldSign: () => {

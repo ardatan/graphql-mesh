@@ -104,7 +104,7 @@ describe('Subscriptions', () => {
     let changeSchema = false;
 
     await using serve = createServeRuntime({
-      logging: false,
+      logging: !!process.env.DEBUG,
       polling: 500,
       supergraph() {
         if (changeSchema) {

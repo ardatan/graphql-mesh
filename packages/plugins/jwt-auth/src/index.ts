@@ -68,12 +68,17 @@ export function useJWT(
     // When a subgraph is about to be executed, we check if the initial request has a JWT token
     // that needs to be passed. At the moment, only GraphQL subgraphs will have the option to forward tokens/payload.
     // The JWT info will be passed to the subgraph execution request.
-    onSubgraphExecute({ executionRequest, setExecutionRequest }) {
+    onSubgraphExecute({ executionRequest, subgraphName, setExecutionRequest, logger }) {
       if (shouldForward && executionRequest.context.jwt) {
         const jwtData: Partial<JWTExtendContextFields> = {
           payload: forwardPayload ? executionRequest.context.jwt.payload : undefined,
           token: forwardToken ? executionRequest.context.jwt.token : undefined,
         };
+
+        logger.debug(
+          `Forwarding JWT payload to subgraph ${subgraphName}, payload: `,
+          jwtData.payload,
+        );
 
         setExecutionRequest({
           ...executionRequest,

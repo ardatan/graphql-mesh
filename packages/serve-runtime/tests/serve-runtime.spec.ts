@@ -10,10 +10,11 @@ import {
 } from 'graphql';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
-import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
+import type { MeshServePlugin } from '../src/types.js';
+import { useCustomFetch } from '../src/useCustomFetch.js';
 
 describe('Serve Runtime', () => {
   beforeEach(() => {
@@ -21,7 +22,7 @@ describe('Serve Runtime', () => {
   });
   function createSupergraphRuntime() {
     return createServeRuntime({
-      logging: false,
+      logging: !!process.env.DEBUG,
       supergraph: () => {
         if (!upstreamIsUp) {
           throw new Error('Upstream is down');
@@ -70,12 +71,12 @@ describe('Serve Runtime', () => {
   }
   const upstreamAPI = createYoga({
     schema: createUpstreamSchema(),
-    logging: false,
+    logging: !!process.env.DEBUG,
   });
   let upstreamIsUp = true;
   const serveRuntimes = {
     proxyAPI: createServeRuntime({
-      logging: false,
+      logging: !!process.env.DEBUG,
       proxy: {
         endpoint: 'http://localhost:4000/graphql',
         fetch(info, init, ...args) {
@@ -191,11 +192,8 @@ describe('Serve Runtime', () => {
       proxy: {
         endpoint: 'http://localhost:4000/graphql',
       },
-      fetchAPI: {
-        fetch: fetchFn,
-      },
-      plugins: () => [mockPlugin],
-      logging: false,
+      plugins: () => [useCustomFetch(fetchFn), mockPlugin],
+      logging: !!process.env.DEBUG,
     });
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
@@ -223,7 +221,7 @@ describe('Serve Runtime', () => {
   it('should invoke onSchemaChange hooks as soon as schema changes', done => {
     let onSchemaChangeCalls = 0;
     const serve = createServeRuntime({
-      logging: false,
+      logging: !!process.env.DEBUG,
       polling: 500,
       supergraph() {
         if (onSchemaChangeCalls > 0) {

@@ -52,6 +52,9 @@ import type {
 import { useChangingSchema } from './useChangingSchema.js';
 import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
 import { useCompleteSubscriptionsOnSchemaChange } from './useCompleteSubscriptionsOnSchemaChange.js';
+import { useFetchDebug } from './useFetchDebug.js';
+import { useRequestId } from './useRequestId.js';
+import { useSubgraphExecuteDebug } from './useSubgraphExecuteDebug.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
@@ -206,20 +209,24 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     disposableStack.use(unifiedGraphManager);
     subgraphInformationHTMLRenderer = async () => {
       const htmlParts: string[] = [];
-      let supergraphLoadedPlace: string;
+      let supergraphLoadedPlace = './supergraph.graphql';
       if ('hive' in config && config.hive.endpoint) {
         supergraphLoadedPlace = 'Hive CDN <br>' + config.hive.endpoint;
       } else if ('supergraph' in config) {
         if (typeof config.supergraph === 'function') {
           const fnName = config.supergraph.name || '';
           supergraphLoadedPlace = `a custom loader ${fnName}`;
+        } else if (typeof config.supergraph === 'string') {
+          supergraphLoadedPlace = config.supergraph;
         }
       }
       let loaded = false;
       let loadError: Error;
-      let transportEntryMap: Record<string, TransportEntry>;
       try {
-        transportEntryMap = await unifiedGraphManager.getTransportEntryMap();
+        // TODO: Workaround for the issue
+        // When you go to landing page, then GraphiQL, GW stops working
+        const schema = await getSchema();
+        schemaChanged(schema);
         loaded = true;
       } catch (e) {
         loaded = false;
@@ -230,8 +237,8 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
         htmlParts.push(`<table>`);
         htmlParts.push(`<tr><th>Subgraph</th><th>Transport</th><th>Location</th></tr>`);
-        for (const subgraphName in transportEntryMap) {
-          const transportEntry = transportEntryMap[subgraphName];
+        for (const subgraphName in unifiedGraphManager._transportEntryMap) {
+          const transportEntry = unifiedGraphManager._transportEntryMap[subgraphName];
           htmlParts.push(`<tr>`);
           htmlParts.push(`<td>${subgraphName}</td>`);
           htmlParts.push(`<td>${transportEntry.kind}</td>`);
@@ -354,6 +361,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       useChangingSchema(getSchema, cb => (schemaChanged = cb)),
       useCompleteSubscriptionsOnDispose(disposableStack),
       useCompleteSubscriptionsOnSchemaChange(),
+      useRequestId(),
+      useSubgraphExecuteDebug(configContext),
+      useFetchDebug(configContext),
       ...(config.plugins?.(configContext) || []),
     ],
     // @ts-expect-error PromiseLike is not compatible with Promise
