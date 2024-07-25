@@ -25,7 +25,6 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
-  # TODO: use versions from snapshot
   ghcr:
     runs-on: ubuntu-latest
     needs: [release]
@@ -50,27 +49,26 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn bundle
-      - name: set mesh-serve tags
+      - name: version mesh-serve
+        uses: actions/github-script@v7
+        id: ver-mesh-serve
+        with:
+          script: |
+            const publishedPackages = JSON.parse(${{ needs.release.outputs.publishedPackages }});
+            const meshServe = publishedPackages.find((p) => p.name === '@graphql-mesh/serve-cli');
+            if (!meshServe) {
+              return core.setFailed('@graphql-mesh/serve-cli was not published!');
+            }
+            return { version: meshServe.version };
+      - name: inject mesh-serve version
         run: |
-          export SHORT_REF="$(git rev-parse --short HEAD)"
-          echo SHORT_REF="$SHORT_REF" >> $GITHUB_ENV
-          export REF_NAME=$(echo "${{ github.head_ref || github.ref_name }}" | sed 's/\//_/g')
-          echo REF_NAME="$REF_NAME" >> $GITHUB_ENV
-          echo MESH_SERVE_TAGS="$REF_NAME,$SHORT_REF" >> $GITHUB_ENV
+          yarn workspace @graphql-mesh/serve-cli inject-version ${{ steps.ver-mesh-serve.outputs.result.version }}
       - name: bake and push
         uses: docker/bake-action@v5
+        env:
+          MESH_SERVE_TAGS: ${{ steps.ver-mesh-serve.outputs.result.version }}
         with:
           set: |
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
           push: true
-      - name: comment on pr
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: Docker Images
-          message: |
-            Published images for this PR are available at:
-            ```
-            ghcr.io/ardatan/mesh-serve:${{ env.REF_NAME }}
-            ghcr.io/ardatan/mesh-serve:${{ env.SHORT_REF }}
-            ```
