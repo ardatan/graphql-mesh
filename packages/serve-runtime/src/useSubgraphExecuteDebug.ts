@@ -8,10 +8,10 @@ export function useSubgraphExecuteDebug<TContext>(opts: {
 }): MeshServePlugin<TContext> {
   return {
     onSubgraphExecute({ executionRequest, logger = opts.logger }) {
-      logger.debug(`subgraph-execute`, {
+      logger.debug(`subgraph-execute`, () => ({
         query: defaultPrintFn(executionRequest.document),
         variables: executionRequest.variables,
-      });
+      }));
       return function onSubgraphExecuteDone({ result }) {
         if (isAsyncIterable(result)) {
           return {

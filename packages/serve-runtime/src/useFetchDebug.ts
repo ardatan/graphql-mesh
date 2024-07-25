@@ -10,11 +10,11 @@ export function useFetchDebug<TContext>(opts: { logger: Logger }): MeshServePlug
         ...(options || {}),
       });
       return function onFetchDone({ response }) {
-        logger.debug('response', {
+        logger.debug('response', () => ({
           url,
           status: response.status,
           headers: Object.fromEntries(response.headers.entries()),
-        });
+        }));
       };
     },
   };
