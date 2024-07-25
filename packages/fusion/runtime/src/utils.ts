@@ -246,10 +246,12 @@ export function wrapExecutorWithHooks({
             },
             executionRequest,
             setExecutionRequest(newExecutionRequest) {
+              execReqLogger.debug('Updating execution request to: ', newExecutionRequest);
               executionRequest = newExecutionRequest;
             },
             executor,
             setExecutor(newExecutor) {
+              execReqLogger.debug('executor has been updated');
               executor = newExecutor;
             },
             requestId,
@@ -270,6 +272,7 @@ export function wrapExecutorWithHooks({
                 onSubgraphExecuteDoneHook({
                   result: currentResult,
                   setResult(newResult: ExecutionResult) {
+                    execReqLogger.debug('overriding result with: ', newResult);
                     currentResult = newResult;
                   },
                 }),
@@ -309,6 +312,8 @@ export function wrapExecutorWithHooks({
                       onNext({
                         result: currentResult,
                         setResult: res => {
+                          execReqLogger.debug('overriding result with: ', res);
+
                           currentResult = res;
                         },
                       }),

@@ -1,4 +1,4 @@
-import type { FetchAPI, GraphQLParams, Plugin as YogaPlugin } from 'graphql-yoga';
+import type { FetchAPI, GraphQLParams, YogaLogger, Plugin as YogaPlugin } from 'graphql-yoga';
 import jsonStableStringify from 'json-stable-stringify';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
@@ -66,8 +66,11 @@ export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions):
     onYogaInit({ yoga }) {
       fetchAPI = yoga.fetchAPI;
     },
-    onSubgraphExecute({ subgraphName, subgraph, executionRequest, setExecutionRequest }) {
+    onSubgraphExecute({ subgraphName, subgraph, executionRequest, setExecutionRequest, logger }) {
+      logger.debug(`running shouldSign for subgraph ${subgraphName}`);
+
       if (shouldSign({ subgraphName, subgraph, executionRequest })) {
+        logger.debug(`shouldSign is true for subgraph ${subgraphName}, signing request`);
         textEncoder ||= new fetchAPI.TextEncoder();
         key$ ||= createCryptoKey({
           textEncoder,
@@ -81,6 +84,10 @@ export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions):
           const encodedContent = textEncoder.encode(serializedExecutionRequest);
           const signature = await fetchAPI.crypto.subtle.sign('HMAC', key, encodedContent);
           const extensionValue = btoa(String.fromCharCode(...new Uint8Array(signature)));
+          logger.debug(
+            `produced hmac signature for subgraph ${subgraphName}, signature: ${signature}, signed payload: ${serializedExecutionRequest}`,
+          );
+
           setExecutionRequest({
             ...executionRequest,
             extensions: {
@@ -89,6 +96,8 @@ export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions):
             },
           });
         });
+      } else {
+        logger.debug(`shouldSign is false for subgraph ${subgraphName}, skipping hmac signature`);
       }
     },
   };
@@ -110,15 +119,23 @@ export function useHmacSignatureValidation(
   const extensionName = options.extensionName || DEFAULT_EXTENSION_NAME;
   let key$: Promise<CryptoKey>;
   let textEncoder: TextEncoder;
+  let logger: YogaLogger;
   const paramsSerializer = options.serializeParams || defaultParamsSerializer;
 
   return {
+    onYogaInit({ yoga }) {
+      logger = yoga.logger;
+    },
     onParams({ params, fetchAPI }) {
       textEncoder ||= new fetchAPI.TextEncoder();
       const extension = params.extensions?.[extensionName];
+
       if (!extension) {
+        logger.warn(`Missing HMAC signature: extension ${extensionName} not found in request.`);
+
         throw new Error(`Missing HMAC signature: extension ${extensionName} not found in request.`);
       }
+
       key$ ||= createCryptoKey({
         textEncoder,
         crypto: fetchAPI.crypto,
@@ -128,6 +145,10 @@ export function useHmacSignatureValidation(
       return key$.then(async key => {
         const sigBuf = Uint8Array.from(atob(extension), c => c.charCodeAt(0));
         const serializedParams = paramsSerializer(params);
+        logger.debug(
+          `HMAC signature will be calculate based on serialized params: ${serializedParams}`,
+        );
+
         const result = await fetchAPI.crypto.subtle.verify(
           'HMAC',
           key,
@@ -136,6 +157,8 @@ export function useHmacSignatureValidation(
         );
 
         if (!result) {
+          logger.error(`HMAC signature does not match the body content. short circuit request.`);
+
           throw new Error(
             `Invalid HMAC signature: extension ${extensionName} does not match the body content.`,
           );
