@@ -25,6 +25,7 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
+  # TODO: use versions from snapshot
   ghcr:
     runs-on: ubuntu-latest
     needs: [release]
