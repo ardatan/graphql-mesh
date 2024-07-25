@@ -25,9 +25,8 @@ jobs:
 
   ghcr:
     runs-on: ubuntu-latest
-    # TODO: uncomment
-    # needs: [stable]
-    # if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
+    needs: [stable]
+    if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
       - name: checkout
         uses: actions/checkout@v4
