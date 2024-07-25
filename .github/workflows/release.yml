@@ -40,7 +40,7 @@ jobs:
       - name: assert latest version tag
         if: steps.latest-version-tag.outputs.serve-cli == ''
         run: |
-          echo "::error::Latest version tag cannot be empty"
+          echo "::error::Latest version tag cannot be empty."
           exit 1
       - name: checkout latest version tag
         uses: actions/checkout@v4
