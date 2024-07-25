@@ -83,6 +83,8 @@ jobs:
             return `latest,${major},${major}.${minor},${version}`;
       - name: checkout head
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - name: download bundle
         uses: actions/download-artifact@v4
         with:
