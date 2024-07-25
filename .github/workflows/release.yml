@@ -8,30 +8,20 @@ on:
 
 jobs:
   stable:
-    runs-on: ubuntu-latest
-    outputs:
-      publishedPackages: ${{ steps.o.outputs.publishedPackages }}
-    steps:
-      - name: set output
-        id: o
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.setOutput('publishedPackages', '[{"name":"@graphql-mesh/serve-cli","version":"0.8.3"}]')
-    # permissions:
-    #   contents: read
-    #   id-token: write
-    #   pull-requests: write
-    # if: github.ref == 'refs/heads/master'
-    # uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
-    # with:
-    #   releaseScript: release
-    #   versionScript: 'changeset-version'
-    #   nodeVersion: 18
-    #   packageManagerVersion: modern
-    # secrets:
-    #   githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
-    #   npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    if: github.ref == 'refs/heads/master'
+    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
+    with:
+      releaseScript: release
+      versionScript: 'changeset-version'
+      nodeVersion: 18
+      packageManagerVersion: modern
+    secrets:
+      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   ghcr:
     runs-on: ubuntu-latest
