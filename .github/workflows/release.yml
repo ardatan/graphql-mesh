@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+        with:
+          fetch-tags: true
       - name: get latest version tag
         id: latest-version-tag
         run: |
