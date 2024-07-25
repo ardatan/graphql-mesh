@@ -20,7 +20,7 @@ describe('useForwardHeaders', () => {
       },
     }),
     plugins: [requestTrackerPlugin],
-    logging: false,
+    logging: !!process.env.DEBUG,
   });
   beforeEach(() => {
     requestTrackerPlugin.onParams.mockClear();
@@ -35,7 +35,7 @@ describe('useForwardHeaders', () => {
         fetch: upstream.fetch,
       },
       plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
-      logging: false,
+      logging: !!process.env.DEBUG,
     });
     const response = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
@@ -76,7 +76,7 @@ describe('useForwardHeaders', () => {
   });
   it("forwards specified headers but doesn't override the provided headers", async () => {
     await using serveRuntime = createServeRuntime({
-      logging: false,
+      logging: !!process.env.DEBUG,
       proxy: {
         endpoint: 'http://localhost:4001/graphql',
         headers: {

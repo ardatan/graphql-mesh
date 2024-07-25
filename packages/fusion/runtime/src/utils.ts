@@ -1,4 +1,5 @@
 import { print, type DocumentNode, type ExecutionResult, type GraphQLSchema } from 'graphql';
+import type { GraphQLResolveInfo } from 'graphql/type';
 import type { TransportEntryAdditions } from '@graphql-mesh/serve-runtime';
 import type {
   Transport,
@@ -167,6 +168,7 @@ export function getOnSubgraphExecute({
               onSubgraphExecuteHooks,
               subgraphName,
               transportEntryMap,
+              transportContext,
               getSubgraphSchema,
             });
             // Caches the executor for future use
@@ -188,7 +190,16 @@ export interface WrapExecuteWithHooksOptions {
   subgraphName: string;
   transportEntryMap?: Record<string, TransportEntry>;
   getSubgraphSchema: (subgraphName: string) => GraphQLSchema;
+  transportContext?: TransportContext;
 }
+
+declare module 'graphql' {
+  interface GraphQLResolveInfo {
+    executionRequest?: ExecutionRequest;
+  }
+}
+
+export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>();
 
 /**
  * This function wraps the executor created by the transport package
@@ -200,11 +211,18 @@ export function wrapExecutorWithHooks({
   subgraphName,
   transportEntryMap,
   getSubgraphSchema,
+  transportContext,
 }: WrapExecuteWithHooksOptions): Executor {
-  if (onSubgraphExecuteHooks.length === 0) {
-    return executor;
-  }
   return function executorWithHooks(executionRequest: ExecutionRequest) {
+    executionRequest.info = executionRequest.info || ({} as GraphQLResolveInfo);
+    executionRequest.info.executionRequest = executionRequest;
+    const execReqLogger = transportContext?.logger?.child?.(subgraphName);
+    if (execReqLogger) {
+      loggerForExecutionRequest.set(executionRequest, execReqLogger);
+    }
+    if (onSubgraphExecuteHooks.length === 0) {
+      return executor(executionRequest);
+    }
     const onSubgraphExecuteDoneHooks: OnSubgraphExecuteDoneHook[] = [];
     return mapMaybePromise(
       iterateAsync(

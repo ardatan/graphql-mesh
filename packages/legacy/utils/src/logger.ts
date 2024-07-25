@@ -169,6 +169,9 @@ export class DefaultLogger implements Logger {
   }
 
   child(name: string): Logger {
+    if (this.name?.includes(name)) {
+      return this;
+    }
     return new DefaultLogger(this.name ? `${this.name} - ${name}` : name, this.logLevel);
   }
 
@@ -177,5 +180,9 @@ export class DefaultLogger implements Logger {
       this.name = this.name ? `${this.name} - ${prefix}` : prefix;
     }
     return this;
+  }
+
+  toJSON() {
+    return undefined;
   }
 }

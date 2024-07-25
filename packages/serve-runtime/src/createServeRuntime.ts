@@ -52,6 +52,9 @@ import type {
 import { useChangingSchema } from './useChangingSchema.js';
 import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
 import { useCompleteSubscriptionsOnSchemaChange } from './useCompleteSubscriptionsOnSchemaChange.js';
+import { useFetchDebug } from './useFetchDebug.js';
+import { useRequestId } from './useRequestId.js';
+import { useSubgraphExecuteDebug } from './useSubgraphExecuteDebug.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
@@ -354,6 +357,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       useChangingSchema(getSchema, cb => (schemaChanged = cb)),
       useCompleteSubscriptionsOnDispose(disposableStack),
       useCompleteSubscriptionsOnSchemaChange(),
+      useRequestId(configContext),
+      useSubgraphExecuteDebug(configContext),
+      useFetchDebug(configContext),
       ...(config.plugins?.(configContext) || []),
     ],
     // @ts-expect-error PromiseLike is not compatible with Promise
