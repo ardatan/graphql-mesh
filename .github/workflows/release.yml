@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: set output
-        run: |
-          echo 'publishedPackages=[{"name":"@graphql-mesh/serve-cli","version":"0.8.3"}]' >>
-          $GITHUB_OUTPUT
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.setOutput('publishedPackages', '[{"name":"@graphql-mesh/serve-cli","version":"0.8.3"}]')
     # permissions:
     #   contents: read
     #   id-token: write
