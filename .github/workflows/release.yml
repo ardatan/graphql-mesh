@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  npm:
+  stable:
     permissions:
       contents: read
       id-token: write
@@ -23,6 +23,7 @@ jobs:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
+  # NOTE: this job DOES NOT run on triggering commit, it instead checks out and runs on the latest tag
   ghcr:
     runs-on: ubuntu-latest
     # TODO: uncomment once working
