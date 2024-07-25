@@ -72,3 +72,12 @@ jobs:
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
           push: true
+      - name: comment on pr
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: Docker Images
+          message: |
+            Published images for this PR are available at:
+            ```
+            ghcr.io/ardatan/mesh-serve:${{ steps.ver-mesh-serve.outputs.result.version }}
+            ```
