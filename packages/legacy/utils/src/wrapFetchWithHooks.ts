@@ -9,19 +9,6 @@ export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>()
 
 export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>[]): MeshFetch {
   return function wrappedFetchFn(url, options, context, info) {
-    const executionRequest = info?.executionRequest;
-    const requestId = context?.request && requestIdByRequest.get(context?.request);
-    let logger: Logger = new DefaultLogger('fetch');
-    if (requestId) {
-      logger = logger.child(requestId);
-    }
-    if (executionRequest) {
-      const execReqLogger = loggerForExecutionRequest.get(executionRequest);
-      if (execReqLogger) {
-        logger = execReqLogger;
-      }
-      loggerForExecutionRequest.set(executionRequest, logger);
-    }
     let fetchFn: MeshFetch;
     const onFetchDoneHooks: OnFetchHookDone[] = [];
     return mapMaybePromise(
@@ -43,9 +30,33 @@ export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>
             },
             context,
             info,
-            executionRequest,
-            requestId,
-            logger,
+            get executionRequest() {
+              return info?.executionRequest;
+            },
+            get requestId() {
+              if (context?.request) {
+                return requestIdByRequest.get(context.request);
+              }
+            },
+            get logger() {
+              let logger: Logger;
+              if (info?.executionRequest) {
+                logger = loggerForExecutionRequest.get(info.executionRequest);
+              }
+              if (!logger) {
+                logger = new DefaultLogger('fetch');
+              }
+              if (context?.request) {
+                const requestId = requestIdByRequest.get(context.request);
+                if (requestId) {
+                  logger = logger.child(requestId);
+                }
+              }
+              if (info?.executionRequest) {
+                loggerForExecutionRequest.set(info.executionRequest, logger);
+              }
+              return logger;
+            },
           }),
         onFetchDoneHooks,
       ),

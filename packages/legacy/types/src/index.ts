@@ -184,7 +184,7 @@ export interface OnFetchHookPayload<TContext> {
   fetchFn: MeshFetch;
   setFetchFn: (fetchFn: MeshFetch) => void;
   executionRequest?: ExecutionRequest;
-  logger?: Logger;
+  logger: Logger;
   requestId?: string;
 }
 
