@@ -26477,32 +26477,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"neo4j-driver-bolt-connection@npm:5.22.0":
-  version: 5.22.0
-  resolution: "neo4j-driver-bolt-connection@npm:5.22.0"
+"neo4j-driver-bolt-connection@npm:5.23.0":
+  version: 5.23.0
+  resolution: "neo4j-driver-bolt-connection@npm:5.23.0"
   dependencies:
     buffer: "npm:^6.0.3"
-    neo4j-driver-core: "npm:5.22.0"
+    neo4j-driver-core: "npm:5.23.0"
     string_decoder: "npm:^1.3.0"
-  checksum: 10c0/48344b7573d87fb1940a3e5a51f752c8c038ddeaad7c1634a38c11c4754973202315806b7425ba2ede7bac6c992d239efba26ca57776937f0076c52ad273ddcc
+  checksum: 10c0/ad8a33a7d7d001d261f34121ae43840bd1fa0bed38c40a01f6306e78570e9bd7870a0519467bdaab8a44592373be5759fa901f74d9846edb12b9f4982bf95c64
   languageName: node
   linkType: hard
 
-"neo4j-driver-core@npm:5.22.0":
-  version: 5.22.0
-  resolution: "neo4j-driver-core@npm:5.22.0"
-  checksum: 10c0/a928f29601e11dbcd8cfafa212adde98b15d2d2dec5b7f6009f6fa9a321e7d7250a83e7857f5024aba9981264e144938c323eb21d5176bc7ccb5434882bb9447
+"neo4j-driver-core@npm:5.23.0":
+  version: 5.23.0
+  resolution: "neo4j-driver-core@npm:5.23.0"
+  checksum: 10c0/cb2ced20bd97640c3435af2ba870f3a9d13d4ae94a07801f225e6bf341193984d8deb43b8251a0959195b1a7c24abbd24442e65968e419a13e2f8617c8dfdcc5
   languageName: node
   linkType: hard
 
 "neo4j-driver@npm:^5.17.0, neo4j-driver@npm:^5.9.2":
-  version: 5.22.0
-  resolution: "neo4j-driver@npm:5.22.0"
+  version: 5.23.0
+  resolution: "neo4j-driver@npm:5.23.0"
   dependencies:
-    neo4j-driver-bolt-connection: "npm:5.22.0"
-    neo4j-driver-core: "npm:5.22.0"
+    neo4j-driver-bolt-connection: "npm:5.23.0"
+    neo4j-driver-core: "npm:5.23.0"
     rxjs: "npm:^7.8.1"
-  checksum: 10c0/39a30392d57876c933b818edd8c895e51a60703c5edeec9f945555586fe31658e6f5492f7149ecba828b679aaf6dcf383cb0b3cce2e2fa171ab7cc6b5f7222bf
+  checksum: 10c0/ff5a8a96dfa699f5fc897b4153544c6331302277cd69955215cbc4aa7e957f1d84afa4206201712b134f49889a72863d82f4042003822ab77feb7641e876906d
   languageName: node
   linkType: hard
 
