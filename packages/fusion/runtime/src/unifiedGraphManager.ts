@@ -77,7 +77,7 @@ export class UnifiedGraphManager<TContext> {
   private inContextSDK;
   private initialUnifiedGraph$: MaybePromise<true>;
   private disposableStack = new AsyncDisposableStack();
-  private _transportEntryMap: Record<string, TransportEntry>;
+  _transportEntryMap: Record<string, TransportEntry>;
   private _transportExecutorStack: AsyncDisposableStack;
   constructor(private opts: UnifiedGraphManagerOptions<TContext>) {
     this.handleUnifiedGraph = opts.handleUnifiedGraph || handleFederationSupergraph;
@@ -183,10 +183,6 @@ export class UnifiedGraphManager<TContext> {
         return cleanupJob$ || true;
       },
     );
-  }
-
-  public getTransportEntryMap() {
-    return mapMaybePromise(this.ensureUnifiedGraph(), () => this._transportEntryMap);
   }
 
   public getUnifiedGraph() {

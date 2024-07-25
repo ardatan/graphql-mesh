@@ -1,7 +1,7 @@
 import { loggerForExecutionRequest } from '@graphql-mesh/fusion-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import type { MeshServePlugin } from './types';
-import { requestIdMap } from './useRequestId';
+import { requestIdMap } from './useRequestId.js';
 
 export function useFetchDebug<TContext>({ logger }: { logger: Logger }): MeshServePlugin<TContext> {
   return {
