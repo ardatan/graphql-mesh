@@ -64,7 +64,7 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn bundle
-      - name: mesh-serve tags
+      - name: get mesh-serve tags
         uses: actions/github-script@v7
         id: mesh-serve-tags
         with:
@@ -76,10 +76,10 @@ jobs:
               core.setFailed(`Missing major or minor in version "${version}"!`);
             }
             return `latest,${major},${major}.${minor},${version}`;
+      - name: set mesh-serve tags
+        run: echo TAGS_MESH_SERVE="${{ steps.mesh-serve-tags.outputs.result }}" >> $GITHUB_ENV
       - name: bake and push
         uses: docker/bake-action@v5
-        env:
-          TAGS_MESH_SERVE: ${{ steps.mesh-serve-tags.outputs.result }}
         with:
           set: |
             *.cache-from=type=gha
