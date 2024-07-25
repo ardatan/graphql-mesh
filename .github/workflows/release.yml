@@ -43,7 +43,7 @@ jobs:
         id: ver-mesh-serve
         with:
           script: |
-            const publishedPackages = ${{ needs.stable.outputs.publishedPackages }}";
+            const publishedPackages = ${{ needs.stable.outputs.publishedPackages }};
             const meshServe = publishedPackages.find((p) => p.name === '@graphql-mesh/serve-cli');
             if (!meshServe) {
               return core.setFailed('@graphql-mesh/serve-cli was not published!');
