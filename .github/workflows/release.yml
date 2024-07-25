@@ -79,7 +79,7 @@ jobs:
       - name: bake and push
         uses: docker/bake-action@v5
         env:
-          MESH_SERVE_TAGS: ${{ steps.mesh-serve-tags.outputs.result }}
+          TAGS_MESH_SERVE: ${{ steps.mesh-serve-tags.outputs.result }}
         with:
           set: |
             *.cache-from=type=gha
