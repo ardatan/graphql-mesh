@@ -77,7 +77,7 @@ jobs:
             }
             return `latest,${major},${major}.${minor},${version}`;
       - name: set mesh-serve tags
-        run: echo TAGS_MESH_SERVE="${{ steps.mesh-serve-tags.outputs.result }}" >> $GITHUB_ENV
+        run: echo MESH_SERVE_TAGS="${{ steps.mesh-serve-tags.outputs.result }}" >> $GITHUB_ENV
       - name: bake and push
         uses: docker/bake-action@v5
         with:
