@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  stable:
+  npm:
     permissions:
       contents: read
       id-token: write
@@ -23,7 +23,7 @@ jobs:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
-  docker:
+  ghcr:
     runs-on: ubuntu-latest
     # TODO: uncomment once working
     # needs: [stable]
