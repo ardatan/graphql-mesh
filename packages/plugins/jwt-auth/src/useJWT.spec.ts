@@ -1,6 +1,6 @@
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import {
   createInlineSigningKeyProvider,
   type JWTExtendContextFields,
