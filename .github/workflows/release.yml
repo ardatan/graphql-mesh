@@ -43,7 +43,9 @@ jobs:
             if (!major || !minor) {
               return core.setFailed(`Unknown major or minor in version "${version}"!`);
             }
-            return { version, tags: `latest,${major},${major}.${minor},${version}` };
+            const r = { version, tags: `latest,${major},${major}.${minor},${version}` };
+            console.log(r);
+            return r;
       - name: checkout
         uses: actions/checkout@v4
       - name: set up docker buildx

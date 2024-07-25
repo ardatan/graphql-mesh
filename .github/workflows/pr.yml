@@ -41,6 +41,7 @@ jobs:
             if (!meshServe) {
               return core.setFailed('@graphql-mesh/serve-cli was not published!');
             }
+            console.log(meshServe.version);
             return meshServe.version;
       - name: checkout
         uses: actions/checkout@v4
