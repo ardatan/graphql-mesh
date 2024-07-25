@@ -36,7 +36,8 @@
   "typings": "dist/typings/index.d.ts",
   "scripts": {
     "bundle": "(rm -rf bundle || true) && rollup -c && yarn inject-version",
-    "inject-version": "tsx scripts/inject-version.ts"
+    "inject-version": "tsx scripts/inject-version.ts",
+    "print-version": "tsx scripts/print-version.ts"
   },
   "peerDependencies": {
     "@parcel/watcher": "^2.1.0",

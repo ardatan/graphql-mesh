@@ -25,9 +25,17 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
+    # TODO: uncomment once working
+    # needs: [stable]
     steps:
+      - name: latest version tags
+        id: latest-version-tags
+        run: |
+          echo "serve-cli=$(git tag -l --sort=-creatordate "@graphql-mesh/serve-cli@*" | head -n 1)" >> "$GITHUB_OUTPUT"
       - name: checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.latest-version-tags.outputs.serve-cli }}
       - name: set up docker buildx
         uses: docker/setup-buildx-action@v3
       - name: log in to ghcr
@@ -36,7 +44,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: setup env
+      - name: set up env
         uses: the-guild-org/shared-config/setup@main
         with:
           nodeVersion: 18
@@ -47,12 +55,12 @@ jobs:
         run: yarn bundle
       - name: version
         run: |
-          export SHORT_REF="$(git rev-parse --short HEAD)"
-          echo SHORT_REF="$SHORT_REF" >> $GITHUB_ENV
+          # shared tags
           export REF_NAME=$(echo "${{ github.head_ref || github.ref_name }}" | sed 's/\//_/g')
-          export VERSIONS="$SHORT_REF,$REF_NAME"
-          ${{ github.ref == 'refs/heads/master' && 'export VERSIONS="$VERSIONS,latest"' || '' }}
-          echo VERSIONS="$VERSIONS" >> $GITHUB_ENV
+          export SHORT_REF="$(git rev-parse --short HEAD)"
+          echo TAGS="latest,$REF_NAME,$SHORT_REF" >> $GITHUB_ENV
+          # image specific tags
+          echo MESH_SERVE_TAGS="$(yarn workspace @graphql-mesh/serve-cli print-version --split)" >> $GITHUB_ENV
       - name: bake and push
         uses: docker/bake-action@v5
         with:
@@ -60,13 +68,3 @@ jobs:
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
           push: true
-      - name: comment on pr
-        if: github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: Docker Images
-          message: |
-            Published images for this PR are available at:
-            ```
-            ghcr.io/ardatan/mesh-serve:${{ env.SHORT_REF  }}
-            ```

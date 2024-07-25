@@ -2,14 +2,19 @@ group "default" {
   targets = ["mesh-serve"]
 }
 
-variable "VERSIONS" {
+variable "TAGS" {
   default = "dev"
 }
+
+variable "MESH_SERVE_TAGS" {}
 
 target "mesh-serve" {
   context = "packages/serve-cli"
   platforms = ["linux/amd64", "linux/arm64"]
-  tags = formatlist("ghcr.io/ardatan/mesh-serve:%s", split(",", VERSIONS))
+  tags = flatten([
+    formatlist("ghcr.io/ardatan/mesh-serve:%s", split(",", TAGS)),
+    formatlist("ghcr.io/ardatan/mesh-serve:%s", split(",", MESH_SERVE_TAGS))
+  ])
   annotations = [
     "org.opencontainers.image.title=\"Mesh Serve\"",
     "org.opencontainers.image.description=\"GraphQL Gateway by The Guild for anything-to-GraphQL\"",
