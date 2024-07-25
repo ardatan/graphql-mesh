@@ -11812,7 +11812,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.99.3"
     "@graphql-mesh/serve-runtime": "npm:^0.5.4"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.66.0"
+    wrangler: "npm:3.67.0"
   languageName: unknown
   linkType: soft
 
@@ -14131,7 +14131,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.5.4"
     "@omnigraph/json-schema": "npm:^0.102.4"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.66.0"
+    wrangler: "npm:3.67.0"
   languageName: unknown
   linkType: soft
 
@@ -14585,7 +14585,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.102.4"
     "@graphql-mesh/plugin-response-cache": "npm:0.99.3"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.66.0"
+    wrangler: "npm:3.67.0"
   languageName: unknown
   linkType: soft
 
@@ -32455,7 +32455,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.99.3"
     "@graphql-mesh/plugin-response-cache": "npm:0.99.3"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.66.0"
+    wrangler: "npm:3.67.0"
   languageName: unknown
   linkType: soft
 
@@ -36171,9 +36171,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.66.0":
-  version: 3.66.0
-  resolution: "wrangler@npm:3.66.0"
+"wrangler@npm:3.67.0":
+  version: 3.67.0
+  resolution: "wrangler@npm:3.67.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
@@ -36204,7 +36204,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/5c672b157ebc1f6ff1c64bd540e8008b0794bf5c6406b4b8613b0d3a707d91ef07da66446d3256485333884e307d407d0486af3ad9d862d32df3b445641e51a9
+  checksum: 10c0/935d4d23fce4da0cdc0da58a012ec2d4ac7dcaa672a9f991f72e6947a91ace2611586885ff6636cdc4969c539843dcf7d2e63de5268872fdcc91ccd1dc96937f
   languageName: node
   linkType: hard
 
