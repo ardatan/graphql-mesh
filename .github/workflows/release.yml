@@ -28,14 +28,16 @@ jobs:
     # TODO: uncomment once working
     # needs: [stable]
     steps:
-      - name: latest version tags
-        id: latest-version-tags
-        run: |
-          echo "serve-cli=$(git tag -l --sort=-creatordate "@graphql-mesh/serve-cli@*" | head -n 1)" >> "$GITHUB_OUTPUT"
       - name: checkout
         uses: actions/checkout@v4
+      - name: get latest version tag
+        id: latest-version-tag
+        run: |
+          echo "serve-cli=$(git tag -l --sort=-creatordate "@graphql-mesh/serve-cli@*" | head -n 1)" >> "$GITHUB_OUTPUT"
+      - name: checkout latest version tag
+        uses: actions/checkout@v4
         with:
-          ref: ${{ steps.latest-version-tags.outputs.serve-cli }}
+          ref: ${{ steps.latest-version-tag.outputs.serve-cli }}
       - name: set up docker buildx
         uses: docker/setup-buildx-action@v3
       - name: log in to ghcr
