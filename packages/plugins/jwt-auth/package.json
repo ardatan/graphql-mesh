@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-yoga/plugin-jwt": "3.0.0"
+    "@graphql-yoga/plugin-jwt": "3.0.1"
   },
   "devDependencies": {
     "@graphql-mesh/serve-runtime": "^0.5.4",
