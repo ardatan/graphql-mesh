@@ -31,6 +31,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           fetch-tags: true
       - name: get latest version tag
         id: latest-version-tag
