@@ -10,7 +10,12 @@ import type {
   TransportGetSubgraphExecutorOptions,
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
-import { iterateAsync, mapMaybePromise, requestIdByRequest } from '@graphql-mesh/utils';
+import {
+  iterateAsync,
+  loggerForExecutionRequest,
+  mapMaybePromise,
+  requestIdByRequest,
+} from '@graphql-mesh/utils';
 import {
   isAsyncIterable,
   isDocumentNode,
@@ -198,8 +203,6 @@ declare module 'graphql' {
     executionRequest?: ExecutionRequest;
   }
 }
-
-export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>();
 
 /**
  * This function wraps the executor created by the transport package

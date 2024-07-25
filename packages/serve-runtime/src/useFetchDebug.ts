@@ -1,4 +1,3 @@
-import { loggerForExecutionRequest } from '@graphql-mesh/fusion-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import type { MeshServePlugin } from './types';
 

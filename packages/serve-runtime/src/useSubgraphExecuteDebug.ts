@@ -1,5 +1,4 @@
 import { isAsyncIterable } from 'graphql-yoga';
-import { loggerForExecutionRequest } from '@graphql-mesh/fusion-runtime';
 import { defaultPrintFn } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
 import type { MeshServePlugin } from './types';
