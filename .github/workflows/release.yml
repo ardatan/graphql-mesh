@@ -9,6 +9,8 @@ on:
 jobs:
   stable:
     runs-on: ubuntu-latest
+    outputs:
+      publishedPackages: string
     steps:
       - name: set output
         uses: actions/github-script@v7
