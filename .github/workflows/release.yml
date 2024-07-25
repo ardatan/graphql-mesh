@@ -64,12 +64,12 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn bundle
-      - name: set shared tags
+      - name: shared tags
         run: |
           export REF_NAME="$(echo "${{ github.head_ref || github.ref_name }}" | sed 's/\//_/g')"
           export SHORT_REF="$(git rev-parse --short HEAD)"
           echo TAGS="latest,$REF_NAME,$SHORT_REF" >> $GITHUB_ENV
-      - name: get mesh serve tags
+      - name: mesh-serve tags
         uses: actions/github-script@v7
         id: mesh-serve-tags
         with:
@@ -78,7 +78,7 @@ jobs:
             const { TAGS } = process.env;
             const { version } = require('./packages/serve-cli/package.json');
             const [major, minor] = String(version).split('.');
-            return `latest,${major},${major}.${minor},${version},${TAGS}`;
+            return `${major},${major}.${minor},${version},${TAGS}`;
       - name: bake and push
         uses: docker/bake-action@v5
         env:
