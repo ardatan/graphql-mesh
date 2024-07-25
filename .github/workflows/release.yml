@@ -65,11 +65,9 @@ jobs:
         run: yarn bundle
       - name: version
         run: |
-          # shared tags
-          export REF_NAME=$(echo "${{ github.head_ref || github.ref_name }}" | sed 's/\//_/g')
+          export REF_NAME="$(echo "${{ github.head_ref || github.ref_name }}" | sed 's/\//_/g')"
           export SHORT_REF="$(git rev-parse --short HEAD)"
           echo TAGS="latest,$REF_NAME,$SHORT_REF" >> $GITHUB_ENV
-          # image specific tags
           echo MESH_SERVE_TAGS="$(yarn workspace @graphql-mesh/serve-cli print-version --split)" >> $GITHUB_ENV
       - name: bake and push
         uses: docker/bake-action@v5
