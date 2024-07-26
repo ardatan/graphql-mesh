@@ -1,13 +1,15 @@
-import type {
-  AnyTypeComposer,
-  ComposeInputType,
-  Directive,
-  InputTypeComposer,
+import {
+  InterfaceTypeComposer,
+  isSomeInputTypeComposer,
+  ListComposer,
   ObjectTypeComposer,
-  SchemaComposer,
-  UnionTypeComposer,
+  type AnyTypeComposer,
+  type ComposeInputType,
+  type Directive,
+  type InputTypeComposer,
+  type SchemaComposer,
+  type UnionTypeComposer,
 } from 'graphql-compose';
-import { isSomeInputTypeComposer, ListComposer } from 'graphql-compose';
 import type { Logger } from '@graphql-mesh/types';
 import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { ResolveRootDirective, StatusCodeTypeNameDirective } from './directives.js';
@@ -106,6 +108,7 @@ export function getUnionTypeComposers({
       const statusCode = statusCodeOneOfIndexMapEntries.find(
         ([statusCode, index]) => index.toString() === outputTypeComposerIndex.toString(),
       )?.[0];
+      const a: InterfaceTypeComposer<any> = outputTypeComposer as any;
       if ('getFields' in outputTypeComposer) {
         if (statusCode != null) {
           schemaComposer.addDirective(StatusCodeTypeNameDirective);
@@ -118,7 +121,15 @@ export function getUnionTypeComposers({
             },
           });
         }
-        (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(outputTypeComposer);
+        if (outputTypeComposer instanceof InterfaceTypeComposer) {
+          schemaComposer.forEach(tc => {
+            if (tc instanceof ObjectTypeComposer && tc.hasInterface(a)) {
+              (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(tc);
+            }
+          });
+        } else {
+          (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(outputTypeComposer);
+        }
       } else {
         for (const possibleType of outputTypeComposer.getTypes()) {
           (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(possibleType);
