@@ -1,5 +1,24 @@
 # @graphql-mesh/utils
 
+## 0.99.4
+
+### Patch Changes
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add timestamp to log messages
+
+  ```
+  [2021-09-29T14:00:00.000Z] XXXX
+  ```
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Prevent logger to have the same log prefixes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.4
+
 ## 0.99.3
 
 ### Patch Changes

@@ -1,5 +1,50 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.5
+
+### Patch Changes
+
+- [#7366](https://github.com/ardatan/graphql-mesh/pull/7366)
+  [`ec31e60`](https://github.com/ardatan/graphql-mesh/commit/ec31e608c271f14554fcef5519a12c4366e87f38)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Removed dependency
+    [`@whatwg-node/server@^0.9.34` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.34)
+    (from `dependencies`)
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the issue when you go to landing page then
+  GraphiQL, queries are not executed
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - More verbose debug logs for HTTP fetch calls and
+  subgraph requests
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Request ID;
+
+  If user provides a request id with `x-request-id` header, it will be used as a request id
+  otherwise Mesh generates a random UUID as a request id. Then it will return the request id in the
+  response headers with `x-request-id` header.
+
+  This `x-request-id` is also available in upstream headers as `request-id` for the upstream
+  services to use.
+
+  This request id will also be added to the logs.
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/fusion-runtime@0.5.5
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/transport-http@0.3.4
+  - @graphql-mesh/plugin-hive@0.99.4
+  - @graphql-mesh/transport-common@0.4.4
+
 ## 0.5.4
 
 ### Patch Changes

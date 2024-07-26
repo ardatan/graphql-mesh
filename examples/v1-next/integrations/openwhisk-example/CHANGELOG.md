@@ -1,5 +1,17 @@
 # openwhisk-example
 
+## 0.14.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ec31e60`](https://github.com/ardatan/graphql-mesh/commit/ec31e608c271f14554fcef5519a12c4366e87f38),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/serve-runtime@0.5.5
+  - @graphql-mesh/serve-cli@0.8.4
+
 ## 0.14.3
 
 ### Patch Changes

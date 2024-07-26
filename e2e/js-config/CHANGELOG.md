@@ -1,5 +1,13 @@
 # @e2e/js-config
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.8.4
+  - @graphql-mesh/compose-cli@0.6.3
+
 ## 0.1.3
 
 ### Patch Changes

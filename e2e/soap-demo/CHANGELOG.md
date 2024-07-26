@@ -1,5 +1,14 @@
 # @e2e/soap-demo
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.8.4
+  - @graphql-mesh/compose-cli@0.6.3
+  - @omnigraph/soap@0.101.4
+
 ## 0.1.3
 
 ### Patch Changes
