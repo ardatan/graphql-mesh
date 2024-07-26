@@ -6,7 +6,7 @@
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
   "ignore": ["website"],
-  "changelog": ["@changesets/changelog-github", { "repo": "urigo/graphql-mesh" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "ardatan/graphql-mesh" }],
   "snapshot": {
     "useCalculatedVersion": true,
     "prereleaseTemplate": "{tag}-{datetime}-{commit}"

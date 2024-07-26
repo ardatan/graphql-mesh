@@ -11,10 +11,10 @@ _Progress of the issue based on the
 [Contributor Workflow](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md#a-typical-contributor-workflow)_
 
 - [ ] 1. The issue provides a reproduction available on
-     [Github](https://github.com/Urigo/graphql-mesh/tree/master/examples/hello-world),
-     [Stackblitz](https://stackblitz.com/github/Urigo/graphql-mesh/tree/master/examples/hello-world)
+     [Github](https://github.com/ardatan/graphql-mesh/tree/master/examples/hello-world),
+     [Stackblitz](https://stackblitz.com/github/ardatan/graphql-mesh/tree/master/examples/hello-world)
      or
-     [CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/hello-world)
+     [CodeSandbox](https://codesandbox.io/s/github/ardatan/graphql-mesh/tree/master/examples/hello-world)
 
 > Make sure to fork this template and run `yarn generate` in the terminal.
 >

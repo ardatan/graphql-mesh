@@ -51,7 +51,7 @@ function Hero() {
           </ButtonLink>
           <ButtonLink
             className="flex flex-row gap-2 items-center"
-            href="https://github.com/urigo/graphql-mesh"
+            href="https://github.com/ardatan/graphql-mesh"
           >
             <FiGithub /> GitHub
           </ButtonLink>
