@@ -5216,7 +5216,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-deduplicate-request@workspace:packages/plugins/deduplicate-request"
   dependencies:
-    "@whatwg-node/fetch": "npm:0.9.18"
+    "@whatwg-node/fetch": "npm:0.9.19"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.3
     "@graphql-mesh/utils": ^0.99.3
@@ -8698,7 +8698,7 @@ __metadata:
     "@graphql-tools/delegate": "npm:^10.0.16"
     "@graphql-tools/utils": "npm:10.3.2"
     "@omnigraph/json-schema": "npm:^0.102.4"
-    "@whatwg-node/fetch": "npm:0.9.18"
+    "@whatwg-node/fetch": "npm:0.9.19"
     change-case: "npm:^4.1.2"
     fets: "npm:0.8.1"
     graphql-yoga: "npm:5.6.2"
@@ -12050,13 +12050,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/fetch@npm:0.9.18, @whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.18, @whatwg-node/fetch@npm:^0.9.4":
+"@whatwg-node/fetch@npm:0.9.18":
   version: 0.9.18
   resolution: "@whatwg-node/fetch@npm:0.9.18"
   dependencies:
     "@whatwg-node/node-fetch": "npm:^0.5.7"
     urlpattern-polyfill: "npm:^10.0.0"
   checksum: 10c0/53fbbdb9c8b99d5ac550c80c4523e0e574c311fca55854c81e26949a4269638a36688cc485220f65845c9c5f10251f474b4982d594f063859af7b44316775a64
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/fetch@npm:0.9.19, @whatwg-node/fetch@npm:^0.9.0, @whatwg-node/fetch@npm:^0.9.13, @whatwg-node/fetch@npm:^0.9.14, @whatwg-node/fetch@npm:^0.9.15, @whatwg-node/fetch@npm:^0.9.17, @whatwg-node/fetch@npm:^0.9.18, @whatwg-node/fetch@npm:^0.9.19, @whatwg-node/fetch@npm:^0.9.4":
+  version: 0.9.19
+  resolution: "@whatwg-node/fetch@npm:0.9.19"
+  dependencies:
+    "@whatwg-node/node-fetch": "npm:^0.5.16"
+    urlpattern-polyfill: "npm:^10.0.0"
+  checksum: 10c0/df446e2348c1ac795f6dd241f5c4c89dc303bfcc44ab27fa85c959d40b542deb6335d19bf5ad8271a40c1d2be66987932bfe83a7fce11831a33dbd97c7d5711e
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/node-fetch@npm:^0.5.16":
+  version: 0.5.16
+  resolution: "@whatwg-node/node-fetch@npm:0.5.16"
+  dependencies:
+    "@kamilkisiela/fast-url-parser": "npm:^1.1.4"
+    "@whatwg-node/events": "npm:^0.1.0"
+    busboy: "npm:^1.6.0"
+    fast-querystring: "npm:^1.1.1"
+    tslib: "npm:^2.6.3"
+  checksum: 10c0/75880677e74eba063239b38ccdaa43acbd6625ca91c018b5b28278a56bc2938319e2cf467e76c24ab4d9040ff3052bb61b865fafae48534fd31d5695214ba457
   languageName: node
   linkType: hard
 
@@ -12086,12 +12109,12 @@ __metadata:
   linkType: hard
 
 "@whatwg-node/server@npm:^0.9.15, @whatwg-node/server@npm:^0.9.34, @whatwg-node/server@npm:^0.9.41":
-  version: 0.9.43
-  resolution: "@whatwg-node/server@npm:0.9.43"
+  version: 0.9.44
+  resolution: "@whatwg-node/server@npm:0.9.44"
   dependencies:
-    "@whatwg-node/fetch": "npm:^0.9.17"
+    "@whatwg-node/fetch": "npm:^0.9.19"
     tslib: "npm:^2.6.3"
-  checksum: 10c0/6e4e33b8dc199eae0b625490196c397037a15bc33700008102f7d343df081957e14c53e894f29b26857c9ba06ef921371ca63dbef5992300163be8eea206c452
+  checksum: 10c0/e2a2c446b28eabb0d93620f2bebc85e3c38538aee5c9b347f66f734b036c821813e73e07dba87fc6cca398257c0396f39b6b3b9ec9af623da8e452fd1cc33491
   languageName: node
   linkType: hard
 
