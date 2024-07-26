@@ -1,6 +1,5 @@
 {
   "name": "@examples/mongoose-example",
-  "version": "0.15.4",
   "license": "MIT",
   "private": true,
   "scripts": {

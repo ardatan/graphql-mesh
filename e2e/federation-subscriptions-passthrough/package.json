@@ -1,6 +1,5 @@
 {
   "name": "@e2e/federation-subscriptions-passthrough",
-  "version": "0.0.0",
   "private": true,
   "devDependencies": {
     "@apollo/rover": "^0.25.0",

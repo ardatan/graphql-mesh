@@ -1,6 +1,5 @@
 {
   "name": "@examples/openapi-subscriptions",
-  "version": "0.13.5",
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",

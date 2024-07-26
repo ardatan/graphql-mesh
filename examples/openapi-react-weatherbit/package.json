@@ -1,6 +1,5 @@
 {
   "name": "@examples/openapi-react-weatherbit",
-  "version": "0.13.4",
   "private": true,
   "scripts": {
     "build": "vite build",

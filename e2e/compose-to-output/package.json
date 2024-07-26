@@ -1,6 +1,5 @@
 {
   "name": "@e2e/compose-to-output",
-  "version": "0.1.4",
   "type": "module",
   "private": true,
   "dependencies": {

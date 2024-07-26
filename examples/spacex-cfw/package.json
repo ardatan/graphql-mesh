@@ -1,6 +1,5 @@
 {
   "name": "@examples/spacex-cfw",
-  "version": "0.10.4",
   "private": true,
   "dependencies": {
     "@envelop/depth-limit": "4.0.0",

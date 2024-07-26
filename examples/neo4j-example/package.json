@@ -1,6 +1,5 @@
 {
   "name": "@examples/neo4j-example",
-  "version": "0.18.4",
   "license": "MIT",
   "private": true,
   "scripts": {

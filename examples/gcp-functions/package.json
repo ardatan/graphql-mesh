@@ -1,6 +1,5 @@
 {
   "name": "@examples/gcp-functions",
-  "version": "0.13.5",
   "private": true,
   "main": "dist/index.js",
   "scripts": {

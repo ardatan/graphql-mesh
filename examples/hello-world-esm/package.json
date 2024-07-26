@@ -1,6 +1,5 @@
 {
   "name": "@examples/hello-world-esm",
-  "version": "0.13.5",
   "type": "module",
   "license": "MIT",
   "private": true,

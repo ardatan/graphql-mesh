@@ -1,6 +1,5 @@
 {
   "name": "@examples-v1-next/cfw-spacex",
-  "version": "0.11.5",
   "private": true,
   "scripts": {
     "start": "wrangler dev"

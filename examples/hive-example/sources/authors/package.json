@@ -1,6 +1,5 @@
 {
   "name": "@examples/hive-example-sources-authors",
-  "version": "0.13.5",
   "description": "Authors Service",
   "private": true,
   "scripts": {

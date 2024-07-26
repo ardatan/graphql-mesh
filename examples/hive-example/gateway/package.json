@@ -1,6 +1,5 @@
 {
   "name": "@examples/hive-example-gateway",
-  "version": "0.13.5",
   "description": "Gateway Example",
   "private": true,
   "scripts": {

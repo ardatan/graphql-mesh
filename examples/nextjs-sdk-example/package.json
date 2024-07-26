@@ -1,6 +1,5 @@
 {
   "name": "@examples/nextjs-sdk-example",
-  "version": "0.13.5",
   "private": true,
   "scripts": {
     "build": "next build",

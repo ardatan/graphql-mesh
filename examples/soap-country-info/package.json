@@ -1,6 +1,5 @@
 {
   "name": "@examples/soap-country-info",
-  "version": "0.17.4",
   "license": "MIT",
   "private": true,
   "scripts": {

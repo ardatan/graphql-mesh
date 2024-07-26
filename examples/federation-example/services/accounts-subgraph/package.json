@@ -1,6 +1,5 @@
 {
   "name": "@examples/federation-example-services-accounts-subgraph",
-  "version": "0.0.0",
   "license": "MIT",
   "private": true,
   "scripts": {

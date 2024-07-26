@@ -1,6 +1,5 @@
 {
   "name": "@examples/federation-example-gateway-supergraph",
-  "version": "0.7.4",
   "license": "MIT",
   "private": true,
   "dependencies": {

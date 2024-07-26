@@ -1,6 +1,5 @@
 {
   "name": "@examples/hive-example-sources-books",
-  "version": "0.13.5",
   "description": "Books Service",
   "private": true,
   "scripts": {

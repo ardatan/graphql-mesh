@@ -1,6 +1,5 @@
 {
   "name": "@examples/federation-example",
-  "version": "0.5.145",
   "license": "MIT",
   "private": true,
   "workspaces": [
