@@ -18,12 +18,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: the-guild-org/shared-config/setup@v1
         name: setup env
         with:
-          nodeVersion: 18
-          packageManager: yarn
-          packageManagerVersion: modern
+          node-version: 18
 
       - uses: the-guild-org/shared-config/website-cf@main
         name: build and deploy website

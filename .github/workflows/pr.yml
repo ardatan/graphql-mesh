@@ -54,10 +54,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: set up env
-        uses: the-guild-org/shared-config/setup@main
+        uses: the-guild-org/shared-config/setup@v1
         with:
-          nodeVersion: 18
-          packageManagerVersion: modern
+          node-version: 18
       - name: prepare
         run: yarn prebuild
       - name: bundle
