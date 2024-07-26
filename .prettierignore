@@ -12,3 +12,4 @@ __generated__/
 CHANGELOG.md
 Dockerfile
 bundle/
+examples/v1-next/integrations/fastify/supergraph.graphql
