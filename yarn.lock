@@ -20553,9 +20553,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-mesh-monorepo@workspace:.":
+"graphql-mesh@workspace:.":
   version: 0.0.0-use.local
-  resolution: "graphql-mesh-monorepo@workspace:."
+  resolution: "graphql-mesh@workspace:."
   dependencies:
     "@ardatan/graphql-to-config-schema": "npm:0.1.25"
     "@babel/core": "npm:7.24.9"

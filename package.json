@@ -1,6 +1,5 @@
 {
-  "name": "graphql-mesh-monorepo",
-  "version": "0.2.15",
+  "name": "graphql-mesh",
   "license": "MIT",
   "private": true,
   "workspaces": {
