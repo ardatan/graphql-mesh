@@ -1,6 +1,5 @@
 {
-  "name": "grpc-example",
-  "version": "0.17.4",
+  "name": "@examples/grpc-example",
   "author": "Simon Liang",
   "license": "MIT",
   "private": true,

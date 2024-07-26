@@ -1,6 +1,5 @@
 {
-  "name": "chinook",
-  "version": "0.16.6",
+  "name": "@examples/sqlite-chinook",
   "license": "MIT",
   "private": true,
   "scripts": {

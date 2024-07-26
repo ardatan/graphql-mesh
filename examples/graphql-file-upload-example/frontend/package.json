@@ -1,6 +1,5 @@
 {
-  "name": "frontend",
-  "version": "0.1.1",
+  "name": "@examples/graphql-file-upload-example-frontend",
   "private": true,
   "scripts": {
     "build": "react-scripts build",

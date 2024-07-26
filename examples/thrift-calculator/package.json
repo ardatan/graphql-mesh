@@ -1,6 +1,5 @@
 {
-  "name": "thrift-calculator",
-  "version": "0.17.4",
+  "name": "@examples/thrift-calculator",
   "license": "MIT",
   "private": true,
   "main": "build/main.js",

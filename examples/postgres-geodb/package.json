@@ -1,6 +1,5 @@
 {
-  "name": "postgres-geodb-example",
-  "version": "0.15.4",
+  "name": "@examples/postgres-geodb",
   "license": "MIT",
   "private": true,
   "scripts": {

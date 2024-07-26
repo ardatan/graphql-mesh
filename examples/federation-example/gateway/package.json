@@ -1,6 +1,5 @@
 {
-  "name": "federation-gateway",
-  "version": "0.10.4",
+  "name": "@examples/federation-example-gateway",
   "license": "MIT",
   "private": true,
   "dependencies": {

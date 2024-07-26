@@ -1,6 +1,5 @@
 {
-  "name": "location-weather-example",
-  "version": "0.21.5",
+  "name": "@examples-v1-next/openapi-location-weather",
   "license": "MIT",
   "private": true,
   "scripts": {

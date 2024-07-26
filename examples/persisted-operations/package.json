@@ -1,6 +1,5 @@
 {
-  "name": "example-persisted-operations",
-  "version": "0.6.5",
+  "name": "@examples/persisted-operations",
   "license": "MIT",
   "private": true,
   "scripts": {

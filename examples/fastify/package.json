@@ -1,6 +1,5 @@
 {
-  "name": "example-fastify",
-  "version": "0.10.4",
+  "name": "@examples/fastify",
   "private": true,
   "scripts": {
     "build": "mesh build",

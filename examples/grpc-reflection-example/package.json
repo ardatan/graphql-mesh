@@ -1,6 +1,5 @@
 {
-  "name": "grpc-reflection-example",
-  "version": "0.17.4",
+  "name": "@examples/grpc-reflection-example",
   "author": "Simon Liang",
   "license": "MIT",
   "private": true,

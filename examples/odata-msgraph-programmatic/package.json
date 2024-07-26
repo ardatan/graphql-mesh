@@ -1,6 +1,5 @@
 {
-  "name": "odata-msgraph-programmatic",
-  "version": "0.12.2",
+  "name": "@examples/odata-msgraph-programmatic",
   "type": "module",
   "license": "MIT",
   "private": true,

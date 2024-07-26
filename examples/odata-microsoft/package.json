@@ -1,6 +1,5 @@
 {
-  "name": "odata-microsoft-graph-example",
-  "version": "0.18.2",
+  "name": "@examples/odata-microsoft",
   "license": "MIT",
   "private": true,
   "scripts": {

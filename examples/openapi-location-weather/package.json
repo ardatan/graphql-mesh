@@ -1,6 +1,5 @@
 {
-  "name": "typescript-location-weather-example",
-  "version": "0.18.5",
+  "name": "@examples/openapi-location-weather",
   "license": "MIT",
   "private": true,
   "scripts": {

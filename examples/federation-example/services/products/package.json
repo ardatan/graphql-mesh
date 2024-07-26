@@ -1,6 +1,5 @@
 {
-  "name": "products",
-  "version": "0.0.14",
+  "name": "@examples/federation-example-services-products",
   "license": "MIT",
   "private": true,
   "scripts": {

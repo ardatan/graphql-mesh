@@ -1,6 +1,5 @@
 {
   "name": "@e2e/utils",
-  "version": "0.0.0",
   "type": "module",
   "private": true,
   "dependencies": {

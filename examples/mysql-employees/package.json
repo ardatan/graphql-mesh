@@ -1,6 +1,5 @@
 {
-  "name": "mysql-employees",
-  "version": "0.16.4",
+  "name": "@examples/mysql-employees",
   "license": "MIT",
   "private": true,
   "scripts": {

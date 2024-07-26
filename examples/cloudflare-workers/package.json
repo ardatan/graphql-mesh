@@ -1,6 +1,5 @@
 {
-  "name": "cloudflare-workers",
-  "version": "0.13.5",
+  "name": "@examples/cloudflare-workers",
   "private": true,
   "dependencies": {
     "@graphql-mesh/cache-cfw-kv": "0.99.4",

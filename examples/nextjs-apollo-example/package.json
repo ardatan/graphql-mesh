@@ -1,6 +1,5 @@
 {
-  "name": "nextjs-apollo-example",
-  "version": "0.14.5",
+  "name": "@examples/nextjs-apollo-example",
   "private": true,
   "scripts": {
     "build": "next build",

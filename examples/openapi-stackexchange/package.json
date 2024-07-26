@@ -1,6 +1,5 @@
 {
-  "name": "openapi-stackexchange",
-  "version": "0.19.5",
+  "name": "@examples/openapi-stackexchange",
   "license": "MIT",
   "private": true,
   "scripts": {

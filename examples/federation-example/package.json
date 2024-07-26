@@ -1,6 +1,5 @@
 {
-  "name": "federation-handler-example",
-  "version": "0.5.145",
+  "name": "@examples/federation-example",
   "license": "MIT",
   "private": true,
   "workspaces": [

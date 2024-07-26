@@ -5,7 +5,7 @@
   "access": "restricted",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["website"],
+  "ignore": ["website", "@e2e/*", "@examples/*", "@examples-v1-next/*"],
   "changelog": ["@changesets/changelog-github", { "repo": "ardatan/graphql-mesh" }],
   "snapshot": {
     "useCalculatedVersion": true,

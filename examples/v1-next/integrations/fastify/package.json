@@ -1,6 +1,5 @@
 {
-  "name": "@v1-next/example-fastify",
-  "version": "0.14.5",
+  "name": "@examples-v1-next/fastify",
   "private": true,
   "scripts": {
     "compose": "node ../../../../packages/compose-cli/dist/cjs/bin.js > supergraph.graphql",

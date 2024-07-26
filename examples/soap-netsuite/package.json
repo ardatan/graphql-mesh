@@ -1,6 +1,5 @@
 {
-  "name": "soap-netsuite",
-  "version": "0.12.4",
+  "name": "@examples/soap-netsuite",
   "license": "MIT",
   "private": true,
   "scripts": {

@@ -1,6 +1,5 @@
 {
-  "name": "hasura-openbrewery-geodb",
-  "version": "0.18.5",
+  "name": "@examples/hasura-openbrewery-geodb",
   "license": "MIT",
   "private": true,
   "scripts": {

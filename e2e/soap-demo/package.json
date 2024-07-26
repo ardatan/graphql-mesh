@@ -1,6 +1,5 @@
 {
   "name": "@e2e/soap-demo",
-  "version": "0.1.4",
   "private": true,
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",

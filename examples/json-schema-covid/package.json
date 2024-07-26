@@ -1,6 +1,5 @@
 {
-  "name": "covid-mesh",
-  "version": "0.18.5",
+  "name": "@examples/json-schema-covid",
   "author": {
     "name": "JYC",
     "url": "https://github.com/jycouet"
