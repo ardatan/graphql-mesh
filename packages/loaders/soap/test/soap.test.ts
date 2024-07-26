@@ -1,5 +1,6 @@
 /* eslint-disable import/no-nodejs-modules */
 import { promises } from 'fs';
+import { globalAgent } from 'https';
 import { join } from 'path';
 import { parse } from 'graphql';
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
@@ -18,6 +19,9 @@ describe('SOAP Loader', () => {
     log: jest.fn(),
     child: () => mockLogger,
   };
+  afterEach(() => {
+    globalAgent.destroy();
+  });
   it('should generate the schema correctly', async () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
