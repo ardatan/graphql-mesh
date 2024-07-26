@@ -1,5 +1,12 @@
 # @graphql-mesh/serve-cli
 
+## 0.8.5
+
+### Patch Changes
+
+- [`3920b8b`](https://github.com/ardatan/graphql-mesh/commit/3920b8bc029bcffedcbd9b12fd2b46edcb380f18)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Trigger release of Docker Image
+
 ## 0.8.4
 
 ### Patch Changes
