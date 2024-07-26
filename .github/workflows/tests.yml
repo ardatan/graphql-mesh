@@ -362,11 +362,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: setup env
-        uses: the-guild-org/shared-config/setup@main
+      - name: set up env
+        uses: the-guild-org/shared-config/setup@v1
         with:
-          nodeVersion: ${{matrix.setup.node-version}}
-          packageManagerVersion: modern
+          node-version: ${{matrix.setup.node-version}}
       - name: prepare
         run: yarn prebuild
       - name: set up docker buildx
