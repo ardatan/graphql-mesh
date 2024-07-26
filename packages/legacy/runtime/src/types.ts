@@ -1,5 +1,4 @@
 import type { DocumentNode, ExecutionResult } from 'graphql';
-import type { Plugin } from '@envelop/core';
 import type {
   GraphQLOperation,
   KeyValueCache,
@@ -7,6 +6,7 @@ import type {
   MeshFetch,
   MeshHandler,
   MeshMerger,
+  MeshPlugin,
   MeshPubSub,
   MeshTransform,
   YamlConfig,
@@ -25,7 +25,7 @@ export type GetMeshOptions = {
   pubsub?: MeshPubSub;
   merger: MeshMerger;
   logger?: Logger;
-  additionalEnvelopPlugins?: Plugin[];
+  additionalEnvelopPlugins?: MeshPlugin<any>[];
   documents?: Source[];
   fetchFn?: MeshFetch;
 };
