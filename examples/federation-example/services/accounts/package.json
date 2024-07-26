@@ -1,5 +1,5 @@
 {
-  "name": "accounts",
+  "name": "@examples/federation-example-services-accounts",
   "version": "0.0.14",
   "license": "MIT",
   "private": true,

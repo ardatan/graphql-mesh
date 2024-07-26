@@ -1,5 +1,5 @@
 {
-  "name": "odata-trippin-example",
+  "name": "@examples/odata-trippin",
   "version": "0.19.2",
   "license": "MIT",
   "private": true,

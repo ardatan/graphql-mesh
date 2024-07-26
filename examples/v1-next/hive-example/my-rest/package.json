@@ -1,5 +1,5 @@
 {
-  "name": "@examples/hive-example-rest-service",
+  "name": "@examples-v1-next/hive-example-my-rest",
   "private": true,
   "scripts": {
     "compose": "yarn mesh-compose --subgraph myrest > typeDefs.graphql",

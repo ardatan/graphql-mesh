@@ -4309,9 +4309,81 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@examples/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway":
+"@examples-v1-next/auth0@workspace:examples/v1-next/auth0":
   version: 0.0.0-use.local
-  resolution: "@examples/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway"
+  resolution: "@examples-v1-next/auth0@workspace:examples/v1-next/auth0"
+  dependencies:
+    "@envelop/auth0": "npm:^6.0.0"
+    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/plugin-operation-field-permissions": "npm:^0.99.4"
+    "@graphql-mesh/serve-cli": "npm:^0.8.4"
+    "@omnigraph/json-schema": "npm:^0.102.5"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples-v1-next/cfw-breweries@workspace:examples/v1-next/integrations/cfw-breweries":
+  version: 0.0.0-use.local
+  resolution: "@examples-v1-next/cfw-breweries@workspace:examples/v1-next/integrations/cfw-breweries"
+  dependencies:
+    "@graphql-mesh/cache-cfw-kv": "npm:^0.99.4"
+    "@graphql-mesh/cache-localforage": "npm:^0.99.4"
+    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
+    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
+    "@omnigraph/json-schema": "npm:^0.102.5"
+    graphql: "npm:16.9.0"
+    wrangler: "npm:3.67.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples-v1-next/cfw-spacex@workspace:examples/v1-next/integrations/cfw-spacex":
+  version: 0.0.0-use.local
+  resolution: "@examples-v1-next/cfw-spacex@workspace:examples/v1-next/integrations/cfw-spacex"
+  dependencies:
+    "@envelop/depth-limit": "npm:^4.0.0"
+    "@graphql-mesh/cache-cfw-kv": "npm:^0.99.4"
+    "@graphql-mesh/plugin-rate-limit": "npm:^0.99.4"
+    "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
+    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
+    graphql: "npm:16.9.0"
+    wrangler: "npm:3.67.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples-v1-next/fastify@workspace:examples/v1-next/integrations/fastify":
+  version: 0.0.0-use.local
+  resolution: "@examples-v1-next/fastify@workspace:examples/v1-next/integrations/fastify"
+  dependencies:
+    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
+    "@omnigraph/openapi": "npm:^0.102.5"
+    fastify: "npm:^4.26.0"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    ts-node-dev: "npm:2.0.0"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples-v1-next/gcp-functions@workspace:examples/v1-next/integrations/gcp-functions":
+  version: 0.0.0-use.local
+  resolution: "@examples-v1-next/gcp-functions@workspace:examples/v1-next/integrations/gcp-functions"
+  dependencies:
+    "@google-cloud/functions-framework": "npm:^3.3.0"
+    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
+    "@omnigraph/json-schema": "npm:^0.102.5"
+    "@types/node": "npm:^20.10.6"
+    graphql: "npm:^16.8.1"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples-v1-next/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway":
+  version: 0.0.0-use.local
+  resolution: "@examples-v1-next/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway"
   dependencies:
     "@graphql-mesh/serve-cli": "workspace:*"
     dotenv: "npm:^16.4.5"
@@ -4319,9 +4391,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@examples/hive-example-graphql-service@workspace:examples/v1-next/hive-example/my-graphql":
+"@examples-v1-next/hive-example-my-graphql@workspace:examples/v1-next/hive-example/my-graphql":
   version: 0.0.0-use.local
-  resolution: "@examples/hive-example-graphql-service@workspace:examples/v1-next/hive-example/my-graphql"
+  resolution: "@examples-v1-next/hive-example-my-graphql@workspace:examples/v1-next/hive-example/my-graphql"
   dependencies:
     "@graphql-hive/cli": "npm:0.39.0"
     graphql: "npm:16.9.0"
@@ -4329,9 +4401,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@examples/hive-example-rest-service@workspace:examples/v1-next/hive-example/my-rest":
+"@examples-v1-next/hive-example-my-rest@workspace:examples/v1-next/hive-example/my-rest":
   version: 0.0.0-use.local
-  resolution: "@examples/hive-example-rest-service@workspace:examples/v1-next/hive-example/my-rest"
+  resolution: "@examples-v1-next/hive-example-my-rest@workspace:examples/v1-next/hive-example/my-rest"
   dependencies:
     "@graphql-hive/cli": "npm:0.39.0"
     "@graphql-mesh/compose-cli": "workspace:*"
@@ -4341,19 +4413,809 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@examples/hive-example@workspace:examples/v1-next/hive-example":
+"@examples-v1-next/hive-example@workspace:examples/v1-next/hive-example":
   version: 0.0.0-use.local
-  resolution: "@examples/hive-example@workspace:examples/v1-next/hive-example"
+  resolution: "@examples-v1-next/hive-example@workspace:examples/v1-next/hive-example"
   languageName: unknown
   linkType: soft
 
-"@examples/reddit-example@workspace:examples/v1-next/json-schema-reddit":
+"@examples-v1-next/json-schema-reddit@workspace:examples/v1-next/json-schema-reddit":
   version: 0.0.0-use.local
-  resolution: "@examples/reddit-example@workspace:examples/v1-next/json-schema-reddit"
+  resolution: "@examples-v1-next/json-schema-reddit@workspace:examples/v1-next/json-schema-reddit"
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
     "@omnigraph/json-schema": "workspace:*"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples-v1-next/openapi-location-weather@workspace:examples/v1-next/openapi-location-weather":
+  version: 0.0.0-use.local
+  resolution: "@examples-v1-next/openapi-location-weather@workspace:examples/v1-next/openapi-location-weather"
+  dependencies:
+    "@graphql-mesh/cache-localforage": "npm:^0.99.4"
+    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
+    "@graphql-mesh/serve-cli": "npm:^0.8.4"
+    "@omnigraph/openapi": "npm:^0.102.5"
+    graphql: "npm:^16.8.1"
+  languageName: unknown
+  linkType: soft
+
+"@examples-v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack":
+  version: 0.0.0-use.local
+  resolution: "@examples-v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack"
+  dependencies:
+    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/serve-cli": "npm:^0.8.4"
+    "@omnigraph/openapi": "npm:^0.102.5"
+    graphql: "npm:^16.8.1"
+  languageName: unknown
+  linkType: soft
+
+"@examples-v1-next/openwhisk-example@workspace:examples/v1-next/integrations/openwhisk-example":
+  version: 0.0.0-use.local
+  resolution: "@examples-v1-next/openwhisk-example@workspace:examples/v1-next/integrations/openwhisk-example"
+  dependencies:
+    "@graphql-mesh/serve-cli": "npm:^0.8.4"
+    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
+    esbuild: "npm:^0.23.0"
+    graphql: "npm:16.9.0"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/auth0@workspace:examples/auth0":
+  version: 0.0.0-use.local
+  resolution: "@examples/auth0@workspace:examples/auth0"
+  dependencies:
+    "@envelop/auth0": "npm:6.0.0"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@graphql-mesh/plugin-operation-field-permissions": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/cloudflare-workers@workspace:examples/cloudflare-workers":
+  version: 0.0.0-use.local
+  resolution: "@examples/cloudflare-workers@workspace:examples/cloudflare-workers"
+  dependencies:
+    "@graphql-mesh/cache-cfw-kv": "npm:0.99.4"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@graphql-mesh/plugin-response-cache": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+    wrangler: "npm:3.67.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/fastify@workspace:examples/fastify":
+  version: 0.0.0-use.local
+  resolution: "@examples/fastify@workspace:examples/fastify"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/graphql": "npm:0.99.4"
+    fastify: "npm:4.28.1"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    ts-node-dev: "npm:2.0.0"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/federation-example-gateway-supergraph@workspace:examples/federation-example/gateway-supergraph":
+  version: 0.0.0-use.local
+  resolution: "@examples/federation-example-gateway-supergraph@workspace:examples/federation-example/gateway-supergraph"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/supergraph": "npm:0.5.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/federation-example-gateway@workspace:examples/federation-example/gateway":
+  version: 0.0.0-use.local
+  resolution: "@examples/federation-example-gateway@workspace:examples/federation-example/gateway"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/graphql": "npm:0.99.4"
+    "@graphql-mesh/transform-federation": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/federation-example-services-accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph":
+  version: 0.0.0-use.local
+  resolution: "@examples/federation-example-services-accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
+  dependencies:
+    "@apollo/server": "npm:4.10.5"
+    "@apollo/subgraph": "npm:2.8.4"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/federation-example-services-accounts@workspace:examples/federation-example/services/accounts":
+  version: 0.0.0-use.local
+  resolution: "@examples/federation-example-services-accounts@workspace:examples/federation-example/services/accounts"
+  dependencies:
+    "@apollo/server": "npm:4.10.5"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/federation-example-services-inventory@workspace:examples/federation-example/services/inventory":
+  version: 0.0.0-use.local
+  resolution: "@examples/federation-example-services-inventory@workspace:examples/federation-example/services/inventory"
+  dependencies:
+    "@apollo/server": "npm:4.10.5"
+    "@apollo/subgraph": "npm:2.8.4"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/federation-example-services-products@workspace:examples/federation-example/services/products":
+  version: 0.0.0-use.local
+  resolution: "@examples/federation-example-services-products@workspace:examples/federation-example/services/products"
+  dependencies:
+    "@apollo/server": "npm:4.10.5"
+    "@apollo/subgraph": "npm:2.8.4"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/federation-example-services-reviews@workspace:examples/federation-example/services/reviews":
+  version: 0.0.0-use.local
+  resolution: "@examples/federation-example-services-reviews@workspace:examples/federation-example/services/reviews"
+  dependencies:
+    "@apollo/server": "npm:4.10.5"
+    "@apollo/subgraph": "npm:2.8.4"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/federation-example@workspace:examples/federation-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/federation-example@workspace:examples/federation-example"
+  dependencies:
+    "@apollo/server": "npm:4.10.5"
+    apollo-server-caching: "npm:3.3.0"
+    concurrently: "npm:8.2.2"
+    delay-cli: "npm:2.0.0"
+    jest: "npm:29.7.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/gcp-functions@workspace:examples/gcp-functions":
+  version: 0.0.0-use.local
+  resolution: "@examples/gcp-functions@workspace:examples/gcp-functions"
+  dependencies:
+    "@google-cloud/functions-framework": "npm:3.4.2"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@types/node": "npm:20.14.12"
+    graphql: "npm:16.9.0"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend":
+  version: 0.0.0-use.local
+  resolution: "@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend"
+  dependencies:
+    "@apollo/client": "npm:3.11.1"
+    "@testing-library/jest-dom": "npm:6.4.8"
+    "@testing-library/react": "npm:16.0.0"
+    "@testing-library/user-event": "npm:14.5.2"
+    "@types/apollo-upload-client": "npm:18.0.0"
+    "@types/jest": "npm:29.5.12"
+    "@types/node": "npm:20.14.12"
+    "@types/react": "npm:18.3.3"
+    "@types/react-dom": "npm:18.3.0"
+    apollo-upload-client: "npm:18.0.1"
+    graphql: "npm:16.9.0"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
+    react-scripts: "npm:5.0.1"
+    typescript: "npm:^5.4.2"
+    web-vitals: "npm:4.2.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/graphql-file-upload-example@workspace:examples/graphql-file-upload-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/graphql-file-upload-example@workspace:examples/graphql-file-upload-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/graphql": "npm:0.99.4"
+    concurrently: "npm:8.2.2"
+    graphql: "npm:16.9.0"
+    graphql-yoga: "npm:^5.6.0"
+    jest: "npm:29.7.0"
+    sharp: "npm:0.33.4"
+    ts-jest: "npm:29.2.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/grpc-example@workspace:examples/grpc-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/grpc-example@workspace:examples/grpc-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/grpc": "npm:0.101.4"
+    "@graphql-mesh/transform-naming-convention": "npm:0.99.4"
+    "@grpc/grpc-js": "npm:1.11.1"
+    "@grpc/proto-loader": "npm:0.7.13"
+    concurrently: "npm:8.2.2"
+    google-protobuf: "npm:3.21.4"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+    ts-jest: "npm:29.2.3"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/grpc-reflection-example@workspace:examples/grpc-reflection-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/grpc-reflection-example@workspace:examples/grpc-reflection-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/grpc": "npm:0.101.4"
+    "@graphql-mesh/transform-naming-convention": "npm:0.99.4"
+    "@grpc/grpc-js": "npm:1.11.1"
+    "@grpc/proto-loader": "npm:0.7.13"
+    concurrently: "npm:8.2.2"
+    google-protobuf: "npm:3.21.4"
+    graphql: "npm:16.9.0"
+    grpc-node-server-reflection: "npm:1.0.2"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/hasura-openbrewery-geodb@workspace:examples/hasura-openbrewery-geodb":
+  version: 0.0.0-use.local
+  resolution: "@examples/hasura-openbrewery-geodb@workspace:examples/hasura-openbrewery-geodb"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/hello-world-esm@workspace:examples/hello-world-esm":
+  version: 0.0.0-use.local
+  resolution: "@examples/hello-world-esm@workspace:examples/hello-world-esm"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@graphql-mesh/plugin-mock": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/hello-world@workspace:examples/hello-world":
+  version: 0.0.0-use.local
+  resolution: "@examples/hello-world@workspace:examples/hello-world"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@graphql-mesh/plugin-mock": "npm:0.99.4"
+    "@graphql-yoga/plugin-sofa": "npm:3.6.3"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/hive-example-gateway@workspace:examples/hive-example/gateway":
+  version: 0.0.0-use.local
+  resolution: "@examples/hive-example-gateway@workspace:examples/hive-example/gateway"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    "@graphql-mesh/plugin-hive": "npm:0.99.4"
+    "@graphql-mesh/transform-hive": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/hive-example-sources-authors@workspace:examples/hive-example/sources/authors":
+  version: 0.0.0-use.local
+  resolution: "@examples/hive-example-sources-authors@workspace:examples/hive-example/sources/authors"
+  dependencies:
+    "@graphql-hive/cli": "npm:0.39.0"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    fets: "npm:^0.8.0"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/hive-example-sources-books@workspace:examples/hive-example/sources/books":
+  version: 0.0.0-use.local
+  resolution: "@examples/hive-example-sources-books@workspace:examples/hive-example/sources/books"
+  dependencies:
+    "@graphql-hive/cli": "npm:0.39.0"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    fets: "npm:^0.8.0"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/json-schema-covid@workspace:examples/json-schema-covid":
+  version: 0.0.0-use.local
+  resolution: "@examples/json-schema-covid@workspace:examples/json-schema-covid"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/graphql": "npm:0.99.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/json-schema-example@workspace:examples/json-schema-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/json-schema-example@workspace:examples/json-schema-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@graphql-mesh/plugin-mock": "npm:0.99.4"
+    "@graphql-mesh/transform-naming-convention": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/json-schema-fhir@workspace:examples/json-schema-fhir":
+  version: 0.0.0-use.local
+  resolution: "@examples/json-schema-fhir@workspace:examples/json-schema-fhir"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@types/unzip-stream": "npm:0.3.4"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+    unzip-stream: "npm:0.3.4"
+  languageName: unknown
+  linkType: soft
+
+"@examples/json-schema-file-upload@workspace:examples/json-schema-file-upload":
+  version: 0.0.0-use.local
+  resolution: "@examples/json-schema-file-upload@workspace:examples/json-schema-file-upload"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@types/node": "npm:20.14.12"
+    concurrently: "npm:8.2.2"
+    fets: "npm:0.8.1"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/json-schema-subscriptions@workspace:examples/json-schema-subscriptions":
+  version: 0.0.0-use.local
+  resolution: "@examples/json-schema-subscriptions@workspace:examples/json-schema-subscriptions"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@graphql-mesh/plugin-live-query": "npm:0.99.4"
+    "@whatwg-node/fetch": "npm:^0.9.0"
+    concurrently: "npm:8.2.2"
+    fets: "npm:0.8.1"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    ts-node-dev: "npm:2.0.0"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/mongoose-example@workspace:examples/mongoose-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/mongoose-example@workspace:examples/mongoose-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/mongoose": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+    mongoose: "npm:8.5.1"
+  languageName: unknown
+  linkType: soft
+
+"@examples/mysql-employees@workspace:examples/mysql-employees":
+  version: 0.0.0-use.local
+  resolution: "@examples/mysql-employees@workspace:examples/mysql-employees"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/mysql": "npm:0.100.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/mysql-rfam@workspace:examples/mysql-rfam":
+  version: 0.0.0-use.local
+  resolution: "@examples/mysql-rfam@workspace:examples/mysql-rfam"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/mysql": "npm:0.100.4"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/neo4j-example@workspace:examples/neo4j-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/neo4j-example@workspace:examples/neo4j-example"
+  dependencies:
+    "@graphql-mesh/cache-file": "npm:0.99.4"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/neo4j": "npm:0.100.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/nextjs-apollo-example@workspace:examples/nextjs-apollo-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/nextjs-apollo-example@workspace:examples/nextjs-apollo-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/config": "npm:0.101.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    "@graphql-mesh/runtime": "npm:0.100.4"
+    "@types/react": "npm:18.3.3"
+    apollo-server-micro: "npm:3.13.0"
+    graphql: "npm:16.9.0"
+    next: "npm:14.2.5"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/nextjs-sdk-example@workspace:examples/nextjs-sdk-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/nextjs-sdk-example@workspace:examples/nextjs-sdk-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/config": "npm:0.101.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    "@graphql-mesh/runtime": "npm:0.100.4"
+    "@types/react": "npm:18.3.3"
+    apollo-server-micro: "npm:3.13.0"
+    graphql: "npm:16.9.0"
+    next: "npm:14.2.5"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/odata-microsoft@workspace:examples/odata-microsoft":
+  version: 0.0.0-use.local
+  resolution: "@examples/odata-microsoft@workspace:examples/odata-microsoft"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/odata": "npm:0.101.2"
+    cross-env: "npm:7.0.3"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/odata-msgraph-programmatic-ts@workspace:examples/odata-msgraph-programmatic-ts":
+  version: 0.0.0-use.local
+  resolution: "@examples/odata-msgraph-programmatic-ts@workspace:examples/odata-msgraph-programmatic-ts"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/config": "npm:0.101.4"
+    "@graphql-mesh/odata": "npm:0.101.2"
+    "@graphql-mesh/runtime": "npm:0.100.4"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/odata-msgraph-programmatic@workspace:examples/odata-msgraph-programmatic":
+  version: 0.0.0-use.local
+  resolution: "@examples/odata-msgraph-programmatic@workspace:examples/odata-msgraph-programmatic"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/config": "npm:0.101.4"
+    "@graphql-mesh/odata": "npm:0.101.2"
+    "@graphql-mesh/runtime": "npm:0.100.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/odata-trippin@workspace:examples/odata-trippin":
+  version: 0.0.0-use.local
+  resolution: "@examples/odata-trippin@workspace:examples/odata-trippin"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/odata": "npm:0.101.2"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openapi-javascript-wiki@workspace:examples/openapi-javascript-wiki":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-javascript-wiki@workspace:examples/openapi-javascript-wiki"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    graphql: "npm:16.9.0"
+    moment: "npm:2.30.1"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openapi-location-weather@workspace:examples/openapi-location-weather":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-location-weather@workspace:examples/openapi-location-weather"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    "@graphql-mesh/plugin-response-cache": "npm:0.99.4"
+    "@graphql-mesh/runtime": "npm:0.100.4"
+    "@graphql-mesh/transform-cache": "npm:0.99.4"
+    "@graphql-mesh/transform-rename": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openapi-meilisearch@workspace:examples/openapi-meilisearch":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-meilisearch@workspace:examples/openapi-meilisearch"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@types/react": "npm:18.3.3"
+    "@types/react-dom": "npm:18.3.0"
+    "@vitejs/plugin-react": "npm:4.3.1"
+    graphql: "npm:16.9.0"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
+    typescript: "npm:^5.4.2"
+    vite: "npm:5.3.5"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openapi-stackexchange@workspace:examples/openapi-stackexchange":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-stackexchange@workspace:examples/openapi-stackexchange"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openapi-stripe@workspace:examples/openapi-stripe":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-stripe@workspace:examples/openapi-stripe"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openapi-subscriptions@workspace:examples/openapi-subscriptions":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-subscriptions@workspace:examples/openapi-subscriptions"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    "@whatwg-node/fetch": "npm:^0.9.0"
+    concurrently: "npm:8.2.2"
+    fets: "npm:^0.8.0"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    ts-node-dev: "npm:2.0.0"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openapi-youtrack@workspace:examples/openapi-youtrack":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-youtrack@workspace:examples/openapi-youtrack"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    "@graphql-mesh/transform-resolvers-composition": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+    graphql-fields: "npm:2.0.3"
+  languageName: unknown
+  linkType: soft
+
+"@examples/openwhisk-example@workspace:examples/openwhisk-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/openwhisk-example@workspace:examples/openwhisk-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/graphql": "npm:0.99.4"
+    esbuild: "npm:^0.23.0"
+    graphql: "npm:16.9.0"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/persisted-operations@workspace:examples/persisted-operations":
+  version: 0.0.0-use.local
+  resolution: "@examples/persisted-operations@workspace:examples/persisted-operations"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+    "@graphql-mesh/plugin-mock": "npm:0.99.4"
+    "@graphql-yoga/plugin-sofa": "npm:3.6.3"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/postgres-geodb@workspace:examples/postgres-geodb":
+  version: 0.0.0-use.local
+  resolution: "@examples/postgres-geodb@workspace:examples/postgres-geodb"
+  dependencies:
+    "@graphql-mesh/cache-file": "npm:0.99.4"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/config": "npm:0.101.4"
+    "@graphql-mesh/graphql": "npm:0.99.4"
+    "@graphql-mesh/postgraphile": "npm:0.99.4"
+    "@graphql-mesh/runtime": "npm:0.100.4"
+    "@graphql-mesh/transform-prefix": "npm:0.99.4"
+    "@types/node": "npm:20.14.12"
+    cross-env: "npm:7.0.3"
+    graphql: "npm:16.9.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/programmatic-batching@workspace:examples/programmatic-batching":
+  version: 0.0.0-use.local
+  resolution: "@examples/programmatic-batching@workspace:examples/programmatic-batching"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/openapi": "npm:0.102.5"
+    "@sinclair/typebox": "npm:0.32.35"
+    concurrently: "npm:8.2.2"
+    fets: "npm:0.8.1"
+    graphql: "npm:16.9.0"
+    jest: "npm:29.7.0"
+    ts-node: "npm:^10.9.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/reddit-example@workspace:examples/reddit-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/reddit-example@workspace:examples/reddit-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/json-schema": "npm:0.102.5"
+  languageName: unknown
+  linkType: soft
+
+"@examples/soap-country-info@workspace:examples/soap-country-info":
+  version: 0.0.0-use.local
+  resolution: "@examples/soap-country-info@workspace:examples/soap-country-info"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/plugin-snapshot": "npm:0.99.4"
+    "@graphql-mesh/soap": "npm:0.101.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/soap-demo@workspace:examples/soap-demo":
+  version: 0.0.0-use.local
+  resolution: "@examples/soap-demo@workspace:examples/soap-demo"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/soap": "npm:0.101.4"
+    cross-env: "npm:7.0.3"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/soap-netsuite@workspace:examples/soap-netsuite":
+  version: 0.0.0-use.local
+  resolution: "@examples/soap-netsuite@workspace:examples/soap-netsuite"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/soap": "npm:0.101.4"
+    cross-env: "npm:7.0.3"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/spacex-cfw@workspace:examples/spacex-cfw":
+  version: 0.0.0-use.local
+  resolution: "@examples/spacex-cfw@workspace:examples/spacex-cfw"
+  dependencies:
+    "@envelop/depth-limit": "npm:4.0.0"
+    "@graphql-mesh/cache-cfw-kv": "npm:0.99.4"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/graphql": "npm:0.99.4"
+    "@graphql-mesh/plugin-rate-limit": "npm:0.99.4"
+    "@graphql-mesh/plugin-response-cache": "npm:0.99.4"
+    graphql: "npm:16.9.0"
+    wrangler: "npm:3.67.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/sqlite-chinook@workspace:examples/sqlite-chinook":
+  version: 0.0.0-use.local
+  resolution: "@examples/sqlite-chinook@workspace:examples/sqlite-chinook"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/tuql": "npm:0.100.6"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
+"@examples/thrift-calculator@workspace:examples/thrift-calculator":
+  version: 0.0.0-use.local
+  resolution: "@examples/thrift-calculator@workspace:examples/thrift-calculator"
+  dependencies:
+    "@creditkarma/thrift-server-core": "npm:1.0.4"
+    "@creditkarma/thrift-server-express": "npm:1.0.4"
+    "@creditkarma/thrift-typescript": "npm:3.7.6"
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/thrift": "npm:0.101.4"
+    concurrently: "npm:8.2.2"
+    express: "npm:4.19.2"
+    graphql: "npm:16.9.0"
+    thrift: "npm:0.20.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@examples/type-merging-batching-example@workspace:examples/type-merging-batching-example":
+  version: 0.0.0-use.local
+  resolution: "@examples/type-merging-batching-example@workspace:examples/type-merging-batching-example"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.92.4"
+    "@graphql-mesh/graphql": "npm:0.99.4"
+    "@graphql-mesh/transform-rename": "npm:0.99.4"
+    "@graphql-mesh/transform-type-merging": "npm:0.99.4"
     graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
@@ -11788,86 +12650,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v1-next/auth0-example@workspace:examples/v1-next/auth0":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/auth0-example@workspace:examples/v1-next/auth0"
-  dependencies:
-    "@envelop/auth0": "npm:^6.0.0"
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
-    "@graphql-mesh/plugin-operation-field-permissions": "npm:^0.99.4"
-    "@graphql-mesh/serve-cli": "npm:^0.8.4"
-    "@omnigraph/json-schema": "npm:^0.102.5"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/cfw-spacex@workspace:examples/v1-next/integrations/cfw-spacex":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/cfw-spacex@workspace:examples/v1-next/integrations/cfw-spacex"
-  dependencies:
-    "@envelop/depth-limit": "npm:^4.0.0"
-    "@graphql-mesh/cache-cfw-kv": "npm:^0.99.4"
-    "@graphql-mesh/plugin-rate-limit": "npm:^0.99.4"
-    "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
-    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
-    graphql: "npm:16.9.0"
-    wrangler: "npm:3.67.0"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/example-fastify@workspace:examples/v1-next/integrations/fastify":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/example-fastify@workspace:examples/v1-next/integrations/fastify"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
-    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
-    "@omnigraph/openapi": "npm:^0.102.5"
-    fastify: "npm:^4.26.0"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    ts-node-dev: "npm:2.0.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/example-gcp@workspace:examples/v1-next/integrations/gcp-functions":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/example-gcp@workspace:examples/v1-next/integrations/gcp-functions"
-  dependencies:
-    "@google-cloud/functions-framework": "npm:^3.3.0"
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
-    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
-    "@omnigraph/json-schema": "npm:^0.102.5"
-    "@types/node": "npm:^20.10.6"
-    graphql: "npm:^16.8.1"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack"
-  dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
-    "@graphql-mesh/serve-cli": "npm:^0.8.4"
-    "@omnigraph/openapi": "npm:^0.102.5"
-    graphql: "npm:^16.8.1"
-  languageName: unknown
-  linkType: soft
-
-"@v1-next/openwhisk-example@workspace:examples/v1-next/integrations/openwhisk-example":
-  version: 0.0.0-use.local
-  resolution: "@v1-next/openwhisk-example@workspace:examples/v1-next/integrations/openwhisk-example"
-  dependencies:
-    "@graphql-mesh/serve-cli": "npm:^0.8.4"
-    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
-    esbuild: "npm:^0.23.0"
-    graphql: "npm:16.9.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "@vitejs/plugin-react@npm:4.3.1":
   version: 4.3.1
   resolution: "@vitejs/plugin-react@npm:4.3.1"
@@ -12244,29 +13026,6 @@ __metadata:
   checksum: 10c0/3a35c5f5586cfb9a21163ca47a5f77ac34fa8ceb5d17d2fa2c0d81f41cbd7f8c6fa52c77e2c039acc0f4d09e71abdc51144246900f6bef5e3c4b333f77d89362
   languageName: node
   linkType: hard
-
-"accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph":
-  version: 0.0.0-use.local
-  resolution: "accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
-  dependencies:
-    "@apollo/server": "npm:4.10.5"
-    "@apollo/subgraph": "npm:2.8.4"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"accounts@workspace:examples/federation-example/services/accounts":
-  version: 0.0.0-use.local
-  resolution: "accounts@workspace:examples/federation-example/services/accounts"
-  dependencies:
-    "@apollo/server": "npm:4.10.5"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "acorn-globals@npm:^6.0.0":
   version: 6.0.0
@@ -13092,33 +13851,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"auth0-example@workspace:examples/auth0":
-  version: 0.0.0-use.local
-  resolution: "auth0-example@workspace:examples/auth0"
-  dependencies:
-    "@envelop/auth0": "npm:6.0.0"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@graphql-mesh/plugin-operation-field-permissions": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-  languageName: unknown
-  linkType: soft
-
-"authors-service@workspace:examples/hive-example/sources/authors":
-  version: 0.0.0-use.local
-  resolution: "authors-service@workspace:examples/hive-example/sources/authors"
-  dependencies:
-    "@graphql-hive/cli": "npm:0.39.0"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    fets: "npm:^0.8.0"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "auto-bind@npm:~4.0.0":
   version: 4.0.0
   resolution: "auto-bind@npm:4.0.0"
@@ -13693,20 +14425,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"books-service@workspace:examples/hive-example/sources/books":
-  version: 0.0.0-use.local
-  resolution: "books-service@workspace:examples/hive-example/sources/books"
-  dependencies:
-    "@graphql-hive/cli": "npm:0.39.0"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    fets: "npm:^0.8.0"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "boolbase@npm:^1.0.0, boolbase@npm:~1.0.0":
   version: 1.0.0
   resolution: "boolbase@npm:1.0.0"
@@ -14143,21 +14861,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cfw-breweries@workspace:examples/v1-next/integrations/cfw-breweries":
-  version: 0.0.0-use.local
-  resolution: "cfw-breweries@workspace:examples/v1-next/integrations/cfw-breweries"
-  dependencies:
-    "@graphql-mesh/cache-cfw-kv": "npm:^0.99.4"
-    "@graphql-mesh/cache-localforage": "npm:^0.99.4"
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
-    "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
-    "@graphql-mesh/serve-runtime": "npm:^0.5.5"
-    "@omnigraph/json-schema": "npm:^0.102.5"
-    graphql: "npm:16.9.0"
-    wrangler: "npm:3.67.0"
-  languageName: unknown
-  linkType: soft
-
 "chainsaw@npm:~0.1.0":
   version: 0.1.0
   resolution: "chainsaw@npm:0.1.0"
@@ -14348,16 +15051,6 @@ __metadata:
   checksum: 10c0/a67a8b9f326231e6e4bf42e0c82d5f6e0b69bcfe4266e406d644ee58d22f7cba63deb034973813d0f5761026328cd4928250136cde940e3ef238a1f020c7307a
   languageName: node
   linkType: hard
-
-"chinook@workspace:examples/sqlite-chinook":
-  version: 0.0.0-use.local
-  resolution: "chinook@workspace:examples/sqlite-chinook"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/tuql": "npm:0.100.6"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
 
 "chokidar@npm:^3.4.2, chokidar@npm:^3.5.1, chokidar@npm:^3.5.3":
   version: 3.6.0
@@ -14598,19 +15291,6 @@ __metadata:
   checksum: 10c0/18fe538a37d6446dda6cbae15868e6a1dfa34baee8f63f018dd2f924048785c959c803452a78a46e215c5139d9aa56dd625f1eea4431ca2b645fcbfc06baa99b
   languageName: node
   linkType: hard
-
-"cloudflare-workers@workspace:examples/cloudflare-workers":
-  version: 0.0.0-use.local
-  resolution: "cloudflare-workers@workspace:examples/cloudflare-workers"
-  dependencies:
-    "@graphql-mesh/cache-cfw-kv": "npm:0.99.4"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@graphql-mesh/plugin-response-cache": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-    wrangler: "npm:3.67.0"
-  languageName: unknown
-  linkType: soft
 
 "cls-bluebird@npm:^2.1.0":
   version: 2.1.0
@@ -15139,29 +15819,6 @@ __metadata:
   checksum: 10c0/1c1703be4f02a250b1d6ca3267e408ce16abfe8364193891afc94c2d5c060b69611fdc8d97af74b7e6d5d1aac0ab2fb94d6b079573146bc2d756c2484ce5f0ee
   languageName: node
   linkType: hard
-
-"country-info-example@workspace:examples/soap-country-info":
-  version: 0.0.0-use.local
-  resolution: "country-info-example@workspace:examples/soap-country-info"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/plugin-snapshot": "npm:0.99.4"
-    "@graphql-mesh/soap": "npm:0.101.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"covid-mesh@workspace:examples/json-schema-covid":
-  version: 0.0.0-use.local
-  resolution: "covid-mesh@workspace:examples/json-schema-covid"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/graphql": "npm:0.99.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-  languageName: unknown
-  linkType: soft
 
 "cpu-features@npm:~0.0.9":
   version: 0.0.10
@@ -18203,46 +18860,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"example-fastify@workspace:examples/fastify":
-  version: 0.0.0-use.local
-  resolution: "example-fastify@workspace:examples/fastify"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/graphql": "npm:0.99.4"
-    fastify: "npm:4.28.1"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    ts-node-dev: "npm:2.0.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"example-gcp@workspace:examples/gcp-functions":
-  version: 0.0.0-use.local
-  resolution: "example-gcp@workspace:examples/gcp-functions"
-  dependencies:
-    "@google-cloud/functions-framework": "npm:3.4.2"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@types/node": "npm:20.14.12"
-    graphql: "npm:16.9.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"example-persisted-operations@workspace:examples/persisted-operations":
-  version: 0.0.0-use.local
-  resolution: "example-persisted-operations@workspace:examples/persisted-operations"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@graphql-mesh/plugin-mock": "npm:0.99.4"
-    "@graphql-yoga/plugin-sofa": "npm:3.6.3"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-  languageName: unknown
-  linkType: soft
-
 "execa@npm:7.1.1":
   version: 7.1.1
   resolution: "execa@npm:7.1.1"
@@ -18710,41 +19327,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"federation-gateway@workspace:examples/federation-example/gateway":
-  version: 0.0.0-use.local
-  resolution: "federation-gateway@workspace:examples/federation-example/gateway"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/graphql": "npm:0.99.4"
-    "@graphql-mesh/transform-federation": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"federation-handler-example@workspace:examples/federation-example":
-  version: 0.0.0-use.local
-  resolution: "federation-handler-example@workspace:examples/federation-example"
-  dependencies:
-    "@apollo/server": "npm:4.10.5"
-    apollo-server-caching: "npm:3.3.0"
-    concurrently: "npm:8.2.2"
-    delay-cli: "npm:2.0.0"
-    jest: "npm:29.7.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"federation-supergraph-gateway@workspace:examples/federation-example/gateway-supergraph":
-  version: 0.0.0-use.local
-  resolution: "federation-supergraph-gateway@workspace:examples/federation-example/gateway-supergraph"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/supergraph": "npm:0.5.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
 "fengari-interop@npm:^0.1.3":
   version: 0.1.3
   resolution: "fengari-interop@npm:0.1.3"
@@ -19166,29 +19748,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"frontend@workspace:examples/graphql-file-upload-example/frontend":
-  version: 0.0.0-use.local
-  resolution: "frontend@workspace:examples/graphql-file-upload-example/frontend"
-  dependencies:
-    "@apollo/client": "npm:3.11.1"
-    "@testing-library/jest-dom": "npm:6.4.8"
-    "@testing-library/react": "npm:16.0.0"
-    "@testing-library/user-event": "npm:14.5.2"
-    "@types/apollo-upload-client": "npm:18.0.0"
-    "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.14.12"
-    "@types/react": "npm:18.3.3"
-    "@types/react-dom": "npm:18.3.0"
-    apollo-upload-client: "npm:18.0.1"
-    graphql: "npm:16.9.0"
-    react: "npm:18.3.1"
-    react-dom: "npm:18.3.1"
-    react-scripts: "npm:5.0.1"
-    typescript: "npm:^5.4.2"
-    web-vitals: "npm:4.2.2"
-  languageName: unknown
-  linkType: soft
-
 "fs-constants@npm:^1.0.0":
   version: 1.0.0
   resolution: "fs-constants@npm:1.0.0"
@@ -19367,18 +19926,6 @@ __metadata:
   checksum: 10c0/584fcd57a03431707a6d0c1c4a41f17368cdb23d37dcb176d6cbbeeaecaac51be15dec229b3547acfb7db052cb066fcd86db907d40112ac4a3d3a368f88e7105
   languageName: node
   linkType: hard
-
-"gateway-example@workspace:examples/hive-example/gateway":
-  version: 0.0.0-use.local
-  resolution: "gateway-example@workspace:examples/hive-example/gateway"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    "@graphql-mesh/plugin-hive": "npm:0.99.4"
-    "@graphql-mesh/transform-hive": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
 
 "gauge@npm:^3.0.0":
   version: 3.0.2
@@ -19964,23 +20511,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-file-upload-example@workspace:examples/graphql-file-upload-example":
-  version: 0.0.0-use.local
-  resolution: "graphql-file-upload-example@workspace:examples/graphql-file-upload-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/graphql": "npm:0.99.4"
-    concurrently: "npm:8.2.2"
-    graphql: "npm:16.9.0"
-    graphql-yoga: "npm:^5.6.0"
-    jest: "npm:29.7.0"
-    sharp: "npm:0.33.4"
-    ts-jest: "npm:29.2.3"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "graphql-import-node@npm:^0.0.5":
   version: 0.0.5
   resolution: "graphql-import-node@npm:0.0.5"
@@ -20213,25 +20743,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"grpc-example@workspace:examples/grpc-example":
-  version: 0.0.0-use.local
-  resolution: "grpc-example@workspace:examples/grpc-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/grpc": "npm:0.101.4"
-    "@graphql-mesh/transform-naming-convention": "npm:0.99.4"
-    "@grpc/grpc-js": "npm:1.11.1"
-    "@grpc/proto-loader": "npm:0.7.13"
-    concurrently: "npm:8.2.2"
-    google-protobuf: "npm:3.21.4"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-    ts-jest: "npm:29.2.3"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "grpc-node-server-reflection@npm:1.0.2":
   version: 1.0.2
   resolution: "grpc-node-server-reflection@npm:1.0.2"
@@ -20242,24 +20753,6 @@ __metadata:
   checksum: 10c0/6da998880fcc3db2c9cfa4aa41bd355a13ae22a31f5ce1b3af1352cb5f34c191a2d76cee0304ee14acc436401ca888e0ed8221af628dd9428b67235a52060a9d
   languageName: node
   linkType: hard
-
-"grpc-reflection-example@workspace:examples/grpc-reflection-example":
-  version: 0.0.0-use.local
-  resolution: "grpc-reflection-example@workspace:examples/grpc-reflection-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/grpc": "npm:0.101.4"
-    "@graphql-mesh/transform-naming-convention": "npm:0.99.4"
-    "@grpc/grpc-js": "npm:1.11.1"
-    "@grpc/proto-loader": "npm:0.7.13"
-    concurrently: "npm:8.2.2"
-    google-protobuf: "npm:3.21.4"
-    graphql: "npm:16.9.0"
-    grpc-node-server-reflection: "npm:1.0.2"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "gzip-size@npm:^6.0.0":
   version: 6.0.0
@@ -20574,16 +21067,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hasura-openbrewery-geodb@workspace:examples/hasura-openbrewery-geodb":
-  version: 0.0.0-use.local
-  resolution: "hasura-openbrewery-geodb@workspace:examples/hasura-openbrewery-geodb"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
 "he@npm:^1.2.0":
   version: 1.2.0
   resolution: "he@npm:1.2.0"
@@ -20602,20 +21085,6 @@ __metadata:
   checksum: 10c0/c9f295d9d8e38fa50679281fd70d80726962256e888a76c8e72e526453da7a1832dcb427caa716c1ad5d79841d4537301b90156fa30298fefd3d68f4ea2181bb
   languageName: node
   linkType: hard
-
-"hello-world-esm@workspace:examples/hello-world-esm":
-  version: 0.0.0-use.local
-  resolution: "hello-world-esm@workspace:examples/hello-world-esm"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@graphql-mesh/plugin-mock": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "hexoid@npm:^1.0.0":
   version: 1.0.0
@@ -21279,18 +21748,6 @@ __metadata:
   checksum: 10c0/5af133a917c0bcf65e84e7f23e779e7abc1cd49cb7fdc62d00d1de74b0d8c1b5ee74ac7766099fb3be1b05b26dfc67bab76a17030d2fe7ea2eef867434362dfc
   languageName: node
   linkType: hard
-
-"inventory@workspace:examples/federation-example/services/inventory":
-  version: 0.0.0-use.local
-  resolution: "inventory@workspace:examples/federation-example/services/inventory"
-  dependencies:
-    "@apollo/server": "npm:4.10.5"
-    "@apollo/subgraph": "npm:2.8.4"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "ioredis-mock@npm:^8.8.3":
   version: 8.9.0
@@ -22141,18 +22598,6 @@ __metadata:
   checksum: 10c0/be0f58c83b5a852f313de2ea57f7b8b7d46dc062b2ffe487d58838e7034d4660f4d22f2a96aae4daa622af6d734726c0d08b01396e59666ededbcfdc25a694d6
   languageName: node
   linkType: hard
-
-"javascript-wiki@workspace:examples/openapi-javascript-wiki":
-  version: 0.0.0-use.local
-  resolution: "javascript-wiki@workspace:examples/openapi-javascript-wiki"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    graphql: "npm:16.9.0"
-    moment: "npm:2.30.1"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "jest-changed-files@npm:^27.5.1":
   version: 27.5.1
@@ -23363,61 +23808,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-schema-example@workspace:examples/json-schema-example":
-  version: 0.0.0-use.local
-  resolution: "json-schema-example@workspace:examples/json-schema-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@graphql-mesh/plugin-mock": "npm:0.99.4"
-    "@graphql-mesh/transform-naming-convention": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-  languageName: unknown
-  linkType: soft
-
-"json-schema-fhir@workspace:examples/json-schema-fhir":
-  version: 0.0.0-use.local
-  resolution: "json-schema-fhir@workspace:examples/json-schema-fhir"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@types/unzip-stream": "npm:0.3.4"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-    unzip-stream: "npm:0.3.4"
-  languageName: unknown
-  linkType: soft
-
-"json-schema-file-upload@workspace:examples/json-schema-file-upload":
-  version: 0.0.0-use.local
-  resolution: "json-schema-file-upload@workspace:examples/json-schema-file-upload"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@types/node": "npm:20.14.12"
-    concurrently: "npm:8.2.2"
-    fets: "npm:0.8.1"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"json-schema-hello-world@workspace:examples/hello-world":
-  version: 0.0.0-use.local
-  resolution: "json-schema-hello-world@workspace:examples/hello-world"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@graphql-mesh/plugin-mock": "npm:0.99.4"
-    "@graphql-yoga/plugin-sofa": "npm:3.6.3"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-  languageName: unknown
-  linkType: soft
-
 "json-schema-ref-parser@npm:^6.1.0":
   version: 6.1.0
   resolution: "json-schema-ref-parser@npm:6.1.0"
@@ -23437,23 +23827,6 @@ __metadata:
   checksum: 10c0/aa89d88108c0109ae35b913c89c132fb50c00f3b99fc8a8309b524b9e3a6a77414f19a6a35a1253871462984cbabc74279ebbd9bf103c6629fb7b37c9fb59bcf
   languageName: node
   linkType: hard
-
-"json-schema-subscriptions@workspace:examples/json-schema-subscriptions":
-  version: 0.0.0-use.local
-  resolution: "json-schema-subscriptions@workspace:examples/json-schema-subscriptions"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-    "@graphql-mesh/plugin-live-query": "npm:0.99.4"
-    "@whatwg-node/fetch": "npm:^0.9.0"
-    concurrently: "npm:8.2.2"
-    fets: "npm:0.8.1"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    ts-node-dev: "npm:2.0.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "json-schema-to-ts@npm:^3.0.0":
   version: 3.1.0
@@ -24039,19 +24412,6 @@ __metadata:
   checksum: 10c0/d3972ab70dfe58ce620e64265f90162d247e87159b6126b01314dd67be43d50e96a50b517bce2d9452a79409c7614054c277b5232377de50416564a77ac7aad3
   languageName: node
   linkType: hard
-
-"location-weather-example@workspace:examples/v1-next/openapi-location-weather":
-  version: 0.0.0-use.local
-  resolution: "location-weather-example@workspace:examples/v1-next/openapi-location-weather"
-  dependencies:
-    "@graphql-mesh/cache-localforage": "npm:^0.99.4"
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
-    "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
-    "@graphql-mesh/serve-cli": "npm:^0.8.4"
-    "@omnigraph/openapi": "npm:^0.102.5"
-    graphql: "npm:^16.8.1"
-  languageName: unknown
-  linkType: soft
 
 "lodash-es@npm:^4.17.21":
   version: 4.17.21
@@ -26235,18 +26595,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose-example@workspace:examples/mongoose-example":
-  version: 0.0.0-use.local
-  resolution: "mongoose-example@workspace:examples/mongoose-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/mongoose": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-    mongoose: "npm:8.5.1"
-  languageName: unknown
-  linkType: soft
-
 "mongoose@npm:8.5.1":
   version: 8.5.1
   resolution: "mongoose@npm:8.5.1"
@@ -26347,27 +26695,6 @@ __metadata:
   checksum: 10c0/cfdd3c6429aad170014892f7934ff60a4418b32e4c14db10f0d3cfb7743f37385e2a3a8c58c65b7c4fbfe44838d9e8cf8c93897b9763a08224c32957a72621c0
   languageName: node
   linkType: hard
-
-"mysql-employees@workspace:examples/mysql-employees":
-  version: 0.0.0-use.local
-  resolution: "mysql-employees@workspace:examples/mysql-employees"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/mysql": "npm:0.100.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"mysql-rfam@workspace:examples/mysql-rfam":
-  version: 0.0.0-use.local
-  resolution: "mysql-rfam@workspace:examples/mysql-rfam"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/mysql": "npm:0.100.4"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-  languageName: unknown
-  linkType: soft
 
 "mysql-utilities@npm:^1.1.4":
   version: 1.1.4
@@ -26512,17 +26839,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"neo4j-example@workspace:examples/neo4j-example":
-  version: 0.0.0-use.local
-  resolution: "neo4j-example@workspace:examples/neo4j-example"
-  dependencies:
-    "@graphql-mesh/cache-file": "npm:0.99.4"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/neo4j": "npm:0.100.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
 "newrelic@npm:10.6.2":
   version: 10.6.2
   resolution: "newrelic@npm:10.6.2"
@@ -26655,42 +26971,6 @@ __metadata:
   checksum: 10c0/8df7d8ccc1a5bab03fa50dd6656c8a6f3750e81ef0b087dc329fea9346847c3094a933a890a8e87151dc32f0bc55020b8f6386d4565856d83bcc10895d29ec08
   languageName: node
   linkType: hard
-
-"nextjs-apollo-example@workspace:examples/nextjs-apollo-example":
-  version: 0.0.0-use.local
-  resolution: "nextjs-apollo-example@workspace:examples/nextjs-apollo-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/config": "npm:0.101.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    "@graphql-mesh/runtime": "npm:0.100.4"
-    "@types/react": "npm:18.3.3"
-    apollo-server-micro: "npm:3.13.0"
-    graphql: "npm:16.9.0"
-    next: "npm:14.2.5"
-    react: "npm:18.3.1"
-    react-dom: "npm:18.3.1"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"nextjs-sdk-example@workspace:examples/nextjs-sdk-example":
-  version: 0.0.0-use.local
-  resolution: "nextjs-sdk-example@workspace:examples/nextjs-sdk-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/config": "npm:0.101.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    "@graphql-mesh/runtime": "npm:0.100.4"
-    "@types/react": "npm:18.3.3"
-    apollo-server-micro: "npm:3.13.0"
-    graphql: "npm:16.9.0"
-    next: "npm:14.2.5"
-    react: "npm:18.3.1"
-    react-dom: "npm:18.3.1"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "nextra-theme-docs@npm:3.0.0-alpha.28":
   version: 3.0.0-alpha.28
@@ -27354,52 +27634,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"odata-microsoft-graph-example@workspace:examples/odata-microsoft":
-  version: 0.0.0-use.local
-  resolution: "odata-microsoft-graph-example@workspace:examples/odata-microsoft"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/odata": "npm:0.101.2"
-    cross-env: "npm:7.0.3"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"odata-msgraph-programmatic-ts@workspace:examples/odata-msgraph-programmatic-ts":
-  version: 0.0.0-use.local
-  resolution: "odata-msgraph-programmatic-ts@workspace:examples/odata-msgraph-programmatic-ts"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/config": "npm:0.101.4"
-    "@graphql-mesh/odata": "npm:0.101.2"
-    "@graphql-mesh/runtime": "npm:0.100.4"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-  languageName: unknown
-  linkType: soft
-
-"odata-msgraph-programmatic@workspace:examples/odata-msgraph-programmatic":
-  version: 0.0.0-use.local
-  resolution: "odata-msgraph-programmatic@workspace:examples/odata-msgraph-programmatic"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/config": "npm:0.101.4"
-    "@graphql-mesh/odata": "npm:0.101.2"
-    "@graphql-mesh/runtime": "npm:0.100.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"odata-trippin-example@workspace:examples/odata-trippin":
-  version: 0.0.0-use.local
-  resolution: "odata-trippin-example@workspace:examples/odata-trippin"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/odata": "npm:0.101.2"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
 "on-exit-leak-free@npm:^2.1.0":
   version: 2.1.2
   resolution: "on-exit-leak-free@npm:2.1.2"
@@ -27487,86 +27721,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-meilisearch@workspace:examples/openapi-meilisearch":
-  version: 0.0.0-use.local
-  resolution: "openapi-meilisearch@workspace:examples/openapi-meilisearch"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit":
-  version: 0.0.0-use.local
-  resolution: "openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@types/react": "npm:18.3.3"
-    "@types/react-dom": "npm:18.3.0"
-    "@vitejs/plugin-react": "npm:4.3.1"
-    graphql: "npm:16.9.0"
-    react: "npm:18.3.1"
-    react-dom: "npm:18.3.1"
-    typescript: "npm:^5.4.2"
-    vite: "npm:5.3.5"
-  languageName: unknown
-  linkType: soft
-
-"openapi-stackexchange@workspace:examples/openapi-stackexchange":
-  version: 0.0.0-use.local
-  resolution: "openapi-stackexchange@workspace:examples/openapi-stackexchange"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"openapi-stripe@workspace:examples/openapi-stripe":
-  version: 0.0.0-use.local
-  resolution: "openapi-stripe@workspace:examples/openapi-stripe"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"openapi-subscriptions@workspace:examples/openapi-subscriptions":
-  version: 0.0.0-use.local
-  resolution: "openapi-subscriptions@workspace:examples/openapi-subscriptions"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    "@whatwg-node/fetch": "npm:^0.9.0"
-    concurrently: "npm:8.2.2"
-    fets: "npm:^0.8.0"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    ts-node-dev: "npm:2.0.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "openapi-types@npm:^12.1.0":
   version: 12.1.3
   resolution: "openapi-types@npm:12.1.3"
   checksum: 10c0/4ad4eb91ea834c237edfa6ab31394e87e00c888fc2918009763389c00d02342345195d6f302d61c3fd807f17723cd48df29b47b538b68375b3827b3758cd520f
   languageName: node
   linkType: hard
-
-"openapi-youtrack@workspace:examples/openapi-youtrack":
-  version: 0.0.0-use.local
-  resolution: "openapi-youtrack@workspace:examples/openapi-youtrack"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    "@graphql-mesh/transform-resolvers-composition": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-    graphql-fields: "npm:2.0.3"
-  languageName: unknown
-  linkType: soft
 
 "opener@npm:^1.5.2":
   version: 1.5.2
@@ -27576,18 +27736,6 @@ __metadata:
   checksum: 10c0/dd56256ab0cf796585617bc28e06e058adf09211781e70b264c76a1dbe16e90f868c974e5bf5309c93469157c7d14b89c35dc53fe7293b0e40b4d2f92073bc79
   languageName: node
   linkType: hard
-
-"openwhisk-example@workspace:examples/openwhisk-example":
-  version: 0.0.0-use.local
-  resolution: "openwhisk-example@workspace:examples/openwhisk-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/graphql": "npm:0.99.4"
-    esbuild: "npm:^0.23.0"
-    graphql: "npm:16.9.0"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "optimism@npm:^0.18.0":
   version: 0.18.0
@@ -29616,25 +29764,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postgres-geodb-example@workspace:examples/postgres-geodb":
-  version: 0.0.0-use.local
-  resolution: "postgres-geodb-example@workspace:examples/postgres-geodb"
-  dependencies:
-    "@graphql-mesh/cache-file": "npm:0.99.4"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/config": "npm:0.101.4"
-    "@graphql-mesh/graphql": "npm:0.99.4"
-    "@graphql-mesh/postgraphile": "npm:0.99.4"
-    "@graphql-mesh/runtime": "npm:0.100.4"
-    "@graphql-mesh/transform-prefix": "npm:0.99.4"
-    "@types/node": "npm:20.14.12"
-    cross-env: "npm:7.0.3"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "postgres-interval@npm:^1.1.0":
   version: 1.2.0
   resolution: "postgres-interval@npm:1.2.0"
@@ -29846,33 +29975,6 @@ __metadata:
   checksum: 10c0/40c3ce4b7e6d4b8c3355479df77aeed46f81b279818ccdc500124e6a5ab882c0cc81ff7ea16384873a95a74c4570b01b120f287abbdd4c877931460eca6084b3
   languageName: node
   linkType: hard
-
-"products@workspace:examples/federation-example/services/products":
-  version: 0.0.0-use.local
-  resolution: "products@workspace:examples/federation-example/services/products"
-  dependencies:
-    "@apollo/server": "npm:4.10.5"
-    "@apollo/subgraph": "npm:2.8.4"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
-"programmatic-batching-example@workspace:examples/programmatic-batching":
-  version: 0.0.0-use.local
-  resolution: "programmatic-batching-example@workspace:examples/programmatic-batching"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    "@sinclair/typebox": "npm:0.32.35"
-    concurrently: "npm:8.2.2"
-    fets: "npm:0.8.1"
-    graphql: "npm:16.9.0"
-    jest: "npm:29.7.0"
-    ts-node: "npm:^10.9.2"
-  languageName: unknown
-  linkType: soft
 
 "prom-client@npm:15.1.3":
   version: 15.1.3
@@ -30589,15 +30691,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reddit-example@workspace:examples/reddit-example":
-  version: 0.0.0-use.local
-  resolution: "reddit-example@workspace:examples/reddit-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/json-schema": "npm:0.102.5"
-  languageName: unknown
-  linkType: soft
-
 "redent@npm:^3.0.0":
   version: 3.0.0
   resolution: "redent@npm:3.0.0"
@@ -31275,18 +31368,6 @@ __metadata:
   checksum: 10c0/c19ef26e4e188f408922c46f7ff480d38e8dfc55d448310dfb518736b23ed2c4f547fb64a6ed5bdba92cd7e7ddc889d36ff78f794816d5e71498d645ef476107
   languageName: node
   linkType: hard
-
-"reviews@workspace:examples/federation-example/services/reviews":
-  version: 0.0.0-use.local
-  resolution: "reviews@workspace:examples/federation-example/services/reviews"
-  dependencies:
-    "@apollo/server": "npm:4.10.5"
-    "@apollo/subgraph": "npm:2.8.4"
-    graphql: "npm:16.9.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
 
 "rfdc@npm:^1.2.0, rfdc@npm:^1.3.0, rfdc@npm:^1.4.1":
   version: 1.4.1
@@ -32244,28 +32325,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap-demo@workspace:examples/soap-demo":
-  version: 0.0.0-use.local
-  resolution: "soap-demo@workspace:examples/soap-demo"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/soap": "npm:0.101.4"
-    cross-env: "npm:7.0.3"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
-"soap-netsuite@workspace:examples/soap-netsuite":
-  version: 0.0.0-use.local
-  resolution: "soap-netsuite@workspace:examples/soap-netsuite"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/soap": "npm:0.101.4"
-    cross-env: "npm:7.0.3"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
 "soap@npm:1.1.0":
   version: 1.1.0
   resolution: "soap@npm:1.1.0"
@@ -32449,21 +32508,6 @@ __metadata:
   checksum: 10c0/6173e1d903dca41dcab6a2deed8b4caf61bd13b6d7af8374713500570aa929ff9414ae09a0519f4f8772df993300305a395d4871f35bc4ca72b6db57e1f30af8
   languageName: node
   linkType: hard
-
-"spacex-cfw@workspace:examples/spacex-cfw":
-  version: 0.0.0-use.local
-  resolution: "spacex-cfw@workspace:examples/spacex-cfw"
-  dependencies:
-    "@envelop/depth-limit": "npm:4.0.0"
-    "@graphql-mesh/cache-cfw-kv": "npm:0.99.4"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/graphql": "npm:0.99.4"
-    "@graphql-mesh/plugin-rate-limit": "npm:0.99.4"
-    "@graphql-mesh/plugin-response-cache": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-    wrangler: "npm:3.67.0"
-  languageName: unknown
-  linkType: soft
 
 "sparse-bitfield@npm:^3.0.3":
   version: 3.0.3
@@ -33757,24 +33801,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"thrift-calculator@workspace:examples/thrift-calculator":
-  version: 0.0.0-use.local
-  resolution: "thrift-calculator@workspace:examples/thrift-calculator"
-  dependencies:
-    "@creditkarma/thrift-server-core": "npm:1.0.4"
-    "@creditkarma/thrift-server-express": "npm:1.0.4"
-    "@creditkarma/thrift-typescript": "npm:3.7.6"
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/thrift": "npm:0.101.4"
-    concurrently: "npm:8.2.2"
-    express: "npm:4.19.2"
-    graphql: "npm:16.9.0"
-    thrift: "npm:0.20.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.4.2"
-  languageName: unknown
-  linkType: soft
-
 "thrift@npm:0.20.0, thrift@npm:^0.20.0":
   version: 0.20.0
   resolution: "thrift@npm:0.20.0"
@@ -34406,18 +34432,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-merging-batching-example@workspace:examples/type-merging-batching-example":
-  version: 0.0.0-use.local
-  resolution: "type-merging-batching-example@workspace:examples/type-merging-batching-example"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/graphql": "npm:0.99.4"
-    "@graphql-mesh/transform-rename": "npm:0.99.4"
-    "@graphql-mesh/transform-type-merging": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
-
 "type@npm:^2.7.2":
   version: 2.7.3
   resolution: "type@npm:2.7.3"
@@ -34492,20 +34506,6 @@ __metadata:
   checksum: 10c0/6005cb31df50eef8b1f3c780eb71a17925f3038a100d82f9406ac2ad1de5eb59f8e6decbdc145b3a1f8e5836e17b0c0002fb698b9fe2516b8f9f9ff602d36412
   languageName: node
   linkType: hard
-
-"typescript-location-weather-example@workspace:examples/openapi-location-weather":
-  version: 0.0.0-use.local
-  resolution: "typescript-location-weather-example@workspace:examples/openapi-location-weather"
-  dependencies:
-    "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/openapi": "npm:0.102.5"
-    "@graphql-mesh/plugin-response-cache": "npm:0.99.4"
-    "@graphql-mesh/runtime": "npm:0.100.4"
-    "@graphql-mesh/transform-cache": "npm:0.99.4"
-    "@graphql-mesh/transform-rename": "npm:0.99.4"
-    graphql: "npm:16.9.0"
-  languageName: unknown
-  linkType: soft
 
 "typescript-memoize@npm:^1.1.1":
   version: 1.1.1

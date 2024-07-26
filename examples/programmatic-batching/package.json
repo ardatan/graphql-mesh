@@ -1,5 +1,5 @@
 {
-  "name": "programmatic-batching-example",
+  "name": "@examples/programmatic-batching",
   "version": "0.13.5",
   "license": "MIT",
   "private": true,

@@ -1,5 +1,5 @@
 {
-  "name": "json-schema-subscriptions",
+  "name": "@examples/json-schema-subscriptions",
   "version": "0.14.5",
   "private": true,
   "scripts": {

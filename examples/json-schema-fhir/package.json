@@ -1,5 +1,5 @@
 {
-  "name": "json-schema-fhir",
+  "name": "@examples/json-schema-fhir",
   "version": "0.13.5",
   "license": "MIT",
   "private": true,

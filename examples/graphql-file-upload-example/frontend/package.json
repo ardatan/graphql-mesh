@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "@examples/graphql-file-upload-example-frontend",
   "version": "0.1.1",
   "private": true,
   "scripts": {

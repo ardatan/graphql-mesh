@@ -1,5 +1,5 @@
 {
-  "name": "graphql-file-upload-example",
+  "name": "@examples/graphql-file-upload-example",
   "version": "0.16.4",
   "license": "MIT",
   "private": true,

@@ -1,5 +1,5 @@
 {
-  "name": "json-schema-example",
+  "name": "@examples/json-schema-example",
   "version": "0.18.5",
   "license": "MIT",
   "private": true,

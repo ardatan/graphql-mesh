@@ -1,5 +1,5 @@
 {
-  "name": "odata-msgraph-programmatic-ts",
+  "name": "@examples/odata-msgraph-programmatic-ts",
   "version": "0.12.2",
   "license": "MIT",
   "private": true,

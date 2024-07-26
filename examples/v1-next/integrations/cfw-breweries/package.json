@@ -1,5 +1,5 @@
 {
-  "name": "cfw-breweries",
+  "name": "@examples-v1-next/cfw-breweries",
   "version": "0.15.5",
   "private": true,
   "scripts": {

@@ -1,5 +1,5 @@
 {
-  "name": "openapi-youtrack",
+  "name": "@examples/openapi-youtrack",
   "version": "0.18.5",
   "license": "MIT",
   "private": true,

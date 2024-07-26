@@ -1,5 +1,5 @@
 {
-  "name": "openapi-subscriptions",
+  "name": "@examples/openapi-subscriptions",
   "version": "0.13.5",
   "private": true,
   "scripts": {

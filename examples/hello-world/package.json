@@ -1,5 +1,5 @@
 {
-  "name": "json-schema-hello-world",
+  "name": "@examples/hello-world",
   "version": "0.13.5",
   "license": "MIT",
   "private": true,

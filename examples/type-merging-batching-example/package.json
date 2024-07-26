@@ -1,5 +1,5 @@
 {
-  "name": "type-merging-batching-example",
+  "name": "@examples/type-merging-batching-example",
   "version": "0.10.4",
   "private": true,
   "scripts": {

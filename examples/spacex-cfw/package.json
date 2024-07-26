@@ -1,5 +1,5 @@
 {
-  "name": "spacex-cfw",
+  "name": "@examples/spacex-cfw",
   "version": "0.10.4",
   "private": true,
   "dependencies": {

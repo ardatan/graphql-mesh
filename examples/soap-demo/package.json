@@ -1,5 +1,5 @@
 {
-  "name": "soap-demo",
+  "name": "@examples/soap-demo",
   "version": "0.12.4",
   "license": "MIT",
   "private": true,

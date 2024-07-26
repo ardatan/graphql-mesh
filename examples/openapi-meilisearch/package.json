@@ -1,5 +1,5 @@
 {
-  "name": "openapi-meilisearch",
+  "name": "@examples/openapi-meilisearch",
   "version": "0.13.5",
   "license": "MIT",
   "private": true,

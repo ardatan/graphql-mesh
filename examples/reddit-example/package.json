@@ -1,5 +1,5 @@
 {
-  "name": "reddit-example",
+  "name": "@examples/reddit-example",
   "version": "0.13.5",
   "private": true,
   "dependencies": {

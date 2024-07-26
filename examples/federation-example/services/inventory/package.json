@@ -1,5 +1,5 @@
 {
-  "name": "inventory",
+  "name": "@examples/federation-example-services-inventory",
   "version": "0.0.14",
   "license": "MIT",
   "private": true,

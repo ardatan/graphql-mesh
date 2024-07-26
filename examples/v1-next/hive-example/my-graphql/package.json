@@ -1,5 +1,5 @@
 {
-  "name": "@examples/hive-example-graphql-service",
+  "name": "@examples-v1-next/hive-example-my-graphql",
   "private": true,
   "scripts": {
     "publish": "hive schema:publish --service mygraphql --url http://localhost:4001/graphql typeDefs.graphql",
