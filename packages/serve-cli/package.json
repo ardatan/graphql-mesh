@@ -48,7 +48,7 @@
     }
   },
   "dependencies": {
-    "@commander-js/extra-typings": "^12.0.1",
+    "@commander-js/extra-typings": "patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch",
     "@graphql-mesh/cross-helpers": "^0.4.5",
     "@graphql-mesh/include": "^0.0.1",
     "@graphql-mesh/serve-runtime": "^0.6.0",
