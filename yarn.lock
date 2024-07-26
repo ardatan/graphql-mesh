@@ -4316,7 +4316,7 @@ __metadata:
     "@envelop/auth0": "npm:^6.0.0"
     "@graphql-mesh/compose-cli": "npm:^0.6.3"
     "@graphql-mesh/plugin-operation-field-permissions": "npm:^0.99.4"
-    "@graphql-mesh/serve-cli": "npm:^0.8.4"
+    "@graphql-mesh/serve-cli": "npm:^0.8.5"
     "@omnigraph/json-schema": "npm:^0.102.5"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
@@ -4437,7 +4437,7 @@ __metadata:
     "@graphql-mesh/cache-localforage": "npm:^0.99.4"
     "@graphql-mesh/compose-cli": "npm:^0.6.3"
     "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
-    "@graphql-mesh/serve-cli": "npm:^0.8.4"
+    "@graphql-mesh/serve-cli": "npm:^0.8.5"
     "@omnigraph/openapi": "npm:^0.102.5"
     graphql: "npm:^16.8.1"
   languageName: unknown
@@ -4448,7 +4448,7 @@ __metadata:
   resolution: "@examples-v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack"
   dependencies:
     "@graphql-mesh/compose-cli": "npm:^0.6.3"
-    "@graphql-mesh/serve-cli": "npm:^0.8.4"
+    "@graphql-mesh/serve-cli": "npm:^0.8.5"
     "@omnigraph/openapi": "npm:^0.102.5"
     graphql: "npm:^16.8.1"
   languageName: unknown
@@ -4458,7 +4458,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/openwhisk-example@workspace:examples/v1-next/integrations/openwhisk-example"
   dependencies:
-    "@graphql-mesh/serve-cli": "npm:^0.8.4"
+    "@graphql-mesh/serve-cli": "npm:^0.8.5"
     "@graphql-mesh/serve-runtime": "npm:^0.5.5"
     esbuild: "npm:^0.23.0"
     graphql: "npm:16.9.0"
@@ -6373,7 +6373,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/serve-cli@npm:^0.8.4, @graphql-mesh/serve-cli@workspace:*, @graphql-mesh/serve-cli@workspace:packages/serve-cli":
+"@graphql-mesh/serve-cli@npm:^0.8.5, @graphql-mesh/serve-cli@workspace:*, @graphql-mesh/serve-cli@workspace:packages/serve-cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-cli@workspace:packages/serve-cli"
   dependencies:
