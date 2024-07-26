@@ -36,7 +36,7 @@
   "packageManager": "yarn@4.3.1",
   "scripts": {
     "build": "yarn prebuild && bob build && yarn postbuild",
-    "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace @v1-next/example-fastify compose && yarn workspace example-fastify build && yarn workspace example-persisted-operations build",
+    "build-test-artifacts": "yarn workspace @examples/json-schema-example build && yarn workspace @examples-v1-next/fastify compose && yarn workspace @examples/fastify build && yarn workspace @examples/persisted-operations build",
     "build:website": "yarn build && cd website && yarn build",
     "bundle": "yarn workspaces foreach -A run bundle",
     "changeset": "changeset",
