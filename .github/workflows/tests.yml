@@ -28,11 +28,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          packageManagerVersion: modern
-
+          node-version-file: .node-version
       - name: Prepare for build
         run: yarn prebuild
       - name: typecheck
@@ -57,11 +56,10 @@ jobs:
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
-          packageManagerVersion: modern
+          node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -106,11 +104,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
-          packageManagerVersion: modern
+          node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -186,11 +183,10 @@ jobs:
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
-          packageManagerVersion: modern
+          node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -277,11 +273,10 @@ jobs:
       - name: Remove node-libcurl
         run: node scripts/remove-node-libcurl.cjs
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
-          packageManagerVersion: modern
+          node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -334,11 +329,10 @@ jobs:
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
-          packageManagerVersion: modern
+          node-version: ${{matrix.node-version}}
       - name: Build
         run: yarn build
       - name: Node.js integrity check
@@ -352,7 +346,7 @@ jobs:
       matrix:
         setup:
           - serve-runner: node
-            node-version: 18
+            node-version-file: .node-version
           - serve-runner: node
             node-version: 20
           - serve-runner: node
@@ -362,11 +356,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: setup env
-        uses: the-guild-org/shared-config/setup@main
+      - name: set up env
+        uses: the-guild-org/shared-config/setup@v1
         with:
-          nodeVersion: ${{matrix.setup.node-version}}
-          packageManagerVersion: modern
+          node-version: ${{matrix.setup.node-version}}
       - name: prepare
         run: yarn prebuild
       - name: set up docker buildx
