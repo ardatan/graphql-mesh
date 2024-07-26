@@ -15,10 +15,17 @@ paths:
             type: string
       responses:
         200:
+          description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
 
 components:
   schemas:
@@ -50,6 +57,15 @@ components:
           properties:
             dog_exclusive:
               type: string
+    ApiError:
+      required:
+        - code
+        - description
+      type: object
+      properties:
+        code:
+          type: string
+      additionalProperties: false
   requestBodies:
     Pet:
       required: true
