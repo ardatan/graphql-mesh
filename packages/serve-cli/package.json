@@ -35,7 +35,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "scripts": {
-    "bundle": "(rm -rf bundle || true) && rollup -c && yarn inject-version",
+    "bundle": "(rm -rf bundle || true) && rollup -c",
     "inject-version": "tsx scripts/inject-version.ts"
   },
   "peerDependencies": {
