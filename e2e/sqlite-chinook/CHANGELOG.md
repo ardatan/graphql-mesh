@@ -1,5 +1,14 @@
 # @e2e/sqlite-chinook
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.8.4
+  - @graphql-mesh/compose-cli@0.6.3
+  - @omnigraph/sqlite@0.3.5
+
 ## 0.1.4
 
 ### Patch Changes

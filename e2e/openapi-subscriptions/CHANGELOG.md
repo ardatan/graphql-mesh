@@ -1,5 +1,17 @@
 # @e2e/openapi-subscriptions
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/serve-cli@0.8.4
+  - @graphql-mesh/compose-cli@0.6.3
+  - @omnigraph/openapi@0.102.5
+
 ## 0.1.4
 
 ### Patch Changes

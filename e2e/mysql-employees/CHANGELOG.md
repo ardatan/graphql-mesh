@@ -1,5 +1,14 @@
 # @e2e/mysql-employees
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.8.4
+  - @graphql-mesh/compose-cli@0.6.3
+  - @omnigraph/mysql@0.4.4
+
 ## 0.1.3
 
 ### Patch Changes

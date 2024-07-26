@@ -1,5 +1,14 @@
 # @e2e/openapi-min-length
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@0.8.4
+  - @graphql-mesh/compose-cli@0.6.3
+  - @omnigraph/openapi@0.102.5
+
 ## 0.0.3
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.5.5
+
+### Patch Changes
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - More verbose debug logs for HTTP fetch calls and
+  subgraph requests
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/runtime@0.100.4
+  - @graphql-mesh/types@0.99.4
+  - @graphql-mesh/transport-common@0.4.4
+
 ## 0.5.4
 
 ### Patch Changes
