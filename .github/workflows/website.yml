@@ -19,9 +19,9 @@ jobs:
           fetch-depth: 0
 
       - uses: the-guild-org/shared-config/setup@v1
-        name: setup env
+        name: set up env
         with:
-          node-version: 18
+          node-version-file: .node-version
 
       - uses: the-guild-org/shared-config/website-cf@main
         name: build and deploy website

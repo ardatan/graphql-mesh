@@ -29,9 +29,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - uses: the-guild-org/shared-config/setup@v1
-        name: setup env
+        name: set up env
         with:
-          node-version: 18
+          node-version-file: .node-version
       - name: Prepare for build
         run: yarn prebuild
       - name: typecheck
@@ -57,7 +57,7 @@ jobs:
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@v1
-        name: setup env
+        name: set up env
         with:
           node-version: ${{matrix.node-version}}
 
@@ -105,7 +105,7 @@ jobs:
           cache: 'yarn'
 
       - uses: the-guild-org/shared-config/setup@v1
-        name: setup env
+        name: set up env
         with:
           node-version: ${{matrix.node-version}}
 
@@ -184,7 +184,7 @@ jobs:
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@v1
-        name: setup env
+        name: set up env
         with:
           node-version: ${{matrix.node-version}}
 
@@ -274,7 +274,7 @@ jobs:
         run: node scripts/remove-node-libcurl.cjs
 
       - uses: the-guild-org/shared-config/setup@v1
-        name: setup env
+        name: set up env
         with:
           node-version: ${{matrix.node-version}}
 
@@ -330,7 +330,7 @@ jobs:
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@v1
-        name: setup env
+        name: set up env
         with:
           node-version: ${{matrix.node-version}}
       - name: Build
@@ -346,7 +346,7 @@ jobs:
       matrix:
         setup:
           - serve-runner: node
-            node-version: 18
+            node-version-file: .node-version
           - serve-runner: node
             node-version: 20
           - serve-runner: node

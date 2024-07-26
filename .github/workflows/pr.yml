@@ -56,7 +56,7 @@ jobs:
       - name: set up env
         uses: the-guild-org/shared-config/setup@v1
         with:
-          node-version: 18
+          node-version-file: .node-version
       - name: prepare
         run: yarn prebuild
       - name: bundle
