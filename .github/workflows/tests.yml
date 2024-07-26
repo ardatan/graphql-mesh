@@ -362,8 +362,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: set up docker buildx
-        uses: docker/setup-buildx-action@v3
       - name: setup env
         uses: the-guild-org/shared-config/setup@main
         with:
@@ -371,6 +369,9 @@ jobs:
           packageManagerVersion: modern
       - name: prepare
         run: yarn prebuild
+      - name: set up docker buildx
+        if: matrix.setup.serve-runner == 'docker'
+        uses: docker/setup-buildx-action@v3
       - name: bundle
         if: matrix.setup.serve-runner == 'docker'
         env:
