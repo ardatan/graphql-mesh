@@ -11,7 +11,7 @@
     "@graphql-mesh/compose-cli": "^0.6.3",
     "@graphql-mesh/plugin-response-cache": "^0.99.4",
     "@graphql-mesh/serve-runtime": "^0.5.5",
-    "@omnigraph/json-schema": "^0.102.5",
+    "@omnigraph/json-schema": "^0.102.6",
     "graphql": "16.9.0"
   },
   "devDependencies": {
