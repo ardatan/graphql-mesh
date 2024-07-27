@@ -1,5 +1,14 @@
 # @graphql-mesh/transport-rest
 
+## 0.4.5
+
+### Patch Changes
+
+- [#7388](https://github.com/ardatan/graphql-mesh/pull/7388)
+  [`c4190a9`](https://github.com/ardatan/graphql-mesh/commit/c4190a9ca20a77356ba0ff165cb47da28c43ff2f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the issue when a discriminator is used with a
+  response that has multiple status codes
+
 ## 0.4.4
 
 ### Patch Changes
