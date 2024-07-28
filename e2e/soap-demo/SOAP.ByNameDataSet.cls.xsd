@@ -1,0 +1,22 @@
+<s:schema xmlns="http://tempuri.org/ByNameDataSet" xmlns:mstns="http://tempuri.org/ByNameDataSet" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="ByNameDataSet" targetNamespace="http://tempuri.org/ByNameDataSet" attributeFormDefault="qualified" elementFormDefault="qualified">
+<s:element name="ByNameDataSet" msdata:IsDataSet="true">
+<s:complexType>
+<s:choice maxOccurs="unbounded">
+<s:element name="ByName">
+<s:complexType>
+<s:sequence>
+<s:element name="ID" type="s:long" minOccurs="0"/>
+<s:element name="Name" type="s:string" minOccurs="0"/>
+<s:element name="DOB" type="s:date" minOccurs="0"/>
+<s:element name="SSN" type="s:string" minOccurs="0"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+</s:choice>
+</s:complexType>
+<s:unique name="Constraint1" msdata:PrimaryKey="true">
+<s:selector xpath=".//mstns:ByName"/>
+<s:field xpath="mstns:ID"/>
+</s:unique>
+</s:element>
+</s:schema>
