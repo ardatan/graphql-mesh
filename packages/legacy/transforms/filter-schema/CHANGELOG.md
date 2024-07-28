@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.99.5
+
+### Patch Changes
+
+- [#7241](https://github.com/ardatan/graphql-mesh/pull/7241)
+  [`7b474af`](https://github.com/ardatan/graphql-mesh/commit/7b474af8ebd91fad894ca72fca31e0afbcc76ede)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`minimatch@^10.0.0` ↗︎](https://www.npmjs.com/package/minimatch/v/10.0.0)
+    (from `^9.0.0`, in `dependencies`)
+
 ## 0.99.4
 
 ### Patch Changes

@@ -4662,7 +4662,7 @@ __metadata:
   resolution: "@examples-v1-next/auth0@workspace:examples/v1-next/auth0"
   dependencies:
     "@envelop/auth0": "npm:^6.0.0"
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/compose-cli": "npm:^0.6.4"
     "@graphql-mesh/plugin-operation-field-permissions": "npm:^0.99.4"
     "@graphql-mesh/serve-cli": "npm:^0.8.5"
     "@omnigraph/json-schema": "npm:^0.102.6"
@@ -4677,7 +4677,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cache-cfw-kv": "npm:^0.99.4"
     "@graphql-mesh/cache-localforage": "npm:^0.99.4"
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/compose-cli": "npm:^0.6.4"
     "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
     "@graphql-mesh/serve-runtime": "npm:^0.5.5"
     "@omnigraph/json-schema": "npm:^0.102.6"
@@ -4692,7 +4692,7 @@ __metadata:
   dependencies:
     "@envelop/depth-limit": "npm:^4.0.0"
     "@graphql-mesh/cache-cfw-kv": "npm:^0.99.4"
-    "@graphql-mesh/plugin-rate-limit": "npm:^0.99.4"
+    "@graphql-mesh/plugin-rate-limit": "npm:^0.99.5"
     "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
     "@graphql-mesh/serve-runtime": "npm:^0.5.5"
     graphql: "npm:16.9.0"
@@ -4704,7 +4704,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/fastify@workspace:examples/v1-next/integrations/fastify"
   dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/compose-cli": "npm:^0.6.4"
     "@graphql-mesh/serve-runtime": "npm:^0.5.5"
     "@omnigraph/openapi": "npm:^0.102.6"
     fastify: "npm:^4.26.0"
@@ -4720,7 +4720,7 @@ __metadata:
   resolution: "@examples-v1-next/gcp-functions@workspace:examples/v1-next/integrations/gcp-functions"
   dependencies:
     "@google-cloud/functions-framework": "npm:^3.3.0"
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/compose-cli": "npm:^0.6.4"
     "@graphql-mesh/serve-runtime": "npm:^0.5.5"
     "@omnigraph/json-schema": "npm:^0.102.6"
     "@types/node": "npm:^20.10.6"
@@ -4783,7 +4783,7 @@ __metadata:
   resolution: "@examples-v1-next/openapi-location-weather@workspace:examples/v1-next/openapi-location-weather"
   dependencies:
     "@graphql-mesh/cache-localforage": "npm:^0.99.4"
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/compose-cli": "npm:^0.6.4"
     "@graphql-mesh/plugin-response-cache": "npm:^0.99.4"
     "@graphql-mesh/serve-cli": "npm:^0.8.5"
     "@omnigraph/openapi": "npm:^0.102.6"
@@ -4795,7 +4795,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack"
   dependencies:
-    "@graphql-mesh/compose-cli": "npm:^0.6.3"
+    "@graphql-mesh/compose-cli": "npm:^0.6.4"
     "@graphql-mesh/serve-cli": "npm:^0.8.5"
     "@omnigraph/openapi": "npm:^0.102.6"
     graphql: "npm:^16.8.1"
@@ -5485,7 +5485,7 @@ __metadata:
   resolution: "@examples/soap-country-info@workspace:examples/soap-country-info"
   dependencies:
     "@graphql-mesh/cli": "npm:0.92.4"
-    "@graphql-mesh/plugin-snapshot": "npm:0.99.4"
+    "@graphql-mesh/plugin-snapshot": "npm:0.99.5"
     "@graphql-mesh/soap": "npm:0.101.4"
     graphql: "npm:16.9.0"
   languageName: unknown
@@ -5521,7 +5521,7 @@ __metadata:
     "@graphql-mesh/cache-cfw-kv": "npm:0.99.4"
     "@graphql-mesh/cli": "npm:0.92.4"
     "@graphql-mesh/graphql": "npm:0.99.4"
-    "@graphql-mesh/plugin-rate-limit": "npm:0.99.4"
+    "@graphql-mesh/plugin-rate-limit": "npm:0.99.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.99.4"
     graphql: "npm:16.9.0"
     wrangler: "npm:3.67.1"
@@ -6066,12 +6066,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/compose-cli@npm:^0.6.3, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
+"@graphql-mesh/compose-cli@npm:^0.6.4, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
     "@commander-js/extra-typings": "npm:^12.0.1"
-    "@graphql-mesh/fusion-composition": "npm:^0.1.4"
+    "@graphql-mesh/fusion-composition": "npm:^0.1.5"
     "@graphql-mesh/utils": "npm:^0.99.4"
     "@graphql-tools/graphql-file-loader": "npm:8.0.1"
     "@graphql-tools/load": "npm:^8.0.1"
@@ -6128,7 +6128,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/fusion-composition@npm:^0.1.4, @graphql-mesh/fusion-composition@workspace:packages/fusion/composition":
+"@graphql-mesh/fusion-composition@npm:^0.1.5, @graphql-mesh/fusion-composition@workspace:packages/fusion/composition":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-composition@workspace:packages/fusion/composition"
   dependencies:
@@ -6598,7 +6598,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-rate-limit@npm:0.99.4, @graphql-mesh/plugin-rate-limit@npm:^0.99.4, @graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit":
+"@graphql-mesh/plugin-rate-limit@npm:0.99.5, @graphql-mesh/plugin-rate-limit@npm:^0.99.5, @graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit"
   dependencies:
@@ -6632,7 +6632,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-snapshot@npm:0.99.4, @graphql-mesh/plugin-snapshot@workspace:packages/plugins/snapshot":
+"@graphql-mesh/plugin-snapshot@npm:0.99.5, @graphql-mesh/plugin-snapshot@workspace:packages/plugins/snapshot":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-snapshot@workspace:packages/plugins/snapshot"
   dependencies:

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rate-limit",
-  "version": "0.99.4",
+  "version": "0.99.5",
   "type": "module",
   "repository": {
     "type": "git",
