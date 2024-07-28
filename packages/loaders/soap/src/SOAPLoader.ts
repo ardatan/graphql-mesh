@@ -72,7 +72,7 @@ export interface SOAPLoaderOptions {
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
   endpoint?: string;
-  cwd: string;
+  cwd?: string;
 }
 
 const soapDirective = new GraphQLDirective({
