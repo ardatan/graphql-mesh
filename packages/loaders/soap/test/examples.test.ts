@@ -8,7 +8,7 @@ import { SOAPLoader } from '../src/index.js';
 
 const { readFile } = promises;
 
-const examples = ['example1', 'example2', 'axis'];
+const examples = ['example1', 'example2', 'axis', 'greeting', 'tempconvert'];
 
 describe('Examples', () => {
   const mockLogger: Logger = {
