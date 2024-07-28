@@ -346,7 +346,7 @@ jobs:
       matrix:
         setup:
           - serve-runner: node
-            node-version-file: .node-version
+            node-version: 18
           - serve-runner: node
             node-version: 20
           - serve-runner: node
