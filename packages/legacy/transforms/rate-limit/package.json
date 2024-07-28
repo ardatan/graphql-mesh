@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.5",
-    "minimatch": "^9.0.0"
+    "minimatch": "^10.0.0"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.99.4",
