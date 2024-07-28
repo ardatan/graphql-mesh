@@ -559,7 +559,7 @@ export function createTenv(cwd: string): Tenv {
           }
         }
       } else {
-        await setTimeout(interval * 3);
+        await waitForReachable(container, ctrl.signal);
       }
       return container;
     },
