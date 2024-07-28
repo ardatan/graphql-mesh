@@ -1,9 +1,29 @@
-import { createTenv } from '@e2e/tenv';
+import { createTenv, type Container } from '@e2e/tenv';
 
-const { compose, serve } = createTenv(__dirname);
+const { compose, serve, container } = createTenv(__dirname);
+
+let soapDemo: Container;
+
+beforeAll(async () => {
+  soapDemo = await container({
+    name: 'soap-demo',
+    image: 'outofcoffee/imposter-all',
+    containerPort: 8080,
+    volumes: [
+      {
+        host: __dirname,
+        container: '/opt/imposter/config',
+      },
+    ],
+    healthcheck: [],
+  });
+});
 
 it('should compose the appropriate schema', async () => {
-  const { result } = await compose();
+  const { result } = await compose({
+    services: [soapDemo],
+    maskServicePorts: true,
+  });
   expect(result).toMatchSnapshot();
 });
 
@@ -17,6 +37,13 @@ it.concurrent.each([
         }
       }
     `,
+    expected: {
+      data: {
+        s0_SOAPDemo_SOAPDemoSoap_AddInteger: {
+          AddIntegerResult: expect.any(Number),
+        },
+      },
+    },
   },
   {
     name: 'DivideInteger',
@@ -27,6 +54,13 @@ it.concurrent.each([
         }
       }
     `,
+    expected: {
+      data: {
+        s0_SOAPDemo_SOAPDemoSoap_DivideInteger: {
+          DivideIntegerResult: expect.any(Number),
+        },
+      },
+    },
   },
   {
     name: 'FindPerson',
@@ -57,6 +91,33 @@ it.concurrent.each([
         }
       }
     `,
+    expected: {
+      data: {
+        s0_SOAPDemo_SOAPDemoSoap_FindPerson: {
+          FindPersonResult: {
+            Age: expect.any(Number),
+            DOB: expect.any(String),
+            FavoriteColors: {
+              FavoriteColorsItem: expect.arrayContaining([expect.any(String)]),
+            },
+            Home: {
+              City: expect.any(String),
+              State: expect.any(String),
+              Street: expect.any(String),
+              Zip: expect.any(String),
+            },
+            Name: expect.any(String),
+            SSN: expect.any(String),
+            Office: {
+              City: expect.any(String),
+              State: expect.any(String),
+              Street: expect.any(String),
+              Zip: expect.any(String),
+            },
+          },
+        },
+      },
+    },
   },
   {
     name: 'GetListByName',
@@ -74,9 +135,25 @@ it.concurrent.each([
         }
       }
     `,
+    expected: {
+      data: {
+        s0_SOAPDemo_SOAPDemoSoap_GetListByName: {
+          GetListByNameResult: {
+            PersonIdentification: expect.arrayContaining([
+              {
+                Name: expect.any(String),
+                DOB: expect.any(String),
+                ID: expect.any(String),
+                SSN: expect.any(String),
+              },
+            ]),
+          },
+        },
+      },
+    },
   },
-])('should execute $name', async ({ query }) => {
-  const { output } = await compose({ output: 'graphql' });
+])('should execute $name', async ({ query, expected }) => {
+  const { output } = await compose({ output: 'graphql', services: [soapDemo] });
   const { execute } = await serve({ supergraph: output });
-  await expect(execute({ query })).resolves.toMatchSnapshot();
+  await expect(execute({ query })).resolves.toEqual(expected);
 });

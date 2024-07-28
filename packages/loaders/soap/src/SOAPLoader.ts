@@ -40,7 +40,12 @@ import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
-import { DefaultLogger, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  DefaultLogger,
+  readFileOrUrl,
+  sanitizeNameForGraphQL,
+} from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import type {
   WSDLBinding,
@@ -66,6 +71,8 @@ export interface SOAPLoaderOptions {
   logger?: Logger;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
+  endpoint?: string;
+  cwd?: string;
 }
 
 const soapDirective = new GraphQLDirective({
@@ -134,6 +141,8 @@ export class SOAPLoader {
   private fetchFn: MeshFetch;
   private subgraphName: string;
   private logger: Logger;
+  private endpoint?: string;
+  private cwd: string;
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
@@ -142,6 +151,8 @@ export class SOAPLoader {
     this.loadXMLSchemaNamespace();
     this.schemaComposer.addDirective(soapDirective);
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
+    this.endpoint = options.endpoint;
+    this.cwd = options.cwd;
   }
 
   loadXMLSchemaNamespace() {
@@ -438,7 +449,7 @@ export class SOAPLoader {
             const soapAnnotations: SoapAnnotations = {
               elementName,
               bindingNamespace,
-              endpoint: portObj.address[0].attributes.location,
+              endpoint: this.endpoint || portObj.address[0].attributes.location,
               subgraph: this.subgraphName,
             };
             rootTC.addFields({
@@ -523,10 +534,14 @@ export class SOAPLoader {
   private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
 
   async fetchXSD(location: string, parentAliasMap = new Map<string, string>()) {
-    const response = await this.fetchFn(location, {
+    let xsdText = await readFileOrUrl<string>(location, {
+      allowUnknownExtensions: true,
+      cwd: this.cwd,
+      fetch: this.fetchFn,
+      importFn: defaultImportFn,
+      logger: this.logger,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
-    let xsdText = await response.text();
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
     const xsdObj: XSDObject = this.xmlParser.parse(xsdText, PARSE_XML_OPTIONS);

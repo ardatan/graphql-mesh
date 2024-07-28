@@ -1,0 +1,2 @@
+plugin: soap
+wsdlFile: SOAP.Demo.cls.wsdl

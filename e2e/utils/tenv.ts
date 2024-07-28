@@ -223,7 +223,12 @@ export function createTenv(cwd: string): Tenv {
     },
     serveRunner,
     async serve(opts) {
-      let { port = await getAvailablePort(), supergraph, pipeLogs, env } = opts || {};
+      let {
+        port = await getAvailablePort(),
+        supergraph,
+        pipeLogs = !!process.env['DEBUG'],
+        env,
+      } = opts || {};
 
       let proc: Proc,
         waitForExit: Promise<void> | null = null;
@@ -326,7 +331,12 @@ export function createTenv(cwd: string): Tenv {
       return serve;
     },
     async compose(opts) {
-      const { services = [], trimHostPaths, maskServicePorts, pipeLogs } = opts || {};
+      const {
+        services = [],
+        trimHostPaths,
+        maskServicePorts,
+        pipeLogs = !!process.env['DEBUG'],
+      } = opts || {};
       let output = '';
       if (opts?.output) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
@@ -375,7 +385,7 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, output, result };
     },
-    async service(name, { port, servePort, pipeLogs } = {}) {
+    async service(name, { port, servePort, pipeLogs = !!process.env['DEBUG'] } = {}) {
       port ||= await getAvailablePort();
       const [proc, waitForExit] = await spawn(
         { cwd, pipeLogs },
@@ -408,7 +418,7 @@ export function createTenv(cwd: string): Tenv {
       containerPort,
       hostPort,
       healthcheck,
-      pipeLogs,
+      pipeLogs = !!process.env['DEBUG'],
       cmd,
       volumes = [],
     }) {
@@ -514,40 +524,43 @@ export function createTenv(cwd: string): Tenv {
       }
 
       // wait for healthy
-      for (;;) {
-        let status = '';
-        try {
-          const {
-            State: { Health },
-          } = await ctr.inspect({ abortSignal: ctrl.signal });
-          status = Health?.Status ? String(Health?.Status) : '';
-        } catch (err) {
-          if (Object(err).statusCode === 404) {
-            throw new DockerError('Container was not started', container);
+      if (healthcheck.length > 0) {
+        for (;;) {
+          let status = '';
+          try {
+            const {
+              State: { Health },
+            } = await ctr.inspect({ abortSignal: ctrl.signal });
+            status = Health?.Status ? String(Health?.Status) : '';
+          } catch (err) {
+            if (Object(err).statusCode === 404) {
+              throw new DockerError('Container was not started', container);
+            }
+            throw err;
           }
-          throw err;
-        }
 
-        if (status === 'none') {
-          await container[Symbol.asyncDispose]();
-          throw new DockerError(
-            'Container has "none" health status, but has a healthcheck',
-            container,
-          );
-        } else if (status === 'unhealthy') {
-          await container[Symbol.asyncDispose]();
-          throw new DockerError('Container is unhealthy', container);
-        } else if (status === 'healthy') {
-          break;
-        } else if (status === 'starting') {
-          // no need to track retries, jest will time out aborting the signal
-          ctrl.signal.throwIfAborted();
-          await setTimeout(interval);
-        } else {
-          throw new DockerError(`Unknown health status "${status}"`, container);
+          if (status === 'none') {
+            await container[Symbol.asyncDispose]();
+            throw new DockerError(
+              'Container has "none" health status, but has a healthcheck',
+              container,
+            );
+          } else if (status === 'unhealthy') {
+            await container[Symbol.asyncDispose]();
+            throw new DockerError('Container is unhealthy', container);
+          } else if (status === 'healthy') {
+            break;
+          } else if (status === 'starting') {
+            // no need to track retries, jest will time out aborting the signal
+            ctrl.signal.throwIfAborted();
+            await setTimeout(interval);
+          } else {
+            throw new DockerError(`Unknown health status "${status}"`, container);
+          }
         }
+      } else {
+        await waitForReachable(container, ctrl.signal);
       }
-
       return container;
     },
     async composeWithApollo(services) {
@@ -583,7 +596,7 @@ interface SpawnOptions extends ProcOptions {
 }
 
 function spawn(
-  { cwd, pipeLogs, env = {}, shell }: SpawnOptions,
+  { cwd, pipeLogs = !!process.env['DEBUG'], env = {}, shell }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<[proc: Proc, waitForExit: Promise<void>]> {
