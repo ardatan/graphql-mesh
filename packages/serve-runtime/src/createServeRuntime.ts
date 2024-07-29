@@ -18,6 +18,7 @@ import { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
   OnSubgraphExecuteHook,
+  TransportEntry,
   UnifiedGraphManagerOptions,
 } from '@graphql-mesh/fusion-runtime';
 import {
@@ -43,7 +44,6 @@ import {
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import {
   mergeDeep,
   type IResolvers,
@@ -51,6 +51,7 @@ import {
   type TypeSource,
 } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
@@ -162,7 +163,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           const onSubgraphExecute = getOnSubgraphExecute({
             onSubgraphExecuteHooks,
             transports: config.transports,
-            transportOptions: config.transportOptions,
             transportContext: configContext,
             transportEntryMap,
             getSubgraphSchema() {
