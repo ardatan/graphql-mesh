@@ -7,11 +7,11 @@
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/cache-localforage": "^0.99.4",
-    "@graphql-mesh/compose-cli": "^0.6.4",
-    "@graphql-mesh/plugin-response-cache": "^0.99.4",
-    "@graphql-mesh/serve-cli": "^0.8.5",
-    "@omnigraph/openapi": "^0.102.6",
+    "@graphql-mesh/cache-localforage": "^0.99.5",
+    "@graphql-mesh/compose-cli": "^0.6.5",
+    "@graphql-mesh/plugin-response-cache": "^0.99.5",
+    "@graphql-mesh/serve-cli": "^0.8.6",
+    "@omnigraph/openapi": "^0.102.7",
     "graphql": "^16.8.1"
   }
 }

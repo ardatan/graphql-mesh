@@ -1,5 +1,28 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.6
+
+### Patch Changes
+
+- [#7401](https://github.com/ardatan/graphql-mesh/pull/7401)
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/disposablestack@^0.0.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.1)
+    (to `dependencies`)
+  - Removed dependency
+    [`disposablestack@^1.1.6` ↗︎](https://www.npmjs.com/package/disposablestack/v/1.1.6) (from
+    `dependencies`)
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4),
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4),
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/fusion-runtime@0.5.6
+  - @graphql-mesh/plugin-hive@0.99.5
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/transport-http@0.3.5
+  - @graphql-mesh/transport-common@0.4.5
+
 ## 0.5.5
 
 ### Patch Changes
