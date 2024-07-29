@@ -5662,7 +5662,7 @@ __metadata:
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
-    "@types/ws": "npm:8.5.11"
+    "@types/ws": "npm:8.5.12"
     "@types/yargs": "npm:17.0.32"
     ajv: "npm:^8.12.0"
     change-case: "npm:^4.1.2"
@@ -5879,7 +5879,7 @@ __metadata:
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
-    "@types/ws": "npm:8.5.11"
+    "@types/ws": "npm:8.5.12"
     "@types/yargs": "npm:17.0.32"
     "@whatwg-node/server": "npm:^0.9.34"
     graphql-yoga: "npm:^5.6.0"
@@ -6978,7 +6978,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/urql-exchange@workspace:packages/legacy/urql"
   dependencies:
-    "@urql/core": "npm:5.0.4"
+    "@urql/core": "npm:5.0.5"
     wonka: "npm:6.3.4"
   peerDependencies:
     "@graphql-mesh/runtime": ^0.100.4
@@ -12260,12 +12260,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:8.5.11, @types/ws@npm:^8, @types/ws@npm:^8.0.0, @types/ws@npm:^8.5.5":
-  version: 8.5.11
-  resolution: "@types/ws@npm:8.5.11"
+"@types/ws@npm:8.5.12, @types/ws@npm:^8, @types/ws@npm:^8.0.0, @types/ws@npm:^8.5.5":
+  version: 8.5.12
+  resolution: "@types/ws@npm:8.5.12"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/50bd2e1a12659fa024a97d7e8c267fbf2a2c2251f1edf2057aa7dfc99682f5c025a188df9e27414675c78d3b189346a3567e1e4c218ad79a9d2b0f1f2b860c3a
+  checksum: 10c0/3fd77c9e4e05c24ce42bfc7647f7506b08c40a40fe2aea236ef6d4e96fc7cb4006a81ed1b28ec9c457e177a74a72924f4768b7b4652680b42dfd52bc380e15f9
   languageName: node
   linkType: hard
 
@@ -12640,13 +12640,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@urql/core@npm:5.0.4":
-  version: 5.0.4
-  resolution: "@urql/core@npm:5.0.4"
+"@urql/core@npm:5.0.5":
+  version: 5.0.5
+  resolution: "@urql/core@npm:5.0.5"
   dependencies:
     "@0no-co/graphql.web": "npm:^1.0.5"
     wonka: "npm:^6.3.2"
-  checksum: 10c0/3aec9420ef930cfdb0dc4635588bb2727884f9691cb56e074440b225d7dbf7a1c0d60c9fd35b1dac53fe7e7ca9d5d4d3a33fd001734096f9dfacb404df919751
+  checksum: 10c0/bbea15d21a5f20c6f68185e42e8b460b394285708c8543fed1753aac1465a509f51a43429069c543aa5a49ea90d4777f83a4cb0a45e585c72886296e50e99578
   languageName: node
   linkType: hard
 
