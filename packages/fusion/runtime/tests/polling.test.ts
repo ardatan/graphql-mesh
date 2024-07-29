@@ -4,6 +4,7 @@ import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { isAsyncIterable } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { UnifiedGraphManager } from '../src/unifiedGraphManager';
 
 describe('Polling', () => {
@@ -45,7 +46,7 @@ describe('Polling', () => {
         return {
           getSubgraphExecutor() {
             const executor: DisposableExecutor = createDefaultExecutor(schema);
-            executor[Symbol.asyncDispose] = disposeFn;
+            executor[DisposableSymbols.asyncDispose] = disposeFn;
             return executor;
           },
         };
@@ -96,7 +97,7 @@ describe('Polling', () => {
     // Check if transport executor is disposed per schema change
     expect(disposeFn).toHaveBeenCalledTimes(2);
 
-    await manager[Symbol.asyncDispose]();
+    await manager[DisposableSymbols.asyncDispose]();
     // Check if transport executor is disposed on global shutdown
     expect(disposeFn).toHaveBeenCalledTimes(3);
   });

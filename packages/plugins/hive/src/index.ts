@@ -3,6 +3,7 @@ import { createHive, useHive } from '@graphql-hive/yoga';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { Logger, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { makeAsyncDisposable } from '@graphql-mesh/utils';
 
 export default function useMeshHive(
   pluginOptions: YamlConfig.HivePlugin & {
@@ -122,15 +123,15 @@ export default function useMeshHive(
     onTerminate().finally(() => pluginOptions.pubsub.unsubscribe(id)),
   );
 
-  return {
-    onPluginInit({ addPlugin }) {
-      addPlugin(
-        // TODO: fix useYogaHive typings to inherit the context
-        useHive(hiveClient) as any,
-      );
+  return makeAsyncDisposable(
+    {
+      onPluginInit({ addPlugin }) {
+        addPlugin(
+          // TODO: fix useYogaHive typings to inherit the context
+          useHive(hiveClient) as any,
+        );
+      },
     },
-    [Symbol.asyncDispose]() {
-      return onTerminate();
-    },
-  };
+    onTerminate,
+  );
 }

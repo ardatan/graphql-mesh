@@ -11,6 +11,7 @@ import {
 import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
 import type { MeshServePlugin } from '../src/types.js';
@@ -242,12 +243,12 @@ describe('Serve Runtime', () => {
       plugins: () => [
         {
           onSchemaChange() {
-            if (onSchemaChangeCalls > 0) {
+            if (onSchemaChangeCalls === 1) {
               // schema changed for the second time
               done();
-              serve[Symbol.asyncDispose]();
             }
             onSchemaChangeCalls++;
+            serve[DisposableSymbols.asyncDispose]();
           },
         },
       ],

@@ -1,3 +1,4 @@
+import { createDisposable } from '@graphql-mesh/utils';
 import type { ServerOptions } from './types.js';
 
 export async function startuWebSocketsServer({
@@ -17,12 +18,12 @@ export async function startuWebSocketsServer({
     return new Promise((resolve, reject) => {
       app.listen(host, port, function listenCallback(listenSocket) {
         if (listenSocket) {
-          resolve({
-            [Symbol.dispose]() {
+          resolve(
+            createDisposable(() => {
               log.info(`Closing ${protocol}://${host}:${port}`);
               app.close();
-            },
-          });
+            }),
+          );
         } else {
           reject(new Error(`Failed to start server on ${protocol}://${host}:${port}!`));
         }

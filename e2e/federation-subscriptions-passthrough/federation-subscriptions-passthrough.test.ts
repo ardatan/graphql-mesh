@@ -1,8 +1,6 @@
-import { createServer } from 'http';
-import type { AddressInfo } from 'net';
 import { setTimeout } from 'timers/promises';
 import { createClient, type Client } from 'graphql-sse';
-import { createTenv } from '@e2e/tenv';
+import { createTenv, getAvailablePort } from '@e2e/tenv';
 import { TOKEN } from './services/products/server';
 
 const { composeWithApollo, service, serve } = createTenv(__dirname);
@@ -142,10 +140,7 @@ it('should subscribe and resolve via http callbacks', async () => {
   ]);
 
   // Get a random available port
-  const dummyServer = createServer();
-  await new Promise<void>(resolve => dummyServer.listen(0, resolve));
-  const availablePort = (dummyServer.address() as AddressInfo).port;
-  await new Promise(resolve => dummyServer.close(resolve));
+  const availablePort = await getAvailablePort();
 
   const publicUrl = `http://0.0.0.0:${availablePort}`;
   await serve({

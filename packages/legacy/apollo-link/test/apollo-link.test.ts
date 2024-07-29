@@ -2,6 +2,7 @@ import { parse } from 'graphql';
 import { ApolloClient, InMemoryCache, type FetchResult } from '@apollo/client/core';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { getTestMesh } from '../../testing/getTestMesh.js';
 import { MeshApolloLink } from '../src/index.js';
 
@@ -12,7 +13,7 @@ function getApolloClientFromMesh(mesh: MeshInstance) {
   });
   return {
     client,
-    [Symbol.dispose]: () => client.stop(),
+    [DisposableSymbols.dispose]: () => client.stop(),
   };
 }
 

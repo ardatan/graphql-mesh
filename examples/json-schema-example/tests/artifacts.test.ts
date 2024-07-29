@@ -1,30 +1,12 @@
-import { createServer } from 'http';
-import { AddressInfo } from 'net';
 import { join } from 'path';
 import { DEFAULT_CLI_PARAMS, serveMesh } from '@graphql-mesh/cli';
 import { fs } from '@graphql-mesh/cross-helpers';
 import { Logger } from '@graphql-mesh/types';
 import { fetch } from '@whatwg-node/fetch';
 import { TerminateHandler } from '../../../packages/legacy/utils/dist/typings/registerTerminateHandler';
+import { getAvailablePort } from '../../../packages/testing/getAvailablePort';
 
 const { readFile } = fs.promises;
-
-const getFreePort = () =>
-  new Promise<number>((resolve, reject) => {
-    const server = createServer();
-    server.once('error', reject);
-    server.listen(0, () => {
-      const port = (server.address() as AddressInfo)?.port;
-      server.closeAllConnections();
-      server.close(err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(port);
-        }
-      });
-    });
-  });
 
 describe('Artifacts', () => {
   it('should execute queries', async () => {
@@ -70,7 +52,7 @@ describe('Artifacts', () => {
         log: jest.fn(),
         child: jest.fn(() => mockLogger),
       };
-      const PORT = await getFreePort();
+      const PORT = await getAvailablePort();
       await serveMesh(
         {
           baseDir: join(__dirname, '..'),

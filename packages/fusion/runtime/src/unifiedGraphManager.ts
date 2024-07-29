@@ -1,4 +1,3 @@
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import type { DocumentNode, GraphQLSchema } from 'graphql';
 import { buildASTSchema, buildSchema, isSchema } from 'graphql';
 import { getInContextSDK } from '@graphql-mesh/runtime';
@@ -9,6 +8,7 @@ import { mapMaybePromise } from '@graphql-mesh/utils';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import type { IResolvers, MaybePromise, TypeSource } from '@graphql-tools/utils';
 import { isDocumentNode } from '@graphql-tools/utils';
+import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
 import { compareSubgraphNames, handleFederationSupergraph } from './federation.js';
 import {
   compareSchemas,
@@ -203,7 +203,7 @@ export class UnifiedGraphManager<TContext> {
     return this.getAndSetUnifiedGraph();
   }
 
-  [Symbol.asyncDispose]() {
+  [DisposableSymbols.asyncDispose]() {
     return this.disposableStack.disposeAsync();
   }
 }

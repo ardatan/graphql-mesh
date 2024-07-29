@@ -15,6 +15,7 @@ import type {
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { getDriverFromOpts, getNeo4JExecutor, loadGraphQLSchemaFromNeo4J } from '@omnigraph/neo4j';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
@@ -103,7 +104,7 @@ export default class Neo4JHandler implements MeshHandler {
     });
 
     const id = this.pubsub.subscribe('destroy', () => {
-      executor[Symbol.asyncDispose]();
+      executor[DisposableSymbols.asyncDispose]();
       this.pubsub.unsubscribe(id);
     });
 

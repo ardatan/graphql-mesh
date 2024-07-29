@@ -39,7 +39,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/neo4j": "^0.4.4"
+    "@omnigraph/neo4j": "^0.4.4",
+    "@whatwg-node/disposablestack": "^0.0.1"
   },
   "publishConfig": {
     "access": "public",

@@ -1,29 +1,20 @@
 /* eslint-disable import/no-nodejs-modules */
-import { createServer, Server } from 'http';
-import type { AddressInfo } from 'net';
 import { execute, OperationTypeNode, parse } from 'graphql';
+import { createDisposableServer } from '../../../testing/createDisposableServer.js';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
 describe('Timeout', () => {
-  let server: Server;
   let timeout: NodeJS.Timeout;
-  beforeAll(async () => {
-    server = createServer((req, res) => {
+  it('should timeout correctly', async () => {
+    await using server = await createDisposableServer((req, res) => {
       timeout = setTimeout(() => {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end('test');
       }, 500);
     });
-    await new Promise<void>(resolve => server.listen(0, resolve));
-  });
-  afterAll(async () => {
-    clearTimeout(timeout);
-    await new Promise(resolve => server.close(resolve));
-  });
-  it('should timeout correctly', async () => {
     const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
       timeout: 300,
-      endpoint: `http://localhost:${(server.address() as AddressInfo).port}`,
+      endpoint: `http://localhost:${server.address().port}`,
       operations: [
         {
           type: OperationTypeNode.QUERY,

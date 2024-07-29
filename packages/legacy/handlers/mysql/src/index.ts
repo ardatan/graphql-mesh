@@ -12,6 +12,7 @@ import type {
 } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
@@ -86,7 +87,7 @@ export default class MySQLHandler implements MeshHandler {
     });
 
     const id = this.pubsub.subscribe('destroy', () => {
-      executor[Symbol.asyncDispose]();
+      executor[DisposableSymbols.asyncDispose]();
       this.pubsub.unsubscribe(id);
     });
 

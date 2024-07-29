@@ -1,13 +1,10 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import type { GraphQLSchema } from 'graphql';
 import { parse } from 'graphql';
 import {
-  createGraphQLError,
   createYoga,
   isAsyncIterable,
-  Repeater,
   useReadinessCheck,
   type FetchAPI,
   type LandingPageRenderer,
@@ -15,12 +12,10 @@ import {
   type YogaServerInstance,
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
-import type { AsyncIterableIteratorOrValue } from '@envelop/core';
 import { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
   OnSubgraphExecuteHook,
-  TransportEntry,
   UnifiedGraphManagerOptions,
 } from '@graphql-mesh/fusion-runtime';
 import {
@@ -40,6 +35,7 @@ import {
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import type { MaybePromise } from '@graphql-tools/utils';
+import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
@@ -409,7 +405,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       value: schemaInvalidator,
       configurable: true,
     },
-    [Symbol.asyncDispose]: {
+    [DisposableSymbols.asyncDispose]: {
       value: () => disposableStack.disposeAsync(),
       configurable: true,
     },

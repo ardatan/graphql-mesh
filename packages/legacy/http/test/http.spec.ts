@@ -1,23 +1,14 @@
-import type { IncomingMessage, Server } from 'http';
-import { createServer, request } from 'http';
-import type { AddressInfo } from 'node:net';
-import { gunzipSync, gzip, gzipSync } from 'zlib';
+import type { IncomingMessage } from 'http';
+import { request } from 'http';
+import { gunzipSync, gzipSync } from 'zlib';
 import type { ExecutionResult } from 'graphql';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import type { MeshPlugin } from '@graphql-mesh/types';
 import { useContentEncoding } from '@whatwg-node/server';
+import { createDisposableServer } from '../../../testing/createDisposableServer.js';
 import { getTestMesh } from '../../testing/getTestMesh.js';
 
 describe('http', () => {
-  let server: Server;
-  afterEach(done => {
-    if (server) {
-      server.closeAllConnections();
-      server.close(done);
-    } else {
-      done();
-    }
-  });
   it('should not allow upper directory access when `staticFiles` is set', async () => {
     await using mesh = await getTestMesh();
     const httpHandler = createMeshHTTPHandler({
@@ -176,9 +167,8 @@ describe('http', () => {
       baseDir: __dirname,
       getBuiltMesh: async () => mesh,
     });
-    server = createServer(httpHandler);
-    await new Promise<void>(resolve => server.listen(0, resolve));
-    const addressInfo = server.address() as AddressInfo;
+    await using server = await createDisposableServer(httpHandler);
+    const addressInfo = server.address();
     const req = request({
       host: 'localhost',
       port: addressInfo.port,

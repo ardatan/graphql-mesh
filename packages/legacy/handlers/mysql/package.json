@@ -40,7 +40,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/mysql": "^0.4.4"
+    "@omnigraph/mysql": "^0.4.4",
+    "@whatwg-node/disposablestack": "^0.0.1"
   },
   "publishConfig": {
     "access": "public",

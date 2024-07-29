@@ -26,6 +26,7 @@ import {
   type Maybe,
   type MaybePromise,
 } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export type { TransportEntry, TransportGetSubgraphExecutor, TransportGetSubgraphExecutorOptions };
 
@@ -401,5 +402,5 @@ export function compareSchemas(
 }
 
 export function isDisposable(obj: any): obj is Disposable | AsyncDisposable {
-  return obj?.[Symbol.dispose] != null || obj?.[Symbol.asyncDispose] != null;
+  return obj?.[DisposableSymbols.dispose] != null || obj?.[DisposableSymbols.asyncDispose] != null;
 }

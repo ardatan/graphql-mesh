@@ -1,4 +1,4 @@
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 
 let leftoverStack = new AsyncDisposableStack();
 

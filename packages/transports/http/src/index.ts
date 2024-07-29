@@ -1,13 +1,13 @@
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
   defaultPrintFn,
-  type DisposableExecutor,
   type Transport,
   type TransportEntry,
 } from '@graphql-mesh/transport-common';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import type { DisposableAsyncExecutor } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export type HTTPTransportOptions<
   TSubscriptionTransportKind = string,
@@ -84,10 +84,10 @@ export default {
         }
         return httpExecutor(executionRequest);
       };
-      hybridExecutor[Symbol.asyncDispose] = function executorDisposeFn() {
+      hybridExecutor[DisposableSymbols.asyncDispose] = function executorDisposeFn() {
         return Promise.all([
-          httpExecutor[Symbol.asyncDispose]?.(),
-          subscriptionsExecutor?.[Symbol.asyncDispose]?.(),
+          httpExecutor[DisposableSymbols.asyncDispose]?.(),
+          subscriptionsExecutor?.[DisposableSymbols.asyncDispose]?.(),
         ]);
       };
       return hybridExecutor;

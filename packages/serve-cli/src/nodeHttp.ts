@@ -3,6 +3,7 @@ import { createServer as createHTTPServer } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
 import type { SecureContextOptions } from 'node:tls';
 import type { RecognizedString } from 'uWebSockets.js';
+import { createAsyncDisposable } from '@graphql-mesh/utils';
 import type { ServerOptions } from './types.js';
 
 export function readRecognizedString(recognizedString: RecognizedString) {
@@ -59,18 +60,19 @@ export async function startNodeHttpServer({
       server.once('error', reject);
       server.listen(port, host, () => {
         log.info(`Server started on ${protocol}://${host}:${port}`);
-        resolve({
-          [Symbol.asyncDispose]() {
-            return new Promise<void>(resolve => {
-              log.info(`Closing server`);
-              server.closeAllConnections();
-              server.close(() => {
-                log.info(`Server closed`);
-                resolve();
-              });
-            });
-          },
-        });
+        resolve(
+          createAsyncDisposable(
+            () =>
+              new Promise<void>(resolve => {
+                log.info(`Closing server`);
+                server.closeAllConnections();
+                server.close(() => {
+                  log.info(`Server closed`);
+                  resolve();
+                });
+              }),
+          ),
+        );
       });
     });
   }
@@ -85,18 +87,19 @@ export async function startNodeHttpServer({
     server.once('error', reject);
     server.listen(port, host, () => {
       log.info(`Server started on ${protocol}://${host}:${port}`);
-      resolve({
-        [Symbol.asyncDispose]() {
-          return new Promise<void>(resolve => {
-            log.info(`Closing server`);
-            server.closeAllConnections();
-            server.close(() => {
-              log.info(`Server closed`);
-              resolve();
-            });
-          });
-        },
-      });
+      resolve(
+        createAsyncDisposable(
+          () =>
+            new Promise<void>(resolve => {
+              log.info(`Closing server`);
+              server.closeAllConnections();
+              server.close(() => {
+                log.info(`Server closed`);
+                resolve();
+              });
+            }),
+        ),
+      );
     });
   });
 }
