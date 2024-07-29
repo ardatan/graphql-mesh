@@ -391,7 +391,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: the-guild-org/shared-config/setup@v1
         name: setup env
         with:
           nodeVersion: 22
@@ -399,9 +399,7 @@ jobs:
       - name: Build Packages
         run: yarn build
       - name: Install Rover
-        run: curl -sSL https://rover.apollo.dev/nix/latest | sh
-      - name: Add Rover to PATH
-        run: echo "$HOME/.rover/bin" >> $GITHUB_PATH
+        run: yarn global add @apollo/rover
       - name: Apollo Federation Subgraph Compatibility
         uses: apollographql/federation-subgraph-compatibility@v2
         with:
