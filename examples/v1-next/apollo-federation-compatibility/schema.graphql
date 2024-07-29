@@ -13,7 +13,7 @@ schema
       "requires"
       "external"
       "override"
-      "@composeDirective"
+      "composeDirective"
     ]
   )
   @link(

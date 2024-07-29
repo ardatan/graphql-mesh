@@ -74,7 +74,7 @@ export function importMeshDirectives(subgraph: GraphQLSchema, directives: string
   }
   const extensions: Record<string, unknown> = (subgraph.extensions ||= {});
   extensions.directives = schemaDirectives;
-  subgraph = importFederationDirectives(subgraph, ['@composeDirective']);
+  subgraph = importFederationDirectives(subgraph, ['composeDirective']);
   return subgraph;
 }
 

@@ -46,6 +46,7 @@ import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate'
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import {
   mergeDeep,
+  printSchemaWithDirectives,
   type IResolvers,
   type MaybePromise,
   type TypeSource,
@@ -225,6 +226,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
                     });
                   }
                   return [];
+                },
+                _service() {
+                  return {
+                    _sdl: printSchemaWithDirectives(subschemaConfig.schema),
+                  };
                 },
               },
             },
