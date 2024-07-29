@@ -6,10 +6,9 @@ import { type MaybePromise } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { createServeRuntime } from '../src/createServeRuntime';
 
-const leftovers: (() => MaybePromise<void>)[] = [];
-afterAll(() => Promise.all(leftovers.map(l => l())));
-
 describe('Subscriptions', () => {
+  const leftovers: (() => MaybePromise<void>)[] = [];
+  afterAll(() => Promise.all(leftovers.map(l => l())));
   const upstreamSchema = createSchema({
     typeDefs: /* GraphQL */ `
       """
