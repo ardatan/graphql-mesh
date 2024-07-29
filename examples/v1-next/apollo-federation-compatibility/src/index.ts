@@ -1,6 +1,5 @@
 import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { join } from 'node:path';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { Inventory, Product, ProductResearch, Resolvers, User } from './resolvers-types';
 
