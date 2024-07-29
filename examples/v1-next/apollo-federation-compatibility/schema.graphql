@@ -38,14 +38,6 @@ directive @transport(
   options: TransportOptions
 ) repeatable on SCHEMA
 
-directive @transport(
-  kind: String!
-  subgraph: String!
-  location: String!
-  headers: [[String]]
-  options: TransportOptions
-) repeatable on SCHEMA
-
 directive @merge(subgraph: String!, keyField: String, keyArg: String) repeatable on FIELD_DEFINITION
 
 type Product

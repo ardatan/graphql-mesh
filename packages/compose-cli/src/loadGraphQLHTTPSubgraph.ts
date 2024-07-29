@@ -274,6 +274,9 @@ function addAnnotations(
   const schemaExtensions: any = (schema.extensions ||= {});
   schemaExtensions.directives ||= {};
   schemaExtensions.directives.transport = transportEntry;
+  if (schema.getDirective('transport')) {
+    return schema;
+  }
   const schemaConfig = schema.toConfig();
   return new GraphQLSchema({
     ...schemaConfig,
