@@ -46,7 +46,7 @@ type Query {
   productBySkuAndVariationId(sku: String!, variationId: ID!): Product
   productResearch(caseNumber: ID!): ProductResearch
   user(email: ID!, totalProductsCreated: Int, yearsOfEmployment: Int): User
-  inventory(id: ID!): Inventory
+  inventoryById(id: ID!): Inventory
 }
 
 type User {

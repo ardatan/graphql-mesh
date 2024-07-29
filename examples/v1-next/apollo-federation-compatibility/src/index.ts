@@ -93,7 +93,7 @@ const resolvers: Resolvers = {
       }
       return null;
     },
-    inventory(_, args) {
+    inventoryById(_, args) {
       if (args.id === 'apollo-oss') {
         return inventory;
       }

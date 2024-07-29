@@ -75,7 +75,7 @@ export type Query = {
   __typename?: 'Query';
   /** @deprecated Use product query instead */
   deprecatedProduct?: Maybe<DeprecatedProduct>;
-  inventory?: Maybe<Inventory>;
+  inventoryById?: Maybe<Inventory>;
   product?: Maybe<Product>;
   productBySkuAndPackage?: Maybe<Product>;
   productBySkuAndVariationId?: Maybe<Product>;
@@ -341,7 +341,7 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryDeprecatedProductArgs, 'package' | 'sku'>
   >;
-  inventory?: Resolver<
+  inventoryById?: Resolver<
     Maybe<ResolversTypes['Inventory']>,
     ParentType,
     ContextType,
