@@ -178,8 +178,14 @@ export async function run({
               log.error(err);
               return;
             }
-            if (events.some(event => event.path === absoluteUnifiedGraphPath)) {
-              log.info(`Supergraph changed`);
+            if (
+              events.some(
+                event => event.path === absoluteUnifiedGraphPath && event.type === 'update',
+              )
+            ) {
+              log.info(
+                `Supergraph: ${unifiedGraphPath} updated on the filesystem. Invalidating...`,
+              );
               if (fork > 1) {
                 for (const workerId in cluster.workers) {
                   cluster.workers[workerId].send('invalidateUnifiedGraph');
