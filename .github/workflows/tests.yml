@@ -394,8 +394,7 @@ jobs:
       - uses: the-guild-org/shared-config/setup@v1
         name: setup env
         with:
-          nodeVersion: 22
-          packageManagerVersion: modern
+          node-version: 22
       - name: Install Rover
         run: npm install -g @apollo/rover
       - name: Build Packages
