@@ -11,8 +11,8 @@
     "dev": "mesh serve"
   },
   "dependencies": {
-    "@graphql-mesh/serve-cli": "^0.8.5",
-    "@graphql-mesh/serve-runtime": "^0.5.5",
+    "@graphql-mesh/serve-cli": "^0.8.6",
+    "@graphql-mesh/serve-runtime": "^0.5.6",
     "esbuild": "^0.23.0",
     "graphql": "16.9.0",
     "typescript": "^5.4.2"
