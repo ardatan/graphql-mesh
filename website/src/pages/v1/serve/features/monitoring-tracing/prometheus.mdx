@@ -4,16 +4,18 @@ description:
   Expose and collect data to optimize your gateway.
 ---
 
+import Image from 'next/image'
 import { Table, Td, Th, Tr } from 'nextra/components'
+import grafanaScreenshot from '@/public/assets/grafana-prom.png'
 import { Callout } from '@theguild/components'
 
 # Prometheus
 
-[Prometheus](https://www.prometheus.io/) is a platform for scraping metrics from services and
-utilities. You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from
-all phases of your GraphQL execution including internal query planning and outgoing HTTP requests.
+[Prometheus](https://www.prometheus.io/) is a utility for producing, scraping and storage of metrics
+from services and utilities.
 
-This plugin tracks the complete gateway execution flow.
+You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases
+of your GraphQL execution including internal query planning and outgoing HTTP requests.
 
 The metrics gathered are then exposed in a format that Prometheus can scrape on a regular basis on
 an HTTP endpoint (`/metrics` by default).
@@ -23,7 +25,7 @@ an HTTP endpoint (`/metrics` by default).
 First, please install the Mesh prometheus plugin and the community prometheus client for Node.js.
 
 ```sh npm2yarn
-npm i @graphql-mesh/plugin-prometheus prom-client
+npm i @graphql-mesh/plugin-prometheus
 ```
 
 You can then add the plugin and its configuration to your `gateway.config.ts` file.
@@ -34,11 +36,9 @@ import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   // ...other options
-
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
-
       // Enable the metrics you want to expose
       // In this example, we enable incoming and outgoing HTTP request durations metrics
       http: true
@@ -50,6 +50,25 @@ export const gatewayConfig = defineConfig({
 
 You can now start your Mesh gateway and make some requests to it. The plugin will start collecting
 metrics, and you can access them by visiting the `/metrics` endpoint.
+
+## Grafana Dashboard
+
+If you are using Grafana to visualize your metrics, you can
+[import the published Grafana dashboard for Grafana's marketplace](https://grafana.com/grafana/dashboards/21777),
+or
+[you can use/import this dashboard JSON file directly](https://github.com/ardatan/graphql-mesh/blob/master/packages/plugins/prometheus/grafana.json)
+to easily visualuze the metrics for your gateway.
+
+<Image
+  src={grafanaScreenshot}
+  loading="eager"
+  placeholder="empty"
+  className="mt-4"
+  alt="Metrics visualized in Grafana"
+/>
+
+For additional instructions, please refer to
+[Import dashboards insturction in Grafana documentation](https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/import-dashboards/).
 
 ## Exposed Metrics
 
@@ -76,24 +95,24 @@ metric to see the available labels.
 By default, all labels are enabled (to the exception of http request and response headers), but you
 can disabled each ones using the `labels` option.
 
-| Default Name                                                                        |   Type    | Description                                                  |
-| ----------------------------------------------------------------------------------- | :-------: | ------------------------------------------------------------ |
-| [`graphql_yoga_http_duration`](#graphql_yoga_http_duration)                         | Histogram | duration of incoming (downstream) HTTP requests              |
-| [`graphql_envelop_phase_parse`](#graphql_envelop_phase_parse)                       | Histogram | duration of the `parse` phase of the GraphQL execution       |
-| [`graphql_envelop_phase_validate`](#graphql_envelop_phase_validate)                 | Histogram | duration of the `validate` phase of the GraphQL execution    |
-| [`graphql_envelop_phase_context`](#graphql_envelop_phase_context)                   | Histogram | duration of the `context` phase of the GraphQL execution     |
-| [`graphql_envelop_phase_execute`](#graphql_envelop_phase_execute)                   | Histogram | duration of the `execute` phase of the GraphQL execution     |
-| [`graphql_envelop_phase_subscribe`](#graphql_envelop_phase_subscribe)               | Histogram | duration of the `subscribe` phase of the GraphQL execution   |
-| [`graphql_envelop_execute_resolver`](#graphql_envelop_execute_resolver)             | Histogram | duration of each resolver execution                          |
-| [`graphql_envelop_request_duration`](#graphql_envelop_request_duration)             | Histogram | duration of the complete GraphQL operation execution         |
-| [`graphql_envelop_request_time_summary`](#graphql_envelop_request_time_summary)     |  Summary  | summary of the time spent on the GraphQL operation execution |
-| [`graphql_envelop_error_result`](#graphql_envelop_error_result)                     |  Counter  | number of errors that was returned by the GraphQL execution  |
-| [`graphql_envelop_request`](#graphql_envelop_request)                               |  Counter  | number of GraphQL operations executed                        |
-| [`graphql_envelop_deprecated_field`](#graphql_envelop_deprecated_field)             |  Counter  | number of deprecated fields used in the GraphQL operation    |
-| [`graphql_envelop_schema_change`](#graphql_envelop_schema_change)                   |  Counter  | number of schema changes that have occurred                  |
-| [`graphql_mesh_fetch_duration`](#graphql_mesh_fetch_duration)                       | Histogram | duration of outgoing HTTP requests                           |
-| [`graphql_mesh_subgraph_execute_duration`](#graphql_mesh_subgraph_execute_duration) | Histogram | duration of subgraph execution                               |
-| [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors)     |  Counter  | number of errors that occurred during the subgraph execution |
+| Default Name                                                                              | Default  |   Type    | Description                                                  |
+| ----------------------------------------------------------------------------------------- | -------- | :-------: | ------------------------------------------------------------ |
+| [`graphql_yoga_http_duration`](#graphql_yoga_http_duration)                               | Enabled  | Histogram | duration of incoming (downstream) HTTP requests              |
+| [`graphql_envelop_phase_parse`](#graphql_envelop_phase_parse)                             | Enabled  | Histogram | duration of the `parse` phase of the GraphQL execution       |
+| [`graphql_envelop_phase_validate`](#graphql_envelop_phase_validate)                       | Enabled  | Histogram | duration of the `validate` phase of the GraphQL execution    |
+| [`graphql_envelop_phase_context`](#graphql_envelop_phase_context)                         | Enabled  | Histogram | duration of the `context` phase of the GraphQL execution     |
+| [`graphql_envelop_phase_execute`](#graphql_envelop_phase_execute)                         | Enabled  | Histogram | duration of the `execute` phase of the GraphQL execution     |
+| [`graphql_envelop_phase_subscribe`](#graphql_envelop_phase_subscribe)                     | Enabled  | Histogram | duration of the `subscribe` phase of the GraphQL execution   |
+| [`graphql_envelop_execute_resolver`](#graphql_envelop_execute_resolver)                   | Disabled | Histogram | duration of each resolver execution                          |
+| [`graphql_envelop_request_duration`](#graphql_envelop_request_duration)                   | Enabled  | Histogram | duration of the complete GraphQL operation execution         |
+| [`graphql_envelop_request_time_summary`](#graphql_envelop_request_time_summary)           | Enabled  |  Summary  | summary of the time spent on the GraphQL operation execution |
+| [`graphql_envelop_error_result`](#graphql_envelop_error_result)                           | Enabled  |  Counter  | number of errors that was returned by the GraphQL execution  |
+| [`graphql_envelop_request`](#graphql_envelop_request)                                     | Enabled  |  Counter  | number of GraphQL operations executed                        |
+| [`graphql_envelop_deprecated_field`](#graphql_envelop_deprecated_field)                   | Enabled  |  Counter  | number of deprecated fields used in the GraphQL operation    |
+| [`graphql_envelop_schema_change`](#graphql_envelop_schema_change)                         | Enabled  |  Counter  | number of schema changes that have occurred                  |
+| [`graphql_gateway_fetch_duration`](#graphql_gateway_fetch_duration)                       | Enabled  | Histogram | duration of outgoing HTTP requests                           |
+| [`graphql_gateway_subgraph_execute_duration`](#graphql_gateway_subgraph_execute_duration) | Enabled  | Histogram | duration of subgraph execution                               |
+| [`graphql_gateway_subgraph_execute_errors`](#graphql_gateway_subgraph_execute_errors)     | Enabled  |  Counter  | number of errors that occurred during the subgraph execution |
 
 ### `graphql_yoga_http_duration`
 
@@ -146,7 +165,7 @@ graphql_yoga_http_duration_sum{method="GET",statusCode="200",operationName="Anon
 graphql_yoga_http_duration_count{method="GET",statusCode="200",operationName="Anonymous"} 4
 ```
 
-### `graphql_mesh_fetch_duration`
+### `graphql_gateway_fetch_duration`
 
 This metric tracks the duration of outgoing HTTP requests. It reports the time spent on each request
 made using the `fetch` function provided by Mesh. It is reported as a
@@ -179,25 +198,25 @@ label, but you can also provide a list of header names to include.
 #### Sample output
 
 ```text
-# HELP graphql_mesh_fetch_duration Time spent on outgoing HTTP calls
-# TYPE graphql_mesh_fetch_duration histogram
-graphql_mesh_fetch_duration_bucket{le="0.005",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="0.01",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="0.025",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="0.05",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="0.1",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="0.25",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="0.5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="1",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="2.5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="10",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
-graphql_mesh_fetch_duration_bucket{le="+Inf",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 2
-graphql_mesh_fetch_duration_sum{url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 502
-graphql_mesh_fetch_duration_count{url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 2
+# HELP graphql_gateway_fetch_duration Time spent on outgoing HTTP calls
+# TYPE graphql_gateway_fetch_duration histogram
+graphql_gateway_fetch_duration_bucket{le="0.005",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="0.01",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="0.025",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="0.05",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="0.1",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="0.25",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="0.5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="1",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="2.5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="5",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="10",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 0
+graphql_gateway_fetch_duration_bucket{le="+Inf",url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 2
+graphql_gateway_fetch_duration_sum{url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 502
+graphql_gateway_fetch_duration_count{url="https://upstream/graphql",method="POST",statusCode="200",statusText="OK"} 2
 ```
 
-### `graphql_mesh_subgraph_execute_duration`
+### `graphql_gateway_subgraph_execute_duration`
 
 This metric tracks the duration of subgraph execution. It reports the time spent on each subgraph
 queries made to resolve incoming operations as a
@@ -219,25 +238,25 @@ To enable this metric, set the `subgraphExecute` option to `true`.
 #### Sample Output
 
 ```text
-# HELP graphql_mesh_subgraph_execute_duration Time spent on subgraph execution
-# TYPE graphql_mesh_subgraph_execute_duration histogram
-graphql_mesh_subgraph_execute_duration_bucket{le="0.005",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="0.01",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="0.025",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="0.05",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="0.1",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="0.25",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="0.5",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="1",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="2.5",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="5",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="10",subgraphName="upstream",operationType="query"} 0
-graphql_mesh_subgraph_execute_duration_bucket{le="+Inf",subgraphName="upstream",operationType="query"} 2
-graphql_mesh_subgraph_execute_duration_sum{subgraphName="upstream",operationType="query"} 889
-graphql_mesh_subgraph_execute_duration_count{subgraphName="upstream",operationType="query"} 2
+# HELP graphql_gateway_subgraph_execute_duration Time spent on subgraph execution
+# TYPE graphql_gateway_subgraph_execute_duration histogram
+graphql_gateway_subgraph_execute_duration_bucket{le="0.005",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="0.01",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="0.025",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="0.05",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="0.1",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="0.25",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="0.5",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="1",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="2.5",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="5",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="10",subgraphName="upstream",operationType="query"} 0
+graphql_gateway_subgraph_execute_duration_bucket{le="+Inf",subgraphName="upstream",operationType="query"} 2
+graphql_gateway_subgraph_execute_duration_sum{subgraphName="upstream",operationType="query"} 889
+graphql_gateway_subgraph_execute_duration_count{subgraphName="upstream",operationType="query"} 2
 ```
 
-### `graphql_mesh_subgraph_execute_errors`
+### `graphql_gateway_subgraph_execute_errors`
 
 This metric tracks the number of errors that occurred during the subgraph execution. It counts all
 errors found in the response returned by the subgraph execution. It is exposed as a
@@ -259,9 +278,9 @@ To enable this metric, set the `subgraphExecuteErrors` option to `true`.
 #### Sample Output
 
 ```text
-# HELP graphql_mesh_subgraph_execute_errors Number of errors on subgraph execution
-# TYPE graphql_mesh_subgraph_execute_errors counter
-graphql_mesh_subgraph_execute_errors{subgraphName="upstream",operationType="query",operationName="Anonymous"} 1
+# HELP graphql_gateway_subgraph_execute_errors Number of errors on subgraph execution
+# TYPE graphql_gateway_subgraph_execute_errors counter
+graphql_gateway_subgraph_execute_errors{subgraphName="upstream",operationType="query",operationName="Anonymous"} 1
 ```
 
 ### `graphql_envelop_phase_parse`
@@ -526,8 +545,8 @@ graphql_envelop_request_time_summary_count{operationName="Anonymous",operationTy
 
 This metric tracks the number of errors that was returned by the GraphQL execution.
 
-Similarly to [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors), it
-counts all errors found in the final response constructed by Mesh after it gathered all subgraph
+Similarly to [`graphql_gateway_subgraph_execute_errors`](#graphql_gateway_subgraph_execute_errors),
+it counts all errors found in the final response constructed by Mesh after it gathered all subgraph
 responses, but it also includes errors from other GraphQL processing phases (parsing, validation and
 context building). It is exposed as a
 [counter](https://prometheus.io/docs/concepts/metric_types/#counter).
@@ -795,27 +814,24 @@ export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
-
-      // Enable all available metrics
-      requestCount: true,
-      requestSummary: true,
-      parse: true,
-      validate: true,
-      contextBuilding: true,
-      execute: true,
-      subscribe: true,
-      errors: true,
-      delegation: true,
-      fetchMetrics: true,
-      http: true
-      deprecatedFields: true,
-      requestTotalDuration: true,
-      schemaChangeCount: true,
-      subgraphExecute: true,
-      subgraphExecuteErrors: true
-
-      // Warning: enabling resolvers level metrics will introduce significant overhead
-      resolvers: true,
+      metrics: {
+        // Enable all available metrics
+        graphql_gateway_fetch_duration: true,
+        graphql_gateway_subgraph_execute_duration: true,
+        graphql_gateway_subgraph_execute_errors: true,
+        graphql_envelop_deprecated_field: true,
+        graphql_envelop_request: true,
+        graphql_envelop_request_duration: true,
+        graphql_envelop_request_time_summary: true,
+        graphql_envelop_phase_parse: true,
+        graphql_envelop_phase_validate: true,
+        graphql_envelop_phase_context: true,
+        graphql_envelop_error_result: true,
+        graphql_envelop_phase_execute: true,
+        graphql_envelop_phase_subscribe: true,
+        graphql_envelop_schema_change: true,
+        graphql_yoga_http_duration: true
+      }
     })
   ]
 })
@@ -824,17 +840,17 @@ export const gatewayConfig = defineConfig({
 ### Prometheus metrics output
 
 ```text
-# HELP graphql_mesh_fetch_duration Time spent on outgoing HTTP calls
-# TYPE graphql_mesh_fetch_duration histogram
+# HELP graphql_gateway_fetch_duration Time spent on outgoing HTTP calls
+# TYPE graphql_gateway_fetch_duration histogram
 
-# HELP graphql_mesh_delegate_duration Time spent on delegate execution
-# TYPE graphql_mesh_delegate_duration histogram
+# HELP graphql_gateway_delegate_duration Time spent on delegate execution
+# TYPE graphql_gateway_delegate_duration histogram
 
-# HELP graphql_mesh_subgraph_execute_duration Time spent on subgraph execution
-# TYPE graphql_mesh_subgraph_execute_duration histogram
+# HELP graphql_gateway_subgraph_execute_duration Time spent on subgraph execution
+# TYPE graphql_gateway_subgraph_execute_duration histogram
 
-# HELP graphql_mesh_subgraph_execute_errors Number of errors on subgraph execution
-# TYPE graphql_mesh_subgraph_execute_errors counter
+# HELP graphql_gateway_subgraph_execute_errors Number of errors on subgraph execution
+# TYPE graphql_gateway_subgraph_execute_errors counter
 
 # HELP graphql_yoga_http_duration Time spent on HTTP connection
 # TYPE graphql_yoga_http_duration histogram

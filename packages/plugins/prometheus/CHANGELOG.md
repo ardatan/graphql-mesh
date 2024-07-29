@@ -70,9 +70,9 @@
         // Warning: enabling resolvers level metrics will introduce significant overhead
   -     resolvers: true,
   +     metrics: {
-  +       graphql_mesh_fetch_duration: true,
-  +       graphql_mesh_subgraph_execute_duration: true,
-  +       graphql_mesh_subgraph_execute_errors
+  +       graphql_gateway_fetch_duration: true,
+  +       graphql_gateway_subgraph_execute_duration: true,
+  +       graphql_gateway_subgraph_execute_errors
   +       graphql_yoga_http_duration: true,
   +       graphql_envelop_request_time_summary: true,
   +       graphql_envelop_phase_parse: true,

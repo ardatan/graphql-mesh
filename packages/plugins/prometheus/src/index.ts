@@ -29,6 +29,25 @@ import {
 export { createCounter, createHistogram, createSummary };
 export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryAndLabels };
 
+const DEFAULT_METRICS_CONFIG: PrometheusPluginOptions['metrics'] = {
+  graphql_envelop_deprecated_field: true,
+  graphql_envelop_request: true,
+  graphql_envelop_request_duration: true,
+  graphql_envelop_request_time_summary: true,
+  graphql_envelop_phase_parse: true,
+  graphql_envelop_phase_validate: true,
+  graphql_envelop_phase_context: true,
+  graphql_envelop_error_result: true,
+  graphql_envelop_execute_resolver: false,
+  graphql_envelop_phase_execute: true,
+  graphql_envelop_phase_subscribe: true,
+  graphql_envelop_schema_change: true,
+  graphql_yoga_http_duration: true,
+  graphql_gateway_fetch_duration: true,
+  graphql_gateway_subgraph_execute_duration: true,
+  graphql_gateway_subgraph_execute_errors: true,
+};
+
 type MeshMetricsConfig = {
   metrics: {
     /**
@@ -42,7 +61,7 @@ type MeshMetricsConfig = {
      *  - number[]: Enable the metric with custom buckets
      *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
      */
-    graphql_mesh_fetch_duration:
+    graphql_gateway_fetch_duration:
       | boolean
       | string
       | number[]
@@ -62,7 +81,7 @@ type MeshMetricsConfig = {
      *  - number[]: Enable the metric with custom buckets
      *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
      */
-    graphql_mesh_subgraph_execute_duration:
+    graphql_gateway_subgraph_execute_duration:
       | boolean
       | string
       | number[]
@@ -73,7 +92,7 @@ type MeshMetricsConfig = {
      * It counts all errors found in the response returned by the subgraph execution.
      * It is exposed as a counter
      */
-    graphql_mesh_subgraph_execute_errors:
+    graphql_gateway_subgraph_execute_errors:
       | boolean
       | string
       | CounterAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
@@ -138,7 +157,14 @@ export default function useMeshPrometheus(
     registry = registryFromYamlConfig(pluginOptions);
   }
 
-  const config = { ...pluginOptions, registry };
+  const config: PrometheusPluginOptions = {
+    ...pluginOptions,
+    registry,
+    metrics: {
+      ...DEFAULT_METRICS_CONFIG,
+      ...pluginOptions.metrics,
+    },
+  };
 
   const fetchLabelNames = [
     'url',
@@ -162,7 +188,7 @@ export default function useMeshPrometheus(
     { url: string; options: MeshFetchRequestInit; response: Response }
   > = getHistogramFromConfig(
     config,
-    'graphql_mesh_fetch_duration',
+    'graphql_gateway_fetch_duration',
     {
       labelNames: fetchLabelNames,
       help: 'Time spent on outgoing HTTP calls',
@@ -190,7 +216,7 @@ export default function useMeshPrometheus(
   const subgraphExecuteHistogram: HistogramAndLabels<string, SubgraphMetricsLabelParams> =
     getHistogramFromConfig(
       config,
-      'graphql_mesh_subgraph_execute_duration',
+      'graphql_gateway_subgraph_execute_duration',
       {
         labelNames: ['subgraphName', 'operationName', 'operationType'],
         help: 'Time spent on subgraph execution',
@@ -205,7 +231,7 @@ export default function useMeshPrometheus(
   const subgraphExecuteErrorCounter: CounterAndLabels<string, SubgraphMetricsLabelParams> =
     getCounterFromConfig(
       config,
-      'graphql_mesh_subgraph_execute_errors',
+      'graphql_gateway_subgraph_execute_errors',
       {
         labelNames: ['subgraphName', 'operationName', 'operationType'],
         help: 'Number of errors on subgraph execution',

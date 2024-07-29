@@ -44,9 +44,9 @@ describe('Prometheus', () => {
         usePrometheus({
           ...ctx,
           metrics: {
-            graphql_mesh_subgraph_execute_duration: true,
-            graphql_mesh_subgraph_execute_errors: true,
-            graphql_mesh_fetch_duration: true,
+            graphql_gateway_subgraph_execute_duration: true,
+            graphql_gateway_subgraph_execute_errors: true,
+            graphql_gateway_fetch_duration: true,
           },
         }),
       ],
@@ -72,7 +72,7 @@ describe('Prometheus', () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ data: { hello: 'Hello world!' } });
     const metrics = await registry.metrics();
-    expect(metrics).toContain('graphql_mesh_subgraph_execute_duration');
+    expect(metrics).toContain('graphql_gateway_subgraph_execute_duration');
     expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
@@ -97,7 +97,7 @@ describe('Prometheus', () => {
       errors: [{ message: 'Error here' }],
     });
     const metrics = await registry.metrics();
-    expect(metrics).toContain('graphql_mesh_subgraph_execute_errors');
+    expect(metrics).toContain('graphql_gateway_subgraph_execute_errors');
     expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
@@ -130,7 +130,7 @@ describe('Prometheus', () => {
     await testQuery();
 
     const metrics = await registry.metrics();
-    expect(metrics).toContain('graphql_mesh_subgraph_execute_duration');
+    expect(metrics).toContain('graphql_gateway_subgraph_execute_duration');
     expect(metrics).toContain('subgraphName="TEST_SUBGRAPH"');
     expect(metrics).toContain('operationType="query"');
   });
