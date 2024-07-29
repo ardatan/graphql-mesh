@@ -5,6 +5,11 @@ import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJS
 
 describe('Timeout', () => {
   let timeout: NodeJS.Timeout;
+  afterEach(() => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  });
   it('should timeout correctly', async () => {
     await using server = await createDisposableServer((req, res) => {
       timeout = setTimeout(() => {
