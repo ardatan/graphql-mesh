@@ -3,13 +3,7 @@ import type { Registry } from 'prom-client';
 import { register as defaultRegistry } from 'prom-client';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
-import type {
-  ImportFn,
-  Logger,
-  MeshFetchRequestInit,
-  MeshPlugin,
-  OnDelegateHookPayload,
-} from '@graphql-mesh/types';
+import type { ImportFn, Logger, MeshFetchRequestInit, MeshPlugin } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   getHeadersObj,
@@ -27,6 +21,8 @@ import {
   createCounter,
   createHistogram,
   createSummary,
+  getCounterFromConfig,
+  getHistogramFromConfig,
   usePrometheus,
 } from '@graphql-yoga/plugin-prometheus';
 
@@ -34,64 +30,33 @@ export { createCounter, createHistogram, createSummary };
 export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryAndLabels };
 
 type MeshMetricsConfig = {
-  /**
-   * @deprecated Graph delegation is no longer a concept in Mesh v1, use `subgraphExecute` instead
-   */
-  delegation?:
-    | boolean
-    | string
-    | HistogramAndLabels<string, Omit<OnDelegateHookPayload<unknown>, 'context'> | undefined>;
-  /**
-   * @deprecated Graph delegation is no longer a concept in Mesh v1
-   */
-  delegationArgs?: boolean;
-  /**
-   * @deprecated Graph delegation is no longer a concept in Mesh v1
-   */
-  delegationKey?: boolean;
-
-  subgraphExecute?:
-    | boolean
-    | string
-    | HistogramAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
-
-  subgraphExecuteErrors?:
-    | boolean
-    | string
-    | CounterAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
-
-  fetchMetrics?:
-    | boolean
-    | string
-    | HistogramAndLabels<
-        string,
-        { url: string; options: MeshFetchRequestInit; response: Response }
-      >;
-
-  /**
-   * @deprecated Use `labels.fetchRequestHeaders` instead
-   */
-  fetchRequestHeaders?: boolean;
-  /**
-   * @deprecated Use `labels.fetchResponseHeaders` instead
-   */
-  fetchResponseHeaders?: boolean;
+  metrics: {
+    graphql_mesh_fetch_duration:
+      | boolean
+      | string
+      | HistogramAndLabels<
+          string,
+          { url: string; options: MeshFetchRequestInit; response: Response }
+        >;
+    graphql_mesh_subgraph_execute_duration:
+      | boolean
+      | string
+      | HistogramAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
+    graphql_mesh_subgraph_execute_errors:
+      | boolean
+      | string
+      | CounterAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
+  };
 
   labels?: {
     fetchRequestHeaders?: boolean;
     fetchResponseHeaders?: boolean;
   };
+
+  logger: Logger;
 };
 
-type PrometheusPluginOptions = Omit<
-  PrometheusTracingPluginConfig,
-  // Remove this after Mesh v1 is released;
-  'registry'
-> &
-  YamlConfig & // Remove this after Mesh v1 is released;
-  MeshMetricsConfig & {
-    logger?: Logger;
-  };
+type PrometheusPluginOptions = PrometheusTracingPluginConfig & MeshMetricsConfig;
 
 type YamlConfig = {
   baseDir?: string;
@@ -106,7 +71,12 @@ type SubgraphMetricsLabelParams = {
 };
 
 export default function useMeshPrometheus(
-  pluginOptions: PrometheusPluginOptions,
+  pluginOptions: Omit<
+    PrometheusPluginOptions,
+    // Remove this after Mesh v1 is released;
+    'registry'
+  > &
+    YamlConfig, // Remove this after Mesh v1 is released,
 ): MeshPlugin<any> & YogaPlugin & MeshServePlugin {
   let registry: Registry;
   if (!pluginOptions.registry) {
@@ -119,193 +89,86 @@ export default function useMeshPrometheus(
     registry = registryFromYamlConfig(pluginOptions);
   }
 
-  let fetchHistogram: HistogramAndLabels<
+  const config = { ...pluginOptions, registry };
+
+  const fetchLabelNames = [
+    'url',
+    'method',
+    'statusCode',
+    'statusText',
+    'requestHeaders',
+    'responseHeaders',
+  ];
+  // Since request and response headers can be large, they are disabled by default
+  const { fetchRequestHeaders, fetchResponseHeaders } = pluginOptions.labels ?? {};
+  if (fetchRequestHeaders) {
+    fetchLabelNames.push('requestHeaders');
+  }
+  if (fetchResponseHeaders) {
+    fetchLabelNames.push('responseHeaders');
+  }
+
+  const fetchHistogram: HistogramAndLabels<
     string,
     { url: string; options: MeshFetchRequestInit; response: Response }
-  >;
+  > = getHistogramFromConfig(
+    config,
+    'graphql_mesh_fetch_duration',
+    {
+      labelNames: fetchLabelNames,
+      help: 'Time spent on outgoing HTTP calls',
+    },
+    ({ url, options, response }) => {
+      const labels: Record<string, string | number> = {
+        url,
+        method: options.method,
+        statusCode: response.status,
+        statusText: response.statusText,
+      };
 
-  if (pluginOptions.fetchMetrics) {
-    const labelNames = ['url', 'method', 'statusCode', 'statusText'];
-    const {
-      fetchRequestHeaders = pluginOptions.fetchRequestHeaders,
-      fetchResponseHeaders = pluginOptions.fetchResponseHeaders,
-    } = pluginOptions.labels || {};
-    if (fetchRequestHeaders) {
-      labelNames.push('requestHeaders');
-    }
-    if (fetchResponseHeaders) {
-      labelNames.push('responseHeaders');
-    }
+      if (fetchRequestHeaders) {
+        labels.requestHeaders = JSON.stringify(options.headers);
+      }
+      if (fetchResponseHeaders) {
+        labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
+      }
+      return labels;
+    },
+  );
 
-    fetchHistogram =
-      typeof pluginOptions.fetchMetrics === 'object'
-        ? pluginOptions.fetchMetrics
-        : createHistogram({
-            registry,
-            histogram: {
-              name:
-                typeof pluginOptions.fetchMetrics === 'string'
-                  ? pluginOptions.fetchMetrics
-                  : 'graphql_mesh_fetch_duration',
-              help: 'Time spent on outgoing HTTP calls',
-              labelNames,
-            },
-            fillLabelsFn: ({ url, options, response }) => {
-              const labels: Record<string, string | number> = {
-                url,
-                method: options.method,
-                statusCode: response.status,
-                statusText: response.statusText,
-              };
+  const subgraphExecuteHistogram: HistogramAndLabels<string, SubgraphMetricsLabelParams> =
+    getHistogramFromConfig(
+      config,
+      'graphql_mesh_subgraph_execute_duration',
+      {
+        labelNames: ['subgraphName', 'operationName', 'operationType'],
+        help: 'Time spent on subgraph execution',
+      },
+      ({ subgraphName, executionRequest }) => ({
+        subgraphName,
+        operationName: executionRequest.operationName || 'Anonymous',
+        operationType: executionRequest.operationType || 'query',
+      }),
+    );
 
-              if (fetchRequestHeaders) {
-                labels.requestHeaders = JSON.stringify(options.headers);
-              }
-              if (fetchResponseHeaders) {
-                labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
-              }
-              return labels;
-            },
-          });
-  }
-
-  let delegateHistogram: HistogramAndLabels<
-    string,
-    Omit<OnDelegateHookPayload<unknown>, 'context'> | undefined
-  >;
-
-  if (pluginOptions.delegation) {
-    const delegationLabelNames = ['sourceName', 'typeName', 'fieldName'];
-    const { delegationArgs, delegationKey } = pluginOptions;
-    if (delegationArgs) {
-      delegationLabelNames.push('args');
-    }
-    if (delegationKey) {
-      delegationLabelNames.push('key');
-    }
-    delegateHistogram =
-      typeof pluginOptions.delegation === 'object'
-        ? pluginOptions.delegation
-        : createHistogram({
-            registry,
-            histogram: {
-              name:
-                typeof pluginOptions.delegation === 'string'
-                  ? pluginOptions.delegation
-                  : 'graphql_mesh_delegate_duration',
-              help: 'Time spent on delegate execution',
-              labelNames: delegationLabelNames,
-            },
-            fillLabelsFn: ({ sourceName, typeName, fieldName, args, key }) => {
-              return {
-                sourceName,
-                typeName,
-                fieldName,
-                args: delegationArgs ? JSON.stringify(args) : undefined,
-                key: delegationKey ? JSON.stringify(key) : undefined,
-              };
-            },
-          });
-  }
-
-  let subgraphExecuteHistogram: HistogramAndLabels<string, SubgraphMetricsLabelParams>;
-
-  if (pluginOptions.subgraphExecute !== false) {
-    const subgraphExecuteLabels = ['subgraphName'];
-    if (pluginOptions.labels?.operationName !== false) {
-      subgraphExecuteLabels.push('operationName');
-    }
-    if (pluginOptions.labels?.operationType !== false) {
-      subgraphExecuteLabels.push('operationType');
-    }
-    subgraphExecuteHistogram =
-      typeof pluginOptions.subgraphExecute === 'object'
-        ? pluginOptions.subgraphExecute
-        : createHistogram({
-            registry,
-            histogram: {
-              name:
-                typeof pluginOptions.subgraphExecute === 'string'
-                  ? pluginOptions.subgraphExecute
-                  : 'graphql_mesh_subgraph_execute_duration',
-              help: 'Time spent on subgraph execution',
-              labelNames: subgraphExecuteLabels,
-            },
-            fillLabelsFn: ({
-              subgraphName,
-              executionRequest: { operationType = 'query', operationName },
-            }) => ({
-              subgraphName,
-              operationType:
-                pluginOptions.labels?.operationType !== false ? operationType : undefined,
-              operationName:
-                pluginOptions.labels?.operationName !== false
-                  ? operationName || 'Anonymous'
-                  : undefined,
-            }),
-          });
-  }
-
-  let subgraphExecuteErrorCounter: CounterAndLabels<string, SubgraphMetricsLabelParams>;
-  if (pluginOptions.subgraphExecuteErrors !== false) {
-    const subgraphExecuteErrorLabels = ['subgraphName'];
-    if (pluginOptions.labels?.operationName !== false) {
-      subgraphExecuteErrorLabels.push('operationName');
-    }
-    if (pluginOptions.labels?.operationType !== false) {
-      subgraphExecuteErrorLabels.push('operationType');
-    }
-    subgraphExecuteErrorCounter =
-      typeof pluginOptions.subgraphExecuteErrors === 'object'
-        ? pluginOptions.subgraphExecuteErrors
-        : createCounter({
-            registry,
-            counter: {
-              name:
-                typeof pluginOptions.subgraphExecuteErrors === 'string'
-                  ? pluginOptions.subgraphExecuteErrors
-                  : `graphql_mesh_subgraph_execute_errors`,
-              help: 'Number of errors on subgraph execution',
-              labelNames: subgraphExecuteErrorLabels,
-            },
-            fillLabelsFn: ({
-              subgraphName,
-              executionRequest: { operationType = 'query', operationName },
-            }) => ({
-              subgraphName,
-              operationType:
-                pluginOptions.labels?.operationType !== false ? operationType : undefined,
-              operationName:
-                pluginOptions.labels?.operationName !== false
-                  ? operationName || 'Anonymous'
-                  : undefined,
-            }),
-          });
-  }
+  const subgraphExecuteErrorCounter: CounterAndLabels<string, SubgraphMetricsLabelParams> =
+    getCounterFromConfig(
+      config,
+      'graphql_mesh_subgraph_execute_errors',
+      {
+        labelNames: ['subgraphName', 'operationName', 'operationType'],
+        help: 'Number of errors on subgraph execution',
+      },
+      ({ subgraphName, executionRequest }) => ({
+        subgraphName,
+        operationName: executionRequest.operationName || 'Anonymous',
+        operationType: executionRequest.operationType || 'query',
+      }),
+    );
 
   return {
     onPluginInit({ addPlugin }) {
-      addPlugin(
-        // TODO: fix usePrometheus typings to inherit the context
-        usePrometheus({
-          ...pluginOptions,
-          registry,
-        }) as any,
-      );
-    },
-    onDelegate({ context, ...payload }) {
-      if (delegateHistogram) {
-        const start = Date.now();
-        return () => {
-          const end = Date.now();
-          const duration = end - start;
-          delegateHistogram.histogram.observe(
-            delegateHistogram.fillLabelsFn(payload, context),
-            duration,
-          );
-        };
-      }
-      return undefined;
+      addPlugin(usePrometheus(config));
     },
     onSubgraphExecute(payload) {
       if (subgraphExecuteHistogram) {
@@ -371,10 +234,10 @@ export default function useMeshPrometheus(
   };
 }
 
-function registryFromYamlConfig(pluginOptions: PrometheusPluginOptions): Registry {
-  const registry$ = loadFromModuleExportExpression<Registry>(pluginOptions.registry, {
-    cwd: pluginOptions.baseDir || globalThis.process?.cwd(),
-    importFn: pluginOptions.importFn || defaultImportFn,
+function registryFromYamlConfig(config: YamlConfig & { logger: Logger }): Registry {
+  const registry$ = loadFromModuleExportExpression<Registry>(config.registry, {
+    cwd: config.baseDir || globalThis.process?.cwd(),
+    importFn: config.importFn || defaultImportFn,
     defaultExportName: 'default',
   });
 
@@ -389,7 +252,7 @@ function registryFromYamlConfig(pluginOptions: PrometheusPluginOptions): Registr
     },
   });
 
-  registry$.then(() => registryProxy.revoke()).catch(e => pluginOptions.logger.error(e));
+  registry$.then(() => registryProxy.revoke()).catch(e => config.logger.error(e));
 
   return registryProxy.proxy;
 }
