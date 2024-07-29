@@ -108,7 +108,7 @@ type Query
     @merge(subgraph: "products", keyField: "study { caseNumber }")
   user(email: ID!, totalProductsCreated: Int, yearsOfEmployment: Int): User
     @merge(subgraph: "products", keyField: "email")
-  inventory(id: ID!): Inventory @merge(subgraph: "products", keyField: "id")
+  inventoryById(id: ID!): Inventory @merge(subgraph: "products", keyField: "id", keyArg: "id")
 }
 
 type User @extends @key(fields: "email") {
