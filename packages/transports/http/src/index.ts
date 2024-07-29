@@ -6,6 +6,7 @@ import {
 } from '@graphql-mesh/transport-common';
 import { dispose, isDisposable, makeAsyncDisposable, mapMaybePromise } from '@graphql-mesh/utils';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
+import { type AsyncExecutor, type ExecutionRequest } from '@graphql-tools/utils';
 
 export type HTTPTransportOptions<
   TSubscriptionTransportKind = string,
@@ -76,8 +77,8 @@ export default {
             ),
         );
       };
-      return makeAsyncDisposable(
-        function hybridExecutor(executionRequest) {
+      return makeAsyncDisposable<AsyncExecutor>(
+        function hybridExecutor(executionRequest: ExecutionRequest) {
           if (subscriptionsExecutor && executionRequest.operationType === 'subscription') {
             return subscriptionsExecutor(executionRequest);
           }
