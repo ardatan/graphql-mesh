@@ -6,9 +6,8 @@ import {
   type DisposableExecutor,
   type Transport,
 } from '@graphql-mesh/transport-common';
-import { makeAsyncDisposable } from '@graphql-mesh/utils';
+import { dispose, isDisposable, makeAsyncDisposable } from '@graphql-mesh/utils';
 import { buildGraphQLWSExecutor } from '@graphql-tools/executor-graphql-ws';
-import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 function switchProtocols(url: string) {
   if (url.startsWith('https://')) {
@@ -85,10 +84,10 @@ export default {
     };
     return makeAsyncDisposable(mergedExecutor, () =>
       Promise.all(
-        Array.from(wsExecutorMap.values()).map(executor =>
-          executor[DisposableSymbols.asyncDispose](),
+        Array.from(wsExecutorMap.values()).map(
+          executor => isDisposable(executor) && dispose(executor),
         ),
-      ),
+      ).then(() => {}),
     );
   },
 } satisfies Transport<'ws', WSTransportOptions>;

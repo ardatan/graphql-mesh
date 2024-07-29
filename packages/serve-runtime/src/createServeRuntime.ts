@@ -18,24 +18,22 @@ import type {
   OnSubgraphExecuteHook,
   UnifiedGraphManagerOptions,
 } from '@graphql-mesh/fusion-runtime';
-import {
-  handleFederationSupergraph,
-  isDisposable,
-  UnifiedGraphManager,
-} from '@graphql-mesh/fusion-runtime';
+import { handleFederationSupergraph, UnifiedGraphManager } from '@graphql-mesh/fusion-runtime';
 import useMeshHive from '@graphql-mesh/plugin-hive';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
+  isDisposable,
   LogLevel,
+  makeAsyncDisposable,
   mapMaybePromise,
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
 import type { MaybePromise } from '@graphql-tools/utils';
-import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
@@ -405,13 +403,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       value: schemaInvalidator,
       configurable: true,
     },
-    [DisposableSymbols.asyncDispose]: {
-      value: () => disposableStack.disposeAsync(),
-      configurable: true,
-    },
   });
 
-  return yoga as YogaServerInstance<unknown, MeshServeContext> & {
-    invalidateUnifiedGraph(): void;
-  } & AsyncDisposable;
+  return makeAsyncDisposable(
+    yoga as YogaServerInstance<unknown, MeshServeContext> & {
+      invalidateUnifiedGraph(): void;
+    },
+    () => disposableStack.disposeAsync(),
+  );
 }

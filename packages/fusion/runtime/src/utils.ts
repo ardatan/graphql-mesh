@@ -11,6 +11,7 @@ import type {
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
 import {
+  isDisposable,
   iterateAsync,
   loggerForExecutionRequest,
   mapMaybePromise,
@@ -26,7 +27,6 @@ import {
   type Maybe,
   type MaybePromise,
 } from '@graphql-tools/utils';
-import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export type { TransportEntry, TransportGetSubgraphExecutor, TransportGetSubgraphExecutorOptions };
 
@@ -399,8 +399,4 @@ export function compareSchemas(
     bStr = printSchemaWithDirectives(b);
   }
   return aStr === bStr;
-}
-
-export function isDisposable(obj: any): obj is Disposable | AsyncDisposable {
-  return obj?.[DisposableSymbols.dispose] != null || obj?.[DisposableSymbols.asyncDispose] != null;
 }

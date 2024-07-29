@@ -5988,7 +5988,6 @@ __metadata:
   resolution: "@graphql-mesh/mysql@workspace:packages/legacy/handlers/mysql"
   dependencies:
     "@omnigraph/mysql": "npm:^0.4.4"
-    "@whatwg-node/disposablestack": "npm:^0.0.1"
   peerDependencies:
     "@graphql-mesh/store": ^0.99.4
     "@graphql-mesh/types": ^0.99.4
@@ -6004,7 +6003,6 @@ __metadata:
   resolution: "@graphql-mesh/neo4j@workspace:packages/legacy/handlers/neo4j"
   dependencies:
     "@omnigraph/neo4j": "npm:^0.4.4"
-    "@whatwg-node/disposablestack": "npm:^0.0.1"
   peerDependencies:
     "@graphql-mesh/store": ^0.99.4
     "@graphql-mesh/types": ^0.99.4
@@ -6819,7 +6817,6 @@ __metadata:
     "@graphql-tools/executor-http": "npm:^1.1.5"
     "@graphql-tools/utils": "npm:^10.2.3"
     "@types/ws": "npm:^8"
-    "@whatwg-node/disposablestack": "npm:^0.0.1"
     graphql-ws: "npm:^5.16.0"
     ws: "npm:^8.18.0"
   peerDependencies:
@@ -6946,7 +6943,6 @@ __metadata:
     "@graphql-tools/executor-graphql-ws": "npm:^1.2.0"
     "@graphql-tools/utils": "npm:^10.2.3"
     "@types/ws": "npm:^8"
-    "@whatwg-node/disposablestack": "npm:^0.0.1"
     graphql-ws: "npm:^5.16.0"
     ws: "npm:^8.18.0"
   peerDependencies:
