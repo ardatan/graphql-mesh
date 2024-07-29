@@ -229,7 +229,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
                 },
                 _service() {
                   return {
-                    _sdl: printSchemaWithDirectives(subschemaConfig.schema),
+                    _sdl: printSchemaWithDirectives(newUnifiedGraph),
                   };
                 },
               },
