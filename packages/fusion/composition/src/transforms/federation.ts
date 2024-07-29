@@ -188,8 +188,8 @@ interface FederationResolveReferenceConfig {
 }
 
 interface MergeDirectiveConfig {
-  keyField: string;
   keyArg?: string;
+  argsExpr?: string;
 }
 
 export function createFederationTransform(config: FederationTransformConfig): SubgraphTransform {
@@ -259,10 +259,10 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                       operationMergeDirectiveConfig = new Map();
                       mergeDirectiveConfigMap.set(operation, operationMergeDirectiveConfig);
                     }
-                    operationMergeDirectiveConfig.set(keyConfig.resolveReference.fieldName, {
-                      keyField: keyConfig.fields,
-                      ...keyConfig.resolveReference,
-                    });
+                    operationMergeDirectiveConfig.set(
+                      keyConfig.resolveReference.fieldName,
+                      keyConfig.resolveReference,
+                    );
                   }
                   break;
                 }
@@ -300,8 +300,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
           mergeDirectiveExtensions.push({
             subgraph: subgraphConfig.name,
-            keyField: mergeDirectiveConfig.keyField,
             keyArg: mergeDirectiveConfig.keyArg,
+            argsExpr: mergeDirectiveConfig.argsExpr,
           });
           mergeDirectiveUsed = true;
           return {
@@ -360,6 +360,9 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 type: GraphQLString,
               },
               keyArg: {
+                type: GraphQLString,
+              },
+              argsExpr: {
                 type: GraphQLString,
               },
             },

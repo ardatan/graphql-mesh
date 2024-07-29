@@ -182,7 +182,21 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           // TODO: Find better alternative later
           unifiedGraph = wrapSchema(subschemaConfig);
           unifiedGraph = mergeSchemas({
+            assumeValid: true,
+            assumeValidSDL: true,
             schemas: [unifiedGraph],
+            typeDefs: /* GraphQL */ `
+              extend type Query {
+                _entities(representations: [_Any!]!): [_Entity]!
+                _service: _Service!
+              }
+
+              scalar _Any
+              scalar _Entity
+              type _Service {
+                sdl: String
+              }
+            `,
             resolvers: {
               Query: {
                 _entities(_root, args, context, info) {
@@ -229,7 +243,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
                 },
                 _service() {
                   return {
-                    _sdl: printSchemaWithDirectives(newUnifiedGraph),
+                    sdl() {
+                      return printSchemaWithDirectives(unifiedGraph);
+                    },
                   };
                 },
               },

@@ -38,7 +38,12 @@ directive @transport(
   options: TransportOptions
 ) repeatable on SCHEMA
 
-directive @merge(subgraph: String!, keyField: String, keyArg: String) repeatable on FIELD_DEFINITION
+directive @merge(
+  subgraph: String!
+  keyField: String
+  keyArg: String
+  argsExpr: String
+) repeatable on FIELD_DEFINITION
 
 type Product
   @custom
@@ -96,18 +101,18 @@ type Query
       ]
     }
   ) {
-  product(id: ID!): Product @merge(subgraph: "products", keyField: "id")
+  product(id: ID!): Product @merge(subgraph: "products")
   deprecatedProduct(sku: String!, package: String!): DeprecatedProduct
     @deprecated(reason: "Use product query instead")
-    @merge(subgraph: "products", keyField: "sku package")
+    @merge(subgraph: "products", argsExpr: "sku: $key.sku, package: $key.package")
   productBySkuAndPackage(sku: String!, package: String!): Product
-    @merge(subgraph: "products", keyField: "sku package")
+    @merge(subgraph: "products", argsExpr: "sku: $key.sku, package: $key.package")
   productBySkuAndVariationId(sku: String!, variationId: ID!): Product
-    @merge(subgraph: "products", keyField: "sku variation { id }")
+    @merge(subgraph: "products", argsExpr: "sku: $key.sku, variationId: $key.variation.id")
   productResearch(caseNumber: ID!): ProductResearch
-    @merge(subgraph: "products", keyField: "study { caseNumber }")
+    @merge(subgraph: "products", argsExpr: "caseNumber: $key.study.caseNumber")
   user(email: ID!, totalProductsCreated: Int, yearsOfEmployment: Int): User
-    @merge(subgraph: "products", keyField: "email")
+    @merge(subgraph: "products", argsExpr: "email: $key.email")
   inventoryById(id: ID!): Inventory @merge(subgraph: "products", keyField: "id", keyArg: "id")
 }
 

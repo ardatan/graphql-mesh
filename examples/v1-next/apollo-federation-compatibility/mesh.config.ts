@@ -30,6 +30,7 @@ export const composeConfig = defineComposeConfig({
                 fields: 'sku package',
                 resolveReference: {
                   fieldName: 'productBySkuAndPackage',
+                  argsExpr: 'sku: $key.sku, package: $key.package',
                 },
               },
               {
@@ -81,6 +82,7 @@ export const composeConfig = defineComposeConfig({
               fields: 'email',
               resolveReference: {
                 fieldName: 'user',
+                argsExpr: 'email: $key.email',
               },
             },
           },

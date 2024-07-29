@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
+import { join } from 'node:path';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { Inventory, Product, ProductResearch, Resolvers, User } from './resolvers-types';
 
@@ -145,7 +146,7 @@ const resolvers: Resolvers = {
 
 const yoga = createYoga({
   schema: createSchema({
-    typeDefs: readFileSync('./typeDefs.graphql', 'utf-8'),
+    typeDefs: readFileSync(join(__dirname, './typeDefs.graphql'), 'utf-8'),
     resolvers,
   }),
 });

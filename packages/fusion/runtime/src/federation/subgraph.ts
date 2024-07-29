@@ -423,6 +423,9 @@ const mergeDirective = new GraphQLDirective({
     keyArg: {
       type: GraphQLString,
     },
+    argsExpr: {
+      type: GraphQLString,
+    },
   },
 });
 
