@@ -22,6 +22,7 @@ import {
   DefaultLogger,
   getHeadersObj,
   groupTransforms,
+  makeDisposable,
   mapMaybePromise,
   parseWithCache,
   PubSub,
@@ -388,29 +389,31 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     return pubsub.publish('destroy', undefined);
   }
 
-  return {
-    get schema() {
-      return subschema ? subschema.transformedSchema : unifiedSubschema.schema;
+  return makeDisposable(
+    {
+      get schema() {
+        return subschema ? subschema.transformedSchema : unifiedSubschema.schema;
+      },
+      rawSources,
+      cache,
+      pubsub,
+      destroy: meshDestroy,
+      logger,
+      plugins,
+      get getEnveloped() {
+        return memoizedGetEnvelopedFactory(plugins);
+      },
+      createExecutor,
+      get execute() {
+        return createExecutor();
+      },
+      get subscribe() {
+        return createExecutor();
+      },
+      sdkRequesterFactory,
     },
-    rawSources,
-    cache,
-    pubsub,
-    destroy: meshDestroy,
-    logger,
-    plugins,
-    get getEnveloped() {
-      return memoizedGetEnvelopedFactory(plugins);
-    },
-    createExecutor,
-    get execute() {
-      return createExecutor();
-    },
-    get subscribe() {
-      return createExecutor();
-    },
-    sdkRequesterFactory,
-    [Symbol.dispose]: meshDestroy,
-  };
+    meshDestroy,
+  );
 }
 
 function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {

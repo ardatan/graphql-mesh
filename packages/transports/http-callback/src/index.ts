@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import type { ExecutionResult, GraphQLError } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import {
-  getInterpolatedHeadersFactory,
-  getInterpolatedStringFactory,
-} from '@graphql-mesh/string-interpolation';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
   defaultPrintFn,
   type DisposableExecutor,
   type Transport,
 } from '@graphql-mesh/transport-common';
-import { createGraphQLError } from '@graphql-tools/utils';
+import { makeDisposable } from '@graphql-mesh/utils';
+import { createGraphQLError, type ExecutionRequest } from '@graphql-tools/utils';
 import { Repeater, type Push } from '@repeaterjs/repeater';
 import { crypto } from '@whatwg-node/fetch';
 
@@ -64,7 +62,7 @@ function createTimeoutError() {
 }
 
 export default {
-  getSubgraphExecutor({ transportEntry, fetch, pubsub, logger }) {
+  getSubgraphExecutor({ transportEntry, fetch, pubsub, logger }): DisposableExecutor {
     let headersInConfig: Record<string, string> | undefined;
     if (typeof transportEntry.headers === 'string') {
       headersInConfig = JSON.parse(transportEntry.headers);
@@ -90,7 +88,7 @@ export default {
     const publicUrl = transportEntry.options?.public_url || 'http://localhost:4000';
     const callbackPath = transportEntry.options?.path || '/callback';
     const heartbeatIntervalMs = transportEntry.options.heartbeat_interval || 50000;
-    const httpCallbackExecutor: DisposableExecutor = function httpCallbackExecutor(execReq) {
+    const httpCallbackExecutor = function httpCallbackExecutor(execReq: ExecutionRequest) {
       const query = defaultPrintFn(execReq.document);
       const subscriptionId = crypto.randomUUID();
       const subscriptionLogger = logger.child(subscriptionId);
@@ -268,8 +266,6 @@ export default {
         }
       }
     }
-    httpCallbackExecutor[Symbol.asyncDispose] = disposeFn;
-    httpCallbackExecutor[Symbol.dispose] = disposeFn;
-    return httpCallbackExecutor;
+    return makeDisposable(httpCallbackExecutor, disposeFn);
   },
 } satisfies Transport<'http-callback', HTTPCallbackTransportOptions>;

@@ -1,13 +1,12 @@
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
   defaultPrintFn,
-  type DisposableExecutor,
   type Transport,
   type TransportEntry,
 } from '@graphql-mesh/transport-common';
-import { mapMaybePromise } from '@graphql-mesh/utils';
+import { dispose, isDisposable, makeAsyncDisposable, mapMaybePromise } from '@graphql-mesh/utils';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
-import type { DisposableAsyncExecutor } from '@graphql-tools/utils';
+import { type AsyncExecutor, type ExecutionRequest } from '@graphql-tools/utils';
 
 export type HTTPTransportOptions<
   TSubscriptionTransportKind = string,
@@ -78,19 +77,19 @@ export default {
             ),
         );
       };
-      const hybridExecutor: DisposableAsyncExecutor = function hybridExecutor(executionRequest) {
-        if (subscriptionsExecutor && executionRequest.operationType === 'subscription') {
-          return subscriptionsExecutor(executionRequest);
-        }
-        return httpExecutor(executionRequest);
-      };
-      hybridExecutor[Symbol.asyncDispose] = function executorDisposeFn() {
-        return Promise.all([
-          httpExecutor[Symbol.asyncDispose]?.(),
-          subscriptionsExecutor?.[Symbol.asyncDispose]?.(),
-        ]);
-      };
-      return hybridExecutor;
+      return makeAsyncDisposable<AsyncExecutor>(
+        function hybridExecutor(executionRequest: ExecutionRequest) {
+          if (subscriptionsExecutor && executionRequest.operationType === 'subscription') {
+            return subscriptionsExecutor(executionRequest);
+          }
+          return httpExecutor(executionRequest);
+        },
+        () =>
+          Promise.all([
+            isDisposable(httpExecutor) && dispose(httpExecutor),
+            isDisposable(subscriptionsExecutor) && dispose(subscriptionsExecutor),
+          ]).then(() => {}),
+      );
     }
 
     return httpExecutor;

@@ -11,6 +11,7 @@ import type {
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
 import {
+  isDisposable,
   iterateAsync,
   loggerForExecutionRequest,
   mapMaybePromise,
@@ -398,8 +399,4 @@ export function compareSchemas(
     bStr = printSchemaWithDirectives(b);
   }
   return aStr === bStr;
-}
-
-export function isDisposable(obj: any): obj is Disposable | AsyncDisposable {
-  return obj?.[Symbol.dispose] != null || obj?.[Symbol.asyncDispose] != null;
 }

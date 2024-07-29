@@ -11,27 +11,16 @@ describe('Spotify', () => {
       source: './fixtures/spotify.yml',
       cwd: __dirname,
       ignoreErrorResponses: true,
-      fetch: (url): Promise<Response> => {
-        return Promise.resolve(
-          new Response(
-            JSON.stringify({
-              albums: {
-                items: [
-                  {
-                    name: url,
-                  },
-                ],
+      fetch: async url =>
+        Response.json({
+          albums: {
+            items: [
+              {
+                name: url,
               },
-            }),
-            {
-              status: 200,
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            },
-          ),
-        );
-      },
+            ],
+          },
+        }),
     });
   });
 

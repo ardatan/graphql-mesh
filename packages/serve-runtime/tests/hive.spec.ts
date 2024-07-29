@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createServer } from 'http';
 import type { AddressInfo } from 'net';
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
 import {
   buildClientSchema,
   getIntrospectionQuery,
@@ -11,6 +10,7 @@ import {
 } from 'graphql';
 import { createSchema } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
+import { createDisposableServer } from '../../testing/createDisposableServer.js';
 import { createServeRuntime } from '../src/createServeRuntime.js';
 
 function createUpstreamSchema() {
@@ -31,16 +31,13 @@ function createUpstreamSchema() {
   });
 }
 
-const leftovers = new Set<() => PromiseLike<void>>();
-afterAll(() => Promise.all(Array.from(leftovers).map(l => l())).finally(() => leftovers.clear()));
-
 describe('Hive CDN', () => {
   afterEach(() => {
     delete process.env.HIVE_CDN_ENDPOINT;
     delete process.env.HIVE_CDN_KEY;
   });
   it('respects env vars', async () => {
-    const cdnServer = createServer((_req, res) => {
+    await using cdnServer = await createDisposableServer((_req, res) => {
       const supergraph = getUnifiedGraphGracefully([
         {
           name: 'upstream',
@@ -49,17 +46,9 @@ describe('Hive CDN', () => {
       ]);
       res.end(supergraph);
     });
-    cdnServer.listen();
-    leftovers.add(
-      () =>
-        new Promise<void>((resolve, reject) => {
-          cdnServer.close(err => (err ? reject(err) : resolve()));
-        }),
-    );
-    process.env.HIVE_CDN_ENDPOINT = `http://localhost:${(cdnServer.address() as AddressInfo).port}`;
+    process.env.HIVE_CDN_ENDPOINT = `http://localhost:${cdnServer.address().port}`;
     process.env.HIVE_CDN_KEY = 'key';
     await using serveRuntime = createServeRuntime();
-    leftovers.add(() => serveRuntime[Symbol.asyncDispose]());
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {

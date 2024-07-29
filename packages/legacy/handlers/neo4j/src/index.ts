@@ -13,7 +13,7 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { dispose, isDisposable, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDriverFromOpts, getNeo4JExecutor, loadGraphQLSchemaFromNeo4J } from '@omnigraph/neo4j';
 
 export default class Neo4JHandler implements MeshHandler {
@@ -102,10 +102,13 @@ export default class Neo4JHandler implements MeshHandler {
       logger: this.logger,
     });
 
-    const id = this.pubsub.subscribe('destroy', () => {
-      executor[Symbol.asyncDispose]();
-      this.pubsub.unsubscribe(id);
-    });
+    if (isDisposable(executor)) {
+      const id = this.pubsub.subscribe('destroy', () => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        dispose(executor);
+        this.pubsub.unsubscribe(id);
+      });
+    }
 
     return {
       schema,

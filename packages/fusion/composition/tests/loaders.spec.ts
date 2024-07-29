@@ -42,6 +42,7 @@ describe('Loaders', () => {
       plugins() {
         return [useCustomFetch(mockFetch)];
       },
+      logging: !!process.env.DEBUG,
     });
     const res = await runtime.fetch('/graphql', {
       method: 'POST',

@@ -41,8 +41,8 @@
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.5",
     "@graphql-tools/delegate": "^10.0.16",
+    "@whatwg-node/disposablestack": "^0.0.1",
     "@whatwg-node/fetch": "^0.9.13",
-    "disposablestack": "^1.1.6",
     "dset": "^3.1.2",
     "js-yaml": "^4.1.0",
     "lodash.get": "^4.4.2",

@@ -10,7 +10,7 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
 
 export default class MySQLHandler implements MeshHandler {
@@ -85,10 +85,13 @@ export default class MySQLHandler implements MeshHandler {
       pool,
     });
 
-    const id = this.pubsub.subscribe('destroy', () => {
-      executor[Symbol.asyncDispose]();
-      this.pubsub.unsubscribe(id);
-    });
+    if (isDisposable(executor)) {
+      const id = this.pubsub.subscribe('destroy', () => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        dispose(executor);
+        this.pubsub.unsubscribe(id);
+      });
+    }
 
     return {
       schema,

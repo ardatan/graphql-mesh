@@ -1,26 +1,14 @@
 /* eslint-disable import/no-nodejs-modules */
 /* eslint-disable import/no-extraneous-dependencies */
-import { createServer, type Server } from 'http';
 import type { AddressInfo } from 'net';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { fetch } from '@whatwg-node/fetch';
 import { createServerAdapter, Response } from '@whatwg-node/server';
+import { createDisposableServer } from '../../testing/createDisposableServer';
 import { createServeRuntime } from '../src/createServeRuntime';
 import { useUpstreamCancel } from '../src/useUpstreamCancel';
 
 describe('useUpstreamCancel', () => {
-  const serversToClose = new Set<Server>();
-  afterAll(() =>
-    Promise.all(
-      [...serversToClose].map(
-        server =>
-          new Promise<void>((resolve, reject) => {
-            server.closeAllConnections();
-            server.close(err => (err ? reject(err) : resolve()));
-          }),
-      ),
-    ),
-  );
   it('cancels upstream requests when the client cancels', async () => {
     const serveRuntimeFetchCallAbortCtrl = new AbortController();
     let resolveDataSource: (response: Response) => void;
@@ -35,13 +23,7 @@ describe('useUpstreamCancel', () => {
         resolveDataSource = resolve;
       });
     });
-    const dataSourceServer = createServer(dataSourceAdapter);
-    await new Promise<void>(resolve =>
-      dataSourceServer.listen(0, () => {
-        serversToClose.add(dataSourceServer);
-        resolve();
-      }),
-    );
+    await using dataSourceServer = await createDisposableServer(dataSourceAdapter);
     const upstreamGraphQL = createYoga({
       logging: false,
       schema: createSchema({
@@ -53,51 +35,36 @@ describe('useUpstreamCancel', () => {
         resolvers: {
           Query: {
             hello: (_root, _args, context) =>
-              fetch(`http://localhost:${(dataSourceServer.address() as AddressInfo).port}`, {
+              fetch(`http://localhost:${dataSourceServer.address().port}`, {
                 signal: context.request.signal,
               }).then(dataSourceFetchSpy),
           },
         },
       }),
     });
-    const upstreamGraphQLServer = createServer(upstreamGraphQL);
-    await new Promise<void>(resolve =>
-      upstreamGraphQLServer.listen(0, () => {
-        serversToClose.add(upstreamGraphQLServer);
-        resolve();
-      }),
-    );
+    await using upstreamGraphQLServer = await createDisposableServer(upstreamGraphQL);
     await using serveRuntime = createServeRuntime({
       proxy: {
-        endpoint: `http://localhost:${(upstreamGraphQLServer.address() as AddressInfo).port}/graphql`,
+        endpoint: `http://localhost:${upstreamGraphQLServer.address().port}/graphql`,
       },
       plugins: () => [useUpstreamCancel()],
       logging: false,
     });
-    const serveRuntimeServer = createServer(serveRuntime);
-    await new Promise<void>(resolve =>
-      serveRuntimeServer.listen(0, () => {
-        serversToClose.add(serveRuntimeServer);
-        resolve();
-      }),
-    );
-    const res$ = fetch(
-      `http://localhost:${(serveRuntimeServer.address() as AddressInfo).port}/graphql`,
-      {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: /* GraphQL */ `
-            query {
-              hello
-            }
-          `,
-        }),
-        signal: serveRuntimeFetchCallAbortCtrl.signal,
+    await using serveRuntimeServer = await createDisposableServer(serveRuntime);
+    const res$ = fetch(`http://localhost:${serveRuntimeServer.address().port}/graphql`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
       },
-    );
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query {
+            hello
+          }
+        `,
+      }),
+      signal: serveRuntimeFetchCallAbortCtrl.signal,
+    });
     await expect(res$).rejects.toThrow();
     expect(dataSourceFetchSpy).not.toHaveBeenCalled();
     await new Promise<void>(resolve => setTimeout(resolve, 300));

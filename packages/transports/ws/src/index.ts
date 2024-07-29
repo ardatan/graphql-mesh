@@ -6,6 +6,7 @@ import {
   type DisposableExecutor,
   type Transport,
 } from '@graphql-mesh/transport-common';
+import { dispose, isDisposable, makeAsyncDisposable } from '@graphql-mesh/utils';
 import { buildGraphQLWSExecutor } from '@graphql-tools/executor-graphql-ws';
 
 function switchProtocols(url: string) {
@@ -81,10 +82,12 @@ export default {
       }
       return wsExecutor(execReq);
     };
-    mergedExecutor[Symbol.asyncDispose] = () =>
+    return makeAsyncDisposable(mergedExecutor, () =>
       Promise.all(
-        Array.from(wsExecutorMap.values()).map(executor => executor[Symbol.asyncDispose]()),
-      );
-    return mergedExecutor;
+        Array.from(wsExecutorMap.values()).map(
+          executor => isDisposable(executor) && dispose(executor),
+        ),
+      ).then(() => {}),
+    );
   },
 } satisfies Transport<'ws', WSTransportOptions>;

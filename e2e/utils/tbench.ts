@@ -1,6 +1,6 @@
 import { setTimeout } from 'timers/promises';
 import { spawn, Thread, Worker } from 'threads';
-import { getLeftoverStack } from './leftoverStack';
+import { leftoverStack } from './leftoverStack';
 import { timeout as jestTimeout, type Server } from './tenv';
 import type { benchGraphQLServer } from './workers/benchGraphQLServer';
 
@@ -51,7 +51,7 @@ export async function createTbench(vusCount: number): Promise<Tbench> {
       .map(() => spawn<typeof benchGraphQLServer>(new Worker('./workers/benchGraphQLServer.js'))),
   );
   vus.forEach(worker => {
-    getLeftoverStack().defer(() => Thread.terminate(worker));
+    leftoverStack.defer(() => Thread.terminate(worker));
   });
   return {
     async sustain({ server, duration = jestTimeout - 10_000, parallelRequestsPerVU = 10, params }) {

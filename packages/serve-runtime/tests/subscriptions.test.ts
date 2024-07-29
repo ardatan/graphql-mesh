@@ -3,12 +3,12 @@ import { createSchema, createYoga, Repeater } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { type MaybePromise } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { createServeRuntime } from '../src/createServeRuntime';
 
-const leftovers: (() => MaybePromise<void>)[] = [];
-afterAll(() => Promise.all(leftovers.map(l => l())));
-
 describe('Subscriptions', () => {
+  const leftovers: (() => MaybePromise<void>)[] = [];
+  afterAll(() => Promise.all(leftovers.map(l => l())));
   const upstreamSchema = createSchema({
     typeDefs: /* GraphQL */ `
       """
@@ -67,7 +67,7 @@ describe('Subscriptions', () => {
       on: {
         connected() {
           setImmediate(() => {
-            serve[Symbol.asyncDispose]();
+            serve[DisposableSymbols.asyncDispose]();
           });
         },
       },
