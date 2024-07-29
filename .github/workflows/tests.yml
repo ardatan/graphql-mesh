@@ -15,10 +15,10 @@ env:
   APOLLO_ELV2_LICENSE: accept
 jobs:
   lint:
-    uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/lint.yml@v1
     with:
+      node-version-file: .node-version
       script: yarn prettier:check && yarn ci:lint
-      packageManagerVersion: modern
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 

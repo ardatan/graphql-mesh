@@ -5,7 +5,9 @@ on:
 jobs:
   dependencies:
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
-    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@main
+    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yml@v1
+    with:
+      node-version-file: .node-version
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 
@@ -15,12 +17,11 @@ jobs:
       contents: read
       id-token: write
       pull-requests: write
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@v1
     with:
+      node-version-file: .node-version
       npmTag: alpha
       buildScript: build
-      nodeVersion: 18
-      packageManagerVersion: modern
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}

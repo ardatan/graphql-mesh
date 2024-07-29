@@ -13,12 +13,11 @@ jobs:
       id-token: write
       pull-requests: write
     if: github.ref == 'refs/heads/master'
-    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@v1
     with:
       releaseScript: release
       versionScript: 'changeset-version'
-      nodeVersion: 18
-      packageManagerVersion: modern
+      node-version-file: .node-version
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}

@@ -23,7 +23,7 @@ jobs:
         with:
           node-version-file: .node-version
 
-      - uses: the-guild-org/shared-config/website-cf@main
+      - uses: the-guild-org/shared-config/website-cf@v1
         name: build and deploy website
         env:
           NEXT_BASE_PATH: ${{ github.ref == 'refs/heads/master' && '/graphql/mesh' || '' }}
