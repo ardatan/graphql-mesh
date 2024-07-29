@@ -42,7 +42,16 @@ describe('Prometheus', () => {
           },
         };
       },
-      plugins: ctx => [usePrometheus(ctx)],
+      plugins: ctx => [
+        usePrometheus({
+          ...ctx,
+          metrics: {
+            graphql_mesh_subgraph_execute_duration: true,
+            graphql_mesh_subgraph_execute_errors: true,
+            graphql_mesh_fetch_duration: true,
+          },
+        }),
+      ],
       logging: !!process.env.DEBUG,
     });
   }
