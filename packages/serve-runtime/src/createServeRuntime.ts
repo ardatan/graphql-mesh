@@ -244,7 +244,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
                 _service() {
                   return {
                     sdl() {
-                      return printSchemaWithDirectives(unifiedGraph);
+                      return printSchemaWithDirectives(newUnifiedGraph);
                     },
                   };
                 },
