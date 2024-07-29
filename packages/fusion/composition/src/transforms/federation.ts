@@ -275,7 +275,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                   break;
                 }
               }
-              usedFederationDirectives.add(directiveName);
+              usedFederationDirectives.add(`@${directiveName}`);
             }
           }
           return new (Object.getPrototypeOf(type).constructor)({
@@ -326,7 +326,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 directiveConfig = {};
               }
               specificDirectiveExtensions.push(directiveConfig);
-              usedFederationDirectives.add(directiveName);
+              usedFederationDirectives.add(`@${directiveName}`);
             }
           }
           return {

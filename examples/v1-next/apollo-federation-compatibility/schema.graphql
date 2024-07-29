@@ -3,17 +3,17 @@ schema
   @link(
     url: "https://specs.apollo.dev/federation/v2.3"
     import: [
-      "key"
-      "shareable"
-      "extends"
-      "interfaceObject"
-      "provides"
-      "tag"
-      "inaccessible"
-      "requires"
-      "external"
-      "override"
-      "composeDirective"
+      "@key"
+      "@shareable"
+      "@extends"
+      "@interfaceObject"
+      "@provides"
+      "@tag"
+      "@inaccessible"
+      "@requires"
+      "@external"
+      "@override"
+      "@composeDirective"
     ]
   )
   @link(
