@@ -396,10 +396,10 @@ jobs:
         with:
           nodeVersion: 22
           packageManagerVersion: modern
+      - name: Install Rover
+        run: npm install -g @apollo/rover
       - name: Build Packages
         run: yarn build
-      - name: Install Rover
-        run: yarn global add @apollo/rover
       - name: Apollo Federation Subgraph Compatibility
         uses: apollographql/federation-subgraph-compatibility@v2
         with:
