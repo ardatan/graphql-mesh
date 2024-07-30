@@ -12139,15 +12139,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.42, @types/node@npm:^18.11.18":
-  version: 18.19.42
-  resolution: "@types/node@npm:18.19.42"
-  dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: 10c0/eaacbbcb376748bddaf6cd04569ebf3f0069a1b6f821db4f85ef9f60c2c63608ddcaf3e67a3c44e1cd8111a26e9da7c83d54ae7c41dd21e7b35cbab9436bfe1e
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:20.14.13, @types/node@npm:^20.10.6, @types/node@npm:^20.14.13":
   version: 20.14.13
   resolution: "@types/node@npm:20.14.13"
@@ -12168,6 +12159,15 @@ __metadata:
   version: 12.20.55
   resolution: "@types/node@npm:12.20.55"
   checksum: 10c0/3b190bb0410047d489c49bbaab592d2e6630de6a50f00ba3d7d513d59401d279972a8f5a598b5bb8ddc1702f8a2f4ec57a65d93852f9c329639738e7053637d1
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.11.18":
+  version: 18.19.42
+  resolution: "@types/node@npm:18.19.42"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/eaacbbcb376748bddaf6cd04569ebf3f0069a1b6f821db4f85ef9f60c2c63608ddcaf3e67a3c44e1cd8111a26e9da7c83d54ae7c41dd21e7b35cbab9436bfe1e
   languageName: node
   linkType: hard
 
@@ -19179,7 +19179,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "npm:0.6.5"
     "@graphql-mesh/serve-cli": "npm:0.8.6"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.6.2"
-    "@types/node": "npm:18.19.42"
+    "@types/node": "npm:20.14.13"
     concurrently: "npm:8.2.2"
     esbuild: "npm:^0.23.0"
     graphql: "npm:16.9.0"
