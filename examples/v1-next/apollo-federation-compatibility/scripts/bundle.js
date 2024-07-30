@@ -13,7 +13,7 @@ async function main() {
     platform: 'node',
     target: 'es2023',
     alias: {
-      'lru-cache': join(__dirname, './lru-cache.js'),
+      'lru-cache': join(__dirname, '../../../../node_modules/lru-cache/dist/commonjs/index.js'),
     },
   });
 
