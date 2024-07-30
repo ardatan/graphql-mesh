@@ -399,6 +399,10 @@ jobs:
         run: npm install -g @apollo/rover
       - name: Build Packages
         run: yarn build
+      - name: Compose Subgraph
+        run: yarn workspace example-apollo-federation-compatibility mesh:compose
+      - name: Bundle Gateway
+        run: yarn workspace example-apollo-federation-compatibility mesh:bundle
       - name: Apollo Federation Subgraph Compatibility
         uses: apollographql/federation-subgraph-compatibility@v2
         with:

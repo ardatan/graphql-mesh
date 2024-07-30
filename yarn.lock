@@ -6223,7 +6223,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/compose-cli@npm:^0.6.5, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
+"@graphql-mesh/compose-cli@npm:0.6.5, @graphql-mesh/compose-cli@npm:^0.6.5, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
@@ -6879,7 +6879,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/serve-cli@npm:^0.8.6, @graphql-mesh/serve-cli@workspace:*, @graphql-mesh/serve-cli@workspace:packages/serve-cli":
+"@graphql-mesh/serve-cli@npm:0.8.6, @graphql-mesh/serve-cli@npm:^0.8.6, @graphql-mesh/serve-cli@workspace:*, @graphql-mesh/serve-cli@workspace:packages/serve-cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-cli@workspace:packages/serve-cli"
   dependencies:
@@ -19630,11 +19630,12 @@ __metadata:
     "@graphql-codegen/cli": "npm:5.0.0"
     "@graphql-codegen/typescript": "npm:4.0.7"
     "@graphql-codegen/typescript-resolvers": "npm:4.1.0"
-    "@graphql-mesh/compose-cli": "workspace:*"
-    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-mesh/compose-cli": "npm:0.6.5"
+    "@graphql-mesh/serve-cli": "npm:0.8.6"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.6.0"
     "@types/node": "npm:18.16.16"
     concurrently: "npm:8.2.2"
+    esbuild: "npm:^0.23.0"
     graphql: "npm:16.6.0"
     graphql-yoga: "npm:5.6.0"
     tsx: "npm:4.16.0"

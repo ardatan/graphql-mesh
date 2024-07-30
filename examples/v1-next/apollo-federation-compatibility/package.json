@@ -7,14 +7,16 @@
   "main": "dist/index.js",
   "scripts": {
     "check": "tsc --pretty --noEmit",
+    "mesh:bundle": "node scripts/bundle.js",
     "mesh:compose": "mesh-compose --subgraph products > schema.graphql",
-    "mesh:serve": "mesh-serve --subgraph schema.graphql --port 4001",
+    "mesh:serve": "mesh-serve --subgraph schema.graphql --host 0.0.0.0 --port 4001",
+    "mesh:start-bundle": "node gateway.js",
     "service:codegen": "graphql-codegen",
     "service:start": "tsx src/index.ts",
-    "start": "concurrently \"yarn service:start\" \"yarn mesh:serve\""
+    "start": "concurrently \"yarn service:start\" \"yarn mesh:start-bundle\""
   },
   "dependencies": {
-    "@graphql-mesh/serve-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "0.8.6",
     "@graphql-yoga/plugin-apollo-inline-trace": "3.6.0",
     "concurrently": "8.2.2",
     "graphql": "16.6.0",
@@ -25,7 +27,8 @@
     "@graphql-codegen/cli": "5.0.0",
     "@graphql-codegen/typescript": "4.0.7",
     "@graphql-codegen/typescript-resolvers": "4.1.0",
-    "@graphql-mesh/compose-cli": "workspace:*",
-    "@types/node": "18.16.16"
+    "@graphql-mesh/compose-cli": "0.6.5",
+    "@types/node": "18.16.16",
+    "esbuild": "^0.23.0"
   }
 }

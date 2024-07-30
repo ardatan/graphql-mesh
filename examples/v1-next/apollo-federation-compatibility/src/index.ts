@@ -153,6 +153,6 @@ const yoga = createYoga({
 
 const server = createServer(yoga);
 
-server.listen(4444, () => {
-  console.log(`🚀 Server ready at http://localhost:4444`);
+server.listen(4444, '0.0.0.0', () => {
+  console.log(`🚀 Server ready at http://0.0.0.0:4444/graphql`);
 });
