@@ -62,6 +62,9 @@ export const fieldTypeMapDirective = new GraphQLDirective({
   name: 'fieldTypeMap',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    subgraph: {
+      type: GraphQLString,
+    },
     fieldTypeMap: {
       type: FieldTypeMapScalar,
     },
@@ -328,6 +331,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               extensions: {
                 directives: {
                   fieldTypeMap: {
+                    subgraph: subgraphName,
                     fieldTypeMap,
                   },
                 },

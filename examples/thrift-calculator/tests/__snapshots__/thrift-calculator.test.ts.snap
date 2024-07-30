@@ -5,11 +5,11 @@ exports[`Thrift Calculator should generate correct schema: thrift-calculator-sch
   query: Query
 }
 
-directive @fieldTypeMap(fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
+directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
 
 type Query {
-  add(request: AddRequestInput): Int @fieldTypeMap(fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
-  subtract(left: Int, right: Int): Int @fieldTypeMap(fieldTypeMap: {left: {type: 8, id: 1}, right: {type: 8, id: 2}})
+  add(request: AddRequestInput): Int @fieldTypeMap(subgraph: "Calculator", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
+  subtract(left: Int, right: Int): Int @fieldTypeMap(subgraph: "Calculator", fieldTypeMap: {left: {type: 8, id: 1}, right: {type: 8, id: 2}})
 }
 
 input AddRequestInput {
