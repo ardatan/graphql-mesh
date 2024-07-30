@@ -8,7 +8,26 @@ it('should compose', async () => {
 });
 
 it('should serve', async () => {
-  const proc = await serve();
+  const proc = await serve({
+    runner: {
+      docker: {
+        volumes: [
+          {
+            host: './jsconfig.json',
+            container: '/serve/jsconfig.json',
+          },
+          {
+            host: './mesh.config.ts',
+            container: '/serve/mesh.config.ts',
+          },
+          {
+            host: './folder',
+            container: '/serve/folder',
+          },
+        ],
+      },
+    },
+  });
   const res = await fetch(`http://0.0.0.0:${proc.port}/healthcheck`);
   expect(res.ok).toBeTruthy();
 });
