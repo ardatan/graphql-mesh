@@ -2,4 +2,7 @@ supergraph-compose.yaml
 supergraph-config.yaml
 supergraph.graphql
 results.md
-gateway.js
+bundle.js
+typeDefs.graphql
+schema.graphql
+

@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": ["./src/**/*", "mesh.config.ts", "gateway.ts"]
+  "include": ["./src/**/*", "mesh.config.ts", "index.ts"]
 }

@@ -5,6 +5,6 @@ services:
     working_dir: /web
     volumes:
       - .:/web
-    command: 'npm i && npm start'
+    command: 'npm start'
     ports:
       - 4001:4001

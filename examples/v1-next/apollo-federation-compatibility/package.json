@@ -6,14 +6,13 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
+    "bundle": "node scripts/bundle.js",
     "check": "tsc --pretty --noEmit",
-    "mesh:bundle": "node scripts/bundle.js",
     "mesh:compose": "mesh-compose --subgraph products > schema.graphql",
     "mesh:serve": "mesh-serve --subgraph schema.graphql --host 0.0.0.0 --port 4001",
-    "mesh:start-bundle": "node gateway.js",
     "service:codegen": "graphql-codegen",
     "service:start": "tsx src/index.ts",
-    "start": "concurrently \"yarn service:start\" \"yarn mesh:start-bundle\""
+    "start": "node bundle.js"
   },
   "dependencies": {
     "@graphql-mesh/serve-cli": "0.8.6",
@@ -21,6 +20,7 @@
     "concurrently": "8.2.2",
     "graphql": "16.6.0",
     "graphql-yoga": "5.6.0",
+    "tslib": "2.6.3",
     "tsx": "4.16.0"
   },
   "devDependencies": {
@@ -29,6 +29,7 @@
     "@graphql-codegen/typescript-resolvers": "4.1.0",
     "@graphql-mesh/compose-cli": "0.6.5",
     "@types/node": "18.16.16",
-    "esbuild": "^0.23.0"
+    "esbuild": "^0.23.0",
+    "lru-cache": "11.0.0"
   }
 }

@@ -1,16 +1,23 @@
 /* eslint-disable */
 const { build } = require('esbuild');
+const { copyFileSync } = require('fs');
+const { join } = require('path');
 
 async function main() {
   await build({
-    entryPoints: ['./gateway.ts'],
-    outfile: 'gateway.js',
+    entryPoints: ['./index.ts'],
+    outfile: 'bundle.js',
     format: 'cjs',
     minify: false,
     bundle: true,
     platform: 'node',
-    target: 'es2020',
+    target: 'es2023',
+    alias: {
+      'lru-cache': join(__dirname, './lru-cache.js'),
+    },
   });
+
+  copyFileSync(join(__dirname, '../src/typeDefs.graphql'), join(__dirname, '../typeDefs.graphql'));
 
   console.info(`Apollo Subgraph test build done!`);
 }

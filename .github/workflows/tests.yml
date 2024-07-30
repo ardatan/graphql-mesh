@@ -402,7 +402,7 @@ jobs:
       - name: Compose Subgraph
         run: yarn workspace example-apollo-federation-compatibility mesh:compose
       - name: Bundle Gateway
-        run: yarn workspace example-apollo-federation-compatibility mesh:bundle
+        run: yarn workspace example-apollo-federation-compatibility bundle
       - name: Apollo Federation Subgraph Compatibility
         uses: apollographql/federation-subgraph-compatibility@v2
         with:
