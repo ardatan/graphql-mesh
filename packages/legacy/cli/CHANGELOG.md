@@ -1,5 +1,13 @@
 # @graphql-mesh/cli
 
+## 0.92.6
+
+### Patch Changes
+
+- [`6827510`](https://github.com/ardatan/graphql-mesh/commit/68275106a5e8f0e173126aad75e5cdc4833d646d)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use jiti importer by default when parsing
+  config
+
 ## 0.92.5
 
 ### Patch Changes
