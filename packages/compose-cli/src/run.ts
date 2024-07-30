@@ -6,6 +6,7 @@ import { promises as fsPromises } from 'fs';
 import { isAbsolute, join, resolve } from 'path';
 import { parse } from 'graphql';
 import createJITI from 'jiti';
+import * as tsconfigPaths from 'tsconfig-paths';
 import { Command, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
@@ -135,6 +136,15 @@ export async function run({
   await fsPromises.writeFile(output, writtenData, 'utf8');
 
   log.info('Done!');
+}
+
+const tsconfig = tsconfigPaths.loadConfig();
+if (tsconfig.resultType === 'success') {
+  // there's a tsconfig loaded, register its paths
+  tsconfigPaths.register({
+    baseUrl: tsconfig.absoluteBaseUrl,
+    paths: tsconfig.paths,
+  });
 }
 
 const jiti = createJITI(

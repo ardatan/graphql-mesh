@@ -5,6 +5,7 @@ import cluster from 'node:cluster';
 import { availableParallelism, release } from 'node:os';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import createJITI from 'jiti';
+import * as tsconfigPaths from 'tsconfig-paths';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
@@ -258,6 +259,15 @@ export async function run({
     maxHeaderSize: config.maxHeaderSize || 16_384,
   });
   terminateStack.use(server);
+}
+
+const tsconfig = tsconfigPaths.loadConfig();
+if (tsconfig.resultType === 'success') {
+  // there's a tsconfig loaded, register its paths
+  tsconfigPaths.register({
+    baseUrl: tsconfig.absoluteBaseUrl,
+    paths: tsconfig.paths,
+  });
 }
 
 const jiti = createJITI(

@@ -58,7 +58,8 @@
     "dotenv": "^16.3.1",
     "jiti": "^1.21.6",
     "json-bigint-patch": "^0.0.8",
-    "spinnies": "^0.5.1"
+    "spinnies": "^0.5.1",
+    "tsconfig-paths": "^4.2.0"
   },
   "optionalDependencies": {
     "node-libcurl": "^4.0.0",

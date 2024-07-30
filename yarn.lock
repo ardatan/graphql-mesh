@@ -5679,6 +5679,7 @@ __metadata:
     open: "npm:^7.4.2"
     pascal-case: "npm:^3.1.2"
     rimraf: "npm:^6.0.0"
+    tsconfig-paths: "npm:^4.2.0"
     tslib: "npm:^2.4.0"
     typescript: "npm:^5.4.2"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
@@ -5714,6 +5715,7 @@ __metadata:
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
     jiti: "npm:^1.21.6"
+    tsconfig-paths: "npm:^4.2.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.5
     graphql: "*"
@@ -6379,6 +6381,7 @@ __metadata:
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
     spinnies: "npm:^0.5.1"
+    tsconfig-paths: "npm:^4.2.0"
     tsx: "npm:^4.16.2"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
@@ -23927,7 +23930,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:^2.1.1, json5@npm:^2.1.2, json5@npm:^2.2.0, json5@npm:^2.2.3":
+"json5@npm:^2.1.1, json5@npm:^2.1.2, json5@npm:^2.2.0, json5@npm:^2.2.2, json5@npm:^2.2.3":
   version: 2.2.3
   resolution: "json5@npm:2.2.3"
   bin:
@@ -34206,6 +34209,17 @@ __metadata:
     minimist: "npm:^1.2.6"
     strip-bom: "npm:^3.0.0"
   checksum: 10c0/5b4f301a2b7a3766a986baf8fc0e177eb80bdba6e396792ff92dc23b5bca8bb279fc96517dcaaef63a3b49bebc6c4c833653ec58155780bc906bdbcf7dda0ef5
+  languageName: node
+  linkType: hard
+
+"tsconfig-paths@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "tsconfig-paths@npm:4.2.0"
+  dependencies:
+    json5: "npm:^2.2.2"
+    minimist: "npm:^1.2.6"
+    strip-bom: "npm:^3.0.0"
+  checksum: 10c0/09a5877402d082bb1134930c10249edeebc0211f36150c35e1c542e5b91f1047b1ccf7da1e59babca1ef1f014c525510f4f870de7c9bda470c73bb4e2721b3ea
   languageName: node
   linkType: hard
 

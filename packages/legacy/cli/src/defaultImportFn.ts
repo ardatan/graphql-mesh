@@ -1,5 +1,15 @@
 import createJITI, { type JITI } from 'jiti';
+import * as tsconfigPaths from 'tsconfig-paths';
 import type { ImportFn } from '@graphql-mesh/types';
+
+const tsconfig = tsconfigPaths.loadConfig();
+if (tsconfig.resultType === 'success') {
+  // there's a tsconfig loaded, register its paths
+  tsconfigPaths.register({
+    baseUrl: tsconfig.absoluteBaseUrl,
+    paths: tsconfig.paths,
+  });
+}
 
 let jiti: JITI;
 function getOrCreateImportFn(): ImportFn {
