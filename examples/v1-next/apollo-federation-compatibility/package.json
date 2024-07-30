@@ -6,7 +6,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "bundle": "node scripts/bundle.js",
+    "build": "node scripts/bundle.js",
     "check": "tsc --pretty --noEmit",
     "mesh:compose": "mesh-compose --subgraph products > schema.graphql",
     "mesh:serve": "mesh-serve --subgraph schema.graphql --host 0.0.0.0 --port 4001",
