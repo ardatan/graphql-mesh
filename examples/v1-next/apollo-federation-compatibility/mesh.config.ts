@@ -21,22 +21,16 @@ export const composeConfig = defineComposeConfig({
           Product: {
             key: [
               {
-                fields: 'id',
-                resolveReference: {
-                  fieldName: 'product',
-                },
-              },
-              {
                 fields: 'sku package',
                 resolveReference: {
                   fieldName: 'productBySkuAndPackage',
-                  argsExpr: 'sku: $key.sku, package: $key.package',
                 },
               },
               {
                 fields: 'sku variation { id }',
                 resolveReference: {
                   fieldName: 'productBySkuAndVariationId',
+                  // Needed because it cannot infer the args from the key that has nested fields
                   argsExpr: 'sku: $key.sku, variationId: $key.variation.id',
                 },
               },
@@ -57,7 +51,6 @@ export const composeConfig = defineComposeConfig({
               fields: 'sku package',
               resolveReference: {
                 fieldName: 'deprecatedProduct',
-                argsExpr: 'sku: $key.sku, package: $key.package',
               },
             },
           },
@@ -82,8 +75,6 @@ export const composeConfig = defineComposeConfig({
               fields: 'email',
               resolveReference: {
                 fieldName: 'user',
-                argsExpr:
-                  'email: $key.email, totalProductsCreated: $key.totalProductsCreated, yearsOfEmployment: $key.yearsOfEmployment',
               },
             },
           },
@@ -107,12 +98,6 @@ export const composeConfig = defineComposeConfig({
             external: true,
           },
           Inventory: {
-            key: {
-              fields: 'id',
-              resolveReference: {
-                fieldName: 'inventoryById',
-              },
-            },
             interfaceObject: true,
           },
         }),

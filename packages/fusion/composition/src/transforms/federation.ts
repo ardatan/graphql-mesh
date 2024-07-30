@@ -1,10 +1,12 @@
 import {
   DirectiveLocation,
+  getNamedType,
   GraphQLDirective,
   GraphQLList,
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
+  isLeafType,
   OperationTypeNode,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
@@ -263,11 +265,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                       mergeDirectiveConfigMap.set(operation, operationMergeDirectiveConfig);
                     }
                     operationMergeDirectiveConfig.set(keyConfig.resolveReference.fieldName, {
-                      ...(keyConfig.resolveReference.key
-                        ? {}
-                        : {
-                            keyField: keyConfig.fields,
-                          }),
+                      keyField: keyConfig.fields,
                       ...keyConfig.resolveReference,
                     });
                   }
@@ -305,12 +303,30 @@ export function createFederationTransform(config: FederationTransformConfig): Su
         if (mergeDirectiveConfig) {
           const fieldDirectives = getDirectiveExtensions(fieldConfig) || {};
           const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
+          let argsExpr = mergeDirectiveConfig.argsExpr;
+          if (!argsExpr && fieldConfig.args && !mergeDirectiveConfig.keyArg) {
+            const argsExprElems: string[] = [];
+            const returnNamedType = getNamedType(fieldConfig.type);
+            if ('getFields' in returnNamedType) {
+              const returnFields = returnNamedType.getFields();
+              for (const argName in fieldConfig.args) {
+                const arg = fieldConfig.args[argName];
+                const argType = getNamedType(arg.type);
+                const returnField = returnFields[argName];
+                const returnFieldType = getNamedType(returnField.type);
+                if (argType.name === returnFieldType.name) {
+                  argsExprElems.push(`${argName}: $key.${argName}`);
+                }
+              }
+              argsExpr = argsExprElems.join(', ');
+            }
+          }
           mergeDirectiveExtensions.push({
             subgraph: subgraphConfig.name,
             key: mergeDirectiveConfig.key,
             keyField: mergeDirectiveConfig.keyField,
             keyArg: mergeDirectiveConfig.keyArg,
-            argsExpr: mergeDirectiveConfig.argsExpr,
+            argsExpr,
           });
           mergeDirectiveUsed = true;
           return {
