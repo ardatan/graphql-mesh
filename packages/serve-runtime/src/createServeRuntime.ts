@@ -58,7 +58,7 @@ import {
 import { wrapSchema } from '@graphql-tools/wrap';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
-import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
+import { getUnifiedGraphSDL, handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
 import type {
   MeshServeConfig,
@@ -258,7 +258,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
                 _service() {
                   return {
                     sdl() {
-                      return printSchemaWithDirectives(newUnifiedGraph);
+                      return getUnifiedGraphSDL(newUnifiedGraph);
                     },
                   };
                 },
