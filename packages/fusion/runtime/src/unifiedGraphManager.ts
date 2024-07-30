@@ -9,12 +9,13 @@ import type { SubschemaConfig } from '@graphql-tools/delegate';
 import type { IResolvers, MaybePromise, TypeSource } from '@graphql-tools/utils';
 import { isDocumentNode } from '@graphql-tools/utils';
 import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
-import { compareSubgraphNames, handleFederationSupergraph } from './federation.js';
+import { handleFederationSupergraph } from './federation/supergraph.js';
 import {
   compareSchemas,
   getOnSubgraphExecute,
   type OnSubgraphExecuteHook,
   type Transports,
+  compareSubgraphNames,
 } from './utils.js';
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {

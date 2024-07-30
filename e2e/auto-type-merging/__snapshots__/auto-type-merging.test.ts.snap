@@ -110,7 +110,7 @@ directive @transport(
   options: TransportOptions
 ) repeatable on SCHEMA
 
-directive @hidden repeatable on FIELD_DEFINITION | OBJECT | INTERFACE | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_OBJECT
+directive @hidden on FIELD_DEFINITION | OBJECT | INTERFACE | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_OBJECT
 
 directive @merge(
   subgraph: String

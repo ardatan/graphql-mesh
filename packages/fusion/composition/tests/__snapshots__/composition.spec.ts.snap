@@ -328,7 +328,7 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-directive @foo repeatable on FIELD_DEFINITION
+directive @foo on FIELD_DEFINITION
 
 type Query @join__type(graph: A)  @join__type(graph: B)  @join__type(graph: C)  {
   myFoo: Foo! @join__field(graph: A) 

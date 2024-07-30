@@ -84,9 +84,9 @@ enum join__Graph {
   MOVIES @join__graph(name: "Movies", url: "neo4j+s://demo.neo4jlabs.com") 
 }
 
-directive @relationshipProperties repeatable on OBJECT
+directive @relationshipProperties on OBJECT
 
-directive @relationship(type: String, direction: _RelationDirections)  repeatable on FIELD_DEFINITION
+directive @relationship(type: String, direction: _RelationDirections)  on FIELD_DEFINITION
 
 directive @introspection(subgraph: String)  repeatable on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
 

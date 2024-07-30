@@ -5,7 +5,6 @@ import type {
   GraphQLNamedType,
 } from 'graphql';
 import {
-  buildSchema,
   concatAST,
   getNamedType,
   GraphQLEnumType,
@@ -20,12 +19,7 @@ import { snakeCase } from 'snake-case';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import type { Constructor, FieldMapper } from '@graphql-tools/utils';
-import {
-  getDocumentNodeFromSchema,
-  MapperKind,
-  mapSchema,
-  printSchemaWithDirectives,
-} from '@graphql-tools/utils';
+import { getDocumentNodeFromSchema, MapperKind, mapSchema } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import {
@@ -63,18 +57,9 @@ export function getUnifiedGraphGracefully(subgraphs: SubgraphConfig[]) {
   return result.supergraphSdl;
 }
 
-export interface ComposeSubgraphsOptions {
-  /**
-   * If set to true, the composition will ignore the semantic conventions and will not add any automatic type merging configuration based on ById and ByIds naming conventions.
-   *
-   * @default false
-   */
-  ignoreSemanticConventions?: boolean;
-}
-
-export function composeSubgraphs(
+export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
-  options: ComposeSubgraphsOptions = {},
+  options: GetAnnotatedSubgraphsOptions = {},
 ) {
   const annotatedSubgraphs: ServiceDefinition[] = [];
   for (const subgraphConfig of subgraphs) {
@@ -609,11 +594,37 @@ export function composeSubgraphs(
     });
   }
 
+  return annotatedSubgraphs;
+}
+
+export interface GetAnnotatedSubgraphsOptions {
+  /**
+   * If set to true, the composition will ignore the semantic conventions and will not add any automatic type merging configuration based on ById and ByIds naming conventions.
+   *
+   * @default false
+   */
+  ignoreSemanticConventions?: boolean;
+}
+
+export type ComposeSubgraphsOptions = GetAnnotatedSubgraphsOptions;
+
+export function composeSubgraphs(
+  subgraphs: SubgraphConfig[],
+  options: ComposeSubgraphsOptions = {},
+) {
+  const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphs, options);
+  const composedSupergraphWithAnnotatedSubgraphs = composeAnnotatedSubgraphs(annotatedSubgraphs);
+  return {
+    ...composedSupergraphWithAnnotatedSubgraphs,
+    subgraphs,
+  };
+}
+
+export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
   const composedSupergraphSdl = composeServices(annotatedSubgraphs);
   return {
     ...composedSupergraphSdl,
     annotatedSubgraphs,
-    subgraphs,
   };
 }
 

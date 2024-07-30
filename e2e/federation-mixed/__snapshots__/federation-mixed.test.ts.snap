@@ -87,7 +87,14 @@ enum join__Graph {
   REVIEWS @join__graph(name: "reviews", url: "http://0.0.0.0:<reviews_port>/graphql") 
 }
 
-directive @merge(subgraph: String!, keyField: String, keyArg: String)  repeatable on FIELD_DEFINITION
+directive @merge(
+  subgraph: String!
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
 
 directive @httpOperation(
   subgraph: String
@@ -144,7 +151,7 @@ type Query @extraSchemaDefinitionDirective(
     path: "/users/{args.id}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @merge(subgraph: "accounts", keyField: "id", keyArg: "id")  @join__field(graph: ACCOUNTS) 
+  ) @merge(subgraph: "accounts", keyArg: "id", keyField: "id")  @join__field(graph: ACCOUNTS) 
   users: [User] @httpOperation(
     subgraph: "accounts"
     path: "/users"

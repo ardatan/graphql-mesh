@@ -1,9 +1,12 @@
 import {
   DirectiveLocation,
+  getNamedType,
   GraphQLDirective,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
+  isLeafType,
   OperationTypeNode,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
@@ -175,7 +178,7 @@ interface FederationResolveReferenceConfig {
    * (WARNING: Advanced usage only)
    * Allows building a custom key just for the argument from the `selectionSet` included by the `@key` directive.
    */
-  key?: string;
+  key?: string[];
   /**
    * (WARNING: Advanced usage only)
    * This argument specifies a string expression that allows more customization of the input arguments.
@@ -188,8 +191,10 @@ interface FederationResolveReferenceConfig {
 }
 
 interface MergeDirectiveConfig {
-  keyField: string;
+  key?: string[];
+  keyField?: string;
   keyArg?: string;
+  argsExpr?: string;
 }
 
 export function createFederationTransform(config: FederationTransformConfig): SubgraphTransform {
@@ -275,7 +280,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                   break;
                 }
               }
-              usedFederationDirectives.add(directiveName);
+              usedFederationDirectives.add(`@${directiveName}`);
             }
           }
           return new (Object.getPrototypeOf(type).constructor)({
@@ -298,10 +303,30 @@ export function createFederationTransform(config: FederationTransformConfig): Su
         if (mergeDirectiveConfig) {
           const fieldDirectives = getDirectiveExtensions(fieldConfig) || {};
           const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
+          let argsExpr = mergeDirectiveConfig.argsExpr;
+          if (!argsExpr && fieldConfig.args && !mergeDirectiveConfig.keyArg) {
+            const argsExprElems: string[] = [];
+            const returnNamedType = getNamedType(fieldConfig.type);
+            if ('getFields' in returnNamedType) {
+              const returnFields = returnNamedType.getFields();
+              for (const argName in fieldConfig.args) {
+                const arg = fieldConfig.args[argName];
+                const argType = getNamedType(arg.type);
+                const returnField = returnFields[argName];
+                const returnFieldType = getNamedType(returnField.type);
+                if (argType.name === returnFieldType.name) {
+                  argsExprElems.push(`${argName}: $key.${argName}`);
+                }
+              }
+              argsExpr = argsExprElems.join(', ');
+            }
+          }
           mergeDirectiveExtensions.push({
             subgraph: subgraphConfig.name,
+            key: mergeDirectiveConfig.key,
             keyField: mergeDirectiveConfig.keyField,
             keyArg: mergeDirectiveConfig.keyArg,
+            argsExpr,
           });
           mergeDirectiveUsed = true;
           return {
@@ -326,7 +351,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 directiveConfig = {};
               }
               specificDirectiveExtensions.push(directiveConfig);
-              usedFederationDirectives.add(directiveName);
+              usedFederationDirectives.add(`@${directiveName}`);
             }
           }
           return {
@@ -356,10 +381,19 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               subgraph: {
                 type: new GraphQLNonNull(GraphQLString),
               },
-              keyField: {
+              argsExpr: {
                 type: GraphQLString,
               },
               keyArg: {
+                type: GraphQLString,
+              },
+              keyField: {
+                type: GraphQLString,
+              },
+              key: {
+                type: new GraphQLList(GraphQLString),
+              },
+              additionalArgs: {
                 type: GraphQLString,
               },
             },
