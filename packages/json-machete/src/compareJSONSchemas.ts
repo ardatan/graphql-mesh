@@ -1,5 +1,5 @@
 import { resolvePath } from './dereferenceObject.js';
-import { JSONSchema } from './types.js';
+import type { JSONSchema } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
 
 export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONSchema) {

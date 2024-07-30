@@ -1,15 +1,15 @@
-import { getNamedType, GraphQLResolveInfo, GraphQLSchema, isObjectType } from 'graphql';
+import type { GraphQLResolveInfo, GraphQLSchema } from 'graphql';
+import { getNamedType, isObjectType } from 'graphql';
 import graphqlFields from 'graphql-fields';
-import { createPool, PoolConnection, type Pool } from 'mysql';
+import { createPool, type Pool, type PoolConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { util } from '@graphql-mesh/cross-helpers';
-import { DisposableExecutor } from '@graphql-mesh/transport-common';
-import { Logger } from '@graphql-mesh/types';
-import { getDefDirectives } from '@graphql-mesh/utils';
+import type { DisposableExecutor } from '@graphql-mesh/transport-common';
+import { getDefDirectives, makeAsyncDisposable } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { getDirective, MapperKind, mapSchema, type ExecutionRequest } from '@graphql-tools/utils';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
-import { MySQLContext } from './types.js';
+import type { MySQLContext } from './types.js';
 
 function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
   const fieldMap: Record<string, any> = graphqlFields(info);
@@ -189,26 +189,26 @@ export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): Disp
   const defaultExecutor = createDefaultExecutor(subgraph);
   const getConnection$ = util.promisify(pool.getConnection.bind(pool));
 
-  const executor: DisposableExecutor = async function mysqlExecutor(executionRequest) {
-    const mysqlConnection = await getConnection$();
-    mysqlConnectionByContext.set(executionRequest.context, mysqlConnection);
-    try {
-      return await defaultExecutor(executionRequest);
-    } finally {
-      mysqlConnectionByContext.delete(executionRequest.context);
-      mysqlConnection.release();
-    }
-  };
-  executor[Symbol.asyncDispose] = function dispose() {
-    return new Promise<void>((resolve, reject) => {
-      pool.end(err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-  };
-  return executor;
+  return makeAsyncDisposable(
+    async function mysqlExecutor(executionRequest: ExecutionRequest) {
+      const mysqlConnection = await getConnection$();
+      mysqlConnectionByContext.set(executionRequest.context, mysqlConnection);
+      try {
+        return await defaultExecutor(executionRequest);
+      } finally {
+        mysqlConnectionByContext.delete(executionRequest.context);
+        mysqlConnection.release();
+      }
+    },
+    () =>
+      new Promise<void>((resolve, reject) => {
+        pool.end(err => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      }),
+  );
 }

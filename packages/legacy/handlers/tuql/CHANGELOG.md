@@ -1,5 +1,76 @@
 # @graphql-mesh/tuql
 
+## 0.100.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.5
+  - @omnigraph/sqlite@0.3.6
+
+## 0.100.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.4
+  - @omnigraph/sqlite@0.3.5
+
+## 0.100.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.3
+  - @omnigraph/sqlite@0.3.4
+
+## 0.100.4
+
+### Patch Changes
+
+- [#7356](https://github.com/ardatan/graphql-mesh/pull/7356)
+  [`04f1c6e`](https://github.com/ardatan/graphql-mesh/commit/04f1c6e5014fec4715e12b84914e5cd89618faa5)
+  Thanks [@theguild-bot](https://github.com/theguild-bot)! - dependencies updates:
+  - Updated dependency
+    [`@omnigraph/sqlite@^0.3.3` ↗︎](https://www.npmjs.com/package/@omnigraph/sqlite/v/0.3.3) (from
+    `^0.3.2`, in `dependencies`)
+
+## 0.100.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f5d8d0f`](https://github.com/ardatan/graphql-mesh/commit/f5d8d0f12bf331bcced836dabf66e68786a0aaad)]:
+  - @omnigraph/sqlite@0.3.3
+
+## 0.100.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/types@0.99.2
+  - @omnigraph/sqlite@0.3.2
+
+## 0.100.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/types@0.99.1
+  - @omnigraph/sqlite@0.3.1
+
+## 0.100.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.0
+  - @omnigraph/sqlite@0.3.0
+
 ## 0.99.10
 
 ### Patch Changes

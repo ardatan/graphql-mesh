@@ -13,7 +13,7 @@ installed (used by `node-pre-gyp` to build some dependencies)
 
 You can install it in Linux based distributions using `sudo apt update && sudo apt install python`
 
-More about this [here](https://github.com/Urigo/graphql-mesh/issues/1543)
+More about this [here](https://github.com/ardatan/graphql-mesh/issues/1543)
 
 ### Local Development
 

@@ -1,13 +1,10 @@
-// eslint-disable-next-line import/no-nodejs-modules
-import { promises as fsPromises } from 'fs';
-// eslint-disable-next-line import/no-nodejs-modules
-import { createServer as createHTTPServer } from 'http';
-// eslint-disable-next-line import/no-nodejs-modules
-import { createServer as createHTTPSServer } from 'https';
-// eslint-disable-next-line import/no-nodejs-modules
-import { SecureContextOptions } from 'tls';
-import { RecognizedString } from 'uWebSockets.js';
-import { ServerOptions } from './types.js';
+import { promises as fsPromises } from 'node:fs';
+import { createServer as createHTTPServer } from 'node:http';
+import { createServer as createHTTPSServer } from 'node:https';
+import type { SecureContextOptions } from 'node:tls';
+import type { RecognizedString } from 'uWebSockets.js';
+import { createAsyncDisposable } from '@graphql-mesh/utils';
+import type { ServerOptions } from './types.js';
 
 export function readRecognizedString(recognizedString: RecognizedString) {
   if (typeof recognizedString === 'string') {
@@ -26,6 +23,7 @@ export async function startNodeHttpServer({
   host,
   port,
   sslCredentials,
+  maxHeaderSize,
 }: ServerOptions): Promise<AsyncDisposable> {
   if (sslCredentials) {
     const sslOptionsForNodeHttp: SecureContextOptions = {};
@@ -62,39 +60,46 @@ export async function startNodeHttpServer({
       server.once('error', reject);
       server.listen(port, host, () => {
         log.info(`Server started on ${protocol}://${host}:${port}`);
-        resolve({
-          [Symbol.asyncDispose]() {
-            return new Promise<void>(resolve => {
+        resolve(
+          createAsyncDisposable(
+            () =>
+              new Promise<void>(resolve => {
+                log.info(`Closing server`);
+                server.closeAllConnections();
+                server.close(() => {
+                  log.info(`Server closed`);
+                  resolve();
+                });
+              }),
+          ),
+        );
+      });
+    });
+  }
+  const server = createHTTPServer(
+    {
+      maxHeaderSize,
+    },
+    handler,
+  );
+  log.info(`Starting server on ${protocol}://${host}:${port}`);
+  return new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(port, host, () => {
+      log.info(`Server started on ${protocol}://${host}:${port}`);
+      resolve(
+        createAsyncDisposable(
+          () =>
+            new Promise<void>(resolve => {
               log.info(`Closing server`);
               server.closeAllConnections();
               server.close(() => {
                 log.info(`Server closed`);
                 resolve();
               });
-            });
-          },
-        });
-      });
-    });
-  }
-  const server = createHTTPServer(handler);
-  log.info(`Starting server on ${protocol}://${host}:${port}`);
-  return new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(port, host, () => {
-      log.info(`Server started on ${protocol}://${host}:${port}`);
-      resolve({
-        [Symbol.asyncDispose]() {
-          return new Promise<void>(resolve => {
-            log.info(`Closing server`);
-            server.closeAllConnections();
-            server.close(() => {
-              log.info(`Server closed`);
-              resolve();
-            });
-          });
-        },
-      });
+            }),
+        ),
+      );
     });
   });
 }

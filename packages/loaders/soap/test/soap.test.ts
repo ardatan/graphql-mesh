@@ -1,8 +1,9 @@
 /* eslint-disable import/no-nodejs-modules */
 import { promises } from 'fs';
+import { globalAgent } from 'https';
 import { join } from 'path';
 import { parse } from 'graphql';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { createExecutorFromSchemaAST, SOAPLoader } from '../src/index.js';
@@ -18,17 +19,12 @@ describe('SOAP Loader', () => {
     log: jest.fn(),
     child: () => mockLogger,
   };
-  it('should generate the schema correctly', async () => {
-    const soapLoader = new SOAPLoader({
-      subgraphName: 'Test',
-      fetch,
-      logger: mockLogger,
-    });
-    await soapLoader.fetchWSDL('https://www.w3schools.com/xml/tempconvert.asmx?WSDL');
-    const schema = soapLoader.buildSchema();
-    expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
+  afterEach(() => {
+    globalAgent.destroy();
   });
-  it('should execute SOAP calls correctly', async () => {
+  // TODO: Implement this locally later
+  // Now E2E tests have it covered
+  it.skip('should execute SOAP calls correctly', async () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,

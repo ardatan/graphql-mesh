@@ -2,8 +2,7 @@
 
 /* eslint-disable import/no-nodejs-modules */
 import { promises as fsPromises } from 'fs';
-import { createServer, Server } from 'http';
-import { AddressInfo, Socket } from 'net';
+import { Socket, type AddressInfo } from 'net';
 import { join } from 'path';
 import { buildASTSchema, buildSchema, introspectionFromSchema, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
@@ -15,6 +14,7 @@ import {
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as fetchFn } from '@whatwg-node/fetch';
+import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
 import GraphQLHandler from '../src/index.js';
 
 const { readFile } = fsPromises;
@@ -23,17 +23,11 @@ const logger = new DefaultLogger('tests');
 
 describe('graphql', () => {
   let store: MeshStore;
-  const servers = new Set<Server>();
-  const sockets = new Set<Socket>();
   beforeEach(() => {
     store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
       readonly: false,
       validate: false,
     });
-  });
-  afterEach(() => {
-    sockets.forEach(socket => socket.destroy());
-    servers.forEach(server => server.close());
   });
   it('handle SDL files correctly as endpoint', async () => {
     const sdlFilePath = './fixtures/schema.graphql';
@@ -132,7 +126,7 @@ describe('graphql', () => {
   });
   it('should handle fallback, retry and timeout options', async () => {
     let cnt = 0;
-    const server1 = createServer((req, res) => {
+    await using server1 = await createDisposableServer((req, res) => {
       if (cnt < 2) {
         const timeout = setTimeout(() => {
           res.writeHead(200);
@@ -150,16 +144,7 @@ describe('graphql', () => {
         cnt++;
       }
     });
-    servers.add(server1);
-    function socketListener(socket: Socket) {
-      sockets.add(socket);
-      socket.once('close', () => {
-        sockets.delete(socket);
-      });
-    }
-    server1.on('connection', socketListener);
-    server1.listen(0);
-    const server2 = createServer((req, res) => {
+    await using server2 = await createDisposableServer((req, res) => {
       res.writeHead(200);
       res.end(
         JSON.stringify({
@@ -169,9 +154,6 @@ describe('graphql', () => {
         }),
       );
     });
-    servers.add(server2);
-    server2.on('connection', socketListener);
-    server2.listen(0);
 
     const introspectionSchemaProxy = store.proxy(
       'introspectionSchema',
@@ -189,12 +171,12 @@ describe('graphql', () => {
       config: {
         sources: [
           {
-            endpoint: `http://localhost:${(server1.address() as AddressInfo).port}`,
+            endpoint: `http://localhost:${server1.address().port}`,
             timeout: 500,
             retry: 3,
           },
           {
-            endpoint: `http://localhost:${(server2.address() as AddressInfo).port}`,
+            endpoint: `http://localhost:${server2.address().port}`,
             retry: 3,
           },
         ],

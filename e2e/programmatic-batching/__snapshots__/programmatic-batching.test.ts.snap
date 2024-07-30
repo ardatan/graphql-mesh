@@ -26,6 +26,8 @@ directive @transport(subgraph: String, kind: String, location: String, headers: 
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
+directive @additionalField on FIELD_DEFINITION
+
 scalar join__FieldSet
 
 scalar link__Import
@@ -51,7 +53,7 @@ scalar _DirectiveExtensions @join__type(graph: API)
 
 type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "API", kind: "rest", location: "http://0.0.0.0:<api_port>"}]}) @join__type(graph: API) {
   dummy: String
-  user(id: Float!): User
+  user(id: Float!): User @additionalField
 }
 
 type Mutation @join__type(graph: API) {

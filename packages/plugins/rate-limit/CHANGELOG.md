@@ -1,5 +1,62 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.99.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.5
+
+## 0.99.5
+
+### Patch Changes
+
+- [#7241](https://github.com/ardatan/graphql-mesh/pull/7241)
+  [`7b474af`](https://github.com/ardatan/graphql-mesh/commit/7b474af8ebd91fad894ca72fca31e0afbcc76ede)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`minimatch@10.0.1` ↗︎](https://www.npmjs.com/package/minimatch/v/10.0.1)
+    (from `9.0.5`, in `dependencies`)
+
+## 0.99.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.4
+
+## 0.99.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.3
+
+## 0.99.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033),
+  [`0bdc18d`](https://github.com/ardatan/graphql-mesh/commit/0bdc18df3d150a61abf987b8829934ed4ca02eed),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/string-interpolation@0.5.5
+  - @graphql-mesh/types@0.99.2
+
+## 0.99.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/types@0.99.1
+
+## 0.99.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.0
+
 ## 0.98.10
 
 ### Patch Changes

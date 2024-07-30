@@ -1,13 +1,14 @@
 import { isAsyncIterable, type Plugin as YogaPlugin } from 'graphql-yoga';
-import { register as defaultRegistry, Registry } from 'prom-client';
-import { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import type { Registry } from 'prom-client';
+import { register as defaultRegistry } from 'prom-client';
+import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
-import {
+import type {
+  ImportFn,
   Logger,
+  MeshFetchRequestInit,
   MeshPlugin,
-  type ImportFn,
-  type MeshFetchRequestInit,
-  type OnDelegateHookPayload,
+  OnDelegateHookPayload,
 } from '@graphql-mesh/types';
 import {
   defaultImportFn,
@@ -29,22 +30,24 @@ import {
   usePrometheus,
 } from '@graphql-yoga/plugin-prometheus';
 
-export {
-  CounterAndLabels,
-  FillLabelsFnParams,
-  HistogramAndLabels,
-  SummaryAndLabels,
-  createCounter,
-  createHistogram,
-  createSummary,
-};
+export { createCounter, createHistogram, createSummary };
+export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryAndLabels };
 
 type MeshMetricsConfig = {
+  /**
+   * @deprecated Graph delegation is no longer a concept in Mesh v1, use `subgraphExecute` instead
+   */
   delegation?:
     | boolean
     | string
     | HistogramAndLabels<string, Omit<OnDelegateHookPayload<unknown>, 'context'> | undefined>;
+  /**
+   * @deprecated Graph delegation is no longer a concept in Mesh v1
+   */
   delegationArgs?: boolean;
+  /**
+   * @deprecated Graph delegation is no longer a concept in Mesh v1
+   */
   delegationKey?: boolean;
 
   subgraphExecute?:
@@ -64,8 +67,20 @@ type MeshMetricsConfig = {
         string,
         { url: string; options: MeshFetchRequestInit; response: Response }
       >;
+
+  /**
+   * @deprecated Use `labels.fetchRequestHeaders` instead
+   */
   fetchRequestHeaders?: boolean;
+  /**
+   * @deprecated Use `labels.fetchResponseHeaders` instead
+   */
   fetchResponseHeaders?: boolean;
+
+  labels?: {
+    fetchRequestHeaders?: boolean;
+    fetchResponseHeaders?: boolean;
+  };
 };
 
 type PrometheusPluginOptions = Omit<
@@ -111,10 +126,14 @@ export default function useMeshPrometheus(
 
   if (pluginOptions.fetchMetrics) {
     const labelNames = ['url', 'method', 'statusCode', 'statusText'];
-    if (pluginOptions.fetchRequestHeaders) {
+    const {
+      fetchRequestHeaders = pluginOptions.fetchRequestHeaders,
+      fetchResponseHeaders = pluginOptions.fetchResponseHeaders,
+    } = pluginOptions.labels || {};
+    if (fetchRequestHeaders) {
       labelNames.push('requestHeaders');
     }
-    if (pluginOptions.fetchResponseHeaders) {
+    if (fetchResponseHeaders) {
       labelNames.push('responseHeaders');
     }
 
@@ -139,10 +158,10 @@ export default function useMeshPrometheus(
                 statusText: response.statusText,
               };
 
-              if (pluginOptions.fetchRequestHeaders) {
+              if (fetchRequestHeaders) {
                 labels.requestHeaders = JSON.stringify(options.headers);
               }
-              if (pluginOptions.fetchResponseHeaders) {
+              if (fetchResponseHeaders) {
                 labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
               }
               return labels;
@@ -157,10 +176,11 @@ export default function useMeshPrometheus(
 
   if (pluginOptions.delegation) {
     const delegationLabelNames = ['sourceName', 'typeName', 'fieldName'];
-    if (pluginOptions.delegationArgs) {
+    const { delegationArgs, delegationKey } = pluginOptions;
+    if (delegationArgs) {
       delegationLabelNames.push('args');
     }
-    if (pluginOptions.delegationKey) {
+    if (delegationKey) {
       delegationLabelNames.push('key');
     }
     delegateHistogram =
@@ -181,19 +201,23 @@ export default function useMeshPrometheus(
                 sourceName,
                 typeName,
                 fieldName,
-                args: pluginOptions.delegationArgs ? JSON.stringify(args) : undefined,
-                key: pluginOptions.delegationKey ? JSON.stringify(key) : undefined,
+                args: delegationArgs ? JSON.stringify(args) : undefined,
+                key: delegationKey ? JSON.stringify(key) : undefined,
               };
             },
           });
   }
 
-  let subgraphExecuteHistogram: HistogramAndLabels<
-    'subgraphName' | 'operationType',
-    SubgraphMetricsLabelParams
-  >;
+  let subgraphExecuteHistogram: HistogramAndLabels<string, SubgraphMetricsLabelParams>;
 
   if (pluginOptions.subgraphExecute !== false) {
+    const subgraphExecuteLabels = ['subgraphName'];
+    if (pluginOptions.labels?.operationName !== false) {
+      subgraphExecuteLabels.push('operationName');
+    }
+    if (pluginOptions.labels?.operationType !== false) {
+      subgraphExecuteLabels.push('operationType');
+    }
     subgraphExecuteHistogram =
       typeof pluginOptions.subgraphExecute === 'object'
         ? pluginOptions.subgraphExecute
@@ -205,20 +229,32 @@ export default function useMeshPrometheus(
                   ? pluginOptions.subgraphExecute
                   : 'graphql_mesh_subgraph_execute_duration',
               help: 'Time spent on subgraph execution',
-              labelNames: ['subgraphName', 'operationType'],
+              labelNames: subgraphExecuteLabels,
             },
-            fillLabelsFn: ({ subgraphName, executionRequest: { operationType = 'query' } }) => ({
+            fillLabelsFn: ({
               subgraphName,
-              operationType,
+              executionRequest: { operationType = 'query', operationName },
+            }) => ({
+              subgraphName,
+              operationType:
+                pluginOptions.labels?.operationType !== false ? operationType : undefined,
+              operationName:
+                pluginOptions.labels?.operationName !== false
+                  ? operationName || 'Anonymous'
+                  : undefined,
             }),
           });
   }
 
-  let subgraphExecuteErrorCounter: CounterAndLabels<
-    'subgraphName' | 'operationType',
-    SubgraphMetricsLabelParams
-  >;
+  let subgraphExecuteErrorCounter: CounterAndLabels<string, SubgraphMetricsLabelParams>;
   if (pluginOptions.subgraphExecuteErrors !== false) {
+    const subgraphExecuteErrorLabels = ['subgraphName'];
+    if (pluginOptions.labels?.operationName !== false) {
+      subgraphExecuteErrorLabels.push('operationName');
+    }
+    if (pluginOptions.labels?.operationType !== false) {
+      subgraphExecuteErrorLabels.push('operationType');
+    }
     subgraphExecuteErrorCounter =
       typeof pluginOptions.subgraphExecuteErrors === 'object'
         ? pluginOptions.subgraphExecuteErrors
@@ -230,11 +266,19 @@ export default function useMeshPrometheus(
                   ? pluginOptions.subgraphExecuteErrors
                   : `graphql_mesh_subgraph_execute_errors`,
               help: 'Number of errors on subgraph execution',
-              labelNames: ['subgraphName', 'operationType'],
+              labelNames: subgraphExecuteErrorLabels,
             },
-            fillLabelsFn: ({ subgraphName, executionRequest: { operationType = 'query' } }) => ({
+            fillLabelsFn: ({
               subgraphName,
-              operationType,
+              executionRequest: { operationType = 'query', operationName },
+            }) => ({
+              subgraphName,
+              operationType:
+                pluginOptions.labels?.operationType !== false ? operationType : undefined,
+              operationName:
+                pluginOptions.labels?.operationName !== false
+                  ? operationName || 'Anonymous'
+                  : undefined,
             }),
           });
   }

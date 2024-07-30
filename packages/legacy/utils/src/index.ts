@@ -25,3 +25,4 @@ export * from './registerTerminateHandler.js';
 export * from './getAdditionalResolversFromTypeDefs.js';
 export * from './get-def-directives.js';
 export * from './getDirectiveExtensions.js';
+export * from './disposable.js';

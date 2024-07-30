@@ -1,16 +1,10 @@
-import {
-  DocumentNode,
-  getOperationAST,
-  GraphQLObjectType,
-  GraphQLSchema,
-  OperationTypeNode,
-  specifiedRules,
-  validate,
-} from 'graphql';
-import { envelop, Plugin, useEngine, useExtendContext, useSchema } from '@envelop/core';
+import type { DocumentNode, GraphQLObjectType, GraphQLSchema, OperationTypeNode } from 'graphql';
+import { getOperationAST, specifiedRules, validate } from 'graphql';
+import type { Plugin } from '@envelop/core';
+import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { useGraphQlJit } from '@envelop/graphql-jit';
 import { process } from '@graphql-mesh/cross-helpers';
-import {
+import type {
   GraphQLOperation,
   KeyValueCache,
   Logger,
@@ -28,16 +22,18 @@ import {
   DefaultLogger,
   getHeadersObj,
   groupTransforms,
+  makeDisposable,
   mapMaybePromise,
   parseWithCache,
   PubSub,
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
-import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
+import type { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
+import { Subschema } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
+import type { ExecutionResult } from '@graphql-tools/utils';
 import {
   createGraphQLError,
-  ExecutionResult,
   getRootTypeMap,
   isAsyncIterable,
   mapAsyncIterator,
@@ -46,7 +42,7 @@ import {
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
-import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
+import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
 import { getOriginalError, isGraphQLJitCompatible, isStreamOperation } from './utils.js';
 
@@ -393,29 +389,31 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     return pubsub.publish('destroy', undefined);
   }
 
-  return {
-    get schema() {
-      return subschema ? subschema.transformedSchema : unifiedSubschema.schema;
+  return makeDisposable(
+    {
+      get schema() {
+        return subschema ? subschema.transformedSchema : unifiedSubschema.schema;
+      },
+      rawSources,
+      cache,
+      pubsub,
+      destroy: meshDestroy,
+      logger,
+      plugins,
+      get getEnveloped() {
+        return memoizedGetEnvelopedFactory(plugins);
+      },
+      createExecutor,
+      get execute() {
+        return createExecutor();
+      },
+      get subscribe() {
+        return createExecutor();
+      },
+      sdkRequesterFactory,
     },
-    rawSources,
-    cache,
-    pubsub,
-    destroy: meshDestroy,
-    logger,
-    plugins,
-    get getEnveloped() {
-      return memoizedGetEnvelopedFactory(plugins);
-    },
-    createExecutor,
-    get execute() {
-      return createExecutor();
-    },
-    get subscribe() {
-      return createExecutor();
-    },
-    sdkRequesterFactory,
-    [Symbol.dispose]: meshDestroy,
-  };
+    meshDestroy,
+  );
 }
 
 function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {

@@ -1,6 +1,7 @@
-import { GraphQLSchema } from 'graphql';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import {
+import type { GraphQLSchema } from 'graphql';
+import type { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import type {
   GetMeshSourcePayload,
   ImportFn,
   Logger,
@@ -53,7 +54,6 @@ export default class ThriftHandler implements MeshHandler {
         operationHeaders: this.config.operationHeaders,
         serviceName: this.config.serviceName,
         baseDir: this.baseDir,
-        // @ts-expect-error TODO: MeshFetch doesnt match the whatwg fetch
         fetchFn,
         logger: this.logger,
         importFn: this.importFn,

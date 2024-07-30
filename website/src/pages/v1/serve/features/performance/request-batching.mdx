@@ -4,7 +4,14 @@ description:
   a single request with the same data that all of the other queries would have made.
 ---
 
+import { Callout } from '@theguild/components'
+
 # Request Batching
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 Batching is the process of taking a group of requests, combining them into one, and making a single
 request with the same data that all of the other queries would have made. This is a way to reduce
@@ -18,9 +25,9 @@ The Batching functionality is described via the
 Batching is disabled by default, but you can enable it by setting the `batching` option to `true`:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   batching: true
 })
 ```
@@ -37,9 +44,9 @@ exceeded an error will be raised. You can customize this option by passing an ob
 `batching` configuration option:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   batching: {
     limit: 2
   }

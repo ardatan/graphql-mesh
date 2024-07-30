@@ -1,21 +1,18 @@
 import { XMLBuilder as JSONToXMLConverter, XMLParser } from 'fast-xml-parser';
-import {
-  execute,
+import type {
   GraphQLFieldResolver,
   GraphQLOutputType,
   GraphQLResolveInfo,
   GraphQLSchema,
-  isListType,
-  isNonNullType,
 } from 'graphql';
+import { execute, isListType, isNonNullType } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import {
-  getInterpolatedHeadersFactory,
-  ResolverDataBasedFactory,
-} from '@graphql-mesh/string-interpolation';
-import { MeshFetch } from '@graphql-mesh/types';
+import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
-import { Executor, getRootTypes } from '@graphql-tools/utils';
+import type { Executor } from '@graphql-tools/utils';
+import { getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
 

@@ -2,7 +2,7 @@
 
 /* eslint-disable no-unreachable-loop */
 import { GraphQLSchema } from 'graphql';
-import { createYoga, YogaServerInstance } from 'graphql-yoga';
+import { createYoga, type YogaServerInstance } from 'graphql-yoga';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { exampleApi7, pubsub } from './example_api7_server.js';
 
@@ -25,7 +25,7 @@ describe('OpenAPI Loader: example_api7', () => {
       schema: createdSchema,
       context: { pubsub },
       maskedErrors: false,
-      logging: false,
+      logging: !!process.env.DEBUG,
     });
   });
 

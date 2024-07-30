@@ -2,6 +2,11 @@ import { Callout } from '@theguild/components'
 
 # Parsing & Validation Caching
 
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
 By default, GraphQL Mesh maintains a parsing and validation cache. If requests contain documents
 that have been executed before, they will not be parsed and validated again.
 
@@ -12,9 +17,9 @@ This behavior is built-in and can be optionally disabled using the `parserAndVal
 options:
 
 ```ts filename="mesh.config.ts" {4,5}
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineServe({
   // disable parse and validate caching
   parserAndValidationCache: false
 })
@@ -39,9 +44,9 @@ interface CacheStore<T> {
 You can then pass your cache store to the `parserAndValidationCache` options:
 
 ```ts filename="mesh.config.ts" {9-13}
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   parserAndValidationCache: {
     documentCache: documentCacheStore as CacheStore<DocumentNode>,
     errorCache: errorCacheStore as CacheStore<Error>,

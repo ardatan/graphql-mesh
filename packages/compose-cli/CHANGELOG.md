@@ -1,5 +1,154 @@
 # @graphql-mesh/compose-cli
 
+## 0.6.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/fusion-composition@0.1.6
+  - @graphql-mesh/types@0.99.5
+
+## 0.6.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7b474af`](https://github.com/ardatan/graphql-mesh/commit/7b474af8ebd91fad894ca72fca31e0afbcc76ede)]:
+  - @graphql-mesh/fusion-composition@0.1.5
+
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/fusion-composition@0.1.4
+  - @graphql-mesh/types@0.99.4
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/fusion-composition@0.1.3
+  - @graphql-mesh/types@0.99.3
+
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+  - @graphql-mesh/fusion-composition@0.1.2
+
+## 0.6.0
+
+### Minor Changes
+
+- [#7266](https://github.com/ardatan/graphql-mesh/pull/7266)
+  [`26deb92`](https://github.com/ardatan/graphql-mesh/commit/26deb92dc1d405847289bf28344511f143f94ff4)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: Remove root-level transforms, please
+  use source-level transforms instead
+
+### Patch Changes
+
+- [#7272](https://github.com/ardatan/graphql-mesh/pull/7272)
+  [`a486cab`](https://github.com/ardatan/graphql-mesh/commit/a486cab84e757b47f2a07240508d6d586e5abfdd)
+  Thanks [@beeequeue](https://github.com/beeequeue)! - `loadGraphQLHTTPSubgraph`: Added
+  `schemaHeaders` to introspection requests
+
+- [#7253](https://github.com/ardatan/graphql-mesh/pull/7253)
+  [`2b8e52f`](https://github.com/ardatan/graphql-mesh/commit/2b8e52fdc40e8a0aa7c48ffb92de1b29b90b3c4e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the bug; When a non-nullable field is added
+  through `additionalTypeDefs` in the compose config, then the gateway fails to resolve it even if a
+  resolver defined in `additionalResolvers`;
+
+  ```ts
+  export const composeConfig = defineComposeConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadOpenAPISubgraph('Wiki', {
+          source: 'https://wikimedia.org/api/rest_v1/?spec',
+          endpoint: 'https://wikimedia.org/api/rest_v1'
+        })
+      }
+    ],
+    additionalTypeDefs: /* GraphQL */ `
+      extend type pageview_project {
+        banana: String
+        apple: String!
+      }
+    `
+  })
+
+  export const serveConfig = defineServeConfig({
+    additionalResolvers: {
+      pageview_project: {
+        banana() {
+          return '🍌'
+        },
+        apple() {
+          return '🍎' // This is ignored
+        }
+      }
+    }
+  })
+  ```
+
+- [`ae8dbdc`](https://github.com/ardatan/graphql-mesh/commit/ae8dbdcf43ee0fdfdd93100c0759bee010c506c3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Reject config files that import modules which
+  are missing
+
+- Updated dependencies
+  [[`e3714fb`](https://github.com/ardatan/graphql-mesh/commit/e3714fb2e91309e515e9c09a7b1c3c15b17fff3d),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/fusion-composition@0.1.1
+  - @graphql-mesh/types@0.99.1
+  - @graphql-mesh/utils@0.99.1
+
+## 0.5.0
+
+### Minor Changes
+
+- [#7257](https://github.com/ardatan/graphql-mesh/pull/7257)
+  [`798ed17`](https://github.com/ardatan/graphql-mesh/commit/798ed17c8e00b199596d9f9c35863c815bf4e151)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support mesh.config.ts or mesh.config.mts or
+  mesh.config.cts or mesh.config.js or mesh.config.mjs or mesh.config.cjs configuration files
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use jiti instead of tsx for importig config
+  files
+
+### Patch Changes
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency [`jiti@^1.21.6` ↗︎](https://www.npmjs.com/package/jiti/v/1.21.6) (to
+    `dependencies`)
+  - Removed dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (from
+    `dependencies`)
+- Updated dependencies
+  [[`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`94245c7`](https://github.com/ardatan/graphql-mesh/commit/94245c708850ce643e395ea559b65d4897f05936),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)]:
+  - @graphql-mesh/fusion-composition@0.1.0
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.4.2
 
 ### Patch Changes

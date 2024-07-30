@@ -5,7 +5,14 @@ description:
   and API reference.
 ---
 
+import { Callout } from '@theguild/components'
+
 # Prefix Transform
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 The prefix transform allows you to add prefixes to existing GraphQL types and root operations (under
 `Query/Mutation`). Prefix transform is similar to [Rename Transform](/v1/compose/transforms/rename)
@@ -24,7 +31,7 @@ add `Countries_` to the types and fields of the subgraph.
 ```ts filename="mesh.config.ts" {13-17}
 import {
   createPrefixTransform,
-  defineConfig as defineComposeConfig,
+  defineConfig,
   loadGraphQLHTTPSubgraph
 } from '@graphql-mesh/compose-cli'
 

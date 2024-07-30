@@ -1,32 +1,33 @@
+import type {
+  GraphQLArgumentConfig,
+  GraphQLFieldConfig,
+  GraphQLFieldConfigArgumentMap,
+  GraphQLNamedType,
+} from 'graphql';
 import {
   buildSchema,
   concatAST,
   getNamedType,
-  GraphQLArgumentConfig,
   GraphQLEnumType,
-  GraphQLFieldConfig,
-  GraphQLFieldConfigArgumentMap,
-  GraphQLNamedType,
   GraphQLSchema,
   GraphQLUnionType,
   isObjectType,
   isSpecifiedScalarType,
   parse,
-  print,
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
+import type { Constructor, FieldMapper } from '@graphql-tools/utils';
 import {
-  Constructor,
-  FieldMapper,
   getDocumentNodeFromSchema,
   MapperKind,
   mapSchema,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
-import { composeServices, ServiceDefinition } from '@theguild/federation-composition';
+import type { ServiceDefinition } from '@theguild/federation-composition';
+import { composeServices } from '@theguild/federation-composition';
 import {
   convertSubgraphToFederationv2,
   detectAndAddMeshDirectives,
@@ -294,7 +295,6 @@ export function composeSubgraphs(
         };
       },
     });
-
     let transformedSubgraph = annotatedSubgraph;
     if (transforms?.length) {
       for (const transform of transforms) {
@@ -542,7 +542,7 @@ export function composeSubgraphs(
       for (const [typeName, directives] of extraTypeDirectivesMap.entries()) {
         queryTypeDirectives.extraTypeDirective.push({
           name: typeName,
-          directives: directives,
+          directives,
         });
       }
     }
@@ -581,7 +581,7 @@ export function composeSubgraphs(
           queryTypeDirectives.extraEnumValueDirective.push({
             name: typeName,
             value: enumValueName,
-            directives: directives,
+            directives,
           });
         }
       }

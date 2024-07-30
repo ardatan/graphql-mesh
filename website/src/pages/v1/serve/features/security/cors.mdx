@@ -8,6 +8,11 @@ import { Callout } from '@theguild/components'
 
 # CORS
 
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
 CORS stands for Cross Origin Resource Sharing. In a nutshell, as a security measure, browsers aren't
 allowed to access resources outside their own domain.
 
@@ -41,9 +46,9 @@ export type CORSOptions =
 ### Example configuration using CORSOptions
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   cors: {
     origin: 'http://localhost:4000',
     credentials: true,
@@ -68,9 +73,9 @@ You can also pass a function to the cors property, that takes your request and c
 options
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   cors: request => {
     return {
       origin: 'http://localhost:4000',
@@ -100,9 +105,9 @@ You can disable CORS on your GraphQL Mesh gateway by simply passing `false` as t
 **For example:**
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   cors: false
 })
 ```

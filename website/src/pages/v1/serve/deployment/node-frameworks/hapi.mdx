@@ -1,0 +1,72 @@
+import { Callout } from '@theguild/components'
+
+# Integration with Hapi
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+[Hapi](https://hapi.dev) allows you to build powerful, scalable applications, with minimal overhead
+and full out-of-the-box functionality.
+
+GraphQL Mesh can be integrated easily as a route to the existing Hapi application with a few lines
+of code.
+
+## Example
+
+```ts
+import http from 'node:http'
+import { Readable } from 'node:stream'
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import Hapi from '@hapi/hapi'
+import { schema } from './my-graphql-schema'
+
+interface ServerContext {
+  req: Hapi.Request
+  h: Hapi.ResponseToolkit
+}
+
+const mesh = createServeRuntime<ServerContext>(/* Your configuration */)
+
+const server = Hapi.server({ port: 4000 })
+
+server.route({
+  method: '*',
+  path: mesh.graphqlEndpoint,
+  options: {
+    payload: {
+      // let mesh handle the parsing
+      output: 'stream'
+    }
+  },
+  handler: async (req, h) => {
+    const { status, headers, body } = await mesh.handleNodeRequestAndResponse(
+      req.raw.req,
+      req.raw.res,
+      {
+        req,
+        h
+      }
+    )
+
+    const res = h.response(
+      Readable.from(body, {
+        // hapi needs the stream not to be in object mode
+        objectMode: false
+      })
+    )
+
+    for (const [key, val] of headers) {
+      res.header(key, val)
+    }
+
+    return res.code(status)
+  }
+})
+
+server.start()
+```
+
+The GraphQL Mesh server should now be available at
+[http://localhost:4000/graphql](http://localhost:4000/graphql).

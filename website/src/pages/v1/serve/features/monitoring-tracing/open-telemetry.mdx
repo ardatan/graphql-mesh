@@ -1,4 +1,11 @@
-## `@envelop/opentelemetry`
+import { Callout } from '@theguild/components'
+
+## Open Telemetry
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 This plugins integrates [Open Telemetry](https://opentelemetry.io/) tracing with your GraphQL
 execution. It also collects GraphQL execution errors and reports it as Exceptions.
@@ -18,10 +25,10 @@ npm i @envelop/opentelemetry
 By default, this plugin prints the collected telemetry to the console:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig  } from '@graphql-mesh/serve-cli'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx: => [
     useOpenTelemetry({
       ...pluginCtx,
@@ -42,13 +49,13 @@ If you wish to use custom tracer/exporter, create it and pass it to the plugin f
 The following example is taking the current global tracer:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 
 import { trace } from '@opentelemetry/api'
 import { BasicTracerProvider, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx: => [
     useOpenTelemetry({
       ...pluginCtx,
@@ -80,7 +87,7 @@ docker run -d --name jaeger \
 ```
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useOpenTelemetry } from '@envelop/opentelemetry'
 
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
@@ -98,7 +105,7 @@ const provider = new BasicTracerProvider()
 provider.addSpanProcessor(new SimpleSpanProcessor(exporter))
 provider.register()
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx: => [
     useOpenTelemetry({
       ...pluginCtx,

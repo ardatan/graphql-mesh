@@ -1,4 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Health Check Endpoints
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 GraphQL Mesh is aware of the usefulness of a health check and gives the user maximum possibilities
 to use the built-in check.
@@ -16,16 +23,16 @@ is accepting requests (alive), but the read replica it uses is still unavailable
 
 ### Liveliness
 
-By default, you can check whether Mesh is alive by issuing a request to the `/health` endpoint and
-expecting the response `200 OK`.
+By default, you can check whether Mesh is alive by issuing a request to the `/healthcheck` endpoint
+and expecting the response `200 OK`.
 
 Of course, you can change this endpoint through the `healthCheckEndpoint` option.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
-  healthCheckEndpoint: '/health'
+export const serveConfig = defineConfig({
+  healthCheckEndpoint: '/healthcheck'
 })
 ```
 
@@ -37,9 +44,9 @@ Additionally, we have another endpoint which checks whether the services powerin
 perform work.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   readinessCheckEndpoint: '/readiness'
 })
 ```

@@ -3,6 +3,11 @@ import { Callout, Tabs } from '@theguild/components'
 
 # Response Caching
 
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
 **_GraphQL Response Caching_** is a feature that allows you to cache the response of a GraphQL
 query. This is useful when you want to reduce the number of requests to your sources. For example,
 if you have a GraphQL query that fetches a list of products, you can cache the response of this
@@ -22,9 +27,9 @@ npm i @graphql-mesh/plugin-response-cache
 
 ```ts filename="mesh.config.ts"
 import useResponseCache from '@graphql-mesh/plugin-response-cache'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useResponseCache({
       ...pluginCtx,
@@ -69,6 +74,7 @@ for the fields and types they are defining. You can add this directive during co
 
 - [See here for Federation to learn more about the `@cacheControl` directive](https://www.apollographql.com/docs/federation/performance/caching/#using-cache-hints-with-subgraphs)
 - [See here for Mesh Compose to learn more about the `@cacheControl` in subgraph definitions](/v1/compose/response-caching)
+{/* `TODO: Later allow programmatic API` */}
 
 ## Session based caching
 
@@ -87,9 +93,9 @@ information.
 
 ```ts filename="mesh.config.ts"
 import useResponseCache from '@graphql-mesh/plugin-response-cache'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useResponseCache({
       ...pluginCtx,

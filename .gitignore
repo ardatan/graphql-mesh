@@ -1,6 +1,7 @@
 node_modules/
 temp
 dist/
+bundle/
 out
 build
 generated
@@ -28,3 +29,4 @@ newrelic_agent.log
 !.yarn/sdks
 !.yarn/versions
 .mise.toml
+docker/supergraph.graphql

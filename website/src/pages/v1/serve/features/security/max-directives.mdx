@@ -1,4 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Max Directives
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 **Limit** the number of **directives** in a GraphQL document.
 
@@ -18,9 +25,9 @@ Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
 import { maxDirectivesPlugin } from '@escape.tech/graphql-armor-max-directives'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineServeConfig({
+export default defineConfig({
   plugins: () => [
     maxDirectivesPlugin({
       // Toggle the plugin | Default: true

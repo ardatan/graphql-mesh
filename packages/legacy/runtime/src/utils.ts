@@ -1,12 +1,5 @@
-import {
-  ASTNode,
-  BREAK,
-  getNamedType,
-  GraphQLInputObjectType,
-  GraphQLInputType,
-  GraphQLSchema,
-  visit,
-} from 'graphql';
+import type { ASTNode, GraphQLInputType, GraphQLSchema } from 'graphql';
+import { BREAK, getNamedType, GraphQLInputObjectType, visit } from 'graphql';
 import { getDocumentString, isGraphQLError } from '@envelop/core';
 import { MapperKind, mapSchema, memoize1 } from '@graphql-tools/utils';
 

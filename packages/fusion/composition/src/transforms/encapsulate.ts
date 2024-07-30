@@ -1,15 +1,14 @@
+import type { GraphQLFieldConfigMap, OperationTypeNode } from 'graphql';
 import {
   DirectiveLocation,
   GraphQLDirective,
-  GraphQLFieldConfigMap,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
-  OperationTypeNode,
 } from 'graphql';
-import { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { addHiddenDirective, hiddenDirective } from './filter-schema.js';
 
 const OPERATION_TYPE_SUFFIX_MAP = {

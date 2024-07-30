@@ -1,20 +1,22 @@
 import { pascalCase } from 'pascal-case';
 import { createHttpClient } from '@creditkarma/thrift-client';
-import {
+import type {
   IMethodAnnotations,
   IThriftAnnotations,
   IThriftField,
   IThriftMessage,
+  TProtocol,
+  TTransport,
+} from '@creditkarma/thrift-server-core';
+import {
   MessageType,
   TApplicationException,
   TApplicationExceptionCodec,
   TApplicationExceptionType,
   ThriftClient,
-  TProtocol,
-  TTransport,
   TType,
 } from '@creditkarma/thrift-server-core';
-import { GraphQLThriftAnnotations, TypeMap, TypeVal } from './types.js';
+import type { GraphQLThriftAnnotations, TypeMap, TypeVal } from './types.js';
 
 interface IGraphQLThriftClient extends ThriftClient {
   doRequest(methodName: string, args: any, fields: TypeMap, context?: any): Promise<any>;

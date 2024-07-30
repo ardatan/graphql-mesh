@@ -1,9 +1,10 @@
 import { specifiedDirectives } from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
-import { connect, ConnectOptions, disconnect, Document, Model } from 'mongoose';
+import type { ConnectOptions, Document, Model } from 'mongoose';
+import { connect, disconnect } from 'mongoose';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   ImportFn,
   Logger,
   MeshHandler,

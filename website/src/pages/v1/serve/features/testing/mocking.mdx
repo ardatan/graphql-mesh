@@ -1,6 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Mocking your GraphQL API
 
-import { Callout } from '@theguild/components'
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 Mocking your GraphQL API is a common practice when developing and testing your application. It
 allows you to simulate the behavior of your API without making real network requests.
@@ -15,9 +20,9 @@ Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
 import useMock from '@graphql-mesh/plugin-mock'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: [
     useMock({
       mocks: [
@@ -39,10 +44,10 @@ The example above will replace the resolver of `User.firstName` with a mock that
 You can also provide a custom function to generate the mock value for a field:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { fullName } from './user-mocks.js'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useMock({
       mocks: [
@@ -61,10 +66,10 @@ export const serveConfig = defineServeConfig({
 You can mock types with custom mock functions like below;
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { user } from './user-mocks.js'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useMock({
       mocks: [
@@ -118,9 +123,9 @@ type User {
 
 ```ts filename="mesh.config.ts"
 import useMock from '@graphql-mesh/plugin-mock'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useMock({
       mocks: [
@@ -186,10 +191,10 @@ type Query {
 ```
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { store } from './init-store.js'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useMock({
       store,
@@ -221,10 +226,10 @@ type Mutation {
 ```
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { store } from './init-store.js'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useMock({
       store,
@@ -257,4 +262,4 @@ export const serveConfig = defineServeConfig({
 })
 ```
 
-`TODO: Move example to here`
+{/* `TODO: Move example to here` */}

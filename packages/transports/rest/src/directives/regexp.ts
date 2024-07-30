@@ -1,4 +1,4 @@
-import { GraphQLScalarType } from 'graphql';
+import type { GraphQLScalarType } from 'graphql';
 
 export function processRegExpAnnotations(scalar: GraphQLScalarType, pattern: string) {
   function coerceString(value: any) {

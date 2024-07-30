@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { EventEmitter } from 'events';
-import { MeshPubSub } from '@graphql-mesh/types';
+import type { MeshPubSub } from '@graphql-mesh/types';
 
 export function getEventEmitterFromPubSub(pubsub: MeshPubSub) {
   return {

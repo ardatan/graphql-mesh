@@ -1,4 +1,5 @@
-import { createSchema, createYoga, Plugin } from 'graphql-yoga';
+import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
+import { useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '../src/createServeRuntime';
 import { useForwardHeaders } from '../src/useForwardHeaders';
 
@@ -20,20 +21,22 @@ describe('useForwardHeaders', () => {
       },
     }),
     plugins: [requestTrackerPlugin],
-    logging: false,
+    logging: !!process.env.DEBUG,
   });
   beforeEach(() => {
     requestTrackerPlugin.onParams.mockClear();
   });
   it('forwards specified headers', async () => {
-    const serveRuntime = createServeRuntime({
+    await using serveRuntime = createServeRuntime({
       proxy: {
-        endpoint: 'https://example.com/graphql',
+        endpoint: 'http://localhost:4001/graphql',
       },
-      fetchAPI: {
-        fetch: upstream.fetch as any,
-      },
-      plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
+      plugins: () => [
+        // @ts-expect-error: TODO: fix this
+        useCustomFetch(upstream.fetch),
+        useForwardHeaders(['x-my-header', 'x-my-other']),
+      ],
+      logging: !!process.env.DEBUG,
     });
     const response = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
@@ -73,19 +76,20 @@ describe('useForwardHeaders', () => {
     expect(headersObj['x-extra-header']).toBeUndefined();
   });
   it("forwards specified headers but doesn't override the provided headers", async () => {
-    const serveRuntime = createServeRuntime({
+    await using serveRuntime = createServeRuntime({
+      logging: !!process.env.DEBUG,
       proxy: {
-        endpoint: 'https://example.com/graphql',
+        endpoint: 'http://localhost:4001/graphql',
         headers: {
           'x-my-header': 'my-value',
           'x-extra-header': 'extra-value',
         },
       },
-      fetchAPI: {
-        // TODO: Fix the type mismatch
-        fetch: upstream.fetch as any,
-      },
-      plugins: () => [useForwardHeaders(['x-my-header', 'x-my-other'])],
+      plugins: () => [
+        // @ts-expect-error: TODO: fix this
+        useCustomFetch(upstream.fetch),
+        useForwardHeaders(['x-my-header', 'x-my-other']),
+      ],
       maskedErrors: false,
     });
     const response = await serveRuntime.fetch('http://localhost:4000/graphql', {

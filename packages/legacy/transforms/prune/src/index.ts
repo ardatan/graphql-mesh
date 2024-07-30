@@ -1,5 +1,5 @@
-import { GraphQLSchema } from 'graphql';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { GraphQLSchema } from 'graphql';
+import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { pruneSchema } from '@graphql-tools/utils';
 
 export default class PruneTransform implements MeshTransform {

@@ -9,3 +9,7 @@ dist/
 supergraph-invalid.graphql
 __generated__/
 .changeset
+CHANGELOG.md
+Dockerfile
+bundle/
+examples/v1-next/integrations/fastify/supergraph.graphql

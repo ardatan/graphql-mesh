@@ -1,9 +1,12 @@
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
+import type { ConfigProcessOptions } from '@graphql-mesh/config';
+import { processConfig } from '@graphql-mesh/config';
 import { path, process } from '@graphql-mesh/cross-helpers';
-import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, loadYaml } from '@graphql-mesh/utils';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { jsonSchema } from '@graphql-mesh/types';
+import { DefaultLogger, loadYaml } from '@graphql-mesh/utils';
+import { defaultImportFn } from './defaultImportFn.js';
 
 export function validateConfig(
   config: any,
@@ -52,7 +55,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
     configName = 'mesh',
     dir: configDir = '',
     initialLoggerPrefix = '🕸️  Mesh',
-    importFn,
+    importFn = defaultImportFn,
     ...restOptions
   } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);

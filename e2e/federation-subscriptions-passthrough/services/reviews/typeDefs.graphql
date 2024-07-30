@@ -1,0 +1,12 @@
+extend type Product @key(fields: "id") {
+  id: ID! @external
+  reviews: [Review!]!
+}
+
+type Review {
+  score: Int!
+}
+
+type Subscription {
+  countdown(from: Int!): Int
+}

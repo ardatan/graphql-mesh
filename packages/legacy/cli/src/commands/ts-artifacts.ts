@@ -1,4 +1,5 @@
-import { GraphQLObjectType, GraphQLSchema, Kind, NamedTypeNode } from 'graphql';
+import type { GraphQLObjectType, GraphQLSchema, NamedTypeNode } from 'graphql';
+import { Kind } from 'graphql';
 import JSON5 from 'json5';
 import { pascalCase } from 'pascal-case';
 import ts from 'typescript';
@@ -8,12 +9,12 @@ import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
-import { Source } from '@graphql-mesh/config';
+import type { Source } from '@graphql-mesh/config';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import { pathExists, printWithCache, writeFile, writeJSON } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { GraphQLMeshCLIParams } from '../index.js';
+import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
 
 const unifiedContextIdentifier = 'MeshContext';

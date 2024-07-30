@@ -5,22 +5,22 @@ description:
 
 import { Callout } from '@theguild/components'
 
-# Getting Started
+# Mesh Compose
 
-GraphQL Mesh Compose is a tool that allows you to compose non-GraphQL and GraphQL sources into a
-supergraph, so that you can serve it using [GraphQL Mesh Serve](/v1/serve/introduction).
+Mesh Compose is a tool for composing non-GraphQL and GraphQL sources into a supergraph, that can be
+served by [Mesh Serve](/v1/serve/introduction) or other gateways such as
+[Apollo Gateway, Apollo Router or Cosmo Router](/v1/compose/consume-in-other-routers).
 
-If you use other routers such as Apollo Gateway, Apollo Router or Cosmo Router, you can still use
-Mesh Compose to convert non-federated sources to a federated subgraph.
-[Learn more about consuming in other routers](/v1/compose/consume-in-other-routers).
+Mesh Compose can also be used for transforming non-federation GraphQL sources into a Apollo
+Federation compatible subgraph.
 
-Basically GraphQL Mesh Compose allows you to do;
+Full overview of Mesh Compose features:
 
 - Convert non-GraphQL sources to a GraphQL subgraph
-- Convert non-federated GraphQL sources to a federated subgraph
-- Transform the subgraphs using [transforms](/v1/compose/transforms)
-- Extend the supergraph using
-  [additionalTypeDefs](/v1/compose/configuration#extending-the-supergraph-using-additionaltypedefs)
+- Convert non-federation GraphQL sources to a federated subgraph
+- [Transform subgraphs](/v1/compose/transforms) (rename, prefix, suffix fields and types etc.)
+- Extend the supergraph with
+  [additional type definitions](/v1/compose/configuration#extending-the-supergraph-using-additionaltypedefs)
 - Adding an authentication layer using [`@auth` or `@skipAuth` directives](/v1/compose/auth)
 - Adding a security layer for rate limiting using [`@rateLimit` directives](/v1/compose/rate-limit)
 - Generate a subgraph that is fully compatible with Federation tools so you can use it with any
@@ -29,8 +29,8 @@ Basically GraphQL Mesh Compose allows you to do;
 
 ## Installation
 
-In order to get started, you need to have [Node.js](https://nodejs.org) installed in your
-environment. Then, you can install Compose CLI with your favorite package manager:
+[Node.js](https://nodejs.org) is a pre-requisite for Mesh Serve. You can install Compose CLI with
+your favorite package manager:
 
 ```sh npm2yarn
 npm i @graphql-mesh/compose-cli
@@ -38,15 +38,21 @@ npm i @graphql-mesh/compose-cli
 
 ## Compose Configuration
 
-You need to create a `mesh.config.ts` file in the root of your project directory. The following
-example loads a GraphQL subgraph from the [Countries API](https://countries.trevorblades.com). Then
-the compose configuration should be exported as `composeConfig`.
+You need to create a Mesh config file in the root of your project directory. The following list of
+files are loaded by default, sorted by priority:
+
+- `mesh.config.ts` _(recommended)_
+- `mesh.config.mts`
+- `mesh.config.cts`
+- `mesh.config.js`
+- `mesh.config.mjs`
+- `mesh.config.cjs`
+
+This example loads a GraphQL subgraph from the [Countries API](https://countries.trevorblades.com).
+Then the compose configuration should be exported as `composeConfig`.
 
 ```ts filename="mesh.config.ts"
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineConfig({
   subgraphs: [
@@ -90,10 +96,7 @@ For example, the following configuration adds `Countries_` to the types and fiel
 by using [Prefix Transform](/v1/compose/transforms/prefix).
 
 ```ts filename="mesh.config.ts" {12-16}
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineConfig({
   subgraphs: [

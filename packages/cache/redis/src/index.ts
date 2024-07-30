@@ -2,13 +2,14 @@ import Redis from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   KeyValueCache,
   KeyValueCacheSetOptions,
   Logger,
   MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -62,7 +63,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
     });
   }
 
-  [Symbol.dispose](): void {
+  [DisposableSymbols.dispose](): void {
     this.client.disconnect();
   }
 

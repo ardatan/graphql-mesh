@@ -83,4 +83,5 @@ export const TransportDirective = new GraphQLDirective({
       type: GraphQLString,
     },
   },
+  isRepeatable: true,
 });

@@ -1,6 +1,6 @@
 import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import { Logger, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, pathExists, withCookies } from '@graphql-mesh/utils';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';

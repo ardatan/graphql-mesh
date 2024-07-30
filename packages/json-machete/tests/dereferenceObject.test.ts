@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { readFileSync } from 'fs';
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { dereferenceObject } from '../src/dereferenceObject.js';
 
 describe('dereferenceObject', () => {

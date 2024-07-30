@@ -1,5 +1,217 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.5.6
+
+### Patch Changes
+
+- [#7401](https://github.com/ardatan/graphql-mesh/pull/7401)
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/disposablestack@^0.0.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.1)
+    (to `dependencies`)
+  - Removed dependency
+    [`disposablestack@^1.1.6` ↗︎](https://www.npmjs.com/package/disposablestack/v/1.1.6) (from
+    `dependencies`)
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/runtime@0.100.5
+  - @graphql-mesh/types@0.99.5
+  - @graphql-mesh/transport-common@0.4.5
+
+## 0.5.5
+
+### Patch Changes
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - More verbose debug logs for HTTP fetch calls and
+  subgraph requests
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/runtime@0.100.4
+  - @graphql-mesh/types@0.99.4
+  - @graphql-mesh/transport-common@0.4.4
+
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/runtime@0.100.3
+  - @graphql-mesh/types@0.99.3
+  - @graphql-mesh/transport-common@0.4.3
+
+## 0.5.3
+
+### Patch Changes
+
+- [#7304](https://github.com/ardatan/graphql-mesh/pull/7304)
+  [`f47c900`](https://github.com/ardatan/graphql-mesh/commit/f47c900d19e8c634d39e9dd90bfb1acc4f892a1f)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Pass context type from `OnSubgraphExecute`
+  to `ExecutionRequest`
+
+## 0.5.2
+
+### Patch Changes
+
+- [#7351](https://github.com/ardatan/graphql-mesh/pull/7351)
+  [`9f6624e`](https://github.com/ardatan/graphql-mesh/commit/9f6624e327a555b3de201e67ca9f5dabca44e238)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.0)
+    (from `^2.1.2`, in `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/cross-helpers@^0.4.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.4)
+    (to `dependencies`)
+
+- [#7352](https://github.com/ardatan/graphql-mesh/pull/7352)
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.16)
+    (from `^10.0.14`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/executor@^1.3.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.0)
+    (from `^1.2.8`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.1)
+    (from `^2.2.0`, in `dependencies`)
+
+- [#7341](https://github.com/ardatan/graphql-mesh/pull/7341)
+  [`29dc043`](https://github.com/ardatan/graphql-mesh/commit/29dc043c1fd5d83b3a3f8a1c739957f3d723067a)
+  Thanks [@dr3](https://github.com/dr3)! - Fix the bug when field name is renamed together with the
+  argument
+
+- [#7294](https://github.com/ardatan/graphql-mesh/pull/7294)
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to manipulate transport entry through
+  `transportEntries`.
+
+  For example, you can add extra headers to a subgraph
+
+  ```ts
+  transportEntries: {
+    products: {
+      // This adds extra headers to the subgraph configuration
+      headers: [
+        // This forwards `authorization` from the upstream to downstream
+        ['authorization', '{context.headers.authorization}'],
+        // Or some static value
+        ['x-extra', process.env.SOME_THING]
+      ]
+    }
+  }
+  ```
+
+- Updated dependencies
+  [[`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)]:
+  - @graphql-mesh/runtime@0.100.2
+  - @graphql-mesh/transport-common@0.4.2
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+
+## 0.5.1
+
+### Patch Changes
+
+- [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.14)
+    (from `^10.0.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.1.2)
+    (from `^2.1.1`, in `dependencies`)
+
+- [#7253](https://github.com/ardatan/graphql-mesh/pull/7253)
+  [`2b8e52f`](https://github.com/ardatan/graphql-mesh/commit/2b8e52fdc40e8a0aa7c48ffb92de1b29b90b3c4e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the bug; When a non-nullable field is added
+  through `additionalTypeDefs` in the compose config, then the gateway fails to resolve it even if a
+  resolver defined in `additionalResolvers`;
+
+  ```ts
+  export const composeConfig = defineComposeConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadOpenAPISubgraph('Wiki', {
+          source: 'https://wikimedia.org/api/rest_v1/?spec',
+          endpoint: 'https://wikimedia.org/api/rest_v1'
+        })
+      }
+    ],
+    additionalTypeDefs: /* GraphQL */ `
+      extend type pageview_project {
+        banana: String
+        apple: String!
+      }
+    `
+  })
+
+  export const serveConfig = defineServeConfig({
+    additionalResolvers: {
+      pageview_project: {
+        banana() {
+          return '🍌'
+        },
+        apple() {
+          return '🍎' // This is ignored
+        }
+      }
+    }
+  })
+  ```
+
+- [#7266](https://github.com/ardatan/graphql-mesh/pull/7266)
+  [`26deb92`](https://github.com/ardatan/graphql-mesh/commit/26deb92dc1d405847289bf28344511f143f94ff4)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix transformations on enum values
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/runtime@0.100.1
+  - @graphql-mesh/transport-common@0.4.1
+  - @graphql-mesh/types@0.99.1
+  - @graphql-mesh/utils@0.99.1
+
+## 0.5.0
+
+### Patch Changes
+
+- [#7215](https://github.com/ardatan/graphql-mesh/pull/7215)
+  [`eefbfbe`](https://github.com/ardatan/graphql-mesh/commit/eefbfbe94d72fa6f5cf60a8cf363cae039aece89)
+  Thanks [@ardatan](https://github.com/ardatan)! - Cleanup created transport executors per schema
+  change Previously they were cleaned up only on server close, which could lead to memory leaks in
+  case of schema changes.
+- Updated dependencies
+  [[`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)]:
+  - @graphql-mesh/transport-common@0.4.0
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/runtime@0.100.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.4.1
 
 ### Patch Changes

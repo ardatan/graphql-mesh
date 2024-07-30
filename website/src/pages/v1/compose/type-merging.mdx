@@ -4,7 +4,14 @@ description:
   schema extensions.
 ---
 
+import { Callout } from '@theguild/components'
+
 # Type Merging
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 Type merging allows _partial definitions_ of a type to exist in any subschema, all of which are
 merged into one unified type in the gateway schema. When querying for a merged type, the gateway
@@ -136,9 +143,9 @@ You can disable this behavior in your configuration by setting `ignoreSemanticCo
 your configuration;
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 
-export default defineComposeConfig({
+export const composeConfig = defineConfig({
   ignoreSemanticConventions: true
   // ...
 })

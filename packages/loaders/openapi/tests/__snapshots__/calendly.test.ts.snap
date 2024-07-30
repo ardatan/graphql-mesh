@@ -22,7 +22,7 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) on SCHEMA
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 type Query {
   """Returns a list of Invitees for an event."""
@@ -1720,7 +1720,7 @@ Supported operators:
   - \`()\` - to allow specifying precedence during a search. Example: \`(this + that) OR (person + place)\`
   - \`*\` - to allow prefix searching. Example \`*@other-website.com\`
 """
-scalar queryInput_activityLog_search_term @length(subgraph: "calendly", min: null, max: 300)
+scalar queryInput_activityLog_search_term @length(subgraph: "calendly", max: 300)
 
 enum queryInput_activityLog_sort_items {
   action_asc @enum(subgraph: "calendly", value: "\\"action:asc\\"")
@@ -1974,7 +1974,7 @@ input post_scheduled_events_uuid_cancellation_request_Input {
 }
 
 """Reason for cancellation"""
-scalar mutationInput_post_scheduled_events_uuid_cancellation_input_reason @length(subgraph: "calendly", min: null, max: 10000)
+scalar mutationInput_post_scheduled_events_uuid_cancellation_input_reason @length(subgraph: "calendly", max: 10000)
 
 scalar ObjMap
 

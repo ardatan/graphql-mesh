@@ -2,7 +2,10 @@
 
 import { Callout } from '@theguild/components'
 
-`TODO: Improve more for gateway usage`
+<Callout>
+  This page is currently under construction. Please feel free to reach out to us directly in case
+  you are having any troubles.
+</Callout>
 
 This plugin allows you to implement custom authentication flow by providing a custom user resolver
 based on the original HTTP request. The resolved user is injected into the GraphQL execution
@@ -96,6 +99,7 @@ To setup this mode, use the following config:
 
 ```ts filename="mesh.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -107,7 +111,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 }
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useGenericAuth({
       resolveUserFn,
@@ -145,7 +149,7 @@ verify it in your resolvers and plugin during authentication.
 
 ```ts filename="mesh.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -157,7 +161,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 }
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useGenericAuth({
       resolveUserFn,
@@ -193,7 +197,7 @@ for protecting specific GraphQL fields.
 
 ```ts filename="mesh.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -205,7 +209,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   /* ... */
 }
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useGenericAuth({
       resolveUserFn,
@@ -215,8 +219,6 @@ export const serveConfig = defineServeConfig({
   ]
 })
 ```
-
-````
 
 ##### Protect a field using a field `directive`
 
@@ -232,7 +234,7 @@ type Query {
   protectedField: String @auth
   # publicField: String
 }
-````
+```
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 

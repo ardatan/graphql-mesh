@@ -1,4 +1,4 @@
-import { YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
 import BareRename from './bareRename.js';
 import WrapRename from './wrapRename.js';
 

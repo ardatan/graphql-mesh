@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose 1`] = `
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@enum", "@httpOperation", "@transport", "@source", "@extraSchemaDefinitionDirective", "@extraEnumValueDirective"]
+)
+{
+  query: Query
+  
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io") 
+}
+
+directive @enum(subgraph: String, value: String)  repeatable on ENUM_VALUE
+
+directive @httpOperation(
+  subgraph: String
+  path: String
+  operationSpecificHeaders: [[String]]
+  httpMethod: HTTPMethod
+  isBinary: Boolean
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
+  jsonApiFields: Boolean
+  queryStringOptions: ObjMap
+) repeatable on FIELD_DEFINITION
+
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: [[String]]
+  queryStringOptions: ObjMap
+  queryParams: [[String]]
+) repeatable on SCHEMA
+
+directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+directive @extraEnumValueDirective(name: String!, value: String!, directives: _DirectiveExtensions)  repeatable on OBJECT
+
+scalar ObjMap @join__type(graph: WIKI) 
+
+scalar _HoistConfig @join__type(graph: WIKI) 
+
+scalar _DirectiveExtensions @join__type(graph: WIKI) 
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "ANIMAL"
+  directives: {source: [{name: "animal", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "CAREER"
+  directives: {source: [{name: "career", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "CELEBRITY"
+  directives: {source: [{name: "celebrity", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "DEV"
+  directives: {source: [{name: "dev", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "EXPLICIT"
+  directives: {source: [{name: "explicit", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "FASHION"
+  directives: {source: [{name: "fashion", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "FOOD"
+  directives: {source: [{name: "food", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "HISTORY"
+  directives: {source: [{name: "history", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "MONEY"
+  directives: {source: [{name: "money", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "MOVIE"
+  directives: {source: [{name: "movie", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "MUSIC"
+  directives: {source: [{name: "music", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "POLITICAL"
+  directives: {source: [{name: "political", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "RELIGION"
+  directives: {source: [{name: "religion", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "SCIENCE"
+  directives: {source: [{name: "science", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "SPORT"
+  directives: {source: [{name: "sport", subgraph: "Wiki"}]}
+) @extraEnumValueDirective(
+  name: "Category"
+  value: "TRAVEL"
+  directives: {source: [{name: "travel", subgraph: "Wiki"}]}
+) @join__type(graph: WIKI)  {
+  jokes_categories: [Category] @httpOperation(
+    subgraph: "Wiki"
+    path: "/jokes/categories"
+    operationSpecificHeaders: [["accept", "application/json"]]
+    httpMethod: GET
+  )
+}
+
+enum Category @join__type(graph: WIKI)  {
+  ANIMAL @join__enumValue(graph: WIKI) 
+  CAREER @join__enumValue(graph: WIKI) 
+  CELEBRITY @join__enumValue(graph: WIKI) 
+  DEV @join__enumValue(graph: WIKI) 
+  EXPLICIT @join__enumValue(graph: WIKI) 
+  FASHION @join__enumValue(graph: WIKI) 
+  FOOD @join__enumValue(graph: WIKI) 
+  HISTORY @join__enumValue(graph: WIKI) 
+  MONEY @join__enumValue(graph: WIKI) 
+  MOVIE @join__enumValue(graph: WIKI) 
+  MUSIC @join__enumValue(graph: WIKI) 
+  POLITICAL @join__enumValue(graph: WIKI) 
+  RELIGION @join__enumValue(graph: WIKI) 
+  SCIENCE @join__enumValue(graph: WIKI) 
+  SPORT @join__enumValue(graph: WIKI) 
+  TRAVEL @join__enumValue(graph: WIKI) 
+}
+
+enum HTTPMethod @join__type(graph: WIKI)  {
+  GET @join__enumValue(graph: WIKI) 
+  HEAD @join__enumValue(graph: WIKI) 
+  POST @join__enumValue(graph: WIKI) 
+  PUT @join__enumValue(graph: WIKI) 
+  DELETE @join__enumValue(graph: WIKI) 
+  CONNECT @join__enumValue(graph: WIKI) 
+  OPTIONS @join__enumValue(graph: WIKI) 
+  TRACE @join__enumValue(graph: WIKI) 
+  PATCH @join__enumValue(graph: WIKI) 
+}
+    "
+`;

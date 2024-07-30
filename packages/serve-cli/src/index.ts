@@ -6,3 +6,4 @@ export {
   useForwardHeaders,
   useStaticFiles,
 } from '@graphql-mesh/serve-runtime';
+export { PubSub } from '@graphql-mesh/utils';

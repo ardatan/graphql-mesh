@@ -4,7 +4,14 @@ description:
   like PostgreSQL, MongoDB, Neo4j, and more.
 ---
 
-# Source Handlers Introduction
+import { Callout } from '@theguild/components'
+
+# Query Anything
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 GraphQL Mesh can consume different data source types inside GraphQL while composing your unified
 graph.
@@ -12,12 +19,9 @@ graph.
 The example below loads a GraphQL subgraph. You can see available source handlers on the menu.
 
 ```ts filename="mesh-config.ts"
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {
@@ -30,24 +34,12 @@ export const composeConfig = defineComposeConfig({
 
 ## Setting Headers
 
-import { Callout } from '@theguild/components'
-
 <Callout emoji="⚠️" type="warning">
   This method is not relevant to all handlers!
 
 Please make sure the handler you are using supports this method: You can do it by checking if
 handler's config reference (appearing on it's designated doc) includes the header fields mentioned
 in this doc.
-
-</Callout>
-
-<Callout emoji="⚠️" type="warning">
-  Using (very) long headers?
-
-Under the hood, Mesh is using `uWebSockets` to serve the GraphQL API. `uWebSockets` has a length
-limit, and responds with 431 code if the header is too long. In case you are using long headers, you
-may need to set `UWS_HTTP_MAX_HEADERS_SIZE` environment variable with a higher value. For example,
-you can set it to 16384 (16KB).
 
 </Callout>
 
@@ -64,12 +56,9 @@ the Headers.
 In this example `operationHeaders` is used to defined the content of the request as Json:
 
 ```ts filename="mesh-config.ts" {9-11}
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {
@@ -98,12 +87,9 @@ The expression inside dynamic values should be as in JS.
 #### From Context
 
 ```ts filename="mesh-config.ts" {9-15}
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {
@@ -130,12 +116,9 @@ Set up the variable on your environment, e.g `VERY_SECRET_TOKEN=12345`. Then you
 The config wil look something like:
 
 ```ts filename="mesh-config.ts" {9-11}
-import {
-  defineConfig as defineComposeConfig,
-  loadGraphQLHTTPSubgraph
-} from '@graphql-mesh/compose-cli'
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {

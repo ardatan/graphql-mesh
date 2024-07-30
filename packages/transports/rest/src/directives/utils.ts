@@ -1,5 +1,6 @@
-import { ASTNode, ConstDirectiveNode, valueFromASTUntyped } from 'graphql';
-import { DirectiveAnnotation } from '@graphql-tools/utils';
+import type { ASTNode, ConstDirectiveNode } from 'graphql';
+import { valueFromASTUntyped } from 'graphql';
+import type { DirectiveAnnotation } from '@graphql-tools/utils';
 
 export function getDirectiveAnnotations(directableObj: {
   astNode?: ASTNode & { directives?: readonly ConstDirectiveNode[] };

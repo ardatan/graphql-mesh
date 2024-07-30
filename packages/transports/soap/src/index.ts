@@ -1,8 +1,10 @@
-import { TransportExecutorFactoryFn } from '@graphql-mesh/transport-common';
+import type { Transport } from '@graphql-mesh/transport-common';
 import { createExecutorFromSchemaAST } from './executor.js';
 
-export const getSubgraphExecutor: TransportExecutorFactoryFn<'soap'> =
-  function getSOAPSubgraphExecutor({ transportEntry, subgraph, fetch }) {
+export { createExecutorFromSchemaAST } from './executor.js';
+
+export default {
+  getSubgraphExecutor({ transportEntry, subgraph, fetch }) {
     let headers: Record<string, string> | undefined;
     if (typeof transportEntry.headers === 'string') {
       headers = JSON.parse(transportEntry.headers);
@@ -11,6 +13,5 @@ export const getSubgraphExecutor: TransportExecutorFactoryFn<'soap'> =
       headers = Object.fromEntries(transportEntry.headers);
     }
     return createExecutorFromSchemaAST(subgraph, fetch, headers);
-  };
-
-export { createExecutorFromSchemaAST } from './executor.js';
+  },
+} satisfies Transport<'soap'>;

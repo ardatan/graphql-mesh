@@ -1,38 +1,54 @@
 import childProcess from 'child_process';
 import fs from 'fs/promises';
 import { createServer } from 'http';
-import { AddressInfo } from 'net';
+import type { AddressInfo } from 'net';
 import os from 'os';
 import path, { isAbsolute } from 'path';
 import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
-import { ExecutionResult } from 'graphql';
+import { glob } from 'glob';
+import type { ExecutionResult } from 'graphql';
+import {
+  IntrospectAndCompose,
+  RemoteGraphQLDataSource,
+  type ServiceEndpointDefinition,
+} from '@apollo/gateway';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { createArg, createPortArg, createServicePortArg } from './args';
+import { leftoverStack } from './leftoverStack';
 
 export const retries = 120,
   interval = 500,
   timeout = retries * interval; // 1min
 jest.setTimeout(timeout);
 
-const leftovers = new Set<AsyncDisposable | string>();
-afterAll(async () => {
-  await Promise.allSettled(
-    Array.from(leftovers.values()).map(leftover => {
-      if (typeof leftover === 'string') {
-        // file
-        return fs.rm(leftover, { recursive: true });
-      }
-      // process
-      return leftover[Symbol.asyncDispose]();
-    }),
-  ).finally(() => {
-    leftovers.clear();
-  });
-});
-
 const __project = path.resolve(__dirname, '..', '..') + '/';
 
 const docker = new Dockerode();
+
+const E2E_SERVE_RUNNERS = ['node', 'docker'] as const;
+
+type ServeRunner = (typeof E2E_SERVE_RUNNERS)[number];
+
+const serveRunner = (function getServeRunner() {
+  const runner = (process.env.E2E_SERVE_RUNNER || 'node').trim().toLowerCase();
+  if (
+    !E2E_SERVE_RUNNERS.includes(
+      // @ts-expect-error
+      runner,
+    )
+  ) {
+    throw new Error(`Unsupported E2E serve runner "${runner}"`);
+  }
+  if (runner === 'docker') {
+    process.stderr.write(`
+⚠️ Using docker serve runner! Make sure you have built the containers with:
+yarn bundle && docker buildx bake e2e
+
+`);
+  }
+  return runner as ServeRunner;
+})();
 
 export interface ProcOptions {
   /**
@@ -40,6 +56,12 @@ export interface ProcOptions {
    * Useful for debugging.
    */
   pipeLogs?: boolean;
+  /**
+   * Additional environment variables to pass to the spawned process.
+   *
+   * They will be merged with `process.env` overriding any existing value.
+   */
+  env?: Record<string, string | number>;
 }
 
 export interface Proc extends AsyncDisposable {
@@ -119,19 +141,37 @@ export interface ContainerOptions extends ProcOptions {
    * Note that the actual Docker container will have a unique suffix.
    */
   name: string;
+  /**
+   * Name of the image to use for the container.
+   *
+   * If the image name exists as a literal in any of the tags in the docker-bake.hcl
+   * file, that local image baked image will be used. So dont forget to bake before
+   * running the tests.
+   *
+   * Otherwise, the image gets pulled.
+   */
   image: string;
   /**
    * Port that the container uses.
-   * Will be bound to an available port on the host in {@link Container.port}.
+   *
+   * Will be bound to the {@link hostPort}.
    */
   containerPort: number;
-  /** A map of environment variable names to values. */
-  env?: Record<string, string | number>;
+  /**
+   * Port that will be bound to the {@link containerPort}.
+   *
+   * @default getAvailablePort()
+   */
+  hostPort?: number;
   /**
    * The healtcheck test command to run on the container.
    * If provided, the run function will wait for the container to become healthy.
    */
   healthcheck: string[];
+  /** Docker CMD to pass to the container when running. */
+  cmd?: (string | number | boolean)[];
+  /** Volume bindings for the container relative to the cwd of Tenv. */
+  volumes?: { host: string; container: string }[];
 }
 
 export interface Container extends Service {
@@ -147,6 +187,7 @@ export interface Tenv {
     write(path: string, content: string): Promise<void>;
   };
   spawn(command: string, opts?: ProcOptions): Promise<[proc: Proc, waitForExit: Promise<void>]>;
+  serveRunner: ServeRunner;
   serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
@@ -156,10 +197,11 @@ export interface Tenv {
    */
   service(name: string, opts?: ServiceOptions): Promise<Service>;
   container(opts: ContainerOptions): Promise<Container>;
+  composeWithApollo(services: Service[]): Promise<string>;
 }
 
 export function createTenv(cwd: string): Tenv {
-  return {
+  const tenv: Tenv = {
     fs: {
       read(filePath) {
         return fs.readFile(isAbsolute(filePath) ? filePath : path.join(cwd, filePath), 'utf8');
@@ -169,7 +211,7 @@ export function createTenv(cwd: string): Tenv {
       },
       async tempfile(name) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_fs'));
-        leftovers.add(tempDir);
+        leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
         return path.join(tempDir, name);
       },
       write(filePath, content) {
@@ -180,17 +222,81 @@ export function createTenv(cwd: string): Tenv {
       const [cmd, ...args] = command.split(' ');
       return spawn({ ...opts, cwd }, cmd, ...args);
     },
+    serveRunner,
     async serve(opts) {
-      const { port = await getAvailablePort(), supergraph, pipeLogs } = opts || {};
-      const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs },
-        'node',
-        '--import',
-        'tsx',
-        path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
-        createPortArg(port),
-        supergraph && createArg('supergraph', supergraph),
-      );
+      let {
+        port = await getAvailablePort(),
+        supergraph,
+        pipeLogs = !!process.env['DEBUG'],
+        env,
+      } = opts || {};
+
+      let proc: Proc,
+        waitForExit: Promise<void> | null = null;
+      if (serveRunner === 'docker') {
+        const volumes: ContainerOptions['volumes'] = [];
+
+        if (supergraph) {
+          // we need to replace all local servers in the supergraph to use docker's local hostname.
+          // without this, the services running on the host wont be accessible by the docker container
+          await fs.writeFile(
+            supergraph,
+            (await fs.readFile(supergraph, 'utf8'))
+              // docker for linux (which is used in the CI) will have the host be on 172.17.0.1 always
+              // locally the host.docker.internal should just work when using the "host" network mode
+              .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
+              .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
+          );
+          volumes.push({ host: supergraph, container: `/serve/${path.basename(supergraph)}` });
+        }
+        for (const configfile of await glob('mesh.config.*', { cwd })) {
+          const contents = await fs.readFile(path.join(cwd, configfile), 'utf8');
+          if (contents.includes('@graphql-mesh/serve-cli')) {
+            volumes.push({ host: configfile, container: `/serve/${path.basename(configfile)}` });
+          }
+        }
+        for (const dbfile of await glob('*.db', { cwd })) {
+          volumes.push({ host: dbfile, container: `/serve/${path.basename(dbfile)}` });
+        }
+
+        const dockerfileExists = await fs
+          .stat(path.join(cwd, 'serve.Dockerfile'))
+          .then(() => true)
+          .catch(() => false);
+
+        const cont = await tenv.container({
+          env,
+          name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
+          image:
+            'ghcr.io/ardatan/mesh-serve:' +
+            (dockerfileExists
+              ? // if the test contains a serve dockerfile, use it instead of the default e2e image
+                `e2e.${path.basename(cwd)}`
+              : 'e2e'),
+          // TODO: changing port from within mesh.config.ts wont work in docker runner
+          hostPort: port,
+          containerPort: port,
+          healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
+          cmd: [
+            createPortArg(port),
+            supergraph && createArg('supergraph', path.basename(supergraph)),
+          ],
+          volumes,
+          pipeLogs,
+        });
+        proc = cont;
+      } /* serveRunner === 'node' */ else {
+        [proc, waitForExit] = await spawn(
+          { env, cwd, pipeLogs },
+          'node',
+          '--import',
+          'tsx',
+          path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
+          createPortArg(port),
+          supergraph && createArg('supergraph', supergraph),
+        );
+      }
+
       const serve: Serve = {
         ...proc,
         port,
@@ -214,7 +320,7 @@ export function createTenv(cwd: string): Tenv {
       const ctrl = new AbortController();
       await Promise.race([
         waitForExit
-          .then(() =>
+          ?.then(() =>
             Promise.reject(
               new Error(`Serve exited successfully, but shouldn't have\n${proc.getStd('both')}`),
             ),
@@ -226,11 +332,16 @@ export function createTenv(cwd: string): Tenv {
       return serve;
     },
     async compose(opts) {
-      const { services = [], trimHostPaths, maskServicePorts, pipeLogs } = opts || {};
+      const {
+        services = [],
+        trimHostPaths,
+        maskServicePorts,
+        pipeLogs = !!process.env['DEBUG'],
+      } = opts || {};
       let output = '';
       if (opts?.output) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
-        leftovers.add(tempDir);
+        leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
         output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
       }
       const [proc, waitForExit] = await spawn(
@@ -275,7 +386,7 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, output, result };
     },
-    async service(name, { port, servePort, pipeLogs } = {}) {
+    async service(name, { port, servePort, pipeLogs = !!process.env['DEBUG'] } = {}) {
       port ||= await getAvailablePort();
       const [proc, waitForExit] = await spawn(
         { cwd, pipeLogs },
@@ -301,28 +412,65 @@ export function createTenv(cwd: string): Tenv {
       ]);
       return service;
     },
-    async container({ name, image, env = {}, containerPort, healthcheck, pipeLogs }) {
+    async container({
+      name,
+      image,
+      env = {},
+      containerPort,
+      hostPort,
+      healthcheck,
+      pipeLogs = !!process.env['DEBUG'],
+      cmd,
+      volumes = [],
+    }) {
       const uniqueName = `${name}_${Math.random().toString(32).slice(2)}`;
 
-      const hostPort = await getAvailablePort();
+      if (!hostPort) {
+        hostPort = await getAvailablePort();
+      }
 
       function msToNs(ms: number): number {
         return ms * 1000000;
       }
 
-      // start the image pull and wait for complete, always pull the image (will load from cache if exists)
-      const imageStream = await docker.pull(image);
-      await new Promise(resolve => docker.modem.followProgress(imageStream, resolve));
+      const bakedImage = await fs
+        .readFile(path.join(__project, 'docker-bake.hcl'))
+        .then(c => c.includes(`"${image}"`));
+
+      if (!bakedImage) {
+        // pull image and wait for finish
+        const imageStream = await docker.pull(image);
+        await new Promise((resolve, reject) => {
+          docker.modem.followProgress(
+            imageStream,
+            (err, res) => (err ? reject(err) : resolve(res)),
+            pipeLogs
+              ? ({ stream }) => {
+                  if (stream) {
+                    process.stderr.write(String(stream));
+                  }
+                }
+              : undefined,
+          );
+        });
+      }
 
       const ctr = await docker.createContainer({
         name: uniqueName,
         Image: image,
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
+        ExposedPorts: {
+          [containerPort + '/tcp']: {},
+        },
+        Cmd: cmd?.filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
           },
+          Binds: Object.values(volumes).map(
+            ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
+          ),
         },
         Healthcheck: {
           Test: healthcheck,
@@ -354,7 +502,7 @@ export function createTenv(cwd: string): Tenv {
         getStats() {
           throw new Error('Cannot get stats of a container.');
         },
-        async [Symbol.asyncDispose]() {
+        async [DisposableSymbols.asyncDispose]() {
           if (ctrl.signal.aborted) {
             // noop if already disposed
             return;
@@ -363,7 +511,7 @@ export function createTenv(cwd: string): Tenv {
           await ctr.stop({ t: 0 });
         },
       };
-      leftovers.add(container);
+      leftoverStack.use(container);
 
       // verify that the container has started
       await setTimeout(interval);
@@ -377,51 +525,79 @@ export function createTenv(cwd: string): Tenv {
       }
 
       // wait for healthy
-      for (;;) {
-        let status = '';
-        try {
-          const {
-            State: { Health },
-          } = await ctr.inspect({ abortSignal: ctrl.signal });
-          status = Health?.Status ? String(Health?.Status) : '';
-        } catch (err) {
-          if (Object(err).statusCode === 404) {
-            throw new DockerError('Container was not started', container);
+      if (healthcheck.length > 0) {
+        for (;;) {
+          let status = '';
+          try {
+            const {
+              State: { Health },
+            } = await ctr.inspect({ abortSignal: ctrl.signal });
+            status = Health?.Status ? String(Health?.Status) : '';
+          } catch (err) {
+            if (Object(err).statusCode === 404) {
+              throw new DockerError('Container was not started', container);
+            }
+            throw err;
           }
-          throw err;
-        }
 
-        if (status === 'none') {
-          await container[Symbol.asyncDispose]();
-          throw new DockerError(
-            'Container has "none" health status, but has a healthcheck',
-            container,
-          );
-        } else if (status === 'unhealthy') {
-          await container[Symbol.asyncDispose]();
-          throw new DockerError('Container is unhealthy', container);
-        } else if (status === 'healthy') {
-          break;
-        } else if (status === 'starting') {
-          // no need to track retries, jest will time out aborting the signal
-          ctrl.signal.throwIfAborted();
-          await setTimeout(interval);
-        } else {
-          throw new DockerError(`Unknown health status "${status}"`, container);
+          if (status === 'none') {
+            await container[DisposableSymbols.asyncDispose]();
+            throw new DockerError(
+              'Container has "none" health status, but has a healthcheck',
+              container,
+            );
+          } else if (status === 'unhealthy') {
+            await container[DisposableSymbols.asyncDispose]();
+            throw new DockerError('Container is unhealthy', container);
+          } else if (status === 'healthy') {
+            break;
+          } else if (status === 'starting') {
+            // no need to track retries, jest will time out aborting the signal
+            ctrl.signal.throwIfAborted();
+            await setTimeout(interval);
+          } else {
+            throw new DockerError(`Unknown health status "${status}"`, container);
+          }
         }
+      } else {
+        await waitForReachable(container, ctrl.signal);
       }
-
       return container;
     },
+    async composeWithApollo(services) {
+      const subgraphs: ServiceEndpointDefinition[] = [];
+      for (const service of services) {
+        subgraphs.push({
+          name: service.name,
+          url: `http://0.0.0.0:${service.port}/graphql`,
+        });
+      }
+
+      const { supergraphSdl } = await new IntrospectAndCompose({
+        subgraphs,
+      }).initialize({
+        getDataSource(opts) {
+          return new RemoteGraphQLDataSource(opts);
+        },
+        update() {},
+        async healthCheck() {},
+      });
+
+      const supergraphFile = await tenv.fs.tempfile('supergraph.graphql');
+      await tenv.fs.write(supergraphFile, supergraphSdl);
+      return supergraphFile;
+    },
   };
+  return tenv;
 }
 
 interface SpawnOptions extends ProcOptions {
   cwd: string;
+  shell?: boolean;
 }
 
 function spawn(
-  { cwd, pipeLogs }: SpawnOptions,
+  { cwd, pipeLogs = !!process.env['DEBUG'], env = {}, shell }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<[proc: Proc, waitForExit: Promise<void>]> {
@@ -429,6 +605,11 @@ function spawn(
     cwd,
     // ignore stdin, pipe stdout and stderr
     stdio: ['ignore', 'pipe', 'pipe'],
+    env: Object.entries(env).reduce(
+      (acc, [key, val]) => ({ ...acc, [key]: String(val) }),
+      process.env,
+    ),
+    shell,
   });
 
   let exit: (err: Error | null) => void;
@@ -472,9 +653,9 @@ function spawn(
         mem: parseFloat(mem) * 0.001, // KB to MB
       };
     },
-    [Symbol.asyncDispose]: () => (child.kill(), waitForExit),
+    [DisposableSymbols.asyncDispose]: () => (child.kill(), waitForExit),
   };
-  leftovers.add(proc);
+  leftoverStack.use(proc);
 
   child.stdout.on('data', x => {
     stdout += x.toString();
@@ -541,4 +722,8 @@ class DockerError extends Error {
     this.name = 'DockerError';
     this.message = message + '\n' + container.getStd('both');
   }
+}
+
+function boolEnv(name: string): boolean {
+  return ['1', 't', 'true', 'y', 'yes'].includes(process.env[name]);
 }

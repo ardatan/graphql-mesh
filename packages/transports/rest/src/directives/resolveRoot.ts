@@ -1,4 +1,4 @@
-import { GraphQLField } from 'graphql';
+import type { GraphQLField } from 'graphql';
 
 function rootResolver(root: any) {
   return root;

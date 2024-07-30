@@ -1,5 +1,3 @@
-import 'tsx/cjs'; // support importing typescript configs in CommonJS
-import 'tsx/esm'; // support importing typescript configs in ESM
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
@@ -7,18 +5,29 @@ import { promises as fsPromises } from 'fs';
 // eslint-disable-next-line import/no-nodejs-modules
 import { isAbsolute, join, resolve } from 'path';
 import { parse } from 'graphql';
+import createJITI from 'jiti';
 import { Command, Option } from '@commander-js/extra-typings';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { getComposedSchemaFromConfig } from './getComposedSchemaFromConfig.js';
-import { MeshComposeCLIConfig } from './types.js';
+import type { MeshComposeCLIConfig } from './types.js';
+
+/** Default config paths sorted by priority. */
+const defaultConfigPaths = [
+  'mesh.config.ts',
+  'mesh.config.mts',
+  'mesh.config.cts',
+  'mesh.config.js',
+  'mesh.config.mjs',
+  'mesh.config.cjs',
+];
 
 let program = new Command()
   .addOption(
-    new Option('-c, --config-path <path>', 'path to the configuration file')
-      .env('CONFIG_PATH')
-      .default('mesh.config.ts'),
+    new Option(
+      '-c, --config-path <path>',
+      `path to the configuration file. defaults to the following files respectively in the current working directory: ${defaultConfigPaths.join(', ')}`,
+    ).env('CONFIG_PATH'),
   )
   .option('--subgraph <name>', 'name of the subgraph to compose')
   .option('-o, --output <path>', 'path to the output file');
@@ -36,8 +45,6 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
   version?: string;
 }
 
-export type ImportedModule<T> = T | { default: T };
-
 export async function run({
   log: rootLog = new DefaultLogger(),
   productName = 'Mesh Compose',
@@ -52,28 +59,33 @@ export async function run({
 
   const log = rootLog.child(`🕸️  ${productName}`);
 
-  const configPath = isAbsolute(opts.configPath)
-    ? opts.configPath
-    : resolve(process.cwd(), opts.configPath);
-  log.info(`Checking configuration at ${configPath}`);
-  const importedConfigModule: ImportedModule<{ composeConfig?: MeshComposeCLIConfig }> =
-    await import(configPath).catch(err => {
-      if (err.code === 'ERR_MODULE_NOT_FOUND') {
-        return {}; // no config is ok
-      }
-      log.error('Loading configuration failed!');
-      throw err;
-    });
-
   let importedConfig: MeshComposeCLIConfig;
-  if ('default' in importedConfigModule) {
-    importedConfig = importedConfigModule.default.composeConfig;
-  } else if ('composeConfig' in importedConfigModule) {
-    importedConfig = importedConfigModule.composeConfig;
+  if (!opts.configPath) {
+    log.info(`Searching for default config files`);
+    for (const configPath of defaultConfigPaths) {
+      importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
+      if (importedConfig) {
+        log.info(`Found default config file ${configPath}`);
+        break;
+      }
+    }
+    if (!importedConfig) {
+      throw new Error(
+        `Cannot find default config file at ${defaultConfigPaths.join(' or ')} in the current working directory`,
+      );
+    }
   } else {
-    throw new Error(`No configuration found at ${configPath}`);
+    // using user-provided config
+    const configPath = isAbsolute(opts.configPath)
+      ? opts.configPath
+      : resolve(process.cwd(), opts.configPath);
+    log.info(`Loading config file at path ${configPath}`);
+    importedConfig = await importConfig(log, configPath);
+    if (!importedConfig) {
+      throw new Error(`Cannot find config file at ${configPath}`);
+    }
   }
-  log.info('Loaded configuration');
+  log.info('Loaded config file');
 
   const config: MeshComposeCLIConfig = {
     ...importedConfig,
@@ -123,4 +135,38 @@ export async function run({
   await fsPromises.writeFile(output, writtenData, 'utf8');
 
   log.info('Done!');
+}
+
+const jiti = createJITI(
+  // import.meta.url is not available in CJS (and cant even be in the syntax) and __filename is not available in ESM
+  // instead, we dont care about the file path because we'll require config imports to have absolute paths
+  '',
+);
+
+async function importConfig(log: Logger, path: string): Promise<MeshComposeCLIConfig | null> {
+  if (!isAbsolute(path)) {
+    throw new Error('Configs can be imported using absolute paths only'); // see createJITI for explanation
+  }
+  try {
+    const importedConfigModule = await jiti.import(path, {});
+    if (!importedConfigModule || typeof importedConfigModule !== 'object') {
+      throw new Error('Invalid imported config module!');
+    }
+    if ('default' in importedConfigModule) {
+      // eslint-disable-next-line dot-notation
+      return importedConfigModule.default['composeConfig'];
+    } else if ('composeConfig' in importedConfigModule) {
+      return importedConfigModule.composeConfig as MeshComposeCLIConfig;
+    }
+  } catch (err) {
+    // NOTE: we dont use the err.code because maybe the config itself is importing a module that does not exist.
+    //       if we were to use the MODULE_NOT_FOUND code, then those configs will fail silently
+    if (String(err).includes(`Cannot find module '${path}'`)) {
+      // config at path not found
+    } else {
+      log.error(`Importing config at ${path} failed!`);
+      throw err;
+    }
+  }
+  return null;
 }

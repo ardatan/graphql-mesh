@@ -1,5 +1,5 @@
 {
-  "name": "@examples/reddit-example",
+  "name": "@examples-v1-next/json-schema-reddit",
   "private": true,
   "scripts": {
     "compose": "yarn mesh-compose",

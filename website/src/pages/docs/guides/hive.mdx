@@ -26,7 +26,7 @@ sources:
   - name: Supergraph
     handler:
       supergraph:
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        source: https://cdn.graphql-hive.com/SOME_UUID/sdl?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_TOKEN
 ```
@@ -38,7 +38,7 @@ sources:
   - name: Supergraph
     handler:
       supergraph:
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        source: https://cdn.graphql-hive.com/SOME_UUID/sdl?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_TOKEN
 pollingInterval: 60_000 # Poll for the supergraph updates per 1 hour
@@ -93,7 +93,7 @@ sources:
     handler:
       graphql:
         # URL needs to have `.graphql` extension to tell the handler it is a GraphQL Schema
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        source: https://cdn.graphql-hive.com/SOME_UUID/sdl?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_BASE64
         # The actual endpoint of the service
@@ -153,7 +153,7 @@ sources:
     handler:
       openapi:
         # URL needs to have `.graphql` extension to tell the handler it is a GraphQL Schema
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        source: https://cdn.graphql-hive.com/SOME_UUID/sdl?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_BASE64
 ```

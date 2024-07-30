@@ -1,5 +1,5 @@
 import path from 'path';
-import { createTenv, Service } from '@e2e/tenv';
+import { createTenv, type Service } from '@e2e/tenv';
 
 const { fs, spawn, service, serve } = createTenv(__dirname);
 

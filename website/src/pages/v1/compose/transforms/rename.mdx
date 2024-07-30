@@ -5,7 +5,14 @@ description:
   this guide.
 ---
 
+import { Callout } from '@theguild/components'
+
 # Rename Transform
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 The rename transform allows you to rename:
 
@@ -23,7 +30,7 @@ JavaScript functions to rename types, fields, and field arguments.
 
 ```ts filename="mesh.config.ts" {13-17}
 import {
-  defineConfig as defineComposeConfig,
+  defineConfig,
   loadGraphQLHTTPSubgraph,
   createRenameTransform
 } from '@graphql-mesh/compose-cli'

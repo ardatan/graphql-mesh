@@ -33,6 +33,16 @@
     "import/no-nodejs-modules": "error",
     "no-eval": "off",
     "no-use-before-define": "off",
+    "@typescript-eslint/consistent-type-exports": [
+      "error",
+      { "fixMixedExportsWithInlineTypeSpecifier": true }
+    ],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "fixStyle": "inline-type-imports"
+      }
+    ],
     "import/no-extraneous-dependencies": [
       "error",
       { "devDependencies": ["**/*.test.ts", "**/*.spec.ts"] }
@@ -53,7 +63,7 @@
       }
     },
     {
-      "files": ["e2e/**/*"],
+      "files": ["e2e/**/*", "packages/serve-cli/**/*"],
       "rules": {
         "import/no-nodejs-modules": "off"
       }

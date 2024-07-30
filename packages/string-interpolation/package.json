@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/string-interpolation",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "type": "module",
   "description": "Dynamic string manipulation",
   "repository": {
@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "dayjs": "1.11.11",
+    "dayjs": "1.11.12",
     "json-pointer": "0.6.2",
     "lodash.get": "4.4.2"
   },

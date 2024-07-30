@@ -1,4 +1,4 @@
-import { MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { loadGraphQLSchemaFromOptions } from '@omnigraph/sqlite';
 
 export default class TuqlHandler implements MeshHandler {

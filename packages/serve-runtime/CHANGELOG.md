@@ -1,5 +1,355 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.6
+
+### Patch Changes
+
+- [#7401](https://github.com/ardatan/graphql-mesh/pull/7401)
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/disposablestack@^0.0.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.1)
+    (to `dependencies`)
+  - Removed dependency
+    [`disposablestack@^1.1.6` ↗︎](https://www.npmjs.com/package/disposablestack/v/1.1.6) (from
+    `dependencies`)
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4),
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4),
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/fusion-runtime@0.5.6
+  - @graphql-mesh/plugin-hive@0.99.5
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/transport-http@0.3.5
+  - @graphql-mesh/transport-common@0.4.5
+
+## 0.5.5
+
+### Patch Changes
+
+- [#7366](https://github.com/ardatan/graphql-mesh/pull/7366)
+  [`ec31e60`](https://github.com/ardatan/graphql-mesh/commit/ec31e608c271f14554fcef5519a12c4366e87f38)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Removed dependency
+    [`@whatwg-node/server@^0.9.34` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.34)
+    (from `dependencies`)
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the issue when you go to landing page then
+  GraphiQL, queries are not executed
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - More verbose debug logs for HTTP fetch calls and
+  subgraph requests
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Request ID;
+
+  If user provides a request id with `x-request-id` header, it will be used as a request id
+  otherwise Mesh generates a random UUID as a request id. Then it will return the request id in the
+  response headers with `x-request-id` header.
+
+  This `x-request-id` is also available in upstream headers as `request-id` for the upstream
+  services to use.
+
+  This request id will also be added to the logs.
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/fusion-runtime@0.5.5
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/transport-http@0.3.4
+  - @graphql-mesh/plugin-hive@0.99.4
+  - @graphql-mesh/transport-common@0.4.4
+
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/fusion-runtime@0.5.4
+  - @graphql-mesh/transport-http@0.3.3
+  - @graphql-mesh/plugin-hive@0.99.3
+  - @graphql-mesh/transport-common@0.4.3
+
+## 0.5.3
+
+### Patch Changes
+
+- [#7304](https://github.com/ardatan/graphql-mesh/pull/7304)
+  [`f47c900`](https://github.com/ardatan/graphql-mesh/commit/f47c900d19e8c634d39e9dd90bfb1acc4f892a1f)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Pass context type from `OnSubgraphExecute`
+  to `ExecutionRequest`
+
+- Updated dependencies
+  [[`f47c900`](https://github.com/ardatan/graphql-mesh/commit/f47c900d19e8c634d39e9dd90bfb1acc4f892a1f)]:
+  - @graphql-mesh/fusion-runtime@0.5.3
+
+## 0.5.2
+
+### Patch Changes
+
+- [#7351](https://github.com/ardatan/graphql-mesh/pull/7351)
+  [`9f6624e`](https://github.com/ardatan/graphql-mesh/commit/9f6624e327a555b3de201e67ca9f5dabca44e238)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.0)
+    (from `^2.1.2`, in `dependencies`)
+
+- [#7352](https://github.com/ardatan/graphql-mesh/pull/7352)
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.16)
+    (from `^10.0.14`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.1)
+    (from `^2.2.0`, in `dependencies`)
+
+- [#7294](https://github.com/ardatan/graphql-mesh/pull/7294)
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to manipulate transport entry through
+  `transportEntries`.
+
+  For example, you can add extra headers to a subgraph
+
+  ```ts
+  transportEntries: {
+    products: {
+      // This adds extra headers to the subgraph configuration
+      headers: [
+        // This forwards `authorization` from the upstream to downstream
+        ['authorization', '{context.headers.authorization}'],
+        // Or some static value
+        ['x-extra', process.env.SOME_THING]
+      ]
+    }
+  }
+  ```
+
+- Updated dependencies
+  [[`9f6624e`](https://github.com/ardatan/graphql-mesh/commit/9f6624e327a555b3de201e67ca9f5dabca44e238),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`29dc043`](https://github.com/ardatan/graphql-mesh/commit/29dc043c1fd5d83b3a3f8a1c739957f3d723067a),
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)]:
+  - @graphql-mesh/fusion-runtime@0.5.2
+  - @graphql-mesh/transport-common@0.4.2
+  - @graphql-mesh/transport-http@0.3.2
+  - @graphql-mesh/utils@0.99.2
+  - @graphql-mesh/plugin-hive@0.99.2
+
+## 0.5.1
+
+### Patch Changes
+
+- [#7300](https://github.com/ardatan/graphql-mesh/pull/7300)
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-hive/apollo@^0.33.4` ↗︎](https://www.npmjs.com/package/@graphql-hive/apollo/v/0.33.4)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-hive/client@^0.32.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.32.0)
+    (from `dependencies`)
+
+- [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.14)
+    (from `^10.0.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.5)
+    (from `^1.1.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.1.2)
+    (from `^2.1.1`, in `dependencies`)
+
+- [#7300](https://github.com/ardatan/graphql-mesh/pull/7300)
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Upgrade Hive SDK to use latest
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`2b8e52f`](https://github.com/ardatan/graphql-mesh/commit/2b8e52fdc40e8a0aa7c48ffb92de1b29b90b3c4e),
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770),
+  [`26deb92`](https://github.com/ardatan/graphql-mesh/commit/26deb92dc1d405847289bf28344511f143f94ff4)]:
+  - @graphql-mesh/fusion-runtime@0.5.1
+  - @graphql-mesh/plugin-hive@0.99.1
+  - @graphql-mesh/transport-common@0.4.1
+  - @graphql-mesh/transport-http@0.3.1
+  - @graphql-mesh/utils@0.99.1
+
+## 0.5.0
+
+### Minor Changes
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - New `transportOptions` configuration property
+  for passing custom transport options per subgraph for specific transport kinds
+
+  For example, adding subscriptions support for Apollo Federation v2 subgraphs:
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/serve-cli'
+  import { HTTPTransportOptions } from '@graphql-mesh/transport-http'
+
+  export const serveConfig = defineConfig({
+    transportOptions: {
+      // apply options to all subgraphs
+      '*': {
+        // on the "http" transport kind
+        http: {
+          // custom http transport options
+          subscriptions: {
+            ws: {
+              path: '/subscriptions'
+            }
+          }
+        } satisfies HTTPTransportOptions
+      }
+    }
+  })
+  ```
+
+### Patch Changes
+
+- [#6772](https://github.com/ardatan/graphql-mesh/pull/6772)
+  [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+
+- [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+
+- [#7223](https://github.com/ardatan/graphql-mesh/pull/7223)
+  [`26549a9`](https://github.com/ardatan/graphql-mesh/commit/26549a9832b4e18afdb22e4615a9951d69a5922b)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+
+- [#7177](https://github.com/ardatan/graphql-mesh/pull/7177)
+  [`7b35444`](https://github.com/ardatan/graphql-mesh/commit/7b35444dcc15c6d22eb1b26c080c7b78ee8aef8e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Disable validation of the operations on the
+  gateway while using Mesh Server as a proxy
+
+  ```ts filename="mesh.config.ts"
+  import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+
+  export default defineServeConfig({
+    proxy: {
+      endpoint: 'https://my-service.com/graphql'
+    },
+    skipValidation: true
+  })
+  ```
+
+  This will disable the validation of the operations, and send the operations directly to the
+  upstream service.
+
+- [#7216](https://github.com/ardatan/graphql-mesh/pull/7216)
+  [`a2306d2`](https://github.com/ardatan/graphql-mesh/commit/a2306d2c53c9d3cf071aec6e550dc5fff976bfb2)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Invoke onSchemaChange plugin hook as soon as
+  supergraph changes and schema setting optimizations
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Refactor transports and improve getting
+  subgraph executors
+
+- [#7215](https://github.com/ardatan/graphql-mesh/pull/7215)
+  [`eefbfbe`](https://github.com/ardatan/graphql-mesh/commit/eefbfbe94d72fa6f5cf60a8cf363cae039aece89)
+  Thanks [@ardatan](https://github.com/ardatan)! - Cleanup created transport executors per schema
+  change Previously they were cleaned up only on server close, which could lead to memory leaks in
+  case of schema changes.
+
+- [#7220](https://github.com/ardatan/graphql-mesh/pull/7220)
+  [`de7517e`](https://github.com/ardatan/graphql-mesh/commit/de7517e653babaeabbd80a941a0210c491601725)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Close subscriptions on disposal and schema
+  change with different codes.
+
+  When the server gets disposed (on shutdown), all active subscriptions will complete emitting the
+  following execution error:
+
+  ```json
+  {
+    "errors": [
+      {
+        "extensions": {
+          "code": "SHUTTING_DOWN"
+        },
+        "message": "subscription has been closed because the server is shutting down"
+      }
+    ]
+  }
+  ```
+
+  However, when the server detects a schema change, all active subscriptions will complete emitting
+  the following execution error:
+
+  ```json
+  {
+    "errors": [
+      {
+        "extensions": {
+          "code": "SUBSCRIPTION_SCHEMA_RELOAD"
+        },
+        "message": "subscription has been closed due to a schema reload"
+      }
+    ]
+  }
+  ```
+
+- Updated dependencies
+  [[`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`26549a9`](https://github.com/ardatan/graphql-mesh/commit/26549a9832b4e18afdb22e4615a9951d69a5922b),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`eefbfbe`](https://github.com/ardatan/graphql-mesh/commit/eefbfbe94d72fa6f5cf60a8cf363cae039aece89),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)]:
+  - @graphql-mesh/transport-common@0.4.0
+  - @graphql-mesh/transport-http@0.3.0
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/fusion-runtime@0.5.0
+  - @graphql-mesh/plugin-hive@0.99.0
+
 ## 0.4.4
 
 ### Patch Changes

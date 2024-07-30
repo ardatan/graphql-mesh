@@ -1,4 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Sentry
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 This plugin collects errors and performance tracing for your execution flow, and reports it to
 [Sentry](https://sentry.io).
@@ -35,11 +42,11 @@ yarn add @sentry/node @sentry/tracing @envelop/sentry
 
 ```ts filename="mesh.config.ts"
 import { useSentry } from '@envelop/sentry'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 // do this only once in you entry file.
 import '@sentry/tracing'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: () => [
     useSentry({
       includeRawResult: false, // set to `true` in order to include the execution result in the metadata collected

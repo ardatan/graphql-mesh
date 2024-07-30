@@ -1,25 +1,24 @@
 import { XMLParser } from 'fast-xml-parser';
+import type { GraphQLScalarType } from 'graphql';
 import {
   DirectiveLocation,
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLFloat,
   GraphQLInt,
-  GraphQLScalarType,
   GraphQLString,
 } from 'graphql';
-import {
+import type {
   AnyTypeComposer,
   EnumTypeComposer,
   EnumTypeComposerValueConfigDefinition,
-  GraphQLJSON,
   InputTypeComposer,
   InputTypeComposerFieldConfigMapDefinition,
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfigDefinition,
   ScalarTypeComposer,
-  SchemaComposer,
 } from 'graphql-compose';
+import { GraphQLJSON, SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
   GraphQLByte,
@@ -38,14 +37,17 @@ import {
   RegularExpression,
 } from 'graphql-scalars';
 import { process } from '@graphql-mesh/cross-helpers';
+import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import {
-  getInterpolatedHeadersFactory,
-  ResolverDataBasedFactory,
-} from '@graphql-mesh/string-interpolation';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
-import { DefaultLogger, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+  defaultImportFn,
+  DefaultLogger,
+  readFileOrUrl,
+  sanitizeNameForGraphQL,
+} from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
-import {
+import type {
   WSDLBinding,
   WSDLDefinition,
   WSDLMessage,
@@ -60,7 +62,8 @@ import {
   XSSchema,
   XSSimpleType,
 } from './types.js';
-import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
+import type { SoapAnnotations } from './utils.js';
+import { PARSE_XML_OPTIONS } from './utils.js';
 
 export interface SOAPLoaderOptions {
   subgraphName: string;
@@ -68,6 +71,8 @@ export interface SOAPLoaderOptions {
   logger?: Logger;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
+  endpoint?: string;
+  cwd?: string;
 }
 
 const soapDirective = new GraphQLDirective({
@@ -136,6 +141,8 @@ export class SOAPLoader {
   private fetchFn: MeshFetch;
   private subgraphName: string;
   private logger: Logger;
+  private endpoint?: string;
+  private cwd: string;
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
@@ -144,6 +151,8 @@ export class SOAPLoader {
     this.loadXMLSchemaNamespace();
     this.schemaComposer.addDirective(soapDirective);
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
+    this.endpoint = options.endpoint;
+    this.cwd = options.cwd;
   }
 
   loadXMLSchemaNamespace() {
@@ -440,7 +449,7 @@ export class SOAPLoader {
             const soapAnnotations: SoapAnnotations = {
               elementName,
               bindingNamespace,
-              endpoint: portObj.address[0].attributes.location,
+              endpoint: this.endpoint || portObj.address[0].attributes.location,
               subgraph: this.subgraphName,
             };
             rootTC.addFields({
@@ -525,10 +534,14 @@ export class SOAPLoader {
   private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
 
   async fetchXSD(location: string, parentAliasMap = new Map<string, string>()) {
-    const response = await this.fetchFn(location, {
+    let xsdText = await readFileOrUrl<string>(location, {
+      allowUnknownExtensions: true,
+      cwd: this.cwd,
+      fetch: this.fetchFn,
+      importFn: defaultImportFn,
+      logger: this.logger,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
-    let xsdText = await response.text();
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
     const xsdObj: XSDObject = this.xmlParser.parse(xsdText, PARSE_XML_OPTIONS);

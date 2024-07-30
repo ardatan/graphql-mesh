@@ -1,11 +1,12 @@
-import { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema, parse, visit } from 'graphql';
+import type { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema } from 'graphql';
+import { parse, visit } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
-import { Driver } from 'neo4j-driver';
-import { DisposableExecutor } from '@graphql-mesh/transport-common';
-import { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { getDirectiveExtensions } from '@graphql-mesh/utils';
+import type { Driver } from 'neo4j-driver';
+import type { DisposableExecutor } from '@graphql-mesh/transport-common';
+import type { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { getDirectiveExtensions, makeAsyncDisposable } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { asArray, getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { asArray, getDocumentNodeFromSchema, type ExecutionRequest } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
@@ -83,21 +84,18 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
     database,
   };
 
-  const executor: DisposableExecutor = function neo4JExecutor(args) {
-    return defaultExecutor({
-      ...args,
-      context: {
-        ...args.context,
-        sessionConfig,
-      },
-    });
-  };
-
-  executor[Symbol.asyncDispose] = function dispose() {
-    return driver.close();
-  };
-
-  return executor;
+  return makeAsyncDisposable(
+    function neo4JExecutor(args: ExecutionRequest) {
+      return defaultExecutor({
+        ...args,
+        context: {
+          ...args.context,
+          sessionConfig,
+        },
+      });
+    },
+    () => driver.close(),
+  );
 }
 
 interface GetExecutableSchemaFromTypeDefs {

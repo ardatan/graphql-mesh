@@ -1,0 +1,37 @@
+import { Callout } from '@theguild/components'
+
+# Deploying Mesh to Cloudflare Workers
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+Mesh Serve a provides you a cross-platform GraphQL Server. So you can easily integrate it into any
+platform besides Node.js.
+
+[Cloudflare Workers](https://developers.cloudflare.com/workers) provides a serverless execution
+environment that allows you to create entirely new applications or augment existing ones without
+configuring or maintaining infrastructure.
+
+<Callout>
+  Before you start, make sure you read the [Serverless / On the
+  Edge](/v1/serve/deployment/serverless) page.
+</Callout>
+
+```ts
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+const serveRuntime = createServeRuntime({
+  // serveConfig
+})
+
+export default { fetch: serveRuntime }
+```
+
+<Callout>
+  If you want to use [Cloudflare KV
+  Cache](https://developers.cloudflare.com/workers/runtime-apis/kv) as a distributed cache, [see
+  here for Mesh
+  integration](https://the-guild.dev/graphql/mesh/v1/serve/features/performance#cloudflare-workers-kv)
+</Callout>

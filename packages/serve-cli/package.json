@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/serve-cli",
-  "version": "0.6.4",
+  "version": "0.8.6",
   "type": "module",
   "repository": {
     "type": "git",
@@ -34,6 +34,10 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
+  "scripts": {
+    "bundle": "(rm -rf bundle || true) && rollup -c",
+    "inject-version": "tsx scripts/inject-version.ts"
+  },
   "peerDependencies": {
     "@parcel/watcher": "^2.1.0",
     "graphql": "*"
@@ -46,15 +50,15 @@
   "dependencies": {
     "@commander-js/extra-typings": "^12.0.1",
     "@graphql-mesh/cross-helpers": "^0.4.4",
-    "@graphql-mesh/serve-runtime": "^0.4.4",
-    "@graphql-mesh/types": "^0.98.10",
-    "@graphql-mesh/utils": "^0.98.10",
+    "@graphql-mesh/serve-runtime": "^0.5.6",
+    "@graphql-mesh/types": "^0.99.5",
+    "@graphql-mesh/utils": "^0.99.5",
     "@graphql-tools/utils": "^10.2.3",
     "commander": "^12.0.0",
     "dotenv": "^16.3.1",
+    "jiti": "^1.21.6",
     "json-bigint-patch": "^0.0.8",
-    "spinnies": "^0.5.1",
-    "tsx": "^4.7.1"
+    "spinnies": "^0.5.1"
   },
   "optionalDependencies": {
     "node-libcurl": "^4.0.0",
@@ -62,7 +66,14 @@
   },
   "devDependencies": {
     "@parcel/watcher": "^2.3.0",
-    "@types/spinnies": "^0.5.3"
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-sucrase": "^5.0.2",
+    "@types/spinnies": "^0.5.3",
+    "rollup": "^4.18.1",
+    "rollup-plugin-tsconfig-paths": "^1.5.2",
+    "tsx": "^4.16.2"
   },
   "publishConfig": {
     "access": "public",

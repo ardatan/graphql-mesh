@@ -1,7 +1,13 @@
-import { GraphQLSchema } from 'graphql';
-import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { GraphQLSchema } from 'graphql';
+import type {
+  ImportFn,
+  MeshTransform,
+  MeshTransformOptions,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { extractResolvers, loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { composeResolvers, ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
+import type { ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
+import { composeResolvers } from '@graphql-tools/resolvers-composition';
 import { addResolversToSchema } from '@graphql-tools/schema';
 
 export default class ResolversCompositionTransform implements MeshTransform {
@@ -49,4 +55,4 @@ export default class ResolversCompositionTransform implements MeshTransform {
   }
 }
 
-export { ResolversComposition } from '@graphql-tools/resolvers-composition';
+export type { ResolversComposition } from '@graphql-tools/resolvers-composition';

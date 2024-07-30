@@ -1,4 +1,4 @@
-import { DocumentNode, FragmentDefinitionNode, OperationDefinitionNode } from 'graphql';
+import type { DocumentNode, FragmentDefinitionNode, OperationDefinitionNode } from 'graphql';
 import { memoize1 } from '@graphql-tools/utils';
 
 export const getOperationsAndFragments = memoize1(function getOperationsAndFragments(

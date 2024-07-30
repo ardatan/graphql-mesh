@@ -1,4 +1,5 @@
-import { lru, LRU } from 'tiny-lru';
+import type { LRU } from 'tiny-lru';
+import { lru } from 'tiny-lru';
 
 export type LRUCache<T = any> = LRU<T>;
 

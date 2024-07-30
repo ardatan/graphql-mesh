@@ -12,10 +12,11 @@ import {
   FiTarget,
   FiUserCheck,
 } from 'react-icons/fi';
-import { Anchor, Mermaid } from '@theguild/components';
-import GraphQLLogo from '../../public/assets/graphql-logo.svg';
-import MeshExampleLogo from '../../public/assets/mesh-example.png';
-import OpenSourceLogo from '../../public/assets/open-source.svg';
+import graphqlLogo from '@/public/assets/graphql-logo.svg';
+import meshDiagram from '@/public/assets/mesh-diagram.svg';
+import meshExampleLogo from '@/public/assets/mesh-example.png';
+import openSourceLogo from '@/public/assets/open-source.svg';
+import { Anchor } from '@theguild/components';
 
 const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
   return (
@@ -50,7 +51,7 @@ function Hero() {
           </ButtonLink>
           <ButtonLink
             className="flex flex-row gap-2 items-center"
-            href="https://github.com/urigo/graphql-mesh"
+            href="https://github.com/ardatan/graphql-mesh"
           >
             <FiGithub /> GitHub
           </ButtonLink>
@@ -76,7 +77,7 @@ const gradients: [string, string][] = [
   ['#ff9472', '#f2709c'],
   ['#4776e6', '#8e54e9'],
   ['#f857a6', '#ff5858'],
-  ['#4AC29A', '#BDFFF3'],
+  ['#4ac29a', '#bdfff3'],
   ['#00c6ff', '#0072ff'],
 ];
 
@@ -97,6 +98,7 @@ function pickGradient(i: number) {
 
   return gradient;
 }
+
 function FeatureWrapper({ children }: PropsWithChildren) {
   return <div className={FeatureWrapperClass}>{children}</div>;
 }
@@ -286,7 +288,7 @@ export function IndexPage(): ReactElement {
                   'Use GraphQL as a query language to fetch data from your data-sources directly, without the need for a running gateway server, or any other bottleneck.',
                 icon: (
                   <Image
-                    src={GraphQLLogo}
+                    src={graphqlLogo}
                     loading="eager"
                     placeholder="empty"
                     alt="GraphQL Logo"
@@ -299,7 +301,7 @@ export function IndexPage(): ReactElement {
                 description: 'GraphQL Mesh compose sources as a single GraphQL schema',
                 icon: (
                   <Image
-                    src={MeshExampleLogo}
+                    src={meshExampleLogo}
                     loading="eager"
                     placeholder="empty"
                     alt="GraphQL Mesh Logo"
@@ -313,7 +315,7 @@ export function IndexPage(): ReactElement {
                   'GraphQL Mesh is free and open-source, and been built with the community. You can contribute, extend and have your custom logic easily.',
                 icon: (
                   <Image
-                    src={OpenSourceLogo}
+                    src={openSourceLogo}
                     loading="eager"
                     placeholder="empty"
                     alt="Open Source Logo"
@@ -378,34 +380,7 @@ export function IndexPage(): ReactElement {
             </div>
           </div>
         }
-        image={
-          <Mermaid
-            chart={`
-              graph TD;
-                subgraph client [" "]
-                  mobile(Mobile App)
-                  web(Web App)
-                  node(Node.js Client)
-                end
-
-                mobile(Mobile App)--->mesh
-                web(Web App)--->mesh
-                node(Node.js Client)--->mesh
-
-                mesh(Mesh Gateway GraphQL API)
-
-                mesh--->rest(Books REST API)
-                mesh--->grpc(Authors gRPC API)
-                mesh--->stores(Stores GraphQL API)
-
-                subgraph api [" "]
-                  rest(Books REST API)
-                  grpc(Authors gRPC API)
-                  stores(Stores GraphQL API)
-                end
-            `}
-          />
-        }
+        image={<Image src={meshDiagram} alt="Mesh diagram" />}
         gradient={2}
       />
       <div className={FeatureWrapperClass}>

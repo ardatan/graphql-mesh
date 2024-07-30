@@ -1,6 +1,5 @@
 {
-  "name": "federation-handler-example",
-  "version": "0.5.145",
+  "name": "@examples/federation-example",
   "license": "MIT",
   "private": true,
   "workspaces": [
@@ -23,7 +22,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@apollo/server": "4.10.4",
+    "@apollo/server": "4.10.5",
     "apollo-server-caching": "3.3.0",
     "concurrently": "8.2.2",
     "delay-cli": "2.0.0",

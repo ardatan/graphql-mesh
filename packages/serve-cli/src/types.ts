@@ -1,6 +1,6 @@
 import type { AppOptions, HttpRequest, HttpResponse } from 'uWebSockets.js';
 import type { MeshServeConfig } from '@graphql-mesh/serve-runtime';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 
 export interface MeshServeCLIContext {
   req: HttpRequest;
@@ -22,6 +22,12 @@ export type MeshServeCLIConfig = MeshServeConfig<MeshServeCLIContext> & {
    */
   sslCredentials?: AppOptions;
   /**
+   * The size of the HTTP headers to allow
+   *
+   * @default 16384
+   */
+  maxHeaderSize?: number;
+  /**
    * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
    * This feature can be disabled by passing `false`
    */
@@ -41,5 +47,6 @@ export interface ServerOptions {
   protocol: 'http' | 'https';
   host: string;
   port: number;
+  maxHeaderSize: number;
   sslCredentials?: MeshServeCLIConfig['sslCredentials'];
 }

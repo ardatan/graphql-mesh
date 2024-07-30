@@ -4,17 +4,82 @@ on:
 
 jobs:
   dependencies:
-    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@main
+    if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
+    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yml@v1
+    with:
+      node-version-file: .node-version
     secrets:
       githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
 
   release:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@v1
     with:
+      node-version-file: .node-version
       npmTag: alpha
       buildScript: build
-      nodeVersion: 18
-      packageManagerVersion: modern
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
+
+  ghcr:
+    runs-on: ubuntu-latest
+    needs: [release]
+    if: contains(needs.release.outputs.publishedPackages, '@graphql-mesh/serve-cli')
+    steps:
+      - name: version mesh-serve
+        uses: actions/github-script@v7
+        id: ver-mesh-serve
+        with:
+          result-encoding: string
+          script: |
+            const publishedPackages = ${{ needs.release.outputs.publishedPackages }};
+            const meshServe = publishedPackages.find((p) => p.name === '@graphql-mesh/serve-cli');
+            if (!meshServe) {
+              return core.setFailed('@graphql-mesh/serve-cli was not published!');
+            }
+            console.log(meshServe.version);
+            return meshServe.version;
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: set up docker buildx
+        uses: docker/setup-buildx-action@v3
+      - name: log in to ghcr
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: set up env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version-file: .node-version
+      - name: prepare
+        run: yarn prebuild
+      - name: bundle
+        run: yarn bundle
+      - name: inject mesh-serve version
+        run: |
+          yarn workspace @graphql-mesh/serve-cli inject-version ${{ steps.ver-mesh-serve.outputs.result }}
+      - name: bake and push
+        uses: docker/bake-action@v5
+        env:
+          MESH_SERVE_TAGS: ${{ steps.ver-mesh-serve.outputs.result }}
+        with:
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
+          push: true
+      - name: comment on pr
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: Docker Images
+          message: |
+            Published images for this PR are available at:
+            ```
+            ghcr.io/ardatan/mesh-serve:${{ steps.ver-mesh-serve.outputs.result }}
+            ```

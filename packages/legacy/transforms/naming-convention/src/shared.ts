@@ -14,7 +14,7 @@ import {
 import { resolvers as scalarsResolversMap } from 'graphql-scalars';
 import { lowerCase } from 'lower-case';
 import { upperCase } from 'upper-case';
-import { YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
 
 type NamingConventionFn = (input: string) => string;
 type NamingConventionType = YamlConfig.NamingConventionTransformConfig['typeNames'];

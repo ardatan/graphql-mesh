@@ -1,6 +1,6 @@
-import { buildSchema, GraphQLField, GraphQLObjectType, printSchema } from 'graphql';
+import { buildSchema, GraphQLObjectType, printSchema, type GraphQLField } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { MeshPubSub } from '@graphql-mesh/types';
+import type { MeshPubSub } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import HoistFieldTransform from '../src/index.js';

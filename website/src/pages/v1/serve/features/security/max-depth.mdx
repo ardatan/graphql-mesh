@@ -1,4 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Max Depth
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 **Limit** the **depth** of a GraphQL document.
 
@@ -18,9 +25,9 @@ Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
 import { maxDepthPlugin } from '@escape.tech/graphql-armor-max-depth'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineServeConfig({
+export default defineConfig({
   plugins: () => [
     maxDepthPlugin({
       // Toggle the plugin | Default: true

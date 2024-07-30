@@ -1,6 +1,7 @@
-import { buildSchema, GraphQLSchema } from 'graphql';
+import { buildSchema, GraphQLEnumType, GraphQLSchema } from 'graphql';
 import {
   composeSubgraphs,
+  createPruneTransform,
   createRenameFieldTransform,
   createRenameTypeTransform,
 } from '../src/index.js';
@@ -102,5 +103,30 @@ describe('Composition', () => {
     ]);
 
     expect(supergraphSdl).toMatchSnapshot();
+  });
+  describe('Pruning', () => {
+    it('keeps enums that are only used in directive args', () => {
+      const { supergraphSdl } = composeSubgraphs([
+        {
+          name: 'Test',
+          schema: buildSchema(
+            /* GraphQL */ `
+              directive @test(arg: Test) on FIELD_DEFINITION
+              type Query {
+                foo: String @test(arg: TEST)
+              }
+              enum Test {
+                TEST
+              }
+            `,
+            { noLocation: true },
+          ),
+          transforms: [createPruneTransform()],
+        },
+      ]);
+      const schema = buildSchema(supergraphSdl);
+      const testEnum = schema.getType('Test');
+      expect(testEnum).toBeInstanceOf(GraphQLEnumType);
+    });
   });
 });

@@ -1,29 +1,32 @@
+import type {
+  DocumentNode,
+  ExecutionResult,
+  GraphQLResolveInfo,
+  IntrospectionQuery,
+  SelectionNode,
+} from 'graphql';
 import {
   buildASTSchema,
   buildClientSchema,
   buildSchema,
-  DocumentNode,
-  ExecutionResult,
   getIntrospectionQuery,
-  GraphQLResolveInfo,
   GraphQLSchema,
-  IntrospectionQuery,
   Kind,
   parse,
   print,
-  SelectionNode,
   visit,
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import { process, util } from '@graphql-mesh/cross-helpers';
-import { PredefinedProxyOptions, StoreProxy, ValidationError } from '@graphql-mesh/store';
+import type { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions, ValidationError } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
   parseInterpolationStrings,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   GetMeshSourcePayload,
   ImportFn,
   Logger,
@@ -41,10 +44,10 @@ import {
   readUrl,
 } from '@graphql-mesh/utils';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from '@graphql-tools/federation';
-import { SubscriptionProtocol, UrlLoader } from '@graphql-tools/url-loader';
+import type { SubscriptionProtocol } from '@graphql-tools/url-loader';
+import { UrlLoader } from '@graphql-tools/url-loader';
+import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
 import {
-  ExecutionRequest,
-  Executor,
   getDocumentNodeFromSchema,
   getOperationASTFromRequest,
   isAsyncIterable,

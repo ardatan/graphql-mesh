@@ -1,19 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { createServer } from 'node:http';
-import { AddressInfo } from 'node:net';
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
-import { ServerOptions } from 'graphql-ws/lib/server';
+import type { ServerOptions } from 'graphql-ws/lib/server';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { YogaServerInstance } from 'graphql-yoga';
+import type { YogaServerInstance } from 'graphql-yoga';
 import { WebSocketServer } from 'ws';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import BareMerger from '@graphql-mesh/merger-bare';
 import { getMesh } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import SupergraphHandler from '@graphql-mesh/supergraph';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn as importFn, PubSub } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
+import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
 import {
   AUTH_HEADER as AUTHORS_AUTH_HEADER,
   server as authorsServer,
@@ -286,38 +284,23 @@ describe('Supergraph', () => {
  getaddrinfo ENOTFOUND down-sdl-source.com`);
   });
   it('configures WebSockets for subscriptions correctly', async () => {
-    await using disposableStack = new AsyncDisposableStack();
-    const authorsHttpServer = createServer(authorsServer);
-    disposableStack.defer(
-      () =>
-        new Promise((resolve, reject) =>
-          authorsHttpServer.close(err => (err ? reject(err) : resolve())),
-        ),
-    );
+    await using authorsHttpServer = await createDisposableServer(authorsServer);
     useServer(
       getGraphQLWSOptionsForYoga(authorsServer),
       new WebSocketServer({
-        server: authorsHttpServer,
+        server: authorsHttpServer.server,
         path: authorsServer.graphqlEndpoint,
       }),
     );
-    const booksHttpServer = createServer(booksServer);
-    disposableStack.defer(
-      () =>
-        new Promise((resolve, reject) =>
-          booksHttpServer.close(err => (err ? reject(err) : resolve())),
-        ),
-    );
+    await using booksHttpServer = await createDisposableServer(booksServer);
     useServer(
       getGraphQLWSOptionsForYoga(booksServer),
       new WebSocketServer({
-        server: booksHttpServer,
+        server: booksHttpServer.server,
         path: booksServer.graphqlEndpoint,
       }),
     );
 
-    await new Promise<void>(resolve => authorsHttpServer.listen(0, () => resolve()));
-    await new Promise<void>(resolve => booksHttpServer.listen(0, () => resolve()));
     const handler = new SupergraphHandler({
       ...baseHandlerConfig,
       config: {
@@ -325,7 +308,7 @@ describe('Supergraph', () => {
         subgraphs: [
           {
             name: 'authors',
-            endpoint: `http://localhost:${(authorsHttpServer.address() as AddressInfo).port}${authorsServer.graphqlEndpoint}`,
+            endpoint: `http://localhost:${authorsHttpServer.address().port}${authorsServer.graphqlEndpoint}`,
             operationHeaders: {
               Authorization: AUTHORS_AUTH_HEADER,
             },
@@ -333,7 +316,7 @@ describe('Supergraph', () => {
           },
           {
             name: 'books',
-            endpoint: `http://localhost:${(booksHttpServer.address() as AddressInfo).port}${booksServer.graphqlEndpoint}`,
+            endpoint: `http://localhost:${booksHttpServer.address().port}${booksServer.graphqlEndpoint}`,
             operationHeaders: {
               Authorization: BOOKS_AUTH_HEADER,
             },
@@ -368,7 +351,6 @@ describe('Supergraph', () => {
       throw new Error('Subscription result is not an async iterable');
     }
     const subscriptionAsyncIterator = subscriptionResult[Symbol.asyncIterator]();
-    disposableStack.defer(() => subscriptionAsyncIterator.return() as Promise<any>);
     const subscriptionIterationResult$ = subscriptionAsyncIterator.next();
     // Wait for the subscription to be ready
     await new Promise<void>(resolve => setTimeout(resolve, 30));
@@ -389,6 +371,7 @@ describe('Supergraph', () => {
     expect(subscriptionIterationResult.value.data).toEqual({
       bookCreated: mutationResult?.data?.createBook,
     });
+    await subscriptionAsyncIterator.return();
   });
 });
 

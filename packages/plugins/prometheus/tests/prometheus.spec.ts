@@ -43,7 +43,7 @@ describe('Prometheus', () => {
         };
       },
       plugins: ctx => [usePrometheus(ctx)],
-      logging: false,
+      logging: !!process.env.DEBUG,
     });
   }
 

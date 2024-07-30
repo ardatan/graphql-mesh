@@ -4,7 +4,14 @@ description:
   request - however, some requests are deemed "simple" and don't make a preflight.
 ---
 
+import { Callout } from '@theguild/components'
+
 # CSRF Prevention
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 If you have CORS enabled, almost all requests coming from the browser will have a preflight
 request - however, some requests are deemed "simple" and don't make a preflight. One example of such
@@ -27,10 +34,10 @@ npm i @graphql-yoga/plugin-csrf-prevention
 ## Quick Start
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useCSRFPrevention } from '@graphql-yoga/plugin-csrf-prevention'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useCSRFPrevention({
       requestHeaders: ['x-graphql-mesh-csrf'] // default

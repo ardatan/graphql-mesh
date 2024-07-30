@@ -1,4 +1,4 @@
-import { GraphQLInterfaceType } from 'graphql';
+import type { GraphQLInterfaceType } from 'graphql';
 
 export function processDiscriminatorAnnotations({
   interfaceType,

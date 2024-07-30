@@ -8,7 +8,7 @@ import {
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { asArray, getRootTypeMap, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { SubgraphTransform } from '../compose.js';
+import type { SubgraphTransform } from '../compose.js';
 import {
   addFederation2DirectivesToSubgraph,
   importFederationDirectives,

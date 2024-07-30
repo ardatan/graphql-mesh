@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose 1`] = `
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@length", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
+)
+{
+  query: Query
+  
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io") 
+}
+
+directive @length(subgraph: String, min: Int, max: Int)  repeatable on SCALAR
+
+directive @httpOperation(
+  subgraph: String
+  path: String
+  operationSpecificHeaders: [[String]]
+  httpMethod: HTTPMethod
+  isBinary: Boolean
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
+  jsonApiFields: Boolean
+  queryStringOptions: ObjMap
+) repeatable on FIELD_DEFINITION
+
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: [[String]]
+  queryStringOptions: ObjMap
+  queryParams: [[String]]
+) repeatable on SCHEMA
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+scalar Category @length(subgraph: "Wiki", max: 100)  @join__type(graph: WIKI) 
+
+scalar ObjMap @join__type(graph: WIKI) 
+
+scalar _DirectiveExtensions @join__type(graph: WIKI) 
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io"}]}
+) @join__type(graph: WIKI)  {
+  jokes_categories: [Category] @httpOperation(
+    subgraph: "Wiki"
+    path: "/jokes/categories"
+    operationSpecificHeaders: [["accept", "application/json"]]
+    httpMethod: GET
+  )
+}
+
+enum HTTPMethod @join__type(graph: WIKI)  {
+  GET @join__enumValue(graph: WIKI) 
+  HEAD @join__enumValue(graph: WIKI) 
+  POST @join__enumValue(graph: WIKI) 
+  PUT @join__enumValue(graph: WIKI) 
+  DELETE @join__enumValue(graph: WIKI) 
+  CONNECT @join__enumValue(graph: WIKI) 
+  OPTIONS @join__enumValue(graph: WIKI) 
+  TRACE @join__enumValue(graph: WIKI) 
+  PATCH @join__enumValue(graph: WIKI) 
+}
+    "
+`;

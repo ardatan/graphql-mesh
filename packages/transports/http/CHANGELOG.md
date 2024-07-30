@@ -1,5 +1,167 @@
 # @graphql-mesh/transport-http
 
+## 0.3.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/transport-common@0.4.5
+
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/transport-common@0.4.4
+
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/transport-common@0.4.3
+
+## 0.3.2
+
+### Patch Changes
+
+- [#7294](https://github.com/ardatan/graphql-mesh/pull/7294)
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/string-interpolation@^0.5.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/utils@^0.99.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.99.0)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/executor-graphql-ws@^1.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-graphql-ws/v/1.2.0)
+    (from `dependencies`)
+
+- [#7294](https://github.com/ardatan/graphql-mesh/pull/7294)
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to manipulate transport entry through
+  `transportEntries`.
+
+  For example, you can add extra headers to a subgraph
+
+  ```ts
+  transportEntries: {
+    products: {
+      // This adds extra headers to the subgraph configuration
+      headers: [
+        // This forwards `authorization` from the upstream to downstream
+        ['authorization', '{context.headers.authorization}'],
+        // Or some static value
+        ['x-extra', process.env.SOME_THING]
+      ]
+    }
+  }
+  ```
+
+- Updated dependencies
+  [[`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033),
+  [`0bdc18d`](https://github.com/ardatan/graphql-mesh/commit/0bdc18df3d150a61abf987b8829934ed4ca02eed),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)]:
+  - @graphql-mesh/string-interpolation@0.5.5
+  - @graphql-mesh/transport-common@0.4.2
+  - @graphql-mesh/utils@0.99.2
+
+## 0.3.1
+
+### Patch Changes
+
+- [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.5)
+    (from `^1.1.2`, in `dependencies`)
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/transport-common@0.4.1
+
+## 0.3.0
+
+### Minor Changes
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support subscriptions over WebSockets
+
+### Patch Changes
+
+- [#6772](https://github.com/ardatan/graphql-mesh/pull/6772)
+  [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/executor-graphql-ws@^1.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-graphql-ws/v/1.2.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.3)
+    (to `dependencies`)
+  - Added dependency [`graphql-ws@^5.16.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.16.0)
+    (to `dependencies`)
+  - Added dependency [`ws@^8.18.0` ↗︎](https://www.npmjs.com/package/ws/v/8.18.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@envelop/core@^5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.0) (from
+    `dependencies`)
+
+- [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+  - Added dependency
+    [`@graphql-tools/executor-graphql-ws@^1.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-graphql-ws/v/1.2.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.3)
+    (to `dependencies`)
+  - Added dependency [`graphql-ws@^5.16.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.16.0)
+    (to `dependencies`)
+  - Added dependency [`ws@^8.18.0` ↗︎](https://www.npmjs.com/package/ws/v/8.18.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@envelop/core@^5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.0) (from
+    `dependencies`)
+
+- [#7223](https://github.com/ardatan/graphql-mesh/pull/7223)
+  [`26549a9`](https://github.com/ardatan/graphql-mesh/commit/26549a9832b4e18afdb22e4615a9951d69a5922b)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor-http@^1.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-http/v/1.1.2)
+    (from `^1.0.6`, in `dependencies`)
+- Updated dependencies
+  [[`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)]:
+  - @graphql-mesh/transport-common@0.4.0
+
 ## 0.2.1
 
 ### Patch Changes

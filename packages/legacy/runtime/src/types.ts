@@ -1,20 +1,20 @@
-import { DocumentNode, ExecutionResult } from 'graphql';
-import { Plugin } from '@envelop/core';
-import {
+import type { DocumentNode, ExecutionResult } from 'graphql';
+import type {
   GraphQLOperation,
   KeyValueCache,
   Logger,
   MeshFetch,
   MeshHandler,
   MeshMerger,
+  MeshPlugin,
   MeshPubSub,
   MeshTransform,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { TerminateHandler } from '@graphql-mesh/utils';
-import { IResolvers, Source } from '@graphql-tools/utils';
-import { MESH_CONTEXT_SYMBOL } from './constants.js';
-import { MeshInstance } from './get-mesh.js';
+import type { TerminateHandler } from '@graphql-mesh/utils';
+import type { IResolvers, Source } from '@graphql-tools/utils';
+import type { MESH_CONTEXT_SYMBOL } from './constants.js';
+import type { MeshInstance } from './get-mesh.js';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -25,7 +25,7 @@ export type GetMeshOptions = {
   pubsub?: MeshPubSub;
   merger: MeshMerger;
   logger?: Logger;
-  additionalEnvelopPlugins?: Plugin[];
+  additionalEnvelopPlugins?: MeshPlugin<any>[];
   documents?: Source[];
   fetchFn?: MeshFetch;
 };

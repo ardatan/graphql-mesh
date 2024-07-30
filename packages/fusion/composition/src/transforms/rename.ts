@@ -1,14 +1,14 @@
 import {
-  GraphQLFieldConfig,
-  GraphQLFieldConfigArgumentMap,
-  GraphQLInputFieldConfig,
-  GraphQLNamedType,
-  GraphQLSchema,
   isSpecifiedScalarType,
+  type GraphQLFieldConfig,
+  type GraphQLFieldConfigArgumentMap,
+  type GraphQLInputFieldConfig,
+  type GraphQLNamedType,
+  type GraphQLSchema,
 } from 'graphql';
 import { resolvers as scalarsResolversMap } from 'graphql-scalars';
-import { getRootTypes, MapperKind, mapSchema, SchemaMapper } from '@graphql-tools/utils';
-import { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import { getRootTypes, MapperKind, mapSchema, type SchemaMapper } from '@graphql-tools/utils';
+import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 
 export const ignoreList = [
   'Int',

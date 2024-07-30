@@ -1,12 +1,14 @@
-import { buildSchema, DocumentNode, extendSchema, GraphQLSchema, parse, print } from 'graphql';
-import { composeSubgraphs, SubgraphConfig } from '@graphql-mesh/fusion-composition';
-import { Logger } from '@graphql-mesh/types';
+import type { DocumentNode, GraphQLSchema } from 'graphql';
+import { buildSchema, Kind, parse, print, visit } from 'graphql';
+import type { SubgraphConfig } from '@graphql-mesh/fusion-composition';
+import { composeSubgraphs } from '@graphql-mesh/fusion-composition';
+import type { Logger } from '@graphql-mesh/types';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { LoaderContext, MeshComposeCLIConfig } from './types.js';
+import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, logger: Logger) {
   const ctx: LoaderContext = {
@@ -33,7 +35,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       };
     }),
   );
-  let additionalTypeDefs: (DocumentNode | string)[] | undefined;
+  let additionalTypeDefs: DocumentNode[] | undefined;
   if (config.additionalTypeDefs != null) {
     const result = await loadTypedefs(config.additionalTypeDefs, {
       noLocation: true,
@@ -41,7 +43,33 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       assumeValidSDL: true,
       loaders: [new GraphQLFileLoader()],
     });
-    additionalTypeDefs = result.map(r => r.document || r.rawSDL);
+    let additionalFieldDirectiveUsed = false;
+    additionalTypeDefs = result
+      .map(r => r.document || parse(r.rawSDL, { noLocation: true }))
+      .map(doc =>
+        visit(doc, {
+          [Kind.FIELD_DEFINITION](node) {
+            additionalFieldDirectiveUsed = true;
+            return {
+              ...node,
+              directives: [
+                ...(node.directives || []),
+                {
+                  kind: Kind.DIRECTIVE,
+                  name: { kind: Kind.NAME, value: 'additionalField' },
+                },
+              ],
+            };
+          },
+        }),
+      );
+    if (additionalFieldDirectiveUsed) {
+      additionalTypeDefs.unshift(
+        parse(/* GraphQL */ `
+          directive @additionalField on FIELD_DEFINITION
+        `),
+      );
+    }
   }
   const result = composeSubgraphs(subgraphConfigsForComposition);
   if (result.errors?.length) {
@@ -59,7 +87,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
   if (!result.supergraphSdl) {
     throw new Error(`Unknown error: composed schema is empty`);
   }
-  if (additionalTypeDefs?.length || config.transforms?.length) {
+  if (additionalTypeDefs?.length /* TODO || config.transforms?.length */) {
     let composedSchema = buildSchema(result.supergraphSdl, {
       noLocation: true,
       assumeValid: true,
@@ -73,12 +101,14 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
         assumeValidSDL: true,
       });
     }
+    /* TODO
     if (config.transforms?.length) {
       logger.info('Applying transforms');
       for (const transform of config.transforms) {
         composedSchema = transform(composedSchema);
       }
     }
+    */
     return printSchemaWithDirectives(composedSchema);
   }
   return result.supergraphSdl;

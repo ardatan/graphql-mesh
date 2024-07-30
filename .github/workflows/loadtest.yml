@@ -13,15 +13,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 21]
+        node-version:
+          - 18
+          - 20
+          - 22
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: the-guild-org/shared-config/setup@v1
         name: setup env
         with:
-          nodeVersion: ${{matrix.node-version}}
-          packageManagerVersion: modern
+          node-version: ${{matrix.node-version}}
       - name: Prepare for build
         run: yarn prebuild
       - name: loadtest

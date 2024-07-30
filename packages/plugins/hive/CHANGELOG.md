@@ -1,5 +1,78 @@
 # @graphql-mesh/plugin-hive
 
+## 0.99.5
+
+### Patch Changes
+
+- [#7401](https://github.com/ardatan/graphql-mesh/pull/7401)
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/utils@^0.99.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.99.4)
+    (to `peerDependencies`)
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/types@0.99.5
+
+## 0.99.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.4
+
+## 0.99.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.3
+
+## 0.99.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033),
+  [`0bdc18d`](https://github.com/ardatan/graphql-mesh/commit/0bdc18df3d150a61abf987b8829934ed4ca02eed),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/string-interpolation@0.5.5
+  - @graphql-mesh/types@0.99.2
+
+## 0.99.1
+
+### Patch Changes
+
+- [#7300](https://github.com/ardatan/graphql-mesh/pull/7300)
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-hive/core@^0.5.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.5.0) (to
+    `dependencies`)
+  - Added dependency
+    [`@graphql-hive/yoga@^0.33.3` ↗︎](https://www.npmjs.com/package/@graphql-hive/yoga/v/0.33.3)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-hive/client@^0.32.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.32.0)
+    (from `dependencies`)
+
+- [#7300](https://github.com/ardatan/graphql-mesh/pull/7300)
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Upgrade Hive SDK to use latest
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/types@0.99.1
+
+## 0.99.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.0
+
 ## 0.98.12
 
 ### Patch Changes

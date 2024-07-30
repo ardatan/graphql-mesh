@@ -1,6 +1,11 @@
-import { MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
+import type { Logger, MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
+import { type ExecutionRequest } from '@graphql-tools/utils';
 import { iterateAsync } from './iterateAsync.js';
+import { DefaultLogger } from './logger.js';
 import { mapMaybePromise } from './map-maybe-promise.js';
+
+export const requestIdByRequest = new WeakMap<Request, string>();
+export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>();
 
 export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>[]): MeshFetch {
   return function wrappedFetchFn(url, options, context, info) {
@@ -25,6 +30,33 @@ export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>
             },
             context,
             info,
+            get executionRequest() {
+              return info?.executionRequest;
+            },
+            get requestId() {
+              if (context?.request) {
+                return requestIdByRequest.get(context.request);
+              }
+            },
+            get logger() {
+              let logger: Logger;
+              if (info?.executionRequest) {
+                logger = loggerForExecutionRequest.get(info.executionRequest);
+              }
+              if (!logger) {
+                logger = new DefaultLogger('fetch');
+              }
+              if (context?.request) {
+                const requestId = requestIdByRequest.get(context.request);
+                if (requestId) {
+                  logger = logger.child(requestId);
+                }
+              }
+              if (info?.executionRequest) {
+                loggerForExecutionRequest.set(info.executionRequest, logger);
+              }
+              return logger;
+            },
           }),
         onFetchDoneHooks,
       ),

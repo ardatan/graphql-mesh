@@ -1,11 +1,12 @@
 import { camelCase } from 'camel-case';
-import { DocumentNode, parse, print, visit } from 'graphql';
+import type { DocumentNode } from 'graphql';
+import { parse, print, visit } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { useMaskedErrors } from '@envelop/core';
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import {
+import type {
   ImportFn,
   MeshHandlerLibrary,
   MeshMergerLibrary,
@@ -22,6 +23,7 @@ import {
   resolveAdditionalResolvers,
 } from '@graphql-mesh/utils';
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
+import type { Source } from './utils.js';
 import {
   getPackage,
   hashSHA256,
@@ -31,7 +33,6 @@ import {
   resolveDocuments,
   resolveLogger,
   resolvePubSub,
-  Source,
 } from './utils.js';
 
 const ENVELOP_CORE_PLUGINS_MAP: Record<

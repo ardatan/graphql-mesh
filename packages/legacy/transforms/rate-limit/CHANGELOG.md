@@ -1,5 +1,77 @@
 # @graphql-mesh/transform-rate-limit
 
+## 0.99.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/types@0.99.5
+
+## 0.99.5
+
+### Patch Changes
+
+- [#7241](https://github.com/ardatan/graphql-mesh/pull/7241)
+  [`7b474af`](https://github.com/ardatan/graphql-mesh/commit/7b474af8ebd91fad894ca72fca31e0afbcc76ede)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`minimatch@^10.0.0` ↗︎](https://www.npmjs.com/package/minimatch/v/10.0.0)
+    (from `^9.0.0`, in `dependencies`)
+
+## 0.99.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/types@0.99.4
+
+## 0.99.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/types@0.99.3
+
+## 0.99.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033),
+  [`0bdc18d`](https://github.com/ardatan/graphql-mesh/commit/0bdc18df3d150a61abf987b8829934ed4ca02eed),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/string-interpolation@0.5.5
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+
+## 0.99.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/types@0.99.1
+  - @graphql-mesh/utils@0.99.1
+
+## 0.99.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)]:
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.98.10
 
 ### Patch Changes

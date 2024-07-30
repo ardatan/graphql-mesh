@@ -1,6 +1,11 @@
-import { ExecutionResult } from 'graphql';
+import type { IncomingMessage } from 'http';
+import { request } from 'http';
+import { gunzipSync, gzipSync } from 'zlib';
+import type { ExecutionResult } from 'graphql';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
-import { MeshInstance } from '@graphql-mesh/runtime';
+import type { MeshPlugin } from '@graphql-mesh/types';
+import { useContentEncoding } from '@whatwg-node/server';
+import { createDisposableServer } from '../../../testing/createDisposableServer.js';
 import { getTestMesh } from '../../testing/getTestMesh.js';
 
 describe('http', () => {
@@ -127,5 +132,75 @@ describe('http', () => {
         'Unexpected parameter "extraParam1" in the request body.',
       );
     });
+  });
+  it('handles compressed data', async () => {
+    await using mesh = await getTestMesh({
+      additionalEnvelopPlugins: [useContentEncoding() as MeshPlugin<{}>],
+    });
+    const httpHandler = createMeshHTTPHandler({
+      baseDir: __dirname,
+      getBuiltMesh: async () => mesh,
+    });
+    const response = await httpHandler.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Encoding': 'gzip',
+      },
+      body: gzipSync(
+        Buffer.from(
+          JSON.stringify({
+            query: `query { __typename }`,
+          }),
+        ),
+      ),
+    });
+    expect(response.status).toBe(200);
+    const result: ExecutionResult = await response.json();
+    expect(result.data.__typename).toBe('Query');
+  });
+  it('returns compressed data if asked', async () => {
+    await using mesh = await getTestMesh({
+      additionalEnvelopPlugins: [useContentEncoding() as MeshPlugin<{}>],
+    });
+    const httpHandler = createMeshHTTPHandler({
+      baseDir: __dirname,
+      getBuiltMesh: async () => mesh,
+    });
+    await using server = await createDisposableServer(httpHandler);
+    const addressInfo = server.address();
+    const req = request({
+      host: 'localhost',
+      port: addressInfo.port,
+      path: '/graphql',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'accept-encoding': 'gzip', // ask for gzip
+      },
+    });
+    req.write(
+      JSON.stringify({
+        query: `query { __typename }`,
+      }),
+    );
+    req.end();
+    const res: IncomingMessage = await new Promise((resolve, reject) => {
+      req.on('response', resolve);
+      req.on('error', reject);
+    });
+    const chunks: Buffer[] = [];
+    await new Promise<void>(resolve => {
+      res.on('data', chunk => {
+        chunks.push(chunk as Buffer);
+      });
+      res.on('end', resolve);
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.headers['content-encoding']).toBe('gzip');
+    const finalRes = Buffer.concat(chunks);
+    expect(finalRes.length.toString()).toBe(res.headers['content-length']);
+    const result: ExecutionResult = JSON.parse(gunzipSync(finalRes).toString());
+    expect(result.data.__typename).toBe('Query');
   });
 });

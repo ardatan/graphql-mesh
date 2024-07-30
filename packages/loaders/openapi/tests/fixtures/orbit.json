@@ -3621,5 +3621,5 @@
       }
     }
   },
-  "servers": [{ "url": "https://app.orbit.love/api/v1" }]
+  "servers": [{ "url": "" }]
 }

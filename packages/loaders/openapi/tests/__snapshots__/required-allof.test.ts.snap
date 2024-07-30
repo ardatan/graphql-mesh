@@ -11,7 +11,7 @@ directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) on SCHEMA
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 type Admin implements User {
   """The Name."""
@@ -30,7 +30,7 @@ interface User @discriminator(subgraph: "test", field: "type") {
 }
 
 """The Name."""
-scalar query_getAdmin_allOf_0_name @length(subgraph: "test", min: null, max: 100)
+scalar query_getAdmin_allOf_0_name @length(subgraph: "test", max: 100)
 
 type Editor implements User {
   """The Name."""

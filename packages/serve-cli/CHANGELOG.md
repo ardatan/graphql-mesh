@@ -1,5 +1,168 @@
 # @graphql-mesh/serve-cli
 
+## 0.8.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4),
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/serve-runtime@0.5.6
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/types@0.99.5
+
+## 0.8.5
+
+### Patch Changes
+
+- [`3920b8b`](https://github.com/ardatan/graphql-mesh/commit/3920b8bc029bcffedcbd9b12fd2b46edcb380f18)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Trigger release of Docker Image
+
+## 0.8.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ec31e60`](https://github.com/ardatan/graphql-mesh/commit/ec31e608c271f14554fcef5519a12c4366e87f38),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/serve-runtime@0.5.5
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/types@0.99.4
+
+## 0.8.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/serve-runtime@0.5.4
+  - @graphql-mesh/types@0.99.3
+
+## 0.8.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f47c900`](https://github.com/ardatan/graphql-mesh/commit/f47c900d19e8c634d39e9dd90bfb1acc4f892a1f)]:
+  - @graphql-mesh/serve-runtime@0.5.3
+
+## 0.8.1
+
+### Patch Changes
+
+- [#7327](https://github.com/ardatan/graphql-mesh/pull/7327)
+  [`cfe779a`](https://github.com/ardatan/graphql-mesh/commit/cfe779a55421ee1064c6778db760bdef8ffb2d3b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add \`--version\` param to Serve CLI to print the
+  version
+
+  Additionally, the version will be available in `globalThis.__VERSION__` during the CLI's runtime.
+
+- [#7333](https://github.com/ardatan/graphql-mesh/pull/7333)
+  [`bfaeffa`](https://github.com/ardatan/graphql-mesh/commit/bfaeffa9881f3bf7faac07ecc39667793f347b83)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to configure max header size if you get
+  431 with headers payload longer than 16kb which is default value for Node.js
+- Updated dependencies
+  [[`9f6624e`](https://github.com/ardatan/graphql-mesh/commit/9f6624e327a555b3de201e67ca9f5dabca44e238),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)]:
+  - @graphql-mesh/serve-runtime@0.5.2
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+
+## 0.8.0
+
+### Minor Changes
+
+- [`7594f4b`](https://github.com/ardatan/graphql-mesh/commit/7594f4b87dbc75e0f9d7ac3bb1bf68e3bb598561)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Change port using PORT env var
+
+- [#7317](https://github.com/ardatan/graphql-mesh/pull/7317)
+  [`8978498`](https://github.com/ardatan/graphql-mesh/commit/8978498a16d6632f3bbe87148f0e8cd3d876e9a8)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Add CLI arguments for polling and error
+  masking
+
+  The usage of arguments is as follows:
+
+  ```
+  Usage: mesh-serve [options]
+
+  Options:
+    --polling <intervalInMs>  schema polling interval in milliseconds (env: POLLING)
+    --masked-errors           mask unexpected errors in responses (default: true)
+    --no-masked-errors        don't mask unexpected errors in responses
+  ```
+
+### Patch Changes
+
+- [`ae8dbdc`](https://github.com/ardatan/graphql-mesh/commit/ae8dbdcf43ee0fdfdd93100c0759bee010c506c3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Reject config files that import modules which
+  are missing
+
+- [`ded0714`](https://github.com/ardatan/graphql-mesh/commit/ded07148cbab19121b608b77c42263f5baeed069)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Attempt watch only if supergraph is a path to
+  a file
+
+- Updated dependencies
+  [[`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770)]:
+  - @graphql-mesh/serve-runtime@0.5.1
+  - @graphql-mesh/types@0.99.1
+  - @graphql-mesh/utils@0.99.1
+
+## 0.7.0
+
+### Minor Changes
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support WebSocket connections
+
+- [#7257](https://github.com/ardatan/graphql-mesh/pull/7257)
+  [`798ed17`](https://github.com/ardatan/graphql-mesh/commit/798ed17c8e00b199596d9f9c35863c815bf4e151)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support mesh.config.ts or mesh.config.mts or
+  mesh.config.cts or mesh.config.js or mesh.config.mjs or mesh.config.cjs configuration files
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use jiti instead of tsx for importig config
+  files
+
+### Patch Changes
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency [`jiti@^1.21.6` ↗︎](https://www.npmjs.com/package/jiti/v/1.21.6) (to
+    `dependencies`)
+  - Removed dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (from
+    `dependencies`)
+- Updated dependencies
+  [[`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a),
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`26549a9`](https://github.com/ardatan/graphql-mesh/commit/26549a9832b4e18afdb22e4615a9951d69a5922b),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`7b35444`](https://github.com/ardatan/graphql-mesh/commit/7b35444dcc15c6d22eb1b26c080c7b78ee8aef8e),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`a2306d2`](https://github.com/ardatan/graphql-mesh/commit/a2306d2c53c9d3cf071aec6e550dc5fff976bfb2),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`eefbfbe`](https://github.com/ardatan/graphql-mesh/commit/eefbfbe94d72fa6f5cf60a8cf363cae039aece89),
+  [`de7517e`](https://github.com/ardatan/graphql-mesh/commit/de7517e653babaeabbd80a941a0210c491601725)]:
+  - @graphql-mesh/serve-runtime@0.5.0
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.6.4
 
 ### Patch Changes

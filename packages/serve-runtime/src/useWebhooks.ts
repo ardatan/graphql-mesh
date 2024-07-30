@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Plugin } from 'graphql-yoga';
-import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import type { Plugin } from 'graphql-yoga';
+import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 
 // TODO: Use Yoga PubSub later
 export interface MeshWebhooksPluginOptions {
@@ -23,8 +23,9 @@ export function useWebhooks({ pubsub, logger }: MeshWebhooksPluginOptions): Plug
     onRequest({ request, url, endResponse, fetchAPI }): void | Promise<void> {
       for (const eventName of pubsub.getEventNames()) {
         if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
+          logger?.debug(`Received webhook request for ${url.pathname}`);
           return request.text().then(body => {
-            logger?.debug(`Received webhook request for ${url.pathname}`, body);
+            logger?.debug(`Emitted webhook request for ${url.pathname}`, body);
             pubsub.publish(
               eventName,
               request.headers.get('content-type') === 'application/json' ? JSON.parse(body) : body,

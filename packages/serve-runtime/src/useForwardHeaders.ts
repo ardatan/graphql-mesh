@@ -1,4 +1,4 @@
-import { MeshServePlugin } from './types';
+import type { MeshServePlugin } from './types';
 
 export interface ForwardHeadersPluginOptions {
   headerNames: string[];

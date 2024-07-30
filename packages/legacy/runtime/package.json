@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.99.12",
+  "version": "0.100.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,8 +33,8 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.4",
-    "@graphql-mesh/types": "^0.98.10",
-    "@graphql-mesh/utils": "^0.98.10",
+    "@graphql-mesh/types": "^0.99.5",
+    "@graphql-mesh/utils": "^0.99.5",
     "@graphql-tools/utils": "^10.2.3",
     "graphql": "*",
     "tslib": "^2.4.0"
@@ -43,10 +43,10 @@
     "@envelop/core": "^5.0.0",
     "@envelop/extended-validation": "^4.0.0",
     "@envelop/graphql-jit": "^8.0.0",
-    "@graphql-mesh/string-interpolation": "^0.5.4",
+    "@graphql-mesh/string-interpolation": "^0.5.5",
     "@graphql-tools/batch-delegate": "^9.0.3",
-    "@graphql-tools/delegate": "^10.0.12",
-    "@graphql-tools/executor": "^1.2.8",
+    "@graphql-tools/delegate": "^10.0.16",
+    "@graphql-tools/executor": "^1.3.0",
     "@graphql-tools/wrap": "^10.0.5",
     "@whatwg-node/fetch": "^0.9.0",
     "graphql-jit": "0.8.2"

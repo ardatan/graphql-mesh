@@ -1,7 +1,12 @@
 {
   "name": "@omnigraph/thrift",
-  "version": "0.3.1",
+  "version": "0.4.5",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/loaders/thrift"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"
@@ -33,14 +38,15 @@
     "@creditkarma/thrift-parser": "^2.0.0",
     "@creditkarma/thrift-server-core": "^1.0.4",
     "@graphql-mesh/cross-helpers": "^0.4.4",
-    "@graphql-mesh/transport-thrift": "^0.3.1",
-    "@graphql-mesh/types": "^0.98.10",
-    "@graphql-mesh/utils": "^0.98.10",
+    "@graphql-mesh/transport-thrift": "^0.4.5",
+    "@graphql-mesh/types": "^0.99.5",
+    "@graphql-mesh/utils": "^0.99.5",
+    "@whatwg-node/fetch": "^0.9.18",
     "graphql-scalars": "^1.22.4",
     "thrift": "^0.20.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "10.2.3"
+    "@graphql-tools/utils": "10.3.2"
   },
   "publishConfig": {
     "access": "public",

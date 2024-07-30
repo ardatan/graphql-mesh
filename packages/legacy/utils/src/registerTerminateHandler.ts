@@ -1,4 +1,4 @@
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'] as const;
 

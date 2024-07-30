@@ -1,4 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Snapshot Plugin
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 The `snapshot` plugin allows applying snapshot for development usage.
 
@@ -16,9 +23,9 @@ Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
 import useSnapshot from '@graphql-mesh/plugin-snapshot'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useSnapshot({
       ...pluginCtx,

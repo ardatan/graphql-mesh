@@ -8,7 +8,10 @@ import { Callout } from '@theguild/components'
 
 # MySQL
 
-![image](https://user-images.githubusercontent.com/20847995/79219205-84e55580-7e5a-11ea-96e2-c39581b90e61.png)
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 This handler allows you to generate GraphQL schema from an existing MySQL database.
 
@@ -23,10 +26,10 @@ npm i @omnigraph/mysql
 Now, you can use it directly in your Mesh config file:
 
 ```ts filename="mesh.config.ts" {2,7-9}
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadMySQLSubgraph } from '@omnigraph/mysql'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadMySQLSubgraph('Employees', {

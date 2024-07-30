@@ -1,15 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { parse } from 'graphql';
+import { buildSchema, OperationTypeNode, parse, validateSchema } from 'graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import GraphQLHandler from '@graphql-mesh/graphql';
+import JsonSchemaHandler from '@graphql-mesh/json-schema';
+import BareMerger from '@graphql-mesh/merger-bare';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { getMesh } from '../src/get-mesh.js';
-import { MeshResolvedSource } from '../src/types.js';
+import type { MeshResolvedSource } from '../src/types.js';
 
 describe('getMesh', () => {
   const baseDir = __dirname;
@@ -399,5 +401,73 @@ describe('getMesh', () => {
         wave1: String
       }"
     `);
+  });
+
+  it('generates valid schema from multiple JSON Schema sources with bare merger', async () => {
+    const mesh = await getMesh({
+      cache,
+      pubsub,
+      logger,
+      sources: [
+        {
+          name: 'Foo',
+          handler: new JsonSchemaHandler({
+            baseDir,
+            cache,
+            pubsub,
+            logger,
+            store,
+            importFn: defaultImportFn,
+            name: 'Foo',
+            config: {
+              operations: [
+                {
+                  type: 'Query',
+                  field: 'foo',
+                  path: '/foo',
+                  responseSample: {
+                    bar: 'baz',
+                  },
+                },
+              ],
+            },
+          }),
+        },
+        {
+          name: 'Bar',
+          handler: new JsonSchemaHandler({
+            baseDir,
+            cache,
+            pubsub,
+            logger,
+            store,
+            importFn: defaultImportFn,
+            name: 'Bar',
+            config: {
+              operations: [
+                {
+                  type: 'Query',
+                  field: 'bar',
+                  path: '/bar',
+                  responseSample: {
+                    baz: 'qux',
+                  },
+                },
+              ],
+            },
+          }),
+        },
+      ],
+      merger: new BareMerger({
+        cache,
+        pubsub,
+        logger,
+        store,
+      }),
+    });
+    const printedSchema = printSchemaWithDirectives(mesh.schema);
+    const parsedSchema = buildSchema(printedSchema);
+    const validatedErrors = validateSchema(parsedSchema);
+    expect(validatedErrors).toHaveLength(0);
   });
 });

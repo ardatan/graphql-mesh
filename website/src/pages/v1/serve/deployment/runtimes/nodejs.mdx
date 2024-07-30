@@ -1,0 +1,34 @@
+import { Callout } from '@theguild/components'
+
+# Node.js
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+Node.js is the most common runtime for JavaScript.
+
+If you have Node.js environment, we highly recommend to use Mesh with Serve CLI as described in the
+[introduction](/v1/serve). If you really want to use the runtime in a customized way. You can use
+the `createServeRuntime` function from `@graphql-mesh/serve-runtime` package.
+
+## Serve CLI
+
+You can follow the introduction page directly to use Serve CLI. [See here](/v1/serve)
+
+## Serve Runtime (advanced-only)
+
+Use this method only if you know what you are doing. It is recommended to use Serve CLI for most
+cases.
+
+```ts
+import { createServer } from 'http'
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+const serveRuntime = createServeRuntime(/* Your configuration */)
+const server = createServer(serveRuntime)
+server.listen(4000, () => {
+  console.log(`Server is running on http://localhost:4000`)
+})
+```

@@ -7,8 +7,9 @@ import type {
   YogaServerOptions,
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
-import type { createSupergraphSDLFetcher } from '@graphql-hive/client';
-import type { Transport, TransportsOption, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
+import type { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
+import type { Transports, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
+import type { Transport, TransportEntry } from '@graphql-mesh/transport-common';
 import type {
   KeyValueCache,
   Logger,
@@ -20,10 +21,13 @@ import type {
 import type { LogLevel } from '@graphql-mesh/utils';
 import type { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import type { IResolvers } from '@graphql-tools/utils';
-import type { CORSPluginOptions } from '@whatwg-node/server';
 import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 
-export { UnifiedGraphConfig };
+export type { UnifiedGraphConfig };
+
+export type TransportEntryAdditions = {
+  [subgraph: '*' | string]: Partial<TransportEntry>;
+};
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
   | MeshServeConfigWithSupergraph<TContext>
@@ -65,13 +69,13 @@ export type MeshServePlugin<
   TPluginContext extends Record<string, any> = Record<string, any>,
   TContext extends Record<string, any> = Record<string, any>,
 > = YogaPlugin<Partial<TPluginContext> & MeshServeContext & TContext> &
-  UnifiedGraphPlugin & {
+  UnifiedGraphPlugin<Partial<TPluginContext> & MeshServeContext & TContext> & {
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
 
 interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigForSupergraph<TContext> {
   /**
-   * Path to the Apollo Federation unified schema.
+   * Path to the Federation Supergraph.
    */
   supergraph?: UnifiedGraphConfig;
 }
@@ -118,9 +122,47 @@ interface MeshServeConfigForSupergraph<TContext> extends MeshServeConfigWithoutS
     | IResolvers<unknown, MeshServeContext & TContext>
     | IResolvers<unknown, MeshServeContext>[];
   /**
-   * Implement custom executors for transports.
+   * A map, or factory function, of transport kinds to their implementations.
+   *
+   * @example Providing a module exporting a transport.
+   *
+   * ```ts
+   * import { defineConfig } from '@graphql-mesh/serve-cli';
+   *
+   * export const serveConfig = defineConfig({
+   *   transports: {
+   *     http: import('@graphql-mesh/transport-http'),
+   *   },
+   * });
+   * ```
    */
-  transports?: TransportsOption;
+  transports?: Transports;
+  /**
+   * Configure Transport options for each subgraph.
+   *
+   * @example Adding subscriptions support for Federation v2 subgraphs.
+   *
+   * ```ts
+   * import { defineConfig } from '@graphql-mesh/serve-cli';
+   *
+   * export const serveConfig = defineConfig({
+   *   transportEntries: {
+   *     '*': {
+   *       http: {
+   *          options: {
+   *            subscriptions: {
+   *              ws: {
+   *                endpoint: '/subscriptions',
+   *              },
+   *          },
+   *         },
+   *       },
+   *     },
+   *   },
+   * });
+   * ```
+   */
+  transportEntries?: TransportEntryAdditions;
   /**
    * Current working directory.
    */
@@ -132,11 +174,16 @@ export interface MeshServeConfigWithProxy<TContext> extends MeshServeConfigWitho
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
   proxy: HTTPExecutorOptions;
-
-  transport?:
-    | Transport<'http'>
-    | Promise<Transport<'http'>>
-    | (() => Transport<'http'> | Promise<Transport<'http'>>);
+  transport?: Transport;
+  /**
+   * Disable GraphQL validation on the gateway
+   *
+   * By default, the gateway will validate the query against the schema before sending it to the executor.
+   * This is recommended to be enabled, but can be disabled for performance reasons.
+   *
+   * @default false
+   */
+  skipValidation?: boolean;
 }
 
 interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
@@ -159,7 +206,7 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Enable, disable or configure CORS.
    */
-  cors?: CORSPluginOptions<unknown>;
+  cors?: YogaServerOptions<unknown, MeshServeContext & TContext>['cors'];
   /**
    * Show, hide or configure GraphiQL.
    */

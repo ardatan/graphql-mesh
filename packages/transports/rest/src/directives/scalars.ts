@@ -1,4 +1,4 @@
-import { GraphQLScalarType } from 'graphql';
+import type { GraphQLScalarType } from 'graphql';
 import { resolvers as scalarResolvers } from 'graphql-scalars';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { processLengthAnnotations } from './length.js';

@@ -1,9 +1,8 @@
 import { constantCase } from 'change-case';
+import type { GraphQLArgument, GraphQLFieldConfigArgumentMap } from 'graphql';
 import {
   DirectiveLocation,
-  GraphQLArgument,
   GraphQLDirective,
-  GraphQLFieldConfigArgumentMap,
   GraphQLSchema,
   GraphQLString,
   isEnumType,
@@ -14,12 +13,13 @@ import {
   typeFromAST,
   visit,
 } from 'graphql';
-import { TransportEntry } from '@graphql-mesh/transport-common';
+import { process } from '@graphql-mesh/cross-helpers';
+import type { TransportEntry } from '@graphql-mesh/transport-common';
 import {
   getDirectiveExtensions,
   resolveAdditionalResolversWithoutImport,
 } from '@graphql-mesh/utils';
-import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import type { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
@@ -29,6 +29,7 @@ import {
   MapperKind,
   mapSchema,
   memoize1,
+  mergeDeep,
 } from '@graphql-tools/utils';
 import {
   HoistField,
@@ -40,7 +41,7 @@ import {
   TransformEnumValues,
 } from '@graphql-tools/wrap';
 import { filterHiddenPartsInSchema } from './filterHiddenPartsInSchema.js';
-import { UnifiedGraphHandler } from './unifiedGraphManager.js';
+import type { UnifiedGraphHandler } from './unifiedGraphManager.js';
 
 // Memoize to avoid re-parsing the same schema AST
 // Workaround for unsupported directives on composition: restore extra directives
@@ -162,6 +163,7 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
   onSubgraphExecute,
   additionalTypeDefs: additionalTypeDefsFromConfig = [],
   additionalResolvers: additionalResolversFromConfig = [],
+  transportEntryAdditions,
 }) {
   const additionalTypeDefs = [...asArray(additionalTypeDefsFromConfig)];
   const additionalResolvers = [...asArray(additionalResolversFromConfig)];
@@ -289,6 +291,9 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
                 }),
               );
             }
+          }
+          const additionalFieldDirectives = fieldDirectives.additionalField;
+          if (additionalFieldDirectives?.length > 0) {
             return null;
           }
           const sourceDirectives = fieldDirectives.source;
@@ -398,6 +403,10 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
             }
             return [realName, fieldConfig];
           }
+          const additionalFieldDirectives = fieldDirectives.additionalField;
+          if (additionalFieldDirectives?.length > 0) {
+            return null;
+          }
         },
         [MapperKind.INTERFACE_FIELD]: (fieldConfig, fieldName, typeName) => {
           const fieldDirectives = getDirectiveExtensions(fieldConfig);
@@ -416,6 +425,10 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
             }
             return [realName, fieldConfig];
           }
+          const additionalFieldDirectives = fieldDirectives.additionalField;
+          if (additionalFieldDirectives?.length > 0) {
+            return null;
+          }
         },
         [MapperKind.ENUM_VALUE]: (enumValueConfig, typeName, _schema, externalValue) => {
           const enumDirectives = getDirectiveExtensions(enumValueConfig);
@@ -432,7 +445,13 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
               }
               renameEnumValueByEnumTypeNames[realTypeName][realValue] = externalValue;
             }
-            return [realValue, enumValueConfig];
+            return [
+              realValue,
+              {
+                ...enumValueConfig,
+                value: realValue,
+              },
+            ];
           }
         },
       });
@@ -485,7 +504,9 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         transforms.push(
           new RenameObjectFieldArguments((typeName, fieldName, argName) => {
             const realTypeName = renameTypeNamesReversed[typeName] ?? typeName;
-            return renameArgByFieldByTypeNames[realTypeName]?.[fieldName]?.[argName] ?? argName;
+            const realFieldName =
+              renameFieldByTypeNamesReversed[realTypeName]?.[fieldName] ?? fieldName;
+            return renameArgByFieldByTypeNames[realTypeName]?.[realFieldName]?.[argName] ?? argName;
           }),
         );
       }
@@ -529,7 +550,7 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         return onSubgraphExecute(subgraphName, req);
       };
     },
-    batch: true,
+    batch: !process.env.JEST,
     onStitchingOptions(opts: any) {
       subschemas = opts.subschemas;
       opts.typeDefs = [opts.typeDefs, additionalTypeDefs];
@@ -538,6 +559,29 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
   });
 
   executableUnifiedGraph = filterHiddenPartsInSchema(executableUnifiedGraph);
+
+  if (transportEntryAdditions) {
+    const wildcardTransportOptions = transportEntryAdditions['*'];
+    for (const subgraphName in transportEntryMap) {
+      const toBeMerged: Partial<TransportEntry>[] = [];
+      const transportEntry = transportEntryMap[subgraphName];
+      if (transportEntry) {
+        toBeMerged.push(transportEntry);
+      }
+      const transportOptionBySubgraph = transportEntryAdditions[subgraphName];
+      if (transportOptionBySubgraph) {
+        toBeMerged.push(transportOptionBySubgraph);
+      }
+      const transportOptionByKind = transportEntryAdditions['*.' + transportEntry?.kind];
+      if (transportOptionByKind) {
+        toBeMerged.push(transportOptionByKind);
+      }
+      if (wildcardTransportOptions) {
+        toBeMerged.push(wildcardTransportOptions);
+      }
+      transportEntryMap[subgraphName] = mergeDeep(toBeMerged);
+    }
+  }
 
   return {
     unifiedGraph: executableUnifiedGraph,

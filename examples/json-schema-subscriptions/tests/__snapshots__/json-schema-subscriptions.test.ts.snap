@@ -13,7 +13,7 @@ directive @httpOperation(subgraph: String, path: String, operationSpecificHeader
 
 directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) on SCHEMA
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 directive @live on QUERY
 

@@ -1,5 +1,107 @@
 # @graphql-mesh/utils
 
+## 0.99.5
+
+### Patch Changes
+
+- [#7401](https://github.com/ardatan/graphql-mesh/pull/7401)
+  [`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/disposablestack@^0.0.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.1)
+    (to `dependencies`)
+  - Removed dependency
+    [`disposablestack@^1.1.6` ↗︎](https://www.npmjs.com/package/disposablestack/v/1.1.6) (from
+    `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.5
+
+## 0.99.4
+
+### Patch Changes
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add timestamp to log messages
+
+  ```
+  [2021-09-29T14:00:00.000Z] XXXX
+  ```
+
+- [#7343](https://github.com/ardatan/graphql-mesh/pull/7343)
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Prevent logger to have the same log prefixes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.4
+
+## 0.99.3
+
+### Patch Changes
+
+- [#7360](https://github.com/ardatan/graphql-mesh/pull/7360)
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Removed dependency [`jiti@^1.21.6` ↗︎](https://www.npmjs.com/package/jiti/v/1.21.6) (from
+    `dependencies`)
+
+- [#7360](https://github.com/ardatan/graphql-mesh/pull/7360)
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - No jiti, keep the utils JS env agnostic
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.3
+
+## 0.99.2
+
+### Patch Changes
+
+- [#7352](https://github.com/ardatan/graphql-mesh/pull/7352)
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.16)
+    (from `^10.0.14`, in `dependencies`)
+- Updated dependencies
+  [[`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033),
+  [`0bdc18d`](https://github.com/ardatan/graphql-mesh/commit/0bdc18df3d150a61abf987b8829934ed4ca02eed),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/string-interpolation@0.5.5
+  - @graphql-mesh/types@0.99.2
+
+## 0.99.1
+
+### Patch Changes
+
+- [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.14)
+    (from `^10.0.12`, in `dependencies`)
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/types@0.99.1
+
+## 0.99.0
+
+### Minor Changes
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use jiti as the default import implementation
+
+### Patch Changes
+
+- [#7261](https://github.com/ardatan/graphql-mesh/pull/7261)
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency [`jiti@^1.21.6` ↗︎](https://www.npmjs.com/package/jiti/v/1.21.6) (to
+    `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.0
+
 ## 0.98.10
 
 ### Patch Changes

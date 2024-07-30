@@ -1,5 +1,5 @@
 {
-  "name": "@examples/hive-example-rest-service",
+  "name": "@examples-v1-next/hive-example-my-rest",
   "private": true,
   "scripts": {
     "compose": "yarn mesh-compose --subgraph myrest > typeDefs.graphql",
@@ -7,11 +7,10 @@
     "start": "node --import tsx index.ts"
   },
   "dependencies": {
-    "@graphql-hive/cli": "0.38.4",
+    "@graphql-hive/cli": "0.39.0",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
     "fets": "0.8.1",
-    "graphql": "16.9.0",
-    "tsx": "4.16.0"
+    "graphql": "16.9.0"
   }
 }

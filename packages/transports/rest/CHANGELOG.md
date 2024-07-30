@@ -1,5 +1,108 @@
 # @graphql-mesh/transport-rest
 
+## 0.4.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/types@0.99.5
+  - @graphql-mesh/transport-common@0.4.5
+
+## 0.4.5
+
+### Patch Changes
+
+- [#7388](https://github.com/ardatan/graphql-mesh/pull/7388)
+  [`c4190a9`](https://github.com/ardatan/graphql-mesh/commit/c4190a9ca20a77356ba0ff165cb47da28c43ff2f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the issue when a discriminator is used with a
+  response that has multiple status codes
+
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/types@0.99.4
+  - @graphql-mesh/transport-common@0.4.4
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/types@0.99.3
+  - @graphql-mesh/transport-common@0.4.3
+
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033),
+  [`0bdc18d`](https://github.com/ardatan/graphql-mesh/commit/0bdc18df3d150a61abf987b8829934ed4ca02eed),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)]:
+  - @graphql-mesh/string-interpolation@0.5.5
+  - @graphql-mesh/transport-common@0.4.2
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/transport-common@0.4.1
+  - @graphql-mesh/types@0.99.1
+  - @graphql-mesh/utils@0.99.1
+
+## 0.4.0
+
+### Patch Changes
+
+- [#6772](https://github.com/ardatan/graphql-mesh/pull/6772)
+  [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
+    in `dependencies`)
+
+- [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
+    in `dependencies`)
+
+- [#7240](https://github.com/ardatan/graphql-mesh/pull/7240)
+  [`3aa1583`](https://github.com/ardatan/graphql-mesh/commit/3aa1583db989ef79a706873e9e5786d1cf61de89)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
+    in `dependencies`)
+- Updated dependencies
+  [[`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)]:
+  - @graphql-mesh/transport-common@0.4.0
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/types@0.99.0
+
 ## 0.3.2
 
 ### Patch Changes

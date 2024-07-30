@@ -1,7 +1,7 @@
-import { SchemaComposer } from 'graphql-compose';
+import type { SchemaComposer } from 'graphql-compose';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { inspect } from '@graphql-tools/utils';
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 
 export function getValidTypeName({
   schemaComposer,

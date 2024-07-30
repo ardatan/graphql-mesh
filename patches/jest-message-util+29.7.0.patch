@@ -1,0 +1,14 @@
+diff --git a/node_modules/jest-message-util/build/index.js b/node_modules/jest-message-util/build/index.js
+index d1cff26..fed45a6 100644
+--- a/node_modules/jest-message-util/build/index.js
++++ b/node_modules/jest-message-util/build/index.js
+@@ -338,7 +338,8 @@ const getTopFrame = lines => {
+     }
+     const parsedFrame = stackUtils.parseLine(line.trim());
+     if (parsedFrame && parsedFrame.file) {
+-      if (parsedFrame.file.startsWith('file://')) {
++      if (parsedFrame.file.startsWith('file:///')) {
++        console.log(parsedFrame.file);
+         parsedFrame.file = (0, _slash.default)(
+           (0, _url.fileURLToPath)(parsedFrame.file)
+         );

@@ -1,4 +1,9 @@
-import { GraphQLObjectType, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
+import {
+  isAbstractType,
+  type GraphQLObjectType,
+  type GraphQLResolveInfo,
+  type GraphQLTypeResolver,
+} from 'graphql';
 import { createGraphQLError, getDirective } from '@graphql-tools/utils';
 
 export function getTypeResolverForAbstractType({
@@ -23,6 +28,13 @@ export function getTypeResolverForAbstractType({
       const typeName =
         statusCodeTypeNameMap[data.$statusCode.toString()] || statusCodeTypeNameMap.default;
       if (typeName) {
+        const type = info.schema.getType(typeName);
+        if (isAbstractType(type)) {
+          const typeName = type.resolveType(data, _ctx, info, type);
+          if (typeName) {
+            return typeName;
+          }
+        }
         return typeName;
       }
     }

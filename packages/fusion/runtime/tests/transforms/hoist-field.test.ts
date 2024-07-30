@@ -1,4 +1,4 @@
-import { GraphQLField, GraphQLObjectType, GraphQLSchema, printSchema } from 'graphql';
+import { GraphQLObjectType, GraphQLSchema, printSchema, type GraphQLField } from 'graphql';
 import { createHoistFieldTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';

@@ -1,16 +1,15 @@
 {
-  "name": "mongoose-example",
-  "version": "0.14.2",
+  "name": "@examples/mongoose-example",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.91.2",
-    "@graphql-mesh/mongoose": "0.98.10",
+    "@graphql-mesh/cli": "0.92.6",
+    "@graphql-mesh/mongoose": "0.99.5",
     "graphql": "16.9.0",
-    "mongoose": "8.4.4"
+    "mongoose": "8.5.1"
   },
   "devDependencies": {
     "jest": "29.7.0"

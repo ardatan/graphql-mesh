@@ -1,18 +1,12 @@
 /* eslint-disable import/no-duplicates */
 import globby from 'globby';
-import {
-  buildSchema,
-  GraphQLFieldResolver,
-  GraphQLScalarType,
-  GraphQLSchema,
-  isEnumType,
-  specifiedDirectives,
-} from 'graphql';
-import {
+import type { GraphQLFieldResolver, GraphQLScalarType, GraphQLSchema } from 'graphql';
+import { buildSchema, isEnumType, specifiedDirectives } from 'graphql';
+import type {
   EnumTypeComposerValueConfigDefinition,
   ObjectTypeComposerFieldConfigAsObjectDefinition,
-  SchemaComposer,
 } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
   GraphQLByte,
@@ -22,14 +16,16 @@ import {
 } from 'graphql-scalars';
 import lodashGet from 'lodash.get';
 import lodashHas from 'lodash.has';
-import protobufjs, { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
-import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
+import type { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
+import protobufjs from 'protobufjs';
+import type { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 import { Client } from '@ardatan/grpc-reflection-js';
 import { fs, path, process } from '@graphql-mesh/cross-helpers';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import type { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
+import type {
   GetMeshSourcePayload,
   ImportFn,
   Logger,
@@ -46,8 +42,9 @@ import {
   getRootTypes,
   GraphQLStreamDirective,
 } from '@graphql-tools/utils';
-import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
-import { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
+import type { ChannelCredentials } from '@grpc/grpc-js';
+import { credentials, loadPackageDefinition } from '@grpc/grpc-js';
+import type { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
 import { fromJSON } from '@grpc/proto-loader';
 import {
   EnumDirective,

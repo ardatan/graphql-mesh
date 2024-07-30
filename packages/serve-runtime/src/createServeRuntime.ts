@@ -1,49 +1,54 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
-import AsyncDisposableStack from 'disposablestack/AsyncDisposableStack';
-import { GraphQLSchema, parse } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
+import { parse } from 'graphql';
 import {
   createYoga,
-  FetchAPI,
-  GraphiQLOptions,
   isAsyncIterable,
-  LandingPageRenderer,
   useReadinessCheck,
-  YogaServerInstance,
+  type FetchAPI,
+  type LandingPageRenderer,
   type Plugin,
+  type YogaServerInstance,
 } from 'graphql-yoga';
-import { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
-import { createSupergraphSDLFetcher } from '@graphql-hive/client';
+import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
+import { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
 import { process } from '@graphql-mesh/cross-helpers';
-import {
-  handleFederationSupergraph,
-  isDisposable,
+import type {
   OnSubgraphExecuteHook,
-  TransportEntry,
-  UnifiedGraphManager,
   UnifiedGraphManagerOptions,
 } from '@graphql-mesh/fusion-runtime';
+import { handleFederationSupergraph, UnifiedGraphManager } from '@graphql-mesh/fusion-runtime';
 import useMeshHive from '@graphql-mesh/plugin-hive';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
+import type { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
+  isDisposable,
   LogLevel,
+  makeAsyncDisposable,
   mapMaybePromise,
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import { MaybePromise } from '@graphql-tools/utils';
+import type { MaybePromise } from '@graphql-tools/utils';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
-import {
+import type {
   MeshServeConfig,
   MeshServeConfigContext,
   MeshServeContext,
   MeshServePlugin,
 } from './types.js';
+import { useChangingSchema } from './useChangingSchema.js';
+import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
+import { useCompleteSubscriptionsOnSchemaChange } from './useCompleteSubscriptionsOnSchemaChange.js';
+import { useFetchDebug } from './useFetchDebug.js';
+import { useRequestId } from './useRequestId.js';
+import { useSubgraphExecuteDebug } from './useSubgraphExecuteDebug.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
@@ -80,7 +85,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
-  let schemaFetcher: () => MaybePromise<GraphQLSchema>;
+  let getSchema: () => MaybePromise<GraphQLSchema> = () => unifiedGraph;
+  let schemaChanged = (_schema: GraphQLSchema): void => {
+    throw new Error('Schema changed too early');
+  };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
   let registryPlugin: MeshPlugin<unknown> = {};
@@ -100,6 +108,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     executorPlugin.onSchemaChange = function onSchemaChange(payload) {
       unifiedGraph = payload.schema;
     };
+    if (config.skipValidation) {
+      executorPlugin.onValidate = function ({ setResult }) {
+        setResult([]);
+      };
+    }
     unifiedGraphPlugin = executorPlugin;
     readinessChecker = () => {
       const res$ = proxyExecutor({
@@ -168,15 +181,21 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
     const unifiedGraphManager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
-      handleUnifiedGraph: handleFederationSupergraph,
+      handleUnifiedGraph: opts => {
+        // when handleUnifiedGraph is called, we're sure that the schema
+        // _really_ changed, we can therefore confidently notify about the schema change
+        schemaChanged(opts.unifiedGraph);
+        return handleFederationSupergraph(opts);
+      },
       transports: config.transports,
+      transportEntryAdditions: config.transportEntries,
       polling: config.polling,
       additionalResolvers: config.additionalResolvers,
-      transportBaseContext: configContext,
+      transportContext: configContext,
       onDelegateHooks,
       onSubgraphExecuteHooks,
     });
-    schemaFetcher = () => unifiedGraphManager.getUnifiedGraph();
+    getSchema = () => unifiedGraphManager.getUnifiedGraph();
     readinessChecker = () =>
       mapMaybePromise(unifiedGraphManager.getUnifiedGraph(), schema => !!schema);
     schemaInvalidator = () => unifiedGraphManager.invalidateUnifiedGraph();
@@ -184,20 +203,24 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     disposableStack.use(unifiedGraphManager);
     subgraphInformationHTMLRenderer = async () => {
       const htmlParts: string[] = [];
-      let supergraphLoadedPlace: string;
+      let supergraphLoadedPlace = './supergraph.graphql';
       if ('hive' in config && config.hive.endpoint) {
         supergraphLoadedPlace = 'Hive CDN <br>' + config.hive.endpoint;
       } else if ('supergraph' in config) {
         if (typeof config.supergraph === 'function') {
           const fnName = config.supergraph.name || '';
           supergraphLoadedPlace = `a custom loader ${fnName}`;
+        } else if (typeof config.supergraph === 'string') {
+          supergraphLoadedPlace = config.supergraph;
         }
       }
       let loaded = false;
       let loadError: Error;
-      let transportEntryMap: Record<string, TransportEntry>;
       try {
-        transportEntryMap = await unifiedGraphManager.getTransportEntryMap();
+        // TODO: Workaround for the issue
+        // When you go to landing page, then GraphiQL, GW stops working
+        const schema = await getSchema();
+        schemaChanged(schema);
         loaded = true;
       } catch (e) {
         loaded = false;
@@ -208,8 +231,8 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
         htmlParts.push(`<table>`);
         htmlParts.push(`<tr><th>Subgraph</th><th>Transport</th><th>Location</th></tr>`);
-        for (const subgraphName in transportEntryMap) {
-          const transportEntry = transportEntryMap[subgraphName];
+        for (const subgraphName in unifiedGraphManager._transportEntryMap) {
+          const transportEntry = unifiedGraphManager._transportEntryMap[subgraphName];
           htmlParts.push(`<tr>`);
           htmlParts.push(`<td>${subgraphName}</td>`);
           htmlParts.push(`<td>${transportEntry.kind}</td>`);
@@ -322,8 +345,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   }
 
   const yoga = createYoga<unknown, MeshServeContext>({
-    // @ts-expect-error PromiseLike is not compatible with Promise
-    schema: schemaFetcher,
     fetchAPI: config.fetchAPI,
     logging: logger,
     plugins: [
@@ -331,6 +352,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       unifiedGraphPlugin,
       readinessCheckPlugin,
       registryPlugin,
+      useChangingSchema(getSchema, cb => (schemaChanged = cb)),
+      useCompleteSubscriptionsOnDispose(disposableStack),
+      useCompleteSubscriptionsOnSchemaChange(),
+      useRequestId(),
+      useSubgraphExecuteDebug(configContext),
+      useFetchDebug(configContext),
       ...(config.plugins?.(configContext) || []),
     ],
     // @ts-expect-error PromiseLike is not compatible with Promise
@@ -376,13 +403,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       value: schemaInvalidator,
       configurable: true,
     },
-    [Symbol.asyncDispose]: {
-      value: () => disposableStack.disposeAsync(),
-      configurable: true,
-    },
   });
 
-  return yoga as YogaServerInstance<unknown, MeshServeContext> & {
-    invalidateUnifiedGraph(): void;
-  } & AsyncDisposable;
+  return makeAsyncDisposable(
+    yoga as YogaServerInstance<unknown, MeshServeContext> & {
+      invalidateUnifiedGraph(): void;
+    },
+    () => disposableStack.disposeAsync(),
+  );
 }

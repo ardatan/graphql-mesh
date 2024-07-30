@@ -1,5 +1,159 @@
 # @graphql-mesh/transport-common
 
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.5
+
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.4
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.3
+
+## 0.4.2
+
+### Patch Changes
+
+- [#7352](https://github.com/ardatan/graphql-mesh/pull/7352)
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.16)
+    (from `^10.0.14`, in `dependencies`)
+
+- [#7294](https://github.com/ardatan/graphql-mesh/pull/7294)
+  [`345a814`](https://github.com/ardatan/graphql-mesh/commit/345a81490f5201f6ee2f378b1b9d83c5881c9730)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ability to manipulate transport entry through
+  `transportEntries`.
+
+  For example, you can add extra headers to a subgraph
+
+  ```ts
+  transportEntries: {
+    products: {
+      // This adds extra headers to the subgraph configuration
+      headers: [
+        // This forwards `authorization` from the upstream to downstream
+        ['authorization', '{context.headers.authorization}'],
+        // Or some static value
+        ['x-extra', process.env.SOME_THING]
+      ]
+    }
+  }
+  ```
+
+- Updated dependencies
+  [[`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/types@0.99.2
+
+## 0.4.1
+
+### Patch Changes
+
+- [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.14)
+    (from `^10.0.12`, in `dependencies`)
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/types@0.99.1
+
+## 0.4.0
+
+### Minor Changes
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Define transports using a default export
+  satisfying the `Transport` generic
+
+  For example, a custom http transport implementation looks like this:
+
+  ```ts
+  // http-transport.ts
+
+  import { Transport } from '@graphql-mesh/transport-common'
+
+  export interface HTTPTransportOptions {
+    cache?: boolean
+  }
+
+  export default {
+    getSubgraphExecutor(opts) {
+      // <the implementation of your executor getter>
+    }
+  } satisfies Transport<'http', HTTPTransportOptions>
+  ```
+
+  and is used for Mesh serve like this:
+
+  ```ts
+  // mesh.config.ts
+
+  import { defineConfig } from '@graphql-mesh/serve-cli'
+
+  export const serveConfig = defineConfig({
+    transport: {
+      http: import('./http-transport')
+    }
+  })
+  ```
+
+  or like this:
+
+  ```ts
+  // mesh.config.ts
+
+  import { defineConfig } from '@graphql-mesh/serve-cli'
+  import httpTransport from './http-transport'
+
+  export const serveConfig = defineConfig({
+    transport: {
+      http: httpTransport
+    }
+  })
+  ```
+
+### Patch Changes
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@envelop/core@^5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.1) (to
+    `dependencies`)
+
+- [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
+  [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Added dependency
+    [`@envelop/core@^5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.1) (to
+    `dependencies`)
+
+- [#7207](https://github.com/ardatan/graphql-mesh/pull/7207)
+  [`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Improved typings and rename
+  `TransportBaseContext` to `TransportContext`
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.99.0
+
 ## 0.3.1
 
 ### Patch Changes

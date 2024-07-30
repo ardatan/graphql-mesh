@@ -1,16 +1,7 @@
-import {
-  DocumentNode,
-  extendSchema,
-  GraphQLOutputType,
-  GraphQLSchema,
-  GraphQLType,
-  isOutputType,
-  parse,
-  parseType,
-  typeFromAST,
-} from 'graphql';
+import type { DocumentNode, GraphQLOutputType, GraphQLSchema, GraphQLType } from 'graphql';
+import { extendSchema, isOutputType, parse, parseType, typeFromAST } from 'graphql';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import { SubgraphTransform } from './compose.js';
+import type { SubgraphTransform } from './compose.js';
 import { TransformValidationError } from './transforms/utils.js';
 
 export function createTypeReplaceTransform(

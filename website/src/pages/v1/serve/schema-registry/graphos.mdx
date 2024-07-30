@@ -23,9 +23,9 @@ You can also provide this configuration programaitically by providing a configur
 with other options to customize the polling/retry behavior.
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineServeConfig({
+export default defineConfig({
   graphos: {
     /**
      * The graph ref of the managed federation graph.
@@ -51,7 +51,3 @@ export default defineServeConfig({
 
 Other more advanced options are available, please refer to the type definitions for more
 information.
-
-## Persisted Operations
-
-`TODO: Add information about persisted operations with GraphOS`

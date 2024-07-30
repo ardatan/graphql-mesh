@@ -2,8 +2,9 @@ import type { Plugin } from 'graphql-yoga';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
-import { useResponseCache, UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
+import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
+import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 
 function generateSessionIdFactory(sessionIdDef: string) {
   if (sessionIdDef == null) {

@@ -1,6 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Execution Cancellation
 
-import { Callout } from '@theguild/components'
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 In the real world, a lot of HTTP requests are dropped or canceled. This can happen due to a flakey
 internet connection, navigation to a new view or page within a web or native app or the user simply
@@ -14,12 +19,9 @@ So any extra calls to the services can be stopped and the resources can be saved
 ## Enable Execution Cancellation
 
 ```ts filename="mesh.config.ts"
-import {
-  defineConfig as defineServeConfig,
-  useExecutionCancellation
-} from '@graphql-mesh/serve-cli'
+import { defineConfig, useExecutionCancellation } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [useExecutionCancellation()]
 })
 ```

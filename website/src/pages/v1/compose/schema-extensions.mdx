@@ -8,6 +8,11 @@ import { Callout } from '@theguild/components'
 
 # Schema Extensions
 
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
 Schema extensions add gateway-level type definitions and resolvers into a combined API, which is
 useful for establishing connections between types that exist in separate subgraphs.
 
@@ -173,10 +178,10 @@ To formalize this navigation within our supergraph, we can extend each type with
 will translate its respective key into an actual object association:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Posts', {
@@ -208,10 +213,10 @@ However, these extensions alone won’t do anything until they have correspondin
 complete example would look like this:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Posts', {
@@ -294,10 +299,10 @@ With this many-users query available, we can now delegate the `Post.user` field 
 many records:
 
 ```ts filename="mesh.config.ts"
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig } from '@graphql-mesh/compose-cli'
 import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Posts', {
@@ -335,7 +340,7 @@ values must correspond to the same index in the Array of keys.
 
 If the query you’re delegating to don’t conform to these expectations, you can provide a custom
 resolver function in `additionalResolvers` in `serve-runtime` configuration.
-`TODO: Add example for custom resolver function programmatically`
+{/* `TODO: Add example for custom resolver function programmatically` */}
 
 Batch delegation is generally preferable over plain delegation because it eliminates the redundancy
 of requesting the same field across an array of parent objects. Even so, delegation costs can add up
@@ -350,13 +355,10 @@ when you want to stitch subgraphs but you don't want to expose some extra fields
 exposed to the client.
 
 ```ts filename="mesh.config.ts"
-import {
-  createFilterTransform,
-  defineConfig as defineComposeConfig
-} from '@graphql-mesh/compose-cli'
+import { createFilterTransform, defineConfig } from '@graphql-mesh/compose-cli'
 import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
 
-export const composeConfig = defineComposeConfig({
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Posts', {

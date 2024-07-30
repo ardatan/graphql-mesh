@@ -1,10 +1,11 @@
-import { dereferenceObject, healJSONSchema, JSONSchemaObject } from 'json-machete';
+import type { JSONSchemaObject } from 'json-machete';
+import { dereferenceObject, healJSONSchema } from 'json-machete';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations.js';
-import { JSONSchemaOperationConfig } from './types.js';
+import type { JSONSchemaOperationConfig } from './types.js';
 
 export async function getDereferencedJSONSchemaFromOperations({
   operations,

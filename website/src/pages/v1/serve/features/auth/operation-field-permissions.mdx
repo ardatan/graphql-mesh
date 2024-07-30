@@ -1,4 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Allow-List Operation Fields
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 With this plugin you can automatically reject GraphQL operations that include specific field
 selections within the operations selection set. It works by extracting a set of schema coordinates
@@ -25,9 +32,9 @@ Then, add it to your plugins:
 
 ```ts filename="mesh.config.ts"
 import { useOperationFieldPermission } from '@envelop/operation-field-permissions'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useOperationFieldPermission({
       // we can access graphql context here

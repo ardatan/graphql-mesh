@@ -2,11 +2,11 @@ import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
-import { getMesh, GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
+import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
+import { getMesh } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { Logger, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, YamlConfig } from '@graphql-mesh/types';
 import {
-  defaultImportFn,
   DefaultLogger,
   pathExists,
   registerTerminateHandler,
@@ -17,6 +17,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
+import { defaultImportFn } from './defaultImportFn.js';
 import { handleFatalError } from './handleFatalError.js';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };

@@ -6,10 +6,9 @@ import os from 'os';
 import open from 'open';
 import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
-import { ServeMeshOptions } from '@graphql-mesh/runtime';
+import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
-import { TerminateHandler } from '@graphql-mesh/utils';
-import { GraphQLMeshCLIParams } from '../../index.js';
+import type { GraphQLMeshCLIParams } from '../../index.js';
 import { startNodeHttpServer } from './node-http.js';
 import { startuWebSocketsServer } from './uWebsockets.js';
 

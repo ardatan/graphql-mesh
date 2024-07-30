@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/supergraph",
-  "version": "0.4.12",
+  "version": "0.5.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,15 +33,15 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.4",
-    "@graphql-mesh/store": "^0.98.10",
-    "@graphql-mesh/types": "^0.98.10",
-    "@graphql-mesh/utils": "^0.98.10",
+    "@graphql-mesh/store": "^0.99.5",
+    "@graphql-mesh/types": "^0.99.5",
+    "@graphql-mesh/utils": "^0.99.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "^0.5.4",
-    "@graphql-tools/federation": "^2.1.1",
+    "@graphql-mesh/string-interpolation": "^0.5.5",
+    "@graphql-tools/federation": "^2.2.1",
     "@graphql-tools/url-loader": "^8.0.2",
     "@graphql-tools/utils": "^10.2.2",
     "lodash.get": "^4.4.2"

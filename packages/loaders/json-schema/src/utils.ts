@@ -1,5 +1,9 @@
-import { OperationTypeNode } from 'graphql';
-import { HTTPMethod, JSONSchemaOperationConfig, JSONSchemaPubSubOperationConfig } from './types.js';
+import type { OperationTypeNode } from 'graphql';
+import type {
+  HTTPMethod,
+  JSONSchemaOperationConfig,
+  JSONSchemaPubSubOperationConfig,
+} from './types.js';
 
 export function isPubSubOperationConfig(
   operationConfig: JSONSchemaOperationConfig,

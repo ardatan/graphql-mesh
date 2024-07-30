@@ -1,14 +1,14 @@
 import {
   buildClientSchema,
   execute,
-  ExecutionResult,
   getIntrospectionQuery,
-  IntrospectionQuery,
   parse,
   printSchema,
   specifiedRules,
   subscribe,
   validate,
+  type ExecutionResult,
+  type IntrospectionQuery,
 } from 'graphql';
 import { envelop, useEngine } from '@envelop/core';
 import { Subschema } from '@graphql-tools/delegate';

@@ -1,0 +1,70 @@
+import { Callout } from '@theguild/components'
+
+# Serverless / On the Edge
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+Mesh Serve can be deployed on the edge. This means that you can deploy your Mesh Serve to a
+serverless environment like AWS Lambda, Cloudflare Workers, or Azure Functions.
+
+For Serverless environments, you cannot use Serve CLI `mesh-serve` but you can use the
+`createServeRuntime` function from `@graphql-mesh/serve-runtime` package.
+
+The serve configuration goes into `createServeRuntime` function instead of `serveConfig` export in
+`mesh.config.ts` file.
+
+## Distributed Caching
+
+But you need to be aware of the limitations of these environments. For example, in-memory caching is
+not possible in these environments. So you have to setup a distributed cache like Redis or
+Memcached.
+
+[See here to configure cache storage](/v1/serve/features/performance).
+
+## Bundling problem
+
+Mesh Serve cannot import the required dependencies manually, and load the supergraph from the file
+system. So if you are not using a schema registry such as GraphQL Hive or Apollo GraphOS, we need to
+save the supergraph as a code file (`supergraph.js` or `supergraph.ts`) and import it.
+
+### Loading the supergraph from a file
+
+For example, in Mesh Compose you need to save the supergraph as a TypeScript file:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  output: 'supergraph.ts',
+  subgraph: [
+    //...
+  ]
+})
+```
+
+In `supergraph.ts` file, you need to export the supergraph:
+
+```ts
+export default /* GraphQL */ `
+  #...
+`
+```
+
+Then you need to import the supergraph in your serverless function:
+
+```ts
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+// Let's say you are using REST transport
+import rest from '@graphql-mesh/transport-rest'
+import supergraph from './supergraph.js'
+
+const serveRuntime = createServeRuntime({
+  supergraph,
+  transports: {
+    rest
+  }
+})
+```

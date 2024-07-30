@@ -1,6 +1,11 @@
+import { Callout } from '@theguild/components'
+
 # Rate Limiting
 
-import { Callout } from '@theguild/components'
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
 
 Rate limiting is a technique for reducing server load by limiting the number of requests that can be
 made to a subgraph.
@@ -16,9 +21,9 @@ npm i @graphql-mesh/plugin-rate-limit
 
 ```ts filename="mesh.config.ts"
 import useRateLimit from '@graphql-mesh/plugin-rate-limit'
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServeConfig({
+export const serveConfig = defineConfig({
   plugins: pluginCtx => [
     useRateLimit({
       ...pluginCtx,
