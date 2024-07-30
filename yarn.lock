@@ -6002,7 +6002,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
     "@graphql-tools/delegate": "npm:^10.0.16"
-    "@graphql-tools/federation": "npm:^2.2.1"
+    "@graphql-tools/federation": "npm:^2.2.2"
     "@graphql-tools/url-loader": "npm:^8.0.0"
     lodash.get: "npm:^4.4.2"
   peerDependencies:
@@ -7393,6 +7393,30 @@ __metadata:
     "@apollo/client":
       optional: true
   checksum: 10c0/ea5d1246040e8badc2bbf98d2b1e517e91c5d04747cb488f83e44235a813b980240a73c8d772b0bc59ffe378ccf45e4088747dc0caac4232e331c4452b263bc1
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/federation@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "@graphql-tools/federation@npm:2.2.2"
+  dependencies:
+    "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0"
+    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/executor-http": "npm:^1.1.5"
+    "@graphql-tools/merge": "npm:^9.0.3"
+    "@graphql-tools/schema": "npm:^10.0.4"
+    "@graphql-tools/stitch": "npm:^9.2.10"
+    "@graphql-tools/utils": "npm:^10.2.3"
+    "@graphql-tools/wrap": "npm:^10.0.3"
+    "@whatwg-node/fetch": "npm:^0.9.17"
+    tslib: "npm:^2.4.0"
+    value-or-promise: "npm:^1.0.12"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  dependenciesMeta:
+    "@apollo/client":
+      optional: true
+  checksum: 10c0/cff79955f7d29f21b45d861ac8609b0dc846f7672dce2f079b17d445c7b712137d3adca2f6a74c88d77f9d5fd4670706dcedfdbf52cec33089b88ebe6839198a
   languageName: node
   linkType: hard
 
