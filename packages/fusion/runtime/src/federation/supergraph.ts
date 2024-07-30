@@ -1,4 +1,5 @@
-import { type GraphQLSchema, isEnumType } from 'graphql';
+import { isEnumType, type GraphQLSchema } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
@@ -15,7 +16,6 @@ import {
 import { filterHiddenPartsInSchema } from '../filterHiddenPartsInSchema.js';
 import type { UnifiedGraphHandler } from '../unifiedGraphManager.js';
 import { handleFederationSubschema } from './subgraph.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 // Memoize to avoid re-parsing the same schema AST
 // Workaround for unsupported directives on composition: restore extra directives

@@ -1,4 +1,4 @@
-import { buildSchema, type DocumentNode, GraphQLSchema, Kind, parse, print, visit } from 'graphql';
+import { buildSchema, type GraphQLSchema, Kind, parse, print, visit, type DocumentNode } from 'graphql';
 import {
   composeSubgraphs,
   getAnnotatedSubgraphs,

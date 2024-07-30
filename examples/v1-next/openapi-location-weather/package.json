@@ -12,6 +12,6 @@
     "@graphql-mesh/plugin-response-cache": "^0.99.5",
     "@graphql-mesh/serve-cli": "^0.8.6",
     "@omnigraph/openapi": "^0.102.7",
-    "graphql": "^16.8.1"
+    "graphql": "^16.9.0"
   }
 }

@@ -7,6 +7,6 @@
     "@graphql-mesh/serve-cli": "workspace:*",
     "@graphql-mesh/utils": "workspace:*",
     "@omnigraph/neo4j": "workspace:*",
-    "graphql": "^16.8.1"
+    "graphql": "^16.9.0"
   }
 }

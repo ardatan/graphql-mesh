@@ -12,10 +12,10 @@ import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposable
 import { handleFederationSupergraph } from './federation/supergraph.js';
 import {
   compareSchemas,
+  compareSubgraphNames,
   getOnSubgraphExecute,
   type OnSubgraphExecuteHook,
   type Transports,
-  compareSubgraphNames,
 } from './utils.js';
 
 function ensureSchema(source: GraphQLSchema | DocumentNode | string) {

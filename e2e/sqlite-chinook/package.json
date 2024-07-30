@@ -5,7 +5,7 @@
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
     "@omnigraph/sqlite": "workspace:*",
-    "graphql": "^16.8.1",
+    "graphql": "^16.9.0",
     "sqlite3": "^5.1.7"
   }
 }
