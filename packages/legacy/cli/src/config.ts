@@ -55,7 +55,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
     configName = 'mesh',
     dir: configDir = '',
     initialLoggerPrefix = '🕸️  Mesh',
-    importFn,
+    importFn = defaultImportFn,
     ...restOptions
   } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
