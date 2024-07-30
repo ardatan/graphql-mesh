@@ -82,6 +82,8 @@ export const composeConfig = defineComposeConfig({
               fields: 'email',
               resolveReference: {
                 fieldName: 'user',
+                argsExpr:
+                  'email: $key.email, totalProductsCreated: $key.totalProductsCreated, yearsOfEmployment: $key.yearsOfEmployment',
               },
             },
           },
