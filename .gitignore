@@ -28,6 +28,5 @@ newrelic_agent.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
 .mise.toml
 docker/supergraph.graphql

@@ -101,41 +101,74 @@ function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCachePar
   };
 }
 
+export type ResponseCacheConfig = Omit<UseResponseCacheParameter, 'cache'> & {
+  /**
+   * The Mesh cache instance to use for storing the response cache.
+   *
+   * The cache should be provided from the Mesh context:
+   * ```ts
+   * defineConfig({
+   *   plugins: ctx => [
+   *     useMeshResponseCache({ ...ctx })
+   *   ]
+   * })
+   * ```
+   */
+  cache: KeyValueCache;
+};
+
+/**
+ * Response cache plugin for GraphQL Mesh
+ * @param options
+ */
+export default function useMeshResponseCache(options: ResponseCacheConfig): Plugin;
+/**
+ * @deprecated Use new configuration format `ResponseCacheConfig`
+ * @param options
+ */
 export default function useMeshResponseCache(
   options: YamlConfig.ResponseCacheConfig & {
     cache: KeyValueCache;
   },
+): Plugin;
+export default function useMeshResponseCache(
+  options:
+    | ResponseCacheConfig
+    // TODO: This is for v0 compatibility, remove once v1 is released
+    | (YamlConfig.ResponseCacheConfig & {
+        cache: KeyValueCache;
+      }),
 ): Plugin {
-  const ttlPerType: Record<string, number> = {};
-  const ttlPerSchemaCoordinate: Record<string, number> = {};
-  if (options.ttlPerCoordinate) {
-    for (const ttlConfig of options.ttlPerCoordinate) {
-      if (ttlConfig.coordinate.includes('.')) {
-        ttlPerSchemaCoordinate[ttlConfig.coordinate] = ttlConfig.ttl;
-      } else {
-        ttlPerType[ttlConfig.coordinate] = ttlConfig.ttl;
-      }
+  const ttlPerType: Record<string, number> = { ...(options as ResponseCacheConfig).ttlPerType };
+  const ttlPerSchemaCoordinate: Record<string, number> = {
+    ...(options as ResponseCacheConfig).ttlPerSchemaCoordinate,
+  };
+
+  const { ttlPerCoordinate } = options as YamlConfig.ResponseCacheConfig;
+  if (ttlPerCoordinate) {
+    for (const ttlConfig of ttlPerCoordinate) {
+      ttlPerSchemaCoordinate[ttlConfig.coordinate] = ttlConfig.ttl;
     }
   }
+
   return useResponseCache({
-    ttl: options.ttl,
-    ignoredTypes: options.ignoredTypes,
-    idFields: options.idFields,
-    invalidateViaMutation: options.invalidateViaMutation,
     includeExtensionMetadata:
       options.includeExtensionMetadata != null
         ? options.includeExtensionMetadata
         : process.env.DEBUG === '1',
+    session: 'sessionId' in options ? generateSessionIdFactory(options.sessionId) : undefined,
+    enabled: 'if' in options ? generateEnabledFactory(options.if) : undefined,
+    buildResponseCacheKey:
+      'cacheKey' in options ? getBuildResponseCacheKey(options.cacheKey) : undefined,
+
+    ...options,
+
+    shouldCacheResult:
+      typeof options.shouldCacheResult === 'string'
+        ? getShouldCacheResult(options.shouldCacheResult)
+        : options.shouldCacheResult,
+    cache: getCacheForResponseCache(options.cache),
     ttlPerType,
     ttlPerSchemaCoordinate,
-    session: generateSessionIdFactory(options.sessionId),
-    enabled: options.if ? generateEnabledFactory(options.if) : undefined,
-    buildResponseCacheKey: options.cacheKey
-      ? getBuildResponseCacheKey(options.cacheKey)
-      : undefined,
-    shouldCacheResult: options.shouldCacheResult
-      ? getShouldCacheResult(options.shouldCacheResult)
-      : undefined,
-    cache: getCacheForResponseCache(options.cache),
   });
 }
