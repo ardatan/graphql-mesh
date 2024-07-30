@@ -6499,7 +6499,7 @@ __metadata:
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/wrap": "npm:^10.0.5"
     "@whatwg-node/fetch": "npm:^0.9.0"
-    graphql-jit: "npm:0.8.2"
+    graphql-jit: "npm:0.8.6"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.4
     "@graphql-mesh/types": ^0.99.5
@@ -13528,7 +13528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.11.0, ajv@npm:^6.12.2, ajv@npm:^6.12.4, ajv@npm:^6.12.5":
+"ajv@npm:^6.12.2, ajv@npm:^6.12.4, ajv@npm:^6.12.5":
   version: 6.12.6
   resolution: "ajv@npm:6.12.6"
   dependencies:
@@ -19527,17 +19527,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-json-stringify@npm:^1.21.0":
-  version: 1.21.0
-  resolution: "fast-json-stringify@npm:1.21.0"
-  dependencies:
-    ajv: "npm:^6.11.0"
-    deepmerge: "npm:^4.2.2"
-    string-similarity: "npm:^4.0.1"
-  checksum: 10c0/591d966b603ae0bcdb766555656292d36a2e8b2cee03b24f207338ab4a7abf0f541c7cafe96b45134e170952fde991960b3baf3ac9a62ad598682e8734efa696
-  languageName: node
-  linkType: hard
-
 "fast-json-stringify@npm:^5.7.0, fast-json-stringify@npm:^5.8.0":
   version: 5.16.1
   resolution: "fast-json-stringify@npm:5.16.1"
@@ -20941,23 +20930,6 @@ __metadata:
   peerDependencies:
     graphql: "*"
   checksum: 10c0/97de408098985f9e5c5d3f2a898c700ea8222c578dc898289bbfea0066be73eb88cc58b1e3a8ae1c71a81651541d8da16bbddfb7a352afcc88edf026ad1fa13c
-  languageName: node
-  linkType: hard
-
-"graphql-jit@npm:0.8.2":
-  version: 0.8.2
-  resolution: "graphql-jit@npm:0.8.2"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    fast-json-stringify: "npm:^1.21.0"
-    generate-function: "npm:^2.3.1"
-    json-schema: "npm:^0.4.0"
-    lodash.memoize: "npm:^4.1.2"
-    lodash.merge: "npm:4.6.2"
-    lodash.mergewith: "npm:4.6.2"
-  peerDependencies:
-    graphql: ">=15"
-  checksum: 10c0/0c49bfb448c2682e538a94aa529a86e43fe274c14890ad1e2d39f07e7857381b4efeeb7960dfc45b1f2b7f11c37d229bf44329c75be3b093c96fbddcac7f3a7c
   languageName: node
   linkType: hard
 
@@ -33516,13 +33488,6 @@ __metadata:
   version: 3.0.1
   resolution: "string-natural-compare@npm:3.0.1"
   checksum: 10c0/85a6a9195736be500af5d817c7ea36b7e1ac278af079a807f70f79a56602359ee6743ca409af6291b94557de550ff60d1ec31b3c4fc8e7a08d0e12cdab57c149
-  languageName: node
-  linkType: hard
-
-"string-similarity@npm:^4.0.1":
-  version: 4.0.4
-  resolution: "string-similarity@npm:4.0.4"
-  checksum: 10c0/fce331b818efafa701f692ddc2e170bd3ceaf6e7ca56a445b36b139981effe0884d8edc794a65005e54304da55ba054edfcff16a339bd301c9b94983fbc62047
   languageName: node
   linkType: hard
 
