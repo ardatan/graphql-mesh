@@ -19233,7 +19233,7 @@ __metadata:
     "@types/node": "npm:18.19.42"
     concurrently: "npm:8.2.2"
     esbuild: "npm:^0.23.0"
-    graphql: "npm:16.6.0"
+    graphql: "npm:16.8.1"
     graphql-yoga: "npm:5.6.2"
     lru-cache: "npm:11.0.0"
     tslib: "npm:2.6.3"
