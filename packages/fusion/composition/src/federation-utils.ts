@@ -96,6 +96,12 @@ export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
       const directiveName = `@${directive.name}`;
       if (!isSpecifiedDirective(directive) && !FEDERATION_V1_DIRECTIVES.includes(directiveName)) {
         meshDirectives.push(directiveName);
+        if (!directive.isRepeatable && directive.args.some(arg => arg.name === 'subgraph')) {
+          return new GraphQLDirective({
+            ...directive.toConfig(),
+            isRepeatable: true,
+          });
+        }
       }
       return directive;
     },

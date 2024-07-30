@@ -38,7 +38,7 @@
     "build": "yarn prebuild && bob build && yarn postbuild",
     "build-test-artifacts": "yarn workspace @examples/json-schema-example build && yarn workspace @examples-v1-next/fastify compose && yarn workspace @examples/fastify build && yarn workspace @examples/persisted-operations build",
     "build:website": "yarn build && cd website && yarn build",
-    "bundle": "yarn workspaces foreach -A run bundle",
+    "bundle": "yarn workspaces foreach --exclude examples -A run bundle",
     "changeset": "changeset",
     "changeset-version": "changeset version && yarn postchangeset",
     "ci:lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",

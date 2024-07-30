@@ -39,7 +39,7 @@ export interface LoadGraphQLSchemaFromMySQLOpts {
 }
 
 export async function loadGraphQLSchemaFromMySQL(
-  name: string,
+  subgraphName: string,
   opts: LoadGraphQLSchemaFromMySQLOpts,
 ) {
   const connectionOpts = getConnectionOptsFromEndpointUri(opts.endpoint);
@@ -94,6 +94,7 @@ export async function loadGraphQLSchemaFromMySQL(
   await Promise.all(
     tableNames.map(async tableName => {
       await handleTableName({
+        subgraphName,
         tableName,
         tables,
         schemaComposer,
@@ -112,7 +113,7 @@ export async function loadGraphQLSchemaFromMySQL(
   const extensions: any = (schema.extensions ||= {});
   extensions.directives ||= {};
   extensions.directives.transport = {
-    subgraph: name,
+    subgraph: subgraphName,
     kind: 'mysql',
     location: opts.endpoint,
   };
@@ -187,6 +188,7 @@ function getAutoIncrementFields(connection: Connection): Promise<Record<string, 
 }
 
 async function handleTableName({
+  subgraphName,
   tableName,
   tables,
   schemaComposer,
@@ -195,6 +197,7 @@ async function handleTableName({
   tableFieldsConfig,
   filteredTables,
 }: {
+  subgraphName: string;
   tableName: string;
   tables: Record<string, DatabaseTable>;
   schemaComposer: SchemaComposer;
@@ -274,6 +277,7 @@ async function handleTableName({
   await Promise.all(
     tableForeignNames.map(foreignName =>
       handleTableForeignName({
+        subgraphName,
         foreignName,
         tableForeigns,
         schemaComposer,
@@ -307,6 +311,7 @@ async function handleTableName({
         {
           name: 'mysqlSelect',
           args: {
+            subgraph: subgraphName,
             table: tableName,
           },
         },
@@ -325,6 +330,7 @@ async function handleTableName({
         {
           name: 'mysqlCount',
           args: {
+            subgraph: subgraphName,
             table: tableName,
           },
         },
@@ -343,6 +349,7 @@ async function handleTableName({
         {
           name: 'mysqlInsert',
           args: {
+            subgraph: subgraphName,
             table: tableName,
             primaryKeys: Array.from(primaryKeys),
           },
@@ -363,6 +370,7 @@ async function handleTableName({
         {
           name: 'mysqlUpdate',
           args: {
+            subgraph: subgraphName,
             table: tableName,
           },
         },
@@ -379,6 +387,7 @@ async function handleTableName({
         {
           name: 'mysqlDelete',
           args: {
+            subgraph: subgraphName,
             table: tableName,
           },
         },
@@ -480,6 +489,7 @@ async function handleFieldName({
 }
 
 async function handleTableForeignName({
+  subgraphName,
   foreignName,
   tableForeigns,
   schemaComposer,
@@ -490,6 +500,7 @@ async function handleTableForeignName({
   orderByInputName,
   objectTypeName,
 }: {
+  subgraphName: string;
   foreignName: string;
   tableForeigns: Record<string, TableForeign>;
   schemaComposer: SchemaComposer;
@@ -532,6 +543,7 @@ async function handleTableForeignName({
         {
           name: 'mysqlSelect',
           args: {
+            subgraph: subgraphName,
             table: foreignTableName,
             columnMap: [[foreignColumnName, columnName]],
           },
@@ -539,6 +551,7 @@ async function handleTableForeignName({
         {
           name: 'mysqlTableForeign',
           args: {
+            subgraph: subgraphName,
             columnName: tableForeign.COLUMN_NAME,
           },
         },
@@ -567,6 +580,7 @@ async function handleTableForeignName({
         {
           name: 'mysqlSelect',
           args: {
+            subgraph: subgraphName,
             table: tableName,
             columnMap: [[columnName, foreignColumnName]],
           },

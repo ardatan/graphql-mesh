@@ -4,6 +4,9 @@ export const MySQLCountDirective = new GraphQLDirective({
   name: 'mysqlCount',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    subgraph: {
+      type: GraphQLString,
+    },
     table: {
       type: GraphQLString,
     },
@@ -14,6 +17,9 @@ export const MySQLSelectDirective = new GraphQLDirective({
   name: 'mysqlSelect',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    subgraph: {
+      type: GraphQLString,
+    },
     table: {
       type: GraphQLString,
     },
@@ -27,6 +33,9 @@ export const MySQLInsertDirective = new GraphQLDirective({
   name: 'mysqlInsert',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    subgraph: {
+      type: GraphQLString,
+    },
     table: {
       type: GraphQLString,
     },
@@ -40,6 +49,9 @@ export const MySQLUpdateDirective = new GraphQLDirective({
   name: 'mysqlUpdate',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    subgraph: {
+      type: GraphQLString,
+    },
     table: {
       type: GraphQLString,
     },
@@ -53,6 +65,9 @@ export const MySQLDeleteDirective = new GraphQLDirective({
   name: 'mysqlDelete',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    subgraph: {
+      type: GraphQLString,
+    },
     table: {
       type: GraphQLString,
     },
@@ -63,6 +78,9 @@ export const MySQLTableForeignDirective = new GraphQLDirective({
   name: 'mysqlTableForeign',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    subgraph: {
+      type: GraphQLString,
+    },
     columnName: {
       type: GraphQLString,
     },
