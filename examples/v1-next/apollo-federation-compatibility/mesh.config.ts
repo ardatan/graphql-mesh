@@ -10,7 +10,7 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('products', {
-        endpoint: 'http://localhost:4444/graphql',
+        endpoint: 'http://0.0.0.0:4444/graphql',
         source: './src/typeDefs.graphql',
       }),
       transforms: [
@@ -82,7 +82,6 @@ export const composeConfig = defineComposeConfig({
               fields: 'email',
               resolveReference: {
                 fieldName: 'user',
-                argsExpr: 'email: $key.email',
               },
             },
           },
@@ -109,7 +108,7 @@ export const composeConfig = defineComposeConfig({
             key: {
               fields: 'id',
               resolveReference: {
-                fieldName: 'inventory',
+                fieldName: 'inventoryById',
               },
             },
             interfaceObject: true,

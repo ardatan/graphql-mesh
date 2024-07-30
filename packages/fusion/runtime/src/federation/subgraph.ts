@@ -417,6 +417,9 @@ const mergeDirective = new GraphQLDirective({
     subgraph: {
       type: GraphQLString,
     },
+    key: {
+      type: GraphQLString,
+    },
     keyField: {
       type: GraphQLString,
     },

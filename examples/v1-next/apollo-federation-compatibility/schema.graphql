@@ -40,9 +40,11 @@ directive @transport(
 
 directive @merge(
   subgraph: String!
-  keyField: String
-  keyArg: String
   argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String]
+  additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
 type Product
@@ -92,28 +94,39 @@ type Query
   @extraSchemaDefinitionDirective(
     directives: {
       transport: [
-        {
-          kind: "http"
-          subgraph: "products"
-          location: "http://localhost:4444/graphql"
-          options: {}
-        }
+        { kind: "http", subgraph: "products", location: "http://0.0.0.0:4444/graphql", options: {} }
       ]
     }
   ) {
-  product(id: ID!): Product @merge(subgraph: "products")
   deprecatedProduct(sku: String!, package: String!): DeprecatedProduct
     @deprecated(reason: "Use product query instead")
-    @merge(subgraph: "products", argsExpr: "sku: $key.sku, package: $key.package")
+    @merge(
+      subgraph: "products"
+      argsExpr: "sku: $key.sku, package: $key.package"
+      keyField: "sku package"
+    )
   productBySkuAndPackage(sku: String!, package: String!): Product
-    @merge(subgraph: "products", argsExpr: "sku: $key.sku, package: $key.package")
+    @merge(
+      subgraph: "products"
+      argsExpr: "sku: $key.sku, package: $key.package"
+      keyField: "sku package"
+    )
   productBySkuAndVariationId(sku: String!, variationId: ID!): Product
-    @merge(subgraph: "products", argsExpr: "sku: $key.sku, variationId: $key.variation.id")
+    @merge(
+      subgraph: "products"
+      argsExpr: "sku: $key.sku, variationId: $key.variation.id"
+      keyField: "sku variation { id }"
+    )
   productResearch(caseNumber: ID!): ProductResearch
-    @merge(subgraph: "products", argsExpr: "caseNumber: $key.study.caseNumber")
+    @merge(
+      subgraph: "products"
+      argsExpr: "caseNumber: $key.study.caseNumber"
+      keyField: "study { caseNumber }"
+    )
   user(email: ID!, totalProductsCreated: Int, yearsOfEmployment: Int): User
-    @merge(subgraph: "products", argsExpr: "email: $key.email")
-  inventoryById(id: ID!): Inventory @merge(subgraph: "products", keyField: "id", keyArg: "id")
+    @merge(subgraph: "products", keyField: "email")
+  inventoryById(id: ID!): Inventory @merge(subgraph: "products", keyField: "id")
+  product(id: ID!): Product @merge(subgraph: "products", keyField: "id")
 }
 
 type User @extends @key(fields: "email") {

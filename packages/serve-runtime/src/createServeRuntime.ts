@@ -1,8 +1,9 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
 import type { GraphQLSchema } from 'graphql';
-import { parse } from 'graphql';
+import { buildASTSchema, parse } from 'graphql';
 import {
+  createSchema,
   createYoga,
   isAsyncIterable,
   mergeSchemas,
@@ -34,6 +35,7 @@ import useMeshHive from '@graphql-mesh/plugin-hive';
 import type { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
+  getDirectiveExtensions,
   getHeadersObj,
   isDisposable,
   LogLevel,
@@ -44,8 +46,10 @@ import {
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
 import { useExecutor } from '@graphql-tools/executor-yoga';
+import { stitchSchemas } from '@graphql-tools/stitch';
 import {
   mergeDeep,
+  parseSelectionSet,
   printSchemaWithDirectives,
   type IResolvers,
   type MaybePromise,
@@ -69,6 +73,7 @@ import { useCompleteSubscriptionsOnSchemaChange } from './useCompleteSubscriptio
 import { useFetchDebug } from './useFetchDebug.js';
 import { useRequestId } from './useRequestId.js';
 import { useSubgraphExecuteDebug } from './useSubgraphExecuteDebug.js';
+import { checkIfDataSatisfiesSelectionSet } from './utils.js';
 
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
@@ -154,6 +159,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           unifiedGraph = newUnifiedGraph;
           unifiedGraph = restoreExtraDirectives(unifiedGraph);
           subschemaConfig = {
+            name: getDirectiveExtensions(unifiedGraph)?.transport?.[0]?.subgraph,
             schema: unifiedGraph,
           };
           const transportEntryMap: Record<string, TransportEntry> = {};
@@ -185,18 +191,20 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
             assumeValid: true,
             assumeValidSDL: true,
             schemas: [unifiedGraph],
-            typeDefs: /* GraphQL */ `
-              extend type Query {
-                _entities(representations: [_Any!]!): [_Entity]!
-                _service: _Service!
-              }
+            typeDefs: [
+              parse(/* GraphQL */ `
+                  type Query {
+                    _entities(representations: [_Any!]!): [_Entity]!
+                    _service: _Service!
+                  }
 
-              scalar _Any
-              scalar _Entity
-              type _Service {
-                sdl: String
-              }
-            `,
+                  scalar _Any
+                  union _Entity = ${Object.keys(subschemaConfig.merge || {}).join(' | ')}
+                  type _Service {
+                    sdl: String
+                  }
+              `),
+            ],
             resolvers: {
               Query: {
                 _entities(_root, args, context, info) {
@@ -204,39 +212,45 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
                     return args.representations.map(representation => {
                       const typeName = representation.__typename;
                       const mergeConfig = subschemaConfig.merge[typeName];
-                      const mergeEndpoint = mergeConfig?.entryPoints?.[0] || mergeConfig;
-                      const fieldName = mergeConfig?.fieldName;
-                      if (fieldName) {
-                        const key = mergeConfig?.key?.(representation);
-                        if (key) {
+                      const entryPoints = mergeConfig?.entryPoints || [mergeConfig];
+                      const satisfiedEntryPoint = entryPoints.find(entryPoint => {
+                        if (entryPoint.selectionSet) {
+                          const selectionSet = parseSelectionSet(entryPoint.selectionSet, {
+                            noLocation: true,
+                          });
+                          return checkIfDataSatisfiesSelectionSet(selectionSet, representation);
+                        }
+                        return true;
+                      });
+                      if (satisfiedEntryPoint) {
+                        if (satisfiedEntryPoint.key) {
                           return mapMaybePromise(
                             batchDelegateToSchema({
                               schema: subschemaConfig,
-                              fieldName,
-                              key,
+                              fieldName: satisfiedEntryPoint.fieldName,
+                              key: satisfiedEntryPoint.key(representation),
+                              argsFromKeys: satisfiedEntryPoint.argsFromKeys,
+                              valuesFromResults: satisfiedEntryPoint.valuesFromResults,
                               context,
                               info,
-                              dataLoaderOptions: mergeEndpoint?.dataLoaderOptions,
-                              valuesFromResults: mergeEndpoint?.valuesFromResults,
                             }),
-                            result => mergeDeep([representation, result]),
+                            res => mergeDeep([representation, res]),
                           );
                         }
-                        const args = mergeConfig?.args?.(representation);
-                        if (args) {
+                        if (satisfiedEntryPoint.args) {
                           return mapMaybePromise(
                             delegateToSchema({
                               schema: subschemaConfig,
-                              fieldName,
-                              args,
+                              fieldName: satisfiedEntryPoint.fieldName,
+                              args: satisfiedEntryPoint.args(representation),
                               context,
                               info,
                             }),
-                            result => mergeDeep([representation, result]),
+                            res => mergeDeep([representation, res]),
                           );
                         }
                       }
-                      return args.representations;
+                      return representation;
                     });
                   }
                   return [];

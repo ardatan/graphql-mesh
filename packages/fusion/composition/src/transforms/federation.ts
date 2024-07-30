@@ -1,6 +1,7 @@
 import {
   DirectiveLocation,
   GraphQLDirective,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
@@ -175,7 +176,7 @@ interface FederationResolveReferenceConfig {
    * (WARNING: Advanced usage only)
    * Allows building a custom key just for the argument from the `selectionSet` included by the `@key` directive.
    */
-  key?: string;
+  key?: string[];
   /**
    * (WARNING: Advanced usage only)
    * This argument specifies a string expression that allows more customization of the input arguments.
@@ -188,6 +189,8 @@ interface FederationResolveReferenceConfig {
 }
 
 interface MergeDirectiveConfig {
+  key?: string[];
+  keyField?: string;
   keyArg?: string;
   argsExpr?: string;
 }
@@ -259,10 +262,14 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                       operationMergeDirectiveConfig = new Map();
                       mergeDirectiveConfigMap.set(operation, operationMergeDirectiveConfig);
                     }
-                    operationMergeDirectiveConfig.set(
-                      keyConfig.resolveReference.fieldName,
-                      keyConfig.resolveReference,
-                    );
+                    operationMergeDirectiveConfig.set(keyConfig.resolveReference.fieldName, {
+                      ...(keyConfig.resolveReference.key
+                        ? {}
+                        : {
+                            keyField: keyConfig.fields,
+                          }),
+                      ...keyConfig.resolveReference,
+                    });
                   }
                   break;
                 }
@@ -300,6 +307,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
           mergeDirectiveExtensions.push({
             subgraph: subgraphConfig.name,
+            key: mergeDirectiveConfig.key,
+            keyField: mergeDirectiveConfig.keyField,
             keyArg: mergeDirectiveConfig.keyArg,
             argsExpr: mergeDirectiveConfig.argsExpr,
           });
@@ -356,13 +365,19 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               subgraph: {
                 type: new GraphQLNonNull(GraphQLString),
               },
-              keyField: {
+              argsExpr: {
                 type: GraphQLString,
               },
               keyArg: {
                 type: GraphQLString,
               },
-              argsExpr: {
+              keyField: {
+                type: GraphQLString,
+              },
+              key: {
+                type: new GraphQLList(GraphQLString),
+              },
+              additionalArgs: {
                 type: GraphQLString,
               },
             },
