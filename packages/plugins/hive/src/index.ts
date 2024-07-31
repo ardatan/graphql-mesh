@@ -10,7 +10,6 @@ export default function useMeshHive(
     logger?: Logger;
     pubsub?: MeshPubSub;
   },
-  // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
   const enabled =
     pluginOptions != null && 'enabled' in pluginOptions

@@ -12,7 +12,6 @@ const mockedSchemas = new WeakSet<GraphQLSchema>();
 
 export default function useMock(
   config: MeshPluginOptions<YamlConfig.MockingConfig>,
-  // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
   // eslint-disable-next-line no-new-func
   const configIf = config != null && 'if' in config ? new Function(`return ${config.if}`)() : true;
