@@ -50,7 +50,7 @@
     "@graphql-tools/delegate": "^10.0.16",
     "@graphql-tools/executor-http": "^1.1.5",
     "@graphql-tools/executor-yoga": "^3.0.0",
-    "@graphql-tools/federation": "^2.2.1",
+    "@graphql-tools/federation": "^2.2.3",
     "@graphql-tools/stitch": "^9.2.10",
     "@graphql-tools/utils": "^10.2.3",
     "@graphql-tools/wrap": "^10.0.5",
