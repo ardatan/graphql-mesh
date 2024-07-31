@@ -5899,7 +5899,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.99.5"
     "@graphql-tools/delegate": "npm:^10.0.16"
     "@graphql-tools/executor": "npm:^1.3.0"
-    "@graphql-tools/federation": "npm:^2.2.1"
+    "@graphql-tools/federation": "npm:^2.2.3"
     "@graphql-tools/stitch": "npm:^9.2.10"
     "@graphql-tools/stitching-directives": "npm:^3.1.2"
     "@graphql-tools/utils": "npm:^10.2.3"
@@ -5919,7 +5919,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
     "@graphql-tools/delegate": "npm:^10.0.16"
-    "@graphql-tools/federation": "npm:^2.2.2"
+    "@graphql-tools/federation": "npm:^2.2.3"
     "@graphql-tools/url-loader": "npm:^8.0.0"
     lodash.get: "npm:^4.4.2"
   peerDependencies:
@@ -6517,7 +6517,7 @@ __metadata:
     "@graphql-tools/delegate": "npm:^10.0.16"
     "@graphql-tools/executor-http": "npm:^1.1.5"
     "@graphql-tools/executor-yoga": "npm:^3.0.0"
-    "@graphql-tools/federation": "npm:^2.2.1"
+    "@graphql-tools/federation": "npm:^2.2.3"
     "@graphql-tools/stitch": "npm:^9.2.10"
     "@graphql-tools/utils": "npm:^10.2.3"
     "@graphql-tools/wrap": "npm:^10.0.5"
@@ -6582,7 +6582,7 @@ __metadata:
   resolution: "@graphql-mesh/supergraph@workspace:packages/legacy/handlers/supergraph"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/federation": "npm:^2.2.1"
+    "@graphql-tools/federation": "npm:^2.2.3"
     "@graphql-tools/url-loader": "npm:^8.0.2"
     "@graphql-tools/utils": "npm:^10.2.2"
     lodash.get: "npm:^4.4.2"
@@ -7318,9 +7318,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/federation@npm:^2.2.1, @graphql-tools/federation@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "@graphql-tools/federation@npm:2.2.2"
+"@graphql-tools/federation@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "@graphql-tools/federation@npm:2.2.3"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0"
     "@graphql-tools/delegate": "npm:^10.0.16"
@@ -7338,7 +7338,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/cff79955f7d29f21b45d861ac8609b0dc846f7672dce2f079b17d445c7b712137d3adca2f6a74c88d77f9d5fd4670706dcedfdbf52cec33089b88ebe6839198a
+  checksum: 10c0/f0a6a2c7a07b0c475bc765b93ded641b13bd11bde166d1bfbca9c8639a0ea5b72b4b5b2e278cc9856dcf6d7832e4eab34a93d0e8b01e2e8059fc50dfdb41731f
   languageName: node
   linkType: hard
 
