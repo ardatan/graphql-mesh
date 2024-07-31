@@ -1,5 +1,19 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.5.7
+
+### Patch Changes
+
+- [#7192](https://github.com/ardatan/graphql-mesh/pull/7192)
+  [`1905f53`](https://github.com/ardatan/graphql-mesh/commit/1905f53a65e6c73d1d305770dcfc4cba34798a09)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.2)
+    (from `^3.0.2`, in `dependencies`)
+- Updated dependencies
+  [[`f5214eb`](https://github.com/ardatan/graphql-mesh/commit/f5214eb67e6a4fb702695207968d66cef03ca4dd)]:
+  - @graphql-mesh/runtime@0.100.6
+
 ## 0.5.6
 
 ### Patch Changes

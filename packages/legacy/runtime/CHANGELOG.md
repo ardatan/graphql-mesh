@@ -1,5 +1,15 @@
 # @graphql-mesh/runtime
 
+## 0.100.6
+
+### Patch Changes
+
+- [#6009](https://github.com/ardatan/graphql-mesh/pull/6009)
+  [`f5214eb`](https://github.com/ardatan/graphql-mesh/commit/f5214eb67e6a4fb702695207968d66cef03ca4dd)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`graphql-jit@0.8.6` ↗︎](https://www.npmjs.com/package/graphql-jit/v/0.8.6)
+    (from `0.8.2`, in `dependencies`)
+
 ## 0.100.5
 
 ### Patch Changes

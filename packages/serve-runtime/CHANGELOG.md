@@ -1,5 +1,25 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.7
+
+### Patch Changes
+
+- [#7192](https://github.com/ardatan/graphql-mesh/pull/7192)
+  [`1905f53`](https://github.com/ardatan/graphql-mesh/commit/1905f53a65e6c73d1d305770dcfc4cba34798a09)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-tools/batch-delegate@^9.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/9.0.3)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/wrap@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@whatwg-node/server@^0.9.34` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.34)
+    (to `dependencies`)
+- Updated dependencies
+  [[`1905f53`](https://github.com/ardatan/graphql-mesh/commit/1905f53a65e6c73d1d305770dcfc4cba34798a09)]:
+  - @graphql-mesh/fusion-runtime@0.5.7
+
 ## 0.5.6
 
 ### Patch Changes

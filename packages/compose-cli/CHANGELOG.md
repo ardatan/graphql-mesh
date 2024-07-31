@@ -1,5 +1,18 @@
 # @graphql-mesh/compose-cli
 
+## 0.6.6
+
+### Patch Changes
+
+- [#7192](https://github.com/ardatan/graphql-mesh/pull/7192)
+  [`1905f53`](https://github.com/ardatan/graphql-mesh/commit/1905f53a65e6c73d1d305770dcfc4cba34798a09)
+  Thanks [@ardatan](https://github.com/ardatan)! - Extract subgraph schema
+
+- Updated dependencies
+  [[`1905f53`](https://github.com/ardatan/graphql-mesh/commit/1905f53a65e6c73d1d305770dcfc4cba34798a09),
+  [`1905f53`](https://github.com/ardatan/graphql-mesh/commit/1905f53a65e6c73d1d305770dcfc4cba34798a09)]:
+  - @graphql-mesh/fusion-composition@0.1.7
+
 ## 0.6.5
 
 ### Patch Changes
