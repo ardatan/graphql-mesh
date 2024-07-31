@@ -6167,6 +6167,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@graphql-mesh/include@workspace:packages/include":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/include@workspace:packages/include"
+  dependencies:
+    dotenv: "npm:^16.3.1"
+    get-tsconfig: "npm:^4.7.6"
+    jiti: "npm:^1.21.6"
+  languageName: unknown
+  linkType: soft
+
 "@graphql-mesh/json-schema@npm:0.102.7, @graphql-mesh/json-schema@workspace:packages/legacy/handlers/json-schema":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/json-schema@workspace:packages/legacy/handlers/json-schema"
@@ -20617,7 +20627,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.0, get-tsconfig@npm:^4.7.5":
+"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.0, get-tsconfig@npm:^4.7.5, get-tsconfig@npm:^4.7.6":
   version: 4.7.6
   resolution: "get-tsconfig@npm:4.7.6"
   dependencies:
