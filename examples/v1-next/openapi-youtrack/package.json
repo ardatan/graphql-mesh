@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.6.6",
-    "@graphql-mesh/serve-cli": "^0.8.7",
+    "@graphql-mesh/serve-cli": "^0.8.8",
     "@omnigraph/openapi": "^0.102.7",
     "graphql": "^16.9.0"
   }
