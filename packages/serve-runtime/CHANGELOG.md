@@ -1,5 +1,19 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.8
+
+### Patch Changes
+
+- [#7424](https://github.com/ardatan/graphql-mesh/pull/7424)
+  [`7cd4d35`](https://github.com/ardatan/graphql-mesh/commit/7cd4d35100489550cef5815acd424ad85a71ec27)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.3)
+    (from `^2.2.1`, in `dependencies`)
+- Updated dependencies
+  [[`7cd4d35`](https://github.com/ardatan/graphql-mesh/commit/7cd4d35100489550cef5815acd424ad85a71ec27)]:
+  - @graphql-mesh/fusion-runtime@0.5.8
+
 ## 0.5.7
 
 ### Patch Changes

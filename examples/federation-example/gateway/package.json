@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@graphql-mesh/cli": "0.92.7",
-    "@graphql-mesh/graphql": "0.99.6",
+    "@graphql-mesh/graphql": "0.99.7",
     "@graphql-mesh/transform-federation": "0.99.6",
     "graphql": "16.9.0"
   }
