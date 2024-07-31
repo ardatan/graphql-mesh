@@ -8251,9 +8251,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ianvs/prettier-plugin-sort-imports@npm:4.2.1":
-  version: 4.2.1
-  resolution: "@ianvs/prettier-plugin-sort-imports@npm:4.2.1"
+"@ianvs/prettier-plugin-sort-imports@npm:4.3.1":
+  version: 4.3.1
+  resolution: "@ianvs/prettier-plugin-sort-imports@npm:4.3.1"
   dependencies:
     "@babel/core": "npm:^7.24.0"
     "@babel/generator": "npm:^7.23.6"
@@ -8267,7 +8267,7 @@ __metadata:
   peerDependenciesMeta:
     "@vue/compiler-sfc":
       optional: true
-  checksum: 10c0/76e5c79a72ca35e03f52059d039a037b2a29224582aca6590ba08a17d85e5143673bee301d3a9cc2e0257570801e6d0ec30ffd01e1f5f0d973a986c6c359f9a8
+  checksum: 10c0/2e997fe88da3b6d8288b83aa708afde427e48be55d432dd1657ef8d28a9eb1c329afdf331f46bcfb1f3ce26d3f335598814512902e4644414b4d0ba47b9c416b
   languageName: node
   linkType: hard
 
@@ -11459,16 +11459,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/prettier-config@npm:2.0.6":
-  version: 2.0.6
-  resolution: "@theguild/prettier-config@npm:2.0.6"
+"@theguild/prettier-config@npm:2.0.7":
+  version: 2.0.7
+  resolution: "@theguild/prettier-config@npm:2.0.7"
   dependencies:
-    "@ianvs/prettier-plugin-sort-imports": "npm:4.2.1"
+    "@ianvs/prettier-plugin-sort-imports": "npm:4.3.1"
     prettier-plugin-pkg: "npm:^0.18.0"
     prettier-plugin-sh: "npm:^0.14.0"
   peerDependencies:
     prettier: ^3
-  checksum: 10c0/14dc874d362a110d8185aa93663662186af786f6922953e4d045d44c385e69218d2c15b41676839c09995a5930bdc5361215ad199ef0baf8505687e18d213fef
+  checksum: 10c0/8bc9dc819564f31c1161a4ee60473da58f5766a1dc0046b92e74ba1951765b5a2e3a4a4e120d1680ce152701362de811ac70e330cdfc03117b061daaf16fb8ab
   languageName: node
   linkType: hard
 
@@ -21040,7 +21040,7 @@ __metadata:
     "@changesets/changelog-github": "npm:0.5.0"
     "@changesets/cli": "npm:2.27.7"
     "@repeaterjs/repeater": "npm:^3.0.5"
-    "@theguild/prettier-config": "npm:2.0.6"
+    "@theguild/prettier-config": "npm:2.0.7"
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.12"
