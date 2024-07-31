@@ -54,6 +54,7 @@ describe('useContentEncoding', () => {
       ]);
     },
     fetchAPI: {
+      // @ts-expect-error - Typings are wrong
       fetch: subgraphServer.fetch,
     },
     plugins: () => [
