@@ -1,5 +1,5 @@
 rm mesh-serve
-rm sea-prep.blobbun
+rm sea-prep.blob
 
 node --experimental-sea-config sea-config.json
 
@@ -12,6 +12,5 @@ npx postject mesh-serve NODE_SEA_BLOB sea-prep.blob \
     --macho-segment-name NODE_SEA
 
 codesign --sign - mesh-serve
-
 
 ./mesh-serve
