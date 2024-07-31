@@ -5,7 +5,6 @@ import { DefaultLogger, pathExists, withCookies } from '@graphql-mesh/utils';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type MeshHTTPHandler = ReturnType<typeof createMeshHTTPHandler>;
 
 export function createMeshHTTPHandler<TServerContext>({

@@ -27,12 +27,14 @@ function loadFromModuleExportExpressionSync<T>({
 
 function tryRequire(modulePath: string, cwd: string) {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     return require(modulePath);
   } catch {
     if (!pathModule.isAbsolute(modulePath)) {
       const absoluteModulePath = pathModule.isAbsolute(modulePath)
         ? modulePath
         : pathModule.join(cwd, modulePath);
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       return require(absoluteModulePath);
     }
   }

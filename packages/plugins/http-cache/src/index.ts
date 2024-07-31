@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import CachePolicy from 'http-cache-semantics';
 import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';

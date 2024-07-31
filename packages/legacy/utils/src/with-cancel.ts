@@ -25,8 +25,7 @@ export function withCancel<T, TAsyncIterable extends AsyncIterable<T>>(
       }
       const propVal = asyncIterable[prop as keyof TAsyncIterable];
       if (typeof propVal === 'function') {
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        return (propVal as Function).bind(asyncIterable);
+        return propVal.bind(asyncIterable);
       }
       return propVal;
     },
