@@ -142,7 +142,7 @@ const tsconfig = tsconfigPaths.loadConfig();
 if (tsconfig.resultType === 'success') {
   // there's a tsconfig loaded, register its paths
   tsconfigPaths.register({
-    baseUrl: tsconfig.absoluteBaseUrl,
+    baseUrl: tsconfig.baseUrl || tsconfig.absoluteBaseUrl,
     paths: tsconfig.paths,
   });
 }
