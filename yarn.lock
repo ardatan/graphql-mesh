@@ -19186,7 +19186,7 @@ __metadata:
     graphql-yoga: "npm:5.6.2"
     lru-cache: "npm:11.0.0"
     tslib: "npm:2.6.3"
-    tsx: "npm:4.16.2"
+    tsx: "npm:4.16.3"
   languageName: unknown
   linkType: soft
 
@@ -34805,9 +34805,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.16.2, tsx@npm:^4.16.2":
-  version: 4.16.2
-  resolution: "tsx@npm:4.16.2"
+"tsx@npm:4.16.3, tsx@npm:^4.16.2":
+  version: 4.16.3
+  resolution: "tsx@npm:4.16.3"
   dependencies:
     esbuild: "npm:~0.21.5"
     fsevents: "npm:~2.3.3"
@@ -34817,7 +34817,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/9df52264f88be00ca473e7d7eda43bb038cc09028514996b864db78645e9cd297c71485f0fdd4985464d6dc46424f8bef9f8c4bd56692c4fcf4d71621ae21763
+  checksum: 10c0/bb7e5fa8c5fbb3f7f4a1de3142d617139158cbfa5bbb02927fe2bdf792ac7202aa1b63e33a31fa43050fe9666b15c20f516947ea938cb327e926933fd2c56ee4
   languageName: node
   linkType: hard
 
