@@ -120,7 +120,8 @@ export async function run({
         .catch(() => false);
       if (exists) {
         log.info(`Found default config file ${configPath}`);
-        importedConfig = await include(absoluteConfigPath);
+        const module = await include(absoluteConfigPath);
+        importedConfig = Object(module).serveConfig;
         break;
       }
     }
@@ -130,15 +131,22 @@ export async function run({
       ? opts.configPath
       : resolve(process.cwd(), opts.configPath);
     log.info(`Loading config file at path ${configPath}`);
-    importedConfig = await include(configPath);
-    if (!importedConfig) {
+    const exists = await lstat(configPath)
+      .then(() => true)
+      .catch(() => false);
+    if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
+    }
+    const module = await include(configPath);
+    importedConfig = Object(module).serveConfig;
+    if (!importedConfig) {
+      throw new Error(`No "serveConfig" exported from config at ${configPath}`);
     }
   }
   if (importedConfig) {
-    log.info('Loaded config file');
+    log.info('Loaded config');
   } else {
-    log.info('No config file loaded, using defaults');
+    log.info('No config loaded, using defaults');
   }
 
   const config: MeshServeCLIConfig = {

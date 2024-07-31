@@ -5977,6 +5977,7 @@ __metadata:
   dependencies:
     "@commander-js/extra-typings": "npm:^12.0.1"
     "@graphql-mesh/fusion-composition": "npm:^0.1.7"
+    "@graphql-mesh/include": "npm:^0.0.0"
     "@graphql-mesh/utils": "npm:^0.99.5"
     "@graphql-tools/graphql-file-loader": "npm:8.0.1"
     "@graphql-tools/load": "npm:^8.0.1"
@@ -5985,7 +5986,6 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.9.14"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
-    jiti: "npm:^1.21.6"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.5
     graphql: "*"
