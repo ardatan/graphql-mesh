@@ -1,29 +1,27 @@
 import Module from 'node:module';
-import { isAbsolute } from 'node:path';
 import { createPathsMatcher, getTsconfig } from 'get-tsconfig';
 import createJITI from 'jiti';
 
 const jiti = createJITI(
-  /** We require absolute import paths, so a base url is not required. See documentation of {@link include} for the why. */
+  /**
+   * We intentionally provide an empty string here and let jiti handle the base URL.
+   *
+   * This is because `import.meta.url` is not available in CJS (and cant even be in the syntax)
+   * and `__filename` is not available in ESM.
+   */
   '',
 );
 
 /**
- * Import a module, ESM or CJS at the provided {@link absolutePath absolute path}.
- *
- * We intentionally require an absolute path to the module because `import.meta.url` is
- * not available in CJS (and cant even be in the syntax) and `__filename` is not available in ESM.
+ * Import a module, ESM or CJS at the provided {@link path}.
  *
  * If the included module has a "default" export, it will be returned instead.
  *
- * If the module is not found, `null` will be returned.
+ * If the module at {@link path} is not found, `null` will be returned.
  */
-export async function include<T = any>(absolutePath: string): Promise<T> {
-  if (!isAbsolute(absolutePath)) {
-    throw new Error('Only absolute paths can be included');
-  }
+export async function include<T = any>(path: string): Promise<T> {
   try {
-    const module = await jiti.import(absolutePath, {});
+    const module = await jiti.import(path, {});
     if (!module) {
       throw new Error('Included module is empty');
     }
@@ -37,7 +35,7 @@ export async function include<T = any>(absolutePath: string): Promise<T> {
   } catch (err) {
     // NOTE: we dont use the err.code because maybe the included module is importing another module that does not exist.
     //       if we were to use the MODULE_NOT_FOUND code, then those includes will fail with an unclear error
-    if (String(err).includes(`Cannot find module '${absolutePath}'`)) {
+    if (String(err).includes(`Cannot find module '${path}'`)) {
       //
     } else {
       throw err;
