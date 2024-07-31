@@ -31,8 +31,8 @@ import {
 export interface SubgraphConfig {
   name: string;
   schema: GraphQLSchema;
-  isFederation?: boolean;
   transforms?: SubgraphTransform[];
+  url?: string;
 }
 
 export type SubgraphTransform = (
@@ -64,7 +64,7 @@ export function getAnnotatedSubgraphs(
   const annotatedSubgraphs: ServiceDefinition[] = [];
   for (const subgraphConfig of subgraphs) {
     const { name: subgraphName, schema, transforms } = subgraphConfig;
-    let url: string;
+    let url: string = subgraphConfig.url;
     const subgraphSchemaExtensions = getDirectiveExtensions(schema);
     const transportDirectives = subgraphSchemaExtensions?.transport;
     if (transportDirectives?.length) {
