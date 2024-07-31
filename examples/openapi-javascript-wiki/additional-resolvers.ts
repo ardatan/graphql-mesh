@@ -27,7 +27,7 @@ export const resolvers: Resolvers = {
       }
 
       if (result != null && 'items' in result) {
-        return result?.items?.[0]?.views || 0n;
+        return result?.items?.[0]?.views || 0;
       }
     },
   },

@@ -7,7 +7,7 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Wiki', {
-        source: 'https://wikimedia.org/api/rest_v1/?spec',
+        source: 'https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml',
         endpoint: 'https://wikimedia.org/api/rest_v1',
         ignoreErrorResponses: true,
       }),
@@ -15,7 +15,7 @@ export const composeConfig = defineComposeConfig({
   ],
   additionalTypeDefs: /* GraphQL */ `
     extend type Query {
-      viewsInPastMonth(project: String!): BigInt!
+      viewsInPastMonth(project: String!): Int!
     }
   `,
 });
@@ -47,7 +47,7 @@ export const serveConfig = defineServeConfig({
         }
 
         if (result != null && 'items' in result) {
-          return result?.items?.[0]?.views || 0n;
+          return result?.items?.[0]?.views || 0;
         }
       },
     },
