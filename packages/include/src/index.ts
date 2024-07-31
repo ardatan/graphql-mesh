@@ -21,28 +21,17 @@ const jiti = createJITI(
  * If the module at {@link path} is not found, `null` will be returned.
  */
 export async function include<T = any>(path: string): Promise<T> {
-  try {
-    const module = await jiti.import(path, {});
-    if (!module) {
-      throw new Error('Included module is empty');
-    }
-    if (typeof module !== 'object') {
-      throw new Error(`Included module is not an object, is instead "${typeof module}"`);
-    }
-    if ('default' in module) {
-      return module.default as T;
-    }
-    return module as T;
-  } catch (err) {
-    // NOTE: we dont use the err.code because maybe the included module is importing another module that does not exist.
-    //       if we were to use the MODULE_NOT_FOUND code, then those includes will fail with an unclear error
-    if (String(err).includes(`Cannot find module '${path}'`)) {
-      //
-    } else {
-      throw err;
-    }
+  const module = await jiti.import(path, {});
+  if (!module) {
+    throw new Error('Included module is empty');
   }
-  return null;
+  if (typeof module !== 'object') {
+    throw new Error(`Included module is not an object, is instead "${typeof module}"`);
+  }
+  if ('default' in module) {
+    return module.default as T;
+  }
+  return module as T;
 }
 
 export interface RegisterTsconfigPathsOptions {
