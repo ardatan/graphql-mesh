@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-type-merging
 
+## 0.99.6
+
+### Patch Changes
+
+- [#7192](https://github.com/ardatan/graphql-mesh/pull/7192)
+  [`1905f53`](https://github.com/ardatan/graphql-mesh/commit/1905f53a65e6c73d1d305770dcfc4cba34798a09)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.2)
+    (from `^3.0.0`, in `dependencies`)
+
 ## 0.99.5
 
 ### Patch Changes
