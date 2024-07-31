@@ -1,6 +1,5 @@
 ---
-"@graphql-mesh/serve-cli": patch
+"@graphql-mesh/plugin-prometheus": patch
 ---
 dependencies updates:
   - Updated dependency [`@graphql-mesh/serve-runtime@^0.5.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/serve-runtime/v/0.5.8) (from `^0.5.6`, in `dependencies`)
-  - Added dependency [`tsconfig-paths@^4.2.0` ↗︎](https://www.npmjs.com/package/tsconfig-paths/v/4.2.0) (to `dependencies`)
