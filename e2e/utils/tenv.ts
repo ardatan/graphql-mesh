@@ -81,6 +81,13 @@ export interface Server extends Proc {
 export interface ServeOptions extends ProcOptions {
   port?: number;
   supergraph?: string;
+  /** {@link serveRunner Serve runner} specific options. */
+  runner?: {
+    /** "docker" specific options. */
+    docker?: {
+      volumes?: ContainerOptions['volumes'];
+    };
+  };
 }
 
 export interface Serve extends Server {
@@ -229,12 +236,13 @@ export function createTenv(cwd: string): Tenv {
         supergraph,
         pipeLogs = !!process.env['DEBUG'],
         env,
+        runner,
       } = opts || {};
 
       let proc: Proc,
         waitForExit: Promise<void> | null = null;
       if (serveRunner === 'docker') {
-        const volumes: ContainerOptions['volumes'] = [];
+        const volumes: ContainerOptions['volumes'] = runner?.docker?.volumes || [];
 
         if (supergraph) {
           // we need to replace all local servers in the supergraph to use docker's local hostname.
