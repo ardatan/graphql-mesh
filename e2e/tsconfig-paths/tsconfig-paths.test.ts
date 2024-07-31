@@ -9,12 +9,15 @@ it('should compose', async () => {
 
 it('should serve', async () => {
   const proc = await serve({
+    env: {
+      MESH_INCLUDE_TSCONFIG_NAME: 'tsconfig-paths.tsconfig.json',
+    },
     runner: {
       docker: {
         volumes: [
           {
-            host: './jsconfig.json',
-            container: '/serve/jsconfig.json',
+            host: './tsconfig-paths.tsconfig.json',
+            container: '/serve/tsconfig-paths.tsconfig.json',
           },
           {
             host: './mesh.config.ts',
