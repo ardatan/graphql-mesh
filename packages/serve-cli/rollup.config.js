@@ -47,6 +47,7 @@ const deps = {
   'node_modules/@graphql-mesh/plugin-jwt-auth/index': '../plugins/jwt-auth/src/index.ts',
   'node_modules/@graphql-mesh/hmac-upstream-signature/index':
     '../plugins/hmac-upstream-signature/src/index.ts',
+  'node_modules/@graphql-mesh/plugin-opentelemetry/index': '../plugins/opentelemetry/src/index.ts',
 };
 
 if (process.env.E2E_SERVE_RUNNER === 'docker') {

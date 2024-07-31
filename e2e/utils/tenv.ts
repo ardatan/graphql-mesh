@@ -92,10 +92,12 @@ export interface ServeOptions extends ProcOptions {
 }
 
 export interface Serve extends Server {
+  fetchJson<T = any>(path: string, init?: RequestInit): Promise<T>;
   execute(args: {
     query: string;
     variables?: Record<string, unknown>;
     operationName?: string;
+    headers?: Record<string, string>;
   }): Promise<ExecutionResult<any>>;
 }
 
@@ -165,6 +167,11 @@ export interface ContainerOptions extends ProcOptions {
    * Will be bound to the {@link hostPort}.
    */
   containerPort: number;
+  /**
+   * Additional ports to expose.
+   *
+   */
+  additionalPorts?: number[];
   /**
    * Port that will be bound to the {@link containerPort}.
    *
@@ -309,14 +316,28 @@ export function createTenv(cwd: string): Tenv {
       const serve: Serve = {
         ...proc,
         port,
+
+        fetchJson: async <T = any>(path: string, init: RequestInit): Promise<T> => {
+          const res = await fetch(`http://0.0.0.0:${port}${path}`, init);
+
+          if (!res.ok) {
+            const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
+            err.name = 'ResponseError';
+            throw err;
+          }
+
+          return await res.json<T>();
+        },
         async execute(args) {
+          const { headers, ...rest } = args;
           const res = await fetch(`http://0.0.0.0:${port}/graphql`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
               accept: 'application/graphql-response+json, application/json',
+              ...headers,
             },
-            body: JSON.stringify(args),
+            body: JSON.stringify(rest),
           });
           if (!res.ok) {
             const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
@@ -428,6 +449,7 @@ export function createTenv(cwd: string): Tenv {
       env = {},
       containerPort,
       hostPort,
+      additionalPorts,
       healthcheck,
       pipeLogs = !!process.env['DEBUG'],
       cmd,
@@ -471,12 +493,17 @@ export function createTenv(cwd: string): Tenv {
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
         ExposedPorts: {
           [containerPort + '/tcp']: {},
+          ...additionalPorts?.reduce((acc, v) => ({ ...acc, [v + '/tcp']: {} }), {}),
         },
         Cmd: cmd?.filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
+            ...additionalPorts?.reduce(
+              (acc, v) => ({ ...acc, [v + '/tcp']: [{ HostPort: v.toString() }] }),
+              {},
+            ),
           },
           Binds: Object.values(volumes).map(
             ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
@@ -734,6 +761,6 @@ class DockerError extends Error {
   }
 }
 
-function boolEnv(name: string): boolean {
+export function boolEnv(name: string): boolean {
   return ['1', 't', 'true', 'y', 'yes'].includes(process.env[name]);
 }
