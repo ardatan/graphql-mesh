@@ -18,7 +18,7 @@ const jiti = createJITI(
  *
  * If the module is not found, `null` will be returned.
  */
-export async function include(absolutePath: string): Promise<unknown> {
+export async function include<T = any>(absolutePath: string): Promise<T> {
   if (!isAbsolute(absolutePath)) {
     throw new Error('Only absolute paths can be included');
   }
@@ -31,9 +31,9 @@ export async function include(absolutePath: string): Promise<unknown> {
       throw new Error(`Included module is not an object, is instead "${typeof module}"`);
     }
     if ('default' in module) {
-      return module.default;
+      return module.default as T;
     }
-    return module;
+    return module as T;
   } catch (err) {
     // NOTE: we dont use the err.code because maybe the included module is importing another module that does not exist.
     //       if we were to use the MODULE_NOT_FOUND code, then those includes will fail with an unclear error

@@ -3,10 +3,10 @@ import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import type { ConfigProcessOptions } from '@graphql-mesh/config';
 import { processConfig } from '@graphql-mesh/config';
 import { path, process } from '@graphql-mesh/cross-helpers';
+import { include } from '@graphql-mesh/include';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { jsonSchema } from '@graphql-mesh/types';
 import { DefaultLogger, loadYaml } from '@graphql-mesh/utils';
-import { defaultImportFn } from './defaultImportFn.js';
 
 export function validateConfig(
   config: any,
@@ -55,7 +55,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
     configName = 'mesh',
     dir: configDir = '',
     initialLoggerPrefix = '🕸️  Mesh',
-    importFn = defaultImportFn,
+    importFn = include,
     ...restOptions
   } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
@@ -94,7 +94,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
 
 function customLoader(
   ext: 'json' | 'yaml' | 'js',
-  importFn = defaultImportFn,
+  importFn = include,
   initialLoggerPrefix = '🕸️  Mesh',
 ) {
   const logger = new DefaultLogger(initialLoggerPrefix).child('config');
