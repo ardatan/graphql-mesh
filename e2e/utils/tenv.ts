@@ -345,6 +345,7 @@ export function createTenv(cwd: string): Tenv {
         trimHostPaths,
         maskServicePorts,
         pipeLogs = !!process.env['DEBUG'],
+        env,
       } = opts || {};
       let output = '';
       if (opts?.output) {
@@ -353,7 +354,7 @@ export function createTenv(cwd: string): Tenv {
         output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
       }
       const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs },
+        { cwd, pipeLogs, env },
         'node',
         '--import',
         'tsx',
