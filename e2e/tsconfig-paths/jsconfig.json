@@ -1,0 +1,8 @@
+// we use jsconfig.json because tsx picks up tsconfig.json and we want to make sure Mesh runtime does it instead
+{
+  "compilerOptions": {
+    "paths": {
+      "@e2e/tsconfig-paths/*": ["./folder/*"]
+    }
+  }
+}
