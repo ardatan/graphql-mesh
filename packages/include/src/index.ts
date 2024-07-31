@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-nodejs-modules
 import Module from 'node:module';
 import { createPathsMatcher, getTsconfig } from 'get-tsconfig';
 import createJITI from 'jiti';
@@ -74,8 +75,10 @@ export function registerTsconfigPaths({
   const tsconfig = getTsconfig(searchPath, configName);
   const pathsMatcher = createPathsMatcher(tsconfig);
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   const originalResolveFilename = Module._resolveFilename;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   Module._resolveFilename = (...args) => {
     const [path, ...rest] = args;
@@ -102,6 +105,7 @@ export function registerTsconfigPaths({
   };
 
   return function unregisterTsconfigPaths() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     Module._resolveFilename = originalResolveFilename;
   };

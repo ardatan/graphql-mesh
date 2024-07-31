@@ -1,8 +1,8 @@
 import '@graphql-mesh/include/register-tsconfig-paths';
 import 'dotenv/config'; // inject dotenv options to process.env
 
+// eslint-disable-next-line import/no-nodejs-modules
 import { promises as fsPromises } from 'fs';
-import { lstat } from 'fs/promises';
 // eslint-disable-next-line import/no-nodejs-modules
 import { isAbsolute, join, resolve } from 'path';
 import { parse } from 'graphql';
@@ -66,7 +66,8 @@ export async function run({
     log.info(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
       const absoluteConfigPath = resolve(process.cwd(), configPath);
-      const exists = await lstat(absoluteConfigPath)
+      const exists = await fsPromises
+        .lstat(absoluteConfigPath)
         .then(() => true)
         .catch(() => false);
       if (exists) {
@@ -90,7 +91,8 @@ export async function run({
       ? opts.configPath
       : resolve(process.cwd(), opts.configPath);
     log.info(`Loading config file at path ${configPath}`);
-    const exists = await lstat(configPath)
+    const exists = await fsPromises
+      .lstat(configPath)
       .then(() => true)
       .catch(() => false);
     if (!exists) {
