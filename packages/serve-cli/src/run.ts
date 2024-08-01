@@ -199,6 +199,7 @@ export async function run({
           registerTerminateHandler(eventName => {
             log.info(`Closing watcher for ${absoluteUnifiedGraphPath} for ${eventName}`);
             return subscription.unsubscribe().catch(err => {
+              // https://github.com/parcel-bundler/watcher/issues/129
               log.error(`Failed to close watcher for ${absoluteUnifiedGraphPath}!`, err);
             });
           });
