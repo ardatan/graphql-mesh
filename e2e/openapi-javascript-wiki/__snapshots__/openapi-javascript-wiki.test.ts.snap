@@ -2178,7 +2178,7 @@ exports[`should execute Metrics 1`] = `
 exports[`should execute ViewsInPastMonth 1`] = `
 {
   "data": {
-    "viewsInPastMonth": 233087769,
+    "viewsInPastMonth": 244752383,
   },
 }
 `;
