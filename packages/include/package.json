@@ -50,6 +50,9 @@
     "get-tsconfig": "^4.7.6",
     "jiti": "^1.21.6"
   },
+  "devDependencies": {
+    "glob": "^11.0.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
@@ -65,8 +68,5 @@
   },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "devDependencies": {
-    "glob": "^11.0.0"
   }
 }
