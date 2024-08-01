@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should include in fixture cjs-imports-another-no-ext 1`] = `
+{
+  "john": "doe",
+}
+`;
+
+exports[`should include in fixture cjs-imports-esm-no-ext 1`] = `
+{
+  "john": "doe",
+}
+`;
+
+exports[`should include in fixture imports-another-cjs-ext-cjs 1`] = `"doe"`;
+
+exports[`should include in fixture imports-another-js-ext 1`] = `"doe"`;
+
+exports[`should include in fixture imports-another-no-ext 1`] = `"doe"`;
+
+exports[`should include in fixture imports-another-no-ext-cjs 1`] = `"doe"`;
+
+exports[`should include in fixture js-imports-another-no-ext 1`] = `"doe"`;
+
+exports[`should include in fixture simple-default-export 1`] = `
+{
+  "john": "doe",
+}
+`;
+
+exports[`should include in fixture simple-named-export 1`] = `
+{
+  "john": "doe",
+}
+`;

@@ -5927,6 +5927,7 @@ __metadata:
     "@graphql-mesh/config": "npm:^0.101.6"
     "@graphql-mesh/cross-helpers": "npm:^0.4.4"
     "@graphql-mesh/http": "npm:^0.100.6"
+    "@graphql-mesh/include": "npm:^0.0.0"
     "@graphql-mesh/runtime": "npm:^0.100.6"
     "@graphql-mesh/store": "npm:^0.99.5"
     "@graphql-mesh/types": "npm:^0.99.5"
@@ -5943,7 +5944,6 @@ __metadata:
     dotenv: "npm:^16.0.3"
     graphql-import-node: "npm:^0.0.5"
     graphql-ws: "npm:^5.12.1"
-    jiti: "npm:^1.21.6"
     json-bigint-patch: "npm:^0.0.8"
     json5: "npm:^2.2.3"
     mkdirp: "npm:^3.0.0"
@@ -5977,6 +5977,7 @@ __metadata:
   dependencies:
     "@commander-js/extra-typings": "npm:^12.0.1"
     "@graphql-mesh/fusion-composition": "npm:^0.1.7"
+    "@graphql-mesh/include": "npm:^0.0.0"
     "@graphql-mesh/utils": "npm:^0.99.5"
     "@graphql-tools/graphql-file-loader": "npm:8.0.1"
     "@graphql-tools/load": "npm:^8.0.1"
@@ -5985,7 +5986,6 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.9.14"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
-    jiti: "npm:^1.21.6"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.5
     graphql: "*"
@@ -6164,6 +6164,17 @@ __metadata:
     "@graphql-tools/utils": ^10.2.3
     graphql: "*"
     tslib: ^2.4.0
+  languageName: unknown
+  linkType: soft
+
+"@graphql-mesh/include@npm:^0.0.0, @graphql-mesh/include@workspace:packages/include":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/include@workspace:packages/include"
+  dependencies:
+    dotenv: "npm:^16.3.1"
+    get-tsconfig: "npm:^4.7.6"
+    glob: "npm:^11.0.0"
+    jiti: "npm:^1.21.6"
   languageName: unknown
   linkType: soft
 
@@ -6633,6 +6644,7 @@ __metadata:
   dependencies:
     "@commander-js/extra-typings": "npm:^12.0.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.4"
+    "@graphql-mesh/include": "npm:^0.0.0"
     "@graphql-mesh/serve-runtime": "npm:^0.5.8"
     "@graphql-mesh/types": "npm:^0.99.5"
     "@graphql-mesh/utils": "npm:^0.99.5"
@@ -6645,7 +6657,6 @@ __metadata:
     "@types/spinnies": "npm:^0.5.3"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
-    jiti: "npm:^1.21.6"
     json-bigint-patch: "npm:^0.0.8"
     node-libcurl: "npm:^4.0.0"
     rollup: "npm:^4.18.1"
@@ -20617,7 +20628,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.0, get-tsconfig@npm:^4.7.5":
+"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.0, get-tsconfig@npm:^4.7.5, get-tsconfig@npm:^4.7.6":
   version: 4.7.6
   resolution: "get-tsconfig@npm:4.7.6"
   dependencies:

@@ -2,6 +2,7 @@ import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import { include } from '@graphql-mesh/include';
 import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { getMesh } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
@@ -17,7 +18,6 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
-import { defaultImportFn } from './defaultImportFn.js';
 import { handleFatalError } from './handleFatalError.js';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
@@ -76,7 +76,7 @@ export async function graphqlMesh(
           externalModules.map(moduleName => {
             const localModulePath = pathModule.resolve(baseDir, moduleName);
             const islocalModule = fs.existsSync(localModulePath);
-            return defaultImportFn(islocalModule ? localModulePath : moduleName);
+            return include(islocalModule ? localModulePath : moduleName);
           }),
         ),
     })
@@ -243,7 +243,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           }
           process.env.NODE_ENV = 'production';
           const mainModule = pathModule.join(builtMeshArtifactsPath, 'index');
-          const builtMeshArtifacts = await defaultImportFn(mainModule);
+          const builtMeshArtifacts = await include(mainModule);
           const rawServeConfig: YamlConfig.Config['serve'] = builtMeshArtifacts.rawServeConfig;
           const meshOptions = await builtMeshArtifacts.getMeshOptions();
           logger = meshOptions.logger;
@@ -278,7 +278,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             cliParams.artifactsDir,
             new FsStoreStorageAdapter({
               cwd: baseDir,
-              importFn: defaultImportFn,
+              importFn: include,
               fileType: 'ts',
             }),
             {
@@ -291,7 +291,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             store,
-            importFn: defaultImportFn,
+            importFn: include,
             ignoreAdditionalResolvers: true,
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
@@ -336,7 +336,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           const importedModulesSet = new Set<string>();
           const importPromises: Promise<any>[] = [];
           const importFn = (moduleId: string, noCache: boolean) => {
-            const importPromise = defaultImportFn(moduleId)
+            const importPromise = include(moduleId)
               .catch(e => {
                 if (e.message.includes('getter')) {
                   return e;

@@ -1,11 +1,13 @@
-import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
+import '@graphql-mesh/include/register-tsconfig-paths';
 import 'dotenv/config'; // inject dotenv options to process.env
+import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
 import cluster from 'node:cluster';
+import { lstat } from 'node:fs/promises';
 import { availableParallelism, release } from 'node:os';
 import { dirname, isAbsolute, resolve } from 'node:path';
-import createJITI from 'jiti';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import { include } from '@graphql-mesh/include';
 import type { UnifiedGraphConfig } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
@@ -113,9 +115,14 @@ export async function run({
   if (!opts.configPath) {
     log.info(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
-      importedConfig = await importConfig(log, resolve(process.cwd(), configPath));
-      if (importedConfig) {
+      const absoluteConfigPath = resolve(process.cwd(), configPath);
+      const exists = await lstat(absoluteConfigPath)
+        .then(() => true)
+        .catch(() => false);
+      if (exists) {
         log.info(`Found default config file ${configPath}`);
+        const module = await include(absoluteConfigPath);
+        importedConfig = Object(module).serveConfig;
         break;
       }
     }
@@ -125,15 +132,22 @@ export async function run({
       ? opts.configPath
       : resolve(process.cwd(), opts.configPath);
     log.info(`Loading config file at path ${configPath}`);
-    importedConfig = await importConfig(log, configPath);
-    if (!importedConfig) {
+    const exists = await lstat(configPath)
+      .then(() => true)
+      .catch(() => false);
+    if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
+    }
+    const module = await include(configPath);
+    importedConfig = Object(module).serveConfig;
+    if (!importedConfig) {
+      throw new Error(`No "serveConfig" exported from config at ${configPath}`);
     }
   }
   if (importedConfig) {
-    log.info('Loaded config file');
+    log.info('Loaded config');
   } else {
-    log.info('No config file loaded, using defaults');
+    log.info('No config loaded, using defaults');
   }
 
   const config: MeshServeCLIConfig = {
@@ -262,38 +276,4 @@ export async function run({
     maxHeaderSize: config.maxHeaderSize || 16_384,
   });
   terminateStack.use(server);
-}
-
-const jiti = createJITI(
-  // import.meta.url is not available in CJS (and cant even be in the syntax) and __filename is not available in ESM
-  // instead, we dont care about the file path because we'll require config imports to have absolute paths
-  '',
-);
-
-async function importConfig(log: Logger, path: string): Promise<MeshServeCLIConfig | null> {
-  if (!isAbsolute(path)) {
-    throw new Error('Configs can be imported using absolute paths only'); // see createJITI for explanation
-  }
-  try {
-    const importedConfigModule = await jiti.import(path, {});
-    if (!importedConfigModule || typeof importedConfigModule !== 'object') {
-      throw new Error('Invalid imported config module!');
-    }
-    if ('default' in importedConfigModule) {
-      // eslint-disable-next-line dot-notation
-      return importedConfigModule.default['serveConfig'];
-    } else if ('serveConfig' in importedConfigModule) {
-      return importedConfigModule.serveConfig as MeshServeCLIConfig;
-    }
-  } catch (err) {
-    // NOTE: we dont use the err.code because maybe the config itself is importing a module that does not exist.
-    //       if we were to use the MODULE_NOT_FOUND code, then those configs will fail silently
-    if (String(err).includes(`Cannot find module '${path}'`)) {
-      // config at path not found
-    } else {
-      log.error(`Importing config at ${path} failed!`);
-      throw err;
-    }
-  }
-  return null;
 }
