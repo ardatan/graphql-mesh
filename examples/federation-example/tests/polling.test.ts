@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { fetch } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../packages/testing/createDisposableServer';
 import { disposableExec } from '../../../packages/testing/disposableExec';
 
@@ -8,7 +9,6 @@ jest.setTimeout(30000);
 async function findAvailableHostName() {
   const hostnames = ['localhost', '127.0.0.1', '0.0.0.0'];
   for (const hostname of hostnames) {
-    console.log('Trying to connect to ' + hostname);
     try {
       const res = await fetch(`http://${hostname}:4000/graphql`, {
         headers: {
@@ -17,13 +17,11 @@ async function findAvailableHostName() {
       });
       await res.text();
     } catch (e) {
-      console.error('Failed to connect to ' + hostname);
       continue;
     }
-    console.log('Connected to ' + hostname);
     return hostname;
   }
-  throw new Error('No available hostname found');
+  throw new Error('No available hostname found for localhost');
 }
 describe('Polling Test', () => {
   it('should pass', async () => {

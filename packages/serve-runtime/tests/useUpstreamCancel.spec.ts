@@ -1,6 +1,4 @@
-/* eslint-disable import/no-nodejs-modules */
 /* eslint-disable import/no-extraneous-dependencies */
-import type { AddressInfo } from 'net';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { fetch } from '@whatwg-node/fetch';
 import { createServerAdapter, Response } from '@whatwg-node/server';
