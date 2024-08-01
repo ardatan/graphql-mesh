@@ -40,7 +40,7 @@ export interface RegisterTsconfigPathsOptions {
    *
    * @default process.cwd()
    */
-  searchPath?: string;
+  cwd?: string;
   /**
    * The file name of the TypeScript config file.
    *
@@ -58,10 +58,10 @@ export interface RegisterTsconfigPathsOptions {
  * @returns The unregister function.
  */
 export function registerTsconfigPaths({
-  searchPath = process.cwd(),
+  cwd = process.cwd(),
   configName = process.env.MESH_INCLUDE_TSCONFIG_NAME || 'tsconfig.json',
 }: RegisterTsconfigPathsOptions = {}): () => void {
-  const tsconfig = getTsconfig(searchPath, configName);
+  const tsconfig = getTsconfig(cwd, configName);
   if (!tsconfig) return; // no tsconfig, no register
 
   const pathsMatcher = createPathsMatcher(tsconfig);
