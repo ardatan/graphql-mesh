@@ -6,7 +6,7 @@ exports[`Merge attributes correctly in allOfs should generate correct schema: al
   mutation: Mutation
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: ObjMap) on INTERFACE | UNION
+directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
@@ -46,8 +46,6 @@ type Mutation {
 """Represents empty values"""
 scalar Void
 
-scalar ObjMap
-
 enum HTTPMethod {
   GET
   HEAD
@@ -58,5 +56,7 @@ enum HTTPMethod {
   OPTIONS
   TRACE
   PATCH
-}"
+}
+
+scalar ObjMap"
 `;

@@ -2,12 +2,18 @@ import type { GraphQLInterfaceType } from 'graphql';
 
 export function processDiscriminatorAnnotations({
   interfaceType,
-  discriminatorFieldName,
+  discriminatorField,
+  discriminatorMapping,
 }: {
   interfaceType: GraphQLInterfaceType;
-  discriminatorFieldName: string;
+  discriminatorField: string;
+  discriminatorMapping: [string, string][];
 }) {
-  interfaceType.resolveType = function discriminatorDirectiveHandler(root) {
-    return root[discriminatorFieldName];
+  const discriminatorMappingObj = Array.isArray(discriminatorMapping)
+    ? Object.fromEntries(discriminatorMapping)
+    : discriminatorMapping;
+  interfaceType.resolveType = function discriminatorDirectiveHandler(data) {
+    const discriminatorValue = data[discriminatorField];
+    return discriminatorMappingObj?.[discriminatorValue] || discriminatorValue;
   };
 }

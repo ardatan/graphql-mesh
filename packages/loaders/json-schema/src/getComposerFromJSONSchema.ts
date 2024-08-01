@@ -869,7 +869,7 @@ export function getComposerFromJSONSchema({
         const discriminatorArgs: {
           subgraph: string;
           field: string;
-          mapping?: Record<string, string>;
+          mapping?: [string, string][];
         } = {
           subgraph: subgraphName,
           field: subSchemaOnly.discriminator.propertyName,
@@ -880,7 +880,7 @@ export function getComposerFromJSONSchema({
             const discType = subSchemaOnly.discriminatorMapping[discriminatorValue];
             mappingByName[discriminatorValue] = discType.output.getTypeName();
           }
-          discriminatorArgs.mapping = mappingByName;
+          discriminatorArgs.mapping = Object.entries(mappingByName);
         }
         (subSchemaAndTypeComposers.output as InterfaceTypeComposer).setDirectiveByName(
           'discriminator',

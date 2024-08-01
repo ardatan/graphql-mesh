@@ -14,15 +14,18 @@ export function getTypeResolverForAbstractType({
 }: {
   possibleTypes: readonly GraphQLObjectType[];
   discriminatorField?: string;
-  discriminatorMapping?: Record<string, string>;
+  discriminatorMapping?: [string, string][];
   statusCodeTypeNameMap?: Record<string, string>;
 }): GraphQLTypeResolver<any, any> {
+  const discriminatorMappingObj = Array.isArray(discriminatorMapping)
+    ? Object.fromEntries(discriminatorMapping)
+    : discriminatorMapping;
   return function resolveType(data: any, _ctx: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
       return data.__typename;
     } else if (discriminatorField != null && data[discriminatorField]) {
       const discriminatorValue = data[discriminatorField];
-      return discriminatorMapping?.[discriminatorValue] || discriminatorValue;
+      return discriminatorMappingObj?.[discriminatorValue] || discriminatorValue;
     }
     if (data.$statusCode && statusCodeTypeNameMap) {
       const typeName =

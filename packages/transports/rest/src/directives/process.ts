@@ -91,7 +91,8 @@ export function processDirectives(
           case 'discriminator':
             processDiscriminatorAnnotations({
               interfaceType: type,
-              discriminatorFieldName: directiveAnnotation.args.field,
+              discriminatorField: directiveAnnotation.args.field,
+              discriminatorMapping: directiveAnnotation.args.mapping,
             });
             break;
         }
@@ -101,7 +102,7 @@ export function processDirectives(
       const directiveAnnotations = getDefDirectives(schema, type);
       let statusCodeTypeNameIndexMap: Record<number, string>;
       let discriminatorField: string;
-      let discriminatorMapping: Record<string, string>;
+      let discriminatorMapping: [string, string][];
       for (const directiveAnnotation of directiveAnnotations) {
         switch (directiveAnnotation.name) {
           case 'statusCodeTypeName':
