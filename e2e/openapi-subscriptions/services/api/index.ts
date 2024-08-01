@@ -9,13 +9,13 @@ const app = createRouter().route({
   handler(req) {
     const subscriptionId = Date.now().toString();
     req.json().then(async ({ callbackUrl }) => {
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 10; i++) {
         const body = JSON.stringify({
           timestamp: new Date().toJSON(),
           userData: 'RANDOM_DATA',
         });
         const fullCallbackUrl = urljoin(callbackUrl, subscriptionId);
-        console.info(`Webhook ping ${i + 1} out of 3 -> `, fullCallbackUrl, body);
+        console.info(`Webhook ping ${i + 1} out of 10 -> `, fullCallbackUrl, body);
         const res = await fetch(fullCallbackUrl, {
           method: 'POST',
           headers: {
