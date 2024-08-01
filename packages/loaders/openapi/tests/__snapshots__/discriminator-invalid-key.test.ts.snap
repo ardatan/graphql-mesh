@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Discriminator Mapping should generate correct schema: discriminator-mapping 1`] = `
-"schema @transport(subgraph: "test", kind: "rest") {
+exports[`Discriminator with invalid key in the mapping should generate correct schema: discriminator-invalid-key 1`] = `
+"schema @transport(subgraph: "test", kind: "rest", location: "http://localhost") {
   query: Query
 }
 
@@ -11,20 +11,25 @@ directive @httpOperation(subgraph: String, path: String, operationSpecificHeader
 
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
+type Cat implements Pet {
+  color: String
+  name: String!
+  petType: String
+}
+
+interface Pet @discriminator(subgraph: "test", field: "petType", mapping: [["pet-cat", "Cat"], ["pet-dog", "Dog"]]) {
+  name: String!
+  petType: String
+}
+
+type Dog implements Pet {
+  age: String
+  name: String!
+  petType: String
+}
+
 type Query {
   pets_by_id(id: String!): Pet @httpOperation(subgraph: "test", path: "/pets/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
-}
-
-union Pet @discriminator(subgraph: "test", field: "petType", mapping: [["Dog", "DogDifferent"], ["Cat", "Cat"]]) = Cat | DogDifferent
-
-type Cat {
-  petType: String
-  cat_exclusive: String
-}
-
-type DogDifferent {
-  petType: String
-  dog_exclusive: String
 }
 
 enum HTTPMethod {

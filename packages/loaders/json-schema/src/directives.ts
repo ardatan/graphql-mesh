@@ -37,7 +37,7 @@ export const DiscriminatorDirective = new GraphQLDirective({
       type: GraphQLString,
     },
     mapping: {
-      type: ObjMapScalar,
+      type: new GraphQLList(new GraphQLList(GraphQLString)),
     },
   },
 });
