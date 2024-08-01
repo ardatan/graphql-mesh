@@ -65,5 +65,8 @@
   },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
+  },
+  "devDependencies": {
+    "glob": "^11.0.0"
   }
 }

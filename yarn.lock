@@ -6173,6 +6173,7 @@ __metadata:
   dependencies:
     dotenv: "npm:^16.3.1"
     get-tsconfig: "npm:^4.7.6"
+    glob: "npm:^11.0.0"
     jiti: "npm:^1.21.6"
   languageName: unknown
   linkType: soft

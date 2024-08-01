@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should include in fixture simple-default-export 1`] = `
+{
+  "john": "doe",
+}
+`;
+
+exports[`should include in fixture simple-named-export 1`] = `
+{
+  "john": "doe",
+}
+`;
