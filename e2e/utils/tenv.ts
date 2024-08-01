@@ -14,6 +14,7 @@ import {
   type ServiceEndpointDefinition,
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { fetch } from '@whatwg-node/fetch';
 import { createArg, createPortArg, createServicePortArg } from './args';
 import { leftoverStack } from './leftoverStack';
 
@@ -40,7 +41,7 @@ const serveRunner = (function getServeRunner() {
   ) {
     throw new Error(`Unsupported E2E serve runner "${runner}"`);
   }
-  if (runner === 'docker') {
+  if (runner === 'docker' && !process.env.CI) {
     process.stderr.write(`
 ⚠️ Using docker serve runner! Make sure you have built the containers with:
 yarn bundle && docker buildx bake e2e

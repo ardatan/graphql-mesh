@@ -1,30 +1,13 @@
 import { exec } from 'child_process';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { fetch } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../packages/testing/createDisposableServer';
 import { disposableExec } from '../../../packages/testing/disposableExec';
+import { getAvailablePort } from '../../../packages/testing/getAvailablePort';
+import { getLocalHostName } from '../../../packages/testing/getLocalHostName';
 
 jest.setTimeout(30000);
-async function findAvailableHostName() {
-  const hostnames = ['localhost', '127.0.0.1', '0.0.0.0'];
-  for (const hostname of hostnames) {
-    console.log('Trying to connect to ' + hostname);
-    try {
-      const res = await fetch(`http://${hostname}:4000/graphql`, {
-        headers: {
-          accept: 'text/html',
-        },
-      });
-      await res.text();
-    } catch (e) {
-      console.error('Failed to connect to ' + hostname);
-      continue;
-    }
-    console.log('Connected to ' + hostname);
-    return hostname;
-  }
-  throw new Error('No available hostname found');
-}
 describe('Polling Test', () => {
   it('should pass', async () => {
     const cwd = join(__dirname, 'fixtures/polling');
@@ -34,7 +17,9 @@ describe('Polling Test', () => {
     await using supergraphSdlServer = await createDisposableServer((req, res) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');
-      console.log('Serving supergraph SDL');
+      if (process.env.DEBUG) {
+        console.log('Serving supergraph SDL');
+      }
       if (changedSupergraph) {
         res.end(supergraphSdl.replace('topProducts', 'topProductsNew'));
       } else {
@@ -42,7 +27,9 @@ describe('Polling Test', () => {
       }
     });
     const SUPERGRAPH_SOURCE = `http://localhost:${(supergraphSdlServer.address() as any).port}`;
-    console.info('Supergraph SDL server is running on ' + SUPERGRAPH_SOURCE);
+    if (process.env.DEBUG) {
+      console.info('Supergraph SDL server is running on ' + SUPERGRAPH_SOURCE);
+    }
     const buildCmd = exec(`${join(__dirname, '../node_modules/.bin/mesh')} build`, {
       cwd,
       env: {
@@ -58,24 +45,29 @@ describe('Polling Test', () => {
         }
       });
     });
+    const port = await getAvailablePort();
     using serveCmd = disposableExec(`${join(__dirname, '../node_modules/.bin/mesh')} start`, {
       cwd,
       env: {
         ...process.env,
+        PORT: port.toString(),
         SUPERGRAPH_SOURCE,
       },
     });
     await new Promise<void>(resolve => {
       serveCmd.stderr?.on('data', function stderrListener(data: string) {
-        console.log(data);
+        if (process.env.DEBUG) {
+          console.log(data);
+        }
         if (data.includes('Serving GraphQL Mesh')) {
           serveCmd.stderr?.off('data', stderrListener);
           resolve();
         }
       });
     });
-    const hostname = await findAvailableHostName();
-    const resp = await fetch(`http://${hostname}:4000/graphql`, {
+    const hostname = await getLocalHostName(port);
+    const url = `http://${hostname}:${port}/graphql`;
+    const resp = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -115,7 +107,7 @@ describe('Polling Test', () => {
     });
     changedSupergraph = true;
     await new Promise(resolve => setTimeout(resolve, 3000));
-    const resp2 = await fetch('http://127.0.0.1:4000/graphql', {
+    const resp2 = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
