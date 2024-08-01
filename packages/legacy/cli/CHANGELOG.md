@@ -1,5 +1,30 @@
 # @graphql-mesh/cli
 
+## 0.92.8
+
+### Patch Changes
+
+- [#7427](https://github.com/ardatan/graphql-mesh/pull/7427)
+  [`8be81d2`](https://github.com/ardatan/graphql-mesh/commit/8be81d25aac222f37ba7bc44592c39b0f53ace95)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/include@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/include/v/0.0.0)
+    (to `dependencies`)
+  - Removed dependency [`jiti@^1.21.6` ↗︎](https://www.npmjs.com/package/jiti/v/1.21.6) (from
+    `dependencies`)
+
+- [#7427](https://github.com/ardatan/graphql-mesh/pull/7427)
+  [`8be81d2`](https://github.com/ardatan/graphql-mesh/commit/8be81d25aac222f37ba7bc44592c39b0f53ace95)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Resolve tsconfig paths when importing config
+  files
+
+- Updated dependencies
+  [[`6fc03b6`](https://github.com/ardatan/graphql-mesh/commit/6fc03b6f138ebc81a477fbf0c222ab6e1d882497),
+  [`8be81d2`](https://github.com/ardatan/graphql-mesh/commit/8be81d25aac222f37ba7bc44592c39b0f53ace95)]:
+  - @graphql-mesh/http@0.100.7
+  - @graphql-mesh/include@0.0.1
+
 ## 0.92.7
 
 ### Patch Changes

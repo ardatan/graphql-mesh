@@ -1,5 +1,44 @@
 # @omnigraph/openapi
 
+## 0.103.0
+
+### Minor Changes
+
+- [#7443](https://github.com/ardatan/graphql-mesh/pull/7443)
+  [`8bccd9a`](https://github.com/ardatan/graphql-mesh/commit/8bccd9a2475c49444a8751a1cdc25386fbacc2b7)
+  Thanks [@ardatan](https://github.com/ardatan)! - POSSIBLE BREAKING CHANGE WARNING: This change is
+  breaking for OpenAPI schemas that have discriminator mapping. It fixes a bug when you have keys in
+  the discriminator mapping that are invalid per GraphQL spec. Now in the artifacts `@discriminator`
+  directive's `mapping` argument is `[String!]!` instead of `ObjMap`. You should make sure both the
+  consumer and the producer of the artifacts are updated to this version.
+
+  ```yaml
+  discriminator:
+    propertyName: petType
+    mapping:
+      'pet-cat': '#/components/schemas/Cat'
+      'pet-dog': '#/components/schemas/Dog'
+  ```
+
+  This OpenAPI used to be translated into;
+
+  ```graphql
+  @directive(mapping: { "pet-cat": "#/components/schemas/Cat", "pet-dog": "#/components/schemas/Dog" })
+  ```
+
+  But this is invalid in GraphQL spec, so now it's translated into;
+
+  ```graphql
+  @directive(mapping: [["pet-cat", "#/components/schemas/Cat"], ["pet-dog", "#/components/schemas/Dog"]])
+  ```
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a4e53d9`](https://github.com/ardatan/graphql-mesh/commit/a4e53d9407b8dcb4b57fb233b8dddfee770d06f5),
+  [`8bccd9a`](https://github.com/ardatan/graphql-mesh/commit/8bccd9a2475c49444a8751a1cdc25386fbacc2b7)]:
+  - @omnigraph/json-schema@0.103.0
+
 ## 0.102.7
 
 ### Patch Changes
