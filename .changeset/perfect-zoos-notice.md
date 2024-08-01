@@ -1,7 +1,7 @@
 ---
 '@omnigraph/json-schema': minor
 '@omnigraph/openapi': minor
-'@graphql-mesh/transport-rest': minor
+'@graphql-mesh/transport-rest': patch
 ---
 
 POSSIBLE BREAKING CHANGE WARNING:
