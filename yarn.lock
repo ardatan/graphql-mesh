@@ -7379,9 +7379,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/delegate@npm:^10.0.11, @graphql-tools/delegate@npm:^10.0.12, @graphql-tools/delegate@npm:^10.0.16, @graphql-tools/delegate@npm:^10.0.4":
-  version: 10.0.16
-  resolution: "@graphql-tools/delegate@npm:10.0.16"
+"@graphql-tools/delegate@npm:^10.0.11, @graphql-tools/delegate@npm:^10.0.12, @graphql-tools/delegate@npm:^10.0.16, @graphql-tools/delegate@npm:^10.0.17, @graphql-tools/delegate@npm:^10.0.4":
+  version: 10.0.17
+  resolution: "@graphql-tools/delegate@npm:10.0.17"
   dependencies:
     "@graphql-tools/batch-execute": "npm:^9.0.4"
     "@graphql-tools/executor": "npm:^1.3.0"
@@ -7391,7 +7391,7 @@ __metadata:
     tslib: "npm:^2.5.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/d0d47db1faec9dd1b55bc9d5300e7c6c33bcda6d47f890a1a5af7c8440175af91cf91e29fe9c533face2743293367609ed9d8f2ebc63532b3af5ecc39a8e9121
+  checksum: 10c0/c136026d328ce29d542077305a639d8f84c254b8ef40a9d187b410b3b5d93bbd1c51c424c4318c2df02e8e8a03bea1cf336268010b59d6c28168b3e5c0fa847d
   languageName: node
   linkType: hard
 
@@ -7498,11 +7498,11 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "@graphql-tools/federation@npm:2.2.3"
+  version: 2.2.4
+  resolution: "@graphql-tools/federation@npm:2.2.4"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/executor-http": "npm:^1.1.5"
     "@graphql-tools/merge": "npm:^9.0.3"
     "@graphql-tools/schema": "npm:^10.0.4"
@@ -7517,7 +7517,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/f0a6a2c7a07b0c475bc765b93ded641b13bd11bde166d1bfbca9c8639a0ea5b72b4b5b2e278cc9856dcf6d7832e4eab34a93d0e8b01e2e8059fc50dfdb41731f
+  checksum: 10c0/a46340004223e7645fe5731a2050e518f429f3a2ee6e81800613b90b50a24d8207959603723048213dd7ef02eaff0c859d73606f57918c5b78726e74cad2d7c5
   languageName: node
   linkType: hard
 
