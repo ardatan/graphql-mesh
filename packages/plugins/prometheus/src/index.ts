@@ -31,6 +31,11 @@ export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryA
 
 type MeshMetricsConfig = {
   metrics: {
+    /**
+     * Tracks the duration of outgoing HTTP requests.
+     * It reports the time spent on each request made using the `fetch` function provided by Mesh.
+     * It is reported as an histogram
+     */
     graphql_mesh_fetch_duration:
       | boolean
       | string
@@ -38,10 +43,22 @@ type MeshMetricsConfig = {
           string,
           { url: string; options: MeshFetchRequestInit; response: Response }
         >;
+
+    /**
+     * Tracks the duration of subgraph execution.
+     * It reports the time spent on each subgraph queries made to resolve incoming operations as an
+     * histogram
+     */
     graphql_mesh_subgraph_execute_duration:
       | boolean
       | string
       | HistogramAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
+
+    /**
+     * This metric tracks the number of errors that occurred during the subgraph execution.
+     * It counts all errors found in the response returned by the subgraph execution.
+     * It is exposed as a counter
+     */
     graphql_mesh_subgraph_execute_errors:
       | boolean
       | string
@@ -49,10 +66,24 @@ type MeshMetricsConfig = {
   };
 
   labels?: {
+    /**
+     * The name of the targeted subgraph.
+     */
+    subgraphName?: boolean;
+    /**
+     * The type of the GraphQL operation executed by the subgraph.
+     */
     fetchRequestHeaders?: boolean | string[];
+    /**
+     * The name of the GraphQL operation executed by the subgraph.
+     */
     fetchResponseHeaders?: boolean | string[];
   };
 
+  /**
+   * The logger instance used by the plugin to log messages.
+   * This should be the logger instance provided by Mesh in the plugins context.
+   */
   logger: Logger;
 };
 
