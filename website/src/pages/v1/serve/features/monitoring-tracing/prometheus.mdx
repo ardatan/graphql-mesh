@@ -161,14 +161,18 @@ To enable this metric, set the `fetchMetrics` option to `true`.
 
 These metrics include some useful labels to help you identify requests and group them together.
 
-| Label             | Description                                                            |
-| ----------------- | ---------------------------------------------------------------------- |
-| `url`             | The URL of the upstream request.                                       |
-| `method`          | The HTTP method of the upstream request.                               |
-| `statusCode`      | The status code of the upstream response.                              |
-| `statusText`      | The status text of the upstream response.                              |
-| `requestHeaders`  | A JSON encoded object containing the headers of the upstream request.  |
-| `responseHeaders` | A JSON encoded object containing the headers of the upstream response. |
+Since they can be heavy, `requestHeaders` and `responseHeaders` are disabled by default. You can
+either set those options to `true` in the `label` configuration object to include all headers in the
+label, but you can also provide a list of header names to include.
+
+| Label             | Description                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| `url`             | The URL of the upstream request.                                                            |
+| `method`          | The HTTP method of the upstream request.                                                    |
+| `statusCode`      | The status code of the upstream response.                                                   |
+| `statusText`      | The status text of the upstream response.                                                   |
+| `requestHeaders`  | Disabled by default. A JSON encoded object containing the headers of the upstream request.  |
+| `responseHeaders` | Disabled by default. A JSON encoded object containing the headers of the upstream response. |
 
 #### Sample output
 

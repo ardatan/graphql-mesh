@@ -49,8 +49,8 @@ type MeshMetricsConfig = {
   };
 
   labels?: {
-    fetchRequestHeaders?: boolean;
-    fetchResponseHeaders?: boolean;
+    fetchRequestHeaders?: boolean | string[];
+    fetchResponseHeaders?: boolean | string[];
   };
 
   logger: Logger;
@@ -127,10 +127,26 @@ export default function useMeshPrometheus(
       };
 
       if (fetchRequestHeaders) {
-        labels.requestHeaders = JSON.stringify(options.headers);
+        labels.requestHeaders = JSON.stringify(
+          Array.isArray(fetchRequestHeaders)
+            ? Object.fromEntries(
+                Object.entries(options.headers).filter(([key]) =>
+                  fetchRequestHeaders.includes(key),
+                ),
+              )
+            : options.headers,
+        );
       }
       if (fetchResponseHeaders) {
-        labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
+        labels.responseHeaders = JSON.stringify(
+          Array.isArray(fetchResponseHeaders)
+            ? Object.fromEntries(
+                Object.entries(response.headers).filter(([key]) =>
+                  fetchResponseHeaders.includes(key),
+                ),
+              )
+            : response.headers,
+        );
       }
       return labels;
     },
