@@ -1,5 +1,16 @@
 # @graphql-mesh/http
 
+## 0.100.7
+
+### Patch Changes
+
+- [#7428](https://github.com/ardatan/graphql-mesh/pull/7428)
+  [`6fc03b6`](https://github.com/ardatan/graphql-mesh/commit/6fc03b6f138ebc81a477fbf0c222ab6e1d882497)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/server@^0.9.46` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.46)
+    (from `^0.9.34`, in `dependencies`)
+
 ## 0.100.6
 
 ### Patch Changes

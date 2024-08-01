@@ -1,5 +1,37 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.9
+
+### Patch Changes
+
+- [#7428](https://github.com/ardatan/graphql-mesh/pull/7428)
+  [`6fc03b6`](https://github.com/ardatan/graphql-mesh/commit/6fc03b6f138ebc81a477fbf0c222ab6e1d882497)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/server@^0.9.46` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.46)
+    (from `^0.9.34`, in `dependencies`)
+
+- [#7428](https://github.com/ardatan/graphql-mesh/pull/7428)
+  [`6fc03b6`](https://github.com/ardatan/graphql-mesh/commit/6fc03b6f138ebc81a477fbf0c222ab6e1d882497)
+  Thanks [@ardatan](https://github.com/ardatan)! - New plugin to apply compression between
+  subgraphs, gateway and the client So Mesh can compress the request before sending it to the
+  subgraph and decompress the response. Then do the same for the response from the subgraph to the
+  client.
+
+  ```ts filename="mesh.config.ts"
+  import { defineConfig, useContentEncoding } from '@graphql-mesh/serve-cli'
+
+  export default defineConfig({
+    plugins: () => [
+      useContentEncoding({
+        subgraphs: ['*'] // Enable compression for all subgraphs
+        // subgraphs: ['subgraph1', 'subgraph2'] // Enable compression for specific subgraphs
+      })
+    ]
+  })
+  ```
+
 ## 0.5.8
 
 ### Patch Changes
