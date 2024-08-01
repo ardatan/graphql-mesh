@@ -198,7 +198,9 @@ export async function run({
           });
           registerTerminateHandler(eventName => {
             log.info(`Closing watcher for ${absoluteUnifiedGraphPath} for ${eventName}`);
-            return subscription.unsubscribe();
+            return subscription.unsubscribe().catch(err => {
+              log.error(`Failed to close watcher for ${absoluteUnifiedGraphPath}!`, err);
+            });
           });
         } catch (err) {
           log.error(`Failed to watch ${unifiedGraphPath}!`);

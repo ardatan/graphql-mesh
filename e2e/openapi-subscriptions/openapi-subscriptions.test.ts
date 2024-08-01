@@ -1,4 +1,5 @@
 import { createTenv } from '@e2e/tenv';
+import { fetch } from '@whatwg-node/fetch';
 
 const { compose, service, serve } = createTenv(__dirname);
 

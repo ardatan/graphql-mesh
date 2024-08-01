@@ -14,6 +14,7 @@ import {
   type ServiceEndpointDefinition,
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { fetch } from '@whatwg-node/fetch';
 import { createArg, createPortArg, createServicePortArg } from './args';
 import { leftoverStack } from './leftoverStack';
 

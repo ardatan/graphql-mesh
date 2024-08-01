@@ -2,6 +2,7 @@ import { createServer } from 'http';
 import { createRouter, Response } from 'fets';
 import urljoin from 'url-join';
 import { Args } from '@e2e/args';
+import { fetch } from '@whatwg-node/fetch';
 
 const app = createRouter().route({
   method: 'POST',
