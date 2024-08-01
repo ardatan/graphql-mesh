@@ -5,7 +5,7 @@ exports[`Merge required attributes correctly in allOfs should generate correct s
   query: Query
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: ObjMap) on INTERFACE | UNION
+directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
@@ -46,8 +46,6 @@ type Query {
   getEditor: Editor @httpOperation(subgraph: "test", path: "/editor", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
 }
 
-scalar ObjMap
-
 enum HTTPMethod {
   GET
   HEAD
@@ -58,5 +56,7 @@ enum HTTPMethod {
   OPTIONS
   TRACE
   PATCH
-}"
+}
+
+scalar ObjMap"
 `;
