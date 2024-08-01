@@ -72,10 +72,14 @@ type MeshMetricsConfig = {
     subgraphName?: boolean;
     /**
      * The type of the GraphQL operation executed by the subgraph.
+     *
+     * The headers to include in the label can be specified as an array of strings.
      */
     fetchRequestHeaders?: boolean | string[];
     /**
      * The name of the GraphQL operation executed by the subgraph.
+     *
+     * The headers to include in the label can be specified as an array of strings.
      */
     fetchResponseHeaders?: boolean | string[];
   };
