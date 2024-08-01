@@ -62,6 +62,8 @@ export function registerTsconfigPaths({
   configName = process.env.MESH_INCLUDE_TSCONFIG_NAME || 'tsconfig.json',
 }: RegisterTsconfigPathsOptions = {}): () => void {
   const tsconfig = getTsconfig(searchPath, configName);
+  if (!tsconfig) return; // no tsconfig, no register
+
   const pathsMatcher = createPathsMatcher(tsconfig);
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
