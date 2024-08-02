@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.99.7
+
+### Patch Changes
+
+- [`a1bfc49`](https://github.com/ardatan/graphql-mesh/commit/a1bfc492ac3378f22b79a51824407e776b496a84)
+  Thanks [@ardatan](https://github.com/ardatan)! - Removed non-functional \`trustProxy\` option in
+  the config schema This might cause a non-functional config schemna validation warning This change
+  does not have any impact on the functionality of the Mesh
+- Updated dependencies []:
+  - @graphql-mesh/store@0.99.7
+
 ## 0.99.6
 
 ### Patch Changes

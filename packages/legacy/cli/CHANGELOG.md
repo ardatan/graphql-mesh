@@ -1,5 +1,22 @@
 # @graphql-mesh/cli
 
+## 0.92.10
+
+### Patch Changes
+
+- [`a1bfc49`](https://github.com/ardatan/graphql-mesh/commit/a1bfc492ac3378f22b79a51824407e776b496a84)
+  Thanks [@ardatan](https://github.com/ardatan)! - Removed non-functional \`trustProxy\` option in
+  the config schema This might cause a non-functional config schemna validation warning This change
+  does not have any impact on the functionality of the Mesh
+- Updated dependencies
+  [[`a1bfc49`](https://github.com/ardatan/graphql-mesh/commit/a1bfc492ac3378f22b79a51824407e776b496a84)]:
+  - @graphql-mesh/types@0.99.7
+  - @graphql-mesh/config@0.101.8
+  - @graphql-mesh/http@0.100.9
+  - @graphql-mesh/runtime@0.100.8
+  - @graphql-mesh/store@0.99.7
+  - @graphql-mesh/utils@0.99.7
+
 ## 0.92.9
 
 ### Patch Changes
