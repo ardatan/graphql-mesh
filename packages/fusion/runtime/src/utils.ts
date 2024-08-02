@@ -32,78 +32,72 @@ export type { TransportEntry, TransportGetSubgraphExecutor, TransportGetSubgraph
 
 export type Transports =
   | {
-      [Kind in string]: MaybePromise<
-        | Transport<Kind> // named export
-        | {
-            default: Transport<Kind>; // property on default export
-          }
-      >;
+      [Kind in string]: Transport<Kind>;
     }
-  | (<Kind extends string>(
-      kind: Kind,
-    ) => MaybePromise<
-      | Transport<Kind> // named export
-      | {
-          default: Transport<Kind>; // property on default export
-        }
-    >);
+  | (<Kind extends string>(kind: Kind) => MaybePromise<Transport<Kind>>);
 
-function createTransportExecutorFactoryGetter(
-  transports: Transports,
-  logger: Logger,
-): TransportExecutorFactoryGetter {
-  return async function getTransport(kind) {
-    let transportGetSubgraphExecutor: TransportGetSubgraphExecutor;
-    let transport =
-      typeof transports === 'function' ? await transports(kind) : await transports?.[kind];
-    if (transport) {
-      transportGetSubgraphExecutor =
-        'default' in transport
-          ? transport.default.getSubgraphExecutor
-          : transport.getSubgraphExecutor;
-    } else {
-      const childLogger = logger.child?.(kind);
-      try {
-        transport = await import(`@graphql-mesh/transport-${kind}`);
-      } catch (err) {
-        childLogger.error(err);
-        throw new Error(
-          `No transport found for ${kind}. Please make sure you have installed @graphql-mesh/transport-${kind} or defined the transport config in "mesh.config.ts"`,
-        );
+function defaultTransportsGetter<Kind extends string>(kind: string): Promise<Transport<Kind>> {
+  return import(`@graphql-mesh/transport-${kind}`)
+    .catch(() => {
+      throw new Error(
+        `No transport found for ${kind}. Please make sure you have installed @graphql-mesh/transport-${kind} or defined the transport config in "mesh.config.ts"`,
+      );
+    })
+    .then(transport => {
+      if (transport.default?.getSubgraphExecutor) {
+        transport = transport.default;
       }
-      transportGetSubgraphExecutor =
-        'default' in transport
-          ? transport.default.getSubgraphExecutor
-          : transport.getSubgraphExecutor;
-      if (!transportGetSubgraphExecutor) {
+      if (!transport.getSubgraphExecutor) {
         throw new Error(
           `@graphql-mesh/transport-${kind} module does not export "getSubgraphExecutor"`,
         );
       }
-      if (typeof transportGetSubgraphExecutor !== 'function') {
+      if (typeof transport.getSubgraphExecutor !== 'function') {
         throw new Error(
           `@graphql-mesh/transport-${kind} module's export "getSubgraphExecutor" is not a function`,
         );
       }
-    }
-    return transportGetSubgraphExecutor;
-  };
+      return transport;
+    });
 }
 
-function getTransportExecutor(
-  transportExecutorFactoryGetter: TransportExecutorFactoryGetter,
-  transportContext: TransportGetSubgraphExecutorOptions,
-  transportExecutorStack: AsyncDisposableStack,
-): MaybePromise<Executor> {
-  const kind = transportContext.transportEntry?.kind || '';
-  const subgraphName = transportContext.subgraphName || '';
+function getTransport<Kind extends string>(transports: Transports, kind: Kind) {
+  if (typeof transports === 'function') {
+    return transports(kind);
+  }
+  return transports[kind];
+}
+
+function getTransportExecutor<Kind extends string>({
+  transportContext,
+  transportEntry,
+  subgraphName = '',
+  subgraph,
+  transports = defaultTransportsGetter,
+}: {
+  transportContext: TransportContext;
+  transportEntry: TransportEntry<Kind>;
+  subgraphName?: string;
+  subgraph: GraphQLSchema;
+  transports?: Transports;
+}): MaybePromise<Executor> {
+  const kind = transportEntry.kind;
   transportContext?.logger?.info(`Loading transport ${kind} for subgraph ${subgraphName}`);
-  return mapMaybePromise(transportExecutorFactoryGetter(kind), executor =>
-    mapMaybePromise(executor(transportContext), executor => {
-      if (isDisposable(executor)) {
-        transportExecutorStack.use(executor);
-      }
-      return executor;
+  return mapMaybePromise(getTransport(transports, kind), transport =>
+    transport.getSubgraphExecutor({
+      subgraphName,
+      subgraph,
+      transportEntry,
+      getTransportExecutor(transportEntry) {
+        return getTransportExecutor({
+          transportContext,
+          transportEntry,
+          subgraphName,
+          subgraph,
+          transports,
+        });
+      },
+      ...transportContext,
     }),
   );
 }
@@ -128,10 +122,6 @@ export function getOnSubgraphExecute({
   transportExecutorStack: AsyncDisposableStack;
 }) {
   const subgraphExecutorMap = new Map<string, Executor>();
-  const transportExecutorFactoryGetter = createTransportExecutorFactoryGetter(
-    transports,
-    transportContext?.logger,
-  );
   return function onSubgraphExecute(subgraphName: string, executionRequest: ExecutionRequest) {
     let executor: Executor = subgraphExecutorMap.get(subgraphName);
     // If the executor is not initialized yet, initialize it
@@ -141,33 +131,21 @@ export function getOnSubgraphExecute({
       executor = function lazyExecutor(subgraphExecReq: ExecutionRequest) {
         return mapMaybePromise(
           // Gets the transport executor for the given subgraph
-          getTransportExecutor(
-            transportExecutorFactoryGetter,
-            transportContext
-              ? {
-                  ...transportContext,
-                  subgraphName,
-                  get subgraph() {
-                    return getSubgraphSchema(subgraphName);
-                  },
-                  get transportEntry() {
-                    return transportEntryMap?.[subgraphName];
-                  },
-                  transportExecutorFactoryGetter,
-                }
-              : {
-                  get subgraph() {
-                    return getSubgraphSchema(subgraphName);
-                  },
-                  get transportEntry() {
-                    return transportEntryMap?.[subgraphName];
-                  },
-                  subgraphName,
-                  transportExecutorFactoryGetter,
-                },
-            transportExecutorStack,
-          ),
+          getTransportExecutor({
+            transportContext,
+            subgraphName,
+            get subgraph() {
+              return getSubgraphSchema(subgraphName);
+            },
+            get transportEntry() {
+              return transportEntryMap?.[subgraphName];
+            },
+            transports,
+          }),
           executor_ => {
+            if (isDisposable(executor_)) {
+              transportExecutorStack.use(executor_);
+            }
             // Wraps the transport executor with hooks
             executor = wrapExecutorWithHooks({
               executor: executor_,

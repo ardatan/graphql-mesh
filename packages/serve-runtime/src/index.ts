@@ -5,3 +5,5 @@ export * from './useCustomFetch.js';
 export * from './useStaticFiles.js';
 export * from './getProxyExecutor.js';
 export * from './useForwardHeaders.js';
+export * from './useUpstreamCancel.js';
+export * from './useContentEncoding.js';

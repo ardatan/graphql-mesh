@@ -1,10 +1,5 @@
 import { buildSchema, printSchema } from 'graphql';
-import {
-  composeSubgraphs,
-  createFilterTransform,
-  createPruneTransform,
-} from '@graphql-mesh/fusion-composition';
-import { printSchemaWithDirectives, pruneSchema } from '@graphql-tools/utils';
+import { createFilterTransform, createPruneTransform } from '@graphql-mesh/fusion-composition';
 import { composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils.js';
 
 describe('filter-schema', () => {

@@ -1,6 +1,7 @@
 import { setTimeout } from 'timers/promises';
 import { createClient, type Client } from 'graphql-sse';
 import { createTenv, getAvailablePort } from '@e2e/tenv';
+import { fetch } from '@whatwg-node/fetch';
 import { TOKEN } from './services/products/server';
 
 const { composeWithApollo, service, serve } = createTenv(__dirname);
@@ -108,6 +109,7 @@ it('should recycle websocket connections', async () => {
     headers: {
       Authorization: TOKEN,
     },
+    fetchFn: fetch,
   });
 
   const query = /* GraphQL */ `
@@ -153,6 +155,7 @@ it('should subscribe and resolve via http callbacks', async () => {
   client = createClient({
     url: `${publicUrl}/graphql`,
     retryAttempts: 0,
+    fetchFn: fetch,
   });
   const sub = client.iterate({
     query: /* GraphQL */ `

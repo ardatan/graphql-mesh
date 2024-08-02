@@ -1,13 +1,11 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
 import type { GraphQLSchema } from 'graphql';
-import { buildASTSchema, parse } from 'graphql';
+import { parse } from 'graphql';
 import {
-  createSchema,
   createYoga,
   isAsyncIterable,
   mergeSchemas,
-  Repeater,
   useReadinessCheck,
   type FetchAPI,
   type LandingPageRenderer,
@@ -46,11 +44,9 @@ import {
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import { stitchSchemas } from '@graphql-tools/stitch';
 import {
   mergeDeep,
   parseSelectionSet,
-  printSchemaWithDirectives,
   type IResolvers,
   type MaybePromise,
   type TypeSource,
@@ -65,7 +61,6 @@ import type {
   MeshServeConfigContext,
   MeshServeContext,
   MeshServePlugin,
-  UnifiedGraphConfig,
 } from './types.js';
 import { useChangingSchema } from './useChangingSchema.js';
 import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
@@ -111,7 +106,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
   let getSchema: () => MaybePromise<GraphQLSchema> = () => unifiedGraph;
-  let schemaChanged: (schema: GraphQLSchema) => void;
+  let setSchema: (schema: GraphQLSchema) => void = schema => {
+    unifiedGraph = schema;
+  };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
   let registryPlugin: MeshPlugin<unknown> = {};
@@ -131,28 +128,35 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     executorPlugin.onSchemaChange = function onSchemaChange(payload) {
       unifiedGraph = payload.schema;
     };
-    if (config.skipValidation) {
-      executorPlugin.onValidate = function ({ setResult }) {
+    executorPlugin.onValidate = function ({ params, setResult }) {
+      if (config.skipValidation || !params.schema) {
         setResult([]);
-      };
-    }
+      }
+    };
     unifiedGraphPlugin = executorPlugin;
     readinessChecker = () => {
       const res$ = proxyExecutor({
-        document: parse(`query { __typename }`),
+        document: parse(`query ReadinessCheck { __typename }`),
       });
       return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
     };
     schemaInvalidator = () => executorPlugin.invalidateUnifiedGraph();
     subgraphInformationHTMLRenderer = () => {
       const endpoint = config.proxy.endpoint || '#';
-      return `<section class="supergraph-information"><h3>Proxy (<a href="${endpoint}">${endpoint}</a>): ${unifiedGraph ? 'Loaded ✅' : 'Not yet ❌'}</h3></section>`;
+      const htmlParts: string[] = [];
+      htmlParts.push(`<section class="supergraph-information">`);
+      htmlParts.push(`<h3>Proxy: <a href="${endpoint}">${endpoint}</a></h3>`);
+      htmlParts.push(`</section>`);
+      return htmlParts.join('');
     };
   } else if ('subgraph' in config) {
     const subgraphInConfig = config.subgraph;
     let getSubschemaConfig$: MaybePromise<boolean>;
     let subschemaConfig: SubschemaConfig;
     function getSubschemaConfig() {
+      if (getSubschemaConfig$) {
+        return getSubschemaConfig$;
+      }
       return mapMaybePromise(
         handleUnifiedGraphConfig(subgraphInConfig, configContext),
         newUnifiedGraph => {
@@ -265,27 +269,28 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
               },
             },
           });
-          schemaChanged(unifiedGraph);
           return true;
         },
       );
     }
-    unifiedGraphPlugin = {
-      // @ts-expect-error PromiseLike is not compatible with Promise
-      onRequestParse() {
-        if (!subschemaConfig) {
-          getSubschemaConfig$ ||= getSubschemaConfig();
-          return getSubschemaConfig$;
-        }
-      },
-    };
+    getSchema = () => mapMaybePromise(getSubschemaConfig(), () => unifiedGraph);
   } else {
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
 
+    let supergraphLoadedPlace: string;
     if ('supergraph' in config) {
       unifiedGraphFetcher = () => handleUnifiedGraphConfig(config.supergraph, configContext);
+      if ('supergraph' in config) {
+        if (typeof config.supergraph === 'function') {
+          const fnName = config.supergraph.name || '';
+          supergraphLoadedPlace = `a custom loader ${fnName}`;
+        } else if (typeof config.supergraph === 'string') {
+          supergraphLoadedPlace = config.supergraph;
+        }
+      }
     } else if (('hive' in config && config.hive.endpoint) || process.env.HIVE_CDN_ENDPOINT) {
       const cdnEndpoint = 'hive' in config ? config.hive.endpoint : process.env.HIVE_CDN_ENDPOINT;
+      supergraphLoadedPlace = 'Hive CDN <br>' + cdnEndpoint;
       const cdnKey = 'hive' in config ? config.hive.key : process.env.HIVE_CDN_KEY;
       if (!cdnKey) {
         throw new Error(
@@ -301,6 +306,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       const errorMessage =
         'You must provide a supergraph schema in the `supergraph` config or point to a supergraph file with `--supergraph` parameter or `HIVE_CDN_ENDPOINT` environment variable or `./supergraph.graphql` file';
       // Falls back to `./supergraph.graphql` by default
+      supergraphLoadedPlace = './supergraph.graphql';
       unifiedGraphFetcher = () => {
         try {
           const res$ = handleUnifiedGraphConfig('./supergraph.graphql', configContext);
@@ -335,11 +341,8 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
     const unifiedGraphManager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
-      handleUnifiedGraph: opts => {
-        // when handleUnifiedGraph is called, we're sure that the schema
-        // _really_ changed, we can therefore confidently notify about the schema change
-        schemaChanged(opts.unifiedGraph);
-        return handleFederationSupergraph(opts);
+      onSchemaChange(unifiedGraph) {
+        setSchema(unifiedGraph);
       },
       transports: config.transports,
       transportEntryAdditions: config.transportEntries,
@@ -351,30 +354,34 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     });
     getSchema = () => unifiedGraphManager.getUnifiedGraph();
     readinessChecker = () =>
-      mapMaybePromise(unifiedGraphManager.getUnifiedGraph(), schema => !!schema);
+      mapMaybePromise(
+        unifiedGraphManager.getUnifiedGraph(),
+        schema => {
+          if (!schema) {
+            logger.debug(`Readiness check failed: Supergraph cannot be loaded`);
+            return false;
+          }
+          logger.debug(`Readiness check passed: Supergraph loaded`);
+          return true;
+        },
+        err => {
+          logger.debug(
+            `Readiness check failed due to errors on loading supergraph:\n${err.stack || err.message}`,
+          );
+          logger.error(err);
+          return false;
+        },
+      );
     schemaInvalidator = () => unifiedGraphManager.invalidateUnifiedGraph();
     contextBuilder = base => unifiedGraphManager.getContext(base);
     disposableStack.use(unifiedGraphManager);
     subgraphInformationHTMLRenderer = async () => {
       const htmlParts: string[] = [];
-      let supergraphLoadedPlace = './supergraph.graphql';
-      if ('hive' in config && config.hive.endpoint) {
-        supergraphLoadedPlace = 'Hive CDN <br>' + config.hive.endpoint;
-      } else if ('supergraph' in config) {
-        if (typeof config.supergraph === 'function') {
-          const fnName = config.supergraph.name || '';
-          supergraphLoadedPlace = `a custom loader ${fnName}`;
-        } else if (typeof config.supergraph === 'string') {
-          supergraphLoadedPlace = config.supergraph;
-        }
-      }
       let loaded = false;
       let loadError: Error;
+      let transportEntryMap: Record<string, TransportEntry>;
       try {
-        // TODO: Workaround for the issue
-        // When you go to landing page, then GraphiQL, GW stops working
-        const schema = await getSchema();
-        schemaChanged(schema);
+        transportEntryMap = await unifiedGraphManager.getTransportEntryMap();
         loaded = true;
       } catch (e) {
         loaded = false;
@@ -382,11 +389,13 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       }
       if (loaded) {
         htmlParts.push(`<h3>Supergraph Status: Loaded ✅</h3>`);
-        htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        if (supergraphLoadedPlace) {
+          htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        }
         htmlParts.push(`<table>`);
         htmlParts.push(`<tr><th>Subgraph</th><th>Transport</th><th>Location</th></tr>`);
-        for (const subgraphName in unifiedGraphManager._transportEntryMap) {
-          const transportEntry = unifiedGraphManager._transportEntryMap[subgraphName];
+        for (const subgraphName in transportEntryMap) {
+          const transportEntry = transportEntryMap[subgraphName];
           htmlParts.push(`<tr>`);
           htmlParts.push(`<td>${subgraphName}</td>`);
           htmlParts.push(`<td>${transportEntry.kind}</td>`);
@@ -398,7 +407,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         htmlParts.push(`</table>`);
       } else {
         htmlParts.push(`<h3>Status: Failed ❌</h3>`);
-        htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        if (supergraphLoadedPlace) {
+          htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        }
         htmlParts.push(`<h3>Error:</h3>`);
         htmlParts.push(`<pre>${loadError.stack}</pre>`);
       }
@@ -478,11 +489,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   if (config.landingPage == null || config.landingPage === true) {
     landingPageRenderer = async function meshLandingPageRenderer(opts) {
+      const subgraphHtml = await subgraphInformationHTMLRenderer();
       return new opts.fetchAPI.Response(
         landingPageHtml
           .replace(/__GRAPHIQL_LINK__/g, opts.graphqlEndpoint)
           .replace(/__REQUEST_PATH__/g, opts.url.pathname)
-          .replace(/__SUBGRAPH_HTML__/g, await subgraphInformationHTMLRenderer()),
+          .replace(/__SUBGRAPH_HTML__/g, subgraphHtml),
         {
           status: 200,
           statusText: 'OK',
@@ -506,7 +518,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       unifiedGraphPlugin,
       readinessCheckPlugin,
       registryPlugin,
-      useChangingSchema(getSchema, cb => (schemaChanged = cb)),
+      useChangingSchema(getSchema, _setSchema => {
+        setSchema = _setSchema;
+      }),
       useCompleteSubscriptionsOnDispose(disposableStack),
       useCompleteSubscriptionsOnSchemaChange(),
       useRequestId(),

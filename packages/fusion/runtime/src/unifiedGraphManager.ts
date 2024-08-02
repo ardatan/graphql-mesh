@@ -58,6 +58,7 @@ export interface UnifiedGraphManagerOptions<TContext> {
   getUnifiedGraph(ctx: TransportContext): MaybePromise<GraphQLSchema | string | DocumentNode>;
   // Handle the unified graph by any specification
   handleUnifiedGraph?: UnifiedGraphHandler;
+  onSchemaChange?(unifiedGraph: GraphQLSchema): void;
   transports?: Transports;
   transportEntryAdditions?: TransportEntryAdditions;
   polling?: number;
@@ -78,7 +79,7 @@ export class UnifiedGraphManager<TContext> {
   private inContextSDK;
   private initialUnifiedGraph$: MaybePromise<true>;
   private disposableStack = new AsyncDisposableStack();
-  _transportEntryMap: Record<string, TransportEntry>;
+  private _transportEntryMap: Record<string, TransportEntry>;
   private _transportExecutorStack: AsyncDisposableStack;
   constructor(private opts: UnifiedGraphManagerOptions<TContext>) {
     this.handleUnifiedGraph = opts.handleUnifiedGraph || handleFederationSupergraph;
@@ -110,13 +111,13 @@ export class UnifiedGraphManager<TContext> {
   }
 
   private ensureUnifiedGraph() {
-    if (!this.initialUnifiedGraph$) {
+    if (!this.initialUnifiedGraph$ && !this.unifiedGraph) {
       this.initialUnifiedGraph$ = this.getAndSetUnifiedGraph();
     }
     return this.initialUnifiedGraph$;
   }
 
-  private getAndSetUnifiedGraph() {
+  private getAndSetUnifiedGraph(): MaybePromise<true> {
     this.pausePolling();
     return mapMaybePromise(
       this.opts.getUnifiedGraph(this.opts.transportContext),
@@ -181,7 +182,15 @@ export class UnifiedGraphManager<TContext> {
         }
         this.continuePolling();
         this._transportEntryMap = transportEntryMap;
+        this.opts.onSchemaChange?.(this.unifiedGraph);
         return cleanupJob$ || true;
+      },
+      err => {
+        this.opts.transportContext?.logger?.error('Failed to load Supergraph', err);
+        if (!this.unifiedGraph) {
+          throw err;
+        }
+        return true;
       },
     );
   }
@@ -198,6 +207,10 @@ export class UnifiedGraphManager<TContext> {
       Object.assign(base, this.opts.transportContext);
       return base;
     });
+  }
+
+  public getTransportEntryMap() {
+    return mapMaybePromise(this.ensureUnifiedGraph(), () => this._transportEntryMap);
   }
 
   invalidateUnifiedGraph() {

@@ -42,6 +42,7 @@ describe('Hive CDN', () => {
         {
           name: 'upstream',
           schema: createUpstreamSchema(),
+          url: 'http://upstream/graphql',
         },
       ]);
       res.end(supergraph);
@@ -65,5 +66,17 @@ describe('Hive CDN', () => {
     const resJson: ExecutionResult<IntrospectionQuery> = await res.json();
     const clientSchema = buildClientSchema(resJson.data);
     expect(printSchema(clientSchema)).toMatchSnapshot('hive-cdn');
+
+    // Landing page
+    const landingPageRes = await serveRuntime.fetch('http://localhost:4000', {
+      method: 'GET',
+      headers: {
+        accept: 'text/html',
+      },
+    });
+    const landingPage = await landingPageRes.text();
+    expect(landingPage).toContain('Hive CDN');
+    expect(landingPage).toContain('upstream');
+    expect(landingPage).toContain('http://upstream/graphql');
   });
 });

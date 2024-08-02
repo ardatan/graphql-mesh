@@ -55,26 +55,19 @@ export default {
             ).toString()
           : payload.transportEntry.location;
         return mapMaybePromise(
-          payload.transportExecutorFactoryGetter(subscriptionsKind),
-          transportExecutorFactory =>
-            mapMaybePromise(
-              transportExecutorFactory({
-                ...payload,
-                transportEntry: {
-                  ...payload.transportEntry,
-                  kind: subscriptionsKind,
-                  location: subscriptionsLocation,
-                  options: {
-                    ...payload.transportEntry.options,
-                    ...payload.transportEntry.options?.subscriptions?.options,
-                  },
-                },
-              }),
-              resolvedSubscriptionsExecutor => {
-                subscriptionsExecutor = resolvedSubscriptionsExecutor;
-                return subscriptionsExecutor(execReq);
-              },
-            ),
+          payload.getTransportExecutor({
+            ...payload.transportEntry,
+            kind: subscriptionsKind,
+            location: subscriptionsLocation,
+            options: {
+              ...payload.transportEntry.options,
+              ...payload.transportEntry.options?.subscriptions?.options,
+            },
+          }),
+          resolvedSubscriptionsExecutor => {
+            subscriptionsExecutor = resolvedSubscriptionsExecutor;
+            return subscriptionsExecutor(execReq);
+          },
         );
       };
       return makeAsyncDisposable<AsyncExecutor>(

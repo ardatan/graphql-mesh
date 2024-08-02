@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLSchema, printSchema } from 'graphql';
+import { GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { createPrefixTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils';
@@ -228,7 +228,7 @@ describe('Prefix', () => {
     expect(newSchema.getType('T_User')).toBeUndefined();
     expect(newSchema.getType('User')).toBeDefined();
   });
-  it('handles union type resolution', async () => {
+  it('handles union type resolution', () => {
     const transform = createPrefixTransform({
       value: 'T_',
       includeRootOperations: true,
@@ -242,7 +242,7 @@ describe('Prefix', () => {
       },
     ]);
 
-    const result = await executor({
+    const result = executor({
       query: /* GraphQL */ `
         query {
           T_node(id: "1") {

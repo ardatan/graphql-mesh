@@ -5,39 +5,27 @@ import type { MeshServePlugin } from './types';
 
 export function useChangingSchema(
   getSchema: () => MaybePromise<GraphQLSchema>,
-  schemaChanged: (cb: (schema: GraphQLSchema) => void) => void,
+  setSchemaCallback: (setSchema: (schema: GraphQLSchema) => void) => void,
 ): MeshServePlugin {
   let currentSchema: GraphQLSchema | undefined;
-  const schemaByRequest = new WeakMap<Request, GraphQLSchema>();
+  let setSchema: (schema: GraphQLSchema) => void;
   return {
-    onPluginInit({ setSchema }) {
-      schemaChanged(schema => {
+    onPluginInit(payload) {
+      setSchema = function (schema: GraphQLSchema) {
         if (currentSchema !== schema) {
-          setSchema(schema);
           currentSchema = schema;
+          payload.setSchema(schema);
         }
-      });
+      };
+      setSchemaCallback(setSchema);
     },
-    onRequestParse({ request }) {
+    // @ts-expect-error - Typing issue with onRequestParse
+    onRequestParse() {
       return {
         onRequestParseDone() {
-          if (!currentSchema) {
-            // only if the schema is not already set do we want to get it
-            return mapMaybePromise(getSchema(), schema => {
-              schemaByRequest.set(request, schema);
-            }) as any; // TODO: PromiseLike in Mesh MaybePromise is not assignable to type Yoga's PromiseOrValue
-          }
+          return mapMaybePromise(getSchema(), setSchema);
         },
       };
-    },
-    onEnveloped({ context, setSchema }) {
-      const schema = context?.request && schemaByRequest.get(context.request);
-      if (schema && currentSchema !== schema) {
-        // the schema will be available in the request only if schemaChanged was never invoked
-        // also avoid setting the schema multiple times by checking whether it was already set
-        setSchema(schema);
-        currentSchema = schema;
-      }
     },
   };
 }

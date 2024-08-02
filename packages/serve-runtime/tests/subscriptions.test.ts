@@ -1,7 +1,6 @@
 import { createClient as createSSEClient } from 'graphql-sse';
 import { createSchema, createYoga, Repeater } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { type MaybePromise } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { createServeRuntime } from '../src/createServeRuntime';
@@ -46,18 +45,13 @@ describe('Subscriptions', () => {
           {
             name: 'upstream',
             schema: upstreamSchema,
+            url: 'http://upstream/graphql',
           },
         ]);
       },
-      transports() {
-        return {
-          getSubgraphExecutor() {
-            return buildHTTPExecutor({
-              endpoint: 'http://upstream/graphql',
-              fetch: upstream.fetch,
-            });
-          },
-        };
+      fetchAPI: {
+        // @ts-expect-error - Typings are wrong
+        fetch: upstream.fetch,
       },
     });
 
@@ -119,18 +113,13 @@ describe('Subscriptions', () => {
           {
             name: 'upstream',
             schema: upstreamSchema,
+            url: 'http://upstream/graphql',
           },
         ]);
       },
-      transports() {
-        return {
-          getSubgraphExecutor() {
-            return buildHTTPExecutor({
-              endpoint: 'http://upstream/graphql',
-              fetch: upstream.fetch,
-            });
-          },
-        };
+      fetchAPI: {
+        // @ts-expect-error - Typings are wrong
+        fetch: upstream.fetch,
       },
     });
 

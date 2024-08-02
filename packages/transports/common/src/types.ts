@@ -27,7 +27,9 @@ export interface TransportGetSubgraphExecutorOptions<
 > extends TransportContext {
   subgraphName: string;
   transportEntry: TransportEntry<Kind, Options>;
-  transportExecutorFactoryGetter: TransportExecutorFactoryGetter;
+  getTransportExecutor: <Kind extends string>(
+    transportEntry: TransportEntry<Kind>,
+  ) => MaybePromise<Executor>;
   subgraph: GraphQLSchema;
 }
 
