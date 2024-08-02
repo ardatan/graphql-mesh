@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-http-callback",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,8 +38,8 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.4",
     "@graphql-mesh/string-interpolation": "^0.5.5",
-    "@graphql-mesh/transport-common": "^0.4.6",
-    "@graphql-mesh/utils": "^0.99.6",
+    "@graphql-mesh/transport-common": "^0.4.7",
+    "@graphql-mesh/utils": "^0.99.7",
     "@graphql-tools/utils": "^10.2.3",
     "@repeaterjs/repeater": "^3.0.6",
     "@whatwg-node/fetch": "^0.9.18"

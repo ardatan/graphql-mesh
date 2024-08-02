@@ -8,8 +8,8 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.92.9",
-    "@graphql-mesh/json-schema": "0.103.1",
+    "@graphql-mesh/cli": "0.92.10",
+    "@graphql-mesh/json-schema": "0.103.2",
     "fets": "0.8.1",
     "graphql": "16.9.0"
   },

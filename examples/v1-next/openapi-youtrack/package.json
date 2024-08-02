@@ -7,9 +7,9 @@
     "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.6.8",
-    "@graphql-mesh/serve-cli": "^0.8.10",
-    "@omnigraph/openapi": "^0.103.1",
+    "@graphql-mesh/compose-cli": "^0.6.9",
+    "@graphql-mesh/serve-cli": "^0.8.11",
+    "@omnigraph/openapi": "^0.103.2",
     "graphql": "^16.9.0"
   }
 }

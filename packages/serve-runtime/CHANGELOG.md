@@ -1,5 +1,16 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/fusion-runtime@0.5.10
+  - @graphql-mesh/utils@0.99.7
+  - @graphql-mesh/plugin-hive@0.99.7
+  - @graphql-mesh/transport-common@0.4.7
+  - @graphql-mesh/transport-http@0.3.7
+
 ## 0.5.10
 
 ### Patch Changes
