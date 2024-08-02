@@ -26,8 +26,6 @@ This feature can be disabled by passing `false` One of:
   * `String`
   * `Boolean`
 * `playgroundTitle` (type: `String`) - Title of GraphiQL Playground
-* `trustProxy` (type: `String`) - Configure Express Proxy Handling
-[Learn more](https://expressjs.com/en/guide/behind-proxies.html)
 * `batchingLimit` (type: `Int`) - Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
 * `healthCheckEndpoint` (type: `String`) - Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)
 * `extraParamNames` (type: `Array of String`) - By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.

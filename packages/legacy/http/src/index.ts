@@ -28,8 +28,6 @@ export function createMeshHTTPHandler<TServerContext>({
     endpoint: graphqlPath = '/graphql',
     batchingLimit,
     healthCheckEndpoint = '/healthcheck',
-    // TODO
-    // trustProxy = 'loopback',
     extraParamNames,
   } = rawServeConfig;
 

@@ -113,11 +113,6 @@ export interface ServeConfig {
    */
   playgroundTitle?: string;
   /**
-   * Configure Express Proxy Handling
-   * [Learn more](https://expressjs.com/en/guide/behind-proxies.html)
-   */
-  trustProxy?: string;
-  /**
    * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
    */
   batchingLimit?: number;

@@ -54,8 +54,6 @@ export async function serveMesh(
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
     browser = process.env.NODE_ENV?.toLowerCase() !== 'production',
-    // TODO
-    // trustProxy = 'loopback',
   } = rawServeConfig;
 
   const port = portSelectorFn(
