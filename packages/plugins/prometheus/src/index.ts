@@ -34,11 +34,18 @@ type MeshMetricsConfig = {
     /**
      * Tracks the duration of outgoing HTTP requests.
      * It reports the time spent on each request made using the `fetch` function provided by Mesh.
-     * It is reported as an histogram
+     * It is reported as an histogram.
+     *
+     * You can pass multiple type of values:
+     *  - boolean: Disable or Enable the metric with default configuration
+     *  - string: Enable the metric with custom name
+     *  - number[]: Enable the metric with custom buckets
+     *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
      */
     graphql_mesh_fetch_duration:
       | boolean
       | string
+      | number[]
       | HistogramAndLabels<
           string,
           { url: string; options: MeshFetchRequestInit; response: Response }
@@ -47,11 +54,18 @@ type MeshMetricsConfig = {
     /**
      * Tracks the duration of subgraph execution.
      * It reports the time spent on each subgraph queries made to resolve incoming operations as an
-     * histogram
+     * histogram.
+     *
+     * You can pass multiple type of values:
+     *  - boolean: Disable or Enable the metric with default configuration
+     *  - string: Enable the metric with custom name
+     *  - number[]: Enable the metric with custom buckets
+     *  - ReturnType<typeof createHistogram>: Enable the metric with custom configuration
      */
     graphql_mesh_subgraph_execute_duration:
       | boolean
       | string
+      | number[]
       | HistogramAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
 
     /**
@@ -162,25 +176,11 @@ export default function useMeshPrometheus(
       };
 
       if (fetchRequestHeaders) {
-        labels.requestHeaders = JSON.stringify(
-          Array.isArray(fetchRequestHeaders)
-            ? Object.fromEntries(
-                Object.entries(options.headers).filter(([key]) =>
-                  fetchRequestHeaders.includes(key),
-                ),
-              )
-            : options.headers,
-        );
+        labels.requestHeaders = JSON.stringify(filterHeaders(fetchRequestHeaders, options.headers));
       }
       if (fetchResponseHeaders) {
         labels.responseHeaders = JSON.stringify(
-          Array.isArray(fetchResponseHeaders)
-            ? Object.fromEntries(
-                Object.entries(response.headers).filter(([key]) =>
-                  fetchResponseHeaders.includes(key),
-                ),
-              )
-            : response.headers,
+          filterHeaders(fetchResponseHeaders, getHeadersObj(response.headers)),
         );
       }
       return labels;
@@ -306,4 +306,10 @@ function registryFromYamlConfig(config: YamlConfig & { logger: Logger }): Regist
   registry$.then(() => registryProxy.revoke()).catch(e => config.logger.error(e));
 
   return registryProxy.proxy;
+}
+
+function filterHeaders(allowList: string[] | unknown, headers: Record<string, string>) {
+  return Array.isArray(allowList)
+    ? Object.fromEntries(Object.entries(headers).filter(([key]) => allowList.includes(key)))
+    : headers;
 }

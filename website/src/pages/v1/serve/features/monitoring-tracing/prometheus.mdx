@@ -68,6 +68,7 @@ requests, errors, and other useful information.
 To enable a metric, set the corresponding option to `true` in the `metrics` option's object. You can
 also provide a string to customize the metric name, or an object to provide more options (see
 [`siimon/prom-client` documentation](https://github.com/siimon/prom-client#custom-metrics)).
+Histogram metrics can be passed an array of numbers to configure buckets.
 
 Each metric also exposes some labels to give more context. Please see details sections of each
 metric to see the available labels.
