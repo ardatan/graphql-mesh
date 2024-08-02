@@ -7,7 +7,7 @@ import {
   getInterpolatedHeadersFactory,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import type { Logger } from '@graphql-mesh/types';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   DefaultLogger,
@@ -29,7 +29,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   source: OpenAPIV3.Document | OpenAPIV2.Document | string;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd?: string;
-  fetch?: WindowOrWorkerGlobalScope['fetch'];
+  fetch?: MeshFetch;
   endpoint?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: OperationHeadersConfiguration;

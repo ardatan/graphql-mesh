@@ -5,6 +5,7 @@ import type { api10 } from '@ardatan/raml-1-parser';
 import { loadApi } from '@ardatan/raml-1-parser';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { asArray } from '@graphql-tools/utils';
 import type {
@@ -45,7 +46,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
   operations: JSONSchemaOperationConfig[];
   cwd: string;
   endpoint: string;
-  fetch?: WindowOrWorkerGlobalScope['fetch'];
+  fetch?: MeshFetch;
 }> {
   const fieldTypeMap: Record<string, RAMLLoaderSelectQueryOrMutationFieldConfig['fieldName']> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {

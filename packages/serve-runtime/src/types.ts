@@ -7,9 +7,8 @@ import type {
   YogaServerOptions,
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
-import type { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
 import type { Transports, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
-import type { Transport, TransportEntry } from '@graphql-mesh/transport-common';
+import type { TransportEntry } from '@graphql-mesh/transport-common';
 import type {
   KeyValueCache,
   Logger,
@@ -97,9 +96,7 @@ interface MeshServeConfigWithSubgraph<TContext>
   subgraph: UnifiedGraphConfig;
 }
 
-type HiveCDNFetcherOptions = Parameters<typeof createSupergraphSDLFetcher>[0];
-
-interface HiveCDNOptions extends Partial<HiveCDNFetcherOptions> {
+interface HiveCDNOptions {
   /**
    * The endpoint of the CDN you obtained from GraphQL Hive.
    *
@@ -238,7 +235,11 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * WHATWG compatible Fetch implementation.
    */
-  fetchAPI?: Partial<FetchAPI>;
+  fetchAPI?: Partial<
+    Omit<FetchAPI, 'fetch'> & {
+      fetch?: MeshFetch;
+    }
+  >;
   /**
    * Enable, disable or implement a custom logger for logging.
    *

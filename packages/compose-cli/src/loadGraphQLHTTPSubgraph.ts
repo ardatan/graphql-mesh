@@ -13,8 +13,13 @@ import {
   isObjectType,
   type IntrospectionQuery,
 } from 'graphql';
-import { isUrl, readFile } from '@graphql-mesh/utils';
-import { isValidPath, type ExecutionResult } from '@graphql-tools/utils';
+import { isUrl, mapMaybePromise, readFile } from '@graphql-mesh/utils';
+import {
+  createGraphQLError,
+  isValidPath,
+  type ExecutionResult,
+  type MaybePromise,
+} from '@graphql-tools/utils';
 import type { LoaderContext, MeshComposeCLISourceHandlerDef } from './types.js';
 
 export interface GraphQLSubgraphLoaderHTTPConfiguration {
@@ -108,7 +113,7 @@ export function loadGraphQLHTTPSubgraph(
   }: GraphQLSubgraphLoaderHTTPConfiguration,
 ): MeshComposeCLISourceHandlerDef {
   return (ctx: LoaderContext) => {
-    let schema$: Promise<GraphQLSchema>;
+    let schema$: MaybePromise<GraphQLSchema>;
     function handleFetchedSchema(schema: GraphQLSchema) {
       return addAnnotations(
         {
@@ -128,13 +133,14 @@ export function loadGraphQLHTTPSubgraph(
       );
     }
     if (source) {
-      let source$: Promise<string>;
+      let source$: MaybePromise<string>;
       if (isUrl(source)) {
-        source$ = ctx
-          .fetch(source, {
+        source$ = mapMaybePromise(
+          ctx.fetch(source, {
             headers: schemaHeaders,
-          })
-          .then(res => res.text());
+          }),
+          res => res.text(),
+        );
       } else if (isValidPath(source)) {
         source$ = readFile(source, {
           allowUnknownExtensions: true,
@@ -144,36 +150,17 @@ export function loadGraphQLHTTPSubgraph(
           logger: ctx.logger,
         });
       }
-      schema$ = source$
-        .then(sdl =>
-          buildSchema(sdl, {
-            assumeValidSDL: true,
-            assumeValid: true,
-            noLocation: true,
-          }),
-        )
-        .then(schema =>
-          addAnnotations(
-            {
-              kind: transportKind,
-              subgraph: subgraphName,
-              location: endpoint,
-              headers: operationHeaders ? Object.entries(operationHeaders) : undefined,
-              options: {
-                method,
-                useGETForQueries,
-                credentials,
-                retry,
-                timeout,
-              },
-            },
-            schema,
-          ),
-        );
+      schema$ = mapMaybePromise(source$, sdl =>
+        buildSchema(sdl, {
+          assumeValidSDL: true,
+          assumeValid: true,
+          noLocation: true,
+        }),
+      );
     } else {
       const fetchAsRegular = () =>
-        ctx
-          .fetch(endpoint, {
+        mapMaybePromise(
+          ctx.fetch(endpoint, {
             method: method || (useGETForQueries ? 'GET' : 'POST'),
             headers: {
               'Content-Type': 'application/json',
@@ -182,33 +169,37 @@ export function loadGraphQLHTTPSubgraph(
             body: JSON.stringify({
               query: getIntrospectionQuery(),
             }),
-          })
-          .then(res => {
+          }),
+          res => {
             assertResponseOk(res);
-            return res.json();
-          })
-          .then((result: ExecutionResult<IntrospectionQuery>) =>
-            buildClientSchema(result.data, {
-              assumeValid: true,
-            }),
-          )
-          .then(schema => {
-            const queryType = schema.getQueryType();
-            const queryFields = queryType?.getFields();
-            if (queryFields._service) {
-              const serviceType = getNamedType(queryFields._service.type);
-              if (isObjectType(serviceType)) {
-                const serviceTypeFields = serviceType.getFields();
-                if (serviceTypeFields.sdl) {
-                  return fetchAsFederation();
+            return mapMaybePromise(res.json(), (result: ExecutionResult<IntrospectionQuery>) => {
+              if (result.errors) {
+                throw new AggregateError(
+                  result.errors.map(err => createGraphQLError(err.message, err)),
+                  'Introspection Query Failed',
+                );
+              }
+              const schema = buildClientSchema(result.data, {
+                assumeValid: true,
+              });
+              const queryType = schema.getQueryType();
+              const queryFields = queryType?.getFields();
+              if (queryFields._service) {
+                const serviceType = getNamedType(queryFields._service.type);
+                if (isObjectType(serviceType)) {
+                  const serviceTypeFields = serviceType.getFields();
+                  if (serviceTypeFields.sdl) {
+                    return fetchAsFederation();
+                  }
                 }
               }
-            }
-            return schema;
-          });
+              return schema;
+            });
+          },
+        );
       const fetchAsFederation = () =>
-        ctx
-          .fetch(endpoint, {
+        mapMaybePromise(
+          ctx.fetch(endpoint, {
             method: method || (useGETForQueries ? 'GET' : 'POST'),
             headers: {
               'Content-Type': 'application/json',
@@ -217,22 +208,27 @@ export function loadGraphQLHTTPSubgraph(
             body: JSON.stringify({
               query: federationIntrospectionQuery,
             }),
-          })
-          .then(res => {
+          }),
+          res => {
             assertResponseOk(res);
-            return res.json();
-          })
-          .then((result: ExecutionResult) => result?.data?._service?.sdl)
-          .then(sdl =>
-            buildSchema(sdl, {
-              assumeValidSDL: true,
-              assumeValid: true,
-              noLocation: true,
-            }),
-          );
+            return mapMaybePromise(res.json(), (result: ExecutionResult) => {
+              if (result.errors) {
+                throw new AggregateError(
+                  result.errors.map(err => createGraphQLError(err.message, err)),
+                  'Introspection Query Failed',
+                );
+              }
+              return buildSchema(result?.data?._service?.sdl, {
+                assumeValidSDL: true,
+                assumeValid: true,
+                noLocation: true,
+              });
+            });
+          },
+        );
       schema$ = federation ? fetchAsFederation() : fetchAsRegular();
     }
-    schema$ = schema$.then(handleFetchedSchema);
+    schema$ = mapMaybePromise(schema$, handleFetchedSchema);
     return {
       name: subgraphName,
       schema$,

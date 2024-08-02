@@ -140,6 +140,7 @@ export default class SupergraphHandler implements MeshHandler {
           subscriptionsEndpoint,
           subscriptionsProtocol:
             subgraphConfiguration.subscriptionsProtocol as SubscriptionProtocol,
+          // @ts-expect-error - this is a bug in the types
           customFetch: fetchFn,
         });
         const subgraphOperationHeadersFactory =
