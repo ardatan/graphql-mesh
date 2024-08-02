@@ -10,7 +10,7 @@ export default function useMeshHive(
     logger?: Logger;
     pubsub?: MeshPubSub;
   },
-) {
+): MeshPlugin<{}> {
   const enabled =
     pluginOptions != null && 'enabled' in pluginOptions
       ? typeof pluginOptions.enabled === 'string'
