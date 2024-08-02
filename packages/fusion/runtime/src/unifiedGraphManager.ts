@@ -58,6 +58,7 @@ export interface UnifiedGraphManagerOptions<TContext> {
   getUnifiedGraph(ctx: TransportContext): MaybePromise<GraphQLSchema | string | DocumentNode>;
   // Handle the unified graph by any specification
   handleUnifiedGraph?: UnifiedGraphHandler;
+  onSchemaChange?(unifiedGraph: GraphQLSchema): void;
   transports?: Transports;
   transportEntryAdditions?: TransportEntryAdditions;
   polling?: number;
@@ -181,6 +182,7 @@ export class UnifiedGraphManager<TContext> {
         }
         this.continuePolling();
         this._transportEntryMap = transportEntryMap;
+        this.opts.onSchemaChange?.(this.unifiedGraph);
         return cleanupJob$ || true;
       },
       err => {

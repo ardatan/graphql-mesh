@@ -119,18 +119,12 @@ describe('Subscriptions', () => {
           {
             name: 'upstream',
             schema: upstreamSchema,
+            url: 'http://upstream/graphql',
           },
         ]);
       },
-      transports() {
-        return {
-          getSubgraphExecutor() {
-            return buildHTTPExecutor({
-              endpoint: 'http://upstream/graphql',
-              fetch: upstream.fetch,
-            });
-          },
-        };
+      fetchAPI: {
+        fetch: upstream.fetch,
       },
     });
 

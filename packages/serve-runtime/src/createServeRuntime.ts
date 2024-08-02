@@ -106,6 +106,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
   let getSchema: () => MaybePromise<GraphQLSchema> = () => unifiedGraph;
+  let setSchema: (schema: GraphQLSchema) => void = schema => {
+    unifiedGraph = schema;
+  };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
   let registryPlugin: MeshPlugin<unknown> = {};
@@ -140,7 +143,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     schemaInvalidator = () => executorPlugin.invalidateUnifiedGraph();
     subgraphInformationHTMLRenderer = () => {
       const endpoint = config.proxy.endpoint || '#';
-      return `<section class="supergraph-information"><h3>Proxy (<a href="${endpoint}">${endpoint}</a>): ${unifiedGraph ? 'Loaded ✅' : 'Not yet ❌'}</h3></section>`;
+      const htmlParts: string[] = [];
+      htmlParts.push(`<section class="supergraph-information">`);
+      htmlParts.push(`<h3>Proxy: <a href="${endpoint}">${endpoint}</a></h3>`);
+      htmlParts.push(`</section>`);
+      return htmlParts.join('');
     };
   } else if ('subgraph' in config) {
     const subgraphInConfig = config.subgraph;
@@ -334,6 +341,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
     const unifiedGraphManager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
+      onSchemaChange(unifiedGraph) {
+        setSchema(unifiedGraph);
+      },
       transports: config.transports,
       transportEntryAdditions: config.transportEntries,
       polling: config.polling,
@@ -508,7 +518,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       unifiedGraphPlugin,
       readinessCheckPlugin,
       registryPlugin,
-      useChangingSchema(getSchema),
+      useChangingSchema(getSchema, _setSchema => {
+        setSchema = _setSchema;
+      }),
       useCompleteSubscriptionsOnDispose(disposableStack),
       useCompleteSubscriptionsOnSchemaChange(),
       useRequestId(),
