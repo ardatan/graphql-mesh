@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.0",
-    "@graphql-hive/apollo": "^0.33.4",
+    "@graphql-hive/apollo": "^0.34.0",
     "@graphql-mesh/cross-helpers": "^0.4.4",
     "@graphql-mesh/fusion-runtime": "^0.5.8",
     "@graphql-mesh/plugin-hive": "^0.99.5",
