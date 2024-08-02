@@ -183,6 +183,10 @@ export class UnifiedGraphManager<TContext> {
         this._transportEntryMap = transportEntryMap;
         return cleanupJob$ || true;
       },
+      err => {
+        this.opts.transportContext?.logger?.error('Failed to load Supergraph', err);
+        throw err;
+      },
     );
   }
 
