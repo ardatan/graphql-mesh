@@ -128,15 +128,15 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     executorPlugin.onSchemaChange = function onSchemaChange(payload) {
       unifiedGraph = payload.schema;
     };
-    if (config.skipValidation) {
-      executorPlugin.onValidate = function ({ setResult }) {
+    executorPlugin.onValidate = function ({ params, setResult }) {
+      if (config.skipValidation || !params.schema) {
         setResult([]);
-      };
-    }
+      }
+    };
     unifiedGraphPlugin = executorPlugin;
     readinessChecker = () => {
       const res$ = proxyExecutor({
-        document: parse(`query { __typename }`),
+        document: parse(`query ReadinessCheck { __typename }`),
       });
       return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
     };

@@ -10,7 +10,6 @@ import {
 } from 'graphql';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
@@ -32,24 +31,22 @@ describe('Serve Runtime', () => {
           {
             name: 'upstream',
             schema: createUpstreamSchema(),
+            url: 'http://localhost:4000/graphql',
           },
         ]);
       },
       polling: 10000,
-      transports() {
-        return {
-          getSubgraphExecutor() {
-            return buildHTTPExecutor({
-              endpoint: 'http://localhost:4000/graphql',
-              fetch(info, init, ...args) {
-                if (!upstreamIsUp) {
-                  return Response.error();
-                }
-                return upstreamAPI.fetch(info, init, ...args);
-              },
-            });
-          },
-        };
+      fetchAPI: {
+        // @ts-expect-error - Typing issue with fetch
+        fetch(url) {
+          if (url.startsWith('http://localhost:4000/graphql')) {
+            if (!upstreamIsUp) {
+              return Response.error();
+            }
+            return upstreamAPI.fetch(url);
+          }
+          return new Response('Not Found', { status: 404 });
+        },
       },
     });
   }
@@ -80,11 +77,17 @@ describe('Serve Runtime', () => {
       logging: !!process.env.DEBUG,
       proxy: {
         endpoint: 'http://localhost:4000/graphql',
-        fetch(info, init, ...args) {
-          if (!upstreamIsUp) {
-            return Response.error();
+      },
+      fetchAPI: {
+        // @ts-expect-error - Typing issue with fetch
+        fetch(url, init) {
+          if (url.startsWith('http://localhost:4000/graphql')) {
+            if (!upstreamIsUp) {
+              return Response.error();
+            }
+            return upstreamAPI.fetch(url, init);
           }
-          return upstreamAPI.fetch(info, init, ...args);
+          return new Response('Not Found', { status: 404 });
         },
       },
     }),
@@ -108,12 +111,12 @@ describe('Serve Runtime', () => {
           });
         });
         describe('readiness check', () => {
-          it('fail if the proxy API is not ready', async () => {
+          it('fail if the upstream API is not ready', async () => {
             upstreamIsUp = false;
             const res = await serveRuntime.fetch('http://localhost:4000/readiness');
             expect(res.status).toBe(503);
           });
-          it('succeed if the proxy API is ready', async () => {
+          it('succeed if the upstream API is ready', async () => {
             const res = await serveRuntime.fetch('http://localhost:4000/readiness');
             expect(res.status).toBe(200);
           });
