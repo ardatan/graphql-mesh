@@ -68,9 +68,14 @@ import { useRequestId } from './useRequestId.js';
 import { useSubgraphExecuteDebug } from './useSubgraphExecuteDebug.js';
 import { checkIfDataSatisfiesSelectionSet } from './utils.js';
 
+export type MeshServeRuntime<TContext extends Record<string, any> = Record<string, any>> =
+  YogaServerInstance<unknown, TContext> & {
+    invalidateUnifiedGraph(): void;
+  } & AsyncDisposable;
+
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
-) {
+): MeshServeRuntime<TContext> {
   let fetchAPI = config.fetchAPI;
   let logger: Logger;
   if (config.logging == null) {
@@ -622,7 +627,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     landingPageRenderer = false;
   }
 
-  const yoga = createYoga<unknown, MeshServeContext>({
+  const yoga = createYoga<unknown, MeshServeContext & TContext>({
     fetchAPI: config.fetchAPI,
     logging: logger,
     plugins: [
@@ -685,10 +690,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     },
   });
 
-  return makeAsyncDisposable(
-    yoga as YogaServerInstance<unknown, MeshServeContext> & {
-      invalidateUnifiedGraph(): void;
-    },
-    () => disposableStack.disposeAsync(),
-  );
+  return makeAsyncDisposable(yoga, () =>
+    disposableStack.disposeAsync(),
+  ) as any as MeshServeRuntime<TContext>;
 }
