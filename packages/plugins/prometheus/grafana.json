@@ -40,7 +40,7 @@
         "type": "prometheus",
         "uid": "fdtll1s7ykn40b"
       },
-      "description": "The time needed to respond to GraphQL requests for quantiles p95, p90, p75 and p50.",
+      "description": "The time needed to successfuly respond to GraphQL requests for quantiles p95, p90, p75 and p50.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -124,7 +124,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by(le) (rate(graphql_yoga_http_duration_bucket{method=\"POST\", statusCode=\"200\"}[$__rate_interval])))",
+          "expr": "histogram_quantile(0.95, sum by(le) (rate(graphql_yoga_http_duration_bucket{url=~\".*/graphql$\", statusCode=\"200\"}[$__rate_interval])))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -140,7 +140,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "histogram_quantile(0.9, sum by(le) (rate(graphql_yoga_http_duration_bucket{method=\"POST\", statusCode=\"200\"}[$__rate_interval])))",
+          "expr": "histogram_quantile(0.9, sum by(le) (rate(graphql_yoga_http_duration_bucket{url=~\".*/graphql$\", statusCode=\"200\"}[$__rate_interval])))",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -156,7 +156,7 @@
             "uid": "fdtll1s7ykn40b"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.75, sum by(le) (rate(graphql_yoga_http_duration_bucket{method=\"POST\", statusCode=\"200\"}[$__rate_interval])))",
+          "expr": "histogram_quantile(0.75, sum by(le) (rate(graphql_yoga_http_duration_bucket{url=~\".*/graphql$\", statusCode=\"200\"}[$__rate_interval])))",
           "hide": false,
           "instant": false,
           "legendFormat": "p75",
@@ -169,7 +169,7 @@
             "uid": "fdtll1s7ykn40b"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.5, sum by(le) (rate(graphql_yoga_http_duration_bucket{method=\"POST\", statusCode=\"200\"}[$__rate_interval])))",
+          "expr": "histogram_quantile(0.5, sum by(le) (rate(graphql_yoga_http_duration_bucket{url=~\".*/graphql$\", statusCode=\"200\"}[$__rate_interval])))",
           "hide": false,
           "instant": false,
           "legendFormat": "p50",
@@ -265,8 +265,8 @@
             "uid": "fdtll1s7ykn40b"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(statusCode) (rate(graphql_yoga_http_duration_count{method=\"POST\"}[$__rate_interval]))",
+          "editorMode": "code",
+          "expr": "sum by(statusCode) (rate(graphql_yoga_http_duration_count{url=~\".*/graphql$\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1397,6 +1397,6 @@
   "timezone": "browser",
   "title": "Mesh",
   "uid": "edtn0ujblc3y8b",
-  "version": 11,
+  "version": 12,
   "weekStart": ""
 }
