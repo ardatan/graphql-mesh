@@ -124,6 +124,7 @@ describe('Subscriptions', () => {
         ]);
       },
       fetchAPI: {
+        // @ts-expect-error - Typings are wrong
         fetch: upstream.fetch,
       },
     });
