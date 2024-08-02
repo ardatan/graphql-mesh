@@ -12,7 +12,11 @@ tags:
   - name: Answers
   - name: Questions
   - name: Users
-    description: 'All user methods that take an {ids} parameter have a /me equivalent method that takes an access_token instead. These methods are provided for developer convenience, with the exception of plain /me, which is actually necessary for discovering which user authenticated to an application.'
+    description:
+      'All user methods that take an {ids} parameter have a /me equivalent method that takes an
+      access_token instead. These methods are provided for developer convenience, with the exception
+      of plain /me, which is actually necessary for discovering which user authenticated to an
+      application.'
 paths:
   /questions:
     get:
@@ -578,7 +582,9 @@ paths:
             type: string
           in: query
           name: site
-          description: 'This parameter can be the full domain name (ie. "stackoverflow.com"), or a short form identified by api_site_parameter on the site object.'
+          description:
+            'This parameter can be the full domain name (ie. "stackoverflow.com"), or a short form
+            identified by api_site_parameter on the site object.'
         - schema:
             type: integer
           in: query
@@ -607,7 +613,9 @@ paths:
               - votes
           in: query
           name: sort
-          description: '`activity` corresponds to `Answer. last_activity_date` , `creation` to `Answer.creation_date` and `votes` to `Answer.score`'
+          description:
+            '`activity` corresponds to `Answer. last_activity_date` , `creation` to
+            `Answer.creation_date` and `votes` to `Answer.score`'
         - schema:
             type: string
             enum:

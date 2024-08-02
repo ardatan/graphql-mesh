@@ -32,7 +32,6 @@ describe('useForwardHeaders', () => {
         endpoint: 'http://localhost:4001/graphql',
       },
       plugins: () => [
-        // @ts-expect-error: TODO: fix this
         useCustomFetch(upstream.fetch),
         useForwardHeaders(['x-my-header', 'x-my-other']),
       ],
@@ -86,7 +85,6 @@ describe('useForwardHeaders', () => {
         },
       },
       plugins: () => [
-        // @ts-expect-error: TODO: fix this
         useCustomFetch(upstream.fetch),
         useForwardHeaders(['x-my-header', 'x-my-other']),
       ],
