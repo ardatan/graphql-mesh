@@ -38,15 +38,7 @@ describe('Serve Runtime', () => {
       polling: 10000,
       fetchAPI: {
         // @ts-expect-error - Typing issue with fetch
-        fetch(url) {
-          if (url.startsWith('http://localhost:4000/graphql')) {
-            if (!upstreamIsUp) {
-              return Response.error();
-            }
-            return upstreamAPI.fetch(url);
-          }
-          return new Response('Not Found', { status: 404 });
-        },
+        fetch: upstreamFetch,
       },
     });
   }
@@ -72,6 +64,15 @@ describe('Serve Runtime', () => {
     logging: !!process.env.DEBUG,
   });
   let upstreamIsUp = true;
+  const upstreamFetch = function (url: string, init: RequestInit) {
+    if (url.startsWith('http://localhost:4000/graphql')) {
+      if (!upstreamIsUp) {
+        return Response.error();
+      }
+      return upstreamAPI.fetch(url, init);
+    }
+    return new Response('Not Found', { status: 404 });
+  };
   const serveRuntimes = {
     proxyAPI: createServeRuntime({
       logging: !!process.env.DEBUG,
@@ -80,15 +81,7 @@ describe('Serve Runtime', () => {
       },
       fetchAPI: {
         // @ts-expect-error - Typing issue with fetch
-        fetch(url, init) {
-          if (url.startsWith('http://localhost:4000/graphql')) {
-            if (!upstreamIsUp) {
-              return Response.error();
-            }
-            return upstreamAPI.fetch(url, init);
-          }
-          return new Response('Not Found', { status: 404 });
-        },
+        fetch: upstreamFetch,
       },
     }),
     supergraphAPI: createSupergraphRuntime(),
