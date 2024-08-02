@@ -2,7 +2,7 @@ import type { JSONSchemaObject } from 'json-machete';
 import { AnySchema } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import { getInterpolationKeys } from '@graphql-mesh/string-interpolation';
-import type { Logger } from '@graphql-mesh/types';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   DefaultLogger,
@@ -22,7 +22,7 @@ async function handleOperationResponseConfig(
   }: {
     schemaHeaders: Record<string, any>;
     cwd: string;
-    fetchFn: WindowOrWorkerGlobalScope['fetch'];
+    fetchFn: MeshFetch;
     logger?: Logger;
   },
 ): Promise<JSONSchemaObject> {
@@ -87,7 +87,7 @@ export async function getReferencedJSONSchemaFromOperations({
   schemaHeaders?: { [key: string]: string };
   ignoreErrorResponses?: boolean;
   logger?: Logger;
-  fetchFn: WindowOrWorkerGlobalScope['fetch'];
+  fetchFn: MeshFetch;
   endpoint: string;
   operationHeaders: Record<string, string>;
   queryParams: Record<string, string | number | boolean>;

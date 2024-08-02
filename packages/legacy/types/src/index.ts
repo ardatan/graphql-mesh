@@ -168,7 +168,7 @@ export type MeshFetch = (
   options?: MeshFetchRequestInit,
   context?: any,
   info?: GraphQLResolveInfo,
-) => Promise<Response>;
+) => MaybePromise<Response>;
 
 export type MeshFetchRequestInit = Omit<RequestInit, 'headers'> & {
   headers?: Record<string, string>;

@@ -73,7 +73,7 @@ import { checkIfDataSatisfiesSelectionSet } from './utils.js';
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
   config: MeshServeConfig<TContext> = {},
 ) {
-  let fetchAPI: Partial<FetchAPI> = config.fetchAPI;
+  let fetchAPI = config.fetchAPI;
   let logger: Logger;
   if (config.logging == null) {
     logger = new DefaultLogger();
@@ -300,6 +300,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       const fetcher = createSupergraphSDLFetcher({
         endpoint: cdnEndpoint,
         key: cdnKey,
+        logger: configContext.logger.child('Hive CDN'),
       });
       unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
     } else {

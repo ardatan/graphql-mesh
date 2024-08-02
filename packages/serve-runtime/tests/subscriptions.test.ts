@@ -1,6 +1,7 @@
 import { createClient as createSSEClient } from 'graphql-sse';
 import { createSchema, createYoga, Repeater } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
+import { useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { type MaybePromise } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { createServeRuntime } from '../src/createServeRuntime';
@@ -49,10 +50,7 @@ describe('Subscriptions', () => {
           },
         ]);
       },
-      fetchAPI: {
-        // @ts-expect-error - Typings are wrong
-        fetch: upstream.fetch,
-      },
+      plugins: () => [useCustomFetch(upstream.fetch)],
     });
 
     const sse = createSSEClient({
@@ -117,10 +115,7 @@ describe('Subscriptions', () => {
           },
         ]);
       },
-      fetchAPI: {
-        // @ts-expect-error - Typings are wrong
-        fetch: upstream.fetch,
-      },
+      plugins: () => [useCustomFetch(upstream.fetch)],
     });
 
     const sse = createSSEClient({

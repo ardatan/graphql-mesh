@@ -7,7 +7,7 @@ import {
   type DisposableExecutor,
   type Transport,
 } from '@graphql-mesh/transport-common';
-import { makeDisposable } from '@graphql-mesh/utils';
+import { makeDisposable, mapMaybePromise } from '@graphql-mesh/utils';
 import { createGraphQLError, type ExecutionRequest } from '@graphql-tools/utils';
 import { Repeater, type Push } from '@repeaterjs/repeater';
 import { crypto } from '@whatwg-node/fetch';
@@ -128,57 +128,61 @@ export default {
         );
       };
       const reqAbortCtrl = new AbortController();
-      const res$ = fetch(
-        transportEntry.location,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...headersFactory({
-              env: process.env,
-              root: execReq.rootValue,
-              context: execReq.context,
-              info: execReq.info,
-            }),
-            Accept: 'application/json;callbackSpec=1.0; charset=utf-8',
-          },
-          body: fetchBody,
-          signal: reqAbortCtrl.signal,
-        },
-        execReq.context,
-        execReq.info,
-      )
-        .then(res => {
-          if (!res.ok) {
-            stopSubscription(
-              new Error(`Subscription request failed with an HTTP Error: ${res.status}`),
-            );
-          }
-          return res.json();
-        })
-        .then((resJson: ExecutionResult) => {
-          logger.debug(`Subscription request received`, resJson);
-          if (resJson.errors) {
-            if (resJson.errors.length === 1) {
-              stopSubscription(createGraphQLError(resJson.errors[0].message, resJson.errors[0]));
-            } else {
+      execReq.context?.waitUntil(
+        mapMaybePromise(
+          fetch(
+            transportEntry.location,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...headersFactory({
+                  env: process.env,
+                  root: execReq.rootValue,
+                  context: execReq.context,
+                  info: execReq.info,
+                }),
+                Accept: 'application/json;callbackSpec=1.0; charset=utf-8',
+              },
+              body: fetchBody,
+              signal: reqAbortCtrl.signal,
+            },
+            execReq.context,
+            execReq.info,
+          ),
+          res => {
+            if (!res.ok) {
               stopSubscription(
-                new AggregateError(
-                  resJson.errors.map(err => createGraphQLError(err.message, err)),
-                  resJson.errors.map(err => err.message).join('\n'),
-                ),
+                new Error(`Subscription request failed with an HTTP Error: ${res.status}`),
               );
             }
-          } else if (resJson.data != null) {
-            pushFn(resJson.data);
-            stopSubscription();
-          }
-        })
-        .catch(e => {
-          logger.debug(`Subscription request failed`, e);
-          stopSubscription(e);
-        });
-      execReq.context?.waitUntil(res$);
+            return mapMaybePromise(res.json<ExecutionResult>(), resJson => {
+              logger.debug(`Subscription request received`, resJson);
+              if (resJson.errors) {
+                if (resJson.errors.length === 1) {
+                  stopSubscription(
+                    createGraphQLError(resJson.errors[0].message, resJson.errors[0]),
+                  );
+                } else {
+                  stopSubscription(
+                    new AggregateError(
+                      resJson.errors.map(err => createGraphQLError(err.message, err)),
+                      resJson.errors.map(err => err.message).join('\n'),
+                    ),
+                  );
+                }
+              } else if (resJson.data != null) {
+                pushFn(resJson.data);
+                stopSubscription();
+              }
+            });
+          },
+          e => {
+            logger.debug(`Subscription request failed`, e);
+            stopSubscription(e);
+          },
+        ),
+      );
       return new Repeater<ExecutionResult>((push, stop) => {
         pushFn = push;
         stopSubscription = stop;

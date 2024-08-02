@@ -39,9 +39,10 @@ export default {
           context: execReq.context,
           info: execReq.info,
         }),
-      fetch: payload.fetch,
       print: defaultPrintFn,
       ...payload.transportEntry.options,
+      // @ts-expect-error - TODO: Fix this in executor-http
+      fetch: payload.fetch,
     });
 
     if (payload.transportEntry.options && 'subscriptions' in payload.transportEntry.options) {

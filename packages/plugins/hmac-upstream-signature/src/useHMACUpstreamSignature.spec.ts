@@ -103,7 +103,6 @@ describe('useHmacSignatureValidation', () => {
         endpoint: 'https://example.com/graphql',
       },
       plugins: () => [
-        // @ts-expect-error - signature mismatch
         useCustomFetch(upstream.fetch),
         {
           onSubgraphExecute(payload) {
@@ -167,7 +166,6 @@ describe('useHmacUpstreamSignature', () => {
         endpoint: 'https://example.com/graphql',
       },
       plugins: () => [
-        // @ts-expect-error - signature mismatch
         useCustomFetch(upstream.fetch),
         {
           onSubgraphExecute(payload) {
@@ -216,7 +214,6 @@ describe('useHmacUpstreamSignature', () => {
         endpoint: 'https://example.com/graphql',
       },
       plugins: () => [
-        // @ts-expect-error - signature mismatch
         useCustomFetch(upstream.fetch),
         useHmacUpstreamSignature({
           secret,
@@ -260,7 +257,6 @@ describe('useHmacUpstreamSignature', () => {
         endpoint: 'https://example.com/graphql',
       },
       plugins: () => [
-        // @ts-expect-error - signature mismatch
         useCustomFetch(upstream.fetch),
         useHmacUpstreamSignature({
           secret,
@@ -304,7 +300,6 @@ describe('useHmacUpstreamSignature', () => {
         endpoint: 'https://example.com/graphql',
       },
       plugins: () => [
-        // @ts-expect-error - signature mismatch
         useCustomFetch(upstream.fetch),
         useHmacUpstreamSignature({
           secret,

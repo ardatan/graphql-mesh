@@ -122,15 +122,9 @@ export default function useMeshHive(
     onTerminate().finally(() => pluginOptions.pubsub.unsubscribe(id)),
   );
 
-  return makeAsyncDisposable(
-    {
-      onPluginInit({ addPlugin }) {
-        addPlugin(
-          // TODO: fix useYogaHive typings to inherit the context
-          useHive(hiveClient) as any,
-        );
-      },
-    },
+  return makeAsyncDisposable<MeshPlugin<{}>>(
+    // @ts-expect-error - Typings are wrong
+    useHive(hiveClient),
     onTerminate,
   );
 }

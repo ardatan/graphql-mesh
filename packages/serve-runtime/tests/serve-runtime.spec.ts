@@ -36,10 +36,7 @@ describe('Serve Runtime', () => {
         ]);
       },
       polling: 10000,
-      fetchAPI: {
-        // @ts-expect-error - Typing issue with fetch
-        fetch: upstreamFetch,
-      },
+      plugins: () => [useCustomFetch(upstreamFetch)],
     });
   }
   function createUpstreamSchema() {
@@ -79,10 +76,7 @@ describe('Serve Runtime', () => {
       proxy: {
         endpoint: 'http://localhost:4000/graphql',
       },
-      fetchAPI: {
-        // @ts-expect-error - Typing issue with fetch
-        fetch: upstreamFetch,
-      },
+      plugins: () => [useCustomFetch(upstreamFetch)],
     }),
     supergraphAPI: createSupergraphRuntime(),
   };

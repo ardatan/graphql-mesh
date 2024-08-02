@@ -32,7 +32,6 @@ describe('useExtractedJWT', () => {
         endpoint: 'https://example.com/graphql',
       },
       plugins: () => [
-        // @ts-expect-error - signature mismatch
         useCustomFetch(upstream.fetch),
         useJWTAuth({
           forward: {
@@ -100,7 +99,6 @@ describe('useJWTAuth', () => {
           endpoint: 'https://example.com/graphql',
         },
         plugins: () => [
-          // @ts-expect-error - signature mismatch
           useCustomFetch(upstream.fetch),
           useJWTAuth({
             forward: {
