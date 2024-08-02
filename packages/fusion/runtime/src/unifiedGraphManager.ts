@@ -110,13 +110,13 @@ export class UnifiedGraphManager<TContext> {
   }
 
   private ensureUnifiedGraph() {
-    if (!this.initialUnifiedGraph$) {
+    if (!this.initialUnifiedGraph$ && !this.unifiedGraph) {
       this.initialUnifiedGraph$ = this.getAndSetUnifiedGraph();
     }
     return this.initialUnifiedGraph$;
   }
 
-  private getAndSetUnifiedGraph() {
+  private getAndSetUnifiedGraph(): MaybePromise<true> {
     this.pausePolling();
     return mapMaybePromise(
       this.opts.getUnifiedGraph(this.opts.transportContext),
@@ -185,7 +185,10 @@ export class UnifiedGraphManager<TContext> {
       },
       err => {
         this.opts.transportContext?.logger?.error('Failed to load Supergraph', err);
-        throw err;
+        if (!this.unifiedGraph) {
+          throw err;
+        }
+        return true;
       },
     );
   }
