@@ -344,7 +344,24 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     });
     getSchema = () => unifiedGraphManager.getUnifiedGraph();
     readinessChecker = () =>
-      mapMaybePromise(unifiedGraphManager.getUnifiedGraph(), schema => !!schema);
+      mapMaybePromise(
+        unifiedGraphManager.getUnifiedGraph(),
+        schema => {
+          if (!schema) {
+            logger.debug(`Readiness check failed: Supergraph cannot be loaded`);
+            return false;
+          }
+          logger.debug(`Readiness check passed: Supergraph loaded`);
+          return true;
+        },
+        err => {
+          logger.debug(
+            `Readiness check failed due to errors on loading supergraph:\n${err.stack || err.message}`,
+          );
+          logger.error(err);
+          return false;
+        },
+      );
     schemaInvalidator = () => unifiedGraphManager.invalidateUnifiedGraph();
     contextBuilder = base => unifiedGraphManager.getContext(base);
     disposableStack.use(unifiedGraphManager);
