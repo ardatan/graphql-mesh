@@ -106,7 +106,7 @@
       "id": 1,
       "options": {
         "legend": {
-          "calcs": ["lastNotNull"],
+          "calcs": ["mean", "last"],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -363,7 +363,7 @@
       "id": 3,
       "options": {
         "legend": {
-          "calcs": ["lastNotNull"],
+          "calcs": ["last"],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -487,7 +487,7 @@
       "id": 4,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": ["mean", "last"],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -588,7 +588,7 @@
       "id": 5,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": ["mean", "last"],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -697,7 +697,7 @@
       "id": 8,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": ["last"],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -719,7 +719,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "Deprecated fields",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -816,7 +816,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "Schema changes",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -1397,6 +1397,6 @@
   "timezone": "browser",
   "title": "Mesh",
   "uid": "edtn0ujblc3y8b",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
