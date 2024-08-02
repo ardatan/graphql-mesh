@@ -241,7 +241,7 @@ export default function useMeshPrometheus(
               },
               onEnd: () => {
                 const end = Date.now();
-                const duration = end - start;
+                const duration = (end - start) / 1000;
                 subgraphExecuteHistogram.histogram.observe(
                   subgraphExecuteHistogram.fillLabelsFn(payload, payload.executionRequest.context),
                   duration,
@@ -257,7 +257,7 @@ export default function useMeshPrometheus(
             });
           }
           const end = Date.now();
-          const duration = end - start;
+          const duration = (end - start) / 1000;
           subgraphExecuteHistogram.histogram.observe(
             subgraphExecuteHistogram.fillLabelsFn(payload, payload.executionRequest.context),
             duration,
@@ -272,7 +272,7 @@ export default function useMeshPrometheus(
         const start = Date.now();
         return ({ response }) => {
           const end = Date.now();
-          const duration = end - start;
+          const duration = (end - start) / 1000;
 
           fetchHistogram.histogram.observe(
             fetchHistogram.fillLabelsFn({ url, options, response }, context),
