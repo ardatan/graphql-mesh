@@ -4196,9 +4196,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/prometheus@npm:11.0.0-alpha-20240729092544-f8b6dbe5":
-  version: 11.0.0-alpha-20240729092544-f8b6dbe5
-  resolution: "@envelop/prometheus@npm:11.0.0-alpha-20240729092544-f8b6dbe5"
+"@envelop/prometheus@npm:11.0.0-alpha-20240802132908-27a22a87":
+  version: 11.0.0-alpha-20240802132908-27a22a87
+  resolution: "@envelop/prometheus@npm:11.0.0-alpha-20240802132908-27a22a87"
   dependencies:
     "@envelop/on-resolve": "npm:^4.1.0"
     tslib: "npm:^2.5.0"
@@ -4206,7 +4206,7 @@ __metadata:
     "@envelop/core": ^5.0.1
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     prom-client: ^15.0.0
-  checksum: 10c0/e71da06ebee51a81dcf894a9dbf68856e763b7b0b6affec2112def52c06994f2aaca3cbc6055ea64f1b98c338fb7a0d412d528a06d9208bb8d583bd167ea4b24
+  checksum: 10c0/f4fd0baebc4d71f5ce13578b67ddc2c9918d6fc50a5faf443abc510a9c9891722eb1687793db033e667d9bc6e6f3648444712faa7435c42337dd168104ee1850
   languageName: node
   linkType: hard
 
@@ -6567,7 +6567,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-prometheus@workspace:packages/plugins/prometheus"
   dependencies:
     "@graphql-mesh/serve-runtime": "npm:^0.5.11"
-    "@graphql-yoga/plugin-prometheus": "npm:5.3.3-alpha-20240729131502-546fd9e4"
+    "@graphql-yoga/plugin-prometheus": "npm:6.0.0-alpha-20240802142318-7e26e11b"
     prom-client: "npm:15.1.3"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.7
@@ -8193,16 +8193,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-prometheus@npm:5.3.3-alpha-20240729131502-546fd9e4":
-  version: 5.3.3-alpha-20240729131502-546fd9e4
-  resolution: "@graphql-yoga/plugin-prometheus@npm:5.3.3-alpha-20240729131502-546fd9e4"
+"@graphql-yoga/plugin-prometheus@npm:6.0.0-alpha-20240802142318-7e26e11b":
+  version: 6.0.0-alpha-20240802142318-7e26e11b
+  resolution: "@graphql-yoga/plugin-prometheus@npm:6.0.0-alpha-20240802142318-7e26e11b"
   dependencies:
-    "@envelop/prometheus": "npm:11.0.0-alpha-20240729092544-f8b6dbe5"
+    "@envelop/prometheus": "npm:11.0.0-alpha-20240802132908-27a22a87"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
     graphql-yoga: ^5.6.2
     prom-client: ^15.0.0
-  checksum: 10c0/39951fcb7a123b9ea877a85001d93c8365e4258a9bb8871bf7aeced15937d24419c0308802b6d1a7e945f6609b23115f2c9d1fc469e8c19d8d3cbed95529787d
+  checksum: 10c0/1af495f218ad2fa68f1ec694c3bf704ad21d9b9156870e92564ed4535a8a6f610c4d37164f7c7f87651592c21ba980fb50ed3ca4f6958f89fa9fa0f585f8b17a
   languageName: node
   linkType: hard
 
