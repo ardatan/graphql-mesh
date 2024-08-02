@@ -133,7 +133,7 @@ describe('Rename', () => {
       ],
     });
 
-    const executor = await composeAndGetExecutor([
+    const executor = composeAndGetExecutor([
       {
         name: 'TEST',
         schema,
@@ -167,7 +167,7 @@ describe('Rename', () => {
         },
       ],
     });
-    const executor = await composeAndGetExecutor([
+    const executor = composeAndGetExecutor([
       {
         name: 'TEST',
         schema,

@@ -1,13 +1,11 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
 import type { GraphQLSchema } from 'graphql';
-import { buildASTSchema, parse } from 'graphql';
+import { parse } from 'graphql';
 import {
-  createSchema,
   createYoga,
   isAsyncIterable,
   mergeSchemas,
-  Repeater,
   useReadinessCheck,
   type FetchAPI,
   type LandingPageRenderer,
@@ -46,11 +44,9 @@ import {
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
 import { useExecutor } from '@graphql-tools/executor-yoga';
-import { stitchSchemas } from '@graphql-tools/stitch';
 import {
   mergeDeep,
   parseSelectionSet,
-  printSchemaWithDirectives,
   type IResolvers,
   type MaybePromise,
   type TypeSource,
@@ -65,7 +61,6 @@ import type {
   MeshServeConfigContext,
   MeshServeContext,
   MeshServePlugin,
-  UnifiedGraphConfig,
 } from './types.js';
 import { useChangingSchema } from './useChangingSchema.js';
 import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
@@ -478,11 +473,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   if (config.landingPage == null || config.landingPage === true) {
     landingPageRenderer = async function meshLandingPageRenderer(opts) {
+      const subgraphHtml = await subgraphInformationHTMLRenderer();
       return new opts.fetchAPI.Response(
         landingPageHtml
           .replace(/__GRAPHIQL_LINK__/g, opts.graphqlEndpoint)
           .replace(/__REQUEST_PATH__/g, opts.url.pathname)
-          .replace(/__SUBGRAPH_HTML__/g, await subgraphInformationHTMLRenderer()),
+          .replace(/__SUBGRAPH_HTML__/g, subgraphHtml),
         {
           status: 200,
           statusText: 'OK',

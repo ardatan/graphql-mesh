@@ -26,23 +26,21 @@ const schemas: Record<string, string> = {
   'Relative Dereference': 'relative_dereference/api.yml',
   'Default Value as Integer': 'default-int-value.yml',
   'algolia-refs-subset': 'algolia-refs-subset/search/spec.yml', // test case for refs in path and responses
-  StackExchange:
-    'https://raw.githubusercontent.com/grokify/api-specs/master/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml',
+  StackExchange: 'stackexchange-api-v2.2_openapi-v3.0.yaml',
   YouTrack: 'youtrack.json',
   DefaultValues: 'default-values.json',
 };
 
 describe('Schemas', () => {
   for (const schemaName in schemas) {
-    describe(schemaName, () => {
+    it(schemaName, () => {
       const schemaPath = schemas[schemaName];
-      it('should generate the correct schema', async () => {
-        const schema = await loadGraphQLSchemaFromOpenAPI(schemaName, {
+      return expect(
+        loadGraphQLSchemaFromOpenAPI(schemaName, {
           source: schemaPath,
           cwd: join(__dirname, 'fixtures'),
-        });
-        expect(printSchemaWithDirectives(schema)).toMatchSnapshot(schemaName);
-      });
+        }).then(printSchemaWithDirectives),
+      ).resolves.toMatchSnapshot();
     });
   }
 });

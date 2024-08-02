@@ -1,0 +1,911 @@
+openapi: 3.0.0
+servers:
+  - url: 'https://api.stackexchange.com/2.2'
+info:
+  description: Stack Exchange API
+  version: '2.2'
+  title: Stack Exchange API
+  termsOfService: 'https://stackoverflow.com/legal/api-terms-of-use'
+  contact:
+    url: https://api.stackexchange.com/
+tags:
+  - name: Answers
+  - name: Questions
+  - name: Users
+    description: 'All user methods that take an {ids} parameter have a /me equivalent method that takes an access_token instead. These methods are provided for developer convenience, with the exception of plain /me, which is actually necessary for discovering which user authenticated to an application.'
+paths:
+  /questions:
+    get:
+      tags:
+        - Questions
+      description: |-
+        Gets all the questions on the site.
+        This method allows you make fairly flexible queries across the entire corpus of questions on a site.
+      operationId: listQuestions
+      parameters:
+        - name: fromdate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: todate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: min
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: max
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: tagged
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - activity
+              - votes
+              - creation
+              - hot
+              - week
+              - month
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pagesize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: site
+          in: query
+          required: true
+          schema:
+            type: string
+            default: stackoverflow
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionsResponse'
+      summary: List Questions
+  /questions/featured:
+    get:
+      tags:
+        - Questions
+      description: |-
+        Gets all the questions on the site.
+        This method allows you make fairly flexible queries across the entire corpus of questions on a site.
+      operationId: listFeaturedQuestions
+      parameters:
+        - name: fromdate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: todate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: min
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: max
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: tagged
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - activity
+              - votes
+              - creation
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pagesize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: site
+          in: query
+          required: true
+          schema:
+            type: string
+            default: stackoverflow
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionsResponse'
+      summary: List Featured Questions
+  /questions/no-answers:
+    get:
+      tags:
+        - Questions
+      description: |-
+        Returns questions which have received no answers.
+        Compare with /questions/unanswered which merely returns questions that the sites consider insufficiently well answered.
+      operationId: listQuestionsWithoutAnswers
+      parameters:
+        - name: fromdate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: todate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: min
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: max
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: tagged
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - activity
+              - votes
+              - creation
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pagesize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: site
+          in: query
+          required: true
+          schema:
+            type: string
+            default: stackoverflow
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionsResponse'
+      summary: List Questions without Answers
+  /questions/unanswered:
+    get:
+      tags:
+        - Questions
+      description: |-
+        Gets all the questions on the site.
+        This method allows you make fairly flexible queries across the entire corpus of questions on a site.
+      operationId: listUnansweredQuestions
+      parameters:
+        - name: fromdate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: todate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: min
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: max
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: tagged
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - activity
+              - votes
+              - creation
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pagesize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: site
+          in: query
+          required: true
+          schema:
+            type: string
+            default: stackoverflow
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionsResponse'
+      summary: List Unanswered Questions
+  /users:
+    get:
+      tags:
+        - Users
+      description: |-
+        Returns all users on a site.
+
+        This method returns a list of users.
+
+        The sorts accepted by this method operate on the following fields of the user object:
+
+        reputation – reputation
+        creation – creation_date
+        name – display_name
+        modified – last_modified_date
+
+        reputation is the default sort.
+
+        It is possible to create moderately complex queries using sort, min, max, fromdate, and todate.
+        The `inname` parameter lets consumers filter the results down to just those users with a certain substring in their display name. For example, `inname=kevin` will return all users with both users named simply "Kevin" or those with Kevin as one of (or part of) their names; such as "Kevin Montrose".
+      operationId: listUsers
+      parameters:
+        - name: inname
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: fromdate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: todate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: min
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: max
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - reputation
+              - creation
+              - name
+              - modified
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pagesize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: site
+          in: query
+          required: true
+          schema:
+            type: string
+            default: stackoverflow
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersResponse'
+      summary: List Users
+  /me:
+    get:
+      tags:
+        - Users
+      description: |-
+        Returns the user associated with the passed access_token.
+
+        This method returns a [user](https://api.stackexchange.com/docs/types/user).
+      operationId: getMe
+      parameters:
+        - name: site
+          in: query
+          required: true
+          schema:
+            type: string
+            default: stackoverflow
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersResponse'
+  '/users/{userIds}/reputation':
+    get:
+      tags:
+        - Users
+      description: |-
+        Gets a subset of the reputation changes for users in {ids}.
+        Reputation changes are intentionally scrubbed of some data to make it difficult to correlate votes on particular posts with user reputation changes. That being said, this method returns enough data for reasonable display of reputation trends.
+        {ids} can contain up to 100 semicolon delimited ids. To find ids programmatically look for user_id on user or shallow_user objects.
+        This method returns a list of reputation objects.
+      operationId: getUsersReputationChanges
+      parameters:
+        - name: userIds
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fromdate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: todate
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pagesize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+        - name: site
+          in: query
+          required: true
+          schema:
+            type: string
+            default: stackoverflow
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReputationResponse'
+      summary: Get Users Reputation Changes
+  /me/reputation:
+    get:
+      tags:
+        - Users
+      description: |-
+        Returns the reputation changed for the user associated with the given access_token.
+        This method returns a list of [reputation changes](https://api.stackexchange.com/docs/types/reputation).
+      operationId: getMyReputation
+      responses:
+        default:
+          description: Success
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReputationResponse'
+  '/users/{userIds}/reputation-history':
+    get:
+      tags:
+        - Users
+      description: |-
+        Returns users' public reputation history.
+        This method returns a list of reputation_history.
+      operationId: getUsersReputationHistory
+      parameters:
+        - name: userIds
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pagesize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: site
+          in: query
+          required: true
+          schema:
+            type: string
+            default: stackoverflow
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReputationHistoryResponse'
+  /me/reputation-history:
+    get:
+      tags:
+        - Users
+      description: |-
+        Returns user's public reputation history.
+
+        This method returns a list of [reputation_history](https://api.stackexchange.com/docs/types/reputation-history).
+      operationId: getMyReputationHistory
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pagesize
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        default:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReputationHistoryResponse'
+  /answers:
+    get:
+      summary: List Answers
+      tags:
+        - Answers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswersResponse'
+      operationId: listAnswers
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: site
+          description: 'This parameter can be the full domain name (ie. "stackoverflow.com"), or a short form identified by api_site_parameter on the site object.'
+        - schema:
+            type: integer
+          in: query
+          name: fromdate
+          description: 'Unix epoch time '
+        - schema:
+            type: integer
+          in: query
+          name: todate
+          description: 'Unix epoch time '
+        - schema:
+            type: integer
+          in: query
+          name: min
+          description: 'Unix epoch time '
+        - schema:
+            type: integer
+          in: query
+          name: max
+          description: 'Unix epoch time '
+        - schema:
+            type: string
+            enum:
+              - activity
+              - creation
+              - votes
+          in: query
+          name: sort
+          description: '`activity` corresponds to `Answer. last_activity_date` , `creation` to `Answer.creation_date` and `votes` to `Answer.score`'
+        - schema:
+            type: string
+            enum:
+              - desc
+              - asc
+          in: query
+          name: order
+        - schema:
+            type: integer
+          in: query
+          name: page
+        - schema:
+            type: integer
+          in: query
+          name: pagesize
+      description: 'Returns a list of [answers](https://api.stackexchange.com/docs/types/answer).'
+components:
+  schemas:
+    QuestionsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          description: A list of questions.
+          items:
+            $ref: '#/components/schemas/Question'
+        has_more:
+          type: boolean
+        quota_max:
+          type: integer
+        quota_remaining:
+          type: integer
+    Question:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        owner:
+          $ref: '#/components/schemas/QuestionOwner'
+        is_answered:
+          type: boolean
+        view_count:
+          type: integer
+        answer_count:
+          type: integer
+        score:
+          type: integer
+        last_activity_date:
+          type: integer
+        creation_date:
+          type: integer
+        question_id:
+          type: integer
+        link:
+          type: string
+        title:
+          type: string
+    QuestionOwner:
+      type: object
+      properties:
+        reputation:
+          type: integer
+        user_id:
+          type: integer
+        user_type:
+          type: string
+        profile_image:
+          type: string
+        display_name:
+          type: string
+        link:
+          type: string
+    ReputationResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          description: A list of reputation_history.
+          items:
+            $ref: '#/components/schemas/ReputationChange'
+        has_more:
+          type: boolean
+        quota_max:
+          type: integer
+        quota_remaining:
+          type: integer
+    ReputationChange:
+      type: object
+      properties:
+        on_date:
+          type: integer
+        reputation_change:
+          type: integer
+        vote_type:
+          type: string
+          enum:
+            - accepts
+            - bounties_won
+            - down_votes
+            - up_votes
+        post_type:
+          type: string
+        post_id:
+          type: integer
+        user_id:
+          type: integer
+    ReputationHistoryResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          description: A list of reputation_history.
+          items:
+            $ref: '#/components/schemas/ReputationHistory'
+        has_more:
+          type: boolean
+        quota_max:
+          type: integer
+        quota_remaining:
+          type: integer
+    ReputationHistory:
+      type: object
+      properties:
+        reputation_history_type:
+          type: string
+        reputation_change:
+          type: integer
+        post_id:
+          type: integer
+        creation_date:
+          type: integer
+        user_id:
+          type: integer
+    User:
+      type: object
+      properties:
+        badge_counts:
+          $ref: '#/components/schemas/UserBadgeCounts'
+        account_id:
+          type: integer
+          format: int64
+        is_employee:
+          type: boolean
+        last_modified_date:
+          type: integer
+          format: int64
+        last_access_date:
+          type: integer
+          format: int64
+        reputation_change_year:
+          type: integer
+        reputation_change_quarter:
+          type: integer
+        reputation_change_month:
+          type: integer
+        reputation_change_week:
+          type: integer
+        reputation_change_day:
+          type: integer
+        reputation:
+          type: integer
+          format: int64
+        creation_date:
+          type: integer
+          format: int64
+        user_type:
+          type: string
+        user_id:
+          type: integer
+          format: int64
+        accept_rate:
+          type: integer
+        location:
+          type: string
+        website_url:
+          type: string
+          format: uri
+        link:
+          type: string
+          format: uri
+        profile_image:
+          type: string
+          format: uri
+        display_name:
+          type: string
+    UserBadgeCounts:
+      type: object
+      properties:
+        bronze:
+          type: integer
+        silver:
+          type: integer
+        gold:
+          type: integer
+    UsersResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        has_more:
+          type: boolean
+        quote_max:
+          type: integer
+        quota_remaining:
+          type: integer
+    Answer:
+      title: Answer
+      type: object
+      properties:
+        accepted:
+          type: boolean
+        answer_id:
+          type: integer
+        awarded_bounty_amount:
+          type: integer
+        awarded_bounty_users:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShallowUser'
+        body:
+          type: string
+        body_markdown:
+          type: string
+        can_flag:
+          type: boolean
+        comment_count:
+          type: integer
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        community_owned_date:
+          type: integer
+        content_license:
+          type: string
+        creation_date:
+          type: integer
+        down_vote_count:
+          type: integer
+        is_accepted:
+          type: boolean
+        last_activity_date:
+          type: integer
+        last_edit_date:
+          type: integer
+        last_editor:
+          $ref: '#/components/schemas/ShallowUser'
+        link:
+          type: string
+        locked_date:
+          type: integer
+        owner:
+          $ref: '#/components/schemas/ShallowUser'
+        question_id:
+          type: integer
+        score:
+          type: boolean
+        share_link:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        title:
+          type: string
+        up_vote_count:
+          type: integer
+        upvoted:
+          type: boolean
+    ShallowUser:
+      title: ShallowUser
+      type: object
+      properties:
+        id:
+          type: string
+    Comment:
+      title: Comment
+      type: object
+      properties:
+        id:
+          type: string
+    AnswersResponse:
+      title: AnswersResponse
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+        has_more:
+          type: boolean
+        backoff:
+          type: integer
+        quota_max:
+          type: integer
+        quota_remaining:
+          type: integer
