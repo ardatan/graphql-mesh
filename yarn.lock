@@ -63,7 +63,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.11.2":
+"@apollo/client@npm:3.11.2, @apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
   version: 3.11.2
   resolution: "@apollo/client@npm:3.11.2"
   dependencies:
@@ -97,43 +97,6 @@ __metadata:
     subscriptions-transport-ws:
       optional: true
   checksum: 10c0/b63e5c1a509ac721bfb3bfbf41d11ffc3f1460d98d297e65cad6ace2d5102d7591e6fb88297f286d7a9cfdcc7f4341cf787474a61c70a98e588ea5f6c8469435
-  languageName: node
-  linkType: hard
-
-"@apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
-  version: 3.11.1
-  resolution: "@apollo/client@npm:3.11.1"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    "@wry/caches": "npm:^1.0.0"
-    "@wry/equality": "npm:^0.5.6"
-    "@wry/trie": "npm:^0.5.0"
-    graphql-tag: "npm:^2.12.6"
-    hoist-non-react-statics: "npm:^3.3.2"
-    optimism: "npm:^0.18.0"
-    prop-types: "npm:^15.7.2"
-    rehackt: "npm:^0.1.0"
-    response-iterator: "npm:^0.2.6"
-    symbol-observable: "npm:^4.0.0"
-    ts-invariant: "npm:^0.10.3"
-    tslib: "npm:^2.3.0"
-    zen-observable-ts: "npm:^1.2.5"
-  peerDependencies:
-    graphql: ^15.0.0 || ^16.0.0
-    graphql-ws: ^5.5.5
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
-    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
-  peerDependenciesMeta:
-    graphql-ws:
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-    subscriptions-transport-ws:
-      optional: true
-  checksum: 10c0/d3a1f30d44d5a84e01538772396e93db4921fcdf99919785688464d487ea00dabfb6ae63ca7e2ebd373eed5d24c134dec6eb4f4d13920044b2ea1f105fa044c4
   languageName: node
   linkType: hard
 
@@ -1486,16 +1449,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.14.0, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.16.8, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.23.9, @babel/parser@npm:^7.24.0, @babel/parser@npm:^7.25.0":
-  version: 7.25.0
-  resolution: "@babel/parser@npm:7.25.0"
-  bin:
-    parser: ./bin/babel-parser.js
-  checksum: 10c0/4aecf13829fa6f4a66835429bd235458544d9cd14374b17c19bc7726f472727ca33f500e51e1298ddc72db93bdd77fcaa9ddc095200b0b792173069e6cf9742e
-  languageName: node
-  linkType: hard
-
-"@babel/parser@npm:^7.25.3":
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.14.0, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.16.8, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.23.9, @babel/parser@npm:^7.24.0, @babel/parser@npm:^7.25.0, @babel/parser@npm:^7.25.3":
   version: 7.25.3
   resolution: "@babel/parser@npm:7.25.3"
   dependencies:
@@ -1503,18 +1457,6 @@ __metadata:
   bin:
     parser: ./bin/babel-parser.js
   checksum: 10c0/874b01349aedb805d6694f867a752fdc7469778fad76aca4548d2cc6ce96087c3ba5fb917a6f8d05d2d1a74aae309b5f50f1a4dba035f5a2c9fcfe6e106d2c4e
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-bugfix-firefox-class-in-computed-class-key@npm:^7.25.0":
-  version: 7.25.0
-  resolution: "@babel/plugin-bugfix-firefox-class-in-computed-class-key@npm:7.25.0"
-  dependencies:
-    "@babel/helper-plugin-utils": "npm:^7.24.8"
-    "@babel/traverse": "npm:^7.25.0"
-  peerDependencies:
-    "@babel/core": ^7.0.0
-  checksum: 10c0/08aecaa7c83fa78a44ea758863083261093374f38f783d3971d2c08de640d701bb464c9c7eaee7a84ce6551b573d703b1b07e59786752cc1f679827ae53d1e4a
   languageName: node
   linkType: hard
 
@@ -2680,7 +2622,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:7.25.3":
+"@babel/preset-env@npm:7.25.3, @babel/preset-env@npm:^7.11.0, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.16.4":
   version: 7.25.3
   resolution: "@babel/preset-env@npm:7.25.3"
   dependencies:
@@ -2773,99 +2715,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.11.0, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.16.4":
-  version: 7.25.2
-  resolution: "@babel/preset-env@npm:7.25.2"
-  dependencies:
-    "@babel/compat-data": "npm:^7.25.2"
-    "@babel/helper-compilation-targets": "npm:^7.25.2"
-    "@babel/helper-plugin-utils": "npm:^7.24.8"
-    "@babel/helper-validator-option": "npm:^7.24.8"
-    "@babel/plugin-bugfix-firefox-class-in-computed-class-key": "npm:^7.25.0"
-    "@babel/plugin-bugfix-safari-class-field-initializer-scope": "npm:^7.25.0"
-    "@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression": "npm:^7.25.0"
-    "@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining": "npm:^7.24.7"
-    "@babel/plugin-bugfix-v8-static-class-fields-redefine-readonly": "npm:^7.25.0"
-    "@babel/plugin-proposal-private-property-in-object": "npm:7.21.0-placeholder-for-preset-env.2"
-    "@babel/plugin-syntax-async-generators": "npm:^7.8.4"
-    "@babel/plugin-syntax-class-properties": "npm:^7.12.13"
-    "@babel/plugin-syntax-class-static-block": "npm:^7.14.5"
-    "@babel/plugin-syntax-dynamic-import": "npm:^7.8.3"
-    "@babel/plugin-syntax-export-namespace-from": "npm:^7.8.3"
-    "@babel/plugin-syntax-import-assertions": "npm:^7.24.7"
-    "@babel/plugin-syntax-import-attributes": "npm:^7.24.7"
-    "@babel/plugin-syntax-import-meta": "npm:^7.10.4"
-    "@babel/plugin-syntax-json-strings": "npm:^7.8.3"
-    "@babel/plugin-syntax-logical-assignment-operators": "npm:^7.10.4"
-    "@babel/plugin-syntax-nullish-coalescing-operator": "npm:^7.8.3"
-    "@babel/plugin-syntax-numeric-separator": "npm:^7.10.4"
-    "@babel/plugin-syntax-object-rest-spread": "npm:^7.8.3"
-    "@babel/plugin-syntax-optional-catch-binding": "npm:^7.8.3"
-    "@babel/plugin-syntax-optional-chaining": "npm:^7.8.3"
-    "@babel/plugin-syntax-private-property-in-object": "npm:^7.14.5"
-    "@babel/plugin-syntax-top-level-await": "npm:^7.14.5"
-    "@babel/plugin-syntax-unicode-sets-regex": "npm:^7.18.6"
-    "@babel/plugin-transform-arrow-functions": "npm:^7.24.7"
-    "@babel/plugin-transform-async-generator-functions": "npm:^7.25.0"
-    "@babel/plugin-transform-async-to-generator": "npm:^7.24.7"
-    "@babel/plugin-transform-block-scoped-functions": "npm:^7.24.7"
-    "@babel/plugin-transform-block-scoping": "npm:^7.25.0"
-    "@babel/plugin-transform-class-properties": "npm:^7.24.7"
-    "@babel/plugin-transform-class-static-block": "npm:^7.24.7"
-    "@babel/plugin-transform-classes": "npm:^7.25.0"
-    "@babel/plugin-transform-computed-properties": "npm:^7.24.7"
-    "@babel/plugin-transform-destructuring": "npm:^7.24.8"
-    "@babel/plugin-transform-dotall-regex": "npm:^7.24.7"
-    "@babel/plugin-transform-duplicate-keys": "npm:^7.24.7"
-    "@babel/plugin-transform-duplicate-named-capturing-groups-regex": "npm:^7.25.0"
-    "@babel/plugin-transform-dynamic-import": "npm:^7.24.7"
-    "@babel/plugin-transform-exponentiation-operator": "npm:^7.24.7"
-    "@babel/plugin-transform-export-namespace-from": "npm:^7.24.7"
-    "@babel/plugin-transform-for-of": "npm:^7.24.7"
-    "@babel/plugin-transform-function-name": "npm:^7.25.1"
-    "@babel/plugin-transform-json-strings": "npm:^7.24.7"
-    "@babel/plugin-transform-literals": "npm:^7.25.2"
-    "@babel/plugin-transform-logical-assignment-operators": "npm:^7.24.7"
-    "@babel/plugin-transform-member-expression-literals": "npm:^7.24.7"
-    "@babel/plugin-transform-modules-amd": "npm:^7.24.7"
-    "@babel/plugin-transform-modules-commonjs": "npm:^7.24.8"
-    "@babel/plugin-transform-modules-systemjs": "npm:^7.25.0"
-    "@babel/plugin-transform-modules-umd": "npm:^7.24.7"
-    "@babel/plugin-transform-named-capturing-groups-regex": "npm:^7.24.7"
-    "@babel/plugin-transform-new-target": "npm:^7.24.7"
-    "@babel/plugin-transform-nullish-coalescing-operator": "npm:^7.24.7"
-    "@babel/plugin-transform-numeric-separator": "npm:^7.24.7"
-    "@babel/plugin-transform-object-rest-spread": "npm:^7.24.7"
-    "@babel/plugin-transform-object-super": "npm:^7.24.7"
-    "@babel/plugin-transform-optional-catch-binding": "npm:^7.24.7"
-    "@babel/plugin-transform-optional-chaining": "npm:^7.24.8"
-    "@babel/plugin-transform-parameters": "npm:^7.24.7"
-    "@babel/plugin-transform-private-methods": "npm:^7.24.7"
-    "@babel/plugin-transform-private-property-in-object": "npm:^7.24.7"
-    "@babel/plugin-transform-property-literals": "npm:^7.24.7"
-    "@babel/plugin-transform-regenerator": "npm:^7.24.7"
-    "@babel/plugin-transform-reserved-words": "npm:^7.24.7"
-    "@babel/plugin-transform-shorthand-properties": "npm:^7.24.7"
-    "@babel/plugin-transform-spread": "npm:^7.24.7"
-    "@babel/plugin-transform-sticky-regex": "npm:^7.24.7"
-    "@babel/plugin-transform-template-literals": "npm:^7.24.7"
-    "@babel/plugin-transform-typeof-symbol": "npm:^7.24.8"
-    "@babel/plugin-transform-unicode-escapes": "npm:^7.24.7"
-    "@babel/plugin-transform-unicode-property-regex": "npm:^7.24.7"
-    "@babel/plugin-transform-unicode-regex": "npm:^7.24.7"
-    "@babel/plugin-transform-unicode-sets-regex": "npm:^7.24.7"
-    "@babel/preset-modules": "npm:0.1.6-no-external-plugins"
-    babel-plugin-polyfill-corejs2: "npm:^0.4.10"
-    babel-plugin-polyfill-corejs3: "npm:^0.10.4"
-    babel-plugin-polyfill-regenerator: "npm:^0.6.1"
-    core-js-compat: "npm:^3.37.1"
-    semver: "npm:^6.3.1"
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 10c0/0b613b31cc78695391501dceded4127240ff4795b19b206560f9adb5cf87bc04eafea3a5727d314ac05b410d35e1973075636ae2ab9e56d798ea586c9fb22a96
-  languageName: node
-  linkType: hard
-
 "@babel/preset-modules@npm:0.1.6-no-external-plugins":
   version: 0.1.6-no-external-plugins
   resolution: "@babel/preset-modules@npm:0.1.6-no-external-plugins"
@@ -2937,22 +2786,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.14.0, @babel/traverse@npm:^7.16.8, @babel/traverse@npm:^7.24.0, @babel/traverse@npm:^7.24.7, @babel/traverse@npm:^7.24.8, @babel/traverse@npm:^7.25.0, @babel/traverse@npm:^7.25.1, @babel/traverse@npm:^7.25.2, @babel/traverse@npm:^7.7.2":
-  version: 7.25.2
-  resolution: "@babel/traverse@npm:7.25.2"
-  dependencies:
-    "@babel/code-frame": "npm:^7.24.7"
-    "@babel/generator": "npm:^7.25.0"
-    "@babel/parser": "npm:^7.25.0"
-    "@babel/template": "npm:^7.25.0"
-    "@babel/types": "npm:^7.25.2"
-    debug: "npm:^4.3.1"
-    globals: "npm:^11.1.0"
-  checksum: 10c0/1edcb602801d6ea577584e957a3f6ad48753c4ccb9373fce4c92ebfdee04833f5bd5f1b74758ab7d61fe66d6d83ffdd7c8d482f46199767feeaed6af7df2191e
-  languageName: node
-  linkType: hard
-
-"@babel/traverse@npm:^7.25.3":
+"@babel/traverse@npm:^7.14.0, @babel/traverse@npm:^7.16.8, @babel/traverse@npm:^7.24.0, @babel/traverse@npm:^7.24.7, @babel/traverse@npm:^7.24.8, @babel/traverse@npm:^7.25.0, @babel/traverse@npm:^7.25.1, @babel/traverse@npm:^7.25.2, @babel/traverse@npm:^7.25.3, @babel/traverse@npm:^7.7.2":
   version: 7.25.3
   resolution: "@babel/traverse@npm:7.25.3"
   dependencies:
@@ -2967,7 +2801,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0, @babel/types@npm:^7.12.6, @babel/types@npm:^7.16.8, @babel/types@npm:^7.18.13, @babel/types@npm:^7.20.7, @babel/types@npm:^7.24.0, @babel/types@npm:^7.24.7, @babel/types@npm:^7.24.8, @babel/types@npm:^7.25.0, @babel/types@npm:^7.25.2, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4, @babel/types@npm:^7.8.3":
+"@babel/types@npm:^7.0.0, @babel/types@npm:^7.12.6, @babel/types@npm:^7.16.8, @babel/types@npm:^7.18.13, @babel/types@npm:^7.20.7, @babel/types@npm:^7.24.0, @babel/types@npm:^7.24.7, @babel/types@npm:^7.24.8, @babel/types@npm:^7.25.0, @babel/types@npm:^7.25.2, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4":
   version: 7.25.2
   resolution: "@babel/types@npm:7.25.2"
   dependencies:
@@ -6065,9 +5899,9 @@ __metadata:
     "@graphql-mesh/transport-common": "npm:^0.4.5"
     "@graphql-mesh/types": "npm:^0.99.5"
     "@graphql-mesh/utils": "npm:^0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/executor": "npm:^1.3.0"
-    "@graphql-tools/federation": "npm:^2.2.3"
+    "@graphql-tools/federation": "npm:^2.2.4"
     "@graphql-tools/stitch": "npm:^9.2.10"
     "@graphql-tools/stitching-directives": "npm:^3.1.2"
     "@graphql-tools/utils": "npm:^10.2.3"
@@ -6086,8 +5920,8 @@ __metadata:
   resolution: "@graphql-mesh/graphql@workspace:packages/legacy/handlers/graphql"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
-    "@graphql-tools/federation": "npm:^2.2.3"
+    "@graphql-tools/delegate": "npm:^10.0.17"
+    "@graphql-tools/federation": "npm:^2.2.4"
     "@graphql-tools/url-loader": "npm:^8.0.0"
     lodash.get: "npm:^4.4.2"
   peerDependencies:
@@ -6234,7 +6068,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching"
   dependencies:
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/schema": "npm:^10.0.0"
     "@graphql-tools/stitch": "npm:^9.2.10"
   peerDependencies:
@@ -6300,7 +6134,7 @@ __metadata:
   resolution: "@graphql-mesh/odata@workspace:packages/legacy/handlers/odata"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@types/http-string-parser": "npm:0.0.33"
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.9.0"
@@ -6585,7 +6419,7 @@ __metadata:
   resolution: "@graphql-mesh/postgraphile@workspace:packages/legacy/handlers/postgraphile"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     pg: "npm:^8.6.0"
     postgraphile: "npm:^4.13.0"
     postgraphile-core: "npm:^4.13.0"
@@ -6622,7 +6456,7 @@ __metadata:
     "@envelop/graphql-jit": "npm:^8.0.0"
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
     "@graphql-tools/batch-delegate": "npm:^9.0.3"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/executor": "npm:^1.3.0"
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/wrap": "npm:^10.0.5"
@@ -6693,10 +6527,10 @@ __metadata:
     "@graphql-mesh/transport-http": "npm:^0.3.5"
     "@graphql-mesh/utils": "npm:^0.99.5"
     "@graphql-tools/batch-delegate": "npm:^9.0.3"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/executor-http": "npm:^1.1.5"
     "@graphql-tools/executor-yoga": "npm:^3.0.0"
-    "@graphql-tools/federation": "npm:^2.2.3"
+    "@graphql-tools/federation": "npm:^2.2.4"
     "@graphql-tools/stitch": "npm:^9.2.10"
     "@graphql-tools/utils": "npm:^10.2.3"
     "@graphql-tools/wrap": "npm:^10.0.5"
@@ -6761,7 +6595,7 @@ __metadata:
   resolution: "@graphql-mesh/supergraph@workspace:packages/legacy/handlers/supergraph"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/federation": "npm:^2.2.3"
+    "@graphql-tools/federation": "npm:^2.2.4"
     "@graphql-tools/url-loader": "npm:^8.0.2"
     "@graphql-tools/utils": "npm:^10.2.2"
     lodash.get: "npm:^4.4.2"
@@ -6816,7 +6650,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-encapsulate@workspace:packages/legacy/transforms/encapsulate"
   dependencies:
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/wrap": "npm:^10.0.5"
   peerDependencies:
@@ -6852,7 +6686,7 @@ __metadata:
   dependencies:
     "@apollo/subgraph": "npm:^2.4.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/stitching-directives": "npm:^3.1.2"
     dset: "npm:^3.1.2"
     graphql-transform-federation: "npm:^2.2.0"
@@ -6869,7 +6703,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-filter-schema@workspace:packages/legacy/transforms/filter-schema"
   dependencies:
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/wrap": "npm:^10.0.5"
     "@types/minimatch": "npm:5.1.2"
     minimatch: "npm:^10.0.0"
@@ -6889,7 +6723,7 @@ __metadata:
     "@graphql-hive/core": "npm:^0.5.0"
     "@graphql-hive/yoga": "npm:^0.33.3"
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.4
     "@graphql-mesh/types": ^0.99.5
@@ -6904,7 +6738,7 @@ __metadata:
   resolution: "@graphql-mesh/transform-hoist-field@workspace:packages/legacy/transforms/hoist-field"
   dependencies:
     "@graphql-mesh/cache-localforage": "npm:0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/wrap": "npm:^10.0.5"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.5
@@ -6919,7 +6753,7 @@ __metadata:
   resolution: "@graphql-mesh/transform-naming-convention@workspace:packages/legacy/transforms/naming-convention"
   dependencies:
     "@graphql-mesh/cache-localforage": "npm:^0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/wrap": "npm:^10.0.5"
     change-case: "npm:^4.1.2"
@@ -6940,7 +6774,7 @@ __metadata:
   resolution: "@graphql-mesh/transform-prefix@workspace:packages/legacy/transforms/prefix"
   dependencies:
     "@graphql-mesh/cache-localforage": "npm:0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/wrap": "npm:^10.0.5"
     graphql-scalars: "npm:^1.22.4"
@@ -6988,7 +6822,7 @@ __metadata:
   resolution: "@graphql-mesh/transform-rename@workspace:packages/legacy/transforms/rename"
   dependencies:
     "@graphql-mesh/cache-localforage": "npm:0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/wrap": "npm:^10.0.5"
     graphql-scalars: "npm:^1.22.4"
@@ -7051,7 +6885,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-type-merging@workspace:packages/legacy/transforms/type-merging"
   dependencies:
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/stitching-directives": "npm:^3.1.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.5
@@ -7066,7 +6900,7 @@ __metadata:
   resolution: "@graphql-mesh/transport-common@workspace:packages/transports/common"
   dependencies:
     "@envelop/core": "npm:^5.0.1"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/utils": "npm:^10.2.3"
   peerDependencies:
     "@graphql-mesh/types": ^0.99.5
@@ -7120,7 +6954,7 @@ __metadata:
     "@graphql-mesh/transport-common": "npm:^0.4.5"
     "@graphql-mesh/types": "npm:^0.99.5"
     "@graphql-mesh/utils": "npm:^0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/utils": "npm:^10.2.3"
     graphql-fields: "npm:^2.0.3"
     mysql: "npm:^2.18.1"
@@ -7138,7 +6972,7 @@ __metadata:
     "@graphql-mesh/transport-common": "npm:^0.4.5"
     "@graphql-mesh/types": "npm:^0.99.5"
     "@graphql-mesh/utils": "npm:^0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/utils": "npm:^10.2.3"
     "@neo4j/graphql": "npm:^5.0.0"
     graphql-scalars: "npm:^1.22.4"
@@ -7254,7 +7088,7 @@ __metadata:
   resolution: "@graphql-mesh/types@workspace:packages/legacy/types"
   dependencies:
     "@graphql-tools/batch-delegate": "npm:^9.0.3"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-typed-document-node/core": "npm:^3.2.0"
   peerDependencies:
     "@graphql-mesh/store": ^0.99.5
@@ -7286,7 +7120,7 @@ __metadata:
   dependencies:
     "@apollo/server": "npm:4.10.5"
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@types/js-yaml": "npm:4.0.9"
     "@types/lodash.topath": "npm:4.5.9"
     "@types/object-hash": "npm:3.0.6"
@@ -7379,7 +7213,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/delegate@npm:^10.0.11, @graphql-tools/delegate@npm:^10.0.12, @graphql-tools/delegate@npm:^10.0.16, @graphql-tools/delegate@npm:^10.0.17, @graphql-tools/delegate@npm:^10.0.4":
+"@graphql-tools/delegate@npm:^10.0.11, @graphql-tools/delegate@npm:^10.0.12, @graphql-tools/delegate@npm:^10.0.17, @graphql-tools/delegate@npm:^10.0.4":
   version: 10.0.17
   resolution: "@graphql-tools/delegate@npm:10.0.17"
   dependencies:
@@ -7497,7 +7331,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/federation@npm:^2.2.3":
+"@graphql-tools/federation@npm:^2.2.4":
   version: 2.2.4
   resolution: "@graphql-tools/federation@npm:2.2.4"
   dependencies:
@@ -9857,7 +9691,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:0.5.5"
     "@graphql-mesh/transport-common": "npm:^0.4.5"
     "@graphql-mesh/transport-rest": "npm:^0.4.7"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@json-schema-tools/meta-schema": "npm:1.7.5"
     "@types/qs": "npm:6.9.15"
     "@types/to-json-schema": "npm:0.2.4"
@@ -9892,7 +9726,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
     "@graphql-mesh/transport-mysql": "npm:^0.4.5"
     "@graphql-mesh/utils": "npm:^0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/utils": "npm:^10.2.3"
     "@types/graphql-fields": "npm:1.3.9"
     "@types/mysql": "npm:2.15.26"
@@ -9912,7 +9746,7 @@ __metadata:
   resolution: "@omnigraph/neo4j@workspace:packages/loaders/neo4j"
   dependencies:
     "@graphql-mesh/transport-neo4j": "npm:^0.4.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/schema": "npm:^10.0.4"
     "@neo4j/introspector": "npm:^3.0.0"
     neo4j-driver: "npm:^5.9.2"
@@ -9928,7 +9762,7 @@ __metadata:
   resolution: "@omnigraph/openapi@workspace:packages/loaders/openapi"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@graphql-tools/utils": "npm:10.3.2"
     "@omnigraph/json-schema": "npm:^0.103.0"
     "@whatwg-node/fetch": "npm:0.9.19"
@@ -9953,7 +9787,7 @@ __metadata:
   dependencies:
     "@ardatan/raml-1-parser": "npm:1.1.69"
     "@graphql-mesh/string-interpolation": "npm:0.5.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     "@omnigraph/json-schema": "npm:0.103.0"
     "@whatwg-node/fetch": "npm:^0.9.0"
     change-case: "npm:4.1.2"
@@ -9995,7 +9829,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.4"
     "@graphql-mesh/types": "npm:^0.99.5"
-    "@graphql-tools/delegate": "npm:^10.0.16"
+    "@graphql-tools/delegate": "npm:^10.0.17"
     tuql: "npm:^1.7.0"
   peerDependencies:
     graphql: "*"
@@ -30874,21 +30708,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:6.13.0":
+"qs@npm:6.13.0, qs@npm:^6.11.2, qs@npm:^6.4.0":
   version: 6.13.0
   resolution: "qs@npm:6.13.0"
   dependencies:
     side-channel: "npm:^1.0.6"
   checksum: 10c0/62372cdeec24dc83a9fb240b7533c0fdcf0c5f7e0b83343edd7310f0ab4c8205a5e7c56406531f2e47e1b4878a3821d652be4192c841de5b032ca83619d8f860
-  languageName: node
-  linkType: hard
-
-"qs@npm:^6.11.2, qs@npm:^6.4.0":
-  version: 6.12.3
-  resolution: "qs@npm:6.12.3"
-  dependencies:
-    side-channel: "npm:^1.0.6"
-  checksum: 10c0/243ddcc8f49dab78fc51041f7f64c500b47c671c45a101a8aca565d8537cb562921da7ef1a831b4a7051596ec88bb35a0d5e25a240025e8b32c6bfb69f00bf2f
   languageName: node
   linkType: hard
 
