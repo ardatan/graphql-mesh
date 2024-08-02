@@ -106,7 +106,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let unifiedGraph: GraphQLSchema;
   let schemaInvalidator: () => void;
   let getSchema: () => MaybePromise<GraphQLSchema> = () => unifiedGraph;
-  let schemaChanged: (schema: GraphQLSchema) => void;
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
   let registryPlugin: MeshPlugin<unknown> = {};
@@ -148,6 +147,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     let getSubschemaConfig$: MaybePromise<boolean>;
     let subschemaConfig: SubschemaConfig;
     function getSubschemaConfig() {
+      if (getSubschemaConfig$) {
+        return getSubschemaConfig$;
+      }
       return mapMaybePromise(
         handleUnifiedGraphConfig(subgraphInConfig, configContext),
         newUnifiedGraph => {
@@ -260,27 +262,28 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
               },
             },
           });
-          schemaChanged(unifiedGraph);
           return true;
         },
       );
     }
-    unifiedGraphPlugin = {
-      // @ts-expect-error PromiseLike is not compatible with Promise
-      onRequestParse() {
-        if (!subschemaConfig) {
-          getSubschemaConfig$ ||= getSubschemaConfig();
-          return getSubschemaConfig$;
-        }
-      },
-    };
+    getSchema = () => mapMaybePromise(getSubschemaConfig(), () => unifiedGraph);
   } else {
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
 
+    let supergraphLoadedPlace: string;
     if ('supergraph' in config) {
       unifiedGraphFetcher = () => handleUnifiedGraphConfig(config.supergraph, configContext);
+      if ('supergraph' in config) {
+        if (typeof config.supergraph === 'function') {
+          const fnName = config.supergraph.name || '';
+          supergraphLoadedPlace = `a custom loader ${fnName}`;
+        } else if (typeof config.supergraph === 'string') {
+          supergraphLoadedPlace = config.supergraph;
+        }
+      }
     } else if (('hive' in config && config.hive.endpoint) || process.env.HIVE_CDN_ENDPOINT) {
       const cdnEndpoint = 'hive' in config ? config.hive.endpoint : process.env.HIVE_CDN_ENDPOINT;
+      supergraphLoadedPlace = 'Hive CDN <br>' + cdnEndpoint;
       const cdnKey = 'hive' in config ? config.hive.key : process.env.HIVE_CDN_KEY;
       if (!cdnKey) {
         throw new Error(
@@ -296,6 +299,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       const errorMessage =
         'You must provide a supergraph schema in the `supergraph` config or point to a supergraph file with `--supergraph` parameter or `HIVE_CDN_ENDPOINT` environment variable or `./supergraph.graphql` file';
       // Falls back to `./supergraph.graphql` by default
+      supergraphLoadedPlace = './supergraph.graphql';
       unifiedGraphFetcher = () => {
         try {
           const res$ = handleUnifiedGraphConfig('./supergraph.graphql', configContext);
@@ -330,12 +334,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
     const unifiedGraphManager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
-      handleUnifiedGraph: opts => {
-        // when handleUnifiedGraph is called, we're sure that the schema
-        // _really_ changed, we can therefore confidently notify about the schema change
-        schemaChanged(opts.unifiedGraph);
-        return handleFederationSupergraph(opts);
-      },
       transports: config.transports,
       transportEntryAdditions: config.transportEntries,
       polling: config.polling,
@@ -352,24 +350,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     disposableStack.use(unifiedGraphManager);
     subgraphInformationHTMLRenderer = async () => {
       const htmlParts: string[] = [];
-      let supergraphLoadedPlace = './supergraph.graphql';
-      if ('hive' in config && config.hive.endpoint) {
-        supergraphLoadedPlace = 'Hive CDN <br>' + config.hive.endpoint;
-      } else if ('supergraph' in config) {
-        if (typeof config.supergraph === 'function') {
-          const fnName = config.supergraph.name || '';
-          supergraphLoadedPlace = `a custom loader ${fnName}`;
-        } else if (typeof config.supergraph === 'string') {
-          supergraphLoadedPlace = config.supergraph;
-        }
-      }
       let loaded = false;
       let loadError: Error;
+      let transportEntryMap: Record<string, TransportEntry>;
       try {
-        // TODO: Workaround for the issue
-        // When you go to landing page, then GraphiQL, GW stops working
-        const schema = await getSchema();
-        schemaChanged(schema);
+        transportEntryMap = await unifiedGraphManager.getTransportEntryMap();
         loaded = true;
       } catch (e) {
         loaded = false;
@@ -377,11 +362,13 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       }
       if (loaded) {
         htmlParts.push(`<h3>Supergraph Status: Loaded ✅</h3>`);
-        htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        if (supergraphLoadedPlace) {
+          htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        }
         htmlParts.push(`<table>`);
         htmlParts.push(`<tr><th>Subgraph</th><th>Transport</th><th>Location</th></tr>`);
-        for (const subgraphName in unifiedGraphManager._transportEntryMap) {
-          const transportEntry = unifiedGraphManager._transportEntryMap[subgraphName];
+        for (const subgraphName in transportEntryMap) {
+          const transportEntry = transportEntryMap[subgraphName];
           htmlParts.push(`<tr>`);
           htmlParts.push(`<td>${subgraphName}</td>`);
           htmlParts.push(`<td>${transportEntry.kind}</td>`);
@@ -393,7 +380,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         htmlParts.push(`</table>`);
       } else {
         htmlParts.push(`<h3>Status: Failed ❌</h3>`);
-        htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        if (supergraphLoadedPlace) {
+          htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        }
         htmlParts.push(`<h3>Error:</h3>`);
         htmlParts.push(`<pre>${loadError.stack}</pre>`);
       }
@@ -502,7 +491,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       unifiedGraphPlugin,
       readinessCheckPlugin,
       registryPlugin,
-      useChangingSchema(getSchema, cb => (schemaChanged = cb)),
+      useChangingSchema(getSchema),
       useCompleteSubscriptionsOnDispose(disposableStack),
       useCompleteSubscriptionsOnSchemaChange(),
       useRequestId(),
