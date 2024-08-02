@@ -1,5 +1,19 @@
 # @graphql-mesh/hmac-upstream-signature
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)]:
+  - @graphql-mesh/transport-common@0.4.6
+  - @graphql-mesh/types@0.99.6
+  - @graphql-mesh/utils@0.99.6
+
 ## 0.0.7
 
 ## 0.0.6

@@ -1,5 +1,59 @@
 # @graphql-mesh/serve-runtime
 
+## 0.5.10
+
+### Patch Changes
+
+- [#7447](https://github.com/ardatan/graphql-mesh/pull/7447)
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.17)
+    (from `^10.0.16`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.4)
+    (from `^2.2.3`, in `dependencies`)
+
+- [#7448](https://github.com/ardatan/graphql-mesh/pull/7448)
+  [`2041e8d`](https://github.com/ardatan/graphql-mesh/commit/2041e8dafcae602aed96e51f4e9ab38113c3ccde)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/apollo@^0.34.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/apollo/v/0.34.0)
+    (from `^0.33.4`, in `dependencies`)
+
+- [#7447](https://github.com/ardatan/graphql-mesh/pull/7447)
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Export
+  \`MeshServeConfigContext`\, \`useContentEncoding\` and \`useUpstreamCancel\` from \`serve-cli\`
+  and \`serve-runtime\`
+
+- [#7447](https://github.com/ardatan/graphql-mesh/pull/7447)
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the wrong information on the landing page
+
+- [#7447](https://github.com/ardatan/graphql-mesh/pull/7447)
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improvements on schema loading handling
+
+- [#7447](https://github.com/ardatan/graphql-mesh/pull/7447)
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Log debug messages when readiness check fails
+
+- Updated dependencies
+  [[`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`2041e8d`](https://github.com/ardatan/graphql-mesh/commit/2041e8dafcae602aed96e51f4e9ab38113c3ccde),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)]:
+  - @graphql-mesh/fusion-runtime@0.5.9
+  - @graphql-mesh/plugin-hive@0.99.6
+  - @graphql-mesh/transport-common@0.4.6
+  - @graphql-mesh/utils@0.99.6
+  - @graphql-mesh/transport-http@0.3.6
+
 ## 0.5.9
 
 ### Patch Changes

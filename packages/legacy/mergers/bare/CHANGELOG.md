@@ -1,5 +1,18 @@
 # @graphql-mesh/merger-bare
 
+## 0.99.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)]:
+  - @graphql-mesh/merger-stitching@0.99.6
+  - @graphql-mesh/types@0.99.6
+  - @graphql-mesh/utils@0.99.6
+
 ## 0.99.5
 
 ### Patch Changes
