@@ -1,6 +1,7 @@
 import 'dotenv/config'; // inject dotenv options to process.env
 import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
+import cluster from 'node:cluster';
 import { availableParallelism, release } from 'node:os';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
@@ -104,7 +105,14 @@ export function run(ctx: Partial<CLIContext>) {
   const { binName, productDescription, version } = cliCtx;
   cli = cli.name(binName).description(productDescription);
   cli.version(version);
-  addCommands(cliCtx, cli);
+
+  const log = ctx.log.child(
+    cluster.worker?.id
+      ? `🕸️  ${ctx.productName} Worker#${cluster.worker.id}`
+      : `🕸️  ${ctx.productName}`,
+  );
+
+  addCommands({ ...cliCtx, log }, cli);
 
   return cli.parseAsync();
 }
