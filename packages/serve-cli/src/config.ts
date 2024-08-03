@@ -19,7 +19,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
   log: Logger;
   configPath: string | null | undefined;
 }) {
-  let importedConfig: Partial<MeshServeConfig<TContext> & ServerConfig> = {};
+  let importedConfig: Partial<MeshServeConfig<TContext> & ServerConfig> | null = null;
 
   if (!opts.configPath) {
     opts.log.info(`Searching for default config files`);
@@ -31,7 +31,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
       if (exists) {
         opts.log.info(`Found default config file ${configPath}`);
         const module = await include(absoluteConfigPath);
-        importedConfig = Object(module).serveConfig;
+        importedConfig = Object(module).serveConfig || null;
         break;
       }
     }
@@ -48,7 +48,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
       throw new Error(`Cannot find config file at ${configPath}`);
     }
     const module = await include(configPath);
-    importedConfig = Object(module).serveConfig;
+    importedConfig = Object(module).serveConfig || null;
     if (!importedConfig) {
       throw new Error(`No "serveConfig" exported from config file at ${configPath}`);
     }
