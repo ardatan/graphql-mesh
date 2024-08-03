@@ -5,12 +5,34 @@ import { availableParallelism, release } from 'node:os';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
+import { addCommands } from './commands';
 import { defaultConfigPaths } from './config.js';
+
+/** The context of the running program. */
+export interface CLIContext {
+  /** @default new DefaultLogger() */
+  log: Logger;
+  /** @default Mesh Serve */
+  productName: string;
+  /** @default serve GraphQL federated architecture for any API service(s) */
+  productDescription: string;
+  /** @default mesh-serve */
+  binName: string;
+  /** @default globalThis.__VERSION__ */
+  version: string;
+}
+
+/** Inferred program options from the root command {@link cli}. */
+export type CLIGlobals = CLI extends Command<any, infer O> ? O : never;
 
 export const defaultFork = process.env.NODE_ENV === 'production' ? availableParallelism() : 1;
 
-/** The root program of serve-cli. */
-export const program = new Command()
+export type CLI = typeof cli;
+
+export type AddCommand = (ctx: CLIContext, cli: CLI) => void;
+
+/** The root cli of serve-cli. */
+let cli = new Command()
   .configureHelp({
     // will print help of global options for each command
     showGlobalOptions: true,
@@ -67,27 +89,22 @@ export const program = new Command()
   .option('--masked-errors', 'mask unexpected errors in responses')
   .option('--hive-usage-token [token]', 'Hive registry token for usage metrics');
 
-/** The context of the running program. */
-export type Program = {
-  /** @default new DefaultLogger() */
-  log: Logger;
-  /** @default Mesh Serve */
-  productName: string;
-  /** @default serve GraphQL federated architecture for any API service(s) */
-  productDescription: string;
-  /** @default mesh-serve */
-  binName: string;
-  /** @default globalThis.__VERSION__ */
-  version: string;
-};
+// @inject-version globalThis.__VERSION__ here
 
-export const defaultProgram: Program = {
-  log: new DefaultLogger(),
-  productName: 'Mesh',
-  productDescription: 'serve GraphQL federated architecture for any API service(s)',
-  binName: 'mesh-serve',
-  version: globalThis.__VERSION__,
-};
+export function run(ctx: Partial<CLIContext>) {
+  const cliCtx: CLIContext = {
+    log: new DefaultLogger(),
+    productName: 'Mesh',
+    productDescription: 'serve GraphQL federated architecture for any API service(s)',
+    binName: 'mesh-serve',
+    version: globalThis.__VERSION__,
+    ...ctx,
+  };
 
-/** Inferred program options from the root command {@link program}. */
-export type ProgramOptions = typeof program extends Command<any, infer O> ? O : never;
+  const { binName, productDescription, version } = cliCtx;
+  cli = cli.name(binName).description(productDescription);
+  cli.version(version);
+  addCommands(cliCtx, cli);
+
+  return cli.parseAsync();
+}
