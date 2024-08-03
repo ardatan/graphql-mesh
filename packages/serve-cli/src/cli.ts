@@ -92,17 +92,17 @@ let cli = new Command()
 
 // @inject-version globalThis.__VERSION__ here
 
-export function run(ctx: Partial<CLIContext>) {
-  const cliCtx: CLIContext = {
+export function run(userCtx: Partial<CLIContext>) {
+  const ctx: CLIContext = {
     log: new DefaultLogger(),
     productName: 'Mesh',
     productDescription: 'serve GraphQL federated architecture for any API service(s)',
     binName: 'mesh-serve',
     version: globalThis.__VERSION__,
-    ...ctx,
+    ...userCtx,
   };
 
-  const { binName, productDescription, version } = cliCtx;
+  const { binName, productDescription, version } = ctx;
   cli = cli.name(binName).description(productDescription);
   cli.version(version);
 
@@ -112,7 +112,7 @@ export function run(ctx: Partial<CLIContext>) {
       : `🕸️  ${ctx.productName}`,
   );
 
-  addCommands({ ...cliCtx, log }, cli);
+  addCommands({ ...ctx, log }, cli);
 
   return cli.parseAsync();
 }
