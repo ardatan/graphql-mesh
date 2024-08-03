@@ -6667,7 +6667,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-extend@workspace:packages/legacy/transforms/extend"
   dependencies:
-    "@graphql-tools/code-file-loader": "npm:8.1.2"
+    "@graphql-tools/code-file-loader": "npm:8.1.3"
     "@graphql-tools/graphql-file-loader": "npm:8.0.1"
     "@graphql-tools/load": "npm:8.0.2"
     "@graphql-tools/schema": "npm:10.0.4"
@@ -7184,18 +7184,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/code-file-loader@npm:8.1.2, @graphql-tools/code-file-loader@npm:^8.0.0, @graphql-tools/code-file-loader@npm:~8.1.0":
-  version: 8.1.2
-  resolution: "@graphql-tools/code-file-loader@npm:8.1.2"
+"@graphql-tools/code-file-loader@npm:8.1.3, @graphql-tools/code-file-loader@npm:^8.0.0, @graphql-tools/code-file-loader@npm:~8.1.0":
+  version: 8.1.3
+  resolution: "@graphql-tools/code-file-loader@npm:8.1.3"
   dependencies:
-    "@graphql-tools/graphql-tag-pluck": "npm:8.3.1"
+    "@graphql-tools/graphql-tag-pluck": "npm:8.3.2"
     "@graphql-tools/utils": "npm:^10.0.13"
     globby: "npm:^11.0.3"
     tslib: "npm:^2.4.0"
     unixify: "npm:^1.0.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/35af0b0fb834fd1d8a59f836bab2bc0bc64641f414e43ebeec3f1174687be6f5b048b48c653d54eda1e19868f3f08f46d747418b1bed6674935badeddc061bb5
+  checksum: 10c0/ce699c39a1dfdedc90609d3c5367dc074a786f0231df802c71ff0e83f9da929681149ecac5a3345bc792a65faca9a1173e0c0ca3c54af540f81a7ea98a8c1fb3
   languageName: node
   linkType: hard
 
@@ -7432,6 +7432,23 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/6e7fe1a3c54146241aeee3fb495a82ac835e7c91fdc0910dd64bbad335918a202ff61d6293b6ad48d683cc5e19117b75afcc263f6f1470295580d530512ef30e
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/graphql-tag-pluck@npm:8.3.2":
+  version: 8.3.2
+  resolution: "@graphql-tools/graphql-tag-pluck@npm:8.3.2"
+  dependencies:
+    "@babel/core": "npm:^7.22.9"
+    "@babel/parser": "npm:^7.16.8"
+    "@babel/plugin-syntax-import-assertions": "npm:^7.20.0"
+    "@babel/traverse": "npm:^7.16.8"
+    "@babel/types": "npm:^7.16.8"
+    "@graphql-tools/utils": "npm:^10.0.13"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/0c351cdaeca3cc1de9308414108be7d760930dfe1e4dbbb6270edd6e449daae27b997ab6fc8a1086302d6712be07f80bbe2e5455a8e66063ea39b50165d38b8f
   languageName: node
   linkType: hard
 
