@@ -6236,7 +6236,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth"
   dependencies:
     "@graphql-mesh/serve-runtime": "npm:^0.5.11"
-    "@graphql-yoga/plugin-jwt": "npm:3.0.2"
+    "@graphql-yoga/plugin-jwt": "npm:^3.0.2"
     graphql-yoga: "npm:^5.6.0"
     jsonwebtoken: "npm:9.0.2"
   peerDependencies:
@@ -6667,10 +6667,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-extend@workspace:packages/legacy/transforms/extend"
   dependencies:
-    "@graphql-tools/code-file-loader": "npm:8.1.3"
-    "@graphql-tools/graphql-file-loader": "npm:8.0.1"
-    "@graphql-tools/load": "npm:8.0.2"
-    "@graphql-tools/schema": "npm:10.0.4"
+    "@graphql-tools/code-file-loader": "npm:^8.1.3"
+    "@graphql-tools/graphql-file-loader": "npm:^8.0.1"
+    "@graphql-tools/load": "npm:^8.0.2"
+    "@graphql-tools/schema": "npm:^10.0.4"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.4
     "@graphql-mesh/types": ^0.99.7
@@ -7184,7 +7184,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/code-file-loader@npm:8.1.3, @graphql-tools/code-file-loader@npm:^8.0.0, @graphql-tools/code-file-loader@npm:~8.1.0":
+"@graphql-tools/code-file-loader@npm:^8.0.0, @graphql-tools/code-file-loader@npm:^8.1.3, @graphql-tools/code-file-loader@npm:~8.1.0":
   version: 8.1.3
   resolution: "@graphql-tools/code-file-loader@npm:8.1.3"
   dependencies:
@@ -7403,7 +7403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/graphql-file-loader@npm:8.0.1, @graphql-tools/graphql-file-loader@npm:^8.0.0, @graphql-tools/graphql-file-loader@npm:~8.0.0":
+"@graphql-tools/graphql-file-loader@npm:8.0.1, @graphql-tools/graphql-file-loader@npm:^8.0.0, @graphql-tools/graphql-file-loader@npm:^8.0.1, @graphql-tools/graphql-file-loader@npm:~8.0.0":
   version: 8.0.1
   resolution: "@graphql-tools/graphql-file-loader@npm:8.0.1"
   dependencies:
@@ -7523,7 +7523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/load@npm:8.0.2, @graphql-tools/load@npm:^8.0.0, @graphql-tools/load@npm:^8.0.1, @graphql-tools/load@npm:~8.0.0":
+"@graphql-tools/load@npm:^8.0.0, @graphql-tools/load@npm:^8.0.1, @graphql-tools/load@npm:^8.0.2, @graphql-tools/load@npm:~8.0.0":
   version: 8.0.2
   resolution: "@graphql-tools/load@npm:8.0.2"
   dependencies:
@@ -7955,7 +7955,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-jwt@npm:3.0.2":
+"@graphql-yoga/plugin-jwt@npm:^3.0.2":
   version: 3.0.2
   resolution: "@graphql-yoga/plugin-jwt@npm:3.0.2"
   dependencies:
