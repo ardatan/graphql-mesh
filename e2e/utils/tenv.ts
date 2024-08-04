@@ -44,7 +44,7 @@ const serveRunner = (function getServeRunner() {
   if (runner === 'docker' && !process.env.CI) {
     process.stderr.write(`
 ⚠️ Using docker serve runner! Make sure you have built the containers with:
-yarn bundle && docker buildx bake e2e
+E2E_SERVE_RUNNER=docker yarn bundle && docker buildx bake e2e
 
 `);
   }
