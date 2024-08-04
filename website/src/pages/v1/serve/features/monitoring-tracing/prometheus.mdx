@@ -56,8 +56,8 @@ metrics, and you can access them by visiting the `/metrics` endpoint.
 By default, the plugin will not expose any metrics. You need to opt in to the metrics you wish to
 export.
 
-In the metrics, you will find the timing of each phase of the GraphQL execution. If you are not
-familiar with the lifecycle of a GraphQL operation in Mesh, please refer to the
+You will find the timing of each phase of the GraphQL execution. If you are not familiar with the
+lifecycle of a GraphQL operation in Mesh, please refer to the
 [Plugin Lifecycle page](/v1/serve/features/custom-plugins#plugin-lifecycle). Each plugin hook has a
 corresponding metric which tracks timings as
 [histograms](https://prometheus.io/docs/concepts/metric_types/#histogram) or
@@ -65,33 +65,35 @@ corresponding metric which tracks timings as
 [counters](https://prometheus.io/docs/concepts/metric_types/#counter) to track the number of
 requests, errors, and other useful information.
 
-To enable a metric, set the corresponding option to `true`. You can also provide a string to
-customize the metric name, or an object to provide more options (see
+To enable a metric, set the corresponding option to `true` in the `metrics` option's object. You can
+also provide a string to customize the metric name, or an object to provide more options (see
 [`siimon/prom-client` documentation](https://github.com/siimon/prom-client#custom-metrics)).
+Histogram metrics can be passed an array of numbers to configure buckets.
 
 Each metric also exposes some labels to give more context. Please see details sections of each
-metric to see the available labels. Some labels can be enabled or disabled using the `labels`
-option.
+metric to see the available labels.
 
-| Default Name                                                                        |   Type    | Option                  |
-| ----------------------------------------------------------------------------------- | :-------: | ----------------------- |
-| [`graphql_yoga_http_duration`](#graphql_yoga_http_duration)                         | Histogram | `http`                  |
-| [`graphql_envelop_phase_parse`](#graphql_envelop_phase_parse)                       | Histogram | `parse`                 |
-| [`graphql_envelop_phase_validate`](#graphql_envelop_phase_validate)                 | Histogram | `validate`              |
-| [`graphql_envelop_phase_context`](#graphql_envelop_phase_context)                   | Histogram | `contextBuilding`       |
-| [`graphql_envelop_phase_execute`](#graphql_envelop_phase_execute)                   | Histogram | `execute`               |
-| [`graphql_envelop_phase_subscribe`](#graphql_envelop_phase_subscribe)               | Histogram | `subscribe`             |
-| [`graphql_envelop_execute_resolver`](#graphql_envelop_execute_resolver)             | Histogram | `resolvers`             |
-| [`graphql_envelop_request_duration`](#graphql_envelop_request_duration)             | Histogram | `requestTotalDuration`  |
-| [`graphql_envelop_request_time_summary`](#graphql_envelop_request_time_summary)     |  Summary  | `requestSummary`        |
-| [`graphql_envelop_error_result`](#graphql_envelop_error_result)                     |  Counter  | `errors`                |
-| [`graphql_envelop_request`](#graphql_envelop_request)                               |  Counter  | `requestCount`          |
-| [`graphql_envelop_deprecated_field`](#graphql_envelop_deprecated_field)             |  Counter  | `deprecatedFields`      |
-| [`graphql_envelop_schema_change`](#graphql_envelop_schema_change)                   |  Counter  | `schemaChangeCount`     |
-| [`graphql_mesh_delegate_duration`](#graphql_mesh_delegate_duration)                 | Histogram | `delegation`            |
-| [`graphql_mesh_fetch_duration`](#graphql_mesh_fetch_duration)                       | Histogram | `fetchMetrics`          |
-| [`graphql_mesh_subgraph_execute_duration`](#graphql_mesh_subgraph_execute_duration) | Histogram | `subgraphExecute`       |
-| [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors)     |  Counter  | `subgraphExecuteErrors` |
+By default, all labels are enabled (to the exception of http request and response headers), but you
+can disabled each ones using the `labels` option.
+
+| Default Name                                                                        |   Type    | Description                                                  |
+| ----------------------------------------------------------------------------------- | :-------: | ------------------------------------------------------------ |
+| [`graphql_yoga_http_duration`](#graphql_yoga_http_duration)                         | Histogram | duration of incoming (downstream) HTTP requests              |
+| [`graphql_envelop_phase_parse`](#graphql_envelop_phase_parse)                       | Histogram | duration of the `parse` phase of the GraphQL execution       |
+| [`graphql_envelop_phase_validate`](#graphql_envelop_phase_validate)                 | Histogram | duration of the `validate` phase of the GraphQL execution    |
+| [`graphql_envelop_phase_context`](#graphql_envelop_phase_context)                   | Histogram | duration of the `context` phase of the GraphQL execution     |
+| [`graphql_envelop_phase_execute`](#graphql_envelop_phase_execute)                   | Histogram | duration of the `execute` phase of the GraphQL execution     |
+| [`graphql_envelop_phase_subscribe`](#graphql_envelop_phase_subscribe)               | Histogram | duration of the `subscribe` phase of the GraphQL execution   |
+| [`graphql_envelop_execute_resolver`](#graphql_envelop_execute_resolver)             | Histogram | duration of each resolver execution                          |
+| [`graphql_envelop_request_duration`](#graphql_envelop_request_duration)             | Histogram | duration of the complete GraphQL operation execution         |
+| [`graphql_envelop_request_time_summary`](#graphql_envelop_request_time_summary)     |  Summary  | summary of the time spent on the GraphQL operation execution |
+| [`graphql_envelop_error_result`](#graphql_envelop_error_result)                     |  Counter  | number of errors that was returned by the GraphQL execution  |
+| [`graphql_envelop_request`](#graphql_envelop_request)                               |  Counter  | number of GraphQL operations executed                        |
+| [`graphql_envelop_deprecated_field`](#graphql_envelop_deprecated_field)             |  Counter  | number of deprecated fields used in the GraphQL operation    |
+| [`graphql_envelop_schema_change`](#graphql_envelop_schema_change)                   |  Counter  | number of schema changes that have occurred                  |
+| [`graphql_mesh_fetch_duration`](#graphql_mesh_fetch_duration)                       | Histogram | duration of outgoing HTTP requests                           |
+| [`graphql_mesh_subgraph_execute_duration`](#graphql_mesh_subgraph_execute_duration) | Histogram | duration of subgraph execution                               |
+| [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors)     |  Counter  | number of errors that occurred during the subgraph execution |
 
 ### `graphql_yoga_http_duration`
 
@@ -115,12 +117,13 @@ To enable this metric, set the `http` option to `true`.
 
 This metric includes some useful labels to help you identify requests and group them together.
 
-| Label           | Enabled by default | Description                                                                                                                                                                                                                                                                                                                                                                             |
-| --------------- | :----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `method`        |  Not configurable  | The HTTP method used to request the gateway endpoint.<br/><br/> Since GraphQL usually only uses `POST` requests, this can be used to filter out GraphiQL-related requests. <br/><br/> It can be any HTTP verb, including disallowed ones. Which means this metric can also be used to track malformed or malicious requests.                                                            |
-| `statusCode`    |  Not configurable  | The HTTP status code returned by the gateway.<br/><br/>You probably want to filter out non-`200` responses to have a view of the successful requests.<br/><br/>This can help you identify which requests are failing and why. Since GraphQL errors are returned as `200 OK` responses, this can be useful to track errors that are not related to the GraphQL, like malformed requests. |
-| `operationName` |       `true`       | If available, the name of the GraphQL operation requested, otherwise `Anonymous`.<br/><br/>This can help you identify which operations are slow or failing.<br/><br/>We recommend you always provide an operation name to your queries and mutations to help performance analysis and bug tracking.                                                                                     |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. It can be one of `query`, `mutation`, or `subscription`.<br/><br/>This can help you differentiate read and write performance of the system. It can for example help understand cache impact.                                                                                                                                               |
+| Label           | Description                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `method`        | The HTTP method used to request the gateway endpoint.<br/><br/> Since GraphQL usually only uses `POST` requests, this can be used to filter out GraphiQL-related requests. <br/><br/> It can be any HTTP verb, including disallowed ones. Which means this metric can also be used to track malformed or malicious requests.                                                            |
+| `statusCode`    | The HTTP status code returned by the gateway.<br/><br/>You probably want to filter out non-`200` responses to have a view of the successful requests.<br/><br/>This can help you identify which requests are failing and why. Since GraphQL errors are returned as `200 OK` responses, this can be useful to track errors that are not related to the GraphQL, like malformed requests. |
+| `operationName` | If available, the name of the GraphQL operation requested, otherwise `Anonymous`.<br/><br/>This can help you identify which operations are slow or failing.<br/><br/>We recommend you always provide an operation name to your queries and mutations to help performance analysis and bug tracking.                                                                                     |
+| `operationType` | The type of the GraphQL operation requested. It can be one of `query`, `mutation`, or `subscription`.<br/><br/>This can help you differentiate read and write performance of the system. It can for example help understand cache impact.                                                                                                                                               |
+| `url`           | The URL of the request. Useful to filter graphql endpoint metrics (`/graphql` by default).                                                                                                                                                                                                                                                                                              |
 
 #### Sample Output
 
@@ -160,14 +163,18 @@ To enable this metric, set the `fetchMetrics` option to `true`.
 
 These metrics include some useful labels to help you identify requests and group them together.
 
-| Label             | Enabled by default | Description                                                            |
-| ----------------- | ------------------ | ---------------------------------------------------------------------- |
-| `url`             | Not configurable   | The URL of the upstream request.                                       |
-| `method`          | Not configurable   | The HTTP method of the upstream request.                               |
-| `statusCode`      | Not configurable   | The status code of the upstream response.                              |
-| `statusText`      | Not configurable   | The status text of the upstream response.                              |
-| `requestHeaders`  | `false`            | A JSON encoded object containing the headers of the upstream request.  |
-| `responseHeaders` | `fasle`            | A JSON encoded object containing the headers of the upstream response. |
+Since they can be heavy, `requestHeaders` and `responseHeaders` are disabled by default. You can
+either set those options to `true` in the `label` configuration object to include all headers in the
+label, but you can also provide a list of header names to include.
+
+| Label             | Description                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| `url`             | The URL of the upstream request.                                                            |
+| `method`          | The HTTP method of the upstream request.                                                    |
+| `statusCode`      | The status code of the upstream response.                                                   |
+| `statusText`      | The status text of the upstream response.                                                   |
+| `requestHeaders`  | Disabled by default. A JSON encoded object containing the headers of the upstream request.  |
+| `responseHeaders` | Disabled by default. A JSON encoded object containing the headers of the upstream response. |
 
 #### Sample output
 
@@ -203,11 +210,11 @@ To enable this metric, set the `subgraphExecute` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                                            |
-| --------------- | :----------------: | ---------------------------------------------------------------------------------------------------------------------- |
-| `subgraphName`  |  Not configurable  | The name of the targeted subgraph.                                                                                     |
-| `operationType` |       `true`       | The type of the GraphQL operation executed by the subgraph. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation executed by the subgraph. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                                            |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `subgraphName`  | The name of the targeted subgraph.                                                                                     |
+| `operationType` | The type of the GraphQL operation executed by the subgraph. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation executed by the subgraph. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -243,11 +250,11 @@ To enable this metric, set the `subgraphExecuteErrors` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                                            |
-| --------------- | :----------------: | ---------------------------------------------------------------------------------------------------------------------- |
-| `subgraphName`  |  Not configurable  | The name of the targeted subgraph.                                                                                     |
-| `operationType` |       `true`       | The type of the GraphQL operation executed by the subgraph. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation executed by the subgraph. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                                            |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `subgraphName`  | The name of the targeted subgraph.                                                                                     |
+| `operationType` | The type of the GraphQL operation executed by the subgraph. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation executed by the subgraph. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -271,10 +278,10 @@ To enable this metric, set the `parse` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -307,10 +314,10 @@ To enable this metric, set the `validate` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -343,10 +350,10 @@ To enable this metric, set the `contextBuilding` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -383,10 +390,10 @@ To enable this metric, set the `execute` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -422,10 +429,10 @@ To enable this metric, set the `subscribe` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -458,10 +465,10 @@ To enable this metric, set the `requestTotalDuration` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -494,10 +501,10 @@ To enable this metric, set the `requestSummary` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample output
 
@@ -517,7 +524,7 @@ graphql_envelop_request_time_summary_count{operationName="Anonymous",operationTy
 
 ### `graphql_envelop_error_result`
 
-This metric tracks the number of errors that occurred returned by the GraphQL execution.
+This metric tracks the number of errors that was returned by the GraphQL execution.
 
 Similarly to [`graphql_mesh_subgraph_execute_errors`](#graphql_mesh_subgraph_execute_errors), it
 counts all errors found in the final response constructed by Mesh after it gathered all subgraph
@@ -532,12 +539,12 @@ To enable this metric, set the `errors` option to `true`.
 Depending on the phase when the error occurred, some labels may be missing. For example, if the
 error occurred during the context phase, only the `phase` label will be present.
 
-| Label           | Enabled by default | Description                                                                                                                                                           |
-| --------------- | :----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `path`          |       `true`       | The path of the field that caused the error. It can be `undefined` if the error is not related to a given field.                                                      |
-| `phase`         |       `true`       | The phase of the GraphQL execution where the error occurred. It can be `parse`, `validate`, `context`, `execute` (for every operation types including subscriptions). |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`.                                                               |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.                                                                   |
+| Label           | Description                                                                                                                                                           |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `path`          | The path of the field that caused the error. It can be `undefined` if the error is not related to a given field.                                                      |
+| `phase`         | The phase of the GraphQL execution where the error occurred. It can be `parse`, `validate`, `context`, `execute` (for every operation types including subscriptions). |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`.                                                               |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.                                                                   |
 
 #### Sample Output
 
@@ -559,23 +566,12 @@ contain multiple GraphQL operations if batching has been enabled.
 
 To enable this metric, set the `requestCount` option to `true`.
 
-#### Filter resolvers to instrument
-
-To mitigate the cost of instrumenting all resolvers, you can explicitly list the fields that should
-be instrumented by providing a list of field names to the `instrumentResolvers` option.
-
-It is a list of strings in the form of `TypeName.fieldName`. For example, to instrument the `hello`
-root query, you would use `Query.hello`.
-
-You can also use wildcards to instrument all the fields for a type. For example, to instrument all
-root queries, you would use `Query.*`.
-
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample output
 
@@ -593,12 +589,12 @@ To enable this metric, set the `deprecatedFields` option to `true`.
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `fieldName`     |       `true`       | The name of the deprecated field that has been used.                                                    |
-| `typeName`      |       `true`       | The name of the parent type of the deprecated field that has been used.                                 |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `fieldName`     | The name of the deprecated field that has been used.                                                    |
+| `typeName`      | The name of the parent type of the deprecated field that has been used.                                 |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
 
 #### Sample Output
 
@@ -644,13 +640,24 @@ to implement resolver level metrics, the gateway can't remotely track their exec
 
 #### Labels
 
-| Label           | Enabled by default | Description                                                                                             |
-| --------------- | :----------------: | ------------------------------------------------------------------------------------------------------- |
-| `operationType` |       `true`       | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
-| `operationName` |       `true`       | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
-| `fieldName`     |       `true`       | The name of the field being resolved.                                                                   |
-| `typeName`      |       `true`       | The name of the parent type of the field being resolved.                                                |
-| `returnType`    |       `true`       | The name of the return type of the field being resolved.                                                |
+| Label           | Description                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| `operationType` | The type of the GraphQL operation requested. This can be one of `query`, `mutation`, or `subscription`. |
+| `operationName` | The name of the GraphQL operation requested. It will be `Anonymous` if no `operationName` is found.     |
+| `fieldName`     | The name of the field being resolved.                                                                   |
+| `typeName`      | The name of the parent type of the field being resolved.                                                |
+| `returnType`    | The name of the return type of the field being resolved.                                                |
+
+#### Filter resolvers to instrument
+
+To mitigate the cost of instrumenting all resolvers, you can explicitly list the fields that should
+be instrumented by providing a list of field names to the `instrumentResolvers` option.
+
+It is a list of strings in the form of `TypeName.fieldName`. For example, to instrument the `hello`
+root query, you would use `Query.hello`.
+
+You can also use wildcards to instrument all the fields for a type. For example, to instrument all
+root queries, you would use `Query.*`.
 
 #### Sample output
 

@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@graphql-mesh/serve-runtime": "^0.5.11",
-    "@graphql-yoga/plugin-prometheus": "^5.0.0"
+    "@graphql-yoga/plugin-prometheus": "6.0.0-alpha-20240802154858-0a0693e0"
   },
   "devDependencies": {
     "prom-client": "15.1.3"
