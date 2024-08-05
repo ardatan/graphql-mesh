@@ -92,7 +92,6 @@ export interface ServeOptions extends ProcOptions {
 }
 
 export interface Serve extends Server {
-  fetchJson<T = any>(path: string, init?: RequestInit): Promise<T>;
   execute(args: {
     query: string;
     variables?: Record<string, unknown>;
@@ -317,18 +316,6 @@ export function createTenv(cwd: string): Tenv {
       const serve: Serve = {
         ...proc,
         port,
-
-        fetchJson: async <T = any>(path: string, init: RequestInit): Promise<T> => {
-          const res = await fetch(`http://0.0.0.0:${port}${path}`, init);
-
-          if (!res.ok) {
-            const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
-            err.name = 'ResponseError';
-            throw err;
-          }
-
-          return await res.json<T>();
-        },
         async execute(args) {
           const { headers, ...rest } = args;
           const res = await fetch(`http://0.0.0.0:${port}/graphql`, {

@@ -272,7 +272,7 @@ describe('opentelemetry', () => {
 
   it('should report http failures', async () => {
     const serviceName = 'mesh-e2e-test-4';
-    const { fetchJson } = await serve({
+    const { port } = await serve({
       supergraph,
       env: {
         OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
@@ -280,7 +280,7 @@ describe('opentelemetry', () => {
       },
     });
 
-    await fetchJson('/non-existing').catch(() => {});
+    await fetch(`http://0.0.0.0:${port}/non-existing`).catch(() => {});
     await sleep(3000);
     const traces = await getJaegerTraces(serviceName);
     expect(traces.data.length).toBe(2);
@@ -314,7 +314,7 @@ describe('opentelemetry', () => {
   it('context propagation should work correctly', async () => {
     const traceId = '0af7651916cd43dd8448eb211c80319c';
     const serviceName = 'mesh-e2e-test-5';
-    const { execute, fetchJson } = await serve({
+    const { execute, port } = await serve({
       supergraph,
       env: {
         OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
@@ -331,12 +331,14 @@ describe('opentelemetry', () => {
       }),
     ).resolves.toMatchSnapshot();
 
-    const upstreamHttpCalls = await fetchJson<
-      Array<{
-        url: string;
-        headers?: Record<string, string>;
-      }>
-    >('/upstream-fetch');
+    const upstreamHttpCalls = await fetch(`http://0.0.0.0:${port}/upstream-fetch`).then(r =>
+      r.json<
+        Array<{
+          url: string;
+          headers?: Record<string, string>;
+        }>
+      >(),
+    );
 
     await sleep(3000);
     const traces = await getJaegerTraces(serviceName);
