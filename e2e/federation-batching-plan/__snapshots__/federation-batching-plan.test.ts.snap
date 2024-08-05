@@ -458,5 +458,292 @@ exports[`should consistently explain the query plan 1`] = `
       },
     ],
   },
+  "extensions": {
+    "plan": [
+      {
+        "query": "query TestQuery {
+  __typename
+  users {
+    __typename
+    ...User
+    id
+  }
+}
+
+fragment User on User {
+  id
+  username
+  name
+}",
+        "subgraphName": "accounts",
+        "variables": {},
+      },
+      {
+        "query": "query TestQuery($_v0_first: Int) {
+  __typename
+  topProducts(first: $_v0_first) {
+    __typename
+    ...Product
+    upc
+  }
+}
+
+fragment Product on Product {
+  __typename
+  upc
+  name
+  price
+  price
+  weight
+  upc
+  weight
+}",
+        "subgraphName": "products",
+        "variables": {
+          "_v0_first": 5,
+        },
+      },
+      {
+        "query": "query TestQuery($_v0_representations: [_Any!]!) {
+  __typename
+  _entities(representations: $_v0_representations) {
+    __typename
+    ... on Product {
+      inStock
+    }
+  }
+}",
+        "subgraphName": "inventory",
+        "variables": {
+          "_v0_representations": [
+            {
+              "__typename": "Product",
+              "price": 899,
+              "upc": "1",
+              "weight": 100,
+            },
+            {
+              "__typename": "Product",
+              "price": 1299,
+              "upc": "2",
+              "weight": 1000,
+            },
+            {
+              "__typename": "Product",
+              "price": 54,
+              "upc": "3",
+              "weight": 50,
+            },
+          ],
+        },
+      },
+      {
+        "query": "query TestQuery($_v0_representations: [_Any!]!) {
+  __typename
+  _entities(representations: $_v0_representations) {
+    __typename
+    ... on Product {
+      shippingEstimate
+    }
+  }
+}",
+        "subgraphName": "inventory",
+        "variables": {
+          "_v0_representations": [
+            {
+              "__typename": "Product",
+              "price": 899,
+              "upc": "1",
+              "weight": 100,
+            },
+            {
+              "__typename": "Product",
+              "price": 1299,
+              "upc": "2",
+              "weight": 1000,
+            },
+            {
+              "__typename": "Product",
+              "price": 54,
+              "upc": "3",
+              "weight": 50,
+            },
+          ],
+        },
+      },
+      {
+        "query": "query TestQuery($_v0_representations: [_Any!]!) {
+  __typename
+  _entities(representations: $_v0_representations) {
+    __typename
+    ... on User {
+      reviews {
+        ...Review
+        product {
+          ...Product
+          reviews {
+            ...Review
+            author {
+              ...User
+              reviews {
+                ...Review
+                product {
+                  ...Product
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment User on User {
+  __typename
+  id
+  username
+  id
+}
+
+fragment Product on Product {
+  __typename
+  upc
+  upc
+}
+
+fragment Review on Review {
+  id
+  body
+}",
+        "subgraphName": "reviews",
+        "variables": {
+          "_v0_representations": [
+            {
+              "__typename": "User",
+              "id": "1",
+            },
+            {
+              "__typename": "User",
+              "id": "2",
+            },
+          ],
+        },
+      },
+      {
+        "query": "query TestQuery($_v0_representations: [_Any!]!) {
+  __typename
+  _entities(representations: $_v0_representations) {
+    __typename
+    ... on Product {
+      reviews {
+        ...Review
+        author {
+          ...User
+          reviews {
+            ...Review
+            product {
+              ...Product
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment Product on Product {
+  __typename
+  upc
+  upc
+}
+
+fragment User on User {
+  __typename
+  id
+  username
+  id
+}
+
+fragment Review on Review {
+  id
+  body
+}",
+        "subgraphName": "reviews",
+        "variables": {
+          "_v0_representations": [
+            {
+              "__typename": "Product",
+              "upc": "1",
+            },
+            {
+              "__typename": "Product",
+              "upc": "2",
+            },
+            {
+              "__typename": "Product",
+              "upc": "3",
+            },
+          ],
+        },
+      },
+      {
+        "query": "query TestQuery($_v0_representations: [_Any!]!) {
+  __typename
+  _entities(representations: $_v0_representations) {
+    __typename
+    ... on Product {
+      name
+      price
+      price
+      weight
+      weight
+    }
+  }
+}",
+        "subgraphName": "products",
+        "variables": {
+          "_v0_representations": [
+            {
+              "__typename": "Product",
+              "upc": "1",
+            },
+            {
+              "__typename": "Product",
+              "upc": "2",
+            },
+            {
+              "__typename": "Product",
+              "upc": "3",
+            },
+          ],
+        },
+      },
+      {
+        "query": "query TestQuery($_v0_representations: [_Any!]!) {
+  __typename
+  _entities(representations: $_v0_representations) {
+    __typename
+    ... on User {
+      name
+    }
+  }
+}",
+        "subgraphName": "accounts",
+        "variables": {
+          "_v0_representations": [
+            {
+              "__typename": "User",
+              "id": "1",
+            },
+            {
+              "__typename": "User",
+              "id": "2",
+            },
+          ],
+        },
+      },
+    ],
+  },
 }
 `;
