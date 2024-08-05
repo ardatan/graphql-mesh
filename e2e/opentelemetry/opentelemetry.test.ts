@@ -1,4 +1,5 @@
-import { boolEnv, createTenv, type Container, type Service } from '@e2e/tenv';
+import { setTimeout } from 'timers/promises';
+import { boolEnv, createTenv, type Container } from '@e2e/tenv';
 
 const { service, serve, container, composeWithApollo, serveRunner } = createTenv(__dirname);
 
@@ -102,12 +103,23 @@ describe('opentelemetry', () => {
     }>;
   };
 
-  async function getJaegerTraces(service: string): Promise<JaegerTracesApiResponse> {
-    const url = `http://localhost:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
-    return await fetch(url).then(r => r.json<JaegerTracesApiResponse>());
-  }
+  async function getJaegerTraces(
+    service: string,
+    expectedDataLength: number,
+  ): Promise<JaegerTracesApiResponse> {
+    const url = `http://0.0.0.0:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
 
-  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    let res: JaegerTracesApiResponse;
+    for (let i = 0; i < 5; i++) {
+      res = await fetch(url).then(r => r.json<JaegerTracesApiResponse>());
+      if (res.data.length >= expectedDataLength) {
+        break;
+      }
+      await setTimeout(300);
+    }
+
+    return res;
+  }
 
   it('should report telemetry metrics correctly to jaeger', async () => {
     const serviceName = 'mesh-e2e-test-1';
@@ -120,8 +132,7 @@ describe('opentelemetry', () => {
     });
 
     await expect(execute({ query: TEST_QUERY })).resolves.toMatchSnapshot();
-    await sleep(3000);
-    const traces = await getJaegerTraces(serviceName);
+    const traces = await getJaegerTraces(serviceName, 2);
     expect(traces.data.length).toBe(2);
     const relevantTraces = traces.data.filter(trace =>
       trace.spans.some(span => span.operationName === 'POST /graphql'),
@@ -168,9 +179,7 @@ describe('opentelemetry', () => {
     });
 
     await expect(execute({ query: 'query { test' })).rejects.toMatchSnapshot();
-    await sleep(3000);
-    const traces = await getJaegerTraces(serviceName);
-
+    const traces = await getJaegerTraces(serviceName, 2);
     expect(traces.data.length).toBe(2);
     const relevantTrace = traces.data.find(trace =>
       trace.spans.some(span => span.operationName === 'POST /graphql'),
@@ -223,9 +232,7 @@ describe('opentelemetry', () => {
     });
 
     await expect(execute({ query: 'query { nonExistentField }' })).rejects.toMatchSnapshot();
-    await sleep(3000);
-    const traces = await getJaegerTraces(serviceName);
-
+    const traces = await getJaegerTraces(serviceName, 2);
     expect(traces.data.length).toBe(2);
     const relevantTrace = traces.data.find(trace =>
       trace.spans.some(span => span.operationName === 'POST /graphql'),
@@ -281,8 +288,7 @@ describe('opentelemetry', () => {
     });
 
     await fetch(`http://0.0.0.0:${port}/non-existing`).catch(() => {});
-    await sleep(3000);
-    const traces = await getJaegerTraces(serviceName);
+    const traces = await getJaegerTraces(serviceName, 2);
     expect(traces.data.length).toBe(2);
     const relevantTrace = traces.data.find(trace =>
       trace.spans.some(span => span.operationName === 'GET /non-existing'),
@@ -340,8 +346,7 @@ describe('opentelemetry', () => {
       >(),
     );
 
-    await sleep(3000);
-    const traces = await getJaegerTraces(serviceName);
+    const traces = await getJaegerTraces(serviceName, 3);
     expect(traces.data.length).toBe(3);
 
     const relevantTraces = traces.data.filter(trace =>
