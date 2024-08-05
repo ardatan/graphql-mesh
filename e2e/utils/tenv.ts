@@ -316,8 +316,7 @@ export function createTenv(cwd: string): Tenv {
       const serve: Serve = {
         ...proc,
         port,
-        async execute(args) {
-          const { headers, ...rest } = args;
+        async execute({ headers, ...args }) {
           const res = await fetch(`http://0.0.0.0:${port}/graphql`, {
             method: 'POST',
             headers: {
@@ -325,7 +324,7 @@ export function createTenv(cwd: string): Tenv {
               accept: 'application/graphql-response+json, application/json',
               ...headers,
             },
-            body: JSON.stringify(rest),
+            body: JSON.stringify(args),
           });
           if (!res.ok) {
             const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
