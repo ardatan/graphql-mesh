@@ -113,7 +113,7 @@ export class DefaultLogger implements Logger {
     const message = this.getLoggerMessage({
       args,
     });
-    const fullMessage = `[${getTimestamp()}] ${this.prefix} ⚠️ ${warnColor(message)}`;
+    const fullMessage = `[${getTimestamp()}] ${this.prefix} WARN  ${warnColor(message)}`;
     if (process?.stderr?.write(fullMessage + '\n')) {
       return;
     }
@@ -127,7 +127,7 @@ export class DefaultLogger implements Logger {
     const message = this.getLoggerMessage({
       args,
     });
-    const fullMessage = `[${getTimestamp()}] ${this.prefix} 💡 ${infoColor(message)}`;
+    const fullMessage = `[${getTimestamp()}] INFO  ${this.prefix} ${infoColor(message)}`;
     if (typeof process?.stderr?.write === 'function') {
       process.stderr.write(fullMessage + '\n');
       return;
@@ -143,7 +143,7 @@ export class DefaultLogger implements Logger {
       args,
       trim: false,
     });
-    const fullMessage = `[${getTimestamp()}] ${this.prefix} 💥 ${errorColor(message)}`;
+    const fullMessage = `[${getTimestamp()}] ERROR ${this.prefix} ${errorColor(message)}`;
     if (typeof process?.stderr?.write === 'function') {
       process.stderr.write(fullMessage + '\n');
       return;
@@ -159,7 +159,7 @@ export class DefaultLogger implements Logger {
       const message = this.handleLazyMessage({
         lazyArgs,
       });
-      const fullMessage = `[${getTimestamp()}] ${this.prefix} 🐛 ${debugColor(message)}`;
+      const fullMessage = `[${getTimestamp()}] DEBUG ${this.prefix} ${debugColor(message)}`;
       if (typeof process?.stderr?.write === 'function') {
         process.stderr.write(fullMessage + '\n');
         return;

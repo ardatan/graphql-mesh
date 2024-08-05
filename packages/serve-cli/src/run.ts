@@ -97,7 +97,7 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
 
 export async function run({
   log: rootLog = new DefaultLogger(),
-  productName = 'Mesh',
+  productName = 'Mesh Serve',
   productDescription = 'serve GraphQL federated architecture for any API service(s)',
   binName = 'mesh-serve',
   version = globalThis.__VERSION__,
@@ -108,7 +108,7 @@ export async function run({
   const opts = program.parse().opts();
 
   const log = rootLog.child(
-    cluster.worker?.id ? `🕸️  ${productName} Worker#${cluster.worker.id}` : `🕸️  ${productName}`,
+    cluster.worker?.id ? `${productName} Worker#${cluster.worker.id}` : productName,
   );
 
   let importedConfig: MeshServeCLIConfig;
