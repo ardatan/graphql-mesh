@@ -59,7 +59,7 @@ export async function run({
   if (process.env.NODE_ENV === 'test') program = program.allowUnknownOption();
   const opts = program.parse().opts();
 
-  const log = rootLog.child(`🕸️  ${productName}`);
+  const log = rootLog.child(` ${productName}`);
 
   let importedConfig: MeshComposeCLIConfig;
   if (!opts.configPath) {
