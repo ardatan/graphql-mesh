@@ -150,6 +150,7 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
   additionalTypeDefs: additionalTypeDefsFromConfig = [],
   additionalResolvers: additionalResolversFromConfig = [],
   transportEntryAdditions,
+  batch = true,
 }) {
   const additionalTypeDefs = [...asArray(additionalTypeDefsFromConfig)];
   const additionalResolvers = [...asArray(additionalResolversFromConfig)];
@@ -194,7 +195,7 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         stitchingDirectivesTransformer,
         onSubgraphExecute,
       }),
-    batch: !process.env.JEST,
+    batch,
     onStitchingOptions(opts: any) {
       subschemas = opts.subschemas;
       opts.typeDefs = [opts.typeDefs, additionalTypeDefs];

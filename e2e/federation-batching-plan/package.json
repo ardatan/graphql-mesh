@@ -1,0 +1,11 @@
+{
+  "name": "@e2e/federation-batching-plan",
+  "private": true,
+  "dependencies": {
+    "@apollo/server": "^4.10.3",
+    "@apollo/subgraph": "^2.7.2",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@graphql-mesh/serve-runtime": "workspace:*",
+    "graphql": "^16.9.0"
+  }
+}

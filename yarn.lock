@@ -3576,6 +3576,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/federation-batching-plan@workspace:e2e/federation-batching-plan":
+  version: 0.0.0-use.local
+  resolution: "@e2e/federation-batching-plan@workspace:e2e/federation-batching-plan"
+  dependencies:
+    "@apollo/server": "npm:^4.10.3"
+    "@apollo/subgraph": "npm:^2.7.2"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-mesh/serve-runtime": "workspace:*"
+    graphql: "npm:^16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/federation-example@workspace:e2e/federation-example":
   version: 0.0.0-use.local
   resolution: "@e2e/federation-example@workspace:e2e/federation-example"
@@ -3842,7 +3854,7 @@ __metadata:
     "@types/dockerode": "npm:^3.3.28"
     dockerode: "npm:^4.0.2"
     glob: "npm:^11.0.0"
-    tsx: "npm:^4.16.2"
+    tsx: "npm:^4.16.5"
   languageName: unknown
   linkType: soft
 
@@ -6501,7 +6513,7 @@ __metadata:
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
     spinnies: "npm:^0.5.1"
-    tsx: "npm:^4.16.2"
+    tsx: "npm:^4.16.5"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
@@ -6519,7 +6531,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/serve-runtime@npm:^0.5.11, @graphql-mesh/serve-runtime@workspace:packages/serve-runtime":
+"@graphql-mesh/serve-runtime@npm:^0.5.11, @graphql-mesh/serve-runtime@workspace:*, @graphql-mesh/serve-runtime@workspace:packages/serve-runtime":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-runtime@workspace:packages/serve-runtime"
   dependencies:
@@ -19203,7 +19215,7 @@ __metadata:
     graphql-yoga: "npm:5.6.3"
     lru-cache: "npm:11.0.0"
     tslib: "npm:2.6.3"
-    tsx: "npm:4.16.5"
+    tsx: "npm:^4.16.5"
   languageName: unknown
   linkType: soft
 
@@ -34811,7 +34823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.16.5, tsx@npm:^4.16.2":
+"tsx@npm:^4.16.5":
   version: 4.16.5
   resolution: "tsx@npm:4.16.5"
   dependencies:

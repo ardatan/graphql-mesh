@@ -228,7 +228,7 @@ describe('Prefix', () => {
     expect(newSchema.getType('T_User')).toBeUndefined();
     expect(newSchema.getType('User')).toBeDefined();
   });
-  it('handles union type resolution', () => {
+  it('handles union type resolution', async () => {
     const transform = createPrefixTransform({
       value: 'T_',
       includeRootOperations: true,
@@ -242,7 +242,7 @@ describe('Prefix', () => {
       },
     ]);
 
-    const result = executor({
+    const result = await executor({
       query: /* GraphQL */ `
         query {
           T_node(id: "1") {

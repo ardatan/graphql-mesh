@@ -45,6 +45,11 @@ export interface UnifiedGraphHandlerOpts {
   additionalResolvers?: IResolvers<unknown, any> | IResolvers<unknown, any>[];
   onSubgraphExecute: ReturnType<typeof getOnSubgraphExecute>;
   transportEntryAdditions?: TransportEntryAdditions;
+  /**
+   * Whether to batch the subgraph executions.
+   * @default true
+   */
+  batch?: boolean;
 }
 
 export interface UnifiedGraphHandlerResult {
@@ -68,9 +73,15 @@ export interface UnifiedGraphManagerOptions<TContext> {
   onSubgraphExecuteHooks?: OnSubgraphExecuteHook[];
   // TODO: Will be removed later once we get rid of v0
   onDelegateHooks?: OnDelegateHook<unknown>[];
+  /**
+   * Whether to batch the subgraph executions.
+   * @default true
+   */
+  batch?: boolean;
 }
 
 export class UnifiedGraphManager<TContext> {
+  private batch: boolean;
   private handleUnifiedGraph: UnifiedGraphHandler;
   private unifiedGraph: GraphQLSchema;
   private lastLoadedUnifiedGraph: string | GraphQLSchema | DocumentNode;
@@ -82,6 +93,7 @@ export class UnifiedGraphManager<TContext> {
   private _transportEntryMap: Record<string, TransportEntry>;
   private _transportExecutorStack: AsyncDisposableStack;
   constructor(private opts: UnifiedGraphManagerOptions<TContext>) {
+    this.batch = opts.batch ?? true;
     this.handleUnifiedGraph = opts.handleUnifiedGraph || handleFederationSupergraph;
     this.onSubgraphExecuteHooks = opts?.onSubgraphExecuteHooks || [];
     this.disposableStack.defer(() => {
@@ -155,6 +167,7 @@ export class UnifiedGraphManager<TContext> {
             return onSubgraphExecute(subgraphName, execReq);
           },
           transportEntryAdditions: this.opts.transportEntryAdditions,
+          batch: this.batch,
         });
         this.unifiedGraph = newUnifiedGraph;
         const onSubgraphExecute = getOnSubgraphExecute({
