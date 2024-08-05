@@ -1,11 +1,12 @@
 import { boolEnv, createTenv, type Container, type Service } from '@e2e/tenv';
 
-const { service, serve, container, composeWithApollo } = createTenv(__dirname);
+const { service, serve, container, composeWithApollo, serveRunner } = createTenv(__dirname);
 
 let supergraph!: string;
 let jaeger: Container;
 
-const JAEGER_HOSTNAME = boolEnv('CI') ? '172.17.0.1' : 'localhost';
+const JAEGER_HOSTNAME =
+  serveRunner === 'docker' ? (boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal') : 'localhost';
 
 const TEST_QUERY = /* GraphQL */ `
   fragment User on User {
@@ -113,6 +114,7 @@ describe('opentelemetry', () => {
   it('should report telemetry metrics correctly to jaeger', async () => {
     const serviceName = 'mesh-e2e-test-1';
     const { execute } = await serve({
+      pipeLogs: true,
       supergraph,
       env: {
         OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
