@@ -3576,6 +3576,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/federation-batching-plan@workspace:e2e/federation-batching-plan":
+  version: 0.0.0-use.local
+  resolution: "@e2e/federation-batching-plan@workspace:e2e/federation-batching-plan"
+  dependencies:
+    "@apollo/server": "npm:^4.10.3"
+    "@apollo/subgraph": "npm:^2.7.2"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-mesh/serve-runtime": "workspace:*"
+    graphql: "npm:^16.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/federation-example@workspace:e2e/federation-example":
   version: 0.0.0-use.local
   resolution: "@e2e/federation-example@workspace:e2e/federation-example"
@@ -6519,7 +6531,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/serve-runtime@npm:^0.5.11, @graphql-mesh/serve-runtime@workspace:packages/serve-runtime":
+"@graphql-mesh/serve-runtime@npm:^0.5.11, @graphql-mesh/serve-runtime@workspace:*, @graphql-mesh/serve-runtime@workspace:packages/serve-runtime":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-runtime@workspace:packages/serve-runtime"
   dependencies:
