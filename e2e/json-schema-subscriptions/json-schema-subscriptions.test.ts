@@ -1,3 +1,4 @@
+import { createClient } from 'graphql-sse';
 import { createTenv, getAvailablePort } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
@@ -33,25 +34,22 @@ it('should query, mutate and subscribe', async () => {
 }
 `);
 
-  const sub = await fetch(`http://0.0.0.0:${servePort}/graphql`, {
-    method: 'POST',
-    headers: {
-      accept: 'text/event-stream',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        subscription TodoAdded {
-          todoAdded {
-            name
-            content
-          }
-        }
-      `,
-    }),
+  const sse = createClient({
+    url: `http://0.0.0.0:${servePort}/graphql`,
+    retryAttempts: 0,
+    fetchFn: fetch,
   });
 
-  expect(sub.ok).toBeTruthy();
+  const sub = sse.iterate({
+    query: /* GraphQL */ `
+      subscription TodoAdded {
+        todoAdded {
+          name
+          content
+        }
+      }
+    `,
+  });
 
   await expect(
     execute({
@@ -75,16 +73,17 @@ it('should query, mutate and subscribe', async () => {
 }
 `);
 
-  Stream: for await (const chunk of sub.body) {
-    const msg = Buffer.from(chunk).toString('utf8');
-    for (const part of msg.split('\n\n')) {
-      if (part.startsWith('event: next')) {
-        expect(part).toMatchInlineSnapshot(`
-  "event: next
-  data: {"data":{"todoAdded":{"name":"Shopping","content":"Buy Milk"}}}"
-  `);
-        break Stream;
-      }
-    }
+  for await (const msg of sub) {
+    expect(msg).toMatchInlineSnapshot(`
+{
+  "data": {
+    "todoAdded": {
+      "content": "Buy Milk",
+      "name": "Shopping",
+    },
+  },
+}
+`);
+    break;
   }
 });

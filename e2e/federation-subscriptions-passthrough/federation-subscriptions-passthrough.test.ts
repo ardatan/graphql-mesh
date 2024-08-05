@@ -23,6 +23,7 @@ it('should subscribe and resolve via websockets', async () => {
     headers: {
       Authorization: TOKEN,
     },
+    fetchFn: fetch,
   });
   const sub = client.iterate({
     query: /* GraphQL */ `

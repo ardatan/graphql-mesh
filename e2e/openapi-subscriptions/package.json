@@ -8,6 +8,7 @@
     "@omnigraph/openapi": "workspace:*",
     "fets": "^0.8.0",
     "graphql": "16.9.0",
+    "graphql-sse": "^2.5.3",
     "url-join": "^5.0.0"
   }
 }

@@ -1,3 +1,4 @@
+import { createClient } from 'graphql-sse';
 import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
@@ -29,38 +30,28 @@ it('should listen for webhooks', async () => {
   });
 
   const subscriptionId = res.data?.post_streams?.subscriptionId;
-
   expect(subscriptionId).toBeTruthy();
 
-  const sub = await fetch(`http://0.0.0.0:${port}/graphql`, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      accept: 'text/event-stream',
-    },
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        subscription ListenWebhook($subscriptionId: String!) {
-          onData(subscriptionId: $subscriptionId) {
-            userData
-          }
-        }
-      `,
-      variables: {
-        subscriptionId,
-      },
-    }),
+  const sse = createClient({
+    url: `http://0.0.0.0:${port}/graphql`,
+    retryAttempts: 0,
+    fetchFn: fetch,
   });
 
-  expect(sub.ok).toBeTruthy();
-
-  const msgs: string[] = [];
-  for await (const chunk of sub.body) {
-    const parts = Buffer.from(chunk)
-      .toString('utf8')
-      .split('\n\n')
-      .filter(msg => msg.includes('event: next'));
-    msgs.push(...parts);
+  const msgs: unknown[] = [];
+  for await (const msg of sse.iterate({
+    query: /* GraphQL */ `
+      subscription ListenWebhook($subscriptionId: String!) {
+        onData(subscriptionId: $subscriptionId) {
+          userData
+        }
+      }
+    `,
+    variables: {
+      subscriptionId,
+    },
+  })) {
+    msgs.push(msg);
     if (msgs.length === 3) {
       break;
     }
@@ -68,12 +59,27 @@ it('should listen for webhooks', async () => {
 
   expect(msgs).toMatchInlineSnapshot(`
 [
-  "event: next
-data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}",
-  "event: next
-data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}",
-  "event: next
-data: {"data":{"onData":{"userData":"RANDOM_DATA"}}}",
+  {
+    "data": {
+      "onData": {
+        "userData": "RANDOM_DATA",
+      },
+    },
+  },
+  {
+    "data": {
+      "onData": {
+        "userData": "RANDOM_DATA",
+      },
+    },
+  },
+  {
+    "data": {
+      "onData": {
+        "userData": "RANDOM_DATA",
+      },
+    },
+  },
 ]
 `);
 });
