@@ -3,7 +3,10 @@ import { defineConfig } from '@graphql-mesh/serve-cli';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 
 export function useExplainQueryPlan(): MeshServePlugin {
-  const plans = new WeakMap<Request, unknown[]>();
+  const plans = new WeakMap<
+    Request,
+    { subgraphName: string; query: string; variables: unknown }[]
+  >();
   return {
     onExecute({
       args: {
@@ -13,11 +16,16 @@ export function useExplainQueryPlan(): MeshServePlugin {
       plans.set(request, []);
       return {
         onExecuteDone({ result, setResult }) {
+          const plan = plans.get(request);
+
+          // stabilise
+          plan.sort((a, b) => a.query.localeCompare(b.query));
+
           setResult({
             ...result,
             extensions: {
               ...result['extensions'],
-              plan: plans.get(request),
+              plan,
             },
           });
         },
