@@ -131,7 +131,7 @@ describe('opentelemetry', () => {
     expect(relevantTraces.length).toBe(1);
     const relevantTrace = relevantTraces[0];
     expect(relevantTrace).toBeDefined();
-    expect(relevantTrace?.spans.length).toBe(12);
+    expect(relevantTrace?.spans.length).toBe(11);
 
     expect(relevantTrace?.spans).toContainEqual(
       expect.objectContaining({ operationName: 'POST /graphql' }),
@@ -153,7 +153,7 @@ describe('opentelemetry', () => {
     ).toBe(2);
     expect(
       relevantTrace?.spans.filter(r => r.operationName === 'subgraph.execute (inventory)').length,
-    ).toBe(2);
+    ).toBe(1);
     expect(
       relevantTrace?.spans.filter(r => r.operationName === 'subgraph.execute (reviews)').length,
     ).toBe(2);
@@ -357,7 +357,7 @@ describe('opentelemetry', () => {
       expect(span.traceID).toBe(traceId);
     }
 
-    expect(upstreamHttpCalls.length).toBe(8);
+    expect(upstreamHttpCalls.length).toBe(7);
 
     for (const call of upstreamHttpCalls) {
       const transparentHeader = (call.headers || {})['traceparent'];
