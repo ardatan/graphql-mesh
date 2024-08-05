@@ -168,10 +168,9 @@ export interface ContainerOptions extends ProcOptions {
    */
   containerPort: number;
   /**
-   * Additional ports to expose.
-   *
+   * Additional ports from the container to expose.
    */
-  additionalPorts?: number[];
+  additionalContainerPorts?: number[];
   /**
    * Port that will be bound to the {@link containerPort}.
    *
@@ -192,6 +191,8 @@ export interface ContainerOptions extends ProcOptions {
 export interface Container extends Service {
   /** Host port binding to the {@link ContainerOptions.containerPort}. */
   port: number;
+  /** A map of {@link ContainerOptions.additionalContainerPorts additional container ports} to the ports on the host. */
+  additionalPorts: Record<number, number>;
 }
 
 export interface Tenv {
@@ -449,7 +450,7 @@ export function createTenv(cwd: string): Tenv {
       env = {},
       containerPort,
       hostPort,
-      additionalPorts,
+      additionalContainerPorts: containerAdditionalPorts,
       healthcheck,
       pipeLogs = !!process.env['DEBUG'],
       cmd,
@@ -459,6 +460,18 @@ export function createTenv(cwd: string): Tenv {
 
       if (!hostPort) {
         hostPort = await getAvailablePort();
+      }
+
+      const additionalPorts: Record<number, number> = {};
+      if (containerAdditionalPorts) {
+        for (const port of containerAdditionalPorts) {
+          if (port === containerPort) {
+            throw new Error(
+              `Additional port ${port} is already specified as the "containerPort", please use a different port or remove it from "additionalPorts"`,
+            );
+          }
+          additionalPorts[port] = await getAvailablePort();
+        }
       }
 
       function msToNs(ms: number): number {
@@ -493,15 +506,17 @@ export function createTenv(cwd: string): Tenv {
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
         ExposedPorts: {
           [containerPort + '/tcp']: {},
-          ...additionalPorts?.reduce((acc, v) => ({ ...acc, [v + '/tcp']: {} }), {}),
         },
         Cmd: cmd?.filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
-            ...additionalPorts?.reduce(
-              (acc, v) => ({ ...acc, [v + '/tcp']: [{ HostPort: v.toString() }] }),
+            ...Object.entries(additionalPorts).reduce(
+              (acc, [containerPort, hostPort]) => ({
+                ...acc,
+                [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
+              }),
               {},
             ),
           },
@@ -532,6 +547,7 @@ export function createTenv(cwd: string): Tenv {
       const container: Container = {
         name,
         port: hostPort,
+        additionalPorts,
         getStd() {
           // TODO: distinguish stdout and stderr
           return stdboth;

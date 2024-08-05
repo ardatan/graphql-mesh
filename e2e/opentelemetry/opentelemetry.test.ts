@@ -85,8 +85,7 @@ describe('opentelemetry', () => {
         COLLECTOR_OTLP_ENABLED: 'true',
       },
       containerPort: 4318,
-      // If you plan to check the local Jaeger instance manually, use http://localhost:16686
-      additionalPorts: [16686],
+      additionalContainerPorts: [16686],
       healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:14269'],
     });
   });
@@ -104,8 +103,7 @@ describe('opentelemetry', () => {
   };
 
   async function getJaegerTraces(service: string): Promise<JaegerTracesApiResponse> {
-    const url = `http://localhost:16686/api/traces?service=${service}`;
-
+    const url = `http://localhost:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
     return await fetch(url).then(r => r.json<JaegerTracesApiResponse>());
   }
 
