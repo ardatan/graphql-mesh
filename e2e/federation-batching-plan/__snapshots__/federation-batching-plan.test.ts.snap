@@ -508,74 +508,6 @@ fragment Product on Product {
   __typename
   _entities(representations: $_v0_representations) {
     __typename
-    ... on Product {
-      inStock
-    }
-  }
-}",
-        "subgraphName": "inventory",
-        "variables": {
-          "_v0_representations": [
-            {
-              "__typename": "Product",
-              "price": 899,
-              "upc": "1",
-              "weight": 100,
-            },
-            {
-              "__typename": "Product",
-              "price": 1299,
-              "upc": "2",
-              "weight": 1000,
-            },
-            {
-              "__typename": "Product",
-              "price": 54,
-              "upc": "3",
-              "weight": 50,
-            },
-          ],
-        },
-      },
-      {
-        "query": "query TestQuery($_v0_representations: [_Any!]!) {
-  __typename
-  _entities(representations: $_v0_representations) {
-    __typename
-    ... on Product {
-      shippingEstimate
-    }
-  }
-}",
-        "subgraphName": "inventory",
-        "variables": {
-          "_v0_representations": [
-            {
-              "__typename": "Product",
-              "price": 899,
-              "upc": "1",
-              "weight": 100,
-            },
-            {
-              "__typename": "Product",
-              "price": 1299,
-              "upc": "2",
-              "weight": 1000,
-            },
-            {
-              "__typename": "Product",
-              "price": 54,
-              "upc": "3",
-              "weight": 50,
-            },
-          ],
-        },
-      },
-      {
-        "query": "query TestQuery($_v0_representations: [_Any!]!) {
-  __typename
-  _entities(representations: $_v0_representations) {
-    __typename
     ... on User {
       reviews {
         ...Review
@@ -683,6 +615,67 @@ fragment Review on Review {
             {
               "__typename": "Product",
               "upc": "3",
+            },
+          ],
+        },
+      },
+      {
+        "query": "query TestQuery($_0__v0_representations: [_Any!]!, $_1__v0_representations: [_Any!]!) {
+  _0___typename: __typename
+  _0__entities: _entities(representations: $_0__v0_representations) {
+    __typename
+    ... on Product {
+      inStock
+    }
+  }
+  _1___typename: __typename
+  _1__entities: _entities(representations: $_1__v0_representations) {
+    __typename
+    ... on Product {
+      shippingEstimate
+    }
+  }
+}",
+        "subgraphName": "inventory",
+        "variables": {
+          "_0__v0_representations": [
+            {
+              "__typename": "Product",
+              "price": 899,
+              "upc": "1",
+              "weight": 100,
+            },
+            {
+              "__typename": "Product",
+              "price": 1299,
+              "upc": "2",
+              "weight": 1000,
+            },
+            {
+              "__typename": "Product",
+              "price": 54,
+              "upc": "3",
+              "weight": 50,
+            },
+          ],
+          "_1__v0_representations": [
+            {
+              "__typename": "Product",
+              "price": 899,
+              "upc": "1",
+              "weight": 100,
+            },
+            {
+              "__typename": "Product",
+              "price": 1299,
+              "upc": "2",
+              "weight": 1000,
+            },
+            {
+              "__typename": "Product",
+              "price": 54,
+              "upc": "3",
+              "weight": 50,
             },
           ],
         },
