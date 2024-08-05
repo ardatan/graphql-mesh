@@ -194,6 +194,7 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         stitchingDirectivesTransformer,
         onSubgraphExecute,
       }),
+    batch: true,
     onStitchingOptions(opts: any) {
       subschemas = opts.subschemas;
       opts.typeDefs = [opts.typeDefs, additionalTypeDefs];
