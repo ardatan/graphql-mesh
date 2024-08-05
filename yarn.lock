@@ -3584,7 +3584,7 @@ __metadata:
     "@apollo/subgraph": "npm:^2.7.2"
     "@graphql-mesh/serve-cli": "workspace:*"
     "@graphql-mesh/serve-runtime": "workspace:*"
-    graphql: "npm:^16.8.1"
+    graphql: "npm:^16.9.0"
   languageName: unknown
   linkType: soft
 

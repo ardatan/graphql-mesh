@@ -6,6 +6,6 @@
     "@apollo/subgraph": "^2.7.2",
     "@graphql-mesh/serve-cli": "workspace:*",
     "@graphql-mesh/serve-runtime": "workspace:*",
-    "graphql": "^16.8.1"
+    "graphql": "^16.9.0"
   }
 }
