@@ -42,6 +42,7 @@ describe('Polling', () => {
     const manager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
       polling: pollingInterval,
+      batch: false,
       transports() {
         return {
           getSubgraphExecutor() {
