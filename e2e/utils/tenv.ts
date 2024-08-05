@@ -96,6 +96,7 @@ export interface Serve extends Server {
     query: string;
     variables?: Record<string, unknown>;
     operationName?: string;
+    headers?: Record<string, string>;
   }): Promise<ExecutionResult<any>>;
 }
 
@@ -166,6 +167,10 @@ export interface ContainerOptions extends ProcOptions {
    */
   containerPort: number;
   /**
+   * Additional ports from the container to expose.
+   */
+  additionalContainerPorts?: number[];
+  /**
    * Port that will be bound to the {@link containerPort}.
    *
    * @default getAvailablePort()
@@ -185,6 +190,8 @@ export interface ContainerOptions extends ProcOptions {
 export interface Container extends Service {
   /** Host port binding to the {@link ContainerOptions.containerPort}. */
   port: number;
+  /** A map of {@link ContainerOptions.additionalContainerPorts additional container ports} to the ports on the host. */
+  additionalPorts: Record<number, number>;
 }
 
 export interface Tenv {
@@ -309,12 +316,13 @@ export function createTenv(cwd: string): Tenv {
       const serve: Serve = {
         ...proc,
         port,
-        async execute(args) {
+        async execute({ headers, ...args }) {
           const res = await fetch(`http://0.0.0.0:${port}/graphql`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
               accept: 'application/graphql-response+json, application/json',
+              ...headers,
             },
             body: JSON.stringify(args),
           });
@@ -428,6 +436,7 @@ export function createTenv(cwd: string): Tenv {
       env = {},
       containerPort,
       hostPort,
+      additionalContainerPorts: containerAdditionalPorts,
       healthcheck,
       pipeLogs = !!process.env['DEBUG'],
       cmd,
@@ -437,6 +446,18 @@ export function createTenv(cwd: string): Tenv {
 
       if (!hostPort) {
         hostPort = await getAvailablePort();
+      }
+
+      const additionalPorts: Record<number, number> = {};
+      if (containerAdditionalPorts) {
+        for (const port of containerAdditionalPorts) {
+          if (port === containerPort) {
+            throw new Error(
+              `Additional port ${port} is already specified as the "containerPort", please use a different port or remove it from "additionalPorts"`,
+            );
+          }
+          additionalPorts[port] = await getAvailablePort();
+        }
       }
 
       function msToNs(ms: number): number {
@@ -477,6 +498,13 @@ export function createTenv(cwd: string): Tenv {
           AutoRemove: true,
           PortBindings: {
             [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
+            ...Object.entries(additionalPorts).reduce(
+              (acc, [containerPort, hostPort]) => ({
+                ...acc,
+                [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
+              }),
+              {},
+            ),
           },
           Binds: Object.values(volumes).map(
             ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
@@ -505,6 +533,7 @@ export function createTenv(cwd: string): Tenv {
       const container: Container = {
         name,
         port: hostPort,
+        additionalPorts,
         getStd() {
           // TODO: distinguish stdout and stderr
           return stdboth;
@@ -734,6 +763,6 @@ class DockerError extends Error {
   }
 }
 
-function boolEnv(name: string): boolean {
+export function boolEnv(name: string): boolean {
   return ['1', 't', 'true', 'y', 'yes'].includes(process.env[name]);
 }
