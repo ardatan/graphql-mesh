@@ -243,6 +243,7 @@ export function createTenv(cwd: string): Tenv {
       const [cmd, ...args] = Array.isArray(command) ? command : command.split(' ');
       return spawn({ ...opts, cwd }, String(cmd), ...args);
     },
+    serveRunner,
     async serve(opts) {
       let {
         port = await getAvailablePort(),
