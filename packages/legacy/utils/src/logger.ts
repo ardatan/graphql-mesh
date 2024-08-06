@@ -33,6 +33,10 @@ export enum LogLevel {
 
 const noop: VoidFunction = () => {};
 
+function truthy(str: unknown) {
+  return str === true || str === 1 || ['1', 't', 'true', 'y', 'yes'].includes(String(str));
+}
+
 function getTimestamp() {
   return new Date().toISOString();
 }
@@ -40,19 +44,20 @@ function getTimestamp() {
 export class DefaultLogger implements Logger {
   constructor(
     public name?: string,
-    public logLevel = process.env.DEBUG === '1' ? LogLevel.debug : LogLevel.info,
+    public logLevel = truthy(process.env.DEBUG) ? LogLevel.debug : LogLevel.info,
+    private trim?: number,
   ) {}
 
-  private getLoggerMessage({ args = [], trim = !this.isDebug }: { args: any[]; trim?: boolean }) {
+  private getLoggerMessage({ args = [] }: { args: any[] }) {
     return args
       .flat(Infinity)
       .map(arg => {
         if (typeof arg === 'string') {
-          if (trim && arg.length > 100) {
+          if (this.trim && arg.length > this.trim) {
             return (
-              arg.slice(0, 100) +
+              arg.slice(0, this.trim) +
               '...' +
-              '<Message is too long. Enable DEBUG=1 to see the full message.>'
+              '<Message is trimmed. Enable DEBUG=1 to see the full message.>'
             );
           }
           return arg;
@@ -61,27 +66,24 @@ export class DefaultLogger implements Logger {
         }
         return util.inspect(arg);
       })
-      .join(` `);
+      .join(' ');
   }
 
-  private handleLazyMessage({ lazyArgs, trim }: { lazyArgs: LazyLoggerMessage[]; trim?: boolean }) {
+  private handleLazyMessage({ lazyArgs }: { lazyArgs: LazyLoggerMessage[] }) {
     const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
       if (typeof arg === 'function') {
         return arg();
       }
       return arg;
     });
-    return this.getLoggerMessage({
-      args: flattenedArgs,
-      trim,
-    });
+    return this.getLoggerMessage({ args: flattenedArgs });
   }
 
   private get isDebug() {
     if (process.env.DEBUG) {
       return (
-        process.env.DEBUG === '1' ||
-        (globalThis as any).DEBUG === '1' ||
+        truthy(process.env.DEBUG) ||
+        truthy((globalThis as any).DEBUG) ||
         this.name.includes(process.env.DEBUG || (globalThis as any).DEBUG)
       );
     }
@@ -96,9 +98,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    const message = this.getLoggerMessage({
-      args,
-    });
+    const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] ${this.prefix} ${message}`;
     if (process?.stderr?.write(fullMessage + '\n')) {
       return;
@@ -110,9 +110,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.warn) {
       return noop;
     }
-    const message = this.getLoggerMessage({
-      args,
-    });
+    const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] ${this.prefix} WARN  ${warnColor(message)}`;
     if (process?.stderr?.write(fullMessage + '\n')) {
       return;
@@ -139,10 +137,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.error) {
       return noop;
     }
-    const message = this.getLoggerMessage({
-      args,
-      trim: false,
-    });
+    const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] ERROR ${this.prefix} ${errorColor(message)}`;
     if (typeof process?.stderr?.write === 'function') {
       process.stderr.write(fullMessage + '\n');
