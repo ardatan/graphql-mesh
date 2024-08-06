@@ -43,38 +43,28 @@ export class DefaultLogger implements Logger {
     public logLevel = process.env.DEBUG === '1' ? LogLevel.debug : LogLevel.info,
   ) {}
 
-  private getLoggerMessage({ args = [], trim = !this.isDebug }: { args: any[]; trim?: boolean }) {
+  private getLoggerMessage({ args = [] }: { args: any[] }) {
     return args
       .flat(Infinity)
       .map(arg => {
         if (typeof arg === 'string') {
-          if (trim && arg.length > 100) {
-            return (
-              arg.slice(0, 100) +
-              '...' +
-              '<Message is too long. Enable DEBUG=1 to see the full message.>'
-            );
-          }
           return arg;
         } else if (typeof arg === 'object' && arg?.stack != null) {
           return arg.stack;
         }
         return util.inspect(arg);
       })
-      .join(` `);
+      .join(' ');
   }
 
-  private handleLazyMessage({ lazyArgs, trim }: { lazyArgs: LazyLoggerMessage[]; trim?: boolean }) {
+  private handleLazyMessage({ lazyArgs }: { lazyArgs: LazyLoggerMessage[] }) {
     const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
       if (typeof arg === 'function') {
         return arg();
       }
       return arg;
     });
-    return this.getLoggerMessage({
-      args: flattenedArgs,
-      trim,
-    });
+    return this.getLoggerMessage({ args: flattenedArgs });
   }
 
   private get isDebug() {
@@ -96,9 +86,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    const message = this.getLoggerMessage({
-      args,
-    });
+    const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] ${this.prefix} ${message}`;
     if (process?.stderr?.write(fullMessage + '\n')) {
       return;
@@ -110,9 +98,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.warn) {
       return noop;
     }
-    const message = this.getLoggerMessage({
-      args,
-    });
+    const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] ${this.prefix} WARN  ${warnColor(message)}`;
     if (process?.stderr?.write(fullMessage + '\n')) {
       return;
@@ -139,10 +125,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.error) {
       return noop;
     }
-    const message = this.getLoggerMessage({
-      args,
-      trim: false,
-    });
+    const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] ERROR ${this.prefix} ${errorColor(message)}`;
     if (typeof process?.stderr?.write === 'function') {
       process.stderr.write(fullMessage + '\n');
