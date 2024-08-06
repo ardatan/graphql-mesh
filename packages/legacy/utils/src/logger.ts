@@ -41,6 +41,7 @@ export class DefaultLogger implements Logger {
   constructor(
     public name?: string,
     public logLevel = process.env.DEBUG === '1' ? LogLevel.debug : LogLevel.info,
+    private trim?: number,
   ) {}
 
   private getLoggerMessage({ args = [] }: { args: any[] }) {
@@ -48,6 +49,13 @@ export class DefaultLogger implements Logger {
       .flat(Infinity)
       .map(arg => {
         if (typeof arg === 'string') {
+          if (this.trim && arg.length > this.trim) {
+            return (
+              arg.slice(0, this.trim) +
+              '...' +
+              '<Message is trimmed. Enable DEBUG=1 to see the full message.>'
+            );
+          }
           return arg;
         } else if (typeof arg === 'object' && arg?.stack != null) {
           return arg.stack;
