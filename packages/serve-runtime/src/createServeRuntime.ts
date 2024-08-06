@@ -152,7 +152,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       if (config.polling) {
         currentTimeout = setTimeout(schemaFetcher, config.polling);
       }
-      currentTimeout = setTimeout(schemaFetcher, config.polling);
     }
     function pausePolling() {
       if (currentTimeout) {
@@ -206,6 +205,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
             continuePolling();
             return true;
           },
+          err => {
+            configContext.logger.warn(`Failed to introspect schema`, err);
+            return true;
+          },
         );
       };
     }
@@ -213,7 +216,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       if (unifiedGraph != null) {
         return unifiedGraph;
       }
-      if (initialFetch$) {
+      if (initialFetch$ != null) {
         return mapMaybePromise(initialFetch$, () => unifiedGraph);
       }
       if (!initialFetch$) {
