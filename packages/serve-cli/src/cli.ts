@@ -40,7 +40,7 @@ let cli = new Command()
   })
   .addOption(
     new Option(
-      '--fork [count]',
+      '--fork <count>',
       'count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is "production", otherwise only one (the main) worker',
     )
       .env('FORK')
@@ -107,9 +107,7 @@ export function run(userCtx: Partial<CLIContext>) {
   cli.version(version);
 
   const log = ctx.log.child(
-    cluster.worker?.id
-      ? `🕸️  ${ctx.productName} Worker#${cluster.worker.id}`
-      : `🕸️  ${ctx.productName}`,
+    cluster.worker?.id ? `${ctx.productName} server worker #${cluster.worker.id}` : ctx.productName,
   );
 
   addCommands({ ...ctx, log }, cli);
