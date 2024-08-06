@@ -156,7 +156,7 @@ export default function useMeshResponseCache(
       options.includeExtensionMetadata != null
         ? options.includeExtensionMetadata
         : process.env.DEBUG === '1',
-    session: 'sessionId' in options ? generateSessionIdFactory(options.sessionId) : undefined,
+    session: 'sessionId' in options ? generateSessionIdFactory(options.sessionId) : () => null,
     enabled: 'if' in options ? generateEnabledFactory(options.if) : undefined,
     buildResponseCacheKey:
       'cacheKey' in options ? getBuildResponseCacheKey(options.cacheKey) : undefined,
