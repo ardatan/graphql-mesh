@@ -55,15 +55,15 @@ export async function startServerForRuntime<
 
   if (cluster.isPrimary && fork > 1) {
     const workers: Worker[] = [];
-    log.info(`Forking ${fork} server workers`);
+    log.info(`Forking ${fork} workers`);
     for (let i = 0; i < fork; i++) {
-      log.info(`Forking server worker #${i}`);
+      log.info(`Forking worker #${i + 1}`);
       workers.push(cluster.fork());
     }
     return terminateStack.use({
       [Symbol.asyncDispose]() {
         workers.forEach((w, i) => {
-          log.info(`Killing server worker #${i}`);
+          log.info(`Killing worker #${i}`);
           w.kill();
         });
         return Promise.resolve();

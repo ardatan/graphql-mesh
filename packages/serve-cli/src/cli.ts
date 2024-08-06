@@ -107,7 +107,7 @@ export function run(userCtx: Partial<CLIContext>) {
   cli.version(version);
 
   const log = ctx.log.child(
-    cluster.worker?.id ? `${ctx.productName} server worker #${cluster.worker.id}` : ctx.productName,
+    cluster.worker?.id ? `${ctx.productName} worker #${cluster.worker.id}` : ctx.productName,
   );
 
   addCommands({ ...ctx, log }, cli);
