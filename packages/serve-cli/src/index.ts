@@ -1,4 +1,4 @@
-export * from './run.js';
+export * from './cli.js';
 export * from './types.js';
 export {
   useWebhooks,
