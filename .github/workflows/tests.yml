@@ -393,7 +393,6 @@ jobs:
       - name: test
         timeout-minutes: 10
         env:
-          DEBUG: 1
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn test:e2e --detectOpenHandles
   apollo-federation-compatibility:
