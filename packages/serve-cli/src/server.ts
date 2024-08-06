@@ -1,4 +1,3 @@
-import cluster, { Worker } from 'node:cluster';
 import { promises as fsPromises } from 'node:fs';
 import { createServer as createHTTPServer } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
@@ -52,25 +51,6 @@ export async function startServerForRuntime<
   { log, fork, host, port, sslCredentials, maxHeaderSize = 16_384 }: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
   const terminateStack = getTerminateStack();
-
-  if (cluster.isPrimary && fork > 1) {
-    const workers: Worker[] = [];
-    log.info(`Forking ${fork} workers`);
-    for (let i = 0; i < fork; i++) {
-      log.info(`Forking worker #${i + 1}`);
-      workers.push(cluster.fork());
-    }
-    return terminateStack.use({
-      [Symbol.asyncDispose]() {
-        workers.forEach((w, i) => {
-          log.info(`Killing worker #${i}`);
-          w.kill();
-        });
-        return Promise.resolve();
-      },
-    });
-  }
-
   terminateStack.use(runtime);
   process.on('message', message => {
     if (message === 'invalidateUnifiedGraph') {

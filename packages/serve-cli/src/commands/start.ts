@@ -18,7 +18,7 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         ...opts,
       };
 
-      // TODO: decide what to do using the config
+      // TODO: decide what to do using the config, also fork
 
       const runtime = createServeRuntime(config);
 

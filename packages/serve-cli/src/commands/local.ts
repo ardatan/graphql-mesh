@@ -1,4 +1,4 @@
-import cluster from 'node:cluster';
+import cluster, { Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
@@ -36,10 +36,6 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         // TODO: make sure there are no other definitions like `hive` or `supergraph` or `subgraph`
       };
 
-      log.info(`Serving local supergraph from ${absSupergraphPath}`);
-
-      const runtime = createServeRuntime(config);
-
       if (cluster.isPrimary) {
         // eslint-disable-next-line @typescript-eslint/consistent-type-imports
         let watcher: typeof import('@parcel/watcher') | undefined;
@@ -52,6 +48,7 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         }
         if (watcher) {
           try {
+            log.info(`Watching ${absSupergraphPath} for changes`);
             const absSupergraphDirname = dirname(absSupergraphPath);
             const subscription = await watcher.subscribe(absSupergraphDirname, (err, events) => {
               if (err) {
@@ -61,9 +58,7 @@ export const addCommand: AddCommand = ({ log }, cli) =>
               if (
                 events.some(event => event.path === absSupergraphPath && event.type === 'update')
               ) {
-                log.info(
-                  `Supergraph: ${absSupergraphPath} updated on the filesystem. Invalidating...`,
-                );
+                log.info(`${absSupergraphPath} changed. Invalidating supergraph...`);
                 if (config.fork > 1) {
                   for (const workerId in cluster.workers) {
                     cluster.workers[workerId].send('invalidateUnifiedGraph');
@@ -85,7 +80,28 @@ export const addCommand: AddCommand = ({ log }, cli) =>
             throw err;
           }
         }
+
+        //
+
+        if (cluster.isPrimary && config.fork > 1) {
+          const workers: Worker[] = [];
+          log.info(`Forking ${config.fork} workers`);
+          for (let i = 0; i < config.fork; i++) {
+            workers.push(cluster.fork());
+          }
+          registerTerminateHandler(eventName => {
+            log.info(`Killing workers for ${eventName}`);
+            workers.forEach((w, i) => {
+              w.kill(eventName);
+            });
+          });
+          return;
+        }
       }
+
+      const runtime = createServeRuntime(config);
+
+      log.info(`Serving local supergraph from ${absSupergraphPath}`);
 
       await startServerForRuntime(runtime, {
         ...config,
