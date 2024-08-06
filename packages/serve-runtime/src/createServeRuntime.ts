@@ -1,13 +1,12 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
-import type { GraphQLSchema } from 'graphql';
-import { parse } from 'graphql';
+import type { ExecutionArgs, GraphQLSchema } from 'graphql';
+import { buildSchema, parse } from 'graphql';
 import {
   createYoga,
   isAsyncIterable,
   mergeSchemas,
   useReadinessCheck,
-  type FetchAPI,
   type LandingPageRenderer,
   type Plugin,
   type YogaServerInstance,
@@ -24,7 +23,6 @@ import {
   getOnSubgraphExecute,
   getStitchingDirectivesTransformerForSubschema,
   handleFederationSubschema,
-  handleFederationSupergraph,
   restoreExtraDirectives,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
@@ -43,15 +41,15 @@ import {
 } from '@graphql-mesh/utils';
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
-import { useExecutor } from '@graphql-tools/executor-yoga';
 import {
   mergeDeep,
   parseSelectionSet,
+  type Executor,
   type IResolvers,
   type MaybePromise,
   type TypeSource,
 } from '@graphql-tools/utils';
-import { wrapSchema } from '@graphql-tools/wrap';
+import { schemaFromExecutor, wrapSchema } from '@graphql-tools/wrap';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { getUnifiedGraphSDL, handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
@@ -116,22 +114,126 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   const disposableStack = new AsyncDisposableStack();
 
-  if ('proxy' in config) {
+  if ('proxy' in config || process.env.PROXY_ENDPOINT) {
+    const proxyEndpoint = 'proxy' in config ? config.proxy.endpoint : process.env.PROXY_ENDPOINT;
     const proxyExecutor = getProxyExecutor({
-      config,
+      config:
+        'proxy' in config
+          ? config
+          : {
+              ...config,
+              proxy: { endpoint: proxyEndpoint },
+            },
       configContext,
-      getSchema: () => unifiedGraph,
+      getSchema() {
+        return unifiedGraph;
+      },
       onSubgraphExecuteHooks,
       disposableStack,
     });
-    const executorPlugin = useExecutor(proxyExecutor);
-    executorPlugin.onSchemaChange = function onSchemaChange(payload) {
-      unifiedGraph = payload.schema;
-    };
-    executorPlugin.onValidate = function ({ params, setResult }) {
-      if (config.skipValidation || !params.schema) {
-        setResult([]);
+    function createExecuteFnFromExecutor(executor: Executor) {
+      return function executeFn(args: ExecutionArgs) {
+        return executor({
+          document: args.document,
+          variables: args.variableValues,
+          operationName: args.operationName,
+          rootValue: args.rootValue,
+          context: args.contextValue,
+        });
+      };
+    }
+    const executeFn = createExecuteFnFromExecutor(proxyExecutor);
+
+    let currentTimeout: ReturnType<typeof setTimeout>;
+    function continuePolling() {
+      if (currentTimeout) {
+        clearTimeout(currentTimeout);
       }
+      if (config.polling) {
+        currentTimeout = setTimeout(schemaFetcher, config.polling);
+      }
+      currentTimeout = setTimeout(schemaFetcher, config.polling);
+    }
+    function pausePolling() {
+      if (currentTimeout) {
+        clearTimeout(currentTimeout);
+      }
+    }
+    let lastFetchedSdl: string;
+    let initialFetch$: MaybePromise<true>;
+    let schemaFetcher: () => MaybePromise<true>;
+    const hiveCdnEndpoint =
+      'hive' in config ? config.hive?.endpoint : process.env.HIVE_CDN_ENDPOINT;
+    if (hiveCdnEndpoint) {
+      const hiveEndpoint = hiveCdnEndpoint;
+      const hiveKey = 'hive' in config ? config.hive?.key : process.env.HIVE_CDN_KEY;
+      if (!hiveKey) {
+        throw new Error('You must provide a hive key');
+      }
+      schemaFetcher = function fetchSchemaFromCDN() {
+        pausePolling();
+        initialFetch$ = mapMaybePromise(
+          configContext.fetch(hiveEndpoint, {
+            headers: {
+              'X-Hive-CDN-Key': hiveKey,
+            },
+          }),
+          res =>
+            mapMaybePromise(res.text(), sdl => {
+              if (lastFetchedSdl == null || lastFetchedSdl !== sdl) {
+                unifiedGraph = buildSchema(sdl, {
+                  assumeValid: true,
+                  assumeValidSDL: true,
+                });
+                setSchema(unifiedGraph);
+              }
+              continuePolling();
+              return true;
+            }),
+        );
+        return initialFetch$;
+      };
+    } else {
+      schemaFetcher = function fetchSchemaWithExecutor() {
+        pausePolling();
+        return mapMaybePromise(
+          schemaFromExecutor(proxyExecutor, configContext, {
+            assumeValid: true,
+          }),
+          schema => {
+            unifiedGraph = schema;
+            setSchema(schema);
+            continuePolling();
+            return true;
+          },
+        );
+      };
+    }
+    getSchema = () => {
+      if (unifiedGraph != null) {
+        return unifiedGraph;
+      }
+      if (initialFetch$) {
+        return mapMaybePromise(initialFetch$, () => unifiedGraph);
+      }
+      if (!initialFetch$) {
+        return mapMaybePromise(schemaFetcher(), () => unifiedGraph);
+      }
+    };
+    disposableStack.defer(pausePolling);
+    const shouldSkipValidation = 'skipValidation' in config ? config.skipValidation : false;
+    const executorPlugin: Plugin = {
+      onExecute({ setExecuteFn }) {
+        setExecuteFn(executeFn);
+      },
+      onSubscribe({ setSubscribeFn }) {
+        setSubscribeFn(executeFn);
+      },
+      onValidate({ params, setResult }) {
+        if (shouldSkipValidation || !params.schema) {
+          setResult([]);
+        }
+      },
     };
     unifiedGraphPlugin = executorPlugin;
     readinessChecker = () => {
@@ -140,12 +242,18 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       });
       return mapMaybePromise(res$, res => !isAsyncIterable(res) && !!res.data?.__typename);
     };
-    schemaInvalidator = () => executorPlugin.invalidateUnifiedGraph();
+    schemaInvalidator = () => {
+      unifiedGraph = undefined;
+      initialFetch$ = schemaFetcher();
+    };
     subgraphInformationHTMLRenderer = () => {
-      const endpoint = config.proxy.endpoint || '#';
+      const endpoint = proxyEndpoint || '#';
       const htmlParts: string[] = [];
       htmlParts.push(`<section class="supergraph-information">`);
       htmlParts.push(`<h3>Proxy: <a href="${endpoint}">${endpoint}</a></h3>`);
+      if (hiveCdnEndpoint) {
+        htmlParts.push(`<p><strong>Source: </strong> <i>Hive CDN</i></p>`);
+      }
       htmlParts.push(`</section>`);
       return htmlParts.join('');
     };

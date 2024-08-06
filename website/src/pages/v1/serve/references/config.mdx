@@ -231,6 +231,12 @@ export const serveConfig = defineConfig({
 })
 ```
 
+<Callout>
+  By default, Mesh Serve introspects the schema from the endpoint. And it fails, it skips the
+  validation and schema aware features. But if you have configured Hive CDN endpoint and key in the
+  configuration, Mesh Serve will fetch the schema from the Hive CDN.
+</Callout>
+
 ### Configure Server
 
 #### `sslCredentials` for HTTPS
