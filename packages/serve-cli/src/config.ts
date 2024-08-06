@@ -16,20 +16,21 @@ export const defaultConfigPaths = [
 ];
 
 export async function loadConfig<TContext extends Record<string, any> = Record<string, any>>(opts: {
+  quiet?: boolean;
   log: Logger;
   configPath: string | null | undefined;
 }) {
   let importedConfig: Partial<MeshServeConfig<TContext> & ServerConfig> | null = null;
 
   if (!opts.configPath) {
-    opts.log.info(`Searching for default config files`);
+    !opts.quiet && opts.log.info(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
       const absoluteConfigPath = resolve(process.cwd(), configPath);
       const exists = await lstat(absoluteConfigPath)
         .then(() => true)
         .catch(() => false);
       if (exists) {
-        opts.log.info(`Found default config file ${configPath}`);
+        !opts.quiet && opts.log.info(`Found default config file ${configPath}`);
         const module = await include(absoluteConfigPath);
         importedConfig = Object(module).serveConfig || null;
         break;
@@ -40,7 +41,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
       : resolve(process.cwd(), opts.configPath);
-    opts.log.info(`Loading config file at path ${configPath}`);
+    !opts.quiet && opts.log.info(`Loading config file at path ${configPath}`);
     const exists = await lstat(configPath)
       .then(() => true)
       .catch(() => false);
@@ -54,9 +55,9 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
     }
   }
   if (importedConfig) {
-    opts.log.info('Loaded config');
+    !opts.quiet && opts.log.info('Loaded config');
   } else {
-    opts.log.info('No config loaded');
+    !opts.quiet && opts.log.info('No config loaded');
   }
 
   // TODO: validate imported config

@@ -17,7 +17,11 @@ export const addCommand: AddCommand = ({ log }, cli) =>
     .action(async function local(supergraphPath) {
       const opts = this.optsWithGlobals<CLIGlobals>();
 
-      const loadedConfig = await loadConfig({ log, configPath: opts.configPath });
+      const loadedConfig = await loadConfig({
+        log,
+        configPath: opts.configPath,
+        quiet: !cluster.isPrimary,
+      });
 
       const absSupergraphPath = isAbsolute(supergraphPath)
         ? String(supergraphPath)
