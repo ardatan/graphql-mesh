@@ -9,12 +9,12 @@ import { startServerForRuntime } from '../server.js';
 
 export const addCommand: AddCommand = ({ log }, cli) =>
   cli
-    .command('local')
+    .command('supergraph')
     .description(
-      'serve a local Federation supergraph provided by a compliant composition tool such as Mesh Compose or Apollo Rover',
+      'serve a Federation supergraph provided by a compliant composition tool such as Mesh Compose or Apollo Rover',
     )
-    .argument('[supergraph]', 'path to the composed supergraph schema file', 'supergraph.graphql')
-    .action(async function local(supergraphPath) {
+    .argument('[schemaPath]', 'path to the composed supergraph schema file', 'supergraph.graphql')
+    .action(async function supergraph(schemaPath) {
       const opts = this.optsWithGlobals<CLIGlobals>();
 
       const loadedConfig = await loadConfig({
@@ -23,21 +23,20 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         quiet: !cluster.isPrimary,
       });
 
-      const absSupergraphPath = isAbsolute(supergraphPath)
-        ? String(supergraphPath)
-        : resolve(process.cwd(), supergraphPath);
+      const absSchemaPath = isAbsolute(schemaPath)
+        ? String(schemaPath)
+        : resolve(process.cwd(), schemaPath);
       try {
-        await lstat(absSupergraphPath);
+        await lstat(absSchemaPath);
       } catch {
-        throw new Error(`Local supergraph at ${absSupergraphPath} does not exist`);
+        throw new Error(`Supergraph schema at ${absSchemaPath} does not exist`);
       }
 
       const config = {
         logging: log,
         ...loadedConfig,
         ...opts,
-        supergraph: absSupergraphPath,
-        // TODO: make sure there are no other definitions like `hive` or `supergraph` or `subgraph`
+        supergraph: absSchemaPath,
       };
 
       if (cluster.isPrimary) {
@@ -47,22 +46,20 @@ export const addCommand: AddCommand = ({ log }, cli) =>
           watcher = await import('@parcel/watcher');
         } catch (err) {
           log.warn(
-            `If you want to enable hot reloading when ${supergraphPath} changes, install "@parcel/watcher"`,
+            `If you want to enable hot reloading when ${schemaPath} changes, install "@parcel/watcher"`,
           );
         }
         if (watcher) {
           try {
-            log.info(`Watching ${absSupergraphPath} for changes`);
-            const absSupergraphDirname = dirname(absSupergraphPath);
+            log.info(`Watching ${absSchemaPath} for changes`);
+            const absSupergraphDirname = dirname(absSchemaPath);
             const subscription = await watcher.subscribe(absSupergraphDirname, (err, events) => {
               if (err) {
                 log.error(err);
                 return;
               }
-              if (
-                events.some(event => event.path === absSupergraphPath && event.type === 'update')
-              ) {
-                log.info(`${absSupergraphPath} changed. Invalidating supergraph...`);
+              if (events.some(event => event.path === absSchemaPath && event.type === 'update')) {
+                log.info(`${absSchemaPath} changed. Invalidating supergraph...`);
                 if (config.fork > 1) {
                   for (const workerId in cluster.workers) {
                     cluster.workers[workerId].send('invalidateUnifiedGraph');
@@ -73,14 +70,14 @@ export const addCommand: AddCommand = ({ log }, cli) =>
               }
             });
             registerTerminateHandler(eventName => {
-              log.info(`Closing watcher for ${absSupergraphPath} for ${eventName}`);
+              log.info(`Closing watcher for ${absSchemaPath} for ${eventName}`);
               return subscription.unsubscribe().catch(err => {
                 // https://github.com/parcel-bundler/watcher/issues/129
-                log.error(`Failed to close watcher for ${absSupergraphPath}!`, err);
+                log.error(`Failed to close watcher for ${absSchemaPath}!`, err);
               });
             });
           } catch (err) {
-            log.error(`Failed to watch ${absSupergraphPath}!`);
+            log.error(`Failed to watch ${absSchemaPath}!`);
             throw err;
           }
         }
@@ -103,7 +100,7 @@ export const addCommand: AddCommand = ({ log }, cli) =>
 
       const runtime = createServeRuntime(config);
 
-      log.info(`Serving local supergraph from ${absSupergraphPath}`);
+      log.info(`Serving supergraph from ${absSchemaPath}`);
 
       await startServerForRuntime(runtime, {
         ...config,
