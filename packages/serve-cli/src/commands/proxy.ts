@@ -34,7 +34,6 @@ export const addCommand: AddCommand = ({ log }, cli) =>
 
       await startServerForRuntime(runtime, {
         ...config,
-        fork: config.fork!, // defaults are defined in cli.ts
         host: config.host!, // defaults are defined in cli.ts
         port: config.port!, // defaults are defined in cli.ts
         log,

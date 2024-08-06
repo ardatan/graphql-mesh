@@ -7,11 +7,6 @@ import type { Logger } from '@graphql-mesh/types';
 import { createAsyncDisposable, getTerminateStack } from '@graphql-mesh/utils';
 
 export interface ServerConfig {
-  /**
-   * The amount of Node.js instances to run in order to
-   * distribute workloads among their application threads.
-   */
-  fork: number;
   /** Host to listen on. */
   host: string;
   /** Port to listen on. */
@@ -48,7 +43,7 @@ export async function startServerForRuntime<
   TContext extends Record<string, any> = Record<string, any>,
 >(
   runtime: MeshServeRuntime<TContext>,
-  { log, fork, host, port, sslCredentials, maxHeaderSize = 16_384 }: ServerForRuntimeOptions,
+  { log, host, port, sslCredentials, maxHeaderSize = 16_384 }: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
   const terminateStack = getTerminateStack();
   terminateStack.use(runtime);
@@ -70,7 +65,6 @@ export async function startServerForRuntime<
   const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
   const server = await startServer(runtime, {
     log,
-    fork,
     host,
     port,
     sslCredentials,
