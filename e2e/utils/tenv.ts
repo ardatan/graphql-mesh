@@ -469,21 +469,28 @@ export function createTenv(cwd: string): Tenv {
         .then(c => c.includes(`"${image}"`));
 
       if (!bakedImage) {
-        // pull image and wait for finish
-        const imageStream = await docker.pull(image);
-        await new Promise((resolve, reject) => {
-          docker.modem.followProgress(
-            imageStream,
-            (err, res) => (err ? reject(err) : resolve(res)),
-            pipeLogs
-              ? ({ stream }) => {
-                  if (stream) {
-                    process.stderr.write(String(stream));
+        // pull image if it doesnt exist and wait for finish
+        const exists = await docker
+          .getImage(image)
+          .get()
+          .then(() => true)
+          .catch(() => false);
+        if (!exists) {
+          const imageStream = await docker.pull(image);
+          await new Promise((resolve, reject) => {
+            docker.modem.followProgress(
+              imageStream,
+              (err, res) => (err ? reject(err) : resolve(res)),
+              pipeLogs
+                ? ({ stream }) => {
+                    if (stream) {
+                      process.stderr.write(String(stream));
+                    }
                   }
-                }
-              : undefined,
-          );
-        });
+                : undefined,
+            );
+          });
+        }
       }
 
       const ctr = await docker.createContainer({
