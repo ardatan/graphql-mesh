@@ -362,6 +362,17 @@ jobs:
           node-version: ${{matrix.setup.node-version}}
       - name: prepare
         run: yarn prebuild
+      - name: hash docker images
+        if: matrix.setup.serve-runner == 'docker'
+        id: hash-docker-images
+        # get all "image: '" occurrences in the e2e tests and hash them with sha1
+        run: |
+          echo "result=$(grep -r -h "image: '" e2e | shasum)" >> "$GITHUB_OUTPUT"
+      - name: cache docker images
+        if: matrix.setup.serve-runner == 'docker'
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
       - name: set up docker buildx
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/setup-buildx-action@v3
