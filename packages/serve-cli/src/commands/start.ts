@@ -16,6 +16,10 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         logging: log,
         ...loadedConfig,
         ...opts,
+        hive: {
+          ...loadedConfig['hive'],
+          token: opts.hiveRegistryToken || loadedConfig['hive']?.['token'],
+        },
       };
 
       // TODO: decide what to do using the config, also fork

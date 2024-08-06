@@ -114,7 +114,16 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
-  let registryPlugin: MeshPlugin<unknown> = {};
+  const hiveToken = 'hive' in config ? config.hive.token : process.env.HIVE_REGISTRY_TOKEN;
+  const hiveRegistryPlugin: MeshPlugin<unknown> = !hiveToken
+    ? {}
+    : useMeshHive({
+        enabled: true,
+        ...configContext,
+        logger: configContext.logger.child('Hive'),
+        ...('hive' in config ? config.hive : {}),
+        token: hiveToken,
+      });
   let subgraphInformationHTMLRenderer: () => MaybePromise<string> = () => '';
 
   const disposableStack = new AsyncDisposableStack();
@@ -445,17 +454,6 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       };
     }
 
-    const hiveToken = 'hive' in config ? config.hive.token : process.env.HIVE_REGISTRY_TOKEN;
-    if (hiveToken) {
-      registryPlugin = useMeshHive({
-        enabled: true,
-        ...configContext,
-        logger: configContext.logger.child('Hive'),
-        ...('hive' in config ? config.hive : {}),
-        token: hiveToken,
-      });
-    }
-
     const unifiedGraphManager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
       onSchemaChange(unifiedGraph) {
@@ -634,7 +632,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       defaultMeshPlugin,
       unifiedGraphPlugin,
       readinessCheckPlugin,
-      registryPlugin,
+      hiveRegistryPlugin,
       useChangingSchema(getSchema, _setSchema => {
         setSchema = _setSchema;
       }),

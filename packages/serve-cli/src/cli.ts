@@ -88,7 +88,12 @@ let cli = new Command()
       }),
   )
   .option('--masked-errors', 'mask unexpected errors in responses')
-  .option('--hive-usage-token [token]', 'Hive registry token for usage metrics');
+  .addOption(
+    new Option(
+      '--hive-registry-token <token>',
+      'Hive registry token for usage metrics reporting',
+    ).env('HIVE_REGISTRY_TOKEN'),
+  );
 
 // @inject-version globalThis.__VERSION__ here
 

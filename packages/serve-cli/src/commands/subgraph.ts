@@ -37,6 +37,10 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         ...loadedConfig,
         ...opts,
         subgraph: absSchemaPath,
+        hive: {
+          ...loadedConfig['hive'],
+          token: opts.hiveRegistryToken || loadedConfig['hive']?.['token'],
+        },
       };
 
       if (cluster.isPrimary && config.fork > 1) {

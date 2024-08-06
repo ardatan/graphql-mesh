@@ -36,8 +36,10 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         ...loadedConfig,
         ...opts,
         hive: {
+          ...loadedConfig['hive'],
           endpoint,
           key,
+          token: opts.hiveRegistryToken || loadedConfig['hive']?.['token'],
         },
       };
 
