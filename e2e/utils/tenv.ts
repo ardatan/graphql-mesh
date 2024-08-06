@@ -147,7 +147,8 @@ export interface Compose extends Proc {
 export interface ContainerOptions extends ProcOptions {
   /**
    * Name of the service.
-   * Note that the actual Docker container will have a unique suffix.
+   * Note that the actual Docker container name will have a unique suffix
+   * and will be available at {@link Container.containerName}.
    */
   name: string;
   /**
@@ -188,6 +189,8 @@ export interface ContainerOptions extends ProcOptions {
 }
 
 export interface Container extends Service {
+  /** The name of running Docker container.  */
+  containerName: string;
   /** Host port binding to the {@link ContainerOptions.containerPort}. */
   port: number;
   /** A map of {@link ContainerOptions.additionalContainerPorts additional container ports} to the ports on the host. */
@@ -201,7 +204,10 @@ export interface Tenv {
     tempfile(name: string): Promise<string>;
     write(path: string, content: string): Promise<void>;
   };
-  spawn(command: string, opts?: ProcOptions): Promise<[proc: Proc, waitForExit: Promise<void>]>;
+  spawn(
+    command: string | (string | number)[],
+    opts?: ProcOptions,
+  ): Promise<[proc: Proc, waitForExit: Promise<void>]>;
   serveRunner: ServeRunner;
   serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
@@ -234,10 +240,9 @@ export function createTenv(cwd: string): Tenv {
       },
     },
     spawn(command, opts) {
-      const [cmd, ...args] = command.split(' ');
-      return spawn({ ...opts, cwd }, cmd, ...args);
+      const [cmd, ...args] = Array.isArray(command) ? command : command.split(' ');
+      return spawn({ ...opts, cwd }, String(cmd), ...args);
     },
-    serveRunner,
     async serve(opts) {
       let {
         port = await getAvailablePort(),
@@ -442,7 +447,7 @@ export function createTenv(cwd: string): Tenv {
       cmd,
       volumes = [],
     }) {
-      const uniqueName = `${name}_${Math.random().toString(32).slice(2)}`;
+      const containerName = `${name}_${Math.random().toString(32).slice(2)}`;
 
       if (!hostPort) {
         hostPort = await getAvailablePort();
@@ -494,7 +499,7 @@ export function createTenv(cwd: string): Tenv {
       }
 
       const ctr = await docker.createContainer({
-        name: uniqueName,
+        name: containerName,
         Image: image,
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
         ExposedPorts: {
@@ -538,6 +543,7 @@ export function createTenv(cwd: string): Tenv {
 
       const ctrl = new AbortController();
       const container: Container = {
+        containerName,
         name,
         port: hostPort,
         additionalPorts,
