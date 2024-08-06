@@ -81,7 +81,7 @@ schema
 
 
 enum join__Graph {
-  MOVIES @join__graph(name: "Movies", url: "neo4j+s://demo.neo4jlabs.com") 
+  MOVIES @join__graph(name: "Movies", url: "neo4j://0.0.0.0:<neo4j_port>") 
 }
 
 directive @relationshipProperties on OBJECT
@@ -104,7 +104,7 @@ scalar Any @join__type(graph: MOVIES)
 scalar _DirectiveExtensions @join__type(graph: MOVIES) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}}]}
+  directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
 ) @join__type(graph: MOVIES)  {
   movies(where: MovieWhere, options: MovieOptions) : [Movie!]!
   moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort]) : MoviesConnection!
@@ -189,7 +189,6 @@ type Movie @introspection @join__type(graph: MOVIES)  {
   released: BigInt! @introspection
   tagline: String @introspection
   title: String! @introspection
-  votes: BigInt! @introspection
   peopleActedInAggregate(where: PersonWhere, directed: Boolean = true) : MoviePersonPeopleActedInAggregationSelection
   peopleActedIn(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN) 
   peopleActedInConnection(
@@ -242,7 +241,6 @@ type MovieAggregateSelection @join__type(graph: MOVIES)  {
   released: BigIntAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
-  votes: BigIntAggregateSelection!
 }
 
 type MovieEdge @join__type(graph: MOVIES)  {
@@ -507,7 +505,6 @@ type PersonMovieActedInMoviesNodeAggregateSelection @join__type(graph: MOVIES)  
   released: BigIntAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
-  votes: BigIntAggregateSelection!
 }
 
 type PersonMovieDirectedMoviesAggregationSelection @join__type(graph: MOVIES)  {
@@ -519,7 +516,6 @@ type PersonMovieDirectedMoviesNodeAggregateSelection @join__type(graph: MOVIES) 
   released: BigIntAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
-  votes: BigIntAggregateSelection!
 }
 
 type PersonMovieProducedMoviesAggregationSelection @join__type(graph: MOVIES)  {
@@ -531,7 +527,6 @@ type PersonMovieProducedMoviesNodeAggregateSelection @join__type(graph: MOVIES) 
   released: BigIntAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
-  votes: BigIntAggregateSelection!
 }
 
 type PersonMovieReviewedMoviesAggregationSelection @join__type(graph: MOVIES)  {
@@ -549,7 +544,6 @@ type PersonMovieReviewedMoviesNodeAggregateSelection @join__type(graph: MOVIES) 
   released: BigIntAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
-  votes: BigIntAggregateSelection!
 }
 
 type PersonMovieWroteMoviesAggregationSelection @join__type(graph: MOVIES)  {
@@ -561,7 +555,6 @@ type PersonMovieWroteMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
   released: BigIntAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
-  votes: BigIntAggregateSelection!
 }
 
 type PersonPeopleFollowsConnection @join__type(graph: MOVIES)  {
@@ -730,7 +723,6 @@ input MovieCreateInput @join__type(graph: MOVIES)  {
   released: BigInt!
   tagline: String
   title: String!
-  votes: BigInt!
   peopleActedIn: MoviePeopleActedInFieldInput
   peopleDirected: MoviePeopleDirectedFieldInput
   peopleProduced: MoviePeopleProducedFieldInput
@@ -1560,7 +1552,6 @@ input MovieSort @join__type(graph: MOVIES)  {
   released: SortDirection
   tagline: SortDirection
   title: SortDirection
-  votes: SortDirection
 }
 
 input MovieUpdateInput @join__type(graph: MOVIES)  {
@@ -1569,9 +1560,6 @@ input MovieUpdateInput @join__type(graph: MOVIES)  {
   released_DECREMENT: BigInt
   tagline: String
   title: String
-  votes: BigInt
-  votes_INCREMENT: BigInt
-  votes_DECREMENT: BigInt
   peopleActedIn: [MoviePeopleActedInUpdateFieldInput!]
   peopleDirected: [MoviePeopleDirectedUpdateFieldInput!]
   peopleProduced: [MoviePeopleProducedUpdateFieldInput!]
@@ -1632,18 +1620,6 @@ input MovieWhere @join__type(graph: MOVIES)  {
   title_NOT_ENDS_WITH: String @deprecated(
     reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
   )
-  votes: BigInt
-  votes_NOT: BigInt @deprecated(
-    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
-  )
-  votes_IN: [BigInt!]
-  votes_NOT_IN: [BigInt!] @deprecated(
-    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
-  )
-  votes_LT: BigInt
-  votes_LTE: BigInt
-  votes_GT: BigInt
-  votes_GTE: BigInt
   OR: [MovieWhere!]
   AND: [MovieWhere!]
   NOT: MovieWhere
@@ -2024,41 +2000,6 @@ input PersonActedInMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   title_AVERAGE_LENGTH_LTE: Float
   title_LONGEST_LENGTH_LTE: Int
   title_SHORTEST_LENGTH_LTE: Int
-  votes_EQUAL: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_EQUAL: BigInt
-  votes_MAX_EQUAL: BigInt
-  votes_SUM_EQUAL: BigInt
-  votes_AVERAGE_EQUAL: BigInt
-  votes_GT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GT: BigInt
-  votes_MAX_GT: BigInt
-  votes_SUM_GT: BigInt
-  votes_AVERAGE_GT: BigInt
-  votes_GTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GTE: BigInt
-  votes_MAX_GTE: BigInt
-  votes_SUM_GTE: BigInt
-  votes_AVERAGE_GTE: BigInt
-  votes_LT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LT: BigInt
-  votes_MAX_LT: BigInt
-  votes_SUM_LT: BigInt
-  votes_AVERAGE_LT: BigInt
-  votes_LTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LTE: BigInt
-  votes_MAX_LTE: BigInt
-  votes_SUM_LTE: BigInt
-  votes_AVERAGE_LTE: BigInt
 }
 
 input PersonActedInMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
@@ -2294,41 +2235,6 @@ input PersonDirectedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   title_AVERAGE_LENGTH_LTE: Float
   title_LONGEST_LENGTH_LTE: Int
   title_SHORTEST_LENGTH_LTE: Int
-  votes_EQUAL: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_EQUAL: BigInt
-  votes_MAX_EQUAL: BigInt
-  votes_SUM_EQUAL: BigInt
-  votes_AVERAGE_EQUAL: BigInt
-  votes_GT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GT: BigInt
-  votes_MAX_GT: BigInt
-  votes_SUM_GT: BigInt
-  votes_AVERAGE_GT: BigInt
-  votes_GTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GTE: BigInt
-  votes_MAX_GTE: BigInt
-  votes_SUM_GTE: BigInt
-  votes_AVERAGE_GTE: BigInt
-  votes_LT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LT: BigInt
-  votes_MAX_LT: BigInt
-  votes_SUM_LT: BigInt
-  votes_AVERAGE_LT: BigInt
-  votes_LTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LTE: BigInt
-  votes_MAX_LTE: BigInt
-  votes_SUM_LTE: BigInt
-  votes_AVERAGE_LTE: BigInt
 }
 
 input PersonDirectedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
@@ -2852,41 +2758,6 @@ input PersonProducedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   title_AVERAGE_LENGTH_LTE: Float
   title_LONGEST_LENGTH_LTE: Int
   title_SHORTEST_LENGTH_LTE: Int
-  votes_EQUAL: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_EQUAL: BigInt
-  votes_MAX_EQUAL: BigInt
-  votes_SUM_EQUAL: BigInt
-  votes_AVERAGE_EQUAL: BigInt
-  votes_GT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GT: BigInt
-  votes_MAX_GT: BigInt
-  votes_SUM_GT: BigInt
-  votes_AVERAGE_GT: BigInt
-  votes_GTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GTE: BigInt
-  votes_MAX_GTE: BigInt
-  votes_SUM_GTE: BigInt
-  votes_AVERAGE_GTE: BigInt
-  votes_LT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LT: BigInt
-  votes_MAX_LT: BigInt
-  votes_SUM_LT: BigInt
-  votes_AVERAGE_LT: BigInt
-  votes_LTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LTE: BigInt
-  votes_MAX_LTE: BigInt
-  votes_SUM_LTE: BigInt
-  votes_AVERAGE_LTE: BigInt
 }
 
 input PersonProducedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
@@ -3103,41 +2974,6 @@ input PersonReviewedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   title_AVERAGE_LENGTH_LTE: Float
   title_LONGEST_LENGTH_LTE: Int
   title_SHORTEST_LENGTH_LTE: Int
-  votes_EQUAL: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_EQUAL: BigInt
-  votes_MAX_EQUAL: BigInt
-  votes_SUM_EQUAL: BigInt
-  votes_AVERAGE_EQUAL: BigInt
-  votes_GT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GT: BigInt
-  votes_MAX_GT: BigInt
-  votes_SUM_GT: BigInt
-  votes_AVERAGE_GT: BigInt
-  votes_GTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GTE: BigInt
-  votes_MAX_GTE: BigInt
-  votes_SUM_GTE: BigInt
-  votes_AVERAGE_GTE: BigInt
-  votes_LT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LT: BigInt
-  votes_MAX_LT: BigInt
-  votes_SUM_LT: BigInt
-  votes_AVERAGE_LT: BigInt
-  votes_LTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LTE: BigInt
-  votes_MAX_LTE: BigInt
-  votes_SUM_LTE: BigInt
-  votes_AVERAGE_LTE: BigInt
 }
 
 input PersonReviewedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
@@ -3656,41 +3492,6 @@ input PersonWroteMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   title_AVERAGE_LENGTH_LTE: Float
   title_LONGEST_LENGTH_LTE: Int
   title_SHORTEST_LENGTH_LTE: Int
-  votes_EQUAL: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_EQUAL: BigInt
-  votes_MAX_EQUAL: BigInt
-  votes_SUM_EQUAL: BigInt
-  votes_AVERAGE_EQUAL: BigInt
-  votes_GT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GT: BigInt
-  votes_MAX_GT: BigInt
-  votes_SUM_GT: BigInt
-  votes_AVERAGE_GT: BigInt
-  votes_GTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_GTE: BigInt
-  votes_MAX_GTE: BigInt
-  votes_SUM_GTE: BigInt
-  votes_AVERAGE_GTE: BigInt
-  votes_LT: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LT: BigInt
-  votes_MAX_LT: BigInt
-  votes_SUM_LT: BigInt
-  votes_AVERAGE_LT: BigInt
-  votes_LTE: BigInt @deprecated(
-    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
-  )
-  votes_MIN_LTE: BigInt
-  votes_MAX_LTE: BigInt
-  votes_SUM_LTE: BigInt
-  votes_AVERAGE_LTE: BigInt
 }
 
 input PersonWroteMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {

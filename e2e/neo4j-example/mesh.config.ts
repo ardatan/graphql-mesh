@@ -1,17 +1,19 @@
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import { Args } from '@e2e/args';
+import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadNeo4JSubgraph } from '@omnigraph/neo4j';
 
-export const composeConfig = defineComposeConfig({
+const args = Args(process.argv);
+
+export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadNeo4JSubgraph('Movies', {
-        endpoint: 'neo4j+s://demo.neo4jlabs.com',
+        endpoint: `neo4j://0.0.0.0:${args.getServicePort('neo4j')}`,
         auth: {
           type: 'basic',
-          username: 'movies',
-          password: 'movies',
+          username: 'neo4j',
+          password: 'password',
         },
-        database: 'movies',
       }),
     },
   ],
