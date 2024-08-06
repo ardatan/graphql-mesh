@@ -67,7 +67,12 @@ let program = new Command()
         return port;
       }),
   )
-  .option('--supergraph <path>', 'path to the supergraph schema')
+  .addOption(
+    new Option('--supergraph <path>', 'path to the supergraph schema').conflicts([
+      'proxy',
+      'subgraph',
+    ]),
+  )
   .addOption(
     new Option('--polling <intervalInMs>', 'schema polling interval in milliseconds')
       .env('POLLING')
@@ -80,7 +85,20 @@ let program = new Command()
       }),
   )
   .option('--masked-errors', 'mask unexpected errors in responses')
-  .option('--subgraph <path>', 'path to the subgraph schema');
+  .addOption(
+    new Option('--subgraph <path>', 'path to the subgraph schema').conflicts([
+      'supergraph',
+      'proxy',
+    ]),
+  )
+  .addOption(
+    new Option('--proxy <endpoint>', 'proxy all requests to this endpoint')
+      .env('PROXY_ENDPOINT')
+      .argParser(e => ({
+        endpoint: new URL(e).toString(),
+      }))
+      .conflicts(['supergraph', 'subgraph']),
+  );
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */

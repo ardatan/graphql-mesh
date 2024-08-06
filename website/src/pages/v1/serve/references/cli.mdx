@@ -32,15 +32,17 @@ Usage: mesh-serve [options]
 serve GraphQL federated architecture for any API service(s)
 
 Options:
-  --fork [count]            count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is "production", otherwise only one (the main)
-                            worker (default: 1, env: FORK)
-  -c, --config-path <path>  path to the configuration file. defaults to the following files respectively in the current working directory: mesh.config.ts,
-                            mesh.config.mts, mesh.config.cts, mesh.config.js, mesh.config.mjs, mesh.config.cjs (env: CONFIG_PATH)
-  -h, --host <hostname>     host to use for serving (default: "0.0.0.0")
+  --fork [count]            count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is "production", otherwise only one (the main) worker (default: 1, env:
+                            FORK)
+  -c, --config-path <path>  path to the configuration file. defaults to the following files respectively in the current working directory: mesh.config.ts, mesh.config.mts,
+                            mesh.config.cts, mesh.config.js, mesh.config.mjs, mesh.config.cjs (env: CONFIG_PATH)
+  -h, --host <hostname>     host to use for serving (default: "127.0.0.1")
   -p, --port <number>       port to use for serving (default: 4000, env: PORT)
   --supergraph <path>       path to the supergraph schema
   --polling <intervalInMs>  schema polling interval in milliseconds (env: POLLING)
-  --masked-errors           mask unexpected errors in responses (default: true)
+  --masked-errors           mask unexpected errors in responses
+  --subgraph <path>         path to the subgraph schema
+  --proxy <endpoint>        proxy all requests to this endpoint (env: PROXY_ENDPOINT)
   --help                    display help for command
 ```
 
