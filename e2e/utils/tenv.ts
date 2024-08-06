@@ -266,8 +266,8 @@ export function createTenv(cwd: string): Tenv {
           await fs.writeFile(
             supergraph,
             (await fs.readFile(supergraph, 'utf8'))
-              // docker for linux (which is used in the CI) will have the host be on 172.17.0.1 always
-              // locally the host.docker.internal should just work when using the "host" network mode
+              // docker for linux (which is used in the CI) will have the host be on 172.17.0.1,
+              // and locally the host.docker.internal (or just on macos?) should just work
               .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
               .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
           );
@@ -507,6 +507,13 @@ export function createTenv(cwd: string): Tenv {
         Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
         ExposedPorts: {
           [containerPort + '/tcp']: {},
+          ...Object.keys(additionalPorts).reduce(
+            (acc, containerPort) => ({
+              ...acc,
+              [containerPort + '/tcp']: {},
+            }),
+            {},
+          ),
         },
         Cmd: cmd?.filter(Boolean).map(String),
         HostConfig: {
