@@ -16,6 +16,7 @@ export const addCommand: AddCommand = ({ log }, cli) =>
       const loadedConfig = await loadConfig({ log, configPath: opts.configPath });
 
       const config = {
+        logging: log,
         ...loadedConfig,
         ...opts,
         proxy: {
