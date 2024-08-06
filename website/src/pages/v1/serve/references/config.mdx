@@ -168,6 +168,27 @@ export const serveConfig = defineConfig({
 })
 ```
 
+<Callout>
+  By default, Mesh Serve introspects the schema from the endpoint. And it fails, it skips the
+  validation and schema aware features. But if you have configured Hive CDN endpoint and key in the
+  configuration, Mesh Serve will fetch the schema from the Hive CDN.
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  proxy: {
+    endpoint: 'https://example.com/graphql'
+  },
+  hive: {
+    endpoint: 'https://cdn.graphql-hive.com/artifacts/v1/0123-3434/sdl',
+    key: 'SOME_HIVE_KEY'
+  }
+})
+```
+
+</Callout>
+
 ##### `endpoint`
 
 The URL of the GraphQL endpoint to proxy requests to.
@@ -230,12 +251,6 @@ export const serveConfig = defineConfig({
   skipValidation: true
 })
 ```
-
-<Callout>
-  By default, Mesh Serve introspects the schema from the endpoint. And it fails, it skips the
-  validation and schema aware features. But if you have configured Hive CDN endpoint and key in the
-  configuration, Mesh Serve will fetch the schema from the Hive CDN.
-</Callout>
 
 ### Configure Server
 
