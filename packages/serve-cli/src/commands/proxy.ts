@@ -40,7 +40,7 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         }
         registerTerminateHandler(eventName => {
           log.info(`Killing workers for ${eventName}`);
-          workers.forEach((w, i) => {
+          workers.forEach(w => {
             w.kill(eventName);
           });
         });
