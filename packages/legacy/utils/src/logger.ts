@@ -33,6 +33,10 @@ export enum LogLevel {
 
 const noop: VoidFunction = () => {};
 
+function truthy(str: unknown) {
+  return str === true || str === 1 || ['1', 't', 'true', 'y', 'yes'].includes(String(str));
+}
+
 function getTimestamp() {
   return new Date().toISOString();
 }
@@ -40,7 +44,7 @@ function getTimestamp() {
 export class DefaultLogger implements Logger {
   constructor(
     public name?: string,
-    public logLevel = process.env.DEBUG === '1' ? LogLevel.debug : LogLevel.info,
+    public logLevel = truthy(process.env.DEBUG) ? LogLevel.debug : LogLevel.info,
     private trim?: number,
   ) {}
 
@@ -78,8 +82,8 @@ export class DefaultLogger implements Logger {
   private get isDebug() {
     if (process.env.DEBUG) {
       return (
-        process.env.DEBUG === '1' ||
-        (globalThis as any).DEBUG === '1' ||
+        truthy(process.env.DEBUG) ||
+        truthy((globalThis as any).DEBUG) ||
         this.name.includes(process.env.DEBUG || (globalThis as any).DEBUG)
       );
     }
