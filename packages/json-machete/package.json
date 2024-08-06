@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.7.5",
-    "cross-inspect": "1.0.0",
+    "cross-inspect": "1.0.1",
     "json-pointer": "0.6.2",
     "to-json-schema": "0.2.5",
     "url-join": "4.0.1"

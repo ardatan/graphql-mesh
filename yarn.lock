@@ -63,7 +63,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.11.2, @apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
+"@apollo/client@npm:3.11.3":
+  version: 3.11.3
+  resolution: "@apollo/client@npm:3.11.3"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@wry/caches": "npm:^1.0.0"
+    "@wry/equality": "npm:^0.5.6"
+    "@wry/trie": "npm:^0.5.0"
+    graphql-tag: "npm:^2.12.6"
+    hoist-non-react-statics: "npm:^3.3.2"
+    optimism: "npm:^0.18.0"
+    prop-types: "npm:^15.7.2"
+    rehackt: "npm:^0.1.0"
+    response-iterator: "npm:^0.2.6"
+    symbol-observable: "npm:^4.0.0"
+    ts-invariant: "npm:^0.10.3"
+    tslib: "npm:^2.3.0"
+    zen-observable-ts: "npm:^1.2.5"
+  peerDependencies:
+    graphql: ^15.0.0 || ^16.0.0
+    graphql-ws: ^5.5.5
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
+    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+  peerDependenciesMeta:
+    graphql-ws:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    subscriptions-transport-ws:
+      optional: true
+  checksum: 10c0/e7ad564bbb5aed4515df1bcf935aa54d6750e79969870a6893991e58ba0cb383c7aa527fcb5f51353032d8c5f897a74b9eb9665f13d260564ee2e56d8afcdba9
+  languageName: node
+  linkType: hard
+
+"@apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
   version: 3.11.2
   resolution: "@apollo/client@npm:3.11.2"
   dependencies:
@@ -4631,7 +4668,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:3.11.2"
+    "@apollo/client": "npm:3.11.3"
     "@testing-library/jest-dom": "npm:6.4.8"
     "@testing-library/react": "npm:16.0.0"
     "@testing-library/user-event": "npm:14.5.2"
@@ -5713,7 +5750,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:3.11.2"
+    "@apollo/client": "npm:3.11.3"
   peerDependencies:
     "@apollo/client": ^3.5.9
     "@graphql-mesh/runtime": ^0.100.8
@@ -7873,7 +7910,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.3.2, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3, @graphql-tools/utils@npm:^10.3.0, @graphql-tools/utils@npm:^10.3.2":
+"@graphql-tools/utils@npm:10.3.2":
   version: 10.3.2
   resolution: "@graphql-tools/utils@npm:10.3.2"
   dependencies:
@@ -7884,6 +7921,20 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/b154aa0cfac7fa56a5ffe09d4c56dd4651f50a8139d4010bebca48b62ffdce3a07727010a2d0c1a2263bdf35a6a937f402db0dcc5a8f06b7009b34a66d84c012
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/utils@npm:10.3.3, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3, @graphql-tools/utils@npm:^10.3.0, @graphql-tools/utils@npm:^10.3.2":
+  version: 10.3.3
+  resolution: "@graphql-tools/utils@npm:10.3.3"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    cross-inspect: "npm:1.0.1"
+    dset: "npm:^3.1.2"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/9ac73505a42a7eb0569c9abe665df43470c4f25f89526f77618cf3e8bed0b0ebb23623b6e153d83ba13885b410271892857de755d30527761ba77a8980e45d29
   languageName: node
   linkType: hard
 
@@ -9385,8 +9436,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^5.0.0":
-  version: 5.5.2
-  resolution: "@neo4j/graphql@npm:5.5.2"
+  version: 5.5.3
+  resolution: "@neo4j/graphql@npm:5.5.3"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -9407,7 +9458,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/e242a1048111f98f06084e17c6df3310952c50158baad03be5fe1a38b4093ff6e9957c760db45bdf5f5c0cbbb4b74fcda08a376f4f0dead44ef62f1011e50ca5
+  checksum: 10c0/991acd8915a9266efb054a0ec8c5d5e03d060f272e9140a7a2693cd6a4e1f244f597d16f9f19fd5a8750d9032ae29b17b05632a11a05f121c1da50a52aca4694
   languageName: node
   linkType: hard
 
@@ -9824,7 +9875,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
     "@graphql-tools/delegate": "npm:^10.0.17"
-    "@graphql-tools/utils": "npm:10.3.2"
+    "@graphql-tools/utils": "npm:10.3.3"
     "@omnigraph/json-schema": "npm:^0.103.2"
     "@whatwg-node/fetch": "npm:0.9.19"
     change-case: "npm:^4.1.2"
@@ -9911,7 +9962,7 @@ __metadata:
     "@graphql-mesh/transport-thrift": "npm:^0.4.7"
     "@graphql-mesh/types": "npm:^0.99.7"
     "@graphql-mesh/utils": "npm:^0.99.7"
-    "@graphql-tools/utils": "npm:10.3.2"
+    "@graphql-tools/utils": "npm:10.3.3"
     "@whatwg-node/fetch": "npm:^0.9.18"
     graphql-scalars: "npm:^1.22.4"
     thrift: "npm:^0.20.0"
@@ -9937,11 +9988,11 @@ __metadata:
   linkType: hard
 
 "@opentelemetry/auto-instrumentations-node@npm:^0.49.0":
-  version: 0.49.0
-  resolution: "@opentelemetry/auto-instrumentations-node@npm:0.49.0"
+  version: 0.49.1
+  resolution: "@opentelemetry/auto-instrumentations-node@npm:0.49.1"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.52.0"
-    "@opentelemetry/instrumentation-amqplib": "npm:^0.40.0"
+    "@opentelemetry/instrumentation-amqplib": "npm:^0.41.0"
     "@opentelemetry/instrumentation-aws-lambda": "npm:^0.43.0"
     "@opentelemetry/instrumentation-aws-sdk": "npm:^0.43.1"
     "@opentelemetry/instrumentation-bunyan": "npm:^0.40.0"
@@ -9980,7 +10031,7 @@ __metadata:
     "@opentelemetry/instrumentation-tedious": "npm:^0.12.0"
     "@opentelemetry/instrumentation-undici": "npm:^0.4.0"
     "@opentelemetry/instrumentation-winston": "npm:^0.39.0"
-    "@opentelemetry/resource-detector-alibaba-cloud": "npm:^0.28.10"
+    "@opentelemetry/resource-detector-alibaba-cloud": "npm:^0.29.0"
     "@opentelemetry/resource-detector-aws": "npm:^1.5.2"
     "@opentelemetry/resource-detector-azure": "npm:^0.2.9"
     "@opentelemetry/resource-detector-container": "npm:^0.3.11"
@@ -9989,7 +10040,7 @@ __metadata:
     "@opentelemetry/sdk-node": "npm:^0.52.0"
   peerDependencies:
     "@opentelemetry/api": ^1.4.1
-  checksum: 10c0/e23187e4f75dc57dfa2af42982f3ac4cd4329f9629007308f6f15a84178ef2d3744c5c40349c5eaeb85aa3baf94833fadf114f0a9b35d94fea6a242450ef87a2
+  checksum: 10c0/cbdada7dddab0d6b30a79301c07aa50c6b20984fd4a0b44870e3e849bbf37ecc3899f9b5e602268d65034fe02adabf2b069723b6ed47ea5f37f0365f5166fbdf
   languageName: node
   linkType: hard
 
@@ -10073,16 +10124,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/instrumentation-amqplib@npm:^0.40.0":
-  version: 0.40.0
-  resolution: "@opentelemetry/instrumentation-amqplib@npm:0.40.0"
+"@opentelemetry/instrumentation-amqplib@npm:^0.41.0":
+  version: 0.41.0
+  resolution: "@opentelemetry/instrumentation-amqplib@npm:0.41.0"
   dependencies:
     "@opentelemetry/core": "npm:^1.8.0"
     "@opentelemetry/instrumentation": "npm:^0.52.0"
     "@opentelemetry/semantic-conventions": "npm:^1.22.0"
   peerDependencies:
     "@opentelemetry/api": ^1.3.0
-  checksum: 10c0/d7a0db05519f29d6c4f28c60648e04923de8982d4796ba172da112d3a99c01db2f1af4a66ec44b0292d686ac5ba0567b273e69df1b6162a3ac1c45e1b809550d
+  checksum: 10c0/c54376907a8abc20e32a90c1d0b4dbc0a7b9a30e68e0fffb1e73eece4e7bc7cceef68ce931a21c3934f450ae7f3458a1f6a6bf4aa7ad31a0b259b3beba71944b
   languageName: node
   linkType: hard
 
@@ -10674,15 +10725,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/resource-detector-alibaba-cloud@npm:^0.28.10":
-  version: 0.28.10
-  resolution: "@opentelemetry/resource-detector-alibaba-cloud@npm:0.28.10"
+"@opentelemetry/resource-detector-alibaba-cloud@npm:^0.29.0":
+  version: 0.29.0
+  resolution: "@opentelemetry/resource-detector-alibaba-cloud@npm:0.29.0"
   dependencies:
     "@opentelemetry/resources": "npm:^1.0.0"
     "@opentelemetry/semantic-conventions": "npm:^1.22.0"
   peerDependencies:
     "@opentelemetry/api": ^1.0.0
-  checksum: 10c0/7d24f0ef4c2d3c32a02ced6b520eb3d31f62c39ca3d75d0371d11771ccc174664ecfe2c6839dc4955cca7c8491abe605d6a88830efefce8a8f9ed12f2ac59b75
+  checksum: 10c0/7bd308ff8ea5727041ae0659ee95926fc5ae65f042b9681dad975515985eba588b6c773d3774695ddeacfbdce20418b9d5abdbce24d0ab7626f2925ae622f085
   languageName: node
   linkType: hard
 
@@ -17297,6 +17348,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cross-inspect@npm:1.0.1":
+  version: 1.0.1
+  resolution: "cross-inspect@npm:1.0.1"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 10c0/2493ee47a801b46ede1c42ca6242b8d2059f7319b5baf23887bbaf46a6ea8e536d2e271d0990176c05092f67b32d084ffd8c93e7c1227eff4a06cceadb49af47
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^5.0.1, cross-spawn@npm:^5.1.0":
   version: 5.1.0
   resolution: "cross-spawn@npm:5.1.0"
@@ -19761,12 +19821,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-promise@npm:7.0.0":
-  version: 7.0.0
-  resolution: "eslint-plugin-promise@npm:7.0.0"
+"eslint-plugin-promise@npm:7.1.0":
+  version: 7.1.0
+  resolution: "eslint-plugin-promise@npm:7.1.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/9a9b5e057ed2d109aabe0d38f98142df0b02f555a2660fbacc58a7ea473f170dcd02ab2f88e514b7a4cbae314945343fbb26cdc04cd36d4f082bfcd6d5a2c650
+  checksum: 10c0/bbc3406139715dfa5f48d04f6d5b5e82f68929d954b0fa3821eb8cd6dc381b210512cedd2d874e5de5381005d316566f4ae046a4750ce3f5f5cbf28a14cc0ab2
   languageName: node
   linkType: hard
 
@@ -22020,7 +22080,7 @@ __metadata:
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.29.1"
     eslint-plugin-n: "npm:17.10.2"
-    eslint-plugin-promise: "npm:7.0.0"
+    eslint-plugin-promise: "npm:7.1.0"
     eslint-plugin-standard: "npm:5.0.0"
     globby: "npm:11.1.0"
     graphql: "npm:16.9.0"
@@ -25269,7 +25329,7 @@ __metadata:
   dependencies:
     "@json-schema-tools/meta-schema": "npm:1.7.5"
     "@types/json-pointer": "npm:1.0.34"
-    cross-inspect: "npm:1.0.0"
+    cross-inspect: "npm:1.0.1"
     json-pointer: "npm:0.6.2"
     to-json-schema: "npm:0.2.5"
     url-join: "npm:4.0.1"
