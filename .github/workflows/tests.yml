@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
@@ -93,7 +93,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
@@ -178,7 +178,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
@@ -259,7 +259,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
@@ -324,7 +324,7 @@ jobs:
           - 22
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
@@ -401,7 +401,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@v4
       - uses: the-guild-org/shared-config/setup@v1
         name: setup env
         with:
