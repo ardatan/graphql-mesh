@@ -5,7 +5,6 @@ const { compose, service, serve, container } = createTenv(__dirname);
 let petstore!: Container;
 beforeAll(async () => {
   petstore = await container({
-    pipeLogs: true,
     name: 'petstore',
     image: 'swaggerapi/petstore3:1.0.7',
     containerPort: 8080,

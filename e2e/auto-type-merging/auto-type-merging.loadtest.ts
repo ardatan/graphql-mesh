@@ -12,7 +12,6 @@ beforeAll(async () => {
     os.availableParallelism() - 2,
   );
   petstore = await container({
-    pipeLogs: true,
     name: 'petstore',
     image: 'swaggerapi/petstore3:1.0.7',
     containerPort: 8080,
