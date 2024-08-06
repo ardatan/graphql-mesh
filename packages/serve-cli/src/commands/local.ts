@@ -84,23 +84,21 @@ export const addCommand: AddCommand = ({ log }, cli) =>
             throw err;
           }
         }
+      }
 
-        //
-
-        if (cluster.isPrimary && config.fork > 1) {
-          const workers: Worker[] = [];
-          log.info(`Forking ${config.fork} workers`);
-          for (let i = 0; i < config.fork; i++) {
-            workers.push(cluster.fork());
-          }
-          registerTerminateHandler(eventName => {
-            log.info(`Killing workers for ${eventName}`);
-            workers.forEach((w, i) => {
-              w.kill(eventName);
-            });
-          });
-          return;
+      if (cluster.isPrimary && config.fork > 1) {
+        const workers: Worker[] = [];
+        log.info(`Forking ${config.fork} workers`);
+        for (let i = 0; i < config.fork; i++) {
+          workers.push(cluster.fork());
         }
+        registerTerminateHandler(eventName => {
+          log.info(`Killing workers for ${eventName}`);
+          workers.forEach((w, i) => {
+            w.kill(eventName);
+          });
+        });
+        return;
       }
 
       const runtime = createServeRuntime(config);
