@@ -1,4 +1,4 @@
-import neo4j from 'neo4j-driver';
+import neo4j, { type AuthToken } from 'neo4j-driver';
 
 export type Neo4JAuthOpts = Neo4JBasicAuth | Neo4JKerberosAuth | Neo4JBearerAuth | Neo4JCustomAuth;
 
@@ -28,7 +28,10 @@ export interface Neo4JCustomAuth {
   parameters?: any;
 }
 
-export function getAuthFromOpts(authOpts: Neo4JAuthOpts) {
+export function getAuthFromOpts(authOpts: Neo4JAuthOpts | null | undefined): AuthToken {
+  if (!authOpts) {
+    return { scheme: 'none', credentials: '' };
+  }
   switch (authOpts.type) {
     case 'basic':
       return neo4j.auth.basic(authOpts.username, authOpts.password, authOpts.realm);
