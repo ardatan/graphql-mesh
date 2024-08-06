@@ -55,6 +55,8 @@ export interface ProcOptions {
   /**
    * Pipe the logs from the spawned process to the current process.
    * Useful for debugging.
+   *
+   * @default boolEnv('DEBUG')
    */
   pipeLogs?: boolean;
   /**
@@ -248,7 +250,7 @@ export function createTenv(cwd: string): Tenv {
       let {
         port = await getAvailablePort(),
         supergraph,
-        pipeLogs = !!process.env['DEBUG'],
+        pipeLogs = boolEnv('DEBUG'),
         env,
         runner,
       } = opts || {};
@@ -359,7 +361,7 @@ export function createTenv(cwd: string): Tenv {
         services = [],
         trimHostPaths,
         maskServicePorts,
-        pipeLogs = !!process.env['DEBUG'],
+        pipeLogs = boolEnv('DEBUG'),
         env,
       } = opts || {};
       let output = '';
@@ -410,7 +412,7 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, output, result };
     },
-    async service(name, { port, servePort, pipeLogs = !!process.env['DEBUG'] } = {}) {
+    async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG') } = {}) {
       port ||= await getAvailablePort();
       const [proc, waitForExit] = await spawn(
         { cwd, pipeLogs },
@@ -444,7 +446,7 @@ export function createTenv(cwd: string): Tenv {
       hostPort,
       additionalContainerPorts: containerAdditionalPorts,
       healthcheck,
-      pipeLogs = !!process.env['DEBUG'],
+      pipeLogs = boolEnv('DEBUG'),
       cmd,
       volumes = [],
     }) {
@@ -650,7 +652,7 @@ interface SpawnOptions extends ProcOptions {
 }
 
 function spawn(
-  { cwd, pipeLogs = !!process.env['DEBUG'], env = {}, shell }: SpawnOptions,
+  { cwd, pipeLogs = boolEnv('DEBUG'), env = {}, shell }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<[proc: Proc, waitForExit: Promise<void>]> {
