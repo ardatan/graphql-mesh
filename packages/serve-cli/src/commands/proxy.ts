@@ -26,6 +26,8 @@ export const addCommand: AddCommand = ({ log }, cli) =>
         // TODO: make sure there are no other definitions like `hive` or `supergraph` or `subgraph`
       };
 
+      // TODO: fork
+
       log.info(`Proxying requests to ${config.proxy.endpoint}`);
 
       const runtime = createServeRuntime(config);
