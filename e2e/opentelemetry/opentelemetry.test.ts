@@ -80,6 +80,7 @@ describe('opentelemetry', () => {
     ]);
 
     jaeger = await container({
+      pipeLogs: true,
       name: 'jaeger',
       image: 'jaegertracing/all-in-one:1.56',
       env: {
