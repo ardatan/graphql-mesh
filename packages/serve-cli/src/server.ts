@@ -1,3 +1,4 @@
+import cluster, { Worker } from 'node:cluster';
 import { promises as fsPromises } from 'node:fs';
 import { createServer as createHTTPServer } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
@@ -7,6 +8,11 @@ import type { Logger } from '@graphql-mesh/types';
 import { createAsyncDisposable, getTerminateStack } from '@graphql-mesh/utils';
 
 export interface ServerConfig {
+  /**
+   * The amount of Node.js instances to run in order to
+   * distribute workloads among their application threads.
+   */
+  fork: number;
   /** Host to listen on. */
   host: string;
   /** Port to listen on. */
@@ -43,9 +49,28 @@ export async function startServerForRuntime<
   TContext extends Record<string, any> = Record<string, any>,
 >(
   runtime: MeshServeRuntime<TContext>,
-  { log, host, port, sslCredentials, maxHeaderSize = 16_384 }: ServerForRuntimeOptions,
+  { log, fork, host, port, sslCredentials, maxHeaderSize = 16_384 }: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
   const terminateStack = getTerminateStack();
+
+  if (cluster.isPrimary && fork > 1) {
+    const workers: Worker[] = [];
+    log.info(`Forking ${fork} server workers`);
+    for (let i = 0; i < fork; i++) {
+      log.info(`Forking server worker #${i}`);
+      workers.push(cluster.fork());
+    }
+    return terminateStack.use({
+      [Symbol.asyncDispose]() {
+        workers.forEach((w, i) => {
+          log.info(`Killing server worker #${i}`);
+          w.kill();
+        });
+        return Promise.resolve();
+      },
+    });
+  }
+
   terminateStack.use(runtime);
   process.on('message', message => {
     if (message === 'invalidateUnifiedGraph') {
@@ -65,6 +90,7 @@ export async function startServerForRuntime<
   const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
   const server = await startServer(runtime, {
     log,
+    fork,
     host,
     port,
     sslCredentials,
