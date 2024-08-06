@@ -490,14 +490,16 @@ export function createTenv(cwd: string): Tenv {
               imageStream,
               (err, res) => (err ? reject(err) : resolve(res)),
               pipeLogs
-                ? ({ stream }) => {
-                    if (stream) {
-                      process.stderr.write(String(stream));
-                    }
+                ? e => {
+                    process.stderr.write(JSON.stringify(e));
                   }
                 : undefined,
             );
           });
+        } else {
+          if (pipeLogs) {
+            process.stderr.write(`Image "${image}" exists, pull skipped`);
+          }
         }
       }
 
