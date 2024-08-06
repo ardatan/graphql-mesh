@@ -29,6 +29,10 @@ export const addCommand: AddCommand = ({ log }, cli) =>
           ...loadedConfig['proxy'],
           endpoint,
         },
+        hive: {
+          ...loadedConfig['hive'],
+          token: opts.hiveRegistryToken || loadedConfig['hive']?.['token'],
+        },
         // TODO: make sure there are no other definitions like `hive` or `supergraph` or `subgraph`
       };
 
