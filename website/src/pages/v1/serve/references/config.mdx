@@ -169,9 +169,9 @@ export const serveConfig = defineConfig({
 ```
 
 <Callout>
-  By default, Mesh Serve introspects the schema from the endpoint. And it fails, it skips the
-  validation and schema aware features. But if you have configured Hive CDN endpoint and key in the
-  configuration, Mesh Serve will fetch the schema from the Hive CDN.
+By default, Mesh Serve introspects the schema from the endpoint. And it fails, it skips the
+validation and schema aware features. But if Hive CDN endpoint and key have been provided in the
+configuration, Mesh Serve will fetch the schema from the Hive CDN.
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
