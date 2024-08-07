@@ -83,6 +83,24 @@ jobs:
             ```
             ghcr.io/ardatan/mesh-serve:${{ steps.ver-mesh-serve.outputs.result }}
             ```
+
+  package-node-sea-github-comment-progress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Initialize PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: 'Node Sea Artifacts Status'
+          message: |
+            The build artifacts for various platforms are being generated:
+            | Platform               | Architecture | Status         |
+            |------------------------|--------------|----------------|
+            | Ubuntu (latest)        | x86_64       | ⏳ In Progress |
+            | Ubuntu (latest)        | arm64        | ⏳ In Progress |
+            | macOS (latest)         | x86_64       | ⏳ In Progress |
+            | macOS (latest)         | arm64        | ⏳ In Progress |
+            | Windows (latest)       | x86_64       | ⏳ In Progress |
+
   package-node-sea:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -118,3 +136,23 @@ jobs:
         with:
           name: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
           path: packages/serve-cli/graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
+
+      - name: Update PR comment with artifact link
+        run: |
+          COMMENT=$(cat pr-body.txt)
+          NEW_COMMENT="| $TARGET_OS | $TARGET_ARCH | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts?name=$ARTIFACT_NAME) |"
+          # Check if the line for the specific target is already present
+          if grep -q "| $TARGET_OS | $TARGET_ARCH |" <<< "$COMMENT"; then
+            # Replace the in-progress line with the new download link
+            UPDATED_COMMENT=$(echo "$COMMENT" | sed "s/| $TARGET_OS | $TARGET_ARCH | .* |/$NEW_COMMENT/")
+          else
+            # Append the new line
+            UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| Windows (latest) | x86_64 | ⏳ In Progress |/a $NEW_COMMENT")
+          fi
+          # Update the PR comment
+          echo "$UPDATED_COMMENT" | gh pr comment ${{ github.event.pull_request.number }} --body -
+        env:
+          TARGET_OS: ${{ matrix.os }}
+          TARGET_ARCH: ${{ matrix.arch }}
+          ARTIFACT_NAME: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
