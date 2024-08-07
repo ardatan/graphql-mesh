@@ -158,7 +158,5 @@ jobs:
       - name: Update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: 'Build Artifacts Status'
+          header: 'Node Sea Artifacts Status'
           message: ${{ steps.update_comment.outputs.comment }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
