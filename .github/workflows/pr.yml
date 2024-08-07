@@ -161,4 +161,6 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: 'Node Sea Artifacts Status'
-          message: ${{ steps.update_comment.outputs.comment }}
+          path: updated_comment.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
