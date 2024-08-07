@@ -108,6 +108,10 @@ jobs:
       - name: generate landing page
         run: yarn workspace @graphql-mesh/serve-runtime generate-landing-page-html
 
+      - name: Build the project
+        working-directory: ./packages/serve-cli
+        run: yarn bundle-binary
+
       - name: Package for ${{ matrix.os }} ${{ matrix.arch }}
         if: matrix.arch == 'x86_64' || matrix.os == 'macos-latest-large'
         working-directory: ./packages/serve-cli
