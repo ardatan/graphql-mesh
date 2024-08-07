@@ -1,19 +1,19 @@
-import type { ExecutionArgs } from 'graphql';
+import type { execute, ExecutionArgs, subscribe } from 'graphql';
+import type { useServer } from 'graphql-ws/lib/use/ws';
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import type { normalizedExecutor } from '@graphql-tools/executor';
 
 export function getGraphQLWSOptions(getBuiltMesh: () => Promise<MeshInstance>) {
   // yoga's envelop may augment the `execute` and `subscribe` operations
   // so we need to make sure we always use the freshest instance
   type EnvelopedExecutionArgs = ExecutionArgs & {
     rootValue: {
-      execute: typeof normalizedExecutor;
-      subscribe: typeof normalizedExecutor;
+      execute: typeof execute;
+      subscribe: typeof subscribe;
     };
   };
   return {
-    execute: args => (args as EnvelopedExecutionArgs).rootValue.execute(args),
-    subscribe: args => (args as EnvelopedExecutionArgs).rootValue.subscribe(args),
+    execute: (args: EnvelopedExecutionArgs) => args.rootValue.execute(args),
+    subscribe: (args: EnvelopedExecutionArgs) => args.rootValue.subscribe(args),
     onSubscribe: async (ctx, msg) => {
       const { getEnveloped } = await getBuiltMesh();
       const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped(ctx);
@@ -34,5 +34,5 @@ export function getGraphQLWSOptions(getBuiltMesh: () => Promise<MeshInstance>) {
       if (errors.length) return errors;
       return args;
     },
-  };
+  } as Parameters<typeof useServer>[0];
 }
