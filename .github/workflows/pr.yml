@@ -114,11 +114,19 @@ jobs:
         working-directory: ./packages/serve-cli
         run: ./bundle.sh ${{ matrix.os }} ${{ matrix.arch }}
 
+      - name: Set artifact name and path
+        id: set-artifact
+        run: |
+          ARTIFACT_DIR=$(find packages/serve-cli -type d -name "graphql-mesh-${{ matrix.arch }}-*")
+          ARTIFACT_NAME=$(basename "$ARTIFACT_DIR")
+          echo "::set-output name=artifact_name::$ARTIFACT_NAME"
+          echo "::set-output name=artifact_path::$ARTIFACT_DIR"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
-          path: packages/serve-cli/graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
+          name: ${{ steps.set-artifact.outputs.artifact_name }}
+          path: ${{ steps.set-artifact.outputs.artifact_path }}
 
       - name: Update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
