@@ -136,9 +136,7 @@ jobs:
             The build artifacts of `mesh-serve` as a single executable for various platforms:
             | Platform               | Status         |
             |------------------------|----------------|
-            | Ubuntu (x86_64)        | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-x86_64-ubuntu-latest) |
-            | Ubuntu (arm64)         | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-arm64-ubuntu-latest) |
-            | macOS (x86_64)         | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-x86_64-macos-latest) |
-            | macOS (arm64)          | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-arm64-macos-latest) |
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            | Ubuntu (x86_64)        | [Download](${{ steps.upload_artifact.outputs.artifact-download-url }}) |
+            | Ubuntu (arm64)         | [Download](${{ steps.upload_artifact.outputs.artifact-download-url }}) |
+            | macOS (x86_64)         | [Download](${{ steps.upload_artifact.outputs.artifact-download-url }}) |
+            | macOS (arm64)          | [Download](${{ steps.upload_artifact.outputs.artifact-download-url }}) |
