@@ -154,6 +154,8 @@ jobs:
             UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| Windows (latest) | x86_64 | ⏳ In Progress |/a $NEW_COMMENT")
           fi
           echo "$UPDATED_COMMENT" > updated_comment.md
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
