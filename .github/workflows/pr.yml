@@ -121,11 +121,16 @@ jobs:
         if: matrix.arch == 'aarch64' && matrix.os == 'ubuntu-latest'
         run: |
           docker run --rm \
+            --privileged \
             -v $(pwd):/workspace \
             -w /workspace/packages/serve-cli \
+            multiarch/qemu-user-static --reset -p yes
+          docker run --rm \
             --platform linux/arm64 \
+            -v $(pwd):/workspace \
+            -w /workspace/packages/serve-cli \
             ubuntu:latest \
-            ./bundle.sh ubuntu-latest aarch64
+            /bin/bash -c "apt-get update && apt-get install -y qemu binfmt-support qemu-user-static && ./bundle.sh ubuntu-latest aarch64"
 
       - name: Set artifact name and path
         id: set-artifact
