@@ -143,16 +143,19 @@ jobs:
           TARGET_ARCH=${{ matrix.arch }}
           ARTIFACT_NAME=graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
           COMMENT=$(gh pr view ${{ github.event.pull_request.number }} --json comments -q '.comments[] | select(.author.login == "github-actions[bot]") | select(.body | startswith("Node Sea Artifacts Status")).body')
+          echo "Original Comment: $COMMENT"
           NEW_COMMENT="| $TARGET_OS | $TARGET_ARCH | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts?name=$ARTIFACT_NAME) |"
+          echo "New Comment Line: $NEW_COMMENT"
           # Check if the line for the specific target is already present
           if grep -q "| $TARGET_OS | $TARGET_ARCH |" <<< "$COMMENT"; then
             # Replace the in-progress line with the new download link
             UPDATED_COMMENT=$(echo "$COMMENT" | sed "s/| $TARGET_OS | $TARGET_ARCH | .* |/$NEW_COMMENT/")
           else
-            # Append the new line without Windows
+            # Append the new line
             UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| macOS (latest) | arm64 | ⏳ In Progress |/a\\
             $NEW_COMMENT")
           fi
+          echo "Updated Comment: $UPDATED_COMMENT"
           echo "$UPDATED_COMMENT" > updated_comment.md
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
