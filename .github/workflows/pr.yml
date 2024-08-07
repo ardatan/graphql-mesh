@@ -137,9 +137,13 @@ jobs:
           name: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
           path: packages/serve-cli/graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
 
-      - name: Update PR comment with artifact link
+      - name: Generate updated comment
+        id: update_comment
         run: |
-          COMMENT=$(cat pr-body.txt)
+          TARGET_OS=${{ matrix.os }}
+          TARGET_ARCH=${{ matrix.arch }}
+          ARTIFACT_NAME=graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
+          COMMENT=$(gh pr view ${{ github.event.pull_request.number }} --json body -q .body)
           NEW_COMMENT="| $TARGET_OS | $TARGET_ARCH | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts?name=$ARTIFACT_NAME) |"
           # Check if the line for the specific target is already present
           if grep -q "| $TARGET_OS | $TARGET_ARCH |" <<< "$COMMENT"; then
@@ -149,10 +153,12 @@ jobs:
             # Append the new line
             UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| Windows (latest) | x86_64 | ⏳ In Progress |/a $NEW_COMMENT")
           fi
-          # Update the PR comment
-          echo "$UPDATED_COMMENT" | gh pr comment ${{ github.event.pull_request.number }} --body -
+          echo "$UPDATED_COMMENT" > updated_comment.md
+
+      - name: Update PR comment with artifact link
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: 'Build Artifacts Status'
+          message: ${{ steps.update_comment.outputs.comment }}
         env:
-          TARGET_OS: ${{ matrix.os }}
-          TARGET_ARCH: ${{ matrix.arch }}
-          ARTIFACT_NAME: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
