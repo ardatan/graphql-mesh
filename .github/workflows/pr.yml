@@ -136,7 +136,9 @@ jobs:
             The build artifacts of `mesh-serve` as a single executable for various platforms:
             | Platform               | Status         |
             |------------------------|----------------|
-            | Ubuntu (x86_64)        | [Download](${{ steps.upload_artifact.outputs.artifact-download-url }}) |
-            | Ubuntu (arm64)         | [Download](${{ steps.upload_artifact.outputs.artifact-download-url }}) |
-            | macOS (x86_64)         | [Download](${{ steps.upload_artifact.outputs.artifact-download-url }}) |
-            | macOS (arm64)          | [Download](${{ steps.upload_artifact.outputs.artifact-download-url }}) |
+            | Ubuntu (x86_64)        | [Download](${{ steps.upload_artifact.outputs['artifact-url'] }}) |
+            | Ubuntu (arm64)         | [Download](${{ steps.upload_artifact.outputs['artifact-url'] }}) |
+            | macOS (x86_64)         | [Download](${{ steps.upload_artifact.outputs['artifact-url'] }}) |
+            | macOS (arm64)          | [Download](${{ steps.upload_artifact.outputs['artifact-url'] }}) |
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
