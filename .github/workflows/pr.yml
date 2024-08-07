@@ -123,7 +123,7 @@ jobs:
           echo "::set-output name=artifact_path::$ARTIFACT_DIR"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.set-artifact.outputs.artifact_name }}
           path: ${{ steps.set-artifact.outputs.artifact_path }}
