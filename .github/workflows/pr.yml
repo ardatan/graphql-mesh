@@ -151,11 +151,12 @@ jobs:
             UPDATED_COMMENT=$(echo "$COMMENT" | sed "s/| $TARGET_OS | $TARGET_ARCH | .* |/$NEW_COMMENT/")
           else
             # Append the new line
-            UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| Windows (latest) | x86_64 | ⏳ In Progress |/a $NEW_COMMENT")
+            UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| Windows (latest) | x86_64 | ⏳ In Progress |/a\\
+            $NEW_COMMENT")
           fi
           echo "$UPDATED_COMMENT" > updated_comment.md
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
