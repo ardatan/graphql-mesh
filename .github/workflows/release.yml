@@ -120,7 +120,10 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace/packages/serve-cli \
             ubuntu:latest \
-            /bin/bash -c "apt-get update && apt-get install -y build-essential && ./bundle.sh ubuntu-latest aarch64"
+            /bin/bash -c "apt-get update && apt-get install -y build-essential curl && \
+            curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+            apt-get install -y nodejs && \
+            ./bundle.sh ubuntu-latest aarch64"
 
       - name: Set artifact name and path
         id: set-artifact
