@@ -1,8 +1,10 @@
 import { setTimeout } from 'timers/promises';
-import { execute, parse } from 'graphql';
+import { parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import RateLimitTransform from '../src/index.js';
 
@@ -67,7 +69,7 @@ describe('Rate Limit Transform', () => {
       }
     `;
     const executeQuery = () =>
-      execute({
+      normalizedExecutor({
         schema: wrappedSchema,
         document: parse(query),
         contextValue: {
@@ -84,6 +86,9 @@ describe('Rate Limit Transform', () => {
       });
     }
     const result = await executeQuery();
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
 
     // Resolver shouldn't be called
     expect(numberOfCalls).toBe(5);
@@ -132,7 +137,7 @@ describe('Rate Limit Transform', () => {
       }
     `;
     const executeQuery = () =>
-      execute({
+      normalizedExecutor({
         schema: wrappedSchema,
         document: parse(query),
         contextValue: {
@@ -151,6 +156,9 @@ describe('Rate Limit Transform', () => {
     await setTimeout(1000);
     const result = await executeQuery();
 
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(result.errors?.length).toBeFalsy();
     expect(result.data?.foo).toBe('bar');
   });
@@ -196,7 +204,7 @@ describe('Rate Limit Transform', () => {
 
     for (let i = 0; i < 2; i++) {
       const executeQuery = () =>
-        execute({
+        normalizedExecutor({
           schema: wrappedSchema,
           document: parse(query),
           contextValue: {
@@ -211,13 +219,16 @@ describe('Rate Limit Transform', () => {
         },
       });
 
-      const resultFails = await execute({
+      const resultFails = await normalizedExecutor({
         schema: wrappedSchema,
         document: parse(query),
         contextValue: {
           userId: `User${i}`,
         },
       });
+      if (isAsyncIterable(resultFails)) {
+        throw new Error('Result should not be an async iterable');
+      }
 
       expect(resultFails.data?.foo).toBeNull();
       const firstError = resultFails.errors?.[0];
@@ -267,7 +278,7 @@ describe('Rate Limit Transform', () => {
     });
 
     const executeQuery = () =>
-      execute({
+      normalizedExecutor({
         schema: wrappedSchema,
         document: parse(/* GraphQL */ `
           query TestQuery {
@@ -282,6 +293,9 @@ describe('Rate Limit Transform', () => {
 
     await executeQuery();
     const result = await executeQuery();
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(result.data.bar).toBe('BAR');
     expect(result.errors?.[0]?.message).toBe(`Rate limit of "Query.foo" exceeded for "MYUSER"`);
   });

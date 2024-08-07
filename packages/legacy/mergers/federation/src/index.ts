@@ -1,5 +1,5 @@
 import type { DocumentNode, ExecutionResult, GraphQLSchema } from 'graphql';
-import { execute, extendSchema, parse } from 'graphql';
+import { extendSchema, parse } from 'graphql';
 import { ApolloGateway, LocalGraphQLDataSource, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
 import { process } from '@graphql-mesh/cross-helpers';
 import type { MeshStore } from '@graphql-mesh/store';
@@ -14,9 +14,10 @@ import type {
   RawSourceOutput,
 } from '@graphql-mesh/types';
 import { printWithCache } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import type { ExecutionRequest } from '@graphql-tools/utils';
-import { asArray, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { asArray, isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 export default class FederationMerger implements MeshMerger {
@@ -46,10 +47,13 @@ export default class FederationMerger implements MeshMerger {
           .proxy(`${rawSource.name}_sdl`, PredefinedProxyOptions.StringWithoutValidation)
           .getWithSet(async () => {
             this.logger.debug(`Fetching Apollo Federated Service SDL for ${rawSource.name}`);
-            const sdlQueryResult: any = await execute({
+            const sdlQueryResult = await normalizedExecutor({
               schema: transformedSchema,
               document: parse(SERVICE_DEFINITION_QUERY),
             });
+            if (isAsyncIterable(sdlQueryResult)) {
+              throw new Error('Expected a result, but got an async iterable');
+            }
             if (sdlQueryResult.errors?.length) {
               throw new AggregateError(
                 sdlQueryResult.errors,

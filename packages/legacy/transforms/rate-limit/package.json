@@ -35,7 +35,7 @@
     "@graphql-mesh/cross-helpers": "^0.4.4",
     "@graphql-mesh/types": "^0.99.7",
     "@graphql-mesh/utils": "^0.99.7",
-    "@graphql-tools/utils": "^10.2.3",
+    "@graphql-tools/utils": "^10.3.4",
     "graphql": "*",
     "tslib": "^2.4.0"
   },

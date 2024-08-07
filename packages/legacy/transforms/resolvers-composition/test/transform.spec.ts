@@ -1,8 +1,10 @@
 import { join } from 'path';
-import { execute, parse } from 'graphql';
+import { parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import ResolversCompositionTransform, { type ResolversComposition } from '../src/index.js';
 
 describe('transform', () => {
@@ -36,7 +38,7 @@ describe('transform', () => {
       },
     });
     const transformedSchema = transform.transformSchema(schema);
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -44,6 +46,9 @@ describe('transform', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Unexpected AsyncIterable');
+    }
     expect(result.data?.foo).toBe('FOO');
   });
   it('should handle composition functions from functions', async () => {
@@ -75,7 +80,7 @@ describe('transform', () => {
       },
     });
     const transformedSchema = transform.transformSchema(schema);
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -83,6 +88,9 @@ describe('transform', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Unexpected AsyncIterable');
+    }
     expect(result.data?.foo).toBe('FOO');
   });
 });

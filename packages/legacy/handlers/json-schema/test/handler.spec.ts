@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { execute, parse } from 'graphql';
+import { parse } from 'graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, DefaultLogger, getHeadersObj, PubSub } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { Headers, Response } from '@whatwg-node/fetch';
 import JsonSchemaHandler from '../src/index.js';
 
@@ -62,7 +63,7 @@ describe('JSON Schema Handler', () => {
       }
     `;
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(query),
     });

@@ -282,9 +282,8 @@ export function wrapExecutorWithHooks({
                 return currentResult;
               }
 
-              const asyncIterator = currentResult[Symbol.asyncIterator]();
               return mapAsyncIterator(
-                asyncIterator,
+                currentResult,
                 currentResult =>
                   mapMaybePromise(
                     iterateAsync(onNextHooks, onNext =>

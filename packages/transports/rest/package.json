@@ -36,7 +36,7 @@
     "@graphql-mesh/transport-common": "^0.4.7",
     "@graphql-mesh/types": "^0.99.7",
     "@graphql-mesh/utils": "^0.99.7",
-    "@graphql-tools/utils": "^10.2.3",
+    "@graphql-tools/utils": "^10.3.4",
     "@whatwg-node/fetch": "^0.9.15",
     "graphql": "*",
     "tslib": "^2.4.0"

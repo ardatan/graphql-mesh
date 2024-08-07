@@ -1,10 +1,11 @@
-import { execute, getIntrospectionQuery, parse, subscribe } from 'graphql';
+import { getIntrospectionQuery, parse } from 'graphql';
 import { envelop } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { useSubschema } from '@graphql-mesh/runtime';
 import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { Subschema } from '@graphql-tools/delegate';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
@@ -128,11 +129,14 @@ describe('encapsulate', () => {
   });
 
   it('should execute queries the same way and preserve execution flow', async () => {
-    const { data: resultBefore } = await execute({
+    const resultBefore = await normalizedExecutor({
       schema,
       document: parse(`{ getSomething }`),
     });
-    expect(resultBefore.getSomething).toBe('boop');
+    if (isAsyncIterable(resultBefore)) {
+      throw new Error('Query did not return ExecutionResult');
+    }
+    expect(resultBefore.data.getSomething).toBe('boop');
 
     const newSchema = wrapSchema({
       schema,
@@ -149,20 +153,27 @@ describe('encapsulate', () => {
       ],
     });
 
-    const { data: resultAfter }: any = await execute({
+    const resultAfter = await normalizedExecutor({
       schema: newSchema,
       document: parse(`{ test { getSomething } }`),
     });
 
-    expect(resultAfter.test.getSomething).toBe('boop');
+    if (isAsyncIterable(resultAfter)) {
+      throw new Error('Query did not return ExecutionResult');
+    }
+
+    expect(resultAfter.data.test.getSomething).toBe('boop');
   });
 
   it('should execute mutations the same way and preserve execution flow', async () => {
-    const { data: resultBefore } = await execute({
+    const resultBefore = await normalizedExecutor({
       schema,
       document: parse(`mutation { doSomething }`),
     });
-    expect(resultBefore.doSomething).toBe('noop');
+    if (isAsyncIterable(resultBefore)) {
+      throw new Error('Query did not return ExecutionResult');
+    }
+    expect(resultBefore.data.doSomething).toBe('noop');
 
     const newSchema = wrapSchema({
       schema,
@@ -179,7 +190,7 @@ describe('encapsulate', () => {
       ],
     });
 
-    const { data: resultAfter }: any = await execute({
+    const { data: resultAfter }: any = await normalizedExecutor({
       schema: newSchema,
       document: parse(`mutation { test { doSomething } }`),
     });
@@ -217,12 +228,15 @@ describe('encapsulate', () => {
       ],
     });
 
-    const { data } = await execute({
+    const result = await normalizedExecutor({
       schema: newSchema,
       document: parse(getIntrospectionQuery()),
     });
 
-    expect(data).not.toBeNull();
+    if (isAsyncIterable(result)) {
+      throw new Error('Query did not return ExecutionResult');
+    }
+    expect(result.data).not.toBeNull();
   });
 
   const customSchema = makeExecutableSchema({
@@ -353,7 +367,7 @@ describe('encapsulate', () => {
       ],
     });
 
-    const result = (await subscribe({
+    const result = await normalizedExecutor({
       schema: newSchema,
       document: parse(/* GraphQL */ `
         subscription {
@@ -362,7 +376,7 @@ describe('encapsulate', () => {
           }
         }
       `),
-    })) as AsyncIterable<any>;
+    });
 
     if (!isAsyncIterable<any>(result)) {
       throw new Error('Subscription did not return AsyncIterable');

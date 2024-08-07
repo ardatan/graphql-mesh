@@ -33,7 +33,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/types": "^0.99.7",
-    "@graphql-tools/utils": "^10.2.3",
+    "@graphql-tools/utils": "^10.3.4",
     "graphql": "*",
     "tslib": "^2.4.0"
   },

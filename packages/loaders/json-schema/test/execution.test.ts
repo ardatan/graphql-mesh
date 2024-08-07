@@ -1,5 +1,6 @@
-import { execute, OperationTypeNode, parse } from 'graphql';
+import { OperationTypeNode, parse } from 'graphql';
 import { getHeadersObj } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { Request, Response } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromJSONSchemas from '../src/index.js';
 
@@ -50,7 +51,7 @@ describe('Execution', () => {
       }
     `;
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(query),
       contextValue: {
@@ -66,7 +67,7 @@ describe('Execution', () => {
       },
     });
 
-    const result2 = await execute({
+    const result2 = await normalizedExecutor({
       schema,
       document: parse(query),
       contextValue: {},
@@ -132,7 +133,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -198,7 +199,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -266,7 +267,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -334,7 +335,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -402,7 +403,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -458,7 +459,7 @@ describe('Execution', () => {
         }
       `;
 
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -511,7 +512,7 @@ describe('Execution', () => {
         }
       `;
 
-      await execute({
+      await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -538,7 +539,7 @@ describe('Execution', () => {
         getTest
       }
     `;
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(query),
     });

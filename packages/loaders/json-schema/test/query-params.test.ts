@@ -1,4 +1,5 @@
-import { execute, OperationTypeNode, parse } from 'graphql';
+import { OperationTypeNode, parse } from 'graphql';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
@@ -23,7 +24,7 @@ describe('Query Params', () => {
       },
     });
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot('queryParamsSample');
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(/* GraphQL */ `
         query {
@@ -31,7 +32,6 @@ describe('Query Params', () => {
         }
       `),
     });
-    expect(result.errors).toBeUndefined();
     expect(result).toEqual({
       data: {
         test: 'foo:bar=baz',

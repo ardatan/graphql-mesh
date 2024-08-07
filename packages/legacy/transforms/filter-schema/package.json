@@ -34,12 +34,12 @@
   "peerDependencies": {
     "@graphql-mesh/types": "^0.99.7",
     "@graphql-mesh/utils": "^0.99.7",
-    "@graphql-tools/utils": "^10.2.3",
+    "@graphql-tools/utils": "^10.3.4",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.17",
+    "@graphql-tools/delegate": "^10.0.18",
     "@graphql-tools/wrap": "^10.0.5",
     "minimatch": "^10.0.0"
   },

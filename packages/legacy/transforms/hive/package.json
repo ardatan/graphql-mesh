@@ -34,7 +34,7 @@
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.4",
     "@graphql-mesh/types": "^0.99.7",
-    "@graphql-tools/utils": "^10.2.3",
+    "@graphql-tools/utils": "^10.3.4",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
@@ -42,7 +42,7 @@
     "@graphql-hive/core": "^0.6.0",
     "@graphql-hive/yoga": "^0.34.0",
     "@graphql-mesh/string-interpolation": "^0.5.5",
-    "@graphql-tools/delegate": "^10.0.17"
+    "@graphql-tools/delegate": "^10.0.18"
   },
   "publishConfig": {
     "access": "public",

@@ -38,8 +38,8 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.1",
-    "@graphql-tools/delegate": "^10.0.17",
-    "@graphql-tools/utils": "^10.2.3"
+    "@graphql-tools/delegate": "^10.0.18",
+    "@graphql-tools/utils": "^10.3.4"
   },
   "publishConfig": {
     "access": "public",
