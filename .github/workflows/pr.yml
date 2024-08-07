@@ -97,22 +97,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: yarn
+          node-version-file: .node-version
 
       - name: Build the project
-        run: yarn build
+        working-directory: ./packages/serve-cli
+        run: yarn bundle-binary
 
       - name: Package for ${{ matrix.os }} ${{ matrix.arch }}
+        working-directory: ./packages/serve-cli
         run: ./bundle.sh ${{ matrix.os }} ${{ matrix.arch }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
-          path: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
+          path: packages/serve-cli/graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
