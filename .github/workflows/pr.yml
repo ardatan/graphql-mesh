@@ -120,33 +120,17 @@ jobs:
           name: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
           path: packages/serve-cli/graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
 
-      - name: Generate updated comment
-        id: update_comment
-        run: |
-          TARGET_OS=${{ matrix.os }}
-          TARGET_ARCH=${{ matrix.arch }}
-          ARTIFACT_NAME=graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
-          COMMENT=$(gh pr view ${{ github.event.pull_request.number }} --json comments -q '.comments[] | select(.author.login == "github-actions[bot]") | select(.body | startswith("Node Sea Artifacts Status")).body')
-          echo "Original Comment: $COMMENT"
-          NEW_COMMENT="| $TARGET_OS | $TARGET_ARCH | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts?name=$ARTIFACT_NAME) |"
-          echo "New Comment Line: $NEW_COMMENT"
-          # Check if the line for the specific target is already present
-          if grep -q "| $TARGET_OS | $TARGET_ARCH |" <<< "$COMMENT"; then
-            # Replace the in-progress line with the new download link
-            UPDATED_COMMENT=$(echo "$COMMENT" | sed "s/| $TARGET_OS | $TARGET_ARCH | .* |/$NEW_COMMENT/")
-          else
-            # Append the new line
-            UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| macOS (latest) | arm64 | ⏳ In Progress |/a\\
-            $NEW_COMMENT")
-          fi
-          echo "::set-output name=comment::$(echo "$UPDATED_COMMENT" | jq -R -s .)"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: 'Node Sea Artifacts Status'
-          message: ${{ steps.update_comment.outputs.comment }}
+          message: |
+            The build artifacts for various platforms are being generated:
+            | Platform               | Status         |
+            |------------------------|----------------|
+            | Ubuntu (x86_64)        | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-x86_64-ubuntu-latest) |
+            | Ubuntu (arm64)         | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-arm64-ubuntu-latest) |
+            | macOS (x86_64)         | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-x86_64-macos-latest) |
+            | macOS (arm64)          | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-arm64-macos-latest) |
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
