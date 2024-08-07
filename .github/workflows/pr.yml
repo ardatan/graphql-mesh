@@ -99,17 +99,16 @@ jobs:
             | Ubuntu (latest)        | arm64        | ⏳ In Progress |
             | macOS (latest)         | x86_64       | ⏳ In Progress |
             | macOS (latest)         | arm64        | ⏳ In Progress |
-            | Windows (latest)       | x86_64       | ⏳ In Progress |
 
   package-node-sea:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         arch: [x86_64, arm64]
-        exclude:
-          - os: windows-latest
-            arch: arm64 # exclude Windows from ARM64
+        # exclude:
+        #   - os: windows-latest
+        #     arch: arm64 # exclude Windows from ARM64
 
     steps:
       - name: Checkout code
@@ -150,8 +149,8 @@ jobs:
             # Replace the in-progress line with the new download link
             UPDATED_COMMENT=$(echo "$COMMENT" | sed "s/| $TARGET_OS | $TARGET_ARCH | .* |/$NEW_COMMENT/")
           else
-            # Append the new line
-            UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| Windows (latest) | x86_64 | ⏳ In Progress |/a\\
+            # Append the new line without Windows
+            UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| macOS (latest) | arm64 | ⏳ In Progress |/a\\
             $NEW_COMMENT")
           fi
           echo "$UPDATED_COMMENT" > updated_comment.md
