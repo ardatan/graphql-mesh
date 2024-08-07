@@ -143,7 +143,7 @@ jobs:
           TARGET_OS=${{ matrix.os }}
           TARGET_ARCH=${{ matrix.arch }}
           ARTIFACT_NAME=graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
-          COMMENT=$(gh pr view ${{ github.event.pull_request.number }} --json body -q .body)
+          COMMENT=$(gh pr view ${{ github.event.pull_request.number }} --json comments -q '.comments[] | select(.author.login == "github-actions[bot]") | select(.body | startswith("Node Sea Artifacts Status")).body')
           NEW_COMMENT="| $TARGET_OS | $TARGET_ARCH | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts?name=$ARTIFACT_NAME) |"
           # Check if the line for the specific target is already present
           if grep -q "| $TARGET_OS | $TARGET_ARCH |" <<< "$COMMENT"; then
