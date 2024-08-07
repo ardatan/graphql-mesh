@@ -1,5 +1,6 @@
 /* eslint-disable import/no-nodejs-modules */
-import { execute, parse } from 'graphql';
+import { parse } from 'graphql';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { exampleApi } from './example_api_server.js';
 
@@ -32,7 +33,7 @@ describe('OpenAPI Loader: Authentication', () => {
       fetch: exampleApi.fetch as any,
     });
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: createdSchema,
       document: parse(query),
     });
@@ -65,7 +66,7 @@ describe('OpenAPI Loader: Authentication', () => {
       fetch: exampleApi.fetch as any,
     });
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: createdSchema,
       document: parse(query),
     });
@@ -98,7 +99,7 @@ describe('OpenAPI Loader: Authentication', () => {
       fetch: exampleApi.fetch as any,
     });
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: createdSchema,
       document: parse(query),
     });
@@ -131,7 +132,7 @@ describe('OpenAPI Loader: Authentication', () => {
       fetch: exampleApi.fetch as any,
     });
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: createdSchema,
       document: parse(query),
     });

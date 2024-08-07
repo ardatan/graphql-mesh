@@ -1,4 +1,5 @@
-import { execute, GraphQLSchema, parse } from 'graphql';
+import { GraphQLSchema, parse } from 'graphql';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
@@ -30,7 +31,7 @@ describe('additional properties in union type', () => {
         }
       }
     `;
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: createdSchema,
       document: parse(query),
     });

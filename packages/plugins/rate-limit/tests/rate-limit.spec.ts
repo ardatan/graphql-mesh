@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { setTimeout } from 'timers/promises';
-import { execute, parse, specifiedRules, subscribe, validate } from 'graphql';
+import { parse, specifiedRules, validate } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import useMeshRateLimit from '../src/index.js';
 
@@ -12,8 +13,8 @@ describe('Rate Limit Plugin', () => {
   const graphQLEnginePlugin = useEngine({
     parse,
     validate,
-    execute,
-    subscribe,
+    execute: normalizedExecutor,
+    subscribe: normalizedExecutor,
     specifiedRules,
   });
 

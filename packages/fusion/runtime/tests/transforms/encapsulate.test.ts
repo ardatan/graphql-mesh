@@ -1,7 +1,8 @@
-import { execute, GraphQLSchema, parse, printSchema } from 'graphql';
+import { GraphQLSchema, parse } from 'graphql';
 import { createEncapsulateTransform } from '@graphql-mesh/fusion-composition';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
 
@@ -92,11 +93,14 @@ describe('encapsulate', () => {
     expect(newSchema.getQueryType().getFields().getSomething).not.toBeDefined();
   });
   it('executes queries the same way and preserves the execution flow', async () => {
-    const { data: resultBefore } = await execute({
+    const resultBefore = await normalizedExecutor({
       schema,
       document: parse(`{ getSomething }`),
     });
-    expect(resultBefore.getSomething).toBe('boop');
+    if (isAsyncIterable(resultBefore)) {
+      throw new Error('Expected a result, but got an async iterable');
+    }
+    expect(resultBefore.data.getSomething).toBe('boop');
     const transform = createEncapsulateTransform();
     const executor = composeAndGetExecutor([
       {

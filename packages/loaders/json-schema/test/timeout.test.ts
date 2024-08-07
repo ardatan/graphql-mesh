@@ -1,5 +1,7 @@
 /* eslint-disable import/no-nodejs-modules */
-import { execute, OperationTypeNode, parse } from 'graphql';
+import { OperationTypeNode, parse } from 'graphql';
+import { normalizedExecutor } from '@graphql-tools/executor';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import { createDisposableServer } from '../../../testing/createDisposableServer.js';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
@@ -32,7 +34,7 @@ describe('Timeout', () => {
         },
       ],
     });
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(/* GraphQL */ `
         query {
@@ -40,6 +42,9 @@ describe('Timeout', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Should not be async iterable');
+    }
     expect(result?.errors?.[0]).toBeDefined();
   });
 });

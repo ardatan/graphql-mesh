@@ -1,6 +1,7 @@
 import { createRouter, Response } from 'fets';
-import { execute, GraphQLSchema, parse } from 'graphql';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { GraphQLSchema, parse } from 'graphql';
+import { normalizedExecutor } from '@graphql-tools/executor';
+import { isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('additionalProperties', () => {
@@ -39,7 +40,7 @@ describe('additionalProperties', () => {
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot('schema');
   });
   it('should return values correctly', async () => {
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(/* GraphQL */ `
         query {

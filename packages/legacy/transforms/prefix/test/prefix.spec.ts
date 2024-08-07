@@ -1,7 +1,8 @@
-import { execute, GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
+import { GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import type { MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import PrefixTransform from '../src/index.js';
@@ -287,7 +288,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
       }),
     );
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: newSchema,
       document: parse(/* GraphQL */ `
         query {

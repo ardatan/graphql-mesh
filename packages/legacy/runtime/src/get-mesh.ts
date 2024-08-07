@@ -378,7 +378,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     return function sdkRequester(...args) {
       return mapMaybePromise(executor(...args), function handleExecutorResultForSdk(result) {
         if (isAsyncIterable(result)) {
-          return mapAsyncIterator(result as AsyncIterableIterator<any>, extractDataOrThrowErrors);
+          return mapAsyncIterator(result, extractDataOrThrowErrors);
         }
         return extractDataOrThrowErrors(result);
       });

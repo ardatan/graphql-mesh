@@ -1,10 +1,11 @@
 import { join } from 'path';
-import { execute, GraphQLObjectType, parse, printSchema } from 'graphql';
+import { GraphQLObjectType, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { pruneSchema } from '@graphql-tools/utils';
+import { isAsyncIterable, pruneSchema } from '@graphql-tools/utils';
 import ReplaceFieldTransform from '../src/index.js';
 
 const importFn: ImportFn = m =>
@@ -156,7 +157,7 @@ describe('replace-field', () => {
     ).toBe('String');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -169,6 +170,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(mockQueryBooks).toHaveBeenCalledTimes(1);
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.books).toEqual([
@@ -219,7 +223,7 @@ describe('replace-field', () => {
       (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString(),
     ).toBe('[Book]');
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -231,6 +235,9 @@ describe('replace-field', () => {
     });
     expect(mockQueryBooks).toHaveBeenCalledTimes(1);
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(result.data.books).toEqual([{ title: 'abc' }, { title: 'def' }]);
   });
 
@@ -280,7 +287,7 @@ describe('replace-field', () => {
       (transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString(),
     ).toBe('String!');
 
-    const result: any = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -293,6 +300,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(result.data.books.books).toEqual([
       { title: 'abc', author: 'abra' },
       { title: 'def', author: 'cadabra' },
@@ -364,7 +374,7 @@ describe('replace-field', () => {
     ).toBe('String!');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -375,6 +385,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(mockQueryBooks).toHaveBeenCalledTimes(1);
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.books).toEqual([
@@ -424,7 +437,7 @@ describe('replace-field', () => {
     });
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -435,6 +448,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(mockQueryBooks).toHaveBeenCalledTimes(1);
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.books).toEqual([{ title: 'abc' }, { title: 'def' }]);
@@ -490,7 +506,7 @@ describe('replace-field', () => {
       (transformedSchema.getType('Book') as GraphQLObjectType).getFields().code.type.toString(),
     ).toBe('String!');
 
-    const result: any = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -503,6 +519,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(result.data.books.books).toEqual([
       { title: 'abc', code: 'store001_def' },
       { title: 'ghi', code: 'store001_lmn' },
@@ -564,7 +583,7 @@ describe('replace-field', () => {
         .fullName.type.toString(),
     ).toBe('String');
 
-    const result: any = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -579,6 +598,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(result.data.books.books).toEqual([
       { title: 'abc', author: { fullName: 'abra' } },
       { title: 'def', author: { fullName: 'cadabra' } },
@@ -633,7 +655,7 @@ describe('replace-field', () => {
         .ourBooks.type.toString(),
     ).toBe('[Book]');
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -643,6 +665,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(mockQueryBooks).toHaveBeenCalledTimes(1);
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.ourBooks).toEqual([{ title: 'abc' }, { title: 'def' }]);
@@ -700,7 +725,7 @@ describe('replace-field', () => {
         .authorName.type.toString(),
     ).toBe('String!');
 
-    const result: any = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -713,6 +738,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(result.data.books.books).toEqual([
       { title: 'abc', authorName: 'abra' },
       { title: 'def', authorName: 'cadabra' },
@@ -770,7 +798,7 @@ describe('replace-field', () => {
         .ourBooks.type.toString(),
     ).toBe('[Book]');
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -781,6 +809,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(mockQueryBooks).toHaveBeenCalledTimes(1);
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
     expect(result.data.ourBooks).toEqual([{ title: 'abc' }, { title: 'def' }]);
@@ -842,7 +873,7 @@ describe('replace-field', () => {
         .isAvailable.type.toString(),
     ).toBe('Boolean');
 
-    const result: any = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -855,6 +886,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(result.data.books.books).toEqual([
       { title: 'abc', isAvailable: false },
       { title: 'def', isAvailable: true },
@@ -915,7 +949,7 @@ describe('replace-field', () => {
     await queryBooks.resolve();
     expect(mockBooksApiResponseBooks).toHaveBeenCalledTimes(1);
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema: transformedSchema,
       document: parse(/* GraphQL */ `
         {
@@ -925,6 +959,9 @@ describe('replace-field', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Result should not be an async iterable');
+    }
     expect(mockQueryBooks).not.toHaveBeenCalled();
     expect(mockBooksApiResponseBooks).toHaveBeenCalledTimes(2);
     expect(result.data.books).toEqual([{ title: 'ghi' }, { title: 'lmn' }]);

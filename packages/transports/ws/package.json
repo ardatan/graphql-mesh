@@ -41,7 +41,7 @@
     "@graphql-mesh/transport-common": "^0.4.7",
     "@graphql-mesh/utils": "^0.99.7",
     "@graphql-tools/executor-graphql-ws": "^1.2.0",
-    "@graphql-tools/utils": "^10.2.3",
+    "@graphql-tools/utils": "^10.3.4",
     "graphql-ws": "^5.16.0",
     "ws": "^8.18.0"
   },

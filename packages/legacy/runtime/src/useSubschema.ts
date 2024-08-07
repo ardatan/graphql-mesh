@@ -1,5 +1,5 @@
 import type { DocumentNode, FieldNode, OperationDefinitionNode } from 'graphql';
-import { BREAK, execute, visit } from 'graphql';
+import { BREAK, visit } from 'graphql';
 import type { CompiledQuery } from 'graphql-jit';
 import { compileQuery, isCompiledQuery } from 'graphql-jit';
 import type { Plugin, TypedExecutionArgs } from '@envelop/core';
@@ -12,6 +12,7 @@ import {
 } from '@graphql-mesh/utils';
 import type { DelegationContext, Subschema } from '@graphql-tools/delegate';
 import { applySchemaTransforms, createDefaultExecutor } from '@graphql-tools/delegate';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import type {
   ExecutionRequest,
   ExecutionResult,
@@ -82,7 +83,7 @@ function getExecuteFn(subschema: Subschema) {
       };
       return executionResult;
     } else if (introspectionQueryType === IntrospectionQueryType.REGULAR) {
-      return execute(args);
+      return normalizedExecutor(args);
     }
     const isStream = introspectionQueryType === IntrospectionQueryType.STREAM;
     const delegationContext: DelegationContext = {

@@ -5,12 +5,13 @@ import type {
   GraphQLResolveInfo,
   GraphQLSchema,
 } from 'graphql';
-import { execute, isListType, isNonNullType } from 'graphql';
+import { isListType, isNonNullType } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { getDirectiveExtensions } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import type { Executor } from '@graphql-tools/utils';
 import { getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
@@ -182,13 +183,13 @@ export function createExecutorFromSchemaAST(
   schema: GraphQLSchema,
   fetchFn: MeshFetch = defaultFetchFn,
   operationHeaders: Record<string, string> = {},
-) {
+): Executor {
   let rootValue: Record<string, RootValueMethod>;
   return function soapExecutor({ document, variables, context }) {
     if (!rootValue) {
       rootValue = createRootValue(schema, fetchFn, operationHeaders);
     }
-    return execute({
+    return normalizedExecutor({
       schema,
       document,
       rootValue,
@@ -196,5 +197,5 @@ export function createExecutorFromSchemaAST(
       variableValues: variables,
       fieldResolver: defaultFieldResolver,
     });
-  } as Executor;
+  };
 }
