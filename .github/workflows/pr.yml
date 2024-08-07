@@ -120,8 +120,8 @@ jobs:
         with:
           node-version-file: .node-version
 
-      - name: Prebuild
-        run: yarn prebuild
+      - name: generate landing page
+        run: yarn workspace @graphql-mesh/serve-runtime generate-landing-page-html
 
       - name: Build the project
         working-directory: ./packages/serve-cli
