@@ -4441,7 +4441,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.40.1"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
-    fets: "npm:0.8.1"
+    fets: "npm:0.8.2"
     graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
@@ -4847,7 +4847,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.103.2"
     "@types/node": "npm:20.14.14"
     concurrently: "npm:8.2.2"
-    fets: "npm:0.8.1"
+    fets: "npm:0.8.2"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
@@ -4863,7 +4863,7 @@ __metadata:
     "@graphql-mesh/plugin-live-query": "npm:0.99.7"
     "@whatwg-node/fetch": "npm:^0.9.0"
     concurrently: "npm:8.2.2"
-    fets: "npm:0.8.1"
+    fets: "npm:0.8.2"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -5045,7 +5045,7 @@ __metadata:
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.3.5"
+    vite: "npm:5.4.0"
   languageName: unknown
   linkType: soft
 
@@ -5147,9 +5147,9 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.92.10"
     "@graphql-mesh/openapi": "npm:0.103.2"
-    "@sinclair/typebox": "npm:0.32.35"
+    "@sinclair/typebox": "npm:0.33.0"
     concurrently: "npm:8.2.2"
-    fets: "npm:0.8.1"
+    fets: "npm:0.8.2"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
     ts-node: "npm:^10.9.2"
@@ -9837,7 +9837,7 @@ __metadata:
     "@omnigraph/json-schema": "npm:^0.103.2"
     "@whatwg-node/fetch": "npm:0.9.19"
     change-case: "npm:^4.1.2"
-    fets: "npm:0.8.1"
+    fets: "npm:0.8.2"
     graphql-yoga: "npm:5.6.3"
     json-bigint-patch: "npm:0.0.8"
     json-machete: "npm:^0.97.3"
@@ -11450,10 +11450,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.32.35, @sinclair/typebox@npm:^0.32.0":
-  version: 0.32.35
-  resolution: "@sinclair/typebox@npm:0.32.35"
-  checksum: 10c0/601b9e7e7bdf67f7b79be95c4eeb97ceace0e1429dd9ce9a78213d61a65b50c14caa46ba0aeed77cd8cfaf61ba13874b69af467ac14d7352844e5cceba1b718d
+"@sinclair/typebox@npm:0.33.0, @sinclair/typebox@npm:^0.33.0":
+  version: 0.33.0
+  resolution: "@sinclair/typebox@npm:0.33.0"
+  checksum: 10c0/9b491a2a972cb31c0d8138a82b7c314079456958b281f78a7f93eee39c35d7c62055fa437826e2b27950f4e6e60de94c5a1586e922d82eda650b680efa9c9ca1
   languageName: node
   linkType: hard
 
@@ -20764,11 +20764,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fets@npm:0.8.1, fets@npm:^0.8.0, fets@npm:^0.8.1":
-  version: 0.8.1
-  resolution: "fets@npm:0.8.1"
+"fets@npm:0.8.2, fets@npm:^0.8.0, fets@npm:^0.8.1":
+  version: 0.8.2
+  resolution: "fets@npm:0.8.2"
   dependencies:
-    "@sinclair/typebox": "npm:^0.32.0"
+    "@sinclair/typebox": "npm:^0.33.0"
     "@whatwg-node/cookie-store": "npm:^0.2.0"
     "@whatwg-node/fetch": "npm:^0.9.4"
     "@whatwg-node/server": "npm:^0.9.15"
@@ -20777,7 +20777,7 @@ __metadata:
     qs: "npm:^6.11.2"
     ts-toolbelt: "npm:^9.6.0"
     tslib: "npm:^2.3.1"
-  checksum: 10c0/fd7d8bb284b6b77ea498c26cb4e7d7d5d2f83ed74fc53bf82708f561b237255563425ac6690dbc6a0bd8563f7317330f1839eb0369618f27f95e79855b3307cd
+  checksum: 10c0/b6db66c24a172226d302902842a60968058cccd148d47aedf9a9a2eb43d4c27f99775da749270717e3a73818ed7a5fd02f36212d4c683561be9a4373bd98d396
   languageName: node
   linkType: hard
 
@@ -31285,7 +31285,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.3.5, postcss@npm:^8.4.23, postcss@npm:^8.4.33, postcss@npm:^8.4.38, postcss@npm:^8.4.39, postcss@npm:^8.4.4":
+"postcss@npm:^8.3.5, postcss@npm:^8.4.23, postcss@npm:^8.4.33, postcss@npm:^8.4.38, postcss@npm:^8.4.4":
   version: 8.4.40
   resolution: "postcss@npm:8.4.40"
   dependencies:
@@ -31293,6 +31293,17 @@ __metadata:
     picocolors: "npm:^1.0.1"
     source-map-js: "npm:^1.2.0"
   checksum: 10c0/65ed67573e5443beaeb582282ff27a6be7c7fe3b4d9fa15761157616f2b97510cb1c335023c26220b005909f007337026d6e3ff092f25010b484ad484e80ea7f
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.40":
+  version: 8.4.41
+  resolution: "postcss@npm:8.4.41"
+  dependencies:
+    nanoid: "npm:^3.3.7"
+    picocolors: "npm:^1.0.1"
+    source-map-js: "npm:^1.2.0"
+  checksum: 10c0/c1828fc59e7ec1a3bf52b3a42f615dba53c67960ed82a81df6441b485fe43c20aba7f4e7c55425762fd99c594ecabbaaba8cf5b30fd79dfec5b52a9f63a2d690
   languageName: node
   linkType: hard
 
@@ -37037,19 +37048,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.3.5":
-  version: 5.3.5
-  resolution: "vite@npm:5.3.5"
+"vite@npm:5.4.0":
+  version: 5.4.0
+  resolution: "vite@npm:5.4.0"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
-    postcss: "npm:^8.4.39"
+    postcss: "npm:^8.4.40"
     rollup: "npm:^4.13.0"
   peerDependencies:
     "@types/node": ^18.0.0 || >=20.0.0
     less: "*"
     lightningcss: ^1.21.0
     sass: "*"
+    sass-embedded: "*"
     stylus: "*"
     sugarss: "*"
     terser: ^5.4.0
@@ -37065,6 +37077,8 @@ __metadata:
       optional: true
     sass:
       optional: true
+    sass-embedded:
+      optional: true
     stylus:
       optional: true
     sugarss:
@@ -37073,7 +37087,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/795c7e0dbc94b96c4a0aff0d5d4b349dd28ad8b7b70979c1010f96b4d83f7d6c1700ebd6fed91de2e021b0a3689b9abc2d8017f6dfa8c9a6ca5c7af637d6afc6
+  checksum: 10c0/122de7795e1c3c08cd0acc7d77296f908398266b424492be7310400107f37a3cf4c9506f2b4b16619e57299ca2859b8ca187aac5e25f8e66d84f9204a1d72d18
   languageName: node
   linkType: hard
 
