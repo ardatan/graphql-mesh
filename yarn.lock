@@ -4690,7 +4690,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     react-scripts: "npm:5.0.1"
     typescript: "npm:^5.4.2"
-    web-vitals: "npm:4.2.2"
+    web-vitals: "npm:4.2.3"
   languageName: unknown
   linkType: soft
 
@@ -37171,10 +37171,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-vitals@npm:4.2.2":
-  version: 4.2.2
-  resolution: "web-vitals@npm:4.2.2"
-  checksum: 10c0/0e41d016a80d8f48e00c95f3d8405a4cb8c6a12a83ac6677ce49447c85ca6fb2325f40915ae5460bb59f07d1b7d65b66b8b42ea50135594ae7dc892453775004
+"web-vitals@npm:4.2.3":
+  version: 4.2.3
+  resolution: "web-vitals@npm:4.2.3"
+  checksum: 10c0/905bdb9434f365435c3c00e5f473ce088980fcd61068906e20a575bae9590e1cc28dab0f90958c66717591e2f4c9b809ec8025cef5796fa4bc1304d50332f125
   languageName: node
   linkType: hard
 
