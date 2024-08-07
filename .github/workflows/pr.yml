@@ -84,22 +84,6 @@ jobs:
             ghcr.io/ardatan/mesh-serve:${{ steps.ver-mesh-serve.outputs.result }}
             ```
 
-  package-node-sea-github-comment-progress:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Initialize PR comment
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: 'Node Sea Artifacts Status'
-          message: |
-            The build artifacts for various platforms are being generated:
-            | Platform               | Architecture | Status         |
-            |------------------------|--------------|----------------|
-            | Ubuntu (latest)        | x86_64       | ⏳ In Progress |
-            | Ubuntu (latest)        | arm64        | ⏳ In Progress |
-            | macOS (latest)         | x86_64       | ⏳ In Progress |
-            | macOS (latest)         | arm64        | ⏳ In Progress |
-
   package-node-sea:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -155,8 +139,7 @@ jobs:
             UPDATED_COMMENT=$(echo "$COMMENT" | sed "/| macOS (latest) | arm64 | ⏳ In Progress |/a\\
             $NEW_COMMENT")
           fi
-          echo "Updated Comment: $UPDATED_COMMENT"
-          echo "$UPDATED_COMMENT" > updated_comment.md
+          echo "::set-output name=comment::$(echo "$UPDATED_COMMENT" | jq -R -s .)"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -164,6 +147,6 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: 'Node Sea Artifacts Status'
-          path: updated_comment.md
+          message: ${{ steps.update_comment.outputs.comment }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
