@@ -12,7 +12,7 @@ node --experimental-sea-config sea-config.json
 ci_platform="${1:-$(uname -s)}"
 arch="${2:-$(uname -m)}"
 
-if [[ "$ci_platform" == "macos-latest" ]]; then
+if [[ "$ci_platform" == "macos-latest" || "$ci_platform" == "macos-latest-large" ]]; then
   platform="apple-darwin"
 elif [[ "$ci_platform" == "ubuntu-latest" ]]; then
   platform="unknown-linux-gnu"
@@ -22,13 +22,13 @@ else
   platform="$ci_platform"
 fi
 
-if [[ "$arch" == "arm64" ]]; then
+if [[ "$arch" == "arm64" || "$arch" == "aarch64" ]]; then
   arch="aarch64"
 elif [[ "$arch" == "x64" || "$arch" == "x86_64" ]]; then
   arch="x86_64"
 fi
 
-output_dir="graphql-mesh-${2}-${platform}"
+output_dir="graphql-mesh-${arch}-${platform}"
 exe_name="mesh-serve"
 if [[ "$platform" == "pc-windows-msvc" ]]; then
   exe_name="mesh-serve.exe"
