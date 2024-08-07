@@ -80,11 +80,6 @@ function updateSeaConfig(assetName, assetPath) {
     assets: {},
   };
 
-  // Load existing sea-config.json if it exists
-  if (fs.existsSync(seaConfigPath)) {
-    seaConfig = JSON.parse(fs.readFileSync(seaConfigPath, 'utf-8'));
-  }
-
   // Update the assets object
   seaConfig.assets[assetName] = assetPath;
 
