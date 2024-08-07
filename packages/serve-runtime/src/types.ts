@@ -84,7 +84,7 @@ interface MeshServeConfigWithHive<TContext> extends MeshServeConfigForSupergraph
   /**
    * Integration options with GraphQL Hive.
    */
-  hive: YamlConfig.HivePlugin & HiveCDNOptions;
+  hive: Partial<YamlConfig.HivePlugin> & HiveCDNOptions;
 }
 
 interface MeshServeConfigWithSubgraph<TContext>
@@ -188,6 +188,14 @@ export interface MeshServeConfigWithProxy<TContext>
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
   proxy: HTTPExecutorOptions;
+  /**
+   * Integration options with GraphQL Hive.
+   */
+  hive?: Partial<YamlConfig.HivePlugin> & HiveCDNOptions;
+  /**
+   * Polling interval in milliseconds.
+   */
+  polling?: number;
   /**
    * Disable GraphQL validation on the gateway
    *
