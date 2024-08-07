@@ -102,6 +102,9 @@ jobs:
         with:
           node-version-file: .node-version
 
+      - name: Prebuild
+        run: yarn prebuild
+
       - name: Build the project
         working-directory: ./packages/serve-cli
         run: yarn bundle-binary
