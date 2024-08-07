@@ -28,7 +28,7 @@ elif [[ "$arch" == "x64" || "$arch" == "x86_64" ]]; then
   arch="x86_64"
 fi
 
-output_dir="graphql-mesh-${arch}-${platform}"
+output_dir="graphql-mesh-${2}-${platform}"
 exe_name="mesh-serve"
 if [[ "$platform" == "pc-windows-msvc" ]]; then
   exe_name="mesh-serve.exe"

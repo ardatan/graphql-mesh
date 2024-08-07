@@ -125,7 +125,7 @@ jobs:
         with:
           header: 'Node Sea Artifacts Status'
           message: |
-            The build artifacts for various platforms are being generated:
+            The build artifacts of `mesh-serve` as a single executable for various platforms:
             | Platform               | Status         |
             |------------------------|----------------|
             | Ubuntu (x86_64)        | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/graphql-mesh-x86_64-ubuntu-latest) |
