@@ -83,3 +83,37 @@ jobs:
             ```
             ghcr.io/ardatan/mesh-serve:${{ steps.ver-mesh-serve.outputs.result }}
             ```
+  package-node-sea:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [x86_64, arm64]
+        exclude:
+          - os: windows-latest
+            arch: arm64 # exclude Windows from ARM64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          architecture: ${{ matrix.arch }}
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build the project
+        run: yarn build
+
+      - name: Package for ${{ matrix.os }} ${{ matrix.arch }}
+        run: ./bundle.sh ${{ matrix.os }} ${{ matrix.arch }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
+          path: graphql-mesh-${{ matrix.arch }}-${{ matrix.os }}
