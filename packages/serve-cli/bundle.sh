@@ -2,62 +2,116 @@
 
 set -e
 
-# clean previous builds
-rm -f mesh-serve mesh-serve.exe
-rm -f sea-prep.blob
+# utils
+clean_previous_builds() {
+  rm -f mesh-serve mesh-serve.exe
+  rm -f sea-prep.blob
+}
 
-# generate SEA blob
-node --experimental-sea-config sea-config.json
+generate_sea_blob() {
+  if [ ! -f sea-prep.blob ]; then
+    node --experimental-sea-config sea-config.json
+  fi
+}
 
-ci_platform="${1:-$(uname -s)}"
-arch="${2:-$(uname -m)}"
+inject_blob() {
+  local exe_path=$1
+  npx postject "$exe_path" NODE_SEA_BLOB sea-prep.blob \
+    --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 \
+    --macho-segment-name NODE_SEA
+  echo "💉 Injection done!"
+}
 
-if [[ "$ci_platform" == "macos-latest" || "$ci_platform" == "macos-latest-large" ]]; then
-  platform="apple-darwin"
-elif [[ "$ci_platform" == "ubuntu-latest" ]]; then
-  platform="unknown-linux-gnu"
-elif [[ "$ci_platform" == "windows-latest" ]]; then
-  platform="pc-windows-msvc"
-else
-  platform="$ci_platform"
-fi
+sign_binary() {
+  local exe_path=$1
+  codesign --sign - "$exe_path"
+}
 
-if [[ "$arch" == "arm64" || "$arch" == "aarch64" ]]; then
-  arch="aarch64"
-elif [[ "$arch" == "x64" || "$arch" == "x86_64" ]]; then
-  arch="x86_64"
-fi
+make_executable() {
+  local exe_path=$1
+  chmod +x "$exe_path"
+}
 
-output_dir="graphql-mesh-${arch}-${platform}"
-exe_name="mesh-serve"
-if [[ "$platform" == "pc-windows-msvc" ]]; then
-  exe_name="mesh-serve.exe"
-fi
+# macOS x86_64
+build_macos_x86_64() {
+  local output_dir="graphql-mesh-x86_64-apple-darwin"
+  local exe_name="mesh-serve"
+  mkdir -p "$output_dir"
+  cp "$(command -v node)" "$output_dir/$exe_name"
+  codesign --remove-signature "$output_dir/$exe_name"
+  inject_blob "$output_dir/$exe_name"
+  sign_binary "$output_dir/$exe_name"
+  make_executable "$output_dir/$exe_name"
+}
 
-mkdir -p $output_dir
+# macOS aarch64
+build_macos_aarch64() {
+  local output_dir="graphql-mesh-aarch64-apple-darwin"
+  local exe_name="mesh-serve"
+  mkdir -p "$output_dir"
+  cp "$(command -v node)" "$output_dir/$exe_name"
+  codesign --remove-signature "$output_dir/$exe_name"
+  inject_blob "$output_dir/$exe_name"
+  sign_binary "$output_dir/$exe_name"
+  make_executable "$output_dir/$exe_name"
+}
 
-if [[ "$platform" == "apple-darwin" ]]; then
-  cp $(command -v node) $output_dir/$exe_name
-  codesign --remove-signature $output_dir/$exe_name
-elif [[ "$platform" == "unknown-linux-gnu" ]]; then
-  cp $(command -v node) $output_dir/$exe_name
-elif [[ "$platform" == "pc-windows-msvc" ]]; then
+# Ubuntu x86_64
+build_ubuntu_x86_64() {
+  local output_dir="graphql-mesh-x86_64-unknown-linux-gnu"
+  local exe_name="mesh-serve"
+  mkdir -p "$output_dir"
+  cp "$(command -v node)" "$output_dir/$exe_name"
+  inject_blob "$output_dir/$exe_name"
+  make_executable "$output_dir/$exe_name"
+}
+
+# Ubuntu aarch64
+build_ubuntu_aarch64() {
+  local output_dir="graphql-mesh-aarch64-unknown-linux-gnu"
+  local exe_name="mesh-serve"
+  mkdir -p "$output_dir"
+  cp "$(command -v node)" "$output_dir/$exe_name"
+  inject_blob "$output_dir/$exe_name"
+  make_executable "$output_dir/$exe_name"
+}
+
+# Windows x86_64
+build_windows_x86_64() {
+  local output_dir="graphql-mesh-x86_64-pc-windows-msvc"
+  local exe_name="mesh-serve.exe"
+  mkdir -p "$output_dir"
   powershell -Command "Copy-Item $(Get-Command node).Source $output_dir/$exe_name"
-  echo "Skipping signature removal for Windows"
-fi
+  inject_blob "$output_dir/$exe_name"
+}
 
-# inject the blob into the binary (only once per binary)
-npx postject $output_dir/$exe_name NODE_SEA_BLOB sea-prep.blob \
-  --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+main() {
+  clean_previous_builds
+  generate_sea_blob
 
-# Sign the binary if necessary
-if [[ "$platform" == "apple-darwin" ]]; then
-  codesign --sign - $output_dir/$exe_name
-elif [[ "$platform" == "pc-windows-msvc" ]]; then
-  echo "Signing on Windows (skipped)"
-fi
+  local ci_platform="$1"
+  local arch="$2"
 
-# Make the binary executable on Unix-like systems
-if [[ "$platform" != "pc-windows-msvc" ]]; then
-  chmod +x $output_dir/$exe_name
-fi
+  if [[ "$ci_platform" == "macos-latest" || "$ci_platform" == "macos-latest-large" ]]; then
+    if [[ "$arch" == "x86_64" ]]; then
+      build_macos_x86_64
+    elif [[ "$arch" == "aarch64" ]]; then
+      build_macos_aarch64
+    fi
+  elif [[ "$ci_platform" == "ubuntu-latest" ]]; then
+    if [[ "$arch" == "x86_64" ]]; then
+      build_ubuntu_x86_64
+    elif [[ "$arch" == "aarch64" ]]; then
+      build_ubuntu_aarch64
+    fi
+  elif [[ "$ci_platform" == "windows-latest" ]]; then
+    build_windows_x86_64
+  else
+    echo "Unsupported platform: $ci_platform"
+    exit 1
+  fi
+
+  echo "Build completed for platform: $ci_platform, architecture: $arch"
+}
+
+main "$@"
