@@ -75,9 +75,13 @@ export type MeshServePlugin<
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
 
-export interface MeshServeConfigSupergraph<TContext> extends MeshServeConfigSchemaBase<TContext> {
+export interface MeshServeConfigSupergraph<
+  TContext extends Record<string, any> = Record<string, any>,
+> extends MeshServeConfigSchemaBase<TContext> {
   /**
-   * Path to the Federation Supergraph.
+   * SDL, path or an URL to the Federation Supergraph schema.
+   *
+   * Alternatively, CDN options for pulling a remote Federation Supergraph.
    */
   supergraph: UnifiedGraphConfig | MeshServeHiveCDNOptions;
   /**
@@ -86,9 +90,10 @@ export interface MeshServeConfigSupergraph<TContext> extends MeshServeConfigSche
   polling?: number;
 }
 
-export interface MeshServeConfigSubgraph<TContext> extends MeshServeConfigSchemaBase<TContext> {
+export interface MeshServeConfigSubgraph<TContext extends Record<string, any> = Record<string, any>>
+  extends MeshServeConfigSchemaBase<TContext> {
   /**
-   * Path to the subgraph schema.
+   * SDL, path or an URL to the Federation Subgraph schema.
    */
   subgraph: UnifiedGraphConfig;
 }
@@ -103,7 +108,8 @@ interface MeshServeConfigSchemaBase<TContext> extends MeshServeConfigBase<TConte
   )[];
 }
 
-export interface MeshServeConfigProxy<TContext> extends MeshServeConfigBase<TContext> {
+export interface MeshServeConfigProxy<TContext extends Record<string, any> = Record<string, any>>
+  extends MeshServeConfigBase<TContext> {
   /**
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
