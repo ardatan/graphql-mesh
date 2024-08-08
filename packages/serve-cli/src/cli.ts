@@ -1,3 +1,4 @@
+import '@graphql-mesh/include/register-tsconfig-paths';
 import 'dotenv/config'; // inject dotenv options to process.env
 import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
