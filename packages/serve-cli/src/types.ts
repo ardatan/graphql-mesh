@@ -1,47 +1,11 @@
-import type { AppOptions } from 'uWebSockets.js';
 import type { MeshServeConfig } from '@graphql-mesh/serve-runtime';
-import type { Logger } from '@graphql-mesh/types';
+import type { ServerConfig } from './server';
 
-export type MeshServeCLIConfig = MeshServeConfig & {
-  /**
-   * Port to listen on (default: `4000`)
-   */
-  port?: number;
-  /**
-   * Host to listen on (default: `localhost`)
-   */
-  host?: string;
-  /**
-   * SSL Credentials for HTTPS Server
-   * If this is provided, Mesh will be served via HTTPS instead of HTTP.
-   */
-  sslCredentials?: AppOptions;
-  /**
-   * The size of the HTTP headers to allow
-   *
-   * @default 16384
-   */
-  maxHeaderSize?: number;
-  /**
-   * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
-   * This feature can be disabled by passing `false`
-   */
-  browser?: string | boolean;
-};
+export type MeshServeCLIConfig = MeshServeConfig & ServerConfig;
 
 /**
  * Type helper for defining the config.
  */
 export function defineConfig(config: MeshServeCLIConfig) {
   return config;
-}
-
-export interface ServerOptions {
-  handler: any;
-  log: Logger;
-  protocol: 'http' | 'https';
-  host: string;
-  port: number;
-  maxHeaderSize: number;
-  sslCredentials?: MeshServeCLIConfig['sslCredentials'];
 }
