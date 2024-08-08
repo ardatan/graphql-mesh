@@ -3,6 +3,7 @@ import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
 import { createServeRuntime, type MeshServeConfigSubgraph } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
+import { isValidPath } from '@graphql-tools/utils';
 import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
 import { loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
@@ -33,8 +34,8 @@ export type SubgraphConfig = MeshServeConfigSubgraph<unknown> & MeshServeCLIConf
 
 export async function runSubgraph({ log }: CLIContext, config: SubgraphConfig) {
   let absSchemaPath: string | null = null;
-  if (typeof config.subgraph === 'undefined' || typeof config.subgraph === 'string') {
-    const subgraphPath = config.subgraph || 'subgraph.graphql';
+  if (typeof config.subgraph === 'string' && isValidPath(config.subgraph)) {
+    const subgraphPath = config.subgraph;
     absSchemaPath = isAbsolute(subgraphPath)
       ? String(subgraphPath)
       : resolve(process.cwd(), subgraphPath);
