@@ -49,7 +49,7 @@
     "@graphql-tools/batch-delegate": "^9.0.3",
     "@graphql-tools/delegate": "^10.0.18",
     "@graphql-tools/executor-http": "^1.1.5",
-    "@graphql-tools/federation": "^2.2.4",
+    "@graphql-tools/federation": "^2.2.5",
     "@graphql-tools/stitch": "^9.2.10",
     "@graphql-tools/utils": "^10.3.4",
     "@graphql-tools/wrap": "^10.0.5",
