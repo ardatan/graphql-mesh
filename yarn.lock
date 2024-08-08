@@ -297,9 +297,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:4.10.5, @apollo/server@npm:^4.10.3":
-  version: 4.10.5
-  resolution: "@apollo/server@npm:4.10.5"
+"@apollo/server@npm:4.11.0, @apollo/server@npm:^4.10.3":
+  version: 4.11.0
+  resolution: "@apollo/server@npm:4.11.0"
   dependencies:
     "@apollo/cache-control-types": "npm:^1.0.3"
     "@apollo/server-gateway-interface": "npm:^1.1.1"
@@ -327,7 +327,7 @@ __metadata:
     whatwg-mimetype: "npm:^3.0.0"
   peerDependencies:
     graphql: ^16.6.0
-  checksum: 10c0/28e5f55144ba49d5401fa060aea892486ad948010aca5860218dcaf049667f5afe05dc8c890f2c57bc20de03dd903073ee77a2943ffea11b96a987d25af6976d
+  checksum: 10c0/5c07f818ba2a943c176a3e3d50115c6fba2dc1b6e818635202cf22f0dacc6e2b39e0c53315399d1e46357072db438bbcd4ebc13afeb0f18bb5378134c100f8f5
   languageName: node
   linkType: hard
 
@@ -4601,7 +4601,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
   dependencies:
-    "@apollo/server": "npm:4.10.5"
+    "@apollo/server": "npm:4.11.0"
     "@apollo/subgraph": "npm:2.8.4"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -4613,7 +4613,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-accounts@workspace:examples/federation-example/services/accounts"
   dependencies:
-    "@apollo/server": "npm:4.10.5"
+    "@apollo/server": "npm:4.11.0"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
@@ -4624,7 +4624,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-inventory@workspace:examples/federation-example/services/inventory"
   dependencies:
-    "@apollo/server": "npm:4.10.5"
+    "@apollo/server": "npm:4.11.0"
     "@apollo/subgraph": "npm:2.8.4"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -4636,7 +4636,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-products@workspace:examples/federation-example/services/products"
   dependencies:
-    "@apollo/server": "npm:4.10.5"
+    "@apollo/server": "npm:4.11.0"
     "@apollo/subgraph": "npm:2.8.4"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -4648,7 +4648,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-reviews@workspace:examples/federation-example/services/reviews"
   dependencies:
-    "@apollo/server": "npm:4.10.5"
+    "@apollo/server": "npm:4.11.0"
     "@apollo/subgraph": "npm:2.8.4"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -4660,7 +4660,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example@workspace:examples/federation-example"
   dependencies:
-    "@apollo/server": "npm:4.10.5"
+    "@apollo/server": "npm:4.11.0"
     apollo-server-caching: "npm:3.3.0"
     concurrently: "npm:8.2.2"
     delay-cli: "npm:2.0.0"
@@ -7237,7 +7237,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/utils@workspace:packages/legacy/utils"
   dependencies:
-    "@apollo/server": "npm:4.10.5"
+    "@apollo/server": "npm:4.11.0"
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
     "@graphql-tools/delegate": "npm:^10.0.18"
     "@types/js-yaml": "npm:4.0.9"
