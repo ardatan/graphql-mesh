@@ -1,6 +1,6 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve } = createTenv(__dirname);
+const { compose, serve, fs } = createTenv(__dirname);
 
 it('should compose', async () => {
   const proc = await compose({
@@ -13,6 +13,7 @@ it('should compose', async () => {
 
 it('should serve', async () => {
   const proc = await serve({
+    supergraph: await fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
     env: {
       MESH_INCLUDE_TSCONFIG_NAME: 'tsconfig-paths.tsconfig.json',
     },

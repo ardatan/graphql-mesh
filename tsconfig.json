@@ -50,7 +50,7 @@
       "@graphql-mesh/*": ["packages/legacy/handlers/*/src/index.ts"],
       "json-machete": ["packages/json-machete/src/index.ts"],
       "@omnigraph/*": ["packages/loaders/*/src/index.ts"],
-      "@e2e/args": ["e2e/utils/args.ts"],
+      "@e2e/opts": ["e2e/utils/opts.ts"],
       "@e2e/tenv": ["e2e/utils/tenv.ts"],
       "@e2e/tbench": ["e2e/utils/tbench.ts"]
     }

@@ -1,4 +1,4 @@
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import {
   camelCase,
   createFilterTransform,
@@ -8,15 +8,15 @@ import {
 } from '@graphql-mesh/compose-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('petstore', {
-        source: `http://0.0.0.0:${args.getServicePort('petstore')}/api/v3/openapi.json`,
+        source: `http://0.0.0.0:${opts.getServicePort('petstore')}/api/v3/openapi.json`,
         // endpoint must be manually specified because the openapi.json spec doesn't contain one
-        endpoint: `http://0.0.0.0:${args.getServicePort('petstore')}/api/v3`,
+        endpoint: `http://0.0.0.0:${opts.getServicePort('petstore')}/api/v3`,
       }),
       transforms: [
         createFilterTransform({
@@ -27,7 +27,7 @@ export const composeConfig = defineConfig({
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('vaccination', {
-        endpoint: `http://0.0.0.0:${args.getServicePort('vaccination')}/graphql`,
+        endpoint: `http://0.0.0.0:${opts.getServicePort('vaccination')}/graphql`,
       }),
       transforms: [
         createNamingConventionTransform({
