@@ -1,15 +1,15 @@
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadSOAPSubgraph } from '@omnigraph/soap';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadSOAPSubgraph('soap-demo', {
         source: './SOAP.Demo.cls.wsdl',
-        endpoint: `http://0.0.0.0:${args.getServicePort('soap-demo')}/csp/samples/SOAP.Demo.cls`,
+        endpoint: `http://0.0.0.0:${opts.getServicePort('soap-demo')}/csp/samples/SOAP.Demo.cls`,
       }),
     },
   ],

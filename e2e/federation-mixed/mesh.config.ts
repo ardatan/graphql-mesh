@@ -1,5 +1,5 @@
 import { GraphQLID, GraphQLNonNull } from 'graphql';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import {
   createFederationTransform,
   createTypeReplaceTransform,
@@ -8,14 +8,14 @@ import {
 } from '@graphql-mesh/compose-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('accounts', {
-        source: `http://0.0.0.0:${args.getServicePort('accounts')}/openapi.json`,
-        endpoint: `http://0.0.0.0:${args.getServicePort('accounts')}`,
+        source: `http://0.0.0.0:${opts.getServicePort('accounts')}/openapi.json`,
+        endpoint: `http://0.0.0.0:${opts.getServicePort('accounts')}`,
       }),
       transforms: [
         createTypeReplaceTransform((typeName, fieldName) =>
@@ -36,17 +36,17 @@ export const composeConfig = defineComposeConfig({
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('products', {
-        endpoint: `http://0.0.0.0:${args.getServicePort('products')}/graphql`,
+        endpoint: `http://0.0.0.0:${opts.getServicePort('products')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('inventory', {
-        endpoint: `http://0.0.0.0:${args.getServicePort('inventory')}/graphql`,
+        endpoint: `http://0.0.0.0:${opts.getServicePort('inventory')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('reviews', {
-        endpoint: `http://0.0.0.0:${args.getServicePort('reviews')}/graphql`,
+        endpoint: `http://0.0.0.0:${opts.getServicePort('reviews')}/graphql`,
       }),
     },
   ],

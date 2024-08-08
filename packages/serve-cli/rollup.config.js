@@ -54,7 +54,7 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   console.warn('⚠️ Bundling extra modules for e2e tests!');
   // extras specific to the docker serve runner in e2e tests
   deps['node_modules/@graphql-mesh/compose-cli/index'] = '../compose-cli/src/index.ts';
-  deps['node_modules/@e2e/args/index'] = '../../e2e/utils/args.ts';
+  deps['node_modules/@e2e/opts/index'] = '../../e2e/utils/opts.ts';
   deps['node_modules/@graphql-mesh/utils/index'] = '../legacy/utils/src/index.ts';
   deps['node_modules/@omnigraph/openapi/index'] = '../loaders/openapi/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-ws/index'] = '../transports/ws/src/index.ts';

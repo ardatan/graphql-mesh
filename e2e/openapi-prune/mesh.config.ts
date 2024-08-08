@@ -1,4 +1,4 @@
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import {
   createPruneTransform,
   defineConfig as defineComposeConfig,
@@ -6,14 +6,14 @@ import {
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Wiki', {
         source: './openapi.json',
-        endpoint: 'http://localhost:' + args.getServicePort('Wiki'),
+        endpoint: 'http://localhost:' + opts.getServicePort('Wiki'),
       }),
       transforms: [createPruneTransform()],
     },
