@@ -141,11 +141,7 @@ export interface MeshServeHiveCDNOptions {
 
 export interface MeshServeHiveReportingOptions extends YamlConfig.HivePlugin {
   type: 'hive';
-  /**
-   * GraphQL Hive registry access token.
-   *
-   * @default process.env.HIVE_REGISTRY_TOKEN
-   */
+  /** GraphQL Hive registry access token. */
   token: string;
 }
 
