@@ -87,7 +87,7 @@ let cli = new Command()
         return interval;
       }),
   )
-  .option('--masked-errors', 'mask unexpected errors in responses')
+  .option('--masked-errors', 'mask unexpected errors in responses', true)
   .addOption(
     new Option(
       '--hive-registry-token <token>',
