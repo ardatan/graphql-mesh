@@ -102,10 +102,9 @@ interface MeshServeConfigSchemaBase<TContext> extends MeshServeConfigBase<TConte
   /**
    * Additional GraphQL schema resolvers.
    */
-  additionalResolvers?: (
-    | IResolvers<unknown, MeshServeContext & TContext>
-    | IResolvers<unknown, MeshServeContext>
-  )[];
+  additionalResolvers?:
+    | (IResolvers<unknown, MeshServeContext & TContext> | IResolvers<unknown, MeshServeContext>)
+    | (IResolvers<unknown, MeshServeContext & TContext> | IResolvers<unknown, MeshServeContext>)[];
 }
 
 export interface MeshServeConfigProxy<TContext extends Record<string, any> = Record<string, any>>
