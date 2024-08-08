@@ -39,6 +39,9 @@ export interface MeshServeConfigContext {
    * WHATWG compatible Fetch implementation.
    */
   fetch: MeshFetch;
+  /**
+   * The logger to use throught Mesh and it's plugins.
+   */
   logger: Logger;
   /**
    * Current working directory.
@@ -73,22 +76,23 @@ export type MeshServePlugin<
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
 
-interface MeshServeConfigWithSupergraph<TContext> extends MeshServeConfigForSupergraph<TContext> {
+export interface MeshServeConfigWithSupergraph<TContext>
+  extends MeshServeConfigWithSchema<TContext> {
   /**
    * Path to the Federation Supergraph.
    */
   supergraph?: UnifiedGraphConfig;
 }
 
-interface MeshServeConfigWithHive<TContext> extends MeshServeConfigForSupergraph<TContext> {
+export interface MeshServeConfigWithHive<TContext> extends MeshServeConfigWithSchema<TContext> {
   /**
    * Integration options with GraphQL Hive.
    */
   hive: Partial<YamlConfig.HivePlugin> & HiveCDNOptions;
 }
 
-interface MeshServeConfigWithSubgraph<TContext>
-  extends MeshServeConfigForSupergraph<TContext>,
+export interface MeshServeConfigWithSubgraph<TContext>
+  extends MeshServeConfigWithSchema<TContext>,
     TransportRelatedConfig {
   /**
    * Path to the subgraph schema.
@@ -162,7 +166,7 @@ interface TransportRelatedConfig {
   transportEntries?: TransportEntryAdditions;
 }
 
-interface MeshServeConfigForSupergraph<TContext>
+interface MeshServeConfigWithSchema<TContext>
   extends MeshServeConfigWithoutSource<TContext>,
     TransportRelatedConfig {
   /**
