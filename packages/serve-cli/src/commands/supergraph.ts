@@ -3,6 +3,7 @@ import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { createServeRuntime, type MeshServeConfigSupergraph } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
+import { isValidPath } from '@graphql-tools/utils';
 import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
 import { loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
@@ -33,8 +34,8 @@ export type SupergraphConfig = MeshServeConfigSupergraph<unknown> & MeshServeCLI
 
 export async function runSupergraph({ log }: CLIContext, config: SupergraphConfig) {
   let absSchemaPath: string | null = null;
-  if (typeof config.supergraph === 'undefined' || typeof config.supergraph === 'string') {
-    const supergraphPath = config.supergraph || 'supergraph.graphql';
+  if (typeof config.supergraph === 'string' && isValidPath(config.supergraph)) {
+    const supergraphPath = config.supergraph;
     absSchemaPath = isAbsolute(supergraphPath)
       ? String(supergraphPath)
       : resolve(process.cwd(), supergraphPath);
