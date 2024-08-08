@@ -29,10 +29,9 @@ export type TransportEntryAdditions = {
 };
 
 export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
-  | MeshServeConfigWithSupergraph<TContext>
-  | MeshServeConfigWithSubgraph<TContext>
-  | MeshServeConfigWithProxy<TContext>
-  | MeshServeConfigWithHive<TContext>;
+  | MeshServeConfigSupergraph<TContext>
+  | MeshServeConfigSubgraph<TContext>
+  | MeshServeConfigProxy<TContext>;
 
 export interface MeshServeConfigContext {
   /**
@@ -76,52 +75,83 @@ export type MeshServePlugin<
     onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
 
-export interface MeshServeConfigWithSupergraph<TContext>
-  extends MeshServeConfigWithSchema<TContext> {
+export interface MeshServeConfigSupergraph<TContext> extends MeshServeConfigSchemaBase<TContext> {
   /**
    * Path to the Federation Supergraph.
    */
-  supergraph?: UnifiedGraphConfig;
-}
-
-export interface MeshServeConfigWithHive<TContext> extends MeshServeConfigWithSchema<TContext> {
+  supergraph: UnifiedGraphConfig | MeshServeHiveCDNOptions;
   /**
-   * Integration options with GraphQL Hive.
+   * GraphQL schema polling interval in milliseconds when the {@link supergraph} is an URL.
    */
-  hive: Partial<YamlConfig.HivePlugin> & HiveCDNOptions;
+  polling?: number;
 }
 
-export interface MeshServeConfigWithSubgraph<TContext>
-  extends MeshServeConfigWithSchema<TContext>,
-    TransportRelatedConfig {
+export interface MeshServeConfigSubgraph<TContext> extends MeshServeConfigSchemaBase<TContext> {
   /**
    * Path to the subgraph schema.
    */
   subgraph: UnifiedGraphConfig;
 }
 
-interface HiveCDNOptions {
+interface MeshServeConfigSchemaBase<TContext> extends MeshServeConfigBase<TContext> {
   /**
-   * The endpoint of the CDN you obtained from GraphQL Hive.
-   *
-   * You can provide an environment variable (HIVE_CDN_ENDPOINT) to set this value.
-   *
-   * @example https://cdn.graphql-hive.com/artifacts/v1/AAA-AAA-AAA/supergraph
-   *
-   * @default process.env.HIVE_CDN_ENDPOINT
+   * Additional GraphQL schema resolvers.
    */
-  endpoint?: string;
-  /**
-   * The key you obtained from GraphQL Hive for the CDN.
-   *
-   * You can provide an environment variable (HIVE_CDN_KEY) to set this value.
-   *
-   * @default process.env.HIVE_CDN_KEY
-   */
-  key?: string;
+  additionalResolvers?: (
+    | IResolvers<unknown, MeshServeContext & TContext>
+    | IResolvers<unknown, MeshServeContext>
+  )[];
 }
 
-interface TransportRelatedConfig {
+export interface MeshServeConfigProxy<TContext> extends MeshServeConfigBase<TContext> {
+  /**
+   * HTTP executor to proxy all incoming requests to another HTTP endpoint.
+   */
+  proxy: HTTPExecutorOptions & { endpoint: string };
+  /**
+   * CDN options to pull the GraphQL schema from.
+   */
+  cdn?: MeshServeHiveCDNOptions;
+  /**
+   * GraphQL schema polling interval in milliseconds.
+   */
+  polling?: number;
+  /**
+   * Disable GraphQL validation on the gateway
+   *
+   * By default, the gateway will validate the query against the schema before sending it to the executor.
+   * This is recommended to be enabled, but can be disabled for performance reasons.
+   *
+   * @default false
+   */
+  skipValidation?: boolean;
+}
+
+export interface MeshServeHiveCDNOptions {
+  type: 'hive';
+  /**
+   * GraphQL Hive CDN endpoint URL.
+   */
+  endpoint: string;
+  /**
+   * GraphQL Hive CDN access key.
+   */
+  key: string;
+}
+
+export interface MeshServeHiveReportingOptions extends YamlConfig.HivePlugin {
+  type: 'hive';
+  /**
+   * GraphQL Hive registry access token.
+   *
+   * @default process.env.HIVE_REGISTRY_TOKEN
+   */
+  token: string;
+}
+
+interface MeshServeConfigBase<TContext extends Record<string, any>> {
+  /** Usage reporting options. */
+  reporting?: MeshServeHiveReportingOptions;
   /**
    * A map, or factory function, of transport kinds to their implementations.
    *
@@ -164,54 +194,6 @@ interface TransportRelatedConfig {
    * ```
    */
   transportEntries?: TransportEntryAdditions;
-}
-
-interface MeshServeConfigWithSchema<TContext>
-  extends MeshServeConfigWithoutSource<TContext>,
-    TransportRelatedConfig {
-  /**
-   * Polling interval in milliseconds.
-   */
-  polling?: number;
-  /**
-   * Additional GraphQL schema resolvers.
-   */
-  additionalResolvers?:
-    | IResolvers<unknown, MeshServeContext & TContext>
-    | IResolvers<unknown, MeshServeContext>[];
-  /**
-   * Current working directory.
-   */
-  cwd?: string;
-}
-
-export interface MeshServeConfigWithProxy<TContext>
-  extends MeshServeConfigWithoutSource<TContext>,
-    TransportRelatedConfig {
-  /**
-   * HTTP executor to proxy all incoming requests to another HTTP endpoint.
-   */
-  proxy: HTTPExecutorOptions;
-  /**
-   * Integration options with GraphQL Hive.
-   */
-  hive?: Partial<YamlConfig.HivePlugin> & HiveCDNOptions;
-  /**
-   * Polling interval in milliseconds.
-   */
-  polling?: number;
-  /**
-   * Disable GraphQL validation on the gateway
-   *
-   * By default, the gateway will validate the query against the schema before sending it to the executor.
-   * This is recommended to be enabled, but can be disabled for performance reasons.
-   *
-   * @default false
-   */
-  skipValidation?: boolean;
-}
-
-interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
   /**
    * Mesh plugins that are compatible with GraphQL Yoga, envelop and Mesh.
    */
@@ -282,4 +264,8 @@ interface MeshServeConfigWithoutSource<TContext extends Record<string, any>> {
    * Readiness check endpoint
    */
   readinessCheckEndpoint?: string;
+  /**
+   * Working directory to run Mesh Serve with.
+   */
+  cwd?: string;
 }

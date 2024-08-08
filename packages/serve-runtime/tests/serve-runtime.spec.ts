@@ -1,13 +1,4 @@
-import {
-  buildClientSchema,
-  buildSchema,
-  getIntrospectionQuery,
-  GraphQLSchema,
-  introspectionFromSchema,
-  printSchema,
-  type ExecutionResult,
-  type IntrospectionQuery,
-} from 'graphql';
+import { buildSchema, GraphQLSchema, introspectionFromSchema, printSchema } from 'graphql';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
@@ -120,27 +111,6 @@ describe('Serve Runtime', () => {
           });
         });
       });
-    });
-  });
-  describe('Defaults', () => {
-    it('falls back to "./supergraph.graphql" by default', async () => {
-      const serveRuntime = createServeRuntime({
-        cwd: __dirname,
-      });
-      const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: getIntrospectionQuery(),
-        }),
-      });
-
-      expect(res.status).toBe(200);
-      const resJson: ExecutionResult<IntrospectionQuery> = await res.json();
-      const clientSchema = buildClientSchema(resJson.data);
-      expect(printSchema(clientSchema)).toMatchSnapshot('default-supergraph');
     });
   });
   it('skips validation when disabled', async () => {

@@ -36,10 +36,6 @@ function createUpstreamSchema() {
 }
 
 describe('Hive CDN', () => {
-  afterEach(() => {
-    delete process.env.HIVE_CDN_ENDPOINT;
-    delete process.env.HIVE_CDN_KEY;
-  });
   it('respects env vars', async () => {
     await using cdnServer = await createDisposableServer((_req, res) => {
       const supergraph = getUnifiedGraphGracefully([
@@ -51,9 +47,13 @@ describe('Hive CDN', () => {
       ]);
       res.end(supergraph);
     });
-    process.env.HIVE_CDN_ENDPOINT = `http://localhost:${cdnServer.address().port}`;
-    process.env.HIVE_CDN_KEY = 'key';
-    await using serveRuntime = createServeRuntime();
+    await using serveRuntime = createServeRuntime({
+      supergraph: {
+        type: 'hive',
+        endpoint: `http://localhost:${cdnServer.address().port}`,
+        key: 'key',
+      },
+    });
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
@@ -83,21 +83,26 @@ describe('Hive CDN', () => {
     expect(landingPage).toContain('upstream');
     expect(landingPage).toContain('http://upstream/graphql');
   });
-  it('uses Hive CDN instead of introspection for Proxy mode with env vars', async () => {
+  it('uses Hive CDN instead of introspection for Proxy mode', async () => {
     const upstreamSchema = createUpstreamSchema();
     const upstreamServer = createYoga({
       schema: upstreamSchema,
       plugins: [useDisableIntrospection()],
     });
-    process.env.PROXY_ENDPOINT = 'http://upstream/graphql';
-    process.env.HIVE_CDN_ENDPOINT = 'http://hive/upstream';
-    process.env.HIVE_CDN_KEY = 'key';
     let schemaChangeSpy = jest.fn((schema: GraphQLSchema) => {});
+    const hiveEndpoint = 'http://hive/upstream';
+    const hiveKey = 'key';
     await using serveRuntime = createServeRuntime({
+      proxy: { endpoint: 'http://upstream/graphql' },
+      cdn: {
+        type: 'hive',
+        endpoint: hiveEndpoint,
+        key: hiveKey,
+      },
       plugins: () => [
         useCustomFetch(function (url, opts) {
-          if (url === process.env.HIVE_CDN_ENDPOINT) {
-            if (opts.headers?.['X-Hive-CDN-Key'] !== process.env.HIVE_CDN_KEY) {
+          if (url === hiveEndpoint) {
+            if (opts.headers?.['X-Hive-CDN-Key'] !== hiveKey) {
               return new serveRuntime.fetchAPI.Response('Unauthorized', {
                 status: 401,
               });

@@ -1,5 +1,5 @@
 import cluster, { Worker } from 'node:cluster';
-import { createServeRuntime, type MeshServeConfigWithProxy } from '@graphql-mesh/serve-runtime';
+import { createServeRuntime, type MeshServeConfigProxy } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
 import type { AddCommand, CLIContext, CLIGlobals } from '../cli.js';
 import { loadConfig } from '../config.js';
@@ -33,7 +33,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       return proxy(ctx, config);
     });
 
-export type ProxyConfig = MeshServeConfigWithProxy<unknown> &
+export type ProxyConfig = MeshServeConfigProxy<unknown> &
   ServerConfig & {
     fork: number;
   };
