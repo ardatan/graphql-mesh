@@ -1,9 +1,9 @@
 import cluster, { Worker } from 'node:cluster';
 import { createServeRuntime, type MeshServeConfigProxy } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
-import type { AddCommand, CLIContext, CLIGlobals } from '../cli.js';
+import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
 import { loadConfig } from '../config.js';
-import { startServerForRuntime, type ServerConfig } from '../server.js';
+import { startServerForRuntime } from '../server.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
   cli
@@ -12,7 +12,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       'serve a proxy to a GraphQL API and add additional features such as monitoring/tracing, caching, rate limiting, security, and more',
     )
     .argument('endpoint', 'URL of the endpoint GraphQL API to proxy')
-    .action(async function (endpoint) {
+    .action(async function proxy(endpoint) {
       const opts = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
@@ -22,23 +22,17 @@ export const addCommand: AddCommand = (ctx, cli) =>
       const config: ProxyConfig = {
         ...loadedConfig,
         ...opts,
-        fork: opts.fork!, // defaults are defined in global cli options
-        host: opts.host!, // defaults are defined in global cli options
-        port: opts.port!, // defaults are defined in global cli options
         proxy: {
           ...loadedConfig['proxy'],
           endpoint,
         },
       };
-      return proxy(ctx, config);
+      return runProxy(ctx, config);
     });
 
-export type ProxyConfig = MeshServeConfigProxy<unknown> &
-  ServerConfig & {
-    fork: number;
-  };
+export type ProxyConfig = MeshServeConfigProxy<unknown> & MeshServeCLIConfig;
 
-export async function proxy({ log }: CLIContext, config: ProxyConfig) {
+export async function runProxy({ log }: CLIContext, config: ProxyConfig) {
   if (cluster.isPrimary && config.fork > 1) {
     const workers: Worker[] = [];
     log.info(`Forking ${config.fork} workers`);
