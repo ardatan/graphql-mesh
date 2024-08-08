@@ -1,10 +1,7 @@
 import cluster, { Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
-import {
-  createServeRuntime,
-  type MeshServeConfigWithSupergraph,
-} from '@graphql-mesh/serve-runtime';
+import { createServeRuntime, type MeshServeConfigSupergraph } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
 import type { AddCommand, CLIContext, CLIGlobals } from '../cli.js';
 import { loadConfig } from '../config.js';
@@ -35,7 +32,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       return supergraph(ctx, config);
     });
 
-export type SupergraphConfig = MeshServeConfigWithSupergraph<unknown> &
+export type SupergraphConfig = MeshServeConfigSupergraph<unknown> &
   ServerConfig & {
     fork: number;
   };

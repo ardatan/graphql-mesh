@@ -1,7 +1,7 @@
 import cluster, { Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
-import { createServeRuntime, type MeshServeConfigWithSubgraph } from '@graphql-mesh/serve-runtime';
+import { createServeRuntime, type MeshServeConfigSubgraph } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
 import type { AddCommand, CLIContext, CLIGlobals } from '../cli.js';
 import { loadConfig } from '../config.js';
@@ -32,7 +32,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       return subgraph(ctx, config);
     });
 
-export type SubgraphConfig = MeshServeConfigWithSubgraph<unknown> &
+export type SubgraphConfig = MeshServeConfigSubgraph<unknown> &
   ServerConfig & {
     fork: number;
   };
