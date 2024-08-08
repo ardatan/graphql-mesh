@@ -1,13 +1,8 @@
-import type { AppOptions, HttpRequest, HttpResponse } from 'uWebSockets.js';
+import type { AppOptions } from 'uWebSockets.js';
 import type { MeshServeConfig } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 
-export interface MeshServeCLIContext {
-  req: HttpRequest;
-  res: HttpResponse;
-}
-
-export type MeshServeCLIConfig = MeshServeConfig<MeshServeCLIContext> & {
+export type MeshServeCLIConfig = MeshServeConfig & {
   /**
    * Port to listen on (default: `4000`)
    */
