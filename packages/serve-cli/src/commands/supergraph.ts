@@ -3,9 +3,9 @@ import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { createServeRuntime, type MeshServeConfigSupergraph } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
-import type { AddCommand, CLIContext, CLIGlobals } from '../cli.js';
+import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
 import { loadConfig } from '../config.js';
-import { startServerForRuntime, type ServerConfig } from '../server.js';
+import { startServerForRuntime } from '../server.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
   cli
@@ -14,8 +14,9 @@ export const addCommand: AddCommand = (ctx, cli) =>
       'serve a Federation supergraph provided by a compliant composition tool such as Mesh Compose or Apollo Rover',
     )
     .argument('[schemaPath]', 'path to the composed supergraph schema file', 'supergraph.graphql')
-    .action(async function (schemaPath) {
+    .action(async function supergraph(schemaPath) {
       const opts = this.optsWithGlobals<CLIGlobals>();
+      console.log(opts);
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -24,20 +25,14 @@ export const addCommand: AddCommand = (ctx, cli) =>
       const config: SupergraphConfig = {
         ...loadedConfig,
         ...opts,
-        fork: opts.fork!, // defaults are defined in global cli options
-        host: opts.host!, // defaults are defined in global cli options
-        port: opts.port!, // defaults are defined in global cli options
         supergraph: schemaPath,
       };
-      return supergraph(ctx, config);
+      return runSupergraph(ctx, config);
     });
 
-export type SupergraphConfig = MeshServeConfigSupergraph<unknown> &
-  ServerConfig & {
-    fork: number;
-  };
+export type SupergraphConfig = MeshServeConfigSupergraph<unknown> & MeshServeCLIConfig;
 
-export async function supergraph({ log }: CLIContext, config: SupergraphConfig) {
+export async function runSupergraph({ log }: CLIContext, config: SupergraphConfig) {
   let absSchemaPath: string | null = null;
   if (typeof config.supergraph === 'undefined' || typeof config.supergraph === 'string') {
     const supergraphPath = config.supergraph || 'supergraph.graphql';

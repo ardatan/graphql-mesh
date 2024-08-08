@@ -7,10 +7,18 @@ import type { Logger } from '@graphql-mesh/types';
 import { createAsyncDisposable, getTerminateStack } from '@graphql-mesh/utils';
 
 export interface ServerConfig {
-  /** Host to listen on. */
-  host: string;
-  /** Port to listen on. */
-  port: number;
+  /**
+   * Host to listen on.
+   *
+   * @default '0.0.0.0'
+   */
+  host?: string;
+  /**
+   * Port to listen on.
+   *
+   * @deafult 4000
+   */
+  port?: number;
   /**
    * SSL Credentials for the HTTPS Server.
    *
@@ -43,7 +51,13 @@ export async function startServerForRuntime<
   TContext extends Record<string, any> = Record<string, any>,
 >(
   runtime: MeshServeRuntime<TContext>,
-  { log, host, port, sslCredentials, maxHeaderSize = 16_384 }: ServerForRuntimeOptions,
+  {
+    log,
+    host = '0.0.0.0',
+    port = 4000,
+    sslCredentials,
+    maxHeaderSize = 16_384,
+  }: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
   const terminateStack = getTerminateStack();
   terminateStack.use(runtime);
@@ -80,7 +94,7 @@ async function startuWebSocketsServer(
   handler: any,
   opts: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
-  const { log, host, port, sslCredentials, maxHeaderSize } = opts;
+  const { log, host = '0.0.0.0', port = 4000, sslCredentials, maxHeaderSize } = opts;
   process.env.UWS_HTTP_MAX_HEADERS_SIZE = maxHeaderSize?.toString();
   return import('uWebSockets.js').then(uWS => {
     const protocol = sslCredentials ? 'https' : 'http';
@@ -110,7 +124,7 @@ async function startNodeHttpServer(
   handler: any,
   opts: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
-  const { log, host, port, sslCredentials, maxHeaderSize } = opts;
+  const { log, host = '0.0.0.0', port = 4000, sslCredentials, maxHeaderSize } = opts;
   if (sslCredentials) {
     const sslOptionsForNodeHttp: SecureContextOptions = {};
     if (sslCredentials.ca_file_name) {

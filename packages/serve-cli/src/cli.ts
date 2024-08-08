@@ -4,10 +4,68 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 import cluster from 'node:cluster';
 import { availableParallelism, release } from 'node:os';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import type {
+  MeshServeConfigProxy,
+  MeshServeConfigSubgraph,
+  MeshServeConfigSupergraph,
+} from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { addCommands } from './commands';
 import { defaultConfigPaths } from './config.js';
+import type { ServerConfig } from './server';
+
+export type MeshServeCLIConfig = (
+  | MeshServeCLISupergraphConfig
+  | MeshServeCLISubgraphConfig
+  | MeshServeCLIProxyConfig
+) &
+  ServerConfig & {
+    /**
+     * Count of workers to spawn. Defaults to `os.availableParallelism()` when NODE_ENV
+     * is "production", otherwise only one (the main) worker.
+     */
+    fork?: number;
+  };
+
+export interface MeshServeCLISupergraphConfig
+  extends Omit<MeshServeConfigSupergraph, 'supergraph'> {
+  /**
+   * SDL, path or an URL to the Federation Supergraph.
+   *
+   * Alternatively, CDN options for pulling a remote Federation Supergraph.
+   *
+   * @default 'supergraph.graphql'
+   */
+  // default matches commands/supergraph.ts
+  supergraph?: MeshServeConfigSupergraph['supergraph'];
+}
+
+export interface MeshServeCLISubgraphConfig extends Omit<MeshServeConfigSubgraph, 'subgraph'> {
+  /**
+   * SDL, path or an URL to the Federation Supergraph.
+   *
+   * Alternatively, CDN options for pulling a remote Federation Supergraph.
+   *
+   * @default 'subgraph.graphql'
+   */
+  // default matches commands/subgraph.ts
+  subgraph?: MeshServeConfigSubgraph['subgraph'];
+}
+
+export interface MeshServeCLIProxyConfig extends Omit<MeshServeConfigProxy, 'proxy'> {
+  /**
+   * HTTP executor to proxy all incoming requests to another HTTP endpoint.
+   */
+  proxy?: MeshServeConfigProxy['proxy'];
+}
+
+/**
+ * Type helper for defining the config.
+ */
+export function defineConfig(config: MeshServeCLIConfig) {
+  return config;
+}
 
 /** The context of the running program. */
 export interface CLIContext {
@@ -87,6 +145,7 @@ let cli = new Command()
         return interval;
       }),
   )
+  .option('--no-masked-errors', "don't mask unexpected errors in responses")
   .option('--masked-errors', 'mask unexpected errors in responses', true)
   .addOption(
     new Option(

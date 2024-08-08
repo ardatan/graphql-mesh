@@ -3,9 +3,9 @@ import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
 import { createServeRuntime, type MeshServeConfigSubgraph } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
-import type { AddCommand, CLIContext, CLIGlobals } from '../cli.js';
+import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
 import { loadConfig } from '../config.js';
-import { startServerForRuntime, type ServerConfig } from '../server.js';
+import { startServerForRuntime } from '../server.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
   cli
@@ -14,7 +14,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       'serve a Federation subgraph that can be used with any Federation compatible router like Mesh Serve or Apollo Router',
     )
     .argument('[schemaPath]', 'path to the subgraph schema file', 'subgraph.graphql')
-    .action(async function (schemaPath) {
+    .action(async function subgraph(schemaPath) {
       const opts = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
@@ -24,20 +24,14 @@ export const addCommand: AddCommand = (ctx, cli) =>
       const config: SubgraphConfig = {
         ...loadedConfig,
         ...opts,
-        fork: opts.fork!, // defaults are defined in global cli options
-        host: opts.host!, // defaults are defined in global cli options
-        port: opts.port!, // defaults are defined in global cli options
         subgraph: schemaPath,
       };
-      return subgraph(ctx, config);
+      return runSubgraph(ctx, config);
     });
 
-export type SubgraphConfig = MeshServeConfigSubgraph<unknown> &
-  ServerConfig & {
-    fork: number;
-  };
+export type SubgraphConfig = MeshServeConfigSubgraph<unknown> & MeshServeCLIConfig;
 
-export async function subgraph({ log }: CLIContext, config: SubgraphConfig) {
+export async function runSubgraph({ log }: CLIContext, config: SubgraphConfig) {
   let absSchemaPath: string | null = null;
   if (typeof config.subgraph === 'undefined' || typeof config.subgraph === 'string') {
     const subgraphPath = config.subgraph || 'subgraph.graphql';

@@ -1,9 +1,8 @@
-import type { AddCommand, CLIGlobals } from '../cli.js';
+import type { AddCommand, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
 import { loadConfig } from '../config.js';
-import type { MeshServeCLIConfig } from '../types.js';
-import { proxy } from './proxy.js';
-import { subgraph } from './subgraph.js';
-import { supergraph } from './supergraph.js';
+import { runProxy } from './proxy.js';
+import { runSubgraph } from './subgraph.js';
+import { runSupergraph } from './supergraph.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
   cli
@@ -15,31 +14,38 @@ export const addCommand: AddCommand = (ctx, cli) =>
       const config = {
         logging: ctx.log,
         ...loadedConfig,
-        fork: opts.fork!, // defaults are defined in global cli options
-        host: opts.host!, // defaults are defined in global cli options
-        port: opts.port!, // defaults are defined in global cli options
-        hive: {
-          ...loadedConfig['hive'],
-          token: opts.hiveRegistryToken || loadedConfig['hive']?.['token'],
+        reporting: {
+          ...loadedConfig.reporting,
+          ...(opts.hiveRegistryToken
+            ? {
+                type: 'hive',
+                token: opts.hiveRegistryToken,
+              }
+            : {}),
         },
       } satisfies MeshServeCLIConfig;
 
       if ('supergraph' in config) {
-        return supergraph(ctx, config);
+        const { supergraph } = config;
+        if (!supergraph) {
+          throw 'Missing "supergraph" property'; // should never happen
+        }
+        return runSupergraph(ctx, { supergraph, ...config });
       }
       if ('subgraph' in config) {
-        return subgraph(
-          ctx,
-          // @ts-expect-error TODO: subgraph will be defined according to types
-          config,
-        );
+        const { subgraph } = config;
+        if (!subgraph) {
+          throw 'Missing "subgraph" property'; // should never happen
+        }
+        return runSubgraph(ctx, { subgraph, ...config });
       }
       if ('proxy' in config) {
-        return proxy(
-          ctx,
-          // @ts-expect-error TODO: proxy will be defined according to types
-          config,
-        );
+        const { proxy } = config;
+        if (!proxy) {
+          throw 'Missing "proxy" property'; // should never happen
+        }
+        return runProxy(ctx, { proxy, ...config });
       }
+
       throw new Error('Cannot decide what to do while interpreting the config');
     });
