@@ -13,11 +13,11 @@ import { defaultConfigPaths } from './config.js';
 export interface CLIContext {
   /** @default new DefaultLogger() */
   log: Logger;
-  /** @default Mesh Serve */
+  /** @default 'Mesh Serve' */
   productName: string;
-  /** @default serve GraphQL federated architecture for any API service(s) */
+  /** @default 'serve GraphQL federated architecture for any API service(s)' */
   productDescription: string;
-  /** @default mesh-serve */
+  /** @default 'mesh-serve' */
   binName: string;
   /** @default globalThis.__VERSION__ */
   version: string;
