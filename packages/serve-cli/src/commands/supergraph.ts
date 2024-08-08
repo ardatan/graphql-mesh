@@ -16,7 +16,6 @@ export const addCommand: AddCommand = (ctx, cli) =>
     .argument('[schemaPath]', 'path to the composed supergraph schema file', 'supergraph.graphql')
     .action(async function supergraph(schemaPath) {
       const opts = this.optsWithGlobals<CLIGlobals>();
-      console.log(opts);
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
