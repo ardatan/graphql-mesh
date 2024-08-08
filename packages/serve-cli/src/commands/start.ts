@@ -7,7 +7,9 @@ import { runSupergraph } from './supergraph.js';
 export const addCommand: AddCommand = (ctx, cli) =>
   cli
     .command('start', { isDefault: true })
-    .description('start the Mesh Serve using the config to decide what to do (default)')
+    .description(
+      'start the Mesh Serve using the config to decide what to do. if the config is empty or missing, will run the "supergraph" command (default)',
+    )
     .action(async function start() {
       const opts = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({ log: ctx.log, configPath: opts.configPath });
@@ -25,13 +27,6 @@ export const addCommand: AddCommand = (ctx, cli) =>
         },
       } satisfies MeshServeCLIConfig;
 
-      if ('supergraph' in config) {
-        const { supergraph } = config;
-        if (!supergraph) {
-          throw 'Missing "supergraph" property'; // should never happen
-        }
-        return runSupergraph(ctx, { supergraph, ...config });
-      }
       if ('subgraph' in config) {
         const { subgraph } = config;
         if (!subgraph) {
@@ -47,5 +42,6 @@ export const addCommand: AddCommand = (ctx, cli) =>
         return runProxy(ctx, { proxy, ...config });
       }
 
-      throw new Error('Cannot decide what to do while interpreting the config');
+      const supergraph = config['supergraph'] || 'supergraph.graphql';
+      return runSupergraph(ctx, { supergraph, ...config });
     });
