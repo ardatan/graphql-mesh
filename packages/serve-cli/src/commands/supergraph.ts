@@ -3,7 +3,7 @@ import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { Option } from '@commander-js/extra-typings';
 import { createServeRuntime, type MeshServeConfigSupergraph } from '@graphql-mesh/serve-runtime';
-import { registerTerminateHandler } from '@graphql-mesh/utils';
+import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
 import { loadConfig } from '../config.js';
@@ -47,7 +47,11 @@ export type SupergraphConfig = MeshServeConfigSupergraph<unknown> & MeshServeCLI
 
 export async function runSupergraph({ log }: CLIContext, config: SupergraphConfig) {
   let absSchemaPath: string | null = null;
-  if (typeof config.supergraph === 'string' && isValidPath(config.supergraph)) {
+  if (
+    typeof config.supergraph === 'string' &&
+    isValidPath(config.supergraph) &&
+    !isUrl(config.supergraph)
+  ) {
     const supergraphPath = config.supergraph;
     absSchemaPath = isAbsolute(supergraphPath)
       ? String(supergraphPath)
@@ -121,7 +125,9 @@ export async function runSupergraph({ log }: CLIContext, config: SupergraphConfi
   const runtime = createServeRuntime(config);
 
   if (absSchemaPath) {
-    log.info(`Serving supergraph from ${absSchemaPath}`);
+    log.info(`Serving local supergraph from ${absSchemaPath}`);
+  } else if (isUrl(String(config.supergraph))) {
+    log.info(`Serving remote supergraph from ${config.supergraph}`);
   } else if (
     typeof config.supergraph === 'object' &&
     'type' in config.supergraph &&
