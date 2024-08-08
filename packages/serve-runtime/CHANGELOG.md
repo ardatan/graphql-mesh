@@ -1,5 +1,74 @@
 # @graphql-mesh/serve-runtime
 
+## 0.6.0
+
+### Patch Changes
+
+- [#7477](https://github.com/ardatan/graphql-mesh/pull/7477)
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.18)
+    (from `^10.0.17`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.3.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.3.4)
+    (from `^10.2.3`, in `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/executor-yoga@^3.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-yoga/v/3.0.0)
+    (from `dependencies`)
+
+- [#7482](https://github.com/ardatan/graphql-mesh/pull/7482)
+  [`d5a4cd4`](https://github.com/ardatan/graphql-mesh/commit/d5a4cd4ff93984b62d9670cc286886e62de1bc55)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.5)
+    (from `^2.2.4`, in `dependencies`)
+
+- [#7466](https://github.com/ardatan/graphql-mesh/pull/7466)
+  [`e2d3270`](https://github.com/ardatan/graphql-mesh/commit/e2d3270c7f32bf0a77b657546a2335572aeb0b79)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support Hive CDN in proxy mode If Hive CDN
+  endpoint is provided, the runtime won't introspect the schema from the endpoint, and fetch it from
+  Hive CDN.
+
+  By default, Mesh Serve introspects the schema from the endpoint. And it fails, it skips the
+  validation and schema aware features. But if Hive CDN endpoint and key have been provided in the
+  configuration, Mesh Serve will fetch the schema from the Hive CDN.
+
+  ```ts filename="mesh.config.ts"
+  import { defineConfig } from '@graphql-mesh/serve-cli'
+
+  export const serveConfig = defineConfig({
+    proxy: {
+      endpoint: 'https://example.com/graphql'
+    },
+    hive: {
+      endpoint: 'https://cdn.graphql-hive.com/artifacts/v1/0123-3434/sdl',
+      key: 'SOME_HIVE_KEY'
+    }
+  })
+  ```
+
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`d5a4cd4`](https://github.com/ardatan/graphql-mesh/commit/d5a4cd4ff93984b62d9670cc286886e62de1bc55),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`0c82de5`](https://github.com/ardatan/graphql-mesh/commit/0c82de538b1780d7858e65a8216854550cd7db1b),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7),
+  [`4d1eb28`](https://github.com/ardatan/graphql-mesh/commit/4d1eb285c2b703c5f80473ad0f316004306fac7f),
+  [`0c82de5`](https://github.com/ardatan/graphql-mesh/commit/0c82de538b1780d7858e65a8216854550cd7db1b),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7)]:
+  - @graphql-mesh/cross-helpers@0.4.5
+  - @graphql-mesh/fusion-runtime@0.6.0
+  - @graphql-mesh/transport-common@0.5.0
+  - @graphql-mesh/transport-http@0.4.0
+  - @graphql-mesh/utils@0.100.0
+  - @graphql-mesh/plugin-hive@0.100.0
+
 ## 0.5.11
 
 ### Patch Changes

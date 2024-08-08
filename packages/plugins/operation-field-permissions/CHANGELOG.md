@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.100.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c)]:
+  - @graphql-mesh/cross-helpers@0.4.5
+  - @graphql-mesh/types@0.100.0
+
 ## 0.99.7
 
 ### Patch Changes

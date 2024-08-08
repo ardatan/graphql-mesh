@@ -1,5 +1,15 @@
 # @graphql-mesh/tuql
 
+## 0.101.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c)]:
+  - @graphql-mesh/types@0.100.0
+  - @omnigraph/sqlite@0.4.0
+
 ## 0.100.9
 
 ### Patch Changes

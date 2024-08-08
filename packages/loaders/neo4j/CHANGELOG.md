@@ -1,5 +1,22 @@
 # @omnigraph/neo4j
 
+## 0.5.0
+
+### Patch Changes
+
+- [#7477](https://github.com/ardatan/graphql-mesh/pull/7477)
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.18)
+    (from `^10.0.17`, in `dependencies`)
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`6361414`](https://github.com/ardatan/graphql-mesh/commit/6361414fe326ef72640069bdcfb846f4d367e31b)]:
+  - @graphql-mesh/transport-neo4j@0.5.0
+  - @graphql-mesh/types@0.100.0
+
 ## 0.4.7
 
 ### Patch Changes

@@ -1,5 +1,58 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.6.0
+
+### Minor Changes
+
+- [#7460](https://github.com/ardatan/graphql-mesh/pull/7460)
+  [`0c82de5`](https://github.com/ardatan/graphql-mesh/commit/0c82de538b1780d7858e65a8216854550cd7db1b)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Control subgraph execution batching in
+  UnifiedGraphManager with batch option
+
+### Patch Changes
+
+- [#7477](https://github.com/ardatan/graphql-mesh/pull/7477)
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.18)
+    (from `^10.0.17`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/executor@^1.3.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.1)
+    (from `^1.3.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.3.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.3.4)
+    (from `^10.2.3`, in `dependencies`)
+
+- [#7482](https://github.com/ardatan/graphql-mesh/pull/7482)
+  [`d5a4cd4`](https://github.com/ardatan/graphql-mesh/commit/d5a4cd4ff93984b62d9670cc286886e62de1bc55)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.5)
+    (from `^2.2.4`, in `dependencies`)
+
+- [#7460](https://github.com/ardatan/graphql-mesh/pull/7460)
+  [`0c82de5`](https://github.com/ardatan/graphql-mesh/commit/0c82de538b1780d7858e65a8216854550cd7db1b)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Batching subgraph requests independant of the
+  JEST environment variable
+
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7),
+  [`4d1eb28`](https://github.com/ardatan/graphql-mesh/commit/4d1eb285c2b703c5f80473ad0f316004306fac7f),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7)]:
+  - @graphql-mesh/cross-helpers@0.4.5
+  - @graphql-mesh/runtime@0.101.0
+  - @graphql-mesh/transport-common@0.5.0
+  - @graphql-mesh/types@0.100.0
+  - @graphql-mesh/utils@0.100.0
+
 ## 0.5.10
 
 ### Patch Changes
