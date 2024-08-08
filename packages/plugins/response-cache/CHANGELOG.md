@@ -1,5 +1,24 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.100.0
+
+### Patch Changes
+
+- [`44f6710`](https://github.com/ardatan/graphql-mesh/commit/44f6710d5c65c9386f5d90d32f63803df673d36a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix \`options.session\` is not a function error
+  when \`sessionId\` is not provided
+
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7),
+  [`4d1eb28`](https://github.com/ardatan/graphql-mesh/commit/4d1eb285c2b703c5f80473ad0f316004306fac7f),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7)]:
+  - @graphql-mesh/cross-helpers@0.4.5
+  - @graphql-mesh/types@0.100.0
+  - @graphql-mesh/utils@0.100.0
+
 ## 0.99.7
 
 ### Patch Changes

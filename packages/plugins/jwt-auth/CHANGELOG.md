@@ -1,5 +1,24 @@
 # @graphql-mesh/plugin-jwt-auth
 
+## 0.1.0
+
+### Patch Changes
+
+- [#7455](https://github.com/ardatan/graphql-mesh/pull/7455)
+  [`5d3610a`](https://github.com/ardatan/graphql-mesh/commit/5d3610a85b3d59df5282a31e8972e800973e6963)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-jwt@^3.0.2` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-jwt/v/3.0.2)
+    (from `3.0.1`, in `dependencies`)
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7),
+  [`4d1eb28`](https://github.com/ardatan/graphql-mesh/commit/4d1eb285c2b703c5f80473ad0f316004306fac7f),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7)]:
+  - @graphql-mesh/types@0.100.0
+  - @graphql-mesh/utils@0.100.0
+
 ## 0.0.10
 
 ### Patch Changes
