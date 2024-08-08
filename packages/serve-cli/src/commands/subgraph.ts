@@ -2,7 +2,7 @@ import cluster, { Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
 import { createServeRuntime, type MeshServeConfigSubgraph } from '@graphql-mesh/serve-runtime';
-import { registerTerminateHandler } from '@graphql-mesh/utils';
+import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
 import { loadConfig } from '../config.js';
@@ -14,7 +14,11 @@ export const addCommand: AddCommand = (ctx, cli) =>
     .description(
       'serve a Federation subgraph that can be used with any Federation compatible router like Mesh Serve or Apollo Router',
     )
-    .argument('[schemaPath]', 'path to the subgraph schema file', 'subgraph.graphql')
+    .argument(
+      '[schemaPathOrUrl]',
+      'path to the subgraph schema file or a url from where to pull the subgraph schema',
+      'subgraph.graphql',
+    )
     .action(async function subgraph(schemaPath) {
       const opts = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
@@ -34,7 +38,11 @@ export type SubgraphConfig = MeshServeConfigSubgraph<unknown> & MeshServeCLIConf
 
 export async function runSubgraph({ log }: CLIContext, config: SubgraphConfig) {
   let absSchemaPath: string | null = null;
-  if (typeof config.subgraph === 'string' && isValidPath(config.subgraph)) {
+  if (
+    typeof config.subgraph === 'string' &&
+    isValidPath(config.subgraph) &&
+    !isUrl(config.subgraph)
+  ) {
     const subgraphPath = config.subgraph;
     absSchemaPath = isAbsolute(subgraphPath)
       ? String(subgraphPath)
@@ -64,7 +72,9 @@ export async function runSubgraph({ log }: CLIContext, config: SubgraphConfig) {
   const runtime = createServeRuntime(config);
 
   if (absSchemaPath) {
-    log.info(`Serving subgraph from ${absSchemaPath}`);
+    log.info(`Serving local subgraph from ${absSchemaPath}`);
+  } else if (isUrl(String(config.subgraph))) {
+    log.info(`Serving remote subgraph from ${config.subgraph}`);
   } else {
     log.info('Serving subgraph from config');
   }
