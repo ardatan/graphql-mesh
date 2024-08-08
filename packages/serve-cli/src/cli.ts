@@ -12,7 +12,7 @@ import type {
 } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { addCommands } from './commands';
+import { addCommands } from './commands/index.js';
 import { defaultConfigPaths } from './config.js';
 import type { ServerConfig } from './server';
 
