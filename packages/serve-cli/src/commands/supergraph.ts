@@ -1,6 +1,7 @@
 import cluster, { Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
+import { Option } from '@commander-js/extra-typings';
 import { createServeRuntime, type MeshServeConfigSupergraph } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
@@ -14,9 +15,19 @@ export const addCommand: AddCommand = (ctx, cli) =>
     .description(
       'serve a Federation supergraph provided by a compliant composition tool such as Mesh Compose or Apollo Rover',
     )
-    .argument('[schemaPath]', 'path to the composed supergraph schema file', 'supergraph.graphql')
-    .action(async function supergraph(schemaPath) {
-      const opts = this.optsWithGlobals<CLIGlobals>();
+    .argument(
+      '[schemaPathOrUrl]',
+      'path to the composed supergraph schema file or a url from where to pull the supergraph schema',
+      'supergraph.graphql',
+    )
+    .addOption(
+      new Option(
+        '--hive-cdn-key <key>',
+        'Hive CDN API key for fetching the supergraph. implies that the "schemaPathOrUrl" argument is a url',
+      ).env('HIVE_CDN_KEY'),
+    )
+    .action(async function supergraph(schemaPathOrUrl) {
+      const { hiveCdnKey, ...opts } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -25,7 +36,9 @@ export const addCommand: AddCommand = (ctx, cli) =>
       const config: SupergraphConfig = {
         ...loadedConfig,
         ...opts,
-        supergraph: schemaPath,
+        supergraph: hiveCdnKey
+          ? { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey }
+          : schemaPathOrUrl,
       };
       return runSupergraph(ctx, config);
     });
@@ -109,6 +122,12 @@ export async function runSupergraph({ log }: CLIContext, config: SupergraphConfi
 
   if (absSchemaPath) {
     log.info(`Serving supergraph from ${absSchemaPath}`);
+  } else if (
+    typeof config.supergraph === 'object' &&
+    'type' in config.supergraph &&
+    config.supergraph.type === 'hive'
+  ) {
+    log.info(`Serving supergraph from Hive CDN at ${config.supergraph.endpoint}`);
   } else {
     log.info('Serving supergraph from config');
   }
