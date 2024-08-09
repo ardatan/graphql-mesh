@@ -25,6 +25,12 @@ export const addCommand: AddCommand = (ctx, cli) =>
     )
     .action(async function proxy(endpoint) {
       const opts = this.optsWithGlobals<CLIGlobals>();
+      if (opts.hiveCdnKey && !opts.schema) {
+        process.stderr.write(
+          `error: option '--schema <schemaPathOrUrl>' is required when providing '--hive-cdn-key <key>'\n`,
+        );
+        process.exit(1);
+      }
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -37,7 +43,13 @@ export const addCommand: AddCommand = (ctx, cli) =>
           ...loadedConfig['proxy'],
           endpoint,
         },
-        // schema:
+        schema: opts.hiveCdnKey
+          ? {
+              type: 'hive',
+              endpoint: opts.schema!, // see validation above
+              key: opts.hiveCdnKey,
+            }
+          : opts.schema,
       };
       return runProxy(ctx, config);
     });
