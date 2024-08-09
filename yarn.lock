@@ -3975,6 +3975,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@envelop/extended-validation@npm:4.1.0-alpha-20240806125641-9b9885ba":
+  version: 4.1.0-alpha-20240806125641-9b9885ba
+  resolution: "@envelop/extended-validation@npm:4.1.0-alpha-20240806125641-9b9885ba"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.0.0"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    "@envelop/core": ^5.0.0
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/db495b73cdae97bd8cbc254aa531a1fe14a0e34b4511c3fb63368785ebbdd83dd4a90ca84a2f9dabf6253799eb8f2f5be5976163ddfaa1a0980c99b55aa80b64
+  languageName: node
+  linkType: hard
+
 "@envelop/extended-validation@npm:^4.0.0":
   version: 4.0.0
   resolution: "@envelop/extended-validation@npm:4.0.0"
@@ -3985,6 +3998,20 @@ __metadata:
     "@envelop/core": ^5.0.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 10c0/86ad663eef0303fab9e7fef233dfa798ff368526faf20cc6043bf8f6da455cf81eb3923b80bc424311f961b7cf87416158ef18abe6aaebba3cacdd4bfdf8f80e
+  languageName: node
+  linkType: hard
+
+"@envelop/generic-auth@npm:8.0.0-alpha-20240806125641-9b9885ba":
+  version: 8.0.0-alpha-20240806125641-9b9885ba
+  resolution: "@envelop/generic-auth@npm:8.0.0-alpha-20240806125641-9b9885ba"
+  dependencies:
+    "@envelop/extended-validation": "npm:4.1.0-alpha-20240806125641-9b9885ba"
+    "@graphql-tools/utils": "npm:^10.0.6"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    "@envelop/core": ^5.0.0
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/604fa4cce427b091a5970f5069840988bc05245df965744f77418af60b0799d30dc8f1a6610da5372a69f272e620486b3e0d6db456a0aad3b06fc40483359c2d
   languageName: node
   linkType: hard
 
@@ -6275,6 +6302,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@graphql-mesh/plugin-generic-auth@workspace:packages/plugins/generic-auth":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/plugin-generic-auth@workspace:packages/plugins/generic-auth"
+  dependencies:
+    "@envelop/generic-auth": "npm:8.0.0-alpha-20240806125641-9b9885ba"
+  peerDependencies:
+    "@graphql-mesh/types": ^0.100.0
+    "@graphql-mesh/utils": ^0.100.0
+    graphql: "*"
+    tslib: ^2.4.0
+  languageName: unknown
+  linkType: soft
+
 "@graphql-mesh/plugin-hive@npm:0.100.0, @graphql-mesh/plugin-hive@npm:^0.100.0, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
@@ -7919,7 +7959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.3.4, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3, @graphql-tools/utils@npm:^10.3.0, @graphql-tools/utils@npm:^10.3.2, @graphql-tools/utils@npm:^10.3.4":
+"@graphql-tools/utils@npm:10.3.4, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.13, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.0.6, @graphql-tools/utils@npm:^10.1.1, @graphql-tools/utils@npm:^10.2.1, @graphql-tools/utils@npm:^10.2.2, @graphql-tools/utils@npm:^10.2.3, @graphql-tools/utils@npm:^10.3.0, @graphql-tools/utils@npm:^10.3.2, @graphql-tools/utils@npm:^10.3.4":
   version: 10.3.4
   resolution: "@graphql-tools/utils@npm:10.3.4"
   dependencies:
