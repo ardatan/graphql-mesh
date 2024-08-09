@@ -1,3 +1,4 @@
+import type { DocumentNode, GraphQLSchema } from 'graphql';
 import type {
   BatchingOptions,
   FetchAPI,
@@ -114,9 +115,11 @@ export interface MeshServeConfigProxy<TContext extends Record<string, any> = Rec
    */
   proxy: HTTPExecutorOptions & { endpoint: string };
   /**
-   * CDN options to pull the GraphQL schema from.
+   * SDL, path or an URL to the GraphQL schema.
+   *
+   * Alternatively, CDN options for pulling a remote GraphQL schema.
    */
-  cdn?: MeshServeHiveCDNOptions;
+  schema?: GraphQLSchema | DocumentNode | string | MeshServeHiveCDNOptions;
   /**
    * GraphQL schema polling interval in milliseconds.
    */

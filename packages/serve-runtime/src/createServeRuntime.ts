@@ -33,6 +33,7 @@ import {
   DefaultLogger,
   getHeadersObj,
   isDisposable,
+  isUrl,
   LogLevel,
   makeAsyncDisposable,
   mapMaybePromise,
@@ -42,6 +43,7 @@ import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
 import {
   getDirectiveExtensions,
+  isValidPath,
   mergeDeep,
   parseSelectionSet,
   type Executor,
@@ -167,8 +169,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     let lastFetchedSdl: string;
     let initialFetch$: MaybePromise<true>;
     let schemaFetcher: () => MaybePromise<true>;
-    if (config.cdn) {
-      const { endpoint, key } = config.cdn;
+
+    if (config.schema && typeof config.schema === 'object' && 'type' in config.schema) {
+      // hive cdn
+      const { endpoint, key } = config.schema;
       schemaFetcher = function fetchSchemaFromCDN() {
         pausePolling();
         initialFetch$ = mapMaybePromise(
@@ -192,7 +196,26 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         );
         return initialFetch$;
       };
+    } else if (config.schema) {
+      // local or remote
+      schemaFetcher = function fetchSchema() {
+        pausePolling();
+        initialFetch$ = mapMaybePromise(
+          handleUnifiedGraphConfig(
+            // @ts-expect-error TODO: what's up with type narrowing
+            config.schema,
+            configContext,
+          ),
+          schema => {
+            setSchema(schema);
+            continuePolling();
+            return true;
+          },
+        );
+        return initialFetch$;
+      };
     } else {
+      // introspect endpoint
       schemaFetcher = function fetchSchemaWithExecutor() {
         pausePolling();
         return mapMaybePromise(
@@ -254,10 +277,16 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       const htmlParts: string[] = [];
       htmlParts.push(`<section class="supergraph-information">`);
       htmlParts.push(`<h3>Proxy: <a href="${endpoint}">${endpoint}</a></h3>`);
-      if (config.cdn) {
-        htmlParts.push(
-          `<p><strong>Source: </strong> <i>${config.cdn.type === 'hive' ? 'Hive' : 'Unknown'} CDN</i></p>`,
-        );
+      if (config.schema) {
+        if (typeof config.schema === 'object' && 'type' in config.schema) {
+          htmlParts.push(
+            `<p><strong>Source: </strong> <i>${config.schema.type === 'hive' ? 'Hive' : 'Unknown'} CDN</i></p>`,
+          );
+        } else if (isValidPath(config.schema) || isUrl(String(config.schema))) {
+          htmlParts.push(`<p><strong>Source: </strong> <i>${config.schema}</i></p>`);
+        } else {
+          htmlParts.push(`<p><strong>Source: </strong> <i>GraphQL schema in config</i></p>`);
+        }
       }
       htmlParts.push(`</section>`);
       return htmlParts.join('');
@@ -391,11 +420,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
     let supergraphLoadedPlace: string;
 
-    if (
-      typeof config.supergraph === 'object' &&
-      'type' in config.supergraph &&
-      config.supergraph.type === 'hive'
-    ) {
+    if (typeof config.supergraph === 'object' && 'type' in config.supergraph) {
       // hive cdn
       const { endpoint, key } = config.supergraph;
       supergraphLoadedPlace = 'Hive CDN <br>' + endpoint;
