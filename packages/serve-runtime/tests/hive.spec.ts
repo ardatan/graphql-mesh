@@ -94,7 +94,7 @@ describe('Hive CDN', () => {
     const hiveKey = 'key';
     await using serveRuntime = createServeRuntime({
       proxy: { endpoint: 'http://upstream/graphql' },
-      cdn: {
+      schema: {
         type: 'hive',
         endpoint: hiveEndpoint,
         key: hiveKey,
