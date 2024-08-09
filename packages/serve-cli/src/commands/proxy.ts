@@ -24,7 +24,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       ).env('HIVE_CDN_KEY'),
     )
     .action(async function proxy(endpoint) {
-      const { hiveCdnKey, ...opts } = this.optsWithGlobals<CLIGlobals>();
+      const { hiveCdnKey, maskedErrors, ...opts } = this.optsWithGlobals<CLIGlobals>();
       if (hiveCdnKey && !opts.schema) {
         process.stderr.write(
           `error: option '--schema <schemaPathOrUrl>' is required when providing '--hive-cdn-key <key>'\n`,
@@ -51,6 +51,10 @@ export const addCommand: AddCommand = (ctx, cli) =>
             }
           : opts.schema,
       };
+      if (maskedErrors != null) {
+        // overwrite masked errors from loaded config only when provided
+        config.maskedErrors = maskedErrors;
+      }
       return runProxy(ctx, config);
     });
 

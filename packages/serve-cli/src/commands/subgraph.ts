@@ -20,7 +20,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       'subgraph.graphql',
     )
     .action(async function subgraph(schemaPath) {
-      const opts = this.optsWithGlobals<CLIGlobals>();
+      const { maskedErrors, ...opts } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -31,6 +31,10 @@ export const addCommand: AddCommand = (ctx, cli) =>
         ...opts,
         subgraph: schemaPath,
       };
+      if (maskedErrors != null) {
+        // overwrite masked errors from loaded config only when provided
+        config.maskedErrors = maskedErrors;
+      }
       return runSubgraph(ctx, config);
     });
 

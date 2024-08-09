@@ -27,7 +27,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       ).env('HIVE_CDN_KEY'),
     )
     .action(async function supergraph(schemaPathOrUrl) {
-      const { hiveCdnKey, ...opts } = this.optsWithGlobals<CLIGlobals>();
+      const { hiveCdnKey, maskedErrors, ...opts } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -40,6 +40,10 @@ export const addCommand: AddCommand = (ctx, cli) =>
           ? { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey }
           : schemaPathOrUrl,
       };
+      if (maskedErrors != null) {
+        // overwrite masked errors from loaded config only when provided
+        config.maskedErrors = maskedErrors;
+      }
       return runSupergraph(ctx, config);
     });
 
