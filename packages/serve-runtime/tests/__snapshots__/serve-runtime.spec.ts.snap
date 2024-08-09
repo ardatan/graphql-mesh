@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Serve Runtime Defaults falls back to "./supergraph.graphql" by default: default-supergraph 1`] = `
-"type Query {
-  foo: String
-}"
-`;

@@ -1,10 +1,10 @@
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import { server } from './server';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
-startStandaloneServer(server, { listen: { port: args.getServicePort('inventory') } }).catch(err => {
+startStandaloneServer(server, { listen: { port: opts.getServicePort('inventory') } }).catch(err => {
   console.error(err);
   process.exit(1);
 });

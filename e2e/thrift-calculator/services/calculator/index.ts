@@ -1,9 +1,9 @@
 import * as express from 'express';
 import { createThriftServer } from '@creditkarma/thrift-server-express';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import { Calculator } from './__generated__';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 const serviceHandlers: Calculator.IHandler<express.Request> = {
   add(request): number {
@@ -22,7 +22,7 @@ const app: express.Application = createThriftServer({
   },
 });
 
-const port = args.getServicePort('calculator');
+const port = opts.getServicePort('calculator');
 
 export default app.listen(port, () => {
   console.log(`Calculator service listening on http://localhost:${port}`);

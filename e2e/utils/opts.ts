@@ -1,4 +1,4 @@
-export function createArg(key: string, val: string | number): string {
+export function createOpt(key: string, val: string | number): string {
   if (key.includes(' ')) {
     throw new Error(`Arg key "${key}" contains spaces`);
   }
@@ -9,15 +9,15 @@ export function createArg(key: string, val: string | number): string {
   return `--${key}=${strVal}`;
 }
 
-export function createPortArg(val: number): string {
-  return createArg('port', val);
+export function createPortOpt(val: number): string {
+  return createOpt('port', val);
 }
 
-export function createServicePortArg(name: string, val: number): string {
-  return createArg(`${name}_port`, val);
+export function createServicePortOpt(name: string, val: number): string {
+  return createOpt(`${name}_port`, val);
 }
 
-export interface Args {
+export interface Opts {
   get(key: string): string | undefined;
   get(key: string, required: true): string;
   getPort(): number | undefined;
@@ -26,7 +26,7 @@ export interface Args {
   getServicePort(name: string, required: true): number;
 }
 
-export function Args(argv: string[]): Args {
+export function Opts(argv: string[]): Opts {
   function get(key: string, required?: true) {
     if (key.includes(' ')) {
       throw new Error(`Arg key "${key}" contains spaces`);

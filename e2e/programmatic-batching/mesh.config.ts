@@ -1,17 +1,17 @@
 import { print } from 'graphql';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('API', {
-        source: `http://0.0.0.0:${args.getServicePort('api')}/openapi.json`,
-        endpoint: `http://0.0.0.0:${args.getServicePort('api')}`,
+        source: `http://0.0.0.0:${opts.getServicePort('api')}/openapi.json`,
+        endpoint: `http://0.0.0.0:${opts.getServicePort('api')}`,
         ignoreErrorResponses: true,
       }),
     },

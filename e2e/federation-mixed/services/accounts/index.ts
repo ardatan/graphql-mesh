@@ -1,10 +1,10 @@
 import { createServer } from 'http';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import { server } from './server';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
-const httpServer = createServer(server).listen(args.getServicePort('accounts'));
+const httpServer = createServer(server).listen(opts.getServicePort('accounts'));
 
 httpServer.once('error', err => {
   console.error(err);

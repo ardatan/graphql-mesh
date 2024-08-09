@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { createSchema, createYoga } from 'graphql-yoga';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 
 export const yoga = createYoga({
   schema: createSchema({
@@ -29,7 +29,7 @@ export const yoga = createYoga({
   }),
 });
 
-const port = Args(process.argv).getServicePort('vaccination', true);
+const port = Opts(process.argv).getServicePort('vaccination', true);
 
 createServer(yoga).listen(port, () => {
   console.log(`Vaccination service listening on http://localhost:${port}`);

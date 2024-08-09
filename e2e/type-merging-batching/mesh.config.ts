@@ -1,4 +1,4 @@
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import {
   createRenameFieldTransform,
   createRenameTypeTransform,
@@ -6,19 +6,18 @@ import {
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 export const composeConfig = defineConfig({
-  output: args.get('output'),
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('authors', {
-        endpoint: `http://localhost:${args.getServicePort('authors')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('authors')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('books', {
-        endpoint: `http://localhost:${args.getServicePort('books')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('books')}/graphql`,
       }),
       transforms: [
         createRenameFieldTransform(({ fieldName, typeName }) =>

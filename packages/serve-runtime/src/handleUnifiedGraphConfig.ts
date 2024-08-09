@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import type { DocumentNode, GraphQLSchema } from 'graphql';
-import { buildASTSchema, buildSchema, graphql, isSchema, parse, print } from 'graphql';
+import { buildASTSchema, isSchema, parse, print } from 'graphql';
 import { defaultImportFn, isUrl, mapMaybePromise, readFileOrUrl } from '@graphql-mesh/utils';
 import type { MaybePromise } from '@graphql-tools/utils';
 import { getDocumentNodeFromSchema, isDocumentNode, isValidPath } from '@graphql-tools/utils';

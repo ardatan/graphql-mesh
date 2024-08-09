@@ -1,9 +1,9 @@
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import { start } from './server';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
-start(args.getServicePort('products')).catch(err => {
+start(opts.getServicePort('products')).catch(err => {
   console.error(err);
   process.exit(1);
 });

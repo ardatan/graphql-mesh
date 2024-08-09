@@ -1,9 +1,11 @@
 import { createTenv } from '@e2e/tenv';
 
-const { serve, compose } = createTenv(__dirname);
+const { serve, compose, fs } = createTenv(__dirname);
 
 it('should write serve logs to stderr', async () => {
-  await using serveInstance = await serve();
+  await using serveInstance = await serve({
+    supergraph: await fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
+  });
   expect(serveInstance.getStd('err')).toContain('Starting server on');
 });
 

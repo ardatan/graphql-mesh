@@ -1,9 +1,9 @@
 import { createServer } from 'http';
 import { createRouter, Response } from 'fets';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 import { fetch } from '@whatwg-node/fetch';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 let todos = [];
 
@@ -23,7 +23,7 @@ const app = createRouter()
         ...reqBody,
       };
       todos.push(todo);
-      await fetch(`http://0.0.0.0:${args.getPort(true)}/webhooks/todo_added`, {
+      await fetch(`http://0.0.0.0:${opts.getPort(true)}/webhooks/todo_added`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ const app = createRouter()
     },
   });
 
-const port = args.getServicePort('api', true);
+const port = opts.getServicePort('api', true);
 
 createServer(app).listen(port, () => {
   console.log(`API service listening on http://localhost:${port}`);
