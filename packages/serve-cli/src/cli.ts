@@ -147,7 +147,13 @@ let cli = new Command()
       }),
   )
   .option('--no-masked-errors', "don't mask unexpected errors in responses")
-  .option('--masked-errors', 'mask unexpected errors in responses', true)
+  .option(
+    '--masked-errors',
+    'mask unexpected errors in responses (default: true)',
+    // we use "null" intentionally so that we know when the user provided the flag vs when not
+    // see here https://github.com/tj/commander.js/blob/970ecae402b253de691e6a9066fea22f38fe7431/lib/command.js#L655
+    null,
+  )
   .addOption(
     new Option(
       '--hive-registry-token <token>',

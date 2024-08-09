@@ -11,7 +11,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       'start the Mesh Serve using the config to decide what to do. if the config is empty or missing, will run the "supergraph" command (default)',
     )
     .action(async function start() {
-      const opts = this.optsWithGlobals<CLIGlobals>();
+      const { maskedErrors, ...opts } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({ log: ctx.log, configPath: opts.configPath });
       const config = {
         logging: ctx.log,
@@ -26,6 +26,10 @@ export const addCommand: AddCommand = (ctx, cli) =>
             : {}),
         },
       } satisfies MeshServeCLIConfig;
+      if (maskedErrors != null) {
+        // overwrite masked errors from loaded config only when provided
+        config.maskedErrors = maskedErrors;
+      }
 
       if ('subgraph' in config) {
         const { subgraph } = config;
@@ -41,7 +45,6 @@ export const addCommand: AddCommand = (ctx, cli) =>
         }
         return runProxy(ctx, { proxy, ...config });
       }
-
       const supergraph = config['supergraph'] || 'supergraph.graphql';
       return runSupergraph(ctx, { supergraph, ...config });
     });
