@@ -5907,7 +5907,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
-    "@commander-js/extra-typings": "patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch"
+    "@commander-js/extra-typings": "npm:^12.1.0"
     "@graphql-mesh/fusion-composition": "npm:^0.2.0"
     "@graphql-mesh/include": "npm:^0.0.1"
     "@graphql-mesh/utils": "npm:^0.100.0"
@@ -6603,7 +6603,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-cli@workspace:packages/serve-cli"
   dependencies:
-    "@commander-js/extra-typings": "patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch"
+    "@commander-js/extra-typings": "npm:^12.1.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.5"
     "@graphql-mesh/include": "npm:^0.0.1"
     "@graphql-mesh/serve-runtime": "npm:^0.6.0"
