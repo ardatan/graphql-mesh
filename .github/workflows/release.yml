@@ -117,7 +117,7 @@ jobs:
       - name: Package for ${{ matrix.os }} ${{ matrix.arch }}
         if: matrix.arch == 'x86_64' || matrix.os == 'macos-latest-large'
         working-directory: ./packages/serve-cli
-        run: ./bundle.sh ${{ matrix.os }} ${{ matrix.arch }}
+        run: ./package-binary.sh ${{ matrix.os }} ${{ matrix.arch }}
 
       - name: Setup QEMU
         if: matrix.arch == 'aarch64' && matrix.os == 'ubuntu-latest'
@@ -133,7 +133,7 @@ jobs:
             /bin/bash -c "apt-get update && apt-get install -y build-essential curl && \
             curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
             apt-get install -y nodejs && \
-            ./bundle.sh ubuntu-latest aarch64"
+            ./package-binary.sh ubuntu-latest aarch64"
 
       - name: Set artifact name and path
         id: set-artifact

@@ -32,3 +32,4 @@ newrelic_agent.log
 docker/supergraph.graphql
 sea-prep.blob
 mesh-serve
+packages/mesh-serve/*/uws_*
