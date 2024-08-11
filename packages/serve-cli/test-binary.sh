@@ -2,16 +2,7 @@
 
 set -e
 
-BINARY_DIR=$(find . -type d -name "graphql-mesh-*")
-
-echo "Found binary directory: $BINARY_DIR"
-
-if [[ -z "$BINARY_DIR" ]]; then
-  echo "No directory found with prefix 'graphql-mesh-'"
-  exit 1
-fi
-
-BINARY_PATH="$BINARY_DIR/mesh-serve"
+BINARY_PATH="./mesh-serve"
 
 if [[ ! -f "$BINARY_PATH" ]]; then
   echo "Binary 'mesh-serve' not found in $BINARY_DIR"
@@ -33,7 +24,7 @@ echo "Captured logs:"
 echo "$captured_logs"
 
 # check if there are any logs that are not of type INFO
-if echo "$captured_logs" | grep -qv "INFO"; then
+if echo "$captured_logs" | grep -v "INFO" | grep -qv -e "ExperimentalWarning: Single executable application is an experimental feature" -e "(Use \`mesh-serve --trace-warnings ...\` to show where the warning was created)"; then
   echo "Error: Found log entries that are not of type INFO."
   kill $pid 2>/dev/null
   exit 1

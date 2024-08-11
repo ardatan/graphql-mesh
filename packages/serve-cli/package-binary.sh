@@ -34,55 +34,45 @@ make_executable() {
 
 # macOS x86_64
 build_macos_x86_64() {
-  local output_dir="graphql-mesh-x86_64-apple-darwin"
   local exe_name="mesh-serve"
-  mkdir -p "$output_dir"
-  cp "$(command -v node)" "$output_dir/$exe_name"
-  codesign --remove-signature "$output_dir/$exe_name"
-  inject_blob "$output_dir/$exe_name"
-  sign_binary "$output_dir/$exe_name"
-  make_executable "$output_dir/$exe_name"
+  cp "$(command -v node)" "$exe_name"
+  codesign --remove-signature "$exe_name"
+  inject_blob "$exe_name"
+  sign_binary "$exe_name"
+  make_executable "$exe_name"
 }
 
 # macOS aarch64
 build_macos_aarch64() {
-  local output_dir="graphql-mesh-aarch64-apple-darwin"
   local exe_name="mesh-serve"
-  mkdir -p "$output_dir"
-  cp "$(command -v node)" "$output_dir/$exe_name"
-  codesign --remove-signature "$output_dir/$exe_name"
-  inject_blob "$output_dir/$exe_name"
-  sign_binary "$output_dir/$exe_name"
-  make_executable "$output_dir/$exe_name"
+  cp "$(command -v node)" "$exe_name"
+  codesign --remove-signature "$exe_name"
+  inject_blob "$exe_name"
+  sign_binary "$exe_name"
+  make_executable "$exe_name"
 }
 
 # Ubuntu x86_64
 build_ubuntu_x86_64() {
-  local output_dir="graphql-mesh-x86_64-unknown-linux-gnu"
   local exe_name="mesh-serve"
-  mkdir -p "$output_dir"
-  cp "$(command -v node)" "$output_dir/$exe_name"
-  inject_blob "$output_dir/$exe_name"
-  make_executable "$output_dir/$exe_name"
+  cp "$(command -v node)" "$exe_name"
+  inject_blob "$exe_name"
+  make_executable "$exe_name"
 }
 
 # Ubuntu aarch64
 build_ubuntu_aarch64() {
-  local output_dir="graphql-mesh-aarch64-unknown-linux-gnu"
   local exe_name="mesh-serve"
-  mkdir -p "$output_dir"
-  cp "$(command -v node)" "$output_dir/$exe_name"
-  inject_blob "$output_dir/$exe_name"
-  make_executable "$output_dir/$exe_name"
+  cp "$(command -v node)" "$exe_name"
+  inject_blob "$exe_name"
+  make_executable "$exe_name"
 }
 
 # Windows x86_64
 build_windows_x86_64() {
-  local output_dir="graphql-mesh-x86_64-pc-windows-msvc"
   local exe_name="mesh-serve.exe"
-  mkdir -p "$output_dir"
-  powershell -Command "Copy-Item $(Get-Command node).Source $output_dir/$exe_name"
-  inject_blob "$output_dir/$exe_name"
+  powershell -Command "Copy-Item $(Get-Command node).Source $exe_name"
+  inject_blob "$exe_name"
 }
 
 main() {

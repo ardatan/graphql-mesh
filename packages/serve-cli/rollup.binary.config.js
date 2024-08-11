@@ -102,16 +102,50 @@ const { getAsset } = require('node:sea');
 const { createRequire } = require('node:module');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
+const crypto = require('crypto');
 
-    const assetName = 'uws_' + process.platform + '_' + process.arch + '_' + process.versions.modules + '.node';
-    const assetData = getAsset(assetName);
+// Function to generate a random name
+function _randomChars(howMany) {
+  const RANDOM_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  let value = [];
+  let rnd = crypto.randomBytes(howMany);
 
-    const bufferData = Buffer.from(assetData);
+  for (let i = 0; i < howMany; i++) {
+    value.push(RANDOM_CHARS[rnd[i] % RANDOM_CHARS.length]);
+  }
 
-    const tempFilePath = path.join(__dirname, assetName);
-    fs.writeFileSync(tempFilePath, bufferData);
-    const requireTemp = createRequire(tempFilePath);
-    return requireTemp(tempFilePath);`;
+  return value.join('');
+}
+
+// Create a temporary file
+function tmpFileSync(postfix) {
+  const tmpDir = os.tmpdir();
+  const name = [
+    'tmp-',
+    process.pid,
+    '-',
+    _randomChars(12),
+    postfix ? '-' + postfix : ''
+  ].join('');
+
+  const filePath = path.join(tmpDir, name);
+  fs.writeFileSync(filePath, '');
+
+  return filePath;
+}
+
+const assetName = 'uws_' + process.platform + '_' + process.arch + '_' + process.versions.modules + '.node';
+const assetData = getAsset(assetName);
+
+const bufferData = Buffer.from(assetData);
+
+// Create a temporary file in the system's temp directory
+const tempFilePath = tmpFileSync(assetName);
+fs.writeFileSync(tempFilePath, bufferData);
+
+const requireTemp = createRequire(tempFilePath);
+return requireTemp(tempFilePath);`;
 
       // Read the bundle file and replace the specified content
       let bundleContent = fs.readFileSync(bundleFilePath, 'utf-8');
