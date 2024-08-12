@@ -36,7 +36,7 @@ export type TransportExecutorFactoryGetter = (
 
 export type TransportGetSubgraphExecutor<
   Options extends Record<string, any> = Record<string, any>,
-> = (opts: TransportGetSubgraphExecutorOptions<Options>) => Executor | Promise<Executor>;
+> = (opts: TransportGetSubgraphExecutorOptions<Options>) => MaybePromise<Executor>;
 
 export type DisposableExecutor = Executor & Partial<Disposable | AsyncDisposable>;
 
@@ -54,3 +54,4 @@ export interface UpstreamErrorExtensions {
     body?: unknown;
   };
 }
+export { type Executor };
