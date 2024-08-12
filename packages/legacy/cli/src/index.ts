@@ -1,3 +1,4 @@
+import '@graphql-mesh/include/register-tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
