@@ -20,6 +20,7 @@ export default function useMeshHive(
       : true;
 
   if (!enabled) {
+    pluginOptions.logger?.warn('Hive plugin is disabled');
     return {};
   }
 
@@ -27,6 +28,7 @@ export default function useMeshHive(
     env: process.env,
   });
   if (!token) {
+    pluginOptions.logger?.warn('Hive plugin is disabled because the "token" was not provided');
     return {};
   }
 
