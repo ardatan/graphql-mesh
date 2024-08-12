@@ -46,7 +46,7 @@ npm i @graphql-mesh/serve-cli
 Having [prepared the supergraph](#prepare-a-supergraph), serve it with:
 
 ```sh
-mesh-serve
+mesh-serve supergraph
 ```
 
 ### Using Docker
@@ -60,7 +60,7 @@ easy to use and can directly replace the CLI in environments where Node.js is no
 Having [prepared the supergraph](#prepare-a-supergraph), serve it with:
 
 ```sh
-docker run -p 4000:4000 -v $(pwd)/supergraph.graphql:/serve/supergraph.graphql ghcr.io/ardatan/mesh-serve
+docker run -p 4000:4000 -v $(pwd)/supergraph.graphql:/serve/supergraph.graphql ghcr.io/ardatan/mesh-serve supergraph
 ```
 
 <Callout>
@@ -77,7 +77,7 @@ Mesh Serve supports basic configuration through CLI arguments.
 For example, you may want to change the port:
 
 ```sh
-mesh-serve --port 5000
+mesh-serve supergraph --port 5000
 ```
 
 The Docker image also supports arguments, simply add them to the run command:
@@ -86,7 +86,7 @@ The Docker image also supports arguments, simply add them to the run command:
 docker run \
   -p 5000:5000 \
   -v "$(pwd)/my-schema.graphql:/serve/my-schema.graphql" \
-  ghcr.io/ardatan/mesh-serve --port=5000
+  ghcr.io/ardatan/mesh-serve supergraph --port=5000
 ```
 
 For a full list of CLI arguments, please refer to the [CLI Reference](./references/cli).
@@ -110,7 +110,7 @@ Mesh Serve will automatically pick up the default config file and apply the sett
 Mesh Serve:
 
 ```sh
-mesh-serve
+mesh-serve supergraph
 ```
 
 However, when using Docker, you have to mount the `mesh.config.ts` file first:
@@ -119,7 +119,7 @@ However, when using Docker, you have to mount the `mesh.config.ts` file first:
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
-  ghcr.io/ardatan/mesh-serve
+  ghcr.io/ardatan/mesh-serve supergraph
 ```
 
 ## Proxy a GraphQL API
@@ -140,8 +140,13 @@ export const serveConfig = defineConfig({
 })
 ```
 
-If you serve with the following config, Mesh Serve will start a gateway that proxies the GraphQL
-API.
+Now run:
+
+```sh
+mesh-serve proxy
+```
+
+and Mesh Serve will start a gateway that proxies the GraphQL API.
 
 ## Next steps
 

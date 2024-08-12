@@ -26,25 +26,25 @@ Before getting started, make sure you have
 
 ### Configuration
 
-For running Mesh Serve with the Hive CDN, you need to provide the `HIVE_CDN_ENDPOINT` and
-`HIVE_CDN_KEY` environment variables.
+For running Mesh Serve with the Hive CDN, you need to provide the necessary options to the CLI:
 
 ```sh filename="Run the Mesh Serve CLI"
-HIVE_CDN_ENDPOINT="CDN_ENDPOINT" HIVE_CDN_KEY="API_KEY" npx mesh-serve
+npx mesh-serve supergraph <endpoint> --hive-cdn-key <api_key>
 ```
 
-Instead of providing the environment variables `HIVE_CDN_ENDPOINT` and `HIVE_CDN_KEY`, you can also
-provide them using a configuration file.
+Instead of providing the CLI options, you can also provide them using a configuration file.
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export default defineConfig({
-  hive: {
+  supergraph: {
+    // The CDN type.
+    type: 'hive',
     // The endpoint of CDN
-    endpoint: 'CDN_ENDPOINT',
+    endpoint: '<endpoint>',
     // The API key provided by GraphQL Hive
-    key: 'API_KEY'
+    key: '<api_key>'
   }
 })
 ```
@@ -59,23 +59,25 @@ Before getting started, make sure you have
 
 ### Configuration
 
-Instead of providing `token`, you can provide it using environment variable `HIVE_REGISTRY_TOKEN`
-without any configuration file needed.
+If you want Mesh Serve to report usage metrics to Hive, you need to provide the necessary options to
+the CLI:
 
 ```sh filename="Run the Mesh Serve CLI"
-HIVE_REGISTRY_TOKEN="MY_REGISTRY_TOKEN" npx mesh-serve
+npx mesh-serve supergraph --hive-registry-token <token>
 ```
 
-Instead of using environment variables, you can also use a configuration file, which allows further
-customization for the configuration.
+Instead of using CLI options, you can also use a configuration file, which allows further
+customization for the configuration:
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export default defineConfig({
-  hive: {
+  reporting: {
+    // The reporting service type
+    type: 'hive',
     // The registry token provided by GraphQL Hive
-    token: 'MY-REGISTRY-TOKEN'
+    token: '<token>'
   }
 })
 ```

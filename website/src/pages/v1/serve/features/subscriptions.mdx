@@ -94,7 +94,7 @@ After having generated a supergraph file `supergraph.graphql` for the two subgra
 Mesh Serve without any additional configuration!
 
 ```sh
-mesh-serve --supergraph=supergraph.graphql
+mesh-serve supergraph supergraph.graphql
 ```
 
 ### Subscribe
@@ -168,7 +168,7 @@ export const serveConfig = defineConfig({
 Now simply start Mesh Serve with:
 
 ```sh
-mesh-serve
+mesh-serve supergraph
 ```
 
 Downstream clients are still subscribing to Mesh Serve gateway through any supported subscriptions
