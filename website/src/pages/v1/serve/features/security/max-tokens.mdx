@@ -30,7 +30,7 @@ Then, add it to your plugins:
 import { maxTokensPlugin } from '@escape.tech/graphql-armor-max-tokens'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineConfig({
+export const serveConfig = defineConfig({
   plugins: () => [
     maxTokensPlugin({
       // Toggle the plugin | Default: true

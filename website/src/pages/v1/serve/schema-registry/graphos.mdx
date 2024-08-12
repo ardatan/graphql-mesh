@@ -25,7 +25,7 @@ with other options to customize the polling/retry behavior.
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineConfig({
+export const serveConfig = defineConfig({
   graphos: {
     /**
      * The graph ref of the managed federation graph.

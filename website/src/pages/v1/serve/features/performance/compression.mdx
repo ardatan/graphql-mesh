@@ -135,7 +135,7 @@ In your Mesh configuration, you need to enable the compression plugin for the ga
 ```ts filename="mesh.config.ts"
 import { defineConfig, useContentEncoding } from '@graphql-mesh/serve-cli'
 
-export default defineConfig({
+export const serveConfig = defineConfig({
   plugins: () => [useContentEncoding()]
 })
 ```
@@ -229,7 +229,7 @@ In your Mesh configuration, you need to enable the compression plugin for the ga
 ```ts filename="mesh.config.ts"
 import { defineConfig, useContentEncoding } from '@graphql-mesh/serve-cli'
 
-export default defineConfig({
+export const serveConfig = defineConfig({
   plugins: () => [
     useContentEncoding({
       subgraphs: ['*'] // Enable compression for all subgraphs
