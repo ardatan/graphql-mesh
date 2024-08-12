@@ -536,7 +536,7 @@ export function createTenv(cwd: string): Tenv {
             {},
           ),
         },
-        Cmd: [...cmd, ...args].filter(Boolean).map(String),
+        Cmd: [...(cmd || []), ...(args || [])].filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
           PortBindings: {
