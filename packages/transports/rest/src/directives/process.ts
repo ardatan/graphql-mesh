@@ -9,8 +9,8 @@ import {
 } from 'graphql';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
-import { getDefDirectives, getDirectiveExtensions } from '@graphql-mesh/utils';
-import { getDirective } from '@graphql-tools/utils';
+import { getDefDirectives } from '@graphql-mesh/utils';
+import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
 import { processFlattenAnnotations } from './flatten.js';

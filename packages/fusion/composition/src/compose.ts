@@ -16,10 +16,15 @@ import {
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
-import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import type { Constructor, FieldMapper } from '@graphql-tools/utils';
-import { getDocumentNodeFromSchema, MapperKind, mapSchema } from '@graphql-tools/utils';
+import {
+  getDirectiveExtensions,
+  getDocumentNodeFromSchema,
+  MapperKind,
+  mapSchema,
+  type Constructor,
+  type FieldMapper,
+} from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import {

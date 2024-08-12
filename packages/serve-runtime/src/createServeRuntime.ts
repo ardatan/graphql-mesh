@@ -31,7 +31,6 @@ import useMeshHive from '@graphql-mesh/plugin-hive';
 import type { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
-  getDirectiveExtensions,
   getHeadersObj,
   isDisposable,
   LogLevel,
@@ -42,6 +41,7 @@ import {
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
 import {
+  getDirectiveExtensions,
   mergeDeep,
   parseSelectionSet,
   type Executor,

@@ -4,9 +4,14 @@ import { GraphQLBigInt } from 'graphql-scalars';
 import type { Driver } from 'neo4j-driver';
 import type { DisposableExecutor } from '@graphql-mesh/transport-common';
 import type { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { getDirectiveExtensions, makeAsyncDisposable } from '@graphql-mesh/utils';
+import { makeAsyncDisposable } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { asArray, getDocumentNodeFromSchema, type ExecutionRequest } from '@graphql-tools/utils';
+import {
+  asArray,
+  getDirectiveExtensions,
+  getDocumentNodeFromSchema,
+  type ExecutionRequest,
+} from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';

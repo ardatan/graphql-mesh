@@ -1,9 +1,12 @@
 import type { GraphQLFieldConfig, GraphQLInputFieldConfig, GraphQLNamedType } from 'graphql';
 import { DirectiveLocation, GraphQLDirective, GraphQLSchema } from 'graphql';
 import { Minimatch } from 'minimatch';
-import { getDirectiveExtensions } from '@graphql-mesh/utils';
-import type { SchemaMapper } from '@graphql-tools/utils';
-import { MapperKind, mapSchema } from '@graphql-tools/utils';
+import {
+  getDirectiveExtensions,
+  MapperKind,
+  mapSchema,
+  type SchemaMapper,
+} from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
 
 export interface FilterTransformConfig {}

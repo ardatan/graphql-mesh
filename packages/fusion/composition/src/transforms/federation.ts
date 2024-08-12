@@ -9,8 +9,13 @@ import {
   isLeafType,
   OperationTypeNode,
 } from 'graphql';
-import { getDirectiveExtensions } from '@graphql-mesh/utils';
-import { asArray, getRootTypeMap, MapperKind, mapSchema } from '@graphql-tools/utils';
+import {
+  asArray,
+  getDirectiveExtensions,
+  getRootTypeMap,
+  MapperKind,
+  mapSchema,
+} from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
 import {
   addFederation2DirectivesToSubgraph,

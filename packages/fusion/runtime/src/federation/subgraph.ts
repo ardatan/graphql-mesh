@@ -11,14 +11,13 @@ import {
   typeFromAST,
   visit,
 } from 'graphql';
+import type { AdditionalStitchingResolverObject } from 'packages/legacy/types/src/config.js';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
-import {
-  getDirectiveExtensions,
-  resolveAdditionalResolversWithoutImport,
-} from '@graphql-mesh/utils';
+import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
 import type { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import {
   astFromField,
+  getDirectiveExtensions,
   MapperKind,
   mapSchema,
   type IResolvers,
@@ -59,7 +58,9 @@ export function handleFederationSubschema({
   // Fix name
   const subgraphName = (subschemaConfig.name =
     realSubgraphNameMap?.get(subschemaConfig.name) || subschemaConfig.name);
-  const subgraphDirectives = getDirectiveExtensions(subschemaConfig.schema);
+  const subgraphDirectives = getDirectiveExtensions<{
+    transport: TransportEntry;
+  }>(subschemaConfig.schema);
   for (const directiveName in schemaDirectives || subgraphDirectives) {
     if (!subgraphDirectives[directiveName]?.length && schemaDirectives[directiveName]?.length) {
       const directives = schemaDirectives[directiveName];
@@ -114,7 +115,7 @@ export function handleFederationSubschema({
       }
     },
     [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName, schema) => {
-      const fieldDirectives = getDirectiveExtensions(fieldConfig);
+      const fieldDirectives = getDirectiveExtensions<any>(fieldConfig);
       if (fieldDirectives.merge?.length) {
         mergeDirectiveUsed = true;
       }
