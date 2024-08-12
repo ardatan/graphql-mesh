@@ -20,7 +20,7 @@ export default function useMeshHive(
       : true;
 
   if (!enabled) {
-    pluginOptions.logger?.warn('Hive plugin is disabled');
+    pluginOptions.logger?.warn('Reporting is disabled');
     return {};
   }
 
@@ -28,9 +28,11 @@ export default function useMeshHive(
     env: process.env,
   });
   if (!token) {
-    pluginOptions.logger?.warn('Hive plugin is disabled because the "token" was not provided');
+    pluginOptions.logger?.warn('Reporting is disabled because the "token" was not provided');
     return {};
   }
+
+  pluginOptions.logger?.info('Reporting enabled');
 
   let usage: HivePluginOptions['usage'] = true;
   if (pluginOptions.usage) {
