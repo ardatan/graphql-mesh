@@ -1,5 +1,10 @@
 import { GraphQLDirective, GraphQLSchema, isSpecifiedDirective } from 'graphql';
-import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
+import {
+  getDirectiveExtensions,
+  MapperKind,
+  mapSchema,
+  printSchemaWithDirectives,
+} from '@graphql-tools/utils';
 
 export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
   const schemaDirectives = getDirectiveExtensions(subgraph);

@@ -94,12 +94,12 @@ directive @transport(kind: String, subgraph: String, location: String, options: 
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
+scalar Any @join__type(graph: MOVIES) 
+
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
 scalar BigInt @join__type(graph: MOVIES) 
-
-scalar Any @join__type(graph: MOVIES) 
 
 scalar _DirectiveExtensions @join__type(graph: MOVIES) 
 

@@ -60,6 +60,6 @@ it.concurrent.each([
     services: [neo4j],
     output: 'graphql',
   });
-  const { execute } = await serve({ supergraph: output });
+  const { execute } = await serve({ supergraph: output, pipeLogs: true });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });
