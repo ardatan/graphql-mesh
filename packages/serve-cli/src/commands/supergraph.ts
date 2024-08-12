@@ -31,7 +31,8 @@ export const addCommand: AddCommand = (ctx, cli) =>
       ).env('HIVE_CDN_KEY'),
     )
     .action(async function supergraph(schemaPathOrUrl) {
-      const { hiveCdnKey, maskedErrors, ...opts } = this.optsWithGlobals<CLIGlobals>();
+      const { hiveCdnKey, hiveRegistryToken, maskedErrors, ...opts } =
+        this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -51,6 +52,15 @@ export const addCommand: AddCommand = (ctx, cli) =>
       const config: SupergraphConfig = {
         ...loadedConfig,
         ...opts,
+        ...(hiveRegistryToken
+          ? {
+              reporting: {
+                ...loadedConfig.reporting,
+                type: 'hive',
+                token: hiveRegistryToken,
+              },
+            }
+          : {}),
         supergraph,
         logging: loadedConfig.logging ?? ctx.log,
       };
