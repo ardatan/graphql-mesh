@@ -3,11 +3,11 @@ import { createYoga } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { useGenericAuth } from '@envelop/generic-auth';
-import useJWT, { createInlineSigningKeyProvider } from '@graphql-mesh/plugin-jwt-auth';
 import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { composeWithApollo } from '../../../testing/composeWithApollo';
+import useJWT, { createInlineSigningKeyProvider, type JWTExtendContextFields } from '../src/index';
 
-describe('Generic Auth', () => {
+describe('Auth Directives', () => {
   const users = [
     {
       id: '1',
@@ -103,9 +103,10 @@ describe('Generic Auth', () => {
           useJWT({
             singingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
           }),
+          // @ts-expect-error - TODO: fix typings
           useGenericAuth({
             mode: 'protect-granular',
-            resolveUserFn(context) {
+            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
               return context?.jwt?.payload;
             },
             rejectUnauthenticated: false,
@@ -223,9 +224,10 @@ describe('Generic Auth', () => {
               missingToken: false,
             },
           }),
+          // @ts-expect-error - TODO: fix typings
           useGenericAuth({
             mode: 'protect-granular',
-            resolveUserFn(context) {
+            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
               return context?.jwt?.payload;
             },
             rejectUnauthenticated: false,
@@ -389,9 +391,10 @@ describe('Generic Auth', () => {
                 missingToken: false,
               },
             }),
+            // @ts-expect-error - TODO: fix typings
             useGenericAuth({
               mode: 'protect-granular',
-              resolveUserFn(context) {
+              resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
                 return context?.jwt?.payload;
               },
               rejectUnauthenticated: false,
@@ -455,9 +458,10 @@ describe('Generic Auth', () => {
                 missingToken: false,
               },
             }),
+            // @ts-expect-error - TODO: fix typings
             useGenericAuth({
               mode: 'protect-granular',
-              resolveUserFn(context) {
+              resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
                 return context?.jwt?.payload;
               },
               rejectUnauthenticated: false,
@@ -572,9 +576,10 @@ describe('Generic Auth', () => {
               missingToken: false,
             },
           }),
+          // @ts-expect-error - TODO: fix typings
           useGenericAuth({
             mode: 'protect-granular',
-            resolveUserFn(context) {
+            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
               return context?.jwt?.payload;
             },
             rejectUnauthenticated: false,
@@ -710,9 +715,10 @@ describe('Generic Auth', () => {
               missingToken: false,
             },
           }),
+          // @ts-expect-error - TODO: fix typings
           useGenericAuth({
             mode: 'protect-granular',
-            resolveUserFn(context) {
+            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
               return context?.jwt?.payload;
             },
             rejectUnauthenticated: false,

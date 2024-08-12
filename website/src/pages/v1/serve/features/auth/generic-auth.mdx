@@ -2,19 +2,14 @@
 
 import { Callout } from '@theguild/components'
 
-<Callout>
-  This page is currently under construction. Please feel free to reach out to us directly in case
-  you are having any troubles.
-</Callout>
-
 This plugin allows you to implement custom authentication flow by providing a custom user resolver
 based on the original HTTP request. The resolved user is injected into the GraphQL execution
 `context`, and you can use it in your resolvers or plugins to fetch the current user.
 
 <Callout>
-  The plugin also comes with an optional `@auth` directive that can be added to your GraphQL schema
-  and helps you to protect your GraphQL schema in a declarative way. [Learn more how to use it in
-  your subgraphs during Mesh Compose](/v1/compose/auth).
+  The plugin also comes with an optional `@authenticated` directive that can be added to your
+  GraphQL schema and helps you to protect your GraphQL schema in a declarative way. [Learn more how
+  to use it in your subgraphs during Mesh Compose](/v1/compose/auth).
 </Callout>
 
 There are several possible flows for using this plugin (see below for setup examples):
@@ -25,7 +20,7 @@ There are several possible flows for using this plugin (see below for setup exam
 - **Option #2 - Manual Validation**: the plugin will just resolve the user and injects it into the
   `context` without validating access to schema field.
 - **Option #3 - Granular field access by using schema field directives or field extensions**: Look
-  for an `@auth` directive automatically protect those specific GraphQL fields.
+  for an `@authenticated` directive automatically protect those specific GraphQL fields.
 
 ## Getting Started
 
@@ -125,7 +120,7 @@ export const serveConfig = defineConfig({
 ##### Allow unauthenticated access for specific fields using a field `directive`
 
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL
-> schema (`directive @skipAuth on FIELD_DEFINITION`).
+> schema (`directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE`).
 
 Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fields, and the default
 `validateUser` function will not get called while resolving that specific field:
@@ -192,8 +187,8 @@ plugins: () => [
 
 #### Option #3 - `protect-granular`
 
-This mode is similar to option #2, but it uses the `@auth` SDL directive or `auth` field extension
-for protecting specific GraphQL fields.
+This mode is similar to option #2, but it uses the `@authenticated` SDL directive or `auth` field
+extension for protecting specific GraphQL fields.
 
 ```ts filename="mesh.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
@@ -223,7 +218,7 @@ export const serveConfig = defineConfig({
 ##### Protect a field using a field `directive`
 
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL
-> schema (`directive @auth on FIELD_DEFINITION`).
+> schema (`directive @authenticated on FIELD_DEFINITION | OBJECT | INTERFACE`).
 
 Then, in your GraphQL schema SDL, you can add `@auth` directive to your fields, and the
 `validateUser` will get called only while resolving that specific field:
@@ -259,39 +254,77 @@ const validateUser: ValidateUserFn<UserType> = ({ user }) => {
 }
 ```
 
-##### With a custom directive with arguments
+##### Role/scope based authentication with `@requiresScope` directive
 
-It is possible to add custom parameters to your `@auth` directive. Here's an example for adding
-role-aware authentication:
+You can use `@requiresScope` directive to protect your schema based on the user's role or scope.
+Here's an example of how you can use it:
 
 ```graphql
-enum Role {
-  ADMIN
-  MEMBER
-}
+directive @requiresScopes(scopes: [[String!]!]!) on FIELD_DEFINITION | OBJECT | INTERFACE
 
-directive @auth(role: Role!) on FIELD_DEFINITION
+type Query {
+  me: User! @requiresScopes(scopes: [["read:user"]])
+  protectedField: String @requiresScopes(scopes: [["read:admin"]])
+  publicField: String
+}
 ```
 
-Then, you use the `directiveNode` parameter to check the arguments:
+By default, the plugin will try to extract available scopes for the current user from `scope`
+property which is expected to be a string like `read:user read:admin`. However you can customize
+this behavior by providing a custom `extractScopes` function.
 
 ```ts
-import { ValidateUserFn } from '@envelop/generic-auth'
+useGenericAuth({
+  resolveUserFn,
+  validateUser,
+  mode: 'protect-granular',
+  extractScopes: user => user.scopes // Expected to return an array of strings
+})
+```
 
-const validateUser: ValidateUserFn<UserType> = ({ user, fieldAuthDirectiveNode }) => {
-  // Now you can use the fieldAuthDirectiveNode parameter to implement custom logic for user validation, with access
-  // to the resolver auth directive arguments.
+You can also apply `AND` or `OR` logic to the scopes:
 
-  if (!user) {
-    return new Error(`Unauthenticated!`)
-  }
-
-  const valueNode = fieldAuthDirectiveNode.arguments.find(arg => arg.name.value === 'role')
-    .value as EnumValueNode
-  const role = valueNode.value
-
-  if (role !== user.role) {
-    return new Error(`No permissions!`)
-  }
+```graphql
+type Query {
+  # This field requires the user to have `read:user` OR `read:admin` scopes
+  me: User! @requiresScopes(scopes: [["read:user"], ["read:admin"]])
+  # This field requires the user to have `read:user` AND `read:admin` scopes
+  protectedField: String @requiresScopes(scopes: [["read:admin", "read:user"]])
+  publicField: String
 }
+```
+
+##### `@policy` directive to fetch the roles from a policy service
+
+You can use the `@policy` directive to fetch the roles from a policy service. Here's an example of
+how you can use it:
+
+```graphql
+directive @policy(name: String!) on FIELD_DEFINITION | OBJECT | INTERFACE
+
+type Query {
+  me: User! @policy(policies: [["read:user"]])
+  protectedField: String @policy(policies: [["read:admin"]])
+  publicField: String
+}
+```
+
+It has the same logic with `@requiresScopes` but it can asynchronously fetch the roles from a
+source;
+
+```ts
+useGenericAuth({
+  resolveUserFn,
+  validateUser,
+  mode: 'protect-granular',
+  fetchPolicies: async user => {
+    const res = await fetch('https://policy-service.com', {
+      headers: {
+        Authorization: `Bearer ${user.token}`
+      }
+    })
+    // Expected to return an array of strings
+    return res.json()
+  }
+})
 ```

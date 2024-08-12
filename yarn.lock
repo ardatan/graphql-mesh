@@ -6366,19 +6366,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-generic-auth@workspace:packages/plugins/generic-auth":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/plugin-generic-auth@workspace:packages/plugins/generic-auth"
-  dependencies:
-    "@envelop/generic-auth": "npm:8.0.0-alpha-20240812121953-81638fef"
-  peerDependencies:
-    "@graphql-mesh/types": ^0.100.0
-    "@graphql-mesh/utils": ^0.100.0
-    graphql: "*"
-    tslib: ^2.4.0
-  languageName: unknown
-  linkType: soft
-
 "@graphql-mesh/plugin-hive@npm:0.102.4, @graphql-mesh/plugin-hive@npm:^0.102.4, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
@@ -6428,6 +6415,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth"
   dependencies:
+    "@envelop/generic-auth": "npm:8.0.0-alpha-20240812121953-81638fef"
     "@graphql-mesh/serve-runtime": "npm:^0.8.5"
     "@graphql-yoga/plugin-jwt": "npm:^3.0.2"
     graphql-yoga: "npm:^5.7.0"
