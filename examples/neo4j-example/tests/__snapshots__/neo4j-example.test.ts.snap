@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Neo4j should generate correct schema 1`] = `
-"schema @transport(kind: "neo4j", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}, subgraph: "Neo4j") {
+"schema @transport(kind: "neo4j", subgraph: "Neo4j", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}) {
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -9,7 +9,7 @@ exports[`Neo4j should generate correct schema 1`] = `
 
 directive @introspection(subgraph: String) on ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
-directive @relationship(direction: _RelationDirections, type: String) on FIELD_DEFINITION
+directive @relationship(direction: _RelationDirections, properties: String, type: String) on FIELD_DEFINITION
 
 directive @relationshipProperties on OBJECT
 

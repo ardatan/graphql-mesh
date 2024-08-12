@@ -95,7 +95,11 @@ export async function loadGraphQLSchemaFromNeo4J(
     ...parse(
       /* GraphQL */ `
         directive @relationshipProperties on OBJECT
-        directive @relationship(type: String, direction: _RelationDirections) on FIELD_DEFINITION
+        directive @relationship(
+          type: String
+          direction: _RelationDirections
+          properties: String
+        ) on FIELD_DEFINITION
         enum _RelationDirections {
           IN
           OUT

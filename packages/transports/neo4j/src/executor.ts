@@ -1,5 +1,5 @@
 import type { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema } from 'graphql';
-import { parse, visit } from 'graphql';
+import { extendSchema, parse, visit } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import type { Driver } from 'neo4j-driver';
 import type { DisposableExecutor } from '@graphql-mesh/transport-common';
@@ -33,6 +33,21 @@ function filterIntrospectionDefinitions<TASTNode extends { directives?: readonly
 
 export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<DisposableExecutor> {
   const schemaDirectives = getDirectiveExtensions(opts.schema);
+  if (!opts.schema.getDirective('relationship')) {
+    opts.schema = extendSchema(
+      opts.schema,
+      parse(
+        /* GraphQL */ `
+          directive @relationship(
+            type: String
+            direction: _RelationDirections
+            properties: String
+          ) on FIELD_DEFINITION
+        `,
+        { noLocation: true },
+      ),
+    );
+  }
   const transportDirectives = schemaDirectives?.transport;
   if (!transportDirectives?.length) {
     throw new Error('No transport directive found on the schema!');
