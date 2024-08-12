@@ -27,7 +27,7 @@ Then, add it to your plugins:
 import { maxDepthPlugin } from '@escape.tech/graphql-armor-max-depth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineConfig({
+export const serveConfig = defineConfig({
   plugins: () => [
     maxDepthPlugin({
       // Toggle the plugin | Default: true

@@ -22,7 +22,7 @@ Then, add it to your plugins:
 import {defineConfig} from '@graphql-mesh/serve-cli';
 import { costLimitPlugin } from '@escape.tech/graphql-armor-cost-limit';
 
-export default defineConfig({
+export const serveConfig = defineConfig({
   plugins: () => [
     costLimitPlugin({
         // Toogle the plugin | default: true

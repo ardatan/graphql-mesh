@@ -37,7 +37,7 @@ Instead of providing the CLI options, you can also provide them using a configur
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineConfig({
+export const serveConfig = defineConfig({
   supergraph: {
     // The CDN type.
     type: 'hive',
@@ -72,7 +72,7 @@ customization for the configuration:
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineConfig({
+export const serveConfig = defineConfig({
   reporting: {
     // The reporting service type
     type: 'hive',
