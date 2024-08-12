@@ -33,6 +33,10 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
         !opts.quiet && opts.log.info(`Found default config file ${configPath}`);
         const module = await include(absoluteConfigPath);
         importedConfig = Object(module).serveConfig || null;
+        if (!importedConfig) {
+          !opts.quiet &&
+            opts.log.warn(`No "serveConfig" exported from config file at ${configPath}`);
+        }
         break;
       }
     }
