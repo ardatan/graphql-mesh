@@ -65,6 +65,8 @@ export interface ProcOptions {
    * They will be merged with `process.env` overriding any existing value.
    */
   env?: Record<string, string | number>;
+  /** Extra args to pass to the process. */
+  args?: (string | number | boolean)[];
 }
 
 export interface Proc extends AsyncDisposable {
@@ -243,9 +245,9 @@ export function createTenv(cwd: string): Tenv {
         return fs.writeFile(filePath, content, 'utf-8');
       },
     },
-    spawn(command, opts) {
+    spawn(command, { args: extraArgs, ...opts }) {
       const [cmd, ...args] = Array.isArray(command) ? command : command.split(' ');
-      return spawn({ ...opts, cwd }, String(cmd), ...args);
+      return spawn({ ...opts, cwd }, String(cmd), ...args, ...extraArgs);
     },
     serveRunner,
     async serve(opts) {
@@ -255,6 +257,7 @@ export function createTenv(cwd: string): Tenv {
         pipeLogs = boolEnv('DEBUG'),
         env,
         runner,
+        args,
       } = opts || {};
 
       let proc: Proc,
@@ -314,7 +317,7 @@ export function createTenv(cwd: string): Tenv {
           hostPort: port,
           containerPort: port,
           healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
-          cmd: [createPortOpt(port), ...(supergraph ? ['supergraph', supergraph] : [])],
+          cmd: [createPortOpt(port), ...(supergraph ? ['supergraph', supergraph] : []), ...args],
           volumes,
           pipeLogs,
         });
@@ -329,6 +332,7 @@ export function createTenv(cwd: string): Tenv {
           'supergraph',
           supergraph,
           createPortOpt(port),
+          ...args,
         );
       }
 
@@ -374,6 +378,7 @@ export function createTenv(cwd: string): Tenv {
         maskServicePorts,
         pipeLogs = boolEnv('DEBUG'),
         env,
+        args,
       } = opts || {};
       let output = '';
       if (opts?.output) {
@@ -389,6 +394,7 @@ export function createTenv(cwd: string): Tenv {
         path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
         output && createOpt('output', output),
         ...services.map(({ name, port }) => createServicePortOpt(name, port)),
+        ...args,
       );
       await waitForExit;
       let result = '';
@@ -423,7 +429,7 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, output, result };
     },
-    async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG') } = {}) {
+    async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args } = {}) {
       port ||= await getAvailablePort();
       const [proc, waitForExit] = await spawn(
         { cwd, pipeLogs },
@@ -433,6 +439,7 @@ export function createTenv(cwd: string): Tenv {
         path.join(cwd, 'services', name),
         createServicePortOpt(name, port),
         servePort && createPortOpt(servePort),
+        ...args,
       );
       const service: Service = { ...proc, name, port };
       const ctrl = new AbortController();
@@ -460,6 +467,7 @@ export function createTenv(cwd: string): Tenv {
       pipeLogs = boolEnv('DEBUG'),
       cmd,
       volumes = [],
+      args,
     }) {
       const containerName = `${name}_${Math.random().toString(32).slice(2)}`;
 
@@ -528,7 +536,7 @@ export function createTenv(cwd: string): Tenv {
             {},
           ),
         },
-        Cmd: cmd?.filter(Boolean).map(String),
+        Cmd: [...cmd, ...args].filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
           PortBindings: {

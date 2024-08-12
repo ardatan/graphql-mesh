@@ -32,7 +32,8 @@ let program = new Command()
     ).env('CONFIG_PATH'),
   )
   .option('--subgraph <name>', 'name of the subgraph to compose')
-  .option('-o, --output <path>', 'path to the output file');
+  .option('-o, --output <path>', 'path to the output file')
+  .option('--native-import', 'use the native "import" function for importing the config file');
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */
@@ -72,7 +73,7 @@ export async function run({
         .catch(() => false);
       if (exists) {
         log.info(`Found default config file ${configPath}`);
-        const module = await include(absoluteConfigPath);
+        const module = await include(absoluteConfigPath, opts.nativeImport);
         importedConfig = Object(module).composeConfig;
         if (!importedConfig) {
           throw new Error(`No "composeConfig" exported from default config at ${configPath}`);
@@ -98,7 +99,7 @@ export async function run({
     if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
     }
-    const module = await include(configPath);
+    const module = await include(configPath, opts.nativeImport);
     importedConfig = Object(module).composeConfig;
     if (!importedConfig) {
       throw new Error(`No "composeConfig" exported from config at ${configPath}`);

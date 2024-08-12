@@ -31,12 +31,13 @@ export const addCommand: AddCommand = (ctx, cli) =>
       ).env('HIVE_CDN_KEY'),
     )
     .action(async function supergraph(schemaPathOrUrl) {
-      const { hiveCdnKey, hiveRegistryToken, maskedErrors, polling, ...opts } =
+      const { hiveCdnKey, hiveRegistryToken, maskedErrors, polling, nativeImport, ...opts } =
         this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
+        nativeImport,
       });
 
       let supergraph: UnifiedGraphConfig | MeshServeHiveCDNOptions = 'supergraph.graphql';

@@ -20,8 +20,8 @@ const jiti = createJITI(
  *
  * If the module at {@link path} is not found, `null` will be returned.
  */
-export async function include<T = any>(path: string): Promise<T> {
-  const module = await jiti.import(path, {});
+export async function include<T = any>(path: string, nativeImport?: boolean): Promise<T> {
+  const module = await (nativeImport ? import(path) : jiti.import(path, {}));
   if (!module) {
     throw new Error('Included module is empty');
   }

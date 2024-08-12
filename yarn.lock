@@ -3875,6 +3875,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/top-level-await@workspace:e2e/top-level-await":
+  version: 0.0.0-use.local
+  resolution: "@e2e/top-level-await@workspace:e2e/top-level-await"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/type-merging-batching@workspace:e2e/type-merging-batching":
   version: 0.0.0-use.local
   resolution: "@e2e/type-merging-batching@workspace:e2e/type-merging-batching"
