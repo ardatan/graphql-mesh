@@ -41,6 +41,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         ...loadedConfig,
         ...opts,
         subgraph,
+        logging: loadedConfig.logging ?? ctx.log,
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided
