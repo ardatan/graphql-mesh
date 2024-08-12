@@ -30,7 +30,7 @@ For example, changing the supergraph to use the `my-schema.graphql` schema inste
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/my-schema.graphql:/serve/my-schema.graphql" \
-  ghcr.io/ardatan/mesh-serve --supergraph=my-schema.graphql
+  ghcr.io/ardatan/mesh-serve supergraph my-schema.graphql
 ```
 
 For a full list of CLI arguments, please refer to the [CLI arguments](./references/cli#arguments).
@@ -56,7 +56,7 @@ export const serveConfig = defineConfig({
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
-  ghcr.io/ardatan/mesh-serve
+  ghcr.io/ardatan/mesh-serve proxy
 ```
 
 For a full list of CLI arguments, please refer to the [Config Reference](./references/config).
@@ -74,7 +74,7 @@ running the image:
 docker run \
   -p 8080:8080 \
   -v "$(pwd)/supergraph.graphql:/serve/supergraph.graphql" \
-  ghcr.io/ardatan/mesh-serve --port=8080
+  ghcr.io/ardatan/mesh-serve supergraph --port=8080
 ```
 
 ## Running
@@ -86,7 +86,7 @@ image is as easy as:
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/supergraph.graphql:/serve/mesh.config.ts" \
-  ghcr.io/ardatan/mesh-serve
+  ghcr.io/ardatan/mesh-serve supergraph
 ```
 
 ## Docker Compose
@@ -100,6 +100,7 @@ Start by defining the `docker-compose.yml`
 services:
   mesh-serve:
     image: ghcr.io/ardatan/mesh-serve
+    command: supergraph
     ports:
       - '4000:4000'
     # Add GraphQL Hive environment variables in case you use it
@@ -171,7 +172,7 @@ And then simply start the new image with the config file mounted:
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
-  mesh-serve-w-rate-limit
+  mesh-serve-w-rate-limit supergraph
 ```
 
 ### Develop Plugin
@@ -265,7 +266,7 @@ docker build -t mesh-serve-w-my-timing .
 And finally start it (the config file is in the image and doesn't need to be mounted):
 
 ```sh
-docker run -p 4000:4000 mesh-serve-w-my-timing
+docker run -p 4000:4000 mesh-serve-w-my-timing supergraph
 ```
 
 <Callout>
@@ -276,7 +277,7 @@ docker run -p 4000:4000 mesh-serve-w-my-timing
 docker run -p 4000:4000 \
   -v "$(pwd)/mesh.config.ts":/serve/mesh.config.ts \
   -v "$(pwd)/my-timing.ts":/serve/my-timing.ts \
-  mesh-serve-w-my-timing
+  mesh-serve-w-my-timing supergraph
 ```
 
 </Callout>
@@ -344,5 +345,5 @@ docker build -t mesh-serve-w-add-res .
 And finally start it (the config file is in the image and doesn't need to be mounted):
 
 ```sh
-docker run -p 4000:4000 mesh-serve-w-add-res
+docker run -p 4000:4000 mesh-serve-w-add-res supergraph
 ```

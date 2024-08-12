@@ -27,23 +27,32 @@ which will print out the following:
 {/* IMPORTANT: please dont forget to update the following when arguments change. simply run `node --import tsx packages/serve-cli/src/bin.ts --help` and copy over the text */}
 
 ```
-Usage: mesh-serve [options]
+Usage: mesh-serve [options] [command]
 
 serve GraphQL federated architecture for any API service(s)
 
 Options:
-  --fork [count]            count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is "production", otherwise only one (the main) worker (default: 1, env:
-                            FORK)
-  -c, --config-path <path>  path to the configuration file. defaults to the following files respectively in the current working directory: mesh.config.ts, mesh.config.mts,
-                            mesh.config.cts, mesh.config.js, mesh.config.mjs, mesh.config.cjs (env: CONFIG_PATH)
-  -h, --host <hostname>     host to use for serving (default: "127.0.0.1")
-  -p, --port <number>       port to use for serving (default: 4000, env: PORT)
-  --supergraph <path>       path to the supergraph schema
-  --polling <intervalInMs>  schema polling interval in milliseconds (env: POLLING)
-  --masked-errors           mask unexpected errors in responses
-  --subgraph <path>         path to the subgraph schema
-  --proxy <endpoint>        proxy all requests to this endpoint (env: PROXY_ENDPOINT)
-  --help                    display help for command
+  --fork <count>                          count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is
+                                          "production", otherwise only one (the main) worker (default: 1, env: FORK)
+  -c, --config-path <path>                path to the configuration file. defaults to the following files respectively in the
+                                          current working directory: mesh.config.ts, mesh.config.mts, mesh.config.cts,
+                                          mesh.config.js, mesh.config.mjs, mesh.config.cjs (env: CONFIG_PATH)
+  -h, --host <hostname>                   host to use for serving (default: "0.0.0.0")
+  -p, --port <number>                     port to use for serving (default: 4000, env: PORT)
+  --polling <intervalInMs>                schema polling interval in milliseconds (env: POLLING)
+  --no-masked-errors                      don't mask unexpected errors in responses
+  --masked-errors                         mask unexpected errors in responses (default: true)
+  --hive-registry-token <token>           Hive registry token for usage metrics reporting (env: HIVE_REGISTRY_TOKEN)
+  --help                                  display help for command
+
+Commands:
+  supergraph [options] [schemaPathOrUrl]  serve a Federation supergraph provided by a compliant composition tool such as Mesh
+                                          Compose or Apollo Rover
+  subgraph [schemaPathOrUrl]              serve a Federation subgraph that can be used with any Federation compatible router like
+                                          Mesh Serve or Apollo Router
+  proxy [options] [endpoint]              serve a proxy to a GraphQL API and add additional features such as monitoring/tracing,
+                                          caching, rate limiting, security, and more
+  help [command]                          display help for command
 ```
 
 <Callout>All arguments can also be configured in the config file.</Callout>
@@ -57,10 +66,6 @@ configuration file if you provide these environment variables.
 
 #### GraphQL Hive
 
-- `HIVE_CDN_ENDPOINT`: The endpoint of the Hive CDN to fetch the supergraph.
-  [See here](/v1/serve/schema-registry/hive#fetching-supergraph-from-hive-cdn)
-- `HIVE_CDN_KEY`: The API key provided by GraphQL Hive for Hive CDN.
-  [See here](/v1/serve/schema-registry/hive#fetching-supergraph-from-hive-cdn)
 - `HIVE_REGISTRY_TOKEN`: The token to push the metrics to GraphQL Hive.
   [See here](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
 
