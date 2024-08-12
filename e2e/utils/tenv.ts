@@ -245,7 +245,7 @@ export function createTenv(cwd: string): Tenv {
         return fs.writeFile(filePath, content, 'utf-8');
       },
     },
-    spawn(command, { args: extraArgs, ...opts }) {
+    spawn(command, { args: extraArgs = [], ...opts } = {}) {
       const [cmd, ...args] = Array.isArray(command) ? command : command.split(' ');
       return spawn({ ...opts, cwd }, String(cmd), ...args, ...extraArgs);
     },
@@ -257,7 +257,7 @@ export function createTenv(cwd: string): Tenv {
         pipeLogs = boolEnv('DEBUG'),
         env,
         runner,
-        args,
+        args = [],
       } = opts || {};
 
       let proc: Proc,
@@ -378,7 +378,7 @@ export function createTenv(cwd: string): Tenv {
         maskServicePorts,
         pipeLogs = boolEnv('DEBUG'),
         env,
-        args,
+        args = [],
       } = opts || {};
       let output = '';
       if (opts?.output) {
@@ -429,7 +429,7 @@ export function createTenv(cwd: string): Tenv {
 
       return { ...proc, output, result };
     },
-    async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args } = {}) {
+    async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args = [] } = {}) {
       port ||= await getAvailablePort();
       const [proc, waitForExit] = await spawn(
         { cwd, pipeLogs },
@@ -465,9 +465,9 @@ export function createTenv(cwd: string): Tenv {
       additionalContainerPorts: containerAdditionalPorts,
       healthcheck,
       pipeLogs = boolEnv('DEBUG'),
-      cmd,
+      cmd = [],
       volumes = [],
-      args,
+      args = [],
     }) {
       const containerName = `${name}_${Math.random().toString(32).slice(2)}`;
 
@@ -536,7 +536,7 @@ export function createTenv(cwd: string): Tenv {
             {},
           ),
         },
-        Cmd: [...(cmd || []), ...(args || [])].filter(Boolean).map(String),
+        Cmd: [...cmd, ...args].filter(Boolean).map(String),
         HostConfig: {
           AutoRemove: true,
           PortBindings: {
