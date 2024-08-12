@@ -8,7 +8,7 @@ describe('Composition with Auth', () => {
       typeDefs: /* GraphQL */ `
         extend schema
           @link(
-            url: "https://specs.apollo.dev/federation/v2.5"
+            url: "https://specs.apollo.dev/federation/v2.6"
             import: ["@authenticated", "@requiresScopes"]
           )
 
@@ -44,15 +44,23 @@ describe('Composition with Auth', () => {
       },
     ]);
 
-    expect(supergraph.errors?.length).toBeFalsy();
-    expect(supergraph.supergraphSdl).toMatchSnapshot();
+    if (supergraph.errors?.length === 1) {
+      throw supergraph.errors[0];
+    } else if (supergraph.errors?.length) {
+      throw new AggregateError(
+        supergraph.errors,
+        'Composition failed with multiple errors' +
+          supergraph.errors.map(e => e.message).join('\n'),
+      );
+    }
+    expect(stripIgnoredCharacters(supergraph.supergraphSdl)).toMatchSnapshot();
   });
   it('@requiresScopes', () => {
     const aSchema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         extend schema
           @link(
-            url: "https://specs.apollo.dev/federation/v2.5"
+            url: "https://specs.apollo.dev/federation/v2.6"
             import: ["@authenticated", "@requiresScopes"]
           )
 
@@ -89,7 +97,15 @@ describe('Composition with Auth', () => {
       },
     ]);
 
-    expect(supergraph.errors?.length).toBeFalsy();
-    expect(supergraph.supergraphSdl).toMatchSnapshot();
+    if (supergraph.errors?.length === 1) {
+      throw supergraph.errors[0];
+    } else if (supergraph.errors?.length) {
+      throw new AggregateError(
+        supergraph.errors,
+        'Composition failed with multiple errors' +
+          supergraph.errors.map(e => e.message).join('\n'),
+      );
+    }
+    expect(stripIgnoredCharacters(supergraph.supergraphSdl)).toMatchSnapshot();
   });
 });
