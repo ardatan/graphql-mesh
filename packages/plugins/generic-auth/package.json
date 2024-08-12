@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/generic-auth": "8.0.0-alpha-20240806125641-9b9885ba"
+    "@envelop/generic-auth": "8.0.0-alpha-20240812121953-81638fef"
   },
   "publishConfig": {
     "access": "public",

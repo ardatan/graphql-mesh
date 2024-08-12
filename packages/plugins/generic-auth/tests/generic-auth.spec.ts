@@ -3,10 +3,6 @@ import { createYoga } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { useGenericAuth } from '@envelop/generic-auth';
-import {
-  createJwtWithRequiresScope,
-  JWT_WITH_REQUIRES_SCOPE,
-} from '@graphql-mesh/plugin-generic-auth';
 import useJWT, { createInlineSigningKeyProvider } from '@graphql-mesh/plugin-jwt-auth';
 import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { composeWithApollo } from '../../../testing/composeWithApollo';
@@ -107,7 +103,13 @@ describe('Generic Auth', () => {
           useJWT({
             singingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
           }),
-          useGenericAuth(JWT_WITH_REQUIRES_SCOPE),
+          useGenericAuth({
+            mode: 'protect-granular',
+            resolveUserFn(context) {
+              return context?.jwt?.payload;
+            },
+            rejectUnauthenticated: false,
+          }),
         ],
       });
 
@@ -221,7 +223,13 @@ describe('Generic Auth', () => {
               missingToken: false,
             },
           }),
-          useGenericAuth(JWT_WITH_REQUIRES_SCOPE),
+          useGenericAuth({
+            mode: 'protect-granular',
+            resolveUserFn(context) {
+              return context?.jwt?.payload;
+            },
+            rejectUnauthenticated: false,
+          }),
         ],
       });
       const response = await serveRuntime.fetch('http://localhost:4000/graphql', {
@@ -235,7 +243,7 @@ describe('Generic Auth', () => {
               me {
                 username
               }
-              post(id: "1234") {
+              post(id: "1") {
                 title
                 views
               }
@@ -249,6 +257,7 @@ describe('Generic Auth', () => {
           me: null,
           post: {
             title: 'Securing supergraphs',
+            views: null,
           },
         },
         errors: [
@@ -380,7 +389,13 @@ describe('Generic Auth', () => {
                 missingToken: false,
               },
             }),
-            useGenericAuth(JWT_WITH_REQUIRES_SCOPE),
+            useGenericAuth({
+              mode: 'protect-granular',
+              resolveUserFn(context) {
+                return context?.jwt?.payload;
+              },
+              rejectUnauthenticated: false,
+            }),
           ],
         });
         const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
@@ -440,7 +455,13 @@ describe('Generic Auth', () => {
                 missingToken: false,
               },
             }),
-            useGenericAuth(JWT_WITH_REQUIRES_SCOPE),
+            useGenericAuth({
+              mode: 'protect-granular',
+              resolveUserFn(context) {
+                return context?.jwt?.payload;
+              },
+              rejectUnauthenticated: false,
+            }),
           ],
         });
         const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
@@ -462,7 +483,10 @@ describe('Generic Auth', () => {
         const resJson: ExecutionResult = await res.json();
         expect(resJson).toEqual({
           data: {
-            product: null,
+            product: {
+              id: null,
+              name: 'Couch',
+            },
           },
           errors: [
             {
@@ -548,7 +572,13 @@ describe('Generic Auth', () => {
               missingToken: false,
             },
           }),
-          useGenericAuth(JWT_WITH_REQUIRES_SCOPE),
+          useGenericAuth({
+            mode: 'protect-granular',
+            resolveUserFn(context) {
+              return context?.jwt?.payload;
+            },
+            rejectUnauthenticated: false,
+          }),
         ],
       });
       const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
@@ -585,6 +615,7 @@ describe('Generic Auth', () => {
                 username: 'john.doe',
               },
               title: 'Securing supergraphs',
+              allowedViewers: null,
             },
             {
               id: '2',
@@ -592,6 +623,7 @@ describe('Generic Auth', () => {
                 username: 'jane.doe',
               },
               title: 'Running supergraphs',
+              allowedViewers: null,
             },
           ],
         },
@@ -601,14 +633,13 @@ describe('Generic Auth', () => {
             extensions: {
               code: 'UNAUTHORIZED_FIELD_OR_TYPE',
             },
-            path: ['posts', 0, 'allowedViewers'],
-          },
-          {
-            message: 'Unauthorized field or type',
-            extensions: {
-              code: 'UNAUTHORIZED_FIELD_OR_TYPE',
-            },
-            path: ['posts', 1, 'allowedViewers'],
+            locations: [
+              {
+                column: 19,
+                line: 10,
+              },
+            ],
+            path: ['posts', 'allowedViewers'],
           },
         ],
       });
@@ -679,11 +710,14 @@ describe('Generic Auth', () => {
               missingToken: false,
             },
           }),
-          useGenericAuth(
-            createJwtWithRequiresScope({
-              extractPolicies: () => ['read_profile'],
-            }),
-          ),
+          useGenericAuth({
+            mode: 'protect-granular',
+            resolveUserFn(context) {
+              return context?.jwt?.payload;
+            },
+            rejectUnauthenticated: false,
+            extractPolicies: () => ['read_profile'],
+          }),
         ],
       });
       const token = jwt.sign({ sub: '123', scope: 'read:email' }, signingKey, {});

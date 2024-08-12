@@ -4050,16 +4050,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/extended-validation@npm:4.1.0-alpha-20240806125641-9b9885ba":
-  version: 4.1.0-alpha-20240806125641-9b9885ba
-  resolution: "@envelop/extended-validation@npm:4.1.0-alpha-20240806125641-9b9885ba"
+"@envelop/extended-validation@npm:4.1.0-alpha-20240812121953-81638fef":
+  version: 4.1.0-alpha-20240812121953-81638fef
+  resolution: "@envelop/extended-validation@npm:4.1.0-alpha-20240812121953-81638fef"
   dependencies:
     "@graphql-tools/utils": "npm:^10.0.0"
     tslib: "npm:^2.5.0"
   peerDependencies:
     "@envelop/core": ^5.0.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/db495b73cdae97bd8cbc254aa531a1fe14a0e34b4511c3fb63368785ebbdd83dd4a90ca84a2f9dabf6253799eb8f2f5be5976163ddfaa1a0980c99b55aa80b64
+  checksum: 10c0/5bc351f3d28fbe12a16ee42b4eede677f12e57815e5d5a8a858a9034577a5528448cf78d5e88e5a8892a9db3320f90d7ae773c1c3e357cbb4099f738de647dea
   languageName: node
   linkType: hard
 
@@ -4076,17 +4076,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/generic-auth@npm:8.0.0-alpha-20240806125641-9b9885ba":
-  version: 8.0.0-alpha-20240806125641-9b9885ba
-  resolution: "@envelop/generic-auth@npm:8.0.0-alpha-20240806125641-9b9885ba"
+"@envelop/generic-auth@npm:8.0.0-alpha-20240812121953-81638fef":
+  version: 8.0.0-alpha-20240812121953-81638fef
+  resolution: "@envelop/generic-auth@npm:8.0.0-alpha-20240812121953-81638fef"
   dependencies:
-    "@envelop/extended-validation": "npm:4.1.0-alpha-20240806125641-9b9885ba"
-    "@graphql-tools/utils": "npm:^10.0.6"
+    "@envelop/extended-validation": "npm:4.1.0-alpha-20240812121953-81638fef"
+    "@graphql-tools/utils": "npm:^10.5.1"
     tslib: "npm:^2.5.0"
   peerDependencies:
     "@envelop/core": ^5.0.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/604fa4cce427b091a5970f5069840988bc05245df965744f77418af60b0799d30dc8f1a6610da5372a69f272e620486b3e0d6db456a0aad3b06fc40483359c2d
+  checksum: 10c0/be6e297b1a352d51b8db64c1eba13b9178b0faac6959ffb80ccb82b10a6621236e3a72c5459d559d8df1d9d9109a2c4391676b1eb10d6411b655bb2cac79c501
   languageName: node
   linkType: hard
 
@@ -6370,7 +6370,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-generic-auth@workspace:packages/plugins/generic-auth"
   dependencies:
-    "@envelop/generic-auth": "npm:8.0.0-alpha-20240806125641-9b9885ba"
+    "@envelop/generic-auth": "npm:8.0.0-alpha-20240812121953-81638fef"
   peerDependencies:
     "@graphql-mesh/types": ^0.100.0
     "@graphql-mesh/utils": ^0.100.0
@@ -8104,9 +8104,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:^10.0.6":
-  version: 10.3.4
-  resolution: "@graphql-tools/utils@npm:10.3.4"
+"@graphql-tools/utils@npm:^10.5.1":
+  version: 10.5.1
+  resolution: "@graphql-tools/utils@npm:10.5.1"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     cross-inspect: "npm:1.0.1"
@@ -8114,7 +8114,7 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/15e50dbe40fdabfb132708f2a4f8213c280c1a39df9c13bde5d1d34f90c7e9d8964f646af2ce533603bed25190d60d925b40657441d991f4206b37e701cd8502
+  checksum: 10c0/e1b442447b983c4e69a213a60bc823274f482d3e58be96702c71a37e2178ee81f8fec39969feae98cd2246b631ef09b687894cea90042a1ad203e0198d470d28
   languageName: node
   linkType: hard
 
