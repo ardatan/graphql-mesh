@@ -46,7 +46,7 @@
     "thrift": "^0.20.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "10.3.4"
+    "@graphql-tools/utils": "10.5.2"
   },
   "publishConfig": {
     "access": "public",
