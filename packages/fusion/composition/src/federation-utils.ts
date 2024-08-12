@@ -1,4 +1,4 @@
-import { GraphQLDirective, isSpecifiedDirective, type GraphQLSchema } from 'graphql';
+import { GraphQLDirective, GraphQLSchema, isSpecifiedDirective } from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
 export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
@@ -111,12 +111,23 @@ export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
   return subgraph;
 }
 
+export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
+  return new GraphQLSchema({
+    ...subgraph.toConfig(),
+    extensions: {
+      ...subgraph.extensions,
+      directives: getDirectiveExtensions(subgraph),
+    },
+    astNode: undefined,
+    extensionASTNodes: undefined,
+  });
+}
+
 export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
-  const linkDirectives = (schemaDirectives.link ||= []);
   if (
-    linkDirectives.some(linkDirectiveArgs =>
-      linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/link/'),
+    schemaDirectives?.link?.some(linkDirectiveArgs =>
+      linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/'),
     )
   ) {
     // This is already v2, skipping
