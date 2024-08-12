@@ -27,7 +27,7 @@ const __project = path.resolve(__dirname, '..', '..') + '/';
 
 const docker = new Dockerode();
 
-const E2E_SERVE_RUNNERS = ['node', 'docker'] as const;
+const E2E_SERVE_RUNNERS = ['node', 'docker', 'bin'] as const;
 
 type ServeRunner = (typeof E2E_SERVE_RUNNERS)[number];
 
@@ -45,6 +45,13 @@ const serveRunner = (function getServeRunner() {
     process.stderr.write(`
 ⚠️ Using docker serve runner! Make sure you have built the containers with:
 E2E_SERVE_RUNNER=docker yarn bundle && docker buildx bake e2e
+
+`);
+  }
+  if (runner === 'bin' && !process.env.CI) {
+    process.stderr.write(`
+⚠️ Using bin serve runner! Make sure you have built the binary with:
+TODO: instructions to build
 
 `);
   }
@@ -334,6 +341,13 @@ export function createTenv(cwd: string): Tenv {
           pipeLogs,
         });
         proc = cont;
+      } else if (serveRunner === 'bin') {
+        [proc, waitForExit] = await spawn(
+          { env, cwd, pipeLogs },
+          path.resolve(__project, 'packages', 'serve-cli', 'mesh-serve'),
+          createPortArg(port),
+          supergraph && createArg('supergraph', supergraph),
+        );
       } /* serveRunner === 'node' */ else {
         [proc, waitForExit] = await spawn(
           { env, cwd, pipeLogs },
