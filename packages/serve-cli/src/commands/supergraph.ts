@@ -2,7 +2,12 @@ import cluster, { Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { Option } from '@commander-js/extra-typings';
-import { createServeRuntime, type MeshServeConfigSupergraph } from '@graphql-mesh/serve-runtime';
+import {
+  createServeRuntime,
+  type MeshServeConfigSupergraph,
+  type MeshServeHiveCDNOptions,
+  type UnifiedGraphConfig,
+} from '@graphql-mesh/serve-runtime';
 import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
@@ -17,8 +22,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
     )
     .argument(
       '[schemaPathOrUrl]',
-      'path to the composed supergraph schema file or a url from where to pull the supergraph schema',
-      'supergraph.graphql',
+      'path to the composed supergraph schema file or a url from where to pull the supergraph schema (default: "supergraph.graphql")',
     )
     .addOption(
       new Option(
@@ -33,12 +37,21 @@ export const addCommand: AddCommand = (ctx, cli) =>
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
       });
+
+      let supergraph: UnifiedGraphConfig | MeshServeHiveCDNOptions = 'supergraph.graphql';
+      if (schemaPathOrUrl) {
+        supergraph = hiveCdnKey
+          ? { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey }
+          : schemaPathOrUrl;
+      } else if ('supergraph' in loadedConfig) {
+        supergraph = loadedConfig.supergraph;
+        // TODO: how to provide hive-cdn-key?
+      }
+
       const config: SupergraphConfig = {
         ...loadedConfig,
         ...opts,
-        supergraph: hiveCdnKey
-          ? { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey }
-          : schemaPathOrUrl,
+        supergraph,
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided
