@@ -1,12 +1,11 @@
 import { isEnumType, type GraphQLSchema } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
-import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   asArray,
+  getDirectiveExtensions,
   getDocumentNodeFromSchema,
   MapperKind,
   mapSchema,
@@ -23,14 +22,14 @@ export const restoreExtraDirectives = memoize1(function restoreExtraDirectives(
   schema: GraphQLSchema,
 ) {
   const queryType = schema.getQueryType();
-  const queryTypeExtensions = getDirectiveExtensions(queryType);
-  const extraTypeDirectives: { name: string; directives: Record<string, any[]> }[] | undefined =
-    queryTypeExtensions?.extraTypeDirective;
-  const extraSchemaDefinitionDirectives: { directives: Record<string, any[]> }[] | undefined =
-    queryTypeExtensions?.extraSchemaDefinitionDirective;
-  const extraEnumValueDirectives:
-    | { name: string; value: string; directives: Record<string, any[]> }[]
-    | undefined = queryTypeExtensions?.extraEnumValueDirective;
+  const queryTypeExtensions = getDirectiveExtensions<{
+    extraTypeDirective?: { name: string; directives: Record<string, any[]> };
+    extraSchemaDefinitionDirective?: { directives: Record<string, any[]> };
+    extraEnumValueDirective?: { name: string; value: string; directives: Record<string, any[]> };
+  }>(queryType);
+  const extraTypeDirectives = queryTypeExtensions?.extraTypeDirective;
+  const extraSchemaDefinitionDirectives = queryTypeExtensions?.extraSchemaDefinitionDirective;
+  const extraEnumValueDirectives = queryTypeExtensions?.extraEnumValueDirective;
   if (
     extraTypeDirectives?.length ||
     extraSchemaDefinitionDirectives?.length ||

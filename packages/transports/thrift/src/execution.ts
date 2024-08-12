@@ -1,17 +1,24 @@
 import type { GraphQLError, GraphQLSchema } from 'graphql';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
-  getDirectiveExtensions,
   getOperationsAndFragments,
   getRootFieldsWithArgs,
   projectResultBySelectionSet,
 } from '@graphql-mesh/utils';
-import type { ExecutionRequest, ExecutionResult, Executor } from '@graphql-tools/utils';
-import { getRootTypeMap } from '@graphql-tools/utils';
+import {
+  getDirectiveExtensions,
+  getRootTypeMap,
+  type ExecutionRequest,
+  type ExecutionResult,
+  type Executor,
+} from '@graphql-tools/utils';
 import { createGraphQLThriftClient } from './client.js';
+import type { GraphQLThriftAnnotations } from './types.js';
 
 export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
-  const schemaDefDirectives = getDirectiveExtensions(subgraph);
+  const schemaDefDirectives = getDirectiveExtensions<{
+    transport: GraphQLThriftAnnotations;
+  }>(subgraph);
   const transportDirectives = schemaDefDirectives?.transport;
   if (!transportDirectives?.length)
     throw new Error('No @transport directive found on schema definition');

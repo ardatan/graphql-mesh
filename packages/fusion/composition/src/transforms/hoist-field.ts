@@ -6,9 +6,8 @@ import type {
   GraphQLObjectType,
   GraphQLSchema,
 } from 'graphql';
-import { getNamedType, isInterfaceType, isObjectType, isOutputType } from 'graphql';
-import { getDirectiveExtensions } from '@graphql-mesh/utils';
-import { MapperKind, mapSchema } from '@graphql-tools/utils';
+import { getNamedType, isInterfaceType, isObjectType } from 'graphql';
+import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { TransformValidationError } from './utils.js';
 

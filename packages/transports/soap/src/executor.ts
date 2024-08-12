@@ -10,10 +10,8 @@ import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
-import { getDirectiveExtensions } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
-import type { Executor } from '@graphql-tools/utils';
-import { getRootTypes } from '@graphql-tools/utils';
+import { getDirectiveExtensions, getRootTypes, type Executor } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
 
@@ -158,7 +156,9 @@ function createRootValue(
   for (const rootType of rootTypes) {
     const rootFieldMap = rootType.getFields();
     for (const fieldName in rootFieldMap) {
-      const fieldDirectives = getDirectiveExtensions(rootFieldMap[fieldName]);
+      const fieldDirectives = getDirectiveExtensions<{
+        soap: SoapAnnotations;
+      }>(rootFieldMap[fieldName]);
       const soapDirectives = fieldDirectives?.soap;
       if (!soapDirectives?.length) {
         // skip fields without @soap directive

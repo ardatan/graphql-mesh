@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.5",
     "@graphql-mesh/transport-common": "^0.5.0",
     "@graphql-mesh/utils": "^0.100.0",
-    "@graphql-tools/utils": "^10.3.4",
+    "@graphql-tools/utils": "^10.5.2",
     "@repeaterjs/repeater": "^3.0.6",
     "@whatwg-node/fetch": "^0.9.18"
   },

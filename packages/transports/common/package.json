@@ -39,7 +39,7 @@
   "dependencies": {
     "@envelop/core": "^5.0.1",
     "@graphql-tools/delegate": "^10.0.18",
-    "@graphql-tools/utils": "^10.3.4"
+    "@graphql-tools/utils": "^10.5.2"
   },
   "publishConfig": {
     "access": "public",
