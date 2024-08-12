@@ -1,8 +1,6 @@
 import { Callout } from '@theguild/components'
 
-# Authentication through `auth` and `skipAuth` directives
-
-{/* `TODO: Test this feature with a real example` */}
+# Authentication through directives
 
 <Callout>
   This page is currently under construction and expected to change. Please feel free to reach out to
@@ -19,31 +17,24 @@ directives are used to enforce authentication and authorization rules on your su
 
 </Callout>
 
-## Granular field access by using schema field directive `@auth`
+## Granular field access by Federation auth directives (`@authenticated`, `@requiresScopes`, `@policy`)
 
-You can use the `auth` directive to enforce authentication rules on specific fields. This directive
-can be used to restrict access to certain fields based on the viewer's session.
-
-You need to define the `auth` directive in your schema:
-
-```graphql
-directive @auth on FIELD_DEFINITION
-```
+You can use the `authenticated` directive to enforce authentication rules on specific fields. This
+directive can be used to restrict access to certain fields based on the viewer's session.
 
 Then, you can use the `auth` directive to set authentication rules on fields:
 
 ```graphql
 type Query {
-  me: User! @auth
-  protectedField: String @auth
+  me: User! @authenticated
+  protectedField: String @authenticated
   # publicField: String
 }
 ```
 
 <Callout>
-  In order to use this directive, you need to configure [Generic
-  Auth](/v1/serve/features/auth/generic-auth) plugin to use **Granular field access by using schema
-  field directives or field extensions** in your GraphQL Mesh Gateway.
+  You can learn more about the auth directives in the gateway docs here. [Generic Auth in GraphQL
+  Mesh Serve](/v1/serve/features/auth/generic-auth)
 </Callout>
 
 ## Exclude fields from authentication by using schema field directive `@skipAuth`

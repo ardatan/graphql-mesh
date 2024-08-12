@@ -74,7 +74,7 @@ const validateUser: ValidateUserFn<UserType> = params => {
   // This method is being triggered in different flows, based on the mode you chose to implement.
 
   // If you are using the `protect-auth-directive` mode, you'll also get 2 additional parameters: the resolver parameters as object and the DirectiveNode of the auth directive.
-  // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@auth` or `@skipAuth` directive
+  // In `protect-auth-directive` mode, this function will always get called and you can use these parameters to check if the field has the `@authenticated` or `@skipAuth` directive
 
   if (!user) {
     return new Error(`Unauthenticated!`)
@@ -220,13 +220,13 @@ export const serveConfig = defineConfig({
 > By default, we assume that you have the GraphQL directive definition as part of your GraphQL
 > schema (`directive @authenticated on FIELD_DEFINITION | OBJECT | INTERFACE`).
 
-Then, in your GraphQL schema SDL, you can add `@auth` directive to your fields, and the
+Then, in your GraphQL schema SDL, you can add `@authenticated` directive to your fields, and the
 `validateUser` will get called only while resolving that specific field:
 
 ```graphql
 type Query {
-  me: User! @auth
-  protectedField: String @auth
+  me: User! @authenticated
+  protectedField: String @authenticated
   # publicField: String
 }
 ```
