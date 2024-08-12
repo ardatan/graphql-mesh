@@ -3850,6 +3850,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/supergraph-url@workspace:e2e/supergraph-url":
+  version: 0.0.0-use.local
+  resolution: "@e2e/supergraph-url@workspace:e2e/supergraph-url"
+  dependencies:
+    graphql: "npm:^16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/thrift-calculator@workspace:e2e/thrift-calculator":
   version: 0.0.0-use.local
   resolution: "@e2e/thrift-calculator@workspace:e2e/thrift-calculator"

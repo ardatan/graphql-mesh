@@ -1,0 +1,8 @@
+{
+  "name": "@e2e/supergraph-url",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "graphql": "^16.9.0"
+  }
+}
