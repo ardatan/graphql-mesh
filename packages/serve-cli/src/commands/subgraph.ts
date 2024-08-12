@@ -23,7 +23,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       'path to the subgraph schema file or a url from where to pull the subgraph schema (default: "subgraph.graphql")',
     )
     .action(async function subgraph(schemaPathOrUrl) {
-      const { maskedErrors, ...opts } = this.optsWithGlobals<CLIGlobals>();
+      const { maskedErrors, hiveRegistryToken, ...opts } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -40,6 +40,15 @@ export const addCommand: AddCommand = (ctx, cli) =>
       const config: SubgraphConfig = {
         ...loadedConfig,
         ...opts,
+        ...(hiveRegistryToken
+          ? {
+              reporting: {
+                ...loadedConfig.reporting,
+                type: 'hive',
+                token: hiveRegistryToken,
+              },
+            }
+          : {}),
         subgraph,
         logging: loadedConfig.logging ?? ctx.log,
       };
