@@ -1,7 +1,11 @@
 import cluster, { Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
-import { createServeRuntime, type MeshServeConfigSubgraph } from '@graphql-mesh/serve-runtime';
+import {
+  createServeRuntime,
+  type MeshServeConfigSubgraph,
+  type UnifiedGraphConfig,
+} from '@graphql-mesh/serve-runtime';
 import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
@@ -16,20 +20,27 @@ export const addCommand: AddCommand = (ctx, cli) =>
     )
     .argument(
       '[schemaPathOrUrl]',
-      'path to the subgraph schema file or a url from where to pull the subgraph schema',
-      'subgraph.graphql',
+      'path to the subgraph schema file or a url from where to pull the subgraph schema (default: "subgraph.graphql")',
     )
-    .action(async function subgraph(schemaPath) {
+    .action(async function subgraph(schemaPathOrUrl) {
       const { maskedErrors, ...opts } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
       });
+
+      let subgraph: UnifiedGraphConfig = 'subgraph.graphql';
+      if (schemaPathOrUrl) {
+        subgraph = schemaPathOrUrl;
+      } else if ('subgraph' in loadedConfig) {
+        subgraph = loadedConfig.subgraph;
+      }
+
       const config: SubgraphConfig = {
         ...loadedConfig,
         ...opts,
-        subgraph: schemaPath,
+        subgraph,
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided

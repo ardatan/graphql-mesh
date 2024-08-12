@@ -12,7 +12,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
     .description(
       'serve a proxy to a GraphQL API and add additional features such as monitoring/tracing, caching, rate limiting, security, and more',
     )
-    .argument('endpoint', 'URL of the endpoint GraphQL API to proxy')
+    .argument('[endpoint]', 'URL of the endpoint GraphQL API to proxy')
     .option(
       '--schema <schemaPathOrUrl>',
       'path to the GraphQL schema file or a url from where to pull the schema',
@@ -25,31 +25,51 @@ export const addCommand: AddCommand = (ctx, cli) =>
     )
     .action(async function proxy(endpoint) {
       const { hiveCdnKey, maskedErrors, ...opts } = this.optsWithGlobals<CLIGlobals>();
-      if (hiveCdnKey && !opts.schema) {
-        process.stderr.write(
-          `error: option '--schema <schemaPathOrUrl>' is required when providing '--hive-cdn-key <key>'\n`,
-        );
-        process.exit(1);
-      }
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
       });
-      const config: ProxyConfig = {
-        ...loadedConfig,
-        ...opts,
-        proxy: {
-          ...loadedConfig['proxy'],
-          endpoint,
-        },
-        schema: hiveCdnKey
+
+      let proxy: MeshServeConfigProxy['proxy'] | undefined = undefined;
+      if (endpoint) {
+        proxy = { endpoint };
+      } else if ('proxy' in loadedConfig) {
+        proxy = loadedConfig.proxy;
+        // TODO: how to provide hive-cdn-key?
+      }
+      if (!proxy) {
+        ctx.log.error(
+          'Proxy endpoint not defined. Please provide it in the [endpoint] argument or in the config file.',
+        );
+        process.exit(1);
+      }
+
+      let schema: MeshServeConfigProxy['schema'] | undefined = undefined;
+      if (opts.schema) {
+        schema = hiveCdnKey
           ? {
               type: 'hive',
               endpoint: opts.schema!, // see validation above
               key: hiveCdnKey,
             }
-          : opts.schema,
+          : opts.schema;
+      } else if ('schema' in loadedConfig) {
+        schema = loadedConfig.schema;
+        // TODO: how to provide hive-cdn-key?
+      }
+      if (hiveCdnKey && !schema) {
+        process.stderr.write(
+          `error: option '--schema <schemaPathOrUrl>' is required when providing '--hive-cdn-key <key>'\n`,
+        );
+        process.exit(1);
+      }
+
+      const config: ProxyConfig = {
+        ...loadedConfig,
+        ...opts,
+        proxy,
+        schema,
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided
