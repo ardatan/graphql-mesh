@@ -151,7 +151,7 @@ type Query @extraSchemaDefinitionDirective(
     path: "/users/{args.id}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @merge(subgraph: "accounts", keyArg: "id", keyField: "id")  @join__field(graph: ACCOUNTS) 
+  ) @merge(subgraph: "accounts", keyField: "id", keyArg: "id")  @join__field(graph: ACCOUNTS) 
   users: [User] @httpOperation(
     subgraph: "accounts"
     path: "/users"

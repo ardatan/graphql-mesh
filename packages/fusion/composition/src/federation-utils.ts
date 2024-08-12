@@ -130,10 +130,10 @@ export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
       const typeDirectives = getDirectiveExtensions(type);
       typeDirectives.shareable ||= [];
       if (!typeDirectives.shareable?.length) {
-        typeDirectives.shareable.push({});
+        const typeExtensions: Record<string, any> = (type.extensions ||= {});
+        typeExtensions.directives ||= {};
+        typeExtensions.directives.shareable = [{}];
       }
-      const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
-      typeExtensions.directives = typeDirectives;
       return type;
     },
   });

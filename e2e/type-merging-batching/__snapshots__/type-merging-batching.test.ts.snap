@@ -56,7 +56,7 @@ scalar _DirectiveExtensions @join__type(graph: AUTHORS) @join__type(graph: BOOKS
 scalar _HoistConfig @join__type(graph: BOOKS)
 
 type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}}]}) @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "books", location: "http://localhost:<books_port>/graphql", options: {}}]}) @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
-  author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "id")
+  author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books")
   authors(ids: [ID]): [Author] @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @join__field(graph: AUTHORS)
   book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id") @join__field(graph: BOOKS)
   books(ids: [ID]): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids") @join__field(graph: BOOKS)

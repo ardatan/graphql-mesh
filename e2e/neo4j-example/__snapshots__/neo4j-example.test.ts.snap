@@ -86,7 +86,7 @@ enum join__Graph {
 
 directive @relationshipProperties on OBJECT
 
-directive @relationship(type: String, direction: _RelationDirections)  on FIELD_DEFINITION
+directive @relationship(type: String, direction: _RelationDirections, properties: String)  on FIELD_DEFINITION
 
 directive @introspection(subgraph: String)  repeatable on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
 
@@ -104,7 +104,7 @@ scalar Any @join__type(graph: MOVIES)
 scalar _DirectiveExtensions @join__type(graph: MOVIES) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}, {kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
+  directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
 ) @join__type(graph: MOVIES)  {
   movies(where: MovieWhere, options: MovieOptions) : [Movie!]!
   moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort]) : MoviesConnection!
@@ -190,7 +190,7 @@ type Movie @introspection @join__type(graph: MOVIES)  {
   tagline: String @introspection
   title: String! @introspection
   peopleActedInAggregate(where: PersonWhere, directed: Boolean = true) : MoviePersonPeopleActedInAggregationSelection
-  peopleActedIn(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN) 
+  peopleActedIn(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties") 
   peopleActedInConnection(
     where: MoviePeopleActedInConnectionWhere
     first: Int
@@ -217,7 +217,7 @@ type Movie @introspection @join__type(graph: MOVIES)  {
     sort: [MoviePeopleProducedConnectionSort!]
   ): MoviePeopleProducedConnection!
   peopleReviewedAggregate(where: PersonWhere, directed: Boolean = true) : MoviePersonPeopleReviewedAggregationSelection
-  peopleReviewed(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN) 
+  peopleReviewed(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN, properties: "ReviewedProperties") 
   peopleReviewedConnection(
     where: MoviePeopleReviewedConnectionWhere
     first: Int
@@ -387,7 +387,7 @@ type Person @introspection @join__type(graph: MOVIES)  {
   born: BigInt @introspection
   name: String! @introspection
   actedInMoviesAggregate(where: MovieWhere, directed: Boolean = true) : PersonMovieActedInMoviesAggregationSelection
-  actedInMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT) 
+  actedInMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties") 
   actedInMoviesConnection(
     where: PersonActedInMoviesConnectionWhere
     first: Int
@@ -432,7 +432,7 @@ type Person @introspection @join__type(graph: MOVIES)  {
     sort: [PersonProducedMoviesConnectionSort!]
   ): PersonProducedMoviesConnection!
   reviewedMoviesAggregate(where: MovieWhere, directed: Boolean = true) : PersonMovieReviewedMoviesAggregationSelection
-  reviewedMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT) 
+  reviewedMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT, properties: "ReviewedProperties") 
   reviewedMoviesConnection(
     where: PersonReviewedMoviesConnectionWhere
     first: Int
