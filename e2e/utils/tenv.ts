@@ -15,8 +15,8 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
-import { createArg, createPortArg, createServicePortArg } from './args';
 import { leftoverStack } from './leftoverStack';
+import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 
 export const retries = 120,
   interval = 500,
@@ -203,7 +203,7 @@ export interface Tenv {
   fs: {
     read(path: string): Promise<string>;
     delete(path: string): Promise<void>;
-    tempfile(name: string): Promise<string>;
+    tempfile(name: string, content?: string): Promise<string>;
     write(path: string, content: string): Promise<void>;
   };
   spawn(
@@ -232,10 +232,12 @@ export function createTenv(cwd: string): Tenv {
       delete(filePath) {
         return fs.unlink(isAbsolute(filePath) ? filePath : path.join(cwd, filePath));
       },
-      async tempfile(name) {
+      async tempfile(name, content) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_fs'));
         leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
-        return path.join(tempDir, name);
+        const tempFile = path.join(tempDir, name);
+        if (content) await fs.writeFile(tempFile, content, 'utf-8');
+        return tempFile;
       },
       write(filePath, content) {
         return fs.writeFile(filePath, content, 'utf-8');
@@ -263,15 +265,26 @@ export function createTenv(cwd: string): Tenv {
         if (supergraph) {
           // we need to replace all local servers in the supergraph to use docker's local hostname.
           // without this, the services running on the host wont be accessible by the docker container
-          await fs.writeFile(
-            supergraph,
-            (await fs.readFile(supergraph, 'utf8'))
+          if (/^http(s?):\/\//.test(supergraph)) {
+            // supergraph is a url
+            supergraph = supergraph
               // docker for linux (which is used in the CI) will have the host be on 172.17.0.1,
               // and locally the host.docker.internal (or just on macos?) should just work
               .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
-              .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
-          );
-          volumes.push({ host: supergraph, container: `/serve/${path.basename(supergraph)}` });
+              .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal');
+          } else {
+            // supergraph is a path
+            await fs.writeFile(
+              supergraph,
+              (await fs.readFile(supergraph, 'utf8'))
+                // docker for linux (which is used in the CI) will have the host be on 172.17.0.1,
+                // and locally the host.docker.internal (or just on macos?) should just work
+                .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
+                .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
+            );
+            volumes.push({ host: supergraph, container: `/serve/${path.basename(supergraph)}` });
+            supergraph = path.basename(supergraph);
+          }
         }
         for (const configfile of await glob('mesh.config.*', { cwd })) {
           const contents = await fs.readFile(path.join(cwd, configfile), 'utf8');
@@ -301,10 +314,7 @@ export function createTenv(cwd: string): Tenv {
           hostPort: port,
           containerPort: port,
           healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
-          cmd: [
-            createPortArg(port),
-            supergraph && createArg('supergraph', path.basename(supergraph)),
-          ],
+          cmd: [createPortOpt(port), ...(supergraph ? ['supergraph', supergraph] : [])],
           volumes,
           pipeLogs,
         });
@@ -316,8 +326,9 @@ export function createTenv(cwd: string): Tenv {
           '--import',
           'tsx',
           path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
-          createPortArg(port),
-          supergraph && createArg('supergraph', supergraph),
+          'supergraph',
+          supergraph,
+          createPortOpt(port),
         );
       }
 
@@ -376,8 +387,8 @@ export function createTenv(cwd: string): Tenv {
         '--import',
         'tsx',
         path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
-        output && createArg('output', output),
-        ...services.map(({ name, port }) => createServicePortArg(name, port)),
+        output && createOpt('output', output),
+        ...services.map(({ name, port }) => createServicePortOpt(name, port)),
       );
       await waitForExit;
       let result = '';
@@ -420,8 +431,8 @@ export function createTenv(cwd: string): Tenv {
         '--import',
         'tsx',
         path.join(cwd, 'services', name),
-        createServicePortArg(name, port),
-        servePort && createPortArg(servePort),
+        createServicePortOpt(name, port),
+        servePort && createPortOpt(servePort),
       );
       const service: Service = { ...proc, name, port };
       const ctrl = new AbortController();

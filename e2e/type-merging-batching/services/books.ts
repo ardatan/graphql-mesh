@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { createSchema, createYoga } from 'graphql-yoga';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 
 const books = [
   {
@@ -49,7 +49,7 @@ const yoga = createYoga({
   }),
 });
 
-const port = Args(process.argv).getServicePort('books', true);
+const port = Opts(process.argv).getServicePort('books', true);
 
 createServer(yoga).listen(port, () => {
   console.log(`Books service listening on http://localhost:${port}`);

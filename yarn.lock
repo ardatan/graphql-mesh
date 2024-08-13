@@ -3247,12 +3247,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commander-js/extra-typings@npm:^12.0.1":
+"@commander-js/extra-typings@npm:12.1.0":
   version: 12.1.0
   resolution: "@commander-js/extra-typings@npm:12.1.0"
   peerDependencies:
     commander: ~12.1.0
   checksum: 10c0/5d29eaa724b577e2a52a393ad54992924d2559931b8e493ab892477b7a4e878e475c6bf771260f8585d835f7d8e17ae4a2656c191e9595d210ae0b48291c0b3d
+  languageName: node
+  linkType: hard
+
+"@commander-js/extra-typings@patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch":
+  version: 12.1.0
+  resolution: "@commander-js/extra-typings@patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch::version=12.1.0&hash=952fa3"
+  peerDependencies:
+    commander: ~12.1.0
+  checksum: 10c0/d5939ca9177be6ed0c6b56adccb789168a734d51a14411b26f9e0466f4415ce00ac5127cbf79353384309ebb33e93f21b9fbe9750ee202d141375b013a8f6079
   languageName: node
   linkType: hard
 
@@ -3838,6 +3847,14 @@ __metadata:
     "@omnigraph/sqlite": "workspace:*"
     graphql: "npm:^16.9.0"
     sqlite3: "npm:^5.1.7"
+  languageName: unknown
+  linkType: soft
+
+"@e2e/supergraph-url@workspace:e2e/supergraph-url":
+  version: 0.0.0-use.local
+  resolution: "@e2e/supergraph-url@workspace:e2e/supergraph-url"
+  dependencies:
+    graphql: "npm:^16.9.0"
   languageName: unknown
   linkType: soft
 
@@ -5862,7 +5879,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
-    "@commander-js/extra-typings": "npm:^12.0.1"
+    "@commander-js/extra-typings": "npm:^12.1.0"
     "@graphql-mesh/fusion-composition": "npm:^0.2.0"
     "@graphql-mesh/include": "npm:^0.0.1"
     "@graphql-mesh/utils": "npm:^0.100.0"
@@ -6558,7 +6575,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/serve-cli@workspace:packages/serve-cli"
   dependencies:
-    "@commander-js/extra-typings": "npm:^12.0.1"
+    "@commander-js/extra-typings": "npm:^12.1.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.5"
     "@graphql-mesh/include": "npm:^0.0.1"
     "@graphql-mesh/serve-runtime": "npm:^0.6.0"

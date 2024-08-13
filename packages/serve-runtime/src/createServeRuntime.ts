@@ -33,6 +33,7 @@ import {
   DefaultLogger,
   getHeadersObj,
   isDisposable,
+  isUrl,
   LogLevel,
   makeAsyncDisposable,
   mapMaybePromise,
@@ -42,6 +43,7 @@ import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
 import {
   getDirectiveExtensions,
+  isValidPath,
   mergeDeep,
   parseSelectionSet,
   type Executor,
@@ -68,9 +70,14 @@ import { useRequestId } from './useRequestId.js';
 import { useSubgraphExecuteDebug } from './useSubgraphExecuteDebug.js';
 import { checkIfDataSatisfiesSelectionSet } from './utils.js';
 
+export type MeshServeRuntime<TContext extends Record<string, any> = Record<string, any>> =
+  YogaServerInstance<unknown, TContext> & {
+    invalidateUnifiedGraph(): void;
+  } & AsyncDisposable;
+
 export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
-  config: MeshServeConfig<TContext> = {},
-) {
+  config: MeshServeConfig<TContext>,
+): MeshServeRuntime<TContext> {
   let fetchAPI = config.fetchAPI;
   let logger: Logger;
   if (config.logging == null) {
@@ -109,21 +116,21 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
-  let registryPlugin: MeshPlugin<unknown> = {};
+  const hiveRegistryPlugin: MeshPlugin<unknown> =
+    config.reporting?.type === 'hive'
+      ? useMeshHive({
+          ...configContext,
+          logger: configContext.logger.child('Hive'),
+          ...config.reporting,
+        })
+      : {};
   let subgraphInformationHTMLRenderer: () => MaybePromise<string> = () => '';
 
   const disposableStack = new AsyncDisposableStack();
 
-  if ('proxy' in config || process.env.PROXY_ENDPOINT) {
-    const proxyEndpoint = 'proxy' in config ? config.proxy.endpoint : process.env.PROXY_ENDPOINT;
+  if ('proxy' in config) {
     const proxyExecutor = getProxyExecutor({
-      config:
-        'proxy' in config
-          ? config
-          : {
-              ...config,
-              proxy: { endpoint: proxyEndpoint },
-            },
+      config,
       configContext,
       getSchema() {
         return unifiedGraph;
@@ -145,12 +152,13 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     const executeFn = createExecuteFnFromExecutor(proxyExecutor);
 
     let currentTimeout: ReturnType<typeof setTimeout>;
+    const polling = config.polling;
     function continuePolling() {
       if (currentTimeout) {
         clearTimeout(currentTimeout);
       }
-      if (config.polling) {
-        currentTimeout = setTimeout(schemaFetcher, config.polling);
+      if (polling) {
+        currentTimeout = setTimeout(schemaFetcher, polling);
       }
     }
     function pausePolling() {
@@ -161,20 +169,16 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     let lastFetchedSdl: string;
     let initialFetch$: MaybePromise<true>;
     let schemaFetcher: () => MaybePromise<true>;
-    const hiveCdnEndpoint =
-      'hive' in config ? config.hive?.endpoint : process.env.HIVE_CDN_ENDPOINT;
-    if (hiveCdnEndpoint) {
-      const hiveEndpoint = hiveCdnEndpoint;
-      const hiveKey = 'hive' in config ? config.hive?.key : process.env.HIVE_CDN_KEY;
-      if (!hiveKey) {
-        throw new Error('You must provide a hive key');
-      }
+
+    if (config.schema && typeof config.schema === 'object' && 'type' in config.schema) {
+      // hive cdn
+      const { endpoint, key } = config.schema;
       schemaFetcher = function fetchSchemaFromCDN() {
         pausePolling();
         initialFetch$ = mapMaybePromise(
-          configContext.fetch(hiveEndpoint, {
+          configContext.fetch(endpoint, {
             headers: {
-              'X-Hive-CDN-Key': hiveKey,
+              'X-Hive-CDN-Key': key,
             },
           }),
           res =>
@@ -192,7 +196,26 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         );
         return initialFetch$;
       };
+    } else if (config.schema) {
+      // local or remote
+      schemaFetcher = function fetchSchema() {
+        pausePolling();
+        initialFetch$ = mapMaybePromise(
+          handleUnifiedGraphConfig(
+            // @ts-expect-error TODO: what's up with type narrowing
+            config.schema,
+            configContext,
+          ),
+          schema => {
+            setSchema(schema);
+            continuePolling();
+            return true;
+          },
+        );
+        return initialFetch$;
+      };
     } else {
+      // introspect endpoint
       schemaFetcher = function fetchSchemaWithExecutor() {
         pausePolling();
         return mapMaybePromise(
@@ -250,12 +273,20 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       initialFetch$ = schemaFetcher();
     };
     subgraphInformationHTMLRenderer = () => {
-      const endpoint = proxyEndpoint || '#';
+      const endpoint = config.proxy.endpoint;
       const htmlParts: string[] = [];
       htmlParts.push(`<section class="supergraph-information">`);
       htmlParts.push(`<h3>Proxy: <a href="${endpoint}">${endpoint}</a></h3>`);
-      if (hiveCdnEndpoint) {
-        htmlParts.push(`<p><strong>Source: </strong> <i>Hive CDN</i></p>`);
+      if (config.schema) {
+        if (typeof config.schema === 'object' && 'type' in config.schema) {
+          htmlParts.push(
+            `<p><strong>Source: </strong> <i>${config.schema.type === 'hive' ? 'Hive' : 'Unknown'} CDN</i></p>`,
+          );
+        } else if (isValidPath(config.schema) || isUrl(String(config.schema))) {
+          htmlParts.push(`<p><strong>Source: </strong> <i>${config.schema}</i></p>`);
+        } else {
+          htmlParts.push(`<p><strong>Source: </strong> <i>GraphQL schema in config</i></p>`);
+        }
       }
       htmlParts.push(`</section>`);
       return htmlParts.join('');
@@ -385,70 +416,34 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       );
     }
     getSchema = () => mapMaybePromise(getSubschemaConfig(), () => unifiedGraph);
-  } else {
+  } /** 'supergraph' in config */ else {
     let unifiedGraphFetcher: UnifiedGraphManagerOptions<unknown>['getUnifiedGraph'];
-
     let supergraphLoadedPlace: string;
-    if ('supergraph' in config) {
-      unifiedGraphFetcher = () => handleUnifiedGraphConfig(config.supergraph, configContext);
-      if ('supergraph' in config) {
-        if (typeof config.supergraph === 'function') {
-          const fnName = config.supergraph.name || '';
-          supergraphLoadedPlace = `a custom loader ${fnName}`;
-        } else if (typeof config.supergraph === 'string') {
-          supergraphLoadedPlace = config.supergraph;
-        }
-      }
-    } else if (('hive' in config && config.hive.endpoint) || process.env.HIVE_CDN_ENDPOINT) {
-      const cdnEndpoint = 'hive' in config ? config.hive.endpoint : process.env.HIVE_CDN_ENDPOINT;
-      supergraphLoadedPlace = 'Hive CDN <br>' + cdnEndpoint;
-      const cdnKey = 'hive' in config ? config.hive.key : process.env.HIVE_CDN_KEY;
-      if (!cdnKey) {
-        throw new Error(
-          'You must provide HIVE_CDN_KEY environment variables or `key` in the hive config',
-        );
-      }
+
+    if (typeof config.supergraph === 'object' && 'type' in config.supergraph) {
+      // hive cdn
+      const { endpoint, key } = config.supergraph;
+      supergraphLoadedPlace = 'Hive CDN <br>' + endpoint;
       const fetcher = createSupergraphSDLFetcher({
-        endpoint: cdnEndpoint,
-        key: cdnKey,
+        endpoint,
+        key,
         logger: configContext.logger.child('Hive CDN'),
       });
       unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
     } else {
-      const errorMessage =
-        'You must provide a supergraph schema in the `supergraph` config or point to a supergraph file with `--supergraph` parameter or `HIVE_CDN_ENDPOINT` environment variable or `./supergraph.graphql` file';
-      // Falls back to `./supergraph.graphql` by default
-      supergraphLoadedPlace = './supergraph.graphql';
-      unifiedGraphFetcher = () => {
-        try {
-          const res$ = handleUnifiedGraphConfig('./supergraph.graphql', configContext);
-          if ('catch' in res$ && typeof res$.catch === 'function') {
-            return res$.catch(e => {
-              if (e.code === 'ENOENT') {
-                throw new Error(errorMessage);
-              }
-              throw e;
-            });
-          }
-          return res$;
-        } catch (e) {
-          if (e.code === 'ENOENT') {
-            throw new Error(errorMessage);
-          }
-          throw e;
-        }
-      };
-    }
-
-    const hiveToken = 'hive' in config ? config.hive.token : process.env.HIVE_REGISTRY_TOKEN;
-    if (hiveToken) {
-      registryPlugin = useMeshHive({
-        enabled: true,
-        ...configContext,
-        logger: configContext.logger.child('Hive'),
-        ...('hive' in config ? config.hive : {}),
-        token: hiveToken,
-      });
+      // local or remote
+      unifiedGraphFetcher = () =>
+        handleUnifiedGraphConfig(
+          // @ts-expect-error TODO: what's up with type narrowing
+          config.supergraph,
+          configContext,
+        );
+      if (typeof config.supergraph === 'function') {
+        const fnName = config.supergraph.name || '';
+        supergraphLoadedPlace = `a custom loader ${fnName}`;
+      } else if (typeof config.supergraph === 'string') {
+        supergraphLoadedPlace = config.supergraph;
+      }
     }
 
     const unifiedGraphManager = new UnifiedGraphManager({
@@ -622,14 +617,14 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     landingPageRenderer = false;
   }
 
-  const yoga = createYoga<unknown, MeshServeContext>({
+  const yoga = createYoga<unknown, MeshServeContext & TContext>({
     fetchAPI: config.fetchAPI,
     logging: logger,
     plugins: [
       defaultMeshPlugin,
       unifiedGraphPlugin,
       readinessCheckPlugin,
-      registryPlugin,
+      hiveRegistryPlugin,
       useChangingSchema(getSchema, _setSchema => {
         setSchema = _setSchema;
       }),
@@ -685,10 +680,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     },
   });
 
-  return makeAsyncDisposable(
-    yoga as YogaServerInstance<unknown, MeshServeContext> & {
-      invalidateUnifiedGraph(): void;
-    },
-    () => disposableStack.disposeAsync(),
-  );
+  return makeAsyncDisposable(yoga, () =>
+    disposableStack.disposeAsync(),
+  ) as any as MeshServeRuntime<TContext>;
 }

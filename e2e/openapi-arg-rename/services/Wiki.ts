@@ -1,7 +1,7 @@
 import http from 'node:http';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 
-const args = Args(process.argv);
+const opts = Opts(process.argv);
 
 const server = http.createServer((req, res) => {
   const u = new URL(req.url, 'http://localhost');
@@ -14,4 +14,4 @@ const server = http.createServer((req, res) => {
   return res.writeHead(404).end();
 });
 
-server.listen(args.getServicePort('Wiki'));
+server.listen(opts.getServicePort('Wiki'));

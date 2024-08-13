@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { createRouter, Response, Type } from 'fets';
-import { Args } from '@e2e/args';
+import { Opts } from '@e2e/opts';
 
 const users = [
   { id: 1, name: 'John Doe' },
@@ -49,7 +49,7 @@ const app = createRouter().route({
   },
 });
 
-const port = Args(process.argv).getServicePort('api', true);
+const port = Opts(process.argv).getServicePort('api', true);
 
 createServer(app).listen(port, () => {
   console.log(`API service listening on http://localhost:${port}`);

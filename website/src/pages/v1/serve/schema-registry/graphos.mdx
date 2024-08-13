@@ -11,7 +11,7 @@ to Apollo GraphOS.
 By default, Mesh will use standard Apollo GraphOS environment variables.
 
 ```sh
-APOLLO_KEY='<YOU_APOLLO_API_KEY>' APOLLO_GRAPH_REF='<YOUR_GRAPH_ID>[@<VARIANT>]' mesh-serve
+npx mesh-serve supergraph <graph_id>[@<variant>] --graphos-cdn-key <api_key>
 ```
 
 <Callout>
@@ -25,8 +25,9 @@ with other options to customize the polling/retry behavior.
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export default defineConfig({
-  graphos: {
+export const serveConfig = defineConfig({
+  supergraph: {
+    type: 'graphos',
     /**
      * The graph ref of the managed federation graph.
      * It is composed of the graph ID and the variant (`<YOUR_GRAPH_ID>@<VARIANT>`).
@@ -35,7 +36,7 @@ export default defineConfig({
      *
      * You can find a a graph's ref at the top of its Schema Reference page in Apollo Studio.
      */
-    graphRef: '<YOUR_GRAPH_ID>[@<VARIANT>]',
+    graphRef: '<graph_id>[@<variant>]',
     /**
      * The API key to use to authenticate with the managed federation up link.
      * It needs at least the `service:read` permission.
@@ -44,7 +45,7 @@ export default defineConfig({
      *
      * [Learn how to create an API key](https://www.apollographql.com/docs/federation/v1/managed-federation/setup#4-connect-the-gateway-to-studio)
      */
-    apiKey: '<YOUR_APOLLO_API_KEY>'
+    apiKey: '<api_key>'
   }
 })
 ```
