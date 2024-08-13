@@ -167,6 +167,7 @@ let cli = new Command()
     // see here https://github.com/tj/commander.js/blob/970ecae402b253de691e6a9066fea22f38fe7431/lib/command.js#L655
     null,
   )
+  .option('--native-import', 'use the native "import" function for importing the config file')
   .addOption(
     new Option(
       '--hive-registry-token <token>',

@@ -23,12 +23,13 @@ export const addCommand: AddCommand = (ctx, cli) =>
       'path to the subgraph schema file or a url from where to pull the subgraph schema (default: "subgraph.graphql")',
     )
     .action(async function subgraph(schemaPathOrUrl) {
-      const { maskedErrors, hiveRegistryToken, polling, ...opts } =
+      const { maskedErrors, hiveRegistryToken, polling, nativeImport, ...opts } =
         this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
+        nativeImport,
       });
 
       let subgraph: UnifiedGraphConfig = 'subgraph.graphql';
