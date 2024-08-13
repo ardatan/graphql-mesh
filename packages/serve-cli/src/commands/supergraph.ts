@@ -69,7 +69,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         // overwrite masked errors from loaded config only when provided
         config.maskedErrors = maskedErrors;
       }
-      if (typeof config.pollingInterval === 'number' && config.pollingInterval <= 10_000) {
+      if (typeof config.pollingInterval === 'number' && config.pollingInterval < 10_000) {
         process.stderr.write(
           `error: polling interval duration too short, use at least 10 seconds\n`,
         );
