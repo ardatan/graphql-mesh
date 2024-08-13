@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { IncomingMessage } from 'node:http';
 import type { ExecutionArgs, GraphQLSchema } from 'graphql';
-import { buildSchema, parse } from 'graphql';
+import { buildSchema, isSchema, parse } from 'graphql';
 import {
   createYoga,
   isAsyncIterable,
@@ -43,6 +43,7 @@ import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
 import {
   getDirectiveExtensions,
+  isDocumentNode,
   isValidPath,
   mergeDeep,
   parseSelectionSet,
@@ -60,7 +61,9 @@ import type {
   MeshServeConfig,
   MeshServeConfigContext,
   MeshServeContext,
+  MeshServeHiveCDNOptions,
   MeshServePlugin,
+  UnifiedGraphConfig,
 } from './types.js';
 import { useChangingSchema } from './useChangingSchema.js';
 import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
@@ -152,13 +155,13 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     const executeFn = createExecuteFnFromExecutor(proxyExecutor);
 
     let currentTimeout: ReturnType<typeof setTimeout>;
-    const polling = config.pollingInterval;
+    const pollingInterval = config.pollingInterval;
     function continuePolling() {
       if (currentTimeout) {
         clearTimeout(currentTimeout);
       }
-      if (polling) {
-        currentTimeout = setTimeout(schemaFetcher, polling);
+      if (pollingInterval) {
+        currentTimeout = setTimeout(schemaFetcher, pollingInterval);
       }
     }
     function pausePolling() {
@@ -198,6 +201,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       };
     } else if (config.schema) {
       // local or remote
+
+      if (!isDynamicUnifiedGraphSchema(config.schema)) {
+        // no polling for static schemas
+        delete config.pollingInterval;
+      }
+
       schemaFetcher = function fetchSchema() {
         pausePolling();
         initialFetch$ = mapMaybePromise(
@@ -432,6 +441,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
     } else {
       // local or remote
+
+      if (!isDynamicUnifiedGraphSchema(config.supergraph)) {
+        // no polling for static schemas
+        delete config.pollingInterval;
+      }
+
       unifiedGraphFetcher = () =>
         handleUnifiedGraphConfig(
           // @ts-expect-error TODO: what's up with type narrowing
@@ -683,4 +698,28 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   return makeAsyncDisposable(yoga, () =>
     disposableStack.disposeAsync(),
   ) as any as MeshServeRuntime<TContext>;
+}
+
+function isDynamicUnifiedGraphSchema(schema: UnifiedGraphConfig | MeshServeHiveCDNOptions) {
+  if (isSchema(schema)) {
+    // schema object
+    return false;
+  }
+  if (isDocumentNode(schema)) {
+    // document node that could be a schema
+    return false;
+  }
+  if (typeof schema === 'string') {
+    if (isValidPath(schema) && !isUrl(String(schema))) {
+      // local path
+      return false;
+    }
+    try {
+      // sdl
+      parse(schema);
+      return false;
+    } catch {}
+  }
+  // likely a dynamic schema that can be polled
+  return true;
 }
