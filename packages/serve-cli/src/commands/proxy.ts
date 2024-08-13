@@ -1,4 +1,4 @@
-import cluster, { Worker } from 'node:cluster';
+import cluster, { type Worker } from 'node:cluster';
 import { Option } from '@commander-js/extra-typings';
 import { createServeRuntime, type MeshServeConfigProxy } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
@@ -32,7 +32,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         quiet: !cluster.isPrimary,
       });
 
-      let proxy: MeshServeConfigProxy['proxy'] | undefined = undefined;
+      let proxy: MeshServeConfigProxy['proxy'] | undefined;
       if (endpoint) {
         proxy = { endpoint };
       } else if ('proxy' in loadedConfig) {
@@ -46,7 +46,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         process.exit(1);
       }
 
-      let schema: MeshServeConfigProxy['schema'] | undefined = undefined;
+      let schema: MeshServeConfigProxy['schema'] | undefined;
       if (opts.schema) {
         schema = hiveCdnKey
           ? {

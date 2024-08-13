@@ -1,4 +1,4 @@
-import cluster, { Worker } from 'node:cluster';
+import cluster, { type Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
 import {
