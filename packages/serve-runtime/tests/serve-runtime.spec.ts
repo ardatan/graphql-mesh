@@ -26,7 +26,7 @@ describe('Serve Runtime', () => {
           },
         ]);
       },
-      polling: 10000,
+      pollingInterval: 10000,
       plugins: () => [useCustomFetch(upstreamFetch)],
     });
   }
@@ -183,7 +183,7 @@ describe('Serve Runtime', () => {
     let onSchemaChangeCalls = 0;
     const serve = createServeRuntime({
       logging: !!process.env.DEBUG,
-      polling: 500,
+      pollingInterval: 500,
       supergraph() {
         if (onSchemaChangeCalls > 0) {
           // change schema after onSchemaChange was invoked

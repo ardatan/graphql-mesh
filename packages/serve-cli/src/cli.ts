@@ -27,6 +27,12 @@ export type MeshServeCLIConfig = (
      * is "production", otherwise only one (the main) worker.
      */
     fork?: number;
+    /**
+     * GraphQL schema polling interval in milliseconds.
+     *
+     * @default 10_000
+     */
+    pollingInterval?: number;
   };
 
 export interface MeshServeCLISupergraphConfig
@@ -138,6 +144,7 @@ let cli = new Command()
   .addOption(
     new Option('--polling <intervalInMs>', 'schema polling interval in milliseconds')
       .env('POLLING')
+      .default(10_000)
       .argParser(v => {
         const interval = parseInt(v);
         if (isNaN(interval)) {

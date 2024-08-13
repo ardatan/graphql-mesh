@@ -40,7 +40,7 @@ export const serveConfig = defineConfig({
       }
     }).then(res => res.text()),
   // Poll the schema registry every 10 seconds
-  polling: 10000,
+  pollingInterval: 10_000,
   plugins: ctx => [
     // You can also write your custom plugins to interact with the schema registry
     useMyCustomPlugin(ctx)

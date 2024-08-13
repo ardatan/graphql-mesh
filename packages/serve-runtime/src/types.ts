@@ -88,7 +88,7 @@ export interface MeshServeConfigSupergraph<
   /**
    * GraphQL schema polling interval in milliseconds when the {@link supergraph} is an URL.
    */
-  polling?: number;
+  pollingInterval?: number;
 }
 
 export interface MeshServeConfigSubgraph<TContext extends Record<string, any> = Record<string, any>>
@@ -123,7 +123,7 @@ export interface MeshServeConfigProxy<TContext extends Record<string, any> = Rec
   /**
    * GraphQL schema polling interval in milliseconds.
    */
-  polling?: number;
+  pollingInterval?: number;
   /**
    * Disable GraphQL validation on the gateway
    *

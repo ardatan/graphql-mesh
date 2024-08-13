@@ -31,7 +31,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       ).env('HIVE_CDN_KEY'),
     )
     .action(async function supergraph(schemaPathOrUrl) {
-      const { hiveCdnKey, hiveRegistryToken, maskedErrors, ...opts } =
+      const { hiveCdnKey, hiveRegistryToken, maskedErrors, polling, ...opts } =
         this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
@@ -61,6 +61,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
               },
             }
           : {}),
+        ...(polling ? { pollingInterval: polling } : {}),
         supergraph,
         logging: loadedConfig.logging ?? ctx.log,
       };

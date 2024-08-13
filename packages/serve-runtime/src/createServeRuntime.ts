@@ -152,7 +152,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     const executeFn = createExecuteFnFromExecutor(proxyExecutor);
 
     let currentTimeout: ReturnType<typeof setTimeout>;
-    const polling = config.polling;
+    const polling = config.pollingInterval;
     function continuePolling() {
       if (currentTimeout) {
         clearTimeout(currentTimeout);
@@ -453,7 +453,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       },
       transports: config.transports,
       transportEntryAdditions: config.transportEntries,
-      polling: config.polling,
+      pollingInterval: config.pollingInterval,
       additionalResolvers: config.additionalResolvers,
       transportContext: configContext,
       onDelegateHooks,
