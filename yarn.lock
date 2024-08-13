@@ -6587,14 +6587,12 @@ __metadata:
     "@rollup/plugin-json": "npm:^6.1.0"
     "@rollup/plugin-node-resolve": "npm:^15.2.3"
     "@rollup/plugin-sucrase": "npm:^5.0.2"
-    "@types/spinnies": "npm:^0.5.3"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
     json-bigint-patch: "npm:^0.0.8"
     node-libcurl: "npm:^4.0.0"
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
-    spinnies: "npm:^0.5.1"
     tsx: "npm:^4.16.5"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
@@ -13480,13 +13478,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/spinnies@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "@types/spinnies@npm:0.5.3"
-  checksum: 10c0/ba7d2d3d201aaa9c425bb8798341474bf9cc47e6d2ea341a376d51f3b6f079bde805c9656ecc04862393715592c86d3f4bf63611c5bb5c6bae89fcdea0a25045
-  languageName: node
-  linkType: hard
-
 "@types/ssh2@npm:*":
   version: 1.15.1
   resolution: "@types/ssh2@npm:1.15.1"
@@ -14673,13 +14664,6 @@ __metadata:
   version: 2.1.1
   resolution: "ansi-regex@npm:2.1.1"
   checksum: 10c0/78cebaf50bce2cb96341a7230adf28d804611da3ce6bf338efa7b72f06cc6ff648e29f80cd95e582617ba58d5fdbec38abfeed3500a98bce8381a9daec7c548b
-  languageName: node
-  linkType: hard
-
-"ansi-regex@npm:^4.1.0":
-  version: 4.1.1
-  resolution: "ansi-regex@npm:4.1.1"
-  checksum: 10c0/d36d34234d077e8770169d980fed7b2f3724bfa2a01da150ccd75ef9707c80e883d27cdf7a0eac2f145ac1d10a785a8a855cffd05b85f778629a0db62e7033da
   languageName: node
   linkType: hard
 
@@ -16571,7 +16555,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-cursor@npm:^3.0.0, cli-cursor@npm:^3.1.0":
+"cli-cursor@npm:^3.1.0":
   version: 3.1.0
   resolution: "cli-cursor@npm:3.1.0"
   dependencies:
@@ -34353,17 +34337,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"spinnies@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "spinnies@npm:0.5.1"
-  dependencies:
-    chalk: "npm:^2.4.2"
-    cli-cursor: "npm:^3.0.0"
-    strip-ansi: "npm:^5.2.0"
-  checksum: 10c0/399ba89d9113e4656a422538bd71090159eb11d2ffe55d6f7b29ea1e91acf3c78abfad672e86aae338e26f322d800c581b7e0d6e49a957676df8208cdae7bf53
-  languageName: node
-  linkType: hard
-
 "split-ca@npm:^1.0.1":
   version: 1.0.1
   resolution: "split-ca@npm:1.0.1"
@@ -34798,15 +34771,6 @@ __metadata:
   dependencies:
     ansi-regex: "npm:^2.0.0"
   checksum: 10c0/f6e7fbe8e700105dccf7102eae20e4f03477537c74b286fd22cfc970f139002ed6f0d9c10d0e21aa9ed9245e0fa3c9275930e8795c5b947da136e4ecb644a70f
-  languageName: node
-  linkType: hard
-
-"strip-ansi@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "strip-ansi@npm:5.2.0"
-  dependencies:
-    ansi-regex: "npm:^4.1.0"
-  checksum: 10c0/de4658c8a097ce3b15955bc6008f67c0790f85748bdc025b7bc8c52c7aee94bc4f9e50624516150ed173c3db72d851826cd57e7a85fe4e4bb6dbbebd5d297fdf
   languageName: node
   linkType: hard
 
