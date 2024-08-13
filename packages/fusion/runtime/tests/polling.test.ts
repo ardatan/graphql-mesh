@@ -41,7 +41,7 @@ describe('Polling', () => {
     const disposeFn = jest.fn();
     const manager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
-      polling: pollingInterval,
+      pollingInterval: pollingInterval,
       batch: false,
       transports() {
         return {

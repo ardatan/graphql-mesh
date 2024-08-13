@@ -4,7 +4,13 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
 import cluster from 'node:cluster';
 import { availableParallelism, release } from 'node:os';
-import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import parseDuration from 'parse-duration';
+import {
+  Command,
+  InvalidArgumentError,
+  Option,
+  type OptionValues,
+} from '@commander-js/extra-typings';
 import type {
   MeshServeConfigProxy,
   MeshServeConfigSubgraph,
@@ -27,6 +33,12 @@ export type MeshServeCLIConfig = (
      * is "production", otherwise only one (the main) worker.
      */
     fork?: number;
+    /**
+     * GraphQL schema polling interval in milliseconds.
+     *
+     * @default 10_000
+     */
+    pollingInterval?: number;
   };
 
 export interface MeshServeCLISupergraphConfig
@@ -136,12 +148,13 @@ let cli = new Command()
       }),
   )
   .addOption(
-    new Option('--polling <intervalInMs>', 'schema polling interval in milliseconds')
+    new Option('--polling <duration>', 'schema polling interval in human readable duration')
       .env('POLLING')
+      .default(10_000, '10s')
       .argParser(v => {
-        const interval = parseInt(v);
-        if (isNaN(interval)) {
-          throw new InvalidArgumentError('not a number.');
+        const interval = parseDuration(v);
+        if (!interval) {
+          throw new InvalidArgumentError('not a duration.');
         }
         return interval;
       }),

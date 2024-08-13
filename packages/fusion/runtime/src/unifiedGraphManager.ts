@@ -66,7 +66,8 @@ export interface UnifiedGraphManagerOptions<TContext> {
   onSchemaChange?(unifiedGraph: GraphQLSchema): void;
   transports?: Transports;
   transportEntryAdditions?: TransportEntryAdditions;
-  polling?: number;
+  /** Schema polling interval in milliseconds. */
+  pollingInterval?: number;
   additionalTypeDefs?: TypeSource;
   additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
   transportContext?: TransportContext;
@@ -114,11 +115,11 @@ export class UnifiedGraphManager<TContext> {
   }
 
   private continuePolling() {
-    if (this.opts.polling) {
+    if (this.opts.pollingInterval) {
       this.currentTimeout = setTimeout(() => {
         this.currentTimeout = undefined;
         return this.getAndSetUnifiedGraph();
-      }, this.opts.polling);
+      }, this.opts.pollingInterval);
     }
   }
 

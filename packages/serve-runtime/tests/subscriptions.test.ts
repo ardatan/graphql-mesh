@@ -97,7 +97,7 @@ describe('Subscriptions', () => {
 
     await using serve = createServeRuntime({
       logging: !!process.env.DEBUG,
-      polling: 500,
+      pollingInterval: 500,
       supergraph() {
         if (changeSchema) {
           return /* GraphQL */ `

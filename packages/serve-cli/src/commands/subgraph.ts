@@ -23,7 +23,8 @@ export const addCommand: AddCommand = (ctx, cli) =>
       'path to the subgraph schema file or a url from where to pull the subgraph schema (default: "subgraph.graphql")',
     )
     .action(async function subgraph(schemaPathOrUrl) {
-      const { maskedErrors, hiveRegistryToken, ...opts } = this.optsWithGlobals<CLIGlobals>();
+      const { maskedErrors, hiveRegistryToken, polling, ...opts } =
+        this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -49,12 +50,19 @@ export const addCommand: AddCommand = (ctx, cli) =>
               },
             }
           : {}),
+        ...(polling ? { pollingInterval: polling } : {}),
         subgraph,
         logging: loadedConfig.logging ?? ctx.log,
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided
         config.maskedErrors = maskedErrors;
+      }
+      if (typeof config.pollingInterval === 'number' && config.pollingInterval < 10_000) {
+        process.stderr.write(
+          `error: polling interval duration too short, use at least 10 seconds\n`,
+        );
+        process.exit(1);
       }
       return runSubgraph(ctx, config);
     });

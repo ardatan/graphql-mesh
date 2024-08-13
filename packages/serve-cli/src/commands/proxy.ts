@@ -24,7 +24,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       ).env('HIVE_CDN_KEY'),
     )
     .action(async function proxy(endpoint) {
-      const { hiveCdnKey, hiveRegistryToken, maskedErrors, ...opts } =
+      const { hiveCdnKey, hiveRegistryToken, maskedErrors, polling, ...opts } =
         this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
@@ -78,6 +78,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
               },
             }
           : {}),
+        ...(polling ? { pollingInterval: polling } : {}),
         proxy,
         schema,
         logging: loadedConfig.logging ?? ctx.log,
@@ -85,6 +86,12 @@ export const addCommand: AddCommand = (ctx, cli) =>
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided
         config.maskedErrors = maskedErrors;
+      }
+      if (typeof config.pollingInterval === 'number' && config.pollingInterval < 10_000) {
+        process.stderr.write(
+          `error: polling interval duration too short, use at least 10 seconds\n`,
+        );
+        process.exit(1);
       }
       return runProxy(ctx, config);
     });
