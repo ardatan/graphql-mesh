@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@graphql-hive/core": "^0.7.0",
-    "@graphql-hive/yoga": "^0.35.0",
+    "@graphql-hive/yoga": "^0.36.0",
     "@graphql-mesh/string-interpolation": "0.5.5"
   },
   "publishConfig": {
