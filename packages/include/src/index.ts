@@ -65,6 +65,7 @@ export function registerTsconfigPaths({
   if (!tsconfig) return; // no tsconfig, no register
 
   const pathsMatcher = createPathsMatcher(tsconfig);
+  if (!pathsMatcher) return; // no paths matcher, no register
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
