@@ -58,7 +58,8 @@
     "@graphql-tools/utils": "^10.5.2",
     "commander": "^12.0.0",
     "dotenv": "^16.3.1",
-    "json-bigint-patch": "^0.0.8"
+    "json-bigint-patch": "^0.0.8",
+    "parse-duration": "^1.1.0"
   },
   "optionalDependencies": {
     "node-libcurl": "^4.0.0",
