@@ -114,8 +114,6 @@ scalar ObjMap @join__type(graph: GREETINGS)
 
 scalar _DirectiveExtensions @join__type(graph: GREETINGS)  @join__type(graph: HELLOER) 
 
-scalar BigInt @join__type(graph: HELLOER) 
-
 scalar TransportOptions @join__type(graph: HELLOER) 
 
 type Query @extraSchemaDefinitionDirective(
