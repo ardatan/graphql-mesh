@@ -2,7 +2,7 @@ import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
-import { include } from '@graphql-mesh/include';
+import { include, registerTsconfigPaths } from '@graphql-mesh/include';
 import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { getMesh } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
@@ -63,6 +63,7 @@ export async function graphqlMesh(
 ) {
   let baseDir = cwdPath;
   let logger: Logger = new DefaultLogger(cliParams.initialLoggerPrefix);
+  const unregisterTsconfigPaths = registerTsconfigPaths({ cwd: baseDir });
   return yargs(args)
     .help()
     .option('r', {
@@ -93,6 +94,8 @@ export async function graphqlMesh(
         } else {
           baseDir = pathModule.resolve(cwdPath, dir);
         }
+        unregisterTsconfigPaths();
+        registerTsconfigPaths({ cwd: baseDir });
         if (fs.existsSync(pathModule.join(baseDir, '.env'))) {
           dotEnvRegister({
             path: pathModule.join(baseDir, '.env'),
