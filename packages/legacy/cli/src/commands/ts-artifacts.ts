@@ -65,12 +65,19 @@ async function generateTypesForApi(options: {
   schema: GraphQLSchema;
   name: string;
   contextVariables: Record<string, string>;
+  flattenTypes: boolean;
+  codegenConfig: any;
 }) {
   const config = {
     skipTypename: true,
+    flattenGeneratedTypes: options.flattenTypes,
+    onlyOperationTypes: options.flattenTypes,
+    preResolveTypes: options.flattenTypes,
     namingConvention: 'keep',
     enumsAsTypes: true,
     ignoreEnumValuesFromSchema: true,
+    useIndexSignature: true,
+    ...options.codegenConfig,
   };
   const baseTypes = await codegen({
     filename: options.name + '_types.ts',
@@ -272,6 +279,8 @@ export async function generateTsArtifacts(
                     schema: sourceSchema,
                     name: source.name,
                     contextVariables: source.contextVariables,
+                    flattenTypes,
+                    codegenConfig,
                   });
 
                   if (codeAst) {
