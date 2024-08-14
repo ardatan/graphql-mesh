@@ -1,5 +1,5 @@
 import type { GraphQLObjectType, GraphQLSchema, NamedTypeNode } from 'graphql';
-import { Kind } from 'graphql';
+import { getNamedType, isAbstractType, Kind } from 'graphql';
 import JSON5 from 'json5';
 import { pascalCase } from 'pascal-case';
 import ts from 'typescript';
@@ -32,6 +32,7 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
 function buildSignatureBasedOnRootFields(
   codegenHelpers: CodegenHelpers,
   type: Maybe<GraphQLObjectType>,
+  schema: GraphQLSchema,
 ): Record<string, string> {
   if (!type) {
     return {};
@@ -51,12 +52,37 @@ function buildSignatureBasedOnRootFields(
       },
     };
 
-    operationMap[fieldName] = `  /** ${field.description} **/\n  ${
-      field.name
-    }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
-      parentTypeNode,
-      false,
-    )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
+    const namedFieldType = getNamedType(field.type);
+
+    if (isAbstractType(namedFieldType)) {
+      const possibleTypes = schema.getPossibleTypes(namedFieldType);
+      const typeNamesDef = possibleTypes
+        .map(possibleType =>
+          codegenHelpers.getTypeToUse(
+            {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: possibleType.name,
+              },
+            },
+            false,
+          ),
+        )
+        .join(' | ');
+      const originalDef = field.type.toString();
+      const def = originalDef.replace(namedFieldType.name, typeNamesDef);
+      operationMap[fieldName] = `  /** ${field.description} **/\n  ${
+        field.name
+      }: InContextSdkMethod<${def}, ${argsName}, ${unifiedContextIdentifier}>`;
+    } else {
+      operationMap[fieldName] = `  /** ${field.description} **/\n  ${
+        field.name
+      }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
+        parentTypeNode,
+        false,
+      )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
+    }
   }
   return operationMap;
 }
@@ -65,12 +91,19 @@ async function generateTypesForApi(options: {
   schema: GraphQLSchema;
   name: string;
   contextVariables: Record<string, string>;
+  flattenTypes: boolean;
+  codegenConfig: any;
 }) {
   const config = {
     skipTypename: true,
+    flattenGeneratedTypes: options.flattenTypes,
+    onlyOperationTypes: options.flattenTypes,
+    preResolveTypes: options.flattenTypes,
     namingConvention: 'keep',
     enumsAsTypes: true,
     ignoreEnumValuesFromSchema: true,
+    useIndexSignature: true,
+    ...options.codegenConfig,
   };
   const baseTypes = await codegen({
     filename: options.name + '_types.ts',
@@ -93,14 +126,17 @@ async function generateTypesForApi(options: {
   const queryOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.schema.getQueryType(),
+    options.schema,
   );
   const mutationOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.schema.getMutationType(),
+    options.schema,
   );
   const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.schema.getSubscriptionType(),
+    options.schema,
   );
 
   const codeAst = `
@@ -272,6 +308,8 @@ export async function generateTsArtifacts(
                     schema: sourceSchema,
                     name: source.name,
                     contextVariables: source.contextVariables,
+                    flattenTypes,
+                    codegenConfig,
                   });
 
                   if (codeAst) {
