@@ -1,5 +1,5 @@
 import type { GraphQLObjectType, GraphQLSchema, NamedTypeNode } from 'graphql';
-import { Kind } from 'graphql';
+import { getNamedType, isAbstractType, Kind } from 'graphql';
 import JSON5 from 'json5';
 import { pascalCase } from 'pascal-case';
 import ts from 'typescript';
@@ -32,6 +32,7 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
 function buildSignatureBasedOnRootFields(
   codegenHelpers: CodegenHelpers,
   type: Maybe<GraphQLObjectType>,
+  schema: GraphQLSchema,
 ): Record<string, string> {
   if (!type) {
     return {};
@@ -51,12 +52,35 @@ function buildSignatureBasedOnRootFields(
       },
     };
 
-    operationMap[fieldName] = `  /** ${field.description} **/\n  ${
-      field.name
-    }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
-      parentTypeNode,
-      false,
-    )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
+    const namedFieldType = getNamedType(field.type);
+
+    if (isAbstractType(namedFieldType)) {
+      const possibleTypes = schema.getPossibleTypes(namedFieldType);
+      const typeNamesDef = possibleTypes
+        .map(possibleType =>
+          codegenHelpers.getTypeToUse(
+            {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: possibleType.name,
+              },
+            },
+            false,
+          ),
+        )
+        .join(' | ');
+      operationMap[fieldName] = `  /** ${field.description} **/\n  ${
+        field.name
+      }: InContextSdkMethod<${typeNamesDef}, ${argsName}, ${unifiedContextIdentifier}>`;
+    } else {
+      operationMap[fieldName] = `  /** ${field.description} **/\n  ${
+        field.name
+      }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
+        parentTypeNode,
+        false,
+      )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
+    }
   }
   return operationMap;
 }
@@ -100,14 +124,17 @@ async function generateTypesForApi(options: {
   const queryOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.schema.getQueryType(),
+    options.schema,
   );
   const mutationOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.schema.getMutationType(),
+    options.schema,
   );
   const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.schema.getSubscriptionType(),
+    options.schema,
   );
 
   const codeAst = `
