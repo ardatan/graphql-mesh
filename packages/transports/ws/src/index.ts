@@ -90,4 +90,4 @@ export default {
       ).then(() => {}),
     );
   },
-} satisfies Transport<'ws', WSTransportOptions>;
+} satisfies Transport<WSTransportOptions>;

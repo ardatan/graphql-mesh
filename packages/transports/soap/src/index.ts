@@ -14,4 +14,4 @@ export default {
     }
     return createExecutorFromSchemaAST(subgraph, fetch, headers);
   },
-} satisfies Transport<'soap'>;
+} satisfies Transport;

@@ -27,9 +27,6 @@ export function loadJSONSchemaSubgraph(name: string, options: JSONSchemaLoaderOp
 
 export { processDirectives } from '@graphql-mesh/transport-rest';
 
-export const getSubgraphExecutor: TransportGetSubgraphExecutor<
-  'rest',
-  RESTTransportOptions
-> = opts => {
+export const getSubgraphExecutor: TransportGetSubgraphExecutor<RESTTransportOptions> = opts => {
   return transportRest.getSubgraphExecutor(opts);
 };

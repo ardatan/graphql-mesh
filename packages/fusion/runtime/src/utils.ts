@@ -32,13 +32,11 @@ export type { TransportEntry, TransportGetSubgraphExecutor, TransportGetSubgraph
 
 export type Transports =
   | {
-      [Kind in string]: Transport<Kind>;
+      [key: string]: Transport;
     }
-  | (<Kind extends string>(kind: Kind) => MaybePromise<Transport<Kind>>);
+  | ((kind: string) => MaybePromise<Transport>);
 
-async function defaultTransportsGetter<Kind extends string>(
-  kind: string,
-): Promise<Transport<Kind>> {
+async function defaultTransportsGetter(kind: string): Promise<Transport> {
   try {
     let transport = await import(`@graphql-mesh/transport-${kind}`);
     if (transport.default?.getSubgraphExecutor) {
@@ -66,14 +64,14 @@ async function defaultTransportsGetter<Kind extends string>(
   }
 }
 
-function getTransport<Kind extends string>(transports: Transports, kind: Kind) {
+function getTransport(transports: Transports, kind: string) {
   if (typeof transports === 'function') {
     return transports(kind);
   }
   return transports[kind];
 }
 
-function getTransportExecutor<Kind extends string>({
+function getTransportExecutor({
   transportContext,
   transportEntry,
   subgraphName = '',
@@ -81,7 +79,7 @@ function getTransportExecutor<Kind extends string>({
   transports = defaultTransportsGetter,
 }: {
   transportContext: TransportContext;
-  transportEntry: TransportEntry<Kind>;
+  transportEntry: TransportEntry;
   subgraphName?: string;
   subgraph: GraphQLSchema;
   transports?: Transports;

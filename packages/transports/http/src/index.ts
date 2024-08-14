@@ -9,14 +9,13 @@ import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/exec
 import { type AsyncExecutor, type ExecutionRequest } from '@graphql-tools/utils';
 
 export type HTTPTransportOptions<
-  TSubscriptionTransportKind = string,
-  TSubscriptionTransportOptions = {},
-> = Pick<HTTPExecutorOptions, 'useGETForQueries' | 'method' | 'timeout' | 'credentials' | 'retry'> &
-  (TSubscriptionTransportKind extends string
-    ? {
-        subscriptions?: TransportEntry<TSubscriptionTransportKind, TSubscriptionTransportOptions>;
-      }
-    : {});
+  TSubscriptionTransportOptions extends Record<string, any> = Record<string, any>,
+> = Pick<
+  HTTPExecutorOptions,
+  'useGETForQueries' | 'method' | 'timeout' | 'credentials' | 'retry'
+> & {
+  subscriptions?: TransportEntry<TSubscriptionTransportOptions>;
+};
 
 export default {
   getSubgraphExecutor(payload) {
@@ -88,4 +87,4 @@ export default {
 
     return httpExecutor;
   },
-} satisfies Transport<'http', HTTPTransportOptions>;
+} satisfies Transport;

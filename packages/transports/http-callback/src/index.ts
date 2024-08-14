@@ -272,4 +272,4 @@ export default {
     }
     return makeDisposable(httpCallbackExecutor, disposeFn);
   },
-} satisfies Transport<'http-callback', HTTPCallbackTransportOptions>;
+} satisfies Transport<HTTPCallbackTransportOptions>;

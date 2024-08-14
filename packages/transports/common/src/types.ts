@@ -2,12 +2,12 @@ import type { GraphQLSchema } from 'graphql';
 import type { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import type { Executor, MaybePromise } from '@graphql-tools/utils';
 
-export interface Transport<Kind extends string = string, Options = Record<string, any>> {
-  getSubgraphExecutor: TransportGetSubgraphExecutor<Kind, Options>;
+export interface Transport<Options extends Record<string, any> = Record<string, any>> {
+  getSubgraphExecutor: TransportGetSubgraphExecutor<Options>;
 }
 
-export interface TransportEntry<Kind extends string = string, Options = Record<string, any>> {
-  kind: Kind;
+export interface TransportEntry<Options extends Record<string, any> = Record<string, any>> {
+  kind: string;
   subgraph: string;
   location?: string;
   headers?: [string, string][];
@@ -22,14 +22,11 @@ export interface TransportContext {
 }
 
 export interface TransportGetSubgraphExecutorOptions<
-  Kind extends string = string,
-  Options = Record<string, any>,
+  Options extends Record<string, any> = Record<string, any>,
 > extends TransportContext {
   subgraphName: string;
-  transportEntry: TransportEntry<Kind, Options>;
-  getTransportExecutor: <Kind extends string>(
-    transportEntry: TransportEntry<Kind>,
-  ) => MaybePromise<Executor>;
+  transportEntry: TransportEntry<Options>;
+  getTransportExecutor(transportEntry: TransportEntry): MaybePromise<Executor>;
   subgraph: GraphQLSchema;
 }
 
@@ -38,8 +35,7 @@ export type TransportExecutorFactoryGetter = (
 ) => MaybePromise<TransportGetSubgraphExecutor>;
 
 export type TransportGetSubgraphExecutor<
-  Kind extends string = string,
-  Options = Record<string, any>,
-> = (opts: TransportGetSubgraphExecutorOptions<Kind, Options>) => Executor | Promise<Executor>;
+  Options extends Record<string, any> = Record<string, any>,
+> = (opts: TransportGetSubgraphExecutorOptions<Options>) => Executor | Promise<Executor>;
 
 export type DisposableExecutor = Executor & Partial<Disposable | AsyncDisposable>;

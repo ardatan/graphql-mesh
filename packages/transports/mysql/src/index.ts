@@ -11,4 +11,4 @@ export default {
       subgraph,
     });
   },
-} satisfies Transport<'mysql'>;
+} satisfies Transport;
