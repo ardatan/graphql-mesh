@@ -157,6 +157,7 @@ exports[`should execute the query 1`] = `
     "greet": {
       "greeting": "Hello, world!",
     },
+    "hello": "world",
   },
 }
 `;

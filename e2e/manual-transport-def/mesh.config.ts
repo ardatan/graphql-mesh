@@ -28,6 +28,6 @@ export const composeConfig = defineComposeConfig({
 export const serveConfig = defineServeConfig({
   transports: {
     rest,
-    http: import('@graphql-mesh/transport-rest'),
+    http: import('@graphql-mesh/transport-http'),
   },
 });
