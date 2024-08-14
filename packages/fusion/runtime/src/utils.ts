@@ -41,6 +41,12 @@ async function defaultTransportsGetter<Kind extends string>(
 ): Promise<Transport<Kind>> {
   try {
     let transport = await import(`@graphql-mesh/transport-${kind}`);
+    if (!transport) {
+      throw new Error(`@graphql-mesh/transport-${kind} module does not export anything`);
+    }
+    if (typeof transport !== 'object') {
+      throw new Error(`@graphql-mesh/transport-${kind} module does not export an object`);
+    }
     if (transport.default?.getSubgraphExecutor) {
       transport = transport.default;
     }
