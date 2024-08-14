@@ -104,10 +104,14 @@ export async function runSupergraph({ log }: CLIContext, config: SupergraphConfi
     let watcher: typeof import('@parcel/watcher') | undefined;
     try {
       watcher = await import('@parcel/watcher');
-    } catch (err) {
-      log.warn(
-        `If you want to enable hot reloading when ${absSchemaPath} changes, install "@parcel/watcher"`,
-      );
+    } catch (e) {
+      if (e.code === 'MODULE_NOT_FOUND') {
+        log.warn(
+          `If you want to enable hot reloading when ${absSchemaPath} changes, install "@parcel/watcher"`,
+        );
+      } else {
+        throw e; // bubble non-module_not_found errors
+      }
     }
     if (watcher) {
       try {
