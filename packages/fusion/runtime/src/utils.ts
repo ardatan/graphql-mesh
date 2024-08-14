@@ -5,7 +5,6 @@ import type {
   Transport,
   TransportContext,
   TransportEntry,
-  TransportExecutorFactoryGetter,
   TransportGetSubgraphExecutor,
   TransportGetSubgraphExecutorOptions,
 } from '@graphql-mesh/transport-common';
@@ -32,9 +31,9 @@ export type { TransportEntry, TransportGetSubgraphExecutor, TransportGetSubgraph
 
 export type Transports =
   | {
-      [key: string]: Transport;
+      [key: string]: MaybePromise<Transport | { default: Transport }>;
     }
-  | ((kind: string) => MaybePromise<Transport>);
+  | ((kind: string) => MaybePromise<Transport | { default: Transport }>);
 
 async function defaultTransportsGetter(kind: string): Promise<Transport> {
   try {
@@ -70,13 +69,6 @@ async function defaultTransportsGetter(kind: string): Promise<Transport> {
   }
 }
 
-function getTransport(transports: Transports, kind: string) {
-  if (typeof transports === 'function') {
-    return transports(kind);
-  }
-  return transports[kind];
-}
-
 function getTransportExecutor({
   transportContext,
   transportEntry,
@@ -91,23 +83,44 @@ function getTransportExecutor({
   transports?: Transports;
 }): MaybePromise<Executor> {
   const kind = transportEntry.kind;
-  transportContext?.logger?.info(`Loading transport ${kind} for subgraph ${subgraphName}`);
-  return mapMaybePromise(getTransport(transports, kind), transport =>
-    transport.getSubgraphExecutor({
-      subgraphName,
-      subgraph,
-      transportEntry,
-      getTransportExecutor(transportEntry) {
-        return getTransportExecutor({
-          transportContext,
-          transportEntry,
-          subgraphName,
-          subgraph,
-          transports,
-        });
-      },
-      ...transportContext,
-    }),
+  transportContext?.logger?.info(`Loading transport "${kind}" for subgraph ${subgraphName}`);
+  return mapMaybePromise(
+    typeof transports === 'function' ? transports(kind) : transports[kind],
+    transport => {
+      if (!transport) {
+        throw new Error(`Transport "${kind}" is empty`);
+      }
+      if (typeof transport !== 'object') {
+        throw new Error(`Transport "${kind}" is not an object`);
+      }
+      let getSubgraphExecutor: TransportGetSubgraphExecutor | undefined;
+      if ('default' in transport) {
+        getSubgraphExecutor = transport.default?.getSubgraphExecutor;
+      } else {
+        getSubgraphExecutor = transport.getSubgraphExecutor;
+      }
+      if (!getSubgraphExecutor) {
+        throw new Error(`Transport "${kind}" does not have "getSubgraphExecutor"`);
+      }
+      if (typeof getSubgraphExecutor !== 'function') {
+        throw new Error(`Transport "${kind}" "getSubgraphExecutor" is not a function`);
+      }
+      return getSubgraphExecutor({
+        subgraphName,
+        subgraph,
+        transportEntry,
+        getTransportExecutor(transportEntry) {
+          return getTransportExecutor({
+            transportContext,
+            transportEntry,
+            subgraphName,
+            subgraph,
+            transports,
+          });
+        },
+        ...transportContext,
+      });
+    },
   );
 }
 
