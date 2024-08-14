@@ -105,13 +105,12 @@ export async function runSupergraph({ log }: CLIContext, config: SupergraphConfi
     try {
       watcher = await import('@parcel/watcher');
     } catch (e) {
-      if (e.code === 'MODULE_NOT_FOUND') {
-        log.warn(
-          `If you want to enable hot reloading when ${absSchemaPath} changes, install "@parcel/watcher"`,
-        );
-      } else {
-        throw e; // bubble non-module_not_found errors
+      if (e.code !== 'MODULE_NOT_FOUND') {
+        log.debug('Problem while importing @parcel/watcher', e);
       }
+      log.warn(
+        `If you want to enable hot reloading when ${absSchemaPath} changes, make sure "@parcel/watcher" is available`,
+      );
     }
     if (watcher) {
       try {
