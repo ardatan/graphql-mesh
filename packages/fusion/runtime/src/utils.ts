@@ -36,29 +36,34 @@ export type Transports =
     }
   | (<Kind extends string>(kind: Kind) => MaybePromise<Transport<Kind>>);
 
-function defaultTransportsGetter<Kind extends string>(kind: string): Promise<Transport<Kind>> {
-  return import(`@graphql-mesh/transport-${kind}`)
-    .catch(() => {
+async function defaultTransportsGetter<Kind extends string>(
+  kind: string,
+): Promise<Transport<Kind>> {
+  try {
+    let transport = await import(`@graphql-mesh/transport-${kind}`);
+    if (transport.default?.getSubgraphExecutor) {
+      transport = transport.default;
+    }
+    if (!transport.getSubgraphExecutor) {
+      throw new Error(
+        `@graphql-mesh/transport-${kind} module does not export "getSubgraphExecutor"`,
+      );
+    }
+    if (typeof transport.getSubgraphExecutor !== 'function') {
+      throw new Error(
+        `@graphql-mesh/transport-${kind} module's export "getSubgraphExecutor" is not a function`,
+      );
+    }
+    return transport;
+  } catch (e) {
+    if (e.code === 'MODULE_NOT_FOUND') {
       throw new Error(
         `No transport found for ${kind}. Please make sure you have installed @graphql-mesh/transport-${kind} or defined the transport config in "mesh.config.ts"`,
       );
-    })
-    .then(transport => {
-      if (transport.default?.getSubgraphExecutor) {
-        transport = transport.default;
-      }
-      if (!transport.getSubgraphExecutor) {
-        throw new Error(
-          `@graphql-mesh/transport-${kind} module does not export "getSubgraphExecutor"`,
-        );
-      }
-      if (typeof transport.getSubgraphExecutor !== 'function') {
-        throw new Error(
-          `@graphql-mesh/transport-${kind} module's export "getSubgraphExecutor" is not a function`,
-        );
-      }
-      return transport;
-    });
+    } else {
+      throw e; // bubble non-module_not_found errors
+    }
+  }
 }
 
 function getTransport<Kind extends string>(transports: Transports, kind: Kind) {

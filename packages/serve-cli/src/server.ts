@@ -72,8 +72,14 @@ export async function startServerForRuntime<
   try {
     await import('uWebSockets.js');
     uWebSocketsAvailable = true;
-  } catch (err) {
-    log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
+  } catch (e) {
+    if (e.code === 'MODULE_NOT_FOUND') {
+      log.warn(
+        'uWebSockets.js is not available currently so the server will fallback to node:http.',
+      );
+    } else {
+      throw e; // bubble non-module_not_found errors
+    }
   }
 
   const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
