@@ -2,6 +2,8 @@
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { run } from './cli.js';
 
+// @inject-version globalThis.__VERSION__ here
+
 const log = new DefaultLogger();
 
 run({ log }).catch(err => {
