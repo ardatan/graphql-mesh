@@ -1,5 +1,57 @@
 # @graphql-mesh/compose-cli
 
+## 0.8.0
+
+### Minor Changes
+
+- [#7494](https://github.com/ardatan/graphql-mesh/pull/7494)
+  [`0594ffd`](https://github.com/ardatan/graphql-mesh/commit/0594ffdd5dacb99d73cfa351439ce8356c3aff2a)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support for `--native-import` flag which will
+  use the native `import` function instead of jiti for importing configs
+
+### Patch Changes
+
+- [#7469](https://github.com/ardatan/graphql-mesh/pull/7469)
+  [`e509a25`](https://github.com/ardatan/graphql-mesh/commit/e509a259d3080db1300c9f38ae149f648fc9159f)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@commander-js/extra-typings@^12.1.0` ↗︎](https://www.npmjs.com/package/@commander-js/extra-typings/v/12.1.0)
+    (from `^12.0.1`, in `dependencies`)
+
+- [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.5)
+    (from `^10.0.4`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
+    (from `^10.3.4`, in `dependencies`)
+
+- [#7512](https://github.com/ardatan/graphql-mesh/pull/7512)
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.3)
+    (from `^10.5.2`, in `dependencies`)
+- Updated dependencies
+  [[`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`78b7569`](https://github.com/ardatan/graphql-mesh/commit/78b7569dda8b797a28883ab34543b6b80f3d825a),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`78b7569`](https://github.com/ardatan/graphql-mesh/commit/78b7569dda8b797a28883ab34543b6b80f3d825a),
+  [`0594ffd`](https://github.com/ardatan/graphql-mesh/commit/0594ffdd5dacb99d73cfa351439ce8356c3aff2a)]:
+  - @graphql-mesh/fusion-composition@0.3.0
+  - @graphql-mesh/types@0.101.0
+  - @graphql-mesh/utils@0.101.0
+  - @graphql-mesh/include@0.1.0
+
 ## 0.7.0
 
 ### Patch Changes

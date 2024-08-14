@@ -1,5 +1,24 @@
 # @graphql-mesh/transform-resolvers-composition
 
+## 0.101.0
+
+### Patch Changes
+
+- [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.5)
+    (from `^10.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)]:
+  - @graphql-mesh/types@0.101.0
+  - @graphql-mesh/utils@0.101.0
+
 ## 0.100.0
 
 ### Patch Changes

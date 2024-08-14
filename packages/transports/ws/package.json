@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-ws",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,10 +36,10 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.4.5",
+    "@graphql-mesh/cross-helpers": "0.4.6",
     "@graphql-mesh/string-interpolation": "^0.5.5",
-    "@graphql-mesh/transport-common": "^0.5.0",
-    "@graphql-mesh/utils": "^0.100.0",
+    "@graphql-mesh/transport-common": "^0.6.0",
+    "@graphql-mesh/utils": "^0.101.0",
     "@graphql-tools/executor-graphql-ws": "^1.2.0",
     "@graphql-tools/utils": "^10.5.3",
     "graphql-ws": "^5.16.0",
