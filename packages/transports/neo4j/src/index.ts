@@ -14,4 +14,4 @@ export default {
       logger,
     });
   },
-} satisfies Transport<'neo4j'>;
+} satisfies Transport;

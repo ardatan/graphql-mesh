@@ -18,7 +18,7 @@ export default {
     const executor = createDefaultExecutor(processedSchema);
     return executor;
   },
-} satisfies Transport<'rest', RESTTransportOptions>;
+} satisfies Transport<RESTTransportOptions>;
 
 export { processDirectives } from './directives/process.js';
 export type { ProcessDirectiveArgs } from './directives/process.js';

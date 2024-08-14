@@ -9,4 +9,4 @@ export default {
   getSubgraphExecutor({ subgraph }) {
     return getThriftExecutor(subgraph);
   },
-} satisfies Transport<'thrift'>;
+} satisfies Transport;

@@ -15,4 +15,4 @@ export default {
     }
     return loadGraphQLSchemaFromOptions(loaderOpts).then(schema => createDefaultExecutor(schema));
   },
-} satisfies Transport<'sqlite', SQLiteTransportOptions>;
+} satisfies Transport<SQLiteTransportOptions>;
