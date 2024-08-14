@@ -1,7 +1,6 @@
 import cluster, { type Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
-import { defaultOptions } from 'packages/string-interpolation/src/statics/DefaultOptions.js';
 import { Option } from '@commander-js/extra-typings';
 import {
   createServeRuntime,
@@ -11,7 +10,13 @@ import {
 } from '@graphql-mesh/serve-runtime';
 import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
-import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
+import {
+  defaultOptions,
+  type AddCommand,
+  type CLIContext,
+  type CLIGlobals,
+  type MeshServeCLIConfig,
+} from '../cli.js';
 import { loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
 

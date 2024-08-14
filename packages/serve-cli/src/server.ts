@@ -5,7 +5,7 @@ import type { SecureContextOptions } from 'node:tls';
 import type { MeshServeRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { createAsyncDisposable, getTerminateStack } from '@graphql-mesh/utils';
-import { defaultOptions } from './cli';
+import { defaultOptions } from './cli.js';
 
 export interface ServerConfig {
   /**
