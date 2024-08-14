@@ -5,12 +5,7 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 import cluster from 'node:cluster';
 import { availableParallelism, release } from 'node:os';
 import parseDuration from 'parse-duration';
-import {
-  Command,
-  InvalidArgumentError,
-  Option,
-  type OptionValues,
-} from '@commander-js/extra-typings';
+import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type {
   MeshServeConfigProxy,
   MeshServeConfigSubgraph,
@@ -97,11 +92,18 @@ export interface CLIContext {
 /** Inferred program options from the root command {@link cli}. */
 export type CLIGlobals = CLI extends Command<any, infer O> ? O : never;
 
-export const defaultFork = process.env.NODE_ENV === 'production' ? availableParallelism() : 1;
-
 export type CLI = typeof cli;
 
 export type AddCommand = (ctx: CLIContext, cli: CLI) => void;
+
+// we dont use `Option.default()` in the command definitions because we want the CLI options to
+// override the config file (with option defaults, config file will always be overwritten)
+export const defaultOptions = {
+  fork: process.env.NODE_ENV === 'production' ? availableParallelism() : 1,
+  host: release().toLowerCase().includes('microsoft') ? '127.0.0.1' : '0.0.0.0',
+  port: 4000,
+  polling: '10s',
+};
 
 /** The root cli of serve-cli. */
 let cli = new Command()
@@ -112,7 +114,7 @@ let cli = new Command()
   .addOption(
     new Option(
       '--fork <count>',
-      'count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is "production", otherwise only one (the main) worker',
+      `count of workers to spawn. defaults to "os.availableParallelism()" when NODE_ENV is "production", otherwise only one (the main) worker (default: ${JSON.stringify(defaultOptions.fork)}`,
     )
       .env('FORK')
       .argParser(v => {
@@ -121,8 +123,7 @@ let cli = new Command()
           throw new InvalidArgumentError('not a number.');
         }
         return count;
-      })
-      .default(defaultFork),
+      }),
   )
   .addOption(
     new Option(
@@ -132,13 +133,15 @@ let cli = new Command()
   )
   .option(
     '-h, --host <hostname>',
-    'host to use for serving',
-    release().toLowerCase().includes('microsoft') ? '127.0.0.1' : '0.0.0.0',
+    `host to use for serving (default: ${JSON.stringify(defaultOptions.host)}`,
+    defaultOptions.host,
   )
   .addOption(
-    new Option('-p, --port <number>', 'port to use for serving')
+    new Option(
+      '-p, --port <number>',
+      `port to use for serving (default: ${JSON.stringify(defaultOptions.port)}`,
+    )
       .env('PORT')
-      .default(4000)
       .argParser(v => {
         const port = parseInt(v);
         if (isNaN(port)) {
@@ -148,9 +151,11 @@ let cli = new Command()
       }),
   )
   .addOption(
-    new Option('--polling <duration>', 'schema polling interval in human readable duration')
+    new Option(
+      '--polling <duration>',
+      `schema polling interval in human readable duration (default: ${JSON.stringify(defaultOptions.polling)})`,
+    )
       .env('POLLING')
-      .default(10_000, '10s')
       .argParser(v => {
         const interval = parseDuration(v);
         if (!interval) {

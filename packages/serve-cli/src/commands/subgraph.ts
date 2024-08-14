@@ -1,6 +1,7 @@
 import cluster, { type Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
+import { defaultOptions } from 'packages/string-interpolation/src/statics/DefaultOptions.js';
 import {
   createServeRuntime,
   type MeshServeConfigSubgraph,
@@ -40,6 +41,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       }
 
       const config: SubgraphConfig = {
+        ...defaultOptions,
         ...loadedConfig,
         ...opts,
         ...(hiveRegistryToken

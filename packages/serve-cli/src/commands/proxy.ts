@@ -1,4 +1,5 @@
 import cluster, { type Worker } from 'node:cluster';
+import { defaultOptions } from 'packages/string-interpolation/src/statics/DefaultOptions.js';
 import { Option } from '@commander-js/extra-typings';
 import { createServeRuntime, type MeshServeConfigProxy } from '@graphql-mesh/serve-runtime';
 import { registerTerminateHandler } from '@graphql-mesh/utils';
@@ -68,6 +69,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       }
 
       const config: ProxyConfig = {
+        ...defaultOptions,
         ...loadedConfig,
         ...opts,
         ...(hiveRegistryToken

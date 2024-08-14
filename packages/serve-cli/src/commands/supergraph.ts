@@ -1,6 +1,7 @@
 import cluster, { type Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
+import { defaultOptions } from 'packages/string-interpolation/src/statics/DefaultOptions.js';
 import { Option } from '@commander-js/extra-typings';
 import {
   createServeRuntime,
@@ -51,6 +52,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       }
 
       const config: SupergraphConfig = {
+        ...defaultOptions,
         ...loadedConfig,
         ...opts,
         ...(hiveRegistryToken
