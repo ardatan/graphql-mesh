@@ -82,6 +82,7 @@ schema
 
 enum join__Graph {
   GREETINGS @join__graph(name: "greetings", url: "http://0.0.0.0:<greetings_port>") 
+  HELLOER @join__graph(name: "helloer", url: "http://0.0.0.0:<helloer_port>/graphql") 
 }
 
 directive @httpOperation(
@@ -98,29 +99,37 @@ directive @httpOperation(
 ) repeatable on FIELD_DEFINITION
 
 directive @transport(
-  subgraph: String
-  kind: String
-  location: String
+  subgraph: String!
+  kind: String!
+  location: String!
   headers: [[String]]
   queryStringOptions: ObjMap
   queryParams: [[String]]
+  options: TransportOptions
 ) repeatable on SCHEMA
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 scalar ObjMap @join__type(graph: GREETINGS) 
 
-scalar _DirectiveExtensions @join__type(graph: GREETINGS) 
+scalar _DirectiveExtensions @join__type(graph: GREETINGS)  @join__type(graph: HELLOER) 
+
+scalar BigInt @join__type(graph: HELLOER) 
+
+scalar TransportOptions @join__type(graph: HELLOER) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "greetings", kind: "rest", location: "http://0.0.0.0:<greetings_port>"}]}
-) @join__type(graph: GREETINGS)  {
+) @extraSchemaDefinitionDirective(
+  directives: {transport: [{kind: "http", subgraph: "helloer", location: "http://0.0.0.0:<helloer_port>/graphql", options: {}}]}
+) @join__type(graph: GREETINGS)  @join__type(graph: HELLOER)  {
   greet(name: String!) : greet_200_response @httpOperation(
     subgraph: "greetings"
     path: "/greet/{args.name}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  )
+  ) @join__field(graph: GREETINGS) 
+  hello: String! @join__field(graph: HELLOER) 
 }
 
 type greet_200_response @join__type(graph: GREETINGS)  {

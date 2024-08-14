@@ -5,6 +5,7 @@
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/serve-cli": "workspace:*",
+    "@graphql-mesh/transport-http": "workspace:*",
     "@graphql-mesh/transport-rest": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
     "fets": "0.8.2",

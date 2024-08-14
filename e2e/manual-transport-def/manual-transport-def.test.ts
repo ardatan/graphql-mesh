@@ -4,17 +4,16 @@ const { compose, serve, service } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose({
-    services: [await service('greetings')],
+    services: [await service('greetings'), await service('helloer')],
     maskServicePorts: true,
   });
   expect(result).toMatchSnapshot();
 });
 
 it('should execute the query', async () => {
-  const greetings = await service('greetings');
   const { output } = await compose({
     output: 'graphql',
-    services: [greetings],
+    services: [await service('greetings'), await service('helloer')],
   });
   const { execute } = await serve({ supergraph: output });
   await expect(
@@ -24,6 +23,7 @@ it('should execute the query', async () => {
           greet(name: "world") {
             greeting
           }
+          hello
         }
       `,
     }),

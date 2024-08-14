@@ -1,5 +1,8 @@
 import { Opts } from '@e2e/opts';
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph,
+} from '@graphql-mesh/compose-cli';
 import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
 import rest from '@graphql-mesh/transport-rest';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
@@ -14,11 +17,17 @@ export const composeConfig = defineComposeConfig({
         endpoint: `http://0.0.0.0:${opts.getServicePort('greetings')}`,
       }),
     },
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('helloer', {
+        endpoint: `http://0.0.0.0:${opts.getServicePort('helloer')}/graphql`,
+      }),
+    },
   ],
 });
 
 export const serveConfig = defineServeConfig({
   transports: {
     rest,
+    http: import('@graphql-mesh/transport-rest'),
   },
 });
