@@ -1,5 +1,17 @@
 # @graphql-mesh/serve-runtime
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e06ac0d`](https://github.com/ardatan/graphql-mesh/commit/e06ac0d721c9af17ea3825b310622aa725dfe807),
+  [`09ad884`](https://github.com/ardatan/graphql-mesh/commit/09ad8840fbb38d770157fb435abfcae19d08f095),
+  [`67e1062`](https://github.com/ardatan/graphql-mesh/commit/67e10629c70ec553234c1ffc99af4b89ddb31985)]:
+  - @graphql-mesh/fusion-runtime@0.7.1
+  - @graphql-mesh/transport-common@0.6.1
+  - @graphql-mesh/transport-http@0.5.1
+
 ## 0.7.0
 
 ### Minor Changes

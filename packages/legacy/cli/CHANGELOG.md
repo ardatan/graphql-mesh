@@ -1,5 +1,14 @@
 # @graphql-mesh/cli
 
+## 0.94.1
+
+### Patch Changes
+
+- [#7509](https://github.com/ardatan/graphql-mesh/pull/7509)
+  [`80dd30c`](https://github.com/ardatan/graphql-mesh/commit/80dd30c446ff8078dc7b183bfec2a32c117f7666)
+  Thanks [@ardatan](https://github.com/ardatan)! - Align codegen configuration of source and main
+  artifacts
+
 ## 0.94.0
 
 ### Patch Changes

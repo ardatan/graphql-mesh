@@ -1,5 +1,17 @@
 # @graphql-mesh/transport-http
 
+## 0.5.1
+
+### Patch Changes
+
+- [#7516](https://github.com/ardatan/graphql-mesh/pull/7516)
+  [`67e1062`](https://github.com/ardatan/graphql-mesh/commit/67e10629c70ec553234c1ffc99af4b89ddb31985)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Transport's kind doesn't need to be typed
+
+- Updated dependencies
+  [[`67e1062`](https://github.com/ardatan/graphql-mesh/commit/67e10629c70ec553234c1ffc99af4b89ddb31985)]:
+  - @graphql-mesh/transport-common@0.6.1
+
 ## 0.5.0
 
 ### Patch Changes

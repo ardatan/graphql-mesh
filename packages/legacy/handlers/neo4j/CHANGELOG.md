@@ -1,5 +1,12 @@
 # @graphql-mesh/neo4j
 
+## 0.102.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/neo4j@0.6.1
+
 ## 0.102.0
 
 ### Patch Changes
