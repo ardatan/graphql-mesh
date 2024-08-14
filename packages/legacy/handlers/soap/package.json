@@ -35,7 +35,7 @@
     "@graphql-mesh/store": "^0.100.0",
     "@graphql-mesh/types": "^0.100.0",
     "@graphql-mesh/utils": "^0.100.0",
-    "@graphql-tools/utils": "^10.5.2",
+    "@graphql-tools/utils": "^10.5.3",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
