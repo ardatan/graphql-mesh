@@ -70,9 +70,11 @@ function buildSignatureBasedOnRootFields(
           ),
         )
         .join(' | ');
+      const originalDef = field.type.toString();
+      const def = originalDef.replace(namedFieldType.name, typeNamesDef);
       operationMap[fieldName] = `  /** ${field.description} **/\n  ${
         field.name
-      }: InContextSdkMethod<${typeNamesDef}, ${argsName}, ${unifiedContextIdentifier}>`;
+      }: InContextSdkMethod<${def}, ${argsName}, ${unifiedContextIdentifier}>`;
     } else {
       operationMap[fieldName] = `  /** ${field.description} **/\n  ${
         field.name
