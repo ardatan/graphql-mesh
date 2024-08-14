@@ -1,5 +1,225 @@
 # @graphql-mesh/serve-runtime
 
+## 0.7.0
+
+### Minor Changes
+
+- [#7469](https://github.com/ardatan/graphql-mesh/pull/7469)
+  [`e509a25`](https://github.com/ardatan/graphql-mesh/commit/e509a259d3080db1300c9f38ae149f648fc9159f)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - MeshServeConfig doesnt have the `hive`
+  property anymore
+
+  Hive's usage reporting can be used with any of serve modes (supergraph, subgraph and proxy), while
+  Hive CDN usage has more integrated configuration.
+
+  ### Usage reporting
+
+  ```diff
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  export const runtime = createServeRuntime({
+    supergraph: 'supergraph.graphql',
+  - hive: {
+  -   token: '<hive-registry-token>'
+  - },
+  + reporting: {
+  +   type: 'hive',
+  +   token: '<hive-registry-token>'
+  + }
+  })
+  ```
+
+  ### Supergraph from Hive CDN
+
+  ```diff
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  export const runtime = createServeRuntime({
+  - hive: {
+  + supergraph: {
+  +   type: 'hive',
+      endpoint: '<hive-endpoint>',
+      key: '<hive-cdn-key>'
+    }
+  })
+  ```
+
+  ### Proxy with schema from Hive CDN
+
+  ```diff
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  export const runtime = createServeRuntime({
+    proxy: '<endpoint>',
+  - hive: {
+  + schema: {
+  +   type: 'hive',
+      endpoint: '<hive-endpoint>',
+      key: '<hive-cdn-key>'
+    }
+  })
+  ```
+
+- [#7469](https://github.com/ardatan/graphql-mesh/pull/7469)
+  [`e509a25`](https://github.com/ardatan/graphql-mesh/commit/e509a259d3080db1300c9f38ae149f648fc9159f)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Any schema source for proxy mode
+
+  Now you can directly provide a GraphQL schema, a path to an SDL or a URL to pull the schema from
+  when running in proxy mode.
+
+  ### GraphQL schema
+
+  ```ts
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  export const runtime = createServeRuntime({
+    proxy: {
+      endpoint: 'http://upstream/graphql'
+    },
+    schema: /* GraphQL */ `
+      type Query {
+        hello: String
+      }
+    `
+  })
+  ```
+
+  ### Path
+
+  ```ts
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  export const runtime = createServeRuntime({
+    proxy: {
+      endpoint: 'http://upstream/graphql'
+    },
+    schema: './schema.graphql'
+  })
+  ```
+
+  ### URL
+
+  ```ts
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  export const runtime = createServeRuntime({
+    proxy: {
+      endpoint: 'http://upstream/graphql'
+    },
+    schema: 'https://my-cdn.com/graphql/schema'
+  })
+  ```
+
+  ### Hive CDN
+
+  ```ts
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  export const runtime = createServeRuntime({
+    proxy: {
+      endpoint: 'http://upstream/graphql'
+    },
+    schema: {
+      type: 'hive',
+      endpoint: 'https://cdn.graphql-hive.com/artifacts/v1/0123-3434/sdl',
+      key: 'SOME_HIVE_KEY'
+    }
+  })
+  ```
+
+- [#7501](https://github.com/ardatan/graphql-mesh/pull/7501)
+  [`83b8cdc`](https://github.com/ardatan/graphql-mesh/commit/83b8cdc937fcb7e3cc4e2ee7a3ae3c1f12ccaf31)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Polling interval option has been renamed to
+  `pollingInterval`
+
+  ### Breaking Changes
+
+  ```diff
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  const runtime = createServeRuntime({
+  - polling: 10_000
+  + pollingInterval: 10_000
+  })
+  ```
+
+### Patch Changes
+
+- [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
+    (from `^10.3.4`, in `dependencies`)
+
+- [#7498](https://github.com/ardatan/graphql-mesh/pull/7498)
+  [`1a9746f`](https://github.com/ardatan/graphql-mesh/commit/1a9746f6ca9b517230a0337d5a852bf05707303a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/apollo@^0.35.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/apollo/v/0.35.0)
+    (from `^0.34.0`, in `dependencies`)
+
+- [#7500](https://github.com/ardatan/graphql-mesh/pull/7500)
+  [`1d24997`](https://github.com/ardatan/graphql-mesh/commit/1d249977bbc1180f15ea0e11eece6cce1e8f2de1)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/apollo@^0.35.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/apollo/v/0.35.0)
+    (from `^0.34.0`, in `dependencies`)
+
+- [#7512](https://github.com/ardatan/graphql-mesh/pull/7512)
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.19)
+    (from `^10.0.18`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.8)
+    (from `^2.2.5`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.3)
+    (from `^10.5.2`, in `dependencies`)
+
+- [#7469](https://github.com/ardatan/graphql-mesh/pull/7469)
+  [`e509a25`](https://github.com/ardatan/graphql-mesh/commit/e509a259d3080db1300c9f38ae149f648fc9159f)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Environment variables are not used,
+  MeshServeConfig contains all necessary configuration options
+
+  @graphql-mesh/serve-runtime is for programmatic usage and therefore should have explicit
+  configuration and assume no defaults. Keep in mind that this doesn't change
+  @graphql-mesh/serve-cli, which can still be configured using environment variables.
+
+- [#7501](https://github.com/ardatan/graphql-mesh/pull/7501)
+  [`83b8cdc`](https://github.com/ardatan/graphql-mesh/commit/83b8cdc937fcb7e3cc4e2ee7a3ae3c1f12ccaf31)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Disable polling for static schemas
+
+- Updated dependencies
+  [[`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`1a9746f`](https://github.com/ardatan/graphql-mesh/commit/1a9746f6ca9b517230a0337d5a852bf05707303a),
+  [`1d24997`](https://github.com/ardatan/graphql-mesh/commit/1d249977bbc1180f15ea0e11eece6cce1e8f2de1),
+  [`ace0a65`](https://github.com/ardatan/graphql-mesh/commit/ace0a650f9543ad977182414e16f581d59a2f3ef),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`e509a25`](https://github.com/ardatan/graphql-mesh/commit/e509a259d3080db1300c9f38ae149f648fc9159f),
+  [`83b8cdc`](https://github.com/ardatan/graphql-mesh/commit/83b8cdc937fcb7e3cc4e2ee7a3ae3c1f12ccaf31),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)]:
+  - @graphql-mesh/cross-helpers@0.4.6
+  - @graphql-mesh/fusion-runtime@0.7.0
+  - @graphql-mesh/plugin-hive@0.101.0
+  - @graphql-mesh/transport-common@0.6.0
+  - @graphql-mesh/transport-http@0.5.0
+  - @graphql-mesh/utils@0.101.0
+
 ## 0.6.0
 
 ### Patch Changes
