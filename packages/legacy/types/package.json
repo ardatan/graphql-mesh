@@ -33,13 +33,13 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/store": "^0.100.0",
-    "@graphql-tools/utils": "^10.5.2",
+    "@graphql-tools/utils": "^10.5.3",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-tools/batch-delegate": "^9.0.3",
-    "@graphql-tools/delegate": "^10.0.18",
+    "@graphql-tools/delegate": "^10.0.19",
     "@graphql-typed-document-node/core": "^3.2.0"
   },
   "publishConfig": {
