@@ -1,5 +1,12 @@
 # @graphql-mesh/soap
 
+## 0.103.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/soap@0.103.1
+
 ## 0.103.0
 
 ### Patch Changes

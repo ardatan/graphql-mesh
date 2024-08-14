@@ -1,5 +1,27 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.7.1
+
+### Patch Changes
+
+- [#7517](https://github.com/ardatan/graphql-mesh/pull/7517)
+  [`e06ac0d`](https://github.com/ardatan/graphql-mesh/commit/e06ac0d721c9af17ea3825b310622aa725dfe807)
+  Thanks [@ardatan](https://github.com/ardatan)! - Accept imported modules as transports and find
+  subgraph executor
+
+- [#7513](https://github.com/ardatan/graphql-mesh/pull/7513)
+  [`09ad884`](https://github.com/ardatan/graphql-mesh/commit/09ad8840fbb38d770157fb435abfcae19d08f095)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Bubble module import errors when module is
+  installed
+
+- [#7516](https://github.com/ardatan/graphql-mesh/pull/7516)
+  [`67e1062`](https://github.com/ardatan/graphql-mesh/commit/67e10629c70ec553234c1ffc99af4b89ddb31985)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Transport's kind doesn't need to be typed
+
+- Updated dependencies
+  [[`67e1062`](https://github.com/ardatan/graphql-mesh/commit/67e10629c70ec553234c1ffc99af4b89ddb31985)]:
+  - @graphql-mesh/transport-common@0.6.1
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,5 +1,21 @@
 # @graphql-mesh/serve-cli
 
+## 0.10.1
+
+### Patch Changes
+
+- [#7513](https://github.com/ardatan/graphql-mesh/pull/7513)
+  [`09ad884`](https://github.com/ardatan/graphql-mesh/commit/09ad8840fbb38d770157fb435abfcae19d08f095)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Bubble module import errors when module is
+  installed
+
+- [#7515](https://github.com/ardatan/graphql-mesh/pull/7515)
+  [`7080f25`](https://github.com/ardatan/graphql-mesh/commit/7080f25780c56a25e6820e44c513e10b13101e54)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Display version when using `--version` flag
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.7.1
+
 ## 0.10.0
 
 ### Minor Changes
