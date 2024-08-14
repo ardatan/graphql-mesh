@@ -175,8 +175,6 @@ let cli = new Command()
     ).env('HIVE_REGISTRY_TOKEN'),
   );
 
-// @inject-version globalThis.__VERSION__ here
-
 export function run(userCtx: Partial<CLIContext>) {
   const ctx: CLIContext = {
     log: new DefaultLogger(),
