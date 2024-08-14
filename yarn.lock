@@ -3677,6 +3677,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/manual-transport-def@workspace:e2e/manual-transport-def":
+  version: 0.0.0-use.local
+  resolution: "@e2e/manual-transport-def@workspace:e2e/manual-transport-def"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-mesh/transport-rest": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fets: "npm:0.8.2"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/mysql-employees@workspace:e2e/mysql-employees":
   version: 0.0.0-use.local
   resolution: "@e2e/mysql-employees@workspace:e2e/mysql-employees"
@@ -7091,7 +7104,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-rest@npm:^0.6.0, @graphql-mesh/transport-rest@workspace:packages/transports/rest":
+"@graphql-mesh/transport-rest@npm:^0.6.0, @graphql-mesh/transport-rest@workspace:*, @graphql-mesh/transport-rest@workspace:packages/transports/rest":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-rest@workspace:packages/transports/rest"
   dependencies:

@@ -1,0 +1,13 @@
+{
+  "name": "@e2e/manual-transport-def",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@graphql-mesh/transport-rest": "workspace:*",
+    "@omnigraph/openapi": "workspace:*",
+    "fets": "0.8.2",
+    "graphql": "16.9.0"
+  }
+}
