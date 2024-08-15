@@ -84,7 +84,10 @@ export interface MeshServeConfigSupergraph<
    *
    * Alternatively, CDN options for pulling a remote Federation Supergraph.
    */
-  supergraph: UnifiedGraphConfig | MeshServeHiveCDNOptions;
+  supergraph:
+    | UnifiedGraphConfig
+    | MeshServeHiveCDNOptions
+    | MeshServeGraphOSManagedFederationOptions;
   /**
    * GraphQL schema polling interval in milliseconds when the {@link supergraph} is an URL.
    */
@@ -153,9 +156,64 @@ export interface MeshServeHiveReportingOptions extends YamlConfig.HivePlugin {
   token: string;
 }
 
+export interface MeshServeGraphOSOptions {
+  type: 'graphos';
+  /**
+   * The graph ref of the managed federation graph.
+   * It is composed of the graph ID and the variant (`<YOUR_GRAPH_ID>@<VARIANT>`).
+   *
+   * You can find a a graph's ref at the top of its Schema Reference page in Apollo Studio.
+   */
+  graphRef: string;
+  /**
+   * The API key to use to authenticate with the managed federation up link.
+   * It needs at least the `service:read` permission.
+   *
+   * [Learn how to create an API key](https://www.apollographql.com/docs/federation/v1/managed-federation/setup#4-connect-the-gateway-to-studio)
+   */
+  apiKey: string;
+}
+
+export interface MeshServeGraphOSManagedFederationOptions extends MeshServeGraphOSOptions {
+  /**
+   * Maximum number of retries to attempt when fetching the schema from the managed federation up link.
+   */
+  maxRetries?: number;
+  /**
+   * Minimum delay in seconds
+   */
+  minDelaySeconds?: number;
+  /**
+   * Delay of seconds on retries
+   */
+  retryDelaySeconds?: number;
+  /**
+   * The URL of the managed federation up link. When retrying after a failure, you should cycle through the default up links using this option.
+   *
+   * Uplinks are available in `DEFAULT_UPLINKS` constant.
+   *
+   * This options can also be defined using the `APOLLO_SCHEMA_CONFIG_DELIVERY_ENDPOINT` environment variable.
+   * It should be a comma separated list of up links, but only the first one will be used.
+   *
+   * Default: 'https://uplink.api.apollographql.com/' (Apollo's managed federation up link on GCP)
+   *
+   * Alternative: 'https://aws.uplink.api.apollographql.com/' (Apollo's managed federation up link on AWS)
+   */
+  upLink?: string;
+}
+
+export interface MeshServeGraphOSReportingOptions extends MeshServeGraphOSOptions {
+  /**
+   * Usage report endpoint
+   *
+   * Defaults to GraphOS endpoint (https://usage-reporting.api.apollographql.com/api/ingress/traces)
+   */
+  endpoint?: string;
+}
+
 interface MeshServeConfigBase<TContext extends Record<string, any>> {
   /** Usage reporting options. */
-  reporting?: MeshServeHiveReportingOptions;
+  reporting?: MeshServeHiveReportingOptions | MeshServeGraphOSReportingOptions;
   /**
    * A map, or factory function, of transport kinds to their implementations.
    *
