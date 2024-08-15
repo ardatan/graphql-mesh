@@ -5,6 +5,7 @@ import { Option } from '@commander-js/extra-typings';
 import {
   createServeRuntime,
   type MeshServeConfigSupergraph,
+  type MeshServeGraphOSManagedFederationOptions,
   type MeshServeHiveCDNOptions,
   type UnifiedGraphConfig,
 } from '@graphql-mesh/serve-runtime';
@@ -37,8 +38,16 @@ export const addCommand: AddCommand = (ctx, cli) =>
       ).env('HIVE_CDN_KEY'),
     )
     .action(async function supergraph(schemaPathOrUrl) {
-      const { hiveCdnKey, hiveRegistryToken, maskedErrors, polling, nativeImport, ...opts } =
-        this.optsWithGlobals<CLIGlobals>();
+      const {
+        hiveCdnKey,
+        hiveRegistryToken,
+        maskedErrors,
+        polling,
+        nativeImport,
+        apolloGraphRef,
+        apolloKey,
+        ...opts
+      } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -46,29 +55,54 @@ export const addCommand: AddCommand = (ctx, cli) =>
         nativeImport,
       });
 
-      let supergraph: UnifiedGraphConfig | MeshServeHiveCDNOptions = 'supergraph.graphql';
+      let supergraph:
+        | UnifiedGraphConfig
+        | MeshServeHiveCDNOptions
+        | MeshServeGraphOSManagedFederationOptions = 'supergraph.graphql';
       if (schemaPathOrUrl) {
-        supergraph = hiveCdnKey
-          ? { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey }
-          : schemaPathOrUrl;
+        if (hiveCdnKey) {
+          supergraph = { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey };
+        } else if (apolloGraphRef) {
+          supergraph = {
+            type: 'graphos',
+            apiKey: apolloKey,
+            graphRef: apolloGraphRef,
+            upLink: schemaPathOrUrl,
+          };
+        } else {
+          supergraph = schemaPathOrUrl;
+        }
+      } else if (apolloGraphRef) {
+        supergraph = { type: 'graphos', apiKey: apolloKey, graphRef: apolloGraphRef };
       } else if ('supergraph' in loadedConfig) {
         supergraph = loadedConfig.supergraph;
         // TODO: how to provide hive-cdn-key?
+      }
+
+      let registryConfig: Pick<SupergraphConfig, 'reporting'> = {};
+
+      if (hiveRegistryToken) {
+        registryConfig = {
+          reporting: {
+            type: 'hive',
+            token: hiveRegistryToken,
+          },
+        };
+      } else if (apolloKey) {
+        registryConfig = {
+          reporting: {
+            type: 'graphos',
+            apiKey: apolloKey,
+            graphRef: apolloGraphRef,
+          },
+        };
       }
 
       const config: SupergraphConfig = {
         ...defaultOptions,
         ...loadedConfig,
         ...opts,
-        ...(hiveRegistryToken
-          ? {
-              reporting: {
-                ...loadedConfig.reporting,
-                type: 'hive',
-                token: hiveRegistryToken,
-              },
-            }
-          : {}),
+        ...registryConfig,
         ...(polling ? { pollingInterval: polling } : {}),
         supergraph,
         logging: loadedConfig.logging ?? ctx.log,

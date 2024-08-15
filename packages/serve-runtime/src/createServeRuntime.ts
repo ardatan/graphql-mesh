@@ -41,6 +41,7 @@ import {
 } from '@graphql-mesh/utils';
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
+import { fetchSupergraphSdlFromManagedFederation } from '@graphql-tools/federation';
 import {
   getDirectiveExtensions,
   isDocumentNode,
@@ -53,6 +54,7 @@ import {
   type TypeSource,
 } from '@graphql-tools/utils';
 import { schemaFromExecutor, wrapSchema } from '@graphql-tools/wrap';
+import { useApolloUsageReport } from '@graphql-yoga/plugin-apollo-usage-report';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { getUnifiedGraphSDL, handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
@@ -119,14 +121,33 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
-  const hiveRegistryPlugin: MeshPlugin<unknown> =
-    config.reporting?.type === 'hive'
-      ? useMeshHive({
-          ...configContext,
-          logger: configContext.logger.child('Hive'),
-          ...config.reporting,
-        })
-      : {};
+  let registryPlugin: MeshPlugin<unknown> = {};
+  if (config.reporting?.type === 'hive') {
+    registryPlugin = useMeshHive({
+      ...configContext,
+      logger: configContext.logger.child('Hive'),
+      ...config.reporting,
+    });
+  } else if (
+    config.reporting?.type === 'graphos' ||
+    (!config.reporting &&
+      'supergraph' in config &&
+      typeof config.supergraph === 'object' &&
+      'type' in config.supergraph &&
+      config.supergraph.type === 'graphos')
+  ) {
+    if (
+      'supergraph' in config &&
+      typeof config.supergraph === 'object' &&
+      'type' in config.supergraph &&
+      config.supergraph.type === 'graphos'
+    ) {
+      config.reporting.apiKey ||= config.supergraph.apiKey;
+      config.reporting.graphRef ||= config.supergraph.graphRef;
+    }
+    // @ts-expect-error - TODO: Fix typings
+    registryPlugin = useApolloUsageReport(config.reporting);
+  }
   let subgraphInformationHTMLRenderer: () => MaybePromise<string> = () => '';
 
   const disposableStack = new AsyncDisposableStack();
@@ -430,15 +451,68 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     let supergraphLoadedPlace: string;
 
     if (typeof config.supergraph === 'object' && 'type' in config.supergraph) {
-      // hive cdn
-      const { endpoint, key } = config.supergraph;
-      supergraphLoadedPlace = 'Hive CDN <br>' + endpoint;
-      const fetcher = createSupergraphSDLFetcher({
-        endpoint,
-        key,
-        logger: configContext.logger.child('Hive CDN'),
-      });
-      unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
+      if (config.supergraph.type === 'hive') {
+        // hive cdn
+        const { endpoint, key } = config.supergraph;
+        supergraphLoadedPlace = 'Hive CDN <br>' + endpoint;
+        const fetcher = createSupergraphSDLFetcher({
+          endpoint,
+          key,
+          logger: configContext.logger.child('Hive CDN'),
+        });
+        unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
+      } else {
+        const opts = config.supergraph;
+        supergraphLoadedPlace = 'GraphOS Managed Federation <br>' + opts.upLink || '';
+        let lastSeenId: string;
+        let lastSupergraphSdl: string;
+        let minDelayMS = config.pollingInterval || 0;
+        unifiedGraphFetcher = () =>
+          mapMaybePromise(
+            fetchSupergraphSdlFromManagedFederation({
+              graphRef: opts.graphRef,
+              apiKey: opts.apiKey,
+              upLink: opts.upLink,
+              lastSeenId,
+              // @ts-expect-error TODO: what's up with type narrowing
+              fetch: configContext.fetch,
+              loggerByMessageLevel: {
+                ERROR(message) {
+                  configContext.logger.child('GraphOS').error(message);
+                },
+                INFO(message) {
+                  configContext.logger.child('GraphOS').info(message);
+                },
+                WARN(message) {
+                  configContext.logger.child('GraphOS').warn(message);
+                },
+              },
+            }),
+            async result => {
+              if (minDelayMS) {
+                await new Promise(resolve => setTimeout(resolve, minDelayMS));
+              }
+              if (result.minDelaySeconds && result.minDelaySeconds > minDelayMS) {
+                minDelayMS = result.minDelaySeconds;
+              }
+              if ('error' in result) {
+                configContext.logger.child('GraphOS').error(result.error.message);
+                return lastSupergraphSdl;
+              }
+              if ('id' in result) {
+                lastSeenId = result.id;
+              }
+              if ('supergraphSdl' in result) {
+                lastSupergraphSdl = result.supergraphSdl;
+                return result.supergraphSdl;
+              }
+              if (lastSupergraphSdl) {
+                throw new Error('Failed to fetch supergraph SDL');
+              }
+              return lastSupergraphSdl;
+            },
+          );
+      }
     } else {
       // local or remote
 
@@ -639,7 +713,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       defaultMeshPlugin,
       unifiedGraphPlugin,
       readinessCheckPlugin,
-      hiveRegistryPlugin,
+      registryPlugin,
       useChangingSchema(getSchema, _setSchema => {
         setSchema = _setSchema;
       }),
