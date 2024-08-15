@@ -8,7 +8,13 @@ import {
 } from '@graphql-mesh/serve-runtime';
 import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
-import type { AddCommand, CLIContext, CLIGlobals, MeshServeCLIConfig } from '../cli.js';
+import {
+  defaultOptions,
+  type AddCommand,
+  type CLIContext,
+  type CLIGlobals,
+  type MeshServeCLIConfig,
+} from '../cli.js';
 import { loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
 
@@ -40,6 +46,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       }
 
       const config: SubgraphConfig = {
+        ...defaultOptions,
         ...loadedConfig,
         ...opts,
         ...(hiveRegistryToken
