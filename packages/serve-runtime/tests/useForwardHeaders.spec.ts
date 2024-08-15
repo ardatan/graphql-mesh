@@ -1,7 +1,7 @@
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import { useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { createServeRuntime } from '../src/createServeRuntime';
-import { useForwardHeaders } from '../src/useForwardHeaders';
+import { useForwardHeaders } from '../src/plugins/useForwardHeaders';
 
 describe('useForwardHeaders', () => {
   const requestTrackerPlugin = {

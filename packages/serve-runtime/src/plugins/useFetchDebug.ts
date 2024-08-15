@@ -1,5 +1,5 @@
 import type { Logger } from '@graphql-mesh/types';
-import type { MeshServePlugin } from './types';
+import type { MeshServePlugin } from '../types';
 
 export function useFetchDebug<TContext>(opts: { logger: Logger }): MeshServePlugin<TContext> {
   return {

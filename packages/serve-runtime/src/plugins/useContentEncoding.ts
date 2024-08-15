@@ -1,7 +1,7 @@
 import type { FetchAPI } from 'graphql-yoga';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import { useContentEncoding as useOrigContentEncoding } from '@whatwg-node/server';
-import type { MeshServePlugin } from './types';
+import type { MeshServePlugin } from '../types';
 
 export interface UseContentEncodingOpts {
   subgraphs?: string[];

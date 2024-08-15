@@ -1,4 +1,4 @@
-import type { MeshServePlugin } from './types.js';
+import type { MeshServePlugin } from '../types.js';
 
 export function useUpstreamCancel(): MeshServePlugin {
   return {

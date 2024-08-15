@@ -1,7 +1,7 @@
 import type { GraphQLSchema } from 'graphql';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import type { MaybePromise } from '@graphql-tools/utils';
-import type { MeshServePlugin } from './types';
+import type { MeshServePlugin } from '../types';
 
 export function useChangingSchema(
   getSchema: () => MaybePromise<GraphQLSchema>,

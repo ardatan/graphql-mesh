@@ -4,8 +4,8 @@ import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { Response } from '@whatwg-node/server';
 import { createServeRuntime } from '../src/createServeRuntime.js';
+import { useCustomFetch } from '../src/plugins/useCustomFetch.js';
 import type { MeshServePlugin } from '../src/types.js';
-import { useCustomFetch } from '../src/useCustomFetch.js';
 
 describe('Serve Runtime', () => {
   beforeEach(() => {

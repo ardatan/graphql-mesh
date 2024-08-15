@@ -1,5 +1,3 @@
-// eslint-disable-next-line import/no-nodejs-modules
-import type { IncomingMessage } from 'node:http';
 import type { ExecutionArgs, GraphQLSchema } from 'graphql';
 import { buildSchema, isSchema, parse } from 'graphql';
 import {
@@ -12,7 +10,7 @@ import {
   type YogaServerInstance,
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
-import { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
+import { createSupergraphSDLFetcher } from '@graphql-hive/core';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
   OnSubgraphExecuteHook,
@@ -26,9 +24,7 @@ import {
   restoreExtraDirectives,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
-import useMeshHive from '@graphql-mesh/plugin-hive';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import type { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
+import type { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
@@ -54,11 +50,17 @@ import {
   type TypeSource,
 } from '@graphql-tools/utils';
 import { schemaFromExecutor, wrapSchema } from '@graphql-tools/wrap';
-import { useApolloUsageReport } from '@graphql-yoga/plugin-apollo-usage-report';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
+import { getRegistryPlugin } from './getRegistryPlugin.js';
 import { getUnifiedGraphSDL, handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
+import { useChangingSchema } from './plugins/useChangingSchema.js';
+import { useCompleteSubscriptionsOnDispose } from './plugins/useCompleteSubscriptionsOnDispose.js';
+import { useCompleteSubscriptionsOnSchemaChange } from './plugins/useCompleteSubscriptionsOnSchemaChange.js';
+import { useFetchDebug } from './plugins/useFetchDebug.js';
+import { useRequestId } from './plugins/useRequestId.js';
+import { useSubgraphExecuteDebug } from './plugins/useSubgraphExecuteDebug.js';
 import type {
   MeshServeConfig,
   MeshServeConfigContext,
@@ -67,12 +69,6 @@ import type {
   MeshServePlugin,
   UnifiedGraphConfig,
 } from './types.js';
-import { useChangingSchema } from './useChangingSchema.js';
-import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
-import { useCompleteSubscriptionsOnSchemaChange } from './useCompleteSubscriptionsOnSchemaChange.js';
-import { useFetchDebug } from './useFetchDebug.js';
-import { useRequestId } from './useRequestId.js';
-import { useSubgraphExecuteDebug } from './useSubgraphExecuteDebug.js';
 import { checkIfDataSatisfiesSelectionSet } from './utils.js';
 
 export type MeshServeRuntime<TContext extends Record<string, any> = Record<string, any>> =
@@ -121,33 +117,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
-  let registryPlugin: MeshPlugin<unknown> = {};
-  if (config.reporting?.type === 'hive') {
-    registryPlugin = useMeshHive({
-      ...configContext,
-      logger: configContext.logger.child('Hive'),
-      ...config.reporting,
-    });
-  } else if (
-    config.reporting?.type === 'graphos' ||
-    (!config.reporting &&
-      'supergraph' in config &&
-      typeof config.supergraph === 'object' &&
-      'type' in config.supergraph &&
-      config.supergraph.type === 'graphos')
-  ) {
-    if (
-      'supergraph' in config &&
-      typeof config.supergraph === 'object' &&
-      'type' in config.supergraph &&
-      config.supergraph.type === 'graphos'
-    ) {
-      config.reporting.apiKey ||= config.supergraph.apiKey;
-      config.reporting.graphRef ||= config.supergraph.graphRef;
-    }
-    // @ts-expect-error - TODO: Fix typings
-    registryPlugin = useApolloUsageReport(config.reporting);
-  }
+  const registryPlugin = getRegistryPlugin(config, configContext);
   let subgraphInformationHTMLRenderer: () => MaybePromise<string> = () => '';
 
   const disposableStack = new AsyncDisposableStack();
@@ -728,7 +698,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     context({ request, params, ...rest }) {
       // TODO: I dont like this cast, but it's necessary
       const { req, connectionParams } = rest as {
-        req?: IncomingMessage;
+        req?: { headers?: Record<string, string> };
         connectionParams?: Record<string, string>;
       };
       const baseContext = {

@@ -3,7 +3,7 @@ import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import type { OnFetchHookDonePayload } from '@graphql-mesh/types';
 import { useContentEncoding as useWhatwgNodeContentEncoding } from '@whatwg-node/server';
-import { useContentEncoding } from '../src/useContentEncoding';
+import { useContentEncoding } from '../src/plugins/useContentEncoding';
 
 describe('useContentEncoding', () => {
   const fooResolver = jest.fn((_, __, _context: YogaInitialContext) => {
