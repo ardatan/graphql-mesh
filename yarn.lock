@@ -8059,25 +8059,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-apollo-inline-trace@npm:3.7.0":
-  version: 3.7.0
-  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.7.0"
-  dependencies:
-    "@apollo/usage-reporting-protobuf": "npm:^4.1.1"
-    "@envelop/on-resolve": "npm:^4.0.0"
-    tslib: "npm:^2.5.2"
-  peerDependencies:
-    "@graphql-tools/utils": ^10.0.0
-    "@whatwg-node/fetch": ^0.9.17
-    graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.7.0
-  checksum: 10c0/bffc3bdce36731c9cd4a83920b8af86515bc854c7009697881835d396c7e4acc5c6a3d2f94de1ce8d18ce05dd4e3f80f5e28bdf19d66f5ece1f7e85a5cd91490
-  languageName: node
-  linkType: hard
-
-"@graphql-yoga/plugin-apollo-inline-trace@npm:^3.6.1-alpha-20240710084647-0e18c8e7":
-  version: 3.6.3
-  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.6.3"
+"@graphql-yoga/plugin-apollo-inline-trace@npm:3.6.1-alpha-20240710084647-0e18c8e7":
+  version: 3.6.1-alpha-20240710084647-0e18c8e7
+  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.6.1-alpha-20240710084647-0e18c8e7"
   dependencies:
     "@envelop/on-resolve": "npm:^4.0.0"
     apollo-reporting-protobuf: "npm:^3.3.2"
@@ -8086,8 +8070,8 @@ __metadata:
     "@graphql-tools/utils": ^10.0.0
     "@whatwg-node/fetch": ^0.9.17
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.6.3
-  checksum: 10c0/2cc817493f5c708f6534506af146ccd369f0a3a516619cea329ec5ce35d2b292597b4950ab3fbf7b53ac84132847aa910059bdab82a9f579b1a53763c42e6164
+    graphql-yoga: ^5.6.1-alpha-20240710084647-0e18c8e7
+  checksum: 10c0/5cc45c61df66aa0c1b8a6d0a1a41012464502bd25bd18997894f875fd7013ebdf013daead99f6fd963163606dcf1995df46c648c1db7456fb231346c6b52c1d3
   languageName: node
   linkType: hard
 

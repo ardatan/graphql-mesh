@@ -32,26 +32,26 @@ Usage: mesh-serve [options] [command]
 serve GraphQL federated architecture for any API service(s)
 
 Options:
-  --fork <count>                          count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is
-                                          "production", otherwise only one (the main) worker (default: 1, env: FORK)
-  -c, --config-path <path>                path to the configuration file. defaults to the following files respectively in the
-                                          current working directory: mesh.config.ts, mesh.config.mts, mesh.config.cts,
-                                          mesh.config.js, mesh.config.mjs, mesh.config.cjs (env: CONFIG_PATH)
-  -h, --host <hostname>                   host to use for serving (default: "0.0.0.0")
+  --fork <count>                          count of workers to spawn. defaults to `os.availableParallelism()` when NODE_ENV is "production", otherwise only one (the
+                                          main) worker (default: 1, env: FORK)
+  -c, --config-path <path>                path to the configuration file. defaults to the following files respectively in the current working directory: mesh.config.ts,
+                                          mesh.config.mts, mesh.config.cts, mesh.config.js, mesh.config.mjs, mesh.config.cjs (env: CONFIG_PATH)
+  -h, --host <hostname>                   host to use for serving (default: "127.0.0.1")
   -p, --port <number>                     port to use for serving (default: 4000, env: PORT)
   --polling <duration>                    schema polling interval in human readable duration (default: 10s, env: POLLING)
   --no-masked-errors                      don't mask unexpected errors in responses
   --masked-errors                         mask unexpected errors in responses (default: true)
+  --native-import                         use the native "import" function for importing the config file
   --hive-registry-token <token>           Hive registry token for usage metrics reporting (env: HIVE_REGISTRY_TOKEN)
+  --apollo-graph-ref <graphRef>           graph ref of the managed federation graph. (<YOUR_GRAPH_ID>@<VARIANT>) (env: APOLLO_GRAPH_REF)
+  --apollo-key <apiKey>                   API key to use to authenticate with the managed federation up link (env: APOLLO_KEY)
   --help                                  display help for command
 
 Commands:
-  supergraph [options] [schemaPathOrUrl]  serve a Federation supergraph provided by a compliant composition tool such as Mesh
-                                          Compose or Apollo Rover
-  subgraph [schemaPathOrUrl]              serve a Federation subgraph that can be used with any Federation compatible router like
-                                          Mesh Serve or Apollo Router
-  proxy [options] [endpoint]              serve a proxy to a GraphQL API and add additional features such as monitoring/tracing,
-                                          caching, rate limiting, security, and more
+  supergraph [options] [schemaPathOrUrl]  serve a Federation supergraph provided by a compliant composition tool such as Mesh Compose or Apollo Rover
+  subgraph [schemaPathOrUrl]              serve a Federation subgraph that can be used with any Federation compatible router like Mesh Serve or Apollo Router
+  proxy [options] [endpoint]              serve a proxy to a GraphQL API and add additional features such as monitoring/tracing, caching, rate limiting, security, and
+                                          more
   help [command]                          display help for command
 ```
 
@@ -66,8 +66,10 @@ configuration file if you provide these environment variables.
 
 #### GraphQL Hive
 
+- `HIVE_CDN_KEY`: The API key provided by GraphQL Hive to fetch the supergraph.
 - `HIVE_REGISTRY_TOKEN`: The token to push the metrics to GraphQL Hive.
-  [See here](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
+
+[See here](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
 
 #### Apollo GraphOS
 
