@@ -5087,7 +5087,7 @@ __metadata:
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.4.0"
+    vite: "npm:5.4.1"
   languageName: unknown
   linkType: soft
 
@@ -5189,7 +5189,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.94.1"
     "@graphql-mesh/openapi": "npm:0.105.1"
-    "@sinclair/typebox": "npm:0.33.6"
+    "@sinclair/typebox": "npm:0.33.7"
     concurrently: "npm:8.2.2"
     fets: "npm:0.8.2"
     graphql: "npm:16.9.0"
@@ -11505,10 +11505,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.33.6":
-  version: 0.33.6
-  resolution: "@sinclair/typebox@npm:0.33.6"
-  checksum: 10c0/4535392290402026e449cd225caad2fffe36d2f24769451e2ed4dcb8667c2d926016ff73eca984794bda8bb853e4c0c1b3e566576471e3dec7995457e2bab0c8
+"@sinclair/typebox@npm:0.33.7":
+  version: 0.33.7
+  resolution: "@sinclair/typebox@npm:0.33.7"
+  checksum: 10c0/e3b7a92f60a6d0cc0995106280d9753c829fd9b0711720543e7c4cf0b3386f26633e80de9f517af7d4c5744cfe7abd6fb80da2e2f03098b2c1ac2a3b1779d640
   languageName: node
   linkType: hard
 
@@ -31357,7 +31357,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.3.5, postcss@npm:^8.4.23, postcss@npm:^8.4.33, postcss@npm:^8.4.38, postcss@npm:^8.4.4, postcss@npm:^8.4.40":
+"postcss@npm:^8.3.5, postcss@npm:^8.4.23, postcss@npm:^8.4.33, postcss@npm:^8.4.38, postcss@npm:^8.4.4, postcss@npm:^8.4.41":
   version: 8.4.41
   resolution: "postcss@npm:8.4.41"
   dependencies:
@@ -37056,13 +37056,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.4.0":
-  version: 5.4.0
-  resolution: "vite@npm:5.4.0"
+"vite@npm:5.4.1":
+  version: 5.4.1
+  resolution: "vite@npm:5.4.1"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
-    postcss: "npm:^8.4.40"
+    postcss: "npm:^8.4.41"
     rollup: "npm:^4.13.0"
   peerDependencies:
     "@types/node": ^18.0.0 || >=20.0.0
@@ -37095,7 +37095,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/122de7795e1c3c08cd0acc7d77296f908398266b424492be7310400107f37a3cf4c9506f2b4b16619e57299ca2859b8ca187aac5e25f8e66d84f9204a1d72d18
+  checksum: 10c0/b9ea824f1a946aa494f756e6d9dd88869baa62ae5ba3071b32b6a20958fd622cb624c860bdd7daee201c83ca029feaf8bbe2d2a6e172a5d49308772f8899d86d
   languageName: node
   linkType: hard
 
