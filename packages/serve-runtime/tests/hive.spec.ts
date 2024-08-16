@@ -85,12 +85,19 @@ describe('Hive CDN', () => {
   });
   it('uses Hive CDN instead of introspection for Proxy mode', async () => {
     const upstreamSchema = createUpstreamSchema();
+    await using cdnServer = await createDisposableServer((_req, res) => {
+      res.end(
+        JSON.stringify({
+          sdl: printSchemaWithDirectives(upstreamSchema),
+        }),
+      );
+    });
     const upstreamServer = createYoga({
       schema: upstreamSchema,
       plugins: [useDisableIntrospection()],
     });
     let schemaChangeSpy = jest.fn((schema: GraphQLSchema) => {});
-    const hiveEndpoint = 'http://hive/upstream';
+    const hiveEndpoint = `http://localhost:${cdnServer.address().port}`;
     const hiveKey = 'key';
     await using serveRuntime = createServeRuntime({
       proxy: { endpoint: 'http://upstream/graphql' },
@@ -101,14 +108,6 @@ describe('Hive CDN', () => {
       },
       plugins: () => [
         useCustomFetch(function (url, opts) {
-          if (url === hiveEndpoint) {
-            if (opts.headers?.['X-Hive-CDN-Key'] !== hiveKey) {
-              return new serveRuntime.fetchAPI.Response('Unauthorized', {
-                status: 401,
-              });
-            }
-            return new serveRuntime.fetchAPI.Response(printSchemaWithDirectives(upstreamSchema));
-          }
           if (url === 'http://upstream/graphql') {
             return upstreamServer.fetch(url, opts);
           }
