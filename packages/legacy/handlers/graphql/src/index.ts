@@ -50,6 +50,7 @@ import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
 import {
   getDocumentNodeFromSchema,
   getOperationASTFromRequest,
+  inspect,
   isAsyncIterable,
   isDocumentNode,
   memoize1,
@@ -169,7 +170,7 @@ export default class GraphQLHandler implements MeshHandler {
         assumeValid: true,
       });
     }
-    throw new Error(`Invalid introspection data: ${util.inspect(sdlOrIntrospection)}`);
+    throw new Error(`Invalid introspection data: ${inspect(sdlOrIntrospection)}`);
   }
 
   async getNonExecutableSchemaForHTTPSource(
@@ -296,7 +297,7 @@ export default class GraphQLHandler implements MeshHandler {
         });
       } else {
         throw new Error(
-          `Provided file '${schemaConfig} exports an unknown type: ${util.inspect(
+          `Provided file '${schemaConfig} exports an unknown type: ${inspect(
             schemaOrStringOrDocumentNode,
           )}': expected GraphQLSchema, SDL or DocumentNode.`,
         );
@@ -494,14 +495,14 @@ export default class GraphQLHandler implements MeshHandler {
           throw schemaResult.reason;
         }
         throw new Error(
-          `Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(
+          `Failed to fetch introspection from ${this.config.endpoint}: ${inspect(
             schemaResult.reason,
           )}`,
         );
       }
       if (executorResult.status === 'rejected') {
         throw new Error(
-          `Failed to create executor for ${this.config.endpoint}: ${util.inspect(
+          `Failed to create executor for ${this.config.endpoint}: ${inspect(
             executorResult.reason,
           )}`,
         );
@@ -518,6 +519,6 @@ export default class GraphQLHandler implements MeshHandler {
       return this.getCodeFirstSource(this.config);
     }
 
-    throw new Error(`Unexpected config: ${util.inspect(this.config)}`);
+    throw new Error(`Unexpected config: ${inspect(this.config)}`);
   }
 }

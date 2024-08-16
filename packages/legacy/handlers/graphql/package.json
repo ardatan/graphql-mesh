@@ -36,16 +36,22 @@
     "@graphql-mesh/store": "^0.101.0",
     "@graphql-mesh/types": "^0.101.0",
     "@graphql-mesh/utils": "^0.101.0",
-    "@graphql-tools/utils": "^10.5.3",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.5",
     "@graphql-tools/delegate": "^10.0.19",
     "@graphql-tools/federation": "^2.2.8",
     "@graphql-tools/url-loader": "^8.0.0",
-    "lodash.get": "^4.4.2"
+    "@graphql-tools/utils": "^10.5.3",
+    "lodash.get": "^4.4.2",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@graphql-mesh/cross-helpers": "workspace:*",
+    "@graphql-mesh/store": "workspace:*",
+    "@graphql-mesh/types": "workspace:*",
+    "@graphql-mesh/utils": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

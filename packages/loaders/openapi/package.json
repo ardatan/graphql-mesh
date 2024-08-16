@@ -35,8 +35,7 @@
     "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/types": "^0.101.0",
     "@graphql-mesh/utils": "^0.101.0",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.5",
@@ -44,7 +43,8 @@
     "@omnigraph/json-schema": "^0.105.1",
     "change-case": "^4.1.2",
     "json-machete": "^0.97.4",
-    "openapi-types": "^12.1.0"
+    "openapi-types": "^12.1.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@graphql-tools/utils": "10.5.3",

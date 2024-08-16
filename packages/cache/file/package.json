@@ -35,11 +35,16 @@
     "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/types": "^0.101.0",
     "@graphql-mesh/utils": "^0.101.0",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
-    "dataloader": "2.2.2"
+    "dataloader": "2.2.2",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@graphql-mesh/cross-helpers": "workspace:*",
+    "@graphql-mesh/types": "workspace:*",
+    "@graphql-mesh/utils": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

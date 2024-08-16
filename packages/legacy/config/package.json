@@ -37,9 +37,7 @@
     "@graphql-mesh/store": "^0.101.0",
     "@graphql-mesh/types": "^0.101.0",
     "@graphql-mesh/utils": "^0.101.0",
-    "@graphql-tools/utils": "^10.5.3",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
     "@envelop/core": "^5.0.0",
@@ -49,11 +47,20 @@
     "@graphql-tools/code-file-loader": "^8.0.0",
     "@graphql-tools/graphql-file-loader": "^8.0.0",
     "@graphql-tools/load": "^8.0.0",
+    "@graphql-tools/utils": "^10.5.3",
     "@graphql-yoga/plugin-persisted-operations": "^3.0.0",
     "@whatwg-node/fetch": "^0.9.0",
     "camel-case": "^4.1.2",
     "param-case": "^3.0.4",
-    "pascal-case": "^3.1.2"
+    "pascal-case": "^3.1.2",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@graphql-mesh/cross-helpers": "workspace:*",
+    "@graphql-mesh/runtime": "workspace:*",
+    "@graphql-mesh/store": "workspace:*",
+    "@graphql-mesh/types": "workspace:*",
+    "@graphql-mesh/utils": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

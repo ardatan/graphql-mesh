@@ -36,8 +36,7 @@
     "@graphql-mesh/types": "^0.101.0",
     "@graphql-mesh/utils": "^0.101.0",
     "@graphql-tools/utils": "^10.5.3",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.5.5",
@@ -56,6 +55,7 @@
     "pascal-case": "3.1.2",
     "qs": "6.13.0",
     "to-json-schema": "0.2.5",
+    "tslib": "^2.4.0",
     "url-join": "4.0.1"
   },
   "devDependencies": {

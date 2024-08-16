@@ -1,6 +1,0 @@
-sources:
-  - name: PetStore
-    handler:
-      openapi:
-        endpoint: https://petstore.swagger.io/v2/
-        source: https://petstore.swagger.io/v2/swagger.json

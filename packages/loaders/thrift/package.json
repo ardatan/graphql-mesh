@@ -43,7 +43,8 @@
     "@graphql-mesh/utils": "^0.101.0",
     "@whatwg-node/fetch": "^0.9.18",
     "graphql-scalars": "^1.22.4",
-    "thrift": "^0.20.0"
+    "thrift": "^0.20.0",
+    "tslib": "^2.6.3"
   },
   "devDependencies": {
     "@graphql-tools/utils": "10.5.3"

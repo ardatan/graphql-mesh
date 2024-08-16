@@ -1,5 +1,4 @@
 import path from 'path-browserify';
-import { inspect } from '@graphql-tools/utils';
 
 export const fs = {
   promises: {},
@@ -48,5 +47,4 @@ export const util = {
       });
     };
   },
-  inspect,
 };

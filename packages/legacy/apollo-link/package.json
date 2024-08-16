@@ -34,12 +34,15 @@
   "peerDependencies": {
     "@apollo/client": "^3.5.9",
     "@graphql-mesh/runtime": "^0.102.0",
+    "graphql": "^15.2.0 || ^16.0.0"
+  },
+  "dependencies": {
     "@graphql-tools/utils": "^10.5.3",
-    "graphql": "^15.2.0 || ^16.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@apollo/client": "3.11.4"
+    "@apollo/client": "3.11.4",
+    "@graphql-mesh/runtime": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

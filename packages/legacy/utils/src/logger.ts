@@ -1,5 +1,6 @@
 import { process, util } from '@graphql-mesh/cross-helpers';
 import type { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
+import { inspect } from '@graphql-tools/utils';
 
 type MessageTransformer = (msg: string) => string;
 
@@ -64,7 +65,7 @@ export class DefaultLogger implements Logger {
         } else if (typeof arg === 'object' && arg?.stack != null) {
           return arg.stack;
         }
-        return util.inspect(arg);
+        return (util.inspect || inspect)(arg);
       })
       .join(' ');
   }

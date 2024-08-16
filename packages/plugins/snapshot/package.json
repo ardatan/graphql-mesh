@@ -35,13 +35,18 @@
     "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/types": "^0.101.0",
     "@graphql-mesh/utils": "^0.101.0",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.5.5",
     "@whatwg-node/fetch": "^0.9.0",
-    "minimatch": "10.0.1"
+    "minimatch": "10.0.1",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@graphql-mesh/cross-helpers": "workspace:*",
+    "@graphql-mesh/types": "workspace:*",
+    "@graphql-mesh/utils": "workspace:*"
   },
   "publishConfig": {
     "access": "public",
