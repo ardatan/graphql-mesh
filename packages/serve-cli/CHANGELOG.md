@@ -1,5 +1,26 @@
 # @graphql-mesh/serve-cli
 
+## 0.10.2
+
+### Patch Changes
+
+- [#7518](https://github.com/ardatan/graphql-mesh/pull/7518)
+  [`b0cdc83`](https://github.com/ardatan/graphql-mesh/commit/b0cdc839699a1dd90d125289b49b75f703cbb18e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-mesh/serve-runtime@^0.7.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/serve-runtime/v/0.7.1)
+    (from `^0.7.0`, in `dependencies`)
+
+- [#7518](https://github.com/ardatan/graphql-mesh/pull/7518)
+  [`b0cdc83`](https://github.com/ardatan/graphql-mesh/commit/b0cdc839699a1dd90d125289b49b75f703cbb18e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Config file options should override the CLI
+  defaults
+
+- Updated dependencies
+  [[`b0cdc83`](https://github.com/ardatan/graphql-mesh/commit/b0cdc839699a1dd90d125289b49b75f703cbb18e)]:
+  - @graphql-mesh/serve-runtime@0.7.2
+
 ## 0.10.1
 
 ### Patch Changes

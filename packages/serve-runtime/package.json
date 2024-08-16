@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/serve-runtime",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,10 +41,10 @@
     "@envelop/core": "^5.0.0",
     "@graphql-hive/apollo": "^0.35.0",
     "@graphql-mesh/cross-helpers": "^0.4.6",
-    "@graphql-mesh/fusion-runtime": "^0.7.1",
+    "@graphql-mesh/fusion-runtime": "^0.7.2",
     "@graphql-mesh/plugin-hive": "^0.101.0",
     "@graphql-mesh/transport-common": "^0.6.1",
-    "@graphql-mesh/transport-http": "^0.5.1",
+    "@graphql-mesh/transport-http": "^0.5.2",
     "@graphql-mesh/utils": "^0.101.0",
     "@graphql-tools/batch-delegate": "^9.0.3",
     "@graphql-tools/delegate": "^10.0.19",
