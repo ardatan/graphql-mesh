@@ -3,7 +3,7 @@
 You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null` One of: 
   * `Boolean`
   * `String`
-* `token` (type: `String`, required) - Access Token
+* `token` (type: `String`) - Access Token for Usage Reporting
 * `agent` (type: `Object`) - Agent Options: 
   * `name` (type: `String`)
   * `logger` (type: `Any`)
@@ -48,3 +48,12 @@ Used by token info to generate a link to the organization, project and target.
   * `usageEndpoint` (type: `String`) - Point to your own instance of GraphQL Hive Usage API
 
 Used by usage reporting.
+* `experimental__persistedDocuments` (type: `Object`) - Experimental persisted documents configuration
+[See more](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway): 
+  * `cdn` (type: `Object`, required) - Point to your own instance of GraphQL Hive API
+
+Used by schema reporting and token info.: 
+    * `endpoint` (type: `String`, required) - CDN endpoint
+    * `accessToken` (type: `String`, required) - Access Token for Persisted Documents CDN
+  * `allowArbitraryDocuments` (type: `Boolean`) - Whether arbitrary documents should be allowed along-side persisted documents. false by default
+  * `cache` (type: `Int`) - Maximum amount of operations that shall be kept in memory after being loaded from the CDN. 10 seconds by default

@@ -1874,13 +1874,14 @@ export interface HivePlugin {
    */
   enabled?: boolean | string;
   /**
-   * Access Token
+   * Access Token for Usage Reporting
    */
-  token: string;
+  token?: string;
   agent?: HiveAgentOptions;
   usage?: HiveUsageOptions;
   reporting?: HiveReportingOptions;
   selfHosting?: HiveSelfHostingOptions;
+  experimental__persistedDocuments?: HivePersistedDocumentsConfiguration;
 }
 /**
  * Agent Options
@@ -1997,6 +1998,36 @@ export interface HiveSelfHostingOptions {
    * Used by usage reporting.
    */
   usageEndpoint?: string;
+}
+/**
+ * Experimental persisted documents configuration
+ * [See more](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)
+ */
+export interface HivePersistedDocumentsConfiguration {
+  cdn: HivePersistedDocumentsConfigurationCDN;
+  /**
+   * Whether arbitrary documents should be allowed along-side persisted documents. false by default
+   */
+  allowArbitraryDocuments?: boolean;
+  /**
+   * Maximum amount of operations that shall be kept in memory after being loaded from the CDN. 10 seconds by default
+   */
+  cache?: number;
+}
+/**
+ * Point to your own instance of GraphQL Hive API
+ *
+ * Used by schema reporting and token info.
+ */
+export interface HivePersistedDocumentsConfigurationCDN {
+  /**
+   * CDN endpoint
+   */
+  endpoint: string;
+  /**
+   * Access Token for Persisted Documents CDN
+   */
+  accessToken: string;
 }
 export interface HTTPCachePlugin {
   /**
