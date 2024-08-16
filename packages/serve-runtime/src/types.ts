@@ -150,7 +150,8 @@ export interface MeshServeHiveCDNOptions {
   key: string;
 }
 
-export interface MeshServeHiveReportingOptions extends YamlConfig.HivePlugin {
+export interface MeshServeHiveReportingOptions
+  extends Omit<YamlConfig.HivePlugin, 'experimental__persistedDocuments'> {
   type: 'hive';
   /** GraphQL Hive registry access token. */
   token: string;
