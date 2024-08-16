@@ -182,13 +182,13 @@ let cli = new Command()
   .addOption(
     new Option(
       '--apollo-graph-ref <graphRef>',
-      'graph ref of the managed federation graph. (<YOUR_GRAPH_ID>@<VARIANT>)',
+      'Apollo graph ref of the managed federation graph (<YOUR_GRAPH_ID>@<VARIANT>)',
     ).env('APOLLO_GRAPH_REF'),
   )
   .addOption(
     new Option(
       '--apollo-key <apiKey>',
-      'API key to use to authenticate with the managed federation up link',
+      'Apollo API key to use to authenticate with the managed federation up link',
     ).env('APOLLO_KEY'),
   );
 
