@@ -47,11 +47,15 @@ export async function meshEndpoint(
   envContext: ImaginaryEnvironmentServerContext
 ) {
   // Serve Runtime provides a fetch function which has exactly the same signature with regular `fetch`
-  const res = await serveRuntime.fetch(envRequest.url, {
-    method: envRequest.method,
-    headers: envRequest.headers,
-    body: envRequest.body // Body can be a string or a ReadableStream or UInt8Array, see [BodyInit](https://developer.mozilla.org/en-US/docs/Web/API/BodyInit)
-  }, envContext)
+  const res = await serveRuntime.fetch(
+    envRequest.url,
+    {
+      method: envRequest.method,
+      headers: envRequest.headers,
+      body: envRequest.body // Body can be a string or a ReadableStream or UInt8Array, see [BodyInit](https://developer.mozilla.org/en-US/docs/Web/API/BodyInit)
+    },
+    envContext
+  )
   // You can create an object from [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) object
   const headersObj: Record<string, string> = {}
   res.headers.forEach((value, key) => {
