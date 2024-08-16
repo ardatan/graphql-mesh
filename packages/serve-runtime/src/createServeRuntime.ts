@@ -10,7 +10,7 @@ import {
   type YogaServerInstance,
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
-import { createSupergraphSDLFetcher } from '@graphql-hive/core';
+import { createSchemaFetcher, createSupergraphSDLFetcher } from '@graphql-hive/core';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
   OnSubgraphExecuteHook,
@@ -167,27 +167,24 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     if (config.schema && typeof config.schema === 'object' && 'type' in config.schema) {
       // hive cdn
       const { endpoint, key } = config.schema;
+      const fetcher = createSchemaFetcher({
+        endpoint,
+        key,
+        logger: configContext.logger.child('Hive CDN'),
+      });
       schemaFetcher = function fetchSchemaFromCDN() {
         pausePolling();
-        initialFetch$ = mapMaybePromise(
-          configContext.fetch(endpoint, {
-            headers: {
-              'X-Hive-CDN-Key': key,
-            },
-          }),
-          res =>
-            mapMaybePromise(res.text(), sdl => {
-              if (lastFetchedSdl == null || lastFetchedSdl !== sdl) {
-                unifiedGraph = buildSchema(sdl, {
-                  assumeValid: true,
-                  assumeValidSDL: true,
-                });
-                setSchema(unifiedGraph);
-              }
-              continuePolling();
-              return true;
-            }),
-        );
+        initialFetch$ = mapMaybePromise(fetcher(), ({ sdl }) => {
+          if (lastFetchedSdl == null || lastFetchedSdl !== sdl) {
+            unifiedGraph = buildSchema(sdl, {
+              assumeValid: true,
+              assumeValidSDL: true,
+            });
+            setSchema(unifiedGraph);
+          }
+          continuePolling();
+          return true;
+        });
         return initialFetch$;
       };
     } else if (config.schema) {
@@ -431,9 +428,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           logger: configContext.logger.child('Hive CDN'),
         });
         unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
-      } else {
+      } else if (config.supergraph.type === 'graphos') {
         const opts = config.supergraph;
-        supergraphLoadedPlace = 'GraphOS Managed Federation <br>' + opts.upLink || '';
+        supergraphLoadedPlace = 'GraphOS Managed Federation <br>' + opts.graphRef || '';
         let lastSeenId: string;
         let lastSupergraphSdl: string;
         let minDelayMS = config.pollingInterval || 0;
@@ -482,6 +479,8 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
               return lastSupergraphSdl;
             },
           );
+      } else {
+        configContext.logger.error(`Unknown supergraph configuration: `, config.supergraph);
       }
     } else {
       // local or remote
@@ -571,13 +570,18 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           htmlParts.push(`</tr>`);
         }
         htmlParts.push(`</table>`);
-      } else {
+      } else if (loadError) {
         htmlParts.push(`<h3>Status: Failed ❌</h3>`);
         if (supergraphLoadedPlace) {
           htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
         }
         htmlParts.push(`<h3>Error:</h3>`);
         htmlParts.push(`<pre>${loadError.stack}</pre>`);
+      } else {
+        htmlParts.push(`<h3>Status: Unknown</h3>`);
+        if (supergraphLoadedPlace) {
+          htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        }
       }
       return `<section class="supergraph-information">${htmlParts.join('')}</section>`;
     };
