@@ -9,7 +9,7 @@
     "@graphql-mesh/cache-cfw-kv": "^0.101.0",
     "@graphql-mesh/plugin-rate-limit": "^0.101.0",
     "@graphql-mesh/plugin-response-cache": "^0.101.0",
-    "@graphql-mesh/serve-runtime": "^0.7.1",
+    "@graphql-mesh/serve-runtime": "^0.7.2",
     "graphql": "16.9.0"
   },
   "devDependencies": {

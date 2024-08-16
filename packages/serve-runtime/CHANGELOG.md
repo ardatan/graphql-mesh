@@ -1,5 +1,27 @@
 # @graphql-mesh/serve-runtime
 
+## 0.7.2
+
+### Patch Changes
+
+- [#7518](https://github.com/ardatan/graphql-mesh/pull/7518)
+  [`b0cdc83`](https://github.com/ardatan/graphql-mesh/commit/b0cdc839699a1dd90d125289b49b75f703cbb18e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/fusion-runtime@^0.7.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-runtime/v/0.7.1)
+    (from `^0.7.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^0.6.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/0.6.1)
+    (from `^0.6.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/transport-http@^0.5.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-http/v/0.5.1)
+    (from `^0.5.0`, in `dependencies`)
+- Updated dependencies
+  [[`b0cdc83`](https://github.com/ardatan/graphql-mesh/commit/b0cdc839699a1dd90d125289b49b75f703cbb18e),
+  [`b0cdc83`](https://github.com/ardatan/graphql-mesh/commit/b0cdc839699a1dd90d125289b49b75f703cbb18e)]:
+  - @graphql-mesh/fusion-runtime@0.7.2
+  - @graphql-mesh/transport-http@0.5.2
+
 ## 0.7.1
 
 ### Patch Changes

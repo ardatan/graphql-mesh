@@ -1,5 +1,13 @@
 # @graphql-mesh/config
 
+## 0.103.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`edf3983`](https://github.com/ardatan/graphql-mesh/commit/edf3983cd63f63c03a830fdc674e0665ded8d22b)]:
+  - @graphql-mesh/merger-bare@0.101.1
+
 ## 0.103.0
 
 ### Patch Changes
