@@ -37,6 +37,18 @@ export const addCommand: AddCommand = (ctx, cli) =>
         'Hive CDN API key for fetching the supergraph. implies that the "schemaPathOrUrl" argument is a url',
       ).env('HIVE_CDN_KEY'),
     )
+    .addOption(
+      new Option(
+        '--hive-cdn-key <key>',
+        'Hive CDN API key for fetching the supergraph. implies that the "schemaPathOrUrl" argument is a url',
+      ).env('HIVE_CDN_KEY'),
+    )
+    .addOption(
+      new Option(
+        '--apollo-uplink <uplink>',
+        'The URL of the managed federation up link. When retrying after a failure, you should cycle through the default up links using this option.',
+      ).env('APOLLO_SCHEMA_CONFIG_DELIVERY_ENDPOINT'),
+    )
     .action(async function supergraph(schemaPathOrUrl) {
       const {
         hiveCdnKey,
@@ -46,6 +58,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         nativeImport,
         apolloGraphRef,
         apolloKey,
+        apolloUplink,
         ...opts
       } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
@@ -62,12 +75,12 @@ export const addCommand: AddCommand = (ctx, cli) =>
       if (schemaPathOrUrl) {
         if (hiveCdnKey) {
           supergraph = { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey };
-        } else if (apolloGraphRef) {
+        } else if (apolloKey) {
           supergraph = {
             type: 'graphos',
             apiKey: apolloKey,
-            graphRef: apolloGraphRef,
-            upLink: schemaPathOrUrl,
+            graphRef: apolloGraphRef || schemaPathOrUrl,
+            upLink: apolloUplink,
           };
         } else {
           supergraph = schemaPathOrUrl;
