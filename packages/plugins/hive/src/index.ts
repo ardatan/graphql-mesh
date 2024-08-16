@@ -111,7 +111,7 @@ export default function useMeshHive<TContext>(
       persistedDocuments && !token
         ? false // disable usage reporting if just persisted documents are configured
         : true,
-    debug: !!process.env.DEBUG,
+    debug: ['1', 't', 'true', 'y', 'yes'].includes(process.env.DEBUG),
     token,
     agent,
     usage,
