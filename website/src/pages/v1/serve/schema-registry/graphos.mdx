@@ -1,4 +1,4 @@
-# Integration with Apollo GraphOS
+# Apollo GraphOS Integration
 
 import { Callout } from '@theguild/components'
 
@@ -6,7 +6,7 @@ Apollo GraphOS is a schema registry that allows you to store and manage your sup
 can use GraphQL Mesh to serve your supergraph schemas stored in Apollo GraphOS, or send usage data
 to Apollo GraphOS.
 
-## How to use?
+## Serve Supergraph from GraphQL Hive
 
 By default, Mesh will use standard Apollo GraphOS environment variables `APOLLO_GRAPH_REF` and
 `APOLLO_KEY`.
@@ -26,8 +26,10 @@ npx mesh-serve supergraph --apollo-graph-ref <graph_id>[@<variant>] --apollo-key
   documentation](https://www.apollographql.com/docs/federation/managed-federation/setup/#4-connect-your-router-to-graphos).
 </Callout>
 
-You can also provide this configuration programaitically by providing a configuration object, along
-with other options to customize the polling/retry behavior.
+### Configuration
+
+You can also provide this configuration programatically by providing a configuration object, along
+with other options to customize the polling behavior.
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
@@ -72,9 +74,12 @@ export const serveConfig = defineConfig({
 
 ## Usage Reporting and Monitoring
 
-If you want to use GraphOS to report usage metrics, you can still provide the CLI arguments as in
-above. Or you can use a configuration file, which allows further customization for the
-configuration:
+If you want to use GraphOS to report usage metrics, you can still provide the CLI arguments or
+default environment variables as supergraph fetching.
+
+### Configuration
+
+Also you can provide additional configuration options to customize the usage reporting behavior.
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
