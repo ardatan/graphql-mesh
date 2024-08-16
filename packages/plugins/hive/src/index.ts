@@ -107,7 +107,10 @@ export default function useMeshHive<TContext>(
     };
   }
   const hiveClient = createHive({
-    enabled: true,
+    enabled:
+      persistedDocuments && !token
+        ? false // disable usage reporting if just persisted documents are configured
+        : true,
     debug: !!process.env.DEBUG,
     token,
     agent,
