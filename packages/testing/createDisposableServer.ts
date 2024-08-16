@@ -13,7 +13,10 @@ export async function createDisposableServer(
 ) {
   const server = createServer(requestListener);
   const port = opts?.port || 0;
-  await new Promise<void>(resolve => server.listen(port, () => resolve()));
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', err => reject(err));
+    server.listen(port, () => resolve());
+  });
   const sockets = new Set<Socket>();
   server.on('connection', socket => {
     sockets.add(socket);

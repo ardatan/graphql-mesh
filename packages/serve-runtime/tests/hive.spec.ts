@@ -53,6 +53,7 @@ describe('Hive CDN', () => {
         endpoint: `http://localhost:${cdnServer.address().port}`,
         key: 'key',
       },
+      logging: !!process.env.DEBUG,
     });
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
@@ -119,6 +120,7 @@ describe('Hive CDN', () => {
           },
         },
       ],
+      logging: !!process.env.DEBUG,
     });
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
