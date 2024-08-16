@@ -30,8 +30,16 @@ export const addCommand: AddCommand = (ctx, cli) =>
       ).env('HIVE_CDN_KEY'),
     )
     .action(async function proxy(endpoint) {
-      const { hiveCdnKey, hiveRegistryToken, maskedErrors, polling, nativeImport, ...opts } =
-        this.optsWithGlobals<CLIGlobals>();
+      const {
+        hiveCdnKey,
+        hiveRegistryToken,
+        maskedErrors,
+        polling,
+        nativeImport,
+        hivePersistedDocumentsEndpoint,
+        hivePersistedDocumentsToken,
+        ...opts
+      } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
         log: ctx.log,
         configPath: opts.configPath,
@@ -87,6 +95,16 @@ export const addCommand: AddCommand = (ctx, cli) =>
             }
           : {}),
         ...(polling ? { pollingInterval: polling } : {}),
+        ...(hivePersistedDocumentsEndpoint
+          ? {
+              persistedDocuments: {
+                type: 'hive',
+                endpoint:
+                  hivePersistedDocumentsEndpoint || loadedConfig.persistedDocuments?.endpoint,
+                token: hivePersistedDocumentsToken || loadedConfig.persistedDocuments?.token,
+              },
+            }
+          : {}),
         proxy,
         schema,
         logging: loadedConfig.logging ?? ctx.log,

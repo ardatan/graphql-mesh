@@ -53,6 +53,8 @@ export const addCommand: AddCommand = (ctx, cli) =>
         apolloGraphRef,
         apolloKey,
         apolloUplink,
+        hivePersistedDocumentsEndpoint,
+        hivePersistedDocumentsToken,
         ...opts
       } = this.optsWithGlobals<CLIGlobals>();
       const loadedConfig = await loadConfig({
@@ -111,6 +113,16 @@ export const addCommand: AddCommand = (ctx, cli) =>
         ...opts,
         ...registryConfig,
         ...(polling ? { pollingInterval: polling } : {}),
+        ...(hivePersistedDocumentsEndpoint
+          ? {
+              persistedDocuments: {
+                type: 'hive',
+                endpoint:
+                  hivePersistedDocumentsEndpoint || loadedConfig.persistedDocuments?.endpoint,
+                token: hivePersistedDocumentsToken || loadedConfig.persistedDocuments?.token,
+              },
+            }
+          : {}),
         supergraph,
         logging: loadedConfig.logging ?? ctx.log,
       };

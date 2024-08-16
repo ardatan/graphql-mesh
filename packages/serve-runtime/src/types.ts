@@ -211,9 +211,28 @@ export interface MeshServeGraphOSReportingOptions extends MeshServeGraphOSOption
   endpoint?: string;
 }
 
+/**
+ * Use Hive's CDN for persisted documents.
+ *
+ * [See more.](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)
+ * */
+export interface MeshServeHivePersistedDocumentsOptions {
+  type: 'hive';
+  /**
+   * GraphQL Hive persisted documents CDN endpoint URL.
+   */
+  endpoint: string;
+  /**
+   * GraphQL Hive persisted documents CDN access token.
+   */
+  token: string;
+}
+
 interface MeshServeConfigBase<TContext extends Record<string, any>> {
   /** Usage reporting options. */
   reporting?: MeshServeHiveReportingOptions | MeshServeGraphOSReportingOptions;
+  /** Persisted documents options. */
+  persistedDocuments?: MeshServeHivePersistedDocumentsOptions;
   /**
    * A map, or factory function, of transport kinds to their implementations.
    *
