@@ -1,4 +1,3 @@
-import type { OnRequestEventPayload } from 'graphql-yoga/typings/plugins/types';
 import {
   type OnExecuteEventPayload,
   type OnParseEventPayload,
@@ -8,7 +7,7 @@ import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
 import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import type { OnFetchHookPayload } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { isAsyncIterable, type ExecutionRequest } from '@graphql-tools/utils';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import {
   context,
   diag,
@@ -24,6 +23,7 @@ import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks';
 import { Resource } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { type SpanProcessor } from '@opentelemetry/sdk-trace-node';
+import type { OnRequestEventPayload } from '@whatwg-node/server';
 import { SEMRESATTRS_SERVICE_NAME } from './attributes.js';
 import {
   completeHttpSpan,

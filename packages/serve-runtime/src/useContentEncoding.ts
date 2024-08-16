@@ -21,10 +21,7 @@ export function useContentEncoding<TContext>({
       fetchAPI = yoga.fetchAPI;
     },
     onPluginInit({ addPlugin }) {
-      addPlugin(
-        // @ts-expect-error - Typings are wrong
-        useOrigContentEncoding(),
-      );
+      addPlugin(useOrigContentEncoding());
     },
     onSubgraphExecute({ subgraphName, executionRequest }) {
       if (subgraphs.includes(subgraphName)) {
