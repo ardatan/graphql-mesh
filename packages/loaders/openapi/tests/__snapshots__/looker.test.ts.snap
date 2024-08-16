@@ -783,7 +783,7 @@ type Query {
   ### Get the current status and content of custom welcome emails
   
   """
-  custom_welcome_email: CustomWelcomeEmail @deprecated(reason: "deprecated") @httpOperation(subgraph: "test", path: "/custom_welcome_email", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  custom_welcome_email: CustomWelcomeEmail @httpOperation(subgraph: "test", path: "/custom_welcome_email", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @deprecated(reason: "deprecated")
   """
   ### Get information about all active dashboards.
   
@@ -3633,7 +3633,7 @@ type Query {
     resource_id: String!
     """Whether or not to refresh the rendered image with the latest content"""
     reload: String
-  ): String @deprecated(reason: "deprecated") @httpOperation(subgraph: "test", path: "/vector_thumbnail/{args.type}/{args.resource_id}", operationSpecificHeaders: [["accept", "image/svg+xml"]], httpMethod: GET, queryParamArgMap: "{\\"reload\\":\\"reload\\"}")
+  ): String @httpOperation(subgraph: "test", path: "/vector_thumbnail/{args.type}/{args.resource_id}", operationSpecificHeaders: [["accept", "image/svg+xml"]], httpMethod: GET, queryParamArgMap: "{\\"reload\\":\\"reload\\"}") @deprecated(reason: "deprecated")
   """
   ### Get information about all API versions supported by this Looker instance.
   
@@ -3664,7 +3664,7 @@ type Query {
   whitelabel_configuration(
     """Requested fields."""
     fields: String
-  ): WhitelabelConfiguration @deprecated(reason: "deprecated") @httpOperation(subgraph: "test", path: "/whitelabel_configuration", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): WhitelabelConfiguration @httpOperation(subgraph: "test", path: "/whitelabel_configuration", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}") @deprecated(reason: "deprecated")
   """
   ### Get All Workspaces
   
@@ -9105,7 +9105,7 @@ type Mutation {
     """
     send_test_welcome_email: Boolean
     input: CustomWelcomeEmail_Input
-  ): CustomWelcomeEmail @deprecated(reason: "deprecated") @httpOperation(subgraph: "test", path: "/custom_welcome_email", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: PATCH, queryParamArgMap: "{\\"send_test_welcome_email\\":\\"send_test_welcome_email\\"}")
+  ): CustomWelcomeEmail @httpOperation(subgraph: "test", path: "/custom_welcome_email", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: PATCH, queryParamArgMap: "{\\"send_test_welcome_email\\":\\"send_test_welcome_email\\"}") @deprecated(reason: "deprecated")
   """
   Requests to this endpoint will send a welcome email with the custom content provided in the body to the currently logged in user.
   
@@ -11577,7 +11577,7 @@ type Mutation {
   ### Update the whitelabel configuration
   
   """
-  update_whitelabel_configuration(input: WhitelabelConfiguration_Input): WhitelabelConfiguration @deprecated(reason: "deprecated") @httpOperation(subgraph: "test", path: "/whitelabel_configuration", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: PUT)
+  update_whitelabel_configuration(input: WhitelabelConfiguration_Input): WhitelabelConfiguration @httpOperation(subgraph: "test", path: "/whitelabel_configuration", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: PUT) @deprecated(reason: "deprecated")
 }
 
 input CreateQueryTask_Input {
