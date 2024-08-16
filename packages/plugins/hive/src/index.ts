@@ -5,12 +5,12 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { Logger, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { makeAsyncDisposable } from '@graphql-mesh/utils';
 
-export default function useMeshHive(
+export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
     logger?: Logger;
     pubsub?: MeshPubSub;
   },
-): MeshPlugin<{}> {
+): MeshPlugin<TContext> {
   const enabled =
     pluginOptions != null && 'enabled' in pluginOptions
       ? typeof pluginOptions.enabled === 'string'
@@ -126,7 +126,7 @@ export default function useMeshHive(
     onTerminate().finally(() => pluginOptions.pubsub.unsubscribe(id)),
   );
 
-  return makeAsyncDisposable<MeshPlugin<{}>>(
+  return makeAsyncDisposable<MeshPlugin<TContext>>(
     // @ts-expect-error - Typings are wrong
     useHive(hiveClient),
     onTerminate,

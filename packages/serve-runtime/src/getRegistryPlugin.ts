@@ -5,14 +5,19 @@ import type { MeshServeConfig, MeshServeConfigContext, MeshServePlugin } from '.
 export function getRegistryPlugin<TContext>(
   config: MeshServeConfig<TContext>,
   configContext: MeshServeConfigContext,
-): MeshServePlugin<TContext> {
+): {
+  name?: string;
+  plugin: MeshServePlugin<TContext>;
+} {
   if (config.reporting?.type === 'hive') {
-    // @ts-expect-error - Typing issue with useMeshHive
-    return useMeshHive({
-      ...configContext,
-      logger: configContext.logger.child('Hive'),
-      ...config.reporting,
-    });
+    return {
+      name: 'Hive',
+      plugin: useMeshHive({
+        ...configContext,
+        logger: configContext.logger.child('Hive'),
+        ...config.reporting,
+      }),
+    };
   } else if (
     config.reporting?.type === 'graphos' ||
     (!config.reporting &&
@@ -30,8 +35,13 @@ export function getRegistryPlugin<TContext>(
       config.reporting.apiKey ||= config.supergraph.apiKey;
       config.reporting.graphRef ||= config.supergraph.graphRef;
     }
-    // @ts-expect-error - Typing issue with useMeshHive
-    return useApolloUsageReport(config.reporting);
+    return {
+      name: 'GraphOS',
+      // @ts-expect-error - TODO: Fix types
+      plugin: useApolloUsageReport(config.reporting),
+    };
   }
-  return {};
+  return {
+    plugin: {},
+  };
 }
