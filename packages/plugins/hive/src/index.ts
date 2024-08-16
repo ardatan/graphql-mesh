@@ -108,6 +108,7 @@ export default function useMeshHive<TContext>(
   }
   const hiveClient = createHive({
     enabled:
+      // eslint-disable-next-line no-unneeded-ternary -- for brevity
       persistedDocuments && !token
         ? false // disable usage reporting if just persisted documents are configured
         : true,
