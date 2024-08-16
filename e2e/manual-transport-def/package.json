@@ -8,7 +8,7 @@
     "@graphql-mesh/transport-http": "workspace:*",
     "@graphql-mesh/transport-rest": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
-    "fets": "0.8.2",
+    "fets": "0.8.3",
     "graphql": "16.9.0"
   }
 }
