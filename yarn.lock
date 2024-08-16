@@ -11325,7 +11325,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.33.7":
+"@sinclair/typebox@npm:0.33.7, @sinclair/typebox@npm:^0.33.0":
   version: 0.33.7
   resolution: "@sinclair/typebox@npm:0.33.7"
   checksum: 10c0/e3b7a92f60a6d0cc0995106280d9753c829fd9b0711720543e7c4cf0b3386f26633e80de9f517af7d4c5744cfe7abd6fb80da2e2f03098b2c1ac2a3b1779d640
@@ -11343,13 +11343,6 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
-  languageName: node
-  linkType: hard
-
-"@sinclair/typebox@npm:^0.33.0":
-  version: 0.33.5
-  resolution: "@sinclair/typebox@npm:0.33.5"
-  checksum: 10c0/f774258c17f261357252245971891a990508faa17f72fb3fbd3c1f22817d8949c0be09347502617dc8e47b70b17555bf3259185227869a7c84b675c91962a757
   languageName: node
   linkType: hard
 
@@ -14106,7 +14099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/node-fetch@npm:^0.5.22":
+"@whatwg-node/node-fetch@npm:^0.5.22, @whatwg-node/node-fetch@npm:^0.5.7":
   version: 0.5.22
   resolution: "@whatwg-node/node-fetch@npm:0.5.22"
   dependencies:
@@ -14115,18 +14108,6 @@ __metadata:
     fast-querystring: "npm:^1.1.1"
     tslib: "npm:^2.6.3"
   checksum: 10c0/690365ebbfff726fc2f06ebe5410b5113d1f1a8360a5d6b34f1213f48e8eb3a5d39564e956e2cf787a71f2f9e7f30b40fb6ad3fc2ceae175e1de458e6b3eafc4
-  languageName: node
-  linkType: hard
-
-"@whatwg-node/node-fetch@npm:^0.5.7":
-  version: 0.5.21
-  resolution: "@whatwg-node/node-fetch@npm:0.5.21"
-  dependencies:
-    "@kamilkisiela/fast-url-parser": "npm:^1.1.4"
-    busboy: "npm:^1.6.0"
-    fast-querystring: "npm:^1.1.1"
-    tslib: "npm:^2.6.3"
-  checksum: 10c0/2ec53e82d271ffd3fa43641ffb1a8cb215d5cf5b04368242e35c74bb49a7a57acedbfa08fbfcb7672e2743e477b408e9fa85e5c7a7c6331c21ab47ca1d48d53a
   languageName: node
   linkType: hard
 
