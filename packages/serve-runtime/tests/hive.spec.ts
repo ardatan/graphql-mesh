@@ -95,6 +95,7 @@ describe('Hive CDN', () => {
     });
     const upstreamServer = createYoga({
       schema: upstreamSchema,
+      // Make sure introspection is not fetched from the service itself
       plugins: [useDisableIntrospection()],
     });
     let schemaChangeSpy = jest.fn((schema: GraphQLSchema) => {});
