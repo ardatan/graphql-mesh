@@ -1,5 +1,13 @@
 # example-apollo-federation-compatibility
 
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)]:
+  - @graphql-mesh/serve-cli@0.10.3
+
 ## 0.2.2
 
 ### Patch Changes

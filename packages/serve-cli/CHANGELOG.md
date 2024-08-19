@@ -1,5 +1,18 @@
 # @graphql-mesh/serve-cli
 
+## 0.10.3
+
+### Patch Changes
+
+- [#7524](https://github.com/ardatan/graphql-mesh/pull/7524)
+  [`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)
+  Thanks [@ardatan](https://github.com/ardatan)! - GraphOS Integration
+
+- Updated dependencies
+  [[`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af),
+  [`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)]:
+  - @graphql-mesh/serve-runtime@0.7.3
+
 ## 0.10.2
 
 ### Patch Changes

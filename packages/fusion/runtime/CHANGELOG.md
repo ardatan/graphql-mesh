@@ -1,5 +1,16 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.7.3
+
+### Patch Changes
+
+- [#7524](https://github.com/ardatan/graphql-mesh/pull/7524)
+  [`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`graphql-yoga@^5.7.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.7.0) (from `^5.6.0`,
+    in `dependencies`)
+
 ## 0.7.2
 
 ### Patch Changes
