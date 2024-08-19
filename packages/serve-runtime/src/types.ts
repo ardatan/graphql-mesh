@@ -227,6 +227,12 @@ export interface MeshServeHivePersistedDocumentsOptions {
    * GraphQL Hive persisted documents CDN access token.
    */
   token: string;
+  /**
+   * Whether arbitrary documents should be allowed along-side persisted documents.
+   *
+   * @default false
+   */
+  allowArbitraryDocuments?: boolean;
 }
 
 interface MeshServeConfigBase<TContext extends Record<string, any>> {

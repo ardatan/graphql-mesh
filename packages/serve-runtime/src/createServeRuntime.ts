@@ -24,6 +24,7 @@ import {
   restoreExtraDirectives,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
+import useMeshHive from '@graphql-mesh/plugin-hive';
 import type { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
@@ -70,7 +71,6 @@ import type {
   UnifiedGraphConfig,
 } from './types.js';
 import { checkIfDataSatisfiesSelectionSet } from './utils.js';
-import useMeshHive from '@graphql-mesh/plugin-hive';
 
 export type MeshServeRuntime<TContext extends Record<string, any> = Record<string, any>> =
   YogaServerInstance<unknown, TContext> & {
@@ -129,6 +129,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           endpoint: config.persistedDocuments.endpoint,
           accessToken: config.persistedDocuments.token,
         },
+        allowArbitraryDocuments: config.persistedDocuments.allowArbitraryDocuments,
       },
     });
   }
