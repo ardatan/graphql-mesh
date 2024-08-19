@@ -1,5 +1,34 @@
 # @graphql-mesh/serve-runtime
 
+## 0.7.3
+
+### Patch Changes
+
+- [#7524](https://github.com/ardatan/graphql-mesh/pull/7524)
+  [`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`graphql-yoga@^5.7.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.7.0) (from `^5.6.0`,
+    in `dependencies`)
+  - Added dependency
+    [`@graphql-hive/core@^0.7.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.7.1) (to
+    `dependencies`)
+  - Added dependency
+    [`@graphql-yoga/plugin-apollo-usage-report@^0.1.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-apollo-usage-report/v/0.1.0)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-hive/apollo@^0.35.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/apollo/v/0.35.0)
+    (from `dependencies`)
+
+- [#7524](https://github.com/ardatan/graphql-mesh/pull/7524)
+  [`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)
+  Thanks [@ardatan](https://github.com/ardatan)! - GraphOS Integration
+
+- Updated dependencies
+  [[`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)]:
+  - @graphql-mesh/fusion-runtime@0.7.3
+
 ## 0.7.2
 
 ### Patch Changes

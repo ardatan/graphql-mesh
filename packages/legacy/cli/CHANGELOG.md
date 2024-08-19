@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.94.3
+
+### Patch Changes
+
+- [#7523](https://github.com/ardatan/graphql-mesh/pull/7523)
+  [`0d92bec`](https://github.com/ardatan/graphql-mesh/commit/0d92becd42cbd0f9b83e323e3f5e6c02c9925854)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - No default importFn for findAndParseConfig,
+  making the processor use utils importFn
+
+- Updated dependencies
+  [[`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)]:
+  - @graphql-mesh/http@0.102.1
+
 ## 0.94.2
 
 ### Patch Changes
