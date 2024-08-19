@@ -1213,6 +1213,70 @@ type Languages_Response {
   metadata: Metadata
 }
 
+type LightningObs {
+  """Cardinal direction of lightning relative to point"""
+  bearing_cardinal: String
+
+  """Direction of lightning relative to point in degrees"""
+  bearing_degrees: Int
+
+  """Distance of lightning from point in kilometers"""
+  distance_km: Float
+
+  """Distance of lightning from point in miles"""
+  distance_mi: Float
+
+  """Internal identifier of lightning"""
+  id: Int
+
+  """Latitude of lightning"""
+  lat: Float
+
+  """Longitude of lightning"""
+  lon: Float
+
+  """Amount of time passed since lightning lightning (in minutes)."""
+  past_mins: Float
+
+  """Source of lightning data"""
+  source: String
+
+  """Timestamp of lightning at local timezone (YYYY-MM-DDTHH:MM:SS)"""
+  timestamp_local: String
+
+  """Timestamp of lightning at UTC timezone (YYYY-MM-DDTHH:MM:SS)"""
+  timestamp_utc: String
+
+  """Type of lightning data"""
+  type: String
+}
+
+type LightningObsGroup {
+  """Count of found lightning"""
+  count: Int
+
+  """Latitude of point."""
+  lat: Float
+  lightning: [LightningObs]
+
+  """
+  Maximum number of lightning that can be returned. Either user, or system provided.
+  """
+  limit: Int
+
+  """Longitude of point."""
+  lon: Float
+
+  """Distance searched for lightning (radially) in KM."""
+  search_distance_km: Int
+
+  """Time backwards from current time searched for lightning."""
+  search_mins: Int
+
+  """Ascending sort key of data (time or distance)."""
+  sort: String
+}
+
 """A HATEAOS link"""
 type Link {
   href: String
@@ -1502,6 +1566,32 @@ type Query {
     """Postal Code. Example: 28546"""
     postal_code: String
   ): AQCurrentGroup
+
+  """
+  Returns nearest and most recent lightning observations - Given a lat/lon.
+  """
+  current_lightning(
+    """Your registered API key."""
+    key: String
+
+    """Latitude component of location."""
+    lat: Float
+
+    """Limit result lightning. (Default 20)"""
+    limit: Int
+
+    """Longitude component of location."""
+    lon: Float
+
+    """Radial search distance from point in KM. (Default 50 - Max 150)"""
+    search_dist_km: Int
+
+    """
+    Search time backwards from current time in minutes. (Default 30 - Max 240)
+    """
+    search_mins: Int
+    sort: queryInput_current_lightning_sort
+  ): LightningObsGroup
 
   "Find administrative divisions, filtering by optional criteria. If no criteria are set, you will get back all\\nknown divisions.\\n"
   findAdminDivisionsUsingGET(
@@ -2877,6 +2967,14 @@ enum queryInput_current_lang {
   uk
   zh
   zh_tw
+}
+
+"""
+Sort results by either most recent occurrence, or least distance from point. (Default distance)
+"""
+enum queryInput_current_lightning_sort {
+  distance
+  time
 }
 
 """
