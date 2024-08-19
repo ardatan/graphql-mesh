@@ -703,6 +703,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       unifiedGraphPlugin,
       readinessCheckPlugin,
       registryPlugin,
+      persistedDocumentsPlugin,
       useChangingSchema(getSchema, _setSchema => {
         setSchema = _setSchema;
       }),
