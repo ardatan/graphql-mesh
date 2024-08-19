@@ -1,5 +1,5 @@
 import { requestIdByRequest } from '@graphql-mesh/utils';
-import type { MeshServePlugin } from './types';
+import type { MeshServePlugin } from '../types';
 
 export function useRequestId<TContext>(): MeshServePlugin<TContext> {
   return {

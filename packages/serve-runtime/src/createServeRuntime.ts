@@ -1,5 +1,3 @@
-// eslint-disable-next-line import/no-nodejs-modules
-import type { IncomingMessage } from 'node:http';
 import type { ExecutionArgs, GraphQLSchema } from 'graphql';
 import { buildSchema, isSchema, parse } from 'graphql';
 import {
@@ -12,7 +10,7 @@ import {
   type YogaServerInstance,
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
-import { createSupergraphSDLFetcher } from '@graphql-hive/apollo';
+import { createSchemaFetcher, createSupergraphSDLFetcher } from '@graphql-hive/core';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
   OnSubgraphExecuteHook,
@@ -26,9 +24,7 @@ import {
   restoreExtraDirectives,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
-import useMeshHive from '@graphql-mesh/plugin-hive';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import type { Logger, MeshPlugin, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
+import type { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
   getHeadersObj,
@@ -41,6 +37,7 @@ import {
 } from '@graphql-mesh/utils';
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { delegateToSchema, type SubschemaConfig } from '@graphql-tools/delegate';
+import { fetchSupergraphSdlFromManagedFederation } from '@graphql-tools/federation';
 import {
   getDirectiveExtensions,
   isDocumentNode,
@@ -55,8 +52,15 @@ import {
 import { schemaFromExecutor, wrapSchema } from '@graphql-tools/wrap';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
+import { getRegistryPlugin } from './getRegistryPlugin.js';
 import { getUnifiedGraphSDL, handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
+import { useChangingSchema } from './plugins/useChangingSchema.js';
+import { useCompleteSubscriptionsOnDispose } from './plugins/useCompleteSubscriptionsOnDispose.js';
+import { useCompleteSubscriptionsOnSchemaChange } from './plugins/useCompleteSubscriptionsOnSchemaChange.js';
+import { useFetchDebug } from './plugins/useFetchDebug.js';
+import { useRequestId } from './plugins/useRequestId.js';
+import { useSubgraphExecuteDebug } from './plugins/useSubgraphExecuteDebug.js';
 import type {
   MeshServeConfig,
   MeshServeConfigContext,
@@ -65,12 +69,6 @@ import type {
   MeshServePlugin,
   UnifiedGraphConfig,
 } from './types.js';
-import { useChangingSchema } from './useChangingSchema.js';
-import { useCompleteSubscriptionsOnDispose } from './useCompleteSubscriptionsOnDispose.js';
-import { useCompleteSubscriptionsOnSchemaChange } from './useCompleteSubscriptionsOnSchemaChange.js';
-import { useFetchDebug } from './useFetchDebug.js';
-import { useRequestId } from './useRequestId.js';
-import { useSubgraphExecuteDebug } from './useSubgraphExecuteDebug.js';
 import { checkIfDataSatisfiesSelectionSet } from './utils.js';
 
 export type MeshServeRuntime<TContext extends Record<string, any> = Record<string, any>> =
@@ -119,14 +117,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
-  const hiveRegistryPlugin: MeshPlugin<unknown> =
-    config.reporting?.type === 'hive'
-      ? useMeshHive({
-          ...configContext,
-          logger: configContext.logger.child('Hive'),
-          ...config.reporting,
-        })
-      : {};
+  const registryPlugin = getRegistryPlugin(config, configContext);
   let subgraphInformationHTMLRenderer: () => MaybePromise<string> = () => '';
 
   const disposableStack = new AsyncDisposableStack();
@@ -176,27 +167,24 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     if (config.schema && typeof config.schema === 'object' && 'type' in config.schema) {
       // hive cdn
       const { endpoint, key } = config.schema;
+      const fetcher = createSchemaFetcher({
+        endpoint,
+        key,
+        logger: configContext.logger.child('Hive CDN'),
+      });
       schemaFetcher = function fetchSchemaFromCDN() {
         pausePolling();
-        initialFetch$ = mapMaybePromise(
-          configContext.fetch(endpoint, {
-            headers: {
-              'X-Hive-CDN-Key': key,
-            },
-          }),
-          res =>
-            mapMaybePromise(res.text(), sdl => {
-              if (lastFetchedSdl == null || lastFetchedSdl !== sdl) {
-                unifiedGraph = buildSchema(sdl, {
-                  assumeValid: true,
-                  assumeValidSDL: true,
-                });
-                setSchema(unifiedGraph);
-              }
-              continuePolling();
-              return true;
-            }),
-        );
+        initialFetch$ = mapMaybePromise(fetcher(), ({ sdl }) => {
+          if (lastFetchedSdl == null || lastFetchedSdl !== sdl) {
+            unifiedGraph = buildSchema(sdl, {
+              assumeValid: true,
+              assumeValidSDL: true,
+            });
+            setSchema(unifiedGraph);
+          }
+          continuePolling();
+          return true;
+        });
         return initialFetch$;
       };
     } else if (config.schema) {
@@ -430,15 +418,70 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     let supergraphLoadedPlace: string;
 
     if (typeof config.supergraph === 'object' && 'type' in config.supergraph) {
-      // hive cdn
-      const { endpoint, key } = config.supergraph;
-      supergraphLoadedPlace = 'Hive CDN <br>' + endpoint;
-      const fetcher = createSupergraphSDLFetcher({
-        endpoint,
-        key,
-        logger: configContext.logger.child('Hive CDN'),
-      });
-      unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
+      if (config.supergraph.type === 'hive') {
+        // hive cdn
+        const { endpoint, key } = config.supergraph;
+        supergraphLoadedPlace = 'Hive CDN <br>' + endpoint;
+        const fetcher = createSupergraphSDLFetcher({
+          endpoint,
+          key,
+          logger: configContext.logger.child('Hive CDN'),
+        });
+        unifiedGraphFetcher = () => fetcher().then(({ supergraphSdl }) => supergraphSdl);
+      } else if (config.supergraph.type === 'graphos') {
+        const opts = config.supergraph;
+        supergraphLoadedPlace = 'GraphOS Managed Federation <br>' + opts.graphRef || '';
+        let lastSeenId: string;
+        let lastSupergraphSdl: string;
+        let minDelayMS = config.pollingInterval || 0;
+        unifiedGraphFetcher = () =>
+          mapMaybePromise(
+            fetchSupergraphSdlFromManagedFederation({
+              graphRef: opts.graphRef,
+              apiKey: opts.apiKey,
+              upLink: opts.upLink,
+              lastSeenId,
+              // @ts-expect-error TODO: what's up with type narrowing
+              fetch: configContext.fetch,
+              loggerByMessageLevel: {
+                ERROR(message) {
+                  configContext.logger.child('GraphOS').error(message);
+                },
+                INFO(message) {
+                  configContext.logger.child('GraphOS').info(message);
+                },
+                WARN(message) {
+                  configContext.logger.child('GraphOS').warn(message);
+                },
+              },
+            }),
+            async result => {
+              if (minDelayMS) {
+                await new Promise(resolve => setTimeout(resolve, minDelayMS));
+              }
+              if (result.minDelaySeconds && result.minDelaySeconds > minDelayMS) {
+                minDelayMS = result.minDelaySeconds;
+              }
+              if ('error' in result) {
+                configContext.logger.child('GraphOS').error(result.error.message);
+                return lastSupergraphSdl;
+              }
+              if ('id' in result) {
+                lastSeenId = result.id;
+              }
+              if ('supergraphSdl' in result) {
+                lastSupergraphSdl = result.supergraphSdl;
+                return result.supergraphSdl;
+              }
+              if (lastSupergraphSdl) {
+                throw new Error('Failed to fetch supergraph SDL');
+              }
+              return lastSupergraphSdl;
+            },
+          );
+      } else {
+        configContext.logger.error(`Unknown supergraph configuration: `, config.supergraph);
+      }
     } else {
       // local or remote
 
@@ -527,13 +570,18 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
           htmlParts.push(`</tr>`);
         }
         htmlParts.push(`</table>`);
-      } else {
+      } else if (loadError) {
         htmlParts.push(`<h3>Status: Failed ❌</h3>`);
         if (supergraphLoadedPlace) {
           htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
         }
         htmlParts.push(`<h3>Error:</h3>`);
         htmlParts.push(`<pre>${loadError.stack}</pre>`);
+      } else {
+        htmlParts.push(`<h3>Status: Unknown</h3>`);
+        if (supergraphLoadedPlace) {
+          htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+        }
       }
       return `<section class="supergraph-information">${htmlParts.join('')}</section>`;
     };
@@ -639,7 +687,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       defaultMeshPlugin,
       unifiedGraphPlugin,
       readinessCheckPlugin,
-      hiveRegistryPlugin,
+      registryPlugin,
       useChangingSchema(getSchema, _setSchema => {
         setSchema = _setSchema;
       }),
@@ -654,7 +702,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     context({ request, params, ...rest }) {
       // TODO: I dont like this cast, but it's necessary
       const { req, connectionParams } = rest as {
-        req?: IncomingMessage;
+        req?: { headers?: Record<string, string> };
         connectionParams?: Record<string, string>;
       };
       const baseContext = {

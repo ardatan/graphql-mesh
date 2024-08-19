@@ -4,7 +4,7 @@ import { fetch } from '@whatwg-node/fetch';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { createDisposableServer } from '../../testing/createDisposableServer';
 import { createServeRuntime } from '../src/createServeRuntime';
-import { useUpstreamCancel } from '../src/useUpstreamCancel';
+import { useUpstreamCancel } from '../src/plugins/useUpstreamCancel';
 
 describe('useUpstreamCancel', () => {
   it('cancels upstream requests when the client cancels', async () => {
