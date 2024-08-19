@@ -13,12 +13,12 @@ const modulesVersion = process.versions.modules;
 
 const binaryName = `uws_${platform}_${arch}_${modulesVersion}.node`;
 const binarySourcePath = path.resolve(`../../node_modules/uWebSockets.js/${binaryName}`);
-const binaryDestPath = `./bundle/${binaryName}`;
+const binaryDestPath = `./bundle-binary/${binaryName}`;
 
 export default defineConfig({
   input: 'src/bin.ts',
   output: {
-    file: 'bundle/bin.cjs',
+    file: 'bundle-binary/bin.cjs',
     format: 'cjs',
     inlineDynamicImports: true,
   },
@@ -74,7 +74,7 @@ function copyNativeBinary() {
 function updateSeaConfig(assetName, assetPath) {
   const seaConfigPath = path.resolve('./sea-config.json');
   let seaConfig = {
-    main: './bundle/bin.cjs',
+    main: './bundle-binary/bin.cjs',
     output: 'sea-prep.blob',
     disableExperimentalSEAWarning: true,
     assets: {},
@@ -92,7 +92,7 @@ function modifyBundle() {
   return {
     name: 'modifyBundle',
     writeBundle() {
-      const bundleFilePath = path.resolve('./bundle/bin.cjs');
+      const bundleFilePath = path.resolve('./bundle-binary/bin.cjs');
 
       // Literal replacement
       const oldContent = `return require('./uws_' + process.platform + '_' + process.arch + '_' + process.versions.modules + '.node');`;
