@@ -144,7 +144,7 @@ jobs:
               curl -fsSL https://deb.nodesource.com/setup_22.x | bash - &&
               apt-get install -y nodejs &&
               ./package-binary.sh ubuntu-latest aarch64 &&
-              yarn build && E2E_SERVE_RUNNER=bin yarn test:e2e
+              yarn build && E2E_SERVE_RUNNER=bin yarn test:e2e"
 
       - name: Set artifact name and path
         id: set-artifact
