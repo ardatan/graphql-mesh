@@ -1,5 +1,49 @@
 # @graphql-mesh/types
 
+## 0.102.0
+
+### Minor Changes
+
+- [#7530](https://github.com/ardatan/graphql-mesh/pull/7530)
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support Hive's experimental persisted
+  documents
+
+  ```ts
+  import { useMeshHive } from '@graphql-mesh/plugin-hive'
+
+  // Usage Reporting
+  useMeshHive({
+    token: '<hive_registry_token>'
+  })
+
+  // Persisted Documents
+  useMeshHive({
+    experimental__persistedDocuments: {
+      cdn: {
+        endpoint: 'https://cdn.graphql-hive.com/<target_id>',
+        accessToken: '<cdn_access_token>'
+      }
+    }
+  })
+
+  // Usage Reporting and Persisted Documents
+  useMeshHive({
+    token: '<hive_registry_token>',
+    experimental__persistedDocuments: {
+      cdn: {
+        endpoint: 'https://cdn.graphql-hive.com/<target_id>',
+        accessToken: '<cdn_access_token>'
+      }
+    }
+  })
+  ```
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.102.0
+
 ## 0.101.0
 
 ### Patch Changes

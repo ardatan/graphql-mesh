@@ -1,5 +1,69 @@
 # @graphql-mesh/plugin-hive
 
+## 0.102.0
+
+### Minor Changes
+
+- [#7530](https://github.com/ardatan/graphql-mesh/pull/7530)
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support Hive's experimental persisted
+  documents
+
+  ```ts
+  import { useMeshHive } from '@graphql-mesh/plugin-hive'
+
+  // Usage Reporting
+  useMeshHive({
+    token: '<hive_registry_token>'
+  })
+
+  // Persisted Documents
+  useMeshHive({
+    experimental__persistedDocuments: {
+      cdn: {
+        endpoint: 'https://cdn.graphql-hive.com/<target_id>',
+        accessToken: '<cdn_access_token>'
+      }
+    }
+  })
+
+  // Usage Reporting and Persisted Documents
+  useMeshHive({
+    token: '<hive_registry_token>',
+    experimental__persistedDocuments: {
+      cdn: {
+        endpoint: 'https://cdn.graphql-hive.com/<target_id>',
+        accessToken: '<cdn_access_token>'
+      }
+    }
+  })
+  ```
+
+### Patch Changes
+
+- [#7540](https://github.com/ardatan/graphql-mesh/pull/7540)
+  [`86acf63`](https://github.com/ardatan/graphql-mesh/commit/86acf6382b15e00fde87b718e84bb86e682621a8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/core@^0.8.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.8.0)
+    (from `^0.7.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-hive/yoga@^0.37.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/yoga/v/0.37.0)
+    (from `^0.36.0`, in `dependencies`)
+
+- [#7530](https://github.com/ardatan/graphql-mesh/pull/7530)
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support truthy DEBUG environment variables
+  (1, t, true, y, yes)
+
+- Updated dependencies
+  [[`13fa835`](https://github.com/ardatan/graphql-mesh/commit/13fa835036c3671305fc831fa236f110c33d9965),
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)]:
+  - @graphql-mesh/string-interpolation@0.5.6
+  - @graphql-mesh/types@0.102.0
+  - @graphql-mesh/utils@0.102.0
+
 ## 0.101.0
 
 ### Patch Changes

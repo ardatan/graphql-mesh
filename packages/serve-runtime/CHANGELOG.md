@@ -1,5 +1,44 @@
 # @graphql-mesh/serve-runtime
 
+## 0.8.0
+
+### Minor Changes
+
+- [#7530](https://github.com/ardatan/graphql-mesh/pull/7530)
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support Hive's experimental persisted
+  documents
+
+  ```ts
+  import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+  createServeRuntime({
+    persistedDocuments: {
+      type: 'hive',
+      endpoint: 'https://cdn.graphql-hive.com/<target_id>',
+      token: '<cdn_access_token>'
+    }
+  })
+  ```
+
+### Patch Changes
+
+- [#7540](https://github.com/ardatan/graphql-mesh/pull/7540)
+  [`86acf63`](https://github.com/ardatan/graphql-mesh/commit/86acf6382b15e00fde87b718e84bb86e682621a8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/core@^0.8.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.8.0)
+    (from `^0.7.1`, in `dependencies`)
+- Updated dependencies
+  [[`86acf63`](https://github.com/ardatan/graphql-mesh/commit/86acf6382b15e00fde87b718e84bb86e682621a8),
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373),
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)]:
+  - @graphql-mesh/plugin-hive@0.102.0
+  - @graphql-mesh/utils@0.102.0
+  - @graphql-mesh/transport-http@0.6.0
+  - @graphql-mesh/fusion-runtime@0.8.0
+  - @graphql-mesh/transport-common@0.7.0
+
 ## 0.7.3
 
 ### Patch Changes
