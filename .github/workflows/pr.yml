@@ -144,7 +144,7 @@ jobs:
               curl -fsSL https://deb.nodesource.com/setup_22.x | bash - &&
               apt-get install -y nodejs &&
               ./package-binary.sh ubuntu-latest aarch64 &&
-              ./test-binary.sh"
+              yarn build && E2E_SERVE_RUNNER=bin yarn test:e2e
 
       - name: Set artifact name and path
         id: set-artifact
@@ -154,9 +154,11 @@ jobs:
           echo "::set-output name=artifact_name::$ARTIFACT_NAME"
           echo "::set-output name=artifact_path::$ARTIFACT_DIR"
 
-      - name: Test the binary
-        working-directory: ./packages/serve-cli
-        run: ./test-binary.sh
+      - name: Build packages
+        run: yarn build
+
+      - name: E2E tests
+        run: E2E_SERVE_RUNNER=bin yarn test:e2e
 
       - name: Upload artifact
         id: upload_artifact
