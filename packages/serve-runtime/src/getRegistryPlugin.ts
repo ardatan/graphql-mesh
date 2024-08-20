@@ -16,6 +16,16 @@ export function getRegistryPlugin<TContext>(
         ...configContext,
         logger: configContext.logger.child('Hive'),
         ...config.reporting,
+        experimental__persistedDocuments:
+          config.persistedDocuments?.type === 'hive'
+            ? {
+                cdn: {
+                  endpoint: config.persistedDocuments.endpoint,
+                  accessToken: config.persistedDocuments.token,
+                },
+                allowArbitraryDocuments: config.persistedDocuments.allowArbitraryDocuments,
+              }
+            : undefined,
       }),
     };
   } else if (

@@ -2025,7 +2025,7 @@
         },
         "token": {
           "type": "string",
-          "description": "Access Token"
+          "description": "Access Token for Usage Reporting"
         },
         "agent": {
           "$ref": "#/definitions/HiveAgentOptions",
@@ -2042,9 +2042,12 @@
         "selfHosting": {
           "$ref": "#/definitions/HiveSelfHostingOptions",
           "description": "Options for self-hosting\n[See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)"
+        },
+        "experimental__persistedDocuments": {
+          "$ref": "#/definitions/HivePersistedDocumentsConfiguration",
+          "description": "Experimental persisted documents configuration\n[See more](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)"
         }
-      },
-      "required": ["token"]
+      }
     },
     "HiveAgentOptions": {
       "additionalProperties": false,
@@ -2197,6 +2200,42 @@
         }
       },
       "required": ["graphqlEndpoint", "applicationUrl"]
+    },
+    "HivePersistedDocumentsConfiguration": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HivePersistedDocumentsConfiguration",
+      "properties": {
+        "cdn": {
+          "$ref": "#/definitions/HivePersistedDocumentsConfigurationCDN",
+          "description": "Point to your own instance of GraphQL Hive API\n\nUsed by schema reporting and token info."
+        },
+        "allowArbitraryDocuments": {
+          "type": "boolean",
+          "description": "Whether arbitrary documents should be allowed along-side persisted documents. false by default"
+        },
+        "cache": {
+          "type": "integer",
+          "description": "Maximum amount of operations that shall be kept in memory after being loaded from the CDN. 10 seconds by default"
+        }
+      },
+      "required": ["cdn"]
+    },
+    "HivePersistedDocumentsConfigurationCDN": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HivePersistedDocumentsConfigurationCDN",
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "description": "CDN endpoint"
+        },
+        "accessToken": {
+          "type": "string",
+          "description": "Access Token for Persisted Documents CDN"
+        }
+      },
+      "required": ["endpoint", "accessToken"]
     },
     "HTTPCachePlugin": {
       "additionalProperties": false,

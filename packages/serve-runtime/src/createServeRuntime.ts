@@ -24,6 +24,7 @@ import {
   restoreExtraDirectives,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
+import useMeshHive from '@graphql-mesh/plugin-hive';
 import type { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
@@ -118,6 +119,20 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
   const registryPlugin = getRegistryPlugin(config, configContext);
+  let persistedDocumentsPlugin: MeshServePlugin = {};
+  if (config.reporting?.type !== 'hive' && config.persistedDocuments?.type === 'hive') {
+    persistedDocumentsPlugin = useMeshHive({
+      ...configContext,
+      logger: configContext.logger.child('Hive'),
+      experimental__persistedDocuments: {
+        cdn: {
+          endpoint: config.persistedDocuments.endpoint,
+          accessToken: config.persistedDocuments.token,
+        },
+        allowArbitraryDocuments: config.persistedDocuments.allowArbitraryDocuments,
+      },
+    });
+  }
   let subgraphInformationHTMLRenderer: () => MaybePromise<string> = () => '';
 
   const disposableStack = new AsyncDisposableStack();
@@ -688,6 +703,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       unifiedGraphPlugin,
       readinessCheckPlugin,
       registryPlugin,
+      persistedDocumentsPlugin,
       useChangingSchema(getSchema, _setSchema => {
         setSchema = _setSchema;
       }),

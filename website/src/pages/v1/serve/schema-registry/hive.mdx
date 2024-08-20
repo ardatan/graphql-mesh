@@ -85,3 +85,53 @@ export const serveConfig = defineConfig({
 Refer to to the
 [Hive Client documentation](https://the-guild.dev/graphql/hive/docs/api-reference/client#configuration)
 for further customization, such as usage reporting sampling and more.
+
+## Persisted Documents
+
+Persisted documents can be used on your GraphQL server or Gateway to reduce the payload size of your
+GraphQL requests and secure your GraphQL API by only allowing operations that are known and trusted
+by your Gateway. GraphQL Hive can serve as a CDN for the persisted documents as they're requested.
+
+Make sure you have configured **Persisted Documents** on GraphQL Hive as described
+[here](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway).
+
+### Configuration
+
+After getting `endpoint` and `token` from GraphQL Hive, you can enable persisted documents in Mesh
+Serve.
+
+```sh filename="Run the Mesh Serve CLI"
+npx mesh-serve supergraph "<cdn_endpoint>" --hive-persisted-documents-token "<cdn_access_token>" < endpoint > --hive-persisted-documents-endpoint
+```
+
+Or you can use a configuration file:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  persistedDocuments: {
+    type: 'hive',
+    endpoint: '<cdn_endpoint>',
+    token: '<cdn-access-token>'
+  }
+})
+```
+
+#### Enabling Arbitrary Documents (not recommended)
+
+By default, Mesh Server only allows persisted documents that are known and trusted by your Gateway.
+If you want to allow arbitrary documents, you can enable the `allowArbitraryDocuments` option:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  persistedDocuments: {
+    type: 'hive',
+    endpoint: '<cdn_endpoint>',
+    token: '<cdn-access-token>',
+    allowArbitraryDocuments: true
+  }
+})
+```

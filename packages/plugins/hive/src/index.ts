@@ -20,19 +20,21 @@ export default function useMeshHive<TContext>(
       : true;
 
   if (!enabled) {
-    pluginOptions.logger?.warn('Reporting is disabled');
+    pluginOptions.logger?.warn('Plugin is disabled');
     return {};
   }
 
   const token = stringInterpolator.parse(pluginOptions.token, {
     env: process.env,
   });
-  if (!token) {
-    pluginOptions.logger?.warn('Reporting is disabled because the "token" was not provided');
-    return {};
+  if (token) {
+    pluginOptions.logger?.info('Reporting enabled');
   }
 
-  pluginOptions.logger?.info('Reporting enabled');
+  const persistedDocuments = pluginOptions.experimental__persistedDocuments;
+  if (persistedDocuments) {
+    pluginOptions.logger?.info('Persisted documents enabled');
+  }
 
   let usage: HivePluginOptions['usage'] = true;
   if (pluginOptions.usage) {
@@ -105,8 +107,12 @@ export default function useMeshHive<TContext>(
     };
   }
   const hiveClient = createHive({
-    enabled: true,
-    debug: !!process.env.DEBUG,
+    enabled:
+      // eslint-disable-next-line no-unneeded-ternary -- for brevity
+      persistedDocuments && !token
+        ? false // disable usage reporting if just persisted documents are configured
+        : true,
+    debug: ['1', 't', 'true', 'y', 'yes'].includes(process.env.DEBUG),
     token,
     agent,
     usage,
@@ -114,6 +120,7 @@ export default function useMeshHive<TContext>(
     selfHosting,
     // Mesh already disposes the client below on Mesh's `destroy` event
     autoDispose: false,
+    experimental__persistedDocuments: persistedDocuments,
   });
   // TODO: Remove later after v0
   // Pubsub.destroy will no longer

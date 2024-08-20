@@ -150,7 +150,8 @@ export interface MeshServeHiveCDNOptions {
   key: string;
 }
 
-export interface MeshServeHiveReportingOptions extends YamlConfig.HivePlugin {
+export interface MeshServeHiveReportingOptions
+  extends Omit<YamlConfig.HivePlugin, 'experimental__persistedDocuments'> {
   type: 'hive';
   /** GraphQL Hive registry access token. */
   token: string;
@@ -211,9 +212,34 @@ export interface MeshServeGraphOSReportingOptions extends MeshServeGraphOSOption
   endpoint?: string;
 }
 
+/**
+ * Use Hive's CDN for persisted documents.
+ *
+ * [See more.](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)
+ * */
+export interface MeshServeHivePersistedDocumentsOptions {
+  type: 'hive';
+  /**
+   * GraphQL Hive persisted documents CDN endpoint URL.
+   */
+  endpoint: string;
+  /**
+   * GraphQL Hive persisted documents CDN access token.
+   */
+  token: string;
+  /**
+   * Whether arbitrary documents should be allowed along-side persisted documents.
+   *
+   * @default false
+   */
+  allowArbitraryDocuments?: boolean;
+}
+
 interface MeshServeConfigBase<TContext extends Record<string, any>> {
   /** Usage reporting options. */
   reporting?: MeshServeHiveReportingOptions | MeshServeGraphOSReportingOptions;
+  /** Persisted documents options. */
+  persistedDocuments?: MeshServeHivePersistedDocumentsOptions;
   /**
    * A map, or factory function, of transport kinds to their implementations.
    *
