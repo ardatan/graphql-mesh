@@ -1,5 +1,17 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.105.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`86acf63`](https://github.com/ardatan/graphql-mesh/commit/86acf6382b15e00fde87b718e84bb86e682621a8),
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373),
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)]:
+  - @graphql-mesh/serve-runtime@0.8.0
+  - @graphql-mesh/types@0.102.0
+  - @graphql-mesh/utils@0.102.0
+
 ## 0.104.3
 
 ### Patch Changes

@@ -1,5 +1,48 @@
 # @graphql-mesh/serve-cli
 
+## 0.11.0
+
+### Minor Changes
+
+- [#7530](https://github.com/ardatan/graphql-mesh/pull/7530)
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Support Hive's experimental persisted
+  documents
+
+  ### Using CLI options
+
+  ```sh
+  mesh-serve supergraph [schemaPathOrUrl] --hive-persisted-documents-endpoint "https://cdn.graphql-hive.com/<target_id>" --hive-persisted-documents-token <cdn_access_token>
+  ```
+
+  ### Using config file
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/serve-cli'
+
+  export const serveConfig = defineConfig({
+    persistedDocuments: {
+      type: 'hive',
+      endpoint: 'https://cdn.graphql-hive.com/<target_id>',
+      token: '<cdn_access_token>'
+    }
+  })
+  ```
+
+### Patch Changes
+
+- [`f46b5a3`](https://github.com/ardatan/graphql-mesh/commit/f46b5a3789afca1a0f430bd7965350de11abf8b8)
+  Thanks [@ardatan](https://github.com/ardatan)! - Restore \`HIVE_CDN_ENDPOINT\` environment
+  variable
+
+- Updated dependencies
+  [[`86acf63`](https://github.com/ardatan/graphql-mesh/commit/86acf6382b15e00fde87b718e84bb86e682621a8),
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373),
+  [`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)]:
+  - @graphql-mesh/serve-runtime@0.8.0
+  - @graphql-mesh/types@0.102.0
+  - @graphql-mesh/utils@0.102.0
+
 ## 0.10.3
 
 ### Patch Changes

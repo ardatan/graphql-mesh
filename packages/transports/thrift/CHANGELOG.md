@@ -1,5 +1,15 @@
 # @graphql-mesh/transport-thrift
 
+## 0.7.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`13fa835`](https://github.com/ardatan/graphql-mesh/commit/13fa835036c3671305fc831fa236f110c33d9965)]:
+  - @graphql-mesh/string-interpolation@0.5.6
+  - @graphql-mesh/utils@0.102.0
+  - @graphql-mesh/transport-common@0.7.0
+
 ## 0.6.2
 
 ### Patch Changes
