@@ -1,22 +1,28 @@
-import type { GraphQLError } from 'graphql';
-import { TypeInfo, visit, visitInParallel, visitWithTypeInfo } from 'graphql';
-import { Minimatch } from 'minimatch';
+import { Store, useRateLimiter, type Identity } from '@envelop/rate-limiter';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { createGraphQLError } from '@graphql-tools/utils';
+import { mapMaybePromise } from '@graphql-mesh/utils';
 
-function deleteNode<T extends Record<string | number, any>>(
-  parent: T,
-  remaining: (string | number)[],
-  currentKey?: keyof T,
-): void {
-  const nextKey = remaining.shift();
-  if (nextKey) {
-    const nextParent = currentKey ? parent[currentKey] : parent;
-    return deleteNode(nextParent, remaining, nextKey);
+class RateLimitMeshStore extends Store {
+  constructor(private cache: KeyValueCache) {
+    super();
   }
-  delete parent[currentKey];
+
+  getForIdentity(identity: Identity): Promise<number[]> | number[] {
+    return mapMaybePromise(
+      this.cache.get(`rate-limit:${identity.contextIdentity}:${identity.fieldIdentity}`),
+      value => value || [],
+    );
+  }
+
+  setForIdentity(identity: Identity, timestamps: number[], windowMs: number): Promise<void> {
+    return this.cache.set(
+      `rate-limit:${identity.contextIdentity}:${identity.fieldIdentity}`,
+      timestamps,
+      { ttl: windowMs / 1000 },
+    );
+  }
 }
 
 export default function useMeshRateLimit({
@@ -25,95 +31,35 @@ export default function useMeshRateLimit({
 }: YamlConfig.RateLimitPluginConfig & {
   cache: KeyValueCache;
 }): MeshPlugin<any> {
-  return {
-    async onExecute(onExecuteArgs) {
-      const typeInfo = new TypeInfo(onExecuteArgs.args.schema);
-      const errors: GraphQLError[] = [];
-      const jobs: Promise<void>[] = [];
-      let remainingFields = 0;
-      visit(
-        onExecuteArgs.args.document,
-        visitInParallel(
-          config.map(config => {
-            const typeMatcher = new Minimatch(config.type);
-            const fieldMatcher = new Minimatch(config.field);
-            const identifier = stringInterpolator.parse(config.identifier, {
+  return useRateLimiter({
+    identifyFn: (context: any) =>
+      context.headers?.authorization ||
+      context.req?.socket?.remoteAddress ||
+      context.req?.connection?.remoteAddress ||
+      context.req?.ip ||
+      context.headers?.['x-forwarded-for'] ||
+      context.headers?.host ||
+      'unknown',
+    store: new RateLimitMeshStore(cache),
+    interpolateMessage: (message, identifier, params) =>
+      stringInterpolator.parse(message, {
+        ...params,
+        id: identifier,
+        identifier,
+      }),
+    configByField: config.map(origConfig => ({
+      type: origConfig.type,
+      field: origConfig.field,
+      max: origConfig.max,
+      window: `${origConfig.ttl}ms`,
+      message: `Rate limit of "${origConfig.type}.${origConfig.field}" exceeded for "{id}"`,
+      identifyFn: origConfig.identifier
+        ? (context: any) =>
+            stringInterpolator.parse(origConfig.identifier, {
+              context,
               env: process.env,
-              root: onExecuteArgs.args.rootValue,
-              context: onExecuteArgs.args.contextValue,
-            });
-            return visitWithTypeInfo(typeInfo, {
-              Field: (fieldNode, key, parent, path) => {
-                const parentType = typeInfo.getParentType();
-                if (typeMatcher.match(parentType.name)) {
-                  const fieldDef = typeInfo.getFieldDef();
-                  if (fieldMatcher.match(fieldDef.name)) {
-                    const cacheKey = `rate-limit-${identifier}-${parentType.name}.${fieldDef.name}`;
-                    const remainingTokens$ = cache.get(cacheKey);
-                    jobs.push(
-                      remainingTokens$.then((remainingTokens: number): Promise<void> => {
-                        if (remainingTokens == null) {
-                          remainingTokens = config.max;
-                        }
-
-                        if (remainingTokens === 0) {
-                          errors.push(
-                            createGraphQLError(
-                              `Rate limit of "${parentType.name}.${fieldDef.name}" exceeded for "${identifier}"`,
-                              {
-                                path: [fieldNode.alias?.value || fieldDef.name],
-                                extensions: {
-                                  http: {
-                                    status: 429,
-                                    headers: {
-                                      'Retry-After': config.ttl,
-                                    },
-                                  },
-                                },
-                              },
-                            ),
-                          );
-                          deleteNode(parent, [...path]);
-                          remainingFields--;
-                          return null;
-                        }
-
-                        return cache.set(cacheKey, remainingTokens - 1, {
-                          ttl: config.ttl / 1000,
-                        });
-                      }),
-                    );
-                  }
-                }
-                remainingFields++;
-                return false;
-              },
-            });
-          }),
-        ),
-      );
-      await Promise.all(jobs);
-      if (errors.length > 0) {
-        // If there is a field left in the final selection set
-        if (remainingFields > 0) {
-          // Add the errors to the final result
-          return {
-            onExecuteDone(onExecuteDoneArgs) {
-              onExecuteDoneArgs.setResult({
-                ...onExecuteDoneArgs.result,
-                errors,
-              });
-            },
-          };
-        }
-
-        // If there is no need to continue the execution, stop
-        onExecuteArgs.setResultAndStopExecution({
-          data: null,
-          errors,
-        });
-      }
-      return undefined;
-    },
-  };
+            })
+        : undefined,
+    })),
+  });
 }

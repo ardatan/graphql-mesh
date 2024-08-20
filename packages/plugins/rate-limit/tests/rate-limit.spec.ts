@@ -85,7 +85,7 @@ describe('Rate Limit Plugin', () => {
 
     // Resolver shouldn't be called
     expect(numberOfCalls).toBe(5);
-    expect(result.data?.foo).toBeUndefined();
+    expect(result.data?.foo).toBeFalsy();
     const firstError = result.errors?.[0];
     expect(firstError.message).toBe('Rate limit of "Query.foo" exceeded for "1"');
     expect(firstError.path).toEqual(['foo']);
@@ -217,7 +217,7 @@ describe('Rate Limit Plugin', () => {
         contextValue: await contextFactory(),
       });
 
-      expect(resultFails.data?.foo).toBeUndefined();
+      expect(resultFails.data?.foo).toBeFalsy();
       const firstError = resultFails.errors?.[0];
       expect(firstError.message).toBe(`Rate limit of "Query.foo" exceeded for "User${i}"`);
       expect(firstError.path).toEqual(['foo']);
