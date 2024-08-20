@@ -3954,17 +3954,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/core@npm:5.0.1, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@envelop/core@npm:5.0.1"
-  dependencies:
-    "@envelop/types": "npm:5.0.0"
-    tslib: "npm:^2.5.0"
-  checksum: 10c0/26bcad627d2959e5dadb7ad0f1d158ba8227e45e721c2112808633124228ed49ee4f8cbb498d57447c4730bfcb9734ebd0fa3e377d2f6dde6b4eb506fc96a568
-  languageName: node
-  linkType: hard
-
-"@envelop/core@npm:5.0.2":
+"@envelop/core@npm:5.0.2, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.0.1":
   version: 5.0.2
   resolution: "@envelop/core@npm:5.0.2"
   dependencies:
@@ -5122,7 +5112,7 @@ __metadata:
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.4.1"
+    vite: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -6338,7 +6328,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-http-details-extensions@workspace:packages/plugins/http-details-extensions"
   dependencies:
-    "@envelop/core": "npm:5.0.1"
+    "@envelop/core": "npm:5.0.2"
     "@whatwg-node/fetch": "npm:^0.9.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.101.0
@@ -6385,7 +6375,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-mock@workspace:packages/plugins/mock"
   dependencies:
-    "@envelop/core": "npm:5.0.1"
+    "@envelop/core": "npm:5.0.2"
     "@graphql-mesh/cache-localforage": "npm:0.101.0"
     "@graphql-mesh/string-interpolation": "npm:^0.5.5"
     "@graphql-tools/mock": "npm:^9.0.3"
@@ -6729,7 +6719,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/string-interpolation@workspace:packages/string-interpolation"
   dependencies:
-    dayjs: "npm:1.11.12"
+    dayjs: "npm:1.11.13"
     json-pointer: "npm:0.6.2"
     lodash.get: "npm:4.4.2"
   peerDependencies:
@@ -18352,10 +18342,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.12, dayjs@npm:^1.11.7":
-  version: 1.11.12
-  resolution: "dayjs@npm:1.11.12"
-  checksum: 10c0/9673d37f3f9ad8a91caaeae9b3fea9a0010c81c7f58599fb9d860bc3359b86632fbff8eb7dddc86c2acaab01c5e6860bc672952f17b58c9286140c52b077c8e4
+"dayjs@npm:1.11.13, dayjs@npm:^1.11.7":
+  version: 1.11.13
+  resolution: "dayjs@npm:1.11.13"
+  checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
   languageName: node
   linkType: hard
 
@@ -33375,7 +33365,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^4.13.0, rollup@npm:^4.18.1":
+"rollup@npm:^4.18.1, rollup@npm:^4.20.0":
   version: 4.21.0
   resolution: "rollup@npm:4.21.0"
   dependencies:
@@ -37170,14 +37160,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.4.1":
-  version: 5.4.1
-  resolution: "vite@npm:5.4.1"
+"vite@npm:5.4.2":
+  version: 5.4.2
+  resolution: "vite@npm:5.4.2"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
     postcss: "npm:^8.4.41"
-    rollup: "npm:^4.13.0"
+    rollup: "npm:^4.20.0"
   peerDependencies:
     "@types/node": ^18.0.0 || >=20.0.0
     less: "*"
@@ -37209,7 +37199,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/b9ea824f1a946aa494f756e6d9dd88869baa62ae5ba3071b32b6a20958fd622cb624c860bdd7daee201c83ca029feaf8bbe2d2a6e172a5d49308772f8899d86d
+  checksum: 10c0/23e347ca8aa6f0a774227e4eb7abae228f12c6806a727b046aa75e7ee37ffc2d68cff74360e12a42c347f79adc294e2363bc723b957bf4b382b5a8fb39e4df9d
   languageName: node
   linkType: hard
 
