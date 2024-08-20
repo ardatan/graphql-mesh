@@ -1,7 +1,6 @@
 import cluster, { type Worker } from 'node:cluster';
-import { Option } from '@commander-js/extra-typings';
 import { createServeRuntime, type MeshServeConfigProxy } from '@graphql-mesh/serve-runtime';
-import { registerTerminateHandler } from '@graphql-mesh/utils';
+import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
 import {
   defaultOptions,
   type AddCommand,
@@ -23,14 +22,9 @@ export const addCommand: AddCommand = (ctx, cli) =>
       '--schema <schemaPathOrUrl>',
       'path to the GraphQL schema file or a url from where to pull the schema',
     )
-    .addOption(
-      new Option(
-        '--hive-cdn-key <key>',
-        'Hive CDN API key for fetching the schema. implies that the "schemaPathOrUrl" option is a url',
-      ).env('HIVE_CDN_KEY'),
-    )
     .action(async function proxy(endpoint) {
       const {
+        hiveCdnEndpoint,
         hiveCdnKey,
         hiveRegistryToken,
         maskedErrors,
@@ -62,14 +56,24 @@ export const addCommand: AddCommand = (ctx, cli) =>
       }
 
       let schema: MeshServeConfigProxy['schema'] | undefined;
-      if (opts.schema) {
-        schema = hiveCdnKey
-          ? {
-              type: 'hive',
-              endpoint: opts.schema!, // see validation above
-              key: hiveCdnKey,
-            }
-          : opts.schema;
+      const hiveCdnEndpointOpt = opts.schema || hiveCdnEndpoint;
+      if (hiveCdnEndpointOpt) {
+        if (hiveCdnKey) {
+          if (!isUrl(hiveCdnEndpointOpt)) {
+            ctx.log.error(
+              'Hive CDN endpoint must be a URL when providing --hive-cdn-key but got ' +
+                hiveCdnEndpointOpt,
+            );
+            process.exit(1);
+          }
+          schema = {
+            type: 'hive',
+            endpoint: hiveCdnEndpointOpt, // see validation above
+            key: hiveCdnKey,
+          };
+        } else {
+          schema = opts.schema;
+        }
       } else if ('schema' in loadedConfig) {
         schema = loadedConfig.schema;
         // TODO: how to provide hive-cdn-key?

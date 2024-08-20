@@ -2,7 +2,7 @@
   "name": "@examples-v1-next/hive-example-gateway",
   "private": true,
   "scripts": {
-    "gateway:start": "yarn mesh-serve"
+    "gateway:start": "yarn mesh-serve supergraph"
   },
   "dependencies": {
     "@graphql-mesh/serve-cli": "workspace:*",

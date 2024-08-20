@@ -65,16 +65,17 @@ configuration file if you provide these environment variables.
 
 #### GraphQL Hive
 
-- `HIVE_CDN_KEY`: The API key provided by GraphQL Hive to fetch the supergraph.
-- `HIVE_REGISTRY_TOKEN`: The token to push the metrics to GraphQL Hive.
+- `HIVE_CDN_ENDPOINT`: The endpoint of the GraphQL Hive CDN
+- `HIVE_CDN_KEY`: The API key provided by GraphQL Hive to fetch the schema
+- `HIVE_REGISTRY_TOKEN`: The token to push the metrics to GraphQL Hive
 
-[See here](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
+[Learn more about Hive integration here](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
 
 #### Apollo GraphOS
 
 - `APOLLO_KEY`: The API key provided by Apollo GraphOS to fetch the supergraph.
-  [See here](/v1/serve/schema-registry/graphos)
 - `APOLLO_GRAPH_REF`: The API key provided by Apollo GraphOS to fetch the supergraph.
-  [See here](/v1/serve/schema-registry/graphos)
 - `APOLLO_SCHEMA_CONFIG_DELIVERY_ENDPOINT`: The URL of the managed federation up link. By default,
-  it uses the first uplink in the list. [See here](/v1/serve/schema-registry/graphos)
+  it uses the first uplink in the list.
+
+[Learn more about GraphOS integration here](/v1/serve/schema-registry/graphos)

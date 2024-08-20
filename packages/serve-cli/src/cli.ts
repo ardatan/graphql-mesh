@@ -6,13 +6,16 @@ import cluster from 'node:cluster';
 import { availableParallelism, release } from 'node:os';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
-import type { MeshServeConfigProxy, MeshServeConfigSubgraph, MeshServeConfigSupergraph } from '@graphql-mesh/serve-runtime';
+import type {
+  MeshServeConfigProxy,
+  MeshServeConfigSubgraph,
+  MeshServeConfigSupergraph,
+} from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { addCommands } from './commands/index.js';
 import { defaultConfigPaths } from './config.js';
 import type { ServerConfig } from './server';
-
 
 export type MeshServeCLIConfig = (
   | MeshServeCLISupergraphConfig
@@ -183,6 +186,17 @@ let cli = new Command()
   .option(
     '--hive-persisted-documents-token <token>',
     '[EXPERIMENTAL] Hive persisted documents CDN endpoint. requires the "--hive-persisted-documents-endpoint <endpoint>" option',
+  )
+  .addOption(
+    new Option('--hive-cdn-endpoint <endpoint>', 'Hive CDN endpoint for fetching the schema').env(
+      'HIVE_CDN_ENDPOINT',
+    ),
+  )
+  .addOption(
+    new Option(
+      '--hive-cdn-key <key>',
+      'Hive CDN API key for fetching the schema. implies that the "schemaPathOrUrl" argument is a url',
+    ).env('HIVE_CDN_KEY'),
   )
   .addOption(
     new Option(

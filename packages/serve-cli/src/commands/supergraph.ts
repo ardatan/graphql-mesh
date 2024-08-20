@@ -33,18 +33,13 @@ export const addCommand: AddCommand = (ctx, cli) =>
     )
     .addOption(
       new Option(
-        '--hive-cdn-key <key>',
-        'Hive CDN API key for fetching the supergraph. implies that the "schemaPathOrUrl" argument is a url',
-      ).env('HIVE_CDN_KEY'),
-    )
-    .addOption(
-      new Option(
         '--apollo-uplink <uplink>',
         'The URL of the managed federation up link. When retrying after a failure, you should cycle through the default up links using this option.',
       ).env('APOLLO_SCHEMA_CONFIG_DELIVERY_ENDPOINT'),
     )
     .action(async function supergraph(schemaPathOrUrl) {
       const {
+        hiveCdnEndpoint,
         hiveCdnKey,
         hiveRegistryToken,
         maskedErrors,
@@ -67,9 +62,16 @@ export const addCommand: AddCommand = (ctx, cli) =>
       let supergraph:
         | UnifiedGraphConfig
         | MeshServeHiveCDNOptions
-        | MeshServeGraphOSManagedFederationOptions = 'supergraph.graphql';
+        | MeshServeGraphOSManagedFederationOptions = hiveCdnEndpoint || 'supergraph.graphql';
       if (schemaPathOrUrl) {
         if (hiveCdnKey) {
+          if (!isUrl(schemaPathOrUrl)) {
+            ctx.log.error(
+              'Hive CDN endpoint must be a URL when providing --hive-cdn-key but got ' +
+                schemaPathOrUrl,
+            );
+            process.exit(1);
+          }
           supergraph = { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey };
         } else if (apolloKey) {
           supergraph = {
