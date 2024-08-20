@@ -603,7 +603,7 @@ export const serveConfig = defineConfig({
       // Set where to extract the payload
       resolveUser: ctx => ctx.jwt?.payload,
       // If you want to continue execution even if some fields are rejected
-      rejectUnauthorized: false
+      rejectUnauthenticated: false
     })
   ]
 })
