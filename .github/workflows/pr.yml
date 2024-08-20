@@ -146,26 +146,20 @@ jobs:
       #         ./package-binary.sh ubuntu-latest aarch64 &&
       #         yarn build && E2E_SERVE_RUNNER=bin yarn test:e2e"
 
-      - name: Set artifact name and path
-        id: set-artifact
-        run: |
-          ARTIFACT_DIR=$(find packages/serve-cli -type d -name "graphql-mesh-${{ matrix.arch }}-*")
-          ARTIFACT_NAME=$(basename "$ARTIFACT_DIR")
-          echo "::set-output name=artifact_name::$ARTIFACT_NAME"
-          echo "::set-output name=artifact_path::$ARTIFACT_DIR"
-
       - name: Build packages
         run: yarn build
 
       - name: E2E tests
-        run: E2E_SERVE_RUNNER=bin yarn test:e2e
+        run: |
+          ls packages/serve-cli
+          E2E_SERVE_RUNNER=bin yarn test:e2e
 
       - name: Upload artifact
         id: upload_artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.set-artifact.outputs.artifact_name }}
-          path: ${{ steps.set-artifact.outputs.artifact_path }}
+          name: packages/serve-cli/mesh-serve
+          path: packages/serve-cli/mesh-serve
 
       - name: Update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
