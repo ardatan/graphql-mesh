@@ -89,7 +89,7 @@ function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCachePar
         for (const responseId of responseIdsToCheck) {
           responseIdsToCheckJobs.push(
             meshCache.getKeysByPrefix(`response-cache:${responseId}:`).then(cacheEntries => {
-              if (cacheEntries.length === 0) {
+              if (cacheEntries.length !== 0) {
                 return meshCache.delete(`response-cache:${responseId}`);
               }
               return undefined;
