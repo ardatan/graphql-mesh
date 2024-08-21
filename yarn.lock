@@ -231,9 +231,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/rover@npm:^0.25.0":
-  version: 0.25.0
-  resolution: "@apollo/rover@npm:0.25.0"
+"@apollo/rover@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "@apollo/rover@npm:0.26.0"
   dependencies:
     axios: "npm:^1.6.5"
     axios-proxy-builder: "npm:^0.1.1"
@@ -242,7 +242,7 @@ __metadata:
     tar: "npm:^7.0.0"
   bin:
     rover: run.js
-  checksum: 10c0/2a541628967b6e23e5f79ba0ed6001d32a41ea57a59d5abcb15fb26a03f92ac5c99ea9541d73a3a5b1e3459f4b9babb217bc74e30b235661c6ba22e63b407c18
+  checksum: 10c0/9e117c6ad0925b5185dd18f07c537aa1e4b442b634059efde3e1b1501105c86c36233b487b4ed887904e5e42bbeaf70c4d40af285e7dd14ff0531b6ea5877fd7
   languageName: node
   linkType: hard
 
@@ -3618,7 +3618,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/federation-example@workspace:e2e/federation-example"
   dependencies:
-    "@apollo/rover": "npm:^0.25.0"
+    "@apollo/rover": "npm:^0.26.0"
     "@apollo/server": "npm:^4.10.3"
     "@apollo/subgraph": "npm:^2.7.2"
   languageName: unknown
@@ -3628,7 +3628,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/federation-mixed@workspace:e2e/federation-mixed"
   dependencies:
-    "@apollo/rover": "npm:^0.25.0"
+    "@apollo/rover": "npm:^0.26.0"
     "@apollo/server": "npm:^4.10.3"
     "@apollo/subgraph": "npm:^2.7.2"
     fets: "npm:^0.8.1"
@@ -3639,7 +3639,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/federation-subscriptions-passthrough@workspace:e2e/federation-subscriptions-passthrough"
   dependencies:
-    "@apollo/rover": "npm:^0.25.0"
+    "@apollo/rover": "npm:^0.26.0"
     "@apollo/server": "npm:^4.10.3"
     "@apollo/subgraph": "npm:^2.7.2"
     "@repeaterjs/repeater": "npm:^3.0.6"
@@ -3826,7 +3826,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/opentelemetry@workspace:e2e/opentelemetry"
   dependencies:
-    "@apollo/rover": "npm:^0.25.0"
+    "@apollo/rover": "npm:^0.26.0"
     "@apollo/server": "npm:^4.10.3"
     "@apollo/subgraph": "npm:^2.7.2"
     "@graphql-mesh/compose-cli": "workspace:*"
@@ -10000,7 +10000,7 @@ __metadata:
     fast-xml-parser: "npm:^4.3.4"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.1.1"
+    soap: "npm:1.1.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.0
     "@graphql-mesh/utils": ^0.102.0
@@ -15421,7 +15421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.1, axios@npm:^1.6.5, axios@npm:^1.7.2":
+"axios@npm:^1.6.1, axios@npm:^1.6.5, axios@npm:^1.7.4":
   version: 1.7.4
   resolution: "axios@npm:1.7.4"
   dependencies:
@@ -34222,11 +34222,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap@npm:1.1.1":
-  version: 1.1.1
-  resolution: "soap@npm:1.1.1"
+"soap@npm:1.1.2":
+  version: 1.1.2
+  resolution: "soap@npm:1.1.2"
   dependencies:
-    axios: "npm:^1.7.2"
+    axios: "npm:^1.7.4"
     axios-ntlm: "npm:^1.4.2"
     debug: "npm:^4.3.5"
     formidable: "npm:^3.5.1"
@@ -34236,7 +34236,7 @@ __metadata:
     strip-bom: "npm:^3.0.0"
     whatwg-mimetype: "npm:4.0.0"
     xml-crypto: "npm:^6.0.0"
-  checksum: 10c0/6ff282406f0d6a457093af8a06a93564e3b540252a0b9260a270f36cea394cf4788dda0d346b890ef64141f0a527512c9c1adc63bc7db6855a1672081f9bbce0
+  checksum: 10c0/b07a1d9f81a03c0875aa505978b0f4f44579c8fc5a78a91387ab694dd4b89a93f22959935c7a68935524059cdc4da38f9dcc29ad6db12df5a2cb97856d390ee5
   languageName: node
   linkType: hard
 
