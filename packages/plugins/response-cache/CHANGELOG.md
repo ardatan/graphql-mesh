@@ -1,5 +1,18 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.102.1
+
+### Patch Changes
+
+- [`ee99888`](https://github.com/ardatan/graphql-mesh/commit/ee9988874badcd0e0b4216b105b39eb93b79431e)
+  Thanks [@gabel](https://github.com/gabel)! - The actual cache entry found for a `responseId` has
+  never been deleted
+
+- Updated dependencies
+  [[`e49a7e6`](https://github.com/ardatan/graphql-mesh/commit/e49a7e69475b652a53a0f289a44247e8b7ea96de)]:
+  - @graphql-mesh/utils@0.102.1
+  - @graphql-mesh/types@0.102.1
+
 ## 0.102.0
 
 ### Patch Changes

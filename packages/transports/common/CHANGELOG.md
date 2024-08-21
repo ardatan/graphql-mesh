@@ -1,5 +1,43 @@
 # @graphql-mesh/transport-common
 
+## 0.7.1
+
+### Patch Changes
+
+- [#7013](https://github.com/ardatan/graphql-mesh/pull/7013)
+  [`60bfc22`](https://github.com/ardatan/graphql-mesh/commit/60bfc2240108af0a599a66451517a146cace879d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Introduce a standard Upstream Error Format for
+  HTTP-based sources;
+
+  So all sources throw an error will have the extensions in the following format;
+
+  ```json
+  {
+    "extensions": {
+      "request": {
+        // The details of the request made to the upstream service
+        "endpoint": "https://api.example.com",
+        "method": "GET"
+      },
+      "response": {
+        // The details of the HTTP response from the upstream service
+        "status": 401,
+        "statusText": "Unauthorized",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          // The raw body returned by the upstream service
+          "error-message": "Unauthorized access"
+        }
+      }
+    }
+  }
+  ```
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.1
+
 ## 0.7.0
 
 ### Patch Changes
