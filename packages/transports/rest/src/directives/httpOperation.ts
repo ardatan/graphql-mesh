@@ -338,35 +338,36 @@ export function addHTTPRootFieldResolver(
         logger.debug(`Unexpected response in ${field.name};\n\t${responseText}`);
         return createGraphQLError(`Unexpected response in ${field.name}`, {
           extensions: {
-            http: {
-              status: response.status,
-              statusText: response.statusText,
-              headers: getHeadersObj(response.headers),
-            },
             request: {
               url: fullPath,
               method: httpMethod,
             },
-            responseText,
-            originalError: {
-              message: error.message,
-              stack: error.stack,
+            response: {
+              status: response.status,
+              statusText: response.statusText,
+              headers: getHeadersObj(response.headers),
+              body: responseText,
             },
+            originalError: error,
           },
         });
       } else {
         return createGraphQLError(
-          `HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
+          `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {
               request: {
                 url: fullPath,
                 method: httpMethod,
               },
-              responseText,
-              responseStatus: response.status,
-              responseStatusText: response.statusText,
-              responseHeaders: getHeadersObj(response.headers),
+              response: {
+                status: response.status,
+                statusText: response.statusText,
+                get headers() {
+                  return getHeadersObj(response.headers);
+                },
+                body: responseText,
+              },
             },
           },
         );
@@ -379,16 +380,18 @@ export function addHTTPRootFieldResolver(
           `HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {
-              http: {
-                status: response.status,
-                statusText: response.statusText,
-                headers: getHeadersObj(response.headers),
-              },
               request: {
                 url: fullPath,
                 method: httpMethod,
               },
-              responseJson,
+              response: {
+                status: response.status,
+                statusText: response.statusText,
+                get headers() {
+                  return getHeadersObj(response.headers);
+                },
+                body: responseJson,
+              },
             },
           },
         );

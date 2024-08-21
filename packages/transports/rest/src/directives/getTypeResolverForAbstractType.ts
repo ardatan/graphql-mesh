@@ -105,17 +105,18 @@ export function getTypeResolverForAbstractType({
       return typeName;
     }
     if (data.$response) {
-      const error = createGraphQLError(`HTTP Error: ${data.$statusCode}`, {
+      const error = createGraphQLError(`Upstream HTTP Error: ${data.$statusCode}`, {
         extensions: {
-          http: {
-            status: data.$statusCode,
-            headers: data.$response.header,
-          },
           request: {
             url: data.$url,
             method: data.$method,
           },
-          responseJson: data.$response,
+          response: {
+            status: data.$statusCode,
+            statusText: data.$statusText,
+            headers: data.$response.header,
+            body: data.$response,
+          },
         },
       });
       return error;

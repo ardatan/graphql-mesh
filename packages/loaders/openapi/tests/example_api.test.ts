@@ -1569,12 +1569,12 @@ describe('example_api', () => {
         method: 'GET',
         url: `http://localhost:3000/api/users/abcdef`,
       },
-      http: {
+      response: {
         status: 404,
         statusText: 'Not Found',
-      },
-      responseJson: {
-        message: 'Wrong username',
+        body: {
+          message: 'Wrong username',
+        },
       },
     });
   });

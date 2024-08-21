@@ -11,7 +11,12 @@ import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolatio
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
-import { getDirectiveExtensions, getRootTypes, type Executor } from '@graphql-tools/utils';
+import {
+  createGraphQLError,
+  getDirectiveExtensions,
+  getRootTypes,
+  type Executor,
+} from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
 
@@ -132,8 +137,47 @@ function createRootValueMethod({
       info,
     );
     const responseXML = await response.text();
-    const responseJSON = xmlToJSONConverter.parse(responseXML, parseXmlOptions);
-    return normalizeResult(responseJSON.Envelope[0].Body[0][soapAnnotations.elementName]);
+    if (!response.ok) {
+      return createGraphQLError(`Upstream HTTP Error: ${response.status}`, {
+        extensions: {
+          request: {
+            url: soapAnnotations.endpoint,
+            method: 'POST',
+            body: requestXML,
+          },
+          response: {
+            status: response.status,
+            statusText: response.statusText,
+            get headers() {
+              return Object.fromEntries(response.headers.entries());
+            },
+            body: responseXML,
+          },
+        },
+      });
+    }
+    try {
+      const responseJSON = xmlToJSONConverter.parse(responseXML, parseXmlOptions);
+      return normalizeResult(responseJSON.Envelope[0].Body[0][soapAnnotations.elementName]);
+    } catch (e) {
+      return createGraphQLError(`Invalid SOAP response: ${e.message}`, {
+        extensions: {
+          request: {
+            url: soapAnnotations.endpoint,
+            method: 'POST',
+            body: requestXML,
+          },
+          response: {
+            status: response.status,
+            statusText: response.statusText,
+            get headers() {
+              return Object.fromEntries(response.headers.entries());
+            },
+            body: responseXML,
+          },
+        },
+      });
+    }
   };
 }
 
