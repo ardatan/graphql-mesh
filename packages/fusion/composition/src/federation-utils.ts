@@ -135,6 +135,12 @@ export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
       }
       return type;
     },
+    [MapperKind.INTERFACE_TYPE]: type => {
+      if ((type?.extensions?.directives as any)?.shareable) {
+        delete (type.extensions.directives as any).shareable;
+      }
+      return type;
+    },
   });
   subgraph = importFederationDirectives(subgraph, FEDERATION_V1_DIRECTIVES);
   return subgraph;

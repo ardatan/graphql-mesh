@@ -1,30 +1,44 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] = `
-"type Person implements IPerson {
-  UserName: String!
-  FirstName: String!
-  LastName: String
-  MiddleName: String
-  Gender: PersonGender!
-  Age: BigInt
-  Emails: [String]
-  AddressInfo: [Location]
-  HomeAddress: Location
-  FavoriteFeature: Feature!
-  Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person]
-  FriendsById(id: ID): Person
-  BestFriend: Person
-  Trips(queryOptions: QueryOptions): [Trip]
-  TripsById(id: ID): Trip
-  GetFavoriteAirline(person: PersonInput): Airline
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
-  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
+"schema @transport(kind: "odata", subgraph: "TripPin", location: "https://services.odata.org/TripPinRESTierService", headers: [], options: {}) {
+  query: Query
+  mutation: Mutation
 }
 
-interface IPerson {
+directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
+
+directive @abstractType(entityTypeName: String, isAbstract: Boolean, aliasNamespaceMap: [[String]], multipleSchemas: Boolean, namespaces: [String]) on INTERFACE | OBJECT
+
+directive @singularNav(navigationPropertyName: String) on FIELD_DEFINITION
+
+directive @pluralNav(navigationPropertyName: String) on FIELD_DEFINITION
+
+directive @navProp(navigationPropertyName: String) on FIELD_DEFINITION
+
+directive @unboundFunction(functionName: String) on FIELD_DEFINITION
+
+directive @boundFunction(functionRef: String) on FIELD_DEFINITION
+
+directive @unboundAction(actionName: String) on FIELD_DEFINITION
+
+directive @boundAction(actionRef: String) on FIELD_DEFINITION
+
+directive @singleton(singletonName: String) on FIELD_DEFINITION
+
+directive @entitySet(entitySetName: String) on FIELD_DEFINITION
+
+directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
+
+directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
+
+directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -36,15 +50,38 @@ interface IPerson {
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person]
-  FriendsById(id: ID): Person
-  BestFriend: Person
-  Trips(queryOptions: QueryOptions): [Trip]
-  TripsById(id: ID): Trip
-  GetFavoriteAirline(person: PersonInput): Airline
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
-  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
+  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
+  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
+  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
+  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
+  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
+  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline")
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips")
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName")
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
+}
+
+interface IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+  UserName: String!
+  FirstName: String!
+  LastName: String
+  MiddleName: String
+  Gender: PersonGender!
+  Age: BigInt
+  Emails: [String]
+  AddressInfo: [Location]
+  HomeAddress: Location
+  FavoriteFeature: Feature!
+  Features: [Feature]!
+  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
+  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
+  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
+  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
+  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
+  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline")
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips")
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName")
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
 enum PersonGender {
@@ -70,22 +107,18 @@ input QueryOptions {
   A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.
   """
   orderby: String
-
   """
   A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.
   """
   top: Int
-
   """
   A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.
   """
   skip: Int
-
   """
   A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.
   """
   filter: String
-
   """
   A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.
   """
@@ -98,7 +131,6 @@ enum InlineCount {
   The OData MUST include a count of the number of entities in the collection identified by the URI (after applying any $filter System Query Options present on the URI)
   """
   allpages
-
   """
   The OData service MUST NOT include a count in the response. This is equivalence to a URI that does not include a $inlinecount query string parameter.
   """
@@ -135,19 +167,19 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-type Airline {
+type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields: [], isOpenType: false, identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") {
   AirlineCode: String!
   Name: String
 }
 
-type Airport {
+type Airport @entityInfo(actualFields: ["Name", "IcaoCode", "IataCode", "Location"], navigationFields: [], isOpenType: false, identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") {
   Name: String
   IcaoCode: String!
   IataCode: String
   Location: AirportLocation
 }
 
-type Trip implements ITrip {
+type Trip implements ITrip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "Trip", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -156,12 +188,12 @@ type Trip implements ITrip {
   Tags: [String]
   StartsAt: DateTime!
   EndsAt: DateTime!
-  PlanItems(queryOptions: QueryOptions): [PlanItem]
-  PlanItemsById(id: ID): PlanItem
-  GetInvolvedPeople(trip: TripInput): [Person]
+  PlanItems(queryOptions: QueryOptions): [PlanItem] @pluralNav(navigationPropertyName: "PlanItems")
+  PlanItemsById(id: ID): PlanItem @singularNav(navigationPropertyName: "PlanItems")
+  GetInvolvedPeople(trip: TripInput): [Person] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople")
 }
 
-interface ITrip {
+interface ITrip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "Trip", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -170,9 +202,9 @@ interface ITrip {
   Tags: [String]
   StartsAt: DateTime!
   EndsAt: DateTime!
-  PlanItems(queryOptions: QueryOptions): [PlanItem]
-  PlanItemsById(id: ID): PlanItem
-  GetInvolvedPeople(trip: TripInput): [Person]
+  PlanItems(queryOptions: QueryOptions): [PlanItem] @pluralNav(navigationPropertyName: "PlanItems")
+  PlanItemsById(id: ID): PlanItem @singularNav(navigationPropertyName: "PlanItems")
+  GetInvolvedPeople(trip: TripInput): [Person] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople")
 }
 
 """
@@ -196,7 +228,7 @@ input TripInput {
   EndsAt: DateTime!
 }
 
-type PlanItem implements IPlanItem {
+type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -204,7 +236,7 @@ type PlanItem implements IPlanItem {
   Duration: ISO8601Duration!
 }
 
-interface IPlanItem {
+interface IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -212,10 +244,29 @@ interface IPlanItem {
   Duration: ISO8601Duration!
 }
 
-"\\n    A string representing a duration conforming to the ISO8601 standard,\\n    such as: P1W1DT13H23M34S\\n    P is the duration designator (for period) placed at the start of the duration representation.\\n    Y is the year designator that follows the value for the number of years.\\n    M is the month designator that follows the value for the number of months.\\n    W is the week designator that follows the value for the number of weeks.\\n    D is the day designator that follows the value for the number of days.\\n    T is the time designator that precedes the time components of the representation.\\n    H is the hour designator that follows the value for the number of hours.\\n    M is the minute designator that follows the value for the number of minutes.\\n    S is the second designator that follows the value for the number of seconds.\\n\\n    Note the time designator, T, that precedes the time value.\\n\\n    Matches moment.js, Luxon and DateFns implementations\\n    ,/. is valid for decimal places and +/- is a valid prefix\\n  "
+"""
+
+    A string representing a duration conforming to the ISO8601 standard,
+    such as: P1W1DT13H23M34S
+    P is the duration designator (for period) placed at the start of the duration representation.
+    Y is the year designator that follows the value for the number of years.
+    M is the month designator that follows the value for the number of months.
+    W is the week designator that follows the value for the number of weeks.
+    D is the day designator that follows the value for the number of days.
+    T is the time designator that precedes the time components of the representation.
+    H is the hour designator that follows the value for the number of hours.
+    M is the minute designator that follows the value for the number of minutes.
+    S is the second designator that follows the value for the number of seconds.
+
+    Note the time designator, T, that precedes the time value.
+
+    Matches moment.js, Luxon and DateFns implementations
+    ,/. is valid for decimal places and +/- is a valid prefix
+  
+"""
 scalar ISO8601Duration
 
-type Event implements IPlanItem {
+type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "OccursAt", "Description"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") {
   OccursAt: EventLocation
   Description: String
   PlanItemId: Int!
@@ -225,7 +276,7 @@ type Event implements IPlanItem {
   Duration: ISO8601Duration!
 }
 
-type PublicTransportation implements IPublicTransportation & IPlanItem {
+type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -234,7 +285,7 @@ type PublicTransportation implements IPublicTransportation & IPlanItem {
   Duration: ISO8601Duration!
 }
 
-interface IPublicTransportation {
+interface IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -243,11 +294,11 @@ interface IPublicTransportation {
   Duration: ISO8601Duration!
 }
 
-type Flight implements IPublicTransportation {
+type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber", "FlightNumber"], navigationFields: ["Airline", "From", "To"], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") {
   FlightNumber: String
-  Airline: Airline
-  From: Airport
-  To: Airport
+  Airline: Airline @navProp(navigationPropertyName: "Airline")
+  From: Airport @navProp(navigationPropertyName: "From")
+  To: Airport @navProp(navigationPropertyName: "To")
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -256,10 +307,10 @@ type Flight implements IPublicTransportation {
   Duration: ISO8601Duration!
 }
 
-type Employee implements IPerson {
+type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") {
   Cost: BigInt!
-  Peers(queryOptions: QueryOptions): [Person]
-  PeersById(id: ID): Person
+  Peers(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Peers")
+  PeersById(id: ID): Person @singularNav(navigationPropertyName: "Peers")
   UserName: String!
   FirstName: String!
   LastName: String
@@ -271,22 +322,22 @@ type Employee implements IPerson {
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person]
-  FriendsById(id: ID): Person
-  BestFriend: Person
-  Trips(queryOptions: QueryOptions): [Trip]
-  TripsById(id: ID): Trip
-  GetFavoriteAirline(person: PersonInput): Airline
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
-  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
+  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
+  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
+  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
+  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
+  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
+  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline")
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips")
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName")
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
-type Manager implements IPerson {
+type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") {
   Budget: BigInt!
   BossOffice: Location
-  DirectReports(queryOptions: QueryOptions): [Person]
-  DirectReportsById(id: ID): Person
+  DirectReports(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "DirectReports")
+  DirectReportsById(id: ID): Person @singularNav(navigationPropertyName: "DirectReports")
   UserName: String!
   FirstName: String!
   LastName: String
@@ -298,88 +349,87 @@ type Manager implements IPerson {
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person]
-  FriendsById(id: ID): Person
-  BestFriend: Person
-  Trips(queryOptions: QueryOptions): [Trip]
-  TripsById(id: ID): Trip
-  GetFavoriteAirline(person: PersonInput): Airline
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
-  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
+  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
+  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
+  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
+  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
+  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
+  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline")
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips")
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName")
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
-type Location implements ILocation {
+type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   Address: String
   City: City
 }
 
-interface ILocation {
+interface ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   Address: String
   City: City
 }
 
-type City {
+type City @entityInfo(actualFields: ["Name", "CountryRegion", "Region"], navigationFields: [], isOpenType: false) {
   Name: String
   CountryRegion: String
   Region: String
 }
 
-type AirportLocation implements ILocation {
+type AirportLocation implements ILocation @entityInfo(actualFields: ["Address", "City", "Loc"], navigationFields: [], isOpenType: false) {
   Loc: String
   Address: String
   City: City
 }
 
-type EventLocation implements ILocation {
+type EventLocation implements ILocation @entityInfo(actualFields: ["Address", "City", "BuildingInfo"], navigationFields: [], isOpenType: false) {
   BuildingInfo: String
   Address: String
   City: City
 }
 
 type Query {
-  GetPersonWithMostFriends: Person
-  GetNearestAirport(lat: Float!, lon: Float!): Airport
-  Me: Person
-  People(queryOptions: QueryOptions): [IPerson]
-  PeopleByUserName(UserName: String!): IPerson
-  PeopleCount(queryOptions: QueryOptions): Int
-  Airlines(queryOptions: QueryOptions): [Airline]
-  AirlinesByAirlineCode(AirlineCode: String!): Airline
-  AirlinesCount(queryOptions: QueryOptions): Int
-  Airports(queryOptions: QueryOptions): [Airport]
-  AirportsByIcaoCode(IcaoCode: String!): Airport
-  AirportsCount(queryOptions: QueryOptions): Int
-  NewComePeople(queryOptions: QueryOptions): [IPerson]
-  NewComePeopleByUserName(UserName: String!): IPerson
-  NewComePeopleCount(queryOptions: QueryOptions): Int
+  GetPersonWithMostFriends: Person @unboundFunction(functionName: "GetPersonWithMostFriends")
+  GetNearestAirport(lat: Float!, lon: Float!): Airport @unboundFunction(functionName: "GetNearestAirport")
+  Me: Person @singleton(singletonName: "Me")
+  People(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "People")
+  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
+  Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
+  AirlinesCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airlines")
+  Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
+  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  AirportsCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airports")
+  NewComePeople(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "NewComePeople")
+  NewComePeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "NewComePeople", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  NewComePeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "NewComePeople")
 }
 
 type Mutation {
-  ResetDataSource: JSON
-  People(queryOptions: QueryOptions): [IPerson]
-  PeopleByUserName(UserName: String!): IPerson
-  createPeople(input: PersonInput): IPerson
-  deletePeopleByUserName(UserName: String!): JSON
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson
-  Airlines(queryOptions: QueryOptions): [Airline]
-  AirlinesByAirlineCode(AirlineCode: String!): Airline
-  createAirlines(input: AirlineInput): Airline
-  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON
-  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline
-  Airports(queryOptions: QueryOptions): [Airport]
-  AirportsByIcaoCode(IcaoCode: String!): Airport
-  createAirports(input: AirportInput): Airport
-  deleteAirportsByIcaoCode(IcaoCode: String!): JSON
-  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport
-  NewComePeople(queryOptions: QueryOptions): [IPerson]
-  NewComePeopleByUserName(UserName: String!): IPerson
-  createNewComePeople(input: PersonInput): IPerson
-  deleteNewComePeopleByUserName(UserName: String!): JSON
-  updateNewComePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson
+  ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource")
+  People(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "People")
+  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  createPeople(input: PersonInput): IPerson @createEntitySet(entitySetName: "People")
+  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
+  createAirlines(input: AirlineInput): Airline @createEntitySet(entitySetName: "Airlines")
+  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @deleteEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
+  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @updateEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
+  Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
+  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  createAirports(input: AirportInput): Airport @createEntitySet(entitySetName: "Airports")
+  deleteAirportsByIcaoCode(IcaoCode: String!): JSON @deleteEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @updateEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  NewComePeople(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "NewComePeople")
+  NewComePeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "NewComePeople", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  createNewComePeople(input: PersonInput): IPerson @createEntitySet(entitySetName: "NewComePeople")
+  deleteNewComePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "NewComePeople", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  updateNewComePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "NewComePeople", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
 }
 
-""""""
 input PersonUpdateInput {
   UserName: String
   FirstName: String
@@ -399,7 +449,6 @@ input AirlineInput {
   Name: String
 }
 
-""""""
 input AirlineUpdateInput {
   AirlineCode: String
   Name: String
@@ -418,7 +467,6 @@ input AirportLocationInput {
   City: CityInput
 }
 
-""""""
 input AirportUpdateInput {
   Name: String
   IcaoCode: String
@@ -428,9 +476,30 @@ input AirportUpdateInput {
 `;
 
 exports[`odata should create correct GraphQL schema for actions bound to entity set 1`] = `
-"type Person {
+"schema @transport(kind: "odata", subgraph: "SampleService", location: "http://sample.service.com", headers: [], options: {}) {
+  query: Query
+  mutation: Mutation
+}
+
+directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
+
+directive @boundAction(actionRef: String) on FIELD_DEFINITION
+
+directive @entitySet(entitySetName: String) on FIELD_DEFINITION
+
+directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
+
+directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
+
+directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+type Person @entityInfo(actualFields: ["UserName"], navigationFields: [], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") {
   UserName: String!
-  SendMessage(UserName: String!, Message: String!): JSON
+  SendMessage(UserName: String!, Message: String!): JSON @boundAction(actionRef: "Sample.Service.SendMessage")
 }
 
 """
@@ -439,9 +508,9 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type Query {
-  People(queryOptions: QueryOptions): [Person]
-  PeopleByUserName(UserName: String!): Person
-  PeopleCount(queryOptions: QueryOptions): Int
+  People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
+  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
 }
 
 input QueryOptions {
@@ -449,22 +518,18 @@ input QueryOptions {
   A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.
   """
   orderby: String
-
   """
   A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.
   """
   top: Int
-
   """
   A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.
   """
   skip: Int
-
   """
   A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.
   """
   filter: String
-
   """
   A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.
   """
@@ -477,7 +542,6 @@ enum InlineCount {
   The OData MUST include a count of the number of entities in the collection identified by the URI (after applying any $filter System Query Options present on the URI)
   """
   allpages
-
   """
   The OData service MUST NOT include a count in the response. This is equivalence to a URI that does not include a $inlinecount query string parameter.
   """
@@ -485,34 +549,58 @@ enum InlineCount {
 }
 
 type Mutation {
-  People(queryOptions: QueryOptions): [Person]
-  PeopleByUserName(UserName: String!): Person
-  createPeople(input: PersonInput): Person
-  deletePeopleByUserName(UserName: String!): JSON
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person
+  People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
+  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  createPeople(input: PersonInput): Person @createEntitySet(entitySetName: "People")
+  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
 }
 
 input PersonInput {
   UserName: String!
 }
 
-""""""
 input PersonUpdateInput {
   UserName: String
 }"
 `;
 
 exports[`odata should create correct GraphQL schema for functions with entity set paths 1`] = `
-"type Person {
+"schema @transport(kind: "odata", subgraph: "SampleService", location: "http://sample.service.com", headers: [], options: {}) {
+  query: Query
+  mutation: Mutation
+}
+
+directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
+
+directive @singularNav(navigationPropertyName: String) on FIELD_DEFINITION
+
+directive @pluralNav(navigationPropertyName: String) on FIELD_DEFINITION
+
+directive @boundFunction(functionRef: String) on FIELD_DEFINITION
+
+directive @entitySet(entitySetName: String) on FIELD_DEFINITION
+
+directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
+
+directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
+
+directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+
+type Person @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Age", "Emails"], navigationFields: ["Messages"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") {
   UserName: String!
   FirstName: String!
   LastName: String
   MiddleName: String
   Age: BigInt
   Emails: [String]
-  Messages(queryOptions: QueryOptions): [Message]
-  MessagesById(id: ID): Message
-  GetAllMessages(bindingParameter: [PersonInput]): [Message]
+  Messages(queryOptions: QueryOptions): [Message] @pluralNav(navigationPropertyName: "Messages")
+  MessagesById(id: ID): Message @singularNav(navigationPropertyName: "Messages")
+  GetAllMessages(bindingParameter: [PersonInput]): [Message] @boundFunction(functionRef: "Sample.Service.GetAllMessages")
 }
 
 """
@@ -525,22 +613,18 @@ input QueryOptions {
   A data service URI with a $orderby System Query Option specifies an expression for determining what values are used to order the collection of Entries identified by the Resource Path section of the URI. This query option is only supported when the resource path identifies a Collection of Entries.
   """
   orderby: String
-
   """
   A data service URI with a $top System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. This subset is formed by selecting only the first N items of the set, where N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.
   """
   top: Int
-
   """
   A data service URI with a $skip System Query Option identifies a subset of the Entries in the Collection of Entries identified by the Resource Path section of the URI. That subset is defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1). N is an integer greater than or equal to zero specified by this query option. If a value less than zero is specified, the URI should be considered malformed.
   """
   skip: Int
-
   """
   A URI with a $filter System Query Option identifies a subset of the Entries from the Collection of Entries identified by the Resource Path section of the URI. The subset is determined by selecting only the Entries that satisfy the predicate expression specified by the query option.
   """
   filter: String
-
   """
   A URI with a $inlinecount System Query Option specifies that the response to the request includes a count of the number of Entries in the Collection of Entries identified by the Resource Path section of the URI. The count must be calculated after applying any $filter System Query Options present in the URI. The set of valid values for the $inlinecount query option are shown in the table below. If a value other than one shown in Table 4 is specified the URI is considered malformed.
   """
@@ -553,7 +637,6 @@ enum InlineCount {
   The OData MUST include a count of the number of entities in the collection identified by the URI (after applying any $filter System Query Options present on the URI)
   """
   allpages
-
   """
   The OData service MUST NOT include a count in the response. This is equivalence to a URI that does not include a $inlinecount query string parameter.
   """
@@ -569,23 +652,23 @@ input PersonInput {
   Emails: [String]
 }
 
-type Message {
+type Message @entityInfo(actualFields: ["Id", "Contents"], navigationFields: [], isOpenType: false, identifierFieldName: "Id", identifierFieldTypeRef: "Edm.String") {
   Id: String!
   Contents: String!
 }
 
 type Query {
-  People(queryOptions: QueryOptions): [Person]
-  PeopleByUserName(UserName: String!): Person
-  PeopleCount(queryOptions: QueryOptions): Int
+  People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
+  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
 }
 
 type Mutation {
-  People(queryOptions: QueryOptions): [Person]
-  PeopleByUserName(UserName: String!): Person
-  createPeople(input: PersonInput): Person
-  deletePeopleByUserName(UserName: String!): JSON
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person
+  People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
+  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  createPeople(input: PersonInput): Person @createEntitySet(entitySetName: "People")
+  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
 }
 
 """
@@ -593,7 +676,6 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-""""""
 input PersonUpdateInput {
   UserName: String
   FirstName: String

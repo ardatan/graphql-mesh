@@ -1,10 +1,12 @@
-import { GraphQLInterfaceType, parse, printSchema, type ExecutionResult } from 'graphql';
+import { GraphQLInterfaceType, parse, type ExecutionResult } from 'graphql';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 
@@ -68,7 +70,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    expect(printSchema(source.schema)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(source.schema)).toMatchSnapshot();
   });
   it('should create correct GraphQL schema for functions with entity set paths', async () => {
     addMock('http://sample.service.com/$metadata', async () => new MockResponse(BasicMetadata));
@@ -87,7 +89,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    expect(printSchema(source.schema)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(source.schema)).toMatchSnapshot();
   });
   it('should create correct GraphQL schema for actions bound to entity set', async () => {
     addMock(
@@ -109,7 +111,7 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    expect(printSchema(source.schema)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(source.schema)).toMatchSnapshot();
   });
   it('should declare arguments for fields created from bound functions', async () => {
     addMock(
@@ -169,8 +171,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         {
           People {
@@ -213,8 +216,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "SOMEID") {
@@ -266,8 +270,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         {
           AirportsByIcaoCode(IcaoCode: "KSFO") {
@@ -312,8 +317,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         {
           People(queryOptions: { filter: "FirstName eq 'Scott'" }) {
@@ -356,8 +362,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         {
           PeopleCount
@@ -418,9 +425,10 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
-      variables: {
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
+      variableValues: {
         input: correctBody,
       },
       document: parse(/* GraphQL */ `
@@ -465,8 +473,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         mutation {
           deletePeopleByUserName(UserName: "SOMEID")
@@ -512,9 +521,10 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
-      variables: {
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
+      variableValues: {
         UserName: 'SOMEID',
         input: correctBody,
       },
@@ -566,8 +576,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         {
           GetNearestAirport(lat: 33, lon: -118) {
@@ -623,8 +634,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "russellwhyte") {
@@ -679,8 +691,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         {
           PeopleByUserName(UserName: "russellwhyte") {
@@ -726,8 +739,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         mutation {
           ResetDataSource
@@ -774,8 +788,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         mutation {
           PeopleByUserName(UserName: "russellwhyte") {
@@ -825,8 +840,9 @@ describe('odata', () => {
       fetchFn: mockFetch,
     });
 
-    const graphqlResult = (await source.executor({
-      context: {},
+    const graphqlResult = (await normalizedExecutor({
+      schema: source.schema,
+      contextValue: {},
       document: parse(/* GraphQL */ `
         mutation {
           PeopleByUserName(UserName: "alice") {

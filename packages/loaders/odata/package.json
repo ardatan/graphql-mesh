@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/odata",
-  "version": "0.104.0",
+  "name": "@omnigraph/odata",
+  "version": "0.0.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "ardatan/graphql-mesh",
-    "directory": "packages/legacy/handlers/odata"
+    "directory": "packages/loaders/odata"
   },
   "license": "MIT",
   "engines": {
@@ -32,13 +32,30 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/store": "^0.102.0",
     "@graphql-mesh/types": "^0.102.0",
+    "@graphql-mesh/utils": "^0.102.0",
+    "@graphql-tools/utils": "^10.5.3",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/odata": "^0.0.0"
+    "@graphql-mesh/string-interpolation": "^0.5.6",
+    "@graphql-tools/delegate": "^10.0.19",
+    "@whatwg-node/fetch": "^0.9.0",
+    "dataloader": "^2.2.2",
+    "fast-xml-parser": "^4.2.1",
+    "graphql-compose": "^9.0.11",
+    "graphql-parse-resolve-info": "^4.13.0",
+    "graphql-scalars": "^1.22.4",
+    "http-string-parser": "^0.0.6",
+    "pascal-case": "^3.1.2",
+    "url-join": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/http-string-parser": "0.0.33",
+    "@types/url-join": "4.0.3"
   },
   "publishConfig": {
     "access": "public",

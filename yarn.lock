@@ -3735,6 +3735,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/odata-trippin-example@workspace:e2e/odata-trippin":
+  version: 0.0.0-use.local
+  resolution: "@e2e/odata-trippin-example@workspace:e2e/odata-trippin"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-mesh/utils": "workspace:*"
+    "@omnigraph/odata": "workspace:*"
+    graphql: "npm:^16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/openapi-additional-resolvers@workspace:e2e/openapi-additional-resolvers":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-additional-resolvers@workspace:e2e/openapi-additional-resolvers"
@@ -6241,25 +6253,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/odata@workspace:packages/legacy/handlers/odata"
   dependencies:
-    "@graphql-mesh/string-interpolation": "npm:^0.5.6"
-    "@graphql-tools/delegate": "npm:^10.0.19"
-    "@types/http-string-parser": "npm:0.0.33"
-    "@types/url-join": "npm:4.0.3"
-    "@whatwg-node/fetch": "npm:^0.9.0"
-    dataloader: "npm:^2.2.2"
-    fast-xml-parser: "npm:^4.2.1"
-    graphql-compose: "npm:^9.0.11"
-    graphql-parse-resolve-info: "npm:^4.13.0"
-    graphql-scalars: "npm:^1.22.4"
-    http-string-parser: "npm:^0.0.6"
-    pascal-case: "npm:^3.1.2"
-    url-join: "npm:^4.0.1"
+    "@omnigraph/odata": "npm:^0.0.0"
   peerDependencies:
-    "@graphql-mesh/cross-helpers": ^0.4.6
     "@graphql-mesh/store": ^0.102.0
     "@graphql-mesh/types": ^0.102.0
-    "@graphql-mesh/utils": ^0.102.0
-    "@graphql-tools/utils": ^10.5.3
     graphql: "*"
     tslib: ^2.4.0
   languageName: unknown
@@ -7115,6 +7112,18 @@ __metadata:
     "@neo4j/graphql": "npm:^5.0.0"
     graphql-scalars: "npm:^1.22.4"
     neo4j-driver: "npm:^5.17.0"
+  peerDependencies:
+    graphql: "*"
+    tslib: ^2.4.0
+  languageName: unknown
+  linkType: soft
+
+"@graphql-mesh/transport-odata@workspace:packages/transports/odata":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/transport-odata@workspace:packages/transports/odata"
+  dependencies:
+    "@graphql-mesh/transport-common": "npm:^0.7.0"
+    "@omnigraph/odata": "npm:^0.0.0"
   peerDependencies:
     graphql: "*"
     tslib: ^2.4.0
@@ -9938,6 +9947,34 @@ __metadata:
     neo4j-driver: "npm:^5.9.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.0
+    graphql: "*"
+    tslib: ^2.4.0
+  languageName: unknown
+  linkType: soft
+
+"@omnigraph/odata@npm:^0.0.0, @omnigraph/odata@workspace:*, @omnigraph/odata@workspace:packages/loaders/odata":
+  version: 0.0.0-use.local
+  resolution: "@omnigraph/odata@workspace:packages/loaders/odata"
+  dependencies:
+    "@graphql-mesh/string-interpolation": "npm:^0.5.6"
+    "@graphql-tools/delegate": "npm:^10.0.19"
+    "@types/http-string-parser": "npm:0.0.33"
+    "@types/url-join": "npm:4.0.3"
+    "@whatwg-node/fetch": "npm:^0.9.0"
+    dataloader: "npm:^2.2.2"
+    fast-xml-parser: "npm:^4.2.1"
+    graphql-compose: "npm:^9.0.11"
+    graphql-parse-resolve-info: "npm:^4.13.0"
+    graphql-scalars: "npm:^1.22.4"
+    http-string-parser: "npm:^0.0.6"
+    pascal-case: "npm:^3.1.2"
+    url-join: "npm:^4.0.1"
+  peerDependencies:
+    "@graphql-mesh/cross-helpers": ^0.4.6
+    "@graphql-mesh/store": ^0.102.0
+    "@graphql-mesh/types": ^0.102.0
+    "@graphql-mesh/utils": ^0.102.0
+    "@graphql-tools/utils": ^10.5.3
     graphql: "*"
     tslib: ^2.4.0
   languageName: unknown

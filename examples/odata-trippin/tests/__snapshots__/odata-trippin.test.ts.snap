@@ -7,6 +7,185 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
       {
         "args": [
           {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "aliasNamespaceMap",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "entityTypeName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "isAbstract",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "multipleSchemas",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "namespaces",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "INTERFACE",
+          "OBJECT",
+        ],
+        "name": "abstractType",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "actionRef",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "boundAction",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "functionRef",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "boundFunction",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "entitySetName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "createEntitySet",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "entitySetName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "identifierFieldName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "identifierFieldTypeRef",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "deleteEntitySet",
+      },
+      {
+        "args": [
+          {
             "defaultValue": ""No longer supported"",
             "deprecationReason": null,
             "isDeprecated": false,
@@ -26,6 +205,161 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           "INPUT_FIELD_DEFINITION",
         ],
         "name": "deprecated",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "actualFields",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "identifierFieldName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "identifierFieldTypeRef",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "isOpenType",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "navigationFields",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "INTERFACE",
+          "OBJECT",
+        ],
+        "name": "entityInfo",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "entitySetName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "entitySet",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "entitySetName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "identifierFieldName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "identifierFieldTypeRef",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "entitySetByIdentifier",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "entitySetName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "entitySetCount",
       },
       {
         "args": [
@@ -54,12 +388,92 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "name": "include",
       },
       {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "navigationPropertyName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "navProp",
+      },
+      {
         "args": [],
         "isRepeatable": false,
         "locations": [
           "INPUT_OBJECT",
         ],
         "name": "oneOf",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "navigationPropertyName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "pluralNav",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "singletonName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "singleton",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "navigationPropertyName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "singularNav",
       },
       {
         "args": [
@@ -110,6 +524,88 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           "SCALAR",
         ],
         "name": "specifiedBy",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "actionName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "unboundAction",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "functionName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "unboundFunction",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "entitySetName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "identifierFieldName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "identifierFieldTypeRef",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+        ],
+        "name": "updateEntitySet",
       },
     ],
     "mutationType": {
