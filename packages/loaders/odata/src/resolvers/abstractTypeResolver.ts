@@ -1,5 +1,5 @@
 import { isEnumType, type GraphQLTypeResolver } from 'graphql';
-import { getTypeNameFromRef } from '../utils/getTypeNameFromRef';
+import { getTypeNameFromRef } from '../utils/getTypeNameFromRef.js';
 
 interface AbstractTypeResolverOpts {
   entityTypeName: string;

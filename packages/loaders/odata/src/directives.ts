@@ -5,8 +5,8 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
-  type GraphQLSchema,
   GraphQLString,
+  type GraphQLSchema,
 } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import {
@@ -16,21 +16,22 @@ import {
 } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { getDataloaderFactory } from './getDataloaderFactory';
-import { createAbstractTypeResolver } from './resolvers/abstractTypeResolver';
-import { createBoundActionResolver } from './resolvers/boundActionResolver';
-import { createBoundFunctionResolver } from './resolvers/boundFunctionResolver';
-import { createCreateEntitySetResolver } from './resolvers/createEntitySetResolver';
-import { createDeleteEntitySetByIdentifierResolver } from './resolvers/deleteEntitySetByIdentifierResolver';
-import { createEntitySetByIdentifierResolver } from './resolvers/entitySetByIdentifierResolver';
-import { createEntitySetCountResolver } from './resolvers/entitySetCountResolver';
-import { createEntitySetResolver } from './resolvers/entitySetResolver';
-import { createNavPropResolver } from './resolvers/navPropResolver';
-import { rootResolver } from './resolvers/rootResolver';
-import { createSingularNavResolver } from './resolvers/singularNavResolver';
-import { createUnboundActionResolver } from './resolvers/unboundActionResolver';
-import { createUnboundFunctionResolver } from './resolvers/unboundFunction';
-import { createUpdateEntitySetResolver } from './resolvers/updateEntitySetResolver';
+import { getDataloaderFactory } from './getDataloaderFactory.js';
+import { createAbstractTypeResolver } from './resolvers/abstractTypeResolver.js';
+import { createBoundActionResolver } from './resolvers/boundActionResolver.js';
+import { createBoundFunctionResolver } from './resolvers/boundFunctionResolver.js';
+import { createCreateEntitySetResolver } from './resolvers/createEntitySetResolver.js';
+import { createDeleteEntitySetByIdentifierResolver } from './resolvers/deleteEntitySetByIdentifierResolver.js';
+import { createEntitySetByIdentifierResolver } from './resolvers/entitySetByIdentifierResolver.js';
+import { createEntitySetCountResolver } from './resolvers/entitySetCountResolver.js';
+import { createEntitySetResolver } from './resolvers/entitySetResolver.js';
+import { createNavPropResolver } from './resolvers/navPropResolver.js';
+import { rootResolver } from './resolvers/rootResolver.js';
+import { createSingletonResolver } from './resolvers/singletonResolver.js';
+import { createSingularNavResolver } from './resolvers/singularNavResolver.js';
+import { createUnboundActionResolver } from './resolvers/unboundActionResolver.js';
+import { createUnboundFunctionResolver } from './resolvers/unboundFunction.js';
+import { createUpdateEntitySetResolver } from './resolvers/updateEntitySetResolver.js';
 
 export const EntityInfoDirective = new GraphQLDirective({
   name: 'entityInfo',
@@ -502,6 +503,15 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
         });
       } else if (fieldDirectives?.resolveRoot?.length) {
         fieldConfig.resolve = rootResolver;
+      } else if (fieldDirectives?.singleton?.length) {
+        const singletonDirective = fieldDirectives.singleton[0];
+        fieldConfig.resolve = createSingletonResolver({
+          singletonName: singletonDirective.singletonName,
+          endpoint,
+          expandNavProps: transportDirective.options?.expandNavProps,
+          dataloaderFactory,
+          headersFactory,
+        });
       } else if (fieldDirectives?.singularNav?.length) {
         const singularNavDirective = fieldDirectives.singularNav[0];
         fieldConfig.resolve = createSingularNavResolver({

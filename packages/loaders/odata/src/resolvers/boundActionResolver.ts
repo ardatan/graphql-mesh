@@ -2,7 +2,7 @@ import type { GraphQLFieldResolver } from 'graphql';
 import urljoin from 'url-join';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import { Request } from '@whatwg-node/fetch';
-import type { DataloaderFactory } from '../getDataloaderFactory';
+import type { DataloaderFactory } from '../getDataloaderFactory.js';
 import { getUrlString } from '../utils/getUrlString.js';
 import { handleResponseText } from '../utils/handleResponseText.js';
 

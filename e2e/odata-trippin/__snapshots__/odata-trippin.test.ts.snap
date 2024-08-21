@@ -3,7 +3,28 @@
 exports[`executes a query 1`] = `
 {
   "data": {
-    "Me": null,
+    "Me": {
+      "AddressInfo": [
+        {
+          "Address": "P.O. Box 555",
+          "City": {
+            "CountryRegion": "United States",
+            "Name": "Lander",
+            "Region": "WY",
+          },
+        },
+      ],
+      "FavoriteFeature": "Feature1",
+      "FirstName": "April",
+      "Gender": "Female",
+      "LastName": "Cline",
+      "Trips": [
+        {
+          "Description": "Trip in US",
+        },
+      ],
+      "UserName": "aprilcline",
+    },
   },
 }
 `;
