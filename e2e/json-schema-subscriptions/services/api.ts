@@ -7,7 +7,7 @@ const opts = Opts(process.argv);
 
 let todos = [];
 
-const app = createRouter()
+const app = createRouter<FetchEvent>()
   .route({
     path: '/todos',
     method: 'GET',
@@ -16,31 +16,33 @@ const app = createRouter()
   .route({
     path: '/todo',
     method: 'POST',
-    async handler(request) {
+    async handler(request, { waitUntil }) {
       const reqBody = await request.json();
       const todo = {
         id: todos.length,
         ...reqBody,
       };
       todos.push(todo);
-      await fetch(`http://0.0.0.0:${opts.getPort(true)}/webhooks/todo_added`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(todo),
-      })
-        .then(res =>
-          res.text().then(resText =>
-            console.log('Webhook payload sent', {
-              status: res.status,
-              statusText: res.statusText,
-              body: resText,
-              headers: Object.fromEntries(res.headers.entries()),
-            }),
-          ),
-        )
-        .catch(err => console.error('Webhook payload failed', err));
+      waitUntil(
+        fetch(`http://0.0.0.0:${opts.getPort(true)}/webhooks/todo_added`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(todo),
+        })
+          .then(res =>
+            res.text().then(resText =>
+              console.log('Webhook payload sent', {
+                status: res.status,
+                statusText: res.statusText,
+                body: resText,
+                headers: Object.fromEntries(res.headers.entries()),
+              }),
+            ),
+          )
+          .catch(err => console.error('Webhook payload failed', err)),
+      );
       return Response.json(todo);
     },
   });
