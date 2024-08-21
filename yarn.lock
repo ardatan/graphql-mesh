@@ -3242,10 +3242,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20240815.0":
-  version: 4.20240815.0
-  resolution: "@cloudflare/workers-types@npm:4.20240815.0"
-  checksum: 10c0/60dc2807a01682a477cd681ccc246342c1d593cbf30f82a1b4563f09773764bcea2801973f8a375a4a8624825d3f9063c440f243882988455a381ed7d562cb46
+"@cloudflare/workers-types@npm:4.20240821.1":
+  version: 4.20240821.1
+  resolution: "@cloudflare/workers-types@npm:4.20240821.1"
+  checksum: 10c0/5abf7cfb4241ee7babd382807f6061ab4315c7703957673289238234a5e4ed7c24154afe8b3cda15c0e60ea52e4c2e44b3554a10e854f85a5f5ea2d5bf5cde46
   languageName: node
   linkType: hard
 
@@ -5813,7 +5813,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20240815.0"
+    "@cloudflare/workers-types": "npm:4.20240821.1"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.0
     "@graphql-mesh/utils": ^0.102.0
@@ -31964,8 +31964,8 @@ __metadata:
   linkType: hard
 
 "protobufjs@npm:^7.2.5, protobufjs@npm:^7.3.0":
-  version: 7.3.2
-  resolution: "protobufjs@npm:7.3.2"
+  version: 7.3.3
+  resolution: "protobufjs@npm:7.3.3"
   dependencies:
     "@protobufjs/aspromise": "npm:^1.1.2"
     "@protobufjs/base64": "npm:^1.1.2"
@@ -31979,7 +31979,7 @@ __metadata:
     "@protobufjs/utf8": "npm:^1.1.0"
     "@types/node": "npm:>=13.7.0"
     long: "npm:^5.0.0"
-  checksum: 10c0/b87e38fffc989793099010439a7ff45a0a57ef5b8f44b5209f06bfa5085ac96a365aa37eb3c79bd6954d6ef1b50fc69da37dae8ea2a31d90b7bc8fb2fa0e3955
+  checksum: 10c0/6e6c606410c59c05bc4e9d491bd1e5e4a1525c150df70cdaedd230fe7de83d48acb823f5c30d850c91fd872c469cc8e6e5dfed39f9b31b30a7bff57e9074ddd1
   languageName: node
   linkType: hard
 
