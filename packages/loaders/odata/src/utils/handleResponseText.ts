@@ -1,6 +1,6 @@
 import { getNamedType, isListType, type GraphQLObjectType, type GraphQLResolveInfo } from 'graphql';
 import urljoin from 'url-join';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
+import { createGraphQLError, getDirectiveExtensions } from '@graphql-tools/utils';
 import type { DirectiveArgsMap } from '../directives.js';
 import { addIdentifierToUrl } from './addIdentifierToUrl.js';
 import { getUrlString } from './getUrlString.js';
@@ -14,27 +14,45 @@ export function handleResponseText(
   try {
     responseJson = JSON.parse(responseText);
   } catch (error) {
-    const actualError = new Error(responseText);
-    Object.assign(actualError, {
+    return createGraphQLError(`Failed to parse response JSON: ${error.message}`, {
       extensions: {
-        url: urlString,
+        request: {
+          url: urlString,
+        },
+        response: {
+          body: responseText,
+        },
+        originalError: error,
       },
     });
-    throw actualError;
   }
   if (responseJson.error) {
-    const actualError = new Error(responseJson.error.message || responseJson.error) as any;
-    actualError.extensions = responseJson.error;
-    throw actualError;
+    return createGraphQLError(responseJson.error.message || responseJson.error, {
+      extensions: {
+        request: {
+          url: urlString,
+        },
+        response: {
+          body: responseJson,
+        },
+      },
+    });
   }
   const urlStringWithoutSearchParams = urlString.split('?')[0];
   if (isListType(info.returnType)) {
     const actualReturnType = getNamedType(info.returnType) as GraphQLObjectType;
     const entityTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(actualReturnType);
     if ('Message' in responseJson && !('value' in responseJson)) {
-      const error = new Error(responseJson.Message);
-      Object.assign(error, { extensions: responseJson });
-      throw error;
+      return createGraphQLError(responseJson.Message, {
+        extensions: {
+          request: {
+            url: urlString,
+          },
+          response: {
+            body: responseJson,
+          },
+        },
+      });
     }
     const returnList: any[] = responseJson.value;
     return returnList.map(element => {

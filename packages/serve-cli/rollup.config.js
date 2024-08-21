@@ -70,6 +70,8 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   deps['node_modules/@graphql-mesh/transport-sqlite/index'] = '../transports/sqlite/src/index.ts';
   deps['node_modules/@omnigraph/json-schema/index'] = '../loaders/json-schema/src/index.ts';
   deps['node_modules/@graphql-mesh/plugin-live-query/index'] = '../plugins/live-query/src/index.ts';
+  deps['node_modules/@omnigraph/odata/index'] = '../loaders/odata/src/index.ts';
+  deps['node_modules/@graphql-mesh/transport-odata/index'] = '../transports/odata/src/index.ts';
 }
 
 export default defineConfig({
