@@ -1,0 +1,30 @@
+---
+description:
+  Discover how to load remote OData metadata as GraphQL Schema with GraphQL Mesh's OData/Microsoft
+  Graph handler. Get started with a few simple steps!
+---
+
+# OData / Microsoft Graph
+
+This handler allows you to load remote [OData](https://odata.org) metadata/schema as GraphQL Schema.
+
+```sh npm2yarn
+npm i @omnigraph/odata
+```
+
+Now, you can use it directly in your Mesh config file:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadODataSubgraph } from '@omnigraph/odata'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadODataSubgraph('TripPin', {
+        endpoint: 'https://services.odata.org/TripPinRESTierService/'
+      })
+    }
+  ]
+})
+```
