@@ -1,5 +1,20 @@
 # @graphql-mesh/serve-cli
 
+## 0.11.1
+
+### Patch Changes
+
+- [`e39a34d`](https://github.com/ardatan/graphql-mesh/commit/e39a34d931ab08c7207c29683f2957f4fc2e567b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better error messages for missing options for
+  \`supergraph\` command
+
+- Updated dependencies
+  [[`e49a7e6`](https://github.com/ardatan/graphql-mesh/commit/e49a7e69475b652a53a0f289a44247e8b7ea96de),
+  [`e49a7e6`](https://github.com/ardatan/graphql-mesh/commit/e49a7e69475b652a53a0f289a44247e8b7ea96de)]:
+  - @graphql-mesh/serve-runtime@0.8.1
+  - @graphql-mesh/utils@0.102.1
+  - @graphql-mesh/types@0.102.1
+
 ## 0.11.0
 
 ### Minor Changes

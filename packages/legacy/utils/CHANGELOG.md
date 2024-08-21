@@ -1,5 +1,18 @@
 # @graphql-mesh/utils
 
+## 0.102.1
+
+### Patch Changes
+
+- [#7553](https://github.com/ardatan/graphql-mesh/pull/7553)
+  [`e49a7e6`](https://github.com/ardatan/graphql-mesh/commit/e49a7e69475b652a53a0f289a44247e8b7ea96de)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/disposablestack@^0.0.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.2)
+    (from `^0.0.1`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.1
+
 ## 0.102.0
 
 ### Patch Changes

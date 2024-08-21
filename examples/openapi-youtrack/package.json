@@ -6,9 +6,9 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.95.0",
-    "@graphql-mesh/openapi": "0.106.0",
-    "@graphql-mesh/transform-resolvers-composition": "0.102.0",
+    "@graphql-mesh/cli": "0.95.1",
+    "@graphql-mesh/openapi": "0.106.1",
+    "@graphql-mesh/transform-resolvers-composition": "0.102.1",
     "graphql": "16.9.0",
     "graphql-fields": "2.0.3"
   }
