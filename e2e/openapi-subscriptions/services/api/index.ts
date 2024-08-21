@@ -17,14 +17,17 @@ const app = createRouter().route({
         });
         const fullCallbackUrl = urljoin(callbackUrl, subscriptionId);
         console.info(`Webhook ping ${i + 1} out of 10 -> `, fullCallbackUrl, body);
-        const res = await fetch(fullCallbackUrl, {
+        await fetch(fullCallbackUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body,
-        });
-        console.info(`Webhook response ${i + 1} -> `, res.status, res.statusText);
+        })
+          .then(res => {
+            console.info(`Webhook response ${i + 1} -> `, res.status, res.statusText);
+          })
+          .catch(err => console.error(`Webhook error ${i + 1} -> `, err));
       }
     });
     return Response.json({ subscriptionId });
