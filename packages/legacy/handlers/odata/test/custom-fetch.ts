@@ -37,7 +37,7 @@ export const mockFetch = function (...args: Parameters<WindowOrWorkerGlobalScope
   const url = decodeURIComponent(request.url);
   const responseFn = mocks[url];
   if (!responseFn) {
-    throw new Error(`${url} isn't mocked!`);
+    throw new Error(`${url} isn't mocked!;\n available mocks: ${Object.keys(mocks).join(',\n')}`);
   }
   return responseFn(request);
 } as any as WindowOrWorkerGlobalScope['fetch'];

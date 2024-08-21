@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/odata",
-  "version": "0.104.0",
+  "name": "@graphql-mesh/transport-odata",
+  "version": "0.0.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "ardatan/graphql-mesh",
-    "directory": "packages/legacy/handlers/odata"
+    "directory": "packages/transports/odata"
   },
   "license": "MIT",
   "engines": {
@@ -32,12 +32,11 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/store": "^0.102.0",
-    "@graphql-mesh/types": "^0.102.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
+    "@graphql-mesh/transport-common": "^0.7.0",
     "@omnigraph/odata": "^0.0.0"
   },
   "publishConfig": {
