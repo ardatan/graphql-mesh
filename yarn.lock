@@ -20414,7 +20414,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:^0.95.0"
     "@graphql-mesh/json-schema": "npm:^0.106.0"
     "@graphql-mesh/plugin-mock": "npm:^0.102.0"
-    graphql: "npm:16.8.1"
+    graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
 
