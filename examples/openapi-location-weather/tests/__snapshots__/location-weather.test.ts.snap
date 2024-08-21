@@ -1252,16 +1252,14 @@ type LightningObs {
 }
 
 type LightningObsGroup {
-  """Count of found lightning"""
+  """Count of lightning events."""
   count: Int
 
   """Latitude of point."""
   lat: Float
   lightning: [LightningObs]
 
-  """
-  Maximum number of lightning that can be returned. Either user, or system provided.
-  """
+  """Count of results in response (determined by limit parameter)."""
   limit: Int
 
   """Longitude of point."""
