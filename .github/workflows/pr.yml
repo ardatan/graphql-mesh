@@ -148,7 +148,7 @@ jobs:
       #         ./package-binary.sh ubuntu-latest aarch64 &&
       #         yarn build && E2E_SERVE_RUNNER=bin yarn test:e2e"
 
-      - name: Build packages
+      - name: Prep Mesh Config Files for E2Es
         run: yarn build
 
       - name: E2E tests

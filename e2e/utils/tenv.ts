@@ -345,6 +345,8 @@ export function createTenv(cwd: string): Tenv {
         [proc, waitForExit] = await spawn(
           { env, cwd, pipeLogs },
           path.resolve(__project, 'packages', 'serve-cli', 'mesh-serve'),
+          'supergraph',
+          supergraph,
           createPortOpt(port),
           supergraph && `supergraph ${supergraph}`,
         );
