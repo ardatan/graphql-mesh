@@ -5855,7 +5855,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/cli@npm:0.95.0, @graphql-mesh/cli@workspace:packages/legacy/cli":
+"@graphql-mesh/cli@npm:0.95.0, @graphql-mesh/cli@npm:^0.95.0, @graphql-mesh/cli@workspace:packages/legacy/cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cli@workspace:packages/legacy/cli"
   dependencies:
@@ -6119,7 +6119,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/json-schema@npm:0.106.0, @graphql-mesh/json-schema@workspace:packages/legacy/handlers/json-schema":
+"@graphql-mesh/json-schema@npm:0.106.0, @graphql-mesh/json-schema@npm:^0.106.0, @graphql-mesh/json-schema@workspace:packages/legacy/handlers/json-schema":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/json-schema@workspace:packages/legacy/handlers/json-schema"
   dependencies:
@@ -6371,7 +6371,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-mock@npm:0.102.0, @graphql-mesh/plugin-mock@workspace:packages/plugins/mock":
+"@graphql-mesh/plugin-mock@npm:0.102.0, @graphql-mesh/plugin-mock@npm:^0.102.0, @graphql-mesh/plugin-mock@workspace:packages/plugins/mock":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-mock@workspace:packages/plugins/mock"
   dependencies:
@@ -20404,6 +20404,17 @@ __metadata:
     lru-cache: "npm:11.0.0"
     tslib: "npm:2.6.3"
     tsx: "npm:^4.16.5"
+  languageName: unknown
+  linkType: soft
+
+"example-response-cache@workspace:examples/response-cache":
+  version: 0.0.0-use.local
+  resolution: "example-response-cache@workspace:examples/response-cache"
+  dependencies:
+    "@graphql-mesh/cli": "npm:^0.95.0"
+    "@graphql-mesh/json-schema": "npm:^0.106.0"
+    "@graphql-mesh/plugin-mock": "npm:^0.102.0"
+    graphql: "npm:16.8.1"
   languageName: unknown
   linkType: soft
 
