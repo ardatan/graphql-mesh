@@ -1,4 +1,4 @@
-import { getNamedType, type GraphQLObjectType, isListType, type GraphQLResolveInfo } from 'graphql';
+import { getNamedType, isListType, type GraphQLObjectType, type GraphQLResolveInfo } from 'graphql';
 import urljoin from 'url-join';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { DirectiveArgsMap } from '../directives.js';
