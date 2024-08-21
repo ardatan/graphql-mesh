@@ -39,3 +39,18 @@ export type TransportGetSubgraphExecutor<
 > = (opts: TransportGetSubgraphExecutorOptions<Options>) => Executor | Promise<Executor>;
 
 export type DisposableExecutor = Executor & Partial<Disposable | AsyncDisposable>;
+
+export interface UpstreamErrorExtensions {
+  subgraph?: string;
+  request: {
+    url?: string;
+    method?: string;
+    body?: unknown;
+  };
+  response: {
+    status?: number;
+    statusText?: string;
+    headers?: Record<string, string>;
+    body?: unknown;
+  };
+}
