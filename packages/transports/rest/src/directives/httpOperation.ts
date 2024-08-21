@@ -298,17 +298,7 @@ export function addHTTPRootFieldResolver(
     operationLogger.debug(`=> Fetching `, fullPath, `=>`, requestInit);
     const fetch: typeof globalFetch = context?.fetch || globalFetch;
     if (!fetch) {
-      return createGraphQLError(
-        `You should have fetch defined in either the config or the context!`,
-        {
-          extensions: {
-            request: {
-              url: fullPath,
-              method: httpMethod,
-            },
-          },
-        },
-      );
+      return new TypeError(`You should have fetch defined in either the config or the context!`);
     }
     // Trick to pass `sourceName` to the `fetch` function for tracing
     const response = await fetch(fullPath, requestInit, context, {
@@ -335,9 +325,9 @@ export function addHTTPRootFieldResolver(
       } else if (response.status === 204 || (response.status === 200 && responseText === '')) {
         responseJson = {};
       } else if (response.status.toString().startsWith('2')) {
-        logger.debug(`Unexpected response in ${field.name};\n\t${responseText}`);
         return createGraphQLError(`Unexpected response in ${field.name}`, {
           extensions: {
+            subgraph: sourceName,
             request: {
               url: fullPath,
               method: httpMethod,
@@ -356,6 +346,7 @@ export function addHTTPRootFieldResolver(
           `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {
+              subgraph: sourceName,
               request: {
                 url: fullPath,
                 method: httpMethod,
@@ -377,9 +368,10 @@ export function addHTTPRootFieldResolver(
     if (!response.status.toString().startsWith('2')) {
       if (!isUnionType(returnNamedGraphQLType)) {
         return createGraphQLError(
-          `HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
+          `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {
+              subgraph: sourceName,
               request: {
                 url: fullPath,
                 method: httpMethod,

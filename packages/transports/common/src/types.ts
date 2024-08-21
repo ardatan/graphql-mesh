@@ -41,6 +41,7 @@ export type TransportGetSubgraphExecutor<
 export type DisposableExecutor = Executor & Partial<Disposable | AsyncDisposable>;
 
 export interface UpstreamErrorExtensions {
+  subgraph?: string;
   request: {
     url?: string;
     method?: string;

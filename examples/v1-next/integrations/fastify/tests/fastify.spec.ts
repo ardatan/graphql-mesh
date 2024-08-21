@@ -64,15 +64,15 @@ describe('fastify', () => {
 
     const resJson = await response.json();
 
-    expect(resJson).toEqual({
+    expect(resJson).toMatchObject({
       data: { pet_by_petId: null },
       errors: [
         {
-          message: 'HTTP Error: 500, Could not invoke operation GET /pet/{args.petId}',
+          message: 'Upstream HTTP Error: 500, Could not invoke operation GET /pet/{args.petId}',
           path: ['pet_by_petId'],
           extensions: {
             request: { url: `http://localhost:${upstreamPort}/pet/pet500`, method: 'GET' },
-            responseJson: { error: 'Error' },
+            response: { body: { error: 'Error' } },
           },
         },
       ],

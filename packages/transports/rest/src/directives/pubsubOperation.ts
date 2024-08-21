@@ -21,9 +21,7 @@ export function processPubSubOperationAnnotations({
     const operationLogger = logger.child(`${info.parentType.name}.${field.name}`);
     const pubsub = context?.pubsub || globalPubsub;
     if (!pubsub) {
-      return createGraphQLError(
-        `You should have PubSub defined in either the config or the context!`,
-      );
+      return new TypeError(`You should have PubSub defined in either the config or the context!`);
     }
     const interpolationData = { root, args, context, info, env: process.env };
     let interpolatedPubSubTopic: string = stringInterpolator.parse(pubsubTopic, interpolationData);

@@ -82,6 +82,7 @@ function normalizeResult(result: any) {
 type RootValueMethod = (args: any, context: any, info: GraphQLResolveInfo) => Promise<any>;
 
 interface SoapAnnotations {
+  subgraph: string;
   endpoint: string;
   bindingNamespace: string;
   elementName: string;
@@ -140,6 +141,7 @@ function createRootValueMethod({
     if (!response.ok) {
       return createGraphQLError(`Upstream HTTP Error: ${response.status}`, {
         extensions: {
+          subgraph: soapAnnotations.subgraph,
           request: {
             url: soapAnnotations.endpoint,
             method: 'POST',
@@ -162,6 +164,7 @@ function createRootValueMethod({
     } catch (e) {
       return createGraphQLError(`Invalid SOAP response: ${e.message}`, {
         extensions: {
+          subgraph: soapAnnotations.subgraph,
           request: {
             url: soapAnnotations.endpoint,
             method: 'POST',
