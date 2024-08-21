@@ -1,0 +1,3687 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose the appropriate schema 1`] = `
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@relationshipProperties", "@relationship", "@introspection", "@transport", "@extraSchemaDefinitionDirective"]
+)
+{
+  query: Query
+  mutation: Mutation
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  MOVIES @join__graph(name: "Movies", url: "neo4j://0.0.0.0:<neo4j_port>") 
+}
+
+directive @relationshipProperties on OBJECT
+
+directive @relationship(type: String, direction: _RelationDirections, properties: String)  on FIELD_DEFINITION
+
+directive @introspection(subgraph: String)  repeatable on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+
+directive @transport(kind: String, subgraph: String, location: String, options: Any)  repeatable on SCHEMA
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt @join__type(graph: MOVIES) 
+
+scalar Any @join__type(graph: MOVIES) 
+
+scalar _DirectiveExtensions @join__type(graph: MOVIES) 
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
+) @join__type(graph: MOVIES)  {
+  movies(where: MovieWhere, options: MovieOptions) : [Movie!]!
+  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort]) : MoviesConnection!
+  moviesAggregate(where: MovieWhere) : MovieAggregateSelection!
+  people(where: PersonWhere, options: PersonOptions) : [Person!]!
+  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort]) : PeopleConnection!
+  peopleAggregate(where: PersonWhere) : PersonAggregateSelection!
+}
+
+type Mutation @join__type(graph: MOVIES)  {
+  createMovies(input: [MovieCreateInput!]!) : CreateMoviesMutationResponse!
+  deleteMovies(where: MovieWhere, delete: MovieDeleteInput) : DeleteInfo!
+  updateMovies(
+    where: MovieWhere
+    update: MovieUpdateInput
+    connect: MovieConnectInput
+    disconnect: MovieDisconnectInput
+    create: MovieRelationInput
+    delete: MovieDeleteInput
+  ): UpdateMoviesMutationResponse!
+  createPeople(input: [PersonCreateInput!]!) : CreatePeopleMutationResponse!
+  deletePeople(where: PersonWhere, delete: PersonDeleteInput) : DeleteInfo!
+  updatePeople(
+    where: PersonWhere
+    update: PersonUpdateInput
+    connect: PersonConnectInput
+    disconnect: PersonDisconnectInput
+    create: PersonRelationInput
+    delete: PersonDeleteInput
+  ): UpdatePeopleMutationResponse!
+}
+
+"""
+The edge properties for the following fields:
+* Movie.peopleActedIn
+* Person.actedInMovies
+"""
+type ActedInProperties @relationshipProperties @introspection @join__type(graph: MOVIES)  {
+  roles: [String]! @introspection
+}
+
+type BigIntAggregateSelection @join__type(graph: MOVIES)  {
+  max: BigInt
+  min: BigInt
+  average: BigInt
+  sum: BigInt
+}
+
+"""
+Information about the number of nodes and relationships created during a create mutation
+"""
+type CreateInfo @join__type(graph: MOVIES)  {
+  bookmark: String @deprecated(
+    reason: "This field has been deprecated because bookmarks are now handled by the driver."
+  )
+  nodesCreated: Int!
+  relationshipsCreated: Int!
+}
+
+type CreateMoviesMutationResponse @join__type(graph: MOVIES)  {
+  info: CreateInfo!
+  movies: [Movie!]!
+}
+
+type CreatePeopleMutationResponse @join__type(graph: MOVIES)  {
+  info: CreateInfo!
+  people: [Person!]!
+}
+
+"""
+Information about the number of nodes and relationships deleted during a delete mutation
+"""
+type DeleteInfo @join__type(graph: MOVIES)  {
+  bookmark: String @deprecated(
+    reason: "This field has been deprecated because bookmarks are now handled by the driver."
+  )
+  nodesDeleted: Int!
+  relationshipsDeleted: Int!
+}
+
+type Movie @introspection @join__type(graph: MOVIES)  {
+  released: BigInt! @introspection
+  tagline: String @introspection
+  title: String! @introspection
+  peopleActedInAggregate(where: PersonWhere, directed: Boolean = true) : MoviePersonPeopleActedInAggregationSelection
+  peopleActedIn(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties") 
+  peopleActedInConnection(
+    where: MoviePeopleActedInConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [MoviePeopleActedInConnectionSort!]
+  ): MoviePeopleActedInConnection!
+  peopleDirectedAggregate(where: PersonWhere, directed: Boolean = true) : MoviePersonPeopleDirectedAggregationSelection
+  peopleDirected(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "DIRECTED", direction: IN) 
+  peopleDirectedConnection(
+    where: MoviePeopleDirectedConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [MoviePeopleDirectedConnectionSort!]
+  ): MoviePeopleDirectedConnection!
+  peopleProducedAggregate(where: PersonWhere, directed: Boolean = true) : MoviePersonPeopleProducedAggregationSelection
+  peopleProduced(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "PRODUCED", direction: IN) 
+  peopleProducedConnection(
+    where: MoviePeopleProducedConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [MoviePeopleProducedConnectionSort!]
+  ): MoviePeopleProducedConnection!
+  peopleReviewedAggregate(where: PersonWhere, directed: Boolean = true) : MoviePersonPeopleReviewedAggregationSelection
+  peopleReviewed(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN, properties: "ReviewedProperties") 
+  peopleReviewedConnection(
+    where: MoviePeopleReviewedConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [MoviePeopleReviewedConnectionSort!]
+  ): MoviePeopleReviewedConnection!
+  peopleWroteAggregate(where: PersonWhere, directed: Boolean = true) : MoviePersonPeopleWroteAggregationSelection
+  peopleWrote(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "WROTE", direction: IN) 
+  peopleWroteConnection(
+    where: MoviePeopleWroteConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [MoviePeopleWroteConnectionSort!]
+  ): MoviePeopleWroteConnection!
+}
+
+type MovieAggregateSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  released: BigIntAggregateSelection!
+  tagline: StringAggregateSelection!
+  title: StringAggregateSelection!
+}
+
+type MovieEdge @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Movie!
+}
+
+type MoviePeopleActedInConnection @join__type(graph: MOVIES)  {
+  edges: [MoviePeopleActedInRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type MoviePeopleActedInRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Person!
+  properties: ActedInProperties!
+}
+
+type MoviePeopleDirectedConnection @join__type(graph: MOVIES)  {
+  edges: [MoviePeopleDirectedRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type MoviePeopleDirectedRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Person!
+}
+
+type MoviePeopleProducedConnection @join__type(graph: MOVIES)  {
+  edges: [MoviePeopleProducedRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type MoviePeopleProducedRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Person!
+}
+
+type MoviePeopleReviewedConnection @join__type(graph: MOVIES)  {
+  edges: [MoviePeopleReviewedRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type MoviePeopleReviewedRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Person!
+  properties: ReviewedProperties!
+}
+
+type MoviePeopleWroteConnection @join__type(graph: MOVIES)  {
+  edges: [MoviePeopleWroteRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type MoviePeopleWroteRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Person!
+}
+
+type MoviePersonPeopleActedInAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: MoviePersonPeopleActedInNodeAggregateSelection
+}
+
+type MoviePersonPeopleActedInNodeAggregateSelection @join__type(graph: MOVIES)  {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
+type MoviePersonPeopleDirectedAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: MoviePersonPeopleDirectedNodeAggregateSelection
+}
+
+type MoviePersonPeopleDirectedNodeAggregateSelection @join__type(graph: MOVIES)  {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
+type MoviePersonPeopleProducedAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: MoviePersonPeopleProducedNodeAggregateSelection
+}
+
+type MoviePersonPeopleProducedNodeAggregateSelection @join__type(graph: MOVIES)  {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
+type MoviePersonPeopleReviewedAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: MoviePersonPeopleReviewedNodeAggregateSelection
+  edge: MoviePersonPeopleReviewedEdgeAggregateSelection
+}
+
+type MoviePersonPeopleReviewedEdgeAggregateSelection @join__type(graph: MOVIES)  {
+  rating: BigIntAggregateSelection!
+  summary: StringAggregateSelection!
+}
+
+type MoviePersonPeopleReviewedNodeAggregateSelection @join__type(graph: MOVIES)  {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
+type MoviePersonPeopleWroteAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: MoviePersonPeopleWroteNodeAggregateSelection
+}
+
+type MoviePersonPeopleWroteNodeAggregateSelection @join__type(graph: MOVIES)  {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
+type MoviesConnection @join__type(graph: MOVIES)  {
+  totalCount: Int!
+  pageInfo: PageInfo!
+  edges: [MovieEdge!]!
+}
+
+"""
+Pagination information (Relay)
+"""
+type PageInfo @join__type(graph: MOVIES)  {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type PeopleConnection @join__type(graph: MOVIES)  {
+  totalCount: Int!
+  pageInfo: PageInfo!
+  edges: [PersonEdge!]!
+}
+
+type Person @introspection @join__type(graph: MOVIES)  {
+  born: BigInt @introspection
+  name: String! @introspection
+  actedInMoviesAggregate(where: MovieWhere, directed: Boolean = true) : PersonMovieActedInMoviesAggregationSelection
+  actedInMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties") 
+  actedInMoviesConnection(
+    where: PersonActedInMoviesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [PersonActedInMoviesConnectionSort!]
+  ): PersonActedInMoviesConnection!
+  directedMoviesAggregate(where: MovieWhere, directed: Boolean = true) : PersonMovieDirectedMoviesAggregationSelection
+  directedMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT) 
+  directedMoviesConnection(
+    where: PersonDirectedMoviesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [PersonDirectedMoviesConnectionSort!]
+  ): PersonDirectedMoviesConnection!
+  followsPeopleAggregate(where: PersonWhere, directed: Boolean = true) : PersonPersonFollowsPeopleAggregationSelection
+  followsPeople(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "FOLLOWS", direction: OUT) 
+  followsPeopleConnection(
+    where: PersonFollowsPeopleConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [PersonFollowsPeopleConnectionSort!]
+  ): PersonFollowsPeopleConnection!
+  peopleFollowsAggregate(where: PersonWhere, directed: Boolean = true) : PersonPersonPeopleFollowsAggregationSelection
+  peopleFollows(where: PersonWhere, options: PersonOptions, directed: Boolean = true) : [Person!]! @introspection @relationship(type: "FOLLOWS", direction: IN) 
+  peopleFollowsConnection(
+    where: PersonPeopleFollowsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [PersonPeopleFollowsConnectionSort!]
+  ): PersonPeopleFollowsConnection!
+  producedMoviesAggregate(where: MovieWhere, directed: Boolean = true) : PersonMovieProducedMoviesAggregationSelection
+  producedMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "PRODUCED", direction: OUT) 
+  producedMoviesConnection(
+    where: PersonProducedMoviesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [PersonProducedMoviesConnectionSort!]
+  ): PersonProducedMoviesConnection!
+  reviewedMoviesAggregate(where: MovieWhere, directed: Boolean = true) : PersonMovieReviewedMoviesAggregationSelection
+  reviewedMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT, properties: "ReviewedProperties") 
+  reviewedMoviesConnection(
+    where: PersonReviewedMoviesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [PersonReviewedMoviesConnectionSort!]
+  ): PersonReviewedMoviesConnection!
+  wroteMoviesAggregate(where: MovieWhere, directed: Boolean = true) : PersonMovieWroteMoviesAggregationSelection
+  wroteMovies(where: MovieWhere, options: MovieOptions, directed: Boolean = true) : [Movie!]! @introspection @relationship(type: "WROTE", direction: OUT) 
+  wroteMoviesConnection(
+    where: PersonWroteMoviesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [PersonWroteMoviesConnectionSort!]
+  ): PersonWroteMoviesConnection!
+}
+
+type PersonActedInMoviesConnection @join__type(graph: MOVIES)  {
+  edges: [PersonActedInMoviesRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type PersonActedInMoviesRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Movie!
+  properties: ActedInProperties!
+}
+
+type PersonAggregateSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
+type PersonDirectedMoviesConnection @join__type(graph: MOVIES)  {
+  edges: [PersonDirectedMoviesRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type PersonDirectedMoviesRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Movie!
+}
+
+type PersonEdge @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Person!
+}
+
+type PersonFollowsPeopleConnection @join__type(graph: MOVIES)  {
+  edges: [PersonFollowsPeopleRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type PersonFollowsPeopleRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Person!
+}
+
+type PersonMovieActedInMoviesAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: PersonMovieActedInMoviesNodeAggregateSelection
+}
+
+type PersonMovieActedInMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+  released: BigIntAggregateSelection!
+  tagline: StringAggregateSelection!
+  title: StringAggregateSelection!
+}
+
+type PersonMovieDirectedMoviesAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: PersonMovieDirectedMoviesNodeAggregateSelection
+}
+
+type PersonMovieDirectedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+  released: BigIntAggregateSelection!
+  tagline: StringAggregateSelection!
+  title: StringAggregateSelection!
+}
+
+type PersonMovieProducedMoviesAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: PersonMovieProducedMoviesNodeAggregateSelection
+}
+
+type PersonMovieProducedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+  released: BigIntAggregateSelection!
+  tagline: StringAggregateSelection!
+  title: StringAggregateSelection!
+}
+
+type PersonMovieReviewedMoviesAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: PersonMovieReviewedMoviesNodeAggregateSelection
+  edge: PersonMovieReviewedMoviesEdgeAggregateSelection
+}
+
+type PersonMovieReviewedMoviesEdgeAggregateSelection @join__type(graph: MOVIES)  {
+  rating: BigIntAggregateSelection!
+  summary: StringAggregateSelection!
+}
+
+type PersonMovieReviewedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+  released: BigIntAggregateSelection!
+  tagline: StringAggregateSelection!
+  title: StringAggregateSelection!
+}
+
+type PersonMovieWroteMoviesAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: PersonMovieWroteMoviesNodeAggregateSelection
+}
+
+type PersonMovieWroteMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+  released: BigIntAggregateSelection!
+  tagline: StringAggregateSelection!
+  title: StringAggregateSelection!
+}
+
+type PersonPeopleFollowsConnection @join__type(graph: MOVIES)  {
+  edges: [PersonPeopleFollowsRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type PersonPeopleFollowsRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Person!
+}
+
+type PersonPersonFollowsPeopleAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: PersonPersonFollowsPeopleNodeAggregateSelection
+}
+
+type PersonPersonFollowsPeopleNodeAggregateSelection @join__type(graph: MOVIES)  {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
+type PersonPersonPeopleFollowsAggregationSelection @join__type(graph: MOVIES)  {
+  count: Int!
+  node: PersonPersonPeopleFollowsNodeAggregateSelection
+}
+
+type PersonPersonPeopleFollowsNodeAggregateSelection @join__type(graph: MOVIES)  {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
+type PersonProducedMoviesConnection @join__type(graph: MOVIES)  {
+  edges: [PersonProducedMoviesRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type PersonProducedMoviesRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Movie!
+}
+
+type PersonReviewedMoviesConnection @join__type(graph: MOVIES)  {
+  edges: [PersonReviewedMoviesRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type PersonReviewedMoviesRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Movie!
+  properties: ReviewedProperties!
+}
+
+type PersonWroteMoviesConnection @join__type(graph: MOVIES)  {
+  edges: [PersonWroteMoviesRelationship!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type PersonWroteMoviesRelationship @join__type(graph: MOVIES)  {
+  cursor: String!
+  node: Movie!
+}
+
+"""
+The edge properties for the following fields:
+* Movie.peopleReviewed
+* Person.reviewedMovies
+"""
+type ReviewedProperties @relationshipProperties @introspection @join__type(graph: MOVIES)  {
+  rating: BigInt! @introspection
+  summary: String! @introspection
+}
+
+type StringAggregateSelection @join__type(graph: MOVIES)  {
+  shortest: String
+  longest: String
+}
+
+"""
+Information about the number of nodes and relationships created and deleted during an update mutation
+"""
+type UpdateInfo @join__type(graph: MOVIES)  {
+  bookmark: String @deprecated(
+    reason: "This field has been deprecated because bookmarks are now handled by the driver."
+  )
+  nodesCreated: Int!
+  nodesDeleted: Int!
+  relationshipsCreated: Int!
+  relationshipsDeleted: Int!
+}
+
+type UpdateMoviesMutationResponse @join__type(graph: MOVIES)  {
+  info: UpdateInfo!
+  movies: [Movie!]!
+}
+
+type UpdatePeopleMutationResponse @join__type(graph: MOVIES)  {
+  info: UpdateInfo!
+  people: [Person!]!
+}
+
+enum _RelationDirections @join__type(graph: MOVIES)  {
+  IN @join__enumValue(graph: MOVIES) 
+  OUT @join__enumValue(graph: MOVIES) 
+}
+
+"""
+An enum for sorting in either ascending or descending order.
+"""
+enum SortDirection @join__type(graph: MOVIES)  {
+  """
+  Sort by field values in ascending order.
+  """
+  ASC @join__enumValue(graph: MOVIES) 
+  """
+  Sort by field values in descending order.
+  """
+  DESC @join__enumValue(graph: MOVIES) 
+}
+
+input ActedInPropertiesCreateInput @join__type(graph: MOVIES)  {
+  roles: [String]!
+}
+
+input ActedInPropertiesSort @join__type(graph: MOVIES)  {
+  roles: SortDirection
+}
+
+input ActedInPropertiesUpdateInput @join__type(graph: MOVIES)  {
+  roles: [String]
+  roles_POP: Int
+  roles_PUSH: [String]
+}
+
+input ActedInPropertiesWhere @join__type(graph: MOVIES)  {
+  roles: [String]
+  roles_NOT: [String] @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  roles_INCLUDES: String
+  roles_NOT_INCLUDES: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  OR: [ActedInPropertiesWhere!]
+  AND: [ActedInPropertiesWhere!]
+  NOT: ActedInPropertiesWhere
+}
+
+input MovieConnectInput @join__type(graph: MOVIES)  {
+  peopleActedIn: [MoviePeopleActedInConnectFieldInput!]
+  peopleDirected: [MoviePeopleDirectedConnectFieldInput!]
+  peopleProduced: [MoviePeopleProducedConnectFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedConnectFieldInput!]
+  peopleWrote: [MoviePeopleWroteConnectFieldInput!]
+}
+
+input MovieConnectWhere @join__type(graph: MOVIES)  {
+  node: MovieWhere!
+}
+
+input MovieCreateInput @join__type(graph: MOVIES)  {
+  released: BigInt!
+  tagline: String
+  title: String!
+  peopleActedIn: MoviePeopleActedInFieldInput
+  peopleDirected: MoviePeopleDirectedFieldInput
+  peopleProduced: MoviePeopleProducedFieldInput
+  peopleReviewed: MoviePeopleReviewedFieldInput
+  peopleWrote: MoviePeopleWroteFieldInput
+}
+
+input MovieDeleteInput @join__type(graph: MOVIES)  {
+  peopleActedIn: [MoviePeopleActedInDeleteFieldInput!]
+  peopleDirected: [MoviePeopleDirectedDeleteFieldInput!]
+  peopleProduced: [MoviePeopleProducedDeleteFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedDeleteFieldInput!]
+  peopleWrote: [MoviePeopleWroteDeleteFieldInput!]
+}
+
+input MovieDisconnectInput @join__type(graph: MOVIES)  {
+  peopleActedIn: [MoviePeopleActedInDisconnectFieldInput!]
+  peopleDirected: [MoviePeopleDirectedDisconnectFieldInput!]
+  peopleProduced: [MoviePeopleProducedDisconnectFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedDisconnectFieldInput!]
+  peopleWrote: [MoviePeopleWroteDisconnectFieldInput!]
+}
+
+input MovieOptions @join__type(graph: MOVIES)  {
+  limit: Int
+  offset: Int
+  """
+  Specify one or more MovieSort objects to sort Movies by. The sorts will be applied in the order in which they are arranged in the array.
+  """
+  sort: [MovieSort!]
+}
+
+input MoviePeopleActedInAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [MoviePeopleActedInAggregateInput!]
+  OR: [MoviePeopleActedInAggregateInput!]
+  NOT: MoviePeopleActedInAggregateInput
+  node: MoviePeopleActedInNodeAggregationWhereInput
+}
+
+input MoviePeopleActedInConnectFieldInput @join__type(graph: MOVIES)  {
+  edge: ActedInPropertiesCreateInput!
+  where: PersonConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [PersonConnectInput!]
+}
+
+input MoviePeopleActedInConnectionSort @join__type(graph: MOVIES)  {
+  node: PersonSort
+  edge: ActedInPropertiesSort
+}
+
+input MoviePeopleActedInConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleActedInConnectionWhere!]
+  OR: [MoviePeopleActedInConnectionWhere!]
+  NOT: MoviePeopleActedInConnectionWhere
+  node: PersonWhere
+  node_NOT: PersonWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  edge: ActedInPropertiesWhere
+  edge_NOT: ActedInPropertiesWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input MoviePeopleActedInCreateFieldInput @join__type(graph: MOVIES)  {
+  edge: ActedInPropertiesCreateInput!
+  node: PersonCreateInput!
+}
+
+input MoviePeopleActedInDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleActedInConnectionWhere
+  delete: PersonDeleteInput
+}
+
+input MoviePeopleActedInDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleActedInConnectionWhere
+  disconnect: PersonDisconnectInput
+}
+
+input MoviePeopleActedInFieldInput @join__type(graph: MOVIES)  {
+  connect: [MoviePeopleActedInConnectFieldInput!]
+  create: [MoviePeopleActedInCreateFieldInput!]
+}
+
+input MoviePeopleActedInNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleActedInNodeAggregationWhereInput!]
+  OR: [MoviePeopleActedInNodeAggregationWhereInput!]
+  NOT: MoviePeopleActedInNodeAggregationWhereInput
+  born_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_EQUAL: BigInt
+  born_MAX_EQUAL: BigInt
+  born_SUM_EQUAL: BigInt
+  born_AVERAGE_EQUAL: BigInt
+  born_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GT: BigInt
+  born_MAX_GT: BigInt
+  born_SUM_GT: BigInt
+  born_AVERAGE_GT: BigInt
+  born_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GTE: BigInt
+  born_MAX_GTE: BigInt
+  born_SUM_GTE: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LT: BigInt
+  born_MAX_LT: BigInt
+  born_SUM_LT: BigInt
+  born_AVERAGE_LT: BigInt
+  born_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LTE: BigInt
+  born_MAX_LTE: BigInt
+  born_SUM_LTE: BigInt
+  born_AVERAGE_LTE: BigInt
+  name_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GT: Float
+  name_LONGEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GTE: Float
+  name_LONGEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LT: Float
+  name_LONGEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LTE: Float
+  name_LONGEST_LENGTH_LTE: Int
+  name_SHORTEST_LENGTH_LTE: Int
+}
+
+input MoviePeopleActedInUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: PersonUpdateInput
+  edge: ActedInPropertiesUpdateInput
+}
+
+input MoviePeopleActedInUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleActedInConnectionWhere
+  connect: [MoviePeopleActedInConnectFieldInput!]
+  disconnect: [MoviePeopleActedInDisconnectFieldInput!]
+  create: [MoviePeopleActedInCreateFieldInput!]
+  update: MoviePeopleActedInUpdateConnectionInput
+  delete: [MoviePeopleActedInDeleteFieldInput!]
+}
+
+input MoviePeopleDirectedAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [MoviePeopleDirectedAggregateInput!]
+  OR: [MoviePeopleDirectedAggregateInput!]
+  NOT: MoviePeopleDirectedAggregateInput
+  node: MoviePeopleDirectedNodeAggregationWhereInput
+}
+
+input MoviePeopleDirectedConnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [PersonConnectInput!]
+}
+
+input MoviePeopleDirectedConnectionSort @join__type(graph: MOVIES)  {
+  node: PersonSort
+}
+
+input MoviePeopleDirectedConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleDirectedConnectionWhere!]
+  OR: [MoviePeopleDirectedConnectionWhere!]
+  NOT: MoviePeopleDirectedConnectionWhere
+  node: PersonWhere
+  node_NOT: PersonWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input MoviePeopleDirectedCreateFieldInput @join__type(graph: MOVIES)  {
+  node: PersonCreateInput!
+}
+
+input MoviePeopleDirectedDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleDirectedConnectionWhere
+  delete: PersonDeleteInput
+}
+
+input MoviePeopleDirectedDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleDirectedConnectionWhere
+  disconnect: PersonDisconnectInput
+}
+
+input MoviePeopleDirectedFieldInput @join__type(graph: MOVIES)  {
+  connect: [MoviePeopleDirectedConnectFieldInput!]
+  create: [MoviePeopleDirectedCreateFieldInput!]
+}
+
+input MoviePeopleDirectedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleDirectedNodeAggregationWhereInput!]
+  OR: [MoviePeopleDirectedNodeAggregationWhereInput!]
+  NOT: MoviePeopleDirectedNodeAggregationWhereInput
+  born_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_EQUAL: BigInt
+  born_MAX_EQUAL: BigInt
+  born_SUM_EQUAL: BigInt
+  born_AVERAGE_EQUAL: BigInt
+  born_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GT: BigInt
+  born_MAX_GT: BigInt
+  born_SUM_GT: BigInt
+  born_AVERAGE_GT: BigInt
+  born_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GTE: BigInt
+  born_MAX_GTE: BigInt
+  born_SUM_GTE: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LT: BigInt
+  born_MAX_LT: BigInt
+  born_SUM_LT: BigInt
+  born_AVERAGE_LT: BigInt
+  born_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LTE: BigInt
+  born_MAX_LTE: BigInt
+  born_SUM_LTE: BigInt
+  born_AVERAGE_LTE: BigInt
+  name_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GT: Float
+  name_LONGEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GTE: Float
+  name_LONGEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LT: Float
+  name_LONGEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LTE: Float
+  name_LONGEST_LENGTH_LTE: Int
+  name_SHORTEST_LENGTH_LTE: Int
+}
+
+input MoviePeopleDirectedUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: PersonUpdateInput
+}
+
+input MoviePeopleDirectedUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleDirectedConnectionWhere
+  connect: [MoviePeopleDirectedConnectFieldInput!]
+  disconnect: [MoviePeopleDirectedDisconnectFieldInput!]
+  create: [MoviePeopleDirectedCreateFieldInput!]
+  update: MoviePeopleDirectedUpdateConnectionInput
+  delete: [MoviePeopleDirectedDeleteFieldInput!]
+}
+
+input MoviePeopleProducedAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [MoviePeopleProducedAggregateInput!]
+  OR: [MoviePeopleProducedAggregateInput!]
+  NOT: MoviePeopleProducedAggregateInput
+  node: MoviePeopleProducedNodeAggregationWhereInput
+}
+
+input MoviePeopleProducedConnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [PersonConnectInput!]
+}
+
+input MoviePeopleProducedConnectionSort @join__type(graph: MOVIES)  {
+  node: PersonSort
+}
+
+input MoviePeopleProducedConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleProducedConnectionWhere!]
+  OR: [MoviePeopleProducedConnectionWhere!]
+  NOT: MoviePeopleProducedConnectionWhere
+  node: PersonWhere
+  node_NOT: PersonWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input MoviePeopleProducedCreateFieldInput @join__type(graph: MOVIES)  {
+  node: PersonCreateInput!
+}
+
+input MoviePeopleProducedDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleProducedConnectionWhere
+  delete: PersonDeleteInput
+}
+
+input MoviePeopleProducedDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleProducedConnectionWhere
+  disconnect: PersonDisconnectInput
+}
+
+input MoviePeopleProducedFieldInput @join__type(graph: MOVIES)  {
+  connect: [MoviePeopleProducedConnectFieldInput!]
+  create: [MoviePeopleProducedCreateFieldInput!]
+}
+
+input MoviePeopleProducedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleProducedNodeAggregationWhereInput!]
+  OR: [MoviePeopleProducedNodeAggregationWhereInput!]
+  NOT: MoviePeopleProducedNodeAggregationWhereInput
+  born_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_EQUAL: BigInt
+  born_MAX_EQUAL: BigInt
+  born_SUM_EQUAL: BigInt
+  born_AVERAGE_EQUAL: BigInt
+  born_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GT: BigInt
+  born_MAX_GT: BigInt
+  born_SUM_GT: BigInt
+  born_AVERAGE_GT: BigInt
+  born_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GTE: BigInt
+  born_MAX_GTE: BigInt
+  born_SUM_GTE: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LT: BigInt
+  born_MAX_LT: BigInt
+  born_SUM_LT: BigInt
+  born_AVERAGE_LT: BigInt
+  born_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LTE: BigInt
+  born_MAX_LTE: BigInt
+  born_SUM_LTE: BigInt
+  born_AVERAGE_LTE: BigInt
+  name_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GT: Float
+  name_LONGEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GTE: Float
+  name_LONGEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LT: Float
+  name_LONGEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LTE: Float
+  name_LONGEST_LENGTH_LTE: Int
+  name_SHORTEST_LENGTH_LTE: Int
+}
+
+input MoviePeopleProducedUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: PersonUpdateInput
+}
+
+input MoviePeopleProducedUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleProducedConnectionWhere
+  connect: [MoviePeopleProducedConnectFieldInput!]
+  disconnect: [MoviePeopleProducedDisconnectFieldInput!]
+  create: [MoviePeopleProducedCreateFieldInput!]
+  update: MoviePeopleProducedUpdateConnectionInput
+  delete: [MoviePeopleProducedDeleteFieldInput!]
+}
+
+input MoviePeopleReviewedAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [MoviePeopleReviewedAggregateInput!]
+  OR: [MoviePeopleReviewedAggregateInput!]
+  NOT: MoviePeopleReviewedAggregateInput
+  node: MoviePeopleReviewedNodeAggregationWhereInput
+  edge: ReviewedPropertiesAggregationWhereInput
+}
+
+input MoviePeopleReviewedConnectFieldInput @join__type(graph: MOVIES)  {
+  edge: ReviewedPropertiesCreateInput!
+  where: PersonConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [PersonConnectInput!]
+}
+
+input MoviePeopleReviewedConnectionSort @join__type(graph: MOVIES)  {
+  node: PersonSort
+  edge: ReviewedPropertiesSort
+}
+
+input MoviePeopleReviewedConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleReviewedConnectionWhere!]
+  OR: [MoviePeopleReviewedConnectionWhere!]
+  NOT: MoviePeopleReviewedConnectionWhere
+  node: PersonWhere
+  node_NOT: PersonWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  edge: ReviewedPropertiesWhere
+  edge_NOT: ReviewedPropertiesWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input MoviePeopleReviewedCreateFieldInput @join__type(graph: MOVIES)  {
+  edge: ReviewedPropertiesCreateInput!
+  node: PersonCreateInput!
+}
+
+input MoviePeopleReviewedDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleReviewedConnectionWhere
+  delete: PersonDeleteInput
+}
+
+input MoviePeopleReviewedDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleReviewedConnectionWhere
+  disconnect: PersonDisconnectInput
+}
+
+input MoviePeopleReviewedFieldInput @join__type(graph: MOVIES)  {
+  connect: [MoviePeopleReviewedConnectFieldInput!]
+  create: [MoviePeopleReviewedCreateFieldInput!]
+}
+
+input MoviePeopleReviewedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleReviewedNodeAggregationWhereInput!]
+  OR: [MoviePeopleReviewedNodeAggregationWhereInput!]
+  NOT: MoviePeopleReviewedNodeAggregationWhereInput
+  born_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_EQUAL: BigInt
+  born_MAX_EQUAL: BigInt
+  born_SUM_EQUAL: BigInt
+  born_AVERAGE_EQUAL: BigInt
+  born_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GT: BigInt
+  born_MAX_GT: BigInt
+  born_SUM_GT: BigInt
+  born_AVERAGE_GT: BigInt
+  born_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GTE: BigInt
+  born_MAX_GTE: BigInt
+  born_SUM_GTE: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LT: BigInt
+  born_MAX_LT: BigInt
+  born_SUM_LT: BigInt
+  born_AVERAGE_LT: BigInt
+  born_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LTE: BigInt
+  born_MAX_LTE: BigInt
+  born_SUM_LTE: BigInt
+  born_AVERAGE_LTE: BigInt
+  name_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GT: Float
+  name_LONGEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GTE: Float
+  name_LONGEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LT: Float
+  name_LONGEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LTE: Float
+  name_LONGEST_LENGTH_LTE: Int
+  name_SHORTEST_LENGTH_LTE: Int
+}
+
+input MoviePeopleReviewedUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: PersonUpdateInput
+  edge: ReviewedPropertiesUpdateInput
+}
+
+input MoviePeopleReviewedUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleReviewedConnectionWhere
+  connect: [MoviePeopleReviewedConnectFieldInput!]
+  disconnect: [MoviePeopleReviewedDisconnectFieldInput!]
+  create: [MoviePeopleReviewedCreateFieldInput!]
+  update: MoviePeopleReviewedUpdateConnectionInput
+  delete: [MoviePeopleReviewedDeleteFieldInput!]
+}
+
+input MoviePeopleWroteAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [MoviePeopleWroteAggregateInput!]
+  OR: [MoviePeopleWroteAggregateInput!]
+  NOT: MoviePeopleWroteAggregateInput
+  node: MoviePeopleWroteNodeAggregationWhereInput
+}
+
+input MoviePeopleWroteConnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [PersonConnectInput!]
+}
+
+input MoviePeopleWroteConnectionSort @join__type(graph: MOVIES)  {
+  node: PersonSort
+}
+
+input MoviePeopleWroteConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleWroteConnectionWhere!]
+  OR: [MoviePeopleWroteConnectionWhere!]
+  NOT: MoviePeopleWroteConnectionWhere
+  node: PersonWhere
+  node_NOT: PersonWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input MoviePeopleWroteCreateFieldInput @join__type(graph: MOVIES)  {
+  node: PersonCreateInput!
+}
+
+input MoviePeopleWroteDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleWroteConnectionWhere
+  delete: PersonDeleteInput
+}
+
+input MoviePeopleWroteDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleWroteConnectionWhere
+  disconnect: PersonDisconnectInput
+}
+
+input MoviePeopleWroteFieldInput @join__type(graph: MOVIES)  {
+  connect: [MoviePeopleWroteConnectFieldInput!]
+  create: [MoviePeopleWroteCreateFieldInput!]
+}
+
+input MoviePeopleWroteNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [MoviePeopleWroteNodeAggregationWhereInput!]
+  OR: [MoviePeopleWroteNodeAggregationWhereInput!]
+  NOT: MoviePeopleWroteNodeAggregationWhereInput
+  born_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_EQUAL: BigInt
+  born_MAX_EQUAL: BigInt
+  born_SUM_EQUAL: BigInt
+  born_AVERAGE_EQUAL: BigInt
+  born_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GT: BigInt
+  born_MAX_GT: BigInt
+  born_SUM_GT: BigInt
+  born_AVERAGE_GT: BigInt
+  born_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GTE: BigInt
+  born_MAX_GTE: BigInt
+  born_SUM_GTE: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LT: BigInt
+  born_MAX_LT: BigInt
+  born_SUM_LT: BigInt
+  born_AVERAGE_LT: BigInt
+  born_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LTE: BigInt
+  born_MAX_LTE: BigInt
+  born_SUM_LTE: BigInt
+  born_AVERAGE_LTE: BigInt
+  name_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GT: Float
+  name_LONGEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GTE: Float
+  name_LONGEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LT: Float
+  name_LONGEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LTE: Float
+  name_LONGEST_LENGTH_LTE: Int
+  name_SHORTEST_LENGTH_LTE: Int
+}
+
+input MoviePeopleWroteUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: PersonUpdateInput
+}
+
+input MoviePeopleWroteUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: MoviePeopleWroteConnectionWhere
+  connect: [MoviePeopleWroteConnectFieldInput!]
+  disconnect: [MoviePeopleWroteDisconnectFieldInput!]
+  create: [MoviePeopleWroteCreateFieldInput!]
+  update: MoviePeopleWroteUpdateConnectionInput
+  delete: [MoviePeopleWroteDeleteFieldInput!]
+}
+
+input MovieRelationInput @join__type(graph: MOVIES)  {
+  peopleActedIn: [MoviePeopleActedInCreateFieldInput!]
+  peopleDirected: [MoviePeopleDirectedCreateFieldInput!]
+  peopleProduced: [MoviePeopleProducedCreateFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedCreateFieldInput!]
+  peopleWrote: [MoviePeopleWroteCreateFieldInput!]
+}
+
+"""
+Fields to sort Movies by. The order in which sorts are applied is not guaranteed when specifying many fields in one MovieSort object.
+"""
+input MovieSort @join__type(graph: MOVIES)  {
+  released: SortDirection
+  tagline: SortDirection
+  title: SortDirection
+}
+
+input MovieUpdateInput @join__type(graph: MOVIES)  {
+  released: BigInt
+  released_INCREMENT: BigInt
+  released_DECREMENT: BigInt
+  tagline: String
+  title: String
+  peopleActedIn: [MoviePeopleActedInUpdateFieldInput!]
+  peopleDirected: [MoviePeopleDirectedUpdateFieldInput!]
+  peopleProduced: [MoviePeopleProducedUpdateFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedUpdateFieldInput!]
+  peopleWrote: [MoviePeopleWroteUpdateFieldInput!]
+}
+
+input MovieWhere @join__type(graph: MOVIES)  {
+  released: BigInt
+  released_NOT: BigInt @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  released_IN: [BigInt!]
+  released_NOT_IN: [BigInt!] @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  released_LT: BigInt
+  released_LTE: BigInt
+  released_GT: BigInt
+  released_GTE: BigInt
+  tagline: String
+  tagline_NOT: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  tagline_IN: [String]
+  tagline_NOT_IN: [String] @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  tagline_CONTAINS: String
+  tagline_STARTS_WITH: String
+  tagline_ENDS_WITH: String
+  tagline_NOT_CONTAINS: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  tagline_NOT_STARTS_WITH: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  tagline_NOT_ENDS_WITH: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  title: String
+  title_NOT: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  title_IN: [String!]
+  title_NOT_IN: [String!] @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  title_CONTAINS: String
+  title_STARTS_WITH: String
+  title_ENDS_WITH: String
+  title_NOT_CONTAINS: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  title_NOT_STARTS_WITH: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  title_NOT_ENDS_WITH: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  OR: [MovieWhere!]
+  AND: [MovieWhere!]
+  NOT: MovieWhere
+  peopleActedIn: PersonWhere @deprecated(reason: "Use \`peopleActedIn_SOME\` instead.") 
+  peopleActedIn_NOT: PersonWhere @deprecated(reason: "Use \`peopleActedIn_NONE\` instead.") 
+  """
+  Return Movies where all of the related People match this filter
+  """
+  peopleActedIn_ALL: PersonWhere
+  """
+  Return Movies where none of the related People match this filter
+  """
+  peopleActedIn_NONE: PersonWhere
+  """
+  Return Movies where one of the related People match this filter
+  """
+  peopleActedIn_SINGLE: PersonWhere
+  """
+  Return Movies where some of the related People match this filter
+  """
+  peopleActedIn_SOME: PersonWhere
+  peopleActedInConnection: MoviePeopleActedInConnectionWhere @deprecated(reason: "Use \`peopleActedInConnection_SOME\` instead.") 
+  peopleActedInConnection_NOT: MoviePeopleActedInConnectionWhere @deprecated(reason: "Use \`peopleActedInConnection_NONE\` instead.") 
+  """
+  Return Movies where all of the related MoviePeopleActedInConnections match this filter
+  """
+  peopleActedInConnection_ALL: MoviePeopleActedInConnectionWhere
+  """
+  Return Movies where none of the related MoviePeopleActedInConnections match this filter
+  """
+  peopleActedInConnection_NONE: MoviePeopleActedInConnectionWhere
+  """
+  Return Movies where one of the related MoviePeopleActedInConnections match this filter
+  """
+  peopleActedInConnection_SINGLE: MoviePeopleActedInConnectionWhere
+  """
+  Return Movies where some of the related MoviePeopleActedInConnections match this filter
+  """
+  peopleActedInConnection_SOME: MoviePeopleActedInConnectionWhere
+  peopleActedInAggregate: MoviePeopleActedInAggregateInput
+  peopleDirected: PersonWhere @deprecated(reason: "Use \`peopleDirected_SOME\` instead.") 
+  peopleDirected_NOT: PersonWhere @deprecated(reason: "Use \`peopleDirected_NONE\` instead.") 
+  """
+  Return Movies where all of the related People match this filter
+  """
+  peopleDirected_ALL: PersonWhere
+  """
+  Return Movies where none of the related People match this filter
+  """
+  peopleDirected_NONE: PersonWhere
+  """
+  Return Movies where one of the related People match this filter
+  """
+  peopleDirected_SINGLE: PersonWhere
+  """
+  Return Movies where some of the related People match this filter
+  """
+  peopleDirected_SOME: PersonWhere
+  peopleDirectedConnection: MoviePeopleDirectedConnectionWhere @deprecated(reason: "Use \`peopleDirectedConnection_SOME\` instead.") 
+  peopleDirectedConnection_NOT: MoviePeopleDirectedConnectionWhere @deprecated(reason: "Use \`peopleDirectedConnection_NONE\` instead.") 
+  """
+  Return Movies where all of the related MoviePeopleDirectedConnections match this filter
+  """
+  peopleDirectedConnection_ALL: MoviePeopleDirectedConnectionWhere
+  """
+  Return Movies where none of the related MoviePeopleDirectedConnections match this filter
+  """
+  peopleDirectedConnection_NONE: MoviePeopleDirectedConnectionWhere
+  """
+  Return Movies where one of the related MoviePeopleDirectedConnections match this filter
+  """
+  peopleDirectedConnection_SINGLE: MoviePeopleDirectedConnectionWhere
+  """
+  Return Movies where some of the related MoviePeopleDirectedConnections match this filter
+  """
+  peopleDirectedConnection_SOME: MoviePeopleDirectedConnectionWhere
+  peopleDirectedAggregate: MoviePeopleDirectedAggregateInput
+  peopleProduced: PersonWhere @deprecated(reason: "Use \`peopleProduced_SOME\` instead.") 
+  peopleProduced_NOT: PersonWhere @deprecated(reason: "Use \`peopleProduced_NONE\` instead.") 
+  """
+  Return Movies where all of the related People match this filter
+  """
+  peopleProduced_ALL: PersonWhere
+  """
+  Return Movies where none of the related People match this filter
+  """
+  peopleProduced_NONE: PersonWhere
+  """
+  Return Movies where one of the related People match this filter
+  """
+  peopleProduced_SINGLE: PersonWhere
+  """
+  Return Movies where some of the related People match this filter
+  """
+  peopleProduced_SOME: PersonWhere
+  peopleProducedConnection: MoviePeopleProducedConnectionWhere @deprecated(reason: "Use \`peopleProducedConnection_SOME\` instead.") 
+  peopleProducedConnection_NOT: MoviePeopleProducedConnectionWhere @deprecated(reason: "Use \`peopleProducedConnection_NONE\` instead.") 
+  """
+  Return Movies where all of the related MoviePeopleProducedConnections match this filter
+  """
+  peopleProducedConnection_ALL: MoviePeopleProducedConnectionWhere
+  """
+  Return Movies where none of the related MoviePeopleProducedConnections match this filter
+  """
+  peopleProducedConnection_NONE: MoviePeopleProducedConnectionWhere
+  """
+  Return Movies where one of the related MoviePeopleProducedConnections match this filter
+  """
+  peopleProducedConnection_SINGLE: MoviePeopleProducedConnectionWhere
+  """
+  Return Movies where some of the related MoviePeopleProducedConnections match this filter
+  """
+  peopleProducedConnection_SOME: MoviePeopleProducedConnectionWhere
+  peopleProducedAggregate: MoviePeopleProducedAggregateInput
+  peopleReviewed: PersonWhere @deprecated(reason: "Use \`peopleReviewed_SOME\` instead.") 
+  peopleReviewed_NOT: PersonWhere @deprecated(reason: "Use \`peopleReviewed_NONE\` instead.") 
+  """
+  Return Movies where all of the related People match this filter
+  """
+  peopleReviewed_ALL: PersonWhere
+  """
+  Return Movies where none of the related People match this filter
+  """
+  peopleReviewed_NONE: PersonWhere
+  """
+  Return Movies where one of the related People match this filter
+  """
+  peopleReviewed_SINGLE: PersonWhere
+  """
+  Return Movies where some of the related People match this filter
+  """
+  peopleReviewed_SOME: PersonWhere
+  peopleReviewedConnection: MoviePeopleReviewedConnectionWhere @deprecated(reason: "Use \`peopleReviewedConnection_SOME\` instead.") 
+  peopleReviewedConnection_NOT: MoviePeopleReviewedConnectionWhere @deprecated(reason: "Use \`peopleReviewedConnection_NONE\` instead.") 
+  """
+  Return Movies where all of the related MoviePeopleReviewedConnections match this filter
+  """
+  peopleReviewedConnection_ALL: MoviePeopleReviewedConnectionWhere
+  """
+  Return Movies where none of the related MoviePeopleReviewedConnections match this filter
+  """
+  peopleReviewedConnection_NONE: MoviePeopleReviewedConnectionWhere
+  """
+  Return Movies where one of the related MoviePeopleReviewedConnections match this filter
+  """
+  peopleReviewedConnection_SINGLE: MoviePeopleReviewedConnectionWhere
+  """
+  Return Movies where some of the related MoviePeopleReviewedConnections match this filter
+  """
+  peopleReviewedConnection_SOME: MoviePeopleReviewedConnectionWhere
+  peopleReviewedAggregate: MoviePeopleReviewedAggregateInput
+  peopleWrote: PersonWhere @deprecated(reason: "Use \`peopleWrote_SOME\` instead.") 
+  peopleWrote_NOT: PersonWhere @deprecated(reason: "Use \`peopleWrote_NONE\` instead.") 
+  """
+  Return Movies where all of the related People match this filter
+  """
+  peopleWrote_ALL: PersonWhere
+  """
+  Return Movies where none of the related People match this filter
+  """
+  peopleWrote_NONE: PersonWhere
+  """
+  Return Movies where one of the related People match this filter
+  """
+  peopleWrote_SINGLE: PersonWhere
+  """
+  Return Movies where some of the related People match this filter
+  """
+  peopleWrote_SOME: PersonWhere
+  peopleWroteConnection: MoviePeopleWroteConnectionWhere @deprecated(reason: "Use \`peopleWroteConnection_SOME\` instead.") 
+  peopleWroteConnection_NOT: MoviePeopleWroteConnectionWhere @deprecated(reason: "Use \`peopleWroteConnection_NONE\` instead.") 
+  """
+  Return Movies where all of the related MoviePeopleWroteConnections match this filter
+  """
+  peopleWroteConnection_ALL: MoviePeopleWroteConnectionWhere
+  """
+  Return Movies where none of the related MoviePeopleWroteConnections match this filter
+  """
+  peopleWroteConnection_NONE: MoviePeopleWroteConnectionWhere
+  """
+  Return Movies where one of the related MoviePeopleWroteConnections match this filter
+  """
+  peopleWroteConnection_SINGLE: MoviePeopleWroteConnectionWhere
+  """
+  Return Movies where some of the related MoviePeopleWroteConnections match this filter
+  """
+  peopleWroteConnection_SOME: MoviePeopleWroteConnectionWhere
+  peopleWroteAggregate: MoviePeopleWroteAggregateInput
+}
+
+input PersonActedInMoviesAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [PersonActedInMoviesAggregateInput!]
+  OR: [PersonActedInMoviesAggregateInput!]
+  NOT: PersonActedInMoviesAggregateInput
+  node: PersonActedInMoviesNodeAggregationWhereInput
+}
+
+input PersonActedInMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+  edge: ActedInPropertiesCreateInput!
+  where: MovieConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [MovieConnectInput!]
+}
+
+input PersonActedInMoviesConnectionSort @join__type(graph: MOVIES)  {
+  node: MovieSort
+  edge: ActedInPropertiesSort
+}
+
+input PersonActedInMoviesConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [PersonActedInMoviesConnectionWhere!]
+  OR: [PersonActedInMoviesConnectionWhere!]
+  NOT: PersonActedInMoviesConnectionWhere
+  node: MovieWhere
+  node_NOT: MovieWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  edge: ActedInPropertiesWhere
+  edge_NOT: ActedInPropertiesWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input PersonActedInMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+  edge: ActedInPropertiesCreateInput!
+  node: MovieCreateInput!
+}
+
+input PersonActedInMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: PersonActedInMoviesConnectionWhere
+  delete: MovieDeleteInput
+}
+
+input PersonActedInMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonActedInMoviesConnectionWhere
+  disconnect: MovieDisconnectInput
+}
+
+input PersonActedInMoviesFieldInput @join__type(graph: MOVIES)  {
+  connect: [PersonActedInMoviesConnectFieldInput!]
+  create: [PersonActedInMoviesCreateFieldInput!]
+}
+
+input PersonActedInMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [PersonActedInMoviesNodeAggregationWhereInput!]
+  OR: [PersonActedInMoviesNodeAggregationWhereInput!]
+  NOT: PersonActedInMoviesNodeAggregationWhereInput
+  released_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_EQUAL: BigInt
+  released_MAX_EQUAL: BigInt
+  released_SUM_EQUAL: BigInt
+  released_AVERAGE_EQUAL: BigInt
+  released_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GT: BigInt
+  released_MAX_GT: BigInt
+  released_SUM_GT: BigInt
+  released_AVERAGE_GT: BigInt
+  released_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GTE: BigInt
+  released_MAX_GTE: BigInt
+  released_SUM_GTE: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LT: BigInt
+  released_MAX_LT: BigInt
+  released_SUM_LT: BigInt
+  released_AVERAGE_LT: BigInt
+  released_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LTE: BigInt
+  released_MAX_LTE: BigInt
+  released_SUM_LTE: BigInt
+  released_AVERAGE_LTE: BigInt
+  tagline_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  title_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+
+input PersonActedInMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: MovieUpdateInput
+  edge: ActedInPropertiesUpdateInput
+}
+
+input PersonActedInMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: PersonActedInMoviesConnectionWhere
+  connect: [PersonActedInMoviesConnectFieldInput!]
+  disconnect: [PersonActedInMoviesDisconnectFieldInput!]
+  create: [PersonActedInMoviesCreateFieldInput!]
+  update: PersonActedInMoviesUpdateConnectionInput
+  delete: [PersonActedInMoviesDeleteFieldInput!]
+}
+
+input PersonConnectInput @join__type(graph: MOVIES)  {
+  actedInMovies: [PersonActedInMoviesConnectFieldInput!]
+  directedMovies: [PersonDirectedMoviesConnectFieldInput!]
+  followsPeople: [PersonFollowsPeopleConnectFieldInput!]
+  peopleFollows: [PersonPeopleFollowsConnectFieldInput!]
+  producedMovies: [PersonProducedMoviesConnectFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesConnectFieldInput!]
+  wroteMovies: [PersonWroteMoviesConnectFieldInput!]
+}
+
+input PersonConnectWhere @join__type(graph: MOVIES)  {
+  node: PersonWhere!
+}
+
+input PersonCreateInput @join__type(graph: MOVIES)  {
+  born: BigInt
+  name: String!
+  actedInMovies: PersonActedInMoviesFieldInput
+  directedMovies: PersonDirectedMoviesFieldInput
+  followsPeople: PersonFollowsPeopleFieldInput
+  peopleFollows: PersonPeopleFollowsFieldInput
+  producedMovies: PersonProducedMoviesFieldInput
+  reviewedMovies: PersonReviewedMoviesFieldInput
+  wroteMovies: PersonWroteMoviesFieldInput
+}
+
+input PersonDeleteInput @join__type(graph: MOVIES)  {
+  actedInMovies: [PersonActedInMoviesDeleteFieldInput!]
+  directedMovies: [PersonDirectedMoviesDeleteFieldInput!]
+  followsPeople: [PersonFollowsPeopleDeleteFieldInput!]
+  peopleFollows: [PersonPeopleFollowsDeleteFieldInput!]
+  producedMovies: [PersonProducedMoviesDeleteFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesDeleteFieldInput!]
+  wroteMovies: [PersonWroteMoviesDeleteFieldInput!]
+}
+
+input PersonDirectedMoviesAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [PersonDirectedMoviesAggregateInput!]
+  OR: [PersonDirectedMoviesAggregateInput!]
+  NOT: PersonDirectedMoviesAggregateInput
+  node: PersonDirectedMoviesNodeAggregationWhereInput
+}
+
+input PersonDirectedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+  where: MovieConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [MovieConnectInput!]
+}
+
+input PersonDirectedMoviesConnectionSort @join__type(graph: MOVIES)  {
+  node: MovieSort
+}
+
+input PersonDirectedMoviesConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [PersonDirectedMoviesConnectionWhere!]
+  OR: [PersonDirectedMoviesConnectionWhere!]
+  NOT: PersonDirectedMoviesConnectionWhere
+  node: MovieWhere
+  node_NOT: MovieWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input PersonDirectedMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+  node: MovieCreateInput!
+}
+
+input PersonDirectedMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: PersonDirectedMoviesConnectionWhere
+  delete: MovieDeleteInput
+}
+
+input PersonDirectedMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonDirectedMoviesConnectionWhere
+  disconnect: MovieDisconnectInput
+}
+
+input PersonDirectedMoviesFieldInput @join__type(graph: MOVIES)  {
+  connect: [PersonDirectedMoviesConnectFieldInput!]
+  create: [PersonDirectedMoviesCreateFieldInput!]
+}
+
+input PersonDirectedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [PersonDirectedMoviesNodeAggregationWhereInput!]
+  OR: [PersonDirectedMoviesNodeAggregationWhereInput!]
+  NOT: PersonDirectedMoviesNodeAggregationWhereInput
+  released_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_EQUAL: BigInt
+  released_MAX_EQUAL: BigInt
+  released_SUM_EQUAL: BigInt
+  released_AVERAGE_EQUAL: BigInt
+  released_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GT: BigInt
+  released_MAX_GT: BigInt
+  released_SUM_GT: BigInt
+  released_AVERAGE_GT: BigInt
+  released_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GTE: BigInt
+  released_MAX_GTE: BigInt
+  released_SUM_GTE: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LT: BigInt
+  released_MAX_LT: BigInt
+  released_SUM_LT: BigInt
+  released_AVERAGE_LT: BigInt
+  released_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LTE: BigInt
+  released_MAX_LTE: BigInt
+  released_SUM_LTE: BigInt
+  released_AVERAGE_LTE: BigInt
+  tagline_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  title_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+
+input PersonDirectedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: MovieUpdateInput
+}
+
+input PersonDirectedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: PersonDirectedMoviesConnectionWhere
+  connect: [PersonDirectedMoviesConnectFieldInput!]
+  disconnect: [PersonDirectedMoviesDisconnectFieldInput!]
+  create: [PersonDirectedMoviesCreateFieldInput!]
+  update: PersonDirectedMoviesUpdateConnectionInput
+  delete: [PersonDirectedMoviesDeleteFieldInput!]
+}
+
+input PersonDisconnectInput @join__type(graph: MOVIES)  {
+  actedInMovies: [PersonActedInMoviesDisconnectFieldInput!]
+  directedMovies: [PersonDirectedMoviesDisconnectFieldInput!]
+  followsPeople: [PersonFollowsPeopleDisconnectFieldInput!]
+  peopleFollows: [PersonPeopleFollowsDisconnectFieldInput!]
+  producedMovies: [PersonProducedMoviesDisconnectFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesDisconnectFieldInput!]
+  wroteMovies: [PersonWroteMoviesDisconnectFieldInput!]
+}
+
+input PersonFollowsPeopleAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [PersonFollowsPeopleAggregateInput!]
+  OR: [PersonFollowsPeopleAggregateInput!]
+  NOT: PersonFollowsPeopleAggregateInput
+  node: PersonFollowsPeopleNodeAggregationWhereInput
+}
+
+input PersonFollowsPeopleConnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [PersonConnectInput!]
+}
+
+input PersonFollowsPeopleConnectionSort @join__type(graph: MOVIES)  {
+  node: PersonSort
+}
+
+input PersonFollowsPeopleConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [PersonFollowsPeopleConnectionWhere!]
+  OR: [PersonFollowsPeopleConnectionWhere!]
+  NOT: PersonFollowsPeopleConnectionWhere
+  node: PersonWhere
+  node_NOT: PersonWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input PersonFollowsPeopleCreateFieldInput @join__type(graph: MOVIES)  {
+  node: PersonCreateInput!
+}
+
+input PersonFollowsPeopleDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: PersonFollowsPeopleConnectionWhere
+  delete: PersonDeleteInput
+}
+
+input PersonFollowsPeopleDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonFollowsPeopleConnectionWhere
+  disconnect: PersonDisconnectInput
+}
+
+input PersonFollowsPeopleFieldInput @join__type(graph: MOVIES)  {
+  connect: [PersonFollowsPeopleConnectFieldInput!]
+  create: [PersonFollowsPeopleCreateFieldInput!]
+}
+
+input PersonFollowsPeopleNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [PersonFollowsPeopleNodeAggregationWhereInput!]
+  OR: [PersonFollowsPeopleNodeAggregationWhereInput!]
+  NOT: PersonFollowsPeopleNodeAggregationWhereInput
+  born_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_EQUAL: BigInt
+  born_MAX_EQUAL: BigInt
+  born_SUM_EQUAL: BigInt
+  born_AVERAGE_EQUAL: BigInt
+  born_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GT: BigInt
+  born_MAX_GT: BigInt
+  born_SUM_GT: BigInt
+  born_AVERAGE_GT: BigInt
+  born_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GTE: BigInt
+  born_MAX_GTE: BigInt
+  born_SUM_GTE: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LT: BigInt
+  born_MAX_LT: BigInt
+  born_SUM_LT: BigInt
+  born_AVERAGE_LT: BigInt
+  born_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LTE: BigInt
+  born_MAX_LTE: BigInt
+  born_SUM_LTE: BigInt
+  born_AVERAGE_LTE: BigInt
+  name_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GT: Float
+  name_LONGEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GTE: Float
+  name_LONGEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LT: Float
+  name_LONGEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LTE: Float
+  name_LONGEST_LENGTH_LTE: Int
+  name_SHORTEST_LENGTH_LTE: Int
+}
+
+input PersonFollowsPeopleUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: PersonUpdateInput
+}
+
+input PersonFollowsPeopleUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: PersonFollowsPeopleConnectionWhere
+  connect: [PersonFollowsPeopleConnectFieldInput!]
+  disconnect: [PersonFollowsPeopleDisconnectFieldInput!]
+  create: [PersonFollowsPeopleCreateFieldInput!]
+  update: PersonFollowsPeopleUpdateConnectionInput
+  delete: [PersonFollowsPeopleDeleteFieldInput!]
+}
+
+input PersonOptions @join__type(graph: MOVIES)  {
+  limit: Int
+  offset: Int
+  """
+  Specify one or more PersonSort objects to sort People by. The sorts will be applied in the order in which they are arranged in the array.
+  """
+  sort: [PersonSort!]
+}
+
+input PersonPeopleFollowsAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [PersonPeopleFollowsAggregateInput!]
+  OR: [PersonPeopleFollowsAggregateInput!]
+  NOT: PersonPeopleFollowsAggregateInput
+  node: PersonPeopleFollowsNodeAggregationWhereInput
+}
+
+input PersonPeopleFollowsConnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [PersonConnectInput!]
+}
+
+input PersonPeopleFollowsConnectionSort @join__type(graph: MOVIES)  {
+  node: PersonSort
+}
+
+input PersonPeopleFollowsConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [PersonPeopleFollowsConnectionWhere!]
+  OR: [PersonPeopleFollowsConnectionWhere!]
+  NOT: PersonPeopleFollowsConnectionWhere
+  node: PersonWhere
+  node_NOT: PersonWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input PersonPeopleFollowsCreateFieldInput @join__type(graph: MOVIES)  {
+  node: PersonCreateInput!
+}
+
+input PersonPeopleFollowsDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: PersonPeopleFollowsConnectionWhere
+  delete: PersonDeleteInput
+}
+
+input PersonPeopleFollowsDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonPeopleFollowsConnectionWhere
+  disconnect: PersonDisconnectInput
+}
+
+input PersonPeopleFollowsFieldInput @join__type(graph: MOVIES)  {
+  connect: [PersonPeopleFollowsConnectFieldInput!]
+  create: [PersonPeopleFollowsCreateFieldInput!]
+}
+
+input PersonPeopleFollowsNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [PersonPeopleFollowsNodeAggregationWhereInput!]
+  OR: [PersonPeopleFollowsNodeAggregationWhereInput!]
+  NOT: PersonPeopleFollowsNodeAggregationWhereInput
+  born_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_EQUAL: BigInt
+  born_MAX_EQUAL: BigInt
+  born_SUM_EQUAL: BigInt
+  born_AVERAGE_EQUAL: BigInt
+  born_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GT: BigInt
+  born_MAX_GT: BigInt
+  born_SUM_GT: BigInt
+  born_AVERAGE_GT: BigInt
+  born_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_GTE: BigInt
+  born_MAX_GTE: BigInt
+  born_SUM_GTE: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LT: BigInt
+  born_MAX_LT: BigInt
+  born_SUM_LT: BigInt
+  born_AVERAGE_LT: BigInt
+  born_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  born_MIN_LTE: BigInt
+  born_MAX_LTE: BigInt
+  born_SUM_LTE: BigInt
+  born_AVERAGE_LTE: BigInt
+  name_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GT: Float
+  name_LONGEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_GTE: Float
+  name_LONGEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LT: Float
+  name_LONGEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  name_AVERAGE_LENGTH_LTE: Float
+  name_LONGEST_LENGTH_LTE: Int
+  name_SHORTEST_LENGTH_LTE: Int
+}
+
+input PersonPeopleFollowsUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: PersonUpdateInput
+}
+
+input PersonPeopleFollowsUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: PersonPeopleFollowsConnectionWhere
+  connect: [PersonPeopleFollowsConnectFieldInput!]
+  disconnect: [PersonPeopleFollowsDisconnectFieldInput!]
+  create: [PersonPeopleFollowsCreateFieldInput!]
+  update: PersonPeopleFollowsUpdateConnectionInput
+  delete: [PersonPeopleFollowsDeleteFieldInput!]
+}
+
+input PersonProducedMoviesAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [PersonProducedMoviesAggregateInput!]
+  OR: [PersonProducedMoviesAggregateInput!]
+  NOT: PersonProducedMoviesAggregateInput
+  node: PersonProducedMoviesNodeAggregationWhereInput
+}
+
+input PersonProducedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+  where: MovieConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [MovieConnectInput!]
+}
+
+input PersonProducedMoviesConnectionSort @join__type(graph: MOVIES)  {
+  node: MovieSort
+}
+
+input PersonProducedMoviesConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [PersonProducedMoviesConnectionWhere!]
+  OR: [PersonProducedMoviesConnectionWhere!]
+  NOT: PersonProducedMoviesConnectionWhere
+  node: MovieWhere
+  node_NOT: MovieWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input PersonProducedMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+  node: MovieCreateInput!
+}
+
+input PersonProducedMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: PersonProducedMoviesConnectionWhere
+  delete: MovieDeleteInput
+}
+
+input PersonProducedMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonProducedMoviesConnectionWhere
+  disconnect: MovieDisconnectInput
+}
+
+input PersonProducedMoviesFieldInput @join__type(graph: MOVIES)  {
+  connect: [PersonProducedMoviesConnectFieldInput!]
+  create: [PersonProducedMoviesCreateFieldInput!]
+}
+
+input PersonProducedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [PersonProducedMoviesNodeAggregationWhereInput!]
+  OR: [PersonProducedMoviesNodeAggregationWhereInput!]
+  NOT: PersonProducedMoviesNodeAggregationWhereInput
+  released_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_EQUAL: BigInt
+  released_MAX_EQUAL: BigInt
+  released_SUM_EQUAL: BigInt
+  released_AVERAGE_EQUAL: BigInt
+  released_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GT: BigInt
+  released_MAX_GT: BigInt
+  released_SUM_GT: BigInt
+  released_AVERAGE_GT: BigInt
+  released_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GTE: BigInt
+  released_MAX_GTE: BigInt
+  released_SUM_GTE: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LT: BigInt
+  released_MAX_LT: BigInt
+  released_SUM_LT: BigInt
+  released_AVERAGE_LT: BigInt
+  released_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LTE: BigInt
+  released_MAX_LTE: BigInt
+  released_SUM_LTE: BigInt
+  released_AVERAGE_LTE: BigInt
+  tagline_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  title_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+
+input PersonProducedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: MovieUpdateInput
+}
+
+input PersonProducedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: PersonProducedMoviesConnectionWhere
+  connect: [PersonProducedMoviesConnectFieldInput!]
+  disconnect: [PersonProducedMoviesDisconnectFieldInput!]
+  create: [PersonProducedMoviesCreateFieldInput!]
+  update: PersonProducedMoviesUpdateConnectionInput
+  delete: [PersonProducedMoviesDeleteFieldInput!]
+}
+
+input PersonRelationInput @join__type(graph: MOVIES)  {
+  actedInMovies: [PersonActedInMoviesCreateFieldInput!]
+  directedMovies: [PersonDirectedMoviesCreateFieldInput!]
+  followsPeople: [PersonFollowsPeopleCreateFieldInput!]
+  peopleFollows: [PersonPeopleFollowsCreateFieldInput!]
+  producedMovies: [PersonProducedMoviesCreateFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesCreateFieldInput!]
+  wroteMovies: [PersonWroteMoviesCreateFieldInput!]
+}
+
+input PersonReviewedMoviesAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [PersonReviewedMoviesAggregateInput!]
+  OR: [PersonReviewedMoviesAggregateInput!]
+  NOT: PersonReviewedMoviesAggregateInput
+  node: PersonReviewedMoviesNodeAggregationWhereInput
+  edge: ReviewedPropertiesAggregationWhereInput
+}
+
+input PersonReviewedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+  edge: ReviewedPropertiesCreateInput!
+  where: MovieConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [MovieConnectInput!]
+}
+
+input PersonReviewedMoviesConnectionSort @join__type(graph: MOVIES)  {
+  node: MovieSort
+  edge: ReviewedPropertiesSort
+}
+
+input PersonReviewedMoviesConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [PersonReviewedMoviesConnectionWhere!]
+  OR: [PersonReviewedMoviesConnectionWhere!]
+  NOT: PersonReviewedMoviesConnectionWhere
+  node: MovieWhere
+  node_NOT: MovieWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  edge: ReviewedPropertiesWhere
+  edge_NOT: ReviewedPropertiesWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input PersonReviewedMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+  edge: ReviewedPropertiesCreateInput!
+  node: MovieCreateInput!
+}
+
+input PersonReviewedMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: PersonReviewedMoviesConnectionWhere
+  delete: MovieDeleteInput
+}
+
+input PersonReviewedMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonReviewedMoviesConnectionWhere
+  disconnect: MovieDisconnectInput
+}
+
+input PersonReviewedMoviesFieldInput @join__type(graph: MOVIES)  {
+  connect: [PersonReviewedMoviesConnectFieldInput!]
+  create: [PersonReviewedMoviesCreateFieldInput!]
+}
+
+input PersonReviewedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [PersonReviewedMoviesNodeAggregationWhereInput!]
+  OR: [PersonReviewedMoviesNodeAggregationWhereInput!]
+  NOT: PersonReviewedMoviesNodeAggregationWhereInput
+  released_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_EQUAL: BigInt
+  released_MAX_EQUAL: BigInt
+  released_SUM_EQUAL: BigInt
+  released_AVERAGE_EQUAL: BigInt
+  released_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GT: BigInt
+  released_MAX_GT: BigInt
+  released_SUM_GT: BigInt
+  released_AVERAGE_GT: BigInt
+  released_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GTE: BigInt
+  released_MAX_GTE: BigInt
+  released_SUM_GTE: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LT: BigInt
+  released_MAX_LT: BigInt
+  released_SUM_LT: BigInt
+  released_AVERAGE_LT: BigInt
+  released_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LTE: BigInt
+  released_MAX_LTE: BigInt
+  released_SUM_LTE: BigInt
+  released_AVERAGE_LTE: BigInt
+  tagline_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  title_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+
+input PersonReviewedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: MovieUpdateInput
+  edge: ReviewedPropertiesUpdateInput
+}
+
+input PersonReviewedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: PersonReviewedMoviesConnectionWhere
+  connect: [PersonReviewedMoviesConnectFieldInput!]
+  disconnect: [PersonReviewedMoviesDisconnectFieldInput!]
+  create: [PersonReviewedMoviesCreateFieldInput!]
+  update: PersonReviewedMoviesUpdateConnectionInput
+  delete: [PersonReviewedMoviesDeleteFieldInput!]
+}
+
+"""
+Fields to sort People by. The order in which sorts are applied is not guaranteed when specifying many fields in one PersonSort object.
+"""
+input PersonSort @join__type(graph: MOVIES)  {
+  born: SortDirection
+  name: SortDirection
+}
+
+input PersonUpdateInput @join__type(graph: MOVIES)  {
+  born: BigInt
+  born_INCREMENT: BigInt
+  born_DECREMENT: BigInt
+  name: String
+  actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
+  directedMovies: [PersonDirectedMoviesUpdateFieldInput!]
+  followsPeople: [PersonFollowsPeopleUpdateFieldInput!]
+  peopleFollows: [PersonPeopleFollowsUpdateFieldInput!]
+  producedMovies: [PersonProducedMoviesUpdateFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesUpdateFieldInput!]
+  wroteMovies: [PersonWroteMoviesUpdateFieldInput!]
+}
+
+input PersonWhere @join__type(graph: MOVIES)  {
+  born: BigInt
+  born_NOT: BigInt @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  born_IN: [BigInt]
+  born_NOT_IN: [BigInt] @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  name: String
+  name_NOT: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  name_IN: [String!]
+  name_NOT_IN: [String!] @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  name_CONTAINS: String
+  name_STARTS_WITH: String
+  name_ENDS_WITH: String
+  name_NOT_CONTAINS: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  name_NOT_STARTS_WITH: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  name_NOT_ENDS_WITH: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  OR: [PersonWhere!]
+  AND: [PersonWhere!]
+  NOT: PersonWhere
+  actedInMovies: MovieWhere @deprecated(reason: "Use \`actedInMovies_SOME\` instead.") 
+  actedInMovies_NOT: MovieWhere @deprecated(reason: "Use \`actedInMovies_NONE\` instead.") 
+  """
+  Return People where all of the related Movies match this filter
+  """
+  actedInMovies_ALL: MovieWhere
+  """
+  Return People where none of the related Movies match this filter
+  """
+  actedInMovies_NONE: MovieWhere
+  """
+  Return People where one of the related Movies match this filter
+  """
+  actedInMovies_SINGLE: MovieWhere
+  """
+  Return People where some of the related Movies match this filter
+  """
+  actedInMovies_SOME: MovieWhere
+  actedInMoviesConnection: PersonActedInMoviesConnectionWhere @deprecated(reason: "Use \`actedInMoviesConnection_SOME\` instead.") 
+  actedInMoviesConnection_NOT: PersonActedInMoviesConnectionWhere @deprecated(reason: "Use \`actedInMoviesConnection_NONE\` instead.") 
+  """
+  Return People where all of the related PersonActedInMoviesConnections match this filter
+  """
+  actedInMoviesConnection_ALL: PersonActedInMoviesConnectionWhere
+  """
+  Return People where none of the related PersonActedInMoviesConnections match this filter
+  """
+  actedInMoviesConnection_NONE: PersonActedInMoviesConnectionWhere
+  """
+  Return People where one of the related PersonActedInMoviesConnections match this filter
+  """
+  actedInMoviesConnection_SINGLE: PersonActedInMoviesConnectionWhere
+  """
+  Return People where some of the related PersonActedInMoviesConnections match this filter
+  """
+  actedInMoviesConnection_SOME: PersonActedInMoviesConnectionWhere
+  actedInMoviesAggregate: PersonActedInMoviesAggregateInput
+  directedMovies: MovieWhere @deprecated(reason: "Use \`directedMovies_SOME\` instead.") 
+  directedMovies_NOT: MovieWhere @deprecated(reason: "Use \`directedMovies_NONE\` instead.") 
+  """
+  Return People where all of the related Movies match this filter
+  """
+  directedMovies_ALL: MovieWhere
+  """
+  Return People where none of the related Movies match this filter
+  """
+  directedMovies_NONE: MovieWhere
+  """
+  Return People where one of the related Movies match this filter
+  """
+  directedMovies_SINGLE: MovieWhere
+  """
+  Return People where some of the related Movies match this filter
+  """
+  directedMovies_SOME: MovieWhere
+  directedMoviesConnection: PersonDirectedMoviesConnectionWhere @deprecated(reason: "Use \`directedMoviesConnection_SOME\` instead.") 
+  directedMoviesConnection_NOT: PersonDirectedMoviesConnectionWhere @deprecated(reason: "Use \`directedMoviesConnection_NONE\` instead.") 
+  """
+  Return People where all of the related PersonDirectedMoviesConnections match this filter
+  """
+  directedMoviesConnection_ALL: PersonDirectedMoviesConnectionWhere
+  """
+  Return People where none of the related PersonDirectedMoviesConnections match this filter
+  """
+  directedMoviesConnection_NONE: PersonDirectedMoviesConnectionWhere
+  """
+  Return People where one of the related PersonDirectedMoviesConnections match this filter
+  """
+  directedMoviesConnection_SINGLE: PersonDirectedMoviesConnectionWhere
+  """
+  Return People where some of the related PersonDirectedMoviesConnections match this filter
+  """
+  directedMoviesConnection_SOME: PersonDirectedMoviesConnectionWhere
+  directedMoviesAggregate: PersonDirectedMoviesAggregateInput
+  followsPeople: PersonWhere @deprecated(reason: "Use \`followsPeople_SOME\` instead.") 
+  followsPeople_NOT: PersonWhere @deprecated(reason: "Use \`followsPeople_NONE\` instead.") 
+  """
+  Return People where all of the related People match this filter
+  """
+  followsPeople_ALL: PersonWhere
+  """
+  Return People where none of the related People match this filter
+  """
+  followsPeople_NONE: PersonWhere
+  """
+  Return People where one of the related People match this filter
+  """
+  followsPeople_SINGLE: PersonWhere
+  """
+  Return People where some of the related People match this filter
+  """
+  followsPeople_SOME: PersonWhere
+  followsPeopleConnection: PersonFollowsPeopleConnectionWhere @deprecated(reason: "Use \`followsPeopleConnection_SOME\` instead.") 
+  followsPeopleConnection_NOT: PersonFollowsPeopleConnectionWhere @deprecated(reason: "Use \`followsPeopleConnection_NONE\` instead.") 
+  """
+  Return People where all of the related PersonFollowsPeopleConnections match this filter
+  """
+  followsPeopleConnection_ALL: PersonFollowsPeopleConnectionWhere
+  """
+  Return People where none of the related PersonFollowsPeopleConnections match this filter
+  """
+  followsPeopleConnection_NONE: PersonFollowsPeopleConnectionWhere
+  """
+  Return People where one of the related PersonFollowsPeopleConnections match this filter
+  """
+  followsPeopleConnection_SINGLE: PersonFollowsPeopleConnectionWhere
+  """
+  Return People where some of the related PersonFollowsPeopleConnections match this filter
+  """
+  followsPeopleConnection_SOME: PersonFollowsPeopleConnectionWhere
+  followsPeopleAggregate: PersonFollowsPeopleAggregateInput
+  peopleFollows: PersonWhere @deprecated(reason: "Use \`peopleFollows_SOME\` instead.") 
+  peopleFollows_NOT: PersonWhere @deprecated(reason: "Use \`peopleFollows_NONE\` instead.") 
+  """
+  Return People where all of the related People match this filter
+  """
+  peopleFollows_ALL: PersonWhere
+  """
+  Return People where none of the related People match this filter
+  """
+  peopleFollows_NONE: PersonWhere
+  """
+  Return People where one of the related People match this filter
+  """
+  peopleFollows_SINGLE: PersonWhere
+  """
+  Return People where some of the related People match this filter
+  """
+  peopleFollows_SOME: PersonWhere
+  peopleFollowsConnection: PersonPeopleFollowsConnectionWhere @deprecated(reason: "Use \`peopleFollowsConnection_SOME\` instead.") 
+  peopleFollowsConnection_NOT: PersonPeopleFollowsConnectionWhere @deprecated(reason: "Use \`peopleFollowsConnection_NONE\` instead.") 
+  """
+  Return People where all of the related PersonPeopleFollowsConnections match this filter
+  """
+  peopleFollowsConnection_ALL: PersonPeopleFollowsConnectionWhere
+  """
+  Return People where none of the related PersonPeopleFollowsConnections match this filter
+  """
+  peopleFollowsConnection_NONE: PersonPeopleFollowsConnectionWhere
+  """
+  Return People where one of the related PersonPeopleFollowsConnections match this filter
+  """
+  peopleFollowsConnection_SINGLE: PersonPeopleFollowsConnectionWhere
+  """
+  Return People where some of the related PersonPeopleFollowsConnections match this filter
+  """
+  peopleFollowsConnection_SOME: PersonPeopleFollowsConnectionWhere
+  peopleFollowsAggregate: PersonPeopleFollowsAggregateInput
+  producedMovies: MovieWhere @deprecated(reason: "Use \`producedMovies_SOME\` instead.") 
+  producedMovies_NOT: MovieWhere @deprecated(reason: "Use \`producedMovies_NONE\` instead.") 
+  """
+  Return People where all of the related Movies match this filter
+  """
+  producedMovies_ALL: MovieWhere
+  """
+  Return People where none of the related Movies match this filter
+  """
+  producedMovies_NONE: MovieWhere
+  """
+  Return People where one of the related Movies match this filter
+  """
+  producedMovies_SINGLE: MovieWhere
+  """
+  Return People where some of the related Movies match this filter
+  """
+  producedMovies_SOME: MovieWhere
+  producedMoviesConnection: PersonProducedMoviesConnectionWhere @deprecated(reason: "Use \`producedMoviesConnection_SOME\` instead.") 
+  producedMoviesConnection_NOT: PersonProducedMoviesConnectionWhere @deprecated(reason: "Use \`producedMoviesConnection_NONE\` instead.") 
+  """
+  Return People where all of the related PersonProducedMoviesConnections match this filter
+  """
+  producedMoviesConnection_ALL: PersonProducedMoviesConnectionWhere
+  """
+  Return People where none of the related PersonProducedMoviesConnections match this filter
+  """
+  producedMoviesConnection_NONE: PersonProducedMoviesConnectionWhere
+  """
+  Return People where one of the related PersonProducedMoviesConnections match this filter
+  """
+  producedMoviesConnection_SINGLE: PersonProducedMoviesConnectionWhere
+  """
+  Return People where some of the related PersonProducedMoviesConnections match this filter
+  """
+  producedMoviesConnection_SOME: PersonProducedMoviesConnectionWhere
+  producedMoviesAggregate: PersonProducedMoviesAggregateInput
+  reviewedMovies: MovieWhere @deprecated(reason: "Use \`reviewedMovies_SOME\` instead.") 
+  reviewedMovies_NOT: MovieWhere @deprecated(reason: "Use \`reviewedMovies_NONE\` instead.") 
+  """
+  Return People where all of the related Movies match this filter
+  """
+  reviewedMovies_ALL: MovieWhere
+  """
+  Return People where none of the related Movies match this filter
+  """
+  reviewedMovies_NONE: MovieWhere
+  """
+  Return People where one of the related Movies match this filter
+  """
+  reviewedMovies_SINGLE: MovieWhere
+  """
+  Return People where some of the related Movies match this filter
+  """
+  reviewedMovies_SOME: MovieWhere
+  reviewedMoviesConnection: PersonReviewedMoviesConnectionWhere @deprecated(reason: "Use \`reviewedMoviesConnection_SOME\` instead.") 
+  reviewedMoviesConnection_NOT: PersonReviewedMoviesConnectionWhere @deprecated(reason: "Use \`reviewedMoviesConnection_NONE\` instead.") 
+  """
+  Return People where all of the related PersonReviewedMoviesConnections match this filter
+  """
+  reviewedMoviesConnection_ALL: PersonReviewedMoviesConnectionWhere
+  """
+  Return People where none of the related PersonReviewedMoviesConnections match this filter
+  """
+  reviewedMoviesConnection_NONE: PersonReviewedMoviesConnectionWhere
+  """
+  Return People where one of the related PersonReviewedMoviesConnections match this filter
+  """
+  reviewedMoviesConnection_SINGLE: PersonReviewedMoviesConnectionWhere
+  """
+  Return People where some of the related PersonReviewedMoviesConnections match this filter
+  """
+  reviewedMoviesConnection_SOME: PersonReviewedMoviesConnectionWhere
+  reviewedMoviesAggregate: PersonReviewedMoviesAggregateInput
+  wroteMovies: MovieWhere @deprecated(reason: "Use \`wroteMovies_SOME\` instead.") 
+  wroteMovies_NOT: MovieWhere @deprecated(reason: "Use \`wroteMovies_NONE\` instead.") 
+  """
+  Return People where all of the related Movies match this filter
+  """
+  wroteMovies_ALL: MovieWhere
+  """
+  Return People where none of the related Movies match this filter
+  """
+  wroteMovies_NONE: MovieWhere
+  """
+  Return People where one of the related Movies match this filter
+  """
+  wroteMovies_SINGLE: MovieWhere
+  """
+  Return People where some of the related Movies match this filter
+  """
+  wroteMovies_SOME: MovieWhere
+  wroteMoviesConnection: PersonWroteMoviesConnectionWhere @deprecated(reason: "Use \`wroteMoviesConnection_SOME\` instead.") 
+  wroteMoviesConnection_NOT: PersonWroteMoviesConnectionWhere @deprecated(reason: "Use \`wroteMoviesConnection_NONE\` instead.") 
+  """
+  Return People where all of the related PersonWroteMoviesConnections match this filter
+  """
+  wroteMoviesConnection_ALL: PersonWroteMoviesConnectionWhere
+  """
+  Return People where none of the related PersonWroteMoviesConnections match this filter
+  """
+  wroteMoviesConnection_NONE: PersonWroteMoviesConnectionWhere
+  """
+  Return People where one of the related PersonWroteMoviesConnections match this filter
+  """
+  wroteMoviesConnection_SINGLE: PersonWroteMoviesConnectionWhere
+  """
+  Return People where some of the related PersonWroteMoviesConnections match this filter
+  """
+  wroteMoviesConnection_SOME: PersonWroteMoviesConnectionWhere
+  wroteMoviesAggregate: PersonWroteMoviesAggregateInput
+}
+
+input PersonWroteMoviesAggregateInput @join__type(graph: MOVIES)  {
+  count: Int
+  count_LT: Int
+  count_LTE: Int
+  count_GT: Int
+  count_GTE: Int
+  AND: [PersonWroteMoviesAggregateInput!]
+  OR: [PersonWroteMoviesAggregateInput!]
+  NOT: PersonWroteMoviesAggregateInput
+  node: PersonWroteMoviesNodeAggregationWhereInput
+}
+
+input PersonWroteMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+  where: MovieConnectWhere
+  """
+  Whether or not to overwrite any matching relationship with the new properties.
+  """
+  overwrite: Boolean! = true
+  connect: [MovieConnectInput!]
+}
+
+input PersonWroteMoviesConnectionSort @join__type(graph: MOVIES)  {
+  node: MovieSort
+}
+
+input PersonWroteMoviesConnectionWhere @join__type(graph: MOVIES)  {
+  AND: [PersonWroteMoviesConnectionWhere!]
+  OR: [PersonWroteMoviesConnectionWhere!]
+  NOT: PersonWroteMoviesConnectionWhere
+  node: MovieWhere
+  node_NOT: MovieWhere @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+}
+
+input PersonWroteMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+  node: MovieCreateInput!
+}
+
+input PersonWroteMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+  where: PersonWroteMoviesConnectionWhere
+  delete: MovieDeleteInput
+}
+
+input PersonWroteMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+  where: PersonWroteMoviesConnectionWhere
+  disconnect: MovieDisconnectInput
+}
+
+input PersonWroteMoviesFieldInput @join__type(graph: MOVIES)  {
+  connect: [PersonWroteMoviesConnectFieldInput!]
+  create: [PersonWroteMoviesCreateFieldInput!]
+}
+
+input PersonWroteMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [PersonWroteMoviesNodeAggregationWhereInput!]
+  OR: [PersonWroteMoviesNodeAggregationWhereInput!]
+  NOT: PersonWroteMoviesNodeAggregationWhereInput
+  released_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_EQUAL: BigInt
+  released_MAX_EQUAL: BigInt
+  released_SUM_EQUAL: BigInt
+  released_AVERAGE_EQUAL: BigInt
+  released_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GT: BigInt
+  released_MAX_GT: BigInt
+  released_SUM_GT: BigInt
+  released_AVERAGE_GT: BigInt
+  released_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_GTE: BigInt
+  released_MAX_GTE: BigInt
+  released_SUM_GTE: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LT: BigInt
+  released_MAX_LT: BigInt
+  released_SUM_LT: BigInt
+  released_AVERAGE_LT: BigInt
+  released_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  released_MIN_LTE: BigInt
+  released_MAX_LTE: BigInt
+  released_SUM_LTE: BigInt
+  released_AVERAGE_LTE: BigInt
+  tagline_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  title_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+
+input PersonWroteMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+  node: MovieUpdateInput
+}
+
+input PersonWroteMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+  where: PersonWroteMoviesConnectionWhere
+  connect: [PersonWroteMoviesConnectFieldInput!]
+  disconnect: [PersonWroteMoviesDisconnectFieldInput!]
+  create: [PersonWroteMoviesCreateFieldInput!]
+  update: PersonWroteMoviesUpdateConnectionInput
+  delete: [PersonWroteMoviesDeleteFieldInput!]
+}
+
+input ReviewedPropertiesAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [ReviewedPropertiesAggregationWhereInput!]
+  OR: [ReviewedPropertiesAggregationWhereInput!]
+  NOT: ReviewedPropertiesAggregationWhereInput
+  rating_EQUAL: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  rating_MIN_EQUAL: BigInt
+  rating_MAX_EQUAL: BigInt
+  rating_SUM_EQUAL: BigInt
+  rating_AVERAGE_EQUAL: BigInt
+  rating_GT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  rating_MIN_GT: BigInt
+  rating_MAX_GT: BigInt
+  rating_SUM_GT: BigInt
+  rating_AVERAGE_GT: BigInt
+  rating_GTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  rating_MIN_GTE: BigInt
+  rating_MAX_GTE: BigInt
+  rating_SUM_GTE: BigInt
+  rating_AVERAGE_GTE: BigInt
+  rating_LT: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  rating_MIN_LT: BigInt
+  rating_MAX_LT: BigInt
+  rating_SUM_LT: BigInt
+  rating_AVERAGE_LT: BigInt
+  rating_LTE: BigInt @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  rating_MIN_LTE: BigInt
+  rating_MAX_LTE: BigInt
+  rating_SUM_LTE: BigInt
+  rating_AVERAGE_LTE: BigInt
+  summary_EQUAL: String @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  summary_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_AVERAGE_LENGTH_EQUAL: Float
+  summary_LONGEST_LENGTH_EQUAL: Int
+  summary_SHORTEST_LENGTH_EQUAL: Int
+  summary_GT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  summary_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_AVERAGE_LENGTH_GT: Float
+  summary_LONGEST_LENGTH_GT: Int
+  summary_SHORTEST_LENGTH_GT: Int
+  summary_GTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  summary_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_AVERAGE_LENGTH_GTE: Float
+  summary_LONGEST_LENGTH_GTE: Int
+  summary_SHORTEST_LENGTH_GTE: Int
+  summary_LT: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  summary_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_AVERAGE_LENGTH_LT: Float
+  summary_LONGEST_LENGTH_LT: Int
+  summary_SHORTEST_LENGTH_LT: Int
+  summary_LTE: Int @deprecated(
+    reason: "Aggregation filters that are not relying on an aggregating function will be deprecated."
+  )
+  summary_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.") 
+  summary_AVERAGE_LENGTH_LTE: Float
+  summary_LONGEST_LENGTH_LTE: Int
+  summary_SHORTEST_LENGTH_LTE: Int
+}
+
+input ReviewedPropertiesCreateInput @join__type(graph: MOVIES)  {
+  rating: BigInt!
+  summary: String!
+}
+
+input ReviewedPropertiesSort @join__type(graph: MOVIES)  {
+  rating: SortDirection
+  summary: SortDirection
+}
+
+input ReviewedPropertiesUpdateInput @join__type(graph: MOVIES)  {
+  rating: BigInt
+  rating_INCREMENT: BigInt
+  rating_DECREMENT: BigInt
+  summary: String
+}
+
+input ReviewedPropertiesWhere @join__type(graph: MOVIES)  {
+  rating: BigInt
+  rating_NOT: BigInt @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  rating_IN: [BigInt!]
+  rating_NOT_IN: [BigInt!] @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  rating_LT: BigInt
+  rating_LTE: BigInt
+  rating_GT: BigInt
+  rating_GTE: BigInt
+  summary: String
+  summary_NOT: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  summary_IN: [String!]
+  summary_NOT_IN: [String!] @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  summary_CONTAINS: String
+  summary_STARTS_WITH: String
+  summary_ENDS_WITH: String
+  summary_NOT_CONTAINS: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  summary_NOT_STARTS_WITH: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  summary_NOT_ENDS_WITH: String @deprecated(
+    reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior"
+  )
+  OR: [ReviewedPropertiesWhere!]
+  AND: [ReviewedPropertiesWhere!]
+  NOT: ReviewedPropertiesWhere
+}
+    
+"
+`;
+
+exports[`should execute MovieWithActedIn 1`] = `
+{
+  "data": {
+    "movies": [
+      {
+        "peopleActedIn": [
+          {
+            "name": "Emil Eifrem",
+          },
+          {
+            "name": "Hugo Weaving",
+          },
+        ],
+        "released": 1999,
+        "tagline": "Welcome to the Real World",
+        "title": "The Matrix",
+      },
+      {
+        "peopleActedIn": [
+          {
+            "name": "Hugo Weaving",
+          },
+          {
+            "name": "Laurence Fishburne",
+          },
+        ],
+        "released": 2003,
+        "tagline": "Free your mind",
+        "title": "The Matrix Reloaded",
+      },
+    ],
+  },
+}
+`;

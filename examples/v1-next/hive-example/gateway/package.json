@@ -1,0 +1,12 @@
+{
+  "name": "@examples-v1-next/hive-example-gateway",
+  "private": true,
+  "scripts": {
+    "gateway:start": "yarn mesh-serve supergraph"
+  },
+  "dependencies": {
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "dotenv": "^16.4.5",
+    "graphql": "16.9.0"
+  }
+}

@@ -1,0 +1,28 @@
+import { Callout } from '@theguild/components'
+
+# Deploying Mesh to Azure Functions
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+Azure Functions is a serverless environment that supports JavaScript. Mesh is platform agnostic and
+can be deployed to Azure Functions as well.
+
+<Callout>
+  Before you start, make sure you read the [Serverless / On the
+  Edge](/v1/serve/deployment/serverless) page.
+</Callout>
+
+```ts
+import { app } from '@azure/functions'
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+const handler = createServeRuntime(/* Your configuration */)
+
+app.http('graphql', {
+  method: ['GET', 'POST'],
+  handler
+})
+```

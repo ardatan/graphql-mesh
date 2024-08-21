@@ -1,5 +1,10 @@
 import { join } from 'path';
+import { DEFAULT_CLI_PARAMS, serveMesh } from '@graphql-mesh/cli';
 import { fs } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-mesh/types';
+import { fetch } from '@whatwg-node/fetch';
+import { TerminateHandler } from '../../../packages/legacy/utils/dist/typings/registerTerminateHandler';
+import { getAvailablePort } from '../../../packages/testing/getAvailablePort';
 
 const { readFile } = fs.promises;
 
@@ -31,5 +36,47 @@ describe('Artifacts', () => {
     expect(sdkResult?.me?.company?.employers).toHaveLength(2);
     expect(sdkResult?.me?.company?.employers?.[0]?.firstName).toBeDefined();
     expect(sdkResult?.me?.company?.employers?.[0]?.jobTitle).toBeDefined();
+  });
+  it('should fallback to node:http when uWebSockets.js is not available', async () => {
+    const terminateHandlers: TerminateHandler[] = [];
+    try {
+      const { getBuiltMesh } = await import('../.mesh/index');
+      jest.mock('uWebSockets.js', () => {
+        throw new Error('uWebSockets.js is not available');
+      });
+      const mockLogger: Logger = {
+        debug: jest.fn(),
+        error: jest.fn(),
+        info: jest.fn(),
+        warn: jest.fn(),
+        log: jest.fn(),
+        child: jest.fn(() => mockLogger),
+      };
+      const PORT = await getAvailablePort();
+      await serveMesh(
+        {
+          baseDir: join(__dirname, '..'),
+          argsPort: PORT,
+          getBuiltMesh,
+          logger: mockLogger,
+          rawServeConfig: {
+            browser: false,
+          },
+          registerTerminateHandler(terminateHandler) {
+            terminateHandlers.push(terminateHandler);
+          },
+        },
+        DEFAULT_CLI_PARAMS,
+      );
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'uWebSockets.js is not available currently so the server will fallback to node:http.',
+      );
+      const res = await fetch(`http://127.0.0.1:${PORT}/graphql`);
+      expect(res.status).toBe(200);
+      await res.text();
+    } finally {
+      jest.resetModules();
+      await Promise.all(terminateHandlers.map(terminateHandler => terminateHandler('SIGTERM')));
+    }
   });
 });

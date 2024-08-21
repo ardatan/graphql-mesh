@@ -1,5 +1,4 @@
 import { basename, join } from 'path';
-import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { ProcessedConfig } from '@graphql-mesh/config';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
@@ -21,8 +20,11 @@ describe('SQLite Chinook', () => {
   });
   it('should give correct response for example queries', async () => {
     for (const source of config.documents || []) {
-      const result = await mesh.execute(source.document!, undefined);
-      expect(result).toMatchSnapshot(basename(source.location!) + '-sqlite-chinook-result');
+      if (!source.document || !source.location) {
+        throw new Error(`Invalid source: ${source.location}`);
+      }
+      const result = await mesh.execute(source.document, undefined);
+      expect(result).toMatchSnapshot(basename(source.location) + '-sqlite-chinook-result');
     }
   });
   afterAll(async () => {

@@ -1,20 +1,22 @@
 import {
-  AnyTypeComposer,
-  ComposeInputType,
-  Directive,
-  InputTypeComposer,
+  InterfaceTypeComposer,
   isSomeInputTypeComposer,
   ListComposer,
   ObjectTypeComposer,
-  SchemaComposer,
-  UnionTypeComposer,
+  type AnyTypeComposer,
+  type ComposeInputType,
+  type Directive,
+  type InputTypeComposer,
+  type SchemaComposer,
+  type UnionTypeComposer,
 } from 'graphql-compose';
-import { Logger } from '@graphql-mesh/types';
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import type { Logger } from '@graphql-mesh/types';
+import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { ResolveRootDirective, StatusCodeTypeNameDirective } from './directives.js';
-import { TypeComposers } from './getComposerFromJSONSchema.js';
+import type { TypeComposers } from './getComposerFromJSONSchema.js';
 
 export interface GetUnionTypeComposersOpts {
+  subgraphName: string;
   schemaComposer: SchemaComposer;
   typeComposersList: {
     input?: AnyTypeComposer<any>;
@@ -24,7 +26,11 @@ export interface GetUnionTypeComposersOpts {
   logger: Logger;
 }
 
-export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeInputType) {
+export function getContainerTC(
+  subgraphName: string,
+  schemaComposer: SchemaComposer,
+  output: ComposeInputType,
+) {
   const containerTypeName = `${output.getTypeName()}_container`;
   schemaComposer.addDirective(ResolveRootDirective);
   return schemaComposer.getOrCreateOTC(containerTypeName, otc =>
@@ -34,6 +40,9 @@ export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeIn
         directives: [
           {
             name: 'resolveRoot',
+            args: {
+              subgraph: subgraphName,
+            },
           },
         ],
       },
@@ -42,6 +51,7 @@ export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeIn
 }
 
 export function getUnionTypeComposers({
+  subgraphName,
   schemaComposer,
   typeComposersList,
   subSchemaAndTypeComposers,
@@ -60,7 +70,7 @@ export function getUnionTypeComposers({
       isOutputPlural = true;
     }
     if (isSomeInputTypeComposer(output)) {
-      outputTypeComposers.push(getContainerTC(schemaComposer, output));
+      outputTypeComposers.push(getContainerTC(subgraphName, schemaComposer, output));
     } else {
       outputTypeComposers.push(output);
     }
@@ -98,18 +108,28 @@ export function getUnionTypeComposers({
       const statusCode = statusCodeOneOfIndexMapEntries.find(
         ([statusCode, index]) => index.toString() === outputTypeComposerIndex.toString(),
       )?.[0];
+      const a: InterfaceTypeComposer<any> = outputTypeComposer as any;
       if ('getFields' in outputTypeComposer) {
         if (statusCode != null) {
           schemaComposer.addDirective(StatusCodeTypeNameDirective);
           directives.push({
             name: 'statusCodeTypeName',
             args: {
+              subgraph: subgraphName,
               statusCode,
               typeName: outputTypeComposer.getTypeName(),
             },
           });
         }
-        (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(outputTypeComposer);
+        if (outputTypeComposer instanceof InterfaceTypeComposer) {
+          schemaComposer.forEach(tc => {
+            if (tc instanceof ObjectTypeComposer && tc.hasInterface(a)) {
+              (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(tc);
+            }
+          });
+        } else {
+          (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(outputTypeComposer);
+        }
       } else {
         for (const possibleType of outputTypeComposer.getTypes()) {
           (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(possibleType);

@@ -19,7 +19,12 @@ type PrometheusConfig @md {
   # Mesh specific flags
 
   delegation: BooleanOrString
-  fetch: BooleanOrString
+  delegationArgs: Boolean
+  delegationKey: Boolean
+
+  subgraphExecute: BooleanOrString
+
+  fetchMetrics: BooleanOrString
   fetchRequestHeaders: Boolean
   fetchResponseHeaders: Boolean
 
@@ -32,7 +37,7 @@ type PrometheusConfig @md {
   The path to the metrics endpoint
   default: `/metrics`
   """
-  endpoint: String
+  endpoint: BooleanOrString
 }
 
 union BooleanOrString = Boolean | String

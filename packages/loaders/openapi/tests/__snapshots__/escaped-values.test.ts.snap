@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Escaped Values should generate the correct schema: escaped_values-schema 1`] = `
-"schema {
+"schema @transport(subgraph: "escaped_values", kind: "rest", location: "http://localhost:3000/api") {
   query: Query
 }
 
-directive @enum(value: String) on ENUM_VALUE
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
-type Query @globalOptions(sourceName: "escaped_values", endpoint: "http://localhost:3000/api") {
-  test: test_200_response @httpOperation(path: "/test", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+type Query {
+  test: test_200_response @httpOperation(subgraph: "escaped_values", path: "/test", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
 }
 
 type test_200_response {
@@ -20,16 +20,14 @@ type test_200_response {
 }
 
 enum query_test_test {
-  NEGATIVE_1 @enum(value: "-1")
-  _0 @enum(value: "0")
-  _10 @enum(value: "10")
-  _15 @enum(value: "15")
-  _30 @enum(value: "30")
-  _45 @enum(value: "45")
-  _60 @enum(value: "60")
+  NEGATIVE_1 @enum(subgraph: "escaped_values", value: "-1")
+  _0 @enum(subgraph: "escaped_values", value: "0")
+  _10 @enum(subgraph: "escaped_values", value: "10")
+  _15 @enum(subgraph: "escaped_values", value: "15")
+  _30 @enum(subgraph: "escaped_values", value: "30")
+  _45 @enum(subgraph: "escaped_values", value: "45")
+  _60 @enum(subgraph: "escaped_values", value: "60")
 }
-
-scalar ObjMap
 
 enum HTTPMethod {
   GET
@@ -41,5 +39,7 @@ enum HTTPMethod {
   OPTIONS
   TRACE
   PATCH
-}"
+}
+
+scalar ObjMap"
 `;

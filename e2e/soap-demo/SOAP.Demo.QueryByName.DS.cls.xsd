@@ -1,0 +1,22 @@
+<s:schema xmlns="http://tempuri.org/QueryByName_DataSet" xmlns:mstns="http://tempuri.org/QueryByName_DataSet" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="QueryByName_DataSet" targetNamespace="http://tempuri.org/QueryByName_DataSet" attributeFormDefault="qualified" elementFormDefault="qualified">
+<s:element name="QueryByName_DataSet" msdata:IsDataSet="true">
+<s:complexType>
+<s:choice maxOccurs="unbounded">
+<s:element name="QueryByName">
+<s:complexType>
+<s:sequence>
+<s:element name="ID" type="s:long" minOccurs="0"/>
+<s:element name="Name" type="s:string" minOccurs="0"/>
+<s:element name="DOB" type="s:date" minOccurs="0"/>
+<s:element name="SSN" type="s:string" minOccurs="0"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+</s:choice>
+</s:complexType>
+<s:unique name="Constraint1" msdata:PrimaryKey="true">
+<s:selector xpath=".//mstns:QueryByName"/>
+<s:field xpath="mstns:ID"/>
+</s:unique>
+</s:element>
+</s:schema>

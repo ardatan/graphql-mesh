@@ -1,7 +1,8 @@
-import { MeshPlugin } from '@graphql-mesh/types';
+import type { MeshPlugin } from '@graphql-mesh/types';
+import { mapMaybePromise } from '@graphql-mesh/utils';
 
 export default function useDeduplicateRequest(): MeshPlugin<any> {
-  const reqResMapByContext = new WeakMap<any, Map<string, Promise<Response>>>();
+  const reqResMapByContext = new WeakMap<any, Map<string, PromiseLike<Response> | Response>>();
   function getReqResMapByContext(context: any) {
     let reqResMap = reqResMapByContext.get(context);
     if (!reqResMap) {
@@ -33,7 +34,7 @@ export default function useDeduplicateRequest(): MeshPlugin<any> {
               reqResMap.set(dedupCacheKey, dedupRes$);
             }
 
-            return dedupRes$.then(res => {
+            return mapMaybePromise(dedupRes$, res => {
               let resPropMapByRes = resPropMap.get(res);
               if (!resPropMapByRes) {
                 resPropMapByRes = new Map();

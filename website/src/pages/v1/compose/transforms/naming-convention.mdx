@@ -1,0 +1,52 @@
+---
+description:
+  Transform the response of your GraphQL API with naming-convention. Apply casing and other
+  conventions to your response with ease.
+---
+
+import { Callout } from '@theguild/components'
+
+# Naming Convention Transform
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+The naming convention transforms allow you to apply casing and other conventions to your response.
+
+## How to use?
+
+You can import `createNamingConventionTransform` to create an instance of the transform. Each
+parameter of the transform factory takes a function that takes a string, and returns another string.
+So you can use your own convention functions, or use the provided ones like `pascalCase`,
+`upperCase`, `camelCase`, etc.
+
+```ts filename="mesh.config.ts" {13-17}
+import {
+  camelCase,
+  createNamingConventionTransform,
+  defineConfig,
+  loadGraphQLHTTPSubgraph,
+  pascalCase,
+  upperCase
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Countries', {
+        endpoint: 'https://countries.trevorblades.com'
+      }),
+      transforms: [
+        createNamingConventionTransform({
+          typeNames: pascalCase,
+          enumValues: upperCase,
+          fieldNames: camelCase,
+          fieldArgumentNames: camelCase
+        })
+      ]
+    }
+  ]
+})
+```

@@ -4,13 +4,13 @@ exports[`JSON Schema Covid should generate correct schema: json-schema-covid-sch
 """""""
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | INTERFACE | OBJECT
 
-directive @globalOptions(endpoint: String, operationHeaders: ObjMap, queryParams: ObjMap, queryStringOptions: ObjMap, sourceName: String) on OBJECT
-
-directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, operationSpecificHeaders: ObjMap, path: String, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap) on FIELD_DEFINITION
+directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: [[String]], path: String, queryParamArgMap: ObjMap, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String!, sourceName: String!, sourceSelectionSet: String, sourceTypeName: String!) on FIELD_DEFINITION
 
-directive @responseMetadata on FIELD_DEFINITION
+directive @responseMetadata(subgraph: String) on FIELD_DEFINITION
+
+directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) repeatable on SCHEMA
 
 """Desc Api Population"""
 type ApiPopulation {
@@ -137,7 +137,6 @@ scalar JSON
 
 scalar ObjMap
 
-""""""
 type Query {
   """"""
   case(countryRegion: String): Case

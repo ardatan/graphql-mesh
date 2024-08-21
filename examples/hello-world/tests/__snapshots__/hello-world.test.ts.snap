@@ -1,19 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Hello World should generate correct schema 1`] = `
-"schema {
+"schema @transport(subgraph: "Hello World", kind: "rest") {
   query: Query
 }
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
-type Query @globalOptions(sourceName: "Hello World") {
-  greeting: String @httpOperation(path: "/", httpMethod: GET)
+type Query {
+  greeting: String @httpOperation(subgraph: "Hello World", path: "/", httpMethod: GET)
 }
-
-scalar ObjMap
 
 enum HTTPMethod {
   GET
@@ -25,7 +23,9 @@ enum HTTPMethod {
   OPTIONS
   TRACE
   PATCH
-}"
+}
+
+scalar ObjMap"
 `;
 
 exports[`Hello World should give correct response 1`] = `

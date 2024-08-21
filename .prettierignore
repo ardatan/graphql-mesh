@@ -1,4 +1,3 @@
-/.changeset/*.md
 /website/src/generated-markdown/
 /website/src/pages/docs/api/
 .next/
@@ -6,3 +5,11 @@ dist/
 .mesh/
 /.husky/_/
 .bob/
+.yarn
+supergraph-invalid.graphql
+__generated__/
+.changeset
+CHANGELOG.md
+Dockerfile
+bundle/
+examples/v1-next/integrations/fastify/supergraph.graphql

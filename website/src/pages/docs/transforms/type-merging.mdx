@@ -84,7 +84,7 @@ And you renamed `AuthorWithBooks` to `Author` using [`Rename`](/docs/transforms/
                   field: author
 ```
 
-then you expect the following query works fine;
+then you expect the following query to work fine;
 
 ```graphql
 {
@@ -100,9 +100,10 @@ then you expect the following query works fine;
 }
 ```
 
-But it won't work because Mesh doesn't know which field belongs to where and how to combine those.
-You could add `additionalResolvers` then extract `books` from `AuthorWithBooks` then return it as
-`books` field of `Author` type, but this sounds a little overhead. So let's try Type Merging here.
+But it won't work because Mesh doesn't know which field belongs to which entity and how to combine
+them. You could add `additionalResolvers` to extract `books` from `AuthorWithBooks` and then return
+it as `books` field of `Author` type, but this adds a lot of overhead. So, let's try Type Merging
+here.
 
 We have Type Merging transform to teach Mesh how to fetch entities from different sources:
 
@@ -125,7 +126,7 @@ sources:
     handler:
       # ...
     transforms:
-      # Rename type names and field names to let stitching merger merges them
+      # Rename type names and field names to let stitching merger merge them
       - rename:
           renames:
             - from:
@@ -174,7 +175,7 @@ sources:
             # And no need to define a key for type
             # keyField assigns to that type automatically
             - queryFieldName: authors
-              # Mesh automatically does batching if return type is a list
+              # Mesh automatically does batching if the return type is a list
               keyField: id
             # keyArg: ids <-- This is needed if you have multiple args
             #                for that query field
@@ -182,7 +183,7 @@ sources:
     handler:
       # ...
     transforms:
-      # Rename type names and field names to let stitching merger merges them
+      # Rename type names and field names to let stitching merger merge them
       - rename:
           renames:
             - from:
@@ -226,7 +227,7 @@ sources:
             # And no need to define a key for type
             # keyField assigns to that type automatically
             - queryFieldName: authors
-              # Mesh automatically does batching if return type is a list
+              # Mesh automatically does batching if the return type is a list
               keyField: id
             # keyArg: ids <-- This is needed if you have multiple args
             #                for that query field
@@ -261,7 +262,7 @@ sources:
 <Callout>You can check out our example that uses Type Merging</Callout>
 
 <iframe
-  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/type-merging-batching-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  src="https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/type-merging-batching-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
   className="mt-6 w-full h-[500px] rounded-md"
   title="federation-example"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"

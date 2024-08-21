@@ -1,0 +1,49 @@
+---
+description:
+  Use Neo4j with GraphQL using @neo4j/graphql schema. Install @graphql-mesh/neo4j to use it directly
+  in your Mesh config file. Get started now!
+---
+
+import { Callout } from '@theguild/components'
+
+# Neo4j
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+This handler allows you to use the GraphQL schema created by
+[`@neo4j/graphql`](https://github.com/neo4j/graphql).
+
+## How to use?
+
+To get started, install the handler library:
+
+```sh npm2yarn
+npm i @omnigraph/neo4j
+```
+
+Then you can import the library in your configuration file, and define your Neo4j source;
+
+```ts filename="mesh.config.ts" {2,7-9}
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadNeo4jSubgraph } from '@omnigraph/neo4j'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadNeo4jSubgraph('MyNeo4j', {
+        url: 'neo4j://localhost',
+        username: 'neo4j',
+        password: 'MY_PASSWORD'
+      })
+    }
+  ]
+})
+```
+
+<Callout>
+  [You can find a working example here](
+  https://github.com/ardatan/graphql-mesh/tree/main/examples/v1-next/neo4j-example )
+</Callout>

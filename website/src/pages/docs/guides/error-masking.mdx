@@ -51,7 +51,8 @@ Envelop allows you to provide your error formatting function as follows:
 
 ```ts filename="envelopPlugins.ts"
 import { GraphQLError } from 'graphql'
-import { PluginOrDisabledPlugin, useMaskedErrors } from '@envelop/core'
+import { Plugin, useMaskedErrors } from '@envelop/core'
+import { MeshPlugin } from '@graphql-mesh/types'
 
 export const formatError: FormatErrorHandler = err => {
   if (err.originalError && err.originalError instanceof GraphQLError === false) {
@@ -61,7 +62,7 @@ export const formatError: FormatErrorHandler = err => {
   return err
 }
 
-const plugins: PluginOrDisabledPlugin = [
+const plugins: MeshPlugin<any>[] = [
   useMaskedErrors({
     errorMessage: 'Something went wrong.',
     formatError

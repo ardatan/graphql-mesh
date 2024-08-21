@@ -5,8 +5,6 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
 
 jobs:
   deployment:
@@ -16,17 +14,16 @@ jobs:
       'push'
     steps:
       - name: checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: 18
-          packageManager: yarn
+          node-version-file: .node-version
 
-      - uses: the-guild-org/shared-config/website-cf@main
+      - uses: the-guild-org/shared-config/website-cf@v1
         name: build and deploy website
         env:
           NEXT_BASE_PATH: ${{ github.ref == 'refs/heads/master' && '/graphql/mesh' || '' }}

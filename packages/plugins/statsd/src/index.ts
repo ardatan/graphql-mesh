@@ -1,6 +1,7 @@
-import StatsD, { Tags } from 'hot-shots';
+import type { Tags } from 'hot-shots';
+import { StatsD } from 'hot-shots';
 import { useStatsD } from '@envelop/statsd';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 
 const metricNames = {

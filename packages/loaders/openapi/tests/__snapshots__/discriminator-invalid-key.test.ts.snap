@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Discriminator with invalid key in the mapping should generate correct schema: discriminator-invalid-key 1`] = `
+"schema @transport(subgraph: "test", kind: "rest", location: "http://localhost") {
+  query: Query
+}
+
+directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+
+type Cat implements Pet {
+  color: String
+  name: String!
+  petType: String
+}
+
+interface Pet @discriminator(subgraph: "test", field: "petType", mapping: [["pet-cat", "Cat"], ["pet-dog", "Dog"]]) {
+  name: String!
+  petType: String
+}
+
+type Dog implements Pet {
+  age: String
+  name: String!
+  petType: String
+}
+
+type Query {
+  pets_by_id(id: String!): Pet @httpOperation(subgraph: "test", path: "/pets/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+}
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}
+
+scalar ObjMap"
+`;

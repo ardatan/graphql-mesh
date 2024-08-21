@@ -1,6 +1,6 @@
 import { execute, GraphQLSchema, parse, validate } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { OpenAPILoaderOptions } from '../src/index.js';
+import type { OpenAPILoaderOptions } from '../src/index.js';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { exampleApi6 } from './example_api6_server.js';
 

@@ -1,9 +1,11 @@
 /* eslint sort-keys: error */
 import { useRouter } from 'next/router';
-import { defineConfig, Giscus, useTheme } from '@theguild/components';
+import { defineConfig, Giscus, PRODUCTS, useTheme } from '@theguild/components';
 
 export default defineConfig({
-  docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website',
+  description: 'GraphQL Gateway Framework and anything-to-GraphQL',
+  docsRepositoryBase: 'https://github.com/ardatan/graphql-mesh/tree/master/website',
+  logo: PRODUCTS.MESH.logo({ className: 'w-8' }),
   main: function Main({ children }) {
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
@@ -12,7 +14,7 @@ export default defineConfig({
       <Giscus
         // ensure giscus is reloaded when client side route is changed
         key={route}
-        repo="Urigo/graphql-mesh"
+        repo="ardatan/graphql-mesh"
         repoId="MDEwOlJlcG9zaXRvcnkyMzM1OTc1MTc="
         category="Docs Discussions"
         categoryId="DIC_kwDODexqTc4CSDDQ"
@@ -28,5 +30,5 @@ export default defineConfig({
       </>
     );
   },
-  siteName: 'MESH',
+  websiteName: 'GraphQL-Mesh',
 });

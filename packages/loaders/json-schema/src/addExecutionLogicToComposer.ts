@@ -1,29 +1,31 @@
+import type { GraphQLScalarType } from 'graphql';
 import {
   getNamedType,
   GraphQLInt,
   GraphQLObjectType,
-  GraphQLScalarType,
   GraphQLString,
+  isInterfaceType,
 } from 'graphql';
-import {
-  GraphQLJSON,
+import type {
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfig,
   SchemaComposer,
 } from 'graphql-compose';
-import { IStringifyOptions } from 'qs';
+import { GraphQLJSON } from 'graphql-compose';
+import type { IStringifyOptions } from 'qs';
 import { process } from '@graphql-mesh/cross-helpers';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger } from '@graphql-mesh/types';
+import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
-  GlobalOptionsDirective,
   HTTPOperationDirective,
   LinkDirective,
   LinkResolverDirective,
   PubSubOperationDirective,
   ResolveRootDirective,
   ResponseMetadataDirective,
+  TransportDirective,
 } from './directives.js';
-import {
+import type {
   JSONSchemaLinkConfig,
   JSONSchemaOperationConfig,
   OperationHeadersConfiguration,
@@ -39,6 +41,7 @@ export interface AddExecutionLogicToComposerOptions {
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
+  handlerName?: string;
 }
 
 const responseMetadataType = new GraphQLObjectType({
@@ -53,8 +56,8 @@ const responseMetadataType = new GraphQLObjectType({
   },
 });
 
-export async function addExecutionDirectivesToComposer(
-  name: string,
+export function addExecutionDirectivesToComposer(
+  subgraphName: string,
   {
     schemaComposer,
     logger,
@@ -63,21 +66,9 @@ export async function addExecutionDirectivesToComposer(
     endpoint,
     queryParams,
     queryStringOptions,
+    handlerName,
   }: AddExecutionLogicToComposerOptions,
 ) {
-  schemaComposer.addDirective(GlobalOptionsDirective);
-  schemaComposer.Query.setDirectiveByName(
-    'globalOptions',
-    JSON.parse(
-      JSON.stringify({
-        sourceName: name,
-        endpoint,
-        operationHeaders,
-        queryStringOptions,
-        queryParams,
-      }),
-    ),
-  );
   logger.debug(`Attaching execution directives to the schema`);
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
@@ -94,6 +85,7 @@ export async function addExecutionDirectivesToComposer(
       field.directives.push({
         name: 'pubsubOperation',
         args: {
+          subgraph: subgraphName,
           pubsubTopic: operationConfig.pubsubTopic,
         },
       });
@@ -115,14 +107,22 @@ ${operationConfig.description || ''}
         name: 'httpOperation',
         args: JSON.parse(
           JSON.stringify({
+            subgraph: subgraphName,
             path: operationConfig.path,
-            operationSpecificHeaders: operationConfig.headers,
+            operationSpecificHeaders: operationConfig.headers
+              ? Object.entries(operationConfig.headers)
+              : undefined,
             httpMethod,
             isBinary: 'binary' in operationConfig ? operationConfig.binary : undefined,
             requestBaseBody:
               'requestBaseBody' in operationConfig ? operationConfig.requestBaseBody : undefined,
             queryParamArgMap: operationConfig.queryParamArgMap,
             queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
+            jsonApiFields: operationConfig.jsonApiFields,
+            queryStringOptions:
+              'queryStringOptions' in operationConfig
+                ? operationConfig.queryStringOptions
+                : undefined,
           }),
         ),
       });
@@ -142,6 +142,7 @@ ${operationConfig.description || ''}
                 linkResolverMapDirective = {
                   name: 'linkResolver',
                   args: {
+                    subgraph: subgraphName,
                     linkResolverMap: {},
                   },
                 };
@@ -161,7 +162,7 @@ ${operationConfig.description || ''}
               }
               if (!targetField) {
                 logger.debug(
-                  `Field ${linkObj.fieldName} not found in ${name} for link ${linkName}`,
+                  `Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`,
                 );
               }
               linkResolverFieldMap[linkName] = {
@@ -176,6 +177,7 @@ ${operationConfig.description || ''}
                   {
                     name: 'link',
                     args: {
+                      subgraph: subgraphName,
                       defaultRootType: rootTypeName,
                       defaultField: operationConfig.field,
                     },
@@ -203,6 +205,9 @@ ${operationConfig.description || ''}
             directives: [
               {
                 name: 'responseMetadata',
+                args: {
+                  subgraph: subgraphName,
+                },
               },
             ],
           },
@@ -237,6 +242,9 @@ ${operationConfig.description || ''}
                     directives: [
                       {
                         name: 'resolveRoot',
+                        args: {
+                          subgraph: subgraphName,
+                        },
                       },
                     ],
                   },
@@ -254,6 +262,9 @@ ${operationConfig.description || ''}
                   directives: [
                     {
                       name: 'responseMetadata',
+                      args: {
+                        subgraph: subgraphName,
+                      },
                     },
                   ],
                 },
@@ -269,5 +280,38 @@ ${operationConfig.description || ''}
   }
 
   logger.debug(`Building the executable schema.`);
-  return schemaComposer;
+  if (schemaComposer.Query.getFieldNames().length === 0) {
+    schemaComposer.Query.addFields({
+      dummy: {
+        type: 'String',
+        resolve: () => 'dummy',
+      },
+    });
+  }
+
+  schemaComposer.addDirective(TransportDirective);
+  let schema = schemaComposer.buildSchema();
+  const schemaExtensions: any = (schema.extensions = schema.extensions || {});
+  schemaExtensions.directives = schemaExtensions.directives || {};
+  schemaExtensions.directives.transport = {
+    subgraph: subgraphName,
+    kind: handlerName,
+    location: endpoint,
+    headers: operationHeaders ? Object.entries(operationHeaders) : undefined,
+    queryParams: queryParams ? Object.entries(queryParams) : undefined,
+    queryStringOptions,
+  };
+  // Fix orphaned interfaces
+  schema = mapSchema(schema, {
+    [MapperKind.TYPE]: type => {
+      if (isInterfaceType(type)) {
+        const { objects, interfaces } = schema.getImplementations(type);
+        if (objects.length === 0 && interfaces.length === 0) {
+          return new GraphQLObjectType(type.toConfig() as any);
+        }
+      }
+      return type;
+    },
+  });
+  return schema;
 }

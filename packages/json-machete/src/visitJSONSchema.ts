@@ -1,4 +1,4 @@
-import { JSONSchema, JSONSchemaObject } from './types.js';
+import type { JSONSchema, JSONSchemaObject } from './types.js';
 
 export interface JSONSchemaVisitorContext {
   visitedSubschemaResultMap: WeakMap<JSONSchemaObject, any>;

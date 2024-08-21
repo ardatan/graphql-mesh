@@ -1,6 +1,6 @@
 import { inspect } from 'cross-inspect';
 import toJsonSchema from 'to-json-schema';
-import { JSONSchema, JSONSchemaObject } from './types.js';
+import type { JSONSchema, JSONSchemaObject } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
@@ -399,6 +399,14 @@ export async function healJSONSchema(
             debugLogFn?.(`${path} has a const definition of null. Setting type to "null".`);
             subSchema.type = 'null';
             delete subSchema.const;
+          }
+          if (subSchema.enum && subSchema.default != null) {
+            if (!subSchema.enum.includes(subSchema.default)) {
+              debugLogFn?.(
+                `${path} has an enum but the default value is not in the enum. Removing it.`,
+              );
+              delete subSchema.default;
+            }
           }
           if (
             !subSchema.title &&

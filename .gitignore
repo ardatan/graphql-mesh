@@ -1,6 +1,7 @@
 node_modules/
 temp
 dist/
+bundle/
 out
 build
 generated
@@ -18,4 +19,14 @@ package-lock.json
 /.husky/_/
 newrelic-agent.log
 website/public/_redirects
-packages/types/src/config-schema.ts
+packages/legacy/types/src/config-schema.ts
+newrelic_agent.log
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.mise.toml
+docker/supergraph.graphql

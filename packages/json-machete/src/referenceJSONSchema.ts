@@ -1,4 +1,4 @@
-import { JSONSchemaObject } from './types.js';
+import type { JSONSchemaObject } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
 
 export async function referenceJSONSchema(

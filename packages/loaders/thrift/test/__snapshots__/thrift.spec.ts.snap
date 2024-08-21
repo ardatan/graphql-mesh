@@ -5,15 +5,19 @@ exports[`thrift Calc: Calc-schema 1`] = `
   query: Query
 }
 
+directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
+
 type Query {
-  add(request: AddRequestInput): Int @fieldTypeMap(request: {name: "AddRequest", type: "ref", id: 1})
-  subtract(left: Int, right: Int): Int @fieldTypeMap(left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2})
+  add(request: AddRequestInput): Int @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
+  subtract(left: Int, right: Int): Int @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2}})
 }
 
 input AddRequestInput {
   left: Int!
   right: Int!
-}"
+}
+
+scalar FieldTypeMap"
 `;
 
 exports[`thrift Recursive: Recursive-schema 1`] = `
@@ -21,8 +25,10 @@ exports[`thrift Recursive: Recursive-schema 1`] = `
   query: Query
 }
 
+directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
+
 type Query {
-  bar(foo: FooInput): Foo @fieldTypeMap(foo: {name: "Foo", type: "ref", id: 1})
+  bar(foo: FooInput): Foo @fieldTypeMap(subgraph: "Recursive", fieldTypeMap: {foo: {name: "Foo", type: "ref", id: 1}})
 }
 
 type Foo {
@@ -33,7 +39,9 @@ type Foo {
 input FooInput {
   name: String
   foo: FooInput
-}"
+}
+
+scalar FieldTypeMap"
 `;
 
 exports[`thrift Twitter: Twitter-schema 1`] = `
@@ -41,11 +49,13 @@ exports[`thrift Twitter: Twitter-schema 1`] = `
   query: Query
 }
 
+directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
+
 type Query {
-  ping: Void @fieldTypeMap
-  postTweet(tweet: TweetInput): Boolean @fieldTypeMap(tweet: {name: "Tweet", type: "ref", id: 1})
-  searchTweets(query: String): TweetSearchResult @fieldTypeMap(query: {id: 1})
-  zip: Void @fieldTypeMap
+  ping: Void @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {})
+  postTweet(tweet: TweetInput): Boolean @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {tweet: {name: "Tweet", type: "ref", id: 1}})
+  searchTweets(query: String): TweetSearchResult @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {query: {id: 1}})
+  zip: Void @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {})
 }
 
 """Represents NULL values"""
@@ -88,5 +98,7 @@ type Tweet {
 type Location {
   latitude: Float!
   longitude: Float!
-}"
+}
+
+scalar FieldTypeMap"
 `;

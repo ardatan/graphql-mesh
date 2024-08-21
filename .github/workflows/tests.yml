@@ -1,8 +1,6 @@
 name: test
 on:
   pull_request:
-    branches:
-      - master
   push:
     branches:
       - master
@@ -14,13 +12,30 @@ env:
   LC_ALL: en-US
   REDIS_HOST: localhost
   REDIS_PORT: 6379
+  APOLLO_ELV2_LICENSE: accept
 jobs:
   lint:
-    uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/lint.yml@v1
     with:
+      node-version-file: .node-version
       script: yarn prettier:check && yarn ci:lint
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
+        with:
+          node-version-file: .node-version
+      - name: Prepare for build
+        run: yarn prebuild
+      - name: typecheck
+        run: yarn typecheck
 
   unit:
     name: unit / node ${{matrix.node-version}}
@@ -29,19 +44,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 21]
+        node-version:
+          - 18
+          - 20
+          - 22
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
+          node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -51,8 +69,14 @@ jobs:
           restore-keys: |
             ${{runner.os}}-${{matrix.node-version}}-jest-unit-
 
+      - name: Generate config schema
+        run: yarn generate-config-schema
+
+      - name: Prepare for build
+        run: yarn prebuild
+
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
@@ -69,24 +93,21 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - name: Use Node
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
 
-      - name: Remove node-libcurl
-        run: node scripts/remove-node-libcurl.cjs
-
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
+          node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -99,8 +120,11 @@ jobs:
       - name: Remove node-libcurl
         run: rm -rf node_modules/node-libcurl
 
+      - name: Prepare for build
+        run: yarn prebuild
+
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
@@ -113,7 +137,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 21]
+        node-version:
+          - 18
+          - 20
+          - 22
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -151,15 +178,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
+          node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -232,13 +259,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - name: Use Node
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
@@ -246,10 +273,10 @@ jobs:
       - name: Remove node-libcurl
         run: node scripts/remove-node-libcurl.cjs
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
+          node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
         uses: actions/cache@v4
@@ -278,7 +305,7 @@ jobs:
       - name: Remove node-libcurl
         run: rm -rf node_modules/node-libcurl
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
@@ -291,19 +318,108 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 21]
+        node-version:
+          - 18
+          - 20
+          - 22
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@v4
 
       - name: Install Required Libraries
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: setup env
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          nodeVersion: ${{matrix.node-version}}
+          node-version: ${{matrix.node-version}}
       - name: Build
         run: yarn build
       - name: Node.js integrity check
         run: yarn bob check
+
+  e2e:
+    name: e2e / runner ${{matrix.setup.serve-runner}} / node ${{matrix.setup.node-version}}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        setup:
+          - serve-runner: node
+            node-version: 18
+          - serve-runner: node
+            node-version: 20
+          - serve-runner: node
+            node-version: 22
+          - serve-runner: docker
+            node-version: 22
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: set up env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version: ${{matrix.setup.node-version}}
+      - name: prepare
+        run: yarn prebuild
+      - name: hash docker images
+        id: hash-docker-images
+        # get all "image: '" occurrences in the e2e tests and hash them
+        run: |
+          echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
+      - name: cache docker images
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
+      - name: set up docker buildx
+        if: matrix.setup.serve-runner == 'docker'
+        uses: docker/setup-buildx-action@v3
+      - name: bundle
+        if: matrix.setup.serve-runner == 'docker'
+        env:
+          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
+        run: yarn bundle
+      - name: bake
+        if: matrix.setup.serve-runner == 'docker'
+        uses: docker/bake-action@v5
+        with:
+          targets: e2e
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
+          # we must load so that the e2e tests can use the cached image
+          # also, in order for loading to work - we must define the platform above
+          load: true
+      - name: test
+        timeout-minutes: 10
+        env:
+          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
+        run: yarn test:e2e --detectOpenHandles
+  apollo-federation-compatibility:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - uses: the-guild-org/shared-config/setup@v1
+        name: setup env
+        with:
+          node-version-file: .node-version
+      - name: Install Rover
+        run: npm install -g @apollo/rover
+      - name: Build Packages
+        run: yarn build
+      - name: Run Mesh Compose
+        run: yarn workspace example-apollo-federation-compatibility mesh:compose
+      - name: Run Bundler
+        run: yarn workspace example-apollo-federation-compatibility build
+      - name: Apollo Federation Subgraph Compatibility
+        uses: apollographql/federation-subgraph-compatibility@v2
+        with:
+          workingDirectory: examples/v1-next/apollo-federation-compatibility
+          compose: docker-compose.yaml
+          schema: schema.graphql
+          path: /graphql
+          token: ${{ secrets.GITHUB_TOKEN }}
+          failOnWarning: true
+          failOnRequired: true
+          debug: true

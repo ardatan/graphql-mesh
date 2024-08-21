@@ -1,14 +1,15 @@
-import { AnySchema, JSONSchemaObject } from 'json-machete';
+import type { JSONSchemaObject } from 'json-machete';
+import { AnySchema } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import { getInterpolationKeys } from '@graphql-mesh/string-interpolation';
-import { Logger } from '@graphql-mesh/types';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   DefaultLogger,
   readFileOrUrl,
   sanitizeNameForGraphQL,
 } from '@graphql-mesh/utils';
-import { JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from './types.js';
+import type { JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from './types.js';
 import { getOperationMetadata } from './utils.js';
 
 async function handleOperationResponseConfig(
@@ -21,7 +22,7 @@ async function handleOperationResponseConfig(
   }: {
     schemaHeaders: Record<string, any>;
     cwd: string;
-    fetchFn: WindowOrWorkerGlobalScope['fetch'];
+    fetchFn: MeshFetch;
     logger?: Logger;
   },
 ): Promise<JSONSchemaObject> {
@@ -86,7 +87,7 @@ export async function getReferencedJSONSchemaFromOperations({
   schemaHeaders?: { [key: string]: string };
   ignoreErrorResponses?: boolean;
   logger?: Logger;
-  fetchFn: WindowOrWorkerGlobalScope['fetch'];
+  fetchFn: MeshFetch;
   endpoint: string;
   operationHeaders: Record<string, string>;
   queryParams: Record<string, string | number | boolean>;

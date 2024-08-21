@@ -1,0 +1,392 @@
+---
+description:
+  Extend your supergraph by combining multiple GraphQL schemas and resolvers with GraphQL Mesh
+  schema extensions.
+---
+
+import { Callout } from '@theguild/components'
+
+# Schema Extensions
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+Schema extensions add gateway-level type definitions and resolvers into a combined API, which is
+useful for establishing connections between types that exist in separate subgraphs.
+
+When considering these capabilities, be sure to compare them with the newer automated features
+available through [type merging](/v1/compose/type-merging). While type merging frequently eliminates
+the need for schema extensions, it does not preclude their use.
+
+<Callout>
+
+Schema delegation is a way to automatically forward a query (or a part of a query) from the unified
+graph to an underlying subgraph that can execute the query.
+
+Schema extensions are usually used to apply this approach to combine independent, uncontrolled
+sources.
+
+</Callout>
+
+## Motivational Example
+
+Let's say we have a `subgraph A`, and the supergraph like below;
+
+```graphql filename="subgraph-a.graphql"
+type Repository {
+  id: ID!
+  url: String
+  issues: [Issue]
+  userId: ID!
+}
+
+type Issue {
+  id: ID!
+  text: String!
+  repository: Repository!
+}
+
+type Query {
+  repositoryById(id: ID!): Repository
+  repositoriesByUserId(id: ID!): [Repository]
+}
+```
+
+And together with other composed subgraphs or extensions, we have the following supergraph;
+
+```graphql filename="unifiedgraph.graphql" {18-27}
+type Repository {
+  id: ID!
+  url: String
+  issues: [Issue]
+  userId: ID!
+  user: User
+}
+
+type Issue {
+  id: ID!
+  text: String!
+  repository: Repository!
+}
+
+type User {
+  id: ID!
+  username: String
+  repositories: [Repository]
+    @resolveTo(
+      sourceName: "A"
+      sourceTypeName: "Query"
+      sourceFieldName: "repositoriesByUserId"
+      requiredSelectionSet: "{ id }"
+      sourceArgs: { id: "{root.id}" }
+    )
+}
+
+type Query {
+  userById(id: ID!): User
+}
+```
+
+Suppose we want the supergraph to delegate retrieval of `repositories` to the `subgraph A`, in order
+to execute queries such as this one:
+
+```graphql
+query {
+  userById(id: "1") {
+    id
+    username
+    repositories {
+      id
+      url
+      user {
+        username
+        id
+      }
+      issues {
+        text
+      }
+    }
+  }
+}
+```
+
+The resolver function for the `repositories` field of the `User` type would be responsible for the
+delegation, in this case. While it’s possible to call a remote GraphQL endpoint or resolve the data
+manually, this would require us to transform the query manually or always fetch all possible fields,
+which could lead to overfetching. Delegation automatically extracts the appropriate query to send to
+the `subgraph A`:
+
+```graphql
+# To Subgraph A
+query ($id: ID!) {
+  repositoriesByUserId(id: $id) {
+    id
+    url
+    issues {
+      text
+    }
+  }
+}
+```
+
+The delegation also removes the fields that don’t exist on the subschema, such as `user`. This field
+would be retrieved from the parent schema using normal GraphQL resolvers.
+
+Each field on the `Repository` and `Issue` types use a special resolver to properly extract data
+from the delegated response. The special resolver resolves aliases, converts custom scalars and
+enums to their internal representations, and maps errors. So it is more than just a simple `fetch`
+call, and return that.
+
+## Basic Example
+
+Let's say we have two subgraphs;
+
+```graphql filename="posts.graphql"
+type Post {
+  id: ID!
+  text: String
+  userId: ID!
+}
+
+type Query {
+  postById(id: ID!): Post
+  postsByUserId(userId: ID!): [Post!]!
+}
+```
+
+```graphql filename="users.graphql"
+type User {
+  id: ID!
+  email: String
+}
+
+type Query {
+  userById(id: ID!): User
+}
+```
+
+We may want to navigate from a particular user to their posts, or from a post to its user. This is
+possible within our service architecture by connecting an existing key of each object to a
+corresponding root query:
+
+- `Post.userId -> userById(id)` gets a Post’s user.
+- `User.id -> postsByUserId(userId)` gets a User’s posts.
+
+To formalize this navigation within our supergraph, we can extend each type with a new field that
+will translate its respective key into an actual object association:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Posts', {
+        endpoint: 'http://localhost:4001/posts'
+      })
+    },
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4002/users'
+      })
+    }
+  ],
+  additionalTypeDefs: /* GraphQL */ `
+    extend type Post {
+      user: User!
+    }
+    extend type User {
+      posts: [Post!]!
+    }
+  `
+})
+```
+
+The `additionalTypeDefs` option provides type extensions (using the extend keyword) that add
+additional fields into the combined gateway schema and therefore may cross-reference types from any
+subgraph.
+
+However, these extensions alone won’t do anything until they have corresponding resolvers. A
+complete example would look like this:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Posts', {
+        endpoint: 'http://localhost:4001/posts'
+      })
+    },
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4002/users'
+      })
+    }
+  ],
+  additionalTypeDefs: /* GraphQL */ `
+    extend type Post {
+      user: User!
+        @resolveTo(
+          sourceName: "Users"
+          sourceTypeName: "Query"
+          sourceFieldName: "userById"
+          requiredSelectionSet: "{ id }"
+          sourceArgs: { id: "{root.userId}" }
+        )
+    }
+    extend type User {
+      posts: [Post!]!
+        @resolveTo(
+          sourceName: "Posts"
+          sourceTypeName: "Query"
+          sourceFieldName: "postsByUserId"
+          requiredSelectionSet: "{ id }"
+          sourceArgs: { userId: "{root.id}" }
+        )
+    }
+  `
+})
+```
+
+When resolving `User.posts` and `Post.user`, we delegate each key reference to its corresponding
+root query.
+
+- `sourceName` specifies the subgraph to delegate to.
+- `sourceTypeName` and `sourceFieldName` specify the root query to call.
+- `sourceArgs` specifies the arguments to be passed to the delegated field
+- `requiredSelectionSet` above specifies the key field(s) needed from an object to query for its
+  associations. For example, `Post.user` will require that a `Post` provide its `userId`. Rather
+  than relying on incoming queries to manually request this key for the association, the selection
+  set will automatically be included in `subgraph` requests to guarantee that these fields are
+  fetched.
+
+<Callout>
+  By default, `resolveTo` assumes that the delegated operation will return the same GraphQL type as
+  the resolved field (ex: a `User` field would delegate to a `User` query). If this is not the case,
+  then you should manually provide a `returnType` option citing the expected GraphQL return type,
+  and transform the result accordingly in the resolver.
+</Callout>
+
+- `returnType` specifies the expected return type of the delegated operation. This is necessary when
+  the return type of the delegated operation differs from the type of the field being resolved. For
+  example, if `Post.user` resolves to a `User` type, but the delegated operation returns a
+  `UserResponse` type, then `returnType` should be set to `User`.
+- `result` specifies the path to the data in the response that should be returned. This is necessary
+  when the data is nested in the response. For example, if the response is
+  `{ data: { user: { id: 1, name: "John" } } }`, then `result` should be set to `data.user`.
+
+## Batch Delegation (Array Batching)
+
+The drawback of performing individual `resolveTo` calls is that they can be fairly inefficient. Say
+we request `Post.user` from an array of ten posts—that would delegate ten individual `userById`
+queries while resolving each user! To improve this, we can instead delegate in batches, where many
+instances of a field resolver are consolidated into one delegation.
+
+To setup batching, the first thing we’ll need is a new query in the users’ service that allows
+fetching many users at once:
+
+```graphql
+usersByIds(ids: [ID!]!): [User]!
+```
+
+With this many-users query available, we can now delegate the `Post.user` field in batches across
+many records:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Posts', {
+        endpoint: 'http://localhost:4001/posts'
+      })
+    },
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4002/users'
+      })
+    }
+  ],
+  additionalTypeDefs: /* GraphQL */ `
+    extend type Post {
+      user: User!
+        @resolveTo(
+          sourceName: "Users"
+          sourceTypeName: "Query"
+          sourceFieldName: "usersByIds"
+          keyField: "userId"
+          keysArg: "ids"
+        )
+    }
+  `
+})
+```
+
+<Callout>
+Internally, `resolveTo` wraps a single `resolveTo` call in a `DataLoader` scoped by context, field, arguments, and query selection. It assumes that the delegated operation will return an array of objects matching the gateway field’s named GraphQL type (ex: a `User` field delegates to a `[User]` query). If this is not the case, then you should manually provide a `returnType` option citing the expected GraphQL return type. Since it is a thin wrapper around DataLoader, it also makes the following assumptions on the results:
+
+The Array of values must be the same length as the Array of keys, and each index in the Array of
+values must correspond to the same index in the Array of keys.
+
+</Callout>
+
+If the query you’re delegating to don’t conform to these expectations, you can provide a custom
+resolver function in `additionalResolvers` in `serve-runtime` configuration.
+{/* `TODO: Add example for custom resolver function programmatically` */}
+
+Batch delegation is generally preferable over plain delegation because it eliminates the redundancy
+of requesting the same field across an array of parent objects. Even so, delegation costs can add up
+because there is still one subschema request made per batched field—for remote services, this may
+create many network requests sent to the same service.
+
+## Hiding internal fields
+
+Let's say if you don't want to expose `usersByIds`, you can use
+[Filter Transform](/v1/compose/transforms/filter) to hide it from the final schema. This is helpful
+when you want to stitch subgraphs but you don't want to expose some extra fields that should not be
+exposed to the client.
+
+```ts filename="mesh.config.ts"
+import { createFilterTransform, defineConfig } from '@graphql-mesh/compose-cli'
+import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Posts', {
+        endpoint: 'http://localhost:4001/posts'
+      })
+    },
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4002/users'
+      }),
+      transforms: [
+        createFilterTransform({
+          fieldFilter: (typeName, fieldName) => fieldName !== 'usersByIds'
+        })
+      ]
+    }
+  ],
+  additionalTypeDefs: /* GraphQL */ `
+    extend type Post {
+      user: User!
+        @resolveTo(
+          sourceName: "Users"
+          sourceTypeName: "Query"
+          sourceFieldName: "usersByIds"
+          keyField: "userId"
+          keysArg: "ids"
+        )
+    }
+  `
+})
+```

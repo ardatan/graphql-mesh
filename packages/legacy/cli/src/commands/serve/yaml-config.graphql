@@ -1,0 +1,114 @@
+type Query {
+  """
+  Configuration for `mesh start` or `mesh dev` command.
+  Those commands won't be available in programmatic usage.
+  """
+  serve: ServeConfig
+  """
+  SDK Configuration
+  """
+  sdk: SDKConfig
+  """
+  Codegen Configuration
+  """
+  codegen: Any
+}
+
+type ServeConfig @md {
+  """
+  Spawn multiple server instances as node clusters (default: `1`)
+  """
+  fork: Fork
+  """
+  TCP Port to listen (default: `4000`)
+  """
+  port: Port
+  """
+  The binding hostname (default: `localhost`)
+  """
+  hostname: String
+  """
+  Configuration for CORS
+  """
+  cors: CorsConfig
+  """
+  Path to your static files you want to be served with GraphQL Mesh HTTP Server
+  """
+  staticFiles: String
+  """
+  Show GraphiQL Playground
+  """
+  playground: Boolean
+  """
+  SSL Credentials for HTTPS Server
+  If this is provided, Mesh will be served via HTTPS
+  """
+  sslCredentials: HTTPSConfig
+  """
+  Path to GraphQL Endpoint (default: /graphql)
+  """
+  endpoint: String
+  """
+  Path to the browser that will be used by `mesh serve` to open a playground window in development mode
+  This feature can be disabled by passing `false`
+  """
+  browser: Browser
+  """
+  Title of GraphiQL Playground
+  """
+  playgroundTitle: String
+  """
+  Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
+  """
+  batchingLimit: Int
+  """
+  Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)
+  """
+  healthCheckEndpoint: String
+
+  """
+  By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.
+
+  This option allows you to specify additional parameters that are allowed in the request body.
+
+  @default []
+
+  @example ['doc_id', 'id']
+  """
+  extraParamNames: [String]
+}
+
+union Port = Int | String
+
+union Fork = Int | Boolean
+
+union RequestBodySize = Int | String
+
+union Browser = String | Boolean
+
+type CorsConfig {
+  origin: Any
+  allowedHeaders: [String]
+  exposedHeaders: [String]
+  credentials: Boolean
+  maxAge: Int
+  preflightContinue: Boolean
+  optionsSuccessStatus: Int
+}
+
+type HTTPSConfig {
+  key: String!
+  cert: String!
+}
+
+type SDKConfig @md {
+  """
+  Use this only if you don't want to use `documents` for SDK,
+  and let Mesh generate them for you
+  """
+  generateOperations: GenerateOperationsConfig
+}
+
+type GenerateOperationsConfig {
+  selectionSetDepth: Int
+}

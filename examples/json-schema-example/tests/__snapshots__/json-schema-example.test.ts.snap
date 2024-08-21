@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JSON Schema Example should generate correct schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
+
+directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HttpMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+
+type Query {
+  me: User @httpOperation(subgraph: "FakeAPI", path: "/me", httpMethod: GET)
+  company(id: String!): Company @httpOperation(subgraph: "FakeAPI", path: "/company/{args.id}", httpMethod: GET)
+}
+
+"""Fake User Object"""
+type User {
+  firstName: String
+  lastName: String
+  jobTitle: String
+  companyId: String
+  birthDate: Date
+  foos: [Foo]
+  company: Company
+}
+
+"""Represents date values"""
+scalar Date
+
+type Foo {
+  id: String
+}
+
+"""Fake Company"""
+type Company {
+  name: String
+  type: CompanyType
+  employers: [User]
+}
+
+enum CompanyType {
+  Public_Limited @enum(subgraph: "FakeAPI", value: "\\"Public Limited\\"")
+  Private_Limited @enum(subgraph: "FakeAPI", value: "\\"Private Limited\\"")
+  One_Person @enum(subgraph: "FakeAPI", value: "\\"One Person\\"")
+}
+
+type Mutation {
+  createUser(input: CreateUpdateUserInput): User @httpOperation(subgraph: "FakeAPI", path: "/user", httpMethod: PUT)
+  updateUser(id: String!, input: CreateUpdateUserInput): User @httpOperation(subgraph: "FakeAPI", path: "/user/{args.id}", httpMethod: POST)
+  deleteUser(id: String!): JSON @httpOperation(subgraph: "FakeAPI", path: "/user/{args.id}", httpMethod: DELETE)
+}
+
+input CreateUpdateUserInput @example(subgraph: "FakeAPI", value: "{\\"firstName\\":\\"John\\",\\"lastName\\":\\"Doe\\",\\"jobTitle\\":\\"Software Developer\\"}") {
+  firstName: String
+  lastName: String
+  jobTitle: String
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+scalar ObjMap
+
+enum HttpMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;

@@ -164,15 +164,15 @@ self.addEventListener('fetch', createBuiltMeshHTTPHandler())
 
 You can see the following examples for more details:
 
-- [Response Caching on a REST API](https://github.com/Urigo/graphql-mesh/tree/master/examples/cloudflare-workers)
-- [Response Caching on a GraphQL API](https://github.com/Urigo/graphql-mesh/tree/master/examples/spacex-cfw)
+- [Response Caching on a REST API](https://github.com/ardatan/graphql-mesh/tree/master/examples/cloudflare-workers)
+- [Response Caching on a GraphQL API](https://github.com/ardatan/graphql-mesh/tree/master/examples/spacex-cfw)
 
 Also you can see how to setup _KV_ as a cache storage in GraphQL Mesh [here](/docs/cache/cfwKv).
 
 ### Deploy Mesh on Apache OpenWhisk
 
 You can see our example that shows how to setup an OpenWhisk action for GraphQL Mesh.
-[OpenWhisk Example](https://github.com/Urigo/graphql-mesh/tree/master/examples/openwhisk-example)
+[OpenWhisk Example](https://github.com/ardatan/graphql-mesh/tree/master/examples/openwhisk-example)
 
 ### Deploy Mesh on GCP Cloud Functions
 
@@ -202,7 +202,7 @@ serve:
 ```
 
 You can see our example that shows how to setup a Cloud Function for GraphQL Mesh.
-[Cloud Functions Example](https://github.com/Urigo/graphql-mesh/tree/master/examples/gcp-functions)
+[Cloud Functions Example](https://github.com/ardatan/graphql-mesh/tree/master/examples/gcp-functions)
 
 ### Deploy on Azure Functions
 
@@ -212,38 +212,16 @@ build step.
 Then assuming that your function's name is `mesh`;
 
 ```ts filename="index.ts"
-import type { IncomingMessage, ServerResponse } from 'node:http'
-import { createBuiltMeshHTTPHandler } from './.mesh'
+import { app } from '@azure/functions'
+import { createBuiltMeshHTTPHandler } from '../.mesh'
 
 const meshHTTP = createBuiltMeshHTTPHandler()
 
-const httpTrigger: AzureFunction = async function (
-  context: Context,
-  req: HttpRequest
-): Promise<void> {
-  context.log('HTTP trigger function processed a request.')
-
-  const response = await meshHTTP.fetch(req.url, {
-    method: req.method?.toString(),
-    body: req.rawBody,
-    headers: req.headers
-  })
-
-  const headersObj = Object.fromEntries(response.headers.entries())
-
-  context.log('GraphQL Mesh response headers:', headersObj)
-
-  const responseText = await response.text()
-  context.log('GraphQL Mesh response text:', responseText)
-
-  context.res = {
-    status: response.status,
-    body: responseText,
-    headers: headersObj
-  }
-}
-
-export default httpTrigger
+app.http('graphql', {
+  methods: ['GET', 'POST'],
+  authLevel: 'anonymous',
+  handler: meshHTTP
+})
 ```
 
 We need to configure Mesh CLI to generate artifacts for the function's path;
@@ -346,19 +324,6 @@ app.use(async ctx => {
   // Converts ReadableStream to a NodeJS Stream
   ctx.body = response.body
 })
-```
-
-### Mesh and SvelteKit
-
-Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the
-build step.
-
-```ts filename="index.ts"
-import { createBuiltMeshHTTPHandler } from './.mesh'
-
-const meshHttp = createBuiltMeshHTTPHandler()
-
-export { meshHttp as get, meshHttp as post }
 ```
 
 ## Mesh and Docker

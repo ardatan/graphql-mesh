@@ -8,11 +8,13 @@ jest.setTimeout(30000);
 describe('PostgresGeoDB', () => {
   let config: ProcessedConfig;
   let mesh: MeshInstance;
+  const debugEnvFlag = process.env.DEBUG;
   beforeAll(async () => {
     config = await findAndParseConfig({
       dir: join(__dirname, '..'),
     });
     mesh = await getMesh(config);
+    process.env.DEBUG = debugEnvFlag;
   });
   it('should give correct response for example queries', async () => {
     const result = await mesh.execute(config.documents[0].document!, {});
@@ -20,6 +22,7 @@ describe('PostgresGeoDB', () => {
     expect(result?.data?.allCities?.nodes?.[0]?.developers?.[0]?.login).toBeTruthy();
   });
   afterAll(() => {
-    mesh.destroy();
+    process.env.DEBUG = debugEnvFlag;
+    mesh?.destroy();
   });
 });

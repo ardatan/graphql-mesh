@@ -1,34 +1,45 @@
-import {
-  GraphQLBoolean,
-  GraphQLEnumType,
+import type {
   GraphQLEnumValueConfigMap,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
+  GraphQLInputType,
+  GraphQLOutputType,
+} from 'graphql';
+import {
+  DirectiveLocation,
+  GraphQLBoolean,
+  GraphQLDirective,
+  GraphQLEnumType,
   GraphQLFloat,
   GraphQLInputObjectType,
-  GraphQLInputType,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLOutputType,
+  GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
 import { GraphQLBigInt, GraphQLByte, GraphQLJSON, GraphQLVoid } from 'graphql-scalars';
-import {
+import type {
   Comment,
   FunctionType,
   IncludeDefinition,
-  parse,
-  SyntaxType,
   ThriftDocument,
 } from '@creditkarma/thrift-parser';
-import { IMethodAnnotations, IThriftAnnotations, TType } from '@creditkarma/thrift-server-core';
+import { parse, SyntaxType } from '@creditkarma/thrift-parser';
+import type { IMethodAnnotations, IThriftAnnotations } from '@creditkarma/thrift-server-core';
+import { TType } from '@creditkarma/thrift-server-core';
 import { path } from '@graphql-mesh/cross-helpers';
-import { ImportFn, Logger } from '@graphql-mesh/types';
+import type {
+  GraphQLThriftAnnotations,
+  StructTypeVal,
+  TypeMap,
+  TypeVal,
+} from '@graphql-mesh/transport-thrift';
+import type { ImportFn, Logger, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
-import { GraphQLThriftAnnotations, StructTypeVal, TypeMap, TypeVal } from './types.js';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
 export interface GraphQLThriftLoaderOptions {
   subgraphName: string;
@@ -40,10 +51,25 @@ export interface GraphQLThriftLoaderOptions {
 
   baseDir?: string;
   schemaHeaders?: Record<string, string>;
-  fetchFn?: typeof fetch;
+  fetchFn?: MeshFetch;
   logger?: Logger;
   importFn?: ImportFn;
 }
+
+export const FieldTypeMapScalar = new GraphQLScalarType({ name: 'FieldTypeMap' });
+
+export const fieldTypeMapDirective = new GraphQLDirective({
+  name: 'fieldTypeMap',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: {
+      type: GraphQLString,
+    },
+    fieldTypeMap: {
+      type: FieldTypeMapScalar,
+    },
+  },
+});
 
 export async function loadNonExecutableGraphQLSchemaFromIDL({
   subgraphName,
@@ -54,7 +80,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
 
   baseDir = process.cwd(),
   schemaHeaders = {},
-  fetchFn = globalThis.fetch,
+  fetchFn = defaultFetch,
   logger = new DefaultLogger('Thrift'),
   importFn = defaultImportFn,
 }: GraphQLThriftLoaderOptions) {
@@ -84,7 +110,7 @@ interface ParseWithIncludesOpts {
   includesMap: Record<string, ThriftDocument>;
   baseDir: string;
   schemaHeaders: Record<string, string>;
-  fetchFn: typeof fetch;
+  fetchFn: MeshFetch;
   logger: Logger;
   importFn: ImportFn;
 }
@@ -304,7 +330,10 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
               args,
               extensions: {
                 directives: {
-                  fieldTypeMap,
+                  fieldTypeMap: {
+                    subgraph: subgraphName,
+                    fieldTypeMap,
+                  },
                 },
               },
             };
@@ -354,6 +383,7 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
 
   const schema = new GraphQLSchema({
     query: queryObjectType,
+    directives: [fieldTypeMapDirective],
     extensions: {
       directives: {
         transport: graphQLThriftAnnotations,

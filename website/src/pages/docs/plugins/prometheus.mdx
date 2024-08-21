@@ -37,44 +37,40 @@ npm i @graphql-mesh/plugin-prometheus prom-client
 # ...
 plugins:
   - prometheus:
-    # all optional, and by default, all set to false, please opt-in to the metrics you wish to get
+      # all optional, and by default, all set to false, please opt-in to the metrics you wish to get
 
-    # requires `execute` to be true
-    requestCount: true
-    # requires `execute` to be true
-    requestSummary: true
-    parse: true
-    validate: true
-    contextBuilding: true
-    execute: true
-    errors: true
-    resolvers: true
+      # requires `execute` to be true
+      requestCount: true
+      # requires `execute` to be true
+      requestSummary: true
+      parse: true
+      validate: true
+      contextBuilding: true
+      execute: true
+      errors: true
 
-    # reports metrics for the delegation to the individual sources
-    delegation: true
+      # reports metrics for the delegation to the individual sources
+      delegation: true
 
-    # reports metrics for the outgoing HTTP requests
-    fetch: true
-    # Adds the request headers to the metrics
-    fetchRequestHeaders: true
-    # Adds the response headers to the metrics
-    fetchResponseHeaders: true
+      # reports metrics for the outgoing HTTP requests
+      fetchMetrics: true
+      # Adds the request headers to the metrics
+      fetchRequestHeaders: true
+      # Adds the response headers to the metrics
+      fetchResponseHeaders: true
 
-    # reports metrics for the incoming HTTP requests (this sets a custom name for http)
-    # If you pass a string instead of boolean, it will be used as the name of the metric
-    http: my-http-duration-metric
-    # Adds the request headers to the metrics
-    httpRequestHeaders: true
-    # Adds the response headers to the metrics
-    httpResponseHeaders: true
+      # reports metrics for the incoming HTTP requests (this sets a custom name for http)
+      # If you pass a string instead of boolean, it will be used as the name of the metric
+      http: my-http-duration-metric
+      # Adds the request headers to the metrics
+      httpRequestHeaders: true
+      # Adds the response headers to the metrics
+      httpResponseHeaders: true
 
-    # reports metrics also for these resolvers, by default all fields are reported
-    resolversWhiteList:
-      - Mutation.*
-      - Query.user
-    deprecatedFields: true
-    # the path of the endpoint to expose the metrics, default is /metrics
-    endpoint: /metrics
+      # by default all fields are reported
+      deprecatedFields: true
+      # the path of the endpoint to expose the metrics, default is /metrics
+      endpoint: /metrics
 ```
 
 > Note: Tracing resolvers using `resolvers: true` might have a performance impact on your GraphQL
@@ -98,6 +94,32 @@ plugins:
       # ...
       registry: ./myRegistry.ts
 ```
+
+## Caveats
+
+Due to Prometheus client API limitations, if this plugin is initialized multiple times, only the
+metrics configuration of the first initialization will be applied.
+
+If necessary, use a different registry instance for each plugin instance, or clear the registry
+before plugin initialization.
+
+```ts
+function usePrometheusWithRegistry() {
+  // create a new registry instance for each plugin instance
+  const registry = new Registry()
+
+  // or just clear the registry if you use only on plugin instance at a time
+  registry.clear()
+
+  return usePrometheus({
+    registry,
+    ...
+  })
+}
+```
+
+Keep in mind that this implies potential data loss in pull mode if some data is produced between
+last pull and the re-initialization of the plugin.
 
 ## Config API Reference
 

@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-nodejs-modules
+import { join } from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
@@ -24,19 +26,21 @@ const schemas: Record<string, string> = {
   'Relative Dereference': 'relative_dereference/api.yml',
   'Default Value as Integer': 'default-int-value.yml',
   'algolia-refs-subset': 'algolia-refs-subset/search/spec.yml', // test case for refs in path and responses
+  StackExchange: 'stackexchange-api-v2.2_openapi-v3.0.yaml',
+  YouTrack: 'youtrack.json',
+  DefaultValues: 'default-values.json',
 };
 
 describe('Schemas', () => {
   for (const schemaName in schemas) {
-    describe(schemaName, () => {
+    it(schemaName, () => {
       const schemaPath = schemas[schemaName];
-      it('should generate the correct schema', async () => {
-        const schema = await loadGraphQLSchemaFromOpenAPI(schemaName, {
-          source: `./fixtures/${schemaPath}`,
-          cwd: __dirname,
-        });
-        expect(printSchemaWithDirectives(schema)).toMatchSnapshot(schemaName);
-      });
+      return expect(
+        loadGraphQLSchemaFromOpenAPI(schemaName, {
+          source: schemaPath,
+          cwd: join(__dirname, 'fixtures'),
+        }).then(printSchemaWithDirectives),
+      ).resolves.toMatchSnapshot();
     });
   }
 });

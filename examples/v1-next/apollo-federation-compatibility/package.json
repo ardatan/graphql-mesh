@@ -1,0 +1,35 @@
+{
+  "name": "example-apollo-federation-compatibility",
+  "version": "0.3.0",
+  "description": "Apollo Federation implemented with GraphQL Mesh",
+  "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node scripts/bundle.js",
+    "check": "tsc --pretty --noEmit",
+    "mesh:compose": "mesh-compose --subgraph products > schema.graphql",
+    "mesh:serve": "mesh-serve --subgraph schema.graphql --host 0.0.0.0 --port 4001",
+    "service:codegen": "graphql-codegen",
+    "service:start": "tsx src/index.ts",
+    "start": "node bundle.js"
+  },
+  "dependencies": {
+    "@graphql-mesh/serve-cli": "0.11.0",
+    "@graphql-yoga/plugin-apollo-inline-trace": "3.7.0",
+    "concurrently": "8.2.2",
+    "graphql": "16.9.0",
+    "graphql-yoga": "5.7.0",
+    "tslib": "2.6.3",
+    "tsx": "^4.16.5"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/typescript": "4.0.9",
+    "@graphql-codegen/typescript-resolvers": "4.2.1",
+    "@graphql-mesh/compose-cli": "0.9.0",
+    "@types/node": "20.16.1",
+    "esbuild": "^0.23.0",
+    "lru-cache": "11.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@e2e/opentelemetry",
+  "private": true,
+  "dependencies": {
+    "@apollo/rover": "^0.25.0",
+    "@apollo/server": "^4.10.3",
+    "@apollo/subgraph": "^2.7.2",
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/fusion-runtime": "workspace:*",
+    "@graphql-mesh/plugin-opentelemetry": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "graphql": "^16.8.1",
+    "graphql-yoga": "^5.7.0"
+  }
+}

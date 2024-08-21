@@ -1,6 +1,5 @@
 {
-  "name": "graphql-file-upload-example",
-  "version": "0.12.5",
+  "name": "@examples/graphql-file-upload-example",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,17 +8,17 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.88.5",
-    "@graphql-mesh/graphql": "0.96.3",
+    "@graphql-mesh/cli": "0.95.0",
+    "@graphql-mesh/graphql": "0.102.0",
     "concurrently": "8.2.2",
-    "graphql": "16.8.1",
-    "graphql-yoga": "5.1.1",
-    "sharp": "0.33.2"
+    "graphql": "16.9.0",
+    "graphql-yoga": "5.7.0",
+    "sharp": "0.33.5"
   },
   "devDependencies": {
     "jest": "29.7.0",
-    "ts-jest": "29.1.2",
-    "ts-node": "10.9.2",
-    "typescript": "5.3.3"
+    "ts-jest": "29.2.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
   }
 }

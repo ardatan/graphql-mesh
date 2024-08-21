@@ -8,3 +8,5 @@ You may override this by setting the indices option to true:
 Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse.
 * `commaRoundTrip` (type: `Boolean`) - Even if there is a single item in an array, this option treats them as arrays
 (default: false)
+* `jsonStringify` (type: `Boolean`) - Stringify the nested objects as JSON
+(default: false)

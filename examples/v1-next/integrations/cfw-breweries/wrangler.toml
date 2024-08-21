@@ -1,0 +1,13 @@
+name = "breweries_mesh"
+main = "src/index.ts"
+compatibility_date = "2022-06-27"
+account_id = "47efd9199a2f2a26049d85b9d3dfe31a"
+node_compat=true
+kv_namespaces = [
+  { binding = "MESH", id = "6efcacf054f9427e8b5f70b28da08e07", preview_id = "0418af2eda0646928a23850d278837e5" }
+]
+usage_model = "bundled"
+
+[vars]
+DEBUG = "1"
+

@@ -1,23 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Discriminator Mapping should generate correct schema: discriminator-mapping 1`] = `
-"schema {
+"schema @transport(subgraph: "test", kind: "rest") {
   query: Query
 }
 
-directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
+directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
-directive @discriminator(field: String, mapping: ObjMap) on INTERFACE | UNION
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
-
-type Query @globalOptions(sourceName: "test") {
-  pets_by_id(id: String!): Pet @httpOperation(path: "/pets/{args.id}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+type Query {
+  pets_by_id(id: String!): Pet @httpOperation(subgraph: "test", path: "/pets/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
 }
 
-union Pet @discriminator(field: "petType", mapping: "{\\"Dog\\":\\"DogDifferent\\",\\"Cat\\":\\"Cat\\"}") = Cat | DogDifferent
+union Pet @discriminator(subgraph: "test", field: "petType", mapping: [["Dog", "DogDifferent"], ["Cat", "Cat"]]) = Cat | DogDifferent
 
 type Cat {
   petType: String
@@ -29,8 +27,6 @@ type DogDifferent {
   dog_exclusive: String
 }
 
-scalar ObjMap
-
 enum HTTPMethod {
   GET
   HEAD
@@ -41,5 +37,7 @@ enum HTTPMethod {
   OPTIONS
   TRACE
   PATCH
-}"
+}
+
+scalar ObjMap"
 `;

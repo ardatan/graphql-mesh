@@ -1,0 +1,144 @@
+
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
+)
+{
+  query: Query
+  
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    `SECURITY` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    `EXECUTION` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  PETS @join__graph(
+    name: "Pets"
+    url: "http://localhost:{context.headers['x-upstream-port']:4001}"
+  )
+}
+
+directive @httpOperation(
+  subgraph: String
+  path: String
+  operationSpecificHeaders: [[String]]
+  httpMethod: HTTPMethod
+  isBinary: Boolean
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
+  jsonApiFields: Boolean
+  queryStringOptions: ObjMap
+) repeatable on FIELD_DEFINITION
+
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: [[String]]
+  queryStringOptions: ObjMap
+  queryParams: [[String]]
+) repeatable on SCHEMA
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+scalar ObjMap @join__type(graph: PETS) 
+
+scalar _DirectiveExtensions @join__type(graph: PETS) 
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "Pets", kind: "rest", location: "http://localhost:{context.headers['x-upstream-port']:4001}"}]}
+) @join__type(graph: PETS)  {
+  pet_by_petId("""
+  ID of pet to return
+  """
+  petId: String!) : Pet @httpOperation(
+    subgraph: "Pets"
+    path: "/pet/{args.petId}"
+    operationSpecificHeaders: [["accept", "application/json"]]
+    httpMethod: GET
+  )
+}
+
+type Pet @join__type(graph: PETS)  {
+  name: String!
+}
+
+enum HTTPMethod @join__type(graph: PETS)  {
+  GET @join__enumValue(graph: PETS) 
+  HEAD @join__enumValue(graph: PETS) 
+  POST @join__enumValue(graph: PETS) 
+  PUT @join__enumValue(graph: PETS) 
+  DELETE @join__enumValue(graph: PETS) 
+  CONNECT @join__enumValue(graph: PETS) 
+  OPTIONS @join__enumValue(graph: PETS) 
+  TRACE @join__enumValue(graph: PETS) 
+  PATCH @join__enumValue(graph: PETS) 
+}
+    

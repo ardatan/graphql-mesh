@@ -1,0 +1,11 @@
+{
+  "@odata.context": "https://sample.service.com/$metadata#People/$entity",
+  "@odata.type": "#Sample.Service.Person",
+  "@odata.id": "https://sample.service.com/People/alice/",
+  "@odata.editLink": "https://sample.service.com/People/alice/",
+  "UserName": "alice",
+  "#Sample.Service.SendMessage": {
+    "title": "Sample.Service.SendMessage",
+    "target": "https://sample.service.com/People/alice/Sample.Service.SendMessage"
+  }
+}

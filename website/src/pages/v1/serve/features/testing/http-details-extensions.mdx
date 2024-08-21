@@ -1,0 +1,75 @@
+import { Callout } from '@theguild/components'
+
+# HTTP Details in Extensions
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+You can expose the details of outgoing HTTP requests done by GraphQL Mesh source handlers within
+extensions property of the GraphQL execution.
+
+This can be useful for debugging purposes, especially when you want to see the details of the HTTP
+request and response.
+
+## How to use?
+
+```sh npm2yarn
+npm install @graphql-mesh/plugin-http-details-extensions
+```
+
+Then, add it to your plugins:
+
+```ts filename="mesh.config.ts"
+import useHTTPDetailsExtensions from '@graphql-mesh/plugin-http-details-extensions'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  plugins: [
+    useHTTPDetailsExtensions({
+      // You can provide a custom condition to enable/disable the plugin
+      if: () => process.env.NODE_ENV === 'development'
+    })
+  ]
+})
+```
+
+Then you can see the details of the HTTP request and response in the extensions property of the
+GraphQL execution.
+
+```json
+{
+  "data": {
+    "someData": "someResult"
+  },
+  "extensions": {
+    "httpDetails": [
+      {
+        "sourceName": "MySource",
+        "path": {
+          "key": "sourceFieldName"
+        },
+        "request": {
+          "timestamp": "2020-01-01T00:00:00.000Z",
+          "url": "http://localhost:8080/some-external-service/some-path",
+          "method": "GET",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "timestamp": "2020-01-01T00:00:00.000Z",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "responseTime": 9999
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,10 @@
+{
+  "name": "@e2e/soap-demo",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@omnigraph/soap": "workspace:*",
+    "graphql": "^16.9.0"
+  }
+}

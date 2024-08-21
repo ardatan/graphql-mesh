@@ -1,0 +1,856 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should write compose output to supergraph.graphql 1`] = `
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  
+{
+  query: Query
+  
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  HELLOWORLD @join__graph(name: "helloworld", url: "") 
+}
+
+type Query @join__type(graph: HELLOWORLD)  {
+  hello: String
+}
+    "
+`;
+
+exports[`should write compose output to supergraph.js 1`] = `"export default "\\nschema\\n  @link(url: \\"https://specs.apollo.dev/link/v1.0\\")\\n  @link(url: \\"https://specs.apollo.dev/join/v0.3\\", for: EXECUTION)\\n  \\n  \\n  \\n  \\n  \\n  \\n{\\n  query: Query\\n  \\n  \\n}\\n\\n\\n  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE\\n\\n  directive @join__field(\\n    graph: join__Graph\\n    requires: join__FieldSet\\n    provides: join__FieldSet\\n    type: String\\n    external: Boolean\\n    override: String\\n    usedOverridden: Boolean\\n  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION\\n\\n  directive @join__graph(name: String!, url: String!) on ENUM_VALUE\\n\\n  directive @join__implements(\\n    graph: join__Graph!\\n    interface: String!\\n  ) repeatable on OBJECT | INTERFACE\\n\\n  directive @join__type(\\n    graph: join__Graph!\\n    key: join__FieldSet\\n    extension: Boolean! = false\\n    resolvable: Boolean! = true\\n    isInterfaceObject: Boolean! = false\\n  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR\\n\\n  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION\\n\\n  scalar join__FieldSet\\n\\n\\n  directive @link(\\n    url: String\\n    as: String\\n    for: link__Purpose\\n    import: [link__Import]\\n  ) repeatable on SCHEMA\\n\\n  scalar link__Import\\n\\n  enum link__Purpose {\\n    \\"\\"\\"\\n    \`SECURITY\` features provide metadata necessary to securely resolve fields.\\n    \\"\\"\\"\\n    SECURITY\\n\\n    \\"\\"\\"\\n    \`EXECUTION\` features provide metadata necessary for operation execution.\\n    \\"\\"\\"\\n    EXECUTION\\n  }\\n\\n\\n\\n\\n\\n\\n\\nenum join__Graph {\\n  HELLOWORLD @join__graph(name: \\"helloworld\\", url: \\"\\") \\n}\\n\\ntype Query @join__type(graph: HELLOWORLD)  {\\n  hello: String\\n}\\n    ""`;
+
+exports[`should write compose output to supergraph.json 1`] = `
+"{
+  "kind": "Document",
+  "definitions": [
+    {
+      "kind": "SchemaDefinition",
+      "directives": [
+        {
+          "kind": "Directive",
+          "name": {
+            "kind": "Name",
+            "value": "link"
+          },
+          "arguments": [
+            {
+              "kind": "Argument",
+              "name": {
+                "kind": "Name",
+                "value": "url"
+              },
+              "value": {
+                "kind": "StringValue",
+                "value": "https://specs.apollo.dev/link/v1.0",
+                "block": false
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Directive",
+          "name": {
+            "kind": "Name",
+            "value": "link"
+          },
+          "arguments": [
+            {
+              "kind": "Argument",
+              "name": {
+                "kind": "Name",
+                "value": "url"
+              },
+              "value": {
+                "kind": "StringValue",
+                "value": "https://specs.apollo.dev/join/v0.3",
+                "block": false
+              }
+            },
+            {
+              "kind": "Argument",
+              "name": {
+                "kind": "Name",
+                "value": "for"
+              },
+              "value": {
+                "kind": "EnumValue",
+                "value": "EXECUTION"
+              }
+            }
+          ]
+        }
+      ],
+      "operationTypes": [
+        {
+          "kind": "OperationTypeDefinition",
+          "operation": "query",
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Query"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "DirectiveDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "join__enumValue"
+      },
+      "arguments": [
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "graph"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "join__Graph"
+              }
+            }
+          },
+          "directives": []
+        }
+      ],
+      "repeatable": true,
+      "locations": [
+        {
+          "kind": "Name",
+          "value": "ENUM_VALUE"
+        }
+      ]
+    },
+    {
+      "kind": "DirectiveDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "join__field"
+      },
+      "arguments": [
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "graph"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "join__Graph"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "requires"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "join__FieldSet"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "provides"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "join__FieldSet"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "type"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "external"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Boolean"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "override"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "usedOverridden"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Boolean"
+            }
+          },
+          "directives": []
+        }
+      ],
+      "repeatable": true,
+      "locations": [
+        {
+          "kind": "Name",
+          "value": "FIELD_DEFINITION"
+        },
+        {
+          "kind": "Name",
+          "value": "INPUT_FIELD_DEFINITION"
+        }
+      ]
+    },
+    {
+      "kind": "DirectiveDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "join__graph"
+      },
+      "arguments": [
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "name"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "url"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String"
+              }
+            }
+          },
+          "directives": []
+        }
+      ],
+      "repeatable": false,
+      "locations": [
+        {
+          "kind": "Name",
+          "value": "ENUM_VALUE"
+        }
+      ]
+    },
+    {
+      "kind": "DirectiveDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "join__implements"
+      },
+      "arguments": [
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "graph"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "join__Graph"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "interface"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String"
+              }
+            }
+          },
+          "directives": []
+        }
+      ],
+      "repeatable": true,
+      "locations": [
+        {
+          "kind": "Name",
+          "value": "OBJECT"
+        },
+        {
+          "kind": "Name",
+          "value": "INTERFACE"
+        }
+      ]
+    },
+    {
+      "kind": "DirectiveDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "join__type"
+      },
+      "arguments": [
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "graph"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "join__Graph"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "key"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "join__FieldSet"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "extension"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Boolean"
+              }
+            }
+          },
+          "defaultValue": {
+            "kind": "BooleanValue",
+            "value": false
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "resolvable"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Boolean"
+              }
+            }
+          },
+          "defaultValue": {
+            "kind": "BooleanValue",
+            "value": true
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "isInterfaceObject"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Boolean"
+              }
+            }
+          },
+          "defaultValue": {
+            "kind": "BooleanValue",
+            "value": false
+          },
+          "directives": []
+        }
+      ],
+      "repeatable": true,
+      "locations": [
+        {
+          "kind": "Name",
+          "value": "OBJECT"
+        },
+        {
+          "kind": "Name",
+          "value": "INTERFACE"
+        },
+        {
+          "kind": "Name",
+          "value": "UNION"
+        },
+        {
+          "kind": "Name",
+          "value": "ENUM"
+        },
+        {
+          "kind": "Name",
+          "value": "INPUT_OBJECT"
+        },
+        {
+          "kind": "Name",
+          "value": "SCALAR"
+        }
+      ]
+    },
+    {
+      "kind": "DirectiveDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "join__unionMember"
+      },
+      "arguments": [
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "graph"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "join__Graph"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "member"
+          },
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String"
+              }
+            }
+          },
+          "directives": []
+        }
+      ],
+      "repeatable": true,
+      "locations": [
+        {
+          "kind": "Name",
+          "value": "UNION"
+        }
+      ]
+    },
+    {
+      "kind": "ScalarTypeDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "join__FieldSet"
+      },
+      "directives": []
+    },
+    {
+      "kind": "DirectiveDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "link"
+      },
+      "arguments": [
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "url"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "as"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "for"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "link__Purpose"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "import"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "link__Import"
+              }
+            }
+          },
+          "directives": []
+        }
+      ],
+      "repeatable": true,
+      "locations": [
+        {
+          "kind": "Name",
+          "value": "SCHEMA"
+        }
+      ]
+    },
+    {
+      "kind": "ScalarTypeDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "link__Import"
+      },
+      "directives": []
+    },
+    {
+      "kind": "EnumTypeDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "link__Purpose"
+      },
+      "directives": [],
+      "values": [
+        {
+          "kind": "EnumValueDefinition",
+          "description": {
+            "kind": "StringValue",
+            "value": "\`SECURITY\` features provide metadata necessary to securely resolve fields.",
+            "block": true
+          },
+          "name": {
+            "kind": "Name",
+            "value": "SECURITY"
+          },
+          "directives": []
+        },
+        {
+          "kind": "EnumValueDefinition",
+          "description": {
+            "kind": "StringValue",
+            "value": "\`EXECUTION\` features provide metadata necessary for operation execution.",
+            "block": true
+          },
+          "name": {
+            "kind": "Name",
+            "value": "EXECUTION"
+          },
+          "directives": []
+        }
+      ]
+    },
+    {
+      "kind": "EnumTypeDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "join__Graph"
+      },
+      "directives": [],
+      "values": [
+        {
+          "kind": "EnumValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "HELLOWORLD"
+          },
+          "directives": [
+            {
+              "kind": "Directive",
+              "name": {
+                "kind": "Name",
+                "value": "join__graph"
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "name"
+                  },
+                  "value": {
+                    "kind": "StringValue",
+                    "value": "helloworld",
+                    "block": false
+                  }
+                },
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "url"
+                  },
+                  "value": {
+                    "kind": "StringValue",
+                    "value": "",
+                    "block": false
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "ObjectTypeDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "Query"
+      },
+      "interfaces": [],
+      "directives": [
+        {
+          "kind": "Directive",
+          "name": {
+            "kind": "Name",
+            "value": "join__type"
+          },
+          "arguments": [
+            {
+              "kind": "Argument",
+              "name": {
+                "kind": "Name",
+                "value": "graph"
+              },
+              "value": {
+                "kind": "EnumValue",
+                "value": "HELLOWORLD"
+              }
+            }
+          ]
+        }
+      ],
+      "fields": [
+        {
+          "kind": "FieldDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "hello"
+          },
+          "arguments": [],
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        }
+      ]
+    }
+  ]
+}"
+`;
+
+exports[`should write compose output to supergraph.ts 1`] = `"export default "\\nschema\\n  @link(url: \\"https://specs.apollo.dev/link/v1.0\\")\\n  @link(url: \\"https://specs.apollo.dev/join/v0.3\\", for: EXECUTION)\\n  \\n  \\n  \\n  \\n  \\n  \\n{\\n  query: Query\\n  \\n  \\n}\\n\\n\\n  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE\\n\\n  directive @join__field(\\n    graph: join__Graph\\n    requires: join__FieldSet\\n    provides: join__FieldSet\\n    type: String\\n    external: Boolean\\n    override: String\\n    usedOverridden: Boolean\\n  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION\\n\\n  directive @join__graph(name: String!, url: String!) on ENUM_VALUE\\n\\n  directive @join__implements(\\n    graph: join__Graph!\\n    interface: String!\\n  ) repeatable on OBJECT | INTERFACE\\n\\n  directive @join__type(\\n    graph: join__Graph!\\n    key: join__FieldSet\\n    extension: Boolean! = false\\n    resolvable: Boolean! = true\\n    isInterfaceObject: Boolean! = false\\n  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR\\n\\n  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION\\n\\n  scalar join__FieldSet\\n\\n\\n  directive @link(\\n    url: String\\n    as: String\\n    for: link__Purpose\\n    import: [link__Import]\\n  ) repeatable on SCHEMA\\n\\n  scalar link__Import\\n\\n  enum link__Purpose {\\n    \\"\\"\\"\\n    \`SECURITY\` features provide metadata necessary to securely resolve fields.\\n    \\"\\"\\"\\n    SECURITY\\n\\n    \\"\\"\\"\\n    \`EXECUTION\` features provide metadata necessary for operation execution.\\n    \\"\\"\\"\\n    EXECUTION\\n  }\\n\\n\\n\\n\\n\\n\\n\\nenum join__Graph {\\n  HELLOWORLD @join__graph(name: \\"helloworld\\", url: \\"\\") \\n}\\n\\ntype Query @join__type(graph: HELLOWORLD)  {\\n  hello: String\\n}\\n    ""`;

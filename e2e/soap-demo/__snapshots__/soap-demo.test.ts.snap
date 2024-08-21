@@ -1,0 +1,299 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose the appropriate schema 1`] = `
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@soap", "@extraSchemaDefinitionDirective"]
+)
+{
+  query: Query
+  mutation: Mutation
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  SOAP_DEMO @join__graph(name: "soap-demo", url: "") 
+}
+
+directive @soap(
+  elementName: String
+  bindingNamespace: String
+  endpoint: String
+  subgraph: String
+) repeatable on FIELD_DEFINITION
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+"""
+A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date @join__type(graph: SOAP_DEMO) 
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt @join__type(graph: SOAP_DEMO) 
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @join__type(graph: SOAP_DEMO) 
+
+scalar _DirectiveExtensions @join__type(graph: SOAP_DEMO) 
+
+type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap", subgraph: "soap-demo"}]})  @join__type(graph: SOAP_DEMO)  {
+  s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input = {}) : s0_FindPersonResponse @soap(
+    elementName: "FindPersonResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+  s0_SOAPDemo_SOAPDemoSoap_GetByName(GetByName: s0_GetByName_Input = {}) : s0_GetByNameResponse @soap(
+    elementName: "GetByNameResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+  s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName(GetDataSetByName: s0_GetDataSetByName_Input = {}) : s0_GetDataSetByNameResponse @soap(
+    elementName: "GetDataSetByNameResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+  s0_SOAPDemo_SOAPDemoSoap_GetListByName(GetListByName: s0_GetListByName_Input = {}) : s0_GetListByNameResponse @soap(
+    elementName: "GetListByNameResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+  s0_SOAPDemo_SOAPDemoSoap_QueryByName(QueryByName: s0_QueryByName_Input = {}) : s0_QueryByNameResponse @soap(
+    elementName: "QueryByNameResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+}
+
+type s0_FindPersonResponse @join__type(graph: SOAP_DEMO)  {
+  FindPersonResult: s0_Person
+}
+
+type s0_Person @join__type(graph: SOAP_DEMO)  {
+  Name: String
+  SSN: String
+  DOB: Date
+  Home: s0_Address
+  Office: s0_Address
+  Spouse: s0_Person
+  FavoriteColors: s0_ArrayOfFavoriteColorsItemString
+  Age: BigInt
+}
+
+type s0_Address @join__type(graph: SOAP_DEMO)  {
+  Street: String
+  City: String
+  State: String
+  Zip: String
+}
+
+type s0_ArrayOfFavoriteColorsItemString @join__type(graph: SOAP_DEMO)  {
+  FavoriteColorsItem: [String]
+}
+
+type s0_GetByNameResponse @join__type(graph: SOAP_DEMO)  {
+  GetByNameResult: JSON
+}
+
+type s0_GetDataSetByNameResponse @join__type(graph: SOAP_DEMO)  {
+  GetDataSetByNameResult: s0_ByNameDataSet
+}
+
+type s0_ByNameDataSet @join__type(graph: SOAP_DEMO)  {
+  ByName: [ByNameDataSet_ByName]
+}
+
+type ByNameDataSet_ByName @join__type(graph: SOAP_DEMO)  {
+  ID: BigInt
+  Name: String
+  DOB: Date
+  SSN: String
+}
+
+type s0_GetListByNameResponse @join__type(graph: SOAP_DEMO)  {
+  GetListByNameResult: s0_ArrayOfPersonIdentificationPersonIdentification
+}
+
+type s0_ArrayOfPersonIdentificationPersonIdentification @join__type(graph: SOAP_DEMO)  {
+  PersonIdentification: [s0_PersonIdentification]
+}
+
+type s0_PersonIdentification @join__type(graph: SOAP_DEMO)  {
+  ID: String
+  Name: String
+  SSN: String
+  DOB: Date
+}
+
+type s0_QueryByNameResponse @join__type(graph: SOAP_DEMO)  {
+  QueryByNameResult: s0_QueryByName_DataSet
+}
+
+type s0_QueryByName_DataSet @join__type(graph: SOAP_DEMO)  {
+  QueryByName: [QueryByName_DataSet_QueryByName]
+}
+
+type QueryByName_DataSet_QueryByName @join__type(graph: SOAP_DEMO)  {
+  ID: BigInt
+  Name: String
+  DOB: Date
+  SSN: String
+}
+
+type Mutation @join__type(graph: SOAP_DEMO)  {
+  s0_SOAPDemo_SOAPDemoSoap_AddInteger(AddInteger: s0_AddInteger_Input = {}) : s0_AddIntegerResponse @soap(
+    elementName: "AddIntegerResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+  s0_SOAPDemo_SOAPDemoSoap_DivideInteger(DivideInteger: s0_DivideInteger_Input = {}) : s0_DivideIntegerResponse @soap(
+    elementName: "DivideIntegerResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+  s0_SOAPDemo_SOAPDemoSoap_LookupCity(LookupCity: s0_LookupCity_Input = {}) : s0_LookupCityResponse @soap(
+    elementName: "LookupCityResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+  s0_SOAPDemo_SOAPDemoSoap_Mission(Mission: JSON = "") : s0_MissionResponse @soap(
+    elementName: "MissionResponse"
+    bindingNamespace: "http://tempuri.org"
+    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    subgraph: "soap-demo"
+  )
+}
+
+type s0_AddIntegerResponse @join__type(graph: SOAP_DEMO)  {
+  AddIntegerResult: BigInt
+}
+
+type s0_DivideIntegerResponse @join__type(graph: SOAP_DEMO)  {
+  DivideIntegerResult: BigInt
+}
+
+type s0_LookupCityResponse @join__type(graph: SOAP_DEMO)  {
+  LookupCityResult: s0_Address
+}
+
+type s0_MissionResponse @join__type(graph: SOAP_DEMO)  {
+  MissionResult: String
+}
+
+input s0_FindPerson_Input @join__type(graph: SOAP_DEMO)  {
+  id: String
+}
+
+input s0_GetByName_Input @join__type(graph: SOAP_DEMO)  {
+  name: String
+}
+
+input s0_GetDataSetByName_Input @join__type(graph: SOAP_DEMO)  {
+  name: String
+}
+
+input s0_GetListByName_Input @join__type(graph: SOAP_DEMO)  {
+  name: String
+}
+
+input s0_QueryByName_Input @join__type(graph: SOAP_DEMO)  {
+  name: String
+}
+
+input s0_AddInteger_Input @join__type(graph: SOAP_DEMO)  {
+  Arg1: BigInt
+  Arg2: BigInt
+}
+
+input s0_DivideInteger_Input @join__type(graph: SOAP_DEMO)  {
+  Arg1: BigInt
+  Arg2: BigInt
+}
+
+input s0_LookupCity_Input @join__type(graph: SOAP_DEMO)  {
+  zip: String
+}
+    
+"
+`;

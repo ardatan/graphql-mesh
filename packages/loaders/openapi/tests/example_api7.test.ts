@@ -2,13 +2,13 @@
 
 /* eslint-disable no-unreachable-loop */
 import { GraphQLSchema } from 'graphql';
-import { createYoga } from 'graphql-yoga';
+import { createYoga, type YogaServerInstance } from 'graphql-yoga';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { exampleApi7, pubsub } from './example_api7_server.js';
 
 let createdSchema: GraphQLSchema;
 
-let yogaServer: ReturnType<typeof createYoga>;
+let yogaServer: YogaServerInstance<any, any>;
 
 describe('OpenAPI Loader: example_api7', () => {
   // Set up the schema first and run example API servers
@@ -25,11 +25,12 @@ describe('OpenAPI Loader: example_api7', () => {
       schema: createdSchema,
       context: { pubsub },
       maskedErrors: false,
-      logging: false,
+      logging: !!process.env.DEBUG,
     });
   });
 
   it('Receive data from the subscription after creating a new instance', async () => {
+    expect.assertions(2);
     const userName = 'Carlos';
     const deviceName = 'Bot';
 

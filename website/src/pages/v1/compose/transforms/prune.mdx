@@ -1,0 +1,42 @@
+---
+description:
+  Easily remove unused and empty types in your GraphQL schema with the prune transform. Learn how to
+  use it and its configuration API reference here.
+---
+
+import { Callout } from '@theguild/components'
+
+# Prune Transform
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+The prune transform allows you removing unused and empty types.
+
+## How to use?
+
+```ts filename="mesh-config.ts"
+import {
+  createPruneTransform,
+  defineConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4001/users'
+      }),
+      transforms: [
+        createPruneTransform({
+          // Skip pruning for specific types
+          skipPruning: ['MyPrecioiusType']
+        })
+      ]
+    }
+  ]
+})
+```

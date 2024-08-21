@@ -1,0 +1,84 @@
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.3"
+    import: [
+      "@key"
+      "@provides"
+      "@requires"
+      "@external"
+      "@inaccessible"
+      "@shareable"
+      "@extends"
+      "@tag"
+      "@composeDirective"
+    ]
+  )
+  @link(
+    url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+    import: ["@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
+  )
+  @composeDirective(name: "@httpOperation")
+  @composeDirective(name: "@transport")
+  @composeDirective(name: "@extraSchemaDefinitionDirective") {
+  query: Query
+}
+
+directive @httpOperation(
+  subgraph: String
+  path: String
+  operationSpecificHeaders: ObjMap
+  httpMethod: HTTPMethod
+  isBinary: Boolean
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
+  jsonApiFields: Boolean
+) repeatable on FIELD_DEFINITION
+
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: ObjMap
+  queryStringOptions: ObjMap
+  queryParams: ObjMap
+) repeatable on SCHEMA
+
+type Query
+  @shareable
+  @extraSchemaDefinitionDirective(
+    directives: {
+      transport: [{ subgraph: "myrest", kind: "rest", location: "http://localhost:4002" }]
+    }
+  ) {
+  greetingsFromREST(name: String!): greetingsFromREST_200_response
+    @httpOperation(
+      subgraph: "myrest"
+      path: "/greetings/{args.name}"
+      operationSpecificHeaders: "\"{\\\"accept\\\":\\\"application/json\\\"}\""
+      httpMethod: GET
+    )
+}
+
+type greetingsFromREST_200_response @shareable {
+  message: String!
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}
+
+scalar _DirectiveExtensions
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT

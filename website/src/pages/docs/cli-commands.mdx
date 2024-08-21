@@ -58,8 +58,8 @@ yarn graphql-mesh dev --port 4002
 
 Builds artifacts required to use `mesh start` for a gateway (production) server or SDK.
 
-Can have `--throwOnInvalidConfig=true` to make CLI throw in case of an invalid configuration. By
-default, CLI gives a warning and continues.
+Can have `--throwOnInvalidConfig` to make CLI throw in case of an invalid configuration. By default,
+CLI gives a warning and continues.
 
 ### `mesh validate`
 
@@ -68,7 +68,7 @@ server. The validation will check the following:
 
 - presence of the `.mesh/` folder
 - validation of the mesh configuration (see
-  [`packages/types/src/config-schema.json`](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config-schema.json))
+  [`packages/legacy/types/src/config-schema.json`](https://github.com/ardatan/graphql-mesh/blob/master/packages/legacy/types/src/config-schema.json))
 - configured sources are valid
 
 More information about this on the [Mesh deployment](/docs/getting-started/deploy-mesh-gateway)

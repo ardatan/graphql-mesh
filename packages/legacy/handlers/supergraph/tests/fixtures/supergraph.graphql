@@ -1,0 +1,103 @@
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(
+  graph: join__Graph!
+  interface: String!
+) repeatable on OBJECT | INTERFACE
+
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(
+  url: String
+  as: String
+  for: link__Purpose
+  import: [link__Import]
+) repeatable on SCHEMA
+
+type Author @join__type(graph: AUTHORS, key: "id") @join__type(graph: BOOKS, key: "id") {
+  id: ID!
+  name: String! @join__field(graph: AUTHORS)
+  birthDate: String @join__field(graph: AUTHORS)
+  books: [Book] @join__field(graph: BOOKS)
+}
+
+type Book @join__type(graph: BOOKS, key: "id") {
+  id: ID!
+  title: String!
+  genre: String
+  author: Author!
+}
+
+scalar join__FieldSet
+
+enum join__Graph {
+  AUTHORS @join__graph(name: "authors", url: "http://authors/graphql")
+  BOOKS @join__graph(name: "books", url: "http://books/graphql")
+}
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+type Mutation @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
+  createAuthor(name: String!, birthDate: String): Author @join__field(graph: AUTHORS)
+  updateAuthor(id: ID!, name: String, birthDate: String): Author @join__field(graph: AUTHORS)
+  deleteAuthor(id: ID!): Author @join__field(graph: AUTHORS)
+  createBook(title: String!, genre: String, authorId: ID!): Book @join__field(graph: BOOKS)
+  updateBook(id: ID!, title: String, genre: String, authorId: ID): Book @join__field(graph: BOOKS)
+  deleteBook(id: ID!): Book @join__field(graph: BOOKS)
+}
+
+type Query @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
+  authors: [Author] @join__field(graph: AUTHORS)
+  author(id: ID!): Author @join__field(graph: AUTHORS)
+  books: [Book] @join__field(graph: BOOKS)
+  book(id: ID!): Book @join__field(graph: BOOKS)
+}
+
+type Subscription @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
+  authorCreated: Author @join__field(graph: AUTHORS)
+  authorUpdated: Author @join__field(graph: AUTHORS)
+  authorDeleted: Author @join__field(graph: AUTHORS)
+  bookCreated: Book @join__field(graph: BOOKS)
+  bookUpdated: Book @join__field(graph: BOOKS)
+  bookDeleted: Book @join__field(graph: BOOKS)
+}

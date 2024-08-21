@@ -1,4 +1,21 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["**/node_modules", "**/dist", "**/test/*.ts", "*.spec.ts", "examples/**/*"]
+  "compilerOptions": {
+    "importHelpers": true,
+    "declaration": true,
+    "verbatimModuleSyntax": false
+  },
+  "exclude": [
+    "**/node_modules",
+    "**/dist",
+    "**/bundle",
+    "**/scripts",
+    "**/test/*.ts",
+    "**/tests/*.ts",
+    "*.spec.ts",
+    "*.test.ts",
+    "*.loadtest.ts",
+    "examples/**/*",
+    "e2e/**/*"
+  ]
 }

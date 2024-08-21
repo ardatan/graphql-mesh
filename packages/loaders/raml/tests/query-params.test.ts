@@ -1,7 +1,8 @@
-import { execute, GraphQLSchema, parse } from 'graphql';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { GraphQLSchema, parse } from 'graphql';
+import { normalizedExecutor } from '@graphql-tools/executor';
+import { isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response, URL } from '@whatwg-node/fetch';
-import { loadGraphQLSchemaFromRAML } from '../src/loadGraphQLSchemaFromRAML';
+import { loadGraphQLSchemaFromRAML } from '../src/loadGraphQLSchemaFromRAML.js';
 
 describe('Query Parameters', () => {
   let schema: GraphQLSchema;
@@ -33,7 +34,7 @@ describe('Query Parameters', () => {
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
   });
   it('respects default values', async () => {
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(/* GraphQL */ `
         query {
@@ -44,6 +45,9 @@ describe('Query Parameters', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Expected a result, but got an async iterable');
+    }
     expect(result.errors).toBeFalsy();
     expect(result.data).toEqual({
       listOfProducts: [
@@ -55,7 +59,7 @@ describe('Query Parameters', () => {
     });
   });
   it('respects arguments with values', async () => {
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(/* GraphQL */ `
         query {
@@ -70,6 +74,9 @@ describe('Query Parameters', () => {
         }
       `),
     });
+    if (isAsyncIterable(result)) {
+      throw new Error('Expected a result, but got an async iterable');
+    }
     expect(result.errors).toBeFalsy();
     expect(result.data).toEqual({
       trueOne: [

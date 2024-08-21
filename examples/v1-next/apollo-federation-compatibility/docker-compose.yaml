@@ -1,0 +1,12 @@
+services:
+  products:
+    image: 'node:22'
+    user: 'node'
+    working_dir: /web
+    volumes:
+      - .:/web
+    environment:
+      - DEBUG=1
+    command: 'npm start'
+    ports:
+      - 4001:4001

@@ -1,10 +1,10 @@
 {
   "name": "@graphql-mesh/cross-helpers",
-  "version": "0.4.1",
+  "version": "0.4.6",
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "repository": {
     "type": "git",
-    "url": "Urigo/graphql-mesh",
+    "url": "ardatan/graphql-mesh",
     "directory": "packages/cross-helpers"
   },
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
@@ -17,7 +17,7 @@
   "types": "index.d.ts",
   "typings": "./index.d.ts",
   "peerDependencies": {
-    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
+    "@graphql-tools/utils": "^10.5.3",
     "graphql": "*"
   },
   "dependencies": {

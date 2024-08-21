@@ -1,7 +1,7 @@
 import { Minimatch } from 'minimatch';
 import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { hashObject } from '@graphql-mesh/string-interpolation';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj, pathExists, writeJSON } from '@graphql-mesh/utils';
 import { Response } from '@whatwg-node/fetch';
 
@@ -20,7 +20,9 @@ interface SnapshotEntry {
 }
 
 export default function useSnapshot(
-  pluginOptions: MeshPluginOptions<YamlConfig.SnapshotPluginConfig>,
+  pluginOptions: YamlConfig.SnapshotPluginConfig & {
+    baseDir?: string;
+  },
 ): MeshPlugin<any> {
   if (typeof pluginOptions.if === 'boolean') {
     if (!pluginOptions.if) {
@@ -40,7 +42,7 @@ export default function useSnapshot(
       if (matches.some(matcher => matcher.match(url))) {
         const snapshotFileName = calculateCacheKey(url, options);
         const snapshotPath = path.join(
-          pluginOptions.baseDir,
+          pluginOptions.baseDir || process.cwd(),
           snapshotsDir,
           `${snapshotFileName}.json`,
         );

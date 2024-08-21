@@ -1,0 +1,23 @@
+diff --git a/package.json b/package.json
+index 2079ae38948b43bf02ea96f6cbd85105d3a754a7..3c4bdb042d3e5e03fbde38dc04f7335992496739 100644
+--- a/package.json
++++ b/package.json
+@@ -3,18 +3,6 @@
+   "version": "1.25.1",
+   "description": "OpenTelemetry SDK resources",
+   "main": "build/src/index.js",
+-  "module": "build/esm/index.js",
+-  "esnext": "build/esnext/index.js",
+-  "browser": {
+-    "./src/platform/index.ts": "./src/platform/browser/index.ts",
+-    "./build/esm/platform/index.js": "./build/esm/platform/browser/index.js",
+-    "./build/esnext/platform/index.js": "./build/esnext/platform/browser/index.js",
+-    "./build/src/platform/index.js": "./build/src/platform/browser/index.js",
+-    "./src/detectors/platform/index.ts": "./src/detectors/platform/browser/index.ts",
+-    "./build/esm/detectors/platform/index.js": "./build/esm/detectors/platform/browser/index.js",
+-    "./build/esnext/detectors/platform/index.js": "./build/esnext/detectors/platform/browser/index.js",
+-    "./build/src/detectors/platform/index.js": "./build/src/detectors/platform/browser/index.js"
+-  },
+   "types": "build/src/index.d.ts",
+   "repository": "open-telemetry/opentelemetry-js",
+   "scripts": {

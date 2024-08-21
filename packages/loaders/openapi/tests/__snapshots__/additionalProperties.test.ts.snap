@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`additionalProperties should generate the schema correctly: schema 1`] = `
-"schema {
+"schema @transport(subgraph: "additionalPropertiesTest", kind: "rest", location: "http://localhost:3000") {
   query: Query
 }
 
-directive @dictionary on FIELD_DEFINITION
+directive @dictionary(subgraph: String) on FIELD_DEFINITION
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
-type Query @globalOptions(sourceName: "additionalPropertiesTest", endpoint: "http://localhost:3000") {
-  test: test_200_response @httpOperation(path: "/test", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+type Query {
+  test: test_200_response @httpOperation(subgraph: "additionalPropertiesTest", path: "/test", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
 }
 
 type test_200_response {
@@ -27,7 +27,7 @@ type query_test_foo {
 
 type query_test_qux {
   quux: String
-  additionalProperties: [query_test_qux_additionalProperties_entry] @dictionary
+  additionalProperties: [query_test_qux_additionalProperties_entry] @dictionary(subgraph: "additionalPropertiesTest")
 }
 
 type query_test_qux_additionalProperties_entry {
@@ -39,8 +39,6 @@ type query_test_qux_additionalProperties {
   corge: String
 }
 
-scalar ObjMap
-
 enum HTTPMethod {
   GET
   HEAD
@@ -51,5 +49,7 @@ enum HTTPMethod {
   OPTIONS
   TRACE
   PATCH
-}"
+}
+
+scalar ObjMap"
 `;

@@ -14,6 +14,10 @@ and transforms.
 
 ## Consume Supergraph SDL from Hive CDN
 
+```sh npm2yarn
+npm i @graphql-mesh/supergraph
+```
+
 If you have a supergraph schema published to GraphQL Hive registry, you can consume it in your
 GraphQL Mesh gateway through Hive CDN;
 
@@ -22,7 +26,7 @@ sources:
   - name: Supergraph
     handler:
       supergraph:
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        source: https://cdn.graphql-hive.com/SOME_UUID/sdl?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_TOKEN
 ```
@@ -34,14 +38,16 @@ sources:
   - name: Supergraph
     handler:
       supergraph:
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        source: https://cdn.graphql-hive.com/SOME_UUID/sdl?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_TOKEN
-polling: 60_000 # Poll for the supergraph updates per 1 hour
+pollingInterval: 60_000 # Poll for the supergraph updates per 1 hour
 ```
 
 <Callout>
-When you use Hive CDN, you don't have to rebuild Mesh artifacts and/or redeploy it. You can just restart it if you don't configure `polling`. If you configured it already, you don't even need to restart the server. GraphQL Mesh will pull the recent changes and update it automatically.
+  When you use Hive CDN, you don't have to rebuild Mesh artifacts and/or redeploy it. You can just
+  restart it if you don't configure `pollingInterval`. If you configured it already, you don't even
+  need to restart the server. GraphQL Mesh will pull the recent changes and update it automatically.
 </Callout>
 
 ## Track your Gateway
@@ -87,7 +93,7 @@ sources:
     handler:
       graphql:
         # URL needs to have `.graphql` extension to tell the handler it is a GraphQL Schema
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        source: https://cdn.graphql-hive.com/SOME_UUID/sdl?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_BASE64
         # The actual endpoint of the service
@@ -147,7 +153,7 @@ sources:
     handler:
       openapi:
         # URL needs to have `.graphql` extension to tell the handler it is a GraphQL Schema
-        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        source: https://cdn.graphql-hive.com/SOME_UUID/sdl?ext=.graphql
         schemaHeaders:
           X-Hive-CDN-Key: SOME_BASE64
 ```

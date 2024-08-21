@@ -1,6 +1,5 @@
 {
-  "name": "openapi-react-weatherbit",
-  "version": "0.9.5",
+  "name": "@examples/openapi-react-weatherbit",
   "private": true,
   "scripts": {
     "build": "vite build",
@@ -11,17 +10,17 @@
     "start": "vite"
   },
   "dependencies": {
-    "graphql": "16.8.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "graphql": "16.9.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.88.5",
-    "@types/react": "18.2.48",
-    "@types/react-dom": "18.2.18",
-    "@vitejs/plugin-react": "4.2.1",
-    "typescript": "5.3.3",
-    "vite": "5.0.12"
+    "@graphql-mesh/cli": "0.95.0",
+    "@types/react": "18.3.4",
+    "@types/react-dom": "18.3.0",
+    "@vitejs/plugin-react": "4.3.1",
+    "typescript": "^5.4.2",
+    "vite": "5.4.2"
   },
   "browserslist": {
     "production": [

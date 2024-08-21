@@ -1,18 +1,22 @@
-import { getExecutableThriftSchema } from './execution.js';
-import { GraphQLThriftLoaderOptions, loadNonExecutableGraphQLSchemaFromIDL } from './schema.js';
+import type { MeshFetch } from '@graphql-mesh/types';
+import type { GraphQLThriftLoaderOptions } from './schema.js';
+import { loadNonExecutableGraphQLSchemaFromIDL } from './schema.js';
 
-export default async function loadGraphQLSchemaFromThriftIDL(
+export function loadThriftSubgraph(
   name: string,
-  opts: Omit<GraphQLThriftLoaderOptions, 'subgraphName'>,
+  options: Omit<GraphQLThriftLoaderOptions, 'subgraphName'>,
 ) {
-  const nonExecutableSchema = await loadNonExecutableGraphQLSchemaFromIDL({
-    ...opts,
-    subgraphName: name,
+  return ({ cwd, fetch }: { cwd: string; fetch: MeshFetch }) => ({
+    name,
+    schema$: loadNonExecutableGraphQLSchemaFromIDL({
+      fetchFn: fetch,
+      baseDir: cwd,
+      subgraphName: name,
+      ...options,
+    }),
   });
-  return getExecutableThriftSchema(nonExecutableSchema);
 }
 
-export * from './types.js';
-export * from './schema.js';
-export * from './execution.js';
-export * from './client.js';
+export { loadNonExecutableGraphQLSchemaFromIDL };
+
+export { getThriftExecutor } from '@graphql-mesh/transport-thrift';

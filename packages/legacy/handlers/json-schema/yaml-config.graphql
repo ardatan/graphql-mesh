@@ -1,0 +1,242 @@
+extend type Handler {
+  """
+  Handler for JSON Schema specification.
+  Source could be a local json file, or a url to it.
+  """
+  jsonSchema: JsonSchemaHandler
+}
+
+type QueryStringOptions @md {
+  """
+  When arrays are stringified, by default they are not given explicit indices:
+  `a=b&a=c&a=d`
+  You may override this by setting the indices option to true:
+  `a[0]=b&a[1]=c&a[2]=d`
+  """
+  indices: Boolean
+  """
+  You can configure how to format arrays in the query strings.
+
+  Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse.
+  """
+  arrayFormat: QueryStringArrayFormat
+  """
+  Even if there is a single item in an array, this option treats them as arrays
+  (default: false)
+  """
+  commaRoundTrip: Boolean
+  """
+  Stringify the nested objects as JSON
+  (default: false)
+  """
+  jsonStringify: Boolean
+}
+
+enum QueryStringArrayFormat {
+  """
+  `a[0]=b&a[1]=c`
+  """
+  indices
+  """
+  `a[]=b&a[]=c`
+  """
+  brackets
+  """
+  `a=b&a=c`
+  """
+  repeat
+  """
+  `a=b,c`
+  """
+  comma
+}
+
+type JsonSchemaHandler @md {
+  source: String
+  endpoint: String
+  operationHeaders: JSON
+  schemaHeaders: JSON
+  operations: [JsonSchemaOperation!]
+  ignoreErrorResponses: Boolean
+  queryParams: Any
+  queryStringOptions: QueryStringOptions
+
+  """
+  Timeout for the HTTP request in milliseconds
+  """
+  timeout: Int
+}
+
+enum JsonSchemaOperationType {
+  Query
+  Mutation
+  Subscription
+}
+
+enum JsonSchemaOperationMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}
+
+interface JsonSchemaBaseOperation {
+  field: String!
+  description: String
+  type: JsonSchemaOperationType!
+  requestSchema: Any
+  requestSample: Any
+  requestTypeName: String
+  requestBaseBody: Any
+  responseSchema: Any
+  responseSample: Any
+  responseTypeName: String
+  exposeResponseMetadata: Boolean
+  argTypeMap: JSON
+  deprecated: Boolean
+}
+
+type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
+  """
+  This Field based on the field name of the URL path.
+  Example: "https://MyAPIURL.com/FieldNameHere/",
+  so we will set the "field: FieldNameHere".
+  """
+  field: String!
+  """
+  Your chance to describe the operation!
+  Make sure the description is clear and concise.
+  """
+  description: String
+  """
+  Type field is set the opertion type: Query, Mutation or Subscription.
+  """
+  type: JsonSchemaOperationType!
+  """
+  Your chance to provide request schema name.
+  """
+  requestSchema: Any
+  """
+  The path definition of the JSON Schema sample.
+  Example: "./jsons/questions.response.json".
+  """
+  requestSample: Any
+  """
+  Inset any name for the type of the request body.
+  """
+  requestTypeName: String
+  """
+  This body will be merged with the request body sent with
+  the underlying HTTP request
+  """
+  requestBaseBody: Any
+  """
+  Yay! Now you can provide the response schema name.
+  """
+  responseSchema: Any
+  """
+  Did you use Sample? Provide the response sample path.
+  """
+  responseSample: Any
+  """
+  Inset any name for the type of the response body.
+  """
+  responseTypeName: String
+  """
+  You can define your response schemas by status codes;
+  ```yaml filename=".meshrc.yaml"
+  responseByStatusCode:
+    200:
+      responseSchema: ./someschema.json#/somepath
+    404:
+      responseSample: ./error-sample.json
+      responseTypeName: MyError
+  ```
+  """
+  responseByStatusCode: Any
+
+  """
+  Expose response details done to the upstream API
+  When you enable this, you will see a new field in the response type;
+  ```graphql
+  type MyResponseType {
+    myFooField: String
+    _response: ResponseMetadata
+  }
+
+  # And a new type for the response metadata object
+  type ResponseMetadata {
+    url: URL
+    status: Int
+    method: String
+    headers: JSON
+    body: String
+  }
+  ```
+  """
+  exposeResponseMetadata: Boolean
+
+  """
+  Mapping the JSON Schema and define the arguments of the operation.
+
+  # Example:
+  argTypeMap:
+    user_id:
+      type: string
+  """
+  argTypeMap: JSON
+
+  """
+  JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.
+
+  # Example:
+  queryParamArgMap:
+    id: user_id
+  """
+  queryParamArgMap: JSON
+  path: String!
+  method: JsonSchemaOperationMethod
+  headers: JSON
+
+  """
+  If true, this operation cannot have requestSchema or requestSample
+  And the request body will be passed as binary with its mime type
+  unless you define an explicit Content-Type header
+  """
+  binary: Boolean
+
+  """
+  If true, `@deprecated` will be added to the field definition
+  """
+  deprecated: Boolean
+}
+
+type JsonSchemaPubSubOperation implements JsonSchemaBaseOperation {
+  field: String!
+  description: String
+  type: JsonSchemaOperationType!
+  requestSchema: Any
+  requestSample: Any
+  requestTypeName: String
+  """
+  This body will be merged with the request body sent with
+  the underlying HTTP request
+  """
+  requestBaseBody: Any
+  responseSchema: Any
+  responseSample: Any
+  responseTypeName: String
+  argTypeMap: JSON
+  pubsubTopic: String!
+  """
+  If true, `@deprecated` will be added to the field definition
+  """
+  deprecated: Boolean
+}
+
+union JsonSchemaOperation = JsonSchemaHTTPOperation | JsonSchemaPubSubOperation

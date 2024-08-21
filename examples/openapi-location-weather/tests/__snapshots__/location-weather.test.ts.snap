@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Location Weather should generate correct schema: location-weather-schema 1`] = `
-"directive @enum(value: String) on ENUM_VALUE
+"directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @globalOptions(endpoint: String, operationHeaders: ObjMap, queryParams: ObjMap, queryStringOptions: ObjMap, sourceName: String) on OBJECT
-
-directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, operationSpecificHeaders: ObjMap, path: String, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap) on FIELD_DEFINITION
+directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: [[String]], path: String, queryParamArgMap: ObjMap, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String!, sourceName: String!, sourceSelectionSet: String, sourceTypeName: String!) on FIELD_DEFINITION
+
+directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) repeatable on SCHEMA
 
 type AQCurrent {
   """Cloud cover as a percentage (%)"""
@@ -1197,7 +1197,7 @@ type HistorySubhourly {
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
-scalar JSON
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 """A language supported by the service"""
 type Language {
@@ -1211,6 +1211,68 @@ type Languages_Response {
   errors: [CitiesError]
   links: [Link]
   metadata: Metadata
+}
+
+type LightningObs {
+  """Cardinal direction of lightning relative to point"""
+  bearing_cardinal: String
+
+  """Direction of lightning relative to point in degrees"""
+  bearing_degrees: Int
+
+  """Distance of lightning from point in kilometers"""
+  distance_km: Float
+
+  """Distance of lightning from point in miles"""
+  distance_mi: Float
+
+  """Internal identifier of lightning"""
+  id: Int
+
+  """Latitude of lightning"""
+  lat: Float
+
+  """Longitude of lightning"""
+  lon: Float
+
+  """Amount of time passed since lightning lightning (in minutes)."""
+  past_mins: Float
+
+  """Source of lightning data"""
+  source: String
+
+  """Timestamp of lightning at local timezone (YYYY-MM-DDTHH:MM:SS)"""
+  timestamp_local: String
+
+  """Timestamp of lightning at UTC timezone (YYYY-MM-DDTHH:MM:SS)"""
+  timestamp_utc: String
+
+  """Type of lightning data"""
+  type: String
+}
+
+type LightningObsGroup {
+  """Count of lightning events."""
+  count: Int
+
+  """Latitude of point."""
+  lat: Float
+  lightning: [LightningObs]
+
+  """Count of results in response (determined by limit parameter)."""
+  limit: Int
+
+  """Longitude of point."""
+  lon: Float
+
+  """Distance searched for lightning (radially) in KM."""
+  search_distance_km: Int
+
+  """Time backwards from current time searched for lightning."""
+  search_mins: Int
+
+  """Ascending sort key of data (time or distance)."""
+  sort: String
 }
 
 """A HATEAOS link"""
@@ -1411,7 +1473,7 @@ type Query {
     country: String
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -1431,7 +1493,7 @@ type Query {
   """
   bulk_files(
     """Your registered API key."""
-    key: String!
+    key: String
   ): JSON
 
   """Returns a Current Observation - given a lat, and a lon."""
@@ -1452,7 +1514,7 @@ type Query {
     include: queryInput_current_include
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_current_lang
 
     """Latitude component of location."""
@@ -1491,7 +1553,7 @@ type Query {
     country: String
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -1502,6 +1564,32 @@ type Query {
     """Postal Code. Example: 28546"""
     postal_code: String
   ): AQCurrentGroup
+
+  """
+  Returns nearest and most recent lightning observations - Given a lat/lon.
+  """
+  current_lightning(
+    """Your registered API key."""
+    key: String
+
+    """Latitude component of location."""
+    lat: Float
+
+    """Limit result lightning. (Default 20)"""
+    limit: Int
+
+    """Longitude component of location."""
+    lon: Float
+
+    """Radial search distance from point in KM. (Default 50 - Max 150)"""
+    search_dist_km: Int
+
+    """
+    Search time backwards from current time in minutes. (Default 30 - Max 240)
+    """
+    search_mins: Int
+    sort: queryInput_current_lightning_sort
+  ): LightningObsGroup
 
   "Find administrative divisions, filtering by optional criteria. If no criteria are set, you will get back all\\nknown divisions.\\n"
   findAdminDivisionsUsingGET(
@@ -2125,7 +2213,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2157,7 +2245,7 @@ type Query {
     hours: Int
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2186,7 +2274,7 @@ type Query {
     days: Float
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_forecast_daily_lang
 
     """Latitude component of location."""
@@ -2208,7 +2296,7 @@ type Query {
   """
   forecast_energy(
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2239,7 +2327,7 @@ type Query {
     hours: Int
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_forecast_hourly_lang
 
     """Latitude component of location."""
@@ -2272,7 +2360,7 @@ type Query {
     country: String
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2534,7 +2622,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2564,7 +2652,7 @@ type Query {
     country: String
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float
@@ -2595,7 +2683,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_history_daily_lang
 
     """Latitude component of location."""
@@ -2623,7 +2711,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float!
@@ -2659,7 +2747,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_history_hourly_lang
 
     """Latitude component of location."""
@@ -2699,7 +2787,7 @@ type Query {
     end_date: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
     lang: queryInput_history_subhourly_lang
 
     """Latitude component of location."""
@@ -2728,7 +2816,7 @@ type Query {
     end_day: String!
 
     """Your registered API key."""
-    key: String!
+    key: String
 
     """Latitude component of location."""
     lat: Float!
@@ -2877,6 +2965,14 @@ enum queryInput_current_lang {
   uk
   zh
   zh_tw
+}
+
+"""
+Sort results by either most recent occurrence, or least distance from point. (Default distance)
+"""
+enum queryInput_current_lightning_sort {
+  distance
+  time
 }
 
 """

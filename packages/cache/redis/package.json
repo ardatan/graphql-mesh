@@ -1,10 +1,10 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.96.3",
+  "version": "0.102.0",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "Urigo/graphql-mesh",
+    "url": "ardatan/graphql-mesh",
     "directory": "packages/cache/redis"
   },
   "license": "MIT",
@@ -32,14 +32,15 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.1",
-    "@graphql-mesh/types": "^0.96.3",
-    "@graphql-mesh/utils": "^0.96.3",
+    "@graphql-mesh/cross-helpers": "^0.4.6",
+    "@graphql-mesh/types": "^0.102.0",
+    "@graphql-mesh/utils": "^0.102.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.5.3",
+    "@graphql-mesh/string-interpolation": "0.5.6",
+    "@whatwg-node/disposablestack": "^0.0.1",
     "ioredis": "^5.3.2",
     "ioredis-mock": "^8.8.3"
   },

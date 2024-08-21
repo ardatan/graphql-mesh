@@ -1,5 +1,5 @@
 /* eslint-disable promise/param-names */
-import { Plugin } from 'graphql-yoga';
+import type { Plugin } from 'graphql-yoga';
 import newRelic from 'newrelic';
 import attributeFilter from 'newrelic/lib/config/attribute-filter.js';
 import NAMES from 'newrelic/lib/metrics/names.js';
@@ -8,8 +8,8 @@ import cat from 'newrelic/lib/util/cat.js';
 import { useNewRelic } from '@envelop/newrelic';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
+import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import { getHeadersObj, mapMaybePromise } from '@graphql-mesh/utils';
 
 const DESTS = attributeFilter.DESTINATIONS;
 
@@ -124,14 +124,10 @@ export default function useMeshNewrelic(
             }
             const res$ = requestHandler(...args);
 
-            if (res$) {
-              if (isPromise(res$)) {
-                return res$.then(sendResAttributes).then(() => res$);
-              }
-              sendResAttributes(res$);
-            }
-
-            return res$;
+            return mapMaybePromise(res$, res => {
+              sendResAttributes(res);
+              return res;
+            });
           }),
         );
       }

@@ -1,5 +1,64 @@
 # @graphql-mesh/cross-helpers
 
+## 0.4.6
+
+### Patch Changes
+
+- [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
+    (from `^10.3.4`, in `peerDependencies`)
+
+- [#7512](https://github.com/ardatan/graphql-mesh/pull/7512)
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.3)
+    (from `^10.5.2`, in `peerDependencies`)
+
+## 0.4.5
+
+### Patch Changes
+
+- [#7477](https://github.com/ardatan/graphql-mesh/pull/7477)
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.3.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.3.4)
+    (from `^10.2.3`, in `peerDependencies`)
+
+## 0.4.4
+
+### Patch Changes
+
+- [#7185](https://github.com/ardatan/graphql-mesh/pull/7185)
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.3)
+    (from `^10.2.1`, in `peerDependencies`)
+
+## 0.4.3
+
+### Patch Changes
+
+- [#7030](https://github.com/ardatan/graphql-mesh/pull/7030)
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.2.1)
+    (from `^10.2.0`, in `peerDependencies`)
+
+## 0.4.2
+
+### Patch Changes
+
+- [`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
 ## 0.4.1
 
 ### Patch Changes

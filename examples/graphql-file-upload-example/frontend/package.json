@@ -1,6 +1,5 @@
 {
-  "name": "frontend",
-  "version": "0.1.1",
+  "name": "@examples/graphql-file-upload-example-frontend",
   "private": true,
   "scripts": {
     "build": "react-scripts build",
@@ -9,24 +8,24 @@
     "test": "react-scripts test"
   },
   "dependencies": {
-    "@apollo/client": "3.8.10",
-    "@testing-library/jest-dom": "6.3.0",
-    "@testing-library/react": "14.1.2",
+    "@apollo/client": "3.11.4",
+    "@testing-library/jest-dom": "6.4.8",
+    "@testing-library/react": "16.0.0",
     "@testing-library/user-event": "14.5.2",
     "apollo-upload-client": "18.0.1",
-    "graphql": "16.8.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "graphql": "16.9.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-scripts": "5.0.1",
-    "web-vitals": "3.5.2"
+    "web-vitals": "4.2.3"
   },
   "devDependencies": {
     "@types/apollo-upload-client": "18.0.0",
-    "@types/jest": "29.5.11",
-    "@types/node": "20.11.9",
-    "@types/react": "18.2.48",
-    "@types/react-dom": "18.2.18",
-    "typescript": "5.3.3"
+    "@types/jest": "29.5.12",
+    "@types/node": "20.16.1",
+    "@types/react": "18.3.4",
+    "@types/react-dom": "18.3.0",
+    "typescript": "^5.4.2"
   },
   "browserslist": {
     "production": [

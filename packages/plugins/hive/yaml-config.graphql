@@ -7,11 +7,11 @@ type HivePlugin @md {
   If this expression is truthy, mocking would be enabled
   You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`
   """
-  enabled: Any
+  enabled: BooleanOrString
   """
-  Access Token
+  Access Token for Usage Reporting
   """
-  token: String!
+  token: String
   """
   Agent Options
   """
@@ -29,9 +29,16 @@ type HivePlugin @md {
   [See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)
   """
   selfHosting: HiveSelfHostingOptions
+  """
+  Experimental persisted documents configuration
+  [See more](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)
+  """
+  experimental__persistedDocuments: HivePersistedDocumentsConfiguration
 }
 
 type HiveAgentOptions {
+  name: String
+  logger: Any
   """
   30s by default
   """
@@ -87,6 +94,7 @@ type HiveUsageOptions {
   Default: false
   """
   processVariables: Boolean
+  sampler: Any
 }
 
 type HiveClientInfo {
@@ -134,4 +142,32 @@ type HiveSelfHostingOptions {
   Used by usage reporting.
   """
   usageEndpoint: String
+}
+
+type HivePersistedDocumentsConfiguration {
+  """
+  Point to your own instance of GraphQL Hive API
+
+  Used by schema reporting and token info.
+  """
+  cdn: HivePersistedDocumentsConfigurationCDN!
+  """
+  Whether arbitrary documents should be allowed along-side persisted documents. false by default
+  """
+  allowArbitraryDocuments: Boolean
+  """
+  Maximum amount of operations that shall be kept in memory after being loaded from the CDN. 10 seconds by default
+  """
+  cache: Int
+}
+
+type HivePersistedDocumentsConfigurationCDN {
+  """
+  CDN endpoint
+  """
+  endpoint: String!
+  """
+  Access Token for Persisted Documents CDN
+  """
+  accessToken: String!
 }

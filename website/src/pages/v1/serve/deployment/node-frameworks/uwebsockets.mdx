@@ -1,0 +1,109 @@
+---
+description: µWebSockets.js is an HTTP/WebSocket server for Node.js.
+---
+
+import { Callout } from '@theguild/components'
+
+# Integration with µWebSockets.js
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+[µWebSockets.js](https://github.com/uNetworking/uWebSockets.js) is an alternative to Node.js's
+built-in HTTP server implementation. It is much faster than Node.js's `http` module as you can see
+in the benchmarks in the
+[GitHub repo](https://github.com/uNetworking/uWebSockets/tree/master/benchmarks#benchmark-driven-development).
+Despite its name, it is not a WebSocket-only server, it does HTTP as well.
+
+Since GraphQL Mesh is framework and environment agnostic, it supports µWebSockets.js out of the box
+with a simple configuration.
+
+<Callout>
+  If you use Serve CLI within Node.js, it already uses µWebSockets.js. You don't need to do anything
+  extra within CLI. Use this guide only if you really need to use µWebSockets.js directly.
+</Callout>
+
+## Example
+
+```ts filename="index.ts"
+import { App, HttpRequest, HttpResponse } from 'uWebSockets.js'
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+interface ServerContext {
+  req: HttpRequest
+  res: HttpResponse
+}
+
+export const serveRuntime = createServeRuntime<ServerContext>(/* Your configuration */)
+
+App()
+  .any('/*', serveRuntime)
+  .listen('localhost', 4000, () => {
+    console.log(`Server is running on http://localhost:4000`)
+  })
+```
+
+## Subscriptions with WebSockets
+
+You can also use WebSockets instead of SSE with `graphql-ws`;
+
+```sh npm2yarn
+npm i graphql-ws
+```
+
+```ts filename="index.ts"
+import { execute, ExecutionArgs, subscribe } from 'graphql'
+import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets'
+import { App, HttpRequest, HttpResponse } from 'uWebSockets.js'
+import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+
+interface ServerContext {
+  req: HttpRequest
+  res: HttpResponse
+}
+
+export const serveRuntime = createServeRuntime<ServerContext>(/* Your configuration */)
+
+// Mesh's envelop may augment the `execute` and `subscribe` operations
+// so we need to make sure we always use the freshest instance
+type EnvelopedExecutionArgs = ExecutionArgs & {
+  rootValue: {
+    execute: typeof execute
+    subscribe: typeof subscribe
+  }
+}
+
+const wsHandler = makeBehavior({
+  execute: args => (args as EnvelopedExecutionArgs).rootValue.execute(args),
+  subscribe: args => (args as EnvelopedExecutionArgs).rootValue.subscribe(args),
+  onSubscribe: async (ctx, msg) => {
+    const { schema, execute, subscribe, contextFactory, parse, validate } =
+      serveRuntime.getEnveloped(ctx)
+
+    const args: EnvelopedExecutionArgs = {
+      schema,
+      operationName: msg.payload.operationName,
+      document: parse(msg.payload.query),
+      variableValues: msg.payload.variables,
+      contextValue: await contextFactory(),
+      rootValue: {
+        execute,
+        subscribe
+      }
+    }
+
+    const errors = validate(args.schema, args.document)
+    if (errors.length) return errors
+    return args
+  }
+})
+
+App()
+  .any('/*', serveRuntime)
+  .ws(serveRuntime.graphqlEndpoint, wsHandler)
+  .listen(() => {
+    console.log(`Server is running on http://localhost:4000`)
+  })
+```

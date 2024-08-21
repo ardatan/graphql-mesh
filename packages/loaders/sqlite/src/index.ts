@@ -1,8 +1,7 @@
-import { GraphQLSchema } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
 import { path, process } from '@graphql-mesh/cross-helpers';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
 
-interface GraphQLSQLiteLoaderOpts {
+export interface GraphQLSQLiteLoaderOpts {
   infile?: string;
   db?: string;
   cwd?: string;
@@ -16,7 +15,10 @@ export function loadGraphQLSchemaFromOptions(
   opts: GraphQLSQLiteLoaderOpts,
 ): Promise<GraphQLSchema> {
   const tuql$ = import('tuql').catch(e => {
-    throw new Error('You need to install `tuql` package in order to use SQLite data source.');
+    console.error(e);
+    throw new Error(
+      'Cannot import `tuql` packages necessary for SQLite data source. Have you installed it?',
+    );
   });
   const cwd = opts.cwd || process.cwd();
   if (opts.infile != null) {
@@ -31,13 +33,14 @@ export function loadGraphQLSchemaFromOptions(
 }
 
 export function loadSQLiteSubgraph(name: string, opts: GraphQLSQLiteLoaderOpts) {
-  return ({ cwd }: { cwd: string }) => ({
+  return () => ({
     name,
     schema$: loadGraphQLSchemaFromOptions(opts).then(schema => {
-      schema.extensions = schema.extensions || {};
-      const directivesObj: any = schema.extensions.directives || {};
-      directivesObj.transport = {
+      const extensionsObj: any = (schema.extensions = schema.extensions || {});
+      extensionsObj.directives ||= {};
+      extensionsObj.directives.transport = {
         kind: 'sqlite',
+        subgraph: name,
         location: opts.infile || opts.db,
         options: {
           type: opts.infile != null ? 'infile' : 'db',
@@ -46,24 +49,4 @@ export function loadSQLiteSubgraph(name: string, opts: GraphQLSQLiteLoaderOpts) 
       return schema;
     }),
   });
-}
-
-interface ThriftTransportEntry {
-  kind: 'thrift';
-  location: string;
-  options: {
-    type: 'infile' | 'db';
-  };
-  cwd?: string;
-}
-
-export function getSubgraphExecutor(opts: ThriftTransportEntry) {
-  const loaderOpts: GraphQLSQLiteLoaderOpts = {};
-  if (opts.options.type === 'infile') {
-    loaderOpts.infile = opts.location;
-  } else {
-    loaderOpts.db = opts.location;
-  }
-  loaderOpts.cwd = opts.cwd || process.cwd();
-  return loadGraphQLSchemaFromOptions(loaderOpts).then(schema => createDefaultExecutor(schema));
 }

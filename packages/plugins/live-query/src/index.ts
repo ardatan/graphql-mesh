@@ -1,8 +1,9 @@
-import { Plugin } from '@envelop/core';
+import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import {
   defaultResourceIdentifierNormalizer,
   InMemoryLiveQueryStore,
@@ -10,8 +11,13 @@ import {
 import { useInvalidateByResult } from './useInvalidateByResult.js';
 
 export default function useMeshLiveQuery(
-  options: MeshPluginOptions<YamlConfig.LiveQueryConfig>,
+  options: {
+    logger?: Logger;
+    pubsub?: MeshPubSub;
+  } & YamlConfig.LiveQueryConfig,
 ): Plugin {
+  options.logger ||= new DefaultLogger();
+  options.pubsub ||= new PubSub();
   options.logger.debug(`Creating Live Query Store`);
   const liveQueryStore = new InMemoryLiveQueryStore({
     buildResourceIdentifier:

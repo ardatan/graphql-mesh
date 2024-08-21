@@ -1,0 +1,26 @@
+import { Callout } from '@theguild/components'
+
+# Upstream Cancellation
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+This feature enables you to cancel the upstream HTTP requests when the client cancels the downstream
+GraphQL request. This can be useful when you want to save resources on your server and the services.
+
+There is also [Execution Cancellation](/v1/serve/features/performance/execution-cancellation) that
+stops the execution, but it doesn't stop ongoing HTTP requests. This seperately allows you to stop
+the HTTP requests by hooking into
+[`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
+
+## Enable Upstream Cancellation
+
+```ts filename="mesh.config.ts"
+import { defineConfig, useUpstreamCancellation } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  plugins: pluginCtx => [useUpstreamCancellation()]
+})
+```

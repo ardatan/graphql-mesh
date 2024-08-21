@@ -1,4 +1,3 @@
-import 'json-bigint-patch';
 import { join } from 'path';
 import { readFile } from 'fs-extra';
 import { findAndParseConfig } from '@graphql-mesh/cli';

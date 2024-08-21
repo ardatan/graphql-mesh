@@ -1,9 +1,9 @@
-import {
+import type {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
   ObjectTypeComposer,
-  SchemaComposer,
 } from 'graphql-compose';
+import { SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
   GraphQLDate,
@@ -14,11 +14,15 @@ import {
   GraphQLUnsignedFloat,
   GraphQLUnsignedInt,
 } from 'graphql-scalars';
-import { Connection, createConnection, DatabaseTable, TableField, TableForeign } from 'mysql';
+import type { Connection, DatabaseTable, MysqlError, TableField, TableForeign } from 'mysql';
+import { createConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { fs, process, util } from '@graphql-mesh/cross-helpers';
+import type { MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
+import { getConnectionOptsFromEndpointUri } from '@graphql-mesh/transport-mysql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
+  MySQLCountDirective,
   MySQLDeleteDirective,
   MySQLInsertDirective,
   MySQLSelectDirective,
@@ -26,8 +30,7 @@ import {
   MySQLUpdateDirective,
   TransportDirective,
 } from './directives.js';
-import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
-import { MySQLContext, MySQLSSLOptions, TableFieldConfig } from './types';
+import type { TableFieldConfig } from './types.js';
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;
@@ -36,7 +39,7 @@ export interface LoadGraphQLSchemaFromMySQLOpts {
 }
 
 export async function loadGraphQLSchemaFromMySQL(
-  name: string,
+  subgraphName: string,
   opts: LoadGraphQLSchemaFromMySQLOpts,
 ) {
   const connectionOpts = getConnectionOptsFromEndpointUri(opts.endpoint);
@@ -57,7 +60,7 @@ export async function loadGraphQLSchemaFromMySQL(
   const getDatabaseTables = util.promisify(
     introspectionConnection.databaseTables.bind(introspectionConnection),
   );
-  const schemaComposer = new SchemaComposer<MySQLContext>();
+  const schemaComposer = new SchemaComposer();
   schemaComposer.add(GraphQLBigInt);
   schemaComposer.add(GraphQLJSON);
   schemaComposer.add(GraphQLDate);
@@ -72,6 +75,7 @@ export async function loadGraphQLSchemaFromMySQL(
   schemaComposer.addDirective(MySQLUpdateDirective);
   schemaComposer.addDirective(MySQLDeleteDirective);
   schemaComposer.addDirective(MySQLTableForeignDirective);
+  schemaComposer.addDirective(MySQLCountDirective);
   schemaComposer.createEnumTC({
     name: 'OrderBy',
     values: {
@@ -90,6 +94,7 @@ export async function loadGraphQLSchemaFromMySQL(
   await Promise.all(
     tableNames.map(async tableName => {
       await handleTableName({
+        subgraphName,
         tableName,
         tables,
         schemaComposer,
@@ -98,13 +103,17 @@ export async function loadGraphQLSchemaFromMySQL(
       });
     }),
   );
-  const endConnection$ = util.promisify(introspectionConnection.end.bind(introspectionConnection));
+  const endConnection$ = util.promisify<
+    // we need to define the generic because introspectionConnection.end is overloaded
+    (err?: MysqlError) => void
+  >(introspectionConnection.end.bind(introspectionConnection));
   await endConnection$(undefined);
+
   const schema = schemaComposer.buildSchema();
   const extensions: any = (schema.extensions ||= {});
   extensions.directives ||= {};
   extensions.directives.transport = {
-    subgraph: name,
+    subgraph: subgraphName,
     kind: 'mysql',
     location: opts.endpoint,
   };
@@ -179,6 +188,7 @@ function getAutoIncrementFields(connection: Connection): Promise<Record<string, 
 }
 
 async function handleTableName({
+  subgraphName,
   tableName,
   tables,
   schemaComposer,
@@ -187,9 +197,10 @@ async function handleTableName({
   tableFieldsConfig,
   filteredTables,
 }: {
+  subgraphName: string;
   tableName: string;
   tables: Record<string, DatabaseTable>;
-  schemaComposer: SchemaComposer<MySQLContext>;
+  schemaComposer: SchemaComposer;
   introspectionConnection: Connection;
   autoIncrementedColumns: Record<string, string>;
   tableFieldsConfig?: TableFieldConfig[];
@@ -266,6 +277,7 @@ async function handleTableName({
   await Promise.all(
     tableForeignNames.map(foreignName =>
       handleTableForeignName({
+        subgraphName,
         foreignName,
         tableForeigns,
         schemaComposer,
@@ -299,6 +311,7 @@ async function handleTableName({
         {
           name: 'mysqlSelect',
           args: {
+            subgraph: subgraphName,
             table: tableName,
           },
         },
@@ -317,6 +330,7 @@ async function handleTableName({
         {
           name: 'mysqlCount',
           args: {
+            subgraph: subgraphName,
             table: tableName,
           },
         },
@@ -335,6 +349,7 @@ async function handleTableName({
         {
           name: 'mysqlInsert',
           args: {
+            subgraph: subgraphName,
             table: tableName,
             primaryKeys: Array.from(primaryKeys),
           },
@@ -355,6 +370,7 @@ async function handleTableName({
         {
           name: 'mysqlUpdate',
           args: {
+            subgraph: subgraphName,
             table: tableName,
           },
         },
@@ -371,6 +387,7 @@ async function handleTableName({
         {
           name: 'mysqlDelete',
           args: {
+            subgraph: subgraphName,
             table: tableName,
           },
         },
@@ -394,7 +411,7 @@ async function handleFieldName({
 }: {
   fields: Record<string, TableField>;
   primaryKeys: Set<string>;
-  schemaComposer: SchemaComposer<MySQLContext>;
+  schemaComposer: SchemaComposer;
   tableName: string;
   fieldName: string;
   autoIncrementedColumns: Record<string, string>;
@@ -472,6 +489,7 @@ async function handleFieldName({
 }
 
 async function handleTableForeignName({
+  subgraphName,
   foreignName,
   tableForeigns,
   schemaComposer,
@@ -482,9 +500,10 @@ async function handleTableForeignName({
   orderByInputName,
   objectTypeName,
 }: {
+  subgraphName: string;
   foreignName: string;
   tableForeigns: Record<string, TableForeign>;
-  schemaComposer: SchemaComposer<MySQLContext>;
+  schemaComposer: SchemaComposer;
   tableTC: ObjectTypeComposer<any, any>;
   fieldNames: string[];
   tableName: string;
@@ -524,6 +543,7 @@ async function handleTableForeignName({
         {
           name: 'mysqlSelect',
           args: {
+            subgraph: subgraphName,
             table: foreignTableName,
             columnMap: [[foreignColumnName, columnName]],
           },
@@ -531,6 +551,7 @@ async function handleTableForeignName({
         {
           name: 'mysqlTableForeign',
           args: {
+            subgraph: subgraphName,
             columnName: tableForeign.COLUMN_NAME,
           },
         },
@@ -559,6 +580,7 @@ async function handleTableForeignName({
         {
           name: 'mysqlSelect',
           args: {
+            subgraph: subgraphName,
             table: tableName,
             columnMap: [[columnName, foreignColumnName]],
           },

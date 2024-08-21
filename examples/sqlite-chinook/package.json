@@ -1,17 +1,16 @@
 {
-  "name": "chinook",
-  "version": "0.12.2",
+  "name": "@examples/sqlite-chinook",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.88.5",
-    "@graphql-mesh/tuql": "0.97.2",
-    "graphql": "16.8.1"
+    "@graphql-mesh/cli": "0.95.0",
+    "@graphql-mesh/tuql": "0.103.0",
+    "graphql": "16.9.0"
   },
   "resolutions": {
-    "graphql": "16.8.1"
+    "graphql": "16.9.0"
   }
 }

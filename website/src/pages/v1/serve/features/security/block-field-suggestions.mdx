@@ -1,0 +1,40 @@
+import { Callout } from '@theguild/components'
+
+# Block Field Suggestions
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+This is a feature that allows you to prevent **returning field suggestions** and **leaking your
+schema** to unauthorized actors provided by
+[GraphQL Armor](https://escape.tech/graphql-armor/docs/plugins/block-field-suggestions/)
+
+In production, this can lead to Schema leak even if the introspection is disabled.
+
+## How to use?
+
+Install the plugin:
+
+```sh npm2yarn
+npm install @escape.tech/graphql-armor-block-field-suggestions
+```
+
+Then, add it to your plugins:
+
+```ts filename="mesh.config.ts"
+import { blockFieldSuggestionsPlugin } from '@escape.tech/graphql-armor-block-field-suggestions'
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  plugins: () => [
+    blockFieldSuggestionsPlugin({
+      // Toggle the plugin | Default: true
+      enabled: true,
+      // Mask applied to the error message | default: '[Suggestion hidden]'
+      mask: '[Suggestion hidden]'
+    })
+  ]
+})
+```

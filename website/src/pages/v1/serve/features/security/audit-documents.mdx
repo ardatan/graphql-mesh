@@ -1,0 +1,31 @@
+import { Callout } from '@theguild/components'
+
+# Audit Documents
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+Audit your documents for useful metrics such as query depth, directive count and alias count. This
+is useful if you want to introduce security rules on your GraphQL server (e.g. via graphql-armor)
+and need to figure out the values for doing so.
+
+## How to use?
+
+You need to install the `@graphql-inspector/cli` package:
+
+```sh npm2yarn
+npm i @graphql-inspector/cli
+```
+
+Then you can point documents to the `audit` command:
+
+```sh
+graphql-inspector audit DOCUMENTS
+```
+
+<Callout>
+  Learn more about this command, and [GraphQL Inspector
+  here](https://the-guild.dev/graphql/inspector/docs/commands/audit#audit---usage)
+</Callout>

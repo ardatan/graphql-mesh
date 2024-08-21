@@ -1,5 +1,39 @@
 # json-machete
 
+## 0.97.4
+
+### Patch Changes
+
+- [#7462](https://github.com/ardatan/graphql-mesh/pull/7462)
+  [`48868b0`](https://github.com/ardatan/graphql-mesh/commit/48868b0e3ff5e30ba589f250d490f285c0365433)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`cross-inspect@1.0.1` ↗︎](https://www.npmjs.com/package/cross-inspect/v/1.0.1) (from `1.0.0`,
+    in `dependencies`)
+
+## 0.97.3
+
+### Patch Changes
+
+- [#6942](https://github.com/ardatan/graphql-mesh/pull/6942)
+  [`234d2f9`](https://github.com/ardatan/graphql-mesh/commit/234d2f9d390bd340b0f7bcdb8f335334ff5f60b9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@json-schema-tools/meta-schema@1.7.5` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.5)
+    (from `1.7.4`, in `dependencies`)
+
+## 0.97.2
+
+### Patch Changes
+
+- [#6832](https://github.com/ardatan/graphql-mesh/pull/6832)
+  [`6521fa0`](https://github.com/ardatan/graphql-mesh/commit/6521fa0ec66fd5af734d8ca03941d78d852d3a0c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@json-schema-tools/meta-schema@1.7.4` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.4)
+    (from `1.7.0`, in `dependencies`)
+
 ## 0.97.1
 
 ### Patch Changes

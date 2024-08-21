@@ -1,0 +1,43 @@
+---
+description:
+  Use GraphQL Mesh with Mongoose to simplify your schema creation. Get started with
+  @graphql-mesh/mongoose package and connect to MongoDB in minutes.
+---
+
+import { Callout } from '@theguild/components'
+
+# MongoDB / Mongoose
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+This handler allows you to use the GraphQL schema created by `graphql-compose-mongoose`.
+
+To get started, install the handler library:
+
+```sh npm2yarn
+npm install @omnigraph/mongoose
+```
+
+Then, you can use it in your Mesh configuration:
+
+```ts filename="mesh.config.ts"
+import loadMongooseSubgraph from '@omnigraph/mongoose'
+import { User } from './models.ts'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadMongooseSubgraph('MyMongooseApi', {
+        connectionString: 'mongodb://localhost:27017/test',
+        models: {
+          // You can provide your models here
+          User
+        }
+      })
+    }
+  ]
+})
+```

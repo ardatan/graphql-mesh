@@ -1,0 +1,72 @@
+{
+  "name": "@graphql-mesh/include",
+  "version": "0.1.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/include"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./register-tsconfig-paths": {
+      "require": {
+        "types": "./dist/typings/register-tsconfig-paths.d.cts",
+        "default": "./dist/cjs/register-tsconfig-paths.js"
+      },
+      "import": {
+        "types": "./dist/typings/register-tsconfig-paths.d.ts",
+        "default": "./dist/esm/register-tsconfig-paths.js"
+      },
+      "default": {
+        "types": "./dist/typings/register-tsconfig-paths.d.ts",
+        "default": "./dist/esm/register-tsconfig-paths.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "get-tsconfig": "^4.7.6",
+    "jiti": "^1.21.6"
+  },
+  "devDependencies": {
+    "glob": "^11.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "buildOptions": {
+    "bin": {
+      "mesh-compose": {
+        "input": "src/bin.ts"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}

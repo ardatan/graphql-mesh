@@ -1,0 +1,60 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Chuck Norris v1",
+    "version": "1"
+  },
+  "paths": {
+    "/main": {
+      "post": {
+        "requestBody": {
+          "description": "Specifies the product reference for alternative journeys",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResponseBody"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RequestBody": {
+        "type": "object",
+        "properties": {
+          "banana": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResponseBody": {
+        "type": "object",
+        "properties": {
+          "apple": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

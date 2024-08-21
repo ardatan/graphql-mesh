@@ -1,0 +1,188 @@
+type Query {
+  require: [String]
+  """
+  Defines the list of your external data sources for your API mesh
+  """
+  sources: [Source!]!
+  """
+  Transform to apply to the unified mesh schema
+  """
+  transforms: [Transform]
+  """
+  Additional type definitions, or type definitions overrides you wish to add to the schema mesh
+  """
+  additionalTypeDefs: Any
+  """
+  Additional resolvers, or resolvers overrides you wish to add to the schema mesh
+  """
+  additionalResolvers: [AdditionalResolver]
+  """
+  Backend cache
+  """
+  cache: Cache
+  """
+  Merge method
+  """
+  merger: String
+  """
+  PubSub Implementation
+  """
+  pubsub: PubSub
+  """
+  Provide a query or queries for GraphQL Playground, validation and SDK Generation
+  The value can be the file path, glob expression for the file paths or the SDL.
+  (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
+  """
+  documents: [String!]
+  """
+  Configure persisted operations options
+  """
+  persistedOperations: PersistedOperationsConfig
+  """
+  Path to a file exporting a logger instance compatible with the `Logger` type from `@graphql-mesh/types`
+  """
+  logger: String
+  """
+  Path to a custom W3 Compatible Fetch Implementation
+  """
+  customFetch: Any
+  """
+  Allow connections to an SSL endpoint without certificates
+  """
+  skipSSLValidation: Boolean
+  """
+  Path to a JavaScript file with a default export of Envelop plugins
+  """
+  additionalEnvelopPlugins: String
+  plugins: [Plugin]
+
+  """
+  If you are using a CDN for a source (e.g. Federation Supergraph), this will be the polling interval in milliseconds for the CDN without a downtime
+  """
+  pollingInterval: Int
+}
+
+scalar JSON
+
+scalar Any
+
+type Source {
+  """
+  The name you wish to set to your remote API, this will be used for building the GraphQL context
+  """
+  name: String!
+  """
+  Point to the handler you wish to use, it can either be a predefined handler, or a custom
+  """
+  handler: Handler!
+  """
+  List of transforms to apply to the current API source, before unifying it with the rest of the sources
+  """
+  transforms: [Transform]
+}
+
+type Transform @withAdditionalProperties
+type Handler @withAdditionalProperties
+type Cache @withAdditionalProperties
+type Plugin @withAdditionalProperties {
+  maskedErrors: MaskedErrorsPluginConfig
+  immediateIntrospection: Any
+}
+
+type MaskedErrorsPluginConfig {
+  errorMessage: String
+}
+
+union AdditionalResolver =
+  | String
+  | AdditionalStitchingResolverObject
+  | AdditionalStitchingBatchResolverObject
+  | AdditionalSubscriptionObject
+
+type AdditionalStitchingResolverObject {
+  sourceName: String!
+  sourceTypeName: String!
+  sourceFieldName: String!
+  sourceSelectionSet: String
+  requiredSelectionSet: String
+  sourceArgs: JSON
+  targetTypeName: String!
+  targetFieldName: String!
+  """
+  Extract specific property from the result
+  """
+  result: String
+  """
+  If return types don't match,
+  you can specify a result type to apply inline fragment
+  """
+  resultType: String
+}
+
+type AdditionalStitchingBatchResolverObject {
+  sourceName: String!
+  sourceTypeName: String!
+  sourceFieldName: String!
+  sourceSelectionSet: String
+  requiredSelectionSet: String
+  keyField: String!
+  keysArg: String!
+  additionalArgs: JSON
+  targetTypeName: String!
+  targetFieldName: String!
+  """
+  Extract specific property from the result
+  """
+  result: String
+  """
+  If return types don't match,
+  you can specify a result type to apply inline fragment
+  """
+  resultType: String
+}
+
+type AdditionalSubscriptionObject {
+  targetTypeName: String!
+  targetFieldName: String!
+  pubsubTopic: String!
+  result: String
+  filterBy: String
+}
+
+union PubSub = String | PubSubConfig
+
+type PubSubConfig {
+  name: String!
+  config: Any
+}
+
+type PersistedOperationsConfig {
+  """
+  Whether to allow execution of arbitrary GraphQL operations aside from persisted operations.
+  """
+  allowArbitraryOperations: Boolean
+  """
+  Whether to skip validation of the persisted operation
+  """
+  skipDocumentValidation: Boolean
+
+  """
+  Custom errors to be thrown
+  """
+  customErrors: CustomPersistedQueryErrors
+}
+
+type CustomPersistedQueryErrors {
+  """
+  Error to be thrown when the persisted operation is not found
+  """
+  notFound: String
+  """
+  Error to be thrown when rejecting non-persisted operations
+  """
+  persistedQueryOnly: String
+  """
+  Error to be thrown when the extraction of the persisted operation id failed
+  """
+  keyNotFound: String
+}

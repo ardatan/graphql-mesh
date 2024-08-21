@@ -10,7 +10,7 @@ It's a small test :)
 
 I want to extend a public [Covid graphQL endpoint](https://covid-19-two-rust.vercel.app/api/graphql)
 with some other data like the population of the country. Sounds like a good scenario for
-[graphql-mesh](https://github.com/Urigo/graphql-mesh)!
+[graphql-mesh](https://github.com/ardatan/graphql-mesh)!
 
 For this I found an API with
 [country population data](https://datasource.kapsarc.org/explore/dataset/world-population/table/?disjunctive.country_name&rows=1&q=France&sort=year).

@@ -15,7 +15,6 @@
     "no-console": "off",
     "no-prototype-builtins": "off",
     "no-useless-constructor": "off",
-    "@typescript-eslint/ban-types": "warn",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-namespace": "off",
@@ -30,9 +29,20 @@
     "@typescript-eslint/return-await": "error",
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/no-empty-object-type": "off",
     "import/no-nodejs-modules": "error",
     "no-eval": "off",
     "no-use-before-define": "off",
+    "@typescript-eslint/consistent-type-exports": [
+      "error",
+      { "fixMixedExportsWithInlineTypeSpecifier": true }
+    ],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "fixStyle": "inline-type-imports"
+      }
+    ],
     "import/no-extraneous-dependencies": [
       "error",
       { "devDependencies": ["**/*.test.ts", "**/*.spec.ts"] }
@@ -51,9 +61,23 @@
       "rules": {
         "@typescript-eslint/no-unused-vars": "off"
       }
+    },
+    {
+      "files": ["e2e/**/*", "packages/serve-cli/**/*"],
+      "rules": {
+        "import/no-nodejs-modules": "off"
+      }
     }
   ],
-  "ignorePatterns": ["dist", "node_modules", "examples", "website", "scripts", ".bob"],
+  "ignorePatterns": [
+    "dist",
+    "node_modules",
+    "examples",
+    "website",
+    "scripts",
+    ".bob",
+    "config-schema.ts"
+  ],
   "globals": {
     "BigInt": true
   }

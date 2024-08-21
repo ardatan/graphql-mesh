@@ -1,0 +1,137 @@
+---
+description:
+  Mesh Server can fetch the supergraph from GraphQL Hive and report usage data to Hive's registry.
+---
+
+# GraphQL Hive Integration
+
+import { Callout } from '@theguild/components'
+
+[GraphQL Hive](https://the-guild.dev/graphql/hive) is a schema registry, monitoring and analytics
+tool for your GraphQL API.
+
+GraphQL Mesh Serve can be configured to fetch the supergraph from Hive's High-Availablity CDN and
+report usage data to Hive's registry.
+
+## Serve Supergraph from GraphQL Hive
+
+For [Federation projects](https://the-guild.dev/graphql/hive/docs/get-started/apollo-federation) on
+GraphQL Hive, you can fetch the supergraph directly from GraphQL Hive CDN.
+
+GraphQL Mesh can fetch the supergraph directly from GraphQL Hive CDN by a few lines of configuration
+without any additional setup for Federation projects.
+
+Before getting started, make sure you have
+[obtained the credentials for the Hive CDN](https://the-guild.dev/graphql/hive/docs/features/high-availability-cdn#cdn-access-tokens).
+
+### Configuration
+
+For running Mesh Serve with the Hive CDN, you need to provide the necessary options to the CLI:
+
+```sh filename="Run the Mesh Serve CLI"
+npx mesh-serve supergraph <endpoint> --hive-cdn-key <api_key>
+```
+
+Instead of providing the CLI options, you can also provide them using a configuration file.
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  supergraph: {
+    // The CDN type.
+    type: 'hive',
+    // The endpoint of CDN
+    endpoint: '<endpoint>',
+    // The API key provided by GraphQL Hive
+    key: '<api_key>'
+  }
+})
+```
+
+## Usage Reporting and Monitoring
+
+Hive allow you to collect usage data from your GraphQL operations and use the data collected for
+[**Monitoring, Observability, Schema Usage and Coverage and Schema Evolution**](https://the-guild.dev/graphql/hive/docs/features/usage-reporting).
+
+Before getting started, make sure you have
+[obtained a registry token from Hive](https://the-guild.dev/graphql/hive/docs/get-started/apollo-federation#hive-cli-access-token).
+
+### Configuration
+
+If you want Mesh Serve to report usage metrics to Hive, you need to provide the necessary options to
+the CLI:
+
+```sh filename="Run the Mesh Serve CLI"
+npx mesh-serve supergraph --hive-registry-token <token>
+```
+
+Instead of using CLI options, you can also use a configuration file, which allows further
+customization for the configuration:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  reporting: {
+    // The reporting service type
+    type: 'hive',
+    // The registry token provided by GraphQL Hive
+    token: '<token>'
+  }
+})
+```
+
+Refer to to the
+[Hive Client documentation](https://the-guild.dev/graphql/hive/docs/api-reference/client#configuration)
+for further customization, such as usage reporting sampling and more.
+
+## Persisted Documents
+
+Persisted documents can be used on your GraphQL server or Gateway to reduce the payload size of your
+GraphQL requests and secure your GraphQL API by only allowing operations that are known and trusted
+by your Gateway. GraphQL Hive can serve as a CDN for the persisted documents as they're requested.
+
+Make sure you have configured **Persisted Documents** on GraphQL Hive as described
+[here](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway).
+
+### Configuration
+
+After getting `endpoint` and `token` from GraphQL Hive, you can enable persisted documents in Mesh
+Serve.
+
+```sh filename="Run the Mesh Serve CLI"
+npx mesh-serve supergraph "<cdn_endpoint>" --hive-persisted-documents-token "<cdn_access_token>" < endpoint > --hive-persisted-documents-endpoint
+```
+
+Or you can use a configuration file:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  persistedDocuments: {
+    type: 'hive',
+    endpoint: '<cdn_endpoint>',
+    token: '<cdn-access-token>'
+  }
+})
+```
+
+#### Enabling Arbitrary Documents (not recommended)
+
+By default, Mesh Server only allows persisted documents that are known and trusted by your Gateway.
+If you want to allow arbitrary documents, you can enable the `allowArbitraryDocuments` option:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/serve-cli'
+
+export const serveConfig = defineConfig({
+  persistedDocuments: {
+    type: 'hive',
+    endpoint: '<cdn_endpoint>',
+    token: '<cdn-access-token>',
+    allowArbitraryDocuments: true
+  }
+})
+```

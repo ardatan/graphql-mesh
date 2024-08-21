@@ -1,0 +1,25 @@
+---
+description:
+  Improve your GraphQL API by using GraphQL Mesh Schema Transformation! Easily modify your schema
+  and control the contents of your requests and responses. Learn how to configure and order
+  transforms for maximum efficiency.
+---
+
+import { Callout } from '@theguild/components'
+
+# Introduction to Transforms
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+GraphQL Mesh allows you to modify the schema easily, in order to control the contents of your
+GraphQL requests and responses; you can use one of the built-in transforms or write your own.
+
+Each transformer can manipulate the schema the way it needs and return the modified schema.
+
+Transforms are specified as a list, and they are executed in order. You can apply them over a
+specific input source or over the unified schema (after merging all sources).
+
+You can see the available transforms under `Transforms` on the menu.

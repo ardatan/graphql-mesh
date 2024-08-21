@@ -58,3 +58,41 @@ curl -X POST -H 'Content-Type: application/json' http://localhost:4000/graphql \
 
 {"data":{"__typename":"Query"}}
 ```
+
+## Allow only persisted operations
+
+By default, GraphQL Mesh will allow all operations to be executed in dev mode, but not in production
+mode.
+
+You can change this behavior by setting `allowUnpersistedOperations` to `false` or `true` in your
+configuration file.
+
+```yml
+persistedOperations:
+  allowArbitraryOperations: true
+```
+
+## Other options
+
+You can also configure the following options:
+
+```yml
+persistedOperations:
+  # Whether to allow execution of arbitrary GraphQL operations aside from persisted operations.
+  allowArbitraryOperations: false;
+
+  # Whether to skip validation of the persisted operation
+  skipDocumentValidation: false;
+
+  # Customize error messages
+  customErrors:
+    # Error message to return when the operation is not found
+    notFound: 'PersistedQueryNotFound'
+
+    # Error to be thrown when rejecting non-persisted operations
+    persistedQueryOnly?: string;
+
+    # Error to be thrown when the extraction of the persisted operation id failed
+
+    keyNotFound?: string;
+```

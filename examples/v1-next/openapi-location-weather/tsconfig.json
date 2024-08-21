@@ -1,0 +1,7 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs"
+  },
+  "files": ["mesh.config.ts"]
+}

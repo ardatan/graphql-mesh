@@ -1,34 +1,16 @@
-import { GraphQLSchema } from 'graphql';
-import { Neo4JAuthOpts } from './auth.js';
-import { getNeo4JExecutor } from './executor.js';
-import { loadGraphQLSchemaFromNeo4J, LoadGraphQLSchemaFromNeo4JOpts } from './schema.js';
+import type { Logger } from '@graphql-mesh/types';
+import type { LoadGraphQLSchemaFromNeo4JOpts } from './schema.js';
+import { loadGraphQLSchemaFromNeo4J } from './schema.js';
 
 export function loadNeo4JSubgraph(name: string, opts: LoadGraphQLSchemaFromNeo4JOpts) {
-  return () => ({
+  return ({ logger }: { logger: Logger }) => ({
     name,
-    schema$: loadGraphQLSchemaFromNeo4J(name, opts),
-  });
-}
-
-export interface Neo4JTransportEntry {
-  kind: 'neo4j';
-  location: string;
-  options: {
-    database: string;
-    auth: Neo4JAuthOpts;
-  };
-}
-
-export function getSubgraphExecutor(
-  _transportEntry: Neo4JTransportEntry,
-  getSubgraph: () => GraphQLSchema,
-) {
-  return getNeo4JExecutor({
-    schema: getSubgraph(),
+    schema$: loadGraphQLSchemaFromNeo4J(name, {
+      ...opts,
+      logger,
+    }),
   });
 }
 
 export * from './schema.js';
-export * from './executor.js';
-export * from './driver.js';
-export * from './auth.js';
+export * from '@graphql-mesh/transport-neo4j';

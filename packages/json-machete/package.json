@@ -1,10 +1,10 @@
 {
   "name": "json-machete",
-  "version": "0.97.1",
+  "version": "0.97.4",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "Urigo/graphql-mesh",
+    "url": "ardatan/graphql-mesh",
     "directory": "packages/json-machete"
   },
   "license": "MIT",
@@ -35,8 +35,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@json-schema-tools/meta-schema": "1.7.0",
-    "cross-inspect": "1.0.0",
+    "@json-schema-tools/meta-schema": "1.7.5",
+    "cross-inspect": "1.0.1",
     "json-pointer": "0.6.2",
     "to-json-schema": "0.2.5",
     "url-join": "4.0.1"

@@ -1,0 +1,23 @@
+import { Opts } from '@e2e/opts';
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineServeConfig, useWebhooks } from '@graphql-mesh/serve-cli';
+import { PubSub } from '@graphql-mesh/utils';
+import { loadOpenAPISubgraph } from '@omnigraph/openapi';
+
+const opts = Opts(process.argv);
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('OpenAPICallbackExample', {
+        source: './services/api/openapi.yml',
+        endpoint: `http://localhost:${opts.getServicePort('api')}`,
+      }),
+    },
+  ],
+});
+
+export const serveConfig = defineServeConfig({
+  pubsub: new PubSub(),
+  plugins: ctx => [useWebhooks(ctx)],
+});

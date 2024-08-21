@@ -1,11 +1,21 @@
-[![Mesh GIF](./website/public/static/img/twitter_1200X345.gif)](https://graphql-mesh.com)
+[![GraphQLConf 2024 Banner: September 10-12, San Francisco. Hosted by the GraphQL Foundation](https://github.com/user-attachments/assets/bdb8cd5d-5186-4ece-b06b-b00a499b7868)](https://graphql.org/conf/2024/?utm_source=github&utm_medium=graphql_mesh&utm_campaign=readme)
+
+<!-- Uncomment when we remove GraphQL Conf banner -->
+<!-- [![Mesh GIF](./website/public/static/img/twitter_1200X345.gif)](https://graphql-mesh.com) -->
+
+<!-- Graphql logo readme banner START -->
+<p style="float: right; margin: 0 0 10px 10px;">
+  <a href="https://www.graphql-mesh.com">graphql-mesh.com</a>
+  <a href="https://the-guild.dev" align="right">
+    <img align="right" src="https://the-guild-org.github.io/press-kit/full-dark-logo.svg" alt="Created by The guild" style="width: 100px;"/>
+  </a>
+</p>
+<!-- Graphql logo readme banner END -->
 
 [![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcli)
-![CI](https://github.com/Urigo/graphql-mesh/workflows/CI/badge.svg)
+![CI](https://github.com/ardatan/graphql-mesh/workflows/test/badge.svg)
 [![Discord Chat](https://img.shields.io/discord/625400653321076807)](https://discord.gg/xud7bH9)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-
-https://www.graphql-mesh.com
 
 GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run
 GraphQL (and also ones that do run GraphQL). It can be used as a gateway to other services or run as

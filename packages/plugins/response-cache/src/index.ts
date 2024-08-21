@@ -1,9 +1,10 @@
-import { Plugin } from '@envelop/core';
+import type { Plugin } from 'graphql-yoga';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
-import { useResponseCache, UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
+import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
+import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 
 function generateSessionIdFactory(sessionIdDef: string) {
   if (sessionIdDef == null) {
@@ -22,7 +23,7 @@ function generateSessionIdFactory(sessionIdDef: string) {
 function generateEnabledFactory(ifDef: string) {
   return function enabled(context: any) {
     // eslint-disable-next-line no-new-func
-    return new Function(`return ${ifDef}`)();
+    return new Function('context', `return ${ifDef}`)(context);
   };
 }
 
@@ -55,81 +56,119 @@ function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCachePar
     get(responseId) {
       return meshCache.get(`response-cache:${responseId}`);
     },
-    async set(responseId, data, entities, ttl) {
+    set(responseId, data, entities, ttl) {
       const ttlConfig = Number.isFinite(ttl) ? { ttl: ttl / 1000 } : undefined;
-      await Promise.all(
-        [...entities].map(async ({ typename, id }) => {
-          const entryId = `${typename}.${id}`;
-          await meshCache.set(`response-cache:${entryId}:${responseId}`, {}, ttlConfig);
-          await meshCache.set(`response-cache:${responseId}:${entryId}`, {}, ttlConfig);
-        }),
-      );
-      return meshCache.set(`response-cache:${responseId}`, data, ttlConfig);
+      const jobs: Promise<void>[] = [];
+      jobs.push(meshCache.set(`response-cache:${responseId}`, data, ttlConfig));
+      for (const { typename, id } of entities) {
+        const entryId = `${typename}.${id}`;
+        jobs.push(meshCache.set(`response-cache:${entryId}:${responseId}`, {}, ttlConfig));
+        jobs.push(meshCache.set(`response-cache:${responseId}:${entryId}`, {}, ttlConfig));
+      }
+      return Promise.all(jobs) as any;
     },
-    async invalidate(entitiesToRemove) {
+    invalidate(entitiesToRemove) {
       const responseIdsToCheck = new Set<string>();
-      await Promise.all(
-        [...entitiesToRemove].map(async ({ typename, id }) => {
-          const entryId = `${typename}.${id}`;
-          const cacheEntriesToDelete = await meshCache.getKeysByPrefix(
-            `response-cache:${entryId}:`,
-          );
-          await Promise.all(
-            cacheEntriesToDelete.map(cacheEntryName => {
-              const [, , responseId] = cacheEntryName.split(':');
-              responseIdsToCheck.add(responseId);
-              return meshCache.delete(entryId);
+      const entitiesToRemoveJobs: Promise<any>[] = [];
+      for (const { typename, id } of entitiesToRemove) {
+        const entryId = `${typename}.${id}`;
+        entitiesToRemoveJobs.push(
+          meshCache.getKeysByPrefix(`response-cache:${entryId}:`).then(cacheEntriesToDelete =>
+            Promise.all(
+              cacheEntriesToDelete.map(cacheEntryName => {
+                const [, , responseId] = cacheEntryName.split(':');
+                responseIdsToCheck.add(responseId);
+                return meshCache.delete(entryId);
+              }),
+            ),
+          ),
+        );
+      }
+      return Promise.all(entitiesToRemoveJobs).then(() => {
+        const responseIdsToCheckJobs: Promise<any>[] = [];
+        for (const responseId of responseIdsToCheck) {
+          responseIdsToCheckJobs.push(
+            meshCache.getKeysByPrefix(`response-cache:${responseId}:`).then(cacheEntries => {
+              if (cacheEntries.length !== 0) {
+                return meshCache.delete(`response-cache:${responseId}`);
+              }
+              return undefined;
             }),
           );
-        }),
-      );
-      await Promise.all(
-        [...responseIdsToCheck].map(async responseId => {
-          const cacheEntries = await meshCache.getKeysByPrefix(`response-cache:${responseId}:`);
-          if (cacheEntries.length === 0) {
-            await meshCache.delete(`response-cache:${responseId}`);
-          }
-        }),
-      );
+        }
+      });
     },
   };
 }
 
+export type ResponseCacheConfig = Omit<UseResponseCacheParameter, 'cache'> & {
+  /**
+   * The Mesh cache instance to use for storing the response cache.
+   *
+   * The cache should be provided from the Mesh context:
+   * ```ts
+   * defineConfig({
+   *   plugins: ctx => [
+   *     useMeshResponseCache({ ...ctx })
+   *   ]
+   * })
+   * ```
+   */
+  cache: KeyValueCache;
+};
+
+/**
+ * Response cache plugin for GraphQL Mesh
+ * @param options
+ */
+export default function useMeshResponseCache(options: ResponseCacheConfig): Plugin;
+/**
+ * @deprecated Use new configuration format `ResponseCacheConfig`
+ * @param options
+ */
 export default function useMeshResponseCache(
   options: YamlConfig.ResponseCacheConfig & {
     cache: KeyValueCache;
   },
+): Plugin;
+export default function useMeshResponseCache(
+  options:
+    | ResponseCacheConfig
+    // TODO: This is for v0 compatibility, remove once v1 is released
+    | (YamlConfig.ResponseCacheConfig & {
+        cache: KeyValueCache;
+      }),
 ): Plugin {
-  const ttlPerType: Record<string, number> = {};
-  const ttlPerSchemaCoordinate: Record<string, number> = {};
-  if (options.ttlPerCoordinate) {
-    for (const ttlConfig of options.ttlPerCoordinate) {
-      if (ttlConfig.coordinate.includes('.')) {
-        ttlPerSchemaCoordinate[ttlConfig.coordinate] = ttlConfig.ttl;
-      } else {
-        ttlPerType[ttlConfig.coordinate] = ttlConfig.ttl;
-      }
+  const ttlPerType: Record<string, number> = { ...(options as ResponseCacheConfig).ttlPerType };
+  const ttlPerSchemaCoordinate: Record<string, number> = {
+    ...(options as ResponseCacheConfig).ttlPerSchemaCoordinate,
+  };
+
+  const { ttlPerCoordinate } = options as YamlConfig.ResponseCacheConfig;
+  if (ttlPerCoordinate) {
+    for (const ttlConfig of ttlPerCoordinate) {
+      ttlPerSchemaCoordinate[ttlConfig.coordinate] = ttlConfig.ttl;
     }
   }
+
   return useResponseCache({
-    ttl: options.ttl,
-    ignoredTypes: options.ignoredTypes,
-    idFields: options.idFields,
-    invalidateViaMutation: options.invalidateViaMutation,
     includeExtensionMetadata:
       options.includeExtensionMetadata != null
         ? options.includeExtensionMetadata
         : process.env.DEBUG === '1',
+    session: 'sessionId' in options ? generateSessionIdFactory(options.sessionId) : () => null,
+    enabled: 'if' in options ? generateEnabledFactory(options.if) : undefined,
+    buildResponseCacheKey:
+      'cacheKey' in options ? getBuildResponseCacheKey(options.cacheKey) : undefined,
+
+    ...options,
+
+    shouldCacheResult:
+      typeof options.shouldCacheResult === 'string'
+        ? getShouldCacheResult(options.shouldCacheResult)
+        : options.shouldCacheResult,
+    cache: getCacheForResponseCache(options.cache),
     ttlPerType,
     ttlPerSchemaCoordinate,
-    session: generateSessionIdFactory(options.sessionId),
-    enabled: options.if ? generateEnabledFactory(options.if) : undefined,
-    buildResponseCacheKey: options.cacheKey
-      ? getBuildResponseCacheKey(options.cacheKey)
-      : undefined,
-    shouldCacheResult: options.shouldCacheResult
-      ? getShouldCacheResult(options.shouldCacheResult)
-      : undefined,
-    cache: getCacheForResponseCache(options.cache),
   });
 }

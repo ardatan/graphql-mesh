@@ -1,5 +1,6 @@
-import { execute, OperationTypeNode, parse } from 'graphql';
+import { OperationTypeNode, parse } from 'graphql';
 import { getHeadersObj } from '@graphql-mesh/utils';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { Request, Response } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromJSONSchemas from '../src/index.js';
 
@@ -50,7 +51,7 @@ describe('Execution', () => {
       }
     `;
 
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(query),
       contextValue: {
@@ -66,7 +67,7 @@ describe('Execution', () => {
       },
     });
 
-    const result2 = await execute({
+    const result2 = await normalizedExecutor({
       schema,
       document: parse(query),
       contextValue: {},
@@ -132,7 +133,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -198,7 +199,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -266,7 +267,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -334,7 +335,7 @@ describe('Execution', () => {
           }
         }
       `;
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -342,6 +343,74 @@ describe('Execution', () => {
         data: {
           test: {
             url: `http://localhost:3000/test?foo${encodeURIComponent('[]')}=bar`,
+          },
+        },
+      });
+    });
+    it('jsonStringify', async () => {
+      const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
+        async fetch(info: RequestInfo, init?: RequestInit) {
+          let request: Request;
+          if (typeof info !== 'object') {
+            request = new Request(info, init);
+          } else {
+            request = info;
+          }
+          return new Response(
+            JSON.stringify({
+              url: request.url,
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+        },
+        endpoint: 'http://localhost:3000',
+        queryStringOptions: {
+          jsonStringify: true,
+        },
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'test',
+            method: 'GET',
+            path: '/test',
+            queryParamArgMap: {
+              foo: 'foo',
+            },
+            argTypeMap: {
+              foo: {
+                type: 'object',
+                properties: {
+                  bar: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+            responseSample: {
+              url: 'http://localhost:3000/test?foo={"bar":"baz"}',
+            },
+          },
+        ],
+      });
+      const query = /* GraphQL */ `
+        query Test {
+          test(foo: { bar: "baz" }) {
+            url
+          }
+        }
+      `;
+      const result = await normalizedExecutor({
+        schema,
+        document: parse(query),
+      });
+      expect(result).toEqual({
+        data: {
+          test: {
+            url: `http://localhost:3000/test?foo=${encodeURIComponent('{"bar":"baz"}')}`,
           },
         },
       });
@@ -390,7 +459,7 @@ describe('Execution', () => {
         }
       `;
 
-      const result = await execute({
+      const result = await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -443,7 +512,7 @@ describe('Execution', () => {
         }
       `;
 
-      await execute({
+      await normalizedExecutor({
         schema,
         document: parse(query),
       });
@@ -470,7 +539,7 @@ describe('Execution', () => {
         getTest
       }
     `;
-    const result = await execute({
+    const result = await normalizedExecutor({
       schema,
       document: parse(query),
     });

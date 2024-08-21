@@ -1,0 +1,14 @@
+{
+  "name": "@examples-v1-next/json-schema-reddit",
+  "private": true,
+  "scripts": {
+    "compose": "yarn mesh-compose",
+    "serve": "yarn mesh-serve"
+  },
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "workspace:*",
+    "@omnigraph/json-schema": "workspace:*",
+    "graphql": "16.9.0"
+  }
+}

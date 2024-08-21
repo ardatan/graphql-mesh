@@ -1,273 +1,395 @@
-import type { Plugin as YogaPlugin } from 'graphql-yoga';
-import { Counter, register as defaultRegistry, Histogram, Registry, Summary } from 'prom-client';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { getHeadersObj, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { isAsyncIterable, type Plugin as YogaPlugin } from 'graphql-yoga';
+import type { Registry } from 'prom-client';
+import { register as defaultRegistry } from 'prom-client';
+import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import type { TransportEntry } from '@graphql-mesh/transport-common';
+import type {
+  ImportFn,
+  Logger,
+  MeshFetchRequestInit,
+  MeshPlugin,
+  OnDelegateHookPayload,
+} from '@graphql-mesh/types';
 import {
-  usePrometheus,
-  PrometheusTracingPluginConfig as YogaPromPluginConfig,
+  defaultImportFn,
+  getHeadersObj,
+  loadFromModuleExportExpression,
+} from '@graphql-mesh/utils';
+import type { ExecutionRequest } from '@graphql-tools/utils';
+import type {
+  CounterAndLabels,
+  FillLabelsFnParams,
+  HistogramAndLabels,
+  PrometheusTracingPluginConfig,
+  SummaryAndLabels,
 } from '@graphql-yoga/plugin-prometheus';
 import {
-  commonFillLabelsFnForEnvelop,
-  commonLabelsForEnvelop,
-  createHistogramForEnvelop,
-} from './createHistogramForEnvelop.js';
+  createCounter,
+  createHistogram,
+  createSummary,
+  usePrometheus,
+} from '@graphql-yoga/plugin-prometheus';
 
-type HistogramContainer = Exclude<YogaPromPluginConfig['http'], boolean>;
-type CounterContainer = Exclude<YogaPromPluginConfig['requestCount'], boolean>;
-type SummaryContainer = Exclude<YogaPromPluginConfig['requestSummary'], boolean>;
+export { createCounter, createHistogram, createSummary };
+export type { CounterAndLabels, FillLabelsFnParams, HistogramAndLabels, SummaryAndLabels };
 
-export default async function useMeshPrometheus(
-  pluginOptions: MeshPluginOptions<YamlConfig.PrometheusConfig>,
-): Promise<MeshPlugin<any> & YogaPlugin> {
-  const registry = pluginOptions.registry
-    ? await loadFromModuleExportExpression<Registry>(pluginOptions.registry, {
-        cwd: pluginOptions.baseDir,
-        importFn: pluginOptions.importFn,
-        defaultExportName: 'default',
-      })
-    : defaultRegistry;
+type MeshMetricsConfig = {
+  /**
+   * @deprecated Graph delegation is no longer a concept in Mesh v1, use `subgraphExecute` instead
+   */
+  delegation?:
+    | boolean
+    | string
+    | HistogramAndLabels<string, Omit<OnDelegateHookPayload<unknown>, 'context'> | undefined>;
+  /**
+   * @deprecated Graph delegation is no longer a concept in Mesh v1
+   */
+  delegationArgs?: boolean;
+  /**
+   * @deprecated Graph delegation is no longer a concept in Mesh v1
+   */
+  delegationKey?: boolean;
 
-  let fetchHistogram: Histogram | undefined;
+  subgraphExecute?:
+    | boolean
+    | string
+    | HistogramAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
 
-  if (pluginOptions.fetch) {
-    const name =
-      typeof pluginOptions.fetch === 'string' ? pluginOptions.fetch : 'graphql_mesh_fetch_duration';
-    const labelNames = ['url', 'method', 'statusCode', 'statusText'];
-    if (pluginOptions.fetchRequestHeaders) {
-      labelNames.push('requestHeaders');
-    }
-    if (pluginOptions.fetchResponseHeaders) {
-      labelNames.push('responseHeaders');
-    }
-    fetchHistogram = new Histogram({
-      name,
-      help: 'Time spent on outgoing HTTP calls',
-      labelNames,
-      registers: [registry],
-    });
+  subgraphExecuteErrors?:
+    | boolean
+    | string
+    | CounterAndLabels<'subgraphName' | 'operationType', SubgraphMetricsLabelParams>;
+
+  fetchMetrics?:
+    | boolean
+    | string
+    | HistogramAndLabels<
+        string,
+        { url: string; options: MeshFetchRequestInit; response: Response }
+      >;
+
+  /**
+   * @deprecated Use `labels.fetchRequestHeaders` instead
+   */
+  fetchRequestHeaders?: boolean;
+  /**
+   * @deprecated Use `labels.fetchResponseHeaders` instead
+   */
+  fetchResponseHeaders?: boolean;
+
+  labels?: {
+    fetchRequestHeaders?: boolean;
+    fetchResponseHeaders?: boolean;
+  };
+};
+
+type PrometheusPluginOptions = Omit<
+  PrometheusTracingPluginConfig,
+  // Remove this after Mesh v1 is released;
+  'registry'
+> &
+  YamlConfig & // Remove this after Mesh v1 is released;
+  MeshMetricsConfig & {
+    logger?: Logger;
+  };
+
+type YamlConfig = {
+  baseDir?: string;
+  importFn?: ImportFn;
+  registry?: Registry | string;
+};
+
+type SubgraphMetricsLabelParams = {
+  subgraphName: string;
+  transportEntry?: TransportEntry;
+  executionRequest: ExecutionRequest;
+};
+
+export default function useMeshPrometheus(
+  pluginOptions: PrometheusPluginOptions,
+): MeshPlugin<any> & YogaPlugin & MeshServePlugin {
+  let registry: Registry;
+  if (!pluginOptions.registry) {
+    registry = defaultRegistry;
+  } else if (typeof pluginOptions.registry !== 'string') {
+    registry = pluginOptions.registry;
+  } else {
+    // TODO: Remove this once Mesh v1 is released
+    //       Mesh v1 config is now a TS config file, we don't need to load it from a string anymore
+    registry = registryFromYamlConfig(pluginOptions);
   }
 
-  let delegateHistogram: Histogram | undefined;
+  let fetchHistogram: HistogramAndLabels<
+    string,
+    { url: string; options: MeshFetchRequestInit; response: Response }
+  >;
+
+  if (pluginOptions.fetchMetrics) {
+    const labelNames = ['url', 'method', 'statusCode', 'statusText'];
+    const {
+      fetchRequestHeaders = pluginOptions.fetchRequestHeaders,
+      fetchResponseHeaders = pluginOptions.fetchResponseHeaders,
+    } = pluginOptions.labels || {};
+    if (fetchRequestHeaders) {
+      labelNames.push('requestHeaders');
+    }
+    if (fetchResponseHeaders) {
+      labelNames.push('responseHeaders');
+    }
+
+    fetchHistogram =
+      typeof pluginOptions.fetchMetrics === 'object'
+        ? pluginOptions.fetchMetrics
+        : createHistogram({
+            registry,
+            histogram: {
+              name:
+                typeof pluginOptions.fetchMetrics === 'string'
+                  ? pluginOptions.fetchMetrics
+                  : 'graphql_mesh_fetch_duration',
+              help: 'Time spent on outgoing HTTP calls',
+              labelNames,
+            },
+            fillLabelsFn: ({ url, options, response }) => {
+              const labels: Record<string, string | number> = {
+                url,
+                method: options.method,
+                statusCode: response.status,
+                statusText: response.statusText,
+              };
+
+              if (fetchRequestHeaders) {
+                labels.requestHeaders = JSON.stringify(options.headers);
+              }
+              if (fetchResponseHeaders) {
+                labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
+              }
+              return labels;
+            },
+          });
+  }
+
+  let delegateHistogram: HistogramAndLabels<
+    string,
+    Omit<OnDelegateHookPayload<unknown>, 'context'> | undefined
+  >;
 
   if (pluginOptions.delegation) {
-    const name =
-      typeof pluginOptions.delegation === 'string'
+    const delegationLabelNames = ['sourceName', 'typeName', 'fieldName'];
+    const { delegationArgs, delegationKey } = pluginOptions;
+    if (delegationArgs) {
+      delegationLabelNames.push('args');
+    }
+    if (delegationKey) {
+      delegationLabelNames.push('key');
+    }
+    delegateHistogram =
+      typeof pluginOptions.delegation === 'object'
         ? pluginOptions.delegation
-        : 'graphql_mesh_delegate_duration';
-    delegateHistogram = new Histogram({
-      name,
-      help: 'Time spent on delegate execution',
-      labelNames: ['sourceName', 'typeName', 'fieldName', 'args', 'key'],
-      registers: [registry],
-    });
+        : createHistogram({
+            registry,
+            histogram: {
+              name:
+                typeof pluginOptions.delegation === 'string'
+                  ? pluginOptions.delegation
+                  : 'graphql_mesh_delegate_duration',
+              help: 'Time spent on delegate execution',
+              labelNames: delegationLabelNames,
+            },
+            fillLabelsFn: ({ sourceName, typeName, fieldName, args, key }) => {
+              return {
+                sourceName,
+                typeName,
+                fieldName,
+                args: delegationArgs ? JSON.stringify(args) : undefined,
+                key: delegationKey ? JSON.stringify(key) : undefined,
+              };
+            },
+          });
   }
 
-  let httpHistogram: HistogramContainer | undefined;
+  let subgraphExecuteHistogram: HistogramAndLabels<string, SubgraphMetricsLabelParams>;
 
-  if (pluginOptions.http) {
-    const labelNames = ['url', 'method', 'statusCode', 'statusText'];
-    if (pluginOptions.httpRequestHeaders) {
-      labelNames.push('requestHeaders');
+  if (pluginOptions.subgraphExecute !== false) {
+    const subgraphExecuteLabels = ['subgraphName'];
+    if (pluginOptions.labels?.operationName !== false) {
+      subgraphExecuteLabels.push('operationName');
     }
-    if (pluginOptions.httpResponseHeaders) {
-      labelNames.push('responseHeaders');
+    if (pluginOptions.labels?.operationType !== false) {
+      subgraphExecuteLabels.push('operationType');
     }
-    const name =
-      typeof pluginOptions.http === 'string' ? pluginOptions.http : 'graphql_mesh_http_duration';
-    httpHistogram = {
-      histogram: new Histogram({
-        name,
-        help: 'Time spent on incoming HTTP requests',
-        labelNames,
-        registers: [registry],
-      }),
-      fillLabelsFn(_, { request, response }) {
-        const labels: Record<string, string> = {
-          url: request.url,
-          method: request.method,
-          statusCode: response.status,
-          statusText: response.statusText,
-        };
-        if (pluginOptions.httpRequestHeaders) {
-          labels.requestHeaders = JSON.stringify(getHeadersObj(request.headers));
-        }
-        if (pluginOptions.httpResponseHeaders) {
-          labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
-        }
-        return labels;
-      },
-    };
+    subgraphExecuteHistogram =
+      typeof pluginOptions.subgraphExecute === 'object'
+        ? pluginOptions.subgraphExecute
+        : createHistogram({
+            registry,
+            histogram: {
+              name:
+                typeof pluginOptions.subgraphExecute === 'string'
+                  ? pluginOptions.subgraphExecute
+                  : 'graphql_mesh_subgraph_execute_duration',
+              help: 'Time spent on subgraph execution',
+              labelNames: subgraphExecuteLabels,
+            },
+            fillLabelsFn: ({
+              subgraphName,
+              executionRequest: { operationType = 'query', operationName },
+            }) => ({
+              subgraphName,
+              operationType:
+                pluginOptions.labels?.operationType !== false ? operationType : undefined,
+              operationName:
+                pluginOptions.labels?.operationName !== false
+                  ? operationName || 'Anonymous'
+                  : undefined,
+            }),
+          });
   }
 
-  let requestCounter: CounterContainer | undefined;
-
-  if (pluginOptions.requestCount) {
-    const name =
-      typeof pluginOptions.requestCount === 'string'
-        ? pluginOptions.requestCount
-        : 'graphql_mesh_request_count';
-    requestCounter = {
-      counter: new Counter({
-        name,
-        help: 'Counts the amount of GraphQL requests executed',
-        labelNames: commonLabelsForEnvelop,
-        registers: [registry],
-      }),
-      fillLabelsFn: commonFillLabelsFnForEnvelop,
-    };
-  }
-
-  let requestSummary: SummaryContainer | undefined;
-
-  if (pluginOptions.requestSummary) {
-    const name =
-      typeof pluginOptions.requestSummary === 'string'
-        ? pluginOptions.requestSummary
-        : 'graphql_mesh_request_time_summary';
-    requestSummary = {
-      summary: new Summary({
-        name,
-        help: 'Summary to measure the time to complete GraphQL operations',
-        labelNames: commonLabelsForEnvelop,
-        registers: [registry],
-      }),
-      fillLabelsFn: commonFillLabelsFnForEnvelop,
-    };
-  }
-
-  let errorsCounter: CounterContainer | undefined;
-
-  if (pluginOptions.errors) {
-    const name =
-      typeof pluginOptions.errors === 'string' ? pluginOptions.errors : 'graphql_mesh_error_result';
-    errorsCounter = {
-      counter: new Counter({
-        name,
-        help: 'Counts the amount of errors reported from all phases',
-        labelNames: ['operationType', 'operationName', 'path', 'phase'] as const,
-        registers: [registry],
-      }),
-      fillLabelsFn: params => ({
-        operationName: params.operationName!,
-        operationType: params.operationType!,
-        path: params.error?.path?.join('.'),
-        phase: params.errorPhase!,
-      }),
-    };
-  }
-
-  let deprecatedCounter: CounterContainer | undefined;
-
-  if (pluginOptions.deprecatedFields) {
-    const name =
-      typeof pluginOptions.deprecatedFields === 'string'
-        ? pluginOptions.deprecatedFields
-        : 'graphql_mesh_deprecated_fields';
-    deprecatedCounter = {
-      counter: new Counter({
-        name,
-        help: 'Counts the amount of deprecated fields used in selection sets',
-        labelNames: ['operationType', 'operationName', 'fieldName', 'typeName'] as const,
-        registers: [registry],
-      }),
-      fillLabelsFn: params => ({
-        operationName: params.operationName!,
-        operationType: params.operationType!,
-        fieldName: params.deprecationInfo?.fieldName,
-        typeName: params.deprecationInfo?.typeName,
-      }),
-    };
+  let subgraphExecuteErrorCounter: CounterAndLabels<string, SubgraphMetricsLabelParams>;
+  if (pluginOptions.subgraphExecuteErrors !== false) {
+    const subgraphExecuteErrorLabels = ['subgraphName'];
+    if (pluginOptions.labels?.operationName !== false) {
+      subgraphExecuteErrorLabels.push('operationName');
+    }
+    if (pluginOptions.labels?.operationType !== false) {
+      subgraphExecuteErrorLabels.push('operationType');
+    }
+    subgraphExecuteErrorCounter =
+      typeof pluginOptions.subgraphExecuteErrors === 'object'
+        ? pluginOptions.subgraphExecuteErrors
+        : createCounter({
+            registry,
+            counter: {
+              name:
+                typeof pluginOptions.subgraphExecuteErrors === 'string'
+                  ? pluginOptions.subgraphExecuteErrors
+                  : `graphql_mesh_subgraph_execute_errors`,
+              help: 'Number of errors on subgraph execution',
+              labelNames: subgraphExecuteErrorLabels,
+            },
+            fillLabelsFn: ({
+              subgraphName,
+              executionRequest: { operationType = 'query', operationName },
+            }) => ({
+              subgraphName,
+              operationType:
+                pluginOptions.labels?.operationType !== false ? operationType : undefined,
+              operationName:
+                pluginOptions.labels?.operationName !== false
+                  ? operationName || 'Anonymous'
+                  : undefined,
+            }),
+          });
   }
 
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
+        // TODO: fix usePrometheus typings to inherit the context
         usePrometheus({
           ...pluginOptions,
-          http: httpHistogram,
-          requestCount: requestCounter,
-          requestTotalDuration: createHistogramForEnvelop({
-            defaultName: 'graphql_mesh_request_duration',
-            valueFromConfig: pluginOptions.requestTotalDuration,
-            help: 'Time spent on running the GraphQL operation from parse to execute',
-            registry,
-          }),
-          requestSummary,
-          parse: createHistogramForEnvelop({
-            defaultName: 'graphql_mesh_parse_duration',
-            valueFromConfig: pluginOptions.parse,
-            help: 'Time spent on parsing the GraphQL operation',
-            registry,
-          }),
-          validate: createHistogramForEnvelop({
-            defaultName: 'graphql_mesh_validate_duration',
-            valueFromConfig: pluginOptions.validate,
-            help: 'Time spent on validating the GraphQL operation',
-            registry,
-          }),
-          contextBuilding: createHistogramForEnvelop({
-            defaultName: 'graphql_mesh_context_building_duration',
-            valueFromConfig: pluginOptions.contextBuilding,
-            help: 'Time spent on building the GraphQL context',
-            registry,
-          }),
-          execute: createHistogramForEnvelop({
-            defaultName: 'graphql_mesh_execute_duration',
-            valueFromConfig: pluginOptions.execute,
-            help: 'Time spent on executing the GraphQL operation',
-            registry,
-          }),
-          errors: errorsCounter,
-          deprecatedFields: deprecatedCounter,
           registry,
-        }),
+        }) as any,
       );
     },
-    onDelegate({ sourceName, typeName, fieldName, args, key }) {
+    onDelegate({ context, ...payload }) {
       if (delegateHistogram) {
         const start = Date.now();
         return () => {
           const end = Date.now();
           const duration = end - start;
-          delegateHistogram.observe(
-            {
-              sourceName,
-              typeName,
-              fieldName,
-              args: JSON.stringify(args),
-              key: JSON.stringify(key),
-            },
+          delegateHistogram.histogram.observe(
+            delegateHistogram.fillLabelsFn(payload, context),
             duration,
           );
         };
       }
       return undefined;
     },
-    onFetch({ url, options }) {
+    onSubgraphExecute(payload) {
+      if (subgraphExecuteHistogram) {
+        const start = Date.now();
+        return ({ result }) => {
+          if (isAsyncIterable(result)) {
+            return {
+              onNext({ result }) {
+                if (result.errors) {
+                  result.errors.forEach(() => {
+                    subgraphExecuteErrorCounter?.counter.inc(
+                      subgraphExecuteErrorCounter.fillLabelsFn(
+                        payload,
+                        payload.executionRequest.context,
+                      ),
+                    );
+                  });
+                }
+              },
+              onEnd: () => {
+                const end = Date.now();
+                const duration = end - start;
+                subgraphExecuteHistogram.histogram.observe(
+                  subgraphExecuteHistogram.fillLabelsFn(payload, payload.executionRequest.context),
+                  duration,
+                );
+              },
+            };
+          }
+          if (result.errors) {
+            result.errors.forEach(() => {
+              subgraphExecuteErrorCounter?.counter.inc(
+                subgraphExecuteErrorCounter.fillLabelsFn(payload, payload.executionRequest.context),
+              );
+            });
+          }
+          const end = Date.now();
+          const duration = end - start;
+          subgraphExecuteHistogram.histogram.observe(
+            subgraphExecuteHistogram.fillLabelsFn(payload, payload.executionRequest.context),
+            duration,
+          );
+          return undefined;
+        };
+      }
+      return undefined;
+    },
+    onFetch({ url, options, context }) {
       if (fetchHistogram) {
         const start = Date.now();
         return ({ response }) => {
           const end = Date.now();
           const duration = end - start;
 
-          const labels: Partial<Record<string, string | number>> = {
-            url,
-            method: options.method,
-            statusCode: response.status,
-            statusText: response.statusText,
-          };
-
-          if (pluginOptions.fetchRequestHeaders) {
-            labels.requestHeaders = JSON.stringify(options.headers);
-          }
-          if (pluginOptions.fetchResponseHeaders) {
-            labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
-          }
-
-          fetchHistogram.observe(labels, duration);
+          fetchHistogram.histogram.observe(
+            fetchHistogram.fillLabelsFn({ url, options, response }, context),
+            duration,
+          );
         };
       }
       return undefined;
     },
   };
+}
+
+function registryFromYamlConfig(pluginOptions: PrometheusPluginOptions): Registry {
+  const registry$ = loadFromModuleExportExpression<Registry>(pluginOptions.registry, {
+    cwd: pluginOptions.baseDir || globalThis.process?.cwd(),
+    importFn: pluginOptions.importFn || defaultImportFn,
+    defaultExportName: 'default',
+  });
+
+  const registryProxy = Proxy.revocable(defaultRegistry, {
+    get(target, prop, receiver) {
+      if (typeof (target as any)[prop] === 'function') {
+        return function (...args: any[]) {
+          return registry$.then(registry => (registry as any)[prop](...args));
+        };
+      }
+      return Reflect.get(target, prop, receiver);
+    },
+  });
+
+  registry$.then(() => registryProxy.revoke()).catch(e => pluginOptions.logger.error(e));
+
+  return registryProxy.proxy;
 }

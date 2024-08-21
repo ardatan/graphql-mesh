@@ -1,16 +1,17 @@
 import faker from 'faker';
-import { execute, GraphQLFieldResolver, GraphQLResolveInfo, GraphQLSchema } from 'graphql';
+import type { GraphQLFieldResolver, GraphQLResolveInfo, GraphQLSchema } from 'graphql';
+import { execute } from 'graphql';
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { addMocksToSchema, createMockStore, IMocks } from '@graphql-tools/mock';
+import type { IMocks } from '@graphql-tools/mock';
+import { addMocksToSchema, createMockStore } from '@graphql-tools/mock';
 
 const mockedSchemas = new WeakSet<GraphQLSchema>();
 
 export default function useMock(
   config: MeshPluginOptions<YamlConfig.MockingConfig>,
-  // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
   // eslint-disable-next-line no-new-func
   const configIf = config != null && 'if' in config ? new Function(`return ${config.if}`)() : true;

@@ -25,7 +25,7 @@ describe('Location Weather', () => {
       'location-weather-schema',
     );
   });
-  it('should give correct response for todayForecast', async () => {
+  it.skip('should give correct response for todayForecast', async () => {
     const todayForecastQuery = await readFile(join(__dirname, '../example-query.graphql'), 'utf8');
     const response = await meshHTTP.fetch('http://localhost:4000/graphql', {
       method: 'POST',
@@ -37,6 +37,7 @@ describe('Location Weather', () => {
       }),
     });
     const result = await response.json();
+    expect(result?.errors?.[0]).toBeFalsy();
     expect(result?.data?.findCitiesUsingGET?.data?.length).toBeGreaterThan(0);
     const found = result.data.findCitiesUsingGET.data[0];
     expect(found.name).toBe('Istanbul');

@@ -1,7 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { execute, parse, specifiedRules, subscribe, validate } from 'graphql';
+import { setTimeout } from 'timers/promises';
+import { parse, specifiedRules, validate } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import useMeshRateLimit from '../src/index.js';
 
@@ -11,8 +13,8 @@ describe('Rate Limit Plugin', () => {
   const graphQLEnginePlugin = useEngine({
     parse,
     validate,
-    execute,
-    subscribe,
+    execute: normalizedExecutor,
+    subscribe: normalizedExecutor,
     specifiedRules,
   });
 
@@ -83,7 +85,7 @@ describe('Rate Limit Plugin', () => {
 
     // Resolver shouldn't be called
     expect(numberOfCalls).toBe(5);
-    expect(result.data?.foo).toBeUndefined();
+    expect(result.data?.foo).toBeFalsy();
     const firstError = result.errors?.[0];
     expect(firstError.message).toBe('Rate limit of "Query.foo" exceeded for "1"');
     expect(firstError.path).toEqual(['foo']);
@@ -143,7 +145,7 @@ describe('Rate Limit Plugin', () => {
         },
       });
     }
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await setTimeout(1000);
     const result = await executeQuery();
 
     expect(result.errors?.length).toBeFalsy();
@@ -215,7 +217,7 @@ describe('Rate Limit Plugin', () => {
         contextValue: await contextFactory(),
       });
 
-      expect(resultFails.data?.foo).toBeUndefined();
+      expect(resultFails.data?.foo).toBeFalsy();
       const firstError = resultFails.errors?.[0];
       expect(firstError.message).toBe(`Rate limit of "Query.foo" exceeded for "User${i}"`);
       expect(firstError.path).toEqual(['foo']);

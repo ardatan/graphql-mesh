@@ -1,0 +1,30 @@
+type Book @key(fields: "id") {
+  id: ID!
+  title: String!
+  genre: String
+  author: Author!
+}
+
+type Author @key(fields: "id") {
+  id: ID!
+  books: [Book]
+}
+
+type Mutation {
+  createBook(title: String!, genre: String, authorId: ID!): Book
+  updateBook(id: ID!, title: String, genre: String, authorId: ID): Book
+  deleteBook(id: ID!): Book
+}
+
+type Query {
+  books: [Book]
+  book(id: ID!): Book
+}
+
+type Subscription {
+  bookCreated: Book
+  bookUpdated: Book
+  bookDeleted: Book
+}
+
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key"])

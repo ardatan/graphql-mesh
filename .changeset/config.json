@@ -5,8 +5,8 @@
   "access": "restricted",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["website", "@graphql-mesh/container"],
-  "changelog": ["@changesets/changelog-github", { "repo": "urigo/graphql-mesh" }],
+  "ignore": ["website", "@e2e/*", "@examples/*", "@examples-v1-next/*"],
+  "changelog": ["@changesets/changelog-github", { "repo": "ardatan/graphql-mesh" }],
   "snapshot": {
     "useCalculatedVersion": true,
     "prereleaseTemplate": "{tag}-{datetime}-{commit}"

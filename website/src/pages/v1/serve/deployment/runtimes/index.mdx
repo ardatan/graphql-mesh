@@ -1,0 +1,18 @@
+import { Callout } from '@theguild/components'
+
+# Server-side JavaScript Environments
+
+<Callout>
+  This page is currently under construction and expected to change. Please feel free to reach out to
+  us directly in case you are having any troubles.
+</Callout>
+
+For Node.js and other Node-compliant environments, you can use Serve CLI as described in the
+[Node.js guide](/v1/serve/deployment/runtimes/nodejs). But if you want to use Mesh with a
+server-side JavaScript environment that is not compatible with Node.js API, you can use the
+`createServeRuntime` function from `@graphql-mesh/serve-runtime` package.
+
+In this case, you have to pass your serve configuration inside `createServeRuntime` instead of
+exporting it `serveConfig` from `mesh.config.ts` file.
+
+See the guides on the left for examples with different server-side JavaScript environments.
