@@ -1,4 +1,5 @@
 import cluster, { type Worker } from 'node:cluster';
+import { log } from 'node:console';
 import { lstat } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { Option } from '@commander-js/extra-typings';
@@ -62,9 +63,11 @@ export const addCommand: AddCommand = (ctx, cli) =>
       let supergraph:
         | UnifiedGraphConfig
         | MeshServeHiveCDNOptions
-        | MeshServeGraphOSManagedFederationOptions = hiveCdnEndpoint || 'supergraph.graphql';
+        | MeshServeGraphOSManagedFederationOptions = 'supergraph.graphql';
       if (schemaPathOrUrl) {
+        ctx.log.info(`Found schema path or URL: ${schemaPathOrUrl}`);
         if (hiveCdnKey) {
+          ctx.log.info(`Using Hive CDN key`);
           if (!isUrl(schemaPathOrUrl)) {
             ctx.log.error(
               'Hive CDN endpoint must be a URL when providing --hive-cdn-key but got ' +
@@ -74,25 +77,64 @@ export const addCommand: AddCommand = (ctx, cli) =>
           }
           supergraph = { type: 'hive', endpoint: schemaPathOrUrl, key: hiveCdnKey };
         } else if (apolloKey) {
+          ctx.log.info(`Using GraphOS API key`);
+          if (!schemaPathOrUrl.includes('@')) {
+            ctx.log.error(
+              `Apollo GraphOS requires a graph ref in the format <graph-id>@<graph-variant> when providing --apollo-key. Please provide a valid graph ref.`,
+            );
+            process.exit(1);
+          }
           supergraph = {
             type: 'graphos',
             apiKey: apolloKey,
-            graphRef: apolloGraphRef || schemaPathOrUrl,
+            graphRef: schemaPathOrUrl,
             upLink: apolloUplink,
           };
         } else {
           supergraph = schemaPathOrUrl;
         }
+      } else if (hiveCdnEndpoint) {
+        if (!isUrl(hiveCdnEndpoint)) {
+          ctx.log.error(
+            `Hive CDN endpoint must be a valid URL but got ${hiveCdnEndpoint}. Please provide a valid URL.`,
+          );
+          process.exit(1);
+        }
+        if (!hiveCdnKey) {
+          ctx.log.error(
+            `Hive CDN requires an API key. Please provide an API key using the --hive-cdn-key option.` +
+              `Learn more at https://the-guild.dev/graphql/hive/docs/features/high-availability-cdn#cdn-access-tokens`,
+          );
+          process.exit(1);
+        }
+        ctx.log.info(`Using Hive CDN endpoint: ${hiveCdnEndpoint}`);
+        supergraph = { type: 'hive', endpoint: hiveCdnEndpoint, key: hiveCdnKey };
       } else if (apolloGraphRef) {
+        if (!apolloGraphRef.includes('@')) {
+          ctx.log.error(
+            `Apollo GraphOS requires a graph ref in the format <graph-id>@<graph-variant>. Please provide a valid graph ref.`,
+          );
+          process.exit(1);
+        }
+        if (!apolloKey) {
+          ctx.log.error(
+            `Apollo GraphOS requires an API key. Please provide an API key using the --apollo-key option.`,
+          );
+          process.exit(1);
+        }
+        ctx.log.info(`Using Apollo Graph Ref: ${apolloGraphRef}`);
         supergraph = { type: 'graphos', apiKey: apolloKey, graphRef: apolloGraphRef };
       } else if ('supergraph' in loadedConfig) {
         supergraph = loadedConfig.supergraph;
         // TODO: how to provide hive-cdn-key?
+      } else {
+        ctx.log.info(`Using default supergraph location: ${supergraph}`);
       }
 
       let registryConfig: Pick<SupergraphConfig, 'reporting'> = {};
 
       if (hiveRegistryToken) {
+        ctx.log.info(`Configuring Hive registry reporting`);
         registryConfig = {
           reporting: {
             type: 'hive',
@@ -100,6 +142,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
           },
         };
       } else if (apolloKey) {
+        ctx.log.info(`Configuring Apollo GraphOS registry reporting`);
         registryConfig = {
           reporting: {
             type: 'graphos',
@@ -154,10 +197,12 @@ export async function runSupergraph({ log }: CLIContext, config: SupergraphConfi
     absSchemaPath = isAbsolute(supergraphPath)
       ? String(supergraphPath)
       : resolve(process.cwd(), supergraphPath);
+    log.info(`Reading supergraph from ${absSchemaPath}`);
     try {
       await lstat(absSchemaPath);
     } catch {
-      throw new Error(`Supergraph schema at ${absSchemaPath} does not exist`);
+      log.error(`Could not read supergraph from ${absSchemaPath}. Make sure the file exists.`);
+      process.exit(1);
     }
   }
 

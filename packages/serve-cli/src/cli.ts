@@ -225,11 +225,11 @@ export function run(userCtx: Partial<CLIContext>) {
   cli = cli.name(binName).description(productDescription);
   cli.version(version);
 
-  const log = ctx.log.child(
-    cluster.worker?.id ? `${ctx.productName} worker #${cluster.worker.id}` : ctx.productName,
-  );
+  if (cluster.worker?.id) {
+    ctx.log = ctx.log.child(`Worker #${cluster.worker.id}`);
+  }
 
-  addCommands({ ...ctx, log }, cli);
+  addCommands(ctx, cli);
 
   return cli.parseAsync();
 }
