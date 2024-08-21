@@ -105,6 +105,8 @@ jobs:
             arch: aarch64
           - os: macos-latest-large
             arch: x86_64
+          - os: ubuntu-latest
+            arch: aarch64
 
     steps:
       - name: Checkout code
