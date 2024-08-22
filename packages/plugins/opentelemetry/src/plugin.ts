@@ -4,7 +4,7 @@ import {
   type OnValidateEventPayload,
 } from '@envelop/types';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
-import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import { DisposableSymbols, type MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import type { OnFetchHookPayload } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { isAsyncIterable } from '@graphql-tools/utils';
@@ -139,7 +139,7 @@ export function useOpenTelemetry(options: OpenTelemetryMeshPluginOptions): MeshS
   const tracer = options.tracer || trace.getTracer('mesh');
 
   return {
-    async onYogaInit() {
+    onYogaInit() {
       diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.WARN);
       contextManager.enable();
       sdk.start();
@@ -308,7 +308,7 @@ export function useOpenTelemetry(options: OpenTelemetryMeshPluginOptions): MeshS
 
       requestContextMapping.delete(request);
     },
-    [Symbol.asyncDispose]() {
+    [DisposableSymbols.asyncDispose]() {
       return sdk.shutdown();
     },
   };

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema } from 'graphql-yoga';
 import { register as registry } from 'prom-client';
-import { composeSubgraphs, getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
+import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { createServeRuntime } from '@graphql-mesh/serve-runtime';
 import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import usePrometheus from '../src/index.js';
@@ -24,10 +24,8 @@ describe('Prometheus', () => {
     },
   });
 
-  let serveRuntime: ReturnType<typeof createServeRuntime>;
-
   function newTestRuntime() {
-    serveRuntime = createServeRuntime({
+    return createServeRuntime({
       supergraph: () =>
         getUnifiedGraphGracefully([
           {
@@ -42,20 +40,22 @@ describe('Prometheus', () => {
           },
         };
       },
-      plugins: ctx => [usePrometheus(ctx)],
+      plugins: ctx => [
+        usePrometheus({
+          ...ctx,
+          metrics: {
+            graphql_mesh_subgraph_execute_duration: true,
+            graphql_mesh_subgraph_execute_errors: true,
+            graphql_mesh_fetch_duration: true,
+          },
+        }),
+      ],
       logging: !!process.env.DEBUG,
     });
   }
 
-  beforeEach(() => {
-    newTestRuntime();
-  });
-
-  afterEach(() => {
-    registry.clear();
-  });
-
   it('should track subgraph requests', async () => {
+    await using serveRuntime = newTestRuntime();
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
@@ -77,6 +77,7 @@ describe('Prometheus', () => {
     expect(metrics).toContain('operationType="query"');
   });
   it('should track subgraph request errors', async () => {
+    await using serveRuntime = newTestRuntime();
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
@@ -102,6 +103,7 @@ describe('Prometheus', () => {
   });
 
   it('can be initialized multiple times in the same node process', async () => {
+    await using serveRuntime = newTestRuntime();
     async function testQuery() {
       const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
         method: 'POST',

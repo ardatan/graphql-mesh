@@ -38,6 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
+    "@graphql-mesh/serve-runtime": "^0.8.2",
     "@graphql-mesh/transport-common": "^0.7.2",
     "@graphql-tools/utils": "^10.5.3",
     "@opentelemetry/api": "^1.9.0",
@@ -54,7 +55,6 @@
     "@opentelemetry/semantic-conventions": "^1.25.1"
   },
   "devDependencies": {
-    "@graphql-mesh/serve-runtime": "^0.8.2",
     "graphql-yoga": "^5.7.0"
   },
   "publishConfig": {
