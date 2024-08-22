@@ -8,3 +8,4 @@ export * from './plugins/useForwardHeaders.js';
 export * from './plugins/useUpstreamCancel.js';
 export * from './plugins/useContentEncoding.js';
 export * from '@whatwg-node/disposablestack';
+export * from './plugins/useCustomAgent.js';

@@ -6,6 +6,7 @@ export {
   useStaticFiles,
   useUpstreamCancel,
   useContentEncoding,
+  useCustomAgent,
 } from '@graphql-mesh/serve-runtime';
 export { PubSub } from '@graphql-mesh/utils';
 export type { MeshServeConfigContext } from '@graphql-mesh/serve-runtime';

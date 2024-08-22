@@ -8,10 +8,12 @@ export function useSubgraphExecuteDebug<TContext>(opts: {
 }): MeshServePlugin<TContext> {
   return {
     onSubgraphExecute({ executionRequest, logger = opts.logger }) {
-      logger.debug(`subgraph-execute`, () => ({
-        query: defaultPrintFn(executionRequest.document),
-        variables: executionRequest.variables,
-      }));
+      if (executionRequest) {
+        logger.debug(`subgraph-execute`, () => ({
+          query: executionRequest.document ?? defaultPrintFn(executionRequest.document),
+          variables: executionRequest.variables,
+        }));
+      }
       return function onSubgraphExecuteDone({ result }) {
         if (isAsyncIterable(result)) {
           return {
@@ -23,10 +25,12 @@ export function useSubgraphExecuteDebug<TContext>(opts: {
             },
           };
         }
-        logger.debug(`subgraph-response`, {
-          data: result.data,
-          errors: result.errors,
-        });
+        if (result) {
+          logger.debug(`subgraph-response`, {
+            data: result.data,
+            errors: result.errors,
+          });
+        }
       };
     },
   };
