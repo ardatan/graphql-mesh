@@ -1,7 +1,7 @@
 import { isAsyncIterable, type Plugin as YogaPlugin } from 'graphql-yoga';
 import type { Registry } from 'prom-client';
 import { register as defaultRegistry } from 'prom-client';
-import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import { DisposableSymbols, type MeshServePlugin } from '@graphql-mesh/serve-runtime';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
 import type { ImportFn, Logger, MeshFetchRequestInit, MeshPlugin } from '@graphql-mesh/types';
 import {
@@ -281,6 +281,9 @@ export default function useMeshPrometheus(
         };
       }
       return undefined;
+    },
+    [DisposableSymbols.dispose]() {
+      return registry.clear();
     },
   };
 }

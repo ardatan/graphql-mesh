@@ -7,3 +7,4 @@ export * from './getProxyExecutor.js';
 export * from './plugins/useForwardHeaders.js';
 export * from './plugins/useUpstreamCancel.js';
 export * from './plugins/useContentEncoding.js';
+export * from '@whatwg-node/disposablestack';
