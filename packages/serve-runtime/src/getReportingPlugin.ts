@@ -2,7 +2,7 @@ import useMeshHive from '@graphql-mesh/plugin-hive';
 import { useApolloUsageReport } from '@graphql-yoga/plugin-apollo-usage-report';
 import type { MeshServeConfig, MeshServeConfigContext, MeshServePlugin } from './types.js';
 
-export function getRegistryPlugin<TContext>(
+export function getReportingPlugin<TContext>(
   config: MeshServeConfig<TContext>,
   configContext: MeshServeConfigContext,
 ): {
