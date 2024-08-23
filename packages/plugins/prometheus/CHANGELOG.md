@@ -1,5 +1,91 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.106.0
+
+### Minor Changes
+
+- [#7407](https://github.com/ardatan/graphql-mesh/pull/7407)
+  [`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - **Breaking Change:** Rename all metrics
+  options to their actual metric name to avoid confusion.
+
+  All metric options have been moved under a mandatory `metrics` key, and the name of each options
+  have been renamed to match the default metric name.
+
+  The plugin option argument is also now mandatory.
+
+  ```diff
+  export const serveConfig = defineConfig({
+    plugins: pluginCtx => [
+      usePrometheus({
+        ...pluginCtx,
+
+        // Enable all available metrics
+  -     fetchMetrics: true,
+  -     subgraphExecute: true,
+  -     subgraphExecuteErrors: true,
+  -     http: true
+  -     requestSummary: true,
+  -     parse: true,
+  -     validate: true,
+  -     contextBuilding: true,
+  -     execute: true,
+  -     subscribe: true,
+  -     errors: true,
+  -     deprecatedFields: true,
+  -     requestTotalDuration: true,
+  -     schemaChangeCount: true,
+
+        // Warning: enabling resolvers level metrics will introduce significant overhead
+  -     resolvers: true,
+  +     metrics: {
+  +       graphql_mesh_fetch_duration: true,
+  +       graphql_mesh_subgraph_execute_duration: true,
+  +       graphql_mesh_subgraph_execute_errors
+  +       graphql_yoga_http_duration: true,
+  +       graphql_envelop_request_time_summary: true,
+  +       graphql_envelop_phase_parse: true,
+  +       graphql_envelop_phase_validate: true,
+  +       graphql_envelop_phase_context: true,
+  +       graphql_envelop_phase_execute: true,
+  +       graphql_envelop_phase_subscribe: true,
+  +       graphql_envelop_error_result: true,
+  +       graphql_envelop_deprecated_field: true,
+  +       graphql_envelop_request_duration: true,
+  +       graphql_envelop_schema_change: true,
+
+          // Warning: enabling resolvers level metrics will introduce significant overhead
+  +       graphql_envelop_execute_resolver: true,
+  +     }
+      })
+    ]
+  })
+  ```
+
+### Patch Changes
+
+- [#7407](https://github.com/ardatan/graphql-mesh/pull/7407)
+  [`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-yoga/plugin-prometheus@^6.0.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/6.0.0)
+    (from `^5.0.0`, in `dependencies`)
+
+- [#7407](https://github.com/ardatan/graphql-mesh/pull/7407)
+  [`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Add missing labels `path` and `phase`
+  of `graphql_envelop_error_result` metric to the configuration.
+
+  Add missing labels `method` and `statusCode` of `graphql_yoga_http_duration` metric to the
+  configuration.
+
+- Updated dependencies
+  [[`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e),
+  [`46f847d`](https://github.com/ardatan/graphql-mesh/commit/46f847d47e9ced84a0010c5f3a9aae5702e0f96f),
+  [`416897a`](https://github.com/ardatan/graphql-mesh/commit/416897a9b8924d309e685faf92325391f7d7f687)]:
+  - @graphql-mesh/serve-runtime@0.8.3
+
 ## 0.105.2
 
 ### Patch Changes

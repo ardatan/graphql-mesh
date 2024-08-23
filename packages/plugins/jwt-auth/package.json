@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-jwt-auth",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,7 +41,7 @@
     "@graphql-yoga/plugin-jwt": "^3.0.2"
   },
   "devDependencies": {
-    "@graphql-mesh/serve-runtime": "^0.8.2",
+    "@graphql-mesh/serve-runtime": "^0.8.3",
     "graphql-yoga": "^5.7.0",
     "jsonwebtoken": "9.0.2"
   },
