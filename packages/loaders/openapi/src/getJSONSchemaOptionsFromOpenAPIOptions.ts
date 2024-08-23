@@ -105,11 +105,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     if (mapping) {
       for (const [key, value] of Object.entries(mapping)) {
         if (typeof value === 'string') {
-          const docIdentifier = value.startsWith('#')
-            ? '#'
-            : value.startsWith('../')
-              ? '../'
-              : null;
+          const docIdentifier = value.startsWith('#') ? '#' : value.startsWith('..') ? '..' : null;
           if (docIdentifier) {
             const [, ref] = value.split(docIdentifier);
             (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
