@@ -145,4 +145,64 @@ describe('Hive CDN', () => {
     expect(schemaChangeSpy).toHaveBeenCalledTimes(1);
     expect(printSchema(schemaChangeSpy.mock.calls[0][0])).toBe(printSchema(upstreamSchema));
   });
+  it('handles persisted documents', async () => {
+    const token = 'secret';
+    await using cdnServer = await createDisposableServer((req, res) => {
+      if (req.url === '/apps/graphql-app/1.0.0/Eaca86e9999dce9b4f14c4ed969aca3258d22ed00') {
+        const hiveCdnKey = req.headers['x-hive-cdn-key'];
+        if (hiveCdnKey !== token) {
+          res.statusCode = 401;
+          res.end('Unauthorized');
+          return;
+        }
+        res.end(/* GraphQL */ `
+          query MyTest {
+            foo
+          }
+        `);
+      }
+    });
+    await using upstreamServer = await createDisposableServer(
+      createYoga<{}>({
+        schema: createSchema({
+          typeDefs: /* GraphQL */ `
+            type Query {
+              foo: String
+            }
+          `,
+          resolvers: {
+            Query: {
+              foo: () => 'bar',
+            },
+          },
+        }),
+      }),
+    );
+    await using serveRuntime = createServeRuntime({
+      proxy: {
+        endpoint: `http://localhost:${upstreamServer.address().port}/graphql`,
+      },
+      persistedDocuments: {
+        type: 'hive',
+        endpoint: `http://localhost:${cdnServer.address().port}`,
+        token,
+      },
+      logging: !!process.env.DEBUG,
+    });
+    const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        documentId: 'graphql-app~1.0.0~Eaca86e9999dce9b4f14c4ed969aca3258d22ed00',
+      }),
+    });
+    const resJson: ExecutionResult = await res.json();
+    expect(resJson).toEqual({
+      data: {
+        foo: 'bar',
+      },
+    });
+  });
 });
