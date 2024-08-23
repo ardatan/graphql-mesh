@@ -105,9 +105,27 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     if (mapping) {
       for (const [key, value] of Object.entries(mapping)) {
         if (typeof value === 'string') {
-          const [, ref] = value.split('#');
-          (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
-          (schema as any).discriminatorMapping[key] = resolvePath(ref, oasOrSwagger);
+          const docIdentifier = value.startsWith('#')
+            ? '#'
+            : value.startsWith('../')
+              ? '../'
+              : null;
+          if (docIdentifier) {
+            const [, ref] = value.split(docIdentifier);
+            (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
+            (schema as any).discriminatorMapping[key] = resolvePath(ref, oasOrSwagger);
+          } else if (value.includes('/')) {
+            logger.warn(`Unsupported discriminator mapping: ${value}`);
+            continue;
+          } else {
+            const schemaObj = (oasOrSwagger as OpenAPIV3.Document).components?.schemas?.[value];
+            if (!schemaObj) {
+              logger.warn(`Invalid discriminator mapping: ${value}`);
+              continue;
+            }
+            (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
+            (schema as any).discriminatorMapping[key] = schemaObj;
+          }
         }
       }
     }

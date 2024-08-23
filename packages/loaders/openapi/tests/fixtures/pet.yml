@@ -29,8 +29,8 @@ components:
       discriminator:
         propertyName: petType
         mapping:
-          Dog: '#/components/schemas/Dog'
-          Cat: '#/components/schemas/Cat'
+          Dog: Dog
+          Cat: '../components/schemas/Cat'
       properties:
         name:
           type: string
