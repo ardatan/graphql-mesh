@@ -1,5 +1,26 @@
 # @omnigraph/openapi
 
+## 0.106.3
+
+### Patch Changes
+
+- [#7565](https://github.com/ardatan/graphql-mesh/pull/7565)
+  [`9118cf4`](https://github.com/ardatan/graphql-mesh/commit/9118cf474ff81b9f44e3c5b3d614fb180a529658)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support different ref types in
+  `discriminator.mapping`;
+
+  All of the following ref formats are considered as valid;
+
+  ```yml
+  discriminator:
+    mapping:
+      A: '#/components/schemas/A'
+      # or
+      A: 'A'
+      # or
+      A: '../components/schemas/A'
+  ```
+
 ## 0.106.2
 
 ### Patch Changes

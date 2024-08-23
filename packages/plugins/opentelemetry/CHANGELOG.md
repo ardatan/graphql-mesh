@@ -1,5 +1,28 @@
 # @graphql-mesh/plugin-opentelemetry
 
+## 0.3.3
+
+### Patch Changes
+
+- [#7407](https://github.com/ardatan/graphql-mesh/pull/7407)
+  [`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/serve-runtime@^0.8.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/serve-runtime/v/0.8.2)
+    (to `dependencies`)
+
+- [#7407](https://github.com/ardatan/graphql-mesh/pull/7407)
+  [`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Export DisposableSymbols from
+  serveRuntime and use it in plugins
+
+- Updated dependencies
+  [[`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e),
+  [`46f847d`](https://github.com/ardatan/graphql-mesh/commit/46f847d47e9ced84a0010c5f3a9aae5702e0f96f),
+  [`416897a`](https://github.com/ardatan/graphql-mesh/commit/416897a9b8924d309e685faf92325391f7d7f687)]:
+  - @graphql-mesh/serve-runtime@0.8.3
+
 ## 0.3.2
 
 ### Patch Changes

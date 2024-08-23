@@ -1,5 +1,47 @@
 # @graphql-mesh/serve-cli
 
+## 0.11.3
+
+### Patch Changes
+
+- [#7560](https://github.com/ardatan/graphql-mesh/pull/7560)
+  [`46f847d`](https://github.com/ardatan/graphql-mesh/commit/46f847d47e9ced84a0010c5f3a9aae5702e0f96f)
+  Thanks [@ardatan](https://github.com/ardatan)! - New plugin to set a custom agent;
+
+  ```ts
+  import { readFileSync } from 'fs'
+  import { Agent } from 'https'
+  import { defineConfig, useCustomAgent } from '@graphql-mesh/serve-cli'
+
+  const agent = new Agent({
+    ca: readFileSync('/path/to/ca.crt')
+    // or
+    rejectUnauthorized: false
+  })
+
+  export const serveConfig = defineConfig({
+    plugins: () => [
+      useCustomAgent(
+        // This function will be called for each URL to determine if the custom agent should be used
+        ({ url }) =>
+          url === 'https://example.com'
+            ? agent
+            : undefined
+      )
+    ]
+  })
+  ```
+
+- [#7407](https://github.com/ardatan/graphql-mesh/pull/7407)
+  [`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Updated Prom plugin version to latest
+
+- Updated dependencies
+  [[`3ea4ea7`](https://github.com/ardatan/graphql-mesh/commit/3ea4ea7e62f4a957a3733eab59ccefd37d8b9e8e),
+  [`46f847d`](https://github.com/ardatan/graphql-mesh/commit/46f847d47e9ced84a0010c5f3a9aae5702e0f96f),
+  [`416897a`](https://github.com/ardatan/graphql-mesh/commit/416897a9b8924d309e685faf92325391f7d7f687)]:
+  - @graphql-mesh/serve-runtime@0.8.3
+
 ## 0.11.2
 
 ### Patch Changes
