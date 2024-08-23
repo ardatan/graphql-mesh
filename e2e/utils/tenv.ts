@@ -262,6 +262,7 @@ export function createTenv(cwd: string): Tenv {
 
       let proc: Proc,
         waitForExit: Promise<void> | null = null;
+
       if (serveRunner === 'docker') {
         const volumes: ContainerOptions['volumes'] = runner?.docker?.volumes || [];
 
@@ -329,10 +330,9 @@ export function createTenv(cwd: string): Tenv {
           '--import',
           'tsx',
           path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
-          'supergraph',
-          supergraph,
-          createPortOpt(port),
+          ...(supergraph ? ['supergraph', supergraph] : []),
           ...args,
+          createPortOpt(port),
         );
       }
 

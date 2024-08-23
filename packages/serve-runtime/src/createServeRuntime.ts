@@ -53,7 +53,7 @@ import {
 import { schemaFromExecutor, wrapSchema } from '@graphql-tools/wrap';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
-import { getRegistryPlugin } from './getRegistryPlugin.js';
+import { getReportingPlugin } from './getReportingPlugin.js';
 import { getUnifiedGraphSDL, handleUnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
 import landingPageHtml from './landing-page-html.js';
 import { useChangingSchema } from './plugins/useChangingSchema.js';
@@ -118,7 +118,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   };
   let contextBuilder: <T>(context: T) => MaybePromise<T>;
   let readinessChecker: () => MaybePromise<boolean>;
-  const registryPlugin = getRegistryPlugin(config, configContext);
+  const { name: reportingTarget, plugin: registryPlugin } = getReportingPlugin(
+    config,
+    configContext,
+  );
   let persistedDocumentsPlugin: MeshServePlugin = {};
   if (config.reporting?.type !== 'hive' && config.persistedDocuments?.type === 'hive') {
     persistedDocumentsPlugin = useMeshHive({
@@ -299,6 +302,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         } else {
           htmlParts.push(`<p><strong>Source: </strong> <i>GraphQL schema in config</i></p>`);
         }
+      }
+      if (reportingTarget) {
+        htmlParts.push(`<p><strong>Usage Reporting: </strong> <i>${reportingTarget}</i></p>`);
       }
       htmlParts.push(`</section>`);
       return htmlParts.join('');
@@ -571,6 +577,9 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         htmlParts.push(`<h3>Supergraph Status: Loaded ✅</h3>`);
         if (supergraphLoadedPlace) {
           htmlParts.push(`<p><strong>Source: </strong> <i>${supergraphLoadedPlace}</i></p>`);
+          if (reportingTarget) {
+            htmlParts.push(`<p><strong>Usage Reporting: </strong> <i>${reportingTarget}</i></p>`);
+          }
         }
         htmlParts.push(`<table>`);
         htmlParts.push(`<tr><th>Subgraph</th><th>Transport</th><th>Location</th></tr>`);
