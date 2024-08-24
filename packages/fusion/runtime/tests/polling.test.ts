@@ -102,4 +102,88 @@ describe('Polling', () => {
     // Check if transport executor is disposed on global shutdown
     expect(disposeFn).toHaveBeenCalledTimes(3);
   });
+  it('continues polling after failing initial fetch', async () => {
+    jest.useFakeTimers();
+    const pollingInterval = 35_000;
+    let schema: GraphQLSchema;
+    let shouldFail = true;
+    const unifiedGraphFetcher = jest.fn(() => {
+      if (shouldFail) {
+        throw new Error('Failed to fetch schema');
+      }
+      const time = new Date().toISOString();
+      schema = createSchema({
+        typeDefs: /* GraphQL */ `
+          """
+          Fetched on ${time}
+          """
+          type Query {
+            time: String
+          }
+        `,
+        resolvers: {
+          Query: {
+            time() {
+              return time;
+            },
+          },
+        },
+      });
+      return getUnifiedGraphGracefully([
+        {
+          name: 'Test',
+          schema,
+        },
+      ]);
+    });
+    const manager = new UnifiedGraphManager({
+      getUnifiedGraph: unifiedGraphFetcher,
+      pollingInterval: pollingInterval,
+      batch: false,
+      transports() {
+        return {
+          getSubgraphExecutor() {
+            return createDefaultExecutor(schema);
+          },
+        };
+      },
+    });
+    async function getFetchedTimeOnComment() {
+      const schema = await manager.getUnifiedGraph();
+      const queryType = schema.getQueryType();
+      const lastFetchedDateStr = queryType.description.match(/Fetched on (.*)/)[1];
+      const lastFetchedDate = new Date(lastFetchedDateStr);
+      return lastFetchedDate;
+    }
+    async function getFetchedTimeFromResolvers() {
+      const schema = await manager.getUnifiedGraph();
+      const result = await normalizedExecutor({
+        schema,
+        document: parse(/* GraphQL */ `
+          query {
+            time
+          }
+        `),
+      });
+      if (isAsyncIterable(result)) {
+        throw new Error('Unexpected async iterable');
+      }
+      return new Date(result.data.time);
+    }
+    async function compareTimes() {
+      const timeFromComment = await getFetchedTimeOnComment();
+      const timeFromResolvers = await getFetchedTimeFromResolvers();
+      expect(timeFromComment).toEqual(timeFromResolvers);
+    }
+    await expect(async () => manager.getUnifiedGraph()).rejects.toThrow();
+    shouldFail = false;
+    jest.advanceTimersByTime(pollingInterval);
+    await compareTimes();
+    shouldFail = true;
+    jest.advanceTimersByTime(pollingInterval);
+    // Should not fail again once it has succeeded
+    await compareTimes();
+    await manager[DisposableSymbols.asyncDispose]();
+    expect(unifiedGraphFetcher).toHaveBeenCalledTimes(3);
+  });
 });
