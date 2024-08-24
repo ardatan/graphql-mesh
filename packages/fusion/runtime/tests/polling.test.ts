@@ -183,7 +183,9 @@ describe('Polling', () => {
     jest.advanceTimersByTime(pollingInterval);
     // Should not fail again once it has succeeded
     await compareTimes();
+    jest.advanceTimersByTime(pollingInterval);
+    // Should keep polling even if it fails in somewhere
     await manager[DisposableSymbols.asyncDispose]();
-    expect(unifiedGraphFetcher).toHaveBeenCalledTimes(3);
+    expect(unifiedGraphFetcher).toHaveBeenCalledTimes(4);
   });
 });
