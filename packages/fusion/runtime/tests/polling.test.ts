@@ -39,7 +39,7 @@ describe('Polling', () => {
       ]);
     };
     const disposeFn = jest.fn();
-    const manager = new UnifiedGraphManager({
+    await using manager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
       pollingInterval: pollingInterval,
       batch: false,
@@ -136,7 +136,7 @@ describe('Polling', () => {
         },
       ]);
     });
-    const manager = new UnifiedGraphManager({
+    await using manager = new UnifiedGraphManager({
       getUnifiedGraph: unifiedGraphFetcher,
       pollingInterval: pollingInterval,
       batch: false,
@@ -185,7 +185,6 @@ describe('Polling', () => {
     await compareTimes();
     jest.advanceTimersByTime(pollingInterval);
     // Should keep polling even if it fails in somewhere
-    await manager[DisposableSymbols.asyncDispose]();
     expect(unifiedGraphFetcher).toHaveBeenCalledTimes(4);
   });
 });
