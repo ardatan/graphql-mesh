@@ -132,83 +132,93 @@ export class UnifiedGraphManager<TContext> {
 
   private getAndSetUnifiedGraph(): MaybePromise<true> {
     this.pausePolling();
-    return mapMaybePromise(
-      this.opts.getUnifiedGraph(this.opts.transportContext),
-      (loadedUnifiedGraph: string | GraphQLSchema | DocumentNode) => {
-        if (
-          loadedUnifiedGraph != null &&
-          this.lastLoadedUnifiedGraph != null &&
-          compareSchemas(loadedUnifiedGraph, this.lastLoadedUnifiedGraph)
-        ) {
-          this.opts.transportContext?.logger?.debug('Unified Graph has not changed, skipping...');
-          this.continuePolling();
-          return;
-        }
-        if (this.lastLoadedUnifiedGraph != null) {
-          this.opts.transportContext?.logger?.debug('Unified Graph changed, updating...');
-        }
-        let cleanupJob$: MaybePromise<void>;
-        if (this._transportExecutorStack) {
-          cleanupJob$ = this._transportExecutorStack.disposeAsync();
-        }
-        return mapMaybePromise(cleanupJob$, () => {
-          this._transportExecutorStack = new AsyncDisposableStack();
-          this.lastLoadedUnifiedGraph ||= loadedUnifiedGraph;
-          this.lastLoadedUnifiedGraph = loadedUnifiedGraph;
-          this.unifiedGraph = ensureSchema(loadedUnifiedGraph);
-          const {
-            unifiedGraph: newUnifiedGraph,
-            transportEntryMap,
-            subschemas,
-            additionalResolvers,
-          } = this.handleUnifiedGraph({
-            unifiedGraph: this.unifiedGraph,
-            additionalTypeDefs: this.opts.additionalTypeDefs,
-            additionalResolvers: this.opts.additionalResolvers,
-            onSubgraphExecute(subgraphName, execReq) {
-              return onSubgraphExecute(subgraphName, execReq);
-            },
-            transportEntryAdditions: this.opts.transportEntryAdditions,
-            batch: this.batch,
-          });
-          this.unifiedGraph = newUnifiedGraph;
-          const onSubgraphExecute = getOnSubgraphExecute({
-            onSubgraphExecuteHooks: this.onSubgraphExecuteHooks,
-            transports: this.opts.transports,
-            transportContext: this.opts.transportContext,
-            transportEntryMap,
-            getSubgraphSchema(subgraphName) {
-              const subgraph = subschemas.find(s => compareSubgraphNames(s.name, subgraphName));
-              if (!subgraph) {
-                throw new Error(`Subgraph ${subgraphName} not found`);
-              }
-              return subgraph.schema;
-            },
-            transportExecutorStack: this._transportExecutorStack,
-          });
-          if (this.opts.additionalResolvers || additionalResolvers.length) {
-            this.inContextSDK = getInContextSDK(
-              this.unifiedGraph,
-              // @ts-expect-error Legacy Mesh RawSource is not compatible with new Mesh
-              subschemas,
-              this.opts.transportContext?.logger,
-              this.opts.onDelegateHooks || [],
-            );
+    try {
+      return mapMaybePromise(
+        this.opts.getUnifiedGraph(this.opts.transportContext),
+        (loadedUnifiedGraph: string | GraphQLSchema | DocumentNode) => {
+          if (
+            loadedUnifiedGraph != null &&
+            this.lastLoadedUnifiedGraph != null &&
+            compareSchemas(loadedUnifiedGraph, this.lastLoadedUnifiedGraph)
+          ) {
+            this.opts.transportContext?.logger?.debug('Unified Graph has not changed, skipping...');
+            this.continuePolling();
+            return;
           }
+          if (this.lastLoadedUnifiedGraph != null) {
+            this.opts.transportContext?.logger?.debug('Unified Graph changed, updating...');
+          }
+          let cleanupJob$: MaybePromise<void>;
+          if (this._transportExecutorStack) {
+            cleanupJob$ = this._transportExecutorStack.disposeAsync();
+          }
+          return mapMaybePromise(cleanupJob$, () => {
+            this._transportExecutorStack = new AsyncDisposableStack();
+            this.lastLoadedUnifiedGraph ||= loadedUnifiedGraph;
+            this.lastLoadedUnifiedGraph = loadedUnifiedGraph;
+            this.unifiedGraph = ensureSchema(loadedUnifiedGraph);
+            const {
+              unifiedGraph: newUnifiedGraph,
+              transportEntryMap,
+              subschemas,
+              additionalResolvers,
+            } = this.handleUnifiedGraph({
+              unifiedGraph: this.unifiedGraph,
+              additionalTypeDefs: this.opts.additionalTypeDefs,
+              additionalResolvers: this.opts.additionalResolvers,
+              onSubgraphExecute(subgraphName, execReq) {
+                return onSubgraphExecute(subgraphName, execReq);
+              },
+              transportEntryAdditions: this.opts.transportEntryAdditions,
+              batch: this.batch,
+            });
+            this.unifiedGraph = newUnifiedGraph;
+            const onSubgraphExecute = getOnSubgraphExecute({
+              onSubgraphExecuteHooks: this.onSubgraphExecuteHooks,
+              transports: this.opts.transports,
+              transportContext: this.opts.transportContext,
+              transportEntryMap,
+              getSubgraphSchema(subgraphName) {
+                const subgraph = subschemas.find(s => compareSubgraphNames(s.name, subgraphName));
+                if (!subgraph) {
+                  throw new Error(`Subgraph ${subgraphName} not found`);
+                }
+                return subgraph.schema;
+              },
+              transportExecutorStack: this._transportExecutorStack,
+            });
+            if (this.opts.additionalResolvers || additionalResolvers.length) {
+              this.inContextSDK = getInContextSDK(
+                this.unifiedGraph,
+                // @ts-expect-error Legacy Mesh RawSource is not compatible with new Mesh
+                subschemas,
+                this.opts.transportContext?.logger,
+                this.opts.onDelegateHooks || [],
+              );
+            }
+            this.continuePolling();
+            this._transportEntryMap = transportEntryMap;
+            this.opts.onSchemaChange?.(this.unifiedGraph);
+            return true;
+          });
+        },
+        err => {
+          this.opts.transportContext?.logger?.error('Failed to load Supergraph', err);
           this.continuePolling();
-          this._transportEntryMap = transportEntryMap;
-          this.opts.onSchemaChange?.(this.unifiedGraph);
+          if (!this.unifiedGraph) {
+            throw err;
+          }
           return true;
-        });
-      },
-      err => {
-        this.opts.transportContext?.logger?.error('Failed to load Supergraph', err);
-        if (!this.unifiedGraph) {
-          throw err;
-        }
-        return true;
-      },
-    );
+        },
+      );
+    } catch (e) {
+      this.opts.transportContext?.logger?.error('Failed to load Supergraph', e);
+      this.continuePolling();
+      if (!this.unifiedGraph) {
+        throw e;
+      }
+      return true;
+    }
   }
 
   public getUnifiedGraph() {
