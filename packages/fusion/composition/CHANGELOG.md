@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-composition
 
+## 0.4.5
+
+### Patch Changes
+
+- [#7488](https://github.com/ardatan/graphql-mesh/pull/7488)
+  [`5146df0`](https://github.com/ardatan/graphql-mesh/commit/5146df0fd3313227d5d7df2beb726ca89e13923f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support auth directives
+
 ## 0.4.4
 
 ### Patch Changes

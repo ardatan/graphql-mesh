@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.95.4",
-    "@graphql-mesh/grpc": "0.104.4",
+    "@graphql-mesh/grpc": "0.104.5",
     "@graphql-mesh/transform-naming-convention": "0.102.4",
     "@grpc/grpc-js": "1.11.1",
     "@grpc/proto-loader": "0.7.13",
