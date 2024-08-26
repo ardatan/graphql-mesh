@@ -36,6 +36,7 @@
   "typings": "dist/typings/index.d.ts",
   "scripts": {
     "bundle": "(rm -rf bundle || true) && rollup -c && rollup -c rollup.binary.config.js",
+    "inject-version": "tsx scripts/inject-version.ts",
     "package-binary": "tsx scripts/package-binary.ts",
     "start": "tsx src/bin.ts"
   },
