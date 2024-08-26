@@ -94,6 +94,7 @@ export async function loadGraphQLSchemaFromNeo4J(
   (typeDefs.definitions as DefinitionNode[]).push(
     ...parse(
       /* GraphQL */ `
+        scalar Any
         directive @relationshipProperties on OBJECT
         directive @relationship(
           type: String
@@ -107,6 +108,12 @@ export async function loadGraphQLSchemaFromNeo4J(
         directive @introspection(
           subgraph: String
         ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+        directive @transport(
+          kind: String
+          subgraph: String
+          location: String
+          options: Any
+        ) on SCHEMA
       `,
       {
         noLocation: true,
@@ -140,13 +147,7 @@ export async function loadGraphQLSchemaFromNeo4J(
   ];
   return mergeSchemas({
     schemas: [schema],
-    typeDefs: [
-      typeDefs,
-      `
-        scalar Any
-        directive @transport(kind: String, subgraph: String, location: String, options: Any) on SCHEMA
-      `,
-    ],
+    typeDefs,
     assumeValid: true,
     assumeValidSDL: true,
   });

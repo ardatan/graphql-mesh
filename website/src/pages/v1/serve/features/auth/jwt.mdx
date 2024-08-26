@@ -574,3 +574,39 @@ export const serveConfig = defineConfig({
 > In case you want to handle the error yourself, you can set
 > `reject: { missingToken: false, invalidToken: false }` and handle the error in your resolvers. The
 > `context.jwt` will be `undefined` in case of missing or invalid token.
+
+### Granular Protection optionally with Auth Directives (`@authenticated`, `@requiresScopes` and `@policy`)
+
+By default, the JWT plugin protects the whole schema. If you want to use a granular protection by
+using Federation directives such as `@authenticated`, `@requiresScopes` and `@policy`, you can use
+[Generic Auth plugin](/v1/serve/features/auth/generic-auth) to have a granular protection using with
+or without JWT.
+
+With the following configuration, you can use the JWT plugin to extract the token and claims, and
+then use the Generic Auth plugin to protect the schema with the Federation directives:
+
+```ts
+import { useGenericAuth, useJWT } from '@graphql-mesh/plugin-jwt-auth'
+
+export const serveConfig = defineConfig({
+  plugins: () => [
+    useJWT({
+      // You have to disable the default rejection of the JWT plugin
+      reject: {
+        missingToken: false,
+        invalidToken: false
+      }
+    }),
+    useGenericAuth({
+      // Then set generic auth plugin to use granular mode
+      mode: 'protect-granular',
+      // Set where to extract the payload
+      resolveUser: ctx => ctx.jwt?.payload,
+      // If you want to continue execution even if some fields are rejected
+      rejectUnauthenticated: false
+    })
+  ]
+})
+```
+
+[Learn more about granular protection of Generic Auth plugin](/v1/serve/features/auth/generic-auth)

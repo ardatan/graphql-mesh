@@ -30,7 +30,9 @@ import { composeServices } from '@theguild/federation-composition';
 import {
   convertSubgraphToFederationv2,
   detectAndAddMeshDirectives,
+  importFederationDirectives,
   importMeshDirectives,
+  normalizeDirectiveExtensions,
 } from './federation-utils.js';
 
 export interface SubgraphConfig {
@@ -78,7 +80,7 @@ export function getAnnotatedSubgraphs(
 
     let mergeDirectiveUsed = false;
     const sourceDirectiveUsed = transforms?.length > 0;
-    const annotatedSubgraph = mapSchema(schema, {
+    const annotatedSubgraph = mapSchema(normalizeDirectiveExtensions(schema), {
       [MapperKind.TYPE]: type => {
         if (!sourceDirectiveUsed || isSpecifiedScalarType(type)) {
           return type;
@@ -484,6 +486,7 @@ export function getAnnotatedSubgraphs(
           },
           // Cleanup AST Node to avoid conflicts with extensions
           astNode: undefined,
+          extensionASTNodes: [],
         });
         extraSchemaDefinitionDirectives = Object.fromEntries(schemaDirectiveExtraEntries);
       }
@@ -499,6 +502,7 @@ export function getAnnotatedSubgraphs(
             .replace('@merge(', '@merge(subgraph: String, ')
             .replace('on ', 'repeatable on '),
         );
+        transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@key']);
       }
     }
     if (sourceDirectiveUsed) {
