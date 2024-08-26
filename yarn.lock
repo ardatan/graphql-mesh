@@ -4050,19 +4050,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/extended-validation@npm:4.1.0-alpha-20240812121953-81638fef":
-  version: 4.1.0-alpha-20240812121953-81638fef
-  resolution: "@envelop/extended-validation@npm:4.1.0-alpha-20240812121953-81638fef"
-  dependencies:
-    "@graphql-tools/utils": "npm:^10.0.0"
-    tslib: "npm:^2.5.0"
-  peerDependencies:
-    "@envelop/core": ^5.0.0
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/5bc351f3d28fbe12a16ee42b4eede677f12e57815e5d5a8a858a9034577a5528448cf78d5e88e5a8892a9db3320f90d7ae773c1c3e357cbb4099f738de647dea
-  languageName: node
-  linkType: hard
-
 "@envelop/extended-validation@npm:^4.0.0":
   version: 4.0.0
   resolution: "@envelop/extended-validation@npm:4.0.0"
@@ -4076,17 +4063,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/generic-auth@npm:8.0.0-alpha-20240812121953-81638fef":
-  version: 8.0.0-alpha-20240812121953-81638fef
-  resolution: "@envelop/generic-auth@npm:8.0.0-alpha-20240812121953-81638fef"
+"@envelop/extended-validation@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@envelop/extended-validation@npm:4.1.0"
   dependencies:
-    "@envelop/extended-validation": "npm:4.1.0-alpha-20240812121953-81638fef"
+    "@graphql-tools/utils": "npm:^10.0.0"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    "@envelop/core": ^5.0.2
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/9b65b4c7040b024ab95aaf901d79cea9a7e61406fe0c7660cde91b7fbfbbae74516d3940b2df3e639e359bb96185df8769c2842367f70e78317cefe8cae12ddf
+  languageName: node
+  linkType: hard
+
+"@envelop/generic-auth@npm:8.0.0":
+  version: 8.0.0
+  resolution: "@envelop/generic-auth@npm:8.0.0"
+  dependencies:
+    "@envelop/extended-validation": "npm:^4.1.0"
     "@graphql-tools/utils": "npm:^10.5.1"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.0
+    "@envelop/core": ^5.0.2
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/be6e297b1a352d51b8db64c1eba13b9178b0faac6959ffb80ccb82b10a6621236e3a72c5459d559d8df1d9d9109a2c4391676b1eb10d6411b655bb2cac79c501
+  checksum: 10c0/0fe9a6cc7f3d4d06aea846428ca2bf090f7060cfd112674bab8687fa0c1d71bce0009f9c722a52d4c6993a62096df8d2ab362a1533ad58f177372ac8c4b24e98
   languageName: node
   linkType: hard
 
@@ -6415,7 +6415,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth"
   dependencies:
-    "@envelop/generic-auth": "npm:8.0.0-alpha-20240812121953-81638fef"
+    "@envelop/generic-auth": "npm:8.0.0"
     "@graphql-mesh/serve-runtime": "npm:^0.8.5"
     "@graphql-yoga/plugin-jwt": "npm:^3.0.2"
     graphql-yoga: "npm:^5.7.0"
