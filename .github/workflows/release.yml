@@ -112,7 +112,7 @@ jobs:
 
       - name: Build the project
         working-directory: ./packages/serve-cli
-        run: yarn bundle-binary
+        run: yarn bundle
 
       - name: Package for ${{ matrix.os }} ${{ matrix.arch }}
         if: matrix.arch == 'x86_64' || matrix.os == 'macos-latest-large'
