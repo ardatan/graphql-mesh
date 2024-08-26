@@ -384,6 +384,7 @@ jobs:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn bundle
       - name: package binary
+        if: matrix.setup.serve-runner == 'bin'
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         working-directory: packages/serve-cli
