@@ -1,5 +1,19 @@
 # @graphql-mesh/plugin-opentelemetry
 
+## 0.3.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005),
+  [`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005),
+  [`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005),
+  [`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005)]:
+  - @graphql-mesh/serve-runtime@0.8.5
+  - @graphql-mesh/transport-common@0.7.4
+  - @graphql-mesh/types@0.102.4
+  - @graphql-mesh/utils@0.102.4
+
 ## 0.3.4
 
 ### Patch Changes
