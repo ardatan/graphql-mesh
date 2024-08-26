@@ -125,5 +125,5 @@ jobs:
         id: upload_artifact
         uses: actions/upload-artifact@v4
         with:
-          name: packages/serve-cli/mesh-serve
-          path: mesh-serve-${{ matrix.os }}-${{ matrix.arch }}
+          name: mesh-serve_${{ matrix.os }}_${{ matrix.arch }}
+          path: packages/serve-cli/mesh-serve
