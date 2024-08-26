@@ -260,7 +260,7 @@ You can use `@requiresScope` directive to protect your schema based on the user'
 Here's an example of how you can use it:
 
 ```graphql
-directive @requiresScopes(scopes: [[String!]!]!) on FIELD_DEFINITION | OBJECT | INTERFACE
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@requiresScopes"])
 
 type Query {
   me: User! @requiresScopes(scopes: [["read:user"]])
@@ -285,6 +285,8 @@ useGenericAuth({
 You can also apply `AND` or `OR` logic to the scopes:
 
 ```graphql
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@requiresScopes"])
+
 type Query {
   # This field requires the user to have `read:user` OR `read:admin` scopes
   me: User! @requiresScopes(scopes: [["read:user"], ["read:admin"]])
@@ -300,7 +302,7 @@ You can use the `@policy` directive to fetch the roles from a policy service. He
 how you can use it:
 
 ```graphql
-directive @policy(name: String!) on FIELD_DEFINITION | OBJECT | INTERFACE
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@policy"])
 
 type Query {
   me: User! @policy(policies: [["read:user"]])
