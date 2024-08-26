@@ -7,6 +7,8 @@ import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import sucrase from '@rollup/plugin-sucrase';
 
+console.log('Bundling...');
+
 /**
  * Dependencies that need to be bundled and placed in the bundled node_modules. Modules that
  * are imported by the `mesh.config.ts` file need to exist here.

@@ -35,10 +35,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "scripts": {
-    "bundle": "(rm -rf bundle || true) && rollup -c",
-    "bundle-binary": "(rm -rf bundle || true) && rollup -c rollup.binary.config.js",
-    "inject-version": "tsx scripts/inject-version.ts",
-    "package-node-sea": "chmod +x ./package-binary.sh && ./package-binary.sh macos-latest-large aarch64",
+    "bundle": "(rm -rf bundle || true) && rollup -c && rollup -c rollup.binary.config.js",
     "start": "tsx src/bin.ts"
   },
   "peerDependencies": {
