@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { defineConfig } from 'rollup';
+import { defineConfig, rollup } from 'rollup';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 const output = 'bundle/mesh-serve.cjs';
@@ -14,21 +14,73 @@ export default defineConfig({
     inlineDynamicImports: true,
   },
   external: ['uWebSockets.js', '@parcel/watcher'],
-  plugins: [nodeResolve(), esmGraphql(), installUws()],
+  plugins: [nodeResolve(), isomorphicGraphql(), installUws()],
 });
 
 /**
- * Replaces all import `graphql/*.js` imports to `graphql/*.mjs` ensuring esm usage.
+ * Bundles all "graphql*" imports inline as an IIFE that first checks
+ * whether the module is already available in near node_modules and uses it,
+ * otherwise uses the bundled version.
+ *
+ * Essentially:
+ * ```js
+ * const graphql = require('graphql')
+ * ```
+ * becomes SEA safe version of:
+ * ```js
+ * const graphql = (function(){
+ *   try {
+ *     return require('graphql')
+ *   } catch {
+ *     return `<bundled require('graphql')>`
+ *   }
+ * })();
+ * ```
  *
  * @type {import('rollup').PluginImpl}
  */
-function esmGraphql() {
+function isomorphicGraphql() {
   return {
-    name: 'graphqlEsm',
+    name: 'isomorphicGraphql',
     async resolveId(source) {
-      if (/graphql\/.*\.js$/.test(source)) {
-        return { id: `../../node_modules/${source.replace(/\.js$/, '.mjs')}` };
+      // all graphql imports are marked as external and bundled in the renderChunk step
+      if (source === 'graphql') {
+        return { id: source, external: true };
       }
+      if (source.startsWith('graphql/')) {
+        return { id: source, external: true };
+      }
+    },
+    async renderChunk(code) {
+      if (!code.includes("require('graphql")) {
+        // code doesnt include a "graphql*" require
+        return null;
+      }
+
+      // append the SEA safe require on the bottom to not mess with the top definitions like 'use strict' and the hashbang
+      let augmented = code;
+      for (const [match, path] of augmented.matchAll(/require\('(graphql.*)'\)/g)) {
+        const requirePath = `../../node_modules/${path === 'graphql' ? 'graphql/index.mjs' : path.replace(/\.js$/, '.mjs')}`;
+
+        const bundle = await rollup({ input: requirePath, plugins: [nodeResolve()] });
+        const { output } = await bundle.generate({ format: 'cjs', inlineDynamicImports: true });
+        let code = `/* require('${path}') */(function(){
+try {
+  // Node SEA safe require implementation that's used for optionally requiring modules
+  // available in the nearby node_modules, falling back to the bundled version.
+  // TODO: wasteful, use a singleton sea safe require instead. but it's not all that bad since this is done just once
+  return require('node:module').createRequire(__filename)('${path}');
+} catch(e) {
+  const exports = {};
+  ${output[0].code}
+  return exports;
+}
+})()`;
+        await bundle.close();
+
+        augmented = augmented.replace(match, () => code);
+      }
+      return augmented;
     },
   };
 }
