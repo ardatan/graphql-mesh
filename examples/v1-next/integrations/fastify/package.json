@@ -6,9 +6,9 @@
     "start": "ts-node-dev src/index.ts"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^0.9.2",
-    "@graphql-mesh/serve-runtime": "^0.8.3",
-    "@omnigraph/openapi": "^0.106.3",
+    "@graphql-mesh/compose-cli": "^0.9.3",
+    "@graphql-mesh/serve-runtime": "^0.8.4",
+    "@omnigraph/openapi": "^0.106.4",
     "fastify": "^4.26.0",
     "graphql": "16.9.0",
     "ts-node": "^10.9.2",
