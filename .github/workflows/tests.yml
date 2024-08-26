@@ -383,6 +383,9 @@ jobs:
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn bundle
+      - name: build # we need to build for binary because it'll use the nearby node_modules
+        if: matrix.setup.serve-runner == 'bin'
+        run: yarn build
       - name: package binary
         if: matrix.setup.serve-runner == 'bin'
         working-directory: packages/serve-cli
