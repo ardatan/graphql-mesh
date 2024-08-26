@@ -4,8 +4,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import { $ } from 'zx';
 
-const platform = process.argv[2] || os.platform();
-const arch = process.argv[3] || os.arch();
+const platform = (process.argv[2] || os.platform()).toLowerCase();
+const arch = (process.argv[3] || os.arch()).toLowerCase();
 if (!['darwin', 'linux'].includes(platform)) {
   throw new Error(`Unsupported platform ${platform}`);
 }
