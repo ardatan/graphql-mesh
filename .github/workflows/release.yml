@@ -120,7 +120,7 @@ jobs:
             -v "$(pwd)/packages/serve-cli:/workspace" \
             -w /workspace \
             node:22 \
-            /bin/bash -c "npm i -g zx && npx tsx scripts/package-binary.ts"
+            /bin/bash -c "npm i -g zx tsx && tsx scripts/package-binary.ts"
       - name: upload artifact
         id: upload_artifact
         uses: actions/upload-artifact@v4
