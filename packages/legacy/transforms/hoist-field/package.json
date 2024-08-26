@@ -38,7 +38,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.19",
+    "@graphql-tools/delegate": "^10.0.20",
     "@graphql-tools/wrap": "^10.0.5"
   },
   "devDependencies": {

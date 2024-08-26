@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.6",
-    "@graphql-tools/delegate": "^10.0.19",
+    "@graphql-tools/delegate": "^10.0.20",
     "@whatwg-node/disposablestack": "^0.0.3",
     "@whatwg-node/fetch": "^0.9.13",
     "dset": "^3.1.2",
