@@ -353,6 +353,8 @@ jobs:
             node-version: 22
           - serve-runner: docker
             node-version: 22
+          - serve-runner: bin
+            node-version: 22
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -377,10 +379,15 @@ jobs:
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/setup-buildx-action@v3
       - name: bundle
-        if: matrix.setup.serve-runner == 'docker'
+        if: matrix.setup.serve-runner == 'docker' || matrix.setup.serve-runner == 'bin'
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn bundle
+      - name: package binary
+        env:
+          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
+        working-directory: packages/serve-cli
+        run: ./package-binary.sh ${{ runner.os }} ${{ runner.arch }}
       - name: bake
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/bake-action@v5
