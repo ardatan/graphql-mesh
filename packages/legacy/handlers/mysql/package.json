@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mysql",
-  "version": "0.103.4",
+  "version": "0.103.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/mysql": "^0.7.4"
+    "@omnigraph/mysql": "^0.7.5"
   },
   "publishConfig": {
     "access": "public",

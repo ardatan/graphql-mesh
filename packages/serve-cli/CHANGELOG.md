@@ -1,5 +1,12 @@
 # @graphql-mesh/serve-cli
 
+## 0.11.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.8.6
+
 ## 0.11.5
 
 ### Patch Changes

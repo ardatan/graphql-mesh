@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.106.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.8.6
+
 ## 0.106.2
 
 ### Patch Changes
