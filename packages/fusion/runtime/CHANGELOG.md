@@ -1,5 +1,40 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.8.3
+
+### Patch Changes
+
+- [#7572](https://github.com/ardatan/graphql-mesh/pull/7572)
+  [`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.20` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.20)
+    (from `^10.0.19`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.9)
+    (from `^2.2.8`, in `dependencies`)
+
+- [#7569](https://github.com/ardatan/graphql-mesh/pull/7569)
+  [`e9d73b7`](https://github.com/ardatan/graphql-mesh/commit/e9d73b7f3af98544f24d7223de735034abf17feb)
+  Thanks [@ardatan](https://github.com/ardatan)! - If the first poll fails, keep polling but fail on
+  requests If any poll fails in somewhere, keep polling but keep using the last successful
+  supergraph
+
+  So if the CDN is down at some point, the gateway will keep polling the supergraph, but will keep
+  using the last successful supergraph. This is useful for cases where the CDN is down, but the
+  supergraph is still available.
+
+- Updated dependencies
+  [[`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4),
+  [`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4),
+  [`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4),
+  [`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4)]:
+  - @graphql-mesh/runtime@0.103.3
+  - @graphql-mesh/transport-common@0.7.3
+  - @graphql-mesh/types@0.102.3
+  - @graphql-mesh/utils@0.102.3
+
 ## 0.8.2
 
 ### Patch Changes
