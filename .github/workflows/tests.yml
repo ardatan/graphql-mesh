@@ -385,10 +385,8 @@ jobs:
         run: yarn bundle
       - name: package binary
         if: matrix.setup.serve-runner == 'bin'
-        env:
-          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         working-directory: packages/serve-cli
-        run: ./package-binary.sh ${{ runner.os }} ${{ runner.arch }}
+        run: yarn package-binary
       - name: bake
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/bake-action@v5

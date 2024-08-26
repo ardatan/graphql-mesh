@@ -108,22 +108,19 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn bundle
-      - name: package for ${{ matrix.os }} ${{ matrix.arch }}
+      - name: package binary
         if: matrix.arch == 'x86_64' || matrix.os == 'macos-latest-large'
         working-directory: packages/serve-cli
-        run: ./package-binary.sh ${{ matrix.os }} ${{ matrix.arch }}
-      - name: package for ${{ matrix.os }} ${{ matrix.arch }}
+        run: yarn package-binary
+      - name: package binary
         if: matrix.arch == 'aarch64' && matrix.os == 'ubuntu-latest'
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker run --rm \
-            -v $(pwd):/workspace \
-            -w /workspace/packages/serve-cli \
-            ubuntu:latest \
-            /bin/bash -c "apt-get update && apt-get install -y build-essential curl && \
-            curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-            apt-get install -y nodejs && \
-            ./package-binary.sh ubuntu-latest aarch64"
+            -v "$(pwd)/packages/serve-cli:/workspace" \
+            -w /workspace \
+            node:22 \
+            /bin/bash -c "npm i -g zx && npx tsx scripts/package-binary.ts"
       - name: upload artifact
         id: upload_artifact
         uses: actions/upload-artifact@v4
