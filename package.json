@@ -33,7 +33,7 @@
       "e2e/*"
     ]
   },
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "scripts": {
     "build": "yarn prebuild && bob build && yarn postbuild",
     "build-test-artifacts": "yarn workspace @examples/json-schema-example build && yarn workspace @examples-v1-next/fastify compose && yarn workspace @examples/fastify build && yarn workspace @examples/persisted-operations build && yarn workspace example-response-cache build",
@@ -85,7 +85,7 @@
     "babel-jest": "29.7.0",
     "bob-the-bundler": "7.0.1",
     "cross-env": "^7.0.3",
-    "eslint": "9.9.0",
+    "eslint": "9.9.1",
     "eslint-config-prettier": "9.1.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.29.1",
@@ -101,7 +101,7 @@
     "patch-package": "8.0.0",
     "prettier": "3.3.3",
     "threads": "^1.7.0",
-    "ts-jest": "29.2.4",
+    "ts-jest": "29.2.5",
     "typescript": "^5.4.2"
   },
   "resolutions": {
@@ -115,7 +115,7 @@
     "es5-ext": "0.10.64",
     "esbuild": "^0.23.0",
     "graphql": "16.9.0",
-    "tslib": "2.6.3",
+    "tslib": "2.7.0",
     "undici": "6.19.8",
     "uuid": "10.0.0"
   },
