@@ -121,7 +121,7 @@ jobs:
       - name: package binary
         if: matrix.arch == 'x86_64' || matrix.os == 'macos-latest-large'
         working-directory: packages/serve-cli
-        run: ./package-binary.sh ${{ matrix.os }} ${{ matrix.arch }}
+        run: yarn package-binary
       - name: package binary
         if: matrix.arch == 'aarch64' && matrix.os == 'ubuntu-latest'
         run: |
