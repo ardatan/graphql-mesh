@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.1",
-    "@graphql-tools/delegate": "^10.0.20",
+    "@graphql-tools/delegate": "^10.0.21",
     "@graphql-tools/utils": "^10.5.3"
   },
   "publishConfig": {

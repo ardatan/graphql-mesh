@@ -39,7 +39,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.20",
+    "@graphql-tools/delegate": "^10.0.21",
     "@graphql-tools/wrap": "^10.0.5",
     "graphql-scalars": "^1.22.4"
   },
