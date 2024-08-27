@@ -36,7 +36,7 @@ storage to leverage the well-known storage APIs that are available in most JavaS
 npm i @graphql-mesh/cache-localforage
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import LocalForageCacheStorage from '@graphql-mesh/cache-localforage'
 
@@ -71,7 +71,7 @@ use Redis as a cache storage for your GraphQL Mesh Gateway.
 npm i @graphql-mesh/cache-redis
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import RedisCacheStorage from '@graphql-mesh/cache-redis'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -110,7 +110,7 @@ Mesh Gateway. [Learn more about KV](https://developers.cloudflare.com/workers/ru
 npm i @graphql-mesh/cache-cf-kw
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import CloudflareKVCacheStorage from '@graphql-mesh/cache-cf-kw'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 

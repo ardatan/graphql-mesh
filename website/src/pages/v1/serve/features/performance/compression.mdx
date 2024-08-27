@@ -132,7 +132,7 @@ We assume that the `gzip` function is a function that compresses the data using 
 
 In your Mesh configuration, you need to enable the compression plugin for the gateway.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig, useContentEncoding } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -226,7 +226,7 @@ In this case, gateway will always send a compressed request to the defined subgr
 
 In your Mesh configuration, you need to enable the compression plugin for the gateway.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig, useContentEncoding } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

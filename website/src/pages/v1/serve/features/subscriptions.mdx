@@ -145,7 +145,7 @@ npm i @graphql-mesh/transport-ws
 And configure Mesh Serve to use the `/subscriptions` path on the "products" subgraph for WebSocket
 connections:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import type { WSTransportOptions } from '@graphql-mesh/transport-http'
 
@@ -181,7 +181,7 @@ Mesh Server can propagate the downstream client's `Authorization` header content
 WebSocket connections through the
 [`ConnectionInit` message payload](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md#connectioninit).
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import type { WSTransportOptions } from '@graphql-mesh/transport-ws'
 
@@ -233,7 +233,7 @@ We'll install `@graphql-mesh/transport-http-callback` to add HTTP Callback suppo
 npm i @graphql-mesh/transport-http-callback
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig, PubSub, useWebhooks } from '@graphql-mesh/serve-cli'
 import type { HTTPCallbackTransportOptions } from '@graphql-mesh/transport-http-callback'
 

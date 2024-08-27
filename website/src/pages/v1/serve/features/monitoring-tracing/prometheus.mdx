@@ -26,9 +26,9 @@ First, please install the Mesh prometheus plugin and the community prometheus cl
 npm i @graphql-mesh/plugin-prometheus prom-client
 ```
 
-You can then add the plugin and its configuration to your `mesh.config.ts` file.
+You can then add the plugin and its configuration to your `gateway.config.ts` file.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -697,7 +697,7 @@ But you can also customize their configuration by providing a string or an objec
 By providing a string, you can change the name of the metric. For example, to change the name of the
 name of the `graphql_yoga_http_duration` metric to `http_request_duration`, you would use:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -731,7 +731,7 @@ Available options depend on the metric type, and full details about them can be 
 
 For example, you can customize the buckets of the `graphql_yoga_http_duration` histogram metric:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import usePrometheus, { createHistogram } from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { register as registry } from 'prom-client'
@@ -766,7 +766,7 @@ export const gatewayConfig = defineConfig({
 
 You can customize the client’s registry by passing a custom registry to the `registry` option.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { Registry } from 'prom-client'
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
@@ -787,7 +787,7 @@ export const gatewayConfig = defineConfig({
 
 ### All metrics enabled
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 

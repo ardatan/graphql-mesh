@@ -16,7 +16,7 @@ Using the parser cache can improve performance up to ~60%, and using the validat
 This behavior is built-in and can be optionally disabled using the `parserAndValidationCache`
 options:
 
-```ts filename="mesh.config.ts" {4,5}
+```ts filename="gateway.config.ts" {4,5}
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineServe({
@@ -43,7 +43,7 @@ interface CacheStore<T> {
 
 You can then pass your cache store to the `parserAndValidationCache` options:
 
-```ts filename="mesh.config.ts" {9-13}
+```ts filename="gateway.config.ts" {9-13}
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

@@ -38,7 +38,7 @@ You can use our generic plugin to handle persisted operations from any store.
 npm i @graphql-yoga/plugin-persisted-operations
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations'
 
@@ -110,7 +110,7 @@ your application/client-code in a JSON file.
 
 This map can then be used to persist the GraphQL documents in the server.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { readFileSync } from 'node:fs'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations'
@@ -312,7 +312,7 @@ customize the GraphQL endpoint. The underlying implementation for the URL matchi
 This combination is powerful as it allows you to use the persisted operation id as it can easily be
 combined with any type of HTTP proxy cache.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations'
 

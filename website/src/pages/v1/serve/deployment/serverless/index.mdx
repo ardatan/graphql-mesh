@@ -14,7 +14,7 @@ For Serverless environments, you cannot use Serve CLI `mesh-serve` but you can u
 `createGatewayRuntime` function from `@graphql-mesh/serve-runtime` package.
 
 The serve configuration goes into `createGatewayRuntime` function instead of `gatewayConfig` export
-in `mesh.config.ts` file.
+in `gateway.config.ts` file.
 
 ## Distributed Caching
 
@@ -34,7 +34,7 @@ save the supergraph as a code file (`supergraph.js` or `supergraph.ts`) and impo
 
 For example, in Mesh Compose you need to save the supergraph as a TypeScript file:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineConfig({

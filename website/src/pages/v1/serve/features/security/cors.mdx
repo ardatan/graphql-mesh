@@ -45,7 +45,7 @@ export type CORSOptions =
 
 ### Example configuration using CORSOptions
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -72,7 +72,7 @@ Access-Control-Allow-Headers: X-Custom-Header
 You can also pass a function to the cors property, that takes your request and constructs the
 options
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -104,7 +104,7 @@ You can disable CORS on your GraphQL Mesh gateway by simply passing `false` as t
 
 **For example:**
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

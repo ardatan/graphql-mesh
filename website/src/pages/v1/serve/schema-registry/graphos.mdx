@@ -31,7 +31,7 @@ npx mesh-serve supergraph <graph_id>[@<variant>] --apollo-key <api_key>
 You can also provide this configuration programatically by providing a configuration object, along
 with other options to customize the polling behavior.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -81,7 +81,7 @@ default environment variables as supergraph fetching.
 
 Also you can provide additional configuration options to customize the usage reporting behavior.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

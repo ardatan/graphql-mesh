@@ -110,8 +110,6 @@ export const defaultOptions = {
   polling: '10s',
 };
 
-const configPathOption = new Option('-c, --config-path <path>').env('CONFIG_PATH');
-
 /** The root cli of serve-cli. */
 let cli = new Command()
   .configureHelp({
@@ -132,7 +130,12 @@ let cli = new Command()
         return count;
       }),
   )
-  .addOption(configPathOption)
+  .addOption(
+    new Option(
+      '-c, --config-path <path>',
+      `path to the configuration file. defaults to the following files respectively in the current working directory: ${createDefaultConfigPaths('gateway').join(', ')}`,
+    ).env('CONFIG_PATH'),
+  )
   .option(
     '-h, --host <hostname>',
     `host to use for serving (default: ${JSON.stringify(defaultOptions.host)}`,
@@ -228,8 +231,6 @@ export function run(userCtx: Partial<CLIContext>) {
   const { binName, productDescription, version } = ctx;
   cli = cli.name(binName).description(productDescription);
   cli.version(version);
-
-  configPathOption.description = `path to the configuration file. defaults to the following files respectively in the current working directory: ${createDefaultConfigPaths(ctx.configFileName).join(', ')}`;
 
   if (cluster.worker?.id) {
     ctx.log = ctx.log.child(`Worker #${cluster.worker.id}`);
