@@ -3235,10 +3235,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-shared@npm:0.3.0":
-  version: 0.3.0
-  resolution: "@cloudflare/workers-shared@npm:0.3.0"
-  checksum: 10c0/1708871348abc2162b0683c9738faf64c6c1fbeb0b77ece1467f64d048b53bfd7542b149ef78f1b70fdafdc3dc47892b727d97e4642bbf644e0936794cf447cd
+"@cloudflare/workers-shared@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@cloudflare/workers-shared@npm:0.4.0"
+  checksum: 10c0/c0e2a548df53a3bbbb4d5599aaa6906d1c6a10ad243d1fdc98aba356bf66f4a54347312646374f413cd10b6d3ccfa74ac927937ca7ae49befc92bd2929212ff6
   languageName: node
   linkType: hard
 
@@ -4459,7 +4459,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^0.8.6"
     "@omnigraph/json-schema": "npm:^0.106.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.72.2"
+    wrangler: "npm:3.72.3"
   languageName: unknown
   linkType: soft
 
@@ -4473,7 +4473,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.4"
     "@graphql-mesh/serve-runtime": "npm:^0.8.6"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.72.2"
+    wrangler: "npm:3.72.3"
   languageName: unknown
   linkType: soft
 
@@ -4613,7 +4613,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.106.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.4"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.72.2"
+    wrangler: "npm:3.72.3"
   languageName: unknown
   linkType: soft
 
@@ -5301,7 +5301,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.102.4"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.4"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.72.2"
+    wrangler: "npm:3.72.3"
   languageName: unknown
   linkType: soft
 
@@ -37823,12 +37823,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.72.2":
-  version: 3.72.2
-  resolution: "wrangler@npm:3.72.2"
+"wrangler@npm:3.72.3":
+  version: 3.72.3
+  resolution: "wrangler@npm:3.72.3"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
-    "@cloudflare/workers-shared": "npm:0.3.0"
+    "@cloudflare/workers-shared": "npm:0.4.0"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     blake3-wasm: "npm:^2.1.5"
@@ -37857,7 +37857,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/f309fad517ec21f10e18e62d56ee65625e69a48335ba93f26019246b2839af3eb42f558677ca32ef42ab3906df2c694735d111b165b147e880368563dfa9e47d
+  checksum: 10c0/4621f815017e8aadf7850f6878c63eaf7ded4c27e054a363ffd6573bece7c7d798df9b6c817cd16b42a35484c73c7a1364d8a0d024755d7a3c278c744e2fbeb1
   languageName: node
   linkType: hard
 
