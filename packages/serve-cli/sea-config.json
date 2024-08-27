@@ -3,6 +3,6 @@
   "output": "sea-prep.blob",
   "disableExperimentalSEAWarning": true,
   "assets": {
-    "uws_darwin_arm64_127.node": "bundle/uws_darwin_arm64_127.node"
+    "uws.node": "bundle/uws.node"
   }
 }
