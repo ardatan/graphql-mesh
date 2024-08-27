@@ -21,7 +21,7 @@ jobs:
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
-          node-version-file: .node-version
+          node-version: 22.6.0
 
       - uses: the-guild-org/shared-config/website-cf@v1
         name: build and deploy website
