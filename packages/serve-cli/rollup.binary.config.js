@@ -3,13 +3,14 @@ import path from 'node:path';
 import { defineConfig, rollup } from 'rollup';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
-const output = 'bundle/mesh-serve.cjs';
-console.log(`Bundling binary to ${output}...`);
+const seaConfig = JSON.parse(fs.readFileSync('sea-config.json', 'utf8'));
+
+console.log(`Bundling binary to ${seaConfig.main}...`);
 
 export default defineConfig({
   input: 'bundle/dist/bin.mjs',
   output: {
-    file: output,
+    file: seaConfig.main,
     format: 'cjs',
     inlineDynamicImports: true,
   },
@@ -92,11 +93,13 @@ try {
  * @type {import('rollup').PluginImpl}
  */
 function installUws() {
+  const assetName = 'uws.node';
+  const destPath = seaConfig.assets[assetName];
+  if (!destPath) {
+    throw new Error(`Asset "${assetName}" not defined in sea-config.json`);
+  }
+
   const { platform, arch, versions } = process;
-
-  const assetName = 'uws.node'; // must match sea-config.json
-  const destPath = `bundle/${assetName}`;
-
   const addonName = `uws_${platform}_${arch}_${versions.modules}.node`;
   const addonPath = path.resolve(`../../node_modules/uWebSockets.js/${addonName}`);
 
@@ -152,7 +155,7 @@ function installUws() {
         return Promise.resolve(requireTemp(tempFilePath));
       })()`;
 
-      return code.replaceAll(uwsImportLocation, uwsInjection)
+      return code.replaceAll(uwsImportLocation, uwsInjection);
     },
   };
 }
