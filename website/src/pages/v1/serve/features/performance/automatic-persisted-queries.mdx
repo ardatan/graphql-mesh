@@ -48,7 +48,7 @@ npm i @graphql-yoga/plugin-apq
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useAPQ } from '@graphql-yoga/plugin-apq'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [useAPQ()]
 })
 ```

@@ -1,6 +1,6 @@
 import { Agent } from 'http';
 import { createSchema, createYoga } from 'graphql-yoga';
-import { createServeRuntime, useCustomAgent } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomAgent } from '@graphql-mesh/serve-runtime';
 import { createDisposableServer } from '../../testing/createDisposableServer';
 
 function createDisposableAgent() {
@@ -34,7 +34,7 @@ describe('useCustomAgent', () => {
     using disposableAgent = createDisposableAgent();
     // @ts-expect-error - `createConnection` is not available in typings
     const spy = jest.spyOn(disposableAgent.agent, 'createConnection');
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: `http://localhost:${upstreamServer.address().port}/graphql`,
       },

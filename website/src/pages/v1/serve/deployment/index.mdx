@@ -25,11 +25,11 @@ it in the list.
 ## Other Environments (Custom)
 
 Let's say you have an environment that is not listed here, you can still deploy your gateway. In
-this case, we will show here how to pass the request information from your environment to Mesh, then
-get the response for your environment back.
+this case, we will show here how to pass the request information from your environment to Gateway,
+then get the response for your environment back.
 
 ```ts
-import { createServeRuntime } from '@graphql-mesh/serve'
+import { createGatewayRuntime } from '@graphql-mesh/serve'
 import type {
   ImaginaryEnvironmentRequest,
   ImaginaryEnvironmentServerContext
@@ -37,7 +37,7 @@ import type {
 import { getMySupergraph } from './my-supergraph.js'
 
 // First pass it to the runtime as a context
-const serveRuntime = createServeRuntime<ImaginaryEnvironmentServerContext>({
+const serveRuntime = createGatewayRuntime<ImaginaryEnvironmentServerContext>({
   supergraph: () => getMySupergraph()
 })
 

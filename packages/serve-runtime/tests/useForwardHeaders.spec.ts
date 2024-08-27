@@ -1,6 +1,6 @@
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import { useCustomFetch } from '@graphql-mesh/serve-runtime';
-import { createServeRuntime } from '../src/createServeRuntime';
+import { createGatewayRuntime } from '../src/createGatewayRuntime';
 import { useForwardHeaders } from '../src/plugins/useForwardHeaders';
 
 describe('useForwardHeaders', () => {
@@ -27,7 +27,7 @@ describe('useForwardHeaders', () => {
     requestTrackerPlugin.onParams.mockClear();
   });
   it('forwards specified headers', async () => {
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: 'http://localhost:4001/graphql',
       },
@@ -75,7 +75,7 @@ describe('useForwardHeaders', () => {
     expect(headersObj['x-extra-header']).toBeUndefined();
   });
   it("forwards specified headers but doesn't override the provided headers", async () => {
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       logging: !!process.env.DEBUG,
       proxy: {
         endpoint: 'http://localhost:4001/graphql',

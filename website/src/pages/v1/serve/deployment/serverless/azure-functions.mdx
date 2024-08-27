@@ -17,9 +17,9 @@ can be deployed to Azure Functions as well.
 
 ```ts
 import { app } from '@azure/functions'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
-const handler = createServeRuntime(/* Your configuration */)
+const handler = createGatewayRuntime(/* Your configuration */)
 
 app.http('graphql', {
   method: ['GET', 'POST'],

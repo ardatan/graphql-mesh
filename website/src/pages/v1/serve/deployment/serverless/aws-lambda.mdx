@@ -17,9 +17,9 @@ the AWS cloud. Mesh Serve is platform agnostic so they can fit together easily.
 
 ```ts
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
-const serveRuntime = createServeRuntime(/* Your configuration */)
+const serveRuntime = createGatewayRuntime(/* Your configuration */)
 
 export async function handler(
   event: APIGatewayEvent,

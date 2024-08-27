@@ -27,9 +27,9 @@ create a new server route in `my-project/src/routes/graphql/+server.ts` to expos
 at `/graphql` and implement using the Mesh Serve runtime like this:
 
 ```ts filename="my-project/src/routes/graphql/+server.ts"
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
-const serve = createServeRuntime({
+const serve = createGatewayRuntime({
   supergraph: 'supergraph.graphql', // working directory is root of the project
   graphqlEndpoint: '/graphql', // matches the server route path
   fetchAPI: { Response } // use the native `Response`

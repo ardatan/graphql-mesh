@@ -29,14 +29,14 @@ with a simple configuration.
 
 ```ts filename="index.ts"
 import { App, HttpRequest, HttpResponse } from 'uWebSockets.js'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
 interface ServerContext {
   req: HttpRequest
   res: HttpResponse
 }
 
-export const serveRuntime = createServeRuntime<ServerContext>(/* Your configuration */)
+export const serveRuntime = createGatewayRuntime<ServerContext>(/* Your configuration */)
 
 App()
   .any('/*', serveRuntime)
@@ -57,14 +57,14 @@ npm i graphql-ws
 import { execute, ExecutionArgs, subscribe } from 'graphql'
 import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets'
 import { App, HttpRequest, HttpResponse } from 'uWebSockets.js'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
 interface ServerContext {
   req: HttpRequest
   res: HttpResponse
 }
 
-export const serveRuntime = createServeRuntime<ServerContext>(/* Your configuration */)
+export const serveRuntime = createGatewayRuntime<ServerContext>(/* Your configuration */)
 
 // Mesh's envelop may augment the `execute` and `subscribe` operations
 // so we need to make sure we always use the freshest instance

@@ -4,7 +4,7 @@ import {
   type OnValidateEventPayload,
 } from '@envelop/types';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
-import { DisposableSymbols, type MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import { DisposableSymbols, type GatewayPlugin } from '@graphql-mesh/serve-runtime';
 import type { OnFetchHookPayload } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { isAsyncIterable } from '@graphql-tools/utils';
@@ -114,7 +114,7 @@ const HeadersTextMapGetter: TextMapGetter = {
   },
 };
 
-export function useOpenTelemetry(options: OpenTelemetryMeshPluginOptions): MeshServePlugin<{
+export function useOpenTelemetry(options: OpenTelemetryMeshPluginOptions): GatewayPlugin<{
   opentelemetry: {
     tracer: Tracer;
     activeContext: () => Context;

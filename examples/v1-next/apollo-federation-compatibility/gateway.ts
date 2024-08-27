@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs';
 import { createServer } from 'http';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 import http from '@graphql-mesh/transport-http';
 import { useApolloInlineTrace } from '@graphql-yoga/plugin-apollo-inline-trace';
 
 createServer(
-  createServeRuntime({
+  createGatewayRuntime({
     subgraph: readFileSync('./schema.graphql', 'utf-8'),
     transports: {
       http,

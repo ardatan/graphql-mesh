@@ -1,8 +1,8 @@
 import { print } from 'graphql';
 import { defineConfig } from '@graphql-mesh/serve-cli';
-import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
 
-export function useExplainQueryPlan(): MeshServePlugin {
+export function useExplainQueryPlan(): GatewayPlugin {
   const plans = new WeakMap<
     Request,
     { subgraphName: string; query: string; variables: unknown }[]
@@ -45,6 +45,6 @@ export function useExplainQueryPlan(): MeshServePlugin {
   };
 }
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [useExplainQueryPlan()],
 });

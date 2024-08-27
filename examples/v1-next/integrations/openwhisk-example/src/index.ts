@@ -1,6 +1,6 @@
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 
-const httpHandler = createServeRuntime({
+const httpHandler = createGatewayRuntime({
   http: {
     endpoint: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
   },

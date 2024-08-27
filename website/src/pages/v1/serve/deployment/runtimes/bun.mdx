@@ -21,9 +21,9 @@ other JS runtime with Mesh;
 The following code is a simple example of how to use GraphQL Mesh with Bun.
 
 ```ts
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
-const serveRuntime = createServeRuntime(/* Your configuration */)
+const serveRuntime = createGatewayRuntime(/* Your configuration */)
 
 const server = Bun.serve({
   fetch: serveRuntime

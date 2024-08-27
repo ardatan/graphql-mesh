@@ -1,9 +1,9 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 
 const functionBasePath = '/mesh';
 
-const meshHTTP = createServeRuntime({
+const meshHTTP = createGatewayRuntime({
   graphqlEndpoint: functionBasePath,
 });
 

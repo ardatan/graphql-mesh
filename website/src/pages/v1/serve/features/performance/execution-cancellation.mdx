@@ -21,7 +21,7 @@ So any extra calls to the services can be stopped and the resources can be saved
 ```ts filename="mesh.config.ts"
 import { defineConfig, useExecutionCancellation } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [useExecutionCancellation()]
 })
 ```

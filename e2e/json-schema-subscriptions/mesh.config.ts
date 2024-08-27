@@ -2,7 +2,7 @@ import { OperationTypeNode } from 'graphql';
 import { Opts } from '@e2e/opts';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import useMeshLiveQuery from '@graphql-mesh/plugin-live-query';
-import { defineConfig as defineServeConfig, useWebhooks } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineGatewayConfig, useWebhooks } from '@graphql-mesh/serve-cli';
 import { PubSub } from '@graphql-mesh/utils';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 
@@ -47,7 +47,7 @@ export const composeConfig = defineComposeConfig({
   `,
 });
 
-export const serveConfig = defineServeConfig({
+export const gatewayConfig = defineGatewayConfig({
   pubsub: new PubSub(),
   plugins: ctx => [
     useWebhooks(ctx),

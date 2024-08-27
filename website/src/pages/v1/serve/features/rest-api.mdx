@@ -34,7 +34,7 @@ npm i @graphql-yoga/plugin-sofa
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useSOFA } from '@graphql-yoga/plugin-sofa'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     useSOFA({
       // The path where the REST API will be served

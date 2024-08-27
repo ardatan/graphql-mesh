@@ -2,7 +2,7 @@ import type { GraphQLSchema } from 'graphql';
 import type { OnSubgraphExecuteHook, TransportEntry } from '@graphql-mesh/fusion-runtime';
 import { getOnSubgraphExecute } from '@graphql-mesh/fusion-runtime';
 import type { Executor } from '@graphql-tools/utils';
-import type { MeshServeConfigContext, MeshServeConfigProxy } from './types.js';
+import type { GatewayConfigContext, GatewayConfigProxy } from './types.js';
 
 export function getProxyExecutor<TContext>({
   config,
@@ -11,8 +11,8 @@ export function getProxyExecutor<TContext>({
   onSubgraphExecuteHooks,
   disposableStack,
 }: {
-  config: MeshServeConfigProxy<TContext>;
-  configContext: MeshServeConfigContext;
+  config: GatewayConfigProxy<TContext>;
+  configContext: GatewayConfigContext;
   getSchema: () => GraphQLSchema;
   onSubgraphExecuteHooks: OnSubgraphExecuteHook[];
   disposableStack: AsyncDisposableStack;

@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@graphql-mesh/transport-common": "^0.7.5",
-    "@graphql-mesh/utils": "^0.101.0",
+    "@graphql-mesh/utils": "^0.102.4",
     "@omnigraph/sqlite": "^0.6.4"
   },
   "publishConfig": {

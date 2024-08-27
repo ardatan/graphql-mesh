@@ -2,7 +2,7 @@ import { defineConfig, PubSub, useWebhooks } from '@graphql-mesh/serve-cli';
 import type { HTTPCallbackTransportOptions } from '@graphql-mesh/transport-http-callback';
 import type { WSTransportOptions } from '@graphql-mesh/transport-ws';
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   pubsub: new PubSub(),
   plugins: ctx => [useWebhooks(ctx)],
   maskedErrors: false,

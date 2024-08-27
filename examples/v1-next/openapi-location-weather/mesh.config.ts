@@ -4,7 +4,7 @@ import {
   defineConfig as defineComposeConfig,
 } from '@graphql-mesh/compose-cli';
 import useResponseCache from '@graphql-mesh/plugin-response-cache';
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 export const composeConfig = defineComposeConfig({
@@ -75,7 +75,7 @@ export const composeConfig = defineComposeConfig({
   `,
 });
 
-export const serveConfig = defineServeConfig({
+export const gatewayConfig = defineGatewayConfig({
   cache: new LocalforageCache(),
   plugins: ctx => {
     const { cache } = ctx;

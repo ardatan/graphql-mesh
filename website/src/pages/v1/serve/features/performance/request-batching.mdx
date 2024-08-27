@@ -27,7 +27,7 @@ Batching is disabled by default, but you can enable it by setting the `batching`
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   batching: true
 })
 ```
@@ -46,7 +46,7 @@ exceeded an error will be raised. You can customize this option by passing an ob
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   batching: {
     limit: 2
   }

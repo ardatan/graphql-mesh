@@ -1,4 +1,4 @@
-export * from './createServeRuntime.js';
+export * from './createGatewayRuntime.js';
 export * from './types.js';
 export * from './plugins/useWebhooks.js';
 export * from './plugins/useCustomFetch.js';

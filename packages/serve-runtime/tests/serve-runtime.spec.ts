@@ -3,16 +3,16 @@ import { createSchema, createYoga } from 'graphql-yoga';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { Response } from '@whatwg-node/server';
-import { createServeRuntime } from '../src/createServeRuntime.js';
+import { createGatewayRuntime } from '../src/createGatewayRuntime.js';
 import { useCustomFetch } from '../src/plugins/useCustomFetch.js';
-import type { MeshServePlugin } from '../src/types.js';
+import type { GatewayPlugin } from '../src/types.js';
 
 describe('Serve Runtime', () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
   function createSupergraphRuntime() {
-    return createServeRuntime({
+    return createGatewayRuntime({
       logging: !!process.env.DEBUG,
       supergraph: () => {
         if (!upstreamIsUp) {
@@ -62,7 +62,7 @@ describe('Serve Runtime', () => {
     return new Response('Not Found', { status: 404 });
   };
   const serveRuntimes = {
-    proxyAPI: createServeRuntime({
+    proxyAPI: createGatewayRuntime({
       logging: !!process.env.DEBUG,
       proxy: {
         endpoint: 'http://localhost:4000/graphql',
@@ -139,7 +139,7 @@ describe('Serve Runtime', () => {
     }) as typeof fetch;
     let mockValidateFn;
     let fetchedSchema: GraphQLSchema;
-    const mockPlugin: MeshServePlugin = {
+    const mockPlugin: GatewayPlugin = {
       onSchemaChange({ schema }) {
         fetchedSchema = schema;
       },
@@ -148,7 +148,7 @@ describe('Serve Runtime', () => {
         setValidationFn(mockValidateFn);
       },
     };
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       skipValidation: true,
       proxy: {
         endpoint: 'http://localhost:4000/graphql',
@@ -181,7 +181,7 @@ describe('Serve Runtime', () => {
   });
   it('should invoke onSchemaChange hooks as soon as schema changes', done => {
     let onSchemaChangeCalls = 0;
-    const serve = createServeRuntime({
+    const serve = createGatewayRuntime({
       logging: !!process.env.DEBUG,
       pollingInterval: 500,
       supergraph() {

@@ -1,7 +1,7 @@
 import type { Logger } from '@graphql-mesh/types';
-import type { MeshServePlugin } from '../types';
+import type { GatewayPlugin } from '../types';
 
-export function useFetchDebug<TContext>(opts: { logger: Logger }): MeshServePlugin<TContext> {
+export function useFetchDebug<TContext>(opts: { logger: Logger }): GatewayPlugin<TContext> {
   return {
     onFetch({ url, options, logger = opts.logger }) {
       logger = logger.child('fetch');

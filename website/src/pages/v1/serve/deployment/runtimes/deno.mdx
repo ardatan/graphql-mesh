@@ -38,9 +38,9 @@ Create a `deno-mesh.ts` file:
 
 ```ts filename="deno-mesh.ts"
 import { serve } from 'https://deno.land/std@0.157.0/http/server.ts'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
-const serveRuntime = createServeRuntime(/* Your configuration */)
+const serveRuntime = createGatewayRuntime(/* Your configuration */)
 
 serve(mesh, {
   onListen({ hostname, port }) {

@@ -4,7 +4,7 @@ import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { type MaybePromise } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import { createServeRuntime } from '../src/createServeRuntime';
+import { createGatewayRuntime } from '../src/createGatewayRuntime';
 
 describe('Subscriptions', () => {
   const leftovers: (() => MaybePromise<void>)[] = [];
@@ -39,7 +39,7 @@ describe('Subscriptions', () => {
   const upstream = createYoga({ schema: upstreamSchema });
 
   it('should terminate subscriptions gracefully on shutdown', async () => {
-    await using serve = createServeRuntime({
+    await using serve = createGatewayRuntime({
       logging: false,
       supergraph() {
         return getUnifiedGraphGracefully([
@@ -95,7 +95,7 @@ describe('Subscriptions', () => {
   it('should terminate subscriptions gracefully on schema update', async () => {
     let changeSchema = false;
 
-    await using serve = createServeRuntime({
+    await using serve = createGatewayRuntime({
       logging: !!process.env.DEBUG,
       pollingInterval: 500,
       supergraph() {

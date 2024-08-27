@@ -2,7 +2,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { createHmac } from 'node:crypto';
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
-import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import {
   defaultParamsSerializer,
   useHmacSignatureValidation,
@@ -11,7 +11,7 @@ import {
 
 describe('useHmacSignatureValidation', () => {
   test('should throw when header is missing or invalid', async () => {
-    const serveRuntime = createServeRuntime({
+    const serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
@@ -98,7 +98,7 @@ describe('useHmacSignatureValidation', () => {
       ],
       logging: false,
     });
-    const serveRuntime = createServeRuntime({
+    const serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
@@ -161,7 +161,7 @@ describe('useHmacUpstreamSignature', () => {
 
   it('should build valid hmac signature based on the request body even when its modified in other plugins', async () => {
     const secret = 'secret';
-    const serveRuntime = createServeRuntime({
+    const serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
@@ -209,7 +209,7 @@ describe('useHmacUpstreamSignature', () => {
 
   it('should include hmac signature based on the request body', async () => {
     const secret = 'secret';
-    const serveRuntime = createServeRuntime({
+    const serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
@@ -252,7 +252,7 @@ describe('useHmacUpstreamSignature', () => {
   it('should allow to customize header name', async () => {
     const secret = 'secret';
     const customExtensionName = 'custom-hmac-signature';
-    const serveRuntime = createServeRuntime({
+    const serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
@@ -295,7 +295,7 @@ describe('useHmacUpstreamSignature', () => {
 
   it('should allow to filter upstream calls', async () => {
     const secret = 'secret';
-    const serveRuntime = createServeRuntime({
+    const serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: 'https://example.com/graphql',
       },

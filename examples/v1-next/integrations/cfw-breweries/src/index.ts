@@ -1,10 +1,10 @@
 import CFWorkerKVCache from '@graphql-mesh/cache-cfw-kv';
 import useResponseCache from '@graphql-mesh/plugin-response-cache';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 import * as rest from '@omnigraph/json-schema';
 import supergraph from './supergraph.graphql';
 
-const meshHttp = createServeRuntime({
+const meshHttp = createGatewayRuntime({
   supergraph,
   transports: {
     rest,

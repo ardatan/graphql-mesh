@@ -2,7 +2,7 @@
 import { createSchema } from 'graphql-yoga';
 import { register as registry } from 'prom-client';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import usePrometheus from '../src/index.js';
 
@@ -25,7 +25,7 @@ describe('Prometheus', () => {
   });
 
   function newTestRuntime() {
-    return createServeRuntime({
+    return createGatewayRuntime({
       supergraph: () =>
         getUnifiedGraphGracefully([
           {

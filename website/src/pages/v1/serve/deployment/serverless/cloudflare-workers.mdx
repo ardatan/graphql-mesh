@@ -20,13 +20,13 @@ configuring or maintaining infrastructure.
 </Callout>
 
 ```ts
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
-const serveRuntime = createServeRuntime({
-  // serveConfig
+const gatewayRuntime = createGatewayRuntime({
+  // gatewayConfig
 })
 
-export default { fetch: serveRuntime }
+export default { fetch: gatewayRuntime }
 ```
 
 <Callout>

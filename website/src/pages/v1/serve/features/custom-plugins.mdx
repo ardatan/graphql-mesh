@@ -31,7 +31,7 @@ import { defineConfig } from '@graphql-mesh/serve-cli'
 // or a Yoga Plugin
 import { useCSRFPrevention } from '@graphql-yoga/plugin-csrf-prevention'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [useGraphQLJit(), useCSRFPrevention()]
 })
 ```
@@ -180,7 +180,7 @@ creating your own for a specific plugin.
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins({
     fetch, // WHATWG compatible Fetch implementation.
     logger, // Logger instance used by Mesh

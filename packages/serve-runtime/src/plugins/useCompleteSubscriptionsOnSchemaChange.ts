@@ -1,7 +1,7 @@
 import { createGraphQLError, isAsyncIterable, Repeater } from 'graphql-yoga';
-import type { MeshServePlugin } from '../types';
+import type { GatewayPlugin } from '../types';
 
-export function useCompleteSubscriptionsOnSchemaChange(): MeshServePlugin {
+export function useCompleteSubscriptionsOnSchemaChange(): GatewayPlugin {
   const activeSubs: (() => void)[] = [];
   return {
     onSchemaChange() {

@@ -1,13 +1,13 @@
 import useMeshHive from '@graphql-mesh/plugin-hive';
 import { useApolloUsageReport } from '@graphql-yoga/plugin-apollo-usage-report';
-import type { MeshServeConfig, MeshServeConfigContext, MeshServePlugin } from './types.js';
+import type { GatewayConfig, GatewayConfigContext, GatewayPlugin } from './types.js';
 
 export function getReportingPlugin<TContext>(
-  config: MeshServeConfig<TContext>,
-  configContext: MeshServeConfigContext,
+  config: GatewayConfig<TContext>,
+  configContext: GatewayConfigContext,
 ): {
   name?: string;
-  plugin: MeshServePlugin<TContext>;
+  plugin: GatewayPlugin<TContext>;
 } {
   if (config.reporting?.type === 'hive') {
     return {

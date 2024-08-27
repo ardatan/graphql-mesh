@@ -3,7 +3,7 @@ import {
   defineConfig as defineComposeConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineServeConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
 import { useApolloInlineTrace } from '@graphql-yoga/plugin-apollo-inline-trace';
 
 export const composeConfig = defineComposeConfig({
@@ -106,6 +106,6 @@ export const composeConfig = defineComposeConfig({
   ],
 });
 
-export const serveConfig = defineServeConfig({
+export const gatewayConfig = defineGatewayConfig({
   plugins: () => [useApolloInlineTrace()],
 });

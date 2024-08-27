@@ -4,7 +4,7 @@ import { buildASTSchema, isSchema, parse, print } from 'graphql';
 import { defaultImportFn, isUrl, mapMaybePromise, readFileOrUrl } from '@graphql-mesh/utils';
 import type { MaybePromise } from '@graphql-tools/utils';
 import { getDocumentNodeFromSchema, isDocumentNode, isValidPath } from '@graphql-tools/utils';
-import type { MeshServeConfigContext } from './types.js';
+import type { GatewayConfigContext } from './types.js';
 
 export type UnifiedGraphSchema = GraphQLSchema | DocumentNode | string;
 
@@ -15,7 +15,7 @@ export type UnifiedGraphConfig =
 
 export function handleUnifiedGraphConfig(
   config: UnifiedGraphConfig,
-  configContext: MeshServeConfigContext,
+  configContext: GatewayConfigContext,
 ): MaybePromise<GraphQLSchema> {
   return mapMaybePromise(typeof config === 'function' ? config() : config, schema =>
     handleUnifiedGraphSchema(schema, configContext),
@@ -46,7 +46,7 @@ export function getUnifiedGraphAST(schema: GraphQLSchema) {
 
 export function handleUnifiedGraphSchema(
   unifiedGraphSchema: UnifiedGraphSchema,
-  configContext: MeshServeConfigContext,
+  configContext: GatewayConfigContext,
 ): Promise<GraphQLSchema> | GraphQLSchema {
   if (isSchema(unifiedGraphSchema)) {
     return unifiedGraphSchema;

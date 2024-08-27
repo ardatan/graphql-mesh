@@ -1,11 +1,11 @@
 import { isAsyncIterable } from 'graphql-yoga';
 import { defaultPrintFn } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
-import type { MeshServePlugin } from '../types';
+import type { GatewayPlugin } from '../types';
 
 export function useSubgraphExecuteDebug<TContext>(opts: {
   logger: Logger;
-}): MeshServePlugin<TContext> {
+}): GatewayPlugin<TContext> {
   return {
     onSubgraphExecute({ executionRequest, logger = opts.logger }) {
       if (executionRequest) {

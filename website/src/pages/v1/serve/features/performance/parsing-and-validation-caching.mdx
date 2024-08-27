@@ -19,7 +19,7 @@ options:
 ```ts filename="mesh.config.ts" {4,5}
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineServe({
+export const gatewayConfig = defineServe({
   // disable parse and validate caching
   parserAndValidationCache: false
 })
@@ -46,7 +46,7 @@ You can then pass your cache store to the `parserAndValidationCache` options:
 ```ts filename="mesh.config.ts" {9-13}
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   parserAndValidationCache: {
     documentCache: documentCacheStore as CacheStore<DocumentNode>,
     errorCache: errorCacheStore as CacheStore<Error>,

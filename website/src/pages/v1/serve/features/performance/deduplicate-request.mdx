@@ -24,7 +24,7 @@ npm i @graphql-mesh/plugin-deduplicate-request
 ```ts filename="mesh.config.ts"
 import useRequestDeduplication from '@graphql-mesh/plugin-deduplicate-request'
 
-export const serveConfig = {
+export const gatewayConfig = {
   plugins: pluginCtx => [
     useRequestDeduplication({
       ...pluginCtx

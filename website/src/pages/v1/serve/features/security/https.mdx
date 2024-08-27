@@ -50,7 +50,7 @@ const agent = new Agent({
   rejectUnauthorized: false
 })
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [
     useCustomAgent(
       // This function will be called for each URL to determine if the custom agent should be used
@@ -71,7 +71,7 @@ certificate files in the configuration file;
 ```ts
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   sslCredentials: {
     key_file_name: 'path/to/key.pem',
     cert_file_name: 'path/to/cert.pem',

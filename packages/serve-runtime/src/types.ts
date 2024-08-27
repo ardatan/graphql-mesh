@@ -29,12 +29,12 @@ export type TransportEntryAdditions = {
   [subgraph: '*' | string]: Partial<TransportEntry>;
 };
 
-export type MeshServeConfig<TContext extends Record<string, any> = Record<string, any>> =
-  | MeshServeConfigSupergraph<TContext>
-  | MeshServeConfigSubgraph<TContext>
-  | MeshServeConfigProxy<TContext>;
+export type GatewayConfig<TContext extends Record<string, any> = Record<string, any>> =
+  | GatewayConfigSupergraph<TContext>
+  | GatewayConfigSubgraph<TContext>
+  | GatewayConfigProxy<TContext>;
 
-export interface MeshServeConfigContext {
+export interface GatewayConfigContext {
   /**
    * WHATWG compatible Fetch implementation.
    */
@@ -57,7 +57,7 @@ export interface MeshServeConfigContext {
   cache?: KeyValueCache;
 }
 
-export interface MeshServeContext extends MeshServeConfigContext, YogaInitialContext {
+export interface GatewayContext extends GatewayConfigContext, YogaInitialContext {
   /**
    * Environment agnostic HTTP headers provided with the request.
    */
@@ -68,51 +68,47 @@ export interface MeshServeContext extends MeshServeConfigContext, YogaInitialCon
   connectionParams: Record<string, string>;
 }
 
-export type MeshServePlugin<
+export type GatewayPlugin<
   TPluginContext extends Record<string, any> = Record<string, any>,
   TContext extends Record<string, any> = Record<string, any>,
-> = YogaPlugin<Partial<TPluginContext> & MeshServeContext & TContext> &
-  UnifiedGraphPlugin<Partial<TPluginContext> & MeshServeContext & TContext> & {
-    onFetch?: OnFetchHook<Partial<TPluginContext> & MeshServeContext & TContext>;
+> = YogaPlugin<Partial<TPluginContext> & GatewayContext & TContext> &
+  UnifiedGraphPlugin<Partial<TPluginContext> & GatewayContext & TContext> & {
+    onFetch?: OnFetchHook<Partial<TPluginContext> & GatewayContext & TContext>;
   } & Partial<Disposable | AsyncDisposable>;
 
-export interface MeshServeConfigSupergraph<
-  TContext extends Record<string, any> = Record<string, any>,
-> extends MeshServeConfigSchemaBase<TContext> {
+export interface GatewayConfigSupergraph<TContext extends Record<string, any> = Record<string, any>>
+  extends GatewayConfigSchemaBase<TContext> {
   /**
    * SDL, path or an URL to the Federation Supergraph schema.
    *
    * Alternatively, CDN options for pulling a remote Federation Supergraph.
    */
-  supergraph:
-    | UnifiedGraphConfig
-    | MeshServeHiveCDNOptions
-    | MeshServeGraphOSManagedFederationOptions;
+  supergraph: UnifiedGraphConfig | GatewayHiveCDNOptions | GatewayGraphOSManagedFederationOptions;
   /**
    * GraphQL schema polling interval in milliseconds when the {@link supergraph} is an URL.
    */
   pollingInterval?: number;
 }
 
-export interface MeshServeConfigSubgraph<TContext extends Record<string, any> = Record<string, any>>
-  extends MeshServeConfigSchemaBase<TContext> {
+export interface GatewayConfigSubgraph<TContext extends Record<string, any> = Record<string, any>>
+  extends GatewayConfigSchemaBase<TContext> {
   /**
    * SDL, path or an URL to the Federation Subgraph schema.
    */
   subgraph: UnifiedGraphConfig;
 }
 
-interface MeshServeConfigSchemaBase<TContext> extends MeshServeConfigBase<TContext> {
+interface GatewayConfigSchemaBase<TContext> extends GatewayConfigBase<TContext> {
   /**
    * Additional GraphQL schema resolvers.
    */
   additionalResolvers?:
-    | (IResolvers<unknown, MeshServeContext & TContext> | IResolvers<unknown, MeshServeContext>)
-    | (IResolvers<unknown, MeshServeContext & TContext> | IResolvers<unknown, MeshServeContext>)[];
+    | (IResolvers<unknown, GatewayContext & TContext> | IResolvers<unknown, GatewayContext>)
+    | (IResolvers<unknown, GatewayContext & TContext> | IResolvers<unknown, GatewayContext>)[];
 }
 
-export interface MeshServeConfigProxy<TContext extends Record<string, any> = Record<string, any>>
-  extends MeshServeConfigBase<TContext> {
+export interface GatewayConfigProxy<TContext extends Record<string, any> = Record<string, any>>
+  extends GatewayConfigBase<TContext> {
   /**
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
@@ -122,7 +118,7 @@ export interface MeshServeConfigProxy<TContext extends Record<string, any> = Rec
    *
    * Alternatively, CDN options for pulling a remote GraphQL schema.
    */
-  schema?: GraphQLSchema | DocumentNode | string | MeshServeHiveCDNOptions;
+  schema?: GraphQLSchema | DocumentNode | string | GatewayHiveCDNOptions;
   /**
    * GraphQL schema polling interval in milliseconds.
    */
@@ -138,7 +134,7 @@ export interface MeshServeConfigProxy<TContext extends Record<string, any> = Rec
   skipValidation?: boolean;
 }
 
-export interface MeshServeHiveCDNOptions {
+export interface GatewayHiveCDNOptions {
   type: 'hive';
   /**
    * GraphQL Hive CDN endpoint URL.
@@ -150,14 +146,14 @@ export interface MeshServeHiveCDNOptions {
   key: string;
 }
 
-export interface MeshServeHiveReportingOptions
+export interface GatewayHiveReportingOptions
   extends Omit<YamlConfig.HivePlugin, 'experimental__persistedDocuments'> {
   type: 'hive';
   /** GraphQL Hive registry access token. */
   token: string;
 }
 
-export interface MeshServeGraphOSOptions {
+export interface GatewayGraphOSOptions {
   type: 'graphos';
   /**
    * The graph ref of the managed federation graph.
@@ -175,7 +171,7 @@ export interface MeshServeGraphOSOptions {
   apiKey: string;
 }
 
-export interface MeshServeGraphOSManagedFederationOptions extends MeshServeGraphOSOptions {
+export interface GatewayGraphOSManagedFederationOptions extends GatewayGraphOSOptions {
   /**
    * Maximum number of retries to attempt when fetching the schema from the managed federation up link.
    */
@@ -203,7 +199,7 @@ export interface MeshServeGraphOSManagedFederationOptions extends MeshServeGraph
   upLink?: string;
 }
 
-export interface MeshServeGraphOSReportingOptions extends MeshServeGraphOSOptions {
+export interface GatewayGraphOSReportingOptions extends GatewayGraphOSOptions {
   /**
    * Usage report endpoint
    *
@@ -217,7 +213,7 @@ export interface MeshServeGraphOSReportingOptions extends MeshServeGraphOSOption
  *
  * [See more.](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)
  * */
-export interface MeshServeHivePersistedDocumentsOptions {
+export interface GatewayHivePersistedDocumentsOptions {
   type: 'hive';
   /**
    * GraphQL Hive persisted documents CDN endpoint URL.
@@ -235,11 +231,11 @@ export interface MeshServeHivePersistedDocumentsOptions {
   allowArbitraryDocuments?: boolean;
 }
 
-interface MeshServeConfigBase<TContext extends Record<string, any>> {
+interface GatewayConfigBase<TContext extends Record<string, any>> {
   /** Usage reporting options. */
-  reporting?: MeshServeHiveReportingOptions | MeshServeGraphOSReportingOptions;
+  reporting?: GatewayHiveReportingOptions | GatewayGraphOSReportingOptions;
   /** Persisted documents options. */
-  persistedDocuments?: MeshServeHivePersistedDocumentsOptions;
+  persistedDocuments?: GatewayHivePersistedDocumentsOptions;
   /**
    * A map, or factory function, of transport kinds to their implementations.
    *
@@ -248,7 +244,7 @@ interface MeshServeConfigBase<TContext extends Record<string, any>> {
    * ```ts
    * import { defineConfig } from '@graphql-mesh/serve-cli';
    *
-   * export const serveConfig = defineConfig({
+   * export const gatewayConfig = defineConfig({
    *   transports: {
    *     http: import('@graphql-mesh/transport-http'),
    *   },
@@ -264,7 +260,7 @@ interface MeshServeConfigBase<TContext extends Record<string, any>> {
    * ```ts
    * import { defineConfig } from '@graphql-mesh/serve-cli';
    *
-   * export const serveConfig = defineConfig({
+   * export const gatewayConfig = defineConfig({
    *   transportEntries: {
    *     '*': {
    *       http: {
@@ -285,27 +281,27 @@ interface MeshServeConfigBase<TContext extends Record<string, any>> {
   /**
    * Mesh plugins that are compatible with GraphQL Yoga, envelop and Mesh.
    */
-  plugins?(context: MeshServeConfigContext): (
+  plugins?(context: GatewayConfigContext): (
     | EnvelopPlugin
-    | EnvelopPlugin<MeshServeContext>
-    | EnvelopPlugin<MeshServeContext & TContext>
+    | EnvelopPlugin<GatewayContext>
+    | EnvelopPlugin<GatewayContext & TContext>
     //
     | YogaPlugin
-    | YogaPlugin<MeshServeContext>
-    | YogaPlugin<MeshServeContext & TContext>
+    | YogaPlugin<GatewayContext>
+    | YogaPlugin<GatewayContext & TContext>
     //
-    | MeshServePlugin
-    | MeshServePlugin<unknown, MeshServeContext>
-    | MeshServePlugin<unknown, MeshServeContext & TContext>
+    | GatewayPlugin
+    | GatewayPlugin<unknown, GatewayContext>
+    | GatewayPlugin<unknown, GatewayContext & TContext>
   )[];
   /**
    * Enable, disable or configure CORS.
    */
-  cors?: YogaServerOptions<unknown, MeshServeContext & TContext>['cors'];
+  cors?: YogaServerOptions<unknown, GatewayContext & TContext>['cors'];
   /**
    * Show, hide or configure GraphiQL.
    */
-  graphiql?: YogaServerOptions<unknown, MeshServeContext & TContext>['graphiql'];
+  graphiql?: YogaServerOptions<unknown, GatewayContext & TContext>['graphiql'];
   /**
    * Whether the landing page should be shown.
    */
@@ -356,4 +352,32 @@ interface MeshServeConfigBase<TContext extends Record<string, any>> {
    * Working directory to run Mesh Serve with.
    */
   cwd?: string;
+
+  // Product Options
+
+  /**
+   * The name of the product.
+   *
+   * @default 'GraphQL Mesh'
+   */
+  productName?: string;
+
+  /**
+   * The description of the product.
+   *
+   * @default 'serve GraphQL federated architecture for any API service(s)'
+   */
+  productDescription?: string;
+
+  /**
+   * The name of the package.
+   *
+   * @default '@graphql-mesh/serve-cli'
+   */
+  productPackageName?: string;
+
+  /**
+   * The logo of the product.
+   */
+  productLogo?: string;
 }

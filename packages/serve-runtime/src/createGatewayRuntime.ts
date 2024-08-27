@@ -62,24 +62,25 @@ import { useCompleteSubscriptionsOnSchemaChange } from './plugins/useCompleteSub
 import { useFetchDebug } from './plugins/useFetchDebug.js';
 import { useRequestId } from './plugins/useRequestId.js';
 import { useSubgraphExecuteDebug } from './plugins/useSubgraphExecuteDebug.js';
+import { defaultProductLogo } from './productLogo.js';
 import type {
-  MeshServeConfig,
-  MeshServeConfigContext,
-  MeshServeContext,
-  MeshServeHiveCDNOptions,
-  MeshServePlugin,
+  GatewayConfig,
+  GatewayConfigContext,
+  GatewayContext,
+  GatewayHiveCDNOptions,
+  GatewayPlugin,
   UnifiedGraphConfig,
 } from './types.js';
 import { checkIfDataSatisfiesSelectionSet } from './utils.js';
 
-export type MeshServeRuntime<TContext extends Record<string, any> = Record<string, any>> =
+export type GatewayRuntime<TContext extends Record<string, any> = Record<string, any>> =
   YogaServerInstance<unknown, TContext> & {
     invalidateUnifiedGraph(): void;
   } & AsyncDisposable;
 
-export function createServeRuntime<TContext extends Record<string, any> = Record<string, any>>(
-  config: MeshServeConfig<TContext>,
-): MeshServeRuntime<TContext> {
+export function createGatewayRuntime<TContext extends Record<string, any> = Record<string, any>>(
+  config: GatewayConfig<TContext>,
+): GatewayRuntime<TContext> {
   let fetchAPI = config.fetchAPI;
   let logger: Logger;
   if (config.logging == null) {
@@ -92,10 +93,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
   } else if (typeof config.logging === 'object') {
     logger = config.logging;
   }
-  const onFetchHooks: OnFetchHook<MeshServeContext>[] = [];
+  const onFetchHooks: OnFetchHook<GatewayContext>[] = [];
   const wrappedFetchFn = wrapFetchWithHooks(onFetchHooks);
 
-  const configContext: MeshServeConfigContext = {
+  const configContext: GatewayConfigContext = {
     fetch: wrappedFetchFn,
     logger,
     cwd: 'cwd' in config ? config.cwd : process.cwd?.(),
@@ -122,7 +123,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     config,
     configContext,
   );
-  let persistedDocumentsPlugin: MeshServePlugin = {};
+  let persistedDocumentsPlugin: GatewayPlugin = {};
   if (config.reporting?.type !== 'hive' && config.persistedDocuments?.type === 'hive') {
     persistedDocumentsPlugin = useMeshHive({
       ...configContext,
@@ -617,7 +618,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     check: readinessChecker,
   });
 
-  const defaultMeshPlugin: MeshServePlugin = {
+  const defaultMeshPlugin: GatewayPlugin = {
     onFetch({ setFetchFn }) {
       setFetchFn(fetchAPI.fetch);
     },
@@ -625,7 +626,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
       onFetchHooks.splice(0, onFetchHooks.length);
       onSubgraphExecuteHooks.splice(0, onSubgraphExecuteHooks.length);
       onDelegateHooks.splice(0, onDelegateHooks.length);
-      for (const plugin of plugins as MeshServePlugin[]) {
+      for (const plugin of plugins as GatewayPlugin[]) {
         if (plugin.onFetch) {
           onFetchHooks.push(plugin.onFetch);
         }
@@ -646,15 +647,16 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   let graphiqlOptionsOrFactory: GraphiQLOptionsOrFactory<unknown> | false;
 
+  const graphiqlTitle = 'Gateway GraphiQL';
   if (config.graphiql == null || config.graphiql === true) {
     graphiqlOptionsOrFactory = {
-      title: 'GraphiQL Mesh',
+      title: graphiqlTitle,
     };
   } else if (config.graphiql === false) {
     graphiqlOptionsOrFactory = false;
   } else if (typeof config.graphiql === 'object') {
     graphiqlOptionsOrFactory = {
-      title: 'GraphiQL Mesh',
+      title: graphiqlTitle,
       ...config.graphiql,
     };
   } else if (typeof config.graphiql === 'function') {
@@ -668,11 +670,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         }
         if (resolvedOpts === true) {
           return {
-            title: 'GraphiQL Mesh',
+            title: graphiqlTitle,
           };
         }
         return {
-          title: 'GraphiQL Mesh',
+          title: graphiqlTitle,
           ...resolvedOpts,
         };
       });
@@ -681,6 +683,12 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   let landingPageRenderer: LandingPageRenderer | boolean;
 
+  const productName = config.productName || 'GraphQL Mesh';
+  const productDescription =
+    config.productDescription || 'Federated architecture for any API service';
+  const productPackageName = config.productPackageName || '@graphql-mesh/serve-cli';
+  const productLogo = config.productLogo || defaultProductLogo;
+
   if (config.landingPage == null || config.landingPage === true) {
     landingPageRenderer = async function meshLandingPageRenderer(opts) {
       const subgraphHtml = await subgraphInformationHTMLRenderer();
@@ -688,7 +696,11 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
         landingPageHtml
           .replace(/__GRAPHIQL_LINK__/g, opts.graphqlEndpoint)
           .replace(/__REQUEST_PATH__/g, opts.url.pathname)
-          .replace(/__SUBGRAPH_HTML__/g, subgraphHtml),
+          .replace(/__SUBGRAPH_HTML__/g, subgraphHtml)
+          .replaceAll(/__PRODUCT_NAME__/g, productName)
+          .replaceAll(/__PRODUCT_DESCRIPTION__/g, productDescription)
+          .replaceAll(/__PRODUCT_PACKAGE_NAME__/g, productPackageName)
+          .replace(/__PRODUCT_LOGO__/g, productLogo),
         {
           status: 200,
           statusText: 'OK',
@@ -704,7 +716,7 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
     landingPageRenderer = false;
   }
 
-  const yoga = createYoga<unknown, MeshServeContext & TContext>({
+  const yoga = createYoga<unknown, GatewayContext & TContext>({
     fetchAPI: config.fetchAPI,
     logging: logger,
     plugins: [
@@ -770,10 +782,10 @@ export function createServeRuntime<TContext extends Record<string, any> = Record
 
   return makeAsyncDisposable(yoga, () =>
     disposableStack.disposeAsync(),
-  ) as any as MeshServeRuntime<TContext>;
+  ) as any as GatewayRuntime<TContext>;
 }
 
-function isDynamicUnifiedGraphSchema(schema: UnifiedGraphConfig | MeshServeHiveCDNOptions) {
+function isDynamicUnifiedGraphSchema(schema: UnifiedGraphConfig | GatewayHiveCDNOptions) {
   if (isSchema(schema)) {
     // schema object
     return false;

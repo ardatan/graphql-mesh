@@ -1,5 +1,5 @@
 import { OperationTypeNode } from 'graphql';
-import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 import { composeSubgraphs } from '../src/compose';
 
@@ -37,7 +37,7 @@ describe('Loaders', () => {
         name: 'Test',
       }),
     );
-    const runtime = createServeRuntime({
+    const runtime = createGatewayRuntime({
       supergraph: supergraphSdl,
       plugins() {
         return [useCustomFetch(mockFetch)];

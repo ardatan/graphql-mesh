@@ -22,9 +22,9 @@ GraphQL Mesh can be integrated with Next.js easily as
 ```ts
 // Next.js Custom Route Handler: https://nextjs.org/docs/app/building-your-application/routing/router-handlers
 
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
-const { handleRequest } = createServeRuntime({
+const { handleRequest } = createGatewayRuntime({
   /* Your configuration here before the following required settings */
 
   // While using Next.js file convention for routing, we need to configure Mesh to use the correct endpoint

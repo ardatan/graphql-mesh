@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import type { MeshFetch } from '@graphql-mesh/types';
-import type { MeshServePlugin } from '../types.js';
+import type { GatewayPlugin } from '../types.js';
 
-export function useCustomFetch(fetch: MeshFetch): MeshServePlugin {
+export function useCustomFetch(fetch: MeshFetch): GatewayPlugin {
   return {
     onFetch({ setFetchFn }) {
       setFetchFn(fetch);

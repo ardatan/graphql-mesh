@@ -1,5 +1,5 @@
 import { type Plugin as YogaPlugin } from 'graphql-yoga';
-import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
 import {
   useJWT as useYogaJWT,
   type JWTExtendContextFields,
@@ -54,7 +54,7 @@ export function useForwardedJWT(config: {
  */
 export function useJWT(
   options: JWTAuthPluginOptions,
-): MeshServePlugin<{ jwt?: JWTExtendContextFields }> {
+): GatewayPlugin<{ jwt?: JWTExtendContextFields }> {
   const forwardPayload = options?.forward?.payload ?? true;
   const forwardToken = options?.forward?.token ?? false;
   const shouldForward = forwardPayload || forwardToken;

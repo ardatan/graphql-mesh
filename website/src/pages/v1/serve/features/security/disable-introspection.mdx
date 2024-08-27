@@ -40,7 +40,7 @@ headers.
 ```ts filename="mesh.config.ts" {7}
 import { defineConfig, useDisableIntrospection } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     useDisableIntrospection({
       isDisabled: request => request.headers.get('x-allow-introspection') !== 'secret-access-key'
@@ -86,7 +86,7 @@ npm i @escape.tech/graphql-armor-block-field-suggestions
 import { blockFieldSuggestionsPlugin } from '@escape.tech/graphql-armor-block-field-suggestions'
 import { defineConfig, useDisableIntrospection } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [useDisableIntrospection(), blockFieldSuggestionsPlugin()]
 })
 ```
