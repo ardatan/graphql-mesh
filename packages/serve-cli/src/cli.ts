@@ -139,6 +139,12 @@ export interface CLIContext {
   /** @default https://the-guild.dev/graphql/mesh */
   productLink: string;
   /** @default 'mesh-serve' */
+  /**
+   * A safe binary executable name, should not contain any special
+   * characters or white-spaces.
+   *
+   * @default 'mesh-serve'
+   */
   binName: string;
   /** @default 'mesh.config' */
   configFileName: string;
@@ -283,7 +289,7 @@ export function run(userCtx: Partial<CLIContext>) {
     productLink: 'https://the-guild.dev/graphql/mesh',
     binName: 'mesh-serve',
     configFileName: 'mesh.config',
-    version: globalThis.__VERSION__,
+    version: globalThis.__VERSION__ || 'dev',
     ...userCtx,
   };
 
