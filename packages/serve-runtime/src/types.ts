@@ -380,4 +380,9 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
    * The logo of the product.
    */
   productLogo?: string;
+
+  /**
+   * The link to the product website
+   */
+  productLink?: string;
 }

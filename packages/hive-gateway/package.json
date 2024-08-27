@@ -1,18 +1,18 @@
 {
-  "name": "@graphql-mesh/serve-cli",
-  "version": "0.11.6",
+  "name": "@graphql-hive/gateway",
+  "version": "0.0.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "ardatan/graphql-mesh",
-    "directory": "packages/serve-cli"
+    "directory": "packages/hive-gateway"
   },
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "bin": {
-    "mesh-serve": "dist/esm/bin.js"
+    "hive-gateway": "dist/esm/bin.js"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -36,7 +36,7 @@
   "typings": "dist/typings/index.d.ts",
   "scripts": {
     "bundle": "(rm -rf bundle || true) && rollup -c",
-    "inject-version": "tsx scripts/inject-version.ts",
+    "inject-version": "tsx ../serve-cli/scripts/inject-version.ts",
     "start": "tsx src/bin.ts"
   },
   "peerDependencies": {
@@ -49,17 +49,9 @@
     }
   },
   "dependencies": {
-    "@commander-js/extra-typings": "^12.1.0",
-    "@graphql-mesh/cross-helpers": "^0.4.6",
-    "@graphql-mesh/include": "^0.1.0",
+    "@graphql-mesh/serve-cli": "^0.11.6",
     "@graphql-mesh/serve-runtime": "^0.8.6",
-    "@graphql-mesh/types": "^0.102.4",
-    "@graphql-mesh/utils": "^0.102.4",
-    "@graphql-tools/utils": "^10.5.3",
-    "commander": "^12.0.0",
-    "dotenv": "^16.3.1",
-    "json-bigint-patch": "^0.0.8",
-    "parse-duration": "^1.1.0"
+    "@graphql-mesh/utils": "^0.102.4"
   },
   "optionalDependencies": {
     "node-libcurl": "^4.0.0",
@@ -82,7 +74,7 @@
   "sideEffects": false,
   "buildOptions": {
     "bin": {
-      "mesh-serve": {
+      "hive-gateway": {
         "input": "src/bin.ts"
       }
     },

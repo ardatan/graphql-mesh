@@ -86,6 +86,8 @@ export interface CLIContext {
   productPackageName: string;
   /** @default Mesh logo */
   productLogo?: string;
+  /** @default https://the-guild.dev/graphql/mesh */
+  productLink: string;
   /** @default 'mesh-serve' */
   binName: string;
   /** @default 'mesh.config' */
@@ -222,6 +224,7 @@ export function run(userCtx: Partial<CLIContext>) {
     productName: 'Mesh',
     productDescription: 'serve GraphQL federated architecture for any API service(s)',
     productPackageName: '@graphql-mesh/serve-cli',
+    productLink: 'https://the-guild.dev/graphql/mesh',
     binName: 'mesh-serve',
     configFileName: 'mesh.config',
     version: globalThis.__VERSION__,

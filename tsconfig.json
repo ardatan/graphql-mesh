@@ -27,6 +27,7 @@
     "verbatimModuleSyntax": true,
 
     "paths": {
+      "@graphql-hive/gateway": ["packages/hive-gateway/src/index.ts"],
       "@graphql-mesh/include": ["packages/include/src/index.ts"],
       "@graphql-mesh/include/*": ["packages/include/src/*"],
       "@graphql-mesh/cli": ["packages/legacy/cli/src/index.ts"],

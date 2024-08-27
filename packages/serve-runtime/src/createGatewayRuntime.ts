@@ -688,6 +688,7 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
     config.productDescription || 'Federated architecture for any API service';
   const productPackageName = config.productPackageName || '@graphql-mesh/serve-cli';
   const productLogo = config.productLogo || defaultProductLogo;
+  const productLink = config.productLink || 'https://the-guild.dev/graphql/mesh';
 
   if (config.landingPage == null || config.landingPage === true) {
     landingPageRenderer = async function meshLandingPageRenderer(opts) {
@@ -700,6 +701,7 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
           .replaceAll(/__PRODUCT_NAME__/g, productName)
           .replaceAll(/__PRODUCT_DESCRIPTION__/g, productDescription)
           .replaceAll(/__PRODUCT_PACKAGE_NAME__/g, productPackageName)
+          .replace(/__PRODUCT_LINK__/, productLink)
           .replace(/__PRODUCT_LOGO__/g, productLogo),
         {
           status: 200,
