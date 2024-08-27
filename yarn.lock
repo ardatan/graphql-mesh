@@ -100,15 +100,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/composition@npm:2.8.4":
-  version: 2.8.4
-  resolution: "@apollo/composition@npm:2.8.4"
+"@apollo/composition@npm:2.8.5":
+  version: 2.8.5
+  resolution: "@apollo/composition@npm:2.8.5"
   dependencies:
-    "@apollo/federation-internals": "npm:2.8.4"
-    "@apollo/query-graphs": "npm:2.8.4"
+    "@apollo/federation-internals": "npm:2.8.5"
+    "@apollo/query-graphs": "npm:2.8.5"
   peerDependencies:
     graphql: ^16.5.0
-  checksum: 10c0/4baba3654b6d11e1a23514c9e9cc1dc60fccc0ab8893c81ec8eef0da1f267b6480ec864c54550ada0261fad020b85db7f89e5781a05201cf0297ae33eec4f82b
+  checksum: 10c0/3b83cbce669596a162952c4befe30c370f075dc9f9b156a378c3235184f651e6ebc842606b7be333adfa62e301e6d1ebef0910c04d443ab88cb694af4395325a
   languageName: node
   linkType: hard
 
@@ -126,13 +126,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/gateway@npm:^2.4.1, @apollo/gateway@npm:^2.8.3":
-  version: 2.8.4
-  resolution: "@apollo/gateway@npm:2.8.4"
+"@apollo/federation-internals@npm:2.8.5":
+  version: 2.8.5
+  resolution: "@apollo/federation-internals@npm:2.8.5"
   dependencies:
-    "@apollo/composition": "npm:2.8.4"
-    "@apollo/federation-internals": "npm:2.8.4"
-    "@apollo/query-planner": "npm:2.8.4"
+    "@types/uuid": "npm:^9.0.0"
+    chalk: "npm:^4.1.0"
+    js-levenshtein: "npm:^1.1.6"
+    uuid: "npm:^9.0.0"
+  peerDependencies:
+    graphql: ^16.5.0
+  checksum: 10c0/21706e88d2afcf356a00b94500afdfc3d4bf58efac3f1dd2269ea7e8c73e9aaa32ba8d2071559977c0022c4b6b45b5dfea72d163c9a9a042c5b9f3fc99f9b3f8
+  languageName: node
+  linkType: hard
+
+"@apollo/gateway@npm:^2.4.1, @apollo/gateway@npm:^2.8.3":
+  version: 2.8.5
+  resolution: "@apollo/gateway@npm:2.8.5"
+  dependencies:
+    "@apollo/composition": "npm:2.8.5"
+    "@apollo/federation-internals": "npm:2.8.5"
+    "@apollo/query-planner": "npm:2.8.5"
     "@apollo/server-gateway-interface": "npm:^1.1.0"
     "@apollo/usage-reporting-protobuf": "npm:^4.1.0"
     "@apollo/utils.createhash": "npm:^2.0.0"
@@ -150,7 +164,7 @@ __metadata:
     node-fetch: "npm:^2.6.7"
   peerDependencies:
     graphql: ^16.5.0
-  checksum: 10c0/a827630cd1287f89c979448e8cc414427ac790c2e9b14e4738e6ec2cd9009c2d6bbceec8ec8f169bced82aea8416737b6824680e222d7b31b4d8b76e7724ddcd
+  checksum: 10c0/d8829573533775b530f8abcd98656a8aace2b8985457869cb8dad2e5dad986790c2e9326fa946066d53d49a03af916933f1331b425df238443e74114a74d74eb
   languageName: node
   linkType: hard
 
@@ -201,33 +215,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/query-graphs@npm:2.8.4":
-  version: 2.8.4
-  resolution: "@apollo/query-graphs@npm:2.8.4"
+"@apollo/query-graphs@npm:2.8.5":
+  version: 2.8.5
+  resolution: "@apollo/query-graphs@npm:2.8.5"
   dependencies:
-    "@apollo/federation-internals": "npm:2.8.4"
+    "@apollo/federation-internals": "npm:2.8.5"
     deep-equal: "npm:^2.0.5"
     ts-graphviz: "npm:^1.5.4"
     uuid: "npm:^9.0.0"
   peerDependencies:
     graphql: ^16.5.0
-  checksum: 10c0/bfaffdfaad6651c85d4e1e54e38d40f046bb436d0d15428ad7f8b5237354920488f578e5e780ceb8140459e7ca542255a86957bdbd3972e04427cc27a60797be
+  checksum: 10c0/d945c00bb00ba2ca35228c305b1cec76f0a42cbd796fee8ff19e8b604129b291383160e4790a016cf5868bbb822c4c88065e69afd1bf01a79f175c0815067f51
   languageName: node
   linkType: hard
 
-"@apollo/query-planner@npm:2.8.4":
-  version: 2.8.4
-  resolution: "@apollo/query-planner@npm:2.8.4"
+"@apollo/query-planner@npm:2.8.5":
+  version: 2.8.5
+  resolution: "@apollo/query-planner@npm:2.8.5"
   dependencies:
-    "@apollo/federation-internals": "npm:2.8.4"
-    "@apollo/query-graphs": "npm:2.8.4"
+    "@apollo/federation-internals": "npm:2.8.5"
+    "@apollo/query-graphs": "npm:2.8.5"
     "@apollo/utils.keyvaluecache": "npm:^2.1.0"
     chalk: "npm:^4.1.0"
     deep-equal: "npm:^2.0.5"
     pretty-format: "npm:^29.0.0"
   peerDependencies:
     graphql: ^16.5.0
-  checksum: 10c0/d8a9be3dc46a546d59fd2b4cf0566560c28c472d9881311198cb49ff7a5ec855431fea2a3d9df36075ef215eff5a8dc3abcec70bea3e5a35d8e848f7b84925f4
+  checksum: 10c0/57896c652b0ab25a0ff5a39ec49d28c9619a2702fd2d39814ffd2d73ff6fbe59a85e04b9805740610951abc8235288aeadd179b0f86cb1186880793207e2c61e
   languageName: node
   linkType: hard
 
@@ -294,7 +308,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/subgraph@npm:2.8.4, @apollo/subgraph@npm:^2.2.3, @apollo/subgraph@npm:^2.4.1, @apollo/subgraph@npm:^2.7.2":
+"@apollo/subgraph@npm:2.8.4":
   version: 2.8.4
   resolution: "@apollo/subgraph@npm:2.8.4"
   dependencies:
@@ -303,6 +317,18 @@ __metadata:
   peerDependencies:
     graphql: ^16.5.0
   checksum: 10c0/2b40fc3227e4c06853495182b18a0809569851a5536c8159fe858a6939e8cda839cc3ac93ca0ba6b8f74e4d58dad7307c2764683b3d26980a37d70fc8ae3f61e
+  languageName: node
+  linkType: hard
+
+"@apollo/subgraph@npm:^2.2.3, @apollo/subgraph@npm:^2.4.1, @apollo/subgraph@npm:^2.7.2":
+  version: 2.8.5
+  resolution: "@apollo/subgraph@npm:2.8.5"
+  dependencies:
+    "@apollo/cache-control-types": "npm:^1.0.2"
+    "@apollo/federation-internals": "npm:2.8.5"
+  peerDependencies:
+    graphql: ^16.5.0
+  checksum: 10c0/19ddc8b775d1ff8072d876d0bc3820e9066e6c6af88cee679672b2b327f999f64db8d092f92ec476aa557912ef9482c2fa2ff0002034862abe65ced140f9d167
   languageName: node
   linkType: hard
 
@@ -10120,8 +10146,8 @@ __metadata:
   linkType: hard
 
 "@opentelemetry/auto-instrumentations-node@npm:^0.49.0":
-  version: 0.49.1
-  resolution: "@opentelemetry/auto-instrumentations-node@npm:0.49.1"
+  version: 0.49.2
+  resolution: "@opentelemetry/auto-instrumentations-node@npm:0.49.2"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.52.0"
     "@opentelemetry/instrumentation-amqplib": "npm:^0.41.0"
@@ -10136,7 +10162,7 @@ __metadata:
     "@opentelemetry/instrumentation-express": "npm:^0.41.1"
     "@opentelemetry/instrumentation-fastify": "npm:^0.38.0"
     "@opentelemetry/instrumentation-fs": "npm:^0.14.0"
-    "@opentelemetry/instrumentation-generic-pool": "npm:^0.38.0"
+    "@opentelemetry/instrumentation-generic-pool": "npm:^0.38.1"
     "@opentelemetry/instrumentation-graphql": "npm:^0.42.0"
     "@opentelemetry/instrumentation-grpc": "npm:^0.52.0"
     "@opentelemetry/instrumentation-hapi": "npm:^0.40.0"
@@ -10148,7 +10174,7 @@ __metadata:
     "@opentelemetry/instrumentation-lru-memoizer": "npm:^0.39.0"
     "@opentelemetry/instrumentation-memcached": "npm:^0.38.0"
     "@opentelemetry/instrumentation-mongodb": "npm:^0.46.0"
-    "@opentelemetry/instrumentation-mongoose": "npm:^0.40.0"
+    "@opentelemetry/instrumentation-mongoose": "npm:^0.41.0"
     "@opentelemetry/instrumentation-mysql": "npm:^0.40.0"
     "@opentelemetry/instrumentation-mysql2": "npm:^0.40.0"
     "@opentelemetry/instrumentation-nestjs-core": "npm:^0.39.0"
@@ -10156,23 +10182,23 @@ __metadata:
     "@opentelemetry/instrumentation-pg": "npm:^0.43.0"
     "@opentelemetry/instrumentation-pino": "npm:^0.41.0"
     "@opentelemetry/instrumentation-redis": "npm:^0.41.0"
-    "@opentelemetry/instrumentation-redis-4": "npm:^0.41.0"
+    "@opentelemetry/instrumentation-redis-4": "npm:^0.41.1"
     "@opentelemetry/instrumentation-restify": "npm:^0.40.0"
     "@opentelemetry/instrumentation-router": "npm:^0.39.0"
     "@opentelemetry/instrumentation-socket.io": "npm:^0.41.0"
-    "@opentelemetry/instrumentation-tedious": "npm:^0.12.0"
-    "@opentelemetry/instrumentation-undici": "npm:^0.4.0"
+    "@opentelemetry/instrumentation-tedious": "npm:^0.13.0"
+    "@opentelemetry/instrumentation-undici": "npm:^0.5.0"
     "@opentelemetry/instrumentation-winston": "npm:^0.39.0"
     "@opentelemetry/resource-detector-alibaba-cloud": "npm:^0.29.0"
-    "@opentelemetry/resource-detector-aws": "npm:^1.5.2"
-    "@opentelemetry/resource-detector-azure": "npm:^0.2.9"
-    "@opentelemetry/resource-detector-container": "npm:^0.3.11"
+    "@opentelemetry/resource-detector-aws": "npm:^1.6.0"
+    "@opentelemetry/resource-detector-azure": "npm:^0.2.10"
+    "@opentelemetry/resource-detector-container": "npm:^0.4.0"
     "@opentelemetry/resource-detector-gcp": "npm:^0.29.10"
     "@opentelemetry/resources": "npm:^1.24.0"
     "@opentelemetry/sdk-node": "npm:^0.52.0"
   peerDependencies:
     "@opentelemetry/api": ^1.4.1
-  checksum: 10c0/cbdada7dddab0d6b30a79301c07aa50c6b20984fd4a0b44870e3e849bbf37ecc3899f9b5e602268d65034fe02adabf2b069723b6ed47ea5f37f0365f5166fbdf
+  checksum: 10c0/087fa53172229523b2a9af92bf6b25568f4714de57c79850cdf437d8299a571c0dd15366bb55ba7e1571297aa6009730f8845d8c51f78e04fbfcf2bc64dd4c19
   languageName: node
   linkType: hard
 
@@ -10185,7 +10211,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/core@npm:1.25.1, @opentelemetry/core@npm:^1.0.0, @opentelemetry/core@npm:^1.1.0, @opentelemetry/core@npm:^1.25.0, @opentelemetry/core@npm:^1.8.0":
+"@opentelemetry/core@npm:1.25.1, @opentelemetry/core@npm:^1.0.0, @opentelemetry/core@npm:^1.1.0, @opentelemetry/core@npm:^1.25.0, @opentelemetry/core@npm:^1.25.1, @opentelemetry/core@npm:^1.8.0":
   version: 1.25.1
   resolution: "@opentelemetry/core@npm:1.25.1"
   dependencies:
@@ -10410,14 +10436,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/instrumentation-generic-pool@npm:^0.38.0":
-  version: 0.38.0
-  resolution: "@opentelemetry/instrumentation-generic-pool@npm:0.38.0"
+"@opentelemetry/instrumentation-generic-pool@npm:^0.38.1":
+  version: 0.38.1
+  resolution: "@opentelemetry/instrumentation-generic-pool@npm:0.38.1"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.52.0"
   peerDependencies:
     "@opentelemetry/api": ^1.3.0
-  checksum: 10c0/ebebc1591f6d1e5ef01ff5dd1baf73919d06fb3ea33363275cd08f8eb42d21c4913ab9c73b403d33c39ca2aad622be07419839524ca67a02401f646465522cf9
+  checksum: 10c0/985d0a4f612544cfd0cd8d1c6f055b6f370333755e7f9d94d66d7fe39f1d1e48ec6b63767c7a3ee1eecd236e1433962050ac0a5b7a66f0bf4da850f7da874eb5
   languageName: node
   linkType: hard
 
@@ -10558,16 +10584,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/instrumentation-mongoose@npm:^0.40.0":
-  version: 0.40.0
-  resolution: "@opentelemetry/instrumentation-mongoose@npm:0.40.0"
+"@opentelemetry/instrumentation-mongoose@npm:^0.41.0":
+  version: 0.41.0
+  resolution: "@opentelemetry/instrumentation-mongoose@npm:0.41.0"
   dependencies:
     "@opentelemetry/core": "npm:^1.8.0"
     "@opentelemetry/instrumentation": "npm:^0.52.0"
     "@opentelemetry/semantic-conventions": "npm:^1.22.0"
   peerDependencies:
     "@opentelemetry/api": ^1.3.0
-  checksum: 10c0/467357de25c0106fbbacbd6a27ef31ee402c00f70d1c5087f8396a908e5a95591b710da873e66f4fddd6c5614627f59143f61f8400fcd5c425724bd91d265810
+  checksum: 10c0/579e426461bad15e4cd37f648fe6a9f1e792dd6db15c5380bc6dd3fa116f5d9fb16541e47045969dc8fe25bc4778baaf0e5db0d9e0c7644c5022b25e06b4b7a0
   languageName: node
   linkType: hard
 
@@ -10649,16 +10675,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/instrumentation-redis-4@npm:^0.41.0":
-  version: 0.41.0
-  resolution: "@opentelemetry/instrumentation-redis-4@npm:0.41.0"
+"@opentelemetry/instrumentation-redis-4@npm:^0.41.1":
+  version: 0.41.1
+  resolution: "@opentelemetry/instrumentation-redis-4@npm:0.41.1"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.52.0"
     "@opentelemetry/redis-common": "npm:^0.36.2"
     "@opentelemetry/semantic-conventions": "npm:^1.22.0"
   peerDependencies:
     "@opentelemetry/api": ^1.3.0
-  checksum: 10c0/fbf9a3d68c027746160cf3d8bcba61f1fae0e6aeb6ced56b53765bac9286a6f6a62be1bb14b92e7ed74fac5111bd78a8b66ae449dc386c6d3b01e7446ed118bc
+  checksum: 10c0/1c324f62a56a0ffdb804bafa9377e1332fd672b9fd63c4261f1c3d31ea6a562998789725e00319e2c8d27f368cac478aa8c65cb1d4e60c3bd2620900c5d731c2
   languageName: node
   linkType: hard
 
@@ -10712,28 +10738,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/instrumentation-tedious@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@opentelemetry/instrumentation-tedious@npm:0.12.0"
+"@opentelemetry/instrumentation-tedious@npm:^0.13.0":
+  version: 0.13.0
+  resolution: "@opentelemetry/instrumentation-tedious@npm:0.13.0"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.52.0"
     "@opentelemetry/semantic-conventions": "npm:^1.22.0"
-    "@types/tedious": "npm:^4.0.10"
+    "@types/tedious": "npm:^4.0.14"
   peerDependencies:
     "@opentelemetry/api": ^1.3.0
-  checksum: 10c0/003918cba49313173767827e9d6fbb5d2319ebd1d9a3e9e02e805d4cae9e13096c2abb61d910178da021e6650160169aa140eb28cc610f9211e3d1adec86bdca
+  checksum: 10c0/76382fee6249d86d127c3a5da9bbfff425de5930c2d9141a8bf181da97c3f00005532ce31ee3840527287994fef55a9bceccfdeadccf6499e959f70ec19d9ab1
   languageName: node
   linkType: hard
 
-"@opentelemetry/instrumentation-undici@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@opentelemetry/instrumentation-undici@npm:0.4.0"
+"@opentelemetry/instrumentation-undici@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@opentelemetry/instrumentation-undici@npm:0.5.0"
   dependencies:
     "@opentelemetry/core": "npm:^1.8.0"
     "@opentelemetry/instrumentation": "npm:^0.52.0"
   peerDependencies:
     "@opentelemetry/api": ^1.7.0
-  checksum: 10c0/fa91e4c89f34d58de507ccf27bb6146c5af3f3d2da9e733f3718d26a5860b72920df5f833f326160c0c2ae744cf95a2212772072d643d7ba80cdee1063c02479
+  checksum: 10c0/f81d4216ff2e4d43592f9969e59bcfb055a73d460d784df8666098e3afbe72236758d1ee36fb0cef79ecda69854daadbb87d35a0a8ca2e60ac4794b1a3796246
   languageName: node
   linkType: hard
 
@@ -10869,40 +10895,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/resource-detector-aws@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "@opentelemetry/resource-detector-aws@npm:1.5.2"
+"@opentelemetry/resource-detector-aws@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@opentelemetry/resource-detector-aws@npm:1.6.0"
   dependencies:
     "@opentelemetry/core": "npm:^1.0.0"
-    "@opentelemetry/resources": "npm:^1.0.0"
+    "@opentelemetry/resources": "npm:^1.10.0"
     "@opentelemetry/semantic-conventions": "npm:^1.22.0"
   peerDependencies:
     "@opentelemetry/api": ^1.0.0
-  checksum: 10c0/ca3f584a7bbeeadf3bbcbf2e25d12a085b9e0d54f6ddb872729e8da54553179e9a4fd9faa6f12c436f02153acda34d460c58c1ce641381f890f50b37c9400f33
+  checksum: 10c0/f6cd8c08172447a95b1f774b55ff720e47e3256a7493c7f54ec62e8ec526595a825b03c2394a1ec16b43edaca39fc878047a2a804533cf8f4a4997339ef2dbfc
   languageName: node
   linkType: hard
 
-"@opentelemetry/resource-detector-azure@npm:^0.2.9":
-  version: 0.2.9
-  resolution: "@opentelemetry/resource-detector-azure@npm:0.2.9"
+"@opentelemetry/resource-detector-azure@npm:^0.2.10":
+  version: 0.2.10
+  resolution: "@opentelemetry/resource-detector-azure@npm:0.2.10"
   dependencies:
+    "@opentelemetry/core": "npm:^1.25.1"
     "@opentelemetry/resources": "npm:^1.10.1"
     "@opentelemetry/semantic-conventions": "npm:^1.22.0"
   peerDependencies:
     "@opentelemetry/api": ^1.0.0
-  checksum: 10c0/ab88d608c8c4bcdd35c21cb481b6a65f0e3ac96e717992aab03237e4340b8bbbe326bc2a8d3357fedfdc2b620f6f2e96da5c75d53a4e1f2929335da88977ebb9
+  checksum: 10c0/cade5012733c56fecbb993e09ee78e42974728d20380c28a1bd7222acbc7ea55bad99ecd42dc74558930ff19601c51eb7ace960de4fc5f38af922db0736a7cc2
   languageName: node
   linkType: hard
 
-"@opentelemetry/resource-detector-container@npm:^0.3.11":
-  version: 0.3.11
-  resolution: "@opentelemetry/resource-detector-container@npm:0.3.11"
+"@opentelemetry/resource-detector-container@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@opentelemetry/resource-detector-container@npm:0.4.0"
   dependencies:
-    "@opentelemetry/resources": "npm:^1.0.0"
+    "@opentelemetry/resources": "npm:^1.10.0"
     "@opentelemetry/semantic-conventions": "npm:^1.22.0"
   peerDependencies:
     "@opentelemetry/api": ^1.0.0
-  checksum: 10c0/efa97f52783207a1e5f0279781a6166d10c860026237351a8c994ca8c44b15779a96ec22241733e96c4ad6776c9961438df8cf91fcc2990bf3402efc042c5f6e
+  checksum: 10c0/b26e1f846cdb05504de50819d16a33006a9d0477103cf27d0d48d326d38fde54388e9102a41ec6bcc01a44fad0cfe51ac76a19e1c5968ca36bdab5fff422ac3d
   languageName: node
   linkType: hard
 
@@ -10920,7 +10947,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/resources@npm:1.25.1, @opentelemetry/resources@npm:^1.25.1":
+"@opentelemetry/resources@npm:1.25.1, @opentelemetry/resources@npm:^1.10.0, @opentelemetry/resources@npm:^1.25.1":
   version: 1.25.1
   resolution: "@opentelemetry/resources@npm:1.25.1"
   dependencies:
@@ -11493,114 +11520,114 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/rollup-android-arm-eabi@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-android-arm-eabi@npm:4.21.0"
+"@rollup/rollup-android-arm-eabi@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-android-arm-eabi@npm:4.21.1"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@rollup/rollup-android-arm64@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-android-arm64@npm:4.21.0"
+"@rollup/rollup-android-arm64@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-android-arm64@npm:4.21.1"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-darwin-arm64@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-darwin-arm64@npm:4.21.0"
+"@rollup/rollup-darwin-arm64@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-darwin-arm64@npm:4.21.1"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-darwin-x64@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-darwin-x64@npm:4.21.0"
+"@rollup/rollup-darwin-x64@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-darwin-x64@npm:4.21.1"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm-gnueabihf@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.21.0"
+"@rollup/rollup-linux-arm-gnueabihf@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.21.1"
   conditions: os=linux & cpu=arm & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm-musleabihf@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-arm-musleabihf@npm:4.21.0"
+"@rollup/rollup-linux-arm-musleabihf@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-arm-musleabihf@npm:4.21.1"
   conditions: os=linux & cpu=arm & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm64-gnu@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.21.0"
+"@rollup/rollup-linux-arm64-gnu@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.21.1"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm64-musl@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.21.0"
+"@rollup/rollup-linux-arm64-musl@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.21.1"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-powerpc64le-gnu@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-powerpc64le-gnu@npm:4.21.0"
+"@rollup/rollup-linux-powerpc64le-gnu@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-powerpc64le-gnu@npm:4.21.1"
   conditions: os=linux & cpu=ppc64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-riscv64-gnu@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.21.0"
+"@rollup/rollup-linux-riscv64-gnu@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.21.1"
   conditions: os=linux & cpu=riscv64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-s390x-gnu@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-s390x-gnu@npm:4.21.0"
+"@rollup/rollup-linux-s390x-gnu@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-s390x-gnu@npm:4.21.1"
   conditions: os=linux & cpu=s390x & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-x64-gnu@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.21.0"
+"@rollup/rollup-linux-x64-gnu@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.21.1"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-x64-musl@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-linux-x64-musl@npm:4.21.0"
+"@rollup/rollup-linux-x64-musl@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-linux-x64-musl@npm:4.21.1"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-arm64-msvc@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.21.0"
+"@rollup/rollup-win32-arm64-msvc@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.21.1"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-ia32-msvc@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.21.0"
+"@rollup/rollup-win32-ia32-msvc@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.21.1"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-x64-msvc@npm:4.21.0":
-  version: 4.21.0
-  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.21.0"
+"@rollup/rollup-win32-x64-msvc@npm:4.21.1":
+  version: 4.21.1
+  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.21.1"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -13640,7 +13667,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tedious@npm:^4.0.10":
+"@types/tedious@npm:^4.0.14":
   version: 4.0.14
   resolution: "@types/tedious@npm:4.0.14"
   dependencies:
@@ -33233,25 +33260,25 @@ __metadata:
   linkType: hard
 
 "rollup@npm:^4.18.1, rollup@npm:^4.20.0":
-  version: 4.21.0
-  resolution: "rollup@npm:4.21.0"
+  version: 4.21.1
+  resolution: "rollup@npm:4.21.1"
   dependencies:
-    "@rollup/rollup-android-arm-eabi": "npm:4.21.0"
-    "@rollup/rollup-android-arm64": "npm:4.21.0"
-    "@rollup/rollup-darwin-arm64": "npm:4.21.0"
-    "@rollup/rollup-darwin-x64": "npm:4.21.0"
-    "@rollup/rollup-linux-arm-gnueabihf": "npm:4.21.0"
-    "@rollup/rollup-linux-arm-musleabihf": "npm:4.21.0"
-    "@rollup/rollup-linux-arm64-gnu": "npm:4.21.0"
-    "@rollup/rollup-linux-arm64-musl": "npm:4.21.0"
-    "@rollup/rollup-linux-powerpc64le-gnu": "npm:4.21.0"
-    "@rollup/rollup-linux-riscv64-gnu": "npm:4.21.0"
-    "@rollup/rollup-linux-s390x-gnu": "npm:4.21.0"
-    "@rollup/rollup-linux-x64-gnu": "npm:4.21.0"
-    "@rollup/rollup-linux-x64-musl": "npm:4.21.0"
-    "@rollup/rollup-win32-arm64-msvc": "npm:4.21.0"
-    "@rollup/rollup-win32-ia32-msvc": "npm:4.21.0"
-    "@rollup/rollup-win32-x64-msvc": "npm:4.21.0"
+    "@rollup/rollup-android-arm-eabi": "npm:4.21.1"
+    "@rollup/rollup-android-arm64": "npm:4.21.1"
+    "@rollup/rollup-darwin-arm64": "npm:4.21.1"
+    "@rollup/rollup-darwin-x64": "npm:4.21.1"
+    "@rollup/rollup-linux-arm-gnueabihf": "npm:4.21.1"
+    "@rollup/rollup-linux-arm-musleabihf": "npm:4.21.1"
+    "@rollup/rollup-linux-arm64-gnu": "npm:4.21.1"
+    "@rollup/rollup-linux-arm64-musl": "npm:4.21.1"
+    "@rollup/rollup-linux-powerpc64le-gnu": "npm:4.21.1"
+    "@rollup/rollup-linux-riscv64-gnu": "npm:4.21.1"
+    "@rollup/rollup-linux-s390x-gnu": "npm:4.21.1"
+    "@rollup/rollup-linux-x64-gnu": "npm:4.21.1"
+    "@rollup/rollup-linux-x64-musl": "npm:4.21.1"
+    "@rollup/rollup-win32-arm64-msvc": "npm:4.21.1"
+    "@rollup/rollup-win32-ia32-msvc": "npm:4.21.1"
+    "@rollup/rollup-win32-x64-msvc": "npm:4.21.1"
     "@types/estree": "npm:1.0.5"
     fsevents: "npm:~2.3.2"
   dependenciesMeta:
@@ -33291,7 +33318,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 10c0/984beb858da245c5e3a9027d6d87e67ad6443f1b46eab07685b861d9e49da5856693265c62a6f8262c36d11c9092713a96a9124f43e6de6698eb84d77118496a
+  checksum: 10c0/e64b6adabadc3e18544c68e9704744c333b38a68ba803c49b5344a015c5865bf35a72669ba121ba26869fa306f193884e07319ccfc570c08fd8f9e72c9949d4d
   languageName: node
   linkType: hard
 
@@ -35912,8 +35939,8 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.16.5":
-  version: 4.18.0
-  resolution: "tsx@npm:4.18.0"
+  version: 4.19.0
+  resolution: "tsx@npm:4.19.0"
   dependencies:
     esbuild: "npm:~0.23.0"
     fsevents: "npm:~2.3.3"
@@ -35923,7 +35950,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/887b43cc3eed0706955b535ecfe13f76be5753ed888064d103aafdae728952355d1ecabdf9824385d852939c85f16ee0262660cf0ccf6824f7aac658e4abfcdb
+  checksum: 10c0/d14463a78067c6db84c677b79b14861de6d7f6fb0ffa5727cc500c4552459e936395a3854ad0112af0fd7b263bcedd62ce3929b036188eb10cd9902a607ffe34
   languageName: node
   linkType: hard
 
