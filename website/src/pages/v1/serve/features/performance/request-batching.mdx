@@ -24,7 +24,7 @@ The Batching functionality is described via the
 
 Batching is disabled by default, but you can enable it by setting the `batching` option to `true`:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -43,7 +43,7 @@ By default up to 10 GraphQL requests are allowed within a single HTTP request. I
 exceeded an error will be raised. You can customize this option by passing an object to the
 `batching` configuration option:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

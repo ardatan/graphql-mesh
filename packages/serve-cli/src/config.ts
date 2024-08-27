@@ -8,6 +8,8 @@ import type { ServerConfig } from './server';
 
 export const defaultConfigExtensions = ['.ts', '.mts', '.cts', '.js', '.mjs', '.cjs'];
 
+export const defaultConfigFileName = 'gateway.config';
+
 export function createDefaultConfigPaths(configFileName: string) {
   return defaultConfigExtensions.map(ext => `${configFileName}${ext}`);
 }
@@ -23,7 +25,11 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
 
   if (!opts.configPath) {
     !opts.quiet && opts.log.info(`Searching for default config files`);
-    for (const configPath of createDefaultConfigPaths(opts.configFileName)) {
+    const configPaths = [
+      ...createDefaultConfigPaths(defaultConfigFileName),
+      ...createDefaultConfigPaths(opts.configFileName),
+    ];
+    for (const configPath of configPaths) {
       const absoluteConfigPath = resolve(process.cwd(), configPath);
       const exists = await lstat(absoluteConfigPath)
         .then(() => true)

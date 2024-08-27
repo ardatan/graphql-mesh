@@ -25,7 +25,7 @@ looking for, then you can use this option on your own to add plugins from either
 
 You can provide those plugins as an array of objects,
 
-```ts filename="mesh.config.ts" {7}
+```ts filename="gateway.config.ts" {7}
 import { useGraphQLJit } from '@envelop/graphql-jit'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 // or a Yoga Plugin
@@ -177,7 +177,7 @@ GraphQL Mesh comes with ready-to-use `logger`, `fetch`, cache storage and etc th
 different components. We'd highly recommend you to use those available context values instead of
 creating your own for a specific plugin.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

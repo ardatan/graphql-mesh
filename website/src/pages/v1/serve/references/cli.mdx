@@ -34,8 +34,8 @@ serve GraphQL federated architecture for any API service(s)
 Options:
   --fork <count>                          count of workers to spawn. defaults to "os.availableParallelism()" when NODE_ENV is "production", otherwise only one (the main) worker
                                           (default: 1 (env: FORK)
-  -c, --config-path <path>                path to the configuration file. defaults to the following files respectively in the current working directory: mesh.config.ts,
-                                          mesh.config.mts, mesh.config.cts, mesh.config.js, mesh.config.mjs, mesh.config.cjs (env: CONFIG_PATH)
+  -c, --config-path <path>                path to the configuration file. defaults to the following files respectively in the current working directory: gateway.config.ts,
+                                          gateway.config.mts, gateway.config.cts, gateway.config.js, gateway.config.mjs, gateway.config.cjs (env: CONFIG_PATH)
   -h, --host <hostname>                   host to use for serving (default: "127.0.0.1" (default: "127.0.0.1")
   -p, --port <number>                     port to use for serving (default: 4000 (env: PORT)
   --polling <duration>                    schema polling interval in human readable duration (default: "10s") (env: POLLING)

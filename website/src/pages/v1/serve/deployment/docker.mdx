@@ -39,10 +39,10 @@ For a full list of CLI arguments, please refer to the [CLI arguments](./referenc
 
 Instead of configuring Mesh Serve with CLI arguments, we support configuring with a config file.
 
-You're recommended to use the `mesh.config.ts` file to configure Mesh Serve. Simply mount the config
-file when running the image.
+You're recommended to use the `gateway.config.ts` file to configure Mesh Serve. Simply mount the
+config file when running the image.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -55,7 +55,7 @@ export const gatewayConfig = defineConfig({
 ```sh
 docker run \
   -p 4000:4000 \
-  -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
+  -v "$(pwd)/gateway.config.ts:/serve/gateway.config.ts" \
   ghcr.io/ardatan/mesh-serve proxy
 ```
 
@@ -67,7 +67,7 @@ The default port where Mesh Serve listens is `4000`; however, maybe the containe
 a network (like when using [Networking in Compose](https://docs.docker.com/compose/networking/)) and
 you wish to change the port of Mesh Serve in the image.
 
-You can use the `mesh.config.ts` to change the port, or simply pass in the `--port` argument when
+You can use the `gateway.config.ts` to change the port, or simply pass in the `--port` argument when
 running the image:
 
 ```sh
@@ -85,7 +85,7 @@ image is as easy as:
 ```sh
 docker run \
   -p 4000:4000 \
-  -v "$(pwd)/supergraph.graphql:/serve/mesh.config.ts" \
+  -v "$(pwd)/supergraph.graphql:/serve/gateway.config.ts" \
   ghcr.io/ardatan/mesh-serve supergraph
 ```
 
@@ -109,7 +109,7 @@ services:
     #   HIVE_CDN_KEY: <secret>
     #   HIVE_REGISTRY_TOKEN: <secret>
     volumes:
-      - ./mesh.config.ts:/serve/mesh.config.ts
+      - ./gateway.config.ts:/serve/gateway.config.ts
 ```
 
 And then simply start the services with:
@@ -143,7 +143,7 @@ docker build -t mesh-serve-w-rate-limit .
 
 Configure to use the rate limiting plugin:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import useRateLimit from '@graphql-mesh/plugin-rate-limit'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -171,7 +171,7 @@ And then simply start the new image with the config file mounted:
 ```sh
 docker run \
   -p 4000:4000 \
-  -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
+  -v "$(pwd)/gateway.config.ts:/serve/gateway.config.ts" \
   mesh-serve-w-rate-limit supergraph
 ```
 
@@ -233,7 +233,7 @@ export function useTiming(): GatewayPlugin {
 }
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useTiming } from './my-timing'
 
@@ -254,7 +254,7 @@ COPY package*.json .
 RUN npm i --omit=dev
 
 COPY my-time.ts .
-COPY mesh.config.ts .
+COPY gateway.config.ts .
 ```
 
 Then build your image:
@@ -275,7 +275,7 @@ docker run -p 4000:4000 mesh-serve-w-my-timing supergraph
 
 ```sh
 docker run -p 4000:4000 \
-  -v "$(pwd)/mesh.config.ts":/serve/mesh.config.ts \
+  -v "$(pwd)/gateway.config.ts":/serve/gateway.config.ts \
   -v "$(pwd)/my-timing.ts":/serve/my-timing.ts \
   mesh-serve-w-my-timing supergraph
 ```
@@ -314,7 +314,7 @@ export const additionalResolvers = {
 }
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { additionalResolvers } from './my-time'
 
@@ -333,7 +333,7 @@ COPY package*.json .
 RUN npm i --omit=dev
 
 COPY my-time.ts .
-COPY mesh.config.ts .
+COPY gateway.config.ts .
 ```
 
 Then build your image:

@@ -290,7 +290,11 @@ export function createTenv(cwd: string): Tenv {
             supergraph = path.basename(supergraph);
           }
         }
-        for (const configfile of await glob('mesh.config.*', { cwd })) {
+        const configFileNames = ['mesh.config.*', 'gateway.config.*'];
+        const configFiles = (
+          await Promise.all(configFileNames.map(configFileName => glob(configFileName, { cwd })))
+        ).flat();
+        for (const configfile of configFiles) {
           const contents = await fs.readFile(path.join(cwd, configfile), 'utf8');
           if (contents.includes('@graphql-mesh/serve-cli')) {
             volumes.push({ host: configfile, container: `/serve/${path.basename(configfile)}` });
@@ -314,7 +318,7 @@ export function createTenv(cwd: string): Tenv {
               ? // if the test contains a serve dockerfile, use it instead of the default e2e image
                 `e2e.${path.basename(cwd)}`
               : 'e2e'),
-          // TODO: changing port from within mesh.config.ts wont work in docker runner
+          // TODO: changing port from within mesh.config.ts or gateway.config.ts wont work in docker runner
           hostPort: port,
           containerPort: port,
           healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],

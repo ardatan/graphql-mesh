@@ -35,7 +35,7 @@ Then, add it to your plugins, and configure your JWT basic setup.
 Here's a mininal example for configuring the JWT plugin with a local signing key, and looking for
 the token in the `authorization` header:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import useJWTAuth, { createInlineSigningKeyProvider, extractFromHeader } from '@graphql-mesh/plugin-jwt-auth';
 
@@ -62,7 +62,7 @@ export const gatewayConfig = defineConfig({
 You can also pass
 [additional configuration options to the Yoga plugin](https://the-guild.dev/graphql/yoga-server/docs/features/jwt#additional-configuration):
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import useJWTAuth, { createInlineSigningKeyProvider, createRemoteJwksSigningKeyProvider, extractFromHeader, extractFromCookie } from '@graphql-mesh/plugin-jwt-auth'
 
@@ -226,7 +226,7 @@ For example, with a plugin like
 use the `jwt` property of the context to access the decoded JWT token, and decide what permissions
 to allow to the user based on identity or token claims:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
 import useJWTAuth from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'

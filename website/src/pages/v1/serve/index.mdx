@@ -96,9 +96,9 @@ For a full list of CLI arguments, please refer to the [CLI Reference](./referenc
 The Mesh Serve config file is used for enabling additional features such as authorization,
 authentication caching, rate limiting, and more...
 
-You're recommended to use the `mesh.config.ts` file to configure Mesh Serve.
+You're recommended to use the `gateway.config.ts` file to configure Mesh Serve.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -113,12 +113,12 @@ Mesh Serve:
 mesh-serve supergraph
 ```
 
-However, when using Docker, you have to mount the `mesh.config.ts` file first:
+However, when using Docker, you have to mount the `gateway.config.ts` file first:
 
 ```sh
 docker run \
   -p 4000:4000 \
-  -v "$(pwd)/mesh.config.ts:/serve/mesh.config.ts" \
+  -v "$(pwd)/gateway.config.ts:/serve/gateway.config.ts" \
   ghcr.io/ardatan/mesh-serve supergraph
 ```
 
@@ -130,7 +130,7 @@ features such as monitoring/tracing, caching, rate limiting, security layers, an
 You can configure Mesh Serve to proxy a GraphQL API by providing the URL of the API in the
 configuration file.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

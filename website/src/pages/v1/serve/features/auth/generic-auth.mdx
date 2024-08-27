@@ -92,7 +92,7 @@ specific GraphQL fields by using the `@skipAuth` directive.
 
 To setup this mode, use the following config:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -142,7 +142,7 @@ type Query {
 This mode uses the plugin to inject the authenticated user into the `context`, and later you can
 verify it in your resolvers and plugin during authentication.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -190,7 +190,7 @@ plugins: () => [
 This mode is similar to option #2, but it uses the `@authenticated` SDL directive or `auth` field
 extension for protecting specific GraphQL fields.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 

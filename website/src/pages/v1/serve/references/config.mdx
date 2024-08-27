@@ -11,7 +11,8 @@ import { Callout } from '@theguild/components'
   us directly in case you are having any troubles.
 </Callout>
 
-An overview of all the configuration options for the `mesh.config.ts` used by the `mesh-serve` CLI.
+An overview of all the configuration options for the `gateway.config.ts` used by the `mesh-serve`
+CLI.
 
 Both TypeScript (`*.ts`) and JavaScript (`*.js`) config filetypes are supported.
 
@@ -19,12 +20,12 @@ Both TypeScript (`*.ts`) and JavaScript (`*.js`) config filetypes are supported.
 
 The following list of files are loaded by default, sorted by priority:
 
-- `mesh.config.ts` _(recommended)_
-- `mesh.config.mts`
-- `mesh.config.cts`
-- `mesh.config.js`
-- `mesh.config.mjs`
-- `mesh.config.cjs`
+- `gateway.config.ts` _(recommended)_
+- `gateway.config.mts`
+- `gateway.config.cts`
+- `gateway.config.js`
+- `gateway.config.mjs`
+- `gateway.config.cjs`
 
 ### Supergraph Related
 
@@ -33,7 +34,7 @@ The following list of files are loaded by default, sorted by priority:
 You can provide `GraphQLSchema`, `DocumentNode` which has the AST of the supergraph or `string`
 which is the `SDL` representation of the supergraph.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -70,7 +71,7 @@ automatically.
 If a function is provided as in the example above, that function will be called every time the
 polling interval is reached.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -83,7 +84,7 @@ export const gatewayConfig = defineConfig({
 You can provide additional resolvers to the supergraph. This can be useful if you want to add a
 custom resolver to the supergraph, or override the existing one.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -130,7 +131,7 @@ listed
 You can provide `GraphQLSchema`, `DocumentNode` which has the AST of the subgraph or `string` which
 is the `SDL` representation of the subgraph
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -157,7 +158,7 @@ export const gatewayConfig = defineConfig({
 
 HTTP executor options to proxy all incoming requests to another HTTP endpoint.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -172,7 +173,7 @@ By default, Mesh Serve introspects the schema from the endpoint. And if it fails
 validation and schema aware features. But if Hive CDN endpoint and key have been provided in the
 configuration, Mesh Serve will fetch the schema from the Hive CDN.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -198,7 +199,7 @@ The URL of the GraphQL endpoint to proxy requests to.
 Additional headers to include when querying the original schema It can be a plain object or a
 function that returns a plain object.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -241,7 +242,7 @@ recommended to keep it enabled for security reasons. But it brings a performance
 want to disable this validation and send the operations directly to the upstream service, you can
 set this option to `true`.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -259,7 +260,7 @@ export const gatewayConfig = defineConfig({
 This is the option to provide SSL Credentials for HTTPS Server. If this is provided, Mesh will be
 served via HTTPS instead of HTTP.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -280,7 +281,7 @@ export const gatewayConfig = defineConfig({
 
 This is the option to open the browser automatically when the server is started.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -297,7 +298,7 @@ export const gatewayConfig = defineConfig({
 These are the options to configure the port and host of the server in the configuration file rather
 than passing them as CLI arguments.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -311,7 +312,7 @@ export const gatewayConfig = defineConfig({
 This is the option to configure the maximum header size of the server. By default, it is 16KB. If
 longer headers are sent, the server will respond with a 431 status code.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -336,7 +337,7 @@ different phases of the GraphQL execution to manipulate or track the entire work
 
 You can configure GraphiQL playground that allows you to play with your GraphQL API.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -354,7 +355,7 @@ export const gatewayConfig = defineConfig({
 
 If you want to disable the landing page, you can set this option to `false`.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -378,7 +379,7 @@ Server components. So it uses [`@whatwg-node/fetch`](https://github.com/ardatan/
 default which is a platform agnostic implementation of the Fetch API. If you want to use a different
 Fetch API implementation, you can provide it here.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import fetch from 'node-fetch'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -399,7 +400,7 @@ Using this option, you can do;
 - Provide your own logger instance
 - Choose a log level
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { createLogger } from 'some-logger-library'
 
@@ -420,7 +421,7 @@ export const gatewayConfig = defineConfig({
 This is the option to provide a custom GraphQL endpoint for the server. By default, it is
 `/graphql`.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

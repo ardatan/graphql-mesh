@@ -37,7 +37,7 @@ Sometimes you want to allow introspectition for certain users. You can access th
 and determine based on that whether introspection should be enabled or not. E.g. you can check the
 headers.
 
-```ts filename="mesh.config.ts" {7}
+```ts filename="gateway.config.ts" {7}
 import { defineConfig, useDisableIntrospection } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({

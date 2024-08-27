@@ -18,7 +18,7 @@ npm install @graphql-mesh/plugin-mock
 
 Then, add it to your plugins:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import useMock from '@graphql-mesh/plugin-mock'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -43,7 +43,7 @@ The example above will replace the resolver of `User.firstName` with a mock that
 
 You can also provide a custom function to generate the mock value for a field:
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { fullName } from './user-mocks.js'
 
@@ -65,7 +65,7 @@ export const gatewayConfig = defineConfig({
 
 You can mock types with custom mock functions like below;
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { user } from './user-mocks.js'
 
@@ -121,7 +121,7 @@ type User {
 }
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import useMock from '@graphql-mesh/plugin-mock'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
@@ -190,7 +190,7 @@ type Query {
 }
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { store } from './init-store.js'
 
@@ -225,7 +225,7 @@ type Mutation {
 }
 ```
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { store } from './init-store.js'
 

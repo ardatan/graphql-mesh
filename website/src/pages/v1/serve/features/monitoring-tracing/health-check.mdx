@@ -28,7 +28,7 @@ and expecting the response `200 OK`.
 
 Of course, you can change this endpoint through the `healthCheckEndpoint` option.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
@@ -43,7 +43,7 @@ A successful response is just `200 OK` without a body.
 Additionally, we have another endpoint which checks whether the services powering Mesh are ready to
 perform work.
 
-```ts filename="mesh.config.ts"
+```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
