@@ -5,7 +5,7 @@ WORKDIR /build
 # python3 is the default, necessary for npm i node-gyp build
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-RUN npm i tuql
+RUN npm i sqlite3 tuql
 
 # tuql should use main graphql
 RUN rm -rf node_modules/tuql/node_modules/graphql
