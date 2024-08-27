@@ -96,6 +96,173 @@
         }
       }
     },
+    "ServeConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ServeConfig",
+      "properties": {
+        "fork": {
+          "description": "Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "port": {
+          "description": "TCP Port to listen (default: `4000`) (Any of: Int, String)",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "hostname": {
+          "type": "string",
+          "description": "The binding hostname (default: `localhost`)"
+        },
+        "cors": {
+          "$ref": "#/definitions/CorsConfig",
+          "description": "Configuration for CORS"
+        },
+        "staticFiles": {
+          "type": "string",
+          "description": "Path to your static files you want to be served with GraphQL Mesh HTTP Server"
+        },
+        "playground": {
+          "type": "boolean",
+          "description": "Show GraphiQL Playground"
+        },
+        "sslCredentials": {
+          "$ref": "#/definitions/HTTPSConfig",
+          "description": "SSL Credentials for HTTPS Server\nIf this is provided, Mesh will be served via HTTPS"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Path to GraphQL Endpoint (default: /graphql)"
+        },
+        "browser": {
+          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disabled by passing `false` (Any of: String, Boolean)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "playgroundTitle": {
+          "type": "string",
+          "description": "Title of GraphiQL Playground"
+        },
+        "batchingLimit": {
+          "type": "integer",
+          "description": "Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)"
+        },
+        "healthCheckEndpoint": {
+          "type": "string",
+          "description": "Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)"
+        },
+        "extraParamNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.\n\nThis option allows you to specify additional parameters that are allowed in the request body.\n\n@default []\n\n@example ['doc_id', 'id']"
+        }
+      }
+    },
+    "CorsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "CorsConfig",
+      "properties": {
+        "origin": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "allowedHeaders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "exposedHeaders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "credentials": {
+          "type": "boolean"
+        },
+        "maxAge": {
+          "type": "integer"
+        },
+        "preflightContinue": {
+          "type": "boolean"
+        },
+        "optionsSuccessStatus": {
+          "type": "integer"
+        }
+      }
+    },
+    "HTTPSConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HTTPSConfig",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "cert": {
+          "type": "string"
+        }
+      },
+      "required": ["key", "cert"]
+    },
+    "SDKConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SDKConfig",
+      "properties": {
+        "generateOperations": {
+          "$ref": "#/definitions/GenerateOperationsConfig",
+          "description": "Use this only if you don't want to use `documents` for SDK,\nand let Mesh generate them for you"
+        }
+      }
+    },
+    "GenerateOperationsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GenerateOperationsConfig",
+      "properties": {
+        "selectionSetDepth": {
+          "type": "integer"
+        }
+      }
+    },
     "Source": {
       "additionalProperties": false,
       "type": "object",
@@ -598,173 +765,6 @@
         "keyNotFound": {
           "type": "string",
           "description": "Error to be thrown when the extraction of the persisted operation id failed"
-        }
-      }
-    },
-    "ServeConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ServeConfig",
-      "properties": {
-        "fork": {
-          "description": "Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)",
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
-        },
-        "port": {
-          "description": "TCP Port to listen (default: `4000`) (Any of: Int, String)",
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "hostname": {
-          "type": "string",
-          "description": "The binding hostname (default: `localhost`)"
-        },
-        "cors": {
-          "$ref": "#/definitions/CorsConfig",
-          "description": "Configuration for CORS"
-        },
-        "staticFiles": {
-          "type": "string",
-          "description": "Path to your static files you want to be served with GraphQL Mesh HTTP Server"
-        },
-        "playground": {
-          "type": "boolean",
-          "description": "Show GraphiQL Playground"
-        },
-        "sslCredentials": {
-          "$ref": "#/definitions/HTTPSConfig",
-          "description": "SSL Credentials for HTTPS Server\nIf this is provided, Mesh will be served via HTTPS"
-        },
-        "endpoint": {
-          "type": "string",
-          "description": "Path to GraphQL Endpoint (default: /graphql)"
-        },
-        "browser": {
-          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disabled by passing `false` (Any of: String, Boolean)",
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
-        },
-        "playgroundTitle": {
-          "type": "string",
-          "description": "Title of GraphiQL Playground"
-        },
-        "batchingLimit": {
-          "type": "integer",
-          "description": "Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)"
-        },
-        "healthCheckEndpoint": {
-          "type": "string",
-          "description": "Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)"
-        },
-        "extraParamNames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.\n\nThis option allows you to specify additional parameters that are allowed in the request body.\n\n@default []\n\n@example ['doc_id', 'id']"
-        }
-      }
-    },
-    "CorsConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "CorsConfig",
-      "properties": {
-        "origin": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
-        },
-        "allowedHeaders": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "exposedHeaders": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "credentials": {
-          "type": "boolean"
-        },
-        "maxAge": {
-          "type": "integer"
-        },
-        "preflightContinue": {
-          "type": "boolean"
-        },
-        "optionsSuccessStatus": {
-          "type": "integer"
-        }
-      }
-    },
-    "HTTPSConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HTTPSConfig",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "cert": {
-          "type": "string"
-        }
-      },
-      "required": ["key", "cert"]
-    },
-    "SDKConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SDKConfig",
-      "properties": {
-        "generateOperations": {
-          "$ref": "#/definitions/GenerateOperationsConfig",
-          "description": "Use this only if you don't want to use `documents` for SDK,\nand let Mesh generate them for you"
-        }
-      }
-    },
-    "GenerateOperationsConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GenerateOperationsConfig",
-      "properties": {
-        "selectionSetDepth": {
-          "type": "integer"
         }
       }
     },
@@ -4312,6 +4312,30 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "required": ["sources"],
   "properties": {
+    "serve": {
+      "$ref": "#/definitions/ServeConfig",
+      "description": "Configuration for `mesh start` or `mesh dev` command.\nThose commands won't be available in programmatic usage."
+    },
+    "sdk": {
+      "$ref": "#/definitions/SDKConfig",
+      "description": "SDK Configuration"
+    },
+    "codegen": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "additionalItems": true
+        }
+      ],
+      "description": "Codegen Configuration"
+    },
     "require": {
       "type": "array",
       "items": {
@@ -4442,30 +4466,6 @@
     "pollingInterval": {
       "type": "integer",
       "description": "If you are using a CDN for a source (e.g. Federation Supergraph), this will be the polling interval in milliseconds for the CDN without a downtime"
-    },
-    "serve": {
-      "$ref": "#/definitions/ServeConfig",
-      "description": "Configuration for `mesh start` or `mesh dev` command.\nThose commands won't be available in programmatic usage."
-    },
-    "sdk": {
-      "$ref": "#/definitions/SDKConfig",
-      "description": "SDK Configuration"
-    },
-    "codegen": {
-      "anyOf": [
-        {
-          "type": "object",
-          "additionalProperties": true
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "array",
-          "additionalItems": true
-        }
-      ],
-      "description": "Codegen Configuration"
     }
   },
   "additionalProperties": false
