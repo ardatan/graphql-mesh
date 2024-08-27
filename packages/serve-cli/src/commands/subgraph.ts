@@ -82,6 +82,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         productName: ctx.productName,
         productDescription: ctx.productDescription,
         productPackageName: ctx.productPackageName,
+        productLogo: ctx.productLogo,
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided

@@ -6,6 +6,12 @@
  */
 
 export interface Config {
+  serve?: ServeConfig;
+  sdk?: SDKConfig;
+  /**
+   * Codegen Configuration
+   */
+  codegen?: any;
   require?: string[];
   /**
    * Defines the list of your external data sources for your API mesh
@@ -65,12 +71,98 @@ export interface Config {
    * If you are using a CDN for a source (e.g. Federation Supergraph), this will be the polling interval in milliseconds for the CDN without a downtime
    */
   pollingInterval?: number;
-  serve?: ServeConfig;
-  sdk?: SDKConfig;
+}
+/**
+ * Configuration for `mesh start` or `mesh dev` command.
+ * Those commands won't be available in programmatic usage.
+ */
+export interface ServeConfig {
   /**
-   * Codegen Configuration
+   * Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)
    */
-  codegen?: any;
+  fork?: number | boolean;
+  /**
+   * TCP Port to listen (default: `4000`) (Any of: Int, String)
+   */
+  port?: number | string;
+  /**
+   * The binding hostname (default: `localhost`)
+   */
+  hostname?: string;
+  cors?: CorsConfig;
+  /**
+   * Path to your static files you want to be served with GraphQL Mesh HTTP Server
+   */
+  staticFiles?: string;
+  /**
+   * Show GraphiQL Playground
+   */
+  playground?: boolean;
+  sslCredentials?: HTTPSConfig;
+  /**
+   * Path to GraphQL Endpoint (default: /graphql)
+   */
+  endpoint?: string;
+  /**
+   * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
+   * This feature can be disabled by passing `false` (Any of: String, Boolean)
+   */
+  browser?: string | boolean;
+  /**
+   * Title of GraphiQL Playground
+   */
+  playgroundTitle?: string;
+  /**
+   * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
+   */
+  batchingLimit?: number;
+  /**
+   * Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)
+   */
+  healthCheckEndpoint?: string;
+  /**
+   * By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.
+   *
+   * This option allows you to specify additional parameters that are allowed in the request body.
+   *
+   * @default []
+   *
+   * @example ['doc_id', 'id']
+   */
+  extraParamNames?: string[];
+}
+/**
+ * Configuration for CORS
+ */
+export interface CorsConfig {
+  origin?: any;
+  allowedHeaders?: string[];
+  exposedHeaders?: string[];
+  credentials?: boolean;
+  maxAge?: number;
+  preflightContinue?: boolean;
+  optionsSuccessStatus?: number;
+}
+/**
+ * SSL Credentials for HTTPS Server
+ * If this is provided, Mesh will be served via HTTPS
+ */
+export interface HTTPSConfig {
+  key: string;
+  cert: string;
+}
+/**
+ * SDK Configuration
+ */
+export interface SDKConfig {
+  generateOperations?: GenerateOperationsConfig;
+}
+/**
+ * Use this only if you don't want to use `documents` for SDK,
+ * and let Mesh generate them for you
+ */
+export interface GenerateOperationsConfig {
+  selectionSetDepth?: number;
 }
 export interface Source {
   /**
@@ -2336,96 +2428,4 @@ export interface StatsdClientConfiguration {
 }
 export interface StatsdClientBufferHolder {
   buffer: string;
-}
-/**
- * Configuration for `mesh start` or `mesh dev` command.
- * Those commands won't be available in programmatic usage.
- */
-export interface ServeConfig {
-  /**
-   * Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)
-   */
-  fork?: number | boolean;
-  /**
-   * TCP Port to listen (default: `4000`) (Any of: Int, String)
-   */
-  port?: number | string;
-  /**
-   * The binding hostname (default: `localhost`)
-   */
-  hostname?: string;
-  cors?: CorsConfig;
-  /**
-   * Path to your static files you want to be served with GraphQL Mesh HTTP Server
-   */
-  staticFiles?: string;
-  /**
-   * Show GraphiQL Playground
-   */
-  playground?: boolean;
-  sslCredentials?: HTTPSConfig;
-  /**
-   * Path to GraphQL Endpoint (default: /graphql)
-   */
-  endpoint?: string;
-  /**
-   * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
-   * This feature can be disabled by passing `false` (Any of: String, Boolean)
-   */
-  browser?: string | boolean;
-  /**
-   * Title of GraphiQL Playground
-   */
-  playgroundTitle?: string;
-  /**
-   * Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
-   */
-  batchingLimit?: number;
-  /**
-   * Endpoint for [Health Check](https://the-guild.dev/graphql/yoga-server/docs/features/health-check)
-   */
-  healthCheckEndpoint?: string;
-  /**
-   * By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.
-   *
-   * This option allows you to specify additional parameters that are allowed in the request body.
-   *
-   * @default []
-   *
-   * @example ['doc_id', 'id']
-   */
-  extraParamNames?: string[];
-}
-/**
- * Configuration for CORS
- */
-export interface CorsConfig {
-  origin?: any;
-  allowedHeaders?: string[];
-  exposedHeaders?: string[];
-  credentials?: boolean;
-  maxAge?: number;
-  preflightContinue?: boolean;
-  optionsSuccessStatus?: number;
-}
-/**
- * SSL Credentials for HTTPS Server
- * If this is provided, Mesh will be served via HTTPS
- */
-export interface HTTPSConfig {
-  key: string;
-  cert: string;
-}
-/**
- * SDK Configuration
- */
-export interface SDKConfig {
-  generateOperations?: GenerateOperationsConfig;
-}
-/**
- * Use this only if you don't want to use `documents` for SDK,
- * and let Mesh generate them for you
- */
-export interface GenerateOperationsConfig {
-  selectionSetDepth?: number;
 }

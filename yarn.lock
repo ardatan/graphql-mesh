@@ -5769,6 +5769,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-hive/gateway@workspace:packages/hive-gateway":
+  version: 0.0.0-use.local
+  resolution: "@graphql-hive/gateway@workspace:packages/hive-gateway"
+  dependencies:
+    "@graphql-mesh/serve-cli": "npm:^0.11.6"
+    "@graphql-mesh/serve-runtime": "npm:^0.8.6"
+    "@graphql-mesh/utils": "npm:^0.102.4"
+    "@parcel/watcher": "npm:^2.3.0"
+    node-libcurl: "npm:^4.0.0"
+    uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
+  peerDependencies:
+    "@parcel/watcher": ^2.1.0
+    graphql: "*"
+  dependenciesMeta:
+    node-libcurl:
+      optional: true
+    uWebSockets.js:
+      optional: true
+  peerDependenciesMeta:
+    "@parcel/watcher":
+      optional: true
+  bin:
+    hive-gateway: dist/esm/bin.js
+  languageName: unknown
+  linkType: soft
+
 "@graphql-hive/yoga@npm:^0.37.0":
   version: 0.37.0
   resolution: "@graphql-hive/yoga@npm:0.37.0"
