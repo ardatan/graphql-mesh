@@ -21,6 +21,8 @@ jobs:
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
+          # node-version-file: .node-version
+          # Website build fails on Node.js 22.7.0, use `node-version-file` later
           node-version: 22.6.0
 
       - uses: the-guild-org/shared-config/website-cf@v1
