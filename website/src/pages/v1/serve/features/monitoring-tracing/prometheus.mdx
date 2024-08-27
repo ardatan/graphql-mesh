@@ -32,7 +32,7 @@ You can then add the plugin and its configuration to your `mesh.config.ts` file.
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...other options
 
   plugins: pluginCtx => [
@@ -701,7 +701,7 @@ name of the `graphql_yoga_http_duration` metric to `http_request_duration`, you 
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
@@ -736,7 +736,7 @@ import usePrometheus, { createHistogram } from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { register as registry } from 'prom-client'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
@@ -773,7 +773,7 @@ import { defineConfig } from '@graphql-mesh/serve-cli'
 
 const myRegistry = new Registry()
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,
@@ -791,7 +791,7 @@ export const serveConfig = defineConfig({
 import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     usePrometheus({
       ...pluginCtx,

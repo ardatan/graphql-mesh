@@ -3,15 +3,15 @@ import type { Agent as HttpAgent } from 'http';
 // eslint-disable-next-line import/no-nodejs-modules
 import type { Agent as HttpsAgent } from 'https';
 import type { OnFetchHookPayload } from '@graphql-mesh/types';
-import type { MeshServeContext, MeshServePlugin } from '../types';
+import type { GatewayContext, GatewayPlugin } from '../types';
 
 type AgentFactory<TContext> = (
-  payload: OnFetchHookPayload<Partial<TContext> & MeshServeContext & Record<string, any>>,
+  payload: OnFetchHookPayload<Partial<TContext> & GatewayContext & Record<string, any>>,
 ) => HttpAgent | HttpsAgent | false | undefined;
 
 export function useCustomAgent<TContext>(
   agentFactory: AgentFactory<TContext>,
-): MeshServePlugin<TContext> {
+): GatewayPlugin<TContext> {
   return {
     onFetch(payload) {
       const agent = agentFactory(payload);

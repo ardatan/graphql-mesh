@@ -3,7 +3,7 @@ import { createYoga } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { useGenericAuth } from '@envelop/generic-auth';
-import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { composeWithApollo } from '../../../testing/composeWithApollo';
 import useJWT, { createInlineSigningKeyProvider, type JWTExtendContextFields } from '../src/index';
 
@@ -89,7 +89,7 @@ describe('Auth Directives', () => {
         schema: subgraphASchema,
       });
       const signingKey = 'secret';
-      await using serveRuntime = createServeRuntime({
+      await using serveRuntime = createGatewayRuntime({
         supergraph: () =>
           composeWithApollo([
             {
@@ -206,7 +206,7 @@ describe('Auth Directives', () => {
       const subgraphAServer = createYoga({
         schema: subgraphASchema,
       });
-      await using serveRuntime = createServeRuntime({
+      await using serveRuntime = createGatewayRuntime({
         supergraph: () =>
           composeWithApollo([
             {
@@ -361,7 +361,7 @@ describe('Auth Directives', () => {
       });
       const signingKey = 'secret';
       it('succeeds', async () => {
-        await using serveRuntime = createServeRuntime({
+        await using serveRuntime = createGatewayRuntime({
           supergraph: () =>
             composeWithApollo([
               {
@@ -428,7 +428,7 @@ describe('Auth Directives', () => {
         });
       });
       it('fails', async () => {
-        await using serveRuntime = createServeRuntime({
+        await using serveRuntime = createGatewayRuntime({
           supergraph: () =>
             composeWithApollo([
               {
@@ -558,7 +558,7 @@ describe('Auth Directives', () => {
         schema: subgraphSchema,
       });
       const signingKey = 'secret';
-      await using serveRuntime = createServeRuntime({
+      await using serveRuntime = createGatewayRuntime({
         supergraph: () =>
           composeWithApollo([
             {
@@ -697,7 +697,7 @@ describe('Auth Directives', () => {
         schema: subgraph,
       });
       const signingKey = 'secret';
-      await using serveRuntime = createServeRuntime({
+      await using serveRuntime = createGatewayRuntime({
         supergraph: () =>
           composeWithApollo([
             {

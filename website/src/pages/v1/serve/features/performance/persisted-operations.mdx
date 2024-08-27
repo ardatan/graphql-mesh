@@ -46,7 +46,7 @@ const store = {
   ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38: '{__typename}'
 }
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     usePersistedOperations({
       getPersistedOperation(sha256Hash: string) {
@@ -117,7 +117,7 @@ import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operation
 
 const persistedOperations = JSON.parse(readFileSync('./persistedOperations.json', 'utf-8'))
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     usePersistedOperations({
       getPersistedOperation(sha256Hash: string) {
@@ -320,7 +320,7 @@ const store = {
   ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38: '{__typename}'
 }
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   graphqlEndpoint: '/graphql/:document_id?',
   plugins: pluginCtx => [
     usePersistedOperations({

@@ -1,6 +1,6 @@
-import type { MeshServePlugin } from '../types.js';
+import type { GatewayPlugin } from '../types.js';
 
-export function useUpstreamCancel(): MeshServePlugin {
+export function useUpstreamCancel(): GatewayPlugin {
   return {
     onFetch({ context, options }) {
       if (context.request) {

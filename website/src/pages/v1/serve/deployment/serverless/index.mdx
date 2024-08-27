@@ -11,10 +11,10 @@ Mesh Serve can be deployed on the edge. This means that you can deploy your Mesh
 serverless environment like AWS Lambda, Cloudflare Workers, or Azure Functions.
 
 For Serverless environments, you cannot use Serve CLI `mesh-serve` but you can use the
-`createServeRuntime` function from `@graphql-mesh/serve-runtime` package.
+`createGatewayRuntime` function from `@graphql-mesh/serve-runtime` package.
 
-The serve configuration goes into `createServeRuntime` function instead of `serveConfig` export in
-`mesh.config.ts` file.
+The serve configuration goes into `createGatewayRuntime` function instead of `gatewayConfig` export
+in `mesh.config.ts` file.
 
 ## Distributed Caching
 
@@ -56,12 +56,12 @@ export default /* GraphQL */ `
 Then you need to import the supergraph in your serverless function:
 
 ```ts
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 // Let's say you are using REST transport
 import rest from '@graphql-mesh/transport-rest'
 import supergraph from './supergraph.js'
 
-const serveRuntime = createServeRuntime({
+const serveRuntime = createGatewayRuntime({
   supergraph,
   transports: {
     rest

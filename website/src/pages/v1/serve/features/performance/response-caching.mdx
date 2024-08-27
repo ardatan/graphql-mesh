@@ -29,7 +29,7 @@ npm i @graphql-mesh/plugin-response-cache
 import useResponseCache from '@graphql-mesh/plugin-response-cache'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     useResponseCache({
       ...pluginCtx,
@@ -95,7 +95,7 @@ information.
 import useResponseCache from '@graphql-mesh/plugin-response-cache'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     useResponseCache({
       ...pluginCtx,

@@ -1,7 +1,7 @@
 import { requestIdByRequest } from '@graphql-mesh/utils';
-import type { MeshServePlugin } from '../types';
+import type { GatewayPlugin } from '../types';
 
-export function useRequestId<TContext>(): MeshServePlugin<TContext> {
+export function useRequestId<TContext>(): GatewayPlugin<TContext> {
   return {
     onRequest({ request, fetchAPI }) {
       const requestId = request.headers.get('x-request-id') || fetchAPI.crypto.randomUUID();

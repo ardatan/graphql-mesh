@@ -149,7 +149,7 @@ connections:
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import type { WSTransportOptions } from '@graphql-mesh/transport-http'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
   transportEntries: {
     // use "*.http" to apply options to all subgraphs with HTTP
@@ -185,7 +185,7 @@ WebSocket connections through the
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import type { WSTransportOptions } from '@graphql-mesh/transport-ws'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
   transportEntries: {
     // use "*.http" to apply options to all subgraphs with HTTP
@@ -237,7 +237,7 @@ npm i @graphql-mesh/transport-http-callback
 import { defineConfig, PubSub, useWebhooks } from '@graphql-mesh/serve-cli'
 import type { HTTPCallbackTransportOptions } from '@graphql-mesh/transport-http-callback'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
   // Setup a PubSub engine to handle webhooks between different instances of Mesh for scalability
   pubsub: new PubSub(),

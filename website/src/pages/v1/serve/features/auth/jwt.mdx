@@ -41,7 +41,7 @@ import useJWTAuth, { createInlineSigningKeyProvider, extractFromHeader } from '@
 
 const signingKey = 'my-secret-key';
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [
     // Look and extract for the token in the 'authorization' header, with the 'Bearer' prefix.
     lookupLocations: [
@@ -66,7 +66,7 @@ You can also pass
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import useJWTAuth, { createInlineSigningKeyProvider, createRemoteJwksSigningKeyProvider, extractFromHeader, extractFromCookie } from '@graphql-mesh/plugin-jwt-auth'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [
     useJWTAuth({
       // Forward the extracted token and claims to the upstream GraphQL subgraphs.
@@ -231,7 +231,7 @@ import { useOperationFieldPermissions } from '@envelop/operation-field-permissio
 import useJWTAuth from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [
     useJWTAuth({}),
     useOperationFieldPermissions({
@@ -354,7 +354,7 @@ The prefix is being validated along with the token (for example: `Bearer my-toke
 import { extractFromHeader, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     useJWT({
@@ -374,7 +374,7 @@ import { extractFromCookie, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useCookies } from '@whatwg-node/server-plugin-cookies'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     // Make sure to add the useCookies plugin before the useJWT plugin.
@@ -398,7 +398,7 @@ const getToken = ({ request, serverContext, url }) => {
   return request.headers.get('x-my-token')
 }
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     useJWT({
@@ -417,7 +417,7 @@ the token in the order you provide.
 import { extractFromCookie, extractFromHeader, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     useCookies(),
@@ -450,7 +450,7 @@ You can provide the signing key directly in the configuration.
 import { createInlineSigningKeyProvider, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     useJWT({
@@ -474,7 +474,7 @@ Provide a `jwksClientOptions` object (see
 import { createRemoteJwksSigningKeyProvider, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     useJWT({
@@ -500,7 +500,7 @@ import {
 } from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     useJWT({
@@ -533,7 +533,7 @@ for this plugin.
 import useJWT from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     useJWT({
@@ -558,7 +558,7 @@ request will be reject with status code `401`.
 import useJWT from '@graphql-mesh/plugin-jwt-auth'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // ...
   plugins: () => [
     useJWT({
@@ -588,7 +588,7 @@ then use the Generic Auth plugin to protect the schema with the Federation direc
 ```ts
 import { useGenericAuth, useJWT } from '@graphql-mesh/plugin-jwt-auth'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [
     useJWT({
       // You have to disable the default rejection of the JWT plugin

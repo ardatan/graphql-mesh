@@ -45,7 +45,7 @@ file when running the image.
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   proxy: {
     endpoint: 'https://example.com/graphql'
   }
@@ -147,7 +147,7 @@ Configure to use the rate limiting plugin:
 import useRateLimit from '@graphql-mesh/plugin-rate-limit'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     useRateLimit({
       ...pluginCtx,
@@ -198,9 +198,9 @@ execution duration to the GraphQL result `extensions` property.
 
 ```ts filename="my-timing.ts"
 import moment from 'moment'
-import type { MeshServePlugin } from '@graphql-mesh/serve-runtime'
+import type { GatewayPlugin } from '@graphql-mesh/serve-runtime'
 
-export function useTiming(): MeshServePlugin {
+export function useTiming(): GatewayPlugin {
   return {
     onExecute() {
       const start = Date.now()
@@ -237,7 +237,7 @@ export function useTiming(): MeshServePlugin {
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useTiming } from './my-timing'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [useTiming()]
 })
 ```
@@ -318,7 +318,7 @@ export const additionalResolvers = {
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { additionalResolvers } from './my-time'
 
-export const serveConfig = defineConfig({ additionalResolvers })
+export const gatewayConfig = defineConfig({ additionalResolvers })
 ```
 
 Your Dockerfile should then look something like this:

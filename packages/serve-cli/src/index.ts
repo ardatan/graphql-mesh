@@ -9,4 +9,4 @@ export {
   useCustomAgent,
 } from '@graphql-mesh/serve-runtime';
 export { PubSub } from '@graphql-mesh/utils';
-export type { MeshServeConfigContext } from '@graphql-mesh/serve-runtime';
+export type { GatewayConfigContext } from '@graphql-mesh/serve-runtime';

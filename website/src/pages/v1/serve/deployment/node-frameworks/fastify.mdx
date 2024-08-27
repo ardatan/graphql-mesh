@@ -25,12 +25,12 @@ So you can benefit from the powerful plugins of Fastify ecosystem with GraphQL M
 
 ```ts
 import fastify, { FastifyReply, FastifyRequest } from 'fastify'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
 // This is the fastify instance you have created
 const app = fastify({ logger: true })
 
-const serveRuntime = createServeRuntime<{
+const serveRuntime = createGatewayRuntime<{
   req: FastifyRequest
   reply: FastifyReply
 }>({

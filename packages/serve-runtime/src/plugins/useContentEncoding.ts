@@ -1,7 +1,7 @@
 import type { FetchAPI } from 'graphql-yoga';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import { useContentEncoding as useOrigContentEncoding } from '@whatwg-node/server';
-import type { MeshServePlugin } from '../types';
+import type { GatewayPlugin } from '../types';
 
 export interface UseContentEncodingOpts {
   subgraphs?: string[];
@@ -9,7 +9,7 @@ export interface UseContentEncodingOpts {
 
 export function useContentEncoding<TContext>({
   subgraphs,
-}: UseContentEncodingOpts): MeshServePlugin<TContext> {
+}: UseContentEncodingOpts): GatewayPlugin<TContext> {
   if (!subgraphs?.length) {
     return useOrigContentEncoding();
   }

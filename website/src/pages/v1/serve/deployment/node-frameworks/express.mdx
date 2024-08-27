@@ -21,11 +21,11 @@ easily integrate GraphQL Mesh into your Express application with a few lines of 
 
 ```ts
 import express from 'express'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
 const app = express()
 
-const serveRuntime = createServeRuntime(/* Your configuration */)
+const serveRuntime = createGatewayRuntime(/* Your configuration */)
 
 // Bind GraphQL Mesh to the graphql endpoint to avoid rendering the playground on any path
 app.use(serveRuntime.graphqlEndpoint, serveRuntime)
@@ -66,11 +66,11 @@ Mesh endpoint.
 ```ts
 import express from 'express'
 import helmet from 'helmet'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
 const app = express()
 
-const serveRuntime = createServeRuntime(/* Your configuration */)
+const serveRuntime = createGatewayRuntime(/* Your configuration */)
 const meshRouter = express.Router()
 // GraphiQL specefic CSP configuration
 meshRouter.use(

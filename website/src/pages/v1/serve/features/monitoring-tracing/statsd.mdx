@@ -50,7 +50,7 @@ import { StatsD } from 'hot-shots'
 import useStatsD from '@graphql-mesh/plugin-statsd'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     useStatsD({
       ...pluginCtx,

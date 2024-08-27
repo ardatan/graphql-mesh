@@ -1,6 +1,6 @@
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
-import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import {
   createInlineSigningKeyProvider,
   type JWTExtendContextFields,
@@ -27,7 +27,7 @@ describe('useExtractedJWT', () => {
     });
 
     const secret = 'topsecret';
-    const serveRuntime = createServeRuntime({
+    const serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
@@ -94,7 +94,7 @@ describe('useJWTAuth', () => {
 
     it('should passthrough jwt token, jwt payload, and signature to the upstream api calls', async () => {
       const secret = 'topsecret';
-      const serveRuntime = createServeRuntime({
+      const serveRuntime = createGatewayRuntime({
         proxy: {
           endpoint: 'https://example.com/graphql',
         },

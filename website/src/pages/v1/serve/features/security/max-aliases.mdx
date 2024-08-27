@@ -27,7 +27,7 @@ Then, add it to your plugins:
 import { maxAliasesPlugin } from '@escape.tech/graphql-armor-max-aliases'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [
     maxAliasesPlugin({
       // Toggle the plugin | Default: true

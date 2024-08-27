@@ -31,7 +31,7 @@ Of course, you can change this endpoint through the `healthCheckEndpoint` option
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   healthCheckEndpoint: '/healthcheck'
 })
 ```
@@ -46,7 +46,7 @@ perform work.
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   readinessCheckEndpoint: '/readiness'
 })
 ```

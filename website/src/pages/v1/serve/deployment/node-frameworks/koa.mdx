@@ -24,11 +24,11 @@ code.
 
 ```ts
 import Koa from 'koa'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
 const app = new Koa()
 
-const serveRuntime = createServeRuntime<Koa.ParameterizedContext>()
+const serveRuntime = createGatewayRuntime<Koa.ParameterizedContext>()
 
 // Bind GraphQL Mesh to `/graphql` endpoint
 app.use(async ctx => {

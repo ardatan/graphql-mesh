@@ -3,20 +3,20 @@ import type { Plugin } from 'graphql-yoga';
 import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 
 // TODO: Use Yoga PubSub later
-export interface MeshWebhooksPluginOptions {
+export interface GatewayWebhooksPluginOptions {
   pubsub?: MeshPubSub;
   logger: Logger;
 }
-export function useWebhooks({ pubsub, logger }: MeshWebhooksPluginOptions): Plugin {
+export function useWebhooks({ pubsub, logger }: GatewayWebhooksPluginOptions): Plugin {
   if (!pubsub) {
     throw new Error(`You must provide a pubsub instance to useWebhooks plugin!
     Example:
-      export const serveConfig: MeshServeCLIConfig = {
+      export const gatewayConfig = defineConfig({
         pubsub: new PubSub(),
         plugins: ctx => [
           useWebhooks(ctx),
         ],
-      }
+      })
     See documentation: https://the-guild.dev/docs/mesh/pubsub`);
   }
   return {

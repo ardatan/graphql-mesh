@@ -1,10 +1,10 @@
-import type { MeshServePlugin } from '../types';
+import type { GatewayPlugin } from '../types';
 
 export interface ForwardHeadersPluginOptions {
   headerNames: string[];
 }
 
-export function useForwardHeaders(headerNames: string[]): MeshServePlugin {
+export function useForwardHeaders(headerNames: string[]): GatewayPlugin {
   return {
     onFetch({ options, setOptions, context }) {
       if (context.request?.headers) {

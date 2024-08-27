@@ -24,7 +24,7 @@ npm i @graphql-mesh/plugin-http-cache
 ```ts filename="mesh.config.ts"
 import useHttpCache from '@graphql-mesh/plugin-http-cache'
 
-export const serveConfig = {
+export const gatewayConfig = {
   cache // Your cache storage here,
   plugins: pluginCtx => [
     useHttpCache({

@@ -48,7 +48,7 @@ export type CORSOptions =
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   cors: {
     origin: 'http://localhost:4000',
     credentials: true,
@@ -75,7 +75,7 @@ options
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   cors: request => {
     return {
       origin: 'http://localhost:4000',
@@ -107,7 +107,7 @@ You can disable CORS on your GraphQL Mesh gateway by simply passing `false` as t
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   cors: false
 })
 ```

@@ -44,7 +44,7 @@ npm i @graphql-yoga/plugin-defer-stream
 ```ts filename="mesh.config.ts"
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
 
-export const serveConfig = {
+export const gatewayConfig = {
   plugins: pluginCtx => [useDeferStream()]
 }
 ```

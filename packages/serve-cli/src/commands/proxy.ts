@@ -1,12 +1,12 @@
 import cluster, { type Worker } from 'node:cluster';
-import { createServeRuntime, type MeshServeConfigProxy } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, type GatewayConfigProxy } from '@graphql-mesh/serve-runtime';
 import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
 import {
   defaultOptions,
   type AddCommand,
   type CLIContext,
   type CLIGlobals,
-  type MeshServeCLIConfig,
+  type GatewayCLIConfig,
 } from '../cli.js';
 import { loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
@@ -39,9 +39,10 @@ export const addCommand: AddCommand = (ctx, cli) =>
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
         nativeImport,
+        configFileName: ctx.configFileName,
       });
 
-      let proxy: MeshServeConfigProxy['proxy'] | undefined;
+      let proxy: GatewayConfigProxy['proxy'] | undefined;
       if (endpoint) {
         proxy = { endpoint };
       } else if ('proxy' in loadedConfig) {
@@ -55,7 +56,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         process.exit(1);
       }
 
-      let schema: MeshServeConfigProxy['schema'] | undefined;
+      let schema: GatewayConfigProxy['schema'] | undefined;
       const hiveCdnEndpointOpt = opts.schema || hiveCdnEndpoint;
       if (hiveCdnEndpointOpt) {
         if (hiveCdnKey) {
@@ -112,6 +113,9 @@ export const addCommand: AddCommand = (ctx, cli) =>
         proxy,
         schema,
         logging: loadedConfig.logging ?? ctx.log,
+        productName: ctx.productName,
+        productDescription: ctx.productDescription,
+        productPackageName: ctx.productPackageName,
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided
@@ -126,7 +130,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       return runProxy(ctx, config);
     });
 
-export type ProxyConfig = MeshServeConfigProxy<unknown> & MeshServeCLIConfig;
+export type ProxyConfig = GatewayConfigProxy<unknown> & GatewayCLIConfig;
 
 export async function runProxy({ log }: CLIContext, config: ProxyConfig) {
   if (cluster.isPrimary && config.fork > 1) {
@@ -146,7 +150,7 @@ export async function runProxy({ log }: CLIContext, config: ProxyConfig) {
 
   log.info(`Proxying requests to ${config.proxy.endpoint}`);
 
-  const runtime = createServeRuntime(config);
+  const runtime = createGatewayRuntime(config);
 
   await startServerForRuntime(runtime, {
     ...config,

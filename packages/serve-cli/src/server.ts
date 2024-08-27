@@ -1,8 +1,8 @@
 import { promises as fsPromises } from 'node:fs';
-import { createServer as createHTTPServer } from 'node:http';
+import { createServer as createHTTPServer, type Server } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
 import type { SecureContextOptions } from 'node:tls';
-import type { MeshServeRuntime } from '@graphql-mesh/serve-runtime';
+import type { GatewayRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { createAsyncDisposable, getTerminateStack } from '@graphql-mesh/utils';
 import { defaultOptions } from './cli.js';
@@ -17,13 +17,13 @@ export interface ServerConfig {
   /**
    * Port to listen on.
    *
-   * @deafult 4000
+   * @default 4000
    */
   port?: number;
   /**
    * SSL Credentials for the HTTPS Server.
    *
-   * If this is provided, Mesh Serve will be over secure HTTPS instead of unsecure HTTP.
+   * If this is provided, Gateway will be over secure HTTPS instead of unsecure HTTP.
    */
   sslCredentials?: ServerConfigSSLCredentials;
   /**
@@ -51,7 +51,7 @@ export interface ServerForRuntimeOptions extends ServerConfig {
 export async function startServerForRuntime<
   TContext extends Record<string, any> = Record<string, any>,
 >(
-  runtime: MeshServeRuntime<TContext>,
+  runtime: GatewayRuntime<TContext>,
   {
     log,
     host = defaultOptions.host,
@@ -69,25 +69,27 @@ export async function startServerForRuntime<
     }
   });
 
-  let uWebSocketsAvailable = false;
-  try {
-    await import('uWebSockets.js');
-    uWebSocketsAvailable = true;
-  } catch (e) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
-      log.debug('Problem while importing uWebSockets.js', e);
-    }
-    log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
-  }
+  let server: AsyncDisposable;
 
-  const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
-  const server = await startServer(runtime, {
+  const serverOpts: ServerForRuntimeOptions = {
     log,
     host,
     port,
     sslCredentials,
     maxHeaderSize,
-  });
+  };
+
+  try {
+    server = await startuWebSocketsServer(runtime, serverOpts);
+  } catch (e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      log.debug('Problem while importing uWebSockets.js', e);
+    }
+    log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
+
+    server = await startNodeHttpServer(runtime, serverOpts);
+  }
+
   terminateStack.use(server);
 
   return server;
@@ -141,7 +143,11 @@ async function startNodeHttpServer(
     sslCredentials,
     maxHeaderSize,
   } = opts;
+  let server: Server;
+  let protocol: string;
+
   if (sslCredentials) {
+    protocol = 'https';
     const sslOptionsForNodeHttp: SecureContextOptions = {};
     if (sslCredentials.ca_file_name) {
       sslOptionsForNodeHttp.ca = await fsPromises.readFile(sslCredentials.ca_file_name);
@@ -164,40 +170,22 @@ async function startNodeHttpServer(
     if (sslCredentials.ssl_prefer_low_memory_usage) {
       sslOptionsForNodeHttp.honorCipherOrder = true;
     }
-    const server = createHTTPSServer(sslOptionsForNodeHttp, handler);
-    log.info(`Starting server on https://${host}:${port}`);
-    return new Promise((resolve, reject) => {
-      server.once('error', reject);
-      server.listen(port, host, () => {
-        log.info(`Server started on https://${host}:${port}`);
-        resolve(
-          createAsyncDisposable(
-            () =>
-              new Promise<void>(resolve => {
-                log.info(`Closing server`);
-                server.closeAllConnections();
-                server.close(() => {
-                  log.info(`Server closed`);
-                  resolve();
-                });
-              }),
-          ),
-        );
-      });
-    });
+    server = createHTTPSServer(sslOptionsForNodeHttp, handler);
+  } else {
+    protocol = 'http';
+    server = createHTTPServer(
+      {
+        maxHeaderSize,
+      },
+      handler,
+    );
   }
 
-  const server = createHTTPServer(
-    {
-      maxHeaderSize,
-    },
-    handler,
-  );
-  log.info(`Starting server on http://${host}:${port}`);
+  log.info(`Starting server on ${protocol}://${host}:${port}`);
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
-      log.info(`Server started on http://${host}:${port}`);
+      log.info(`Server started on ${protocol}://${host}:${port}`);
       resolve(
         createAsyncDisposable(
           () =>

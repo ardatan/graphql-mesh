@@ -37,7 +37,7 @@ npm i @graphql-yoga/plugin-csrf-prevention
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import { useCSRFPrevention } from '@graphql-yoga/plugin-csrf-prevention'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
     useCSRFPrevention({
       requestHeaders: ['x-graphql-mesh-csrf'] // default

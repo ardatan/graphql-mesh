@@ -64,9 +64,9 @@ npm i @google-cloud/functions-framework @graphql-mesh/serve-runtime graphql
 ### Usage
 
 ```js filename=index.js
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 
-export const graphql = createServeRuntime(/* Configuration */)
+export const graphql = createGatewayRuntime(/* Configuration */)
 ```
 
 You can now deploy your function with `gcloud` CLI:

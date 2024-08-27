@@ -18,7 +18,7 @@ of code.
 ```ts
 import http from 'node:http'
 import { Readable } from 'node:stream'
-import { createServeRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
 import Hapi from '@hapi/hapi'
 import { schema } from './my-graphql-schema'
 
@@ -27,7 +27,7 @@ interface ServerContext {
   h: Hapi.ResponseToolkit
 }
 
-const mesh = createServeRuntime<ServerContext>(/* Your configuration */)
+const mesh = createGatewayRuntime<ServerContext>(/* Your configuration */)
 
 const server = Hapi.server({ port: 4000 })
 

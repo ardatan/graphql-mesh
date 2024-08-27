@@ -1,6 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { createServer } from 'http';
-import type { AddressInfo } from 'net';
 import {
   buildClientSchema,
   getIntrospectionQuery,
@@ -15,7 +13,7 @@ import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createDisposableServer } from '../../testing/createDisposableServer.js';
-import { createServeRuntime } from '../src/createServeRuntime.js';
+import { createGatewayRuntime } from '../src/createGatewayRuntime.js';
 
 function createUpstreamSchema() {
   return createSchema({
@@ -47,7 +45,7 @@ describe('Hive CDN', () => {
       ]);
       res.end(supergraph);
     });
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       supergraph: {
         type: 'hive',
         endpoint: `http://localhost:${cdnServer.address().port}`,
@@ -101,7 +99,7 @@ describe('Hive CDN', () => {
     let schemaChangeSpy = jest.fn((schema: GraphQLSchema) => {});
     const hiveEndpoint = `http://localhost:${cdnServer.address().port}`;
     const hiveKey = 'key';
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       proxy: { endpoint: 'http://upstream/graphql' },
       schema: {
         type: 'hive',
@@ -178,7 +176,7 @@ describe('Hive CDN', () => {
         }),
       }),
     );
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: `http://localhost:${upstreamServer.address().port}/graphql`,
       },
@@ -238,7 +236,7 @@ describe('Hive CDN', () => {
         }),
       }),
     );
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: `http://localhost:${upstreamServer.address().port}/graphql`,
       },

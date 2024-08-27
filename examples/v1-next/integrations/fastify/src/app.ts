@@ -1,10 +1,10 @@
 import { join } from 'path';
 import fastify from 'fastify';
-import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 
 export const app = fastify();
 
-const meshHttp = createServeRuntime({
+const meshHttp = createGatewayRuntime({
   supergraph: join(__dirname, '..', 'supergraph.graphql'),
 });
 

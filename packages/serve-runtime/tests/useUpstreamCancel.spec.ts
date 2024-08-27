@@ -3,7 +3,7 @@ import { createSchema, createYoga } from 'graphql-yoga';
 import { fetch } from '@whatwg-node/fetch';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { createDisposableServer } from '../../testing/createDisposableServer';
-import { createServeRuntime } from '../src/createServeRuntime';
+import { createGatewayRuntime } from '../src/createGatewayRuntime';
 import { useUpstreamCancel } from '../src/plugins/useUpstreamCancel';
 
 describe('useUpstreamCancel', () => {
@@ -41,7 +41,7 @@ describe('useUpstreamCancel', () => {
       }),
     });
     await using upstreamGraphQLServer = await createDisposableServer(upstreamGraphQL);
-    await using serveRuntime = createServeRuntime({
+    await using serveRuntime = createGatewayRuntime({
       proxy: {
         endpoint: `http://localhost:${upstreamGraphQLServer.address().port}/graphql`,
       },

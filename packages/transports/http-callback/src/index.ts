@@ -77,9 +77,9 @@ export default {
     if (!pubsub) {
       throw new Error(`You must provide a pubsub instance to http-callbacks transport!
     Example:
-      export const serveConfig: MeshServeCLIConfig = {
+      export const gatewayConfig = defineConfig({
         pubsub: new PubSub(),
-      }
+      })
     See documentation: https://the-guild.dev/docs/mesh/pubsub`);
     }
     const reqAbortCtrls = new Set<AbortController>();

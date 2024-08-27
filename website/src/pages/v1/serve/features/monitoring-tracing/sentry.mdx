@@ -46,7 +46,7 @@ import { defineConfig } from '@graphql-mesh/serve-cli'
 // do this only once in you entry file.
 import '@sentry/tracing'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [
     useSentry({
       includeRawResult: false, // set to `true` in order to include the execution result in the metadata collected

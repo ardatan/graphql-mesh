@@ -1,7 +1,7 @@
 import type { FetchAPI, GraphQLParams, YogaLogger, Plugin as YogaPlugin } from 'graphql-yoga';
 import jsonStableStringify from 'json-stable-stringify';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
-import type { MeshServePlugin } from '@graphql-mesh/serve-runtime';
+import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
 import { defaultPrintFn } from '@graphql-mesh/transport-common';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import type { ExecutionRequest, MaybePromise } from '@graphql-tools/utils';
@@ -49,7 +49,7 @@ function createCryptoKey({
   );
 }
 
-export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions): MeshServePlugin {
+export function useHmacUpstreamSignature(options: HMACUpstreamSignatureOptions): GatewayPlugin {
   if (!options.secret) {
     throw new Error('Property "secret" is required for useHmacUpstreamSignature plugin');
   }

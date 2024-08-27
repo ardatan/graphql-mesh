@@ -2,8 +2,8 @@ import cluster, { type Worker } from 'node:cluster';
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
 import {
-  createServeRuntime,
-  type MeshServeConfigSubgraph,
+  createGatewayRuntime,
+  type GatewayConfigSubgraph,
   type UnifiedGraphConfig,
 } from '@graphql-mesh/serve-runtime';
 import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
@@ -13,7 +13,7 @@ import {
   type AddCommand,
   type CLIContext,
   type CLIGlobals,
-  type MeshServeCLIConfig,
+  type GatewayCLIConfig,
 } from '../cli.js';
 import { loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
@@ -22,7 +22,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
   cli
     .command('subgraph')
     .description(
-      'serve a Federation subgraph that can be used with any Federation compatible router like Mesh Serve or Apollo Router',
+      'serve a Federation subgraph that can be used with any Federation compatible router like Apollo Router/Gateway',
     )
     .argument(
       '[schemaPathOrUrl]',
@@ -43,6 +43,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
         nativeImport,
+        configFileName: ctx.configFileName,
       });
 
       let subgraph: UnifiedGraphConfig = 'subgraph.graphql';
@@ -78,6 +79,9 @@ export const addCommand: AddCommand = (ctx, cli) =>
           : {}),
         subgraph,
         logging: loadedConfig.logging ?? ctx.log,
+        productName: ctx.productName,
+        productDescription: ctx.productDescription,
+        productPackageName: ctx.productPackageName,
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided
@@ -92,7 +96,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
       return runSubgraph(ctx, config);
     });
 
-export type SubgraphConfig = MeshServeConfigSubgraph<unknown> & MeshServeCLIConfig;
+export type SubgraphConfig = GatewayConfigSubgraph<unknown> & GatewayCLIConfig;
 
 export async function runSubgraph({ log }: CLIContext, config: SubgraphConfig) {
   let absSchemaPath: string | null = null;
@@ -127,7 +131,7 @@ export async function runSubgraph({ log }: CLIContext, config: SubgraphConfig) {
     return;
   }
 
-  const runtime = createServeRuntime(config);
+  const runtime = createGatewayRuntime(config);
 
   if (absSchemaPath) {
     log.info(`Serving local subgraph from ${absSchemaPath}`);

@@ -31,7 +31,7 @@ npm i @graphql-mesh/plugin-opentelemetry
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -72,7 +72,7 @@ A simple exporter that writes the spans to the `stdout` of the process.
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [createStdoutExporter()]
@@ -89,7 +89,7 @@ An exporter that writes the spans to an OTLP-supported backend.
 import { createOtlpHttpExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -111,7 +111,7 @@ export const serveConfig = defineConfig({
 import { createOtlpGrpcExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -136,7 +136,7 @@ use it by pointing the `createOtlpHttpExporter`/`createOtlpGrpcExporter` to the 
 import { createOtlpHttpExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -175,7 +175,7 @@ by configuring the `createOtlpHttpExporter`/`createOtlpGrpcExporter` to the NewR
 import { createOtlpHttpExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -200,7 +200,7 @@ so you can use it by pointing the `createOtlpHttpExporter` to the DataDog Agent 
 import { createOtlpHttpExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -225,7 +225,7 @@ exporter to send the spans to a Zipkin backend:
 import { createZipkinExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -308,7 +308,7 @@ You may disable this by setting `spans.http` to `false`:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -329,7 +329,7 @@ Or, you may filter the spans by setting the `spans` configuration to a function:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -369,7 +369,7 @@ You may disable this by setting `spans.graphqlParse` to `false`:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -390,7 +390,7 @@ Or, you may filter the spans by setting the `spans` configuration to a function:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -430,7 +430,7 @@ You may disable this by setting `spans.graphqlValidate` to `false`:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -451,7 +451,7 @@ Or, you may filter the spans by setting the `spans` configuration to a function:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -492,7 +492,7 @@ You may disable this by setting `spans.graphqlExecute` to `false`:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -513,7 +513,7 @@ Or, you may filter the spans by setting the `spans` configuration to a function:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -563,7 +563,7 @@ You may disable this by setting `spans.subgraphExecute` to `false`:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -584,7 +584,7 @@ Or, you may filter the spans by setting the `spans.subgraphExecute` configuratio
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -629,7 +629,7 @@ You may disable this by setting `spans.upstreamFetch` to `false`:
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -650,7 +650,7 @@ Or, you may filter the spans by setting the `spans.upstreamFetch` configuration 
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [
@@ -689,7 +689,7 @@ You may disable this by setting `inheritContext` or `propagateContext` to `false
 import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: [
     useOpenTelemetry({
       exporters: [

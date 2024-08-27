@@ -27,7 +27,7 @@ Then, add it to your plugins:
 import { maxDirectivesPlugin } from '@escape.tech/graphql-armor-max-directives'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   plugins: () => [
     maxDirectivesPlugin({
       // Toggle the plugin | Default: true

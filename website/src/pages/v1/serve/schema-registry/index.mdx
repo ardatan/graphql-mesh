@@ -31,7 +31,7 @@ options to customize the polling/retry behavior.
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   supergraph: () =>
     // Fetch the supergraph from the schema registry
     fetch('https://my-registry.com/supergraph.graphql', {

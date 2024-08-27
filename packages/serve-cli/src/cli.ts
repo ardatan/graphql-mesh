@@ -7,20 +7,20 @@ import { availableParallelism, release } from 'node:os';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type {
-  MeshServeConfigProxy,
-  MeshServeConfigSubgraph,
-  MeshServeConfigSupergraph,
+  GatewayConfigProxy,
+  GatewayConfigSubgraph,
+  GatewayConfigSupergraph,
 } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { addCommands } from './commands/index.js';
-import { defaultConfigPaths } from './config.js';
+import { createDefaultConfigPaths } from './config.js';
 import type { ServerConfig } from './server';
 
-export type MeshServeCLIConfig = (
-  | MeshServeCLISupergraphConfig
-  | MeshServeCLISubgraphConfig
-  | MeshServeCLIProxyConfig
+export type GatewayCLIConfig = (
+  | GatewayCLISupergraphConfig
+  | GatewayCLISubgraphConfig
+  | GatewayCLIProxyConfig
 ) &
   ServerConfig & {
     /**
@@ -36,8 +36,7 @@ export type MeshServeCLIConfig = (
     pollingInterval?: number;
   };
 
-export interface MeshServeCLISupergraphConfig
-  extends Omit<MeshServeConfigSupergraph, 'supergraph'> {
+export interface GatewayCLISupergraphConfig extends Omit<GatewayConfigSupergraph, 'supergraph'> {
   /**
    * SDL, path or an URL to the Federation Supergraph.
    *
@@ -46,10 +45,10 @@ export interface MeshServeCLISupergraphConfig
    * @default 'supergraph.graphql'
    */
   // default matches commands/supergraph.ts
-  supergraph?: MeshServeConfigSupergraph['supergraph'];
+  supergraph?: GatewayConfigSupergraph['supergraph'];
 }
 
-export interface MeshServeCLISubgraphConfig extends Omit<MeshServeConfigSubgraph, 'subgraph'> {
+export interface GatewayCLISubgraphConfig extends Omit<GatewayConfigSubgraph, 'subgraph'> {
   /**
    * SDL, path or an URL to the Federation Supergraph.
    *
@@ -58,20 +57,20 @@ export interface MeshServeCLISubgraphConfig extends Omit<MeshServeConfigSubgraph
    * @default 'subgraph.graphql'
    */
   // default matches commands/subgraph.ts
-  subgraph?: MeshServeConfigSubgraph['subgraph'];
+  subgraph?: GatewayConfigSubgraph['subgraph'];
 }
 
-export interface MeshServeCLIProxyConfig extends Omit<MeshServeConfigProxy, 'proxy'> {
+export interface GatewayCLIProxyConfig extends Omit<GatewayConfigProxy, 'proxy'> {
   /**
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
-  proxy?: MeshServeConfigProxy['proxy'];
+  proxy?: GatewayConfigProxy['proxy'];
 }
 
 /**
  * Type helper for defining the config.
  */
-export function defineConfig(config: MeshServeCLIConfig) {
+export function defineConfig(config: GatewayCLIConfig) {
   return config;
 }
 
@@ -83,8 +82,14 @@ export interface CLIContext {
   productName: string;
   /** @default 'serve GraphQL federated architecture for any API service(s)' */
   productDescription: string;
+  /** @default '@graphql-mesh/serve-cli' */
+  productPackageName: string;
+  /** @default Mesh logo */
+  productLogo?: string;
   /** @default 'mesh-serve' */
   binName: string;
+  /** @default 'mesh.config' */
+  configFileName: string;
   /** @default globalThis.__VERSION__ */
   version: string;
 }
@@ -104,6 +109,8 @@ export const defaultOptions = {
   port: 4000,
   polling: '10s',
 };
+
+const configPathOption = new Option('-c, --config-path <path>').env('CONFIG_PATH');
 
 /** The root cli of serve-cli. */
 let cli = new Command()
@@ -125,12 +132,7 @@ let cli = new Command()
         return count;
       }),
   )
-  .addOption(
-    new Option(
-      '-c, --config-path <path>',
-      `path to the configuration file. defaults to the following files respectively in the current working directory: ${defaultConfigPaths.join(', ')}`,
-    ).env('CONFIG_PATH'),
-  )
+  .addOption(configPathOption)
   .option(
     '-h, --host <hostname>',
     `host to use for serving (default: ${JSON.stringify(defaultOptions.host)}`,
@@ -216,7 +218,9 @@ export function run(userCtx: Partial<CLIContext>) {
     log: new DefaultLogger(),
     productName: 'Mesh',
     productDescription: 'serve GraphQL federated architecture for any API service(s)',
+    productPackageName: '@graphql-mesh/serve-cli',
     binName: 'mesh-serve',
+    configFileName: 'mesh.config',
     version: globalThis.__VERSION__,
     ...userCtx,
   };
@@ -224,6 +228,8 @@ export function run(userCtx: Partial<CLIContext>) {
   const { binName, productDescription, version } = ctx;
   cli = cli.name(binName).description(productDescription);
   cli.version(version);
+
+  configPathOption.description = `path to the configuration file. defaults to the following files respectively in the current working directory: ${createDefaultConfigPaths(ctx.configFileName).join(', ')}`;
 
   if (cluster.worker?.id) {
     ctx.log = ctx.log.child(`Worker #${cluster.worker.id}`);

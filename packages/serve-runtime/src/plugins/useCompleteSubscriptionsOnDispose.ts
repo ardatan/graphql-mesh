@@ -1,9 +1,9 @@
 import { createGraphQLError, isAsyncIterable, Repeater } from 'graphql-yoga';
-import type { MeshServePlugin } from '../types';
+import type { GatewayPlugin } from '../types';
 
 export function useCompleteSubscriptionsOnDispose(
   disposableStack: AsyncDisposableStack,
-): MeshServePlugin {
+): GatewayPlugin {
   function createShutdownError() {
     return createGraphQLError('subscription has been closed because the server is shutting down', {
       extensions: {

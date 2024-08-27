@@ -20,7 +20,7 @@ plugins, transforms and subgraph execution.
 ## Providing Cache Storage
 
 In order to enable features that need a storage to keep the data, you need to define a cache storage
-implementation, and pass it to the `serveConfig`.
+implementation, and pass it to the `gatewayConfig`.
 
 You can choose the best-fit cache storage for your use case.
 
@@ -40,7 +40,7 @@ npm i @graphql-mesh/cache-localforage
 import { defineConfig } from '@graphql-mesh/serve-cli'
 import LocalForageCacheStorage from '@graphql-mesh/cache-localforage'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   cache: new LocalForageCacheStorage({
     // All of the following options are listed with default values, you don't need to provide them
     driver: ['WEBSQL', 'INDEXEDDB', 'LOCALSTORAGE'] // The order of the drivers to use
@@ -75,7 +75,7 @@ npm i @graphql-mesh/cache-redis
 import RedisCacheStorage from '@graphql-mesh/cache-redis'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   cache: new RedisCacheStorage({
     host: 'localhost', // The host of the Redis server
     port: 6379, // The port of the Redis server
@@ -114,7 +114,7 @@ npm i @graphql-mesh/cache-cf-kw
 import CloudflareKVCacheStorage from '@graphql-mesh/cache-cf-kw'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   cache: new CloudflareKVCacheStorage({
     namespace: 'GraphQLMesh' // The namespace of the KV
   }),
