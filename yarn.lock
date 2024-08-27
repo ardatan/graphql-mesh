@@ -5776,8 +5776,9 @@ __metadata:
     "@graphql-mesh/serve-cli": "npm:^0.11.6"
     "@graphql-mesh/serve-runtime": "npm:^0.8.6"
     "@graphql-mesh/utils": "npm:^0.102.4"
-    "@parcel/watcher": "npm:^2.3.0"
+    "@parcel/watcher": "npm:2.3.0"
     node-libcurl: "npm:^4.0.0"
+    tsx: "npm:4.19.0"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
@@ -11068,10 +11069,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/watcher-android-arm64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-android-arm64@npm:2.3.0"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-android-arm64@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-android-arm64@npm:2.4.1"
   conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-darwin-arm64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-darwin-arm64@npm:2.3.0"
+  conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
@@ -11082,10 +11097,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/watcher-darwin-x64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-darwin-x64@npm:2.3.0"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-darwin-x64@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-darwin-x64@npm:2.4.1"
   conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-freebsd-x64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-freebsd-x64@npm:2.3.0"
+  conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
@@ -11096,10 +11125,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/watcher-linux-arm-glibc@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-linux-arm-glibc@npm:2.3.0"
+  conditions: os=linux & cpu=arm & libc=glibc
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-linux-arm-glibc@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-linux-arm-glibc@npm:2.4.1"
   conditions: os=linux & cpu=arm & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-linux-arm64-glibc@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-linux-arm64-glibc@npm:2.3.0"
+  conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
@@ -11110,10 +11153,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/watcher-linux-arm64-musl@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-linux-arm64-musl@npm:2.3.0"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-linux-arm64-musl@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-linux-arm64-musl@npm:2.4.1"
   conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-linux-x64-glibc@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-linux-x64-glibc@npm:2.3.0"
+  conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
@@ -11124,10 +11181,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/watcher-linux-x64-musl@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-linux-x64-musl@npm:2.3.0"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-linux-x64-musl@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-linux-x64-musl@npm:2.4.1"
   conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-win32-arm64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-win32-arm64@npm:2.3.0"
+  conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
@@ -11138,6 +11209,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/watcher-win32-ia32@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-win32-ia32@npm:2.3.0"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-win32-ia32@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-win32-ia32@npm:2.4.1"
@@ -11145,10 +11223,67 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/watcher-win32-x64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher-win32-x64@npm:2.3.0"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-win32-x64@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-win32-x64@npm:2.4.1"
   conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@parcel/watcher@npm:2.3.0"
+  dependencies:
+    "@parcel/watcher-android-arm64": "npm:2.3.0"
+    "@parcel/watcher-darwin-arm64": "npm:2.3.0"
+    "@parcel/watcher-darwin-x64": "npm:2.3.0"
+    "@parcel/watcher-freebsd-x64": "npm:2.3.0"
+    "@parcel/watcher-linux-arm-glibc": "npm:2.3.0"
+    "@parcel/watcher-linux-arm64-glibc": "npm:2.3.0"
+    "@parcel/watcher-linux-arm64-musl": "npm:2.3.0"
+    "@parcel/watcher-linux-x64-glibc": "npm:2.3.0"
+    "@parcel/watcher-linux-x64-musl": "npm:2.3.0"
+    "@parcel/watcher-win32-arm64": "npm:2.3.0"
+    "@parcel/watcher-win32-ia32": "npm:2.3.0"
+    "@parcel/watcher-win32-x64": "npm:2.3.0"
+    detect-libc: "npm:^1.0.3"
+    is-glob: "npm:^4.0.3"
+    micromatch: "npm:^4.0.5"
+    node-addon-api: "npm:^7.0.0"
+    node-gyp: "npm:latest"
+  dependenciesMeta:
+    "@parcel/watcher-android-arm64":
+      optional: true
+    "@parcel/watcher-darwin-arm64":
+      optional: true
+    "@parcel/watcher-darwin-x64":
+      optional: true
+    "@parcel/watcher-freebsd-x64":
+      optional: true
+    "@parcel/watcher-linux-arm-glibc":
+      optional: true
+    "@parcel/watcher-linux-arm64-glibc":
+      optional: true
+    "@parcel/watcher-linux-arm64-musl":
+      optional: true
+    "@parcel/watcher-linux-x64-glibc":
+      optional: true
+    "@parcel/watcher-linux-x64-musl":
+      optional: true
+    "@parcel/watcher-win32-arm64":
+      optional: true
+    "@parcel/watcher-win32-ia32":
+      optional: true
+    "@parcel/watcher-win32-x64":
+      optional: true
+  checksum: 10c0/f223a6d5c56071c5f466725b93a83d0066ef01837fdae12ce86c9127586ad8138fe52f18de18c2752e3d8ca350b582ea4b55d16a51bd0584428d20698ace17a0
   languageName: node
   linkType: hard
 
@@ -36177,6 +36312,22 @@ __metadata:
   peerDependencies:
     typescript: ">=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta"
   checksum: 10c0/02f19e458ec78ead8fffbf711f834ad8ecd2cc6ade4ec0320790713dccc0a412b99e7fd907c4cda2a1dc602c75db6f12e0108e87a5afad4b2f9e90a24cabd5a2
+  languageName: node
+  linkType: hard
+
+"tsx@npm:4.19.0":
+  version: 4.19.0
+  resolution: "tsx@npm:4.19.0"
+  dependencies:
+    esbuild: "npm:~0.23.0"
+    fsevents: "npm:~2.3.3"
+    get-tsconfig: "npm:^4.7.5"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    tsx: dist/cli.mjs
+  checksum: 10c0/d14463a78067c6db84c677b79b14861de6d7f6fb0ffa5727cc500c4552459e936395a3854ad0112af0fd7b263bcedd62ce3929b036188eb10cd9902a607ffe34
   languageName: node
   linkType: hard
 
