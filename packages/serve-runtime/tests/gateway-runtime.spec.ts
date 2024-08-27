@@ -7,7 +7,7 @@ import { createGatewayRuntime } from '../src/createGatewayRuntime.js';
 import { useCustomFetch } from '../src/plugins/useCustomFetch.js';
 import type { GatewayPlugin } from '../src/types.js';
 
-describe('Serve Runtime', () => {
+describe('Gateway Runtime', () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
