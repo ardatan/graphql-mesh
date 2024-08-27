@@ -6510,7 +6510,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-prometheus@workspace:packages/plugins/prometheus"
   dependencies:
     "@graphql-mesh/serve-runtime": "npm:^0.8.6"
-    "@graphql-yoga/plugin-prometheus": "npm:^6.0.0"
+    "@graphql-yoga/plugin-prometheus": "npm:^6.1.0"
     prom-client: "npm:15.1.3"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.4
@@ -8199,7 +8199,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-prometheus@npm:^6.0.0":
+"@graphql-yoga/plugin-prometheus@npm:^6.1.0":
   version: 6.1.0
   resolution: "@graphql-yoga/plugin-prometheus@npm:6.1.0"
   dependencies:
