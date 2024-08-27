@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { run } from '@graphql-mesh/serve-cli';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { hiveProductConfig } from './hiveProductConfig';
+import { hiveProductConfig } from './hiveProductConfig.js';
 
 // @inject-version globalThis.__VERSION__ here
 
