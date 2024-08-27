@@ -1,1 +1,3 @@
-export * from '../serve-cli/rollup.config.js';
+import rollupConfig from '../serve-cli/rollup.config.js';
+
+export default rollupConfig;
