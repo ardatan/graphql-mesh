@@ -36,5 +36,5 @@ jobs:
           projectName: graphql-mesh
           prId: ${{ github.event.pull_request.number }}
           websiteDirectory: ./
-          buildScript: yarn build:website && cd website && yarn next build
+          buildScript: yarn build:website
           artifactDir: website/out
