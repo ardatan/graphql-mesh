@@ -42,6 +42,13 @@ if (process.env.E2E_TEST) {
 } else {
   testMatch.push('!**/e2e/**/?(*.)+(spec|test).[jt]s?(x)');
 }
+
+// Disable grpc-reflection tests for Node.js v22.7.0
+// See https://github.com/nodejs/node/issues/54518
+if (process.version === 'v22.7.0') {
+  testMatch.push('!**/examples/grpc-reflection*/**');
+}
+
 /** @type {import('jest').Config} */
 module.exports = {
   ...(process.env.E2E_SERVE_RUNNER === 'docker'
