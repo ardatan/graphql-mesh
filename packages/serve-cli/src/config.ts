@@ -138,7 +138,7 @@ export function getCacheInstanceFromConfig(
         });
     }
     if (config.cache.type !== 'localforage') {
-      ctx.logger.warn(`Unknown cache type: ${config.cache.type}`);
+      ctx.logger.warn('Unknown cache type, falling back to localforage', config.cache);
     }
     return new LocalforageCache({
       ...ctx,
