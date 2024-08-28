@@ -5892,7 +5892,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:0.5.6"
     "@types/ioredis-mock": "npm:8.2.5"
-    "@whatwg-node/disposablestack": "npm:^0.0.4"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
     ioredis: "npm:^5.3.2"
     ioredis-mock: "npm:^8.8.3"
   peerDependencies:
@@ -6062,7 +6062,7 @@ __metadata:
     "@graphql-tools/stitching-directives": "npm:^3.1.2"
     "@graphql-tools/utils": "npm:^10.5.3"
     "@graphql-tools/wrap": "npm:^10.0.5"
-    "@whatwg-node/disposablestack": "npm:^0.0.4"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
     change-case: "npm:^4.1.2"
     graphql-yoga: "npm:^5.7.0"
     tslib: "npm:^2.4.0"
@@ -6727,7 +6727,7 @@ __metadata:
     "@graphql-yoga/plugin-csrf-prevention": "npm:^3.7.0"
     "@graphql-yoga/plugin-defer-stream": "npm:^3.7.0"
     "@graphql-yoga/plugin-persisted-operations": "npm:^3.7.0"
-    "@whatwg-node/disposablestack": "npm:^0.0.4"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
     "@whatwg-node/server": "npm:^0.9.46"
     graphql-sse: "npm:^2.5.3"
     graphql-yoga: "npm:^5.7.0"
@@ -7331,7 +7331,7 @@ __metadata:
     "@types/js-yaml": "npm:4.0.9"
     "@types/lodash.topath": "npm:4.5.9"
     "@types/object-hash": "npm:3.0.6"
-    "@whatwg-node/disposablestack": "npm:^0.0.4"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
     "@whatwg-node/fetch": "npm:^0.9.13"
     dset: "npm:^3.1.2"
     js-yaml: "npm:^4.1.0"
@@ -14362,12 +14362,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/disposablestack@npm:^0.0.4":
-  version: 0.0.4
-  resolution: "@whatwg-node/disposablestack@npm:0.0.4"
+"@whatwg-node/disposablestack@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "@whatwg-node/disposablestack@npm:0.0.5"
   dependencies:
     tslib: "npm:^2.6.3"
-  checksum: 10c0/50c550372ba348cd395682e68fde5974686e5e3f8c3e62403ae78993704dfd3f290b0352c727563d207f466e71ba889ad6e1d028e777ddbb885ac1af1406afe1
+  checksum: 10c0/dfa949223f348a51acdeca2e3f08393ec8816a2ac2cee754a129e9b2ee4ada3afc1b3dcfbec7bdfe5abe14b30627ef0cef89d01a00062a031c82d555c43ab7f9
   languageName: node
   linkType: hard
 
