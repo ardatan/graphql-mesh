@@ -10,6 +10,26 @@ describe('redis', () => {
   const logger = new DefaultLogger('test');
 
   describe('constructor', () => {
+    let redisUrlEnv: string;
+    let redisHostEnv: string;
+    let redisPortEnv: string;
+    let redisPasswordEnv: string;
+    beforeAll(() => {
+      redisUrlEnv = process.env.REDIS_URL;
+      redisHostEnv = process.env.REDIS_HOST;
+      redisPortEnv = process.env.REDIS_PORT;
+      redisPasswordEnv = process.env.REDIS_PASSWORD;
+      delete process.env.REDIS_URL;
+      delete process.env.REDIS_HOST;
+      delete process.env.REDIS_PORT;
+      delete process.env.REDIS_PASSWORD;
+    });
+    afterAll(() => {
+      process.env.REDIS_URL = redisUrlEnv;
+      process.env.REDIS_HOST = redisHostEnv;
+      process.env.REDIS_PORT = redisPortEnv;
+      process.env.REDIS_PASSWORD = redisPasswordEnv;
+    });
     it('never call Redis constructor if no config is provided', async () => {
       using redis = new RedisCache({ logger });
 

@@ -1803,6 +1803,7 @@ export interface RedisConfig {
   host?: string;
   port?: string;
   password?: string;
+  db?: number;
   url?: string;
   /**
    * Flag to indicate lazyConnect value for Redis client.

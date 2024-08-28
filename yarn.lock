@@ -3843,7 +3843,6 @@ __metadata:
     "@apollo/subgraph": "npm:^2.7.2"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/fusion-runtime": "workspace:*"
-    "@graphql-mesh/plugin-opentelemetry": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
     graphql: "npm:^16.8.1"
     graphql-yoga: "npm:^5.7.0"
@@ -4013,7 +4012,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/generic-auth@npm:8.0.0":
+"@envelop/generic-auth@npm:8.0.0, @envelop/generic-auth@npm:^8.0.0":
   version: 8.0.0
   resolution: "@envelop/generic-auth@npm:8.0.0"
   dependencies:
@@ -4561,7 +4560,6 @@ __metadata:
   dependencies:
     "@graphql-mesh/cache-localforage": "npm:^0.102.4"
     "@graphql-mesh/compose-cli": "npm:^0.9.5"
-    "@graphql-mesh/plugin-response-cache": "npm:^0.102.4"
     "@graphql-mesh/serve-cli": "npm:^0.11.6"
     "@omnigraph/openapi": "npm:^0.106.6"
     graphql: "npm:^16.9.0"
@@ -5888,7 +5886,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/cache-redis@workspace:packages/cache/redis":
+"@graphql-mesh/cache-redis@npm:^0.102.4, @graphql-mesh/cache-redis@workspace:packages/cache/redis":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-redis@workspace:packages/cache/redis"
   dependencies:
@@ -6121,7 +6119,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/hmac-upstream-signature@workspace:packages/plugins/hmac-upstream-signature":
+"@graphql-mesh/hmac-upstream-signature@npm:^0.3.6, @graphql-mesh/hmac-upstream-signature@workspace:packages/plugins/hmac-upstream-signature":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/hmac-upstream-signature@workspace:packages/plugins/hmac-upstream-signature"
   dependencies:
@@ -6316,7 +6314,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-deduplicate-request@workspace:packages/plugins/deduplicate-request":
+"@graphql-mesh/plugin-deduplicate-request@npm:^0.102.4, @graphql-mesh/plugin-deduplicate-request@workspace:packages/plugins/deduplicate-request":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-deduplicate-request@workspace:packages/plugins/deduplicate-request"
   dependencies:
@@ -6345,7 +6343,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-http-cache@workspace:packages/plugins/http-cache":
+"@graphql-mesh/plugin-http-cache@npm:^0.102.4, @graphql-mesh/plugin-http-cache@workspace:packages/plugins/http-cache":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-http-cache@workspace:packages/plugins/http-cache"
   dependencies:
@@ -6374,7 +6372,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth":
+"@graphql-mesh/plugin-jwt-auth@npm:^0.3.6, @graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth"
   dependencies:
@@ -6452,7 +6450,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-opentelemetry@workspace:*, @graphql-mesh/plugin-opentelemetry@workspace:packages/plugins/opentelemetry":
+"@graphql-mesh/plugin-opentelemetry@npm:^0.3.6, @graphql-mesh/plugin-opentelemetry@workspace:packages/plugins/opentelemetry":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-opentelemetry@workspace:packages/plugins/opentelemetry"
   dependencies:
@@ -6505,7 +6503,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-prometheus@workspace:packages/plugins/prometheus":
+"@graphql-mesh/plugin-prometheus@npm:^0.106.3, @graphql-mesh/plugin-prometheus@workspace:packages/plugins/prometheus":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-prometheus@workspace:packages/plugins/prometheus"
   dependencies:
@@ -6558,7 +6556,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-snapshot@npm:0.102.4, @graphql-mesh/plugin-snapshot@workspace:packages/plugins/snapshot":
+"@graphql-mesh/plugin-snapshot@npm:0.102.4, @graphql-mesh/plugin-snapshot@npm:^0.102.4, @graphql-mesh/plugin-snapshot@workspace:packages/plugins/snapshot":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-snapshot@workspace:packages/plugins/snapshot"
   dependencies:
@@ -6652,9 +6650,23 @@ __metadata:
   resolution: "@graphql-mesh/serve-cli@workspace:packages/serve-cli"
   dependencies:
     "@commander-js/extra-typings": "npm:^12.1.0"
+    "@graphql-mesh/cache-cfw-kv": "npm:^0.102.4"
+    "@graphql-mesh/cache-localforage": "npm:^0.102.4"
+    "@graphql-mesh/cache-redis": "npm:^0.102.4"
     "@graphql-mesh/cross-helpers": "npm:^0.4.6"
+    "@graphql-mesh/hmac-upstream-signature": "npm:^0.3.6"
     "@graphql-mesh/include": "npm:^0.1.0"
+    "@graphql-mesh/plugin-deduplicate-request": "npm:^0.102.4"
+    "@graphql-mesh/plugin-http-cache": "npm:^0.102.4"
+    "@graphql-mesh/plugin-jwt-auth": "npm:^0.3.6"
+    "@graphql-mesh/plugin-mock": "npm:^0.102.4"
+    "@graphql-mesh/plugin-opentelemetry": "npm:^0.3.6"
+    "@graphql-mesh/plugin-prometheus": "npm:^0.106.3"
+    "@graphql-mesh/plugin-rate-limit": "npm:^0.102.4"
+    "@graphql-mesh/plugin-snapshot": "npm:^0.102.4"
     "@graphql-mesh/serve-runtime": "npm:^0.8.6"
+    "@graphql-mesh/transport-http-callback": "npm:^0.3.5"
+    "@graphql-mesh/transport-ws": "npm:^0.3.5"
     "@graphql-mesh/types": "npm:^0.102.4"
     "@graphql-mesh/utils": "npm:^0.102.4"
     "@graphql-tools/utils": "npm:^10.5.3"
@@ -6694,10 +6706,13 @@ __metadata:
   dependencies:
     "@envelop/core": "npm:^5.0.0"
     "@envelop/disable-introspection": "npm:6.0.0"
+    "@envelop/generic-auth": "npm:^8.0.0"
     "@graphql-hive/core": "npm:^0.8.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.6"
     "@graphql-mesh/fusion-runtime": "npm:^0.8.5"
+    "@graphql-mesh/hmac-upstream-signature": "npm:^0.3.6"
     "@graphql-mesh/plugin-hive": "npm:^0.102.4"
+    "@graphql-mesh/plugin-response-cache": "npm:^0.102.4"
     "@graphql-mesh/transport-common": "npm:^0.7.5"
     "@graphql-mesh/transport-http": "npm:^0.6.5"
     "@graphql-mesh/utils": "npm:^0.102.4"
@@ -6709,6 +6724,9 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.5.3"
     "@graphql-tools/wrap": "npm:^10.0.5"
     "@graphql-yoga/plugin-apollo-usage-report": "npm:^0.1.0"
+    "@graphql-yoga/plugin-csrf-prevention": "npm:^3.7.0"
+    "@graphql-yoga/plugin-defer-stream": "npm:^3.7.0"
+    "@graphql-yoga/plugin-persisted-operations": "npm:^3.7.0"
     "@whatwg-node/disposablestack": "npm:^0.0.3"
     "@whatwg-node/server": "npm:^0.9.46"
     graphql-sse: "npm:^2.5.3"
@@ -7084,7 +7102,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-http-callback@workspace:packages/transports/http-callback":
+"@graphql-mesh/transport-http-callback@npm:^0.3.5, @graphql-mesh/transport-http-callback@workspace:packages/transports/http-callback":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-http-callback@workspace:packages/transports/http-callback"
   dependencies:
@@ -7241,7 +7259,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-ws@workspace:packages/transports/ws":
+"@graphql-mesh/transport-ws@npm:^0.3.5, @graphql-mesh/transport-ws@workspace:packages/transports/ws":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-ws@workspace:packages/transports/ws"
   dependencies:
@@ -8173,6 +8191,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-yoga/plugin-csrf-prevention@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "@graphql-yoga/plugin-csrf-prevention@npm:3.7.0"
+  peerDependencies:
+    graphql-yoga: ^5.7.0
+  checksum: 10c0/57c06fc6a56280e1a5e234a79090aee47773ef190fdbdca2ad139f9d23f8d5ff84e0fba7d1021bf12d658e238670525ac27e432b60dc7977f2ab61ea8e8778b2
+  languageName: node
+  linkType: hard
+
+"@graphql-yoga/plugin-defer-stream@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "@graphql-yoga/plugin-defer-stream@npm:3.7.0"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.0.0"
+  peerDependencies:
+    graphql: ^15.2.0 || ^16.0.0
+    graphql-yoga: ^5.7.0
+  checksum: 10c0/57d651a81233c65cd6499cfeafea0efcc8d0af2533a51494bd6fbc4305d30f0fb04d16df368cc849291c88876eb24b2459022bda5da9d30959129db64c0b5cdf
+  languageName: node
+  linkType: hard
+
 "@graphql-yoga/plugin-jwt@npm:^3.0.2":
   version: 3.1.0
   resolution: "@graphql-yoga/plugin-jwt@npm:3.1.0"
@@ -8188,7 +8227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-persisted-operations@npm:^3.0.0, @graphql-yoga/plugin-persisted-operations@npm:^3.3.1":
+"@graphql-yoga/plugin-persisted-operations@npm:^3.0.0, @graphql-yoga/plugin-persisted-operations@npm:^3.3.1, @graphql-yoga/plugin-persisted-operations@npm:^3.7.0":
   version: 3.7.0
   resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.7.0"
   peerDependencies:

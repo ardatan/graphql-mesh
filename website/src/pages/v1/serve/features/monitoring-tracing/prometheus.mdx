@@ -1,7 +1,7 @@
 ---
 description:
-  Learn how to track and analyze GraphQL execution metrics using @graphql-mesh/plugin-prometheus.
-  Expose and collect data to optimize your gateway.
+  Learn how to track and analyze GraphQL execution metrics. Expose and collect data to optimize your
+  gateway.
 ---
 
 import Image from 'next/image'
@@ -14,37 +14,27 @@ import { Callout } from '@theguild/components'
 [Prometheus](https://www.prometheus.io/) is a utility for producing, scraping and storage of metrics
 from services and utilities.
 
-You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases
-of your GraphQL execution including internal query planning and outgoing HTTP requests.
+You can use this feature of the gateway to expose and collect metrics from all phases of your
+GraphQL execution including internal query planning and outgoing HTTP requests.
 
 The metrics gathered are then exposed in a format that Prometheus can scrape on a regular basis on
 an HTTP endpoint (`/metrics` by default).
 
 ## Getting Started
 
-First, please install the Mesh prometheus plugin and the community prometheus client for Node.js.
-
-```sh npm2yarn
-npm i @graphql-mesh/plugin-prometheus
-```
-
-You can then add the plugin and its configuration to your `gateway.config.ts` file.
+Add its configuration to your `gateway.config.ts` file.
 
 ```ts filename="gateway.config.ts"
-import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
+  prometheus: {
+    // Enable the metrics you want to expose
+    // In this example, we enable incoming and outgoing HTTP request durations metrics
+    http: true,
+    fetchMetrics: true
+  }
   // ...other options
-  plugins: pluginCtx => [
-    usePrometheus({
-      ...pluginCtx,
-      // Enable the metrics you want to expose
-      // In this example, we enable incoming and outgoing HTTP request durations metrics
-      http: true
-      fetchMetrics: true
-    })
-  ]
 })
 ```
 
@@ -717,16 +707,12 @@ By providing a string, you can change the name of the metric. For example, to ch
 name of the `graphql_yoga_http_duration` metric to `http_request_duration`, you would use:
 
 ```ts filename="gateway.config.ts"
-import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    usePrometheus({
-      ...pluginCtx,
-      http: 'http_request_duration'
-    })
-  ]
+  prometheus: {
+    http: 'http_request_duration'
+  }
 })
 ```
 
@@ -751,33 +737,29 @@ Available options depend on the metric type, and full details about them can be 
 For example, you can customize the buckets of the `graphql_yoga_http_duration` histogram metric:
 
 ```ts filename="gateway.config.ts"
-import usePrometheus, { createHistogram } from '@graphql-mesh/plugin-prometheus'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, createHistogram } from '@graphql-mesh/serve-cli'
 import { register as registry } from 'prom-client'
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    usePrometheus({
-      ...pluginCtx,
-      http: createHistogram({
-        registry,
-        histogram: {
-          name: 'graphql_yoga_http_duration',
-          help: 'Time spent on HTTP connection',
-          labels: ['method', 'statusCode', 'operationName', 'operationType'],
-          buckets: [0.1, 5, 15, 50, 100, 500],
-        }
-        fillLabelsFn(params, { request, response }) {
-          return {
-            method: request.method,
-            statusCode: response.status,
-            operationType: params.operationType,
-            operationName: params.operationName || 'Anonymous',
-          };
-        }
-      })
+  prometheus: {
+    http: createHistogram({
+      registry,
+      histogram: {
+        name: 'graphql_yoga_http_duration',
+        help: 'Time spent on HTTP connection',
+        labels: ['method', 'statusCode', 'operationName', 'operationType'],
+        buckets: [0.1, 5, 15, 50, 100, 500],
+      }
+      fillLabelsFn(params, { request, response }) {
+        return {
+          method: request.method,
+          statusCode: response.status,
+          operationType: params.operationType,
+          operationName: params.operationName || 'Anonymous',
+        };
+      }
     })
-  ]
+  }
 })
 ```
 
@@ -787,18 +769,14 @@ You can customize the client’s registry by passing a custom registry to the `r
 
 ```ts filename="gateway.config.ts"
 import { Registry } from 'prom-client'
-import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 const myRegistry = new Registry()
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    usePrometheus({
-      ...pluginCtx,
-      registry: myRegistry
-    })
-  ]
+  prometheus: {
+    registry: myRegistry
+  }
 })
 ```
 
@@ -807,33 +785,27 @@ export const gatewayConfig = defineConfig({
 ### All metrics enabled
 
 ```ts filename="gateway.config.ts"
-import usePrometheus from '@graphql-mesh/plugin-prometheus'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    usePrometheus({
-      ...pluginCtx,
-      metrics: {
-        // Enable all available metrics
-        graphql_gateway_fetch_duration: true,
-        graphql_gateway_subgraph_execute_duration: true,
-        graphql_gateway_subgraph_execute_errors: true,
-        graphql_envelop_deprecated_field: true,
-        graphql_envelop_request: true,
-        graphql_envelop_request_duration: true,
-        graphql_envelop_request_time_summary: true,
-        graphql_envelop_phase_parse: true,
-        graphql_envelop_phase_validate: true,
-        graphql_envelop_phase_context: true,
-        graphql_envelop_error_result: true,
-        graphql_envelop_phase_execute: true,
-        graphql_envelop_phase_subscribe: true,
-        graphql_envelop_schema_change: true,
-        graphql_yoga_http_duration: true
-      }
-    })
-  ]
+  prometheus: {
+    // Enable all available metrics
+    graphql_gateway_fetch_duration: true,
+    graphql_gateway_subgraph_execute_duration: true,
+    graphql_gateway_subgraph_execute_errors: true,
+    graphql_envelop_deprecated_field: true,
+    graphql_envelop_request: true,
+    graphql_envelop_request_duration: true,
+    graphql_envelop_request_time_summary: true,
+    graphql_envelop_phase_parse: true,
+    graphql_envelop_phase_validate: true,
+    graphql_envelop_phase_context: true,
+    graphql_envelop_error_result: true,
+    graphql_envelop_phase_execute: true,
+    graphql_envelop_phase_subscribe: true,
+    graphql_envelop_schema_change: true,
+    graphql_yoga_http_duration: true
+  }
 })
 ```
 

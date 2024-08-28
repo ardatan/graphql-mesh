@@ -1,6 +1,6 @@
 import { Agent } from 'http';
 import { createSchema, createYoga } from 'graphql-yoga';
-import { createGatewayRuntime, useCustomAgent } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 import { createDisposableServer } from '../../testing/createDisposableServer';
 
 function createDisposableAgent() {
@@ -13,7 +13,7 @@ function createDisposableAgent() {
   };
 }
 
-describe('useCustomAgent', () => {
+describe('Custom Agent', () => {
   it('should work', async () => {
     await using upstreamServer = await createDisposableServer(
       createYoga<any>({
@@ -38,7 +38,7 @@ describe('useCustomAgent', () => {
       proxy: {
         endpoint: `http://localhost:${upstreamServer.address().port}/graphql`,
       },
-      plugins: () => [useCustomAgent(() => disposableAgent.agent)],
+      customAgent: () => disposableAgent.agent,
     });
     expect(spy.mock.calls.length).toBe(0);
     const res = await serveRuntime.fetch('http://localhost:4000/graphql', {

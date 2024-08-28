@@ -6,15 +6,21 @@ import cluster from 'node:cluster';
 import { availableParallelism, release } from 'node:os';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import type { JWTAuthPluginOptions } from '@graphql-mesh/plugin-jwt-auth';
+import type { OpenTelemetryMeshPluginOptions } from '@graphql-mesh/plugin-opentelemetry';
+import type { PrometheusPluginOptions } from '@graphql-mesh/plugin-prometheus';
+import type useMeshRateLimit from '@graphql-mesh/plugin-rate-limit';
 import type {
+  GatewayConfigContext,
   GatewayConfigProxy,
   GatewayConfigSubgraph,
   GatewayConfigSupergraph,
 } from '@graphql-mesh/serve-runtime';
-import type { Logger } from '@graphql-mesh/types';
+import type { KeyValueCache, Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { addCommands } from './commands/index.js';
 import { createDefaultConfigPaths } from './config.js';
+import type { LocalForageCacheStorage } from './index.js';
 import type { ServerConfig } from './server';
 
 export type GatewayCLIConfig = (
@@ -34,7 +40,7 @@ export type GatewayCLIConfig = (
      * @default 10_000
      */
     pollingInterval?: number;
-  };
+  } & GatewayCLIBuiltinPluginConfig;
 
 export interface GatewayCLISupergraphConfig extends Omit<GatewayConfigSupergraph, 'supergraph'> {
   /**
@@ -66,6 +72,51 @@ export interface GatewayCLIProxyConfig extends Omit<GatewayConfigProxy, 'proxy'>
    */
   proxy?: GatewayConfigProxy['proxy'];
 }
+
+export interface GatewayCLIBuiltinPluginConfig {
+  /**
+   * Configure JWT Auth
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/auth/jwt)
+   */
+  jwt?: JWTAuthPluginOptions;
+  /**
+   * Configure Prometheus metrics
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/monitoring-tracing/prometheus)
+   */
+  prometheus?: Exclude<PrometheusPluginOptions, GatewayConfigContext>;
+  /**
+   * Configure OpenTelemetry
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/monitoring-tracing/open-telemetry)
+   */
+  openTelemetry?: Exclude<OpenTelemetryMeshPluginOptions, GatewayConfigContext>;
+  /**
+   * Configure Rate Limiting
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/security/rate-limiting)
+   */
+  rateLimiting?: Exclude<Parameters<typeof useMeshRateLimit>[0], GatewayConfigContext>;
+
+  cache?:
+    | KeyValueCache
+    | GatewayCLILocalforageCacheConfig
+    | GatewayCLIRedisCacheConfig
+    | GatewayCLICloudflareKVCacheConfig;
+}
+
+export type GatewayCLILocalforageCacheConfig = YamlConfig.LocalforageConfig & {
+  type: 'localforage';
+};
+
+export type GatewayCLIRedisCacheConfig = YamlConfig.RedisConfig & {
+  type: 'redis';
+};
+
+export type GatewayCLICloudflareKVCacheConfig = YamlConfig.CFWorkersKVCacheConfig & {
+  type: 'cfw-kv';
+};
 
 /**
  * Type helper for defining the config.

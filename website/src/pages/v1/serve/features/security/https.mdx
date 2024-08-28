@@ -42,7 +42,7 @@ The only way to configure HTTPS programmaticaly is to use a custom agent like be
 ```ts
 import { readFileSync } from 'fs'
 import { Agent } from 'https'
-import { defineConfig, useCustomAgent } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 const agent = new Agent({
   ca: readFileSync('/path/to/ca.crt')
@@ -51,15 +51,11 @@ const agent = new Agent({
 })
 
 export const gatewayConfig = defineConfig({
-  plugins: () => [
-    useCustomAgent(
-      // This function will be called for each URL to determine if the custom agent should be used
-      ({ url }) =>
+  // This function will be called for each URL to determine if the custom agent should be used
+  customAgent: ({ url }) =>
         url === 'https://example.com'
           ? agent
           : undefined
-    )
-  ]
 })
 ```
 

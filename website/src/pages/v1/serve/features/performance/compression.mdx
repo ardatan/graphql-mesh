@@ -130,17 +130,17 @@ We assume that the `gzip` function is a function that compresses the data using 
 
 ### Configuration on Gateway
 
-In your Mesh configuration, you need to enable the compression plugin for the gateway.
+In your gateway configuration, you need to enable the compression for the gateway.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useContentEncoding } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: () => [useContentEncoding()]
+  contentEncoding: true
 })
 ```
 
-Now Mesh will respect the `Accept-Encoding` header from the client and compress the response
+Now gateway will respect the `Accept-Encoding` header from the client and compress the response
 accordingly.
 
 ## From the subgraph to the gateway
@@ -224,17 +224,15 @@ In this case, gateway will always send a compressed request to the defined subgr
 
 ### Configuration on Gateway
 
-In your Mesh configuration, you need to enable the compression plugin for the gateway.
+In your gateway configuration, you need to enable the compression.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useContentEncoding } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: () => [
-    useContentEncoding({
-      subgraphs: ['*'] // Enable compression for all subgraphs
-      // subgraphs: ['subgraph1', 'subgraph2'] // Enable compression for specific subgraphs
-    })
-  ]
+  contentEncoding: {
+    subgraphs: ['*'] // Enable compression for all subgraphs
+    // subgraphs: ['subgraph1', 'subgraph2'] // Enable compression for specific subgraphs
+  }
 })
 ```

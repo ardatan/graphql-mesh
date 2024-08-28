@@ -17,6 +17,8 @@ export function getReportingPlugin<TContext>(
         logger: configContext.logger.child('Hive'),
         ...config.reporting,
         experimental__persistedDocuments:
+          config.persistedDocuments &&
+          'type' in config.persistedDocuments &&
           config.persistedDocuments?.type === 'hive'
             ? {
                 cdn: {

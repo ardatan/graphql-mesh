@@ -3,7 +3,6 @@ import {
   createRenameTypeTransform,
   defineConfig as defineComposeConfig,
 } from '@graphql-mesh/compose-cli';
-import useResponseCache from '@graphql-mesh/plugin-response-cache';
 import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
@@ -76,24 +75,13 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const gatewayConfig = defineGatewayConfig({
-  cache: new LocalforageCache(),
-  plugins: ctx => {
-    const { cache } = ctx;
-    if (!cache) {
-      throw new Error('Mesh cache not available');
-    }
-    return [
-      useResponseCache({
-        ...ctx,
-        cache,
-        ttlPerCoordinate: [
-          // Geo data doesn't change frequently, so we can cache it forever
-          { coordinate: 'Query.findCitiesUsingGET', ttl: 0 },
-          // Forcast data might change, so we can cache it for 1 hour only
-          { coordinate: 'PopulatedPlaceSummary.dailyForecast', ttl: 3600 },
-          { coordinate: 'PopulatedPlaceSummary.todayForecast', ttl: 3600 },
-        ],
-      }),
-    ];
+  responseCaching: {
+    ttlPerCoordinate: [
+      // Geo data doesn't change frequently, so we can cache it forever
+      { coordinate: 'Query.findCitiesUsingGET', ttl: 0 },
+      // Forcast data might change, so we can cache it for 1 hour only
+      { coordinate: 'PopulatedPlaceSummary.dailyForecast', ttl: 3600 },
+      { coordinate: 'PopulatedPlaceSummary.todayForecast', ttl: 3600 },
+    ],
   },
 });

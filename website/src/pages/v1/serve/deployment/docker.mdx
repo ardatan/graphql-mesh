@@ -128,39 +128,33 @@ a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve`.
 If need only a handful of plugins (or some other dependencies), you can simply extend the image and
 install the modules with `npm i`:
 
-For example, adding [Rate Limiting](/v1/serve/features/security/rate-limiting) to the container
-would look like this:
+For example, adding
+[Block Field Suggestions Plugin](/v1/serve/features/security/block-field-suggestions) to the
+container would look like this:
 
 ```dockerfile filename="Dockerfile"
 FROM ghcr.io/ardatan/mesh-serve
 
-RUN npm i @graphql-mesh/plugin-rate-limit
+RUN npm i @escape.tech/graphql-armor-block-field-suggestions
 ```
 
 ```sh
-docker build -t mesh-serve-w-rate-limit .
+docker build -t mesh-serve-w-block-suggestions .
 ```
 
-Configure to use the rate limiting plugin:
+Configure to use the block field suggestions plugin:
 
 ```ts filename="gateway.config.ts"
-import useRateLimit from '@graphql-mesh/plugin-rate-limit'
+import { blockFieldSuggestionsPlugin } from '@escape.tech/graphql-armor-block-field-suggestions'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
-    useRateLimit({
-      ...pluginCtx,
-      rules: [
-        {
-          type: 'Query',
-          field: 'foo',
-          max: 5, // requests limit for a time period
-          ttl: 5000, // time period
-          // You can use any value from the context
-          identifier: '{context.headers.authorization}'
-        }
-      ]
+    blockFieldSuggestionsPlugin({
+      // Toggle the plugin | Default: true
+      enabled: true,
+      // Mask applied to the error message | default: '[Suggestion hidden]'
+      mask: '[Suggestion hidden]'
     })
   ]
 })
@@ -172,7 +166,7 @@ And then simply start the new image with the config file mounted:
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/gateway.config.ts:/serve/gateway.config.ts" \
-  mesh-serve-w-rate-limit supergraph
+  mesh-serve-w-block-suggestions supergraph
 ```
 
 ### Develop Plugin

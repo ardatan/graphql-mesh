@@ -100,14 +100,14 @@ describe('Gateway Runtime', () => {
           });
         });
         describe('GraphiQL', () => {
-          it('has Gateway GraphiQL title', async () => {
+          it('has correct GraphiQL title', async () => {
             const res = await serveRuntime.fetch('http://localhost:4000/graphql', {
               headers: {
                 accept: 'text/html',
               },
             });
             const text = await res.text();
-            expect(text).toContain('<title>Gateway GraphiQL</title>');
+            expect(text).toContain('<title>GraphQL Mesh</title>');
           });
         });
       });

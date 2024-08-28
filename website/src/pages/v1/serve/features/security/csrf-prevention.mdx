@@ -23,25 +23,14 @@ force all clients to manipulate the headers of GET requests, marking them as "\_
 therefore always executing a preflight request. Apollo does this when using the
 [`csrfPrevention = true` option](https://www.apollographql.com/docs/apollo-server/api/apollo-server/#csrfprevention).
 
-By using the `@graphql-yoga/plugin-csrf-prevention` GraphQL Yoga plugin, you can achieve the same!
-
-## Installation
-
-```sh npm2yarn
-npm i @graphql-yoga/plugin-csrf-prevention
-```
-
 ## Quick Start
 
 ```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
-import { useCSRFPrevention } from '@graphql-yoga/plugin-csrf-prevention'
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    useCSRFPrevention({
-      requestHeaders: ['x-graphql-mesh-csrf'] // default
-    })
-  ]
+  csrfPrevention: {
+    requestHeaders: ['x-gateway-csrf']
+  }
 })
 ```

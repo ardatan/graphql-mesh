@@ -5,7 +5,7 @@ import type { Agent as HttpsAgent } from 'https';
 import type { OnFetchHookPayload } from '@graphql-mesh/types';
 import type { GatewayContext, GatewayPlugin } from '../types';
 
-type AgentFactory<TContext> = (
+export type AgentFactory<TContext> = (
   payload: OnFetchHookPayload<Partial<TContext> & GatewayContext & Record<string, any>>,
 ) => HttpAgent | HttpsAgent | false | undefined;
 

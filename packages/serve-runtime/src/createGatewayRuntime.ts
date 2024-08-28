@@ -4,12 +4,15 @@ import {
   createYoga,
   isAsyncIterable,
   mergeSchemas,
+  useExecutionCancellation,
   useReadinessCheck,
   type LandingPageRenderer,
   type Plugin,
   type YogaServerInstance,
 } from 'graphql-yoga';
 import type { GraphiQLOptionsOrFactory } from 'graphql-yoga/typings/plugins/use-graphiql.js';
+import { useDisableIntrospection } from '@envelop/disable-introspection';
+import { useGenericAuth } from '@envelop/generic-auth';
 import { createSchemaFetcher, createSupergraphSDLFetcher } from '@graphql-hive/core';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
@@ -24,7 +27,9 @@ import {
   restoreExtraDirectives,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
+import { useHmacUpstreamSignature } from '@graphql-mesh/hmac-upstream-signature';
 import useMeshHive from '@graphql-mesh/plugin-hive';
+import useMeshResponseCache from '@graphql-mesh/plugin-response-cache';
 import type { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
   DefaultLogger,
@@ -51,6 +56,9 @@ import {
   type TypeSource,
 } from '@graphql-tools/utils';
 import { schemaFromExecutor, wrapSchema } from '@graphql-tools/wrap';
+import { useCSRFPrevention } from '@graphql-yoga/plugin-csrf-prevention';
+import { useDeferStream } from '@graphql-yoga/plugin-defer-stream';
+import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { getProxyExecutor } from './getProxyExecutor.js';
 import { getReportingPlugin } from './getReportingPlugin.js';
@@ -59,9 +67,13 @@ import landingPageHtml from './landing-page-html.js';
 import { useChangingSchema } from './plugins/useChangingSchema.js';
 import { useCompleteSubscriptionsOnDispose } from './plugins/useCompleteSubscriptionsOnDispose.js';
 import { useCompleteSubscriptionsOnSchemaChange } from './plugins/useCompleteSubscriptionsOnSchemaChange.js';
+import { useContentEncoding } from './plugins/useContentEncoding.js';
+import { useCustomAgent } from './plugins/useCustomAgent.js';
 import { useFetchDebug } from './plugins/useFetchDebug.js';
 import { useRequestId } from './plugins/useRequestId.js';
 import { useSubgraphExecuteDebug } from './plugins/useSubgraphExecuteDebug.js';
+import { useUpstreamCancel } from './plugins/useUpstreamCancel.js';
+import { useWebhooks } from './plugins/useWebhooks.js';
 import { defaultProductLogo } from './productLogo.js';
 import type {
   GatewayConfig,
@@ -124,7 +136,12 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
     configContext,
   );
   let persistedDocumentsPlugin: GatewayPlugin = {};
-  if (config.reporting?.type !== 'hive' && config.persistedDocuments?.type === 'hive') {
+  if (
+    config.reporting?.type !== 'hive' &&
+    config.persistedDocuments &&
+    'type' in config.persistedDocuments &&
+    config.persistedDocuments?.type === 'hive'
+  ) {
     persistedDocumentsPlugin = useMeshHive({
       ...configContext,
       logger: configContext.logger.child('Hive'),
@@ -135,6 +152,11 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
         },
         allowArbitraryDocuments: config.persistedDocuments.allowArbitraryDocuments,
       },
+    });
+  } else if (config.persistedDocuments && 'getPersistedOperation' in config.persistedDocuments) {
+    persistedDocumentsPlugin = usePersistedOperations({
+      ...configContext,
+      ...config.persistedDocuments,
     });
   }
   let subgraphInformationHTMLRenderer: () => MaybePromise<string> = () => '';
@@ -618,7 +640,7 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
     check: readinessChecker,
   });
 
-  const defaultMeshPlugin: GatewayPlugin = {
+  const defaultGatewayPlugin: GatewayPlugin = {
     onFetch({ setFetchFn }) {
       setFetchFn(fetchAPI.fetch);
     },
@@ -645,18 +667,24 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
     },
   };
 
+  const productName = config.productName || 'GraphQL Mesh';
+  const productDescription =
+    config.productDescription || 'Federated architecture for any API service';
+  const productPackageName = config.productPackageName || '@graphql-mesh/serve-cli';
+  const productLogo = config.productLogo || defaultProductLogo;
+  const productLink = config.productLink || 'https://the-guild.dev/graphql/mesh';
+
   let graphiqlOptionsOrFactory: GraphiQLOptionsOrFactory<unknown> | false;
 
-  const graphiqlTitle = 'Gateway GraphiQL';
   if (config.graphiql == null || config.graphiql === true) {
     graphiqlOptionsOrFactory = {
-      title: graphiqlTitle,
+      title: productName,
     };
   } else if (config.graphiql === false) {
     graphiqlOptionsOrFactory = false;
   } else if (typeof config.graphiql === 'object') {
     graphiqlOptionsOrFactory = {
-      title: graphiqlTitle,
+      title: productName,
       ...config.graphiql,
     };
   } else if (typeof config.graphiql === 'function') {
@@ -670,11 +698,11 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
         }
         if (resolvedOpts === true) {
           return {
-            title: graphiqlTitle,
+            title: productName,
           };
         }
         return {
-          title: graphiqlTitle,
+          title: productName,
           ...resolvedOpts,
         };
       });
@@ -683,15 +711,8 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
 
   let landingPageRenderer: LandingPageRenderer | boolean;
 
-  const productName = config.productName || 'GraphQL Mesh';
-  const productDescription =
-    config.productDescription || 'Federated architecture for any API service';
-  const productPackageName = config.productPackageName || '@graphql-mesh/serve-cli';
-  const productLogo = config.productLogo || defaultProductLogo;
-  const productLink = config.productLink || 'https://the-guild.dev/graphql/mesh';
-
   if (config.landingPage == null || config.landingPage === true) {
-    landingPageRenderer = async function meshLandingPageRenderer(opts) {
+    landingPageRenderer = async function gatewayLandingPageRenderer(opts) {
       const subgraphHtml = await subgraphInformationHTMLRenderer();
       return new opts.fetchAPI.Response(
         landingPageHtml
@@ -718,25 +739,86 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
     landingPageRenderer = false;
   }
 
+  const basePlugins = [
+    defaultGatewayPlugin,
+    unifiedGraphPlugin,
+    readinessCheckPlugin,
+    registryPlugin,
+    persistedDocumentsPlugin,
+    useChangingSchema(getSchema, _setSchema => {
+      setSchema = _setSchema;
+    }),
+    useCompleteSubscriptionsOnDispose(disposableStack),
+    useCompleteSubscriptionsOnSchemaChange(),
+    useRequestId(),
+    useSubgraphExecuteDebug(configContext),
+    useFetchDebug(configContext),
+  ];
+
+  const extraPlugins = [];
+
+  if (config.webhooks) {
+    extraPlugins.push(useWebhooks(configContext));
+  }
+
+  if (config.responseCaching) {
+    extraPlugins.push(
+      // @ts-expect-error TODO: what's up with type narrowing
+      useMeshResponseCache({
+        ...configContext,
+        ...config.responseCaching,
+      }),
+    );
+  }
+
+  if (config.contentEncoding) {
+    extraPlugins.push(
+      useContentEncoding(typeof config.contentEncoding === 'object' ? config.contentEncoding : {}),
+    );
+  }
+
+  if (config.deferStream) {
+    extraPlugins.push(useDeferStream());
+  }
+
+  if (config.executionCancellation) {
+    extraPlugins.push(useExecutionCancellation());
+  }
+
+  if (config.upstreamCancellation) {
+    extraPlugins.push(useUpstreamCancel());
+  }
+
+  if (config.disableIntrospection) {
+    extraPlugins.push(
+      useDisableIntrospection(
+        typeof config.disableIntrospection === 'object' ? config.disableIntrospection : {},
+      ),
+    );
+  }
+
+  if (config.csrfPrevention) {
+    extraPlugins.push(
+      useCSRFPrevention(typeof config.csrfPrevention === 'object' ? config.csrfPrevention : {}),
+    );
+  }
+
+  if (config.customAgent) {
+    extraPlugins.push(useCustomAgent<{}>(config.customAgent));
+  }
+
+  if (config.genericAuth) {
+    extraPlugins.push(useGenericAuth(config.genericAuth));
+  }
+
+  if (config.hmacSignature) {
+    extraPlugins.push(useHmacUpstreamSignature(config.hmacSignature));
+  }
+
   const yoga = createYoga<unknown, GatewayContext & TContext>({
     fetchAPI: config.fetchAPI,
     logging: logger,
-    plugins: [
-      defaultMeshPlugin,
-      unifiedGraphPlugin,
-      readinessCheckPlugin,
-      registryPlugin,
-      persistedDocumentsPlugin,
-      useChangingSchema(getSchema, _setSchema => {
-        setSchema = _setSchema;
-      }),
-      useCompleteSubscriptionsOnDispose(disposableStack),
-      useCompleteSubscriptionsOnSchemaChange(),
-      useRequestId(),
-      useSubgraphExecuteDebug(configContext),
-      useFetchDebug(configContext),
-      ...(config.plugins?.(configContext) || []),
-    ],
+    plugins: [...basePlugins, ...(config.plugins?.(configContext) || []), ...extraPlugins],
     // @ts-expect-error PromiseLike is not compatible with Promise
     context({ request, params, ...rest }) {
       // TODO: I dont like this cast, but it's necessary

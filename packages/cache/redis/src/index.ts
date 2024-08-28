@@ -20,7 +20,6 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
 
   constructor(options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub; logger: Logger }) {
     const lazyConnect = options.lazyConnect !== false;
-
     if (options.url) {
       const redisUrl = new URL(interpolateStrWithEnv(options.url));
 
@@ -38,15 +37,20 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
       options.logger.debug(`Connecting to Redis at ${redisUrl.toString()}`);
       this.client = new Redis(redisUrl?.toString());
     } else {
-      const parsedHost = interpolateStrWithEnv(options.host?.toString());
-      const parsedPort = interpolateStrWithEnv(options.port?.toString());
-      const parsedPassword = interpolateStrWithEnv(options.password?.toString());
+      const parsedHost = interpolateStrWithEnv(options.host?.toString()) || process.env.REDIS_HOST;
+      const parsedPort = interpolateStrWithEnv(options.port?.toString()) || process.env.REDIS_PORT;
+      const parsedPassword =
+        interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
+      const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+      const numPort = parseInt(parsedPort);
+      const numDb = parseInt(parsedDb);
       if (parsedHost) {
         options.logger.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
         this.client = new Redis({
           host: parsedHost,
-          port: parseInt(parsedPort),
+          port: isNaN(numPort) ? undefined : numPort,
           password: parsedPassword,
+          db: isNaN(numDb) ? undefined : numDb,
           ...(lazyConnect ? { lazyConnect: true } : {}),
           enableAutoPipelining: true,
           enableOfflineQueue: true,

@@ -3,11 +3,7 @@
 import { createHmac } from 'node:crypto';
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
-import {
-  defaultParamsSerializer,
-  useHmacSignatureValidation,
-  useHmacUpstreamSignature,
-} from './index';
+import { defaultParamsSerializer, useHmacSignatureValidation } from './index';
 
 describe('useHmacSignatureValidation', () => {
   test('should throw when header is missing or invalid', async () => {
@@ -102,6 +98,9 @@ describe('useHmacSignatureValidation', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
+      hmacSignature: {
+        secret: sharedSecret,
+      },
       plugins: () => [
         useCustomFetch(upstream.fetch),
         {
@@ -110,9 +109,6 @@ describe('useHmacSignatureValidation', () => {
             payload.executionRequest.extensions.addedToPayload = true;
           },
         },
-        useHmacUpstreamSignature({
-          secret: sharedSecret,
-        }),
       ],
       logging: false,
     });
@@ -165,6 +161,9 @@ describe('useHmacUpstreamSignature', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
+      hmacSignature: {
+        secret,
+      },
       plugins: () => [
         useCustomFetch(upstream.fetch),
         {
@@ -173,9 +172,6 @@ describe('useHmacUpstreamSignature', () => {
             payload.executionRequest.extensions.addedToPayload = true;
           },
         },
-        useHmacUpstreamSignature({
-          secret,
-        }),
       ],
       logging: false,
     });
@@ -213,12 +209,10 @@ describe('useHmacUpstreamSignature', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      plugins: () => [
-        useCustomFetch(upstream.fetch),
-        useHmacUpstreamSignature({
-          secret,
-        }),
-      ],
+      hmacSignature: {
+        secret,
+      },
+      plugins: () => [useCustomFetch(upstream.fetch)],
       logging: false,
     });
 
@@ -256,13 +250,11 @@ describe('useHmacUpstreamSignature', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      plugins: () => [
-        useCustomFetch(upstream.fetch),
-        useHmacUpstreamSignature({
-          secret,
-          extensionName: customExtensionName,
-        }),
-      ],
+      hmacSignature: {
+        secret,
+        extensionName: customExtensionName,
+      },
+      plugins: () => [useCustomFetch(upstream.fetch)],
       logging: false,
     });
 
@@ -299,15 +291,11 @@ describe('useHmacUpstreamSignature', () => {
       proxy: {
         endpoint: 'https://example.com/graphql',
       },
-      plugins: () => [
-        useCustomFetch(upstream.fetch),
-        useHmacUpstreamSignature({
-          secret,
-          shouldSign: () => {
-            return false;
-          },
-        }),
-      ],
+      hmacSignature: {
+        secret,
+        shouldSign: () => false,
+      },
+      plugins: () => [useCustomFetch(upstream.fetch)],
       logging: false,
     });
 

@@ -2,7 +2,6 @@ import { parse, type ExecutionResult } from 'graphql';
 import { createYoga } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
 import { buildSubgraphSchema } from '@apollo/subgraph';
-import { useGenericAuth } from '@envelop/generic-auth';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import { composeWithApollo } from '../../../testing/composeWithApollo';
 import useJWT, { createInlineSigningKeyProvider, type JWTExtendContextFields } from '../src/index';
@@ -98,18 +97,17 @@ describe('Auth Directives', () => {
               url: 'http://localhost:4001/graphql',
             },
           ]),
+        genericAuth: {
+          mode: 'protect-granular',
+          resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
+            return context?.jwt?.payload;
+          },
+          rejectUnauthenticated: false,
+        },
         plugins: () => [
           useCustomFetch(subgraphAServer.fetch),
           useJWT({
             singingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
-          }),
-          // @ts-expect-error - TODO: fix typings
-          useGenericAuth({
-            mode: 'protect-granular',
-            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
-              return context?.jwt?.payload;
-            },
-            rejectUnauthenticated: false,
           }),
         ],
       });
@@ -215,6 +213,13 @@ describe('Auth Directives', () => {
               url: 'http://localhost:4001/graphql',
             },
           ]),
+        genericAuth: {
+          mode: 'protect-granular',
+          resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
+            return context?.jwt?.payload;
+          },
+          rejectUnauthenticated: false,
+        },
         plugins: () => [
           useCustomFetch(subgraphAServer.fetch),
           useJWT({
@@ -223,14 +228,6 @@ describe('Auth Directives', () => {
               invalidToken: false,
               missingToken: false,
             },
-          }),
-          // @ts-expect-error - TODO: fix typings
-          useGenericAuth({
-            mode: 'protect-granular',
-            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
-              return context?.jwt?.payload;
-            },
-            rejectUnauthenticated: false,
           }),
         ],
       });
@@ -375,6 +372,13 @@ describe('Auth Directives', () => {
                 url: 'http://localhost:4002/graphql',
               },
             ]),
+          genericAuth: {
+            mode: 'protect-granular',
+            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
+              return context?.jwt?.payload;
+            },
+            rejectUnauthenticated: false,
+          },
           plugins: () => [
             useCustomFetch(function (url, ...args) {
               if (url === 'http://localhost:4001/graphql') {
@@ -390,14 +394,6 @@ describe('Auth Directives', () => {
                 invalidToken: false,
                 missingToken: false,
               },
-            }),
-            // @ts-expect-error - TODO: fix typings
-            useGenericAuth({
-              mode: 'protect-granular',
-              resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
-                return context?.jwt?.payload;
-              },
-              rejectUnauthenticated: false,
             }),
           ],
         });
@@ -442,6 +438,13 @@ describe('Auth Directives', () => {
                 url: 'http://localhost:4002/graphql',
               },
             ]),
+          genericAuth: {
+            mode: 'protect-granular',
+            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
+              return context?.jwt?.payload;
+            },
+            rejectUnauthenticated: false,
+          },
           plugins: () => [
             useCustomFetch(function (url, ...args) {
               if (url === 'http://localhost:4001/graphql') {
@@ -457,14 +460,6 @@ describe('Auth Directives', () => {
                 invalidToken: false,
                 missingToken: false,
               },
-            }),
-            // @ts-expect-error - TODO: fix typings
-            useGenericAuth({
-              mode: 'protect-granular',
-              resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
-                return context?.jwt?.payload;
-              },
-              rejectUnauthenticated: false,
             }),
           ],
         });
@@ -567,6 +562,13 @@ describe('Auth Directives', () => {
               url: 'http://localhost:4001/graphql',
             },
           ]),
+        genericAuth: {
+          mode: 'protect-granular',
+          resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
+            return context?.jwt?.payload;
+          },
+          rejectUnauthenticated: false,
+        },
         plugins: () => [
           useCustomFetch(subgraphServer.fetch),
           useJWT({
@@ -575,14 +577,6 @@ describe('Auth Directives', () => {
               invalidToken: false,
               missingToken: false,
             },
-          }),
-          // @ts-expect-error - TODO: fix typings
-          useGenericAuth({
-            mode: 'protect-granular',
-            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
-              return context?.jwt?.payload;
-            },
-            rejectUnauthenticated: false,
           }),
         ],
       });
@@ -706,6 +700,14 @@ describe('Auth Directives', () => {
               url: 'http://localhost:4001/graphql',
             },
           ]),
+        genericAuth: {
+          mode: 'protect-granular',
+          resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
+            return context?.jwt?.payload;
+          },
+          rejectUnauthenticated: false,
+          extractPolicies: () => ['read_profile'],
+        },
         plugins: () => [
           useCustomFetch(subgraphServer.fetch),
           useJWT({
@@ -714,15 +716,6 @@ describe('Auth Directives', () => {
               invalidToken: false,
               missingToken: false,
             },
-          }),
-          // @ts-expect-error - TODO: fix typings
-          useGenericAuth({
-            mode: 'protect-granular',
-            resolveUserFn(context: { jwt?: JWTExtendContextFields }) {
-              return context?.jwt?.payload;
-            },
-            rejectUnauthenticated: false,
-            extractPolicies: () => ['read_profile'],
           }),
         ],
       });

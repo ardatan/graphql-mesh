@@ -124,7 +124,7 @@ type MeshMetricsConfig = {
   logger: Logger;
 };
 
-type PrometheusPluginOptions = PrometheusTracingPluginConfig & MeshMetricsConfig;
+export type PrometheusPluginOptions = PrometheusTracingPluginConfig & MeshMetricsConfig;
 
 type YamlConfig = {
   baseDir?: string;

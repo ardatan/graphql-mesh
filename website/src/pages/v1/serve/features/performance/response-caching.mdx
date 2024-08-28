@@ -3,11 +3,6 @@ import { Callout, Tabs } from '@theguild/components'
 
 # Response Caching
 
-<Callout>
-  This page is currently under construction and expected to change. Please feel free to reach out to
-  us directly in case you are having any troubles.
-</Callout>
-
 **_GraphQL Response Caching_** is a feature that allows you to cache the response of a GraphQL
 query. This is useful when you want to reduce the number of requests to your sources. For example,
 if you have a GraphQL query that fetches a list of products, you can cache the response of this
@@ -21,22 +16,14 @@ of making a request to the underlying sources.
 
 ## How to use?
 
-```sh npm2yarn
-npm i @graphql-mesh/plugin-response-cache
-```
-
 ```ts filename="gateway.config.ts"
-import useResponseCache from '@graphql-mesh/plugin-response-cache'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    useResponseCache({
-      ...pluginCtx,
-      // global cache
-      session: () => null
-    })
-  ]
+  responseCaching: {
+    // global cache
+    session: () => null
+  }
 })
 ```
 
@@ -74,7 +61,6 @@ for the fields and types they are defining. You can add this directive during co
 
 - [See here for Federation to learn more about the `@cacheControl` directive](https://www.apollographql.com/docs/federation/performance/caching/#using-cache-hints-with-subgraphs)
 - [See here for Mesh Compose to learn more about the `@cacheControl` in subgraph definitions](/v1/compose/response-caching)
-  {/* `TODO: Later allow programmatic API` */}
 
 ## Session based caching
 
@@ -92,17 +78,13 @@ information.
 </Callout>
 
 ```ts filename="gateway.config.ts"
-import useResponseCache from '@graphql-mesh/plugin-response-cache'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    useResponseCache({
-      ...pluginCtx,
-      // cache based on the authentication header
-      session: request => request.headers.get('authentication')
-    })
-  ]
+  responseCaching: {
+    // cache based on the authentication header
+    session: request => request.headers.get('authentication')
+  }
 })
 ```
 
@@ -119,8 +101,8 @@ This can be useful to prevent exposure of sensitive data to unauthorized users.
 ]}>
   <Tabs.Tab>
     ```ts filename="Response Cache configuration with scope"
-    useResponseCache({
-      ...pluginCtx,
+      defineConfig({
+        responseCaching: {
       // cache based on the authentication header
       session: request => request.headers.get('authentication')
 
@@ -128,8 +110,8 @@ This can be useful to prevent exposure of sensitive data to unauthorized users.
       scopePerSchemaCoordinate: {
         'Query.me': 'PRIVATE', // on a field
         User: 'PRIVATE', // or a type
-      }
-    })
+      }}
+      })
     ```
 
   </Tabs.Tab >
@@ -157,8 +139,10 @@ For example, if data returned by an API is always the same for every users with 
 can use the role as a session key.
 
 ```ts filename="Role based caching"
-useResponseCache({
-  session: request => request.headers.get('x-user-role')
+defineConfig({
+  responseCaching: {
+    session: request => request.headers.get('x-user-role')
+  }
 })
 ```
 
@@ -180,16 +164,17 @@ is picked.
 ]}>
   <Tabs.Tab>
     ```ts filename="Response Cache configuration with TTL"
-    useResponseCache({
-      ...pluginCtx,
-      session: () => null,
-      // by default cache all operations for 2 seconds
-      ttl: 2_000,
-      ttlPerSchemaCoordinate: {
-        // only cache query operations containing User for 500ms
-        User: 500
-        // cache operations selecting Query.lazy for 10 seconds
-        'Query.lazy': 10_000
+    defineConfig({
+      responseCaching: {
+        session: () => null,
+        // by default cache all operations for 2 seconds
+        ttl: 2_000,
+        ttlPerSchemaCoordinate: {
+          // only cache query operations containing User for 500ms
+          User: 500
+          // cache operations selecting Query.lazy for 10 seconds
+          'Query.lazy': 10_000
+        }
       }
     })
     ```
@@ -217,10 +202,11 @@ You can globaly disable caching using the `enabled` option. This can be useful f
 development.
 
 ```ts filename="Disabling caching"
-useResponseCache({
-  ...pluginCtx,
-  session: request => null,
-  enabled: () => process.env.NODE_ENV !== 'development'
+defineConfig({
+  responseCaching: {
+    session: request => null,
+    enabled: () => process.env.NODE_ENV !== 'development'
+  }
 })
 ```
 
@@ -233,10 +219,11 @@ Be aware that this means that if the response contains entities that are part of
 responses, those responses will not be invalidated.
 
 ```ts filename="Disabling caching for a specific request"
-useResponseCache({
-  ...pluginCtx,
-  session: request => null,
-  enabled: request => request.headers.get('x-no-cache') !== 'true'
+defineConfig({
+  responseCaching: {
+    session: request => null,
+    enabled: request => request.headers.get('x-no-cache') !== 'true'
+  }
 })
 ```
 
@@ -255,8 +242,8 @@ in the response.
 ]}>
   <Tabs.Tab title="Programatically using options">
     ```ts filename="Disabling caching for a specific type"
-    useResponseCache({
-      ...pluginCtx,
+defineConfig({
+  responseCaching: {
       session: request => null,
       ttlPerSchemaCoordinate: {
         // for a entire type
@@ -264,7 +251,8 @@ in the response.
         // for a specific field
         'Query.time': 0
       }
-    })
+  }
+})
     ```
   </Tabs.Tab>
   <Tabs.Tab title="Declaratively using @cacheControl">
@@ -316,10 +304,11 @@ For the given GraphQL operation and execution result, all cached query results t
 This behavior can be disabled by setting the `invalidateViaMutation` option to `false`.
 
 ```ts filename="Disabling mutation invalidation"
-useResponseCache({
-  ...pluginCtx,
-  session: request => null,
-  invalidateViaMutation: false
+defineConfig({
+  responseCaching: {
+    session: request => null,
+    invalidateViaMutation: false
+  }
 })
 ```
 
@@ -333,10 +322,11 @@ By default, the identity of entities is based on the `id` field.
 You can customize the identity field by setting the `idFields` options.
 
 ```ts filename="Customizing entity identity"
-useResponseCache({
-  ...pluginCtx,
-  session: request => null,
-  idFields: ['id', 'email']
+defineConfig({
+  responseCaching: {
+    session: request => null,
+    idFields: ['id', 'email']
+  }
 })
 ```
 
