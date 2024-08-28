@@ -16,10 +16,11 @@ import type {
   GatewayConfigSubgraph,
   GatewayConfigSupergraph,
 } from '@graphql-mesh/serve-runtime';
-import type { Logger } from '@graphql-mesh/types';
+import type { KeyValueCache, Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { addCommands } from './commands/index.js';
 import { createDefaultConfigPaths } from './config.js';
+import type { LocalForageCacheStorage } from './index.js';
 import type { ServerConfig } from './server';
 
 export type GatewayCLIConfig = (
@@ -97,7 +98,25 @@ export interface GatewayCLIBuiltinPluginConfig {
    * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/security/rate-limiting)
    */
   rateLimiting?: Exclude<Parameters<typeof useMeshRateLimit>[0], GatewayConfigContext>;
+
+  cache?:
+    | KeyValueCache
+    | GatewayCLILocalforageCacheConfig
+    | GatewayCLIRedisCacheConfig
+    | GatewayCLICloudflareKVCacheConfig;
 }
+
+export type GatewayCLILocalforageCacheConfig = YamlConfig.LocalforageConfig & {
+  type: 'localforage';
+};
+
+export type GatewayCLIRedisCacheConfig = YamlConfig.RedisConfig & {
+  type: 'redis';
+};
+
+export type GatewayCLICloudflareKVCacheConfig = YamlConfig.CFWorkersKVCacheConfig & {
+  type: 'cfw-kv';
+};
 
 /**
  * Type helper for defining the config.

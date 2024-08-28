@@ -1,6 +1,6 @@
 import cluster, { type Worker } from 'node:cluster';
 import { createGatewayRuntime, type GatewayConfigProxy } from '@graphql-mesh/serve-runtime';
-import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
+import { isUrl, PubSub, registerTerminateHandler } from '@graphql-mesh/utils';
 import {
   defaultOptions,
   type AddCommand,
@@ -8,7 +8,7 @@ import {
   type CLIGlobals,
   type GatewayCLIConfig,
 } from '../cli.js';
-import { getBuiltinPluginsFromConfig, loadConfig } from '../config.js';
+import { getBuiltinPluginsFromConfig, getCacheInstanceFromConfig, loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
@@ -86,6 +86,8 @@ export const addCommand: AddCommand = (ctx, cli) =>
         process.exit(1);
       }
 
+      const pubsub = loadedConfig.pubsub || new PubSub();
+
       const config: ProxyConfig = {
         ...defaultOptions,
         ...loadedConfig,
@@ -125,6 +127,11 @@ export const addCommand: AddCommand = (ctx, cli) =>
         productPackageName: ctx.productPackageName,
         productLogo: ctx.productLogo,
         productLink: ctx.productLink,
+        pubsub,
+        cache: getCacheInstanceFromConfig(loadedConfig, {
+          pubsub,
+          logger: ctx.log,
+        }),
         plugins(ctx) {
           const builtinPlugins = getBuiltinPluginsFromConfig(loadedConfig, ctx);
           const userPlugins = loadedConfig.plugins?.(ctx) ?? [];

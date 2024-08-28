@@ -6,7 +6,7 @@ import {
   type GatewayConfigSubgraph,
   type UnifiedGraphConfig,
 } from '@graphql-mesh/serve-runtime';
-import { isUrl, registerTerminateHandler } from '@graphql-mesh/utils';
+import { isUrl, PubSub, registerTerminateHandler } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import {
   defaultOptions,
@@ -15,7 +15,7 @@ import {
   type CLIGlobals,
   type GatewayCLIConfig,
 } from '../cli.js';
-import { getBuiltinPluginsFromConfig, loadConfig } from '../config.js';
+import { getBuiltinPluginsFromConfig, getCacheInstanceFromConfig, loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
@@ -52,6 +52,8 @@ export const addCommand: AddCommand = (ctx, cli) =>
       } else if ('subgraph' in loadedConfig) {
         subgraph = loadedConfig.subgraph;
       }
+
+      const pubsub = loadedConfig.pubsub || new PubSub();
 
       const config: SubgraphConfig = {
         ...defaultOptions,
@@ -91,6 +93,11 @@ export const addCommand: AddCommand = (ctx, cli) =>
         productPackageName: ctx.productPackageName,
         productLogo: ctx.productLogo,
         productLink: ctx.productLink,
+        pubsub,
+        cache: getCacheInstanceFromConfig(loadedConfig, {
+          pubsub,
+          logger: ctx.log,
+        }),
         plugins(ctx) {
           const builtinPlugins = getBuiltinPluginsFromConfig(loadedConfig, ctx);
           const userPlugins = loadedConfig.plugins?.(ctx) ?? [];

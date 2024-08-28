@@ -75,7 +75,6 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const gatewayConfig = defineGatewayConfig({
-  cache: new LocalforageCache(),
   responseCaching: {
     ttlPerCoordinate: [
       // Geo data doesn't change frequently, so we can cache it forever

@@ -9,9 +9,10 @@ const meshHttp = createGatewayRuntime({
   transports: {
     rest,
   },
-  cache: new CFWorkerKVCache({
+  cache: {
+    type: 'cfw-kv',
     namespace: 'MESH',
-  }),
+  },
   responseCaching: {
     ttlPerCoordinate: [
       {

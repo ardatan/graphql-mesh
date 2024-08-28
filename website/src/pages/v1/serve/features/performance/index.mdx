@@ -8,11 +8,6 @@ import { Callout } from '@theguild/components'
 
 # Performance & Caching
 
-<Callout>
-  This page is currently under construction and expected to change. Please feel free to reach out to
-  us directly in case you are having any troubles.
-</Callout>
-
 GraphQL Mesh Serve Runtime provides a set of features to help you optimize the performance of your
 GraphQL Mesh Gateway. GraphQL Mesh provides a shared caching storage that can be used across
 plugins, transforms and subgraph execution.
@@ -32,16 +27,12 @@ LocalForage is a library that improves the existing storage mechanism in the bro
 Even if it is known as a browser storage, GraphQL Mesh provides you as a platform-agnostic cache
 storage to leverage the well-known storage APIs that are available in most JavaScript environments.
 
-```sh npm2yarn
-npm i @graphql-mesh/cache-localforage
-```
-
 ```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-mesh/serve-cli'
-import LocalForageCacheStorage from '@graphql-mesh/cache-localforage'
 
 export const gatewayConfig = defineConfig({
-  cache: new LocalForageCacheStorage({
+  cache: {
+    type: 'localforage',
     // All of the following options are listed with default values, you don't need to provide them
     driver: ['WEBSQL', 'INDEXEDDB', 'LOCALSTORAGE'] // The order of the drivers to use
     name: 'GraphQLMesh', // The name of the database
@@ -49,7 +40,7 @@ export const gatewayConfig = defineConfig({
     size: 4980736, // The size of the database
     storeName: 'keyvaluepairs', // The name of the store
     description: 'Cache storage for GraphQL Mesh', // The description of the database
-  }),
+  }
   responseCaching: {
     session: () => null,
   }
@@ -63,23 +54,19 @@ use Redis as a cache storage for your GraphQL Mesh Gateway.
 
 <Callout>The Redis cache currently only works in Node.js environments.</Callout>
 
-```sh npm2yarn
-npm i @graphql-mesh/cache-redis
-```
-
 ```ts filename="gateway.config.ts"
-import RedisCacheStorage from '@graphql-mesh/cache-redis'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  cache: new RedisCacheStorage({
+  cache: {
+    type: 'redis',
     host: 'localhost', // The host of the Redis server
     port: 6379, // The port of the Redis server
     password: undefined, // The password of the Redis server
     lazyConnect: true, // If true, the connection will be established when the first operation is executed
     // or
     url: 'redis://localhost:6379' // The URL of the Redis server
-  }),
+  },
   responseCaching: {
     session: () => null
   }
@@ -98,18 +85,14 @@ Mesh Gateway. [Learn more about KV](https://developers.cloudflare.com/workers/ru
   documentation](/v1/serve/deployment/cloudflare-workers).
 </Callout>
 
-```sh npm2yarn
-npm i @graphql-mesh/cache-cf-kw
-```
-
 ```ts filename="gateway.config.ts"
-import CloudflareKVCacheStorage from '@graphql-mesh/cache-cf-kw'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  cache: new CloudflareKVCacheStorage({
+  cache: {
+    type: 'cfw-kv',
     namespace: 'GraphQLMesh' // The namespace of the KV
-  }),
+  }
   responseCaching: {
     session: () => null
   }

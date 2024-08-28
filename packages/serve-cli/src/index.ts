@@ -8,3 +8,6 @@ export { default as useHttpCache } from '@graphql-mesh/plugin-http-cache';
 export { default as useDeduplicateRequest } from '@graphql-mesh/plugin-deduplicate-request';
 export { default as useMock } from '@graphql-mesh/plugin-mock';
 export { default as useSnapshot } from '@graphql-mesh/plugin-snapshot';
+export { default as CloudflareKVCacheStorage } from '@graphql-mesh/cache-cfw-kv';
+export { default as RedisCacheStorage } from '@graphql-mesh/cache-redis';
+export { default as LocalForageCacheStorage } from '@graphql-mesh/cache-localforage';

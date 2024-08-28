@@ -50,6 +50,9 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "^12.1.0",
+    "@graphql-mesh/cache-cfw-kv": "^0.102.4",
+    "@graphql-mesh/cache-localforage": "^0.102.4",
+    "@graphql-mesh/cache-redis": "^0.102.4",
     "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/hmac-upstream-signature": "^0.3.6",
     "@graphql-mesh/include": "^0.1.0",

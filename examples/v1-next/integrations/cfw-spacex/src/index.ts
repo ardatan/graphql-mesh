@@ -10,9 +10,10 @@ self.addEventListener(
     proxy: {
       endpoint: 'https://main--spacex-l4uc6p.apollographos.net/graphql',
     },
-    cache: new CFWorkerKVCache({
+    cache: {
+      type: 'cfw-kv',
       namespace: 'MESH',
-    }),
+    },
     plugins: ctx => [
       useDepthLimit({
         maxDepth: 5,

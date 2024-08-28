@@ -3843,7 +3843,6 @@ __metadata:
     "@apollo/subgraph": "npm:^2.7.2"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-mesh/fusion-runtime": "workspace:*"
-    "@graphql-mesh/plugin-opentelemetry": "workspace:*"
     "@graphql-mesh/serve-cli": "workspace:*"
     graphql: "npm:^16.8.1"
     graphql-yoga: "npm:^5.7.0"
@@ -5887,7 +5886,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/cache-redis@workspace:packages/cache/redis":
+"@graphql-mesh/cache-redis@npm:^0.102.4, @graphql-mesh/cache-redis@workspace:packages/cache/redis":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-redis@workspace:packages/cache/redis"
   dependencies:
@@ -6451,7 +6450,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-opentelemetry@npm:^0.3.6, @graphql-mesh/plugin-opentelemetry@workspace:*, @graphql-mesh/plugin-opentelemetry@workspace:packages/plugins/opentelemetry":
+"@graphql-mesh/plugin-opentelemetry@npm:^0.3.6, @graphql-mesh/plugin-opentelemetry@workspace:packages/plugins/opentelemetry":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-opentelemetry@workspace:packages/plugins/opentelemetry"
   dependencies:
@@ -6651,6 +6650,9 @@ __metadata:
   resolution: "@graphql-mesh/serve-cli@workspace:packages/serve-cli"
   dependencies:
     "@commander-js/extra-typings": "npm:^12.1.0"
+    "@graphql-mesh/cache-cfw-kv": "npm:^0.102.4"
+    "@graphql-mesh/cache-localforage": "npm:^0.102.4"
+    "@graphql-mesh/cache-redis": "npm:^0.102.4"
     "@graphql-mesh/cross-helpers": "npm:^0.4.6"
     "@graphql-mesh/hmac-upstream-signature": "npm:^0.3.6"
     "@graphql-mesh/include": "npm:^0.1.0"

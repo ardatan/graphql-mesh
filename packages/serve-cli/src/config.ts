@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
+import LocalforageCache from '@graphql-mesh/cache-localforage';
+import RedisCache from '@graphql-mesh/cache-redis';
 import { include } from '@graphql-mesh/include';
 import useJWT from '@graphql-mesh/plugin-jwt-auth';
 import { useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry';
 import useMeshPrometheus from '@graphql-mesh/plugin-prometheus';
 import useMeshRateLimit from '@graphql-mesh/plugin-rate-limit';
 import type { GatewayConfig, GatewayConfigContext } from '@graphql-mesh/serve-runtime';
-import type { Logger } from '@graphql-mesh/types';
+import type { KeyValueCache, Logger } from '@graphql-mesh/types';
 import type { GatewayCLIBuiltinPluginConfig } from './cli';
 import type { ServerConfig } from './server';
 
@@ -116,4 +118,35 @@ export function getBuiltinPluginsFromConfig(
   }
 
   return plugins;
+}
+
+export function getCacheInstanceFromConfig(
+  config: GatewayCLIBuiltinPluginConfig,
+  ctx: Pick<GatewayConfigContext, 'logger' | 'pubsub'>,
+): KeyValueCache {
+  if (config.cache && 'type' in config.cache) {
+    switch (config.cache.type) {
+      case 'redis':
+        return new RedisCache({
+          ...ctx,
+          ...config.cache,
+        });
+      case 'cfw-kv':
+        return new RedisCache({
+          ...ctx,
+          ...config.cache,
+        });
+    }
+    if (config.cache.type !== 'localforage') {
+      ctx.logger.warn(`Unknown cache type: ${config.cache.type}`);
+    }
+    return new LocalforageCache({
+      ...ctx,
+      ...config.cache,
+    });
+  }
+  if (config.cache) {
+    return config.cache as KeyValueCache;
+  }
+  return new LocalforageCache();
 }
