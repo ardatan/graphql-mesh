@@ -234,7 +234,7 @@ npm i @graphql-mesh/transport-http-callback
 ```
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, PubSub, useWebhooks } from '@graphql-mesh/serve-cli'
+import { defineConfig, PubSub } from '@graphql-mesh/serve-cli'
 import type { HTTPCallbackTransportOptions } from '@graphql-mesh/transport-http-callback'
 
 export const gatewayConfig = defineConfig({
@@ -242,7 +242,7 @@ export const gatewayConfig = defineConfig({
   // Setup a PubSub engine to handle webhooks between different instances of Mesh for scalability
   pubsub: new PubSub(),
   // Setup Mesh to listen for webhook callbacks, and emit the payloads through PubSub engine
-  plugins: ctx => [useWebhooks()],
+  webhooks: true,
   transportEntries: {
     // use "*.http" to apply options to all subgraphs with HTTP
     '*.http': {

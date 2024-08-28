@@ -9,13 +9,11 @@ export interface GatewayWebhooksPluginOptions {
 }
 export function useWebhooks({ pubsub, logger }: GatewayWebhooksPluginOptions): Plugin {
   if (!pubsub) {
-    throw new Error(`You must provide a pubsub instance to useWebhooks plugin!
+    throw new Error(`You must provide a pubsub instance to webhooks feature!
     Example:
       export const gatewayConfig = defineConfig({
         pubsub: new PubSub(),
-        plugins: ctx => [
-          useWebhooks(ctx),
-        ],
+        webhooks: true,
       })
     See documentation: https://the-guild.dev/docs/mesh/pubsub`);
   }

@@ -1,0 +1,63 @@
+# Debugging
+
+With `DEBUG=1` flag, you can see a verbose output in your logs to debug all the HTTP requests and
+responses from the client to the subgraphs.
+
+```
+[2024-08-28T12:06:25.861Z] DEBUG upstream - 887a7efc-7324-4612-b1a7-0b76ada9fd7a - fetch request {
+  url: 'http://localhost:44725/graphql',
+  method: 'POST',
+  body: '{\n  "query": "query MyTest{foo}"\n}',
+  headers: {
+    accept: 'application/graphql-response+json, application/json, multipart/mixed',
+    'content-type': 'application/json',
+    'x-request-id': '887a7efc-7324-4612-b1a7-0b76ada9fd7a'
+  },
+}
+[2024-08-28T12:06:25.866Z] DEBUG upstream - 887a7efc-7324-4612-b1a7-0b76ada9fd7a - fetch response {
+  url: 'http://localhost:44725/graphql',
+  status: 200,
+  headers: {
+    'content-type': 'application/graphql-response+json; charset=utf-8',
+    'content-length': '22',
+    date: 'Wed, 28 Aug 2024 12:06:25 GMT',
+    connection: 'keep-alive',
+    'keep-alive': 'timeout=5'
+  }
+}
+```
+
+Also in this mode, the gateway will add details about the underlying HTTP requests and received
+responses in case of an error;
+
+```json
+{
+  "errors": [
+    {
+      "message": "Response not successful: Received status code 500",
+      "extensions": {
+        "request": {
+          "url": "https://api.example.com/graphql",
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": {
+            "query": "query { hello }"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "Internal Server Error",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": {
+            "message": "Internal Server Error"
+          }
+        }
+      }
+    }
+  ]
+}
+```

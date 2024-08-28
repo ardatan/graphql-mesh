@@ -4,9 +4,8 @@ import { fetch } from '@whatwg-node/fetch';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { createDisposableServer } from '../../testing/createDisposableServer';
 import { createGatewayRuntime } from '../src/createGatewayRuntime';
-import { useUpstreamCancel } from '../src/plugins/useUpstreamCancel';
 
-describe('useUpstreamCancel', () => {
+describe('Upstream Cancellation', () => {
   it('cancels upstream requests when the client cancels', async () => {
     const serveRuntimeFetchCallAbortCtrl = new AbortController();
     let resolveDataSource: (response: Response) => void;
@@ -45,7 +44,7 @@ describe('useUpstreamCancel', () => {
       proxy: {
         endpoint: `http://localhost:${upstreamGraphQLServer.address().port}/graphql`,
       },
-      plugins: () => [useUpstreamCancel()],
+      upstreamCancellation: true,
       logging: false,
     });
     await using serveRuntimeServer = await createDisposableServer(serveRuntime);

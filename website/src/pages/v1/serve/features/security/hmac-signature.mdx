@@ -51,32 +51,15 @@ the subgraphs validating the HMAC signature.
 
 ### Step 2: HMAC Signing in Mesh Gateway
 
-To get started with HMAC signing in your GraphQL Mesh Gateway, you need to add the
-`@graphql-mesh/hmac-upstream-signature` package to your project:
-
-```sh npm2yarn
-npm i @graphql-mesh/hmac-upstream-signature
-```
-
-<Callout>
-  Make sure to add `useHmacUpstreamSignature` last in the plugins list in your Mesh configuration.
-</Callout>
-
 ```ts
 import { useHmacUpstreamSignature } from '@graphql-mesh/hmac-upstream-signature'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
+  hmacUpstreamSignature: {
+    secret: myHMACSecret // see step 1 for the secret key
+  }
   // ...
-  plugins: () => [
-    // other Mesh plugins
-    // ...
-    // ...
-    // ...
-    useHmacUpstreamSignature({
-      secret: myHMACSecret // see step 1 for the secret key
-    })
-  ]
 })
 ```
 
@@ -91,19 +74,19 @@ The next step is to perform a verification over the sent HMAC signature in the s
 
 #### With GraphQL Yoga
 
-If you are using Yoga, you can install the same plugin package:
+If you are using Yoga, you can use the gateway package:
 
 ```sh npm2yarn
-npm i @graphql-mesh/hmac-upstream-signature
+npm i @graphql-mesh/serve-runtime
 ```
 
 ```ts
 import { createYoga } from 'graphql-yoga'
-import { useHmacSignatureValidation } from '@graphql-mesh/hmac-upstream-signature'
+import { useHmacSignatureValidation } from '@graphql-mesh/serve-runtime'
 
 const myYogaSubgraphServer = createYoga({
   // ...
-  plugins: () => [
+  plugins: [
     useHmacSignatureValidation({
       secret: myHMACSecret // see step 1 for the secret key
     })
@@ -121,14 +104,13 @@ const myYogaSubgraphServer = createYoga({
 #### With Apollo Server
 
 If you are using Apollo-Server for your subgraph services, you can implement a custom plugin to
-verify the HMAC signature. You can still use the utilities from the
-`@graphql-mesh/hmac-upstream-signature` library to serialize the request parameters and verify the
-HMAC signature in a stable way.
+verify the HMAC signature. You can still use the utilities from the `@graphql-mesh/serve-runtime`
+library to serialize the request parameters and verify the HMAC signature in a stable way.
 
-Start by installing the `@graphql-mesh/hmac-upstream-signature` package:
+Start by installing the `@graphql-mesh/serve-runtime` package:
 
 ```sh npm2yarn
-npm i @graphql-mesh/hmac-upstream-signature
+npm i @graphql-mesh/serve-runtime
 ```
 
 Now, configure your Apollo Server with the HMAC verification plugin:
@@ -136,7 +118,7 @@ Now, configure your Apollo Server with the HMAC verification plugin:
 ```ts filename="apollo-subgraph.ts"
 import { createHmac } from 'crypto'
 import { ApolloServer, ApolloServerPlugin } from '@apollo/server'
-import { defaultParamsSerializer } from '@graphql-mesh/hmac-upstream-signature'
+import { defaultParamsSerializer } from '@graphql-mesh/serve-runtime'
 
 const verifyHmacPlugin = {
   async requestDidStart({ request, contextValue }) {
@@ -208,11 +190,11 @@ Here's an example of an incoming subgraph request with the HMAC signature:
 
 </Steps>
 
-## Plugins Configuration
+## Configuration
 
-### `useHmacUpstreamSignature`
+### `hmacUpstreamSignature`
 
-The `useHmacUpstreamSignature` plugin allow you to customize the HMAC signing behavior in the Mesh
+The `hmacUpstreamSignature` flag allows you to customize the HMAC signing behavior in the Mesh
 gateway:
 
 - `secret`: The secret key used for HMAC signing and verification. It should be a random, opaque

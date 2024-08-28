@@ -50,13 +50,9 @@ export const gatewayConfig = defineConfig({
     storeName: 'keyvaluepairs', // The name of the store
     description: 'Cache storage for GraphQL Mesh', // The description of the database
   }),
-  plugins: pluginCtx => ([
-    // Your plugins here
-    useResponseCache({
-      ...pluginCtx, // To pass the shared cache storage
-      // other configuration
-    })
-  ])
+  responseCaching: {
+    session: () => null,
+  }
 })
 ```
 
@@ -84,13 +80,9 @@ export const gatewayConfig = defineConfig({
     // or
     url: 'redis://localhost:6379' // The URL of the Redis server
   }),
-  plugins: pluginCtx => [
-    // Your plugins here
-    useResponseCache({
-      ...pluginCtx // To pass the shared cache storage
-      // other configuration
-    })
-  ]
+  responseCaching: {
+    session: () => null
+  }
 })
 ```
 
@@ -118,13 +110,9 @@ export const gatewayConfig = defineConfig({
   cache: new CloudflareKVCacheStorage({
     namespace: 'GraphQLMesh' // The namespace of the KV
   }),
-  plugins: pluginCtx => [
-    // Your plugins here
-    useResponseCache({
-      ...pluginCtx // To pass the shared cache storage
-      // other configuration
-    })
-  ]
+  responseCaching: {
+    session: () => null
+  }
 })
 ```
 

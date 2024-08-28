@@ -2,28 +2,16 @@ import { Callout } from '@theguild/components'
 
 # Snapshot Plugin
 
-<Callout>
-  This page is currently under construction and expected to change. Please feel free to reach out to
-  us directly in case you are having any troubles.
-</Callout>
-
 The `snapshot` plugin allows applying snapshot for development usage.
 
 The snapshot plugin writes the responses of your remote data source to your file system and then
 uses it instead of re-fetching it every time. It’s also helpful because you can easily manipulate
 your data manually and see how your API mesh responds.
 
-To get started with this plugin, install it:
-
-```sh npm2yarn
-npm i @graphql-mesh/plugin-snapshot
-```
-
 Then, add it to your plugins:
 
 ```ts filename="gateway.config.ts"
-import useSnapshot from '@graphql-mesh/plugin-snapshot'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, useSnapshot } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [

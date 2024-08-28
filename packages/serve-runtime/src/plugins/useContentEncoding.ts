@@ -9,7 +9,7 @@ export interface UseContentEncodingOpts {
 
 export function useContentEncoding<TContext>({
   subgraphs,
-}: UseContentEncodingOpts): GatewayPlugin<TContext> {
+}: UseContentEncodingOpts = {}): GatewayPlugin<TContext> {
   if (!subgraphs?.length) {
     return useOrigContentEncoding();
   }
@@ -24,7 +24,7 @@ export function useContentEncoding<TContext>({
       addPlugin(useOrigContentEncoding());
     },
     onSubgraphExecute({ subgraphName, executionRequest }) {
-      if (subgraphs.includes(subgraphName)) {
+      if (subgraphs.includes(subgraphName) || subgraphs.includes('*')) {
         execReqWithContentEncoding.add(executionRequest);
       }
     },

@@ -15,7 +15,7 @@ import {
   type CLIGlobals,
   type GatewayCLIConfig,
 } from '../cli.js';
-import { loadConfig } from '../config.js';
+import { getBuiltinPluginsFromConfig, loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
@@ -72,8 +72,15 @@ export const addCommand: AddCommand = (ctx, cli) =>
               persistedDocuments: {
                 type: 'hive',
                 endpoint:
-                  hivePersistedDocumentsEndpoint || loadedConfig.persistedDocuments?.endpoint,
-                token: hivePersistedDocumentsToken || loadedConfig.persistedDocuments?.token,
+                  hivePersistedDocumentsEndpoint ||
+                  (loadedConfig.persistedDocuments &&
+                    'endpoint' in loadedConfig.persistedDocuments &&
+                    loadedConfig.persistedDocuments?.endpoint),
+                token:
+                  hivePersistedDocumentsToken ||
+                  (loadedConfig.persistedDocuments &&
+                    'token' in loadedConfig.persistedDocuments &&
+                    loadedConfig.persistedDocuments?.token),
               },
             }
           : {}),
@@ -84,6 +91,11 @@ export const addCommand: AddCommand = (ctx, cli) =>
         productPackageName: ctx.productPackageName,
         productLogo: ctx.productLogo,
         productLink: ctx.productLink,
+        plugins(ctx) {
+          const builtinPlugins = getBuiltinPluginsFromConfig(loadedConfig, ctx);
+          const userPlugins = loadedConfig.plugins?.(ctx) ?? [];
+          return [...builtinPlugins, ...userPlugins];
+        },
       };
       if (maskedErrors != null) {
         // overwrite masked errors from loaded config only when provided

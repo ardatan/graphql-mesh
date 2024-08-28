@@ -2,8 +2,13 @@
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
 import { include } from '@graphql-mesh/include';
-import type { GatewayConfig } from '@graphql-mesh/serve-runtime';
+import useJWT from '@graphql-mesh/plugin-jwt-auth';
+import { useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry';
+import useMeshPrometheus from '@graphql-mesh/plugin-prometheus';
+import useMeshRateLimit from '@graphql-mesh/plugin-rate-limit';
+import type { GatewayConfig, GatewayConfigContext } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
+import type { GatewayCLIBuiltinPluginConfig } from './cli';
 import type { ServerConfig } from './server';
 
 export const defaultConfigExtensions = ['.ts', '.mts', '.cts', '.js', '.mjs', '.cjs'];
@@ -21,7 +26,9 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
   nativeImport: boolean | undefined;
   configFileName: string;
 }) {
-  let importedConfig: Partial<GatewayConfig<TContext> & ServerConfig> | null = null;
+  let importedConfig: Partial<
+    GatewayConfig<TContext> & ServerConfig & GatewayCLIBuiltinPluginConfig
+  > | null = null;
 
   if (!opts.configPath) {
     !opts.quiet && opts.log.info(`Searching for default config files`);
@@ -72,4 +79,41 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
   // TODO: validate imported config
 
   return importedConfig || {};
+}
+
+export function getBuiltinPluginsFromConfig(
+  config: GatewayCLIBuiltinPluginConfig,
+  ctx: GatewayConfigContext,
+) {
+  const plugins = [];
+  if (config.jwt) {
+    plugins.push(useJWT(config.jwt));
+  }
+  if (config.prometheus) {
+    plugins.push(
+      useMeshPrometheus({
+        ...ctx,
+        ...config.prometheus,
+      }),
+    );
+  }
+  if (config.openTelemetry) {
+    plugins.push(
+      useOpenTelemetry({
+        ...ctx,
+        ...config.openTelemetry,
+      }),
+    );
+  }
+
+  if (config.rateLimiting) {
+    plugins.push(
+      useMeshRateLimit({
+        ...ctx,
+        ...config.rateLimiting,
+      }),
+    );
+  }
+
+  return plugins;
 }

@@ -12,24 +12,20 @@ can enable HTTP caching in your GraphQL Mesh Gateway by using the HTTP caching p
 you to cache the responses when possible, and reduce the server load. It uses
 [`http-cache-semantics`](https://www.npmjs.com/package/http-cache-semantics) under the hood.
 
-```sh npm2yarn
-npm i @graphql-mesh/plugin-http-cache
-```
-
 <Callout>
   You need to set your cache storage in your Mesh configuration to enable response caching. See
   [Cache Storage](/v1/serve/features/performance#providing-cache-storage) for more information.
 </Callout>
 
 ```ts filename="gateway.config.ts"
-import useHttpCache from '@graphql-mesh/plugin-http-cache'
+import { defineConfig, useHttpCache } from '@graphql-mesh/serve-cli'
 
-export const gatewayConfig = {
+export const gatewayConfig = defineConfig({
   cache // Your cache storage here,
   plugins: pluginCtx => [
     useHttpCache({
       ...pluginCtx
     })
   ]
-}
+})
 ```

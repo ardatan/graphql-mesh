@@ -8,8 +8,7 @@ based on the original HTTP request. The resolved user is injected into the Graph
 
 <Callout>
   The plugin also comes with an optional `@authenticated` directive that can be added to your
-  GraphQL schema and helps you to protect your GraphQL schema in a declarative way. [Learn more how
-  to use it in your subgraphs during Mesh Compose](/v1/compose/auth).
+  GraphQL schema and helps you to protect your GraphQL schema in a declarative way.
 </Callout>
 
 There are several possible flows for using this plugin (see below for setup examples):
@@ -24,20 +23,14 @@ There are several possible flows for using this plugin (see below for setup exam
 
 ## Getting Started
 
-Start by installing the plugin:
-
-```sh npm2yarn
-npm i @envelop/generic-auth
-```
-
-Then, define your authentication methods:
+Define your authentication methods:
 
 1. Resolve your user from the request by implementing `resolveUserFn`:
 
 Use this method to only extract the user from the context, with any custom code, for example:
 
 ```ts
-import { ResolveUserFn } from '@envelop/generic-auth'
+import { ResolveUserFn } from '@graphql-mesh/serve-runtime'
 
 type UserType = {
   id: string
@@ -67,7 +60,7 @@ This method is optional; the default method will just verify the value returned 
 throw an error in case of a false value (`false | null | undefined`).
 
 ```ts
-import { ValidateUserFn } from '@envelop/generic-auth'
+import { ValidateUserFn } from '@graphql-mesh/serve-cli'
 
 const validateUser: ValidateUserFn<UserType> = params => {
   // Here you can implement any custom to check if the user is valid and have access to the server.
@@ -93,8 +86,7 @@ specific GraphQL fields by using the `@skipAuth` directive.
 To setup this mode, use the following config:
 
 ```ts filename="gateway.config.ts"
-import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -107,13 +99,11 @@ const validateUser: ValidateUserFn<UserType> = params => {
 }
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    useGenericAuth({
-      resolveUserFn,
-      validateUser,
-      mode: 'protect-all'
-    })
-  ]
+  genericAuth: {
+    resolveUserFn,
+    validateUser,
+    mode: 'protect-all'
+  }
 })
 ```
 
@@ -126,6 +116,15 @@ Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fiel
 `validateUser` function will not get called while resolving that specific field:
 
 ```graphql
+# This is needed for Federation because `@skipAuth` is not part of Federation spec
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@composeDirective"])
+  @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@skipAuth"])
+  @composeDirective(name: "@skipAuth")
+
+directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE
+
 type Query {
   me: User!
   protectedField: String
@@ -135,16 +134,13 @@ type Query {
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
-[Learn more about to apply it during Mesh Compose](/v1/compose/auth).
-
 #### Option #2 - `resolve-only`
 
 This mode uses the plugin to inject the authenticated user into the `context`, and later you can
 verify it in your resolvers and plugin during authentication.
 
 ```ts filename="gateway.config.ts"
-import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -157,13 +153,11 @@ const validateUser: ValidateUserFn<UserType> = params => {
 }
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    useGenericAuth({
-      resolveUserFn,
-      validateUser,
-      mode: 'resolve-only'
-    })
-  ]
+  genericAuth: {
+    resolveUserFn,
+    validateUser,
+    mode: 'resolve-only'
+  }
 })
 ```
 
@@ -191,8 +185,7 @@ This mode is similar to option #2, but it uses the `@authenticated` SDL directiv
 extension for protecting specific GraphQL fields.
 
 ```ts filename="gateway.config.ts"
-import { ResolveUserFn, useGenericAuth, ValidateUserFn } from '@envelop/generic-auth'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-mesh/serve-cli'
 
 type UserType = {
   id: string
@@ -205,25 +198,23 @@ const validateUser: ValidateUserFn<UserType> = params => {
 }
 
 export const gatewayConfig = defineConfig({
-  plugins: pluginCtx => [
-    useGenericAuth({
-      resolveUserFn,
-      validateUser,
-      mode: 'protect-granular'
-    })
-  ]
+  genericAuth: {
+    resolveUserFn,
+    validateUser,
+    mode: 'protect-granular'
+  }
 })
 ```
 
 ##### Protect a field using a field `directive`
 
-> By default, we assume that you have the GraphQL directive definition as part of your GraphQL
-> schema (`directive @authenticated on FIELD_DEFINITION | OBJECT | INTERFACE`).
-
-Then, in your GraphQL schema SDL, you can add `@authenticated` directive to your fields, and the
+In your GraphQL schema SDL, you can add `@authenticated` directive to your fields, and the
 `validateUser` will get called only while resolving that specific field:
 
 ```graphql
+# Import it from Federation spec
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@authenticated"])
+
 type Query {
   me: User! @authenticated
   protectedField: String @authenticated
@@ -233,8 +224,6 @@ type Query {
 
 > You can apply that directive to any GraphQL `field` definition, not only to root fields.
 
-[Learn more about to apply it during Mesh Compose](/v1/compose/auth).
-
 #### Extend authentication with custom logic
 
 You can also specify a custom `validateUser` function and get access to a handy object while using
@@ -242,7 +231,7 @@ the `protect-all` and `protect-granular` mode:
 
 ```ts
 import { GraphQLError } from 'graphql'
-import { ValidateUserFn } from '@envelop/generic-auth'
+import { ValidateUserFn } from '@graphql-mesh/serve-cli'
 
 const validateUser: ValidateUserFn<UserType> = ({ user }) => {
   // Now you can use the 3rd parameter to implement custom logic for user validation, with access
@@ -274,12 +263,12 @@ property which is expected to be a string like `read:user read:admin`. However y
 this behavior by providing a custom `extractScopes` function.
 
 ```ts
-useGenericAuth({
+{
   resolveUserFn,
   validateUser,
   mode: 'protect-granular',
   extractScopes: user => user.scopes // Expected to return an array of strings
-})
+}
 ```
 
 You can also apply `AND` or `OR` logic to the scopes:
@@ -315,7 +304,7 @@ It has the same logic with `@requiresScopes` but it can asynchronously fetch the
 source;
 
 ```ts
-useGenericAuth({
+{
   resolveUserFn,
   validateUser,
   mode: 'protect-granular',
@@ -328,5 +317,5 @@ useGenericAuth({
     // Expected to return an array of strings
     return res.json()
   }
-})
+}
 ```

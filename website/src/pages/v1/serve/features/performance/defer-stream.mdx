@@ -8,11 +8,6 @@ import { Callout } from '@theguild/components'
 
 # Defer and Stream
 
-<Callout>
-  This page is currently under construction and expected to change. Please feel free to reach out to
-  us directly in case you are having any troubles.
-</Callout>
-
 Stream and defer are directives that allow you to improve latency for clients by sending the most
 important data as soon as it's ready.
 
@@ -33,21 +28,14 @@ working group.
   change. Furthermore, there is no yet a stable specification for the incremental delivery protocol.
 </Callout>
 
-## Installation
-
-Enabling support for the `@defer` and `@stream` directive requires installing a plugin.
-
-```sh npm2yarn
-npm i @graphql-yoga/plugin-defer-stream
-```
+## Enabling in the configuration
 
 ```ts filename="gateway.config.ts"
-import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
+import { defineConfig } from '@graphql-mesh/serve-cli'
 
-export const gatewayConfig = {
-  plugins: pluginCtx => [useDeferStream()]
-}
+export const gatewayConfig = defineConfig({
+  deferStream: true
+})
 ```
 
-{/* `TODO: Test and provide an example` */}
 [See more](https://the-guild.dev/graphql/yoga-server/docs/features/defer-stream#using-defer)

@@ -28,11 +28,9 @@ You can provide those plugins as an array of objects,
 ```ts filename="gateway.config.ts" {7}
 import { useGraphQLJit } from '@envelop/graphql-jit'
 import { defineConfig } from '@graphql-mesh/serve-cli'
-// or a Yoga Plugin
-import { useCSRFPrevention } from '@graphql-yoga/plugin-csrf-prevention'
 
 export const gatewayConfig = defineConfig({
-  plugins: () => [useGraphQLJit(), useCSRFPrevention()]
+  plugins: () => [useGraphQLJit()]
 })
 ```
 
@@ -132,7 +130,6 @@ This hook is invoked everytime the gateways sends an outgoing HTTP request to an
 **Example plugins:**
 
 - [Prometheus plugin](/v1/serve/plugins/monitoring-tracing/prometheus)
-- [Forward Headers plugin](/v1/serve/plugins/auth/forward-headers)
 
 ##### `API`
 

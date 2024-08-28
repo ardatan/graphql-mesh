@@ -2,25 +2,15 @@ import { Callout } from '@theguild/components'
 
 # Mocking your GraphQL API
 
-<Callout>
-  This page is currently under construction and expected to change. Please feel free to reach out to
-  us directly in case you are having any troubles.
-</Callout>
-
 Mocking your GraphQL API is a common practice when developing and testing your application. It
 allows you to simulate the behavior of your API without making real network requests.
 
 ## How to use?
 
-```sh npm2yarn
-npm install @graphql-mesh/plugin-mock
-```
-
-Then, add it to your plugins:
+Add it to your plugins:
 
 ```ts filename="gateway.config.ts"
-import useMock from '@graphql-mesh/plugin-mock'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   plugins: [
@@ -44,7 +34,7 @@ The example above will replace the resolver of `User.firstName` with a mock that
 You can also provide a custom function to generate the mock value for a field:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
 import { fullName } from './user-mocks.js'
 
 export const gatewayConfig = defineConfig({
@@ -66,7 +56,7 @@ export const gatewayConfig = defineConfig({
 You can mock types with custom mock functions like below;
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
 import { user } from './user-mocks.js'
 
 export const gatewayConfig = defineConfig({
@@ -122,8 +112,7 @@ type User {
 ```
 
 ```ts filename="gateway.config.ts"
-import useMock from '@graphql-mesh/plugin-mock'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
@@ -167,7 +156,7 @@ using the store provided in the context `context.mockStore`;
 When having a schema that returns a list, in this case, a list of users:
 
 ```ts filename="init-store.ts"
-import { MockStore } from '@graphql-mesh/plugin-mock'
+import { MockStore } from '@graphql-mesh/serve-cli'
 
 export const store = new MockStore()
 const users = [{ id: 'uuid', name: 'John Snow' }]
@@ -191,7 +180,7 @@ type Query {
 ```
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
 import { store } from './init-store.js'
 
 export const gatewayConfig = defineConfig({
@@ -226,7 +215,7 @@ type Mutation {
 ```
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
 import { store } from './init-store.js'
 
 export const gatewayConfig = defineConfig({
@@ -261,5 +250,3 @@ export const gatewayConfig = defineConfig({
   ]
 })
 ```
-
-{/* `TODO: Move example to here` */}

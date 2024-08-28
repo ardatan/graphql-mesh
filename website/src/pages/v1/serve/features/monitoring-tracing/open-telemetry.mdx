@@ -19,41 +19,32 @@ The following features are supported in this plugin:
 
 <Image src={jaegerScreenshot} loading="eager" placeholder="empty" alt="OpenTelemetry Jaeger UI" />
 
-## Getting Started
-
-```sh npm2yarn
-npm i @graphql-mesh/plugin-opentelemetry
-```
-
 ## Usage Example
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { createStdoutExporter, defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        // A simple output to the console.
-        // You can add more exporters here, please see documentation below for more examples.
-        createStdoutExporter()
-      ],
-      serviceName: 'my-custom-service-name', // Optional, the name of your service
-      tracer: myCustomTracer, // Optional, a custom tracer to use
-      inheritContext: true, // Optional, whether to inherit the context from the incoming request
-      propagateContext: true, // Optional, whether to propagate the context to the outgoing requests
-      // Optional config to customize the spans. By default all spans are enabled.
-      spans: {
-        http: true, // Whether to track the HTTP request/response
-        graphqlParse: true, // Whether to track the GraphQL parse phase
-        graphqlValidate: true, // Whether to track the GraphQL validate phase
-        graphqlExecute: true, // Whether to track the GraphQL execute phase
-        subgraphExecute: true, // Whether to track the subgraph execution phase
-        upstreamFetch: true // Whether to track the upstream HTTP requests
-      }
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      // A simple output to the console.
+      // You can add more exporters here, please see documentation below for more examples.
+      createStdoutExporter()
+    ],
+    serviceName: 'my-custom-service-name', // Optional, the name of your service
+    tracer: myCustomTracer, // Optional, a custom tracer to use
+    inheritContext: true, // Optional, whether to inherit the context from the incoming request
+    propagateContext: true, // Optional, whether to propagate the context to the outgoing requests
+    // Optional config to customize the spans. By default all spans are enabled.
+    spans: {
+      http: true, // Whether to track the HTTP request/response
+      graphqlParse: true, // Whether to track the GraphQL parse phase
+      graphqlValidate: true, // Whether to track the GraphQL validate phase
+      graphqlExecute: true, // Whether to track the GraphQL execute phase
+      subgraphExecute: true, // Whether to track the subgraph execution phase
+      upstreamFetch: true // Whether to track the upstream HTTP requests
+    }
+  }
 })
 ```
 
@@ -69,15 +60,12 @@ built-in exporters, or create your own custom exporter.
 A simple exporter that writes the spans to the `stdout` of the process.
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { createStdoutExporter, defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [createStdoutExporter()]
-    })
-  ]
+  openTelemetry: {
+    exporters: [createStdoutExporter()]
+  }
 })
 ```
 
@@ -86,44 +74,38 @@ export const gatewayConfig = defineConfig({
 An exporter that writes the spans to an OTLP-supported backend.
 
 ```ts filename="gateway.config.ts"
-import { createOtlpHttpExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpHttpExporter, defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        createOtlpHttpExporter({
-          url: 'http://my-otlp-backend:4318'
-          // ...
-          // additional options to pass to @opentelemetry/exporter-trace-otlp-http
-          // https://www.npmjs.com/package/@opentelemetry/exporter-trace-otlp-http
-        })
-      ]
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      createOtlpHttpExporter({
+        url: 'http://my-otlp-backend:4318'
+        // ...
+        // additional options to pass to @opentelemetry/exporter-trace-otlp-http
+        // https://www.npmjs.com/package/@opentelemetry/exporter-trace-otlp-http
+      })
+    ]
+  }
 })
 ```
 
 #### OTLP over gRPC
 
 ```ts filename="gateway.config.ts"
-import { createOtlpGrpcExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpGrpcExporter, defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        createOtlpGrpcExporter({
-          url: 'http://my-otlp-backend:4317'
-          // ...
-          // additional options to pass to @opentelemetry/exporter-trace-otlp-grpc
-          // https://www.npmjs.com/package/@opentelemetry/exporter-trace-otlp-grpc
-        })
-      ]
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      createOtlpGrpcExporter({
+        url: 'http://my-otlp-backend:4317'
+        // ...
+        // additional options to pass to @opentelemetry/exporter-trace-otlp-grpc
+        // https://www.npmjs.com/package/@opentelemetry/exporter-trace-otlp-grpc
+      })
+    ]
+  }
 })
 ```
 
@@ -133,20 +115,16 @@ export const gatewayConfig = defineConfig({
 use it by pointing the `createOtlpHttpExporter`/`createOtlpGrpcExporter` to the Jaeger endpoint:
 
 ```ts filename="gateway.config.ts"
-import { createOtlpHttpExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpHttpExporter, defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        // or createOtlpGrpcExporter
-        createOtlpHttpExporter({
-          url: 'http://my-otlp-backend:4318/v1/traces'
-        })
-      ]
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      createOtlpHttpExporter({
+        url: 'http://my-jaeger-backend:4318'
+      })
+    ]
+  }
 })
 ```
 
@@ -172,19 +150,16 @@ docker run -d --name jaeger \
 by configuring the `createOtlpHttpExporter`/`createOtlpGrpcExporter` to the NewRelic endpoint:
 
 ```ts filename="gateway.config.ts"
-import { createOtlpHttpExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpHttpExporter, defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        createOtlpHttpExporter({
-          url: 'http://<newrelic-endpoint>:4318'
-        })
-      ]
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      createOtlpHttpExporter({
+        url: 'http://<newrelic-endpoint>:4318'
+      })
+    ]
+  }
 })
 ```
 
@@ -197,19 +172,16 @@ export const gatewayConfig = defineConfig({
 so you can use it by pointing the `createOtlpHttpExporter` to the DataDog Agent endpoint:
 
 ```ts filename="gateway.config.ts"
-import { createOtlpHttpExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpHttpExporter, defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        createOtlpHttpExporter({
-          url: 'http://<datadog-agent-host>:4318'
-        })
-      ]
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      createOtlpHttpExporter({
+        url: 'http://<datadog-agent-host>:4318'
+      })
+    ]
+  }
 })
 ```
 
@@ -222,22 +194,19 @@ export const gatewayConfig = defineConfig({
 exporter to send the spans to a Zipkin backend:
 
 ```ts filename="gateway.config.ts"
-import { createZipkinExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { createZipkinExporter, defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        createZipkinExporter({
-          url: 'http://<zipkin-host>:9411/api/v2/spans'
-          // ...
-          // additional options to pass to @opentelemetry/exporter-zipkin
-          // https://www.npmjs.com/package/@opentelemetry/exporter-zipkin
-        })
-      ]
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      createZipkinExporter({
+        url: 'http://<zipkin-host>:9411/api/v2/spans'
+        // ...
+        // additional options to pass to @opentelemetry/exporter-zipkin
+        // https://www.npmjs.com/package/@opentelemetry/exporter-zipkin
+      })
+    ]
+  }
 })
 ```
 
@@ -305,45 +274,39 @@ And the following attributes for the HTTP response:
 You may disable this by setting `spans.http` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        http: false
-      }
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      http: false
+    }
+  }
 })
 ```
 
 Or, you may filter the spans by setting the `spans` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        http: payload => {
-          // Filter the spans based on the payload
-          return true
-        }
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      http: payload => {
+        // Filter the spans based on the payload
+        return true
       }
-    })
-  ]
+    }
+  }
 })
 ```
 
@@ -366,45 +329,39 @@ following attributes:
 You may disable this by setting `spans.graphqlParse` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        graphqlParse: false
-      }
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      graphqlParse: false
+    }
+  }
 })
 ```
 
 Or, you may filter the spans by setting the `spans` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        graphqlParse: payload => {
-          // Filter the spans based on the payload
-          return true
-        }
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      graphqlParse: payload => {
+        // Filter the spans based on the payload
+        return true
       }
-    })
-  ]
+    }
+  }
 })
 ```
 
@@ -427,45 +384,39 @@ following attributes:
 You may disable this by setting `spans.graphqlValidate` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        graphqlValidate: false
-      }
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      graphqlValidate: false
+    }
+  }
 })
 ```
 
 Or, you may filter the spans by setting the `spans` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        graphqlValidate: payload => {
-          // Filter the spans based on the payload
-          return true
-        }
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      graphqlValidate: payload => {
+        // Filter the spans based on the payload
+        return true
       }
-    })
-  ]
+    }
+  }
 })
 ```
 
@@ -489,45 +440,39 @@ following attributes:
 You may disable this by setting `spans.graphqlExecute` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        graphqlExecute: false
-      }
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      graphqlExecute: false
+    }
+  }
 })
 ```
 
 Or, you may filter the spans by setting the `spans` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        graphqlExecute: payload => {
-          // Filter the spans based on the payload
-          return true
-        }
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      graphqlExecute: payload => {
+        // Filter the spans based on the payload
+        return true
       }
-    })
-  ]
+    }
+  }
 })
 ```
 
@@ -560,45 +505,39 @@ And the following attributes for the HTTP response:
 You may disable this by setting `spans.subgraphExecute` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        subgraphExecute: false
-      }
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      subgraphExecute: false
+    }
+  }
 })
 ```
 
 Or, you may filter the spans by setting the `spans.subgraphExecute` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        subgraphExecute: payload => {
-          // Filter the spans based on the payload
-          return true
-        }
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      subgraphExecute: payload => {
+        // Filter the spans based on the payload
+        return true
       }
-    })
-  ]
+    }
+  }
 })
 ```
 
@@ -626,45 +565,39 @@ And the following attributes for the HTTP response:
 You may disable this by setting `spans.upstreamFetch` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        upstreamFetch: false
-      }
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      upstreamFetch: false
+    }
+  }
 })
 ```
 
 Or, you may filter the spans by setting the `spans.upstreamFetch` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      spans: {
-        /* ... */
-        upstreamFetch: payload => {
-          // Filter the spans based on the payload
-          return true
-        }
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    spans: {
+      /* ... */
+      upstreamFetch: payload => {
+        // Filter the spans based on the payload
+        return true
       }
-    })
-  ]
+    }
+  }
 })
 ```
 
@@ -686,20 +619,17 @@ the incoming HTTP request and the outgoing HTTP requests.
 You may disable this by setting `inheritContext` or `propagateContext` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
 import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
-  plugins: [
-    useOpenTelemetry({
-      exporters: [
-        /* ... */
-      ],
-      // Controls the propagation of the trace context between the incoming HTTP request and the Mesh gateway
-      inheritContext: false,
-      // Controls the propagation of the trace context between the Mesh gateway and the upstream HTTP requests
-      propagateContext: false
-    })
-  ]
+  openTelemetry: {
+    exporters: [
+      /* ... */
+    ],
+    // Controls the propagation of the trace context between the incoming HTTP request and the Mesh gateway
+    inheritContext: false,
+    // Controls the propagation of the trace context between the Mesh gateway and the upstream HTTP requests
+    propagateContext: false
+  }
 })
 ```

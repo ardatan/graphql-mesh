@@ -12,17 +12,14 @@ const meshHttp = createGatewayRuntime({
   cache: new CFWorkerKVCache({
     namespace: 'MESH',
   }),
-  plugins: ctx => [
-    useResponseCache({
-      ...ctx,
-      ttlPerCoordinate: [
-        {
-          coordinate: 'Query.breweries',
-          ttl: 24 * 60 * 60 * 1000,
-        },
-      ],
-    }),
-  ],
+  responseCaching: {
+    ttlPerCoordinate: [
+      {
+        coordinate: 'Query.breweries',
+        ttl: 24 * 60 * 60 * 1000,
+      },
+    ],
+  },
 });
 
 self.addEventListener('fetch', meshHttp);

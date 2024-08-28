@@ -2,10 +2,9 @@ import { createSchema, createYoga, type FetchAPI, type YogaInitialContext } from
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 import type { OnFetchHookDonePayload } from '@graphql-mesh/types';
-import { useContentEncoding as useWhatwgNodeContentEncoding } from '@whatwg-node/server';
-import { useContentEncoding } from '../src/plugins/useContentEncoding';
+import { useContentEncoding } from '@whatwg-node/server';
 
-describe('useContentEncoding', () => {
+describe('contentEncoding', () => {
   const fooResolver = jest.fn((_, __, _context: YogaInitialContext) => {
     return 'bar';
   });
@@ -41,7 +40,7 @@ describe('useContentEncoding', () => {
   });
   const subgraphServer = createYoga({
     schema: subgraphSchema,
-    plugins: [useWhatwgNodeContentEncoding()],
+    plugins: [useContentEncoding()],
   });
   const gateway = createGatewayRuntime({
     supergraph() {
@@ -53,11 +52,11 @@ describe('useContentEncoding', () => {
         },
       ]);
     },
+    contentEncoding: {
+      subgraphs: ['subgraph'],
+    },
     plugins: () => [
       useCustomFetch(subgraphServer.fetch),
-      useContentEncoding({
-        subgraphs: ['subgraph'],
-      }),
       {
         onFetch() {
           return onFetchDoneSpy;

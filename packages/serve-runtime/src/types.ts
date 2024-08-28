@@ -8,7 +8,11 @@ import type {
   YogaServerOptions,
 } from 'graphql-yoga';
 import type { Plugin as EnvelopPlugin } from '@envelop/core';
+import type { DisableIntrospectionOptions } from '@envelop/disable-introspection';
+import type { useGenericAuth } from '@envelop/generic-auth';
 import type { Transports, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
+import type { HMACUpstreamSignatureOptions } from '@graphql-mesh/plugin-hmac-upstream-signature';
+import type useMeshResponseCache from '@graphql-mesh/plugin-response-cache';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
 import type {
   KeyValueCache,
@@ -21,7 +25,11 @@ import type {
 import type { LogLevel } from '@graphql-mesh/utils';
 import type { HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import type { IResolvers } from '@graphql-tools/utils';
+import type { CSRFPreventionPluginOptions } from '@graphql-yoga/plugin-csrf-prevention';
+import type { UsePersistedOperationsOptions } from '@graphql-yoga/plugin-persisted-operations';
 import type { UnifiedGraphConfig } from './handleUnifiedGraphConfig.js';
+import type { UseContentEncodingOpts } from './plugins/useContentEncoding.js';
+import type { AgentFactory } from './plugins/useCustomAgent.js';
 
 export type { UnifiedGraphConfig };
 
@@ -235,7 +243,7 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
   /** Usage reporting options. */
   reporting?: GatewayHiveReportingOptions | GatewayGraphOSReportingOptions;
   /** Persisted documents options. */
-  persistedDocuments?: GatewayHivePersistedDocumentsOptions;
+  persistedDocuments?: GatewayHivePersistedDocumentsOptions | UsePersistedOperationsOptions;
   /**
    * A map, or factory function, of transport kinds to their implementations.
    *
@@ -385,4 +393,84 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
    * The link to the product website
    */
   productLink?: string;
+
+  // Builtin plugins
+
+  /**
+   * Enable response caching
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/performance/response-caching)
+   */
+
+  responseCaching?: Omit<Parameters<typeof useMeshResponseCache>[0], keyof GatewayConfigContext>;
+
+  /**
+   * Enable compression and decompression of HTTP requests and responses
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/performance/compression)
+   */
+  contentEncoding?: false | UseContentEncodingOpts;
+
+  /**
+   * Enable `@defer` and `@stream` support
+   *
+   * @experimental This feature is experimental and may change in the future.
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/performance/defer-stream)
+   */
+  deferStream?: boolean;
+
+  /**
+   * Enable execution cancellation
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/performance/execution-cancellation)
+   */
+  executionCancellation?: boolean;
+
+  /**
+   * Enable upstream cancellation
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/performance/upstream-cancellation)
+   */
+  upstreamCancellation?: boolean;
+
+  /**
+   * Disable introspection
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/security/disable-introspection)
+   *
+   * @default false
+   */
+  disableIntrospection?: DisableIntrospectionOptions;
+
+  /**
+   * CSRF Prevention
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/security/csrf-prevention)
+   */
+  csrfPrevention?: CSRFPreventionPluginOptions;
+
+  /**
+   * Providing a custom HTTP(S) Agent to manipulate the HTTP(S) requests.
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/security/https)
+   */
+  customAgent?: AgentFactory<GatewayContext & TContext>;
+
+  /**
+   * Generic Auth Configuration
+   */
+  genericAuth?: Parameters<typeof useGenericAuth>[0];
+
+  /**
+   * HMAC Signature Handling
+   *
+   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/security/hmac-signature)
+   */
+  hmacSignature?: HMACUpstreamSignatureOptions;
+
+  /**
+   * Enable WebHooks handling
+   */
+  webhooks?: boolean;
 }
