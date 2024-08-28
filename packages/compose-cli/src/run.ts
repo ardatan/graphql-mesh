@@ -5,6 +5,7 @@ import { promises as fsPromises } from 'fs';
 import module from 'node:module';
 // eslint-disable-next-line import/no-nodejs-modules
 import { isAbsolute, join, resolve } from 'path';
+import { pathToFileURL } from 'url';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
@@ -52,7 +53,7 @@ export async function run({
   binName = 'mesh-compose',
   version,
 }: RunOptions): Promise<void | never> {
-  module.register('@graphql-mesh/include/hooks');
+  module.register('@graphql-mesh/include/hooks', pathToFileURL('./'));
 
   program = program.name(binName).description(productDescription);
   if (version) program = program.version(version);

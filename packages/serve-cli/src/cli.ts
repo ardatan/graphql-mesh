@@ -4,6 +4,7 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 import cluster from 'node:cluster';
 import module from 'node:module';
 import { availableParallelism, release } from 'node:os';
+import { pathToFileURL } from 'node:url';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { InitializeData } from '@graphql-mesh/include/hooks.js';
@@ -270,7 +271,7 @@ let cli = new Command()
   );
 
 export function run(userCtx: Partial<CLIContext>) {
-  module.register('@graphql-mesh/include/hooks');
+  module.register('@graphql-mesh/include/hooks', pathToFileURL('./'));
 
   const ctx: CLIContext = {
     log: new DefaultLogger(),
