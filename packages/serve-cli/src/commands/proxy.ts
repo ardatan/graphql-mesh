@@ -87,6 +87,11 @@ export const addCommand: AddCommand = (ctx, cli) =>
       }
 
       const pubsub = loadedConfig.pubsub || new PubSub();
+      const cache = await getCacheInstanceFromConfig(loadedConfig, {
+        pubsub,
+        logger: ctx.log,
+      });
+      const builtinPlugins = await getBuiltinPluginsFromConfig(loadedConfig, { cache });
 
       const config: ProxyConfig = {
         ...defaultOptions,
@@ -128,12 +133,8 @@ export const addCommand: AddCommand = (ctx, cli) =>
         productLogo: ctx.productLogo,
         productLink: ctx.productLink,
         pubsub,
-        cache: getCacheInstanceFromConfig(loadedConfig, {
-          pubsub,
-          logger: ctx.log,
-        }),
+        cache,
         plugins(ctx) {
-          const builtinPlugins = getBuiltinPluginsFromConfig(loadedConfig, ctx);
           const userPlugins = loadedConfig.plugins?.(ctx) ?? [];
           return [...builtinPlugins, ...userPlugins];
         },

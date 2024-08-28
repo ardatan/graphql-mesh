@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, resolve } from 'node:path';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
-import RedisCache from '@graphql-mesh/cache-redis';
 import { include } from '@graphql-mesh/include';
-import useJWT from '@graphql-mesh/plugin-jwt-auth';
-import { useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry';
-import useMeshPrometheus from '@graphql-mesh/plugin-prometheus';
-import useMeshRateLimit from '@graphql-mesh/plugin-rate-limit';
 import type { GatewayConfig, GatewayConfigContext } from '@graphql-mesh/serve-runtime';
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
 import type { GatewayCLIBuiltinPluginConfig } from './cli';
@@ -83,35 +77,29 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
   return importedConfig || {};
 }
 
-export function getBuiltinPluginsFromConfig(
+export async function getBuiltinPluginsFromConfig(
   config: GatewayCLIBuiltinPluginConfig,
-  ctx: GatewayConfigContext,
+  ctx: { cache: KeyValueCache },
 ) {
   const plugins = [];
   if (config.jwt) {
+    const { useJWT } = await import('@graphql-mesh/plugin-jwt-auth');
     plugins.push(useJWT(config.jwt));
   }
   if (config.prometheus) {
-    plugins.push(
-      useMeshPrometheus({
-        ...ctx,
-        ...config.prometheus,
-      }),
-    );
+    const { default: useMeshPrometheus } = await import('@graphql-mesh/plugin-prometheus');
+    plugins.push(useMeshPrometheus(config.prometheus));
   }
   if (config.openTelemetry) {
-    plugins.push(
-      useOpenTelemetry({
-        ...ctx,
-        ...config.openTelemetry,
-      }),
-    );
+    const { useOpenTelemetry } = await import('@graphql-mesh/plugin-opentelemetry');
+    plugins.push(useOpenTelemetry(config.openTelemetry));
   }
 
   if (config.rateLimiting) {
+    const { default: useMeshRateLimit } = await import('@graphql-mesh/plugin-rate-limit');
     plugins.push(
       useMeshRateLimit({
-        ...ctx,
+        cache: ctx.cache,
         ...config.rateLimiting,
       }),
     );
@@ -120,26 +108,31 @@ export function getBuiltinPluginsFromConfig(
   return plugins;
 }
 
-export function getCacheInstanceFromConfig(
+export async function getCacheInstanceFromConfig(
   config: GatewayCLIBuiltinPluginConfig,
   ctx: Pick<GatewayConfigContext, 'logger' | 'pubsub'>,
-): KeyValueCache {
+): Promise<KeyValueCache> {
   if (config.cache && 'type' in config.cache) {
     switch (config.cache.type) {
-      case 'redis':
+      case 'redis': {
+        const { default: RedisCache } = await import('@graphql-mesh/cache-redis');
         return new RedisCache({
           ...ctx,
           ...config.cache,
         });
-      case 'cfw-kv':
-        return new RedisCache({
+      }
+      case 'cfw-kv': {
+        const { default: CloudflareKVCacheStorage } = await import('@graphql-mesh/cache-cfw-kv');
+        return new CloudflareKVCacheStorage({
           ...ctx,
           ...config.cache,
         });
+      }
     }
     if (config.cache.type !== 'localforage') {
       ctx.logger.warn('Unknown cache type, falling back to localforage', config.cache);
     }
+    const { default: LocalforageCache } = await import('@graphql-mesh/cache-localforage');
     return new LocalforageCache({
       ...ctx,
       ...config.cache,
@@ -148,5 +141,6 @@ export function getCacheInstanceFromConfig(
   if (config.cache) {
     return config.cache as KeyValueCache;
   }
+  const { default: LocalforageCache } = await import('@graphql-mesh/cache-localforage');
   return new LocalforageCache();
 }
