@@ -1,11 +1,12 @@
-import '@graphql-mesh/include/register-tsconfig-paths';
 import 'dotenv/config'; // inject dotenv options to process.env
 import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
 import cluster from 'node:cluster';
+import module from 'node:module';
 import { availableParallelism, release } from 'node:os';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import type { InitializeData } from '@graphql-mesh/include/hooks.js';
 import type { JWTAuthPluginOptions } from '@graphql-mesh/plugin-jwt-auth';
 import type { OpenTelemetryMeshPluginOptions } from '@graphql-mesh/plugin-opentelemetry';
 import type { PrometheusPluginOptions } from '@graphql-mesh/plugin-prometheus';
@@ -230,7 +231,6 @@ let cli = new Command()
     // see here https://github.com/tj/commander.js/blob/970ecae402b253de691e6a9066fea22f38fe7431/lib/command.js#L655
     null,
   )
-  .option('--native-import', 'use the native "import" function for importing the config file')
   .addOption(
     new Option(
       '--hive-registry-token <token>',
@@ -270,6 +270,8 @@ let cli = new Command()
   );
 
 export function run(userCtx: Partial<CLIContext>) {
+  module.register('@graphql-mesh/include/hooks');
+
   const ctx: CLIContext = {
     log: new DefaultLogger(),
     productName: 'Mesh',

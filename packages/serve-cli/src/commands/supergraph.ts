@@ -44,7 +44,6 @@ export const addCommand: AddCommand = (ctx, cli) =>
         hiveRegistryToken,
         maskedErrors,
         polling,
-        nativeImport,
         apolloGraphRef,
         apolloKey,
         apolloUplink,
@@ -56,7 +55,6 @@ export const addCommand: AddCommand = (ctx, cli) =>
         log: ctx.log,
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
-        nativeImport,
         configFileName: ctx.configFileName,
       });
 

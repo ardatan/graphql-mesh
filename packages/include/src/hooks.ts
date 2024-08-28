@@ -21,10 +21,10 @@ let pathsMatcher: ((specifier: string) => string[]) | undefined;
 let packedDepsPath = '';
 
 export interface InitializeData {
-  packedDepsPath: string;
+  packedDepsPath?: string;
 }
 
-export const initialize: module.InitializeHook<InitializeData> = data => {
+export const initialize: module.InitializeHook<InitializeData> = (data = {}) => {
   if (data.packedDepsPath) {
     packedDepsPath = data.packedDepsPath;
     debug(`Packed dependencies available at "${packedDepsPath}"`);

@@ -1,14 +1,12 @@
-import '@graphql-mesh/include/register-tsconfig-paths';
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
 import { promises as fsPromises } from 'fs';
+import module from 'node:module';
 // eslint-disable-next-line import/no-nodejs-modules
 import { isAbsolute, join, resolve } from 'path';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
-// eslint-disable-next-line import/no-nodejs-modules
-import { include } from '@graphql-mesh/include';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { getComposedSchemaFromConfig } from './getComposedSchemaFromConfig.js';
@@ -55,6 +53,8 @@ export async function run({
   binName = 'mesh-compose',
   version,
 }: RunOptions): Promise<void | never> {
+  module.register('@graphql-mesh/include/hooks');
+
   program = program.name(binName).description(productDescription);
   if (version) program = program.version(version);
   if (process.env.NODE_ENV === 'test') program = program.allowUnknownOption();
@@ -73,7 +73,7 @@ export async function run({
         .catch(() => false);
       if (exists) {
         log.info(`Found default config file ${configPath}`);
-        const module = await include(absoluteConfigPath, opts.nativeImport);
+        const module = await import(absoluteConfigPath);
         importedConfig = Object(module).composeConfig;
         if (!importedConfig) {
           throw new Error(`No "composeConfig" exported from default config at ${configPath}`);
@@ -99,7 +99,7 @@ export async function run({
     if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
     }
-    const module = await include(configPath, opts.nativeImport);
+    const module = await import(configPath);
     importedConfig = Object(module).composeConfig;
     if (!importedConfig) {
       throw new Error(`No "composeConfig" exported from config at ${configPath}`);

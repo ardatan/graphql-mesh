@@ -303,6 +303,13 @@ export function createTenv(cwd: string): Tenv {
         for (const dbfile of await glob('*.db', { cwd })) {
           volumes.push({ host: dbfile, container: `/serve/${path.basename(dbfile)}` });
         }
+        const packageJsonExists = await fs
+          .stat(path.join(cwd, 'package.json'))
+          .then(() => true)
+          .catch(() => false);
+        if (packageJsonExists) {
+          volumes.push({ host: 'package.json', container: '/serve/package.json' });
+        }
 
         const dockerfileExists = await fs
           .stat(path.join(cwd, 'serve.Dockerfile'))
