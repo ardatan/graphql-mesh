@@ -1,9 +1,8 @@
-import { defineConfig, PubSub } from '@graphql-mesh/serve-cli';
+import { defineConfig } from '@graphql-mesh/serve-cli';
 import type { HTTPCallbackTransportOptions } from '@graphql-mesh/transport-http-callback';
 import type { WSTransportOptions } from '@graphql-mesh/transport-ws';
 
 export const gatewayConfig = defineConfig({
-  pubsub: new PubSub(),
   webhooks: true,
   maskedErrors: false,
   transportEntries: {

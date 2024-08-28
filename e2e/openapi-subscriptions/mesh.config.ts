@@ -18,6 +18,5 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const gatewayConfig = defineGatewayConfig({
-  pubsub: new PubSub(),
   webhooks: true,
 });
