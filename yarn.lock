@@ -6665,6 +6665,8 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.102.4"
     "@graphql-mesh/plugin-snapshot": "npm:^0.102.4"
     "@graphql-mesh/serve-runtime": "npm:^0.8.6"
+    "@graphql-mesh/transport-http-callback": "npm:^0.3.5"
+    "@graphql-mesh/transport-ws": "npm:^0.3.5"
     "@graphql-mesh/types": "npm:^0.102.4"
     "@graphql-mesh/utils": "npm:^0.102.4"
     "@graphql-tools/utils": "npm:^10.5.3"
@@ -7100,7 +7102,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-http-callback@workspace:packages/transports/http-callback":
+"@graphql-mesh/transport-http-callback@npm:^0.3.5, @graphql-mesh/transport-http-callback@workspace:packages/transports/http-callback":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-http-callback@workspace:packages/transports/http-callback"
   dependencies:
@@ -7257,7 +7259,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-ws@workspace:packages/transports/ws":
+"@graphql-mesh/transport-ws@npm:^0.3.5, @graphql-mesh/transport-ws@workspace:packages/transports/ws":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-ws@workspace:packages/transports/ws"
   dependencies:
