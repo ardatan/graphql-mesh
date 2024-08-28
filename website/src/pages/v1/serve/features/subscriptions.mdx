@@ -136,18 +136,11 @@ If your subgraph uses WebSockets for subscriptions support
 ([like with Apollo Server](https://www.apollographql.com/docs/apollo-server/data/subscriptions/)),
 Mesh Serve will need additional configuration pointing to the WebSocket server path on the subgraph.
 
-We'll install `@graphql-mesh/transport-ws` to add WebSockets support.
-
-```sh npm2yarn
-npm i @graphql-mesh/transport-ws
-```
-
 And configure Mesh Serve to use the `/subscriptions` path on the "products" subgraph for WebSocket
 connections:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
-import type { WSTransportOptions } from '@graphql-mesh/transport-http'
+import { defineConfig, type WSTransportOptions } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
@@ -182,8 +175,7 @@ WebSocket connections through the
 [`ConnectionInit` message payload](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md#connectioninit).
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
-import type { WSTransportOptions } from '@graphql-mesh/transport-ws'
+import { defineConfig, type WSTransportOptions } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
@@ -227,15 +219,8 @@ If your subgraph uses
 [HTTP Callback protocol for subscriptions](https://www.apollographql.com/docs/router/executing-operations/subscription-callback-protocol/),
 Mesh Serve will need additional configuration.
 
-We'll install `@graphql-mesh/transport-http-callback` to add HTTP Callback support.
-
-```sh npm2yarn
-npm i @graphql-mesh/transport-http-callback
-```
-
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
-import type { HTTPCallbackTransportOptions } from '@graphql-mesh/transport-http-callback'
+import { defineConfig, type HTTPCallbackTransportOptions } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
