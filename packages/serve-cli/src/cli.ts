@@ -7,7 +7,6 @@ import { availableParallelism, release } from 'node:os';
 import { pathToFileURL } from 'node:url';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
-import type { InitializeData } from '@graphql-mesh/include/hooks.js';
 import type { JWTAuthPluginOptions } from '@graphql-mesh/plugin-jwt-auth';
 import type { OpenTelemetryMeshPluginOptions } from '@graphql-mesh/plugin-opentelemetry';
 import type { PrometheusPluginOptions } from '@graphql-mesh/plugin-prometheus';
@@ -22,7 +21,6 @@ import type { KeyValueCache, Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { addCommands } from './commands/index.js';
 import { createDefaultConfigPaths } from './config.js';
-import type { LocalForageCacheStorage } from './index.js';
 import type { ServerConfig } from './server';
 
 export type GatewayCLIConfig = (
@@ -271,7 +269,7 @@ let cli = new Command()
   );
 
 export function run(userCtx: Partial<CLIContext>) {
-  module.register('@graphql-mesh/include/hooks', pathToFileURL('./'));
+  module.register('@graphql-mesh/include/hooks', pathToFileURL(__filename));
 
   const ctx: CLIContext = {
     log: new DefaultLogger(),

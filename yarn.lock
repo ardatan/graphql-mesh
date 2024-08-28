@@ -22291,6 +22291,7 @@ __metadata:
     prettier: "npm:3.3.3"
     threads: "npm:^1.7.0"
     ts-jest: "npm:29.2.5"
+    tsx: "npm:^4.19.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -36228,7 +36229,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.16.5":
+"tsx@npm:^4.16.5, tsx@npm:^4.19.0":
   version: 4.19.0
   resolution: "tsx@npm:4.19.0"
   dependencies:
