@@ -20,9 +20,8 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
 
   constructor(options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub; logger: Logger }) {
     const lazyConnect = options.lazyConnect !== false;
-    const urlOption = options.url || process.env.REDIS_URL;
-    if (urlOption) {
-      const redisUrl = new URL(interpolateStrWithEnv(urlOption));
+    if (options.url) {
+      const redisUrl = new URL(interpolateStrWithEnv(options.url));
 
       if (!['redis:', 'rediss:'].includes(redisUrl.protocol)) {
         throw new Error('Redis URL must use either redis:// or rediss://');
@@ -43,13 +42,15 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
       const parsedPassword =
         interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
       const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+      const numPort = parseInt(parsedPort);
+      const numDb = parseInt(parsedDb);
       if (parsedHost) {
         options.logger.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
         this.client = new Redis({
           host: parsedHost,
-          port: parseInt(parsedPort),
+          port: isNaN(numPort) ? undefined : numPort,
           password: parsedPassword,
-          db: parseInt(parsedDb),
+          db: isNaN(numDb) ? undefined : numDb,
           ...(lazyConnect ? { lazyConnect: true } : {}),
           enableAutoPipelining: true,
           enableOfflineQueue: true,
