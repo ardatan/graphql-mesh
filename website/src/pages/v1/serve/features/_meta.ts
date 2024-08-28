@@ -8,5 +8,4 @@ export default {
   // 'webhooks-as-subscriptions': 'Webhooks as Subscriptions',
   testing: 'Testing & Debugging',
   'custom-plugins': 'Custom Plugins',
-  'rest-api': 'Exposing REST API',
 };
