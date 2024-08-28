@@ -14,3 +14,5 @@ dependencies updates:
   - Added dependency [`@graphql-mesh/plugin-prometheus@^0.106.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-prometheus/v/0.106.3) (to `dependencies`)
   - Added dependency [`@graphql-mesh/plugin-rate-limit@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-rate-limit/v/0.102.4) (to `dependencies`)
   - Added dependency [`@graphql-mesh/plugin-snapshot@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-snapshot/v/0.102.4) (to `dependencies`)
+  - Added dependency [`@graphql-mesh/transport-http-callback@^0.3.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-http-callback/v/0.3.5) (to `dependencies`)
+  - Added dependency [`@graphql-mesh/transport-ws@^0.3.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-ws/v/0.3.5) (to `dependencies`)
