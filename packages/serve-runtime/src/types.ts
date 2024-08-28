@@ -287,7 +287,7 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
    */
   transportEntries?: TransportEntryAdditions;
   /**
-   * Mesh plugins that are compatible with GraphQL Yoga, envelop and Mesh.
+   * Gateway plugins that are compatible with GraphQL Yoga, envelop and Mesh.
    */
   plugins?(context: GatewayConfigContext): (
     | EnvelopPlugin

@@ -13,11 +13,11 @@ GraphQL Mesh uses
 different phases of the GraphQL execution to manipulate or track the entire workflow step-by-step.
 
 <Callout>
-You can both use Yoga or Envelop or Mesh plugins with GraphQL Mesh.
+You can both use Yoga or Envelop or Gateway plugins with your GraphQL Gateway.
 But you should always opt-in for the Mesh variant of the plugin, then Yoga then Envelop because each of them have more control over the execution.
 For example, Yoga variant of the plugin leverage HTTP hooks, and Mesh one can leverage more hooks and more control over the context.
 
-We'd recommend to check the features of GraphQL Mesh first, and if you can't find what you are
+We'd recommend to check the features of the gateway first, and if you can't find what you are
 looking for, then you can use this option on your own to add plugins from either GraphQL Yoga or
 [Envelop's Plugin Hub](https://the-guild.dev/graphql/envelop/plugins).
 
@@ -40,8 +40,8 @@ Sometimes you might want to build your own plugins. You can write your own Mesh 
 share it with other people by publishing it to `npm`.
 
 <Callout>
-  A good entry-point for discovering how to write Mesh plugins is to look at the source code of the
-  existing plugins maintained by us.
+  A good entry-point for discovering how to write Gateway plugins is to look at the source code of
+  the existing plugins maintained by us.
 </Callout>
 
 The most hooks for Mesh origin from the Envelop and Yoga plugin systems.
@@ -49,7 +49,7 @@ The most hooks for Mesh origin from the Envelop and Yoga plugin systems.
 and
 [Yoga Plugin Lifecycle documentation](https://the-guild.dev/graphql/yoga-server/docs/features/envelop-plugins).
 In addition, Yoga adds more HTTP specific hooks while Mesh adds more related to the subgraph
-execution. GraphQL Mesh plugins also uses
+execution. Gateway plugins also uses
 [Explicit Resource Management](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-2.html),
 so all the resources are cleaned up gracefully when Mesh gateway is shut down. You can see
 `Symbol.asyncDispose` below.
