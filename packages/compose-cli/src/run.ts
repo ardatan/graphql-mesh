@@ -30,8 +30,7 @@ let program = new Command()
     ).env('CONFIG_PATH'),
   )
   .option('--subgraph <name>', 'name of the subgraph to compose')
-  .option('-o, --output <path>', 'path to the output file')
-  .option('--native-import', 'use the native "import" function for importing the config file');
+  .option('-o, --output <path>', 'path to the output file');
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */

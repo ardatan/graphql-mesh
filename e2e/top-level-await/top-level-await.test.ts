@@ -6,15 +6,12 @@ const { serve, compose, fs } = createTenv(__dirname);
 it('should serve', async () => {
   const proc = await serve({
     supergraph: await fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
-    args: ['--native-import'],
   });
   const res = await fetch(`http://0.0.0.0:${proc.port}/healthcheck`);
   expect(res.ok).toBeTruthy();
 });
 
 it('should compose', async () => {
-  const proc = await compose({
-    args: ['--native-import'],
-  });
+  const proc = await compose();
   expect(proc.result).toMatchSnapshot();
 });
