@@ -44,7 +44,7 @@ export interface RegisterTsconfigPathsOptions {
   /**
    * The file name of the TypeScript config file.
    *
-   * Can be changed using the `MESH_INCLUDE_TSCONFIG_NAME` environment variable.
+   * Can be changed using the `MESH_INCLUDE_TSCONFIG_SEARCH_PATH` environment variable.
    *
    * @default 'tsconfig.json'
    */
@@ -59,7 +59,7 @@ export interface RegisterTsconfigPathsOptions {
  */
 export function registerTsconfigPaths({
   cwd = process.cwd(),
-  configName = process.env.MESH_INCLUDE_TSCONFIG_NAME || 'tsconfig.json',
+  configName = process.env.MESH_INCLUDE_TSCONFIG_SEARCH_PATH || 'tsconfig.json',
 }: RegisterTsconfigPathsOptions = {}): () => void {
   const tsconfig = getTsconfig(cwd, configName);
   if (!tsconfig) return () => {}; // no tsconfig, no register

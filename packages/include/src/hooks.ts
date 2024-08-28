@@ -21,7 +21,17 @@ let pathsMatcher: ((specifier: string) => string[]) | undefined;
 let packedDepsPath = '';
 
 export interface InitializeData {
+  /**
+   * Packed deps will be checked first, and enforced if present, during module resolution.
+   * This allows us to consistently use the same module instance even if multiple are installed by the user.
+   */
   packedDepsPath?: string;
+  /**
+   * tsconfig search path for registering tsconfig paths.
+   *
+   * @default process.env.MESH_INCLUDE_TSCONFIG_SEARCH_PATH || 'tsconfig.json'
+   */
+  tsconfigSearchPath?: string;
 }
 
 export const initialize: module.InitializeHook<InitializeData> = (data = {}) => {
@@ -31,7 +41,7 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
   }
   const tsconfig = getTsconfig(
     undefined,
-    process.env.MESH_INCLUDE_TSCONFIG_NAME || 'tsconfig.json',
+    data.tsconfigSearchPath || process.env.MESH_INCLUDE_TSCONFIG_SEARCH_PATH || 'tsconfig.json',
   );
   if (tsconfig) {
     debug(`tsconfig found at "${tsconfig.path}"`);
