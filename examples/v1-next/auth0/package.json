@@ -3,9 +3,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "compose": "node ../../packages/compose-cli/dist/esm/bin.js",
     "pretest": "npm run compose",
-    "start": "node ../../packages/serve-cli/dist/cjs/bin.js",
+    "start": "node ../../packages/serve-cli/dist/esm/bin.js",
     "test": "jest"
   },
   "dependencies": {

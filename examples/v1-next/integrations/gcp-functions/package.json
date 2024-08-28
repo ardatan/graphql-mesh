@@ -6,7 +6,7 @@
     "build": "npm run compose && npm run build:ts",
     "build:ts": "tsc",
     "check": "exit 0",
-    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js > supergraph.graphql",
+    "compose": "node ../../packages/compose-cli/dist/esm/bin.js > supergraph.graphql",
     "prestart": "npm run build",
     "start": "functions-framework --target=mesh"
   },

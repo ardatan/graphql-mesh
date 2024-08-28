@@ -3,8 +3,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
-    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
+    "compose": "node ../../packages/compose-cli/dist/esm/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/esm/bin.js"
   },
   "dependencies": {
     "@graphql-mesh/cache-localforage": "^0.102.4",
