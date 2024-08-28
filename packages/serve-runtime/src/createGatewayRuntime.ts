@@ -27,8 +27,8 @@ import {
   restoreExtraDirectives,
   UnifiedGraphManager,
 } from '@graphql-mesh/fusion-runtime';
+import { useHmacUpstreamSignature } from '@graphql-mesh/hmac-upstream-signature';
 import useMeshHive from '@graphql-mesh/plugin-hive';
-import { useHmacUpstreamSignature } from '@graphql-mesh/plugin-hmac-upstream-signature';
 import useMeshResponseCache from '@graphql-mesh/plugin-response-cache';
 import type { Logger, OnDelegateHook, OnFetchHook } from '@graphql-mesh/types';
 import {
