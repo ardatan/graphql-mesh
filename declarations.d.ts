@@ -18,4 +18,5 @@ declare module '@newrelic/test-utilities' {
   export const TestAgent: any;
 }
 
-declare var __VERSION__: string;
+declare var __VERSION__: string | undefined;
+declare var __PACKED_DEPS_PATH__: string | undefined;

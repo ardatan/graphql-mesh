@@ -24,81 +24,8 @@ export default defineConfig({
     'uWebSockets.js', // will be installed
     /node_modules\/graphql/, // will be packed as dep
   ],
-  plugins: [
-    nodeResolve(),
-    //isomorphicGraphql(),
-    installUws(),
-    installDeps(),
-  ],
+  plugins: [nodeResolve(), installUws(), installDeps()],
 });
-
-/**
- * Bundles all "graphql*" imports inline as an IIFE that first checks
- * whether the module is already available in near node_modules and uses it,
- * otherwise uses the bundled version.
- *
- * Essentially:
- * ```js
- * const graphql = require('graphql')
- * ```
- * becomes SEA safe version of:
- * ```js
- * const graphql = (function(){
- *   try {
- *     return require('graphql')
- *   } catch {
- *     return `<bundled require('graphql')>`
- *   }
- * })();
- * ```
- *
- * @type {import('rollup').PluginImpl}
- */
-function isomorphicGraphql() {
-  return {
-    name: 'isomorphicGraphql',
-    async resolveId(source) {
-      // all graphql imports are marked as external and bundled in the renderChunk step
-      if (source === 'graphql') {
-        return { id: source, external: true };
-      }
-      if (source.startsWith('graphql/')) {
-        return { id: source, external: true };
-      }
-    },
-    async renderChunk(code) {
-      if (!code.includes("require('graphql")) {
-        // code doesnt include a "graphql*" require
-        return null;
-      }
-
-      // append the SEA safe require on the bottom to not mess with the top definitions like 'use strict' and the hashbang
-      let augmented = code;
-      for (const [match, path] of augmented.matchAll(/require\('(graphql.*)'\)/g)) {
-        const requirePath = `../../node_modules/${path === 'graphql' ? 'graphql/index.mjs' : path.replace(/\.js$/, '.mjs')}`;
-
-        const bundle = await rollup({ input: requirePath, plugins: [nodeResolve()] });
-        const { output } = await bundle.generate({ format: 'cjs', inlineDynamicImports: true });
-        let code = `/* require('${path}') */(function(){
-try {
-  // Node SEA safe require implementation that's used for optionally requiring modules
-  // available in the nearby node_modules, falling back to the bundled version.
-  // TODO: wasteful, use a singleton sea safe require instead. but it's not all that bad since this is done just once
-  return require('node:module').createRequire(__filename)('${path}');
-} catch(e) {
-  const exports = {};
-  ${output[0].code}
-  return exports;
-}
-})()`;
-        await bundle.close();
-
-        augmented = augmented.replace(match, () => code);
-      }
-      return augmented;
-    },
-  };
-}
 
 /**
  * Copies the uWebSockets.js node addon for the current platform, installs
@@ -228,9 +155,12 @@ return module.exports;
       // inject the modules hash
       code = code.replaceAll('__MODULES_HASH__', JSON.stringify(__MODULES_HASH__));
 
-      // replace all "graphql*" requires to use the to the packed deps
+      // replace all "graphql*" requires to use the packed deps (the new require will invoke @graphql-mesh/include/hooks)
       for (const [match, path] of code.matchAll(/require\('(graphql.*)'\)/g)) {
-        code = code.replace(match, () => `seaPackedModulesRequire(${JSON.stringify(path)})`);
+        code = code.replace(
+          match,
+          () => `require('node:module').createRequire(__filename)(${JSON.stringify(path)})`,
+        );
       }
 
       return code;

@@ -51,7 +51,7 @@ E2E_SERVE_RUNNER=docker yarn bundle && docker buildx bake e2e
   if (runner === 'bin' && !process.env.CI) {
     process.stderr.write(`
 ⚠️ Using bin serve runner! Make sure you have built the binary with:
-E2E_SERVE_RUNNER=docker yarn bundle && yarn workspace @graphql-mesh/serve-cli package-binary
+yarn build && yarn bundle && yarn workspace @graphql-mesh/serve-cli package-binary
 
 `);
   }
