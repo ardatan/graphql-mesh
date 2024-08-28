@@ -91,7 +91,7 @@ export default defineConfig({
     // system (`/node_modules`)
     chunkFileNames: 'node_modules/.chunk/[name]-[hash].mjs',
   },
-  external: ['uWebSockets.js', 'node-libcurl', 'tuql', 'ioredis-mock'],
+  external: ['uWebSockets.js', 'node-libcurl', 'tuql'],
   plugins: [
     tsConfigPaths(), // use tsconfig paths to resolve modules
     nodeResolve({ preferBuiltins: true }), // resolve node_modules and bundle them too
