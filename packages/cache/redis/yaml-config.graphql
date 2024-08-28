@@ -6,6 +6,7 @@ type RedisConfig @md {
   host: String
   port: String
   password: String
+  db: Int
   url: String
   """
   Flag to indicate lazyConnect value for Redis client.

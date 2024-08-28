@@ -87,6 +87,9 @@
         "password": {
           "type": "string"
         },
+        "db": {
+          "type": "integer"
+        },
         "url": {
           "type": "string"
         },
