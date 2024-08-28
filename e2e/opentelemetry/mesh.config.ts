@@ -1,9 +1,7 @@
 import {
   createOtlpHttpExporter,
-  createStdoutExporter,
-  useOpenTelemetry,
-} from '@graphql-mesh/plugin-opentelemetry';
-import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
+  defineConfig as defineGatewayConfig,
+} from '@graphql-mesh/serve-cli';
 import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
 import type { MeshFetchRequestInit } from '@graphql-mesh/types';
 
@@ -27,21 +25,19 @@ const useOnFetchTracer = (): GatewayPlugin => {
 };
 
 export const gatewayConfig = defineGatewayConfig({
-  plugins: () => [
-    useOpenTelemetry({
-      exporters: [
-        createOtlpHttpExporter(
-          {
-            url: process.env.OTLP_EXPORTER_URL,
-          },
-          // Batching config is set in order to make it easier to test.
-          {
-            scheduledDelayMillis: 1,
-          },
-        ),
-      ],
-      serviceName: process.env.OTLP_SERVICE_NAME,
-    }),
-    useOnFetchTracer(),
-  ],
+  openTelemetry: {
+    exporters: [
+      createOtlpHttpExporter(
+        {
+          url: process.env.OTLP_EXPORTER_URL,
+        },
+        // Batching config is set in order to make it easier to test.
+        {
+          scheduledDelayMillis: 1,
+        },
+      ),
+    ],
+    serviceName: process.env.OTLP_SERVICE_NAME,
+  },
+  plugins: () => [useOnFetchTracer()],
 });
