@@ -85,7 +85,7 @@ jobs:
       - name: comment on pr
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: Docker Images
+          header: Docker Image for ${{ matrix.productname }}
           message: |
             Published images for this PR are available at:
             ```
