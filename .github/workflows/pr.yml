@@ -131,7 +131,7 @@ jobs:
             -v "$(pwd)/packages/serve-cli:/workspace" \
             -w /workspace \
             node:22 \
-            /bin/bash -c "npx tsx scripts/package-binary.ts"
+            /bin/bash -c "npx -y tsx scripts/package-binary.ts"
       - name: upload artifact
         id: upload_artifact
         uses: actions/upload-artifact@v4
@@ -141,14 +141,10 @@ jobs:
       - name: update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: 'Node Sea Artifacts Status'
+          header: 'Node Sea Artifacts Status (${{ matrix.os }} - ${{ matrix.arch }})'
           message: |
-            The build artifacts of `mesh-serve` as a single executable for various platforms:
-            | Platform               | Status         |
-            |------------------------|----------------|
-            | Ubuntu (x86_64)        | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}) |
-            | Ubuntu (arm64)         | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}) |
-            | macOS (x86_64)         | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}) |
-            | macOS (arm64)          | [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}) |
+            The build artifacts of `mesh-serve` as a single executable for ${{ matrix.os }} - ${{ matrix.arch }} are available at:
+            [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }})
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
