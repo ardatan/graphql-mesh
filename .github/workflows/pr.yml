@@ -97,6 +97,7 @@ jobs:
   bin:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, macos-latest-large]
         arch: [x86_64, aarch64]

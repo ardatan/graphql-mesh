@@ -1,8 +1,16 @@
 // tsx package-binary.ts <platform> <arch>
 
+import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
-import { $ } from 'zx';
+
+async function $(
+  strings: TemplateStringsArray,
+  ...values: (string | number | boolean)[]
+): Promise<void> {
+  const command = String.raw(strings, ...values);
+  execSync(command, { stdio: 'inherit' });
+}
 
 const platform = (process.argv[2] || os.platform()).toLowerCase();
 const arch = (process.argv[3] || os.arch()).toLowerCase();
