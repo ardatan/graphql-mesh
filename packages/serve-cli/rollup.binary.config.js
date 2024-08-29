@@ -24,91 +24,13 @@ export default defineConfig({
     'uWebSockets.js', // will be installed
     /node_modules\/graphql/, // will be packed as dep
   ],
-  plugins: [nodeResolve(), installUws(), installDeps()],
+  plugins: [nodeResolve(), packDeps()],
 });
 
 /**
- * Copies the uWebSockets.js node addon for the current platform, installs
- * it and prepares for building the single binary.
- *
  * @type {import('rollup').PluginImpl}
  */
-function installUws() {
-  const assetName = 'uws.node';
-  const destPath = seaConfig.assets[assetName];
-  if (!destPath) {
-    throw new Error(`Asset "${assetName}" not defined in sea-config.json`);
-  }
-
-  const { platform, arch, versions } = process;
-  const addonName = `uws_${platform}_${arch}_${versions.modules}.node`;
-  const addonPath = path.resolve(`../../node_modules/uWebSockets.js/${addonName}`);
-
-  return {
-    name: 'installUws',
-    generateBundle() {
-      if (!fs.existsSync(addonPath)) {
-        throw new Error(`UWS addon does not exist at ${addonPath}`);
-      }
-      this.emitFile({
-        type: 'asset',
-        fileName: assetName,
-        source: fs.readFileSync(addonPath),
-      });
-    },
-    renderChunk(code, chunk) {
-      const uwsImportLocation = `import('uWebSockets.js')`;
-      if (!code.includes(uwsImportLocation)) {
-        throw new Error('Cannot find destination in bundle to inject uws addon');
-      }
-
-      const uwsInjection = `(function(){
-        const { getAsset } = require('node:sea');
-        const { createRequire } = require('node:module');
-        const fs = require('fs');
-        const path = require('path');
-        const os = require('os');
-        const crypto = require('crypto');
-
-        // Create a temporary file
-        function tmpFileSync(postfix) {
-          const tmpDir = os.tmpdir();
-          const name = [
-            'tmp-',
-            process.pid,
-            '-',
-            Math.random().toString('32').slice(2),
-            postfix ? '-' + postfix : ''
-          ].join('');
-
-          const filePath = path.join(tmpDir, name);
-          fs.writeFileSync(filePath, '');
-
-          return filePath;
-        }
-
-        const assetName = ${JSON.stringify(assetName)};
-        const assetData = getAsset(assetName);
-
-        const bufferData = Buffer.from(assetData);
-
-        // Create a temporary file in the system's temp directory
-        const tempFilePath = tmpFileSync(assetName);
-        fs.writeFileSync(tempFilePath, bufferData);
-
-        const requireTemp = createRequire(tempFilePath);
-        return Promise.resolve(requireTemp(tempFilePath));
-      })()`;
-
-      return code.replaceAll(uwsImportLocation, uwsInjection);
-    },
-  };
-}
-
-/**
- * @type {import('rollup').PluginImpl}
- */
-function installDeps() {
+function packDeps() {
   const assetName = 'node_modules.zip';
   const destPath = seaConfig.assets[assetName];
   if (!destPath) {
@@ -117,6 +39,26 @@ function installDeps() {
 
   const zip = new ADMZip();
   zip.addLocalFolder('../../node_modules/graphql', './graphql'); // works just like this because graphql is zero-dep
+
+  let uwsAddonAdded = false;
+  const uwsAddonForThisSystem = `uws_${process.platform}_${process.arch}_${process.versions.modules}.node`;
+  zip.addLocalFolder('../../node_modules/uWebSockets.js', './uWebSockets.js', filename => {
+    filename = filename.replace('uWebSockets.js/', '');
+    if (filename === uwsAddonForThisSystem) uwsAddonAdded = true;
+    return [
+      uwsAddonForThisSystem,
+      'package.json',
+      'uws.js', // cjs
+      'ESM_wrapper.mjs', // esm
+      'index.d.ts', // types (unused, but why not)
+    ].includes(filename);
+  });
+  if (!uwsAddonAdded) {
+    throw new Error(
+      `uWebSockets.js doesnt have the "${uwsAddonForThisSystem}" addon for this system`,
+    );
+  }
+
   zip.addLocalFolder('bundle/node_modules');
   const zipBuf = zip.toBuffer();
   const __MODULES_HASH__ = createHash('sha256').update(zipBuf).digest('hex');
