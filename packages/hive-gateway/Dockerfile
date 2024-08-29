@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
   node-libcurl@npm:@ardatan/node-libcurl@^4 \
-  graphql@^16.9.0 --loglevel verbose
+  graphql@^16.9.0
 
 #
 

@@ -142,9 +142,9 @@ jobs:
       - name: update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: 'Node Sea Artifacts Status (${{ matrix.os }} - ${{ matrix.arch }})'
+          header: 'Node Sea Artifacts Status (`${{ matrix.os }} - ${{ matrix.arch }}`)'
           message: |
-            The build artifacts of `mesh-serve` as a single executable for ${{ matrix.os }} - ${{ matrix.arch }} are available at:
+            The build artifacts of `mesh-serve` as a single executable for `${{ matrix.os }} - ${{ matrix.arch }}` are available at:
             [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }})
 
         env:

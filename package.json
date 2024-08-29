@@ -120,7 +120,8 @@
     "graphql-rate-limit@npm:^3.3.0": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
     "tslib": "2.7.0",
     "undici": "6.19.8",
-    "uuid": "10.0.0"
+    "uuid": "10.0.0",
+    "node-gyp": "10.2.0"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
