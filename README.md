@@ -5,7 +5,6 @@
 
 <!-- Graphql logo readme banner START -->
 <p style="float: right; margin: 0 0 10px 10px;">
-  <a href="https://www.graphql-mesh.com">graphql-mesh.com</a>
   <a href="https://the-guild.dev" align="right">
     <img align="right" src="https://the-guild-org.github.io/press-kit/full-dark-logo.svg" alt="Created by The guild" style="width: 100px;"/>
   </a>
@@ -15,7 +14,7 @@
 <div align="center">
   <h3>GraphQL Mesh</h3>
   <h6>GraphQL Federation framework for any API</h6>
-  <a href="https://www.graphql-mesh.com/docs"><b>Go to documenation</b></a>
+  <a href="https://www.graphql-mesh.com/docs"><b>Go to documentation</b></a>
 </div>
 
 <br />
