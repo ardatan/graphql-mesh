@@ -78,6 +78,7 @@ jobs:
         env:
           MESH_SERVE_TAGS: ${{ fromJSON(steps.ver-mesh-serve.outputs.result).tags }}
         with:
+          targets: ${{ matrix.productname }}
           set: |
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max

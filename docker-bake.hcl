@@ -1,5 +1,5 @@
-group "default" {
-  targets = ["mesh-serve", "hive-gateway"]
+group "mesh-serve" {
+  targets = ["mesh-serve"]
 }
 
 variable "MESH_SERVE_TAGS" {
@@ -17,6 +17,14 @@ target "mesh-serve" {
     "org.opencontainers.image.source=https://github.com/ardatan/graphql-mesh/tree/master/packages/serve-cli",
     "org.opencontainers.image.documentation=https://the-guild.dev/graphql/mesh/v1/serve/deployment/docker"
   ]
+}
+
+group "hive-gateway" {
+  targets = ["hive-gateway]
+}
+
+variable "MESH_SERVE_TAGS" {
+  default = "dev"
 }
 
 target "hive-gateway" {
