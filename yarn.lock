@@ -7867,14 +7867,14 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/merge@npm:^9.0.0, @graphql-tools/merge@npm:^9.0.3, @graphql-tools/merge@npm:^9.0.4, @graphql-tools/merge@npm:^9.0.5, @graphql-tools/merge@npm:^9.0.6":
-  version: 9.0.6
-  resolution: "@graphql-tools/merge@npm:9.0.6"
+  version: 9.0.7
+  resolution: "@graphql-tools/merge@npm:9.0.7"
   dependencies:
     "@graphql-tools/utils": "npm:^10.5.4"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/827b1335ee89854b083aff819dc1b1004a6f87fe591c33441da83f6157ced091b511956297f7b8af2399be6a78522bd7dc492979990ac5cc29a2f9a375b6e6a9
+  checksum: 10c0/cd131180f99e38a7c5a7156f44aaa4d46ac7e73b0ce12ceb7165f227e89cf193ec28deeecbe77b2c825588bcbd869f952010a1d88d0cb19b794adbad2af02ccf
   languageName: node
   linkType: hard
 
