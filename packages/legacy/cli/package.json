@@ -74,7 +74,7 @@
     "yargs": "^17.7.1"
   },
   "optionalDependencies": {
-    "node-libcurl": "^4.0.0",
+    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.0",
     "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "devDependencies": {

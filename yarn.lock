@@ -5778,7 +5778,7 @@ __metadata:
     "@rollup/plugin-json": "npm:^6.1.0"
     "@rollup/plugin-node-resolve": "npm:^15.2.3"
     "@rollup/plugin-sucrase": "npm:^5.0.2"
-    node-libcurl: "npm:^4.0.0"
+    node-libcurl: "npm:@ardatan/node-libcurl@^4.0.0"
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
     tsx: "npm:^4.16.5"
@@ -5944,7 +5944,7 @@ __metadata:
     json-bigint-patch: "npm:^0.0.8"
     json5: "npm:^2.2.3"
     mkdirp: "npm:^3.0.0"
-    node-libcurl: "npm:^4.0.0"
+    node-libcurl: "npm:@ardatan/node-libcurl@^4.0.0"
     open: "npm:^7.4.2"
     pascal-case: "npm:^3.1.2"
     rimraf: "npm:^6.0.0"
@@ -6686,7 +6686,7 @@ __metadata:
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
     json-bigint-patch: "npm:^0.0.8"
-    node-libcurl: "npm:^4.0.0"
+    node-libcurl: "npm:@ardatan/node-libcurl@^4.0.0"
     parse-duration: "npm:^1.1.0"
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
@@ -9338,7 +9338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mapbox/node-pre-gyp@npm:1.0.11":
+"@mapbox/node-pre-gyp@npm:^1.0.11":
   version: 1.0.11
   resolution: "@mapbox/node-pre-gyp@npm:1.0.11"
   dependencies:
@@ -22287,6 +22287,7 @@ __metadata:
     jest: "npm:29.7.0"
     lint-staged: "npm:15.2.9"
     minimatch: "npm:10.0.1"
+    node-gyp: "npm:^10.2.0"
     patch-package: "npm:8.0.0"
     prettier: "npm:3.3.3"
     threads: "npm:^1.7.0"
@@ -28617,16 +28618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:2.18.0":
-  version: 2.18.0
-  resolution: "nan@npm:2.18.0"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10c0/9209d80134fdb98c0afe35c1372d2b930a0a8d3c52706cb5e4257a27e9845c375f7a8daedadadec8d6403ca2eebb3b37d362ff5d1ec03249462abf65fef2a148
-  languageName: node
-  linkType: hard
-
-"nan@npm:^2.12.1, nan@npm:^2.14.0, nan@npm:^2.16.0, nan@npm:^2.17.0, nan@npm:^2.18.0, nan@npm:^2.19.0":
+"nan@npm:^2.12.1, nan@npm:^2.14.0, nan@npm:^2.16.0, nan@npm:^2.17.0, nan@npm:^2.18.0, nan@npm:^2.19.0, nan@npm:^2.20.0":
   version: 2.20.0
   resolution: "nan@npm:2.20.0"
   dependencies:
@@ -29026,26 +29018,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:10.0.1":
-  version: 10.0.1
-  resolution: "node-gyp@npm:10.0.1"
-  dependencies:
-    env-paths: "npm:^2.2.0"
-    exponential-backoff: "npm:^3.1.1"
-    glob: "npm:^10.3.10"
-    graceful-fs: "npm:^4.2.6"
-    make-fetch-happen: "npm:^13.0.0"
-    nopt: "npm:^7.0.0"
-    proc-log: "npm:^3.0.0"
-    semver: "npm:^7.3.5"
-    tar: "npm:^6.1.2"
-    which: "npm:^4.0.0"
-  bin:
-    node-gyp: bin/node-gyp.js
-  checksum: 10c0/abddfff7d873312e4ed4a5fb75ce893a5c4fb69e7fcb1dfa71c28a6b92a7f1ef6b62790dffb39181b5a82728ba8f2f32d229cf8cbe66769fe02cea7db4a555aa
-  languageName: node
-  linkType: hard
-
 "node-gyp@npm:8.x":
   version: 8.4.1
   resolution: "node-gyp@npm:8.4.1"
@@ -29066,7 +29038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:latest":
+"node-gyp@npm:^10.2.0, node-gyp@npm:latest":
   version: 10.2.0
   resolution: "node-gyp@npm:10.2.0"
   dependencies:
@@ -29093,18 +29065,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-libcurl@npm:^4.0.0":
+"node-libcurl@npm:@ardatan/node-libcurl@^4.0.0":
   version: 4.0.0
-  resolution: "node-libcurl@npm:4.0.0"
+  resolution: "@ardatan/node-libcurl@npm:4.0.0"
   dependencies:
-    "@mapbox/node-pre-gyp": "npm:1.0.11"
+    "@mapbox/node-pre-gyp": "npm:^1.0.11"
     env-paths: "npm:2.2.0"
-    nan: "npm:2.18.0"
-    node-gyp: "npm:10.0.1"
-    npmlog: "npm:7.0.1"
-    rimraf: "npm:5.0.5"
-    tslib: "npm:2.6.2"
-  checksum: 10c0/d74ec1701710d5f836fa86fc86f811483844732a00d03ea991fd3fd61d92393fe7e90d65a936599b0ec764ced626a1d65ac18f75814eadcbcaa14e48b2bcee61
+    nan: "npm:^2.20.0"
+    node-gyp: "npm:^10.2.0"
+    npmlog: "npm:^7.0.1"
+    rimraf: "npm:^5.0.5"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/eb95ab457d7bce679ad44a64ded04b843ef0ab5de1aa4959e2d06786c91b56dc035c81110f440f5eba3c2c7583dfab6704a029abb11a4612db72edb571e82b1f
   languageName: node
   linkType: hard
 
@@ -29298,18 +29270,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npmlog@npm:7.0.1":
-  version: 7.0.1
-  resolution: "npmlog@npm:7.0.1"
-  dependencies:
-    are-we-there-yet: "npm:^4.0.0"
-    console-control-strings: "npm:^1.1.0"
-    gauge: "npm:^5.0.0"
-    set-blocking: "npm:^2.0.0"
-  checksum: 10c0/d4e6a2aaa7b5b5d2e2ed8f8ac3770789ca0691a49f3576b6a8c97d560a4c3305d2c233a9173d62be737e6e4506bf9e89debd6120a3843c1d37315c34f90fef71
-  languageName: node
-  linkType: hard
-
 "npmlog@npm:^4.0.2":
   version: 4.1.2
   resolution: "npmlog@npm:4.1.2"
@@ -29343,6 +29303,18 @@ __metadata:
     gauge: "npm:^4.0.3"
     set-blocking: "npm:^2.0.0"
   checksum: 10c0/0cacedfbc2f6139c746d9cd4a85f62718435ad0ca4a2d6459cd331dd33ae58206e91a0742c1558634efcde3f33f8e8e7fd3adf1bfe7978310cf00bd55cccf890
+  languageName: node
+  linkType: hard
+
+"npmlog@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "npmlog@npm:7.0.1"
+  dependencies:
+    are-we-there-yet: "npm:^4.0.0"
+    console-control-strings: "npm:^1.1.0"
+    gauge: "npm:^5.0.0"
+    set-blocking: "npm:^2.0.0"
+  checksum: 10c0/d4e6a2aaa7b5b5d2e2ed8f8ac3770789ca0691a49f3576b6a8c97d560a4c3305d2c233a9173d62be737e6e4506bf9e89debd6120a3843c1d37315c34f90fef71
   languageName: node
   linkType: hard
 
@@ -31870,13 +31842,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proc-log@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "proc-log@npm:3.0.0"
-  checksum: 10c0/f66430e4ff947dbb996058f6fd22de2c66612ae1a89b097744e17fb18a4e8e7a86db99eda52ccf15e53f00b63f4ec0b0911581ff2aac0355b625c8eac509b0dc
-  languageName: node
-  linkType: hard
-
 "proc-log@npm:^4.1.0, proc-log@npm:^4.2.0":
   version: 4.2.0
   resolution: "proc-log@npm:4.2.0"
@@ -33376,17 +33341,6 @@ __metadata:
   bin:
     rimraf: dist/esm/bin.mjs
   checksum: 10c0/b30b6b072771f0d1e73b4ca5f37bb2944ee09375be9db5f558fcd3310000d29dfcfa93cf7734d75295ad5a7486dc8e40f63089ced1722a664539ffc0c3ece8c6
-  languageName: node
-  linkType: hard
-
-"rimraf@npm:5.0.5":
-  version: 5.0.5
-  resolution: "rimraf@npm:5.0.5"
-  dependencies:
-    glob: "npm:^10.3.7"
-  bin:
-    rimraf: dist/esm/bin.mjs
-  checksum: 10c0/d50dbe724f33835decd88395b25ed35995077c60a50ae78ded06e0185418914e555817aad1b4243edbff2254548c2f6ad6f70cc850040bebb4da9e8cc016f586
   languageName: node
   linkType: hard
 

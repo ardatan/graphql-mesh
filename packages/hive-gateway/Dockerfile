@@ -1,14 +1,17 @@
 # IMPORTANT: make sure bundle is ready with `yarn bundle`
 
-# we build with Node 21 because node-libcurl has published prebuilt releases (building from source fails when using Node 22)
-FROM node:21 AS install
+FROM node:22-slim AS install
 
 WORKDIR /install
 
+RUN apt-get update && apt-get install -y \
+  # for node-libcurl
+  curl libcurl4-openssl-dev libssl-dev git python3 build-essential
+
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
-  node-libcurl@^4 \
-  graphql@^16.9.0
+  node-libcurl@npm:@ardatan/node-libcurl@^4 \
+  graphql@^16.9.0 --loglevel verbose
 
 #
 
