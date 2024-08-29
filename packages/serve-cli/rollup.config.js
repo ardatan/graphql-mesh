@@ -264,11 +264,11 @@ function graphql() {
  */
 function injectIncludeHooks() {
   let injected = false;
-  const injectionDest = "register('@graphql-mesh/include/hooks'"; // intentionally no closing bracked because there's more arguments
+  const injectionDest = /register\(\s*'@graphql-mesh\/include\/hooks'/; // intentionally no closing bracked because there's more arguments
   return {
     name: 'injectIncludeHooks',
     async renderChunk(chunk) {
-      if (!chunk.includes(injectionDest)) return;
+      if (!injectionDest.test(chunk)) return;
       injected = true;
 
       const bundle = await rollup({
