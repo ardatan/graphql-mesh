@@ -92,13 +92,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-latest-large]
+        os: [ubuntu-latest, macos-latest, macos-latest-large, windows-latest]
         arch: [x86_64, aarch64]
         exclude:
           - os: macos-latest
             arch: aarch64
           - os: macos-latest-large
             arch: x86_64
+          - os: ubuntu-latest
+            arch: aarch64
+          - os: windows-latest
+            arch: aarch64
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -111,7 +115,6 @@ jobs:
       - name: bundle
         run: yarn bundle
       - name: package binary
-        if: matrix.arch == 'x86_64' || matrix.os == 'macos-latest-large'
         working-directory: packages/serve-cli
         run: yarn package-binary
       - name: package binary
