@@ -232,6 +232,7 @@ describe('opentelemetry', () => {
     });
 
     await expect(execute({ query: 'query { nonExistentField }' })).rejects.toMatchSnapshot();
+    await setTimeout(300);
     const traces = await getJaegerTraces(serviceName, 2);
     expect(traces.data.length).toBe(2);
     const relevantTrace = traces.data.find(trace =>
