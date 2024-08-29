@@ -108,7 +108,11 @@ async function startuWebSocketsServer(
     maxHeaderSize,
   } = opts;
   process.env.UWS_HTTP_MAX_HEADERS_SIZE = maxHeaderSize?.toString();
-  return import('uWebSockets.js').then(uWS => {
+  // we intentionally use uws.default for CJS/ESM cross compatibility.
+  //
+  // when importing ESM of uws, the default will be flattened; but when importing
+  // CJS, that wont happen - however, the default will always be available
+  return import('uWebSockets.js').then(({ default: uWS }) => {
     const protocol = sslCredentials ? 'https' : 'http';
     const app = sslCredentials ? uWS.SSLApp(sslCredentials) : uWS.App();
     app.any('/*', handler);
