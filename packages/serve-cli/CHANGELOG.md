@@ -1,5 +1,163 @@
 # @graphql-mesh/serve-cli
 
+## 0.12.0
+
+### Minor Changes
+
+- [#7580](https://github.com/ardatan/graphql-mesh/pull/7580)
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: All types prefixed with `MeshServe`,
+  now are prefixed with `Gateway`. e.g. `MeshServeRuntime` -> `GatewayRuntime`
+
+  Runtime factory is renamed; `createServeRuntime` -> `createGatewayRuntime`
+
+  The expected export name for config files are renamed from `serveConfig` to `gatewayConfig`
+
+  RENAMING:
+
+  You can rename the product, config file name etc by using the following config options;
+
+  For example;
+
+  ```ts
+  productName = 'Mesh Gateway'
+  productDescription =
+    'Mesh Gateway is a GraphQL Gateway that can be used to serve a supergraph schema.'
+  productLogo = '<svg>...</svg>'
+  productPackageName = '@graphql-mesh/gateway'
+  ```
+
+- [#7596](https://github.com/ardatan/graphql-mesh/pull/7596)
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Register @graphql-mesh/include/hooks instead
+  of using jiti and include
+
+### Patch Changes
+
+- [#7594](https://github.com/ardatan/graphql-mesh/pull/7594)
+  [`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/cache-cfw-kv@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-cfw-kv/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/cache-localforage@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-localforage/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/cache-redis@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-redis/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/hmac-upstream-signature@^0.3.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/hmac-upstream-signature/v/0.3.6)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-deduplicate-request@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-deduplicate-request/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-http-cache@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-http-cache/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-jwt-auth@^0.3.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-jwt-auth/v/0.3.6)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-mock@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-mock/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-opentelemetry@^0.3.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-opentelemetry/v/0.3.6)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-prometheus@^0.106.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-prometheus/v/0.106.3)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-rate-limit@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-rate-limit/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-snapshot@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-snapshot/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/transport-http-callback@^0.3.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-http-callback/v/0.3.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/transport-ws@^0.3.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-ws/v/0.3.5)
+    (to `dependencies`)
+
+- [#7594](https://github.com/ardatan/graphql-mesh/pull/7594)
+  [`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Adding these plugins to serve-runtime by default,
+  and make them configurable through the configuration;
+
+  - `useResponseCache`
+  - `useContentEncoding`
+  - `useDeferStream`
+  - `useExecutionCancellation`
+  - `useUpstreamCancellation`
+  - `useDisableIntrospection`
+  - `useCSRFPrevention`
+  - `useCustomAgent`
+  - `useGenericAuth`
+  - `useHMACUpstreamSignature`
+  - `useWebhooks`
+
+  In addition, the following ones are added to the serve-cli:
+
+  - `useJWT`
+  - `usePrometheus`
+  - `useOpenTelemetry`
+  - `useRateLimit`
+
+- [#7583](https://github.com/ardatan/graphql-mesh/pull/7583)
+  [`4662f65`](https://github.com/ardatan/graphql-mesh/commit/4662f6558f7146c3c1b51ffd8de0433ff40eaffb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support `gateway.config.*` prefix as default
+  configuration file path
+
+- [#7582](https://github.com/ardatan/graphql-mesh/pull/7582)
+  [`2ac3981`](https://github.com/ardatan/graphql-mesh/commit/2ac3981ce8e03ba5bfb78f8aceca7e4ed06f938a)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Updated Prom plugin version to latest
+
+- [#7584](https://github.com/ardatan/graphql-mesh/pull/7584)
+  [`d4838b0`](https://github.com/ardatan/graphql-mesh/commit/d4838b0f530dc1841ad9da0cd88cb26387564012)
+  Thanks [@ardatan](https://github.com/ardatan)! - Introduce Hive Gateway
+
+- Updated dependencies
+  [[`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`2ac3981`](https://github.com/ardatan/graphql-mesh/commit/2ac3981ce8e03ba5bfb78f8aceca7e4ed06f938a),
+  [`2ac3981`](https://github.com/ardatan/graphql-mesh/commit/2ac3981ce8e03ba5bfb78f8aceca7e4ed06f938a),
+  [`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc),
+  [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d),
+  [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d),
+  [`2ac3981`](https://github.com/ardatan/graphql-mesh/commit/2ac3981ce8e03ba5bfb78f8aceca7e4ed06f938a),
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849),
+  [`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc),
+  [`2ac3981`](https://github.com/ardatan/graphql-mesh/commit/2ac3981ce8e03ba5bfb78f8aceca7e4ed06f938a),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`d4838b0`](https://github.com/ardatan/graphql-mesh/commit/d4838b0f530dc1841ad9da0cd88cb26387564012)]:
+  - @graphql-mesh/cache-redis@0.102.5
+  - @graphql-mesh/include@0.2.0
+  - @graphql-mesh/plugin-prometheus@0.107.0
+  - @graphql-mesh/serve-runtime@0.9.0
+  - @graphql-mesh/utils@0.102.5
+  - @graphql-mesh/hmac-upstream-signature@0.4.0
+  - @graphql-mesh/transport-http-callback@0.4.0
+  - @graphql-mesh/plugin-opentelemetry@0.4.0
+  - @graphql-mesh/plugin-jwt-auth@0.4.0
+  - @graphql-mesh/cache-cfw-kv@0.102.5
+  - @graphql-mesh/cache-localforage@0.102.5
+  - @graphql-mesh/plugin-deduplicate-request@0.102.5
+  - @graphql-mesh/plugin-http-cache@0.102.5
+  - @graphql-mesh/plugin-mock@0.102.5
+  - @graphql-mesh/plugin-rate-limit@0.102.5
+  - @graphql-mesh/plugin-snapshot@0.102.5
+  - @graphql-mesh/transport-ws@0.3.6
+  - @graphql-mesh/types@0.102.5
+
 ## 0.11.6
 
 ### Patch Changes

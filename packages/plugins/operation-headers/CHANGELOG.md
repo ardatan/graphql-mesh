@@ -1,5 +1,49 @@
 # @graphql-mesh/plugin-operation-headers
 
+## 0.7.0
+
+### Minor Changes
+
+- [#7580](https://github.com/ardatan/graphql-mesh/pull/7580)
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: All types prefixed with `MeshServe`,
+  now are prefixed with `Gateway`. e.g. `MeshServeRuntime` -> `GatewayRuntime`
+
+  Runtime factory is renamed; `createServeRuntime` -> `createGatewayRuntime`
+
+  The expected export name for config files are renamed from `serveConfig` to `gatewayConfig`
+
+  RENAMING:
+
+  You can rename the product, config file name etc by using the following config options;
+
+  For example;
+
+  ```ts
+  productName = 'Mesh Gateway'
+  productDescription =
+    'Mesh Gateway is a GraphQL Gateway that can be used to serve a supergraph schema.'
+  productLogo = '<svg>...</svg>'
+  productPackageName = '@graphql-mesh/gateway'
+  ```
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc),
+  [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d),
+  [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d),
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849),
+  [`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc),
+  [`d4838b0`](https://github.com/ardatan/graphql-mesh/commit/d4838b0f530dc1841ad9da0cd88cb26387564012)]:
+  - @graphql-mesh/serve-runtime@0.9.0
+  - @graphql-mesh/utils@0.102.5
+  - @graphql-mesh/types@0.102.5
+
 ## 0.6.6
 
 ### Patch Changes

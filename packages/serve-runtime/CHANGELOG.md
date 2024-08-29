@@ -1,5 +1,129 @@
 # @graphql-mesh/serve-runtime
 
+## 0.9.0
+
+### Minor Changes
+
+- [#7580](https://github.com/ardatan/graphql-mesh/pull/7580)
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: All types prefixed with `MeshServe`,
+  now are prefixed with `Gateway`. e.g. `MeshServeRuntime` -> `GatewayRuntime`
+
+  Runtime factory is renamed; `createServeRuntime` -> `createGatewayRuntime`
+
+  The expected export name for config files are renamed from `serveConfig` to `gatewayConfig`
+
+  RENAMING:
+
+  You can rename the product, config file name etc by using the following config options;
+
+  For example;
+
+  ```ts
+  productName = 'Mesh Gateway'
+  productDescription =
+    'Mesh Gateway is a GraphQL Gateway that can be used to serve a supergraph schema.'
+  productLogo = '<svg>...</svg>'
+  productPackageName = '@graphql-mesh/gateway'
+  ```
+
+### Patch Changes
+
+- [#7594](https://github.com/ardatan/graphql-mesh/pull/7594)
+  [`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@envelop/disable-introspection@^6.0.0` ↗︎](https://www.npmjs.com/package/@envelop/disable-introspection/v/6.0.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@envelop/generic-auth@^8.0.0` ↗︎](https://www.npmjs.com/package/@envelop/generic-auth/v/8.0.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/hmac-upstream-signature@^0.3.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/hmac-upstream-signature/v/0.3.6)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/plugin-response-cache@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-response-cache/v/0.102.4)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-yoga/plugin-csrf-prevention@^3.7.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-csrf-prevention/v/3.7.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-yoga/plugin-defer-stream@^3.7.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-defer-stream/v/3.7.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-yoga/plugin-persisted-operations@^3.7.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-persisted-operations/v/3.7.0)
+    (to `dependencies`)
+
+- [#7595](https://github.com/ardatan/graphql-mesh/pull/7595)
+  [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/disposablestack@^0.0.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.4)
+    (from `^0.0.3`, in `dependencies`)
+
+- [#7596](https://github.com/ardatan/graphql-mesh/pull/7596)
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/disposablestack@^0.0.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.5)
+    (from `^0.0.4`, in `dependencies`)
+
+- [#7597](https://github.com/ardatan/graphql-mesh/pull/7597)
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/disposablestack@^0.0.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.5)
+    (from `^0.0.4`, in `dependencies`)
+
+- [#7594](https://github.com/ardatan/graphql-mesh/pull/7594)
+  [`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Adding these plugins to serve-runtime by default,
+  and make them configurable through the configuration;
+
+  - `useResponseCache`
+  - `useContentEncoding`
+  - `useDeferStream`
+  - `useExecutionCancellation`
+  - `useUpstreamCancellation`
+  - `useDisableIntrospection`
+  - `useCSRFPrevention`
+  - `useCustomAgent`
+  - `useGenericAuth`
+  - `useHMACUpstreamSignature`
+  - `useWebhooks`
+
+  In addition, the following ones are added to the serve-cli:
+
+  - `useJWT`
+  - `usePrometheus`
+  - `useOpenTelemetry`
+  - `useRateLimit`
+
+- [#7584](https://github.com/ardatan/graphql-mesh/pull/7584)
+  [`d4838b0`](https://github.com/ardatan/graphql-mesh/commit/d4838b0f530dc1841ad9da0cd88cb26387564012)
+  Thanks [@ardatan](https://github.com/ardatan)! - Introduce Hive Gateway
+
+- Updated dependencies
+  [[`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d),
+  [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d),
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849),
+  [`9f01438`](https://github.com/ardatan/graphql-mesh/commit/9f01438fbdf327c0a4bfa0cf440d890ec871ffcc)]:
+  - @graphql-mesh/fusion-runtime@0.8.6
+  - @graphql-mesh/utils@0.102.5
+  - @graphql-mesh/hmac-upstream-signature@0.4.0
+  - @graphql-mesh/plugin-hive@0.102.5
+  - @graphql-mesh/plugin-response-cache@0.102.5
+  - @graphql-mesh/transport-http@0.6.6
+  - @graphql-mesh/transport-common@0.7.6
+
 ## 0.8.6
 
 ### Patch Changes
