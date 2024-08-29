@@ -62,9 +62,13 @@ globalThis.__PACKED_DEPS_PATH__ = `${require('node:os').tmpdir()}${require('node
   Module._resolveFilename = (...args) => {
     const [id, ...rest] = args;
     try {
+      debug(`Resolving packed dependency "${id}"`);
+      const resolvedPath = path.join(modulesPath, id);
+      debug(`Resolved to "${resolvedPath}"`);
       // always try to import from necessary modules first
       return originalResolveFilename(path.join(modulesPath, id), ...rest);
-    } catch {
+    } catch (e) {
+      debug(`Failed to resolve packed dependency "${id}"; Falling back to the original resolver...`, e);
       // fall back to the original resolver
       return originalResolveFilename(...args);
     }
