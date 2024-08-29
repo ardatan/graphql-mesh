@@ -116,10 +116,10 @@
     "es5-ext": "0.10.64",
     "esbuild": "^0.23.0",
     "graphql": "16.9.0",
+    "graphql-rate-limit@npm:^3.3.0": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
     "tslib": "2.7.0",
     "undici": "6.19.8",
-    "uuid": "10.0.0",
-    "graphql-rate-limit@npm:^3.3.0": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch"
+    "uuid": "10.0.0"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
