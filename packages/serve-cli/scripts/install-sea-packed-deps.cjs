@@ -25,7 +25,7 @@ function debug(msg, ...args) {
 // NOTE that the path is stable for modules hash and system,
 // we should NEVER install modules in multiple places to avoid
 // spamming user's devices
-globalThis.__PACKED_DEPS_PATH__ = `${require('node:os').tmpdir()}/mesh-serve_${
+globalThis.__PACKED_DEPS_PATH__ = `${require('node:os').tmpdir()}${require('node:path').sep}mesh-serve_${
   // @ts-expect-error INJECTED DURING BUNDLE (check rollup.binary.config.js)
   __MODULES_HASH__
 }_node_modules`;
