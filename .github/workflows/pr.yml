@@ -107,22 +107,28 @@ jobs:
             arch: x86_64
           - os: macos-latest-large
             arch: aarch64
-          - os: windows-latest
+          - os: windows-2019
             arch: x86_64
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: Disable Windows Defender
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         run: Set-MpPreference -DisableRealtimeMonitoring $true
         shell: powershell
       - name: Install NASM
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         uses: ilammy/setup-nasm@v1
       - name: Install Required Libraries
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - uses: the-guild-org/shared-config/setup@v1
+        if: matrix.os == 'windows-2019'
+        name: setup Node 21 for Windows
+        with:
+          node-version: 21
+      - uses: the-guild-org/shared-config/setup@v1
+        if: matrix.os != 'windows-2019'
         name: set up env
         with:
           node-version-file: .node-version

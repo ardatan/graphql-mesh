@@ -40,7 +40,8 @@ function packDeps() {
   const zip = new ADMZip();
   let uwsAddonAdded = false;
   const uwsAddonForThisSystem = `uws_${process.platform}_${process.arch}_${process.versions.modules}.node`;
-  zip.addLocalFolder('../../node_modules/uWebSockets.js', './uWebSockets.js', filename => {
+  const uWSDir = path.join('..', '..', 'node_modules', 'uWebSockets.js');
+  zip.addLocalFolder(uWSDir, './uWebSockets.js', filename => {
     filename = filename.replace('uWebSockets.js/', '');
     console.log(`Packing ${filename}...`);
     if (filename === uwsAddonForThisSystem) uwsAddonAdded = true;
@@ -55,9 +56,12 @@ function packDeps() {
   if (!uwsAddonAdded) {
     console.warn(`uWebSockets.js doesnt have the "${uwsAddonForThisSystem}" addon for this system`);
   }
-  zip.addLocalFolder('../../node_modules/tslib', './tslib'); // tslib is zero-dep (necessary for node-libcurl)
-  zip.addLocalFolder('../../node_modules/node-libcurl', './node-libcurl'); // node-libcurl is zero-dep (aside from tslib, the other dependencies in package.json are just for building)
-  zip.addLocalFolder('../../node_modules/graphql', './graphql'); // graphql is zero-dep
+  const tsLibPath = path.join('..', '..', 'node_modules', 'tslib');
+  zip.addLocalFolder(tsLibPath, './tslib'); // tslib is zero-dep (necessary for node-libcurl)
+  const nodeLibcurlPath = path.join('..', '..', 'node_modules', 'node-libcurl');
+  zip.addLocalFolder(nodeLibcurlPath, './node-libcurl'); // node-libcurl is zero-dep (aside from tslib, the other dependencies in package.json are just for building)
+  const graphqlPath = path.join('..', '..', 'node_modules', 'graphql');
+  zip.addLocalFolder(graphqlPath, './graphql'); // graphql is zero-dep
   zip.addLocalFolder('bundle/node_modules');
   const zipBuf = zip.toBuffer();
   const __MODULES_HASH__ = createHash('sha256').update(zipBuf).digest('hex');
@@ -75,8 +79,9 @@ function packDeps() {
       ].join('\n');
 
       // bundle adm-zip and inject it to the script
+      const admZipPath = path.join('..', '..', 'node_modules', 'adm-zip', 'adm-zip.js');
       const bundle = await rollup({
-        input: '../../node_modules/adm-zip/adm-zip.js',
+        input: admZipPath,
         plugins: [nodeResolve(), commonjs(), json()],
       });
       const { output: outputs } = await bundle.generate({
