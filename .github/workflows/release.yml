@@ -131,18 +131,8 @@ jobs:
       - name: bundle
         run: yarn bundle
       - name: package binary
-        if: matrix.arch != 'aarch64'
         working-directory: packages/serve-cli
         run: yarn package-binary
-      - name: package binary
-        if: matrix.arch == 'aarch64'
-        run: |
-          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker run --rm \
-            -v "$(pwd)/packages/serve-cli:/workspace" \
-            -w /workspace \
-            node:22 \
-            /bin/bash -c "npx -y tsx scripts/package-binary.ts"
       - name: upload artifact
         id: upload_artifact
         uses: actions/upload-artifact@v4

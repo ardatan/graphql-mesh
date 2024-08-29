@@ -42,7 +42,7 @@ function packDeps() {
   const uwsAddonForThisSystem = `uws_${process.platform}_${process.arch}_${process.versions.modules}.node`;
   const uWSDir = path.join('..', '..', 'node_modules', 'uWebSockets.js');
   zip.addLocalFolder(uWSDir, './uWebSockets.js', filename => {
-    filename = filename.replace('uWebSockets.js/', '');
+    filename = filename.replace('uWebSockets.js' + path.sep, '');
     console.log(`Packing ${filename}...`);
     if (filename === uwsAddonForThisSystem) uwsAddonAdded = true;
     return [
