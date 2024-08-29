@@ -112,7 +112,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: ilammy/setup-nasm@v1
       - name: Install Required Libraries
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'ubuntu-latest'
         run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
