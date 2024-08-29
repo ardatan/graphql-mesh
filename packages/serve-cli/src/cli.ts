@@ -297,5 +297,21 @@ export function run(userCtx: Partial<CLIContext>) {
 
   addCommands(ctx, cli);
 
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  warnIfNodeLibcurlMissing(ctx);
+
   return cli.parseAsync();
+}
+
+async function warnIfNodeLibcurlMissing(ctx: CLIContext) {
+  ctx.log.debug('Checking if node-libcurl is installed and available for use.');
+  try {
+    await import('node-libcurl');
+    ctx.log.debug('node-libcurl is installed and available for use.');
+  } catch (e) {
+    ctx.log.warn(
+      'node-libcurl is not installed properly which is used for better performance and developer experience. Falling back to "node:http".',
+      e,
+    );
+  }
 }

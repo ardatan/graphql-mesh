@@ -1,19 +1,17 @@
 # IMPORTANT: make sure bundle is ready with `yarn bundle`
 
-FROM node:22 AS install
+FROM node:22-slim AS install
 
 WORKDIR /install
 
 RUN apt-get update && apt-get install -y \
   # for node-libcurl
-  libcurl4-openssl-dev libssl-dev \
-  # clean
-  apt-get clean
+  curl libcurl4-openssl-dev libssl-dev git python3 build-essential
 
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
   node-libcurl@npm:@ardatan/node-libcurl@^4 \
-  graphql@^16.9.0
+  graphql@^16.9.0 --loglevel verbose
 
 #
 

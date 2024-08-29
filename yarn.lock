@@ -22287,6 +22287,7 @@ __metadata:
     jest: "npm:29.7.0"
     lint-staged: "npm:15.2.9"
     minimatch: "npm:10.0.1"
+    node-gyp: "npm:^10.2.0"
     patch-package: "npm:8.0.0"
     prettier: "npm:3.3.3"
     threads: "npm:^1.7.0"
