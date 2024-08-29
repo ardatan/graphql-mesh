@@ -15,7 +15,7 @@ You can use rate limiting feature in order to limit the rate of calling queries 
 ## Programmatic Configuration
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   rateLimiting: {
@@ -36,7 +36,7 @@ export const gatewayConfig = defineConfig({
 # Rate Limiting through `@rateLimit` directive
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   rateLimiting: true

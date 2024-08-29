@@ -38,7 +38,7 @@ and determine based on that whether introspection should be enabled or not. E.g.
 headers.
 
 ```ts filename="gateway.config.ts" {7}
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   disableIntrospection: {
@@ -82,7 +82,7 @@ npm i @escape.tech/graphql-armor-block-field-suggestions
 
 ```ts filename="Disabling the 'did you mean x' suggestion feature with a plugin" {2, 7}
 import { blockFieldSuggestionsPlugin } from '@escape.tech/graphql-armor-block-field-suggestions'
-import { defineConfig, useDisableIntrospection } from '@graphql-mesh/serve-cli'
+import { defineConfig, useDisableIntrospection } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   disableIntrospection: true,

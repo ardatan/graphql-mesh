@@ -1,4 +1,4 @@
-group "default" {
+group "mesh-serve" {
   targets = ["mesh-serve"]
 }
 
@@ -15,6 +15,27 @@ target "mesh-serve" {
     "org.opencontainers.image.description=\"GraphQL Gateway by The Guild for anything-to-GraphQL\"",
     "org.opencontainers.image.licenses=MIT",
     "org.opencontainers.image.source=https://github.com/ardatan/graphql-mesh/tree/master/packages/serve-cli",
+    "org.opencontainers.image.documentation=https://the-guild.dev/graphql/mesh/v1/serve/deployment/docker"
+  ]
+}
+
+group "hive-gateway" {
+  targets = ["hive-gateway"]
+}
+
+variable "MESH_SERVE_TAGS" {
+  default = "dev"
+}
+
+target "hive-gateway" {
+  context = "packages/hive-gateway"
+  platforms = ["linux/amd64", "linux/arm64"]
+  tags = formatlist("ghcr.io/ardatan/hive-gateway:%s", split(",", MESH_SERVE_TAGS))
+  annotations = [
+    "org.opencontainers.image.title=\"Hive Gateway\"",
+    "org.opencontainers.image.description=\"GraphQL Gateway by The Guild\"",
+    "org.opencontainers.image.licenses=MIT",
+    "org.opencontainers.image.source=https://github.com/ardatan/graphql-mesh/tree/master/packages/hive-gateway",
     "org.opencontainers.image.documentation=https://the-guild.dev/graphql/mesh/v1/serve/deployment/docker"
   ]
 }

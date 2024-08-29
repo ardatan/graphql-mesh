@@ -10,7 +10,7 @@ import { Callout } from '@theguild/components'
 Building a secure GraphQL API is hard by design because of the “Graph” nature of GraphQL. Libraries
 for making different aspects of a GraphQL server secure have existed since the early days of
 GraphQL. However, combining those tools is often cumbersome and results in messy code. With envelop
-securing your server is now as easy as pie! GraphQL Mesh has a built-in security layer that helps
+securing your server is now as easy as pie! Hive Gateway has a built-in security layer that helps
 you to secure your Gateway. But in most of time, this security layer is not enough or needed to be
 customized for your use case.
 
@@ -133,9 +133,9 @@ requests to the subgraph.
 In case of any missing signature, tampering or unauthorized access, the subgraph services will
 reject the request.
 
-We recommend using HMAC signing for requests between the GraphQL Mesh gateway and the upstream in
-cases where authentication plugins are involved, in order to ensure the gateway is the only entity
-that can execute requests to the subgraph on behalf of the end-users.
+We recommend using HMAC signing for requests between the Hive Gateway and the upstream in cases
+where authentication plugins are involved, in order to ensure the gateway is the only entity that
+can execute requests to the subgraph on behalf of the end-users.
 
 You can use the [HMAC Signature plugin](/v1/serve/features/security/hmac-signature) to perform
 requesting signing and verification.
@@ -199,6 +199,6 @@ You can block field suggestions with the
 
 In most GraphQL servers any thrown error or rejected promise will result in the original error
 leaking to the outside world. Some frameworks have custom logic for catching unexpected errors and
-mapping them to an unexpected error instead. In GraphQL Mesh, this is enabled by default.
+mapping them to an unexpected error instead. In Hive Gateway, this is enabled by default.
 
 [Learn more about Error Masking](/v1/serve/features/security/error-masking)

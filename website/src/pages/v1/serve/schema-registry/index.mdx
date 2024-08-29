@@ -12,14 +12,14 @@ The benefits of using a schema registry include:
 - Breaking changes, validation and schema evolution to understand the impact of changes on the
   client
 
-Mesh Serve can serve the supergraph from a schema registry and report usage data to the registry.
+Hive Gateway can serve the supergraph from a schema registry and report usage data to the registry.
 
 ## Built-in Integrations
 
-GraphQL Mesh has built in support for the following schema registries.
+Hive Gateway has built in support for the following schema registries.
 
 <Cards>
-  <Cards.Card arrow title="GraphQL Hive" href="/v1/serve/schema-registry/hive" />
+  <Cards.Card arrow title="Hive Registry" href="/v1/serve/schema-registry/hive" />
   <Cards.Card arrow title="Apollo GraphOS" href="/v1/serve/schema-registry/graphos" />
 </Cards>
 
@@ -29,7 +29,7 @@ You can also use a custom schema registry by providing a configuration object, a
 options to customize the polling/retry behavior.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   supergraph: () =>

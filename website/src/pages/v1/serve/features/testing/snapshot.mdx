@@ -6,12 +6,12 @@ The `snapshot` plugin allows applying snapshot for development usage.
 
 The snapshot plugin writes the responses of your remote data source to your file system and then
 uses it instead of re-fetching it every time. It’s also helpful because you can easily manipulate
-your data manually and see how your API mesh responds.
+your data manually and see how your gateway responds.
 
 Then, add it to your plugins:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useSnapshot } from '@graphql-mesh/serve-cli'
+import { defineConfig, useSnapshot } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [

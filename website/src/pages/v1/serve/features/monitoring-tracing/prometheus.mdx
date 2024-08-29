@@ -25,7 +25,7 @@ an HTTP endpoint (`/metrics` by default).
 Add its configuration to your `gateway.config.ts` file.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   prometheus: {
@@ -38,7 +38,7 @@ export const gatewayConfig = defineConfig({
 })
 ```
 
-You can now start your Mesh gateway and make some requests to it. The plugin will start collecting
+You can now start your Hive Gateway and make some requests to it. The plugin will start collecting
 metrics, and you can access them by visiting the `/metrics` endpoint.
 
 ## Grafana Dashboard
@@ -66,7 +66,7 @@ By default, the plugin will not expose any metrics. You need to opt in to the me
 export.
 
 You will find the timing of each phase of the GraphQL execution. If you are not familiar with the
-lifecycle of a GraphQL operation in Mesh, please refer to the
+lifecycle of a GraphQL operation in the gateway, please refer to the
 [Plugin Lifecycle page](/v1/serve/features/custom-plugins#plugin-lifecycle). Each plugin hook has a
 corresponding metric which tracks timings as
 [histograms](https://prometheus.io/docs/concepts/metric_types/#histogram) or
@@ -158,13 +158,13 @@ graphql_yoga_http_duration_count{method="GET",statusCode="200",operationName="An
 ### `graphql_gateway_fetch_duration`
 
 This metric tracks the duration of outgoing HTTP requests. It reports the time spent on each request
-made using the `fetch` function provided by Mesh. It is reported as a
+made using the `fetch` function provided by the gateway. It is reported as a
 [histogram](https://prometheus.io/docs/concepts/metric_types/#histogram).
 
 This metric can provide insights into the network usage of your gateway. It does not only include
 requests made to resolve GraphQL operation responses, but also include any other outgoing HTTP
-requests made by Mesh or one of its plugins. It will for example include requests made to fetch the
-supergraph schema from the configured Schema Registry.
+requests made by the gateway or one of its plugins. It will for example include requests made to
+fetch the supergraph schema from the configured Schema Registry.
 
 To enable this metric, set the `fetchMetrics` option to `true`.
 
@@ -536,9 +536,9 @@ graphql_envelop_request_time_summary_count{operationName="Anonymous",operationTy
 This metric tracks the number of errors that was returned by the GraphQL execution.
 
 Similarly to [`graphql_gateway_subgraph_execute_errors`](#graphql_gateway_subgraph_execute_errors),
-it counts all errors found in the final response constructed by Mesh after it gathered all subgraph
-responses, but it also includes errors from other GraphQL processing phases (parsing, validation and
-context building). It is exposed as a
+it counts all errors found in the final response constructed by the gateway after it gathered all
+subgraph responses, but it also includes errors from other GraphQL processing phases (parsing,
+validation and context building). It is exposed as a
 [counter](https://prometheus.io/docs/concepts/metric_types/#counter).
 
 To enable this metric, set the `errors` option to `true`.
@@ -707,7 +707,7 @@ By providing a string, you can change the name of the metric. For example, to ch
 name of the `graphql_yoga_http_duration` metric to `http_request_duration`, you would use:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   prometheus: {
@@ -737,7 +737,7 @@ Available options depend on the metric type, and full details about them can be 
 For example, you can customize the buckets of the `graphql_yoga_http_duration` histogram metric:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, createHistogram } from '@graphql-mesh/serve-cli'
+import { defineConfig, createHistogram } from '@graphql-hive/gateway'
 import { register as registry } from 'prom-client'
 
 export const gatewayConfig = defineConfig({
@@ -769,7 +769,7 @@ You can customize the client’s registry by passing a custom registry to the `r
 
 ```ts filename="gateway.config.ts"
 import { Registry } from 'prom-client'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 const myRegistry = new Registry()
 
@@ -785,7 +785,7 @@ export const gatewayConfig = defineConfig({
 ### All metrics enabled
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   prometheus: {

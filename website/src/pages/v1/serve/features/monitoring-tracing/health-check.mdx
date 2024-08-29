@@ -7,7 +7,7 @@ import { Callout } from '@theguild/components'
   us directly in case you are having any troubles.
 </Callout>
 
-GraphQL Mesh is aware of the usefulness of a health check and gives the user maximum possibilities
+Hive Gateway is aware of the usefulness of a health check and gives the user maximum possibilities
 to use the built-in check.
 
 ## Types of health checks
@@ -23,13 +23,13 @@ is accepting requests (alive), but the read replica it uses is still unavailable
 
 ### Liveliness
 
-By default, you can check whether Mesh is alive by issuing a request to the `/healthcheck` endpoint
-and expecting the response `200 OK`.
+By default, you can check whether the gateway is alive by issuing a request to the `/healthcheck`
+endpoint and expecting the response `200 OK`.
 
 Of course, you can change this endpoint through the `healthCheckEndpoint` option.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   healthCheckEndpoint: '/healthcheck'
@@ -40,11 +40,11 @@ A successful response is just `200 OK` without a body.
 
 ### Readiness
 
-Additionally, we have another endpoint which checks whether the services powering Mesh are ready to
-perform work.
+Additionally, we have another endpoint which checks whether the services powering Hive Gateway are
+ready to perform work.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   readinessCheckEndpoint: '/readiness'

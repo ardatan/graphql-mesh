@@ -8,9 +8,9 @@ import { Callout } from '@theguild/components'
 </Callout>
 
 For Node.js and other Node-compliant environments, you can use Serve CLI as described in the
-[Node.js guide](/v1/serve/deployment/runtimes/nodejs). But if you want to use Mesh with a
+[Node.js guide](/v1/serve/deployment/runtimes/nodejs). But if you want to use Hive Gateway with a
 server-side JavaScript environment that is not compatible with Node.js API, you can use the
-`createGatewayRuntime` function from `@graphql-mesh/serve-runtime` package.
+`createGatewayRuntime` function from `@graphql-hive/gateway` package.
 
 In this case, you have to pass your serve configuration inside `createGatewayRuntime` instead of
 exporting it `gatewayConfig` from `gateway.config.ts` file.

@@ -7,7 +7,7 @@ import { Callout } from '@theguild/components'
   us directly in case you are having any troubles.
 </Callout>
 
-By default, GraphQL Mesh maintains a parsing and validation cache. If requests contain documents
+By default, Hive Gateway maintains a parsing and validation cache. If requests contain documents
 that have been executed before, they will not be parsed and validated again.
 
 Using the parser cache can improve performance up to ~60%, and using the validation cache up to ~50%
@@ -17,7 +17,7 @@ This behavior is built-in and can be optionally disabled using the `parserAndVal
 options:
 
 ```ts filename="gateway.config.ts" {4,5}
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineServe({
   // disable parse and validate caching
@@ -44,7 +44,7 @@ interface CacheStore<T> {
 You can then pass your cache store to the `parserAndValidationCache` options:
 
 ```ts filename="gateway.config.ts" {9-13}
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   parserAndValidationCache: {

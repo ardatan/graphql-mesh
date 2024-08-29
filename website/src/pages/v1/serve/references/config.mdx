@@ -1,5 +1,5 @@
 ---
-description: Mesh Serve Configuration Reference
+description: Hive Gateway Configuration Reference
 ---
 
 import { Callout } from '@theguild/components'
@@ -11,7 +11,7 @@ import { Callout } from '@theguild/components'
   us directly in case you are having any troubles.
 </Callout>
 
-An overview of all the configuration options for the `gateway.config.ts` used by the `mesh-serve`
+An overview of all the configuration options for the `gateway.config.ts` used by the `hive-gateway`
 CLI.
 
 Both TypeScript (`*.ts`) and JavaScript (`*.js`) config filetypes are supported.
@@ -35,7 +35,7 @@ You can provide `GraphQLSchema`, `DocumentNode` which has the AST of the supergr
 which is the `SDL` representation of the supergraph.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   supergraph: './supergraph.graphql',
@@ -53,10 +53,10 @@ export const gatewayConfig = defineConfig({
 
 <Callout>
 
-For GraphQL Hive and Apollo GraphOS, you probably don't need to provide the `supergraph` option.
+For Hive Registry and Apollo GraphOS, you probably don't need to provide the `supergraph` option.
 
-- If you use GraphQL Hive, please refer to the dedicated section for
-  [Fetching Supergraph from Hive CDN](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
+- If you use Hive Registry, please refer to the dedicated section for
+  [Fetching Supergraph from Hive Registry CDN](/v1/serve/schema-registry/hive#publishing-subgraphs-to-hive-cdn)
 - If you use Apollo GraphOS, please refer to the dedicated section for
   [Fetching Supergraph from Apollo GraphOS](/v1/serve/schema-registry/apollo-graphos).
 
@@ -65,14 +65,14 @@ For GraphQL Hive and Apollo GraphOS, you probably don't need to provide the `sup
 #### Polling
 
 Let's say you have a source that can be changed after a while, it can be a CDN, schema registry or a
-local file. So by enabling this option, Mesh can poll the source and update the schema
+local file. So by enabling this option, Hive Gateway can poll the source and update the schema
 automatically.
 
 If a function is provided as in the example above, that function will be called every time the
 polling interval is reached.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   pollingInterval: 5_000 // Polling interval in milliseconds
@@ -85,7 +85,7 @@ You can provide additional resolvers to the supergraph. This can be useful if yo
 custom resolver to the supergraph, or override the existing one.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   additionalResolvers: {
@@ -132,7 +132,7 @@ You can provide `GraphQLSchema`, `DocumentNode` which has the AST of the subgrap
 is the `SDL` representation of the subgraph
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   subgraph: './subgraph.graphql',
@@ -152,14 +152,14 @@ export const gatewayConfig = defineConfig({
   The rest of the configuration options are the same as the supergraph configuration.
 </Callout>
 
-### Configure Mesh as a GraphQL Proxy
+### Configure Hive Gateway as a GraphQL Proxy
 
 #### `proxy`
 
 HTTP executor options to proxy all incoming requests to another HTTP endpoint.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   proxy: {
@@ -169,12 +169,12 @@ export const gatewayConfig = defineConfig({
 ```
 
 <Callout>
-By default, Mesh Serve introspects the schema from the endpoint. And if it fails, it skips the
+By default, Hive Gateway introspects the schema from the endpoint. And if it fails, it skips the
 validation and schema aware features. But if Hive CDN endpoint and key have been provided in the
-configuration, Mesh Serve will fetch the schema from the Hive CDN.
+configuration, Hive Gateway will fetch the schema from the Hive CDN.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   proxy: {
@@ -200,7 +200,7 @@ Additional headers to include when querying the original schema It can be a plai
 function that returns a plain object.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   proxy: {
@@ -237,13 +237,13 @@ Request Credentials (default: 'same-origin')
 
 #### `skipValidation`
 
-By default, Mesh validates the operations on the gateway against the introspected schema. This is
-recommended to keep it enabled for security reasons. But it brings a performance overhead. If you
-want to disable this validation and send the operations directly to the upstream service, you can
-set this option to `true`.
+By default, Hive Gateway validates the operations on the gateway against the introspected schema.
+This is recommended to keep it enabled for security reasons. But it brings a performance overhead.
+If you want to disable this validation and send the operations directly to the upstream service, you
+can set this option to `true`.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   proxy: {
@@ -257,11 +257,11 @@ export const gatewayConfig = defineConfig({
 
 #### `sslCredentials` for HTTPS
 
-This is the option to provide SSL Credentials for HTTPS Server. If this is provided, Mesh will be
-served via HTTPS instead of HTTP.
+This is the option to provide SSL Credentials for HTTPS Server. If this is provided, Hive Gateway
+will be served via HTTPS instead of HTTP.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   sslCredentials: {
@@ -282,11 +282,11 @@ export const gatewayConfig = defineConfig({
 This is the option to open the browser automatically when the server is started.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   /**
-   * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
+   * Path to the browser that will be used by `Hive Gateway` to open a playground window in development mode
    * This feature can be disabled by passing `false`
    */
   browser: true // or `google-chrome` or `firefox` or `safari` or `edge` or `opera` or `vivaldi` or `brave` or `chromium` or `msedge` or `false`
@@ -299,7 +299,7 @@ These are the options to configure the port and host of the server in the config
 than passing them as CLI arguments.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   port: 4000,
@@ -313,7 +313,7 @@ This is the option to configure the maximum header size of the server. By defaul
 longer headers are sent, the server will respond with a 431 status code.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   maxHeaderSize: 32 * 1024 // 32KB
@@ -322,7 +322,7 @@ export const gatewayConfig = defineConfig({
 
 #### `plugins`
 
-This is the option to extend your Mesh Gateway with plugins. GraphQL Mesh uses
+This is the option to extend your Hive Gateway with plugins. Hive Gateway uses
 [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server/docs/features/envelop-plugins), and
 [Envelop](https://the-guild.dev/graphql/envelop) plugin system which allows you to hook into the
 different phases of the GraphQL execution to manipulate or track the entire workflow step-by-step.
@@ -338,7 +338,7 @@ different phases of the GraphQL execution to manipulate or track the entire work
 You can configure GraphiQL playground that allows you to play with your GraphQL API.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   graphiql: {
@@ -356,7 +356,7 @@ export const gatewayConfig = defineConfig({
 If you want to disable the landing page, you can set this option to `false`.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   landingPage: false
@@ -374,14 +374,14 @@ export const gatewayConfig = defineConfig({
   are doing. Use it on your own risk.
 </Callout>
 
-GraphQL Mesh heavily relies on WHATWG Fetch API not only as a HTTP Client but also for handling HTTP
+Hive Gateway heavily relies on WHATWG Fetch API not only as a HTTP Client but also for handling HTTP
 Server components. So it uses [`@whatwg-node/fetch`](https://github.com/ardatan/whatwg-node) by
 default which is a platform agnostic implementation of the Fetch API. If you want to use a different
 Fetch API implementation, you can provide it here.
 
 ```ts filename="gateway.config.ts"
 import fetch from 'node-fetch'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   fetchAPI: {
@@ -392,7 +392,8 @@ export const gatewayConfig = defineConfig({
 
 #### `logger`
 
-By default, Mesh uses a simple logger that logs to the console by using standard `console` methods.
+By default, Hive Gateway uses a simple logger that logs to the console by using standard `console`
+methods.
 
 Using this option, you can do;
 
@@ -401,7 +402,7 @@ Using this option, you can do;
 - Choose a log level
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 import { createLogger } from 'some-logger-library'
 
 export const gatewayConfig = defineConfig({
@@ -413,8 +414,7 @@ export const gatewayConfig = defineConfig({
 })
 ```
 
-`TODO: Move those into a dedicated Logging page under Features`
-[GraphQL Mesh uses the same logging mechanism of GraphQL Yoga](https://the-guild.dev/graphql/yoga-server/docs/features/logging-and-debugging)
+[Hive Gateway uses the same logging mechanism of GraphQL Yoga](https://the-guild.dev/graphql/yoga-server/docs/features/logging-and-debugging)
 
 #### `graphqlEndpoint`
 
@@ -422,7 +422,7 @@ This is the option to provide a custom GraphQL endpoint for the server. By defau
 `/graphql`.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   graphqlEndpoint: '/my-graphql-endpoint'
@@ -437,14 +437,14 @@ This is enabled by default for security reasons.
 
 #### `cache`
 
-Provide a cache storage for the server. By default, Mesh uses an in-memory cache.
+Provide a cache storage for the server. By default, Hive Gateway uses an in-memory cache.
 
 [Learn more about Caching](/v1/serve/features/performance)
 
 #### `pubsub`
 
-Provide a PubSub instance for the server. By default, Mesh uses an in-memory PubSub. In order to
-have a better scalability, you can provide a custom PubSub.
+Provide a PubSub instance for the server. By default, Hive Gateway uses an in-memory PubSub. In
+order to have a better scalability, you can provide a custom PubSub.
 
 [Learn more about Subscriptions and Webhooks to see if you need this option](/v1/serve/features/subscriptions-webhooks)
 

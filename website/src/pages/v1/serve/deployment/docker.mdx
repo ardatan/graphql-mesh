@@ -21,7 +21,7 @@ in case you don't have Docker installed already.
 
 ### Arguments
 
-Mesh Serve can be configured with [CLI arguments](/v1/serve/references/cli#arguments) even when
+Hive Gateway can be configured with [CLI arguments](/v1/serve/references/cli#arguments) even when
 running the image!
 
 For example, changing the supergraph to use the `my-schema.graphql` schema instead looks like this:
@@ -30,20 +30,20 @@ For example, changing the supergraph to use the `my-schema.graphql` schema inste
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/my-schema.graphql:/serve/my-schema.graphql" \
-  ghcr.io/ardatan/mesh-serve supergraph my-schema.graphql
+  ghcr.io/ardatan/hive-gateway supergraph my-schema.graphql
 ```
 
 For a full list of CLI arguments, please refer to the [CLI arguments](./references/cli#arguments).
 
 ### Config File
 
-Instead of configuring Mesh Serve with CLI arguments, we support configuring with a config file.
+Instead of configuring Hive Gateway with CLI arguments, we support configuring with a config file.
 
-You're recommended to use the `gateway.config.ts` file to configure Mesh Serve. Simply mount the
+You're recommended to use the `gateway.config.ts` file to configure Hive Gateway. Simply mount the
 config file when running the image.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   proxy: {
@@ -56,16 +56,18 @@ export const gatewayConfig = defineConfig({
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/gateway.config.ts:/serve/gateway.config.ts" \
-  ghcr.io/ardatan/mesh-serve proxy
+  ghcr.io/ardatan/hive-gateway proxy
 ```
 
-For a full list of CLI arguments, please refer to the [Config Reference](./references/config).
+For a full list of CLI arguments, please refer to the
+[Config Reference](/v1/serve/references/config).
 
 ### Changing Port in Container
 
-The default port where Mesh Serve listens is `4000`; however, maybe the container is running inside
-a network (like when using [Networking in Compose](https://docs.docker.com/compose/networking/)) and
-you wish to change the port of Mesh Serve in the image.
+The default port where Hive Gateway listens is `4000`; however, maybe the container is running
+inside a network (like when using
+[Networking in Compose](https://docs.docker.com/compose/networking/)) and you wish to change the
+port of Hive Gateway in the image.
 
 You can use the `gateway.config.ts` to change the port, or simply pass in the `--port` argument when
 running the image:
@@ -74,7 +76,7 @@ running the image:
 docker run \
   -p 8080:8080 \
   -v "$(pwd)/supergraph.graphql:/serve/supergraph.graphql" \
-  ghcr.io/ardatan/mesh-serve supergraph --port=8080
+  ghcr.io/ardatan/hive-gateway supergraph --port=8080
 ```
 
 ## Running
@@ -86,24 +88,24 @@ image is as easy as:
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/supergraph.graphql:/serve/gateway.config.ts" \
-  ghcr.io/ardatan/mesh-serve supergraph
+  ghcr.io/ardatan/hive-gateway supergraph
 ```
 
 ## Docker Compose
 
 You may have an environment where you want to use [Docker Compose](https://docs.docker.com/compose/)
-and would like to add Mesh Serve there.
+and would like to add Hive Gateway there.
 
 Start by defining the `docker-compose.yml`
 
 ```yaml
 services:
-  mesh-serve:
-    image: ghcr.io/ardatan/mesh-serve
+  hive-gateway:
+    image: ghcr.io/ardatan/hive-gateway
     command: supergraph
     ports:
       - '4000:4000'
-    # Add GraphQL Hive environment variables in case you use it
+    # Add Hive Registry environment variables in case you use it
     # environment:
     #   HIVE_CDN_ENDPOINT: <secret>
     #   HIVE_CDN_KEY: <secret>
@@ -123,7 +125,7 @@ docker compose up
 ### Install Plugin
 
 You may want to add additional functionality, or plugins to the base image - you just need to create
-a new Dockerfile basing the image off `ghcr.io/ardatan/mesh-serve`.
+a new Dockerfile basing the image off `ghcr.io/ardatan/hive-gateway`.
 
 If need only a handful of plugins (or some other dependencies), you can simply extend the image and
 install the modules with `npm i`:
@@ -133,20 +135,20 @@ For example, adding
 container would look like this:
 
 ```dockerfile filename="Dockerfile"
-FROM ghcr.io/ardatan/mesh-serve
+FROM ghcr.io/ardatan/hive-gateway
 
 RUN npm i @escape.tech/graphql-armor-block-field-suggestions
 ```
 
 ```sh
-docker build -t mesh-serve-w-block-suggestions .
+docker build -t hive-gateway-w-block-suggestions .
 ```
 
 Configure to use the block field suggestions plugin:
 
 ```ts filename="gateway.config.ts"
 import { blockFieldSuggestionsPlugin } from '@escape.tech/graphql-armor-block-field-suggestions'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
@@ -166,7 +168,7 @@ And then simply start the new image with the config file mounted:
 docker run \
   -p 4000:4000 \
   -v "$(pwd)/gateway.config.ts:/serve/gateway.config.ts" \
-  mesh-serve-w-block-suggestions supergraph
+  hive-gateway-w-block-suggestions supergraph
 ```
 
 ### Develop Plugin
@@ -184,15 +186,15 @@ execution duration to the GraphQL result `extensions` property.
     "moment": "^2"
   },
   "devDependencies": {
-    "@graphql-mesh/serve-cli": "latest",
-    "@graphql-mesh/serve-runtime": "latest"
+    "@graphql-hive/gateway": "latest",
+    "@graphql-hive/gateway": "latest"
   }
 }
 ```
 
 ```ts filename="my-timing.ts"
 import moment from 'moment'
-import type { GatewayPlugin } from '@graphql-mesh/serve-runtime'
+import type { GatewayPlugin } from '@graphql-hive/gateway'
 
 export function useTiming(): GatewayPlugin {
   return {
@@ -228,7 +230,7 @@ export function useTiming(): GatewayPlugin {
 ```
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 import { useTiming } from './my-timing'
 
 export const gatewayConfig = defineConfig({
@@ -239,11 +241,11 @@ export const gatewayConfig = defineConfig({
 Your Dockerfile should then look something like this:
 
 ```dockerfile filename="Dockerfile"
-FROM ghcr.io/ardatan/mesh-serve
+FROM ghcr.io/ardatan/hive-gateway
 
 # we dont install dev deps because:
 #   1. we need them for type checking only
-#   2. Mesh Serve is already available in the docker image
+#   2. Hive Gateway is already available in the docker image
 COPY package*.json .
 RUN npm i --omit=dev
 
@@ -254,13 +256,13 @@ COPY gateway.config.ts .
 Then build your image:
 
 ```sh
-docker build -t mesh-serve-w-my-timing .
+docker build -t hive-gateway-w-my-timing .
 ```
 
 And finally start it (the config file is in the image and doesn't need to be mounted):
 
 ```sh
-docker run -p 4000:4000 mesh-serve-w-my-timing supergraph
+docker run -p 4000:4000 hive-gateway-w-my-timing supergraph
 ```
 
 <Callout>
@@ -271,7 +273,7 @@ docker run -p 4000:4000 mesh-serve-w-my-timing supergraph
 docker run -p 4000:4000 \
   -v "$(pwd)/gateway.config.ts":/serve/gateway.config.ts \
   -v "$(pwd)/my-timing.ts":/serve/my-timing.ts \
-  mesh-serve-w-my-timing supergraph
+  hive-gateway-w-my-timing supergraph
 ```
 
 </Callout>
@@ -291,7 +293,7 @@ Say you have the following files:
     "moment": "^2"
   },
   "devDependencies": {
-    "@graphql-mesh/serve-cli": "latest"
+    "@graphql-hive/gateway": "latest"
   }
 }
 ```
@@ -309,7 +311,7 @@ export const additionalResolvers = {
 ```
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 import { additionalResolvers } from './my-time'
 
 export const gatewayConfig = defineConfig({ additionalResolvers })
@@ -318,11 +320,11 @@ export const gatewayConfig = defineConfig({ additionalResolvers })
 Your Dockerfile should then look something like this:
 
 ```dockerfile filename="Dockerfile"
-FROM ghcr.io/ardatan/mesh-serve
+FROM ghcr.io/ardatan/hive-gateway
 
 # we dont install dev deps because:
 #   1. we need them for type checking only
-#   2. Mesh Serve is already available in the docker image
+#   2. Hive Gateway is already available in the docker image
 COPY package*.json .
 RUN npm i --omit=dev
 
@@ -333,11 +335,11 @@ COPY gateway.config.ts .
 Then build your image:
 
 ```sh
-docker build -t mesh-serve-w-add-res .
+docker build -t hive-gateway-w-add-res .
 ```
 
 And finally start it (the config file is in the image and doesn't need to be mounted):
 
 ```sh
-docker run -p 4000:4000 mesh-serve-w-add-res supergraph
+docker run -p 4000:4000 hive-gateway-w-add-res supergraph
 ```

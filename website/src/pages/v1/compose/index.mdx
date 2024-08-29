@@ -8,7 +8,7 @@ import { Callout } from '@theguild/components'
 # Mesh Compose
 
 Mesh Compose is a tool for composing non-GraphQL and GraphQL sources into a supergraph, that can be
-served by [Mesh Serve](/v1/serve/introduction) or other gateways such as
+served by [Hive Gateway](/v1/serve/introduction) or other gateways such as
 [Apollo Gateway, Apollo Router or Cosmo Router](/v1/compose/consume-in-other-routers).
 
 Mesh Compose can also be used for transforming non-federation GraphQL sources into a Apollo
@@ -29,7 +29,7 @@ Full overview of Mesh Compose features:
 
 ## Installation
 
-[Node.js](https://nodejs.org) is a pre-requisite for Mesh Serve. You can install Compose CLI with
+[Node.js](https://nodejs.org) is a pre-requisite for Hive Gateway. You can install Compose CLI with
 your favorite package manager:
 
 ```sh npm2yarn
@@ -200,9 +200,7 @@ You can generate the supergraph by running the following command:
 mesh-compose > supergraph.graphql
 ```
 
-<Callout>
-  [In order to serve the supergraph, you need to setup GraphQL Mesh Serve](/v1/serve).
-</Callout>
+<Callout>[In order to serve the supergraph, you need to setup Hive Gateway](/v1/serve).</Callout>
 
 ## Generating the individual subgraphs for Schema Registry
 

@@ -22,7 +22,7 @@ The following features are supported in this plugin:
 ## Usage Example
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, defineConfig } from '@graphql-mesh/serve-cli'
+import { createStdoutExporter, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -60,7 +60,7 @@ built-in exporters, or create your own custom exporter.
 A simple exporter that writes the spans to the `stdout` of the process.
 
 ```ts filename="gateway.config.ts"
-import { createStdoutExporter, defineConfig } from '@graphql-mesh/serve-cli'
+import { createStdoutExporter, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -74,7 +74,7 @@ export const gatewayConfig = defineConfig({
 An exporter that writes the spans to an OTLP-supported backend.
 
 ```ts filename="gateway.config.ts"
-import { createOtlpHttpExporter, defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpHttpExporter, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -93,7 +93,7 @@ export const gatewayConfig = defineConfig({
 #### OTLP over gRPC
 
 ```ts filename="gateway.config.ts"
-import { createOtlpGrpcExporter, defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpGrpcExporter, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -115,7 +115,7 @@ export const gatewayConfig = defineConfig({
 use it by pointing the `createOtlpHttpExporter`/`createOtlpGrpcExporter` to the Jaeger endpoint:
 
 ```ts filename="gateway.config.ts"
-import { createOtlpHttpExporter, defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpHttpExporter, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -150,7 +150,7 @@ docker run -d --name jaeger \
 by configuring the `createOtlpHttpExporter`/`createOtlpGrpcExporter` to the NewRelic endpoint:
 
 ```ts filename="gateway.config.ts"
-import { createOtlpHttpExporter, defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpHttpExporter, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -172,7 +172,7 @@ export const gatewayConfig = defineConfig({
 so you can use it by pointing the `createOtlpHttpExporter` to the DataDog Agent endpoint:
 
 ```ts filename="gateway.config.ts"
-import { createOtlpHttpExporter, defineConfig } from '@graphql-mesh/serve-cli'
+import { createOtlpHttpExporter, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -194,7 +194,7 @@ export const gatewayConfig = defineConfig({
 exporter to send the spans to a Zipkin backend:
 
 ```ts filename="gateway.config.ts"
-import { createZipkinExporter, defineConfig } from '@graphql-mesh/serve-cli'
+import { createZipkinExporter, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -274,7 +274,7 @@ And the following attributes for the HTTP response:
 You may disable this by setting `spans.http` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -292,7 +292,7 @@ export const gatewayConfig = defineConfig({
 Or, you may filter the spans by setting the `spans` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -329,7 +329,7 @@ following attributes:
 You may disable this by setting `spans.graphqlParse` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -347,7 +347,7 @@ export const gatewayConfig = defineConfig({
 Or, you may filter the spans by setting the `spans` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -384,7 +384,7 @@ following attributes:
 You may disable this by setting `spans.graphqlValidate` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -402,7 +402,7 @@ export const gatewayConfig = defineConfig({
 Or, you may filter the spans by setting the `spans` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -440,7 +440,7 @@ following attributes:
 You may disable this by setting `spans.graphqlExecute` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -458,7 +458,7 @@ export const gatewayConfig = defineConfig({
 Or, you may filter the spans by setting the `spans` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -487,7 +487,7 @@ the following attributes:
 - `graphql.document`: The GraphQL query string executed to the upstream
 - `graphql.operation.name`: The operation name
 - `graphql.operation.type`: The operation type (`query`/`mutation`/`subscription`)
-- `mesh.upstream.subgraph.name`: The name of the upstream subgraph
+- `gateway.upstream.subgraph.name`: The name of the upstream subgraph
 
 In addition, the span will include the following attributes for the HTTP requests;
 
@@ -505,7 +505,7 @@ And the following attributes for the HTTP response:
 You may disable this by setting `spans.subgraphExecute` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -523,7 +523,7 @@ export const gatewayConfig = defineConfig({
 Or, you may filter the spans by setting the `spans.subgraphExecute` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -565,7 +565,7 @@ And the following attributes for the HTTP response:
 You may disable this by setting `spans.upstreamFetch` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -583,7 +583,7 @@ export const gatewayConfig = defineConfig({
 Or, you may filter the spans by setting the `spans.upstreamFetch` configuration to a function:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
@@ -619,16 +619,16 @@ the incoming HTTP request and the outgoing HTTP requests.
 You may disable this by setting `inheritContext` or `propagateContext` to `false`:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
     exporters: [
       /* ... */
     ],
-    // Controls the propagation of the trace context between the incoming HTTP request and the Mesh gateway
+    // Controls the propagation of the trace context between the incoming HTTP request and Hive Gateway
     inheritContext: false,
-    // Controls the propagation of the trace context between the Mesh gateway and the upstream HTTP requests
+    // Controls the propagation of the trace context between Hive Gateway and the upstream HTTP requests
     propagateContext: false
   }
 })

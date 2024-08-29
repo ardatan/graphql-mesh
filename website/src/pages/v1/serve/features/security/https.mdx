@@ -5,34 +5,34 @@ import { Callout } from '@theguild/components'
 HTTPS (HyperText Transfer Protocol Secure) is an encrypted version of the HTTP protocol. It uses TLS
 to encrypt all communication between a client and a server.
 
-There are different ways to secure the connection. It is either between the client and Mesh Serve or
-between Mesh Serve and the subgraphs.
+There are different ways to secure the connection. It is either between the client and Hive Gateway
+or between Hive Gateway and the subgraphs.
 
 <Callout>This is only available on Node environment.</Callout>
 
 ## Subgraph - Gateway Connection
 
-Mesh Serve acts as a client to the subgraphs, so if you want to have a secure connection in between
-Mesh Serve and the subgraphs, you can use HTTPs.
+Hive Gateway acts as a client to the subgraphs, so if you want to have a secure connection in
+between Hive Gateway and the subgraphs, you can use HTTPs.
 
 ### Using Self-Signed Certificates
 
-But if you use self-signed certificates, Mesh Serve may not verify the certificate by default, then
-you need to provide those certificates to Mesh Serve.
+But if you use self-signed certificates, Hive Gateway may not verify the certificate by default,
+then you need to provide those certificates to Hive Gateway.
 
 #### Environment Variables
 
-Mesh Serve's default HTTP Client implementation respects Node's environment variables related to
+Hive Gateway's default HTTP Client implementation respects Node's environment variables related to
 this;
 
 - `NODE_TLS_REJECT_UNAUTHORIZED` - If set to `0`, it disables the rejection of self-signed
   certificates.
 - `NODE_EXTRA_CA_CERTS` - If set, it provides a path to a CA certificate file.
 
-Below is an example of how to use self-signed certificates with Mesh Serve;
+Below is an example of how to use self-signed certificates with Hive Gateway;
 
 ```sh
-NODE_EXTRA_CA_CERTS=/path/to/ca.crt mesh-serve supergraph <path-to-supergraph-config>
+NODE_EXTRA_CA_CERTS=/path/to/ca.crt hive-gateway supergraph <path-to-supergraph-config>
 ```
 
 #### Configuration File
@@ -42,7 +42,7 @@ The only way to configure HTTPS programmaticaly is to use a custom agent like be
 ```ts
 import { readFileSync } from 'fs'
 import { Agent } from 'https'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 const agent = new Agent({
   ca: readFileSync('/path/to/ca.crt')
@@ -61,11 +61,11 @@ export const gatewayConfig = defineConfig({
 
 ## Client - Gateway Connection
 
-You can also configure Mesh Serve to listen on HTTPS. You can provide the path to the key and
+You can also configure Hive Gateway to listen on HTTPS. You can provide the path to the key and
 certificate files in the configuration file;
 
 ```ts
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   sslCredentials: {

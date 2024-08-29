@@ -7,11 +7,11 @@ import { Callout } from '@theguild/components'
   us directly in case you are having any troubles.
 </Callout>
 
-Mesh Serve can be deployed on the edge. This means that you can deploy your Mesh Serve to a
+Hive Gateway can be deployed on the edge. This means that you can deploy your Hive Gateway to a
 serverless environment like AWS Lambda, Cloudflare Workers, or Azure Functions.
 
-For Serverless environments, you cannot use Serve CLI `mesh-serve` but you can use the
-`createGatewayRuntime` function from `@graphql-mesh/serve-runtime` package.
+For Serverless environments, you cannot use Serve CLI `hive-gateway` but you can use the
+`createGatewayRuntime` function from `@graphql-hive/gateway` package.
 
 The serve configuration goes into `createGatewayRuntime` function instead of `gatewayConfig` export
 in `gateway.config.ts` file.
@@ -26,8 +26,8 @@ Memcached.
 
 ## Bundling problem
 
-Mesh Serve cannot import the required dependencies manually, and load the supergraph from the file
-system. So if you are not using a schema registry such as GraphQL Hive or Apollo GraphOS, we need to
+Hive Gateway cannot import the required dependencies manually, and load the supergraph from the file
+system. So if you are not using a schema registry such as Hive Gateway or Apollo GraphOS, we need to
 save the supergraph as a code file (`supergraph.js` or `supergraph.ts`) and import it.
 
 ### Loading the supergraph from a file
@@ -56,7 +56,7 @@ export default /* GraphQL */ `
 Then you need to import the supergraph in your serverless function:
 
 ```ts
-import { createGatewayRuntime, WSTransport } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime, WSTransport } from '@graphql-hive/gateway'
 // Let's say you are using WS transport
 import supergraph from './supergraph.js'
 
