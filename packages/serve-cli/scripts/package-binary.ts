@@ -8,7 +8,7 @@ const platform = (process.argv[2] || os.platform()).toLowerCase();
 const arch = (process.argv[3] || os.arch()).toLowerCase();
 
 const isDarwin = platform.includes('darwin') || platform.includes('macos');
-const isWindows = platform.includes('windows');
+const isWindows = platform.includes('win32');
 const isLinux = platform.includes('linux');
 if (!isDarwin && !isWindows && !isLinux) {
   throw new Error(`Unsupported platform ${platform}`);
