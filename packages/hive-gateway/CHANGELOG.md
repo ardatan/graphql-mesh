@@ -1,5 +1,14 @@
 # @graphql-hive/gateway
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`bc70d78`](https://github.com/ardatan/graphql-mesh/commit/bc70d78c7542d1ca46fe65a9886da880e7e574b7)]:
+  - @graphql-mesh/serve-runtime@0.9.1
+  - @graphql-mesh/serve-cli@0.12.1
+
 ## 0.1.0
 
 ### Patch Changes

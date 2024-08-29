@@ -1,5 +1,16 @@
 # @graphql-mesh/serve-runtime
 
+## 0.9.1
+
+### Patch Changes
+
+- [`bc70d78`](https://github.com/ardatan/graphql-mesh/commit/bc70d78c7542d1ca46fe65a9886da880e7e574b7)
+  Thanks [@ardatan](https://github.com/ardatan)! - Print documents in `subgraph-execute` logs
+  correctly
+
+- Updated dependencies []:
+  - @graphql-mesh/hmac-upstream-signature@0.4.1
+
 ## 0.9.0
 
 ### Minor Changes
