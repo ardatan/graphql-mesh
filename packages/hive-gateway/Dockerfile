@@ -7,7 +7,7 @@ WORKDIR /install
 
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
-  node-libcurl@^4 \
+  node-libcurl@npm:@ardatan/node-libcurl@^4 \
   graphql@^16.9.0
 
 #

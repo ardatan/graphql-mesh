@@ -1,13 +1,12 @@
 # IMPORTANT: make sure bundle is ready with `yarn bundle`
 
-# we build with Node 21 because node-libcurl has published prebuilt releases (building from source fails when using Node 22)
-FROM node:21 AS install
+FROM node:22 AS install
 
 WORKDIR /install
 
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
-  node-libcurl@^4 \
+  node-libcurl@npm:@ardatan/node-libcurl@^4 \
   graphql@^16.9.0
 
 #
