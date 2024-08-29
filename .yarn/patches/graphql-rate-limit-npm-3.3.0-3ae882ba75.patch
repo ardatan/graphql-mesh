@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index bb3c6e4fa2dd3379e49babcbad1b14dcc714c5dd..f3312cf7c88d5703ece190d0cee932d839259505 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,7 @@
+   "description": "Add Rate Limiting To Your GraphQL Resolvers 💂‍♀",
+   "main": "dist/index.js",
+   "typings": "dist/index.d.ts",
+-  "module": "build/esm/index.js",
++  "module": "dist/esm/index.js",
+   "repository": "https://github.com/teamplanes/graphql-rate-limit",
+   "license": "MIT",
+   "keywords": [],
