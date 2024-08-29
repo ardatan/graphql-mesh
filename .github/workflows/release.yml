@@ -25,6 +25,7 @@ jobs:
   ghcr:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - productname: mesh-serve
@@ -89,6 +90,7 @@ jobs:
   bin:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, macos-latest-large]
         arch: [x86_64, aarch64]

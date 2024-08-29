@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [release]
     strategy:
+      fail-fast: false
       matrix:
         include:
           - productname: mesh-serve
@@ -89,7 +90,7 @@ jobs:
         with:
           header: Docker Image for ${{ matrix.productname }}
           message: |
-            Published images for this PR are available at:
+            Published ${{matrix.productname}} images for this PR are available at:
             ```
             ghcr.io/ardatan/${{ matrix.productname }}:${{ steps.ver-mesh-serve.outputs.result }}
             ```
