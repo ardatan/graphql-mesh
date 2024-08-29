@@ -29,7 +29,11 @@ console.log('Removing the signature');
 if (isDarwin) {
   execSync(`codesign --remove-signature ${dest}`);
 } else if (isWindows) {
-  execSync(`signtool remove /s ${dest}`);
+  try {
+    execSync(`signtool remove /s ${dest}`);
+  } catch (e) {
+    console.warn('Removing signature failed', e);
+  }
 }
 
 console.log('Injecting blob');
@@ -51,7 +55,11 @@ console.log('Signing binary');
 if (isDarwin) {
   execSync(`codesign --sign - ${dest}`);
 } else if (isWindows) {
-  execSync(`signtool sign /fd SHA256 ${dest}`);
+  try {
+    execSync(`signtool sign /fd SHA256 ${dest}`);
+  } catch (e) {
+    console.warn('Signing failed', e);
+  }
 } else {
   console.warn('Signing skipped because unsupported platform');
 }
