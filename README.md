@@ -12,10 +12,26 @@
 </p>
 <!-- Graphql logo readme banner END -->
 
+<div align="center">
+  <h3>GraphQL Mesh</h3>
+  <h6>GraphQL Federation framework for any API</h6>
+  <a href="https://www.the-guild.dev/graphql/yoga-server/docs"><b>Go to documenation</b></a>
+</div>
+
+<br />
+
+<div align="center">
+
 [![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcli)
 ![CI](https://github.com/ardatan/graphql-mesh/workflows/test/badge.svg)
 [![Discord Chat](https://img.shields.io/discord/625400653321076807)](https://discord.gg/xud7bH9)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
+</div>
+
+GraphQL Mesh is a GraphQL Federation framework and gateway for both GraphQL Federation and
+non-GraphQL Federation subgraphs, non-GraphQL services, such as REST and gRPC, and also databases
+such as MongoDB, MySQL, and PostgreSQL.
 
 GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run
 GraphQL (and also ones that do run GraphQL). It can be used as a gateway to other services or run as
@@ -33,7 +49,7 @@ implementation, legacy API services, chosen schema specification and non-typed A
 
 GraphQL Mesh is acting as a proxy to your data, and uses common libraries to wrap your existing API
 services. You can use this proxy locally in your service or application by running the GraphQL
-schema locally (with GraphQL `execute`), or you can deploy this as a gateway layer to your internal
+schema locally (with GraphQL execute), or you can deploy this as a gateway layer to your internal
 service.
 
 ## How does it work?
@@ -44,35 +60,7 @@ The way GraphQL Mesh works is:
 2. Create a runtime instance of fully-typed SDK for the services.
 3. Convert API specs to GraphQL schema
 4. Applies custom schema transformations and schema extensions
-5. Creates fully-typed, single schema, GraphQL SDK to fetch data from your services.
-
-## Getting Started
-
-<details>
-<summary><strong>Installation</strong></summary>
-<p>
-
-GraphQL Mesh comes in multiple packages, which you should install according to your needs.
-
-To get started with the basics, install the following:
-
-```sh
-$ yarn add graphql @graphql-mesh/runtime @graphql-mesh/cli
-```
-
-Then, you need to install a Mesh handler, according to your API needs. You can see the list of all
-available built-in handlers in this README, under the `Supported APIs` section.
-
-For example, if you wish to use OpenAPI handler, install the handler that matches your needs:
-
-```sh
-$ yarn add graphql @graphql-mesh/openapi
-```
-
-Then, this handler will be available for you to use in your config file.
-
-</p>
-</details>
+5. Creates a Federation subgraph or a Federation-compatible supergraph
 
 [Getting started](https://www.graphql-mesh.com/docs/introduction)
 
