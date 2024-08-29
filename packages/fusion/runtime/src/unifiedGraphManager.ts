@@ -31,12 +31,6 @@ function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   return source;
 }
 
-export interface GetExecutableSchemaFromSupergraphOptions<TContext extends Record<string, any>> {
-  additionalTypeDefs?: DocumentNode | string | DocumentNode[] | string[];
-  additionalResolvers?: IResolvers<unknown, TContext> | IResolvers<unknown, TContext>[];
-  transportContext?: TransportContext;
-}
-
 export type UnifiedGraphHandler = (opts: UnifiedGraphHandlerOpts) => UnifiedGraphHandlerResult;
 
 export interface UnifiedGraphHandlerOpts {
