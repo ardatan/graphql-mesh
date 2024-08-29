@@ -125,6 +125,7 @@ jobs:
       - name: bundle
         run: yarn bundle
       - name: package binary
+        if: matrix.arch != 'aarch64' && matrix.os != 'ubuntu-latest'
         working-directory: packages/serve-cli
         run: yarn package-binary
       - name: package binary
