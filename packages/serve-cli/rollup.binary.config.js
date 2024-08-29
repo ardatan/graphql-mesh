@@ -38,8 +38,6 @@ function packDeps() {
   }
 
   const zip = new ADMZip();
-  zip.addLocalFolder('../../node_modules/graphql', './graphql'); // works just like this because graphql is zero-dep
-
   let uwsAddonAdded = false;
   const uwsAddonForThisSystem = `uws_${process.platform}_${process.arch}_${process.versions.modules}.node`;
   zip.addLocalFolder('../../node_modules/uWebSockets.js', './uWebSockets.js', filename => {
@@ -58,13 +56,13 @@ function packDeps() {
       `uWebSockets.js doesnt have the "${uwsAddonForThisSystem}" addon for this system`,
     );
   }
-
+  zip.addLocalFolder('../../node_modules/graphql', './graphql'); // works just like this because graphql is zero-dep
   zip.addLocalFolder('bundle/node_modules');
   const zipBuf = zip.toBuffer();
   const __MODULES_HASH__ = createHash('sha256').update(zipBuf).digest('hex');
 
   return {
-    name: 'installDeps',
+    name: 'packDeps',
     async renderChunk(code) {
       // inject the sea packed deps install script on the second line, skipping the hashbang and 'use strict' declaration
       const [hashbang, usestrict, ...rest] = code.split('\n');
