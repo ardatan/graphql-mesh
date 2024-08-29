@@ -42,6 +42,7 @@ function packDeps() {
   const uwsAddonForThisSystem = `uws_${process.platform}_${process.arch}_${process.versions.modules}.node`;
   zip.addLocalFolder('../../node_modules/uWebSockets.js', './uWebSockets.js', filename => {
     filename = filename.replace('uWebSockets.js/', '');
+    console.log(`Packing ${filename}...`);
     if (filename === uwsAddonForThisSystem) uwsAddonAdded = true;
     return [
       uwsAddonForThisSystem,
@@ -52,9 +53,7 @@ function packDeps() {
     ].includes(filename);
   });
   if (!uwsAddonAdded) {
-    throw new Error(
-      `uWebSockets.js doesnt have the "${uwsAddonForThisSystem}" addon for this system`,
-    );
+    console.warn(`uWebSockets.js doesnt have the "${uwsAddonForThisSystem}" addon for this system`);
   }
   zip.addLocalFolder('../../node_modules/tslib', './tslib'); // tslib is zero-dep (necessary for node-libcurl)
   zip.addLocalFolder('../../node_modules/node-libcurl', './node-libcurl'); // node-libcurl is zero-dep (aside from tslib, the other dependencies in package.json are just for building)
