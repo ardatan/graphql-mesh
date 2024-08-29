@@ -20,7 +20,7 @@ target "mesh-serve" {
 }
 
 group "hive-gateway" {
-  targets = ["hive-gateway]
+  targets = ["hive-gateway"]
 }
 
 variable "MESH_SERVE_TAGS" {
