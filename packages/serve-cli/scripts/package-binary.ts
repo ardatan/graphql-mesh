@@ -24,25 +24,33 @@ execSync(`node --experimental-sea-config sea-config.json`);
 console.log(`Using node from ${process.execPath}`);
 await fs.copyFile(process.execPath, dest);
 
+console.log('Removing the signature');
+
+if (isDarwin) {
+  execSync(`codesign --remove-signature ${dest}`);
+} else if (isWindows) {
+  execSync(`signtool remove /s ${dest}`);
+}
+
 console.log('Injecting blob');
 if (isWindows) {
-  execSync(`npx postject ${dest} NODE_SEA_BLOB sea-prep.blob ^
-    --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2`);
+  execSync(
+    `npx postject ${dest} NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2`,
+  );
 } else if (isDarwin) {
-  execSync(`npx postject ${dest} NODE_SEA_BLOB sea-prep.blob \
-    --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 \
-    --macho-segment-name NODE_SEA`);
+  execSync(
+    `npx postject ${dest} NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA`,
+  );
 } else {
-  execSync(`npx postject ${dest} NODE_SEA_BLOB sea-prep.blob \
-    --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2`);
+  execSync(
+    `npx postject ${dest} NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2`,
+  );
 }
 
 console.log('Signing binary');
 if (isDarwin) {
-  execSync(`codesign --remove-signature ${dest}`);
   execSync(`codesign --sign - ${dest}`);
 } else if (isWindows) {
-  execSync(`signtool remove /s ${dest}`);
   execSync(`signtool sign /fd SHA256 ${dest}`);
 } else {
   console.warn('Signing skipped because unsupported platform');
