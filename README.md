@@ -15,7 +15,7 @@
 <div align="center">
   <h3>GraphQL Mesh</h3>
   <h6>GraphQL Federation framework for any API</h6>
-  <a href="https://www.the-guild.dev/graphql/yoga-server/docs"><b>Go to documenation</b></a>
+  <a href="https://www.graphql-mesh.com/docs"><b>Go to documenation</b></a>
 </div>
 
 <br />
