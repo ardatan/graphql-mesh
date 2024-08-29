@@ -4,7 +4,6 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 import cluster from 'node:cluster';
 import module from 'node:module';
 import { availableParallelism, release } from 'node:os';
-import { pathToFileURL } from 'node:url';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { JWTAuthPluginOptions } from '@graphql-mesh/plugin-jwt-auth';
@@ -269,7 +268,11 @@ let cli = new Command()
   );
 
 export function run(userCtx: Partial<CLIContext>) {
-  module.register('@graphql-mesh/include/hooks', pathToFileURL(__filename));
+  module.register(
+    '@graphql-mesh/include/hooks',
+    // @ts-ignore bob will complain when bundling for cjs
+    import.meta.url,
+  );
 
   const ctx: CLIContext = {
     log: new DefaultLogger(),

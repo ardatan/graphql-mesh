@@ -50,7 +50,7 @@
     "inject-version": "yarn workspaces foreach -A run inject-version",
     "lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --ext .ts \"./packages/**/src/**/*.ts\"",
     "loadtest:e2e": "cross-env \"JEST=1\" \"E2E_TEST=true\" jest --no-watchman --runInBand --bail --config=jest.config.loadtest.js",
-    "postbuild": "yarn inject-version && yarn copy-config-schema && yarn fix-bin && tsx scripts/fix-__filename-in-esm.ts",
+    "postbuild": "yarn inject-version && yarn copy-config-schema && yarn fix-bin && tsx scripts/replace-import-meta-url-in-cjs.ts",
     "postchangeset": "yarn install --no-immutable",
     "postgenerate-config-schema": "node scripts/create-config-schema-ts.js && npx prettier --write ./packages/legacy/types/src",
     "postinstall": "husky install && patch-package",
