@@ -1,41 +1,42 @@
 ---
 description:
-  Mesh Server can fetch the supergraph from GraphQL Hive and report usage data to Hive's registry.
+  Hive Gateway can fetch the supergraph from Hive Registry and report usage data to Hive's registry.
 ---
 
-# GraphQL Hive Integration
+# Hive Registry Integration
 
 import { Callout } from '@theguild/components'
 
-[GraphQL Hive](https://the-guild.dev/graphql/hive) is a schema registry, monitoring and analytics
+[Hive Registry](https://the-guild.dev/graphql/hive) is a schema registry, monitoring and analytics
 tool for your GraphQL API.
 
-GraphQL Mesh Serve can be configured to fetch the supergraph from Hive's High-Availablity CDN and
-report usage data to Hive's registry.
+Hive Gateway can be configured to fetch the supergraph from Hive's High-Availablity CDN and report
+usage data to Hive's registry.
 
-## Serve Supergraph from GraphQL Hive
+## Serve Supergraph from Hive Registry
 
 For [Federation projects](https://the-guild.dev/graphql/hive/docs/get-started/apollo-federation) on
-GraphQL Hive, you can fetch the supergraph directly from GraphQL Hive CDN.
+Hive Registry, you can fetch the supergraph directly from Hive Registry CDN.
 
-GraphQL Mesh can fetch the supergraph directly from GraphQL Hive CDN by a few lines of configuration
-without any additional setup for Federation projects.
+Hive Gateway can fetch the supergraph directly from Hive Registry CDN by a few lines of
+configuration without any additional setup for Federation projects.
 
 Before getting started, make sure you have
 [obtained the credentials for the Hive CDN](https://the-guild.dev/graphql/hive/docs/features/high-availability-cdn#cdn-access-tokens).
 
 ### Configuration
 
-For running Mesh Serve with the Hive CDN, you need to provide the necessary options to the CLI:
+For running Hive Gateway with the Hive Registry CDN, you need to provide the necessary options to
+the CLI:
 
-```sh filename="Run the Mesh Serve CLI"
-npx mesh-serve supergraph <endpoint> --hive-cdn-key <api_key>
+```sh filename="Run the Hive Gateway CLI"
+npx hive-gateway supergraph <endpoint> --hive-cdn-key <api_key>
 ```
 
 Instead of providing the CLI options, you can also provide them using a configuration file.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   supergraph: {
@@ -43,7 +44,7 @@ export const gatewayConfig = defineConfig({
     type: 'hive',
     // The endpoint of CDN
     endpoint: '<endpoint>',
-    // The API key provided by GraphQL Hive
+    // The API key provided by Hive Registry
     key: '<api_key>'
   }
 })
@@ -59,24 +60,24 @@ Before getting started, make sure you have
 
 ### Configuration
 
-If you want Mesh Serve to report usage metrics to Hive, you need to provide the necessary options to
-the CLI:
+If you want Hive Gateway to report usage metrics to Hive, you need to provide the necessary options
+to the CLI:
 
-```sh filename="Run the Mesh Serve CLI"
-npx mesh-serve supergraph --hive-registry-token <token>
+```sh filename="Run the Hive Gateway CLI"
+npx hive-gateway supergraph --hive-registry-token <token>
 ```
 
 Instead of using CLI options, you can also use a configuration file, which allows further
 customization for the configuration:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   reporting: {
     // The reporting service type
     type: 'hive',
-    // The registry token provided by GraphQL Hive
+    // The registry token provided by Hive Registry
     token: '<token>'
   }
 })
@@ -90,24 +91,24 @@ for further customization, such as usage reporting sampling and more.
 
 Persisted documents can be used on your GraphQL server or Gateway to reduce the payload size of your
 GraphQL requests and secure your GraphQL API by only allowing operations that are known and trusted
-by your Gateway. GraphQL Hive can serve as a CDN for the persisted documents as they're requested.
+by your Gateway. Hive Registry can serve as a CDN for the persisted documents as they're requested.
 
-Make sure you have configured **Persisted Documents** on GraphQL Hive as described
+Make sure you have configured **Persisted Documents** on Hive Registry as described
 [here](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway).
 
 ### Configuration
 
-After getting `endpoint` and `token` from GraphQL Hive, you can enable persisted documents in Mesh
-Serve.
+After getting `endpoint` and `token` from Hive Registry, you can enable persisted documents in Hive
+Gateway.
 
-```sh filename="Run the Mesh Serve CLI"
-npx mesh-serve supergraph "<cdn_endpoint>" --hive-persisted-documents-token "<cdn_access_token>" < endpoint > --hive-persisted-documents-endpoint
+```sh filename="Run the Hive Gateway CLI"
+npx hive-gateway supergraph "<cdn_endpoint>" --hive-persisted-documents-token "<cdn_access_token>" < endpoint > --hive-persisted-documents-endpoint
 ```
 
 Or you can use a configuration file:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   persistedDocuments: {
@@ -120,11 +121,12 @@ export const gatewayConfig = defineConfig({
 
 #### Enabling Arbitrary Documents (not recommended)
 
-By default, Mesh Server only allows persisted documents that are known and trusted by your Gateway.
-If you want to allow arbitrary documents, you can enable the `allowArbitraryDocuments` option:
+By default, Hive Gatewayr only allows persisted documents that are known and trusted by your
+Gateway. If you want to allow arbitrary documents, you can enable the `allowArbitraryDocuments`
+option:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   persistedDocuments: {

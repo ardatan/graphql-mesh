@@ -6,17 +6,17 @@ A [JSON Web Tokens (JWT)](https://jwt.io/) is a signed token containing arbitrar
 commonly used for authentication. By being signed by the issuer of the token, it can be verified
 that the token is valid and has not been tampered with.
 
-GraphQL Mesh provides a plugin to easily integrate JWT into your API, allowing you to easily
+Hive Gateway provides a plugin to easily integrate JWT into your API, allowing you to easily
 validate, decode and use the token (for identity and authorization).
 
 Once you have the JWT token extract and validated, the JWT claims (and optionally, the full token)
-are injected to the GraphQL Mesh execution context, and forwarded to upstream GraphQL subgraphs,
+are injected to the Hive Gateway execution context, and forwarded to upstream GraphQL subgraphs,
 using the `extensions` field.
 
 <Callout type="warning">
 
 When JWT is enabled and claims are forwarded to the upstream GraphQL subgraphs, you might want to
-use [HMAC Signature](/v1/serve/features/security/hmac-signature) between your Mesh Gateway and the
+use [HMAC Signature](/v1/serve/features/security/hmac-signature) between your Hive Gateway and the
 subgraphs. This will ensure that the requests to the subgraphs are trusted and signed by the
 gateway, and no other entity can execute requests to the subgraph on behalf of the end-users.
 
@@ -32,7 +32,7 @@ import {
   createInlineSigningKeyProvider,
   defineConfig,
   extractFromHeader
-} from '@graphql-mesh/serve-cli'
+} from '@graphql-hive/gateway'
 
 const signingKey = 'my-secret-key'
 
@@ -54,7 +54,7 @@ You can also pass
 [additional configuration options to the Yoga plugin](https://the-guild.dev/graphql/yoga-server/docs/features/jwt#additional-configuration):
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, createInlineSigningKeyProvider, createRemoteJwksSigningKeyProvider, extractFromHeader, extractFromCookie } from '@graphql-mesh/serve-cli'
+import { defineConfig, createInlineSigningKeyProvider, createRemoteJwksSigningKeyProvider, extractFromHeader, extractFromCookie } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   jwt: {
@@ -104,15 +104,15 @@ for complete details and examples.
 The JWT token and payload can be forwarded to the upstream GraphQL subgraphs, using the `extensions`
 field of the request body.
 
-This workflow can allow you to easily delegate the authentication process to the GraphQL Mesh
-gateway, and allow the subgraphs to deal only with the user identity and authorization.
+This workflow can allow you to easily delegate the authentication process to Hive Gateway, and allow
+the subgraphs to deal only with the user identity and authorization.
 
 ```mermaid
 flowchart LR
 	1(["End-user"]) --->|"query { comments { id author { id name }}}"| 2
 
-    subgraph Mesh Gateway
-    2["Mesh Engine"]
+    subgraph Hive Gateway
+    2["Engine"]
     3["JWT Plugin"]
     4["Query Planner"]
     2--->|"Bearer XYZ"|3
@@ -203,8 +203,7 @@ Additionally, if you wish to change the name of the `jwt` field in the extension
 
 ### Within Gateway
 
-The JWT plugin will inject the decoded token and payload into the context of the GraphQL Mesh
-gateway.
+The JWT plugin will inject the decoded token and payload into the context of Hive Gateway.
 
 You can use the injected payload with other plugins, to implement things like authorization or
 user-identity based logic.
@@ -216,7 +215,7 @@ to allow to the user based on identity or token claims:
 
 ```ts filename="gateway.config.ts"
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -260,7 +259,7 @@ If you are using [GraphQL-Yoga](the-guild.dev/graphql/yoga-server) for your upst
 implementation, you can use a built-in utility for extracting it for you in an easy way:
 
 ```ts filename="yoga-subgraph.ts"
-import { useForwardedJWT } from '@graphql-mesh/serve-runtime'
+import { useForwardedJWT } from '@graphql-hive/gateway'
 
 const myYogaSubgraphServer = createYoga({
   schema: mySchema,
@@ -276,7 +275,7 @@ const myYogaSubgraphServer = createYoga({
 ```
 
 With this plugin configured, you should be able to just access `context.jwt` in your subgraphs, just
-like you would in the Mesh gateway.
+like you would in the gateway.
 
 This makes the process of integrating JWT easier, and streamlined across the whole flow of
 execution.
@@ -308,7 +307,7 @@ Other implementations for GraphQL subgraph servers can also access the JWT token
 looking at the `extensions` field of the incoming request.
 
 The `extensions` field of the incoming request will contain the JWT token and claims, injected by
-the Mesh gateway, following this structure:
+Hive Gateway, following this structure:
 
 ```json
 {
@@ -317,7 +316,7 @@ the Mesh gateway, following this structure:
       "payload": {
         "sub": 123
       },
-      // optional, depends on the Mesh gateway plugin configuration
+      // optional, depends on the gateway plugin configuration
       "token": {
         "value": "XYZ",
         "prefix": "Bearer"
@@ -341,7 +340,7 @@ plugin to look for the token in a different header or with a different prefix.
 The prefix is being validated along with the token (for example: `Bearer my-token`).
 
 ```ts
-import { defineConfig, extractFromHeader } from '@graphql-mesh/serve-cli'
+import { defineConfig, extractFromHeader } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -358,7 +357,7 @@ You can configure the plugin to look for the token in a cookie. To do so, you ne
 parsing in the gateway.
 
 ```ts
-import { extractFromCookie, defineConfig } from '@graphql-mesh/serve-cli'
+import { extractFromCookie, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -376,7 +375,7 @@ export const gatewayConfig = defineConfig({
 You can configure the plugin to use a custom function to look for the token:
 
 ```ts
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 const getToken = ({ request, serverContext, url }) => {
   return request.headers.get('x-my-token')
@@ -397,7 +396,7 @@ You can configure the plugin to look for the token in multiple locations. The pl
 the token in the order you provide.
 
 ```ts
-import { defineConfig, extractFromCookie, extractFromHeader } from '@graphql-mesh/serve-cli'
+import { defineConfig, extractFromCookie, extractFromHeader } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -427,7 +426,7 @@ You can provide the signing key directly in the configuration.
 > secret store!
 
 ```ts
-import { createInlineSigningKeyProvider, defineConfig } from '@graphql-mesh/serve-cli'
+import { createInlineSigningKeyProvider, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -449,7 +448,7 @@ Provide a `jwksClientOptions` object (see
 [node-jwks-rsa documentation](https://github.com/auth0/node-jwks-rsa/blob/master/EXAMPLES.md)].
 
 ```ts
-import { createRemoteJwksSigningKeyProvider, defineConfig } from '@graphql-mesh/serve-cli'
+import { createRemoteJwksSigningKeyProvider, defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -473,7 +472,7 @@ import {
   createInlineSigningKeyProvider,
   createRemoteJwksSigningKeyProvider,
   defineConfig
-} from '@graphql-mesh/serve-cli'
+} from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -504,7 +503,7 @@ You can find
 for this plugin.
 
 ```ts
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -527,7 +526,7 @@ By default, an authentication error will be thrown if the token is missing or in
 request will be reject with status code `401`.
 
 ```ts
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...
@@ -556,7 +555,7 @@ With the following configuration, you can use the JWT plugin to extract the toke
 then use the Generic Auth plugin to protect the schema with the Federation directives:
 
 ```ts
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   // ...

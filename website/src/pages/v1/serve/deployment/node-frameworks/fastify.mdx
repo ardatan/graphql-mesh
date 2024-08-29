@@ -16,16 +16,16 @@ import { Callout } from '@theguild/components'
 [Fastify is one of the popular HTTP server frameworks for Node.js.](https://www.fastify.io/) It is a
 very simple, yet powerful framework that is easy to learn and use.
 
-You can easily integrate GraphQL Mesh with Fastify.
+You can easily integrate Hive Gateway with Fastify.
 
-So you can benefit from the powerful plugins of Fastify ecosystem with GraphQL Mesh.
+So you can benefit from the powerful plugins of Fastify ecosystem with Hive Gateway.
 [See the ecosystem](https://fastify.io/docs/latest/Guides/Ecosystem)
 
 ## Example
 
 ```ts
 import fastify, { FastifyReply, FastifyRequest } from 'fastify'
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 
 // This is the fastify instance you have created
 const app = fastify({ logger: true })
@@ -44,12 +44,12 @@ const serveRuntime = createGatewayRuntime<{
 })
 
 /**
- * We pass the incoming HTTP request to GraphQL Mesh
+ * We pass the incoming HTTP request to Hive Gateway
  * and handle the response using Fastify's `reply` API
  * Learn more about `reply` https://www.fastify.io/docs/latest/Reply/
  **/
 app.route({
-  // Bind to the Mesh's endpoint to avoid rendering on any path
+  // Bind to the Hive Gateway's endpoint to avoid rendering on any path
   url: serveRuntime.graphqlEndpoint,
   method: ['GET', 'POST', 'OPTIONS'],
   handler: async (req, reply) => {
@@ -75,10 +75,10 @@ app.listen(4000)
 
 ## Add dummy content type parser for File Uploads
 
-Fastify needs to be aware of GraphQL Mesh will handle `multipart/form-data` requests because
+Fastify needs to be aware of Hive Gateway will handle `multipart/form-data` requests because
 otherwise it will throw an error something like `Unsupported media type`.
 
 ```ts
-// This will allow Fastify to forward multipart requests to GraphQL Mesh
+// This will allow Fastify to forward multipart requests to Hive Gateway
 app.addContentTypeParser('multipart/form-data', {}, (req, payload, done) => done(null))
 ```

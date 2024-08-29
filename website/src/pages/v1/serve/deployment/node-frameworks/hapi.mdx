@@ -2,15 +2,10 @@ import { Callout } from '@theguild/components'
 
 # Integration with Hapi
 
-<Callout>
-  This page is currently under construction and expected to change. Please feel free to reach out to
-  us directly in case you are having any troubles.
-</Callout>
-
 [Hapi](https://hapi.dev) allows you to build powerful, scalable applications, with minimal overhead
 and full out-of-the-box functionality.
 
-GraphQL Mesh can be integrated easily as a route to the existing Hapi application with a few lines
+Hive Gateway can be integrated easily as a route to the existing Hapi application with a few lines
 of code.
 
 ## Example
@@ -18,7 +13,7 @@ of code.
 ```ts
 import http from 'node:http'
 import { Readable } from 'node:stream'
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 import Hapi from '@hapi/hapi'
 import { schema } from './my-graphql-schema'
 
@@ -27,21 +22,21 @@ interface ServerContext {
   h: Hapi.ResponseToolkit
 }
 
-const mesh = createGatewayRuntime<ServerContext>(/* Your configuration */)
+const hiveGateway = createGatewayRuntime<ServerContext>(/* Your configuration */)
 
 const server = Hapi.server({ port: 4000 })
 
 server.route({
   method: '*',
-  path: mesh.graphqlEndpoint,
+  path: hiveGateway.graphqlEndpoint,
   options: {
     payload: {
-      // let mesh handle the parsing
+      // let hiveGateway handle the parsing
       output: 'stream'
     }
   },
   handler: async (req, h) => {
-    const { status, headers, body } = await mesh.handleNodeRequestAndResponse(
+    const { status, headers, body } = await hiveGateway.handleNodeRequestAndResponse(
       req.raw.req,
       req.raw.res,
       {
@@ -68,5 +63,5 @@ server.route({
 server.start()
 ```
 
-The GraphQL Mesh server should now be available at
+Hive Gateway should now be available at
 [http://localhost:4000/graphql](http://localhost:4000/graphql).

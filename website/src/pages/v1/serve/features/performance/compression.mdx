@@ -14,7 +14,7 @@ client supports.
 
 [Learn more about compression in HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)
 
-GraphQL Mesh is capable of handling compressions in the following directions. We can selectively
+Hive Gateway is capable of handling compressions in the following directions. We can selectively
 enable or disable compression in each direction.
 
 ```mermaid
@@ -133,7 +133,7 @@ We assume that the `gzip` function is a function that compresses the data using 
 In your gateway configuration, you need to enable the compression for the gateway.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   contentEncoding: true
@@ -227,7 +227,7 @@ In this case, gateway will always send a compressed request to the defined subgr
 In your gateway configuration, you need to enable the compression.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   contentEncoding: {

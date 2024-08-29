@@ -1,6 +1,6 @@
 ---
 description:
-  Performance is a critical aspect of any application. GraphQL Mesh Serve Runtime provides a set of
+  Performance is a critical aspect of any application. Hive Gateway Runtime provides a set of
   features to help you optimize the performance of your gateway.
 ---
 
@@ -8,9 +8,9 @@ import { Callout } from '@theguild/components'
 
 # Performance & Caching
 
-GraphQL Mesh Serve Runtime provides a set of features to help you optimize the performance of your
-GraphQL Mesh Gateway. GraphQL Mesh provides a shared caching storage that can be used across
-plugins, transforms and subgraph execution.
+Hive Gateway provides a set of features to help you optimize the performance of your GraphQL
+gateway. Hive Gateway provides a shared caching storage that can be used across plugins, transforms
+and subgraph execution.
 
 ## Providing Cache Storage
 
@@ -24,22 +24,22 @@ You can choose the best-fit cache storage for your use case.
 LocalForage is a library that improves the existing storage mechanism in the browser by using
 `IndexedDB`, `WebSQL` and `localStorage`, [see more](https://github.com/localForage/localForage).
 
-Even if it is known as a browser storage, GraphQL Mesh provides you as a platform-agnostic cache
+Even if it is known as a browser storage, Hive Gateway provides you as a platform-agnostic cache
 storage to leverage the well-known storage APIs that are available in most JavaScript environments.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   cache: {
     type: 'localforage',
     // All of the following options are listed with default values, you don't need to provide them
     driver: ['WEBSQL', 'INDEXEDDB', 'LOCALSTORAGE'] // The order of the drivers to use
-    name: 'GraphQLMesh', // The name of the database
+    name: 'HiveGateway', // The name of the database
     version: 1.0, // The version of the database
     size: 4980736, // The size of the database
     storeName: 'keyvaluepairs', // The name of the store
-    description: 'Cache storage for GraphQL Mesh', // The description of the database
+    description: 'Cache storage for Hive Gateway', // The description of the database
   }
   responseCaching: {
     session: () => null,
@@ -50,12 +50,12 @@ export const gatewayConfig = defineConfig({
 ### Redis
 
 Redis is an in-memory data structure store, used as a database, cache, and message broker. You can
-use Redis as a cache storage for your GraphQL Mesh Gateway.
+use Redis as a cache storage for your Hive Gateway.
 
 <Callout>The Redis cache currently only works in Node.js environments.</Callout>
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   cache: {
@@ -76,22 +76,22 @@ export const gatewayConfig = defineConfig({
 ### Cloudflare Workers KV
 
 Cloudflare Workers KV is a distributed, eventually consistent key-value store available in the
-Cloudflare Workers runtime. You can use Cloudflare Workers KV as a cache storage for your GraphQL
-Mesh Gateway. [Learn more about KV](https://developers.cloudflare.com/workers/runtime-apis/kv/)
+Cloudflare Workers runtime. You can use Cloudflare Workers KV as a cache storage for your Hive
+Gateway. [Learn more about KV](https://developers.cloudflare.com/workers/runtime-apis/kv/)
 
 <Callout>
   This is only available for Cloudflare Workers runtime. If you want to learn how to deploy your
-  GraphQL Mesh Gateway to Cloudflare Workers, you can check the [deployment
+  Hive Gateway to Cloudflare Workers, you can check the [deployment
   documentation](/v1/serve/deployment/cloudflare-workers).
 </Callout>
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   cache: {
     type: 'cfw-kv',
-    namespace: 'GraphQLMesh' // The namespace of the KV
+    namespace: 'HiveGateway' // The namespace of the KV
   }
   responseCaching: {
     session: () => null
@@ -102,11 +102,11 @@ export const gatewayConfig = defineConfig({
 ## Custom Cache Storage
 
 You can also implement your own cache storage by extending the `CacheStorage` class. It needs to
-match `KeyValueCache` interface from `@graphql-mesh/serve-runtime`.
+match `KeyValueCache` interface from `@graphql-hive/gateway`.
 
 ```ts filename="my-cache-storage.ts"
 import { LRUCache } from 'lru-cache'
-import { KeyValueCache } from '@graphql-mesh/serve-runtime'
+import { KeyValueCache } from '@graphql-hive/gateway'
 
 export class MyKeyValueCache<V = any> implements KeyValueCache<V> {
   // Your cache implementation here

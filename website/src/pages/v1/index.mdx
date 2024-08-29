@@ -1,7 +1,7 @@
 ---
 description:
-  GraphQL Mesh is a framework that allows you to build GraphQL gateways using GraphQL or non-GraphQL
-  sources
+  GraphQL Mesh is a framework that allows you to build GraphQL gateways and APIs using GraphQL or
+  non-GraphQL sources
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -19,7 +19,7 @@ graph TD
     end
 
     subgraph Gateway
-        B[GraphQL Mesh]
+        B[GraphQL Mesh + Hive Gateway]
     end
 
     subgraph Backend Services
@@ -34,12 +34,10 @@ graph TD
     B --> C3
 ```
 
-The GraphQL Mesh framework consists of two main components.
-
-- **Mesh Compose.** Combine muliple API sources (GraphQL, Federation, REST, gRPC, PostgreSQL, MySql
+- **Mesh Compose** Combine muliple API sources (GraphQL, Federation, REST, gRPC, PostgreSQL, MySql
   and co) into a single GraphQL supegraph.
 
-- **Mesh Serve.** The Gateway to serve your existing supergraph as provided by either Mesh Compose,
+- **Hive Gateway** The Gateway to serve your existing supergraph as provided by either Mesh Compose,
   GraphQL Hive, Apollo GraphOS, or a proxy to your existing GraphQL API. Flexible support for
   authentication, authorization, caching, rate-limiting and observability.
 
@@ -48,9 +46,9 @@ The GraphQL Mesh framework consists of two main components.
 Want to turn existing services into a GraphQL supergraph? Continue with Mesh Compose.
 
 Already have a supergraph from a schema registry such as GraphQL Hive or Apollo GraphOS and want to
-spin up a gateway? Continue with Mesh Serve.
+spin up a gateway? Continue with Hive Gateway.
 
 <Cards>
   <Cards.Card arrow title="Get Started with Mesh Compose" href="/v1/compose" />
-  <Cards.Card arrow title="Get Started with Mesh Serve" href="/v1/serve" />
+  <Cards.Card arrow title="Get Started with Hive Gateway" href="/v1/serve" />
 </Cards>

@@ -42,8 +42,8 @@ npm i @graphql-mesh/plugin-statsd hot-shots
 
 ```ts filename="gateway.config.ts"
 import { StatsD } from 'hot-shots'
+import { defineConfig } from '@graphql-hive/gateway'
 import useStatsD from '@graphql-mesh/plugin-statsd'
-import { defineConfig } from '@graphql-mesh/serve-cli'
 
 export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
@@ -53,8 +53,8 @@ export const gatewayConfig = defineConfig({
       client: new StatsD({
         port: 8020
       }),
-      // results in `my-graphql-mesh.operations.count` instead of `graphql.operations.count`
-      prefix: 'my-graphql-mesh',
+      // results in `my-graphql-gateway.operations.count` instead of `graphql.operations.count`
+      prefix: 'my-graphql-gateway',
       // If you wish to disable introspection logging
       skipIntrospection: true
     })

@@ -10,7 +10,7 @@ allows you to simulate the behavior of your API without making real network requ
 Add it to your plugins:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   plugins: [
@@ -34,7 +34,7 @@ The example above will replace the resolver of `User.firstName` with a mock that
 You can also provide a custom function to generate the mock value for a field:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-hive/gateway'
 import { fullName } from './user-mocks.js'
 
 export const gatewayConfig = defineConfig({
@@ -56,7 +56,7 @@ export const gatewayConfig = defineConfig({
 You can mock types with custom mock functions like below;
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-hive/gateway'
 import { user } from './user-mocks.js'
 
 export const gatewayConfig = defineConfig({
@@ -98,8 +98,8 @@ export const fullName = () => fullNames.next().value
 
 ## Mocking the lists
 
-Mesh generates two mocked items by default if the return type is a list. But this can be configured,
-as shown below:
+Hive Gateway generates two mocked items by default if the return type is a list. But this can be
+configured, as shown below:
 
 ```graphql
 type Query {
@@ -112,7 +112,7 @@ type User {
 ```
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   plugins: pluginCtx => [
@@ -146,7 +146,7 @@ Now `query { users { id fullName } }{:graphql}` query will return 3 of `User` it
 
 ## Stateful mocking
 
-GraphQL Mesh supports GraphQL Tools' Stateful Mocking feature. So you can have stateful mocking by
+Hive Gateway supports GraphQL Tools' Stateful Mocking feature. So you can have stateful mocking by
 using the store provided in the context `context.mockStore`;
 
 <Callout>[Learn more about GraphQL Tools Mocking](https://graphql-tools.com/docs/mocking)</Callout>
@@ -156,7 +156,7 @@ using the store provided in the context `context.mockStore`;
 When having a schema that returns a list, in this case, a list of users:
 
 ```ts filename="init-store.ts"
-import { MockStore } from '@graphql-mesh/serve-cli'
+import { MockStore } from '@graphql-hive/gateway'
 
 export const store = new MockStore()
 const users = [{ id: 'uuid', name: 'John Snow' }]
@@ -180,7 +180,7 @@ type Query {
 ```
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-hive/gateway'
 import { store } from './init-store.js'
 
 export const gatewayConfig = defineConfig({
@@ -215,7 +215,7 @@ type Mutation {
 ```
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, useMock } from '@graphql-mesh/serve-cli'
+import { defineConfig, useMock } from '@graphql-hive/gateway'
 import { store } from './init-store.js'
 
 export const gatewayConfig = defineConfig({

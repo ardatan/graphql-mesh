@@ -2,10 +2,11 @@ import { Callout } from '@theguild/components'
 
 # Subscriptions
 
-GraphQL Mesh fully supports federated subscriptions and behaves just like
+Hive Gateway fully supports federated subscriptions and behaves just like
 [Federation GraphQL subscriptions in Apollo Router](https://www.apollographql.com/docs/router/executing-operations/subscription-support).
 
-Subgraphs providing subscriptions can communicate with Mesh through one of the following protocols:
+Subgraphs providing subscriptions can communicate with Hive Gateway through one of the following
+protocols:
 
 - [GraphQL over SSE](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md)
 - [GraphQL over WebSocket](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md)
@@ -91,10 +92,10 @@ server.listen(40002, () => {
 
 After having generated a supergraph file `supergraph.graphql` for the two subgraphs, either using
 [Mesh Compose](/v1/compose) or [Apollo Rover](https://www.apollographql.com/docs/rover/), simply run
-Mesh Serve without any additional configuration!
+Hive Gateway without any additional configuration!
 
 ```sh
-mesh-serve supergraph supergraph.graphql
+hive-gateway supergraph supergraph.graphql
 ```
 
 ### Subscribe
@@ -115,8 +116,8 @@ subscription {
 }
 ```
 
-Mesh will inteligently resolve all fields on subscription events and deliver you the complete
-result.
+Hive Gateway will inteligently resolve all fields on subscription events and deliver you the
+complete result.
 
 You can subscribe to the gateway through Server-Sent Events (SSE) (in JavaScript, using
 [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) or
@@ -134,13 +135,14 @@ curl 'http://localhost:4000/graphql' \
 
 If your subgraph uses WebSockets for subscriptions support
 ([like with Apollo Server](https://www.apollographql.com/docs/apollo-server/data/subscriptions/)),
-Mesh Serve will need additional configuration pointing to the WebSocket server path on the subgraph.
+Hive Gateway will need additional configuration pointing to the WebSocket server path on the
+subgraph.
 
-And configure Mesh Serve to use the `/subscriptions` path on the "products" subgraph for WebSocket
+And configure Hive Gateway to use the `/subscriptions` path on the "products" subgraph for WebSocket
 connections:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, type WSTransportOptions } from '@graphql-mesh/serve-cli'
+import { defineConfig, type WSTransportOptions } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
@@ -158,24 +160,24 @@ export const gatewayConfig = defineConfig({
 })
 ```
 
-Now simply start Mesh Serve with:
+Now simply start Hive Gateway with:
 
 ```sh
-mesh-serve supergraph
+hive-gateway supergraph
 ```
 
-Downstream clients are still subscribing to Mesh Serve gateway through any supported subscriptions
-protocol, but upstream Mesh Serve will use long-living WebSocket connections to the "products"
+Downstream clients are still subscribing to Hive Gateway gateway through any supported subscriptions
+protocol, but upstream Hive Gateway will use long-living WebSocket connections to the "products"
 service.
 
 ### `Authorization` header
 
-Mesh Server can propagate the downstream client's `Authorization` header contents to the upstream
+Hive Gatewayr can propagate the downstream client's `Authorization` header contents to the upstream
 WebSocket connections through the
 [`ConnectionInit` message payload](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md#connectioninit).
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, type WSTransportOptions } from '@graphql-mesh/serve-cli'
+import { defineConfig, type WSTransportOptions } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
@@ -217,14 +219,14 @@ The contents of the payload will be available in `graphql-ws` connectionParams:
 
 If your subgraph uses
 [HTTP Callback protocol for subscriptions](https://www.apollographql.com/docs/router/executing-operations/subscription-callback-protocol/),
-Mesh Serve will need additional configuration.
+Hive Gateway will need additional configuration.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, type HTTPCallbackTransportOptions } from '@graphql-mesh/serve-cli'
+import { defineConfig, type HTTPCallbackTransportOptions } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   supergraph: 'supergraph.graphql',
-  // Setup Mesh to listen for webhook callbacks, and emit the payloads through PubSub engine
+  // Setup Hive Gateway to listen for webhook callbacks, and emit the payloads through PubSub engine
   webhooks: true,
   transportEntries: {
     // use "*.http" to apply options to all subgraphs with HTTP
@@ -249,8 +251,8 @@ export const gatewayConfig = defineConfig({
 
 ## Closing active subscriptions on schema change
 
-When the schema changes in Mesh, all active subscriptions will be completed after emitting the
-following execution error:
+When the schema changes in Hive Gateway, all active subscriptions will be completed after emitting
+the following execution error:
 
 ```json
 {

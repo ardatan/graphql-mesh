@@ -1,13 +1,13 @@
 import { Callout } from '@theguild/components'
 
-# Deploying Mesh to Cloudflare Workers
+# Deploying Hive Gateway to Cloudflare Workers
 
 <Callout>
   This page is currently under construction and expected to change. Please feel free to reach out to
   us directly in case you are having any troubles.
 </Callout>
 
-Mesh Serve a provides you a cross-platform GraphQL Server. So you can easily integrate it into any
+Hive Gateway a provides you a cross-platform GraphQL Server. So you can easily integrate it into any
 platform besides Node.js.
 
 [Cloudflare Workers](https://developers.cloudflare.com/workers) provides a serverless execution
@@ -20,7 +20,7 @@ configuring or maintaining infrastructure.
 </Callout>
 
 ```ts
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 
 const gatewayRuntime = createGatewayRuntime({
   // gatewayConfig
@@ -32,6 +32,5 @@ export default { fetch: gatewayRuntime }
 <Callout>
   If you want to use [Cloudflare KV
   Cache](https://developers.cloudflare.com/workers/runtime-apis/kv) as a distributed cache, [see
-  here for Mesh
-  integration](https://the-guild.dev/graphql/mesh/v1/serve/features/performance#cloudflare-workers-kv)
+  here for Hive Gateway integration](/v1/serve/features/performance#cloudflare-workers-kv)
 </Callout>

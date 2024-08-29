@@ -7,15 +7,15 @@ import { Callout } from '@theguild/components'
   us directly in case you are having any troubles.
 </Callout>
 
-GraphQL Mesh uses
+Hive Gateway uses
 [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server/docs/features/envelop-plugins), and it uses
 [Envelop](https://the-guild.dev/graphql/envelop) plugin system which allows you to hook into the
 different phases of the GraphQL execution to manipulate or track the entire workflow step-by-step.
 
 <Callout>
 You can both use Yoga or Envelop or Gateway plugins with your GraphQL Gateway.
-But you should always opt-in for the Mesh variant of the plugin, then Yoga then Envelop because each of them have more control over the execution.
-For example, Yoga variant of the plugin leverage HTTP hooks, and Mesh one can leverage more hooks and more control over the context.
+But you should always opt-in for the Hive Gateway variant of the plugin, then Yoga then Envelop because each of them have more control over the execution.
+For example, Yoga variant of the plugin leverage HTTP hooks, and Hive Gateway one can leverage more hooks and more control over the context.
 
 We'd recommend to check the features of the gateway first, and if you can't find what you are
 looking for, then you can use this option on your own to add plugins from either GraphQL Yoga or
@@ -27,7 +27,7 @@ You can provide those plugins as an array of objects,
 
 ```ts filename="gateway.config.ts" {7}
 import { useGraphQLJit } from '@envelop/graphql-jit'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   plugins: () => [useGraphQLJit()]
@@ -36,7 +36,7 @@ export const gatewayConfig = defineConfig({
 
 ## Writing Plugins
 
-Sometimes you might want to build your own plugins. You can write your own Mesh plugin and even
+Sometimes you might want to build your own plugins. You can write your own gateway plugin and even
 share it with other people by publishing it to `npm`.
 
 <Callout>
@@ -44,19 +44,19 @@ share it with other people by publishing it to `npm`.
   the existing plugins maintained by us.
 </Callout>
 
-The most hooks for Mesh origin from the Envelop and Yoga plugin systems.
+The most hooks for Hive Gateway origin from the Envelop and Yoga plugin systems.
 [Please refer to the Envelop Plugin Lifecycle documentation for more information.](https://the-guild.dev/graphql/envelop/docs/plugins/lifecycle)
 and
 [Yoga Plugin Lifecycle documentation](https://the-guild.dev/graphql/yoga-server/docs/features/envelop-plugins).
-In addition, Yoga adds more HTTP specific hooks while Mesh adds more related to the subgraph
+In addition, Yoga adds more HTTP specific hooks while Hive Gateway adds more related to the subgraph
 execution. Gateway plugins also uses
 [Explicit Resource Management](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-2.html),
-so all the resources are cleaned up gracefully when Mesh gateway is shut down. You can see
+so all the resources are cleaned up gracefully when Hive Gateway is shut down. You can see
 `Symbol.asyncDispose` below.
 
 ### Plugin Lifecycle
 
-The following diagram shows the plugin lifecycle of GraphQL Mesh. For a detailed description of each
+The following diagram shows the plugin lifecycle of Hive Gateway. For a detailed description of each
 hook, please refer to the detail sections of each hook. Please check Yoga and Envelop documentation
 for more information about the hooks except `onSubgraphExecute`.
 
@@ -150,8 +150,8 @@ This hook is invoked everytime the gateways sends an outgoing HTTP request to an
 
 #### `Symbol.asyncDispose` or `Symbol.dispose`
 
-In order to clean up resources when the Mesh gateway is shut down, you can use `Symbol.asyncDispose`
-or `Symbol.syncDispose` to clean up resources.
+In order to clean up resources when Hive Gateway is shut down, you can use `Symbol.asyncDispose` or
+`Symbol.syncDispose` to clean up resources.
 
 ```ts
 export const useMyPlugin = () => {
@@ -170,20 +170,20 @@ here.
 
 ### Plugin Context
 
-GraphQL Mesh comes with ready-to-use `logger`, `fetch`, cache storage and etc that are shared across
+Hive Gateway comes with ready-to-use `logger`, `fetch`, cache storage and etc that are shared across
 different components. We'd highly recommend you to use those available context values instead of
 creating your own for a specific plugin.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   plugins({
     fetch, // WHATWG compatible Fetch implementation.
-    logger, // Logger instance used by Mesh
+    logger, // Logger instance used by Hive Gateway
     cwd, // Current working directory
-    pubsub, // PubSub instance used by Mesh
-    cache // Cache storage used by Mesh
+    pubsub, // PubSub instance used by Hive Gateway
+    cache // Cache storage used by Hive Gateway
   }) {
     return [
       useMyPlugin({ logger, fetch }) // So the plugin can use the shared logger and fetch
@@ -218,7 +218,7 @@ npm i @graphql-yoga/plugin-sofa
 ## Quick Start
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 import { useSOFA } from '@graphql-yoga/plugin-sofa'
 
 export const gatewayConfig = defineConfig({

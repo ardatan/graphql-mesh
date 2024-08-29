@@ -15,19 +15,19 @@ import { Callout } from '@theguild/components'
 
 [Express is the most popular web framework for Node.js.](https://expressjs.com/) It is a minimalist
 framework that provides a robust set of features to handle HTTP on Node.js applications. You can
-easily integrate GraphQL Mesh into your Express application with a few lines of code.
+easily integrate Hive Gateway into your Express application with a few lines of code.
 
 ## Example
 
 ```ts
 import express from 'express'
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 
 const app = express()
 
 const serveRuntime = createGatewayRuntime(/* Your configuration */)
 
-// Bind GraphQL Mesh to the graphql endpoint to avoid rendering the playground on any path
+// Bind Hive Gateway to the graphql endpoint to avoid rendering the playground on any path
 app.use(serveRuntime.graphqlEndpoint, serveRuntime)
 
 app.listen(4000, () => {
@@ -60,20 +60,20 @@ app.use(
 ### Isolate GraphiQL configuration
 
 To avoid applying this configuration to other endpoints you may have on your Express server, you can
-use `Express.Router` to create a new router instance and apply the configuration only to the GraphQL
-Mesh endpoint.
+use `Express.Router` to create a new router instance and apply the configuration only to the Hive
+Gateway endpoint.
 
 ```ts
 import express from 'express'
 import helmet from 'helmet'
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 
 const app = express()
 
 const serveRuntime = createGatewayRuntime(/* Your configuration */)
-const meshRouter = express.Router()
+const hiveGWRouter = express.Router()
 // GraphiQL specefic CSP configuration
-meshRouter.use(
+hiveGWRouter.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
@@ -84,11 +84,11 @@ meshRouter.use(
     }
   })
 )
-meshRouter.use(serveRuntime)
+hiveGWRouter.use(serveRuntime)
 
-// By adding the GraphQL Mesh router before the global helmet middleware,
-// you can be sure that the global CSP configuration will not be applied to the GraphQL Mesh endpoint
-app.use(serveRuntime.graphqlEndpoint, meshRouter)
+// By adding the Hive Gateway router before the global helmet middleware,
+// you can be sure that the global CSP configuration will not be applied to the Hive Gateway endpoint
+app.use(serveRuntime.graphqlEndpoint, hiveGWRouter)
 
 // Add the global CSP configuration for the rest of your server.
 app.use(helmet())

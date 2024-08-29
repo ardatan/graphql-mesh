@@ -29,18 +29,25 @@ jobs:
   ghcr:
     runs-on: ubuntu-latest
     needs: [release]
+    strategy:
+      matrix:
+        include:
+          - productname: mesh-serve
+            packagename: '@graphql-mesh/serve-cli'
+          - productname: hive-gateway
+            packagename: '@graphql-hive/gateway'
     if: contains(needs.release.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
-      - name: version mesh-serve
+      - name: version ${{ matrix.productname }}
         uses: actions/github-script@v7
         id: ver-mesh-serve
         with:
           result-encoding: string
           script: |
             const publishedPackages = ${{ needs.release.outputs.publishedPackages }};
-            const meshServe = publishedPackages.find((p) => p.name === '@graphql-mesh/serve-cli');
+            const meshServe = publishedPackages.find((p) => p.name === '${{ matrix.packagename }}');
             if (!meshServe) {
-              return core.setFailed('@graphql-mesh/serve-cli was not published!');
+              return core.setFailed('${{ matrix.packagename }} was not published!');
             }
             console.log(meshServe.version);
             return meshServe.version;
@@ -62,9 +69,9 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn bundle
-      - name: inject mesh-serve version
+      - name: inject ${{ matrix.productname }} version
         run: |
-          yarn workspace @graphql-mesh/serve-cli inject-version ${{ steps.ver-mesh-serve.outputs.result }}
+          yarn workspace ${{ matrix.packagename }} inject-version ${{ steps.ver-mesh-serve.outputs.result }}
       - name: bake and push
         uses: docker/bake-action@v5
         env:
@@ -81,5 +88,5 @@ jobs:
           message: |
             Published images for this PR are available at:
             ```
-            ghcr.io/ardatan/mesh-serve:${{ steps.ver-mesh-serve.outputs.result }}
+            ghcr.io/ardatan/${{ matrix.productname }}:${{ steps.ver-mesh-serve.outputs.result }}
             ```

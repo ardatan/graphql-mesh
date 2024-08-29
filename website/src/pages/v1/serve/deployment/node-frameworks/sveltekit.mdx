@@ -6,7 +6,7 @@ description:
 # Integration with SvelteKit
 
 [SvelteKit](https://kit.svelte.dev/) is a framework for rapidly developing robust, performant web
-applications using [Svelte](https://svelte.dev/). You can easily integrate Mesh Serve into your
+applications using [Svelte](https://svelte.dev/). You can easily integrate Hive Gateway into your
 SvelteKit powered application.
 
 ## Example
@@ -15,19 +15,19 @@ SvelteKit is typically used together with [Vite](https://vitejs.dev/) with the p
 [looking like this](https://kit.svelte.dev/docs/project-structure). We also assume that you have
 composed a `supergraph.graphql` with [Mesh Compose](/v1/compose).
 
-In this example, we want to integrate Mesh Serve into Vite's routes, we'll therefore use the
+In this example, we want to integrate Hive Gateway into Vite's routes, we'll therefore use the
 runtime.
 
 ```sh npm2yarn
-npm i @graphql-mesh/serve-runtime
+npm i @graphql-hive/gateway
 ```
 
 Keeping the [aforementioned project layout](https://kit.svelte.dev/docs/project-structure) in mind,
 create a new server route in `my-project/src/routes/graphql/+server.ts` to expose the GraphQL server
-at `/graphql` and implement using the Mesh Serve runtime like this:
+at `/graphql` and implement using the Hive Gateway runtime like this:
 
 ```ts filename="my-project/src/routes/graphql/+server.ts"
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 
 const serve = createGatewayRuntime({
   supergraph: 'supergraph.graphql', // working directory is root of the project

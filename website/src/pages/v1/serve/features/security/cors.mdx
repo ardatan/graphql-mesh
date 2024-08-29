@@ -17,7 +17,7 @@ CORS stands for Cross Origin Resource Sharing. In a nutshell, as a security meas
 allowed to access resources outside their own domain.
 
 If your api and web apps are deployed to different domains (or subdomains), you'll have to worry
-about CORS. For example, if your web client is deployed to example.com but your Mesh gateway is
+about CORS. For example, if your web client is deployed to example.com but your Hive Gateway is
 api.example.com. For security reasons your browser will not allow XHR requests (like the kind that
 the GraphQL client makes) to a domain other than the one currently in the browser's address bar.
 
@@ -26,9 +26,9 @@ To deal with this you have two options:
 _1. Avoid CORS by proxying your requests_ e.g. If you setup a proxy or redirect to forward requests
 from `example.com/api/*` to `api.example.com`, you avoid CORS issues all together.
 
-_2. Configure Mesh to send back CORS headers_ Mesh comes with CORS support out of the box - CORS can
-be configured when creating the server either by passing a CORSOptions object, or a builder function
-that returns the CORSOptions object.
+_2. Configure the gateway to send back CORS headers_ Hive Gateway comes with CORS support out of the
+box - CORS can be configured when creating the server either by passing a CORSOptions object, or a
+builder function that returns the CORSOptions object.
 
 ```ts
 export type CORSOptions =
@@ -46,7 +46,7 @@ export type CORSOptions =
 ### Example configuration using CORSOptions
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   cors: {
@@ -73,7 +73,7 @@ You can also pass a function to the cors property, that takes your request and c
 options
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   cors: request => {
@@ -92,20 +92,20 @@ return it in the `Access-Control-Allow-Origin` header.
 
 ## Default CORS setting
 
-By default, GraphQL Mesh Serve will return `Access-Control-Allow-Origin: *` when preflight requests
-are made.
+By default, Hive Gateway will return `Access-Control-Allow-Origin: *` when preflight requests are
+made.
 
 This means cross origin requests from browsers work out of the box - however it may be appropriate
 to lock to a specific domain before deploying to production.
 
 ## Disabling CORS
 
-You can disable CORS on your GraphQL Mesh gateway by simply passing `false` as the cors property
+You can disable CORS on your gateway by simply passing `false` as the cors property
 
 **For example:**
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   cors: false
@@ -114,5 +114,5 @@ export const gatewayConfig = defineConfig({
 
 <Callout>
   If you disable CORS, you may run into issues with your web client not being able to access the
-  Mesh gateway. This is because of the browser's security policy.
+  Hive Gateway. This is because of the browser's security policy.
 </Callout>

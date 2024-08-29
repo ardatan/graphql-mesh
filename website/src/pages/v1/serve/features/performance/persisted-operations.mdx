@@ -33,7 +33,7 @@ persisted operations.
 ## Plugin for custom handling
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 const store = {
   ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38: '{__typename}'
@@ -103,7 +103,7 @@ This map can then be used to persist the GraphQL documents in the server.
 
 ```ts filename="gateway.config.ts"
 import { readFileSync } from 'node:fs'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 const persistedOperations = JSON.parse(readFileSync('./persistedOperations.json', 'utf-8'))
 
@@ -297,7 +297,7 @@ This combination is powerful as it allows you to use the persisted operation id 
 combined with any type of HTTP proxy cache.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 const store = {
   ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38: '{__typename}'

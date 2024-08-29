@@ -1,6 +1,6 @@
 ---
 description:
-  GraphQL Mesh provides you a cross-platform GraphQL Server. So you can easily integrate it into any
+  Hive Gateway provides you a cross-platform GraphQL Server. So you can easily integrate it into any
   platform besides Node.js.
 ---
 
@@ -8,15 +8,10 @@ import { Callout } from '@theguild/components'
 
 # Integration with Deno
 
-<Callout>
-  This page is currently under construction and expected to change. Please feel free to reach out to
-  us directly in case you are having any troubles.
-</Callout>
-
-GraphQL Mesh provides you a cross-platform GraphQL Server. So you can easily integrate it into any
+Hive Gateway provides you a cross-platform GraphQL Server. So you can easily integrate it into any
 platform besides Node.js.
 [Deno is a simple, modern and secure runtime for JavaScript and TypeScript that uses V8 and is built in Rust](https://deno.land/).
-We will use `@graphql-mesh/serve-runtime` which has an agnostic HTTP handler using
+We will use `@graphql-hive/gateway` which has an agnostic HTTP handler using
 [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)'s
 [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) and
 [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) objects.
@@ -26,25 +21,25 @@ We will use `@graphql-mesh/serve-runtime` which has an agnostic HTTP handler usi
 Create a `deno.json` file.
 [Learn more about import maps](https://deno.land/manual/basics/import_maps)
 
-Create a `deno-mesh.ts` file:
+Create a `deno-hive-gateway.ts` file:
 
 ```json filename="deno.json" {3}
 {
   "imports": {
-    "@graphql-mesh/serve-runtime": "npm:@graphql-mesh/serve-runtime@^0.1.0"
+    "@graphql-hive/gateway": "npm:@graphql-hive/gateway@^0.1.0"
   }
 }
 ```
 
-```ts filename="deno-mesh.ts"
+```ts filename="deno-hive-gateway.ts"
 import { serve } from 'https://deno.land/std@0.157.0/http/server.ts'
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 
-const serveRuntime = createGatewayRuntime(/* Your configuration */)
+const gatewayRuntime = createGatewayRuntime(/* Your configuration */)
 
-serve(mesh, {
+serve(gatewayRuntime, {
   onListen({ hostname, port }) {
-    console.log(`Listening on http://${hostname}:${port}/${mesh.graphqlEndpoint}`)
+    console.log(`Listening on http://${hostname}:${port}/${gatewayRuntime.graphqlEndpoint}`)
   }
 })
 ```
@@ -52,5 +47,5 @@ serve(mesh, {
 And run it:
 
 ```bash
-deno run --allow-net deno-mesh.ts
+deno run --allow-net deno-hive-gateway.ts
 ```

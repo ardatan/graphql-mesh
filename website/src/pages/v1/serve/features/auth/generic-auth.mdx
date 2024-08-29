@@ -30,7 +30,7 @@ Define your authentication methods:
 Use this method to only extract the user from the context, with any custom code, for example:
 
 ```ts
-import { ResolveUserFn } from '@graphql-mesh/serve-runtime'
+import { ResolveUserFn } from '@graphql-hive/gateway'
 
 type UserType = {
   id: string
@@ -60,7 +60,7 @@ This method is optional; the default method will just verify the value returned 
 throw an error in case of a false value (`false | null | undefined`).
 
 ```ts
-import { ValidateUserFn } from '@graphql-mesh/serve-cli'
+import { ValidateUserFn } from '@graphql-hive/gateway'
 
 const validateUser: ValidateUserFn<UserType> = params => {
   // Here you can implement any custom to check if the user is valid and have access to the server.
@@ -86,7 +86,7 @@ specific GraphQL fields by using the `@skipAuth` directive.
 To setup this mode, use the following config:
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-mesh/serve-cli'
+import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-hive/gateway'
 
 type UserType = {
   id: string
@@ -140,7 +140,7 @@ This mode uses the plugin to inject the authenticated user into the `context`, a
 verify it in your resolvers and plugin during authentication.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-mesh/serve-cli'
+import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-hive/gateway'
 
 type UserType = {
   id: string
@@ -185,7 +185,7 @@ This mode is similar to option #2, but it uses the `@authenticated` SDL directiv
 extension for protecting specific GraphQL fields.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-mesh/serve-cli'
+import { defineConfig, ResolveUserFn, ValidateUserFn } from '@graphql-hive/gateway'
 
 type UserType = {
   id: string
@@ -231,7 +231,7 @@ the `protect-all` and `protect-granular` mode:
 
 ```ts
 import { GraphQLError } from 'graphql'
-import { ValidateUserFn } from '@graphql-mesh/serve-cli'
+import { ValidateUserFn } from '@graphql-hive/gateway'
 
 const validateUser: ValidateUserFn<UserType> = ({ user }) => {
   // Now you can use the 3rd parameter to implement custom logic for user validation, with access

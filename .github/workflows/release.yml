@@ -24,18 +24,25 @@ jobs:
 
   ghcr:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - productname: mesh-serve
+            packagename: '@graphql-mesh/serve-cli'
+          - productname: hive-gateway
+            packagename: '@graphql-hive/gateway'
     needs: [stable]
     if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
-      - name: version mesh-serve
+      - name: version ${{ matrix.productname }}
         uses: actions/github-script@v7
         id: ver-mesh-serve
         with:
           script: |
             const publishedPackages = ${{ needs.stable.outputs.publishedPackages }};
-            const meshServe = publishedPackages.find((p) => p.name === '@graphql-mesh/serve-cli');
+            const meshServe = publishedPackages.find((p) => p.name === '${{ matrix.packagename }}');
             if (!meshServe) {
-              return core.setFailed('@graphql-mesh/serve-cli was not published!');
+              return core.setFailed('${{ matrix.packagename }} was not published!');
             }
             const { version } = meshServe;
             const [major, minor] = version.split('.');
@@ -63,9 +70,9 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn bundle
-      - name: inject mesh-serve version
+      - name: inject ${{ matrix.productname }} version
         run: |
-          yarn workspace @graphql-mesh/serve-cli inject-version ${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
+          yarn workspace ${{ matrix.packagename }} inject-version ${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
       - name: bake and push
         uses: docker/bake-action@v5
         env:

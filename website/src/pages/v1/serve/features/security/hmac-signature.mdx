@@ -6,20 +6,20 @@ HMAC (Hash-based Message Authentication Code) is a mechanism for calculating a m
 authentication code involving a hash function in combination with a secret key. It can be used to
 verify the integrity and authenticity of a message.
 
-This Mesh plugin implements HMAC signing for requests between GraphQL Mesh gateway and the upstream
+This Gateway plugin implements HMAC signing for requests between Hive Gateway and the upstream
 GraphQL subgraph. It also provides HMAC verification plugin for the incoming requests in the
 subgraph services.
 
 By activating this plugin, you can ensure that the requests send to GraphQL subgraphs is trusted and
-signed by the Mesh gateway. In case of any missing signature, tampering or unauthorized access, the
+signed by the Hive Gateway. In case of any missing signature, tampering or unauthorized access, the
 subgraph services will reject the request.
 
 ```mermaid
 flowchart LR
 	1(["End-user"]) --->|"query { comments { id author { id name }}}"| 2
 
-    subgraph Mesh Gateway
-    2["Mesh Engine"]
+    subgraph Hive Gateway
+    2["Engine"]
     3["useHmacUpstreamSignature"]
     4["Query Planner"]
     2--->3
@@ -46,14 +46,13 @@ flowchart LR
 
 Before you start, you need to have a secret key that will be used for HMAC signing and verification.
 
-The secret key should be a random, opaque string, that will be shared between the Mesh Gateway and
+The secret key should be a random, opaque string, that will be shared between the Hive Gateway and
 the subgraphs validating the HMAC signature.
 
-### Step 2: HMAC Signing in Mesh Gateway
+### Step 2: HMAC Signing in Hive Gateway
 
 ```ts
-import { useHmacUpstreamSignature } from '@graphql-mesh/hmac-upstream-signature'
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   hmacUpstreamSignature: {
@@ -77,12 +76,12 @@ The next step is to perform a verification over the sent HMAC signature in the s
 If you are using Yoga, you can use the gateway package:
 
 ```sh npm2yarn
-npm i @graphql-mesh/serve-runtime
+npm i @graphql-hive/gateway
 ```
 
 ```ts
 import { createYoga } from 'graphql-yoga'
-import { useHmacSignatureValidation } from '@graphql-mesh/serve-runtime'
+import { useHmacSignatureValidation } from '@graphql-hive/gateway'
 
 const myYogaSubgraphServer = createYoga({
   // ...
@@ -104,13 +103,13 @@ const myYogaSubgraphServer = createYoga({
 #### With Apollo Server
 
 If you are using Apollo-Server for your subgraph services, you can implement a custom plugin to
-verify the HMAC signature. You can still use the utilities from the `@graphql-mesh/serve-runtime`
-library to serialize the request parameters and verify the HMAC signature in a stable way.
+verify the HMAC signature. You can still use the utilities from the `@graphql-hive/gateway` library
+to serialize the request parameters and verify the HMAC signature in a stable way.
 
-Start by installing the `@graphql-mesh/serve-runtime` package:
+Start by installing the `@graphql-hive/gateway` package:
 
 ```sh npm2yarn
-npm i @graphql-mesh/serve-runtime
+npm i @graphql-hive/gateway
 ```
 
 Now, configure your Apollo Server with the HMAC verification plugin:
@@ -118,7 +117,7 @@ Now, configure your Apollo Server with the HMAC verification plugin:
 ```ts filename="apollo-subgraph.ts"
 import { createHmac } from 'crypto'
 import { ApolloServer, ApolloServerPlugin } from '@apollo/server'
-import { defaultParamsSerializer } from '@graphql-mesh/serve-runtime'
+import { defaultParamsSerializer } from '@graphql-hive/gateway'
 
 const verifyHmacPlugin = {
   async requestDidStart({ request, contextValue }) {
@@ -170,7 +169,7 @@ using the following specification:
   }
   ```
 
-- The HMAC signature should be calculated using the secret key shared between the Mesh Gateway and
+- The HMAC signature should be calculated using the secret key shared between the Hive Gateway and
   the subgraph services.
 
 Here's an example of an incoming subgraph request with the HMAC signature:
@@ -185,7 +184,7 @@ Here's an example of an incoming subgraph request with the HMAC signature:
 }
 ```
 
-> The signature is produced by the Mesh Gateway using the shared secret key, and the serialized
+> The signature is produced by the Hive Gateway using the shared secret key, and the serialized
 > request (query and variables).
 
 </Steps>
@@ -194,11 +193,11 @@ Here's an example of an incoming subgraph request with the HMAC signature:
 
 ### `hmacUpstreamSignature`
 
-The `hmacUpstreamSignature` flag allows you to customize the HMAC signing behavior in the Mesh
-gateway:
+The `hmacUpstreamSignature` flag allows you to customize the HMAC signing behavior in the Hive
+Gateway:
 
 - `secret`: The secret key used for HMAC signing and verification. It should be a random, opaque
-  string shared between the Mesh Gateway and the subgraph services.
+  string shared between the Hive Gateway and the subgraph services.
 - `extensionName` (optional, default: `hmac-signature`): The key name used in the `extensions` field
   of the outgoing requests to store the HMAC signature.
 - `serializeExecutionRequest` - A function to customize the way the incoming request is serialized
@@ -214,7 +213,7 @@ The `useHmacSignatureValidation` plugin allow you to customize the HMAC verifica
 subgraph.
 
 - `secret`: The secret key used for HMAC signing and verification. It should be a random, opaque
-  string shared between the Mesh Gateway and the subgraph services.
+  string shared between the Hive Gateway and the subgraph services.
 - `extensionName` (optional, default: `hmac-signature`): The key name used in the `extensions` field
   of the outgoing requests to store the HMAC signature.
 - `serializeParams` - A function to customize the way the incoming request is serialized before

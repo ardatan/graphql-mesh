@@ -10,14 +10,14 @@ query so that the next time the same query is made, the response is fetched from
 of making a request to the underlying sources.
 
 <Callout>
-  You need to set your cache storage in your Mesh configuration to enable response caching. See
+  You need to set your cache storage in your gateway configuration to enable response caching. See
   [Cache Storage](/v1/serve/features/performance#providing-cache-storage) for more information.
 </Callout>
 
 ## How to use?
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   responseCaching: {
@@ -78,7 +78,7 @@ information.
 </Callout>
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   responseCaching: {

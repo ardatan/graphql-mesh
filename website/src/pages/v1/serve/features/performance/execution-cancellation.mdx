@@ -11,7 +11,7 @@ In the real world, a lot of HTTP requests are dropped or canceled. This can happ
 internet connection, navigation to a new view or page within a web or native app or the user simply
 closing the app. In this case, the server can stop processing the request and save resources.
 
-That is why GraphQL Mesh comes with the support for canceling the GraphQL execution upon request
+That is why Hive Gateway comes with the support for canceling the GraphQL execution upon request
 cancellation.
 
 So any extra calls to the services can be stopped and the resources can be saved.
@@ -19,14 +19,14 @@ So any extra calls to the services can be stopped and the resources can be saved
 ## Enable Execution Cancellation
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   executionCancellation: true
 })
 ```
 
-That is all you need to do to enable execution cancellation in your Mesh gateway. Theoretically, you
+That is all you need to do to enable execution cancellation in your Hive Gateway. Theoretically, you
 can enable this and immediately benefit from it without making any other adjustments within your
 GraphQL schema implementation.
 

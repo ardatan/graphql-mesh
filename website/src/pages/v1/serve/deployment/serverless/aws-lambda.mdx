@@ -1,6 +1,6 @@
 import { Callout } from '@theguild/components'
 
-# Deploying Mesh to AWS Lambda
+# Deploying Hive Gateway to AWS Lambda
 
 <Callout>
   This page is currently under construction and expected to change. Please feel free to reach out to
@@ -8,7 +8,7 @@ import { Callout } from '@theguild/components'
 </Callout>
 
 AWS Lambda is a serverless computing platform that makes it easy to build applications that run on
-the AWS cloud. Mesh Serve is platform agnostic so they can fit together easily.
+the AWS cloud. Hive Gateway is platform agnostic so they can fit together easily.
 
 <Callout>
   Before you start, make sure you read the [Serverless / On the
@@ -17,7 +17,7 @@ the AWS cloud. Mesh Serve is platform agnostic so they can fit together easily.
 
 ```ts
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 
 const serveRuntime = createGatewayRuntime(/* Your configuration */)
 

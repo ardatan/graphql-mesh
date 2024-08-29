@@ -2,8 +2,8 @@
 
 import { Callout } from '@theguild/components'
 
-Once you configured, and tested your gateway. Now, it is time to deploy it. GraphQL Mesh Serve
-Runtime uses Web Standards (WHATWG Fetch API) not only as an HTTP client but also for handling the
+Once you configured, and tested your gateway. Now, it is time to deploy it. Hive Gateway Runtime
+uses Web Standards (WHATWG Fetch API) not only as an HTTP client but also for handling the
 server-side. That gives us the ability to run the gateway in any environment that runs JavaScript.
 
 Node.js is the most common server-side environment in JavaScript ecosystem but it doesn't use Web
@@ -29,7 +29,7 @@ this case, we will show here how to pass the request information from your envir
 then get the response for your environment back.
 
 ```ts
-import { createGatewayRuntime } from '@graphql-mesh/serve'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
 import type {
   ImaginaryEnvironmentRequest,
   ImaginaryEnvironmentServerContext
@@ -37,17 +37,17 @@ import type {
 import { getMySupergraph } from './my-supergraph.js'
 
 // First pass it to the runtime as a context
-const serveRuntime = createGatewayRuntime<ImaginaryEnvironmentServerContext>({
+const gatewayRuntime = createGatewayRuntime<ImaginaryEnvironmentServerContext>({
   supergraph: () => getMySupergraph()
 })
 
 // Let's say it needs a function exported
-export async function meshEndpoint(
+export async function gatewayEndpoint(
   envRequest: ImaginaryEnvironmentRequest,
   envContext: ImaginaryEnvironmentServerContext
 ) {
   // Serve Runtime provides a fetch function which has exactly the same signature with regular `fetch`
-  const res = await serveRuntime.fetch(
+  const res = await gatewayRuntime.fetch(
     envRequest.url,
     {
       method: envRequest.method,

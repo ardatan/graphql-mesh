@@ -3,22 +3,22 @@
 import { Callout } from '@theguild/components'
 
 Apollo GraphOS is a schema registry that allows you to store and manage your supergraph schemas. You
-can use GraphQL Mesh to serve your supergraph schemas stored in Apollo GraphOS, or send usage data
+can use Hive Registry to serve your supergraph schemas stored in Apollo GraphOS, or send usage data
 to Apollo GraphOS.
 
-## Serve Supergraph from GraphQL Hive
+## Serve Supergraph from Apollo GraphOS
 
-By default, Mesh will use standard Apollo GraphOS environment variables `APOLLO_GRAPH_REF` and
-`APOLLO_KEY`.
+By default, Hive Gateway will use standard Apollo GraphOS environment variables `APOLLO_GRAPH_REF`
+and `APOLLO_KEY`.
 
 ```sh
-npx mesh-serve supergraph
+npx hive-gateway supergraph
 ```
 
 But you can also provide these values using the CLI:
 
 ```sh
-npx mesh-serve supergraph <graph_id>[@<variant>] --apollo-key <api_key>
+npx hive-gateway supergraph <graph_id>[@<variant>] --apollo-key <api_key>
 ```
 
 <Callout>
@@ -32,7 +32,7 @@ You can also provide this configuration programatically by providing a configura
 with other options to customize the polling behavior.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   supergraph: {
@@ -82,7 +82,7 @@ default environment variables as supergraph fetching.
 Also you can provide additional configuration options to customize the usage reporting behavior.
 
 ```ts filename="gateway.config.ts"
-import { defineConfig } from '@graphql-mesh/serve-cli'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   reporting: {
