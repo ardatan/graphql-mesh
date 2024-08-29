@@ -270,6 +270,7 @@ let cli = new Command()
 export function run(userCtx: Partial<CLIContext>) {
   module.register(
     '@graphql-mesh/include/hooks',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore bob will complain when bundling for cjs
     import.meta.url,
   );

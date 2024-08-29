@@ -4,6 +4,7 @@ import 'dotenv/config'; // inject dotenv options to process.env
 import { promises as fsPromises } from 'fs';
 // eslint-disable-next-line import/no-nodejs-modules
 import module from 'node:module';
+// eslint-disable-next-line import/no-nodejs-modules
 import { isAbsolute, join, resolve } from 'path';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
@@ -54,6 +55,7 @@ export async function run({
 }: RunOptions): Promise<void | never> {
   module.register(
     '@graphql-mesh/include/hooks',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore bob will complain when bundling for cjs
     import.meta.url,
   );

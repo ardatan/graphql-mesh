@@ -1,3 +1,4 @@
+/* eslint-disable import/no-nodejs-modules */
 // ONLY FOR NODE. register with `node --import @graphql-mesh/include/hooks <your script>`
 
 import fs from 'node:fs/promises';
@@ -14,6 +15,7 @@ function debug(msg: string) {
   }
 }
 
+// eslint-disable-next-line dot-notation
 const resolveFilename: (path: string) => string = module['_resolveFilename'];
 
 let pathsMatcher: ((specifier: string) => string[]) | undefined;
