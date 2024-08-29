@@ -1,5 +1,34 @@
 # @graphql-mesh/utils
 
+## 0.102.5
+
+### Patch Changes
+
+- [#7595](https://github.com/ardatan/graphql-mesh/pull/7595)
+  [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/disposablestack@^0.0.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.4)
+    (from `^0.0.3`, in `dependencies`)
+
+- [#7596](https://github.com/ardatan/graphql-mesh/pull/7596)
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/disposablestack@^0.0.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.5)
+    (from `^0.0.4`, in `dependencies`)
+
+- [#7597](https://github.com/ardatan/graphql-mesh/pull/7597)
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/disposablestack@^0.0.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.5)
+    (from `^0.0.4`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.5
+
 ## 0.102.4
 
 ### Patch Changes

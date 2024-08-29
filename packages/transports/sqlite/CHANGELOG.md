@@ -1,5 +1,48 @@
 # @graphql-mesh/transport-sqlite
 
+## 0.7.0
+
+### Minor Changes
+
+- [#7580](https://github.com/ardatan/graphql-mesh/pull/7580)
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: All types prefixed with `MeshServe`,
+  now are prefixed with `Gateway`. e.g. `MeshServeRuntime` -> `GatewayRuntime`
+
+  Runtime factory is renamed; `createServeRuntime` -> `createGatewayRuntime`
+
+  The expected export name for config files are renamed from `serveConfig` to `gatewayConfig`
+
+  RENAMING:
+
+  You can rename the product, config file name etc by using the following config options;
+
+  For example;
+
+  ```ts
+  productName = 'Mesh Gateway'
+  productDescription =
+    'Mesh Gateway is a GraphQL Gateway that can be used to serve a supergraph schema.'
+  productLogo = '<svg>...</svg>'
+  productPackageName = '@graphql-mesh/gateway'
+  ```
+
+### Patch Changes
+
+- [#7580](https://github.com/ardatan/graphql-mesh/pull/7580)
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.102.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.102.4)
+    (from `^0.101.0`, in `dependencies`)
+- Updated dependencies
+  [[`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d)]:
+  - @graphql-mesh/utils@0.102.5
+  - @omnigraph/sqlite@0.6.5
+  - @graphql-mesh/transport-common@0.7.6
+
 ## 0.6.5
 
 ### Patch Changes

@@ -1,5 +1,27 @@
 # @graphql-mesh/include
 
+## 0.2.0
+
+### Minor Changes
+
+- [#7596](https://github.com/ardatan/graphql-mesh/pull/7596)
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Module hooks using sucrase transpiling only
+  TS with tsconfig paths support
+
+- [#7596](https://github.com/ardatan/graphql-mesh/pull/7596)
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - No more
+  @graphql-mesh/include/register-tsconfig-paths
+
+### Patch Changes
+
+- [#7596](https://github.com/ardatan/graphql-mesh/pull/7596)
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency [`sucrase@^3.35.0` ↗︎](https://www.npmjs.com/package/sucrase/v/3.35.0) (to
+    `dependencies`)
+
 ## 0.1.0
 
 ### Minor Changes

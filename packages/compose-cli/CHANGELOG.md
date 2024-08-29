@@ -1,5 +1,29 @@
 # @graphql-mesh/compose-cli
 
+## 0.10.0
+
+### Minor Changes
+
+- [#7596](https://github.com/ardatan/graphql-mesh/pull/7596)
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Register @graphql-mesh/include/hooks instead
+  of using jiti and include
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d),
+  [`75e9f63`](https://github.com/ardatan/graphql-mesh/commit/75e9f63d09514a0af786f909dc8c32ac09a1a849),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)]:
+  - @graphql-mesh/include@0.2.0
+  - @graphql-mesh/utils@0.102.5
+  - @graphql-mesh/fusion-composition@0.5.0
+  - @graphql-mesh/types@0.102.5
+
 ## 0.9.5
 
 ### Patch Changes
