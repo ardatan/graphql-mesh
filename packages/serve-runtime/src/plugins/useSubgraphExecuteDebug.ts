@@ -10,7 +10,7 @@ export function useSubgraphExecuteDebug<TContext>(opts: {
     onSubgraphExecute({ executionRequest, logger = opts.logger }) {
       if (executionRequest) {
         logger.debug(`subgraph-execute`, () => ({
-          query: executionRequest.document ?? defaultPrintFn(executionRequest.document),
+          query: executionRequest.document && defaultPrintFn(executionRequest.document),
           variables: executionRequest.variables,
         }));
       }
