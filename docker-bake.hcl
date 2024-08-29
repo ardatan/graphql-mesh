@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["mesh-serve", "hive-gateway]
+  targets = ["mesh-serve", "hive-gateway"]
 }
 
 variable "MESH_SERVE_TAGS" {
