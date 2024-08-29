@@ -116,7 +116,7 @@ function installDeps() {
   }
 
   const zip = new ADMZip();
-  zip.addLocalFolder('../../node_modules/graphql', './graphql');
+  zip.addLocalFolder('../../node_modules/graphql', './graphql'); // works just like this because graphql is zero-dep
   zip.addLocalFolder('bundle/node_modules');
   const zipBuf = zip.toBuffer();
   const __MODULES_HASH__ = createHash('sha256').update(zipBuf).digest('hex');
