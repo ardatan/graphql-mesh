@@ -4,6 +4,12 @@ FROM node:22 AS install
 
 WORKDIR /install
 
+RUN apt-get update && apt-get install -y \
+  # for node-libcurl
+  libcurl4-openssl-dev libssl-dev \
+  # clean
+  apt-get clean
+
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
   node-libcurl@npm:@ardatan/node-libcurl@^4 \

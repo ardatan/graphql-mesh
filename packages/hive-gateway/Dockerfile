@@ -1,9 +1,14 @@
 # IMPORTANT: make sure bundle is ready with `yarn bundle`
 
-# we build with Node 21 because node-libcurl has published prebuilt releases (building from source fails when using Node 22)
-FROM node:21 AS install
+FROM node:22 AS install
 
 WORKDIR /install
+
+RUN apt-get update && apt-get install -y \
+  # for node-libcurl
+  libcurl4-openssl-dev libssl-dev \
+  # clean
+  apt-get clean
 
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \

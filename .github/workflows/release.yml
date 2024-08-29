@@ -54,6 +54,8 @@ jobs:
             return r;
       - name: checkout
         uses: actions/checkout@v4
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - name: set up docker buildx
         uses: docker/setup-buildx-action@v3
       - name: log in to ghcr
