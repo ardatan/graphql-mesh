@@ -1,4 +1,4 @@
-// tsx package-binary.ts <platform> <arch>
+// tsx package-binary.ts [platform] [arch]
 
 import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
