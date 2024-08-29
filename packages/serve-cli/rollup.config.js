@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { defineConfig } from 'rollup';
+import { defineConfig, rollup } from 'rollup';
 import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -99,6 +99,7 @@ export default defineConfig({
     json(), // support importing json files to esm (needed for commonjs() plugin)
     sucrase({ transforms: ['typescript'] }), // transpile typescript
     packagejson(), // add package jsons
+    injectIncludeHooks(), // injects bundled @graphql-mesh/include/hooks
   ],
 });
 
@@ -254,6 +255,44 @@ function graphql() {
         );
       }
       return augmented;
+    },
+  };
+}
+
+/**
+ * @type {import('rollup').PluginImpl}
+ */
+function injectIncludeHooks() {
+  let injected = false;
+  const injectionDest = /register\(\s*'@graphql-mesh\/include\/hooks'/; // intentionally no closing bracked because there's more arguments
+  return {
+    name: 'injectIncludeHooks',
+    async renderChunk(chunk) {
+      if (!injectionDest.test(chunk)) return;
+      injected = true;
+
+      const bundle = await rollup({
+        input: '../include/src/hooks.ts',
+        plugins: [nodeResolve(), commonjs(), sucrase({ transforms: ['typescript'] })],
+      });
+
+      const { output: outputs } = await bundle.generate({
+        format: 'esm',
+        inlineDynamicImports: true,
+      });
+      const script = outputs[0].code;
+
+      return chunk.replace(
+        injectionDest,
+        () => `register(${JSON.stringify(`data:text/javascript,${encodeURIComponent(script)}`)}`,
+      );
+    },
+    generateBundle() {
+      if (!injected) {
+        throw new Error(
+          `Include hooks cannot be injected, does "${injectionDest}" exist in the source code?`,
+        );
+      }
     },
   };
 }

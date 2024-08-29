@@ -5,7 +5,7 @@ const { compose, serve, fs } = createTenv(__dirname);
 it('should compose', async () => {
   const proc = await compose({
     env: {
-      MESH_INCLUDE_TSCONFIG_NAME: 'tsconfig-paths.tsconfig.json',
+      MESH_INCLUDE_TSCONFIG_SEARCH_PATH: 'tsconfig-paths.tsconfig.json',
     },
   });
   expect(proc.result).toMatchSnapshot();
@@ -15,7 +15,7 @@ it('should serve', async () => {
   const proc = await serve({
     supergraph: await fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
     env: {
-      MESH_INCLUDE_TSCONFIG_NAME: 'tsconfig-paths.tsconfig.json',
+      MESH_INCLUDE_TSCONFIG_SEARCH_PATH: 'tsconfig-paths.tsconfig.json',
     },
     runner: {
       docker: {

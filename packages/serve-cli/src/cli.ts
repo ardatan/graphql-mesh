@@ -1,8 +1,8 @@
-import '@graphql-mesh/include/register-tsconfig-paths';
 import 'dotenv/config'; // inject dotenv options to process.env
 import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
 import cluster from 'node:cluster';
+import module from 'node:module';
 import { availableParallelism, release } from 'node:os';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
@@ -20,7 +20,6 @@ import type { KeyValueCache, Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { addCommands } from './commands/index.js';
 import { createDefaultConfigPaths } from './config.js';
-import type { LocalForageCacheStorage } from './index.js';
 import type { ServerConfig } from './server';
 
 export type GatewayCLIConfig = (
@@ -230,7 +229,6 @@ let cli = new Command()
     // see here https://github.com/tj/commander.js/blob/970ecae402b253de691e6a9066fea22f38fe7431/lib/command.js#L655
     null,
   )
-  .option('--native-import', 'use the native "import" function for importing the config file')
   .addOption(
     new Option(
       '--hive-registry-token <token>',
@@ -270,6 +268,13 @@ let cli = new Command()
   );
 
 export function run(userCtx: Partial<CLIContext>) {
+  module.register(
+    '@graphql-mesh/include/hooks',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore bob will complain when bundling for cjs
+    import.meta.url,
+  );
+
   const ctx: CLIContext = {
     log: new DefaultLogger(),
     productName: 'Mesh',
