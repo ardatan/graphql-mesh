@@ -21,7 +21,7 @@ console.log(`Packaging binary with Node SEA for ${platform}-${arch} to ${dest}`)
 console.log('Generating blob');
 await $`node --experimental-sea-config sea-config.json`;
 
-console.log(`Using node at ${process.execPath}`);
+console.log(`Using node from ${process.execPath}`);
 await fs.copyFile(process.execPath, dest);
 
 console.log('Injecting blob');
