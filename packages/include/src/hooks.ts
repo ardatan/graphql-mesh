@@ -112,7 +112,14 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
 export const load: module.LoadHook = async (url, context, nextLoad) => {
   if (/\.(m|c)?ts$/.test(url)) {
     debug(`Transpiling TypeScript file at "${url}"`);
-    const source = await fs.readFile(new URL(url), 'utf8');
+    let urlObj: URL | string;
+    try {
+      urlObj = new URL(url);
+    } catch (e) {
+      process.stderr.write(`Failed to parse URL "${url}"; ${e?.stack || e}\n`);
+      throw e;
+    }
+    const source = await fs.readFile(urlObj, 'utf8');
     const { code } = transform(source, { transforms: ['typescript'] });
     return {
       format: /\.cts$/.test(url) ? 'commonjs' : 'module', // TODO: ".ts" files _might_ not always be esm
