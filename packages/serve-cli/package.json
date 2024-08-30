@@ -74,10 +74,10 @@
     "commander": "^12.0.0",
     "dotenv": "^16.3.1",
     "json-bigint-patch": "^0.0.8",
+    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.1",
     "parse-duration": "^1.1.0"
   },
   "optionalDependencies": {
-    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.1",
     "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "devDependencies": {
