@@ -112,15 +112,14 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
 export const load: module.LoadHook = async (url, context, nextLoad) => {
   if (/\.(m|c)?ts$/.test(url)) {
     debug(`Transpiling TypeScript file at "${url}"`);
-    let parsedUrl: URL | string;
     if (path.sep === '\\' && !url.startsWith('file:') && url[1] === ':' && url[2] === '/') {
-      parsedUrl = url;
-    } else {
-      try {
-        parsedUrl = new URL(url);
-      } catch (e) {
-        throw new Error(`Failed to parse URL "${url}"; ${e?.stack || e}`);
-      }
+      url = `file:///${url}`;
+    }
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch (e) {
+      throw new Error(`Failed to parse URL "${url}"; ${e?.stack || e}`);
     }
     let source: string;
     try {
