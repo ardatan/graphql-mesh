@@ -385,6 +385,9 @@ export function createTenv(cwd: string): Tenv {
         },
       };
       const ctrl = new AbortController();
+      const timeout = globalThis.setTimeout(() => {
+        ctrl.abort(`Serve did not become reachable in 45s`);
+      }, 45000);
       await Promise.race([
         waitForExit
           ?.then(() =>
@@ -396,6 +399,7 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(serve, ctrl.signal),
       ]);
+      clearTimeout(timeout);
       return serve;
     },
     async compose(opts) {
@@ -607,7 +611,7 @@ export function createTenv(cwd: string): Tenv {
 
       const ctrl = new AbortController();
       const timeout = globalThis.setTimeout(() => {
-        ctrl.abort(`Service "${name}" did not become reachable in 45s`);
+        ctrl.abort(`Container "${name}" did not become reachable in 45s`);
       }, 45000);
       const container: Container = {
         containerName,
