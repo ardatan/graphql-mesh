@@ -16,7 +16,8 @@ if (!isDarwin && !isWindows && !isLinux) {
 
 const dest = 'mesh-serve' + (isWindows ? '.exe' : '');
 
-const signToolPath = 'C:\\Program Files (x86)\\Microsoft SDKs\\ClickOnce\\SignTool\\signtool.exe';
+const signToolPath =
+  'C:\\Program Files (x86)\\Microsoft SDKs\\ClickOnce\\SignTool\\signtool.exe'.replace(/ /g, '\\ ');
 
 console.log(`Packaging binary with Node SEA for ${platform}-${arch} to ${dest}`);
 
