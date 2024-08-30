@@ -322,9 +322,9 @@ jobs:
 
   e2e:
     name:
-      e2e / runner ${{matrix.setup.serve-runner}} / os ${{ matrix.os }} / node
+      e2e / runner ${{matrix.setup.serve-runner}} / os ${{ matrix.setup.os }} / node
       ${{matrix.setup.node-version}}
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.setup.os }}
     strategy:
       fail-fast: false
       matrix:

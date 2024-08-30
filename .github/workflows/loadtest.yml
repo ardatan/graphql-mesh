@@ -7,8 +7,8 @@ on:
       - master
 
 jobs:
-  e2e:
-    name: e2e / node ${{matrix.node-version}}
+  loadtest-e2e:
+    name: node ${{matrix.node-version}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
