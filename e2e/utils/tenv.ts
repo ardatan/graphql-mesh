@@ -470,17 +470,23 @@ export function createTenv(cwd: string): Tenv {
       );
       const service: Service = { ...proc, name, port };
       const ctrl = new AbortController();
+      const timeout = globalThis.setTimeout(() => {
+        ctrl.abort();
+      }, 45000);
       await Promise.race([
         waitForExit
           .then(() =>
             Promise.reject(
-              new Error(`Service exited successfully, but shouldn't have\n${proc.getStd('both')}`),
+              new Error(
+                `Service "${name}" exited successfully, but shouldn't have\n${proc.getStd('both')}`,
+              ),
             ),
           )
           // stop reachability wait after exit
           .finally(() => ctrl.abort()),
         waitForReachable(service, ctrl.signal),
       ]);
+      clearTimeout(timeout);
       return service;
     },
     async container({
@@ -600,6 +606,9 @@ export function createTenv(cwd: string): Tenv {
       await ctr.start();
 
       const ctrl = new AbortController();
+      const timeout = globalThis.setTimeout(() => {
+        ctrl.abort();
+      }, 45000);
       const container: Container = {
         containerName,
         name,
@@ -636,7 +645,7 @@ export function createTenv(cwd: string): Tenv {
 
       // wait for healthy
       if (healthcheck.length > 0) {
-        for (;;) {
+        while (!ctrl.signal.aborted) {
           let status = '';
           try {
             const {
@@ -662,8 +671,6 @@ export function createTenv(cwd: string): Tenv {
           } else if (status === 'healthy') {
             break;
           } else if (status === 'starting') {
-            // no need to track retries, jest will time out aborting the signal
-            ctrl.signal.throwIfAborted();
             await setTimeout(interval);
           } else {
             throw new DockerError(`Unknown health status "${status}"`, container);
@@ -672,6 +679,7 @@ export function createTenv(cwd: string): Tenv {
       } else {
         await waitForReachable(container, ctrl.signal);
       }
+      clearTimeout(timeout);
       return container;
     },
     async composeWithApollo(services) {
@@ -823,13 +831,11 @@ export function getAvailablePort(): Promise<number> {
 }
 
 async function waitForReachable(server: Server, signal: AbortSignal) {
-  for (;;) {
+  while (!signal.aborted) {
     try {
       await fetch(`http://0.0.0.0:${server.port}`, { signal });
       break;
     } catch (err) {
-      // no need to track retries, jest will time out aborting the signal
-      signal.throwIfAborted();
       await setTimeout(interval);
     }
   }
