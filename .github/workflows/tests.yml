@@ -347,9 +347,10 @@ jobs:
           - serve-runner: bin
             node-version: 22
             os: windows-latest
-          - serve-runner: bin
-            node-version: 22
-            os: macos-latest
+          # Disabled because Docker does not work on macOS M1 runners
+          # - serve-runner: bin
+          #   node-version: 22
+          #   os: macos-latest
           - serve-runner: bin
             node-version: 22
             os: macos-latest-large
@@ -385,6 +386,10 @@ jobs:
       - name: build # we need to build for binary because it'll use the nearby node_modules
         if: matrix.setup.serve-runner == 'bin'
         run: yarn build
+        shell: bash
+      - name: Install Windows SDK for signtool
+        if: matrix.setup.os == 'windows-latest' && matrix.setup.serve-runner == 'bin'
+        uses: fbactions/setup-winsdk@v2
       - name: package binary
         if: matrix.setup.serve-runner == 'bin'
         working-directory: packages/serve-cli
