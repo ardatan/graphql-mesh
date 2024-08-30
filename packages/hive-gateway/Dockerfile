@@ -4,6 +4,8 @@ FROM node:22-slim AS install
 
 WORKDIR /install
 
+RUN apt-get update && apt-get install -y git
+
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
   node-libcurl@npm:@ardatan/node-libcurl@^4.0.1 \

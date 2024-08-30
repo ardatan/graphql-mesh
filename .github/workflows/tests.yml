@@ -174,9 +174,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
-
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
@@ -255,17 +252,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
-
       - name: Use Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
-
-      - name: Remove node-libcurl
-        run: node scripts/remove-node-libcurl.cjs
 
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
@@ -330,27 +321,41 @@ jobs:
         run: yarn bob check
 
   e2e:
-    name: e2e / runner ${{matrix.setup.serve-runner}} / node ${{matrix.setup.node-version}}
-    runs-on: ubuntu-latest
+    name:
+      e2e / runner ${{matrix.setup.serve-runner}} / os ${{ matrix.os }} / node
+      ${{matrix.setup.node-version}}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         setup:
           - serve-runner: node
             node-version: 18
+            os: ubuntu-latest
           - serve-runner: node
             node-version: 20
+            os: ubuntu-latest
           - serve-runner: node
             node-version: 22
+            os: ubuntu-latest
           - serve-runner: docker
             node-version: 22
+            os: ubuntu-latest
           - serve-runner: bin
             node-version: 22
+            os: ubuntu-latest
+          - serve-runner: bin
+            node-version: 22
+            os: windows-latest
+          - serve-runner: bin
+            node-version: 22
+            os: macos-latest
+          - serve-runner: bin
+            node-version: 22
+            os: macos-latest-large
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - name: set up env
         uses: the-guild-org/shared-config/setup@v1
         with:
