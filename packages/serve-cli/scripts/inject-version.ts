@@ -19,6 +19,8 @@ for (const file of [
   resolve(__dirname, '../dist/esm/bin.js'),
   // bundle
   resolve(__dirname, '../bundle/dist/bin.mjs'),
+  // binary bundle
+  resolve(__dirname, '../bundle/mesh-serve.cjs'),
 ]) {
   try {
     const content = await readFile(file, 'utf-8');
