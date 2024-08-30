@@ -110,6 +110,7 @@ jobs:
       - name: timestamp
         id: timestamp
         run: echo "timestamp=$(date +%s%3N) >> $GITHUB_OUTPUT"
+        shell: bash
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
