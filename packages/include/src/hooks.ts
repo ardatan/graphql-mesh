@@ -116,8 +116,7 @@ export const load: module.LoadHook = async (url, context, nextLoad) => {
     try {
       urlObj = new URL(url);
     } catch (e) {
-      process.stderr.write(`Failed to parse URL "${url}"; ${e?.stack || e}\n`);
-      throw e;
+      throw new Error(`Failed to parse URL "${url}"; ${e?.stack || e}`);
     }
     const source = await fs.readFile(urlObj, 'utf8');
     const { code } = transform(source, { transforms: ['typescript'] });

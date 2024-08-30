@@ -393,6 +393,11 @@ jobs:
         if: matrix.setup.serve-runner == 'bin'
         run: yarn build
         shell: bash
+      - if: matrix.setup.os == 'windows-latest'
+        name: Install Windows SDK
+        uses: fbactions/setup-winsdk@v2
+        with:
+          winsdk-build-version: 18362
       - name: package binary
         if: matrix.setup.serve-runner == 'bin'
         working-directory: packages/serve-cli
