@@ -3,6 +3,7 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
+import { path } from '@graphql-mesh/cross-helpers';
 
 const platform = (process.argv[2] || os.platform()).toLowerCase();
 const arch = (process.argv[3] || os.arch()).toLowerCase();
@@ -16,8 +17,14 @@ if (!isDarwin && !isWindows && !isLinux) {
 
 const dest = 'mesh-serve' + (isWindows ? '.exe' : '');
 
-const signToolPath =
-  'C:\\Program Files (x86)\\Microsoft SDKs\\ClickOnce\\SignTool\\signtool.exe'.replace(/ /g, '\\ ');
+const signToolPath = path.join(
+  'C:\\',
+  'Program Files (x86)',
+  'Microsoft SDKs',
+  'ClickOnce',
+  'SignTool',
+  'signtool.exe',
+);
 
 console.log(`Packaging binary with Node SEA for ${platform}-${arch} to ${dest}`);
 
