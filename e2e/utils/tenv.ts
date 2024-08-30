@@ -810,7 +810,8 @@ export function getAvailablePort(): Promise<number> {
       server.listen(0, () => {
         try {
           const addressInfo = server.address() as AddressInfo;
-          server.close(err => (err ? reject(err) : resolve(addressInfo?.port)));
+          resolve(addressInfo.port);
+          server.close();
         } catch (err) {
           reject(err);
         }

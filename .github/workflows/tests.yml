@@ -325,6 +325,7 @@ jobs:
       e2e / runner ${{matrix.setup.serve-runner}} / os ${{ matrix.setup.os }} / node
       ${{matrix.setup.node-version}}
     runs-on: ${{ matrix.setup.os }}
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
