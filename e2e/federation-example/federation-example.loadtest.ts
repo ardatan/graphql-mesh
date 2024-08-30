@@ -1,5 +1,4 @@
 import os from 'os';
-import path from 'path';
 import { createTbench, type Tbench, type TbenchResult } from '@e2e/tbench';
 import { createTenv, type Service } from '@e2e/tenv';
 
@@ -22,16 +21,6 @@ beforeAll(async () => {
     await service('products'),
     await service('reviews'),
   ];
-
-  const supergraphConfig = { subgraphs: {} };
-  for (const service of services) {
-    supergraphConfig.subgraphs[service.name] = {
-      routing_url: `http://0.0.0.0:${service.port}/graphql`,
-      schema: {
-        file: path.join(__dirname, 'services', service.name, 'typeDefs.graphql'),
-      },
-    };
-  }
 
   supergraph = await composeWithApollo(services);
 });

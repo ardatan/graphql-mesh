@@ -23,7 +23,7 @@ export const retries = 120,
   timeout = retries * interval; // 1min
 jest.setTimeout(timeout);
 
-const __project = path.resolve(__dirname, '..', '..') + '/';
+const __project = path.resolve(__dirname, '..', '..') + path.sep;
 
 const docker = new Dockerode();
 
@@ -805,9 +805,20 @@ function spawn(
 
 export function getAvailablePort(): Promise<number> {
   const server = createServer();
-  server.listen(0);
-  const { port } = server.address() as AddressInfo;
-  return new Promise((resolve, reject) => server.close(err => (err ? reject(err) : resolve(port))));
+  return new Promise((resolve, reject) => {
+    try {
+      server.listen(0, () => {
+        try {
+          const addressInfo = server.address() as AddressInfo;
+          server.close(err => (err ? reject(err) : resolve(addressInfo?.port)));
+        } catch (err) {
+          reject(err);
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 async function waitForReachable(server: Server, signal: AbortSignal) {

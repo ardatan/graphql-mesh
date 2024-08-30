@@ -55,7 +55,7 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
   if (packedDepsPath) {
     try {
       const resolved = await nextResolve(
-        resolveFilename(path.join(packedDepsPath, specifier)),
+        resolveFilename(path.join(packedDepsPath, specifier).replace(/\\/g, '/')),
         context,
       );
       debug(`Using packed dependency "${specifier}" from "${packedDepsPath}"`);

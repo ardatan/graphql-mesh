@@ -371,7 +371,7 @@ jobs:
         run: |
           colima start
           docker ps -a
-          sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock
+          sudo ln -sf $COLIMA_HOME/default/docker.sock /var/run/docker.sock
       - name: hash docker images
         id: hash-docker-images
         # get all "image: '" occurrences in the e2e tests and hash them
