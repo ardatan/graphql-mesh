@@ -104,9 +104,6 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn bundle
-      - name: Install Windows SDK for signtool
-        if: matrix.os == 'windows-latest'
-        uses: fbactions/setup-winsdk@v2
       - name: package binary
         working-directory: packages/serve-cli
         run: yarn package-binary

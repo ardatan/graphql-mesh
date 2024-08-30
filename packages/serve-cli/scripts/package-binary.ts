@@ -16,6 +16,8 @@ if (!isDarwin && !isWindows && !isLinux) {
 
 const dest = 'mesh-serve' + (isWindows ? '.exe' : '');
 
+const signToolPath = 'C:\\Program Files (x86)\\Microsoft SDKs\\ClickOnce\\SignTool\\signtool.exe';
+
 console.log(`Packaging binary with Node SEA for ${platform}-${arch} to ${dest}`);
 
 console.log('Generating blob');
@@ -30,7 +32,7 @@ if (isDarwin) {
   execSync(`codesign --remove-signature ${dest}`);
 } else if (isWindows) {
   try {
-    execSync(`signtool remove /s ${dest}`);
+    execSync(`${signToolPath} remove /s ${dest}`);
   } catch (e) {
     console.warn('Removing signature failed', e);
   }
@@ -56,7 +58,7 @@ if (isDarwin) {
   execSync(`codesign --sign - ${dest}`);
 } else if (isWindows) {
   try {
-    execSync(`signtool sign /fd SHA256 ${dest}`);
+    execSync(`${signToolPath} sign /fd SHA256 ${dest}`);
   } catch (e) {
     console.warn('Signing failed', e);
   }

@@ -371,6 +371,7 @@ jobs:
         run: |
           colima start
           docker ps -a
+          sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock
       - name: hash docker images
         id: hash-docker-images
         # get all "image: '" occurrences in the e2e tests and hash them
@@ -394,9 +395,6 @@ jobs:
         if: matrix.setup.serve-runner == 'bin'
         run: yarn build
         shell: bash
-      - name: Install Windows SDK for signtool
-        if: matrix.setup.os == 'windows-latest' && matrix.setup.serve-runner == 'bin'
-        uses: fbactions/setup-winsdk@v2
       - name: package binary
         if: matrix.setup.serve-runner == 'bin'
         working-directory: packages/serve-cli
