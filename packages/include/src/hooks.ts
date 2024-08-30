@@ -110,11 +110,11 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
 };
 
 export const load: module.LoadHook = async (url, context, nextLoad) => {
+  if (path.sep === '\\' && !url.startsWith('file:') && url[1] === ':' && url[2] === '/') {
+    url = `file:///${url}`;
+  }
   if (/\.(m|c)?ts$/.test(url)) {
     debug(`Transpiling TypeScript file at "${url}"`);
-    if (path.sep === '\\' && !url.startsWith('file:') && url[1] === ':' && url[2] === '/') {
-      url = `file:///${url}`;
-    }
     let parsedUrl: URL;
     try {
       parsedUrl = new URL(url);
