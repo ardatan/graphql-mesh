@@ -77,7 +77,7 @@
     "parse-duration": "^1.1.0"
   },
   "optionalDependencies": {
-    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.0",
+    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.1",
     "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "devDependencies": {
