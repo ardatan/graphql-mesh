@@ -369,7 +369,6 @@ jobs:
       - name: Start Docker
         if: runner.os == 'macOS'
         run: |
-          brew install colima
           colima start
           docker ps -a
       - name: hash docker images
