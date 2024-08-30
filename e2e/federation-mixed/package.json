@@ -2,7 +2,6 @@
   "name": "@e2e/federation-mixed",
   "private": true,
   "devDependencies": {
-    "@apollo/rover": "^0.26.0",
     "@apollo/server": "^4.10.3",
     "@apollo/subgraph": "^2.7.2",
     "fets": "^0.8.1"
