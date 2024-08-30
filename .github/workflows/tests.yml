@@ -362,6 +362,9 @@ jobs:
           node-version: ${{matrix.setup.node-version}}
       - name: prepare
         run: yarn prebuild
+      - name: Setup Docker
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: hash docker images
         id: hash-docker-images
         # get all "image: '" occurrences in the e2e tests and hash them

@@ -4,7 +4,8 @@ FROM node:22-slim AS install
 
 WORKDIR /install
 
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y \
+  curl libssl-dev git python3 build-essential
 
 RUN npm i \
   uNetworking/uWebSockets.js#semver:^20 \
