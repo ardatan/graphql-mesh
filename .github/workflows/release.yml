@@ -55,8 +55,6 @@ jobs:
             return r;
       - name: checkout
         uses: actions/checkout@v4
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - name: set up docker buildx
         uses: docker/setup-buildx-action@v3
       - name: log in to ghcr
@@ -88,37 +86,16 @@ jobs:
           push: true
 
   bin:
-    needs: [stable]
-    if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            arch: x86_64
-          - os: macos-latest
-            arch: x86_64
-          - os: macos-latest-large
-            arch: aarch64
-          - os: windows-latest
-            arch: x86_64
+        os: [ubuntu-latest, macos-latest, macos-latest-large, windows-latest]
+    needs: [stable]
+    if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Disable Windows Defender
-        if: matrix.os == 'windows-latest'
-        run: Set-MpPreference -DisableRealtimeMonitoring $true
-        shell: powershell
-      - name: Install NASM
-        if: matrix.os == 'windows-latest'
-        uses: ilammy/setup-nasm@v1
-      - if: matrix.os == 'windows-latest'
-        name: Install Windows SDK
-        uses: fbactions/setup-winsdk@v2
-      - name: Install Required Libraries
-        if: matrix.os == 'ubuntu-latest'
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
@@ -130,9 +107,16 @@ jobs:
       - name: package binary
         working-directory: packages/serve-cli
         run: yarn package-binary
-      - name: upload artifact
-        id: upload_artifact
-        uses: actions/upload-artifact@v4
+      - name: timestamp
+        id: timestamp
+        run: echo "timestamp=$(date +%s%3N) >> $GITHUB_OUTPUT"
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: mesh-serve_${{ matrix.os }}_${{ matrix.arch }}
-          path: packages/serve-cli/mesh-serve
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file:
+            packages/serve-cli/${{ matrix.os == 'windows-latest' && 'mesh-serve.exe' ||
+            'mesh-serve'}}
+          asset_name: mesh-serve-${{ matrix.os }}
+          tag: release-${{ steps.timestamp.outputs.timestamp }}
+          overwrite: true

@@ -53,9 +53,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
-
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
@@ -94,9 +91,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - name: Use Node
         uses: actions/setup-node@v4
@@ -325,9 +319,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
