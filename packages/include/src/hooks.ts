@@ -118,7 +118,12 @@ export const load: module.LoadHook = async (url, context, nextLoad) => {
     } catch (e) {
       throw new Error(`Failed to parse URL "${url}"; ${e?.stack || e}`);
     }
-    const source = await fs.readFile(urlObj, 'utf8');
+    let source: string;
+    try {
+      source = await fs.readFile(urlObj, 'utf8');
+    } catch (e) {
+      throw new Error(`Failed to read file at "${url}"; ${e?.stack || e}`);
+    }
     const { code } = transform(source, { transforms: ['typescript'] });
     return {
       format: /\.cts$/.test(url) ? 'commonjs' : 'module', // TODO: ".ts" files _might_ not always be esm
