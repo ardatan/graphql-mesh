@@ -20,9 +20,10 @@ const dest = 'mesh-serve' + (isWindows ? '.exe' : '');
 const signToolPath = path.join(
   'C:\\',
   'Program Files (x86)',
-  'Microsoft SDKs',
-  'ClickOnce',
-  'SignTool',
+  'Windows Kits',
+  '10',
+  '10.0.18362.0',
+  'x64',
   'signtool.exe',
 );
 
