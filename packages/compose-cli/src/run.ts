@@ -78,7 +78,7 @@ export async function run({
         .catch(() => false);
       if (exists) {
         log.info(`Found default config file ${configPath}`);
-        const module = await import(absoluteConfigPath);
+        const module = await import(absoluteConfigPath.replace(/\\/g, '/'));
         importedConfig = Object(module).composeConfig;
         if (!importedConfig) {
           throw new Error(`No "composeConfig" exported from default config at ${configPath}`);
@@ -104,7 +104,7 @@ export async function run({
     if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
     }
-    const module = await import(configPath);
+    const module = await import(configPath.replace(/\\/g, '/'));
     importedConfig = Object(module).composeConfig;
     if (!importedConfig) {
       throw new Error(`No "composeConfig" exported from config at ${configPath}`);
