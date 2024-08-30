@@ -43,7 +43,7 @@
     "changeset-version": "changeset version && yarn postchangeset",
     "ci:lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
     "clean": "(rm -rf packages/**/dist & rm -rf packages/**/(!node_modules)/**/dist & rm -rf examples/**/node_modules/.bin/*mesh* & rm -rf .bob) || true",
-    "copy-config-schema": "cp ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/esm && cp ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/cjs",
+    "copy-config-schema": "cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/esm/config-schema.json && cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/cjs/config-schema.json",
     "dev:website": "yarn workspace website run dev",
     "fix-bin": "node scripts/fix-bin.js",
     "generate-config-schema": "yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/src/generated-markdown && yarn postgenerate-config-schema",
@@ -84,6 +84,7 @@
     "@typescript-eslint/parser": "8.3.0",
     "babel-jest": "29.7.0",
     "bob-the-bundler": "7.0.1",
+    "cp-cli": "^2.0.0",
     "cross-env": "^7.0.3",
     "eslint": "9.9.1",
     "eslint-config-prettier": "9.1.0",
@@ -118,10 +119,10 @@
     "esbuild": "^0.23.0",
     "graphql": "16.9.0",
     "graphql-rate-limit@npm:^3.3.0": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
+    "node-gyp": "10.2.0",
     "tslib": "2.7.0",
     "undici": "6.19.8",
-    "uuid": "10.0.0",
-    "node-gyp": "10.2.0"
+    "uuid": "10.0.0"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
