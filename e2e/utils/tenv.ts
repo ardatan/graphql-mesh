@@ -471,7 +471,7 @@ export function createTenv(cwd: string): Tenv {
       const service: Service = { ...proc, name, port };
       const ctrl = new AbortController();
       const timeout = globalThis.setTimeout(() => {
-        ctrl.abort();
+        ctrl.abort(`Service "${name}" did not become reachable in 45s`);
       }, 45000);
       await Promise.race([
         waitForExit
@@ -607,7 +607,7 @@ export function createTenv(cwd: string): Tenv {
 
       const ctrl = new AbortController();
       const timeout = globalThis.setTimeout(() => {
-        ctrl.abort();
+        ctrl.abort(`Service "${name}" did not become reachable in 45s`);
       }, 45000);
       const container: Container = {
         containerName,
