@@ -373,6 +373,8 @@ jobs:
           echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
       - name: cache docker images
         uses: ScribeMD/docker-cache@0.5.0
+        # Only works on ubuntu-latest
+        if: runner.os == 'ubuntu-latest'
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
       - name: set up docker buildx
