@@ -40,7 +40,7 @@ if (isDarwin) {
   execSync(`codesign --remove-signature ${dest}`);
 } else if (isWindows) {
   try {
-    execSync(`${signToolPath} remove /s ${dest}`);
+    execSync(`"${signToolPath}" remove /s ${dest}`);
   } catch (e) {
     console.warn('Removing signature failed', e);
   }
@@ -66,7 +66,7 @@ if (isDarwin) {
   execSync(`codesign --sign - ${dest}`);
 } else if (isWindows) {
   try {
-    execSync(`${signToolPath} sign /fd SHA256 ${dest}`);
+    execSync(`"${signToolPath}" sign /fd SHA256 ${dest}`);
   } catch (e) {
     console.warn('Signing failed', e);
   }
