@@ -375,16 +375,10 @@ jobs:
       # Install macOS specific dependencies
       - name: Setup Docker
         if: runner.os == 'macOS'
-        uses: douglascamata/setup-docker-macos-action@v1-alpha
-      - name: Configure Docker
-        if: runner.os == 'macOS'
         run: |
-          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
-          brew install binfmt-support qemu-user-static
+          brew install docker qemu binfmt-support qemu-user-static
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+          docker run --rm -t arm64v8/ubuntu uname -m
 
       - name: set up docker buildx
         if: matrix.setup.serve-runner == 'docker'
