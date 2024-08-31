@@ -366,22 +366,19 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Install winget
-        shell: powershell
-        run: |
-          $ErrorActionPreference = 'Stop'
+        uses: Cyberboss/install-winget@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          iwr $(iwr 'https://store.rg-adguard.net/api/GetFiles' -Method 'POST' -ContentType 'application/x-www-form-urlencoded' -Body 'type=PackageFamilyName&url=Microsoft.VCLibs.140.00_8wekyb3d8bbwe&ring=RP&lang=en-US' -UseBasicParsing | Foreach-Object Links | Where-Object outerHTML -match 'Microsoft.VCLibs.140.00_.+_x64__8wekyb3d8bbwe.appx' | Foreach-Object href) -OutFile $env:TEMP\vclibs.appx
-          iwr $(iwr 'https://store.rg-adguard.net/api/GetFiles' -Method 'POST' -ContentType 'application/x-www-form-urlencoded' -Body 'type=PackageFamilyName&url=Microsoft.VCLibs.140.00.UWPDesktop_8wekyb3d8bbwe&ring=RP&lang=en-US' -UseBasicParsing | Foreach-Object Links | Where-Object outerHTML -match 'Microsoft.VCLibs.140.00.UWPDesktop_.+_x64__8wekyb3d8bbwe.appx' | Foreach-Object href) -OutFile $env:TEMP\vclibsuwp.appx
-          iwr 'https://github.com/microsoft/winget-cli/releases/download/v1.8.1911/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle' -OutFile $env:TEMP\winget.msixbundle
-          iwr 'https://github.com/microsoft/winget-cli/releases/download/v1.8.1911/76fba573f02545629706ab99170237bc_License1.xml' -Outfile $env:TEMP\winget.license
-
-          Add-AppxProvisionedPackage -Online -PackagePath $env:TEMP\winget.msixbundle -LicensePath $env:TEMP\winget.license -DependencyPackagePath @("$env:TEMP\vclibs.appx", "$env:TEMP\vclibsuwp.appx")
+      - if: runner.os == 'Windows'
+        name: Install Ubuntu via winget
+        run: winget install -e --id Canonical.Ubuntu.2004
 
       - if: runner.os == 'Windows'
         name: Set up WSL
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
         with:
-          distro: Ubuntu
+          distro: Ubuntu-20.04
 
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
