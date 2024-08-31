@@ -65,7 +65,7 @@
     const [id, ...rest] = args;
     try {
       debug(`Resolving packed dependency "${id}"`);
-      const resolvedPath = path.join(modulesPath, id).replace(/\\/g, '/');
+      const resolvedPath = path.join(modulesPath, id);
       debug(`Resolved to "${resolvedPath}"`);
       // always try to import from necessary modules first
       return originalResolveFilename(resolvedPath, ...rest);

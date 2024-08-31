@@ -36,12 +36,12 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
         .then(() => true)
         .catch(() => false);
       if (exists) {
-        !opts.quiet && opts.log.info(`Found default config file ${configPath}`);
-        const module = await import(absoluteConfigPath.replace(/\\/g, '/'));
+        !opts.quiet && opts.log.info(`Found default config file ${absoluteConfigPath}`);
+        const module = await import(absoluteConfigPath);
         importedConfig = Object(module).gatewayConfig || null;
         if (!importedConfig) {
           !opts.quiet &&
-            opts.log.warn(`No "gatewayConfig" exported from config file at ${configPath}`);
+            opts.log.warn(`No "gatewayConfig" exported from config file at ${absoluteConfigPath}`);
         }
         break;
       }
@@ -58,7 +58,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
     if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
     }
-    const module = await import(configPath.replace(/\\/g, '/'));
+    const module = await import(configPath);
     importedConfig = Object(module).gatewayConfig || null;
     if (!importedConfig) {
       throw new Error(`No "gatewayConfig" exported from config file at ${configPath}`);
