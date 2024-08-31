@@ -377,6 +377,12 @@ jobs:
           --accept-source-agreements
 
       - if: runner.os == 'Windows'
+        name: Set up WSL
+        uses: Ubuntu/WSL/.github/actions/wsl-install@main
+        with:
+          distro: Ubuntu-20.04
+
+      - if: runner.os == 'Windows'
         name: Install Docker in WSL
         run: |
           wsl sudo apt-get update
