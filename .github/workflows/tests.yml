@@ -378,6 +378,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
         run: |
+          wsl sudo bash -c 'echo "[boot]\nsystemd=true\n" >> /etc/wsl.conf'
           wsl --shutdown
           wsl sudo apt update
           wsl sudo apt install -y apt-transport-https ca-certificates curl software-properties-common

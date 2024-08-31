@@ -59,6 +59,15 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
         context,
       );
       debug(`Using packed dependency "${specifier}" from "${packedDepsPath}"`);
+      if (
+        path.sep === '\\' &&
+        !resolved.url.startsWith('file:') &&
+        resolved.url[1] === ':' &&
+        resolved.url[2] === '/'
+      ) {
+        debug(`Fixing Windows path at "${resolved.url}"`);
+        resolved.url = `file:///${resolved.url}`;
+      }
       return resolved;
     } catch {
       // noop
