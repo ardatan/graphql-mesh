@@ -385,9 +385,6 @@ export function createTenv(cwd: string): Tenv {
         },
       };
       const ctrl = new AbortController();
-      const timeout = globalThis.setTimeout(() => {
-        ctrl.abort(`Serve did not become reachable in 45s`);
-      }, 45000);
       await Promise.race([
         waitForExit
           ?.then(() =>
@@ -399,7 +396,6 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(serve, ctrl.signal),
       ]);
-      clearTimeout(timeout);
       return serve;
     },
     async compose(opts) {
@@ -462,8 +458,9 @@ export function createTenv(cwd: string): Tenv {
     },
     async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args = [] } = {}) {
       port ||= await getAvailablePort();
+      const ctrl = new AbortController();
       const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs },
+        { cwd, pipeLogs, signal: ctrl.signal },
         'node',
         '--import',
         'tsx',
@@ -473,10 +470,6 @@ export function createTenv(cwd: string): Tenv {
         ...args,
       );
       const service: Service = { ...proc, name, port };
-      const ctrl = new AbortController();
-      const timeout = globalThis.setTimeout(() => {
-        ctrl.abort(`Service "${name}" did not become reachable in 45s`);
-      }, 45000);
       await Promise.race([
         waitForExit
           .then(() =>
@@ -490,7 +483,6 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(service, ctrl.signal),
       ]);
-      clearTimeout(timeout);
       return service;
     },
     async container({
@@ -559,6 +551,8 @@ export function createTenv(cwd: string): Tenv {
         }
       }
 
+      const ctrl = new AbortController();
+
       const ctr = await docker.createContainer({
         name: containerName,
         Image: image,
@@ -596,10 +590,16 @@ export function createTenv(cwd: string): Tenv {
           Timeout: 0, // dont wait between tests
           Retries: retries,
         },
+        abortSignal: ctrl.signal,
       });
 
       let stdboth = '';
-      const stream = await ctr.attach({ stream: true, stdout: true, stderr: true });
+      const stream = await ctr.attach({
+        stream: true,
+        stdout: true,
+        stderr: true,
+        abortSignal: ctrl.signal,
+      });
       stream.on('data', data => {
         stdboth += data.toString();
         if (pipeLogs) {
@@ -609,10 +609,6 @@ export function createTenv(cwd: string): Tenv {
 
       await ctr.start();
 
-      const ctrl = new AbortController();
-      const timeout = globalThis.setTimeout(() => {
-        ctrl.abort(`Container "${name}" did not become reachable in 45s`);
-      }, 45000);
       const container: Container = {
         containerName,
         name,
@@ -683,7 +679,6 @@ export function createTenv(cwd: string): Tenv {
       } else {
         await waitForReachable(container, ctrl.signal);
       }
-      clearTimeout(timeout);
       return container;
     },
     async composeWithApollo(services) {
@@ -716,10 +711,11 @@ export function createTenv(cwd: string): Tenv {
 interface SpawnOptions extends ProcOptions {
   cwd: string;
   shell?: boolean;
+  signal?: AbortSignal;
 }
 
 function spawn(
-  { cwd, pipeLogs = boolEnv('DEBUG'), env = {}, shell }: SpawnOptions,
+  { cwd, pipeLogs = boolEnv('DEBUG'), env = {}, shell, signal }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<[proc: Proc, waitForExit: Promise<void>]> {
@@ -732,6 +728,7 @@ function spawn(
       process.env,
     ),
     shell,
+    signal,
   });
 
   let exit: (err: Error | null) => void;
