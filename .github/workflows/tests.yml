@@ -373,12 +373,6 @@ jobs:
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
 
       - if: runner.os == 'Windows'
-        name: Install Windows SDK
-        uses: fbactions/setup-winsdk@v2
-        with:
-          winsdk-build-version: 18362
-
-      - if: runner.os == 'Windows'
         name: Enable WSL and set default version to WSL 2
         run: |
           dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
@@ -414,6 +408,12 @@ jobs:
         run: |
           [System.Environment]::SetEnvironmentVariable('DOCKER_HOST', 'tcp://localhost:2375', [System.EnvironmentVariableTarget]::Machine)
         shell: pwsh
+
+      - if: runner.os == 'Windows'
+        name: Install Windows SDK
+        uses: fbactions/setup-winsdk@v2
+        with:
+          winsdk-build-version: 18362
 
       # Install macOS specific dependencies
       - name: Setup Docker on macOS
