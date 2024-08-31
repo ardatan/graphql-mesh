@@ -346,10 +346,11 @@ jobs:
             os: ubuntu-latest
           - serve-runner: bin
             node-version: 22
-            os: windows-latest
-          - serve-runner: bin
-            node-version: 22
-            os: macos-latest
+            os: windows-2019
+          # macos-latest doesn't support docker
+          # - serve-runner: bin
+          #   node-version: 22
+          #   os: macos-latest
           - serve-runner: bin
             node-version: 22
             os: macos-latest-large
@@ -373,7 +374,7 @@ jobs:
         name: Set up WSL
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
         with:
-          distro: Ubuntu-Preview
+          distro: Ubuntu
 
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
