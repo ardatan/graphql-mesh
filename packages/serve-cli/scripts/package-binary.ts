@@ -60,9 +60,7 @@ if (isDarwin) {
   execSync(`codesign --sign - ${dest}`);
 } else if (isWindows) {
   try {
-    execSync(
-      `"${signToolPath}" sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 ${dest}`,
-    );
+    execSync(`"${signToolPath}" sign /fd SHA256 ${dest}`);
   } catch (e) {
     console.warn('Signing failed', e);
   }
