@@ -375,10 +375,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Install Ubuntu WSL
         run: |
-          Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-2004 -OutFile ubuntu-2004.appx -UseBasicParsing
-          Rename-Item ubuntu-2004.appx ubuntu-2004.zip
-          Expand-Archive ubuntu-2004.zip -DestinationPath Ubuntu2004
-          .\Ubuntu2004\ubuntu2004.exe install --root
+          wsl --install -d Ubuntu-20.04 --root --verbose
         shell: pwsh
 
       - if: runner.os == 'Windows'
