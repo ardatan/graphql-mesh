@@ -475,7 +475,7 @@ jobs:
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: |
-          yarn test:e2e --detectOpenHandles
+          yarn test:e2e --detectOpenHandles --forceExit
   apollo-federation-compatibility:
     runs-on: ubuntu-latest
     steps:
