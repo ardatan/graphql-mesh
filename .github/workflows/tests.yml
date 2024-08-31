@@ -383,9 +383,8 @@ jobs:
       - if: runner.os == 'Windows'
         name: Install Ubuntu WSL
         run: |
-          Invoke-WebRequest -Uri https://aka.ms/wslubuntu2004 -OutFile Ubuntu.appx
-          Add-AppxPackage .\Ubuntu.appx
-          wsl --set-default ubuntu
+          wsl --install -d Ubuntu-20.04
+          wsl --set-default Ubuntu-20.04
         shell: pwsh
 
       - if: runner.os == 'Windows'
