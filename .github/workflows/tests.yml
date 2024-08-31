@@ -365,40 +365,24 @@ jobs:
         shell: powershell
 
       - if: runner.os == 'Windows'
-        name: Install winget
-        uses: Cyberboss/install-winget@v1
+        uses: Vampire/setup-wsl@v3
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - if: runner.os == 'Windows'
-        name: Install Ubuntu via winget
-        run:
-          winget install -e --id Canonical.Ubuntu.2004 --disable-interactivity
-          --accept-source-agreements
-
-      - if: runner.os == 'Windows'
-        name: Set up WSL
-        uses: Ubuntu/WSL/.github/actions/wsl-install@main
-        with:
-          distro: Ubuntu-20.04
-
-      - if: runner.os == 'Windows'
-        name: Install Docker in WSL
-        uses: Ubuntu/WSL/.github/actions/wsl-bash@main
-        with:
-          distro: Ubuntu-20.04
-          exec: |
+          distribution: Ubuntu-20.04
+          wsl-conf: |
+            [boot]
+            systemd=true
+          wsl-shell-command: |
             sudo apt update
             sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
             sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-            apt-cache policy docker-ce
+            apt-cache policy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
             sudo apt install -y docker-ce
             sudo systemctl status docker
-            sudo usermod -aG docker ${USER}
-            su - ${USER}
+            sudo groupadd docker
+            sudo usermod -aG docker $USER
             docker run hello-world
-            echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://127.0.0.1:23750\"]}" > /etc/docker/daemon.json
+            echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json
             sudo systemctl daemon-reload
             sudo systemctl restart docker.service
             # Configure Multiarch QEMU Docker
@@ -412,7 +396,7 @@ jobs:
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker run --rm -t arm64v8/ubuntu uname -m
         env:
-          DOCKER_HOST: tcp://127.0.0.1:23750
+          DOCKER_HOST: tcp://localhost:2375
 
       - if: runner.os == 'Windows'
         name: Install Windows SDK
