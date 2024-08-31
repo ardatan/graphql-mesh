@@ -390,17 +390,16 @@ jobs:
         shell: pwsh
 
       - if: runner.os == 'Windows'
+        name: Configure Docker to expose via TCP
+        run: |
+          wsl sudo sh -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
+        shell: pwsh
+
+      - if: runner.os == 'Windows'
         name: Start Docker daemon in WSL
         run: |
           wsl sudo dockerd > /dev/null 2>&1 &
           sleep 10
-        shell: pwsh
-
-      - if: runner.os == 'Windows'
-        name: Configure Docker to expose via TCP
-        run: |
-          wsl sudo sh -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
-          wsl sudo service docker restart
         shell: pwsh
 
       - if: runner.os == 'Windows'
