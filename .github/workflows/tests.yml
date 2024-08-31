@@ -372,7 +372,9 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Install Ubuntu via winget
-        run: winget install -e --id Canonical.Ubuntu.2004
+        run:
+          winget install -e --id Canonical.Ubuntu.2004 --disable-interactivity
+          --accept-source-agreements
 
       - if: runner.os == 'Windows'
         name: Set up WSL
