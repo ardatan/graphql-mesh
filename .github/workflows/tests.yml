@@ -402,7 +402,7 @@ jobs:
         name: Start Docker daemon in WSL
         run: |
           # Disable firewall
-          sudo ufw disable
+          wsl sudo ufw disable
           wsl sudo pkill dockerd
           # See the daemon.json file
           wsl cat /etc/docker/daemon.json
