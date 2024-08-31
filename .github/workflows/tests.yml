@@ -407,7 +407,7 @@ jobs:
           # See the daemon.json file
           wsl cat /etc/docker/daemon.json
           # Start the Docker daemon
-          wsl sudo dockerd > /dev/null 2>&1 &
+          wsl sudo dockerd-H tcp://127.0.0.1:23750 > /dev/null 2>&1 &
           sleep 10
         shell: pwsh
 
