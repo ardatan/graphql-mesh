@@ -370,22 +370,20 @@ jobs:
       - if: runner.os == 'Windows'
         name: Set up WSL
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
-        with:
-          distro: Ubuntu-20.04
 
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
         run: |
-          wsl -d Ubuntu-20.04 -- sudo apt-get update
-          wsl -d Ubuntu-20.04 -- sudo apt-get install -y docker.io
-          wsl -d Ubuntu-20.04 -- sudo service docker start
+          wsl sudo apt-get update
+          wsl sudo apt-get install -y docker.io
+          wsl sudo service docker start
         shell: pwsh
 
       - if: runner.os == 'Windows'
         name: Configure Docker to expose via TCP
         run: |
-          wsl -d Ubuntu-20.04 -- sudo sh -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
-          wsl -d Ubuntu-20.04 -- sudo service docker restart
+          wsl sudo sh -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
+          wsl sudo service docker restart
         shell: pwsh
 
       - if: runner.os == 'Windows'
