@@ -349,7 +349,7 @@ jobs:
             os: windows-latest
           - serve-runner: bin
             node-version: 22
-            os: macos-15
+            os: macos-latest
           - serve-runner: bin
             node-version: 22
             os: macos-latest-large
@@ -366,12 +366,14 @@ jobs:
       - if: runner.os == 'Windows'
         name: Install winget
         uses: Cyberboss/install-winget@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - if: runner.os == 'Windows'
         name: Set up WSL
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
         with:
-          distro: Ubuntu
+          distro: Ubuntu-Preview
 
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
