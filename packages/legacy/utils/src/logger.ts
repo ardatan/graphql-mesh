@@ -111,7 +111,7 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     const message = this.getLoggerMessage({ args });
-    const fullMessage = `[${getTimestamp()}] ${this.prefix} WARN  ${warnColor(message)}`;
+    const fullMessage = `[${getTimestamp()}] WARN  ${this.prefix} ${warnColor(message)}`;
     if (process?.stderr?.write(fullMessage + '\n')) {
       return;
     }
