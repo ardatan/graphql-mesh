@@ -23,6 +23,7 @@ export default defineConfig({
     '@parcel/watcher',
     'uWebSockets.js', // will be installed
     /node_modules\/graphql/, // will be packed as dep
+    /node_modules\\graphql/, // will be packed as dep
   ],
   plugins: [
     nodeResolve({ preferBuiltins: true }), // resolve node_modules and bundle them too

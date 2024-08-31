@@ -378,6 +378,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
         run: |
+          wsl --shutdown
           wsl sudo apt update
           wsl sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
           wsl bash -c "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
@@ -385,8 +386,7 @@ jobs:
           wsl apt-cache policy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
           wsl sudo apt install -y docker-ce
           wsl sudo systemctl status docker
-          wsl sudo groupadd docker
-          wsl sudo usermod -aG docker $USER
+          wsl sudo usermod -a -G docker $USER
           wsl docker run hello-world
           wsl bash -c 'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json'
           wsl sudo systemctl daemon-reload
