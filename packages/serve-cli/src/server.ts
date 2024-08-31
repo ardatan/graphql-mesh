@@ -82,9 +82,7 @@ export async function startServerForRuntime<
   try {
     server = await startuWebSocketsServer(runtime, serverOpts);
   } catch (e) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
-      log.debug('Problem while importing uWebSockets.js', e);
-    }
+    log.debug(e.message);
     log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
 
     server = await startNodeHttpServer(runtime, serverOpts);
@@ -124,6 +122,7 @@ async function startuWebSocketsServer(
             createAsyncDisposable(() => {
               log.info(`Closing ${protocol}://${host}:${port}`);
               app.close();
+              log.info(`Closed ${protocol}://${host}:${port}`);
               return Promise.resolve();
             }),
           );
@@ -194,10 +193,10 @@ async function startNodeHttpServer(
         createAsyncDisposable(
           () =>
             new Promise<void>(resolve => {
-              log.info(`Closing server`);
+              log.info(`Closing ${protocol}://${host}:${port}`);
               server.closeAllConnections();
               server.close(() => {
-                log.info(`Server closed`);
+                log.info(`Closed ${protocol}://${host}:${port}`);
                 resolve();
               });
             }),

@@ -5,8 +5,6 @@
 
 // @ts-check
 
-
-
 /** Intentionally IIFE, should run immediately on CLI boot. */
 (function installSeaPackedDeps() {
   const shouldCleanPackedDeps = ['1', 'y', 'yes', 't', 'true'].includes(
@@ -72,7 +70,6 @@
     } catch (e) {
       debug(
         `Failed to resolve packed dependency "${id}"; Falling back to the original resolver...`,
-        e,
       );
       // fall back to the original resolver
       return originalResolveFilename(...args);

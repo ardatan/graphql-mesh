@@ -3,7 +3,6 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
-import { path } from '@graphql-mesh/cross-helpers';
 
 const platform = (process.argv[2] || os.platform()).toLowerCase();
 const arch = (process.argv[3] || os.arch()).toLowerCase();

@@ -323,7 +323,7 @@ async function warnIfNodeLibcurlMissing(ctx: CLIContext) {
   } catch (e) {
     ctx.log.warn(
       'node-libcurl is not installed properly which is used for better performance and developer experience. Falling back to "node:http".',
-      e,
     );
+    ctx.log.debug(e.message);
   }
 }

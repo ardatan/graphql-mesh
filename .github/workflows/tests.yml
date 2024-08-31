@@ -411,7 +411,7 @@ jobs:
             # See the daemon.json file
             cat /etc/docker/daemon.json
             # Start the Docker daemon
-            sudo dockerd -H tcp://127.0.0.1:23750 > /dev/null 2>&1 &
+            sudo dockerd > /dev/null 2>&1 &
             # Sleep for 10 seconds to let the Docker daemon start
             sleep 10
             # Configure Multiarch QEMU Docker
