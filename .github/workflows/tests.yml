@@ -364,6 +364,10 @@ jobs:
         shell: powershell
 
       - if: runner.os == 'Windows'
+        name: Install winget
+        uses: Cyberboss/install-winget@v1
+
+      - if: runner.os == 'Windows'
         name: Set up WSL
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
         with:
