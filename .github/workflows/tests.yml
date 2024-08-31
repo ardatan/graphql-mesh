@@ -370,6 +370,8 @@ jobs:
       - if: runner.os == 'Windows'
         name: Set up WSL
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
+        with:
+          distro: Ubuntu
 
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
