@@ -377,26 +377,23 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
-        uses: Ubuntu/WSL/.github/actions/wsl-bash@main
-        with:
-          distro: Ubuntu
-          exec: |
-            sudo apt update
-            sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-            sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-            apt-cache policy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-            sudo apt install -y docker-ce
-            sudo systemctl status docker
-            sudo groupadd docker
-            sudo usermod -aG docker $USER
-            docker run hello-world
-            echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json
-            sudo systemctl daemon-reload
-            sudo systemctl restart docker.service
-            # Configure Multiarch QEMU Docker
-            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-            docker run --rm -t arm64v8/ubuntu uname -m
+        run: |
+          wsl sudo apt update
+          wsl sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+          wsl curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          wsl sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+          wsl apt-cache policy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+          wsl sudo apt install -y docker-ce
+          wsl sudo systemctl status docker
+          wsl sudo groupadd docker
+          wsl sudo usermod -aG docker $USER
+          wsl docker run hello-world
+          wsl echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json
+          wsl sudo systemctl daemon-reload
+          wsl sudo systemctl restart docker.service
+          wsl # Configure Multiarch QEMU Docker
+          wsl docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          wsl docker run --rm -t arm64v8/ubuntu uname -m
 
       - if: runner.os == 'Windows'
         name: Configure Multiarch QEMU Docker on Windows
