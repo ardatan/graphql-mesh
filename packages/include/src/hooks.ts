@@ -111,6 +111,7 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
 
 export const load: module.LoadHook = async (url, context, nextLoad) => {
   if (path.sep === '\\' && !url.startsWith('file:') && url[1] === ':' && url[2] === '/') {
+    debug(`Fixing Windows path at "${url}"`);
     url = `file:///${url}`;
   }
   if (/\.(m|c)?ts$/.test(url)) {
