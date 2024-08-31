@@ -395,7 +395,7 @@ jobs:
         with:
           distro: Ubuntu-20.04
           exec:
-            'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" >
+            'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://127.0.0.1:2375\"]}" >
             /etc/docker/daemon.json'
 
       - if: runner.os == 'Windows'
