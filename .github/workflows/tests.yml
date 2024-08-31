@@ -363,6 +363,9 @@ jobs:
         name: Disable Windows Defender
         run: Set-MpPreference -DisableRealtimeMonitoring $true
         shell: powershell
+      - if: runner.os == 'Windows'
+        name: Install winget
+        uses: Cyberboss/install-winget@v1
       - name: Set up WSL
         if: runner.os == 'Windows'
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
@@ -373,11 +376,13 @@ jobs:
           winsdk-build-version: 18362
 
       # Install macOS specific dependencies
-      - name: Setup Docker
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Configure Multiarch Qemu
         if: runner.os == 'macOS'
         run: |
-          brew install --cask docker
-          brew install qemu
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker run --rm -t arm64v8/ubuntu uname -m
 
