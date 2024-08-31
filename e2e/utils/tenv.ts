@@ -625,13 +625,13 @@ export function createTenv(cwd: string): Tenv {
         getStats() {
           throw new Error('Cannot get stats of a container.');
         },
-        async [DisposableSymbols.asyncDispose]() {
+        [DisposableSymbols.asyncDispose]() {
           if (ctrl.signal.aborted) {
             // noop if already disposed
             return;
           }
           ctrl.abort();
-          await ctr.stop({ t: 0 });
+          return ctr.stop({ t: 0 });
         },
       };
       leftoverStack.use(container);

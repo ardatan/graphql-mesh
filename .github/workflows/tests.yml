@@ -363,6 +363,9 @@ jobs:
           node-version: ${{matrix.setup.node-version}}
       - name: prepare
         run: yarn prebuild
+      - name: Set up WSL
+        if: runner.os == 'windows-latest'
+        uses: Ubuntu/WSL/.github/actions/wsl-install@main
       - name: Setup Docker
         if: runner.os == 'macOS'
         uses: douglascamata/setup-docker-macos-action@v1-alpha
@@ -370,6 +373,11 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+          mkdir -p ~/.docker/machine/cache
+          curl -Lo ~/.docker/machine/cache/boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
+          brew install docker-machine
+          docker-machine create --driver virtualbox default
+          docker-machine env default
       - name: hash docker images
         id: hash-docker-images
         # get all "image: '" occurrences in the e2e tests and hash them
