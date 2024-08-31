@@ -363,17 +363,57 @@ jobs:
         name: Disable Windows Defender
         run: Set-MpPreference -DisableRealtimeMonitoring $true
         shell: powershell
+
       - if: runner.os == 'Windows'
         name: Install winget
         uses: Cyberboss/install-winget@v1
+
       - name: Set up WSL
         if: runner.os == 'Windows'
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
+
       - if: runner.os == 'Windows'
         name: Install Windows SDK
         uses: fbactions/setup-winsdk@v2
         with:
           winsdk-build-version: 18362
+
+      - if: runner.os == 'Windows'
+        name: Enable WSL and set default version to WSL 2
+        run: |
+          dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+          dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+          wsl --set-default-version 2
+        shell: pwsh
+
+      - if: runner.os == 'Windows'
+        name: Install Ubuntu WSL
+        run: |
+          Invoke-WebRequest -Uri https://aka.ms/wslubuntu2004 -OutFile Ubuntu.appx
+          Add-AppxPackage .\Ubuntu.appx
+          wsl --set-default ubuntu
+        shell: pwsh
+
+      - if: runner.os == 'Windows'
+        name: Install Docker in WSL
+        run: |
+          wsl sudo apt-get update
+          wsl sudo apt-get install -y qemu binfmt-support qemu-user-static docker.io
+          wsl sudo service docker start
+        shell: pwsh
+
+      - if: runner.os == 'Windows'
+        name: Configure Docker to expose via TCP
+        run: |
+          wsl sudo sh -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
+          wsl sudo service docker restart
+        shell: pwsh
+
+      - if: runner.os == 'Windows'
+        name: Set DOCKER_HOST environment variable
+        run: |
+          [System.Environment]::SetEnvironmentVariable('DOCKER_HOST', 'tcp://localhost:2375', [System.EnvironmentVariableTarget]::Machine)
+        shell: pwsh
 
       # Install macOS specific dependencies
       - name: Setup Docker on macOS
@@ -387,10 +427,6 @@ jobs:
       - name: set up docker buildx
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/setup-buildx-action@v3
-      - name: set up env
-        uses: the-guild-org/shared-config/setup@v1
-        with:
-          node-version: ${{matrix.setup.node-version}}
       - name: hash docker images
         id: hash-docker-images
         # get all "image: '" occurrences in the e2e tests and hash them
@@ -402,10 +438,16 @@ jobs:
         if: runner.os == 'Linux' || runner.os == 'Windows'
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
+
       - name: Configure Multiarch QEMU Docker
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker run --rm -t arm64v8/ubuntu uname -m
+
+      - name: set up env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version: ${{matrix.setup.node-version}}
       - name: prepare
         run: yarn prebuild
       - name: bundle
