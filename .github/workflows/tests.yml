@@ -380,15 +380,15 @@ jobs:
         run: |
           wsl sudo apt update
           wsl sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-          wsl curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          wsl sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+          wsl bash -c "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
+          wsl sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
           wsl apt-cache policy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
           wsl sudo apt install -y docker-ce
           wsl sudo systemctl status docker
           wsl sudo groupadd docker
           wsl sudo usermod -aG docker $USER
           wsl docker run hello-world
-          wsl echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json
+          wsl bash -c 'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json'
           wsl sudo systemctl daemon-reload
           wsl sudo systemctl restart docker.service
           wsl # Configure Multiarch QEMU Docker
