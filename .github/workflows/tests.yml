@@ -395,7 +395,7 @@ jobs:
         with:
           distro: Ubuntu-20.04
           exec:
-            'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://127.0.0.1:2375\"]}" >
+            'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://127.0.0.1:23750\"]}" >
             /etc/docker/daemon.json'
 
       - if: runner.os == 'Windows'
@@ -417,7 +417,7 @@ jobs:
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker run --rm -t arm64v8/ubuntu uname -m
         env:
-          DOCKER_HOST: tcp://localhost:2375
+          DOCKER_HOST: tcp://localhost:23750
 
       - if: runner.os == 'Windows'
         name: Install Windows SDK
