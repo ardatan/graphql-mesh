@@ -402,7 +402,7 @@ jobs:
         name: Start Docker daemon in WSL
         run: |
           # See the daemon.json file
-          cat /etc/docker/daemon.json
+          wsl cat /etc/docker/daemon.json
           # Start the Docker daemon
           wsl sudo dockerd > /dev/null 2>&1 &
           sleep 10

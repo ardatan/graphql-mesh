@@ -88,6 +88,7 @@ describe('opentelemetry', () => {
       containerPort: 4318,
       additionalContainerPorts: [16686],
       healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:14269'],
+      pipeLogs: true,
     });
   });
 
