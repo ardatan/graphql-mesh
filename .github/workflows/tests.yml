@@ -378,7 +378,7 @@ jobs:
         run: |
           mkdir -p ~/.docker/machine/cache
           curl -Lo ~/.docker/machine/cache/boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
-          brew install virtualbox@5.0.12 docker docker-machine
+          brew install virtualbox docker docker-machine
           docker-machine create --driver virtualbox default
           docker-machine env default
       - name: set up docker buildx
