@@ -380,9 +380,12 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
-          brew install qemu binfmt-support qemu-user-static
+          brew install binfmt-support qemu-user-static
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker run --rm -t arm64v8/ubuntu uname -m
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: set up docker buildx
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/setup-buildx-action@v3
