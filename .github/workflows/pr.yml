@@ -102,6 +102,18 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+
+      # Install Windows specific dependencies
+      - if: runner.os == 'Windows'
+        name: Disable Windows Defender
+        run: Set-MpPreference -DisableRealtimeMonitoring $true
+        shell: powershell
+      - if: runner.os == 'Windows'
+        name: Install Windows SDK
+        uses: fbactions/setup-winsdk@v2
+        with:
+          winsdk-build-version: 18362
+
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
@@ -110,11 +122,6 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn bundle
-      - if: matrix.os == 'windows-latest'
-        name: Install Windows SDK
-        uses: fbactions/setup-winsdk@v2
-        with:
-          winsdk-build-version: 18362
       - name: package binary
         working-directory: packages/serve-cli
         run: yarn package-binary

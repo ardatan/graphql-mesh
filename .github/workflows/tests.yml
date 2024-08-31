@@ -357,21 +357,33 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
+      # Install Windows specific dependencies
+      - if: runner.os == 'Windows'
+        name: Disable Windows Defender
+        run: Set-MpPreference -DisableRealtimeMonitoring $true
+        shell: powershell
       - name: Set up WSL
         if: runner.os == 'Windows'
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
+      - if: runner.os == 'Windows'
+        name: Install Windows SDK
+        uses: fbactions/setup-winsdk@v2
+        with:
+          winsdk-build-version: 18362
+
+      # Install macOS specific dependencies
       - name: Setup Docker
         if: runner.os == 'macOS'
-        uses: douglascamata/setup-docker-macos-action@v1-alpha
-      - name: Start Docker
-        if: runner.os == 'macOS'
         run: |
-          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
           mkdir -p ~/.docker/machine/cache
           curl -Lo ~/.docker/machine/cache/boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
-          brew install virtualbox docker-machine
+          brew install virtualbox@5.0.12 docker docker-machine
           docker-machine create --driver virtualbox default
           docker-machine env default
+      - name: set up docker buildx
+        if: matrix.setup.serve-runner == 'docker'
+        uses: docker/setup-buildx-action@v3
       - name: set up env
         uses: the-guild-org/shared-config/setup@v1
         with:
@@ -387,9 +399,6 @@ jobs:
         if: runner.os == 'Linux'
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
-      - name: set up docker buildx
-        if: matrix.setup.serve-runner == 'docker'
-        uses: docker/setup-buildx-action@v3
       - name: prepare
         run: yarn prebuild
       - name: bundle
@@ -401,11 +410,6 @@ jobs:
         if: matrix.setup.serve-runner == 'bin'
         run: yarn build
         shell: bash
-      - if: runner.os == 'Windows'
-        name: Install Windows SDK
-        uses: fbactions/setup-winsdk@v2
-        with:
-          winsdk-build-version: 18362
       - name: package binary
         if: matrix.setup.serve-runner == 'bin'
         working-directory: packages/serve-cli
