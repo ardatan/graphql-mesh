@@ -376,6 +376,7 @@ jobs:
       - name: Setup VirtualBox
         if: runner.os == 'macOS'
         run: |
+          spctl kext-consent add VB5E2TV963
           curl -L -o virtualbox.dmg https://download.virtualbox.org/virtualbox/5.0.12/VirtualBox-5.0.12-104815-OSX.dmg
           hdiutil attach virtualbox.dmg
           sudo installer -pkg /Volumes/VirtualBox/VirtualBox.pkg -target /
