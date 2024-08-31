@@ -365,14 +365,6 @@ jobs:
         shell: powershell
 
       - if: runner.os == 'Windows'
-        name: Install winget
-        uses: Cyberboss/install-winget@v1
-
-      - name: Set up WSL
-        if: runner.os == 'Windows'
-        uses: Ubuntu/WSL/.github/actions/wsl-install@main
-
-      - if: runner.os == 'Windows'
         name: Enable WSL and set default version to WSL 2
         run: |
           dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
@@ -383,23 +375,25 @@ jobs:
       - if: runner.os == 'Windows'
         name: Install Ubuntu WSL
         run: |
-          wsl --install -d Ubuntu-20.04
-          wsl --set-default Ubuntu-20.04
+          Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-2004 -OutFile ubuntu-2004.appx -UseBasicParsing
+          Rename-Item ubuntu-2004.appx ubuntu-2004.zip
+          Expand-Archive ubuntu-2004.zip -DestinationPath Ubuntu2004
+          .\Ubuntu2004\ubuntu2004.exe install --root
         shell: pwsh
 
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
         run: |
-          wsl sudo apt-get update
-          wsl sudo apt-get install -y qemu binfmt-support qemu-user-static docker.io
-          wsl sudo service docker start
+          wsl -d Ubuntu-20.04 -- sudo apt-get update
+          wsl -d Ubuntu-20.04 -- sudo apt-get install -y docker.io
+          wsl -d Ubuntu-20.04 -- sudo service docker start
         shell: pwsh
 
       - if: runner.os == 'Windows'
         name: Configure Docker to expose via TCP
         run: |
-          wsl sudo sh -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
-          wsl sudo service docker restart
+          wsl -d Ubuntu-20.04 -- sudo sh -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
+          wsl -d Ubuntu-20.04 -- sudo service docker restart
         shell: pwsh
 
       - if: runner.os == 'Windows'
