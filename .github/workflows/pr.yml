@@ -130,9 +130,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mesh-serve_${{ matrix.os }}
-          path:
-            packages/serve-cli/${{ matrix.os == 'windows-latest' && 'mesh-serve.exe' ||
-            'mesh-serve'}}
+          path: |
+            packages/serve-cli
       - name: update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
         with:

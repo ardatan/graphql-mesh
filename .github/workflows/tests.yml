@@ -371,7 +371,13 @@ jobs:
           wsl-conf: |
             [boot]
             systemd=true
-          wsl-shell-command: |
+
+      - if: runner.os == 'Windows'
+        name: Install Docker in WSL
+        uses: Ubuntu/WSL/.github/actions/wsl-bash@main
+        with:
+          distro: Ubuntu-20.04
+          exec: |
             sudo apt update
             sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
