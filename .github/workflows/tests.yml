@@ -357,14 +357,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: set up env
-        uses: the-guild-org/shared-config/setup@v1
-        with:
-          node-version: ${{matrix.setup.node-version}}
-      - name: prepare
-        run: yarn prebuild
       - name: Set up WSL
-        if: runner.os == 'windows-latest'
+        if: runner.os == 'Windows'
         uses: Ubuntu/WSL/.github/actions/wsl-install@main
       - name: Setup Docker
         if: runner.os == 'macOS'
@@ -375,9 +369,13 @@ jobs:
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
           mkdir -p ~/.docker/machine/cache
           curl -Lo ~/.docker/machine/cache/boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
-          brew install docker-machine
+          brew install virtualbox docker-machine
           docker-machine create --driver virtualbox default
           docker-machine env default
+      - name: set up env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version: ${{matrix.setup.node-version}}
       - name: hash docker images
         id: hash-docker-images
         # get all "image: '" occurrences in the e2e tests and hash them
@@ -386,12 +384,14 @@ jobs:
       - name: cache docker images
         uses: ScribeMD/docker-cache@0.5.0
         # Only works on ubuntu-latest
-        if: runner.os == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
       - name: set up docker buildx
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/setup-buildx-action@v3
+      - name: prepare
+        run: yarn prebuild
       - name: bundle
         if: matrix.setup.serve-runner == 'docker' || matrix.setup.serve-runner == 'bin'
         env:
@@ -401,7 +401,7 @@ jobs:
         if: matrix.setup.serve-runner == 'bin'
         run: yarn build
         shell: bash
-      - if: matrix.setup.os == 'windows-latest'
+      - if: runner.os == 'Windows'
         name: Install Windows SDK
         uses: fbactions/setup-winsdk@v2
         with:
@@ -425,7 +425,9 @@ jobs:
         timeout-minutes: 60
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
-        run: yarn test:e2e --detectOpenHandles
+        run: |
+          ${{ runner.os == 'macOS' && 'eval "$(docker-machine env default)"' || ''}}
+          yarn test:e2e --detectOpenHandles
   apollo-federation-compatibility:
     runs-on: ubuntu-latest
     steps:
