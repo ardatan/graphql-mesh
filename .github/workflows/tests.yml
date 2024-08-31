@@ -387,7 +387,13 @@ jobs:
         run: |
           wsl sudo apt-get update
           wsl sudo apt-get install -y docker.io
-          wsl sudo service docker start
+        shell: pwsh
+
+      - if: runner.os == 'Windows'
+        name: Start Docker daemon in WSL
+        run: |
+          wsl sudo dockerd > /dev/null 2>&1 &
+          sleep 10
         shell: pwsh
 
       - if: runner.os == 'Windows'
