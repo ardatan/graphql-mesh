@@ -347,10 +347,9 @@ jobs:
           - serve-runner: bin
             node-version: 22
             os: windows-latest
-          # Disabled because Docker does not work on macOS M1 runners
-          # - serve-runner: bin
-          #   node-version: 22
-          #   os: macos-latest
+          - serve-runner: bin
+            node-version: 22
+            os: macos-15
           - serve-runner: bin
             node-version: 22
             os: macos-latest-large
@@ -365,18 +364,10 @@ jobs:
         shell: powershell
 
       - if: runner.os == 'Windows'
-        name: Enable WSL and set default version to WSL 2
-        run: |
-          dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-          dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-          wsl --set-default-version 2
-        shell: pwsh
-
-      - if: runner.os == 'Windows'
-        name: Install Ubuntu WSL
-        run: |
-          wsl --install -d Ubuntu-20.04 --root --verbose
-        shell: pwsh
+        name: Set up WSL
+        uses: Ubuntu/WSL/.github/actions/wsl-install@main
+        with:
+          distro: Ubuntu-20.04
 
       - if: runner.os == 'Windows'
         name: Install Docker in WSL
@@ -408,7 +399,7 @@ jobs:
       # Install macOS specific dependencies
       - name: Setup Docker on macOS
         if: runner.os == 'macOS'
-        uses: douglascamata/setup-docker-macos-action@v1-alpha
+        uses: ardatan/setup-docker-macos-action@main
       - name: Configure Docker Socket Path
         if: runner.os == 'macOS'
         run: |
