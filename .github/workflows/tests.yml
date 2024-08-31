@@ -377,12 +377,6 @@ jobs:
           --accept-source-agreements
 
       - if: runner.os == 'Windows'
-        name: Set up WSL
-        uses: Ubuntu/WSL/.github/actions/wsl-install@main
-        with:
-          distro: Ubuntu-20.04
-
-      - if: runner.os == 'Windows'
         name: Install Docker in WSL
         run: |
           wsl sudo apt-get update
@@ -406,18 +400,12 @@ jobs:
         shell: pwsh
 
       - if: runner.os == 'Windows'
-        name: Set DOCKER_HOST environment variable
-        run: |
-          [System.Environment]::SetEnvironmentVariable('DOCKER_HOST', 'tcp://localhost:2375', [System.EnvironmentVariableTarget]::Machine)
-        shell: pwsh
-
-      - if: runner.os == 'Windows'
         name: Configure Multiarch QEMU Docker
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker run --rm -t arm64v8/ubuntu uname -m
         env:
-          DOCKER_HOST: tcp://localhost:2375
+          DOCKER_HOST: tcp://0.0.0.0:2375
 
       - if: runner.os == 'Windows'
         name: Install Windows SDK
