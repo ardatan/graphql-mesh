@@ -392,7 +392,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Configure Docker to expose via TCP
         run: |
-          wsl sudo sh -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
+          wsl sudo bash -c "echo '{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}' > /etc/docker/daemon.json"
         shell: pwsh
 
       - if: runner.os == 'Windows'
