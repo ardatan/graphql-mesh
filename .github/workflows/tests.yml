@@ -398,8 +398,8 @@ jobs:
           echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
       - name: cache docker images
         uses: ScribeMD/docker-cache@0.5.0
-        # Only works on ubuntu-latest
-        if: runner.os == 'Linux'
+        # Does not work on macOS
+        if: runner.os == 'Linux' || runner.os == 'Windows'
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
       - name: Configure Multiarch QEMU Docker
