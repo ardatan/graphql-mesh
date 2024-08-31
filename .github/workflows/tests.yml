@@ -373,23 +373,16 @@ jobs:
           winsdk-build-version: 18362
 
       # Install macOS specific dependencies
-      - name: Setup VirtualBox
-        if: runner.os == 'macOS'
-        run: |
-          spctl kext-consent add VB5E2TV963
-          curl -L -o virtualbox.dmg https://download.virtualbox.org/virtualbox/5.0.12/VirtualBox-5.0.12-104815-OSX.dmg
-          hdiutil attach virtualbox.dmg
-          sudo installer -pkg /Volumes/VirtualBox/VirtualBox.pkg -target /
-          hdiutil detach /Volumes/VirtualBox
-          /Applications/VirtualBox.app/Contents/MacOS/VBoxManage --version
       - name: Setup Docker
         if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Configure Docker
+        if: runner.os == 'macOS'
         run: |
-          mkdir -p ~/.docker/machine/cache
-          curl -Lo ~/.docker/machine/cache/boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
-          brew install docker docker-machine
-          docker-machine create --driver virtualbox default
-          docker-machine env default
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+          brew install qemu binfmt-support qemu-user-static
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker run --rm -t arm64v8/ubuntu uname -m
       - name: set up docker buildx
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/setup-buildx-action@v3
