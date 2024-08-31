@@ -368,7 +368,10 @@ jobs:
         uses: Vampire/setup-wsl@v3
         with:
           distribution: Ubuntu-20.04
+          set-as-default: true
           wsl-conf: |
+            [automount]
+            root = /
             [boot]
             systemd=true
 
@@ -376,7 +379,7 @@ jobs:
         name: Install Docker in WSL
         uses: Ubuntu/WSL/.github/actions/wsl-bash@main
         with:
-          distro: Ubuntu-20.04
+          distro: Ubuntu
           exec: |
             sudo apt update
             sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
