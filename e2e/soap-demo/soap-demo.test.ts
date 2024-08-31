@@ -16,6 +16,7 @@ beforeAll(async () => {
       },
     ],
     healthcheck: [],
+    pipeLogs: true,
   });
 });
 
