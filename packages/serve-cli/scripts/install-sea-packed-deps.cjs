@@ -61,6 +61,10 @@
   // @ts-expect-error
   Module._resolveFilename = (...args) => {
     const [id, ...rest] = args;
+    if (path.sep === '\\' && id[1] === ':') {
+      // Windows path, skip
+      return originalResolveFilename(...args);
+    }
     try {
       debug(`Resolving packed dependency "${id}"`);
       const resolvedPath = path.join(modulesPath, id);
