@@ -395,12 +395,15 @@ jobs:
         with:
           distro: Ubuntu-20.04
           exec:
-            'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://localhost:2375\"]}" >
+            'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" >
             /etc/docker/daemon.json'
 
       - if: runner.os == 'Windows'
         name: Start Docker daemon in WSL
         run: |
+          # Disable firewall
+          sudo ufw disable
+          wsl sudo pkill dockerd
           # See the daemon.json file
           wsl cat /etc/docker/daemon.json
           # Start the Docker daemon
