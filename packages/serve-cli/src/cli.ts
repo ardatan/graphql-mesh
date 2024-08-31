@@ -3,7 +3,7 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
 import cluster from 'node:cluster';
 import module from 'node:module';
-import { availableParallelism, release } from 'node:os';
+import { availableParallelism, platform, release } from 'node:os';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { InitializeData } from '@graphql-mesh/include/hooks';
@@ -164,7 +164,12 @@ export type AddCommand = (ctx: CLIContext, cli: CLI) => void;
 // override the config file (with option defaults, config file will always be overwritten)
 export const defaultOptions = {
   fork: process.env.NODE_ENV === 'production' ? availableParallelism() : 1,
-  host: release().toLowerCase().includes('microsoft') ? '127.0.0.1' : '0.0.0.0',
+  host:
+    platform() === 'win32' ||
+    // is WSL?
+    release().toLowerCase().includes('microsoft')
+      ? '127.0.0.1'
+      : '0.0.0.0',
   port: 4000,
   polling: '10s',
 };

@@ -110,19 +110,22 @@ async function startuWebSocketsServer(
   //
   // when importing ESM of uws, the default will be flattened; but when importing
   // CJS, that wont happen - however, the default will always be available
-  return import('uWebSockets.js').then(({ default: uWS }) => {
+  return import('uWebSockets.js').then(uWSModule => {
+    const uWS = uWSModule.default || uWSModule;
     const protocol = sslCredentials ? 'https' : 'http';
     const app = sslCredentials ? uWS.SSLApp(sslCredentials) : uWS.App();
     app.any('/*', handler);
-    log.info(`Starting server on ${protocol}://${host}:${port}`);
+    const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
+    log.info(`Starting server on ${url}`);
     return new Promise((resolve, reject) => {
       app.listen(host, port, function listenCallback(listenSocket) {
         if (listenSocket) {
+          log.info(`Server started on ${url}`);
           resolve(
             createAsyncDisposable(() => {
-              log.info(`Closing ${protocol}://${host}:${port}`);
+              log.info(`Closing ${url}`);
               app.close();
-              log.info(`Closed ${protocol}://${host}:${port}`);
+              log.info(`Closed ${url}`);
               return Promise.resolve();
             }),
           );
@@ -184,19 +187,21 @@ async function startNodeHttpServer(
     );
   }
 
-  log.info(`Starting server on ${protocol}://${host}:${port}`);
+  const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
+
+  log.info(`Starting server on ${url}`);
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
-      log.info(`Server started on ${protocol}://${host}:${port}`);
+      log.info(`Server started on ${url}`);
       resolve(
         createAsyncDisposable(
           () =>
             new Promise<void>(resolve => {
-              log.info(`Closing ${protocol}://${host}:${port}`);
+              log.info(`Closing ${url}`);
               server.closeAllConnections();
               server.close(() => {
-                log.info(`Closed ${protocol}://${host}:${port}`);
+                log.info(`Closed ${url}`);
                 resolve();
               });
             }),
