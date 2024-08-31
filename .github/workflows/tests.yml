@@ -412,6 +412,14 @@ jobs:
         shell: pwsh
 
       - if: runner.os == 'Windows'
+        name: Configure Multiarch QEMU Docker
+        run: |
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker run --rm -t arm64v8/ubuntu uname -m
+        env:
+          DOCKER_HOST: tcp://localhost:2375
+
+      - if: runner.os == 'Windows'
         name: Install Windows SDK
         uses: fbactions/setup-winsdk@v2
         with:
