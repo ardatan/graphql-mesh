@@ -400,16 +400,23 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Start Docker daemon in WSL
-        run: |
-          # Disable firewall
-          wsl sudo ufw disable
-          wsl sudo pkill dockerd
-          # See the daemon.json file
-          wsl cat /etc/docker/daemon.json
-          # Start the Docker daemon
-          wsl sudo dockerd -H tcp://127.0.0.1:23750 > /dev/null 2>&1 &
-          sleep 10
-        shell: pwsh
+        uses: Ubuntu/WSL/.github/actions/wsl-bash@main
+        with:
+          distro: Ubuntu-20.04
+          exec: |
+            # Disable firewall
+            sudo ufw disable
+            # Kill the existing Docker daemon
+            sudo pkill dockerd
+            # See the daemon.json file
+            cat /etc/docker/daemon.json
+            # Start the Docker daemon
+            sudo dockerd -H tcp://127.0.0.1:23750 > /dev/null 2>&1 &
+            # Sleep for 10 seconds to let the Docker daemon start
+            sleep 10
+            # Configure Multiarch QEMU Docker
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+            docker run --rm -t arm64v8/ubuntu uname -m
 
       - if: runner.os == 'Windows'
         name: Configure Multiarch QEMU Docker
@@ -417,7 +424,7 @@ jobs:
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker run --rm -t arm64v8/ubuntu uname -m
         env:
-          DOCKER_HOST: tcp://localhost:23750
+          DOCKER_HOST: tcp://127.0.0.1:23750
 
       - if: runner.os == 'Windows'
         name: Install Windows SDK
