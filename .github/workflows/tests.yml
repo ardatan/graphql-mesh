@@ -384,14 +384,6 @@ jobs:
         shell: pwsh
 
       - if: runner.os == 'Windows'
-        name: Wait for boot2docker to start
-        uses: iFaxity/wait-on-action@v1.2.1
-        timeout-minutes: 5
-        continue-on-error: true
-        with:
-          resource: tcp:5555
-
-      - if: runner.os == 'Windows'
         name: Install Posh-SSH module
         shell: pwsh
         run: |
@@ -401,6 +393,8 @@ jobs:
       - if: runner.os == 'Windows'
         name: Setup Boot2Docker to expose Docker daemon via TCP
         shell: pwsh
+        # Unfortuantely doesn't work
+        # Locally I can run these command and it works
         run: |
           $username = 'docker'
           $hostname = '127.0.0.1'
