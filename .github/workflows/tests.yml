@@ -379,15 +379,18 @@ jobs:
       - if: runner.os == 'Windows'
         name: Run QEMU with boot2docker
         run: |
-          ./qemu-system-x86_64.exe -m 1g -cdrom D:\a\boot2docker.iso -device e1000,netdev=mynet0 -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 &
+          ./qemu-system-x86_64.exe -m 1g -cdrom D:\a\boot2docker.iso -device e1000,netdev=mynet0 -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 & sleep 30
         working-directory: "C:\\Program Files\\qemu"
         shell: pwsh
 
       - if: runner.os == 'Windows'
         name: Wait for boot2docker to start
         uses: iFaxity/wait-on-action@v1.2.1
+        timeout-minutes: 5
+        continue-on-error: true
         with:
           resource: tcp:5555
+
       - if: runner.os == 'Windows'
         name: Install Posh-SSH module
         shell: pwsh
