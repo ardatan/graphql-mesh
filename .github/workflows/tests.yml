@@ -389,18 +389,24 @@ jobs:
           user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 &
 
       - if: runner.os == 'Windows'
-        name: Run SSH command with password
+        name: Install OpenSSH
         run: |
-          echo $env:SSH_PASSWORD | C:\ProgramData\chocolatey\lib\expect\tools\expect\bin\expect -c "
-          spawn ssh user@hostname
-          expect \"password:\"
-          send \"tcuser\r\"
-          expect \"$\"
-          send \"echo 'DOCKER_TLS=no' > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart\r\"
-          interact
-          "
-        env:
-          SSH_PASSWORD: tcuser
+          Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Client*' | Add-WindowsCapability -Online
+
+      - if: runner.os == 'Windows'
+        name: Run SSH command with password
+        shell: pwsh
+        run: |
+          $username = 'docker'
+          $hostname = '127.0.0.1'
+          $password = "tcuser"
+
+          $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
+
+          $session = New-SSHSession -ComputerName $hostname -Credential $credential
+          Invoke-SSHCommand -SessionId $session.SessionId -Command "echo 'DOCKER_TLS=no' > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"
+          Remove-SSHSession -SessionId $session.SessionId
 
       - if: runner.os == 'Windows'
         name: Test Docker
@@ -414,10 +420,6 @@ jobs:
         uses: fbactions/setup-winsdk@v2
         with:
           winsdk-build-version: 18362
-
-      - if: runner.os == 'Windows'
-        name: Install Docker
-        uses: docker/setup-buildx-action@v1
 
       # Install macOS specific dependencies
       - name: Configure Homebrew cache
