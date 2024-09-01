@@ -366,17 +366,14 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Install QEMU
-        run:
-          curl https://qemu.weilnetz.de/w64/old/qemu-system-x86_64.exe -outfile
-          qemu-system-x86_64.exe
+        run: |
+          Invoke-WebRequest -Uri "https://qemu.weilnetz.de/w64/old/qemu-system-x86_64.exe" -OutFile "qemu-system-x86_64.exe"
         shell: pwsh
 
       - if: runner.os == 'Windows'
         name: Install boot2docker
-        run:
-          curl
-          https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
-          -outfile boot2docker.iso
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso" -OutFile "boot2docker.iso"
         shell: pwsh
 
       - if: runner.os == 'Windows'
