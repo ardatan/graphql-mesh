@@ -76,39 +76,47 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
   try {
     return await nextResolve(specifier, context);
   } catch (e) {
-    // default resolve failed, try alternatives
     try {
-      return await nextResolve(resolveFilename(specifier), context);
-    } catch {
+      // default resolve failed, try alternatives
+      const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
+      return await nextResolve(
+        specifierWithoutJs + '.ts', // TODO: .mts or .cts?
+        context,
+      );
+    } catch (e) {
       try {
-        const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
-        // usual filenames tried, could be a .ts file?
-        return await nextResolve(
-          resolveFilename(
-            specifierWithoutJs + '.ts', // TODO: .mts or .cts?
-          ),
-          context,
-        );
+        return await nextResolve(resolveFilename(specifier), context);
       } catch {
-        // not a .ts file, try the tsconfig paths if available
-        if (pathsMatcher) {
-          for (const possiblePath of pathsMatcher(specifier)) {
-            try {
-              return await nextResolve(resolveFilename(possiblePath), context);
-            } catch {
+        try {
+          const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
+          // usual filenames tried, could be a .ts file?
+          return await nextResolve(
+            resolveFilename(
+              specifierWithoutJs + '.ts', // TODO: .mts or .cts?
+            ),
+            context,
+          );
+        } catch {
+          // not a .ts file, try the tsconfig paths if available
+          if (pathsMatcher) {
+            for (const possiblePath of pathsMatcher(specifier)) {
               try {
-                const possiblePathWithoutJs = possiblePath.endsWith('.js')
-                  ? possiblePath.slice(0, -3)
-                  : possiblePath;
-                // the tsconfig path might point to a .ts file, try it too
-                return await nextResolve(
-                  resolveFilename(
-                    possiblePathWithoutJs + '.ts', // TODO: .mts or .cts?
-                  ),
-                  context,
-                );
+                return await nextResolve(resolveFilename(possiblePath), context);
               } catch {
-                // noop
+                try {
+                  const possiblePathWithoutJs = possiblePath.endsWith('.js')
+                    ? possiblePath.slice(0, -3)
+                    : possiblePath;
+                  // the tsconfig path might point to a .ts file, try it too
+                  return await nextResolve(
+                    resolveFilename(
+                      possiblePathWithoutJs + '.ts', // TODO: .mts or .cts?
+                    ),
+                    context,
+                  );
+                } catch {
+                  // noop
+                }
               }
             }
           }
