@@ -484,6 +484,7 @@ jobs:
           docker image pull jaegertracing/all-in-one:1.56 & \
           docker image pull outofcoffee/imposter-all & \
           wait
+        shell: bash
       - name: test
         timeout-minutes: 60
         env:

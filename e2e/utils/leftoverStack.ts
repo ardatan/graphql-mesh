@@ -2,13 +2,22 @@ import { AsyncDisposableStack, SuppressedError } from '@whatwg-node/disposablest
 
 export let leftoverStack = new AsyncDisposableStack();
 
+function trimError(error: any) {
+  const stringError = error.toString();
+  return stringError.split('at resolve (data:text/javascript')[0];
+}
+
 function handleSuppressedError(e: any) {
   let currErr = e;
   while (currErr instanceof SuppressedError) {
-    console.error(`Suppressed error`, currErr.error);
+    if (currErr.error) {
+      console.error(`Suppressed error`, trimError(currErr.error));
+    }
     currErr = currErr.suppressed;
   }
-  console.error('Failed to dispose leftover stack', currErr);
+  if (currErr) {
+    console.error('Failed to dispose leftover stack', trimError(currErr));
+  }
 }
 
 afterAll(() => {
