@@ -362,7 +362,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Disable Windows Defender
         run: Set-MpPreference -DisableRealtimeMonitoring $true
-        shell: bash
+        shell: pwsh
 
       - if: runner.os == 'Windows'
         name: Install QEMU
