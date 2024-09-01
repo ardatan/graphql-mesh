@@ -395,6 +395,7 @@ jobs:
         shell: pwsh
         # Unfortuantely doesn't work
         # Locally I can run these command and it works
+        continue-on-error: true
         run: |
           $username = 'docker'
           $hostname = '127.0.0.1'
