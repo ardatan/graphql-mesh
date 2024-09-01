@@ -367,19 +367,19 @@ jobs:
       - if: runner.os == 'Windows'
         name: Install QEMU
         run: |
-          Invoke-WebRequest -Uri "https://qemu.weilnetz.de/w64/old/qemu-system-x86_64.exe" -OutFile "qemu-system-x86_64.exe"
+          Invoke-WebRequest -Uri "https://qemu.weilnetz.de/w64/old/qemu-system-x86_64.exe" -OutFile "D:\a\qemu-system-x86_64.exe"
         shell: pwsh
 
       - if: runner.os == 'Windows'
         name: Install boot2docker
         run: |
-          Invoke-WebRequest -Uri "https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso" -OutFile "boot2docker.iso"
+          Invoke-WebRequest -Uri "https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso" -OutFile "D:\a\boot2docker.iso"
         shell: pwsh
 
       - if: runner.os == 'Windows'
         name: Run QEMU with boot2docker
         run: |
-          qemu-system-x86_64.exe -m 1g -cdrom boot2docker.iso -device e1000,netdev=mynet0 -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375
+          D:\a\qemu-system-x86_64.exe -m 1g -cdrom D:\a\boot2docker.iso -device e1000,netdev=mynet0 -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375
 
       - if: runner.os == 'Windows'
         name: Install Posh-SSH module
