@@ -365,6 +365,12 @@ jobs:
         shell: pwsh
 
       - if: runner.os == 'Windows'
+        name: Install expect
+        run: |
+          choco install expect
+        shell: pwsh
+
+      - if: runner.os == 'Windows'
         name: Install QEMU
         run: |
           Invoke-WebRequest -Uri "https://qemu.weilnetz.de/w64/old/qemu-system-x86_64.exe" -OutFile "qemu-system-x86_64.exe"
@@ -383,16 +389,18 @@ jobs:
           user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 &
 
       - if: runner.os == 'Windows'
-        name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: 127.0.0.1
-          username: docker
-          password: tcuser
-          port: 5555
-          script: |
-            echo "DOCKER_TLS=no" > /var/lib/boot2docker/profile
-            sudo /etc/init.d/docker restart
+        name: Run SSH command with password
+        run: |
+          echo $env:SSH_PASSWORD | C:\ProgramData\chocolatey\lib\expect\tools\expect\bin\expect -c "
+          spawn ssh user@hostname
+          expect \"password:\"
+          send \"tcuser\r\"
+          expect \"$\"
+          send \"echo 'DOCKER_TLS=no' > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart\r\"
+          interact
+          "
+        env:
+          SSH_PASSWORD: tcuser
 
       - if: runner.os == 'Windows'
         name: Test Docker
