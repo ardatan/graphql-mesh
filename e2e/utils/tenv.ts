@@ -9,7 +9,6 @@ import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
 import { glob } from 'glob';
 import type { ExecutionResult } from 'graphql';
-import { localHostnames } from 'packages/testing/getLocalHostName';
 import {
   IntrospectAndCompose,
   RemoteGraphQLDataSource,
@@ -17,6 +16,7 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
+import { localHostnames } from '../../packages/testing/getLocalHostName';
 import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 
