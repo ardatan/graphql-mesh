@@ -387,7 +387,7 @@ jobs:
         name: Wait for boot2docker to start
         uses: iFaxity/wait-on-action@v1.2.1
         with:
-          resource: tcp://127.0.0.1:5555
+          resource: tcp:5555
       - if: runner.os == 'Windows'
         name: Install Posh-SSH module
         shell: pwsh
