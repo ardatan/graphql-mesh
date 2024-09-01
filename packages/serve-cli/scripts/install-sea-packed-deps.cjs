@@ -30,6 +30,7 @@
   const path = require('node:path');
   const sea = require('node:sea');
   const os = require('node:os');
+  const url = require('node:url');
 
   // NOTE that the path is stable for modules hash and system,
   // we should NEVER install modules in multiple places to avoid
@@ -63,11 +64,14 @@
     const [id, ...rest] = args;
     if (path.sep === '\\' && id[1] === ':') {
       let fixedPath = id.replace(/\\/g, '/');
-      if (!fixedPath.startsWith('file:') && fixedPath[0] !== '/') {
+      if (!fixedPath.startsWith('file:') && !fixedPath.startsWith('/')) {
         fixedPath = `/${fixedPath}`;
       }
+      if (!fixedPath.startsWith('file:')) {
+        fixedPath = `file://${fixedPath}`;
+      }
       if (fixedPath.startsWith('file:///')) {
-        fixedPath = fixedPath.slice(8);
+        fixedPath = url.fileURLToPath(fixedPath);
       }
       return originalResolveFilename(fixedPath, ...rest);
     }

@@ -386,23 +386,14 @@ jobs:
           wsl sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
           wsl apt-cache policy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
           wsl sudo apt install -y docker-ce
-          wsl sudo update-alternatives --config iptables
+          wsl sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
           wsl bash -c 'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json'
-          wsl sudo dockerd > /dev/null 2>&1 &
-          wsl sleep 10
-          wsl sudo docker run hello-world
+          wsl sudo service docker start
+          wsl sudo docker ps -a
+          wsl sudo docker run --rm hello-world
           wsl # Configure Multiarch QEMU Docker
           wsl sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           wsl sudo docker run --rm -t arm64v8/ubuntu uname -m
-
-      - if: runner.os == 'Windows'
-        name: Configure Multiarch QEMU Docker on Windows
-        run: |
-          docker run hello-world
-          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker run --rm -t arm64v8/ubuntu uname -m
-        env:
-          DOCKER_HOST: tcp://localhost:2375
 
       - if: runner.os == 'Windows'
         name: Install Windows SDK
@@ -429,10 +420,9 @@ jobs:
         # get all "image: '" occurrences in the e2e tests and hash them
         run: |
           echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
+        shell: bash
       - name: cache docker images
         uses: ScribeMD/docker-cache@0.5.0
-        # Does not work on macOS
-        if: runner.os == 'Linux' || runner.os == 'Windows'
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
 
