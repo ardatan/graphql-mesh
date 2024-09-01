@@ -388,7 +388,12 @@ jobs:
           wsl sudo apt install -y docker-ce
           wsl sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
           wsl bash -c 'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json'
-          wsl sudo service docker start
+          wsl ls -l /var/run/docker.sock
+          wsl sudo chown root:docker /var/run/docker.sock
+          wsl sudo service docker restart
+          wsl sudo docker context ls
+          wsl sudo docker context use default
+          wsl sudo rm -rf ~/.docker
           wsl sudo docker ps -a
           wsl sudo docker run --rm hello-world
           wsl # Configure Multiarch QEMU Docker
@@ -402,6 +407,15 @@ jobs:
           winsdk-build-version: 18362
 
       # Install macOS specific dependencies
+      - name: Configure Homebrew cache
+        if: runner.os == 'macOS'
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/Library/Caches/Homebrew/foo--*
+            ~/Library/Caches/Homebrew/downloads/*--foo-*
+          key: brew-${{ hashFiles('.github/brew-formulae') }}
+          restore-keys: brew-
       - name: Setup Docker on macOS
         if: runner.os == 'macOS'
         uses: douglascamata/setup-docker-macos-action@v1-alpha
@@ -423,6 +437,7 @@ jobs:
         shell: bash
       - name: cache docker images
         uses: ScribeMD/docker-cache@0.5.0
+        if: runner.os != 'macOS'
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
 

@@ -77,10 +77,7 @@
     }
     try {
       debug(`Resolving packed dependency "${id}"`);
-      let resolvedPath = path.join(modulesPath, id);
-      if (path.sep === '\\') {
-        resolvedPath = `/` + resolvedPath.replace(/\\/g, '/');
-      }
+      const resolvedPath = path.join(modulesPath, id);
       debug(`Resolved to "${resolvedPath}"`);
       // always try to import from necessary modules first
       return originalResolveFilename(resolvedPath, ...rest);
