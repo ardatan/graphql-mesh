@@ -62,17 +62,21 @@
   Module._resolveFilename = (...args) => {
     const [id, ...rest] = args;
     if (path.sep === '\\' && id[1] === ':') {
-      if (!id.startsWith('file:')) {
-        debug(`Fixing Windows path at "${id}"`);
-        const fixedPath = id.replace(/\\/g, '/');
-        return originalResolveFilename(`file:///${fixedPath}`, ...rest);
+      let fixedPath = id.replace(/\\/g, '/');
+      if (!fixedPath.startsWith('file:') && fixedPath[0] !== '/') {
+        fixedPath = `/${fixedPath}`;
       }
-      // Windows path, skip
-      return originalResolveFilename(...args);
+      if (fixedPath.startsWith('file:///')) {
+        fixedPath = fixedPath.slice(8);
+      }
+      return originalResolveFilename(fixedPath, ...rest);
     }
     try {
       debug(`Resolving packed dependency "${id}"`);
-      const resolvedPath = path.join(modulesPath, id);
+      let resolvedPath = path.join(modulesPath, id);
+      if (path.sep === '\\') {
+        resolvedPath = `/` + resolvedPath.replace(/\\/g, '/');
+      }
       debug(`Resolved to "${resolvedPath}"`);
       // always try to import from necessary modules first
       return originalResolveFilename(resolvedPath, ...rest);

@@ -386,7 +386,7 @@ jobs:
           wsl sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
           wsl apt-cache policy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
           wsl sudo apt install -y docker-ce
-          sudo update-alternatives --config iptables
+          wsl sudo update-alternatives --config iptables
           wsl bash -c 'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json'
           wsl sudo dockerd > /dev/null 2>&1 &
           wsl sleep 10
