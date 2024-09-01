@@ -378,9 +378,11 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Run QEMU with boot2docker
-        run:
-          qemu-system-x86_64.exe -m 1g -cdrom boot2docker.iso -device e1000,netdev=mynet0 -netdev
-          user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 &
+        run: |
+          qemu-system-x86_64.exe -m 1g -cdrom boot2docker.iso \
+          -device e1000,netdev=mynet0 \
+          -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375
+        shell: bash
 
       - if: runner.os == 'Windows'
         name: Install Posh-SSH module
@@ -390,7 +392,7 @@ jobs:
           Import-Module Posh-SSH
 
       - if: runner.os == 'Windows'
-        name: Run SSH command with password
+        name: Setup Boot2Docker to expose Docker daemon via TCP
         shell: pwsh
         run: |
           $username = 'docker'
@@ -405,9 +407,6 @@ jobs:
           Invoke-SSHCommand -SessionId $session.SessionId -Command "echo 'DOCKER_TLS=no' > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"
           Remove-SSHSession -SessionId $session.SessionId
 
-      - if: runner.os == 'Windows'
-        name: Test Docker
-        run: |
           echo "DOCKER_HOST=tcp://localhost:5556" >> $GITHUB_ENV
 
       - if: runner.os == 'Windows'
