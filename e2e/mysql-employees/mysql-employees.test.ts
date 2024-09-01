@@ -3,22 +3,25 @@ import { createTenv, type Container } from '@e2e/tenv';
 const { compose, serve, container } = createTenv(__dirname);
 
 let mysql!: Container;
-beforeAll(async () => {
-  mysql = await container({
-    name: 'employees',
-    image: 'genschsa/mysql-employees',
-    containerPort: 3306,
-    healthcheck: [
-      'CMD',
-      'mysqladmin',
-      'ping',
-      '--host=127.0.0.1', // use the network connection (and not the socket file). making sure we dont check the temporary/setup database
-    ],
-    env: {
-      MYSQL_ROOT_PASSWORD: 'passwd', // used in mesh.config.ts
-    },
-  });
-});
+beforeAll(
+  async () => {
+    mysql = await container({
+      name: 'employees',
+      image: 'genschsa/mysql-employees',
+      containerPort: 3306,
+      healthcheck: [
+        'CMD',
+        'mysqladmin',
+        'ping',
+        '--host=127.0.0.1', // use the network connection (and not the socket file). making sure we dont check the temporary/setup database
+      ],
+      env: {
+        MYSQL_ROOT_PASSWORD: 'passwd', // used in mesh.config.ts
+      },
+    });
+  },
+  10 * 60 * 1000,
+);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose({

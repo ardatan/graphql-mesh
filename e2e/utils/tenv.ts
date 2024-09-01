@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import type { AddressInfo } from 'net';
 import os from 'os';
 import path, { isAbsolute } from 'path';
+import type { Readable } from 'stream';
 import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
 import { glob } from 'glob';
@@ -524,6 +525,8 @@ export function createTenv(cwd: string): Tenv {
         .readFile(path.join(__project, 'docker-bake.hcl'))
         .then(c => c.includes(`"${image}"`));
 
+      const ctrl = new AbortController();
+
       if (!bakedImage) {
         // pull image if it doesnt exist and wait for finish
         const exists = await docker
@@ -532,7 +535,11 @@ export function createTenv(cwd: string): Tenv {
           .then(() => true)
           .catch(() => false);
         if (!exists) {
-          const imageStream = await docker.pull(image);
+          const imageStream = (await docker.pull(image)) as Readable;
+          leftoverStack.defer(() => {
+            imageStream.destroy();
+          });
+          ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
           await new Promise((resolve, reject) => {
             docker.modem.followProgress(
               imageStream,
@@ -550,8 +557,6 @@ export function createTenv(cwd: string): Tenv {
           }
         }
       }
-
-      const ctrl = new AbortController();
 
       const ctr = await docker.createContainer({
         name: containerName,
