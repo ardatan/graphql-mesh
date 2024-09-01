@@ -9,7 +9,7 @@ const seaWarnings = [
   `(Use \`mesh-serve--trace - warnings ...\` to show where the warning was created)`,
 ];
 
-function trimError(error: any) {
+export function trimError(error: any) {
   let stringError = error.toString();
   for (const warning of seaWarnings) {
     stringError = stringError.replace(warning, '');

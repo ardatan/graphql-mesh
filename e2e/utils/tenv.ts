@@ -17,7 +17,7 @@ import {
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { localHostnames } from '../../packages/testing/getLocalHostName';
-import { leftoverStack } from './leftoverStack';
+import { leftoverStack, trimError } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 
 export const retries = 120,
@@ -806,11 +806,7 @@ function spawn(
   });
   child.once('close', code => {
     // process ended _and_ the stdio streams have been closed
-    exit(
-      code
-        ? new Error(`Exit code ${code}\n${proc.getStd('both').split('(data:text/javascript')[0]}`)
-        : null,
-    );
+    exit(code ? new Error(`Exit code ${code}\n${trimError(proc.getStd('both'))}`) : null);
   });
 
   return new Promise((resolve, reject) => {
