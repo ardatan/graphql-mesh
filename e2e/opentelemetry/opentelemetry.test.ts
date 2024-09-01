@@ -72,28 +72,25 @@ const TEST_QUERY = /* GraphQL */ `
 `;
 
 describe('opentelemetry', () => {
-  beforeAll(
-    async () => {
-      supergraph = await composeWithApollo([
-        await service('accounts'),
-        await service('inventory'),
-        await service('products'),
-        await service('reviews'),
-      ]);
+  beforeAll(async () => {
+    supergraph = await composeWithApollo([
+      await service('accounts'),
+      await service('inventory'),
+      await service('products'),
+      await service('reviews'),
+    ]);
 
-      jaeger = await container({
-        name: 'jaeger',
-        image: 'jaegertracing/all-in-one:1.56',
-        env: {
-          COLLECTOR_OTLP_ENABLED: 'true',
-        },
-        containerPort: 4318,
-        additionalContainerPorts: [16686],
-        healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:14269'],
-      });
-    },
-    10 * 60 * 1000,
-  );
+    jaeger = await container({
+      name: 'jaeger',
+      image: 'jaegertracing/all-in-one:1.56',
+      env: {
+        COLLECTOR_OTLP_ENABLED: 'true',
+      },
+      containerPort: 4318,
+      additionalContainerPorts: [16686],
+      healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:14269'],
+    });
+  });
 
   type JaegerTracesApiResponse = {
     data: Array<{

@@ -441,19 +441,9 @@ jobs:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
 
       - name: Configure Multiarch QEMU Docker
-        if: runner.os != 'Windows'
+        continue-on-error: true
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker run --rm -t arm64v8/ubuntu uname -m
-
-      - name: Pull images for e2e tests before
-        if: runner.os == 'macOS'
-        run: |
-          docker image pull swaggerapi/petstore3:1.0.7
-          docker image pull genschsa/mysql-employees
-          docker image pull neo4j:5.22.0
-          docker image pull jaegertracing/all-in-one:1.56
-          docker image pull outofcoffee/imposter-all
 
       - name: set up env
         uses: the-guild-org/shared-config/setup@v1
@@ -485,6 +475,15 @@ jobs:
           # we must load so that the e2e tests can use the cached image
           # also, in order for loading to work - we must define the platform above
           load: true
+      - name: Pull Docker Images used in E2E
+        continue-on-error: true
+        run: |
+          docker image pull swaggerapi/petstore3:1.0.7 & \
+          docker image pull genschsa/mysql-employees & \
+          docker image pull neo4j:5.22.0 & \
+          docker image pull jaegertracing/all-in-one:1.56 & \
+          docker image pull outofcoffee/imposter-all & \
+          wait
       - name: test
         timeout-minutes: 60
         env:

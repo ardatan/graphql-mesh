@@ -3,36 +3,33 @@ import { createTenv, type Container } from '@e2e/tenv';
 const { compose, container, serve, spawn } = createTenv(__dirname);
 
 let neo4j: Container;
-beforeAll(
-  async () => {
-    neo4j = await container({
-      name: 'neo4j',
-      image: 'neo4j:5.22.0',
-      containerPort: 7687,
-      env: {
-        NEO4J_AUTH: 'neo4j/password',
+beforeAll(async () => {
+  neo4j = await container({
+    name: 'neo4j',
+    image: 'neo4j:5.22.0',
+    containerPort: 7687,
+    env: {
+      NEO4J_AUTH: 'neo4j/password',
+    },
+    volumes: [
+      {
+        host: 'movies.cypher',
+        container: '/backups/movies.cypher',
       },
-      volumes: [
-        {
-          host: 'movies.cypher',
-          container: '/backups/movies.cypher',
-        },
-      ],
-      healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:7474'],
-    });
+    ],
+    healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:7474'],
+  });
 
-    const [, waitForLoad] = await spawn([
-      'docker',
-      'exec',
-      neo4j.containerName,
-      'bash',
-      '-c',
-      'cypher-shell -u neo4j -p password -f /backups/movies.cypher',
-    ]);
-    await waitForLoad;
-  },
-  10 * 60 * 1000,
-);
+  const [, waitForLoad] = await spawn([
+    'docker',
+    'exec',
+    neo4j.containerName,
+    'bash',
+    '-c',
+    'cypher-shell -u neo4j -p password -f /backups/movies.cypher',
+  ]);
+  await waitForLoad;
+});
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose({

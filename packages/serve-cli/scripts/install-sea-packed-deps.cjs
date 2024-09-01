@@ -61,32 +61,39 @@
   const originalResolveFilename = Module._resolveFilename;
   // @ts-expect-error
   Module._resolveFilename = (...args) => {
-    const [id, ...rest] = args;
-    if (path.sep === '\\' && id[1] === ':') {
-      let fixedPath = id.replace(/\\/g, '/');
-      if (!fixedPath.startsWith('file:') && !fixedPath.startsWith('/')) {
-        fixedPath = `/${fixedPath}`;
-      }
-      if (!fixedPath.startsWith('file:')) {
-        fixedPath = `file://${fixedPath}`;
-      }
-      if (fixedPath.startsWith('file:///')) {
-        fixedPath = url.fileURLToPath(fixedPath);
-      }
-      return originalResolveFilename(fixedPath, ...rest);
-    }
     try {
-      debug(`Resolving packed dependency "${id}"`);
-      const resolvedPath = path.join(modulesPath, id);
-      debug(`Resolved to "${resolvedPath}"`);
-      // always try to import from necessary modules first
-      return originalResolveFilename(resolvedPath, ...rest);
+      const [id, ...rest] = args;
+      if (path.sep === '\\' && id[1] === ':') {
+        let fixedPath = id.replace(/\\/g, '/');
+        if (!fixedPath.startsWith('file:') && !fixedPath.startsWith('/')) {
+          fixedPath = `/${fixedPath}`;
+        }
+        if (!fixedPath.startsWith('file:')) {
+          fixedPath = `file://${fixedPath}`;
+        }
+        if (fixedPath.startsWith('file:///')) {
+          fixedPath = url.fileURLToPath(fixedPath);
+        }
+        return originalResolveFilename(fixedPath, ...rest);
+      }
+      try {
+        debug(`Resolving packed dependency "${id}"`);
+        const resolvedPath = path.join(modulesPath, id);
+        debug(`Resolved to "${resolvedPath}"`);
+        // always try to import from necessary modules first
+        return originalResolveFilename(resolvedPath, ...rest);
+      } catch (e) {
+        debug(
+          `Failed to resolve packed dependency "${id}"; Falling back to the original resolver...`,
+        );
+        // fall back to the original resolver
+        return originalResolveFilename(...args);
+      }
     } catch (e) {
-      debug(
-        `Failed to resolve packed dependency "${id}"; Falling back to the original resolver...`,
-      );
-      // fall back to the original resolver
-      return originalResolveFilename(...args);
+      if (e.stack?.length > 1000) {
+        e.stack = e.stack.slice(0, 1000);
+      }
+      throw e;
     }
   };
 })();

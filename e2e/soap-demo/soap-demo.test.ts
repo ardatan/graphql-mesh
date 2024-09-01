@@ -4,23 +4,20 @@ const { compose, serve, container } = createTenv(__dirname);
 
 let soapDemo: Container;
 
-beforeAll(
-  async () => {
-    soapDemo = await container({
-      name: 'soap-demo',
-      image: 'outofcoffee/imposter-all',
-      containerPort: 8080,
-      volumes: [
-        {
-          host: __dirname,
-          container: '/opt/imposter/config',
-        },
-      ],
-      healthcheck: [],
-    });
-  },
-  10 * 60 * 1000,
-);
+beforeAll(async () => {
+  soapDemo = await container({
+    name: 'soap-demo',
+    image: 'outofcoffee/imposter-all',
+    containerPort: 8080,
+    volumes: [
+      {
+        host: __dirname,
+        container: '/opt/imposter/config',
+      },
+    ],
+    healthcheck: [],
+  });
+});
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose({
