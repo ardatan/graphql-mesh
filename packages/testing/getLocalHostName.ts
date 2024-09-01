@@ -1,11 +1,11 @@
 import { fetch } from '@whatwg-node/fetch';
 
-export const localHostnames = ['localhost', '127.0.0.1', '0.0.0.0'];
+export const localHostnames = ['0.0.0.0', '127.0.0.1', 'localhost'];
 
 export async function getLocalHostName(port: number) {
   const timeoutSignal = AbortSignal.timeout(5000);
   while (!timeoutSignal.aborted) {
-    for (const hostname of localHostnames) {
+    for (const hostname of [...localHostnames]) {
       if (process.env.DEBUG) {
         console.log(`Trying hostname: ${hostname}`);
       }

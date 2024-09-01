@@ -838,13 +838,15 @@ export function getAvailablePort(): Promise<number> {
 }
 
 async function waitForReachable(server: Server, signal: AbortSignal) {
-  while (!signal.aborted) {
+  outer: while (!signal.aborted) {
     for (const localHostname of localHostnames) {
       try {
         await fetch(`http://${localHostname}:${server.port}`, { signal });
-        break;
+        break outer;
       } catch (err) {}
     }
+    // no need to track retries, jest will time out aborting the signal
+    signal.throwIfAborted();
     await setTimeout(interval);
   }
 }
