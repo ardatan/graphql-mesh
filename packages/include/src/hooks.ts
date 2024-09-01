@@ -52,6 +52,10 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
 };
 
 export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
+  if (path.sep === '\\' && context.parentURL?.[1] === ':') {
+    debug(`Fixing Windows path at "${context.parentURL}"`);
+    context.parentURL = `file:///${context.parentURL.replace(/\\/g, '/')}`;
+  }
   if (packedDepsPath) {
     try {
       const resolved = await nextResolve(

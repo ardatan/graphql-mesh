@@ -9,6 +9,7 @@ import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
 import { glob } from 'glob';
 import type { ExecutionResult } from 'graphql';
+import { localHostnames } from 'packages/testing/getLocalHostName';
 import {
   IntrospectAndCompose,
   RemoteGraphQLDataSource,
@@ -838,12 +839,13 @@ export function getAvailablePort(): Promise<number> {
 
 async function waitForReachable(server: Server, signal: AbortSignal) {
   while (!signal.aborted) {
-    try {
-      await fetch(`http://0.0.0.0:${server.port}`, { signal });
-      break;
-    } catch (err) {
-      await setTimeout(interval);
+    for (const localHostname of localHostnames) {
+      try {
+        await fetch(`http://${localHostname}:${server.port}`, { signal });
+        break;
+      } catch (err) {}
     }
+    await setTimeout(interval);
   }
 }
 
