@@ -21,7 +21,8 @@
         "tailwindcss",
         "@whatwg-node/*",
         "graphql-jit",
-        "husky"
+        "husky",
+        "@opentelemetry/*"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
