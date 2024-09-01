@@ -322,9 +322,7 @@ export function run(userCtx: Partial<CLIContext>) {
 
 async function warnIfNodeLibcurlMissing(ctx: CLIContext) {
   ctx.log.debug('Checking if node-libcurl is installed and available for use.');
-  if (globalThis.libcurl) {
-    ctx.log.debug('node-libcurl is already available for use.');
-  } else {
+  if (!globalThis.libcurl) {
     ctx.log.warn(
       'node-libcurl is not installed properly which is used for better performance and developer experience. Falling back to "node:http".',
     );

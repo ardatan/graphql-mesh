@@ -414,6 +414,8 @@ jobs:
       - name: Setup Docker on macOS
         if: runner.os == 'macOS'
         uses: douglascamata/setup-docker-macos-action@v1-alpha
+        with:
+          upgrade-qemu: true
       - name: Configure Docker Socket Path
         if: runner.os == 'macOS'
         run: |

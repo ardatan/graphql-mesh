@@ -62,6 +62,11 @@
   Module._resolveFilename = (...args) => {
     const [id, ...rest] = args;
     if (path.sep === '\\' && id[1] === ':') {
+      if (!id.startsWith('file:')) {
+        debug(`Fixing Windows path at "${id}"`);
+        const fixedPath = id.replace(/\\/g, '/');
+        return originalResolveFilename(`file:///${fixedPath}`, ...rest);
+      }
       // Windows path, skip
       return originalResolveFilename(...args);
     }
