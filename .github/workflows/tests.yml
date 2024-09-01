@@ -436,7 +436,7 @@ jobs:
         shell: bash
       - name: cache docker images
         uses: ScribeMD/docker-cache@0.5.0
-        if: runner.os != 'macOS'
+        continue-on-error: true
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
 
