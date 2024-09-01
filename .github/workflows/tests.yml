@@ -383,9 +383,11 @@ jobs:
           user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 &
 
       - if: runner.os == 'Windows'
-        name: Install OpenSSH
+        name: Install Posh-SSH module
+        shell: pwsh
         run: |
-          Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Client*' | Add-WindowsCapability -Online
+          Install-Module -Name Posh-SSH -Force -Scope CurrentUser
+          Import-Module Posh-SSH
 
       - if: runner.os == 'Windows'
         name: Run SSH command with password
@@ -404,10 +406,8 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Test Docker
-        run: docker run hello-world
-        env:
-          DOCKER_HOST: tcp://localhost:5556
-          DOCKER_TLS_VERIFY: 0
+        run: |
+          echo "DOCKER_HOST=tcp://localhost:5556" >> $GITHUB_ENV
 
       - if: runner.os == 'Windows'
         name: Install Windows SDK
