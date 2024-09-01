@@ -365,12 +365,6 @@ jobs:
         shell: pwsh
 
       - if: runner.os == 'Windows'
-        name: Install expect
-        run: |
-          choco install expect
-        shell: pwsh
-
-      - if: runner.os == 'Windows'
         name: Install QEMU
         run: |
           Invoke-WebRequest -Uri "https://qemu.weilnetz.de/w64/old/qemu-system-x86_64.exe" -OutFile "qemu-system-x86_64.exe"
