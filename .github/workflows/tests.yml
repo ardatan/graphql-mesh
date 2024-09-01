@@ -394,7 +394,7 @@ jobs:
         shell: pwsh
         run: |
           $username = 'docker'
-          $hostname = '127.0.0.1'
+          $hostname = 'localhost'
           $port = 5555
           $password = "tcuser"
 
