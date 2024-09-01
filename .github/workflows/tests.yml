@@ -368,6 +368,7 @@ jobs:
         name: Install QEMU
         run: |
           choco install qemu -y
+          cat C:\ProgramData\chocolatey\logs\chocolatey.log
         shell: pwsh
 
       - if: runner.os == 'Windows'
@@ -379,7 +380,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Run QEMU with boot2docker
         run: |
-          qemu-system-x86_64.exe -m 1g -cdrom D:\a\boot2docker.iso -device e1000,netdev=mynet0 -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375
+          ./qemu-system-x86_64.exe -m 1g -cdrom D:\a\boot2docker.iso -device e1000,netdev=mynet0 -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375
         working-directory: "C:\\Program Files\\qemu"
         shell: pwsh
 
