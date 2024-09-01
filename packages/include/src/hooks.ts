@@ -81,10 +81,11 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
       return await nextResolve(resolveFilename(specifier), context);
     } catch {
       try {
+        const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
         // usual filenames tried, could be a .ts file?
         return await nextResolve(
           resolveFilename(
-            specifier + '.ts', // TODO: .mts or .cts?
+            specifierWithoutJs + '.ts', // TODO: .mts or .cts?
           ),
           context,
         );
@@ -96,10 +97,13 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
               return await nextResolve(resolveFilename(possiblePath), context);
             } catch {
               try {
+                const possiblePathWithoutJs = possiblePath.endsWith('.js')
+                  ? possiblePath.slice(0, -3)
+                  : possiblePath;
                 // the tsconfig path might point to a .ts file, try it too
                 return await nextResolve(
                   resolveFilename(
-                    possiblePath + '.ts', // TODO: .mts or .cts?
+                    possiblePathWithoutJs + '.ts', // TODO: .mts or .cts?
                   ),
                   context,
                 );
