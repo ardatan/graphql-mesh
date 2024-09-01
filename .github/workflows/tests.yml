@@ -379,7 +379,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Run QEMU with boot2docker
         run:
-          qemu-system-x86_64.exe -m 4g -cdrom boot2docker.iso -device e1000,netdev=mynet0 -netdev
+          qemu-system-x86_64.exe -m 512 -cdrom boot2docker.iso -device e1000,netdev=mynet0 -netdev
           user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 &
 
       - if: runner.os == 'Windows'
@@ -401,7 +401,7 @@ jobs:
           $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
           $credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
 
-          $session = New-SSHSession -ComputerName $hostname -Credential $credential -Port $port
+          $session = New-SSHSession -ComputerName $hostname -Credential $credential -Port $port -Force -AcceptKey
           Invoke-SSHCommand -SessionId $session.SessionId -Command "echo 'DOCKER_TLS=no' > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"
           Remove-SSHSession -SessionId $session.SessionId
 
