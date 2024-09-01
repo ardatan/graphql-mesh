@@ -380,6 +380,7 @@ jobs:
         name: Run QEMU with boot2docker
         run: |
           D:\a\qemu-system-x86_64.exe -m 1g -cdrom D:\a\boot2docker.iso -device e1000,netdev=mynet0 -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375
+        shell: cmd
 
       - if: runner.os == 'Windows'
         name: Install Posh-SSH module
