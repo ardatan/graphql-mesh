@@ -5952,7 +5952,7 @@ __metadata:
     json-bigint-patch: "npm:^0.0.8"
     json5: "npm:^2.2.3"
     mkdirp: "npm:^3.0.0"
-    node-libcurl: "npm:@ardatan/node-libcurl@^4.0.1"
+    node-libcurl: "npm:@ardatan/node-libcurl@^4.0.2"
     open: "npm:^7.4.2"
     pascal-case: "npm:^3.1.2"
     rimraf: "npm:^6.0.0"
@@ -6694,7 +6694,7 @@ __metadata:
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.3.1"
     json-bigint-patch: "npm:^0.0.8"
-    node-libcurl: "npm:@ardatan/node-libcurl@^4.0.1"
+    node-libcurl: "npm:@ardatan/node-libcurl@^4.0.2"
     parse-duration: "npm:^1.1.0"
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
@@ -29328,9 +29328,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-libcurl@npm:@ardatan/node-libcurl@^4.0.1":
-  version: 4.0.1
-  resolution: "@ardatan/node-libcurl@npm:4.0.1"
+"node-libcurl@npm:@ardatan/node-libcurl@^4.0.2":
+  version: 4.0.2
+  resolution: "@ardatan/node-libcurl@npm:4.0.2"
   dependencies:
     "@mapbox/node-pre-gyp": "npm:^1.0.11"
     env-paths: "npm:2.2.0"
@@ -29339,7 +29339,7 @@ __metadata:
     npmlog: "npm:^7.0.1"
     rimraf: "npm:^5.0.5"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/d106ef2859c1c2021e3d9c913b98f31ab712e88da2723abcf47d159dec2f46d265c9b574ced69e019be10dab9c9e872f390613448671425026eca3cd60f46b26
+  checksum: 10c0/2ff892ffaa70bc37a79d40cd56388bd7327abb525d923e4e1466dc5911b6efa05c4d05bf6b3dbfdf5ed83fcbc5e1860819ae28321463049d099d886d5c1fb9c8
   languageName: node
   linkType: hard
 
