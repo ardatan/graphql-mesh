@@ -362,13 +362,54 @@ jobs:
       - if: runner.os == 'Windows'
         name: Disable Windows Defender
         run: Set-MpPreference -DisableRealtimeMonitoring $true
-        shell: powershell
+        shell: bash
+
+      - if: runner.os == 'Windows'
+        name: Install QEMU
+        run: wget https://qemu.weilnetz.de/w64/old/qemu-system-x86_64.exe
+        shell: bash
+
+      - if: runner.os == 'Windows'
+        name: Install boot2docker
+        run:
+          wget
+          https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
+        shell: bash
+
+      - if: runner.os == 'Windows'
+        name: Run QEMU with boot2docker
+        run:
+          qemu-system-x86_64.exe -m 4g -cdrom boot2docker.iso -device e1000,netdev=mynet0 -netdev
+          user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 &
+
+      - if: runner.os == 'Windows'
+        name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 127.0.0.1
+          username: docker
+          password: tcuser
+          port: 5555
+          script: |
+            echo "DOCKER_TLS=no" > /var/lib/boot2docker/profile
+            sudo /etc/init.d/docker restart
+
+      - if: runner.os == 'Windows'
+        name: Test Docker
+        run: docker run hello-world
+        env:
+          DOCKER_HOST: tcp://localhost:5556
+          DOCKER_TLS_VERIFY: 0
 
       - if: runner.os == 'Windows'
         name: Install Windows SDK
         uses: fbactions/setup-winsdk@v2
         with:
           winsdk-build-version: 18362
+
+      - if: runner.os == 'Windows'
+        name: Install Docker
+        uses: docker/setup-buildx-action@v1
 
       # Install macOS specific dependencies
       - name: Configure Homebrew cache
