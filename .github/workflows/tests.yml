@@ -365,41 +365,6 @@ jobs:
         shell: powershell
 
       - if: runner.os == 'Windows'
-        uses: Vampire/setup-wsl@v3
-        with:
-          distribution: Ubuntu-20.04
-          set-as-default: true
-          wsl-conf: |
-            [automount]
-            root = /
-            [boot]
-            systemd=true
-
-      - if: runner.os == 'Windows'
-        name: Install Docker in WSL
-        run: |
-          wsl sudo bash -c 'echo "[boot]\nsystemd=true\n" >> /etc/wsl.conf'
-          wsl --shutdown
-          wsl sudo apt update
-          wsl sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-          wsl bash -c "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
-          wsl sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-          wsl apt-cache policy docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-          wsl sudo apt install -y docker-ce
-          wsl sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-          wsl bash -c 'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json'
-          # wsl ls -l /var/run/docker.sock
-          # wsl sudo chown root:docker /var/run/docker.sock
-          wsl sudo service docker restart
-          # wsl sudo docker context ls
-          # wsl sudo docker context use default
-          # wsl sudo rm -rf ~/.docker
-          # wsl sudo docker ps -a
-          # wsl sudo docker run --rm hello-world
-          # wsl sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          # wsl sudo docker run --rm -t arm64v8/ubuntu uname -m
-
-      - if: runner.os == 'Windows'
         name: Install Windows SDK
         uses: fbactions/setup-winsdk@v2
         with:

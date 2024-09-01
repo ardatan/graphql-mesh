@@ -806,7 +806,11 @@ function spawn(
   });
   child.once('close', code => {
     // process ended _and_ the stdio streams have been closed
-    exit(code ? new Error(`Exit code ${code}\n${proc.getStd('both')}`) : null);
+    exit(
+      code
+        ? new Error(`Exit code ${code}\n${proc.getStd('both').split('(data:text/javascript')[0]}`)
+        : null,
+    );
   });
 
   return new Promise((resolve, reject) => {
