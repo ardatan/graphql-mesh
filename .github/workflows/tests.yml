@@ -390,10 +390,10 @@ jobs:
           wsl bash -c 'echo "{\"hosts\": [\"unix:///var/run/docker.sock\", \"tcp://0.0.0.0:2375\"]}" > /etc/docker/daemon.json'
           wsl sudo dockerd > /dev/null 2>&1 &
           wsl sleep 10
-          wsl docker run hello-world
+          wsl sudo docker run hello-world
           wsl # Configure Multiarch QEMU Docker
-          wsl docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          wsl docker run --rm -t arm64v8/ubuntu uname -m
+          wsl sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          wsl sudo docker run --rm -t arm64v8/ubuntu uname -m
 
       - if: runner.os == 'Windows'
         name: Configure Multiarch QEMU Docker on Windows
