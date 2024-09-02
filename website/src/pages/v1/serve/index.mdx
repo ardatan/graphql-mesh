@@ -24,11 +24,12 @@ Hive Gateway provides all of its features for free without any extra paid licens
 - [JSON Web Tokens (JWT)](/v1/serve/features/auth/jwt) authentication between client and gateway
   also between gateway and subgraph
 - [Authorization](/v1/serve/features/auth/generic-auth) on specific fields and types using
-  Federation Auth directives such as `@requiresScopes` ,`@authenticated` and `@policy`
-- Role-based Access Control either with directives or programmatically
+  Federation Auth directives like `@authenticated` and `@skipAuth`
+- [Role-based Access Control (RBAC)](/v1/serve/features/auth/generic-auth) either programmatically
+  or with directives `@requiresScope` and `@policy`
 - [Response Caching](/v1/serve/features/performance/response-caching) based on either in memory or
   Redis for distributed caching optionally with `@cacheControl` directive
-- [Security](/v1/serve/features/security/index) features such as safelisting, depth limit etc
+- [Security](/v1/serve/features/security) features such as safelisting, depth limit etc
 - [Rate Limiting](/v1/serve/features/security/rate-limiting) on specific fields and types either
   programmatically or declaratively with `@rateLimit` directive
 - [Prometheus and OpenTelemetry integration](v1/serve/features/monitoring-tracing) with fully
@@ -37,5 +38,8 @@ Hive Gateway provides all of its features for free without any extra paid licens
   Registry or a selfhosting storage
 - [E2E HTTP Compression](/v1/serve/features/performance/compression) from the client to the subgraph
   for better performance and resource management
+- [And more](/v1/serve/features)...
 
-<Cards.Card arrow title="Start with Hive Gateway" href="/v1/serve/getting-started" />
+<br />
+
+<Cards.Card arrow title="Get started with Hive Gateway" href="/v1/serve/getting-started" />
