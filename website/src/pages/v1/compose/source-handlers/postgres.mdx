@@ -1,0 +1,64 @@
+---
+description:
+  Discover the power of GraphQL Mesh and PostGraphile with our handler library! Use your PostgreSQL
+  database schema to create a GraphQL schema, and add external plugins for federation, many-to-many,
+  and PostGIS support.
+---
+
+import { Callout } from '@theguild/components'
+
+# PostgreSQL (Coming soon)
+
+![image](https://user-images.githubusercontent.com/20847995/79219670-5ae06300-7e5b-11ea-81f1-d0c08a884607.png)
+
+This handler allows you to use the GraphQL schema created by
+[PostGraphile](https://graphile.org/postgraphile), based on a PostgreSQL database schema.
+
+To get started, install the handler library:
+
+```sh npm2yarn
+npm i @omnigraph/postgresql
+```
+
+Now, you can use it directly in your Mesh config file:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadPostgreSQLSubgraph } from '@omnigraph/postgresql'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadPostgreSQLSubgraph('MyPostgreSQL', {
+        connectionString: 'postgres://postgres:password@localhost/postgres'
+        // You can also use environment variables like below
+        // connectionString: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`
+      })
+    }
+  ]
+})
+```
+
+### Federation and Automatic Type Merging support
+
+The Federation plugin converts your Postgraphile schema into a federated schema that can also be
+recognized by Mesh, which brings Automatic Type Merging. It automatically uses
+`@graphile/federation` package, so you don't need to configure it manually.
+
+### Many-to-Many support
+
+Suppose you want to have automatic many-to-many mapping across your entities. You can install
+`@graphile-contrib/pg-many-to-many` and add it under `appendPlugins`.
+
+```sh npm2yarn
+npm i @graphile-contrib/pg-many-to-many
+```
+
+### PostGIS Support
+
+If you use `PostGIS` in your PostgreSQL database, you need to install `@graphile/postgis` package
+and add it under `appendPlugins`.
+
+```sh npm2yarn
+npm i @graphile/postgis
+```
