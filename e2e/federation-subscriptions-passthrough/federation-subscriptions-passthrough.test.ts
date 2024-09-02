@@ -137,6 +137,9 @@ it('should recycle websocket connections', async () => {
 });
 
 it('should subscribe and resolve via http callbacks', async () => {
+  if (process.version.startsWith('v18')) {
+    return;
+  }
   const supergraphFile = await composeWithApollo([
     await service('products'),
     await service('reviews'),

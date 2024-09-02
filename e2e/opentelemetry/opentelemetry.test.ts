@@ -85,7 +85,7 @@ describe('opentelemetry', () => {
       name: 'jaeger',
       image:
         os.platform().toLowerCase() === 'win32'
-          ? 'johnnyhuy/jaeger-windows'
+          ? 'johnnyhuy/jaeger-windows:1809'
           : 'jaegertracing/all-in-one:1.56',
       env: {
         COLLECTOR_OTLP_ENABLED: 'true',
