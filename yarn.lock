@@ -5836,9 +5836,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-hive/yoga@npm:^0.37.0":
-  version: 0.37.0
-  resolution: "@graphql-hive/yoga@npm:0.37.0"
+"@graphql-hive/yoga@npm:^0.38.0":
+  version: 0.38.0
+  resolution: "@graphql-hive/yoga@npm:0.38.0"
   dependencies:
     "@graphql-hive/core": "npm:0.8.0"
     "@graphql-yoga/plugin-persisted-operations": "npm:^3.3.1"
@@ -5846,7 +5846,7 @@ __metadata:
   peerDependencies:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     graphql-yoga: ^5.0.0
-  checksum: 10c0/43fbf315a7f040dad7b18396ab50e017581be3b9944b49d0d44904979ddfb96e8cfe2538bae2acef18e9bcb067c3211c60cf64e0020bb49ca7bae79f5a091bb6
+  checksum: 10c0/5f299725a9e7b8a05c53043560b2103ce5dc75be926f8552b8b36af9c2e6518d1cd907aab7fee6a4b9f30d5989f07ae12ece78d56bb7323168f3b66929afbfcc
   languageName: node
   linkType: hard
 
@@ -6377,7 +6377,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
     "@graphql-hive/core": "npm:^0.8.0"
-    "@graphql-hive/yoga": "npm:^0.37.0"
+    "@graphql-hive/yoga": "npm:^0.38.0"
     "@graphql-mesh/string-interpolation": "npm:0.5.6"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.6
@@ -6959,7 +6959,7 @@ __metadata:
   resolution: "@graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive"
   dependencies:
     "@graphql-hive/core": "npm:^0.8.0"
-    "@graphql-hive/yoga": "npm:^0.37.0"
+    "@graphql-hive/yoga": "npm:^0.38.0"
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
     "@graphql-tools/delegate": "npm:^10.0.21"
   peerDependencies:
