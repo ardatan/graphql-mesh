@@ -99,7 +99,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, macos-latest-large, windows-latest]
+        productname: [mesh-serve, hive-gateway]
     steps:
+      - name: Choose names
+        id: names
+        run: |
+          echo "::set-output name=productname::${{ matrix.productname == 'mesh-serve' && 'mesh-serve' || 'hive-gateway' }}"
+          echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
+          echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
       - name: checkout
         uses: actions/checkout@v2
 
@@ -129,15 +136,17 @@ jobs:
         id: upload_artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mesh-serve_${{ matrix.os }}
+          name:
+            ${{ steps.names.outputs.packagedir }}/${{ matrix.productname
+            }}-${{runner.os}}-${{runner.arch}}${{ runner.os == 'Windows' && '.exe' || ''}}
           path: |
-            packages/serve-cli
+            ${{ steps.names.outputs.packagedir }}
       - name: update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: 'Node Sea Artifacts Status (`${{ matrix.os }}`)'
+          header: 'Node Sea Artifacts Status (`${{ runner.os }}-${{ runner.arch }}`)'
           message: |
-            The build artifacts of `mesh-serve` as a single executable for `${{ matrix.os }}` are available at:
+            The build artifacts of `${{ matrix.productname }}` as a single executable for `${{ runner.os }}-${{ runner.arch }}` are available at:
             [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }})
 
         env:

@@ -27,23 +27,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - productname: mesh-serve
-            packagename: '@graphql-mesh/serve-cli'
-          - productname: hive-gateway
-            packagename: '@graphql-hive/gateway'
+        productname: [mesh-serve, hive-gateway]
     needs: [stable]
     if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
+      - name: Choose names
+        id: names
+        run: |
+          echo "::set-output name=productname::${{ matrix.productname == 'mesh-serve' && 'mesh-serve' || 'hive-gateway' }}"
+          echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
+          echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
       - name: version ${{ matrix.productname }}
         uses: actions/github-script@v7
         id: ver-mesh-serve
         with:
           script: |
             const publishedPackages = ${{ needs.stable.outputs.publishedPackages }};
-            const meshServe = publishedPackages.find((p) => p.name === '${{ matrix.packagename }}');
+            const meshServe = publishedPackages.find((p) => p.name === '${{ steps.names.outputs.packagename }}');
             if (!meshServe) {
-              return core.setFailed('${{ matrix.packagename }} was not published!');
+              return core.setFailed('${{ steps.names.outputs.packagename }} was not published!');
             }
             const { version } = meshServe;
             const [major, minor] = version.split('.');
@@ -73,7 +75,7 @@ jobs:
         run: yarn bundle
       - name: inject ${{ matrix.productname }} version
         run: |
-          yarn workspace ${{ matrix.packagename }} inject-version ${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
+          yarn workspace ${{ steps.names.outputs.packagename }} inject-version ${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
       - name: bake and push
         uses: docker/bake-action@v5
         env:
@@ -91,9 +93,34 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, macos-latest-large, windows-latest]
+        productname: [mesh-serve, hive-gateway]
     needs: [stable]
     if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
+      - name: Choose names
+        id: names
+        run: |
+          echo "::set-output name=productname::${{ matrix.productname == 'mesh-serve' && 'mesh-serve' || 'hive-gateway' }}"
+          echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
+          echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
+      - name: version ${{ matrix.productname }}
+        uses: actions/github-script@v7
+        id: ver-mesh-serve
+        with:
+          script: |
+            const publishedPackages = ${{ needs.stable.outputs.publishedPackages }};
+            const meshServe = publishedPackages.find((p) => p.name === '${{ steps.names.outputs.packagename }}');
+            if (!meshServe) {
+              return core.setFailed('${{ steps.names.outputs.packagename }} was not published!');
+            }
+            const { version } = meshServe;
+            const [major, minor] = version.split('.');
+            if (!major || !minor) {
+              return core.setFailed(`Unknown major or minor in version "${version}"!`);
+            }
+            const r = { version, tags: `latest,${major},${major}.${minor},${version}` };
+            console.log(r);
+            return r;
       - name: checkout
         uses: actions/checkout@v2
 
@@ -117,19 +144,18 @@ jobs:
       - name: bundle
         run: yarn bundle
       - name: package binary
-        working-directory: packages/serve-cli
+        working-directory: ${{ steps.names.outputs.packagedir }}
         run: yarn package-binary
-      - name: timestamp
-        id: timestamp
-        run: echo "timestamp=$(date +%s%3N) >> $GITHUB_OUTPUT"
         shell: bash
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file:
-            packages/serve-cli/${{ matrix.os == 'windows-latest' && 'mesh-serve.exe' ||
-            'mesh-serve'}}
-          asset_name: mesh-serve-${{ matrix.os }}
-          tag: release-${{ steps.timestamp.outputs.timestamp }}
+            ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os ==
+            'Windows' && '.exe' || ''}}
+          asset_name:
+            ${{ matrix.productname }}-${{ runner.os }}-${{ runner.arch }}${{ runner.os == 'Windows'
+            && '.exe' || ''}}
+          tag: ${{fromJSON(steps.ver-mesh-serve.outputs.result).version}}
           overwrite: true
