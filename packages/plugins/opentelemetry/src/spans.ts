@@ -7,6 +7,7 @@ import {
 } from '@graphql-tools/utils';
 import { SpanKind, SpanStatusCode, type Context, type Span, type Tracer } from '@opentelemetry/api';
 import {
+  SEMATTRS_GATEWAY_UPSTREAM_SUBGRAPH_NAME,
   SEMATTRS_GRAPHQL_DOCUMENT,
   SEMATTRS_GRAPHQL_ERROR_COUNT,
   SEMATTRS_GRAPHQL_OPERATION_NAME,
@@ -19,7 +20,6 @@ import {
   SEMATTRS_HTTP_STATUS_CODE,
   SEMATTRS_HTTP_URL,
   SEMATTRS_HTTP_USER_AGENT,
-  SEMATTRS_MESH_UPSTREAM_SUBGRAPH_NAME,
   SEMATTRS_NET_HOST_NAME,
 } from './attributes.js';
 
@@ -201,7 +201,7 @@ export function createSubgraphExecuteFetchSpan(input: {
           input.executionRequest.document,
           input.executionRequest.operationName,
         )?.operation,
-        [SEMATTRS_MESH_UPSTREAM_SUBGRAPH_NAME]: input.subgraphName,
+        [SEMATTRS_GATEWAY_UPSTREAM_SUBGRAPH_NAME]: input.subgraphName,
       },
       kind: SpanKind.CLIENT,
     },

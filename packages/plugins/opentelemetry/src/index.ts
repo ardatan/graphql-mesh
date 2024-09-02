@@ -1,2 +1,5 @@
 export * from './processors.js';
-export { useOpenTelemetry, type OpenTelemetryMeshPluginOptions } from './plugin.js';
+export {
+  useOpenTelemetry,
+  type OpenTelemetryGatewayPluginOptions as OpenTelemetryMeshPluginOptions,
+} from './plugin.js';

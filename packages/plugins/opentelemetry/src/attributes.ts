@@ -20,5 +20,5 @@ export const SEMATTRS_GRAPHQL_OPERATION_TYPE = 'graphql.operation.type';
 export const SEMATTRS_GRAPHQL_OPERATION_NAME = 'graphql.operation.name';
 export const SEMATTRS_GRAPHQL_ERROR_COUNT = 'graphql.error.count';
 
-// Mesh-specific attributes
-export const SEMATTRS_MESH_UPSTREAM_SUBGRAPH_NAME = 'mesh.upstream.subgraph.name';
+// Gateway-specific attributes
+export const SEMATTRS_GATEWAY_UPSTREAM_SUBGRAPH_NAME = 'gateway.upstream.subgraph.name';

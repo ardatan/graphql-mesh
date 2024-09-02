@@ -39,18 +39,18 @@ type PrimitiveOrEvaluated<TExpectedResult, TInput = never> =
   | TExpectedResult
   | ((input: TInput) => TExpectedResult);
 
-export type OpenTelemetryMeshPluginOptions = {
+export type OpenTelemetryGatewayPluginOptions = {
   /**
    * A list of OpenTelemetry exporters to use for exporting the spans.
    * You can use exporters from `@opentelemetry/exporter-*` packages, or use the built-in utility functions.
    */
   exporters: SpanProcessor[];
   /**
-   * Service name to use for the spans (default: 'Mesh').
+   * Service name to use for the spans (default: 'Gateway').
    */
   serviceName?: string;
   /**
-   * Tracer instance to use for creating spans (default: a tracer with name 'mesh').
+   * Tracer instance to use for creating spans (default: a tracer with name 'gateway').
    */
   tracer?: Tracer;
   /**
@@ -114,13 +114,13 @@ const HeadersTextMapGetter: TextMapGetter = {
   },
 };
 
-export function useOpenTelemetry(options: OpenTelemetryMeshPluginOptions): GatewayPlugin<{
+export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): GatewayPlugin<{
   opentelemetry: {
     tracer: Tracer;
     activeContext: () => Context;
   };
 }> {
-  const serviceName = options.serviceName ?? 'Mesh';
+  const serviceName = options.serviceName ?? 'Gateway';
   const spanProcessors = options.exporters;
   const contextManager = new AsyncHooksContextManager();
   const inheritContext = options.inheritContext ?? true;
@@ -136,7 +136,7 @@ export function useOpenTelemetry(options: OpenTelemetryMeshPluginOptions): Gatew
   });
 
   const requestContextMapping = new WeakMap<Request, Context>();
-  const tracer = options.tracer || trace.getTracer('mesh');
+  const tracer = options.tracer || trace.getTracer('gateway');
 
   return {
     onYogaInit() {
