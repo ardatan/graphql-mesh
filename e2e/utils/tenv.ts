@@ -16,10 +16,7 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
-import {
-  getLocalHostName as getLocalHostNameWithPort,
-  localHostnames,
-} from '../../packages/testing/getLocalHostName';
+import { localHostnames } from '../../packages/testing/getLocalHostName';
 import { leftoverStack, trimError } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 
@@ -372,7 +369,7 @@ export function createTenv(cwd: string): Tenv {
         ...proc,
         port,
         async execute({ headers, ...args }) {
-          const res = await fetch(`http://0.0.0.0:${port}/graphql`, {
+          const res = await fetch(`http://${getLocalHostName()}:${port}/graphql`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
