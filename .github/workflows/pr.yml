@@ -137,10 +137,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name:
-            ${{ steps.names.outputs.packagedir }}/${{ matrix.productname
-            }}-${{runner.os}}-${{runner.arch}}${{ runner.os == 'Windows' && '.exe' || ''}}
+            ${{ matrix.productname}}-${{runner.os}}-${{runner.arch}}${{ runner.os == 'Windows' &&
+            '.exe' || ''}}
           path: |
-            ${{ steps.names.outputs.packagedir }}
+            ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os == 'Windows' && '.exe' || '' }}
       - name: update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
         with:
