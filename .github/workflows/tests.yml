@@ -494,6 +494,7 @@ jobs:
           docker image pull genschsa/mysql-employees & \
           docker image pull neo4j:5.22.0 & \
           docker image pull jaegertracing/all-in-one:1.56 & \
+          docker image pull johnnyhuy/jaeger-windows & \
           docker image pull outofcoffee/imposter-all & \
           wait
         shell: bash
