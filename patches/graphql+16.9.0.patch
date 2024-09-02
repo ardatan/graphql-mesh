@@ -1,0 +1,26 @@
+diff --git a/node_modules/graphql/jsutils/instanceOf.js b/node_modules/graphql/jsutils/instanceOf.js
+index 18403cf..8cec40e 100644
+--- a/node_modules/graphql/jsutils/instanceOf.js
++++ b/node_modules/graphql/jsutils/instanceOf.js
+@@ -43,21 +43,6 @@ const instanceOf =
+               ? void 0
+               : _value$constructor.name;
+ 
+-          if (className === valueClassName) {
+-            const stringifiedValue = (0, _inspect.inspect)(value);
+-            throw new Error(`Cannot use ${className} "${stringifiedValue}" from another module or realm.
+-
+-Ensure that there is only one instance of "graphql" in the node_modules
+-directory. If different versions of "graphql" are the dependencies of other
+-relied on modules, use "resolutions" to ensure only one version is installed.
+-
+-https://yarnpkg.com/en/docs/selective-version-resolutions
+-
+-Duplicate "graphql" modules cannot be used at the same time since different
+-versions may have different capabilities and behavior. The data from one
+-version used in the function from another could produce confusing and
+-spurious results.`);
+-          }
+         }
+ 
+         return false;

@@ -16,7 +16,10 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
-import { localHostnames } from '../../packages/testing/getLocalHostName';
+import {
+  getLocalHostName as getLocalHostNameWithPort,
+  localHostnames,
+} from '../../packages/testing/getLocalHostName';
 import { leftoverStack, trimError } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 
@@ -692,7 +695,7 @@ export function createTenv(cwd: string): Tenv {
       for (const service of services) {
         subgraphs.push({
           name: service.name,
-          url: `http://0.0.0.0:${service.port}/graphql`,
+          url: `http://${getLocalHostName()}:${service.port}/graphql`,
         });
       }
 
@@ -864,4 +867,8 @@ class DockerError extends Error {
 
 export function boolEnv(name: string): boolean {
   return ['1', 't', 'true', 'y', 'yes'].includes(process.env[name]);
+}
+
+export function getLocalHostName(): string {
+  return path.sep === '\\' ? '127.0.0.1' : '0.0.0.0';
 }

@@ -1,6 +1,6 @@
 import { setTimeout } from 'timers/promises';
 import { createClient, type Client } from 'graphql-sse';
-import { createTenv, getAvailablePort } from '@e2e/tenv';
+import { createTenv, getAvailablePort, getLocalHostName } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 import { TOKEN } from './services/products/server';
 
@@ -18,7 +18,7 @@ it('should subscribe and resolve via websockets', async () => {
   const { port } = await serve({ supergraph: supergraphFile });
 
   client = createClient({
-    url: `http://0.0.0.0:${port}/graphql`,
+    url: `http://${getLocalHostName()}:${port}/graphql`,
     retryAttempts: 0,
     headers: {
       Authorization: TOKEN,
@@ -105,7 +105,7 @@ it('should recycle websocket connections', async () => {
   const { port } = await serve({ supergraph: supergraphFile });
 
   client = createClient({
-    url: `http://0.0.0.0:${port}/graphql`,
+    url: `http://${getLocalHostName()}:${port}/graphql`,
     retryAttempts: 0,
     headers: {
       Authorization: TOKEN,
@@ -145,7 +145,7 @@ it('should subscribe and resolve via http callbacks', async () => {
   // Get a random available port
   const availablePort = await getAvailablePort();
 
-  const publicUrl = `http://0.0.0.0:${availablePort}`;
+  const publicUrl = `http://${getLocalHostName()}:${availablePort}`;
   await serve({
     supergraph: supergraphFile,
     port: availablePort,

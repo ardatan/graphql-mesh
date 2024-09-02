@@ -1,5 +1,5 @@
 import path from 'path';
-import { createTenv, type Service } from '@e2e/tenv';
+import { createTenv, getLocalHostName, type Service } from '@e2e/tenv';
 
 const { fs, service, serve, composeWithApollo } = createTenv(__dirname);
 
@@ -12,16 +12,6 @@ beforeAll(async () => {
     await service('products'),
     await service('reviews'),
   ];
-
-  const supergraphConfig = { subgraphs: {} };
-  for (const service of services) {
-    supergraphConfig.subgraphs[service.name] = {
-      routing_url: `http://0.0.0.0:${service.port}/graphql`,
-      schema: {
-        file: path.join(__dirname, 'services', service.name, 'typeDefs.graphql'),
-      },
-    };
-  }
 
   supergraph = await fs.read(await composeWithApollo(services));
 });

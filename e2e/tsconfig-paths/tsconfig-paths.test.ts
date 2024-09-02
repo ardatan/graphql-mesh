@@ -1,4 +1,4 @@
-import { createTenv } from '@e2e/tenv';
+import { createTenv, getLocalHostName } from '@e2e/tenv';
 
 const { compose, serve, fs } = createTenv(__dirname);
 
@@ -36,6 +36,6 @@ it('should serve', async () => {
       },
     },
   });
-  const res = await fetch(`http://0.0.0.0:${proc.port}/healthcheck`);
+  const res = await fetch(`http://${getLocalHostName()}:${proc.port}/healthcheck`);
   expect(res.ok).toBeTruthy();
 });

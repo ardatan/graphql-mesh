@@ -1,5 +1,5 @@
 import { createClient } from 'graphql-sse';
-import { createTenv } from '@e2e/tenv';
+import { createTenv, getLocalHostName } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
 const { compose, service, serve } = createTenv(__dirname);
@@ -25,7 +25,7 @@ it('should listen for webhooks', async () => {
       }
     `,
     variables: {
-      url: `http://0.0.0.0:${port.toString()}/callback`,
+      url: `http://${getLocalHostName()}:${port.toString()}/callback`,
     },
   });
 
@@ -33,7 +33,7 @@ it('should listen for webhooks', async () => {
   expect(subscriptionId).toBeTruthy();
 
   const sse = createClient({
-    url: `http://0.0.0.0:${port}/graphql`,
+    url: `http://${getLocalHostName()}:${port}/graphql`,
     retryAttempts: 0,
     fetchFn: fetch,
   });

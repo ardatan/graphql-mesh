@@ -1,5 +1,5 @@
 import { setTimeout } from 'timers/promises';
-import { boolEnv, createTenv, type Container } from '@e2e/tenv';
+import { boolEnv, createTenv, getLocalHostName, type Container } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
 const { service, serve, container, composeWithApollo, serveRunner } = createTenv(__dirname);
@@ -108,7 +108,7 @@ describe('opentelemetry', () => {
     service: string,
     expectedDataLength: number,
   ): Promise<JaegerTracesApiResponse> {
-    const url = `http://0.0.0.0:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
+    const url = `http://${getLocalHostName()}:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
 
     let res: JaegerTracesApiResponse;
     for (let i = 0; i < 15; i++) {
