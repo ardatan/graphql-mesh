@@ -2,11 +2,6 @@ import { Callout } from '@theguild/components'
 
 # Parsing & Validation Caching
 
-<Callout>
-  This page is currently under construction and expected to change. Please feel free to reach out to
-  us directly in case you are having any troubles.
-</Callout>
-
 By default, Hive Gateway maintains a parsing and validation cache. If requests contain documents
 that have been executed before, they will not be parsed and validated again.
 
@@ -19,7 +14,7 @@ options:
 ```ts filename="gateway.config.ts" {4,5}
 import { defineConfig } from '@graphql-hive/gateway'
 
-export const gatewayConfig = defineServe({
+export const gatewayConfig = defineConfig({
   // disable parse and validate caching
   parserAndValidationCache: false
 })
