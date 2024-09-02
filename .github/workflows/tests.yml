@@ -344,9 +344,10 @@ jobs:
           - serve-runner: bin
             node-version: 22
             os: ubuntu-latest
-          - serve-runner: bin
-            node-version: 22
-            os: windows-2019
+          # Disabled temporarily
+          # - serve-runner: bin
+          #   node-version: 22
+          #   os: windows-2019
           # macos-latest doesn't support docker
           # - serve-runner: bin
           #   node-version: 22

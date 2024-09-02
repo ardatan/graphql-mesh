@@ -97,16 +97,16 @@ download_binary() {
 get_architecture() {
     case $(uname -ms) in
     'Darwin x86_64')
-        RETVAL="darwin-amd64"
+        RETVAL="macOS-X64"
         ;;
     'Darwin arm64')
-        RETVAL="darwin-arm64"
+        RETVAL="macOS-ARM64"
         ;;
     'Linux arm64')
-        RETVAL="linux-arm64"
+        RETVAL="linux-ARM64"
         ;;
     'Linux x86_64' | *)
-        RETVAL="linux-amd64"
+        RETVAL="linux-X64"
         ;;
     esac
 }
