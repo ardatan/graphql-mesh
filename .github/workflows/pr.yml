@@ -32,13 +32,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - productname: mesh-serve
-            packagename: '@graphql-mesh/serve-cli'
-          - productname: hive-gateway
-            packagename: '@graphql-hive/gateway'
+        productname: [mesh-serve, hive-gateway]
     if: contains(needs.release.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
+      - name: Choose names
+        id: names
+        run: |
+          echo "::set-output name=productname::${{ matrix.productname == 'mesh-serve' && 'mesh-serve' || 'hive-gateway' }}"
+          echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
+          echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
       - name: version ${{ matrix.productname }}
         uses: actions/github-script@v7
         id: ver-mesh-serve
@@ -48,7 +50,7 @@ jobs:
             const publishedPackages = ${{ needs.release.outputs.publishedPackages }};
             const meshServe = publishedPackages.find((p) => p.name === '${{ matrix.packagename }}');
             if (!meshServe) {
-              return core.setFailed('${{ matrix.packagename }} was not published!');
+              return core.setFailed('${{ steps.names.outputs.packagename }} was not published!');
             }
             console.log(meshServe.version);
             return meshServe.version;
