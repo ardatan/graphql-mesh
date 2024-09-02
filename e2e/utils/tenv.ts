@@ -24,7 +24,10 @@ import { trimError } from './trimError';
 export const retries = 120,
   interval = 500,
   timeout = retries * interval; // 1min
-jest.setTimeout(timeout);
+
+if (typeof jest !== 'undefined') {
+  jest.setTimeout(timeout);
+}
 
 const __project = path.resolve(__dirname, '..', '..') + path.sep;
 
