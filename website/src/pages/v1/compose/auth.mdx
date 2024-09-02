@@ -2,8 +2,9 @@ import { Callout } from '@theguild/components'
 
 # Authentication through directives
 
-You can use the `auth` and `skipAuth` directives to control access to your GraphQL API. These
-directives are used to enforce authentication and authorization rules on your supergraph.
+You can use the `@authenticated`, `@requiresScope`, `@policy` and `@skipAuth` directives to control
+access to your GraphQL API. These directives are used to enforce authentication and authorization
+rules on your supergraph.
 
 <Callout>
   You need to configure your gateway to use specific authentication rules in order to use these directives.
@@ -44,7 +45,14 @@ annotating them.
 You need to define the `skipAuth` directive in your schema:
 
 ```graphql
-directive @skipAuth on FIELD_DEFINITION
+# This is needed for Federation because `@skipAuth` is not part of Federation spec
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@composeDirective"])
+  @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@skipAuth"])
+  @composeDirective(name: "@skipAuth")
+
+directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE
 ```
 
 Then, you can use the `skipAuth` directive to exclude fields from authentication:

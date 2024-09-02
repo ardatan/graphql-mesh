@@ -1,5 +1,6 @@
 export default {
-  index: 'Getting Started',
+  index: 'Introduction',
+  'getting-started': 'Getting Started',
   'schema-registry': 'Schema Registry',
   features: 'Features',
   deployment: 'Deployment',
