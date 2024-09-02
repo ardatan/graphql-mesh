@@ -115,7 +115,7 @@ describe('opentelemetry', () => {
     const url = `http://localhost:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
 
     let res: JaegerTracesApiResponse;
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 25; i++) {
       res = await fetch(url).then(r => r.json<JaegerTracesApiResponse>());
       if (res.data.length >= expectedDataLength) {
         break;

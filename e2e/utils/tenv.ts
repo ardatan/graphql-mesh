@@ -841,11 +841,11 @@ export function getAvailablePort(): Promise<number> {
   });
 }
 
-async function waitForReachable(server: Server, signal: AbortSignal) {
+async function waitForPort(port: number, signal: AbortSignal) {
   outer: while (!signal.aborted) {
     for (const localHostname of localHostnames) {
       try {
-        await fetch(`http://${localHostname}:${server.port}`, { signal });
+        await fetch(`http://${localHostname}:${port}`, { signal });
         break outer;
       } catch (err) {}
     }
@@ -853,6 +853,14 @@ async function waitForReachable(server: Server, signal: AbortSignal) {
     signal.throwIfAborted();
     await setTimeout(interval);
   }
+}
+
+async function waitForReachable(server: Server, signal: AbortSignal) {
+  const ports = [server.port];
+  if ('additionalPorts' in server) {
+    ports.push(...Object.values(server.additionalPorts));
+  }
+  return Promise.all(ports.map(port => waitForPort(port, signal)));
 }
 
 class DockerError extends Error {
