@@ -72,7 +72,7 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
-        run: yarn bundle
+        run: yarn workspace ${{ steps.names.outputs.packagename }} bundle
       - name: inject ${{ matrix.productname }} version
         run: |
           yarn workspace ${{ steps.names.outputs.packagename }} inject-version ${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
@@ -142,10 +142,9 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
-        run: yarn bundle
+        run: yarn workspace ${{ steps.names.outputs.packagename }} bundle
       - name: package binary
-        working-directory: ${{ steps.names.outputs.packagedir }}
-        run: yarn package-binary
+        run: yarn workspace ${{ steps.names.outputs.packagename }} package-binary
         shell: bash
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2

@@ -48,7 +48,7 @@ jobs:
           result-encoding: string
           script: |
             const publishedPackages = ${{ needs.release.outputs.publishedPackages }};
-            const meshServe = publishedPackages.find((p) => p.name === '${{ matrix.packagename }}');
+            const meshServe = publishedPackages.find((p) => p.name === '${{ steps.names.outputs.packagename }}');
             if (!meshServe) {
               return core.setFailed('${{ steps.names.outputs.packagename }} was not published!');
             }
@@ -71,10 +71,10 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
-        run: yarn bundle
+        run: yarn workspace ${{steps.names.outputs.packagename }} bundle
       - name: inject ${{ matrix.productname }} version
         run: |
-          yarn workspace ${{ matrix.packagename }} inject-version ${{ steps.ver-mesh-serve.outputs.result }}
+          yarn workspace ${{steps.names.outputs.packagename }} inject-version ${{ steps.ver-mesh-serve.outputs.result }}
       - name: bake and push
         uses: docker/bake-action@v5
         env:
@@ -130,10 +130,9 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
-        run: yarn bundle
+        run: yarn workspace ${{steps.names.outputs.packagename }} bundle
       - name: package binary
-        working-directory: packages/serve-cli
-        run: yarn package-binary
+        run: yarn workspace ${{steps.names.outputs.packagename }} package-binary
       - name: upload artifact
         id: upload_artifact
         uses: actions/upload-artifact@v4

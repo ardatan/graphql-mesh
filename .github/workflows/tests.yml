@@ -467,7 +467,7 @@ jobs:
         if: matrix.setup.serve-runner == 'docker' || matrix.setup.serve-runner == 'bin'
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
-        run: yarn bundle
+        run: yarn workspace @graphql-mesh/serve-cli bundle
       - name: build # we need to build for binary because it'll use the nearby node_modules
         if: matrix.setup.serve-runner == 'bin'
         run: yarn build
@@ -475,7 +475,7 @@ jobs:
       - name: package binary
         if: matrix.setup.serve-runner == 'bin'
         working-directory: packages/serve-cli
-        run: yarn package-binary
+        run: yarn workspace @graphql-mesh/serve-cli package-binary
       - name: bake
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/bake-action@v5
