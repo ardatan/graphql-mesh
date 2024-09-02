@@ -385,3 +385,14 @@ export const composeConfig = defineConfig({
   `
 })
 ```
+
+## Schema Registry / Hive
+
+You can use [Schema Extensions](/v1/compose/schema-extensions) with Hive. Since we don't have a
+composition configuration of supergraph when we use a Hive project, we have to use Hive's settings
+to configure `additionalTypeDefs`.
+
+All you need to do is to provide the `additionalTypeDefs` in the `Base Schema` section of your
+project's `Settings` tab, like below.
+
+![image](https://github.com/ardatan/graphql-mesh/assets/20847995/c7171c04-24c2-47d7-b885-c04ea3c20a67)

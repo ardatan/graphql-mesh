@@ -1,6 +1,6 @@
 import { Callout } from '@theguild/components'
 
-# Consume in other routers
+# Consume in other gateways
 
 If you don't use Hive Gateway, but still want to use Mesh Compose to convert non-federated sources
 to a federated subgraph. You can still do it but it has some limitations, you need to generate the
@@ -8,7 +8,7 @@ subgraph, and serve the subgraph with [Hive Gateway](/v1/serve) But if you use H
 don't need to worry about this, then you can use the supergraph directly without having multiple
 servers.
 
-That's because other routers are not aware of Mesh Compose's additional directives to handle the
+That's because other gateways are not aware of Mesh Compose's additional directives to handle the
 non-federated sources.
 
 This means you can use non-federated sources in any Federation compliant gateway such as Apollo
