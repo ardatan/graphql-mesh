@@ -143,6 +143,9 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn workspace ${{ steps.names.outputs.packagename }} bundle
+      - name: inject ${{ matrix.productname }} version
+        run: |
+          yarn workspace ${{steps.names.outputs.packagename }} inject-version ${{ steps.ver-mesh-serve.outputs.result }}
       - name: package binary
         run: yarn workspace ${{ steps.names.outputs.packagename }} package-binary
         shell: bash

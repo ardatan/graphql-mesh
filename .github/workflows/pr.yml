@@ -131,6 +131,9 @@ jobs:
         run: yarn prebuild
       - name: bundle
         run: yarn workspace ${{steps.names.outputs.packagename }} bundle
+      - name: inject ${{ steps.names.outputs.packagename }} version
+        run: |
+          yarn workspace ${{steps.names.outputs.packagename }} inject-version ${{ github.sha }}
       - name: package binary
         run: yarn workspace ${{steps.names.outputs.packagename }} package-binary
       - name: upload artifact
