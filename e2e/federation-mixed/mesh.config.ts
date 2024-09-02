@@ -1,6 +1,5 @@
 import { GraphQLID, GraphQLNonNull } from 'graphql';
-import { Opts } from '@e2e/opts';
-import { getLocalHostName } from '@e2e/tenv';
+import { getLocalHostName, Opts } from '@e2e/opts';
 import {
   createFederationTransform,
   createTypeReplaceTransform,

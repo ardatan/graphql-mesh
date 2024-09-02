@@ -18,7 +18,7 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { localHostnames } from '../../packages/testing/getLocalHostName';
 import { leftoverStack } from './leftoverStack';
-import { createOpt, createPortOpt, createServicePortOpt } from './opts';
+import { createOpt, createPortOpt, createServicePortOpt, getLocalHostName } from './opts';
 import { trimError } from './trimError';
 
 export const retries = 120,
@@ -868,8 +868,4 @@ class DockerError extends Error {
 
 export function boolEnv(name: string): boolean {
   return ['1', 't', 'true', 'y', 'yes'].includes(process.env[name]);
-}
-
-export function getLocalHostName(): string {
-  return path.sep === '\\' ? '127.0.0.1' : '0.0.0.0';
 }

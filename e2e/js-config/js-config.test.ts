@@ -1,4 +1,5 @@
-import { createTenv, getLocalHostName } from '@e2e/tenv';
+import { getLocalHostName } from '@e2e/opts';
+import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
 const { serve, compose, fs } = createTenv(__dirname);

@@ -1,7 +1,6 @@
 import { createServer } from 'http';
 import { createRouter, Response } from 'fets';
-import { Opts } from '@e2e/opts';
-import { getLocalHostName } from '@e2e/tenv';
+import { getLocalHostName, Opts } from '@e2e/opts';
 import { fetch } from '@whatwg-node/fetch';
 
 const opts = Opts(process.argv);

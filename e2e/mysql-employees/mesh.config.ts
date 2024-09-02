@@ -1,5 +1,4 @@
-import { Opts } from '@e2e/opts';
-import { getLocalHostName } from '@e2e/tenv';
+import { getLocalHostName, Opts } from '@e2e/opts';
 import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadMySQLSubgraph } from '@omnigraph/mysql';
 

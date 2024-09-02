@@ -1,6 +1,7 @@
 import { setTimeout } from 'timers/promises';
 import { createClient, type Client } from 'graphql-sse';
-import { createTenv, getAvailablePort, getLocalHostName } from '@e2e/tenv';
+import { getLocalHostName } from '@e2e/opts';
+import { createTenv, getAvailablePort } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 import { TOKEN } from './services/products/server';
 

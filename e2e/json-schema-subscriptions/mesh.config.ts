@@ -1,6 +1,5 @@
 import { OperationTypeNode } from 'graphql';
-import { Opts } from '@e2e/opts';
-import { getLocalHostName } from '@e2e/tenv';
+import { getLocalHostName, Opts } from '@e2e/opts';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import useMeshLiveQuery from '@graphql-mesh/plugin-live-query';
 import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';

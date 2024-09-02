@@ -1,3 +1,5 @@
+import path from 'path';
+
 export function createOpt(key: string, val: string | number): string {
   if (key.includes(' ')) {
     throw new Error(`Arg key "${key}" contains spaces`);
@@ -71,4 +73,8 @@ export function Opts(argv: string[]): Opts {
     getPort,
     getServicePort,
   };
+}
+
+export function getLocalHostName(): string {
+  return path.sep === '\\' ? '127.0.0.1' : '0.0.0.0';
 }
