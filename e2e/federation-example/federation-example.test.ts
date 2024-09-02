@@ -1,5 +1,4 @@
-import path from 'path';
-import { createTenv, getLocalHostName, type Service } from '@e2e/tenv';
+import { createTenv, type Service } from '@e2e/tenv';
 
 const { fs, service, serve, composeWithApollo } = createTenv(__dirname);
 

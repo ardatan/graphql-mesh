@@ -1,5 +1,6 @@
 import { getIntrospectionQuery } from 'graphql';
-import { createTenv, getLocalHostName } from '@e2e/tenv';
+import { getLocalHostName } from '@e2e/opts';
+import { createTenv } from '@e2e/tenv';
 
 const { serve, service } = createTenv(__dirname);
 

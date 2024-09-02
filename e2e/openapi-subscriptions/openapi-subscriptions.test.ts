@@ -1,5 +1,6 @@
 import { createClient } from 'graphql-sse';
-import { createTenv, getLocalHostName } from '@e2e/tenv';
+import { getLocalHostName } from '@e2e/opts';
+import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
 const { compose, service, serve } = createTenv(__dirname);
