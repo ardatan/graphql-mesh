@@ -110,7 +110,7 @@ jobs:
           echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
           echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Install Windows specific dependencies
       - if: runner.os == 'Windows'
