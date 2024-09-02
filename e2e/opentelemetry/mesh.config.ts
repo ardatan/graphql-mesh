@@ -13,12 +13,13 @@ const useOnFetchTracer = (): GatewayPlugin => {
   }> = [];
 
   return {
-    onFetch: async ({ url, options }) => {
+    onFetch({ url, options }) {
       upstreamCallHeaders.push({ url, headers: options.headers });
     },
-    onRequest: async ({ request, url, endResponse }) => {
+    onRequest({ request, url, endResponse, fetchAPI }) {
       if (url.pathname === '/upstream-fetch' && request.method === 'GET') {
-        return endResponse(Response.json(upstreamCallHeaders));
+        endResponse(fetchAPI.Response.json(upstreamCallHeaders));
+        return;
       }
     },
   };
