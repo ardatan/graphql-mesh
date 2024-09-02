@@ -17,8 +17,9 @@ import {
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { localHostnames } from '../../packages/testing/getLocalHostName';
-import { leftoverStack, trimError } from './leftoverStack';
+import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
+import { trimError } from './trimError';
 
 export const retries = 120,
   interval = 500,
