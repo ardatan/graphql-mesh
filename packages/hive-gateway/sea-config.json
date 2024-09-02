@@ -1,0 +1,8 @@
+{
+  "main": "bundle/hive-gateway.cjs",
+  "output": "sea-prep.blob",
+  "disableExperimentalSEAWarning": true,
+  "assets": {
+    "node_modules.zip": "bundle/node_modules.zip"
+  }
+}

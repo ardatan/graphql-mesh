@@ -53,9 +53,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
-
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
@@ -94,9 +91,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
 
       - name: Use Node
         uses: actions/setup-node@v4
@@ -180,9 +174,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
-
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
@@ -261,17 +252,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
-
       - name: Use Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
-
-      - name: Remove node-libcurl
-        run: node scripts/remove-node-libcurl.cjs
 
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
@@ -326,9 +311,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
-
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
@@ -339,48 +321,162 @@ jobs:
         run: yarn bob check
 
   e2e:
-    name: e2e / runner ${{matrix.setup.serve-runner}} / node ${{matrix.setup.node-version}}
-    runs-on: ubuntu-latest
+    name:
+      e2e / runner ${{matrix.setup.serve-runner}} / os ${{ matrix.setup.os }} / node
+      ${{matrix.setup.node-version}}
+    runs-on: ${{ matrix.setup.os }}
     strategy:
       fail-fast: false
       matrix:
         setup:
           - serve-runner: node
             node-version: 18
+            os: ubuntu-latest
           - serve-runner: node
             node-version: 20
+            os: ubuntu-latest
           - serve-runner: node
             node-version: 22
+            os: ubuntu-latest
           - serve-runner: docker
             node-version: 22
+            os: ubuntu-latest
+          - serve-runner: bin
+            node-version: 22
+            os: ubuntu-latest
+          # Disabled temporarily
+          # - serve-runner: bin
+          #   node-version: 22
+          #   os: windows-2019
+          # macos-latest doesn't support docker
+          # - serve-runner: bin
+          #   node-version: 22
+          #   os: macos-latest
+          - serve-runner: bin
+            node-version: 22
+            os: macos-latest-large
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
+
+      # Install Windows specific dependencies
+      - if: runner.os == 'Windows'
+        name: Disable Windows Defender
+        run: Set-MpPreference -DisableRealtimeMonitoring $true
+        shell: pwsh
+
+      # - if: runner.os == 'Windows'
+      #   name: Install QEMU
+      #   run: |
+      #     choco install qemu -y
+      #   shell: pwsh
+
+      # - if: runner.os == 'Windows'
+      #   name: Install boot2docker
+      #   run: |
+      #     Invoke-WebRequest -Uri "https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso" -OutFile "D:\a\boot2docker.iso"
+      #   shell: pwsh
+
+      # - if: runner.os == 'Windows'
+      #   name: Run QEMU with boot2docker
+      #   run: |
+      #     ./qemu-system-x86_64.exe -m 1g -cdrom D:\a\boot2docker.iso -device e1000,netdev=mynet0 -netdev user,id=mynet0,hostfwd=tcp::5555-:22,hostfwd=tcp::5556-:2375 & sleep 30
+      #   working-directory: "C:\\Program Files\\qemu"
+      #   shell: pwsh
+
+      # - if: runner.os == 'Windows'
+      #   name: Install Posh-SSH module
+      #   shell: pwsh
+      #   run: |
+      #     Install-Module -Name Posh-SSH -Force -Scope CurrentUser
+      #     Import-Module Posh-SSH
+
+      # - if: runner.os == 'Windows'
+      #   name: Setup Boot2Docker to expose Docker daemon via TCP
+      #   shell: pwsh
+      #   # Unfortuantely doesn't work
+      #   # Locally I can run these command and it works
+      #   continue-on-error: true
+      #   run: |
+      #     $username = 'docker'
+      #     $hostname = '127.0.0.1'
+      #     $port = 5555
+      #     $password = "tcuser"
+
+      #     $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+      #     $credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
+
+      #     $session = New-SSHSession -ComputerName $hostname -Credential $credential -Port $port -Force -AcceptKey
+      #     Invoke-SSHCommand -SessionId $session.SessionId -Command "echo 'DOCKER_TLS=no' > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"
+      #     Remove-SSHSession -SessionId $session.SessionId
+
+      #     echo "DOCKER_HOST=tcp://localhost:5556" >> $GITHUB_ENV
+
+      - if: runner.os == 'Windows'
+        name: Install Windows SDK
+        uses: fbactions/setup-winsdk@v2
+        with:
+          winsdk-build-version: 18362
+
+      # Install macOS specific dependencies
+      - name: Configure Homebrew cache
+        if: runner.os == 'macOS'
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/Library/Caches/Homebrew/foo--*
+            ~/Library/Caches/Homebrew/downloads/*--foo-*
+          key: brew-${{ hashFiles('.github/brew-formulae') }}
+          restore-keys: brew-
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+        with:
+          upgrade-qemu: true
+      - name: Configure Docker Socket Path
+        if: runner.os == 'macOS'
+        run: |
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+
+      - name: set up docker buildx
+        if: matrix.setup.serve-runner == 'docker'
+        uses: docker/setup-buildx-action@v3
+      - name: hash docker images
+        id: hash-docker-images
+        # get all "image: '" occurrences in the e2e tests and hash them
+        run: |
+          echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
+        shell: bash
+      - name: cache docker images
+        uses: ScribeMD/docker-cache@0.5.0
+        continue-on-error: true
+        with:
+          key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
+
+      - name: Configure Multiarch QEMU Docker
+        continue-on-error: true
+        run: |
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
       - name: set up env
         uses: the-guild-org/shared-config/setup@v1
         with:
           node-version: ${{matrix.setup.node-version}}
       - name: prepare
         run: yarn prebuild
-      - name: hash docker images
-        id: hash-docker-images
-        # get all "image: '" occurrences in the e2e tests and hash them
-        run: |
-          echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
-      - name: cache docker images
-        uses: ScribeMD/docker-cache@0.5.0
-        with:
-          key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
-      - name: set up docker buildx
-        if: matrix.setup.serve-runner == 'docker'
-        uses: docker/setup-buildx-action@v3
       - name: bundle
-        if: matrix.setup.serve-runner == 'docker'
+        if: matrix.setup.serve-runner == 'docker' || matrix.setup.serve-runner == 'bin'
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
-        run: yarn bundle
+        run: yarn workspace @graphql-mesh/serve-cli bundle
+      - name: build # we need to build for binary because it'll use the nearby node_modules
+        if: matrix.setup.serve-runner == 'bin'
+        run: yarn build
+        shell: bash
+      - name: package binary
+        if: matrix.setup.serve-runner == 'bin'
+        working-directory: packages/serve-cli
+        run: yarn workspace @graphql-mesh/serve-cli package-binary
       - name: bake
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/bake-action@v5
@@ -392,11 +488,22 @@ jobs:
           # we must load so that the e2e tests can use the cached image
           # also, in order for loading to work - we must define the platform above
           load: true
+      - name: Pull Docker Images used in E2E
+        continue-on-error: true
+        run: |
+          docker image pull swaggerapi/petstore3:1.0.7 & \
+          docker image pull genschsa/mysql-employees & \
+          docker image pull neo4j:5.22.0 & \
+          docker image pull ${{ runner.os == 'Windows' && 'johnnyhuy/jaeger-windows:1809' || 'jaegertracing/all-in-one:1.56' }} & \
+          docker image pull outofcoffee/imposter & \
+          wait
+        shell: bash
       - name: test
-        timeout-minutes: 10
+        timeout-minutes: 60
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
-        run: yarn test:e2e --detectOpenHandles
+        run: |
+          yarn test:e2e --detectOpenHandles --forceExit
   apollo-federation-compatibility:
     runs-on: ubuntu-latest
     steps:

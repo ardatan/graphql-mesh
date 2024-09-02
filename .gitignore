@@ -30,3 +30,10 @@ newrelic_agent.log
 !.yarn/versions
 .mise.toml
 docker/supergraph.graphql
+sea-prep.blob
+mesh-serve
+packages/serve-cli/*/uws_*
+packages/serve-cli/bundle-binary
+packages/hive-gateway/hive-gateway
+packages/hive-gateway/*/uws_*
+packages/hive-gateway/bundle-binary

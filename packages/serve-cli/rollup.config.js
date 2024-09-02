@@ -7,6 +7,8 @@ import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import sucrase from '@rollup/plugin-sucrase';
 
+console.log('Bundling...');
+
 /**
  * Dependencies that need to be bundled and placed in the bundled node_modules. Modules that
  * are imported by the `mesh.config.ts` file need to exist here.
@@ -90,7 +92,7 @@ export default defineConfig({
     // system (`/node_modules`)
     chunkFileNames: 'node_modules/.chunk/[name]-[hash].mjs',
   },
-  external: ['uWebSockets.js', 'node-libcurl', 'tuql'],
+  external: ['uWebSockets.js', 'node-libcurl', 'tuql', '@parcel/watcher'],
   plugins: [
     tsConfigPaths(), // use tsconfig paths to resolve modules
     nodeResolve({ preferBuiltins: true }), // resolve node_modules and bundle them too
@@ -156,7 +158,7 @@ function graphql() {
         // import 'graphql'
         return { id: source, external: true };
       }
-      if (!source.startsWith('graphql/')) {
+      if (!source.startsWith('graphql/') && !source.startsWith('graphql\\')) {
         // not import 'graphql/*'
         return null;
       }
@@ -165,7 +167,7 @@ function graphql() {
         return { id: source, external: true };
       }
 
-      const relPath = source.replace('graphql/', '');
+      const relPath = source.replace('graphql/', '').replace('graphql\\', '');
       if (!relPath) {
         throw new Error(
           `Importing "${source}" from "${importer}" is not a graphql module relative import`,

@@ -1,4 +1,5 @@
 import { createTenv } from '@e2e/tenv';
+import { fetch } from '@whatwg-node/fetch';
 
 const { compose, serve, fs } = createTenv(__dirname);
 
@@ -36,6 +37,6 @@ it('should serve', async () => {
       },
     },
   });
-  const res = await fetch(`http://0.0.0.0:${proc.port}/healthcheck`);
+  const res = await fetch(`http://localhost:${proc.port}/healthcheck`);
   expect(res.ok).toBeTruthy();
 });

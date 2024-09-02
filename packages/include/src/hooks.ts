@@ -52,6 +52,10 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
 };
 
 export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
+  if (path.sep === '\\' && context.parentURL?.[1] === ':') {
+    debug(`Fixing Windows path at "${context.parentURL}"`);
+    context.parentURL = `file:///${context.parentURL.replace(/\\/g, '/')}`;
+  }
   if (packedDepsPath) {
     try {
       const resolved = await nextResolve(
@@ -59,6 +63,10 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
         context,
       );
       debug(`Using packed dependency "${specifier}" from "${packedDepsPath}"`);
+      if (path.sep === '\\' && !resolved.url.startsWith('file:') && resolved.url[1] === ':') {
+        debug(`Fixing Windows path at "${resolved.url}"`);
+        resolved.url = `file:///${resolved.url.replace(/\\/g, '/')}`;
+      }
       return resolved;
     } catch {
       // noop
@@ -68,35 +76,47 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
   try {
     return await nextResolve(specifier, context);
   } catch (e) {
-    // default resolve failed, try alternatives
     try {
-      return await nextResolve(resolveFilename(specifier), context);
-    } catch {
+      // default resolve failed, try alternatives
+      const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
+      return await nextResolve(
+        specifierWithoutJs + '.ts', // TODO: .mts or .cts?
+        context,
+      );
+    } catch (e) {
       try {
-        // usual filenames tried, could be a .ts file?
-        return await nextResolve(
-          resolveFilename(
-            specifier + '.ts', // TODO: .mts or .cts?
-          ),
-          context,
-        );
+        return await nextResolve(resolveFilename(specifier), context);
       } catch {
-        // not a .ts file, try the tsconfig paths if available
-        if (pathsMatcher) {
-          for (const possiblePath of pathsMatcher(specifier)) {
-            try {
-              return await nextResolve(resolveFilename(possiblePath), context);
-            } catch {
+        try {
+          const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
+          // usual filenames tried, could be a .ts file?
+          return await nextResolve(
+            resolveFilename(
+              specifierWithoutJs + '.ts', // TODO: .mts or .cts?
+            ),
+            context,
+          );
+        } catch {
+          // not a .ts file, try the tsconfig paths if available
+          if (pathsMatcher) {
+            for (const possiblePath of pathsMatcher(specifier)) {
               try {
-                // the tsconfig path might point to a .ts file, try it too
-                return await nextResolve(
-                  resolveFilename(
-                    possiblePath + '.ts', // TODO: .mts or .cts?
-                  ),
-                  context,
-                );
+                return await nextResolve(resolveFilename(possiblePath), context);
               } catch {
-                // noop
+                try {
+                  const possiblePathWithoutJs = possiblePath.endsWith('.js')
+                    ? possiblePath.slice(0, -3)
+                    : possiblePath;
+                  // the tsconfig path might point to a .ts file, try it too
+                  return await nextResolve(
+                    resolveFilename(
+                      possiblePathWithoutJs + '.ts', // TODO: .mts or .cts?
+                    ),
+                    context,
+                  );
+                } catch {
+                  // noop
+                }
               }
             }
           }
@@ -110,9 +130,24 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
 };
 
 export const load: module.LoadHook = async (url, context, nextLoad) => {
+  if (path.sep === '\\' && !url.startsWith('file:') && url[1] === ':') {
+    debug(`Fixing Windows path at "${url}"`);
+    url = `file:///${url.replace(/\\/g, '/')}`;
+  }
   if (/\.(m|c)?ts$/.test(url)) {
     debug(`Transpiling TypeScript file at "${url}"`);
-    const source = await fs.readFile(new URL(url), 'utf8');
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch (e) {
+      throw new Error(`Failed to parse URL "${url}"; ${e?.stack || e}`);
+    }
+    let source: string;
+    try {
+      source = await fs.readFile(parsedUrl, 'utf8');
+    } catch (e) {
+      throw new Error(`Failed to read file at "${url}"; ${e?.stack || e}`);
+    }
     const { code } = transform(source, { transforms: ['typescript'] });
     return {
       format: /\.cts$/.test(url) ? 'commonjs' : 'module', // TODO: ".ts" files _might_ not always be esm

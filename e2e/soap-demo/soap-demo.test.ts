@@ -7,7 +7,7 @@ let soapDemo: Container;
 beforeAll(async () => {
   soapDemo = await container({
     name: 'soap-demo',
-    image: 'outofcoffee/imposter-all',
+    image: 'outofcoffee/imposter',
     containerPort: 8080,
     volumes: [
       {

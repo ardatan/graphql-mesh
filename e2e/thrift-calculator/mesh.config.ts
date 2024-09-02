@@ -9,7 +9,7 @@ export const composeConfig = defineConfig({
     {
       sourceHandler: loadThriftSubgraph('calculator', {
         source: './services/calculator/calculator.thrift',
-        endpoint: `http://0.0.0.0:${opts.getServicePort('calculator')}/thrift`,
+        endpoint: `http://localhost:${opts.getServicePort('calculator')}/thrift`,
         serviceName: 'Calculator',
       }),
     },

@@ -10,8 +10,8 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('API', {
-        source: `http://0.0.0.0:${opts.getServicePort('api')}/openapi.json`,
-        endpoint: `http://0.0.0.0:${opts.getServicePort('api')}`,
+        source: `http://localhost:${opts.getServicePort('api')}/openapi.json`,
+        endpoint: `http://localhost:${opts.getServicePort('api')}`,
         ignoreErrorResponses: true,
       }),
     },

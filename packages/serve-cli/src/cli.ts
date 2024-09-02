@@ -3,9 +3,10 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
 import cluster from 'node:cluster';
 import module from 'node:module';
-import { availableParallelism, release } from 'node:os';
+import { availableParallelism, platform, release } from 'node:os';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import type { InitializeData } from '@graphql-mesh/include/hooks';
 import type { JWTAuthPluginOptions } from '@graphql-mesh/plugin-jwt-auth';
 import type { OpenTelemetryMeshPluginOptions } from '@graphql-mesh/plugin-opentelemetry';
 import type { PrometheusPluginOptions } from '@graphql-mesh/plugin-prometheus';
@@ -139,6 +140,12 @@ export interface CLIContext {
   /** @default https://the-guild.dev/graphql/mesh */
   productLink: string;
   /** @default 'mesh-serve' */
+  /**
+   * A safe binary executable name, should not contain any special
+   * characters or white-spaces.
+   *
+   * @default 'mesh-serve'
+   */
   binName: string;
   /** @default 'mesh.config' */
   configFileName: string;
@@ -157,7 +164,12 @@ export type AddCommand = (ctx: CLIContext, cli: CLI) => void;
 // override the config file (with option defaults, config file will always be overwritten)
 export const defaultOptions = {
   fork: process.env.NODE_ENV === 'production' ? availableParallelism() : 1,
-  host: release().toLowerCase().includes('microsoft') ? '127.0.0.1' : '0.0.0.0',
+  host:
+    platform().toLowerCase() === 'win32' ||
+    // is WSL?
+    release().toLowerCase().includes('microsoft')
+      ? '127.0.0.1'
+      : '0.0.0.0',
   port: 4000,
   polling: '10s',
 };
@@ -268,12 +280,17 @@ let cli = new Command()
   );
 
 export function run(userCtx: Partial<CLIContext>) {
-  module.register(
-    '@graphql-mesh/include/hooks',
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore bob will complain when bundling for cjs
-    import.meta.url,
-  );
+  module.register('@graphql-mesh/include/hooks', {
+    parentURL:
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore bob will complain when bundling for cjs
+      import.meta.url,
+    data: {
+      packedDepsPath:
+        // WILL BE AVAILABLE IN SEA ENVIRONMENTS (see install-sea-packed-deps.cjs and rollup.binary.config.js)
+        globalThis.__PACKED_DEPS_PATH__ || '',
+    } satisfies InitializeData,
+  });
 
   const ctx: CLIContext = {
     log: new DefaultLogger(),
@@ -283,7 +300,7 @@ export function run(userCtx: Partial<CLIContext>) {
     productLink: 'https://the-guild.dev/graphql/mesh',
     binName: 'mesh-serve',
     configFileName: 'mesh.config',
-    version: globalThis.__VERSION__,
+    version: globalThis.__VERSION__ || 'dev',
     ...userCtx,
   };
 
@@ -305,13 +322,9 @@ export function run(userCtx: Partial<CLIContext>) {
 
 async function warnIfNodeLibcurlMissing(ctx: CLIContext) {
   ctx.log.debug('Checking if node-libcurl is installed and available for use.');
-  try {
-    await import('node-libcurl');
-    ctx.log.debug('node-libcurl is installed and available for use.');
-  } catch (e) {
+  if (!globalThis.libcurl) {
     ctx.log.warn(
       'node-libcurl is not installed properly which is used for better performance and developer experience. Falling back to "node:http".',
-      e,
     );
   }
 }

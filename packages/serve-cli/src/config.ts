@@ -36,12 +36,12 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
         .then(() => true)
         .catch(() => false);
       if (exists) {
-        !opts.quiet && opts.log.info(`Found default config file ${configPath}`);
+        !opts.quiet && opts.log.info(`Found default config file ${absoluteConfigPath}`);
         const module = await import(absoluteConfigPath);
         importedConfig = Object(module).gatewayConfig || null;
         if (!importedConfig) {
           !opts.quiet &&
-            opts.log.warn(`No "gatewayConfig" exported from config file at ${configPath}`);
+            opts.log.warn(`No "gatewayConfig" exported from config file at ${absoluteConfigPath}`);
         }
         break;
       }

@@ -81,7 +81,7 @@ schema
 
 
 enum join__Graph {
-  EMPLOYEES @join__graph(name: "Employees", url: "mysql://root:passwd@0.0.0.0:<employees_port>/employees") 
+  EMPLOYEES @join__graph(name: "Employees", url: "mysql://root:passwd@localhost:<employees_port>/employees") 
 }
 
 directive @transport(subgraph: String, kind: String, location: String)  repeatable on SCHEMA
@@ -108,7 +108,7 @@ scalar Date @join__type(graph: EMPLOYEES)
 scalar _DirectiveExtensions @join__type(graph: EMPLOYEES) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "Employees", kind: "mysql", location: "mysql://root:passwd@0.0.0.0:<employees_port>/employees"}]}
+  directives: {transport: [{subgraph: "Employees", kind: "mysql", location: "mysql://root:passwd@localhost:<employees_port>/employees"}]}
 ) @join__type(graph: EMPLOYEES)  {
   current_dept_emp(
     limit: Int

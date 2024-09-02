@@ -65,6 +65,7 @@
     "json-bigint-patch": "^0.0.8",
     "json5": "^2.2.3",
     "mkdirp": "^3.0.0",
+    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.2",
     "open": "^7.4.2",
     "pascal-case": "^3.1.2",
     "rimraf": "^6.0.0",
@@ -74,7 +75,6 @@
     "yargs": "^17.7.1"
   },
   "optionalDependencies": {
-    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.0",
     "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "devDependencies": {

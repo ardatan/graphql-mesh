@@ -1,9 +1,8 @@
 import os from 'os';
-import path from 'path';
 import { createTbench, type Tbench, type TbenchResult } from '@e2e/tbench';
 import { createTenv, type Service } from '@e2e/tenv';
 
-const { fs, serve, service, spawn } = createTenv(__dirname);
+const { fs, serve, service, composeWithApollo } = createTenv(__dirname);
 
 let tbench: Tbench;
 beforeAll(async () => {
@@ -23,25 +22,7 @@ beforeAll(async () => {
     await service('reviews'),
   ];
 
-  const supergraphConfig = { subgraphs: {} };
-  for (const service of services) {
-    supergraphConfig.subgraphs[service.name] = {
-      routing_url: `http://0.0.0.0:${service.port}/graphql`,
-      schema: {
-        file: path.join(__dirname, 'services', service.name, 'typeDefs.graphql'),
-      },
-    };
-  }
-
-  const supergraphConfigFile = await fs.tempfile('supergraph.json');
-  await fs.write(supergraphConfigFile, JSON.stringify(supergraphConfig));
-
-  const [proc, waitForExit] = await spawn(
-    `yarn rover supergraph compose --config ${supergraphConfigFile}`,
-  );
-  await waitForExit;
-
-  supergraph = proc.getStd('out');
+  supergraph = await composeWithApollo(services);
 });
 
 const threshold: TbenchResult = {

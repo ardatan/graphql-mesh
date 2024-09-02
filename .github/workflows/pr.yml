@@ -30,14 +30,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: [release]
     strategy:
+      fail-fast: false
       matrix:
-        include:
-          - productname: mesh-serve
-            packagename: '@graphql-mesh/serve-cli'
-          - productname: hive-gateway
-            packagename: '@graphql-hive/gateway'
+        productname: [mesh-serve, hive-gateway]
     if: contains(needs.release.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
+      - name: Choose names
+        id: names
+        run: |
+          echo "::set-output name=productname::${{ matrix.productname == 'mesh-serve' && 'mesh-serve' || 'hive-gateway' }}"
+          echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
+          echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
       - name: version ${{ matrix.productname }}
         uses: actions/github-script@v7
         id: ver-mesh-serve
@@ -45,16 +48,14 @@ jobs:
           result-encoding: string
           script: |
             const publishedPackages = ${{ needs.release.outputs.publishedPackages }};
-            const meshServe = publishedPackages.find((p) => p.name === '${{ matrix.packagename }}');
+            const meshServe = publishedPackages.find((p) => p.name === '${{ steps.names.outputs.packagename }}');
             if (!meshServe) {
-              return core.setFailed('${{ matrix.packagename }} was not published!');
+              return core.setFailed('${{ steps.names.outputs.packagename }} was not published!');
             }
             console.log(meshServe.version);
             return meshServe.version;
       - name: checkout
         uses: actions/checkout@v4
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - name: set up docker buildx
         uses: docker/setup-buildx-action@v3
       - name: log in to ghcr
@@ -70,10 +71,10 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
-        run: yarn bundle
+        run: yarn workspace ${{steps.names.outputs.packagename }} bundle
       - name: inject ${{ matrix.productname }} version
         run: |
-          yarn workspace ${{ matrix.packagename }} inject-version ${{ steps.ver-mesh-serve.outputs.result }}
+          yarn workspace ${{steps.names.outputs.packagename }} inject-version ${{ steps.ver-mesh-serve.outputs.result }}
       - name: bake and push
         uses: docker/bake-action@v5
         env:
@@ -87,9 +88,70 @@ jobs:
       - name: comment on pr
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: Docker Image for ${{ matrix.productname }}
+          header: Docker Image for `${{ matrix.productname }}`
           message: |
-            Published images for this PR are available at:
+            Published `${{matrix.productname}}` images for this PR are available at:
             ```
             ghcr.io/ardatan/${{ matrix.productname }}:${{ steps.ver-mesh-serve.outputs.result }}
             ```
+
+  bin:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-latest-large, windows-latest]
+        productname: [mesh-serve, hive-gateway]
+    steps:
+      - name: Choose names
+        id: names
+        run: |
+          echo "::set-output name=productname::${{ matrix.productname == 'mesh-serve' && 'mesh-serve' || 'hive-gateway' }}"
+          echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
+          echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
+      - name: checkout
+        uses: actions/checkout@v2
+
+      # Install Windows specific dependencies
+      - if: runner.os == 'Windows'
+        name: Disable Windows Defender
+        run: Set-MpPreference -DisableRealtimeMonitoring $true
+        shell: powershell
+      - if: runner.os == 'Windows'
+        name: Install Windows SDK
+        uses: fbactions/setup-winsdk@v2
+        with:
+          winsdk-build-version: 18362
+
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
+        with:
+          node-version-file: .node-version
+      - name: prepare
+        run: yarn prebuild
+      - name: bundle
+        run: yarn workspace ${{steps.names.outputs.packagename }} bundle
+      - name: inject ${{ steps.names.outputs.packagename }} version
+        run: |
+          yarn workspace ${{steps.names.outputs.packagename }} inject-version ${{ github.sha }}
+      - name: package binary
+        run: yarn workspace ${{steps.names.outputs.packagename }} package-binary
+      - name: upload artifact
+        id: upload_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name:
+            ${{ matrix.productname}}-${{runner.os}}-${{runner.arch}}${{ runner.os == 'Windows' &&
+            '.exe' || ''}}
+          path: |
+            ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os == 'Windows' && '.exe' || '' }}
+      - name: update PR comment with artifact link
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: 'Node Sea Artifacts Status (`${{ runner.os }}-${{ runner.arch }}`)'
+          message: |
+            The build artifacts of `${{ matrix.productname }}` as a single executable for `${{ runner.os }}-${{ runner.arch }}` are available at:
+            [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }})
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

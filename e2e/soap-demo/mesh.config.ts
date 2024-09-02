@@ -9,7 +9,7 @@ export const composeConfig = defineConfig({
     {
       sourceHandler: loadSOAPSubgraph('soap-demo', {
         source: './SOAP.Demo.cls.wsdl',
-        endpoint: `http://0.0.0.0:${opts.getServicePort('soap-demo')}/csp/samples/SOAP.Demo.cls`,
+        endpoint: `http://localhost:${opts.getServicePort('soap-demo')}/csp/samples/SOAP.Demo.cls`,
       }),
     },
   ],

@@ -1,6 +1,7 @@
 import { promises as fsPromises } from 'node:fs';
 import { createServer as createHTTPServer, type Server } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
+import os from 'node:os';
 import type { SecureContextOptions } from 'node:tls';
 import type { GatewayRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
@@ -79,15 +80,20 @@ export async function startServerForRuntime<
     maxHeaderSize,
   };
 
-  try {
-    server = await startuWebSocketsServer(runtime, serverOpts);
-  } catch (e) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
-      log.debug('Problem while importing uWebSockets.js', e);
-    }
-    log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
-
+  if (os.platform().toLowerCase() === 'win32') {
+    // TODO: uWebSockets.js gives \`Segmentation fault\` error on Windows
     server = await startNodeHttpServer(runtime, serverOpts);
+  } else {
+    try {
+      server = await startuWebSocketsServer(runtime, serverOpts);
+    } catch (e) {
+      log.debug(e.message);
+      log.warn(
+        'uWebSockets.js is not available currently so the server will fallback to node:http.',
+      );
+
+      server = await startNodeHttpServer(runtime, serverOpts);
+    }
   }
 
   terminateStack.use(server);
@@ -108,18 +114,26 @@ async function startuWebSocketsServer(
     maxHeaderSize,
   } = opts;
   process.env.UWS_HTTP_MAX_HEADERS_SIZE = maxHeaderSize?.toString();
-  return import('uWebSockets.js').then(uWS => {
+  // we intentionally use uws.default for CJS/ESM cross compatibility.
+  //
+  // when importing ESM of uws, the default will be flattened; but when importing
+  // CJS, that wont happen - however, the default will always be available
+  return import('uWebSockets.js').then(uWSModule => {
+    const uWS = uWSModule.default || uWSModule;
     const protocol = sslCredentials ? 'https' : 'http';
     const app = sslCredentials ? uWS.SSLApp(sslCredentials) : uWS.App();
     app.any('/*', handler);
-    log.info(`Starting server on ${protocol}://${host}:${port}`);
+    const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
+    log.info(`Starting server on ${url}`);
     return new Promise((resolve, reject) => {
       app.listen(host, port, function listenCallback(listenSocket) {
         if (listenSocket) {
+          log.info(`Server started on ${url}`);
           resolve(
             createAsyncDisposable(() => {
-              log.info(`Closing ${protocol}://${host}:${port}`);
+              log.info(`Closing ${url}`);
               app.close();
+              log.info(`Closed ${url}`);
               return Promise.resolve();
             }),
           );
@@ -181,19 +195,21 @@ async function startNodeHttpServer(
     );
   }
 
-  log.info(`Starting server on ${protocol}://${host}:${port}`);
+  const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
+
+  log.info(`Starting server on ${url}`);
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
-      log.info(`Server started on ${protocol}://${host}:${port}`);
+      log.info(`Server started on ${url}`);
       resolve(
         createAsyncDisposable(
           () =>
             new Promise<void>(resolve => {
-              log.info(`Closing server`);
+              log.info(`Closing ${url}`);
               server.closeAllConnections();
               server.close(() => {
-                log.info(`Server closed`);
+                log.info(`Closed ${url}`);
                 resolve();
               });
             }),

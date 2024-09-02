@@ -1,7 +1,6 @@
-import path from 'path';
 import { createTenv, type Service } from '@e2e/tenv';
 
-const { fs, spawn, service, serve } = createTenv(__dirname);
+const { fs, service, serve, composeWithApollo } = createTenv(__dirname);
 
 let services!: Service[];
 let supergraph!: string;
@@ -13,28 +12,10 @@ beforeAll(async () => {
     await service('reviews'),
   ];
 
-  const supergraphConfig = { subgraphs: {} };
-  for (const service of services) {
-    supergraphConfig.subgraphs[service.name] = {
-      routing_url: `http://0.0.0.0:${service.port}/graphql`,
-      schema: {
-        file: path.join(__dirname, 'services', service.name, 'typeDefs.graphql'),
-      },
-    };
-  }
-
-  const supergraphConfigFile = await fs.tempfile('supergraph.json');
-  await fs.write(supergraphConfigFile, JSON.stringify(supergraphConfig));
-
-  const [proc, waitForExit] = await spawn(
-    `yarn rover supergraph compose --config ${supergraphConfigFile}`,
-  );
-  await waitForExit;
-
-  supergraph = proc.getStd('out');
+  supergraph = await fs.read(await composeWithApollo(services));
 });
 
-it('should compose supergraph with rover', async () => {
+it('should compose supergraph', async () => {
   let maskedSupergraph = supergraph;
   for (const service of services) {
     maskedSupergraph = maskedSupergraph.replaceAll(service.port.toString(), `<${service.name}>`);

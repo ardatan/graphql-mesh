@@ -25,24 +25,27 @@ jobs:
   ghcr:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        include:
-          - productname: mesh-serve
-            packagename: '@graphql-mesh/serve-cli'
-          - productname: hive-gateway
-            packagename: '@graphql-hive/gateway'
+        productname: [mesh-serve, hive-gateway]
     needs: [stable]
     if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     steps:
+      - name: Choose names
+        id: names
+        run: |
+          echo "::set-output name=productname::${{ matrix.productname == 'mesh-serve' && 'mesh-serve' || 'hive-gateway' }}"
+          echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
+          echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
       - name: version ${{ matrix.productname }}
         uses: actions/github-script@v7
         id: ver-mesh-serve
         with:
           script: |
             const publishedPackages = ${{ needs.stable.outputs.publishedPackages }};
-            const meshServe = publishedPackages.find((p) => p.name === '${{ matrix.packagename }}');
+            const meshServe = publishedPackages.find((p) => p.name === '${{ steps.names.outputs.packagename }}');
             if (!meshServe) {
-              return core.setFailed('${{ matrix.packagename }} was not published!');
+              return core.setFailed('${{ steps.names.outputs.packagename }} was not published!');
             }
             const { version } = meshServe;
             const [major, minor] = version.split('.');
@@ -54,8 +57,6 @@ jobs:
             return r;
       - name: checkout
         uses: actions/checkout@v4
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - name: set up docker buildx
         uses: docker/setup-buildx-action@v3
       - name: log in to ghcr
@@ -71,10 +72,10 @@ jobs:
       - name: prepare
         run: yarn prebuild
       - name: bundle
-        run: yarn bundle
+        run: yarn workspace ${{ steps.names.outputs.packagename }} bundle
       - name: inject ${{ matrix.productname }} version
         run: |
-          yarn workspace ${{ matrix.packagename }} inject-version ${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
+          yarn workspace ${{ steps.names.outputs.packagename }} inject-version ${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
       - name: bake and push
         uses: docker/bake-action@v5
         env:
@@ -85,3 +86,78 @@ jobs:
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
           push: true
+
+  bin:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-latest-large, windows-latest]
+        productname: [mesh-serve, hive-gateway]
+    needs: [stable]
+    if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
+    steps:
+      - name: Choose names
+        id: names
+        run: |
+          echo "::set-output name=productname::${{ matrix.productname == 'mesh-serve' && 'mesh-serve' || 'hive-gateway' }}"
+          echo "::set-output name=packagename::${{ matrix.productname == 'mesh-serve' && '@graphql-mesh/serve-cli' || '@graphql-hive/gateway' }}"
+          echo "::set-output name=packagedir::${{ matrix.productname == 'mesh-serve' && 'packages/serve-cli' || 'packages/hive-gateway' }}"
+      - name: version ${{ matrix.productname }}
+        uses: actions/github-script@v7
+        id: ver-mesh-serve
+        with:
+          script: |
+            const publishedPackages = ${{ needs.stable.outputs.publishedPackages }};
+            const meshServe = publishedPackages.find((p) => p.name === '${{ steps.names.outputs.packagename }}');
+            if (!meshServe) {
+              return core.setFailed('${{ steps.names.outputs.packagename }} was not published!');
+            }
+            const { version } = meshServe;
+            const [major, minor] = version.split('.');
+            if (!major || !minor) {
+              return core.setFailed(`Unknown major or minor in version "${version}"!`);
+            }
+            const r = { version, tags: `latest,${major},${major}.${minor},${version}` };
+            console.log(r);
+            return r;
+      - name: checkout
+        uses: actions/checkout@v2
+
+      # Install Windows specific dependencies
+      - if: runner.os == 'Windows'
+        name: Disable Windows Defender
+        run: Set-MpPreference -DisableRealtimeMonitoring $true
+        shell: powershell
+      - if: matrix.os == 'windows-latest'
+        name: Install Windows SDK
+        uses: fbactions/setup-winsdk@v2
+        with:
+          winsdk-build-version: 18362
+
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
+        with:
+          node-version-file: .node-version
+      - name: prepare
+        run: yarn prebuild
+      - name: bundle
+        run: yarn workspace ${{ steps.names.outputs.packagename }} bundle
+      - name: inject ${{ matrix.productname }} version
+        run: |
+          yarn workspace ${{steps.names.outputs.packagename }} inject-version ${{ steps.ver-mesh-serve.outputs.result }}
+      - name: package binary
+        run: yarn workspace ${{ steps.names.outputs.packagename }} package-binary
+        shell: bash
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file:
+            ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os ==
+            'Windows' && '.exe' || ''}}
+          asset_name:
+            ${{ matrix.productname }}-${{ runner.os }}-${{ runner.arch }}${{ runner.os == 'Windows'
+            && '.exe' || ''}}
+          tag: ${{fromJSON(steps.ver-mesh-serve.outputs.result).version}}
+          overwrite: true

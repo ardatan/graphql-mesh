@@ -14,8 +14,8 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('accounts', {
-        source: `http://0.0.0.0:${opts.getServicePort('accounts')}/openapi.json`,
-        endpoint: `http://0.0.0.0:${opts.getServicePort('accounts')}`,
+        source: `http://localhost:${opts.getServicePort('accounts')}/openapi.json`,
+        endpoint: `http://localhost:${opts.getServicePort('accounts')}`,
       }),
       transforms: [
         createTypeReplaceTransform((typeName, fieldName) =>
@@ -36,17 +36,17 @@ export const composeConfig = defineComposeConfig({
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('products', {
-        endpoint: `http://0.0.0.0:${opts.getServicePort('products')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('products')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('inventory', {
-        endpoint: `http://0.0.0.0:${opts.getServicePort('inventory')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('inventory')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('reviews', {
-        endpoint: `http://0.0.0.0:${opts.getServicePort('reviews')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('reviews')}/graphql`,
       }),
     },
   ],

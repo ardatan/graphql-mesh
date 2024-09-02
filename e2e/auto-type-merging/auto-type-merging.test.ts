@@ -8,7 +8,7 @@ beforeAll(async () => {
     name: 'petstore',
     image: 'swaggerapi/petstore3:1.0.7',
     containerPort: 8080,
-    healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:8080'],
+    healthcheck: ['CMD-SHELL', 'wget --spider http://localhost:8080'],
   });
 });
 

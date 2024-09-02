@@ -35,8 +35,9 @@
   },
   "typings": "dist/typings/index.d.ts",
   "scripts": {
-    "bundle": "(rm -rf bundle || true) && rollup -c",
+    "bundle": "(rm -rf bundle || true) && rollup -c && rollup -c rollup.binary.config.js",
     "inject-version": "tsx scripts/inject-version.ts",
+    "package-binary": "tsx scripts/package-binary.ts",
     "start": "tsx src/bin.ts"
   },
   "peerDependencies": {
@@ -73,10 +74,10 @@
     "commander": "^12.0.0",
     "dotenv": "^16.3.1",
     "json-bigint-patch": "^0.0.8",
+    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.2",
     "parse-duration": "^1.1.0"
   },
   "optionalDependencies": {
-    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.0",
     "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "devDependencies": {
@@ -85,6 +86,8 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-sucrase": "^5.0.2",
+    "@types/adm-zip": "^0.5.5",
+    "adm-zip": "^0.5.15",
     "rollup": "^4.18.1",
     "rollup-plugin-tsconfig-paths": "^1.5.2",
     "tsx": "^4.16.5"

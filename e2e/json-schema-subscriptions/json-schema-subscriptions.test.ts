@@ -35,7 +35,7 @@ it('should query, mutate and subscribe', async () => {
 `);
 
   const sse = createClient({
-    url: `http://0.0.0.0:${servePort}/graphql`,
+    url: `http://localhost:${servePort}/graphql`,
     retryAttempts: 0,
     fetchFn: fetch,
   });

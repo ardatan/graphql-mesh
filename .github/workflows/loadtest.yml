@@ -7,8 +7,8 @@ on:
       - master
 
 jobs:
-  e2e:
-    name: e2e / node ${{matrix.node-version}}
+  loadtest-e2e:
+    name: node ${{matrix.node-version}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -20,8 +20,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: Install Required Libraries
-        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
       - uses: the-guild-org/shared-config/setup@v1
         name: setup env
         with:

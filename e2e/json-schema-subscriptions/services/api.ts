@@ -24,7 +24,7 @@ const app = createRouter<FetchEvent>()
       };
       todos.push(todo);
       waitUntil(
-        fetch(`http://0.0.0.0:${opts.getPort(true)}/webhooks/todo_added`, {
+        fetch(`http://localhost:${opts.getPort(true)}/webhooks/todo_added`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -8,7 +8,7 @@ export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadMySQLSubgraph('Employees', {
-        endpoint: `mysql://root:passwd@0.0.0.0:${opts.getServicePort('employees')}/employees`,
+        endpoint: `mysql://root:passwd@localhost:${opts.getServicePort('employees')}/employees`,
       }),
     },
   ],

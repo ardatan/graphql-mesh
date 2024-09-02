@@ -8,7 +8,7 @@ export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadNeo4JSubgraph('Movies', {
-        endpoint: `neo4j://0.0.0.0:${opts.getServicePort('neo4j')}`,
+        endpoint: `neo4j://localhost:${opts.getServicePort('neo4j')}`,
         auth: {
           type: 'basic',
           username: 'neo4j',

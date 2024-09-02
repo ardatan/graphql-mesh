@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import type { AddressInfo } from 'net';
 import os from 'os';
 import path, { isAbsolute } from 'path';
+import type { Readable } from 'stream';
 import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
 import { glob } from 'glob';
@@ -15,19 +16,24 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
+import { localHostnames } from '../../packages/testing/getLocalHostName';
 import { leftoverStack } from './leftoverStack';
-import { createOpt, createPortOpt, createServicePortOpt } from './opts';
+import { createOpt, createPortOpt, createServicePortOpt, getLocalHostName } from './opts';
+import { trimError } from './trimError';
 
 export const retries = 120,
   interval = 500,
   timeout = retries * interval; // 1min
-jest.setTimeout(timeout);
 
-const __project = path.resolve(__dirname, '..', '..') + '/';
+if (typeof jest !== 'undefined') {
+  jest.setTimeout(timeout);
+}
+
+const __project = path.resolve(__dirname, '..', '..') + path.sep;
 
 const docker = new Dockerode();
 
-const E2E_SERVE_RUNNERS = ['node', 'docker'] as const;
+const E2E_SERVE_RUNNERS = ['node', 'docker', 'bin'] as const;
 
 type ServeRunner = (typeof E2E_SERVE_RUNNERS)[number];
 
@@ -45,6 +51,13 @@ const serveRunner = (function getServeRunner() {
     process.stderr.write(`
 ⚠️ Using docker serve runner! Make sure you have built the containers with:
 E2E_SERVE_RUNNER=docker yarn bundle && docker buildx bake e2e
+
+`);
+  }
+  if (runner === 'bin' && !process.env.CI) {
+    process.stderr.write(`
+⚠️ Using bin serve runner! Make sure you have built the binary with:
+yarn build && yarn bundle && yarn package-binary
 
 `);
   }
@@ -334,6 +347,15 @@ export function createTenv(cwd: string): Tenv {
           pipeLogs,
         });
         proc = cont;
+      } else if (serveRunner === 'bin') {
+        [proc, waitForExit] = await spawn(
+          { env, cwd, pipeLogs },
+          path.resolve(__project, 'packages', 'serve-cli', 'mesh-serve'),
+          'supergraph',
+          supergraph,
+          createPortOpt(port),
+          ...args,
+        );
       } /* serveRunner === 'node' */ else {
         [proc, waitForExit] = await spawn(
           { env, cwd, pipeLogs },
@@ -351,7 +373,7 @@ export function createTenv(cwd: string): Tenv {
         ...proc,
         port,
         async execute({ headers, ...args }) {
-          const res = await fetch(`http://0.0.0.0:${port}/graphql`, {
+          const res = await fetch(`http://localhost:${port}/graphql`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
@@ -442,8 +464,9 @@ export function createTenv(cwd: string): Tenv {
     },
     async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args = [] } = {}) {
       port ||= await getAvailablePort();
+      const ctrl = new AbortController();
       const [proc, waitForExit] = await spawn(
-        { cwd, pipeLogs },
+        { cwd, pipeLogs, signal: ctrl.signal },
         'node',
         '--import',
         'tsx',
@@ -453,12 +476,13 @@ export function createTenv(cwd: string): Tenv {
         ...args,
       );
       const service: Service = { ...proc, name, port };
-      const ctrl = new AbortController();
       await Promise.race([
         waitForExit
           .then(() =>
             Promise.reject(
-              new Error(`Service exited successfully, but shouldn't have\n${proc.getStd('both')}`),
+              new Error(
+                `Service "${name}" exited successfully, but shouldn't have\n${proc.getStd('both')}`,
+              ),
             ),
           )
           // stop reachability wait after exit
@@ -506,6 +530,8 @@ export function createTenv(cwd: string): Tenv {
         .readFile(path.join(__project, 'docker-bake.hcl'))
         .then(c => c.includes(`"${image}"`));
 
+      const ctrl = new AbortController();
+
       if (!bakedImage) {
         // pull image if it doesnt exist and wait for finish
         const exists = await docker
@@ -514,7 +540,11 @@ export function createTenv(cwd: string): Tenv {
           .then(() => true)
           .catch(() => false);
         if (!exists) {
-          const imageStream = await docker.pull(image);
+          const imageStream = (await docker.pull(image)) as Readable;
+          leftoverStack.defer(() => {
+            imageStream.destroy();
+          });
+          ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
           await new Promise((resolve, reject) => {
             docker.modem.followProgress(
               imageStream,
@@ -570,10 +600,16 @@ export function createTenv(cwd: string): Tenv {
           Timeout: 0, // dont wait between tests
           Retries: retries,
         },
+        abortSignal: ctrl.signal,
       });
 
       let stdboth = '';
-      const stream = await ctr.attach({ stream: true, stdout: true, stderr: true });
+      const stream = await ctr.attach({
+        stream: true,
+        stdout: true,
+        stderr: true,
+        abortSignal: ctrl.signal,
+      });
       stream.on('data', data => {
         stdboth += data.toString();
         if (pipeLogs) {
@@ -583,7 +619,6 @@ export function createTenv(cwd: string): Tenv {
 
       await ctr.start();
 
-      const ctrl = new AbortController();
       const container: Container = {
         containerName,
         name,
@@ -596,13 +631,13 @@ export function createTenv(cwd: string): Tenv {
         getStats() {
           throw new Error('Cannot get stats of a container.');
         },
-        async [DisposableSymbols.asyncDispose]() {
+        [DisposableSymbols.asyncDispose]() {
           if (ctrl.signal.aborted) {
             // noop if already disposed
             return;
           }
           ctrl.abort();
-          await ctr.stop({ t: 0 });
+          return ctr.stop({ t: 0 });
         },
       };
       leftoverStack.use(container);
@@ -620,7 +655,7 @@ export function createTenv(cwd: string): Tenv {
 
       // wait for healthy
       if (healthcheck.length > 0) {
-        for (;;) {
+        while (!ctrl.signal.aborted) {
           let status = '';
           try {
             const {
@@ -646,8 +681,6 @@ export function createTenv(cwd: string): Tenv {
           } else if (status === 'healthy') {
             break;
           } else if (status === 'starting') {
-            // no need to track retries, jest will time out aborting the signal
-            ctrl.signal.throwIfAborted();
             await setTimeout(interval);
           } else {
             throw new DockerError(`Unknown health status "${status}"`, container);
@@ -663,7 +696,7 @@ export function createTenv(cwd: string): Tenv {
       for (const service of services) {
         subgraphs.push({
           name: service.name,
-          url: `http://0.0.0.0:${service.port}/graphql`,
+          url: `http://localhost:${service.port}/graphql`,
         });
       }
 
@@ -688,10 +721,11 @@ export function createTenv(cwd: string): Tenv {
 interface SpawnOptions extends ProcOptions {
   cwd: string;
   shell?: boolean;
+  signal?: AbortSignal;
 }
 
 function spawn(
-  { cwd, pipeLogs = boolEnv('DEBUG'), env = {}, shell }: SpawnOptions,
+  { cwd, pipeLogs = boolEnv('DEBUG'), env = {}, shell, signal }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
 ): Promise<[proc: Proc, waitForExit: Promise<void>]> {
@@ -704,6 +738,7 @@ function spawn(
       process.env,
     ),
     shell,
+    signal,
   });
 
   let exit: (err: Error | null) => void;
@@ -775,7 +810,7 @@ function spawn(
   });
   child.once('close', code => {
     // process ended _and_ the stdio streams have been closed
-    exit(code ? new Error(`Exit code ${code}\n${proc.getStd('both')}`) : null);
+    exit(code ? new Error(`Exit code ${code}\n${trimError(proc.getStd('both'))}`) : null);
   });
 
   return new Promise((resolve, reject) => {
@@ -789,21 +824,34 @@ function spawn(
 
 export function getAvailablePort(): Promise<number> {
   const server = createServer();
-  server.listen(0);
-  const { port } = server.address() as AddressInfo;
-  return new Promise((resolve, reject) => server.close(err => (err ? reject(err) : resolve(port))));
+  return new Promise((resolve, reject) => {
+    try {
+      server.listen(0, () => {
+        try {
+          const addressInfo = server.address() as AddressInfo;
+          resolve(addressInfo.port);
+          server.close();
+        } catch (err) {
+          reject(err);
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 async function waitForReachable(server: Server, signal: AbortSignal) {
-  for (;;) {
-    try {
-      await fetch(`http://0.0.0.0:${server.port}`, { signal });
-      break;
-    } catch (err) {
-      // no need to track retries, jest will time out aborting the signal
-      signal.throwIfAborted();
-      await setTimeout(interval);
+  outer: while (!signal.aborted) {
+    for (const localHostname of localHostnames) {
+      try {
+        await fetch(`http://${localHostname}:${server.port}`, { signal });
+        break outer;
+      } catch (err) {}
     }
+    // no need to track retries, jest will time out aborting the signal
+    signal.throwIfAborted();
+    await setTimeout(interval);
   }
 }
 

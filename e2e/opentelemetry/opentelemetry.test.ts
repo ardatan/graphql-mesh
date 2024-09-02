@@ -1,5 +1,7 @@
+import os from 'os';
 import { setTimeout } from 'timers/promises';
 import { boolEnv, createTenv, type Container } from '@e2e/tenv';
+import { fetch } from '@whatwg-node/fetch';
 
 const { service, serve, container, composeWithApollo, serveRunner } = createTenv(__dirname);
 
@@ -81,13 +83,16 @@ describe('opentelemetry', () => {
 
     jaeger = await container({
       name: 'jaeger',
-      image: 'jaegertracing/all-in-one:1.56',
+      image:
+        os.platform().toLowerCase() === 'win32'
+          ? 'johnnyhuy/jaeger-windows:1809'
+          : 'jaegertracing/all-in-one:1.56',
       env: {
         COLLECTOR_OTLP_ENABLED: 'true',
       },
       containerPort: 4318,
       additionalContainerPorts: [16686],
-      healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:14269'],
+      healthcheck: ['CMD-SHELL', 'wget --spider http://localhost:14269'],
     });
   });
 
@@ -107,10 +112,10 @@ describe('opentelemetry', () => {
     service: string,
     expectedDataLength: number,
   ): Promise<JaegerTracesApiResponse> {
-    const url = `http://0.0.0.0:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
+    const url = `http://localhost:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
 
     let res: JaegerTracesApiResponse;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 15; i++) {
       res = await fetch(url).then(r => r.json<JaegerTracesApiResponse>());
       if (res.data.length >= expectedDataLength) {
         break;
@@ -288,7 +293,7 @@ describe('opentelemetry', () => {
       },
     });
 
-    await fetch(`http://0.0.0.0:${port}/non-existing`).catch(() => {});
+    await fetch(`http://localhost:${port}/non-existing`).catch(() => {});
     const traces = await getJaegerTraces(serviceName, 2);
     expect(traces.data.length).toBe(2);
     const relevantTrace = traces.data.find(trace =>
@@ -338,7 +343,7 @@ describe('opentelemetry', () => {
       }),
     ).resolves.toMatchSnapshot();
 
-    const upstreamHttpCalls = await fetch(`http://0.0.0.0:${port}/upstream-fetch`).then(r =>
+    const upstreamHttpCalls = await fetch(`http://localhost:${port}/upstream-fetch`).then(r =>
       r.json<
         Array<{
           url: string;

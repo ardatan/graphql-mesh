@@ -7,7 +7,7 @@ it('should serve', async () => {
   const proc = await serve({
     supergraph: await fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
   });
-  const res = await fetch(`http://0.0.0.0:${proc.port}/healthcheck`);
+  const res = await fetch(`http://localhost:${proc.port}/healthcheck`);
   expect(res.ok).toBeTruthy();
 });
 

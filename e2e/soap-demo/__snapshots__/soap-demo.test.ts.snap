@@ -114,31 +114,31 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap
   s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input = {}) : s0_FindPersonResponse @soap(
     elementName: "FindPersonResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
   s0_SOAPDemo_SOAPDemoSoap_GetByName(GetByName: s0_GetByName_Input = {}) : s0_GetByNameResponse @soap(
     elementName: "GetByNameResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
   s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName(GetDataSetByName: s0_GetDataSetByName_Input = {}) : s0_GetDataSetByNameResponse @soap(
     elementName: "GetDataSetByNameResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
   s0_SOAPDemo_SOAPDemoSoap_GetListByName(GetListByName: s0_GetListByName_Input = {}) : s0_GetListByNameResponse @soap(
     elementName: "GetListByNameResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
   s0_SOAPDemo_SOAPDemoSoap_QueryByName(QueryByName: s0_QueryByName_Input = {}) : s0_QueryByNameResponse @soap(
     elementName: "QueryByNameResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
 }
@@ -222,25 +222,25 @@ type Mutation @join__type(graph: SOAP_DEMO)  {
   s0_SOAPDemo_SOAPDemoSoap_AddInteger(AddInteger: s0_AddInteger_Input = {}) : s0_AddIntegerResponse @soap(
     elementName: "AddIntegerResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
   s0_SOAPDemo_SOAPDemoSoap_DivideInteger(DivideInteger: s0_DivideInteger_Input = {}) : s0_DivideIntegerResponse @soap(
     elementName: "DivideIntegerResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
   s0_SOAPDemo_SOAPDemoSoap_LookupCity(LookupCity: s0_LookupCity_Input = {}) : s0_LookupCityResponse @soap(
     elementName: "LookupCityResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
   s0_SOAPDemo_SOAPDemoSoap_Mission(Mission: JSON = "") : s0_MissionResponse @soap(
     elementName: "MissionResponse"
     bindingNamespace: "http://tempuri.org"
-    endpoint: "http://0.0.0.0:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
+    endpoint: "http://localhost:<soap-demo_port>/csp/samples/SOAP.Demo.cls"
     subgraph: "soap-demo"
   )
 }

@@ -17,7 +17,7 @@ beforeAll(async () => {
         container: '/backups/movies.cypher',
       },
     ],
-    healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:7474'],
+    healthcheck: ['CMD-SHELL', 'wget --spider http://localhost:7474'],
   });
 
   const [, waitForLoad] = await spawn([
