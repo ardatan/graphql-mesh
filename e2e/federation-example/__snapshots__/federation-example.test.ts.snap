@@ -25,10 +25,10 @@ directive @link(url: String, as: String, for: link__Purpose, import: [link__Impo
 scalar join__FieldSet
 
 enum join__Graph {
-  ACCOUNTS @join__graph(name: "accounts", url: "http://0.0.0.0:<accounts>/graphql")
-  INVENTORY @join__graph(name: "inventory", url: "http://0.0.0.0:<inventory>/graphql")
-  PRODUCTS @join__graph(name: "products", url: "http://0.0.0.0:<products>/graphql")
-  REVIEWS @join__graph(name: "reviews", url: "http://0.0.0.0:<reviews>/graphql")
+  ACCOUNTS @join__graph(name: "accounts", url: "http://localhost:<accounts>/graphql")
+  INVENTORY @join__graph(name: "inventory", url: "http://localhost:<inventory>/graphql")
+  PRODUCTS @join__graph(name: "products", url: "http://localhost:<products>/graphql")
+  REVIEWS @join__graph(name: "reviews", url: "http://localhost:<reviews>/graphql")
 }
 
 scalar link__Import

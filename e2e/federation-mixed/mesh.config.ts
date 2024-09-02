@@ -1,5 +1,5 @@
 import { GraphQLID, GraphQLNonNull } from 'graphql';
-import { getLocalHostName, Opts } from '@e2e/opts';
+import { Opts } from '@e2e/opts';
 import {
   createFederationTransform,
   createTypeReplaceTransform,
@@ -14,8 +14,8 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('accounts', {
-        source: `http://${getLocalHostName()}:${opts.getServicePort('accounts')}/openapi.json`,
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('accounts')}`,
+        source: `http://localhost:${opts.getServicePort('accounts')}/openapi.json`,
+        endpoint: `http://localhost:${opts.getServicePort('accounts')}`,
       }),
       transforms: [
         createTypeReplaceTransform((typeName, fieldName) =>
@@ -36,17 +36,17 @@ export const composeConfig = defineComposeConfig({
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('products', {
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('products')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('products')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('inventory', {
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('inventory')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('inventory')}/graphql`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('reviews', {
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('reviews')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('reviews')}/graphql`,
       }),
     },
   ],

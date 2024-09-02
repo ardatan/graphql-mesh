@@ -1,6 +1,7 @@
 import { promises as fsPromises } from 'node:fs';
 import { createServer as createHTTPServer, type Server } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
+import os from 'node:os';
 import type { SecureContextOptions } from 'node:tls';
 import type { GatewayRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
@@ -79,13 +80,20 @@ export async function startServerForRuntime<
     maxHeaderSize,
   };
 
-  try {
-    server = await startuWebSocketsServer(runtime, serverOpts);
-  } catch (e) {
-    log.debug(e.message);
-    log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
-
+  if (os.platform().toLowerCase() === 'win32') {
+    // Try node:http on Windows
     server = await startNodeHttpServer(runtime, serverOpts);
+  } else {
+    try {
+      server = await startuWebSocketsServer(runtime, serverOpts);
+    } catch (e) {
+      log.debug(e.message);
+      log.warn(
+        'uWebSockets.js is not available currently so the server will fallback to node:http.',
+      );
+
+      server = await startNodeHttpServer(runtime, serverOpts);
+    }
   }
 
   terminateStack.use(server);

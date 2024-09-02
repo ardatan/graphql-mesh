@@ -1,5 +1,4 @@
 import { createClient } from 'graphql-sse';
-import { getLocalHostName } from '@e2e/opts';
 import { createTenv, getAvailablePort } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
@@ -36,7 +35,7 @@ it('should query, mutate and subscribe', async () => {
 `);
 
   const sse = createClient({
-    url: `http://${getLocalHostName()}:${servePort}/graphql`,
+    url: `http://localhost:${servePort}/graphql`,
     retryAttempts: 0,
     fetchFn: fetch,
   });

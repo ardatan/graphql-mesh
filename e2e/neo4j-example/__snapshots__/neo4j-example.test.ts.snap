@@ -81,7 +81,7 @@ schema
 
 
 enum join__Graph {
-  MOVIES @join__graph(name: "Movies", url: "neo4j://0.0.0.0:<neo4j_port>") 
+  MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>") 
 }
 
 directive @relationshipProperties on OBJECT
@@ -104,7 +104,7 @@ scalar BigInt @join__type(graph: MOVIES)
 scalar _DirectiveExtensions @join__type(graph: MOVIES) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://0.0.0.0:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
+  directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://localhost:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
 ) @join__type(graph: MOVIES)  {
   movies(where: MovieWhere, options: MovieOptions) : [Movie!]!
   moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort]) : MoviesConnection!

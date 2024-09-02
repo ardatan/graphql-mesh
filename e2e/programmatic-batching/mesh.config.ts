@@ -1,5 +1,5 @@
 import { print } from 'graphql';
-import { getLocalHostName, Opts } from '@e2e/opts';
+import { Opts } from '@e2e/opts';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
@@ -10,8 +10,8 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('API', {
-        source: `http://${getLocalHostName()}:${opts.getServicePort('api')}/openapi.json`,
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('api')}`,
+        source: `http://localhost:${opts.getServicePort('api')}/openapi.json`,
+        endpoint: `http://localhost:${opts.getServicePort('api')}`,
         ignoreErrorResponses: true,
       }),
     },

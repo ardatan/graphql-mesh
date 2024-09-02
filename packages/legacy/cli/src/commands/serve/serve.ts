@@ -46,7 +46,7 @@ export async function serveMesh(
   const {
     fork: configFork = process.env.NODE_ENV?.toLowerCase() === 'production',
     port: configPort,
-    hostname = os.platform() === 'win32' ||
+    hostname = os.platform().toLowerCase() === 'win32' ||
     // is WSL?
     os.release().toLowerCase().includes('microsoft')
       ? '127.0.0.1'

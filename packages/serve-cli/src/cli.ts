@@ -165,7 +165,7 @@ export type AddCommand = (ctx: CLIContext, cli: CLI) => void;
 export const defaultOptions = {
   fork: process.env.NODE_ENV === 'production' ? availableParallelism() : 1,
   host:
-    platform() === 'win32' ||
+    platform().toLowerCase() === 'win32' ||
     // is WSL?
     release().toLowerCase().includes('microsoft')
       ? '127.0.0.1'

@@ -81,8 +81,8 @@ schema
 
 
 enum join__Graph {
-  GREETINGS @join__graph(name: "greetings", url: "http://0.0.0.0:<greetings_port>") 
-  HELLOER @join__graph(name: "helloer", url: "http://0.0.0.0:<helloer_port>/graphql") 
+  GREETINGS @join__graph(name: "greetings", url: "http://localhost:<greetings_port>") 
+  HELLOER @join__graph(name: "helloer", url: "http://localhost:<helloer_port>/graphql") 
 }
 
 directive @httpOperation(
@@ -117,9 +117,9 @@ scalar _DirectiveExtensions @join__type(graph: GREETINGS)  @join__type(graph: HE
 scalar TransportOptions @join__type(graph: HELLOER) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "greetings", kind: "rest", location: "http://0.0.0.0:<greetings_port>"}]}
+  directives: {transport: [{subgraph: "greetings", kind: "rest", location: "http://localhost:<greetings_port>"}]}
 ) @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "http", subgraph: "helloer", location: "http://0.0.0.0:<helloer_port>/graphql", options: {}}]}
+  directives: {transport: [{kind: "http", subgraph: "helloer", location: "http://localhost:<helloer_port>/graphql", options: {}}]}
 ) @join__type(graph: GREETINGS)  @join__type(graph: HELLOER)  {
   greet(name: String!) : greet_200_response @httpOperation(
     subgraph: "greetings"

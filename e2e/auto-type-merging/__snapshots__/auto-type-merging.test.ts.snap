@@ -81,8 +81,8 @@ schema
 
 
 enum join__Graph {
-  PETSTORE @join__graph(name: "petstore", url: "http://0.0.0.0:<petstore_port>/api/v3") 
-  VACCINATION @join__graph(name: "vaccination", url: "http://0.0.0.0:<vaccination_port>/graphql") 
+  PETSTORE @join__graph(name: "petstore", url: "http://localhost:<petstore_port>/api/v3") 
+  VACCINATION @join__graph(name: "vaccination", url: "http://localhost:<vaccination_port>/graphql") 
 }
 
 directive @enum(subgraph: String, value: String)  repeatable on ENUM_VALUE
@@ -161,9 +161,9 @@ scalar _DirectiveExtensions @join__type(graph: PETSTORE)  @join__type(graph: VAC
 scalar TransportOptions @join__type(graph: VACCINATION) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "petstore", kind: "rest", location: "http://0.0.0.0:<petstore_port>/api/v3"}]}
+  directives: {transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}
 ) @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "http", subgraph: "vaccination", location: "http://0.0.0.0:<vaccination_port>/graphql", options: {}}]}
+  directives: {transport: [{kind: "http", subgraph: "vaccination", location: "http://localhost:<vaccination_port>/graphql", options: {}}]}
 ) @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION)  {
   """
   Multiple status values can be provided with comma separated strings

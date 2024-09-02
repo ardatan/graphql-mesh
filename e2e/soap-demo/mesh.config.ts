@@ -1,4 +1,4 @@
-import { getLocalHostName, Opts } from '@e2e/opts';
+import { Opts } from '@e2e/opts';
 import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadSOAPSubgraph } from '@omnigraph/soap';
 
@@ -9,7 +9,7 @@ export const composeConfig = defineConfig({
     {
       sourceHandler: loadSOAPSubgraph('soap-demo', {
         source: './SOAP.Demo.cls.wsdl',
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('soap-demo')}/csp/samples/SOAP.Demo.cls`,
+        endpoint: `http://localhost:${opts.getServicePort('soap-demo')}/csp/samples/SOAP.Demo.cls`,
       }),
     },
   ],

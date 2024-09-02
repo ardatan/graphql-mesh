@@ -81,10 +81,10 @@ schema
 
 
 enum join__Graph {
-  ACCOUNTS @join__graph(name: "accounts", url: "http://0.0.0.0:<accounts_port>") 
-  INVENTORY @join__graph(name: "inventory", url: "http://0.0.0.0:<inventory_port>/graphql") 
-  PRODUCTS @join__graph(name: "products", url: "http://0.0.0.0:<products_port>/graphql") 
-  REVIEWS @join__graph(name: "reviews", url: "http://0.0.0.0:<reviews_port>/graphql") 
+  ACCOUNTS @join__graph(name: "accounts", url: "http://localhost:<accounts_port>") 
+  INVENTORY @join__graph(name: "inventory", url: "http://localhost:<inventory_port>/graphql") 
+  PRODUCTS @join__graph(name: "products", url: "http://localhost:<products_port>/graphql") 
+  REVIEWS @join__graph(name: "reviews", url: "http://localhost:<reviews_port>/graphql") 
 }
 
 directive @merge(
@@ -132,13 +132,13 @@ scalar _DirectiveExtensions @join__type(graph: ACCOUNTS)  @join__type(graph: INV
 scalar TransportOptions @join__type(graph: INVENTORY)  @join__type(graph: PRODUCTS)  @join__type(graph: REVIEWS) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "accounts", kind: "rest", location: "http://0.0.0.0:<accounts_port>"}]}
+  directives: {transport: [{subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>"}]}
 ) @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "http", subgraph: "inventory", location: "http://0.0.0.0:<inventory_port>/graphql", options: {}}]}
+  directives: {transport: [{kind: "http", subgraph: "inventory", location: "http://localhost:<inventory_port>/graphql", options: {}}]}
 ) @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "http", subgraph: "products", location: "http://0.0.0.0:<products_port>/graphql", options: {}}]}
+  directives: {transport: [{kind: "http", subgraph: "products", location: "http://localhost:<products_port>/graphql", options: {}}]}
 ) @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "http", subgraph: "reviews", location: "http://0.0.0.0:<reviews_port>/graphql", options: {}}]}
+  directives: {transport: [{kind: "http", subgraph: "reviews", location: "http://localhost:<reviews_port>/graphql", options: {}}]}
 ) @join__type(graph: ACCOUNTS)  @join__type(graph: INVENTORY)  @join__type(graph: PRODUCTS)  @join__type(graph: REVIEWS)  {
   me: User @httpOperation(
     subgraph: "accounts"

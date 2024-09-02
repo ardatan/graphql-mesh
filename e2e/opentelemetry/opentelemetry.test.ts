@@ -1,5 +1,4 @@
 import { setTimeout } from 'timers/promises';
-import { getLocalHostName } from '@e2e/opts';
 import { boolEnv, createTenv, type Container } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
@@ -109,7 +108,7 @@ describe('opentelemetry', () => {
     service: string,
     expectedDataLength: number,
   ): Promise<JaegerTracesApiResponse> {
-    const url = `http://${getLocalHostName()}:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
+    const url = `http://localhost:${jaeger.additionalPorts[16686]}/api/traces?service=${service}`;
 
     let res: JaegerTracesApiResponse;
     for (let i = 0; i < 15; i++) {
@@ -290,7 +289,7 @@ describe('opentelemetry', () => {
       },
     });
 
-    await fetch(`http://${getLocalHostName()}:${port}/non-existing`).catch(() => {});
+    await fetch(`http://localhost:${port}/non-existing`).catch(() => {});
     const traces = await getJaegerTraces(serviceName, 2);
     expect(traces.data.length).toBe(2);
     const relevantTrace = traces.data.find(trace =>
@@ -340,9 +339,7 @@ describe('opentelemetry', () => {
       }),
     ).resolves.toMatchSnapshot();
 
-    const upstreamHttpCalls = await fetch(
-      `http://${getLocalHostName()}:${port}/upstream-fetch`,
-    ).then(r =>
+    const upstreamHttpCalls = await fetch(`http://localhost:${port}/upstream-fetch`).then(r =>
       r.json<
         Array<{
           url: string;

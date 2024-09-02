@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { createRouter, Response } from 'fets';
-import { getLocalHostName, Opts } from '@e2e/opts';
+import { Opts } from '@e2e/opts';
 import { fetch } from '@whatwg-node/fetch';
 
 const opts = Opts(process.argv);
@@ -24,7 +24,7 @@ const app = createRouter<FetchEvent>()
       };
       todos.push(todo);
       waitUntil(
-        fetch(`http://${getLocalHostName()}:${opts.getPort(true)}/webhooks/todo_added`, {
+        fetch(`http://localhost:${opts.getPort(true)}/webhooks/todo_added`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

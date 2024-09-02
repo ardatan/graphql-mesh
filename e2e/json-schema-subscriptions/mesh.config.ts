@@ -1,5 +1,5 @@
 import { OperationTypeNode } from 'graphql';
-import { getLocalHostName, Opts } from '@e2e/opts';
+import { Opts } from '@e2e/opts';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import useMeshLiveQuery from '@graphql-mesh/plugin-live-query';
 import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
@@ -11,7 +11,7 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadJSONSchemaSubgraph('API', {
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('api')}`,
+        endpoint: `http://localhost:${opts.getServicePort('api')}`,
         operationHeaders: {
           'Content-Type': 'application/json',
         },

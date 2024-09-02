@@ -44,14 +44,14 @@ enum link__Purpose {
 }
 
 enum join__Graph {
-  API @join__graph(name: "API", url: "http://0.0.0.0:<api_port>")
+  API @join__graph(name: "API", url: "http://localhost:<api_port>")
 }
 
 scalar ObjMap @join__type(graph: API)
 
 scalar _DirectiveExtensions @join__type(graph: API)
 
-type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "API", kind: "rest", location: "http://0.0.0.0:<api_port>"}]}) @join__type(graph: API) {
+type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "API", kind: "rest", location: "http://localhost:<api_port>"}]}) @join__type(graph: API) {
   dummy: String
   user(id: Float!): User @additionalField
 }

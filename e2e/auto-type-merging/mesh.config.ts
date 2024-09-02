@@ -1,4 +1,4 @@
-import { getLocalHostName, Opts } from '@e2e/opts';
+import { Opts } from '@e2e/opts';
 import {
   camelCase,
   createFilterTransform,
@@ -14,9 +14,9 @@ export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('petstore', {
-        source: `http://${getLocalHostName()}:${opts.getServicePort('petstore')}/api/v3/openapi.json`,
+        source: `http://localhost:${opts.getServicePort('petstore')}/api/v3/openapi.json`,
         // endpoint must be manually specified because the openapi.json spec doesn't contain one
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('petstore')}/api/v3`,
+        endpoint: `http://localhost:${opts.getServicePort('petstore')}/api/v3`,
       }),
       transforms: [
         createFilterTransform({
@@ -27,7 +27,7 @@ export const composeConfig = defineConfig({
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('vaccination', {
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('vaccination')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('vaccination')}/graphql`,
       }),
       transforms: [
         createNamingConventionTransform({

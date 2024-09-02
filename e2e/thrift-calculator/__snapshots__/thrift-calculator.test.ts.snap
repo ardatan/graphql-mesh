@@ -81,7 +81,7 @@ schema
 
 
 enum join__Graph {
-  CALCULATOR @join__graph(name: "calculator", url: "http://0.0.0.0:<calculator_port>/thrift") 
+  CALCULATOR @join__graph(name: "calculator", url: "http://localhost:<calculator_port>/thrift") 
 }
 
 directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap)  repeatable on FIELD_DEFINITION
@@ -93,7 +93,7 @@ scalar FieldTypeMap @join__type(graph: CALCULATOR)
 scalar _DirectiveExtensions @join__type(graph: CALCULATOR) 
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "calculator", kind: "thrift", location: "http://0.0.0.0:<calculator_port>/thrift", headers: {}, options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}}]}
+  directives: {transport: [{subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: {}, options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}}]}
 ) @join__type(graph: CALCULATOR)  {
   add(request: AddRequestInput) : Int @fieldTypeMap(
     subgraph: "calculator"

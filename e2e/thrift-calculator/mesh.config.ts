@@ -1,4 +1,4 @@
-import { getLocalHostName, Opts } from '@e2e/opts';
+import { Opts } from '@e2e/opts';
 import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadThriftSubgraph } from '@omnigraph/thrift';
 
@@ -9,7 +9,7 @@ export const composeConfig = defineConfig({
     {
       sourceHandler: loadThriftSubgraph('calculator', {
         source: './services/calculator/calculator.thrift',
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('calculator')}/thrift`,
+        endpoint: `http://localhost:${opts.getServicePort('calculator')}/thrift`,
         serviceName: 'Calculator',
       }),
     },

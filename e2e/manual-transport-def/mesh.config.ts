@@ -1,4 +1,4 @@
-import { getLocalHostName, Opts } from '@e2e/opts';
+import { Opts } from '@e2e/opts';
 import {
   defineConfig as defineComposeConfig,
   loadGraphQLHTTPSubgraph,
@@ -13,13 +13,13 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('greetings', {
-        source: `http://${getLocalHostName()}:${opts.getServicePort('greetings')}/openapi.json`,
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('greetings')}`,
+        source: `http://localhost:${opts.getServicePort('greetings')}/openapi.json`,
+        endpoint: `http://localhost:${opts.getServicePort('greetings')}`,
       }),
     },
     {
       sourceHandler: loadGraphQLHTTPSubgraph('helloer', {
-        endpoint: `http://${getLocalHostName()}:${opts.getServicePort('helloer')}/graphql`,
+        endpoint: `http://localhost:${opts.getServicePort('helloer')}/graphql`,
       }),
     },
   ],
