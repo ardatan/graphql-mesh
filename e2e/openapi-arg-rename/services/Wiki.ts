@@ -4,14 +4,19 @@ import { Opts } from '@e2e/opts';
 const opts = Opts(process.argv);
 
 const server = http.createServer((req, res) => {
-  const u = new URL(req.url, 'http://localhost');
-  if (u.pathname === '/good') {
-    return res.setHeader('content-type', 'application/json').end(JSON.stringify({ apple: 'good' }));
+  if (req.url?.endsWith('good')) {
+    res.setHeader('content-type', 'application/json');
+    res.end(JSON.stringify({ apple: 'good' }));
+    return;
   }
-  if (u.pathname === '/bad') {
-    return res.setHeader('content-type', 'application/json').end(JSON.stringify({ apple: 'bad' }));
+  if (req.url?.endsWith('bad')) {
+    res.setHeader('content-type', 'application/json');
+    res.end(JSON.stringify({ apple: 'bad' }));
+    return;
   }
-  return res.writeHead(404).end();
+  res.writeHead(404);
+  res.end();
+  return;
 });
 
 server.listen(opts.getServicePort('Wiki'));

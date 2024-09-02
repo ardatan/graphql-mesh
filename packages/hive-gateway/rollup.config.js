@@ -158,7 +158,7 @@ function graphql() {
         // import 'graphql'
         return { id: source, external: true };
       }
-      if (!source.startsWith('graphql/')) {
+      if (!source.startsWith('graphql/') && !source.startsWith('graphql\\')) {
         // not import 'graphql/*'
         return null;
       }
@@ -167,7 +167,7 @@ function graphql() {
         return { id: source, external: true };
       }
 
-      const relPath = source.replace('graphql/', '');
+      const relPath = source.replace('graphql/', '').replace('graphql\\', '');
       if (!relPath) {
         throw new Error(
           `Importing "${source}" from "${importer}" is not a graphql module relative import`,

@@ -81,7 +81,7 @@ export async function startServerForRuntime<
   };
 
   if (os.platform().toLowerCase() === 'win32') {
-    // Try node:http on Windows
+    // TODO: uWebSockets.js gives \`Segmentation fault\` error on Windows
     server = await startNodeHttpServer(runtime, serverOpts);
   } else {
     try {

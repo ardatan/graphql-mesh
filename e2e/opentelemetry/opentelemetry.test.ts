@@ -1,3 +1,4 @@
+import os from 'os';
 import { setTimeout } from 'timers/promises';
 import { boolEnv, createTenv, type Container } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
@@ -82,13 +83,16 @@ describe('opentelemetry', () => {
 
     jaeger = await container({
       name: 'jaeger',
-      image: 'jaegertracing/all-in-one:1.56',
+      image:
+        os.platform().toLowerCase() === 'win32'
+          ? 'johnnyhuy/jaeger-windows'
+          : 'jaegertracing/all-in-one:1.56',
       env: {
         COLLECTOR_OTLP_ENABLED: 'true',
       },
       containerPort: 4318,
       additionalContainerPorts: [16686],
-      healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0:14269'],
+      healthcheck: ['CMD-SHELL', 'wget --spider http://localhost:14269'],
     });
   });
 
