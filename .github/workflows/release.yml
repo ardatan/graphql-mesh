@@ -122,7 +122,7 @@ jobs:
             console.log(r);
             return r;
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Install Windows specific dependencies
       - if: runner.os == 'Windows'
