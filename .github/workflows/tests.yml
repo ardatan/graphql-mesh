@@ -448,8 +448,7 @@ jobs:
           echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
         shell: bash
       - name: cache docker images
-        uses: ScribeMD/docker-cache@0.5.0
-        continue-on-error: true
+        uses: enisdenjo/docker-cache@main
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
       - name: set up env
