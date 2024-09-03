@@ -142,7 +142,7 @@ return module.exports;
       }
 
       // replace the @graphql-mesh/include/hooks register to use the absolute path of the packed deps
-      const includeHooksRegisterDest = /register\(\s*'@graphql-mesh\/include\/hooks'/; // intentionally no closing bracked because there's more arguments
+      const includeHooksRegisterDest = /register\(\s*'@graphql-mesh\/include\/hooks'/g; // intentionally no closing bracked because there's more arguments
       if (includeHooksRegisterDest.test(code)) {
         code = code.replaceAll(
           includeHooksRegisterDest,
