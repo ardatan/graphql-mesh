@@ -304,13 +304,26 @@ export function run(userCtx: Partial<CLIContext>) {
     ...userCtx,
   };
 
-  const { binName, productDescription, version } = ctx;
+  const { binName, productName, productDescription, version } = ctx;
   cli = cli.name(binName).description(productDescription);
   cli.version(version);
 
   if (cluster.worker?.id) {
     ctx.log = ctx.log.child(`Worker #${cluster.worker.id}`);
+  } else {
+    ctx.log.info(`Starting ${productName} ${version || ''}`);
   }
+
+  const internalWarningLog = ctx.log.child('internal');
+
+  process.on('warning', warning => {
+    if (warning.name === 'MaxListenersExceededWarning') {
+      ctx.log.warn(
+        'Potential memory leak detected.\nPlease report this to the maintainers.\nEnable debug mode to see more details.',
+      );
+    }
+    internalWarningLog.warn(warning);
+  });
 
   addCommands(ctx, cli);
 

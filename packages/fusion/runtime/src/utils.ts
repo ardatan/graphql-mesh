@@ -83,7 +83,7 @@ function getTransportExecutor({
   transports?: Transports;
 }): MaybePromise<Executor> {
   const kind = transportEntry.kind;
-  transportContext?.logger?.info(`Loading transport "${kind}" for subgraph ${subgraphName}`);
+  transportContext?.logger?.debug(`Loading transport "${kind}" for subgraph ${subgraphName}`);
   return mapMaybePromise(
     typeof transports === 'function' ? transports(kind) : transports[kind],
     transport => {
@@ -148,7 +148,7 @@ export function getOnSubgraphExecute({
     let executor: Executor = subgraphExecutorMap.get(subgraphName);
     // If the executor is not initialized yet, initialize it
     if (executor == null) {
-      transportContext?.logger?.info(`Initializing executor for subgraph ${subgraphName}`);
+      transportContext?.logger?.debug(`Initializing executor for subgraph ${subgraphName}`);
       // Lazy executor that loads transport executor on demand
       executor = function lazyExecutor(subgraphExecReq: ExecutionRequest) {
         return mapMaybePromise(

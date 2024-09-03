@@ -69,7 +69,7 @@ export async function run({
 
   let importedConfig: MeshComposeCLIConfig;
   if (!opts.configPath) {
-    log.info(`Searching for default config files`);
+    log.debug(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
       const absoluteConfigPath = resolve(process.cwd(), configPath);
       const exists = await fsPromises
@@ -96,7 +96,7 @@ export async function run({
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
       : resolve(process.cwd(), opts.configPath);
-    log.info(`Loading config file at path ${configPath}`);
+    log.debug(`Loading config file at path ${configPath}`);
     const exists = await fsPromises
       .lstat(configPath)
       .then(() => true)

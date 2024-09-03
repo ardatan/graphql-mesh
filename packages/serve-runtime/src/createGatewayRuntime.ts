@@ -83,7 +83,7 @@ import type {
   GatewayPlugin,
   UnifiedGraphConfig,
 } from './types.js';
-import { checkIfDataSatisfiesSelectionSet } from './utils.js';
+import { checkIfDataSatisfiesSelectionSet, defaultQueryText } from './utils.js';
 
 export type GatewayRuntime<TContext extends Record<string, any> = Record<string, any>> =
   YogaServerInstance<unknown, TContext> & {
@@ -679,12 +679,14 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
   if (config.graphiql == null || config.graphiql === true) {
     graphiqlOptionsOrFactory = {
       title: productName,
+      defaultQuery: defaultQueryText,
     };
   } else if (config.graphiql === false) {
     graphiqlOptionsOrFactory = false;
   } else if (typeof config.graphiql === 'object') {
     graphiqlOptionsOrFactory = {
       title: productName,
+      defaultQuery: defaultQueryText,
       ...config.graphiql,
     };
   } else if (typeof config.graphiql === 'function') {
@@ -699,10 +701,12 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
         if (resolvedOpts === true) {
           return {
             title: productName,
+            defaultQuery: defaultQueryText,
           };
         }
         return {
           title: productName,
+          defaultQuery: defaultQueryText,
           ...resolvedOpts,
         };
       });

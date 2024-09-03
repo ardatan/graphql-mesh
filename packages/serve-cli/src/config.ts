@@ -25,7 +25,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
   > | null = null;
 
   if (!opts.configPath) {
-    !opts.quiet && opts.log.info(`Searching for default config files`);
+    !opts.quiet && opts.log.debug(`Searching for default config files`);
     const configPaths = [
       ...createDefaultConfigPaths(defaultConfigFileName),
       ...createDefaultConfigPaths(opts.configFileName),
@@ -67,7 +67,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
   if (importedConfig) {
     !opts.quiet && opts.log.info('Loaded config');
   } else {
-    !opts.quiet && opts.log.info('No config loaded');
+    !opts.quiet && opts.log.debug('No config loaded');
   }
 
   // TODO: validate imported config

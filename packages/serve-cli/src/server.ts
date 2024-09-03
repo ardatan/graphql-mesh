@@ -124,16 +124,17 @@ async function startuWebSocketsServer(
     const app = sslCredentials ? uWS.SSLApp(sslCredentials) : uWS.App();
     app.any('/*', handler);
     const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
-    log.info(`Starting server on ${url}`);
+    log.debug(`Starting server on ${url}`);
     return new Promise((resolve, reject) => {
       app.listen(host, port, function listenCallback(listenSocket) {
         if (listenSocket) {
-          log.info(`Server started on ${url}`);
+          log.info(`Listening on ${url}`);
           resolve(
             createAsyncDisposable(() => {
-              log.info(`Closing ${url}`);
+              process.stderr.write('\n');
+              log.info(`Stopping the server`);
               app.close();
-              log.info(`Closed ${url}`);
+              log.info(`Stopped the server successfully`);
               return Promise.resolve();
             }),
           );
@@ -197,19 +198,20 @@ async function startNodeHttpServer(
 
   const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
 
-  log.info(`Starting server on ${url}`);
+  log.debug(`Starting server on ${url}`);
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
-      log.info(`Server started on ${url}`);
+      log.info(`Listening on ${url}`);
       resolve(
         createAsyncDisposable(
           () =>
             new Promise<void>(resolve => {
-              log.info(`Closing ${url}`);
+              process.stderr.write('\n');
+              log.info(`Stopping the server`);
               server.closeAllConnections();
               server.close(() => {
-                log.info(`Closed ${url}`);
+                log.info(`Stopped the server successfully`);
                 resolve();
               });
             }),

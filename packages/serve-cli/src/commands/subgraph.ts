@@ -6,7 +6,7 @@ import {
   type GatewayConfigSubgraph,
   type UnifiedGraphConfig,
 } from '@graphql-mesh/serve-runtime';
-import { isUrl, PubSub, registerTerminateHandler } from '@graphql-mesh/utils';
+import { isUrl, PubSub } from '@graphql-mesh/utils';
 import { isValidPath } from '@graphql-tools/utils';
 import {
   defaultOptions,
@@ -17,6 +17,7 @@ import {
 } from '../cli.js';
 import { getBuiltinPluginsFromConfig, getCacheInstanceFromConfig, loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
+import { handleFork } from './handleFork.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
   cli
@@ -136,18 +137,7 @@ export async function runSubgraph({ log }: CLIContext, config: SubgraphConfig) {
     }
   }
 
-  if (cluster.isPrimary && config.fork > 1) {
-    const workers: Worker[] = [];
-    log.info(`Forking ${config.fork} workers`);
-    for (let i = 0; i < config.fork; i++) {
-      workers.push(cluster.fork());
-    }
-    registerTerminateHandler(signal => {
-      log.info(`Killing workers with ${signal}`);
-      workers.forEach(w => {
-        w.kill(signal);
-      });
-    });
+  if (handleFork(log, config)) {
     return;
   }
 

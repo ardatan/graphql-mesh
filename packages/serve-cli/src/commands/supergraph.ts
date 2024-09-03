@@ -20,6 +20,7 @@ import {
 } from '../cli.js';
 import { getBuiltinPluginsFromConfig, getCacheInstanceFromConfig, loadConfig } from '../config.js';
 import { startServerForRuntime } from '../server.js';
+import { handleFork } from './handleFork.js';
 
 export const addCommand: AddCommand = (ctx, cli) =>
   cli
@@ -276,18 +277,7 @@ export async function runSupergraph({ log }: CLIContext, config: SupergraphConfi
     }
   }
 
-  if (cluster.isPrimary && config.fork > 1) {
-    const workers: Worker[] = [];
-    log.info(`Forking ${config.fork} workers`);
-    for (let i = 0; i < config.fork; i++) {
-      workers.push(cluster.fork());
-    }
-    registerTerminateHandler(signal => {
-      log.info(`Killing workers with ${signal}`);
-      workers.forEach(w => {
-        w.kill(signal);
-      });
-    });
+  if (handleFork(log, config)) {
     return;
   }
 
