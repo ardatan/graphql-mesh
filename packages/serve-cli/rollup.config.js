@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { defineConfig, rollup } from 'rollup';
+import { defineConfig } from 'rollup';
 import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -39,6 +39,7 @@ console.log('Bundling...');
 const deps = {
   'node_modules/@graphql-mesh/serve-cli/index': 'src/index.ts',
   'node_modules/@graphql-mesh/serve-runtime/index': '../serve-runtime/src/index.ts',
+  'node_modules/@graphql-mesh/include/hooks': '../include/src/hooks.ts',
   // default transports should be in the container
   'node_modules/@graphql-mesh/transport-common/index': '../transports/common/src/index.ts',
   'node_modules/@graphql-mesh/transport-http/index': '../transports/http/src/index.ts',
@@ -101,7 +102,6 @@ export default defineConfig({
     json(), // support importing json files to esm (needed for commonjs() plugin)
     sucrase({ transforms: ['typescript'] }), // transpile typescript
     packagejson(), // add package jsons
-    injectIncludeHooks(), // injects bundled @graphql-mesh/include/hooks
   ],
 });
 
@@ -115,11 +115,17 @@ function packagejson() {
     name: 'packagejson',
     generateBundle(_outputs, bundles) {
       for (const bundle of Object.values(bundles).filter(
-        bundle => !!deps[bundle.name] && bundle.name.endsWith('/index'),
+        bundle => !!deps[bundle.name] && bundle.name.startsWith('node_modules/'),
       )) {
         const dir = path.dirname(bundle.fileName);
         const bundledFile = path.basename(bundle.fileName);
-        const pkg = { type: 'module', main: bundledFile };
+        const pkg = { type: 'module' };
+        if (bundledFile === 'index.mjs') {
+          pkg.main = bundledFile;
+        } else {
+          // if the bundled file is not "index", then it's an exports path (like with @graphql-mesh/include/hooks)
+          pkg.exports = { [`./${path.basename(bundle.fileName, '.mjs')}`]: `./${bundledFile}` };
+        }
         this.emitFile({
           type: 'asset',
           fileName: path.join(dir, 'package.json'),
@@ -257,44 +263,6 @@ function graphql() {
         );
       }
       return augmented;
-    },
-  };
-}
-
-/**
- * @type {import('rollup').PluginImpl}
- */
-function injectIncludeHooks() {
-  let injected = false;
-  const injectionDest = /register\(\s*'@graphql-mesh\/include\/hooks'/; // intentionally no closing bracked because there's more arguments
-  return {
-    name: 'injectIncludeHooks',
-    async renderChunk(chunk) {
-      if (!injectionDest.test(chunk)) return;
-      injected = true;
-
-      const bundle = await rollup({
-        input: '../include/src/hooks.ts',
-        plugins: [nodeResolve(), commonjs(), sucrase({ transforms: ['typescript'] })],
-      });
-
-      const { output: outputs } = await bundle.generate({
-        format: 'esm',
-        inlineDynamicImports: true,
-      });
-      const script = outputs[0].code;
-
-      return chunk.replace(
-        injectionDest,
-        () => `register(${JSON.stringify(`data:text/javascript,${encodeURIComponent(script)}`)}`,
-      );
-    },
-    generateBundle() {
-      if (!injected) {
-        throw new Error(
-          `Include hooks cannot be injected, does "${injectionDest}" exist in the source code?`,
-        );
-      }
     },
   };
 }
