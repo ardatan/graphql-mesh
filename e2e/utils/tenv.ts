@@ -663,7 +663,7 @@ export function createTenv(cwd: string): Tenv {
         let timedOut = false;
         globalThis.setTimeout(() => {
           timedOut = true;
-        }, 15_000);
+        }, 30_000);
         while (!timedOut && !ctrl.signal.aborted) {
           let status = '';
           try {
