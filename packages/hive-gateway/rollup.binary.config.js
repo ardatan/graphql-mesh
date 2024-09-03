@@ -141,6 +141,19 @@ return module.exports;
         throw new Error('Bundle does not have any dynamic commonjs requires');
       }
 
+      // replace the @graphql-mesh/include/hooks register to use the absolute path of the packed deps
+      const includeHooksRegisterDest = /register\(\s*'@graphql-mesh\/include\/hooks'/g; // intentionally no closing bracked because there's more arguments
+      if (includeHooksRegisterDest.test(code)) {
+        code = code.replaceAll(
+          includeHooksRegisterDest,
+          `register(require('node:path').join(globalThis.__PACKED_DEPS_PATH__, '@graphql-mesh', 'include', 'hooks.mjs')`,
+        );
+      } else {
+        throw new Error(
+          `Include hooks path cannot be fixed, does "${includeHooksRegisterDest}" exist in the source code?`,
+        );
+      }
+
       return code;
     },
     async generateBundle() {
