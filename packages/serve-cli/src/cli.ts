@@ -304,14 +304,12 @@ export function run(userCtx: Partial<CLIContext>) {
     ...userCtx,
   };
 
-  const { binName, productName, productDescription, version } = ctx;
+  const { binName, productDescription, version } = ctx;
   cli = cli.name(binName).description(productDescription);
   cli.version(version);
 
   if (cluster.worker?.id) {
     ctx.log = ctx.log.child(`Worker #${cluster.worker.id}`);
-  } else {
-    ctx.log.info(`Starting ${productName} ${version || ''}`);
   }
 
   const internalWarningLog = ctx.log.child('internal');
