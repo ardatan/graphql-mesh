@@ -22,7 +22,7 @@ beforeAll(async () => {
       'CMD',
       'mysqladmin',
       'ping',
-      '--host=0.0.0.0', // use the network connection (and not the socket file). making sure we dont check the temporary/setup database
+      '--host=127.0.0.1', // use the network connection (and not the socket file). making sure we dont check the temporary/setup database
     ],
     env: {
       MYSQL_ROOT_PASSWORD: 'passwd', // used in mesh.config.ts
