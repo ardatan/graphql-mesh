@@ -5,6 +5,7 @@ const { compose, serve, container } = createTenv(__dirname);
 let mysql!: Container;
 beforeAll(async () => {
   mysql = await container({
+    pipeLogs: true,
     name: 'employees',
     image: 'genschsa/mysql-employees',
     containerPort: 3306,

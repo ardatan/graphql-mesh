@@ -82,6 +82,7 @@ describe('opentelemetry', () => {
     ]);
 
     jaeger = await container({
+      pipeLogs: true,
       name: 'jaeger',
       image:
         os.platform().toLowerCase() === 'win32'
@@ -129,6 +130,7 @@ describe('opentelemetry', () => {
   it('should report telemetry metrics correctly to jaeger', async () => {
     const serviceName = 'mesh-e2e-test-1';
     const { execute } = await serve({
+      pipeLogs: true,
       supergraph,
       env: {
         OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
