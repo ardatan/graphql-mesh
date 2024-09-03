@@ -136,15 +136,20 @@ jobs:
           yarn workspace ${{steps.names.outputs.packagename }} inject-version ${{ github.sha }}
       - name: package binary
         run: yarn workspace ${{steps.names.outputs.packagename }} package-binary
+
+      - name: compress binary
+        run: |
+          gzip -9 ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os == 'Windows' && '.exe' || '' }}
+
       - name: upload artifact
         id: upload_artifact
         uses: actions/upload-artifact@v4
         with:
           name:
             ${{ matrix.productname}}-${{runner.os}}-${{runner.arch}}${{ runner.os == 'Windows' &&
-            '.exe' || ''}}
+            '.exe.gz' || '.gz'}}
           path: |
-            ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os == 'Windows' && '.exe' || '' }}
+            ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os == 'Windows' && '.exe.gz' || '.gz' }}
       - name: update PR comment with artifact link
         uses: marocchino/sticky-pull-request-comment@v2
         with:
