@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-hive
 
+## 0.102.6
+
+### Patch Changes
+
+- [#7607](https://github.com/ardatan/graphql-mesh/pull/7607)
+  [`379c9cf`](https://github.com/ardatan/graphql-mesh/commit/379c9cf2c6c958d5d1615c953137204ddcf3e7bc)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/yoga@^0.38.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/yoga/v/0.38.0)
+    (from `^0.37.0`, in `dependencies`)
+
 ## 0.102.5
 
 ### Patch Changes

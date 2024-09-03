@@ -1,5 +1,14 @@
 # @graphql-mesh/serve-runtime
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`379c9cf`](https://github.com/ardatan/graphql-mesh/commit/379c9cf2c6c958d5d1615c953137204ddcf3e7bc)]:
+  - @graphql-mesh/plugin-hive@0.102.6
+  - @graphql-mesh/hmac-upstream-signature@0.4.2
+
 ## 0.9.1
 
 ### Patch Changes

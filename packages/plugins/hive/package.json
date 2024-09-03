@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-hive",
-  "version": "0.102.5",
+  "version": "0.102.6",
   "type": "module",
   "repository": {
     "type": "git",

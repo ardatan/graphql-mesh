@@ -1,5 +1,30 @@
 # @graphql-mesh/serve-cli
 
+## 0.12.2
+
+### Patch Changes
+
+- [#7339](https://github.com/ardatan/graphql-mesh/pull/7339)
+  [`b50ad41`](https://github.com/ardatan/graphql-mesh/commit/b50ad4132197da143b2568f00b0136e013cee7d0)
+  Thanks [@YassinEldeeb](https://github.com/YassinEldeeb)! - dependencies updates:
+
+  - Added dependency
+    [`node-libcurl@npm:@ardatan/node-libcurl@^4.0.2` ↗︎](https://www.npmjs.com/package/node-libcurl/v/4.0.2)
+    (to `dependencies`)
+
+- [#7601](https://github.com/ardatan/graphql-mesh/pull/7601)
+  [`04251e5`](https://github.com/ardatan/graphql-mesh/commit/04251e57d05b91a2d4018ac63639d8b1eb56855a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Warn if \`node-libcurl\` is not available
+
+- Updated dependencies
+  [[`d4f23b3`](https://github.com/ardatan/graphql-mesh/commit/d4f23b32f53178620f346a84dead035fb56c34f9),
+  [`c663f59`](https://github.com/ardatan/graphql-mesh/commit/c663f59e916f9b9fbb0fe9e4ee4439bb8c3f9412)]:
+  - @graphql-mesh/plugin-opentelemetry@0.4.2
+  - @graphql-mesh/serve-runtime@0.9.2
+  - @graphql-mesh/hmac-upstream-signature@0.4.2
+  - @graphql-mesh/plugin-jwt-auth@0.4.2
+  - @graphql-mesh/plugin-prometheus@0.107.2
+
 ## 0.12.1
 
 ### Patch Changes

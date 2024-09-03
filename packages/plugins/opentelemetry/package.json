@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-opentelemetry",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/serve-runtime": "^0.9.1",
+    "@graphql-mesh/serve-runtime": "^0.9.2",
     "@graphql-mesh/transport-common": "^0.7.6",
     "@graphql-tools/utils": "^10.5.3",
     "@opentelemetry/api": "^1.9.0",
