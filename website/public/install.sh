@@ -4,16 +4,16 @@ set -u
 
 GITHUB_OWNER="ardatan"
 GITHUB_REPO="graphql-mesh"
-BINARY_NAME="mesh-serve"
+BINARY_NAME="hive-gateway"
 
 # Determine the package version
 if [ "$#" -eq 1 ]; then
   TARGET_VERSION=$1
 else
   echo "Version not provided. Retrieving the latest version..."
-  TARGET_VERSION=$(npm show @graphql-mesh/serve-cli version 2>/dev/null)
+  TARGET_VERSION=$(npm show @graphql-hive/gateway version 2>/dev/null)
   if [ -z "$TARGET_VERSION" ]; then
-    echo "Could not retrieve the latest version of @graphql-mesh/serve-cli."
+    echo "Could not retrieve the latest version of @graphql-hive/gateway."
     exit 1
   fi
   echo "Using version: $TARGET_VERSION"

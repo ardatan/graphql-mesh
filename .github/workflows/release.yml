@@ -149,6 +149,9 @@ jobs:
       - name: package binary
         run: yarn workspace ${{ steps.names.outputs.packagename }} package-binary
         shell: bash
+      - name: compress binary
+        run: |
+          gzip -9 ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os == 'Windows' && '.exe' || '' }}
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -156,7 +159,7 @@ jobs:
           release_name: v${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
           file:
             ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os ==
-            'Windows' && '.exe' || ''}}
+            'Windows' && '.exe.gz' || '.gz' }}
           asset_name:
             ${{ matrix.productname }}-${{ runner.os }}-${{ runner.arch }}${{ runner.os == 'Windows'
             && '.exe' || ''}}
