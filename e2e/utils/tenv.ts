@@ -699,7 +699,7 @@ export function createTenv(cwd: string): Tenv {
         try {
           await waitForReachable(
             container,
-            AbortSignal.any([ctrl.signal, AbortSignal.timeout(timeout)]),
+            AbortSignal.any([ctrl.signal, AbortSignal.timeout(30_000)]),
           );
         } catch (err) {
           // Timed out, continue
