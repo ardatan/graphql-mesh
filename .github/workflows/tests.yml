@@ -419,14 +419,17 @@ jobs:
           winsdk-build-version: 18362
 
       # Install macOS specific dependencies
-      - name: Configure Homebrew cache
+      - name: get homebrew cache path
+        if: runner.os == 'macOS'
+        id: homebrew-cache-path
+        run: |
+          echo "result=$(brew --cache)" >> "$GITHUB_OUTPUT"
+      - name: cache homebrew
         if: runner.os == 'macOS'
         uses: actions/cache@v4
         with:
-          path: |
-            ~/Library/Caches/Homebrew/foo--*
-            ~/Library/Caches/Homebrew/downloads/*--foo-*
-          key: brew-${{ hashFiles('.github/brew-formulae') }}
+          path: ${{ steps.homebrew-cache-path.outputs.result }}
+          key: brew-${{ hashFiles(steps.homebrew-cache-path.outputs.result) }}
           restore-keys: brew-
       - name: Setup Docker on macOS
         if: runner.os == 'macOS'
