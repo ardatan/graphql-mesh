@@ -145,7 +145,7 @@ jobs:
         run: yarn workspace ${{ steps.names.outputs.packagename }} bundle
       - name: inject ${{ matrix.productname }} version
         run: |
-          yarn workspace ${{steps.names.outputs.packagename }} inject-version ${{ steps.ver-mesh-serve.outputs.result }}
+          yarn workspace ${{steps.names.outputs.packagename }} inject-version
       - name: package binary
         run: yarn workspace ${{ steps.names.outputs.packagename }} package-binary
         shell: bash
@@ -153,11 +153,12 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+          release_name: v${{ fromJSON(steps.ver-mesh-serve.outputs.result).version }}
           file:
             ${{ steps.names.outputs.packagedir }}/${{ matrix.productname }}${{ runner.os ==
             'Windows' && '.exe' || ''}}
           asset_name:
             ${{ matrix.productname }}-${{ runner.os }}-${{ runner.arch }}${{ runner.os == 'Windows'
             && '.exe' || ''}}
-          tag: ${{fromJSON(steps.ver-mesh-serve.outputs.result).version}}
+          tag: v${{fromJSON(steps.ver-mesh-serve.outputs.result).version}}
           overwrite: true
