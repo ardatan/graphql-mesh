@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/serve-runtime",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -44,8 +44,8 @@
     "@graphql-hive/core": "^0.8.0",
     "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/fusion-runtime": "^0.8.6",
-    "@graphql-mesh/hmac-upstream-signature": "^0.4.1",
-    "@graphql-mesh/plugin-hive": "^0.102.5",
+    "@graphql-mesh/hmac-upstream-signature": "^0.4.2",
+    "@graphql-mesh/plugin-hive": "^0.102.6",
     "@graphql-mesh/plugin-response-cache": "^0.102.5",
     "@graphql-mesh/transport-common": "^0.7.6",
     "@graphql-mesh/transport-http": "^0.6.6",

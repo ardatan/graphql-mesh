@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@graphql-mesh/compose-cli": "^0.10.0",
-    "@graphql-mesh/serve-runtime": "^0.9.1",
+    "@graphql-mesh/serve-runtime": "^0.9.2",
     "@omnigraph/openapi": "^0.106.7",
     "fastify": "^4.26.0",
     "graphql": "16.9.0",

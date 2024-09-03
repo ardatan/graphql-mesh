@@ -12,7 +12,7 @@
     "@envelop/auth0": "^6.0.0",
     "@graphql-mesh/compose-cli": "^0.10.0",
     "@graphql-mesh/plugin-operation-field-permissions": "^0.102.5",
-    "@graphql-mesh/serve-cli": "^0.12.1",
+    "@graphql-mesh/serve-cli": "^0.12.2",
     "@omnigraph/json-schema": "^0.106.6",
     "graphql": "16.9.0"
   },

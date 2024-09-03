@@ -13,7 +13,7 @@
     "@creditkarma/thrift-server-core": "1.0.4",
     "@creditkarma/thrift-server-express": "1.0.4",
     "@creditkarma/thrift-typescript": "3.7.6",
-    "@graphql-mesh/cli": "0.96.0",
+    "@graphql-mesh/cli": "0.96.1",
     "@graphql-mesh/thrift": "0.104.6",
     "express": "4.19.2",
     "graphql": "16.9.0",

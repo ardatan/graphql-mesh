@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.96.1
+
+### Patch Changes
+
+- [#7339](https://github.com/ardatan/graphql-mesh/pull/7339)
+  [`b50ad41`](https://github.com/ardatan/graphql-mesh/commit/b50ad4132197da143b2568f00b0136e013cee7d0)
+  Thanks [@YassinEldeeb](https://github.com/YassinEldeeb)! - dependencies updates:
+
+  - Added dependency
+    [`node-libcurl@npm:@ardatan/node-libcurl@^4.0.2` ↗︎](https://www.npmjs.com/package/node-libcurl/v/4.0.2)
+    (to `dependencies`)
+
+- [#7601](https://github.com/ardatan/graphql-mesh/pull/7601)
+  [`04251e5`](https://github.com/ardatan/graphql-mesh/commit/04251e57d05b91a2d4018ac63639d8b1eb56855a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Warn if \`node-libcurl\` is not available
+
 ## 0.96.0
 
 ### Patch Changes
