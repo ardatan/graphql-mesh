@@ -314,18 +314,9 @@ export function run(userCtx: Partial<CLIContext>) {
     ctx.log.info(`Starting ${productName} ${version || ''}`);
   }
 
-  const internalWarningLog = ctx.log.child('internal');
-
-  process.on('warning', warning => {
-    if (warning.name === 'MaxListenersExceededWarning') {
-      ctx.log.warn(
-        'Potential memory leak detected.\nPlease report this to the maintainers.\nEnable debug mode to see more details.',
-      );
-    }
-    internalWarningLog.warn(warning);
-  });
-
   addCommands(ctx, cli);
+
+  handleNodeWarnings();
 
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   warnIfNodeLibcurlMissing(ctx);
@@ -340,4 +331,13 @@ async function warnIfNodeLibcurlMissing(ctx: CLIContext) {
       'node-libcurl is not installed properly which is used for better performance and developer experience. Falling back to "node:http".',
     );
   }
+}
+
+function handleNodeWarnings() {
+  const originalProcessEmitWarning = process.emitWarning.bind(process);
+  process.emitWarning = function gatewayEmitWarning(warning: string | Error, ...opts: any[]) {
+    if (['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG))) {
+      originalProcessEmitWarning(warning, ...opts);
+    }
+  };
 }
