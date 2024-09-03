@@ -10105,7 +10105,7 @@ __metadata:
     fast-xml-parser: "npm:^4.3.4"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.1.2"
+    soap: "npm:1.1.3"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.5
     "@graphql-mesh/utils": ^0.102.5
@@ -15737,7 +15737,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.1, axios@npm:^1.7.4":
+"axios@npm:^1.6.1":
   version: 1.7.5
   resolution: "axios@npm:1.7.5"
   dependencies:
@@ -15745,6 +15745,17 @@ __metadata:
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
   checksum: 10c0/1d5daeb28b3d1bb2a7b9f0743433c4bfbeaddc15461e50ebde487eec6c009af2515749d5261096dd430c90cd891bd310bcba5ec3967bae2033c4a307f58a6ad3
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.7":
+  version: 1.7.7
+  resolution: "axios@npm:1.7.7"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/4499efc89e86b0b49ffddc018798de05fab26e3bf57913818266be73279a6418c3ce8f9e934c7d2d707ab8c095e837fc6c90608fb7715b94d357720b5f568af7
   languageName: node
   linkType: hard
 
@@ -18685,7 +18696,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:4.x, debug@npm:>=3 <5, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.2.0, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.3.5, debug@npm:~4.3.6":
+"debug@npm:4, debug@npm:4.x, debug@npm:>=3 <5, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.2.0, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.3.5, debug@npm:^4.3.6, debug@npm:~4.3.6":
   version: 4.3.6
   resolution: "debug@npm:4.3.6"
   dependencies:
@@ -34502,13 +34513,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap@npm:1.1.2":
-  version: 1.1.2
-  resolution: "soap@npm:1.1.2"
+"soap@npm:1.1.3":
+  version: 1.1.3
+  resolution: "soap@npm:1.1.3"
   dependencies:
-    axios: "npm:^1.7.4"
+    axios: "npm:^1.7.7"
     axios-ntlm: "npm:^1.4.2"
-    debug: "npm:^4.3.5"
+    debug: "npm:^4.3.6"
     formidable: "npm:^3.5.1"
     get-stream: "npm:^6.0.1"
     lodash: "npm:^4.17.21"
@@ -34516,7 +34527,7 @@ __metadata:
     strip-bom: "npm:^3.0.0"
     whatwg-mimetype: "npm:4.0.0"
     xml-crypto: "npm:^6.0.0"
-  checksum: 10c0/b07a1d9f81a03c0875aa505978b0f4f44579c8fc5a78a91387ab694dd4b89a93f22959935c7a68935524059cdc4da38f9dcc29ad6db12df5a2cb97856d390ee5
+  checksum: 10c0/2147d575e9eb86954b779536c7ee44caddbfa07df1b69d07fe0bb4ce1bbabd09b8d66cd9d3c6b0bbf6a307e1884ee5115691cada1427faf6371c6f5a0cf18165
   languageName: node
   linkType: hard
 
