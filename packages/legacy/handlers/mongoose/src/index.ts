@@ -97,11 +97,14 @@ export default class MongooseHandler implements MeshHandler {
 
           const resolversOption = modelConfig.options?.resolvers;
           function isResolverEnabled(operation): boolean {
-            return !resolversOption?.hasOwnProperty(operation) || resolversOption[operation] !== false;
+            return (
+              Object.prototype.hasOwnProperty.call(resolversOption, operation) ||
+              resolversOption[operation] !== false
+            );
           }
 
           const enabledQueryOperations = modelQueryOperations.filter(isResolverEnabled);
-          const enabledMuationOperations = modelMutationOperations.filter(isResolverEnabled);
+          const enabledMutationOperations = modelMutationOperations.filter(isResolverEnabled);
 
           await Promise.all([
             Promise.all(
@@ -112,7 +115,7 @@ export default class MongooseHandler implements MeshHandler {
               ),
             ),
             Promise.all(
-              enabledMuationOperations.map(async mutationOperation =>
+              enabledMutationOperations.map(async mutationOperation =>
                 schemaComposer.Mutation.addFields({
                   [`${modelConfig.name}_${mutationOperation}`]:
                     modelTC.getResolver(mutationOperation),
