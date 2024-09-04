@@ -20,6 +20,8 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
+const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG));
+
 export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, logger: Logger) {
   const ctx: LoaderContext = {
     fetch: config.fetch || defaultFetch,
@@ -29,14 +31,19 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
   const subgraphConfigsForComposition: SubgraphConfig[] = await Promise.all(
     config.subgraphs.map(async subgraphCLIConfig => {
       const { name: subgraphName, schema$ } = subgraphCLIConfig.sourceHandler(ctx);
-      const log = logger.child(`"${subgraphName}" subgraph`);
-      log.info(`Loading`);
+      const log = logger.child(`[${subgraphName}]`);
+      log.debug(`Loading subgraph`);
       let subgraphSchema: GraphQLSchema;
       try {
         subgraphSchema = await schema$;
       } catch (e) {
-        log.error(`Failed to load subgraph ${subgraphName}`);
-        throw e;
+        if (isDebug) {
+          log.error(`Failed to load subgraph`, e);
+        } else {
+          log.error(e.message || e);
+          log.error(`Failed to load subgraph`);
+        }
+        process.exit(1);
       }
       return {
         name: subgraphName,
@@ -85,18 +92,26 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
     const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphConfigsForComposition);
     const subgraph = annotatedSubgraphs.find(sg => sg.name === config.subgraph);
     if (!subgraph) {
-      throw new Error(`Subgraph ${config.subgraph} not found`);
+      logger.error(`Subgraph ${config.subgraph} not found`);
+      process.exit(1);
     }
     return print(subgraph.typeDefs);
   }
   const result = composeSubgraphs(subgraphConfigsForComposition);
   if (result.errors?.length) {
-    throw new Error(
-      `Failed to compose subgraphs; \n${result.errors.map(e => `- ${e.message}`).join('\n')}`,
-    );
+    for (const error of result.errors) {
+      if (isDebug) {
+        logger.error(error);
+      } else {
+        logger.error(error.message || error);
+      }
+    }
+    logger.error(`Failed to compose subgraphs`);
+    process.exit(1);
   }
   if (!result.supergraphSdl) {
-    throw new Error(`Unknown error: composed schema is empty`);
+    logger.error(`Unknown error: Supergraph is empty`);
+    process.exit(1);
   }
   if (additionalTypeDefs?.length /* TODO || config.transforms?.length */) {
     let composedSchema = buildSchema(result.supergraphSdl, {
