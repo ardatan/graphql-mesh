@@ -61,7 +61,6 @@ const getIntrospectionOperationType = memoize1(function getIntrospectionOperatio
 
 function getExecuteFn(subschema: Subschema) {
   const compiledQueryCache = new WeakMap<DocumentNode, CompiledQuery>();
-  const transformedDocumentNodeCache = new WeakMap<DocumentNode, DocumentNode>();
   return function subschemaExecute(args: TypedExecutionArgs<any>): any {
     const originalRequest: ExecutionRequest = {
       document: args.document,
@@ -166,14 +165,6 @@ function getExecuteFn(subschema: Subschema) {
       transformationContext,
       subschema.transforms,
     );
-    const cachedTransfomedDocumentNode: DocumentNode = transformedDocumentNodeCache.get(
-      originalRequest.document,
-    );
-    if (cachedTransfomedDocumentNode) {
-      transformedRequest.document = cachedTransfomedDocumentNode;
-    } else {
-      transformedDocumentNodeCache.set(originalRequest.document, transformedRequest.document);
-    }
 
     return mapMaybePromise(
       executor(transformedRequest),
