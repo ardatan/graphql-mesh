@@ -316,8 +316,6 @@ export function run(userCtx: Partial<CLIContext>) {
 
   addCommands(ctx, cli);
 
-  handleNodeWarnings();
-
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   warnIfNodeLibcurlMissing(ctx);
 
@@ -333,7 +331,7 @@ async function warnIfNodeLibcurlMissing(ctx: CLIContext) {
   }
 }
 
-function handleNodeWarnings() {
+export function handleNodeWarnings() {
   const originalProcessEmitWarning = process.emitWarning.bind(process);
   process.emitWarning = function gatewayEmitWarning(warning: string | Error, ...opts: any[]) {
     if (['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG))) {
