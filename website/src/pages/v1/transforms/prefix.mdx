@@ -1,0 +1,47 @@
+---
+description:
+  Add prefixes to GraphQL types and operations using Prefix Transform in GraphQL Mesh. Simplify
+  complicated names, avoid conflicts, and "namespace" APIs easily. Learn how to use it with examples
+  and API reference.
+---
+
+import { Callout } from '@theguild/components'
+
+# Prefix Transform
+
+The prefix transform allows you to add prefixes to existing GraphQL types and root operations (under
+`Query/Mutation`). Prefix transform is similar to [Rename Transform](/v1/transforms/rename) in that
+it allows you to modify names to avoid conflicts, simplify complicated names, and change the
+appearance of your query. In contrast with the Rename Transform, Prefix Transform is simpler and
+only allows you to append a **prefix** to the existing name.
+
+You can use it to easily "namespace" APIs in your unified API and avoid conflicts.
+
+## How to use?
+
+You can import `createPrefixTransform` to create an instance of the transform. The `value` option is
+the prefix that you want to add to the types and fields of the subgraph. In the example below, we
+add `Countries_` to the types and fields of the subgraph.
+
+```ts filename="mesh.config.ts" {13-17}
+import {
+  createPrefixTransform,
+  defineConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Countries', {
+        endpoint: 'https://countries.trevorblades.com'
+      }),
+      transforms: [
+        createPrefixTransform({
+          value: 'Countries_'
+        })
+      ]
+    }
+  ]
+})
+```
