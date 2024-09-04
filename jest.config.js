@@ -52,6 +52,7 @@ if (process.env.CI && !isLinux) {
   testMatch.push('!**/e2e/auto-type-merging/**');
   testMatch.push('!**/e2e/neo4j-example/**');
   testMatch.push('!**/e2e/soap-demo/**');
+  testMatch.push('!**/e2e/mysql-employees/**');
   if (isWindows) {
     testMatch.push('!**/e2e/opentelemetry/**');
   }
