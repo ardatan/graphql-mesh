@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import type { RequestListener } from 'node:http';
+import type { RequestListener, Server } from 'node:http';
 import type { AddressInfo, Socket } from 'node:net';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
@@ -7,10 +7,16 @@ export interface DisposableServerOpts {
   port?: number;
 }
 
+export interface DisposableServer {
+  address(): AddressInfo;
+  [DisposableSymbols.asyncDispose](): Promise<void>;
+  server: Server;
+}
+
 export async function createDisposableServer(
   requestListener?: RequestListener,
   opts?: DisposableServerOpts,
-) {
+): Promise<DisposableServer> {
   const server = createServer(requestListener);
   const port = opts?.port || 0;
   await new Promise<void>((resolve, reject) => {
@@ -37,7 +43,7 @@ export async function createDisposableServer(
         server.close(err => (err ? reject(err) : resolve()));
       });
     },
-    get server() {
+    get server(): Server {
       return server;
     },
   };
