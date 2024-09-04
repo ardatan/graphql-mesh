@@ -422,6 +422,9 @@ jobs:
         shell: bash
       - name: prepare
         run: yarn prebuild
+      - name: pull docker images
+        run: |
+          docker image pull ${{ runner.os == 'Windows' && 'johnnyhuy/jaeger-windows:1809' || 'jaegertracing/all-in-one:1.56' }}
       - name: bundle
         if: matrix.setup.serve-runner == 'docker' || matrix.setup.serve-runner == 'bin'
         env:
