@@ -21,7 +21,7 @@ import {
 } from '@opentelemetry/api';
 import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks';
 import { Resource } from '@opentelemetry/resources';
-import { NodeSDK } from '@opentelemetry/sdk-node';
+import { NodeSDK, type NodeSDKConfiguration } from '@opentelemetry/sdk-node';
 import { type SpanProcessor } from '@opentelemetry/sdk-trace-node';
 import type { OnRequestEventPayload } from '@whatwg-node/server';
 import { SEMRESATTRS_SERVICE_NAME } from './attributes.js';
@@ -130,7 +130,7 @@ export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): Ga
     resource: new Resource({
       [SEMRESATTRS_SERVICE_NAME]: serviceName,
     }),
-    spanProcessors,
+    spanProcessors: spanProcessors as unknown as NodeSDKConfiguration['spanProcessors'],
     contextManager,
     instrumentations: [],
   });
