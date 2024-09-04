@@ -656,8 +656,6 @@ export function createTenv(cwd: string): Tenv {
         throw err;
       }
 
-      // Timeout for healthcheck
-
       // wait for healthy
       if (healthcheck.length > 0) {
         while (!ctrl.signal.aborted) {
