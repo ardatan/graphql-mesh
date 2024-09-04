@@ -119,7 +119,7 @@ Then, in your GraphQL schema SDL, you can add `@skipAuth` directive to your fiel
 # This is needed for Federation because `@skipAuth` is not part of Federation spec
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@composeDirective"])
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
   @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@skipAuth"])
   @composeDirective(name: "@skipAuth")
 
