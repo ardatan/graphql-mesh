@@ -41,7 +41,7 @@ export interface JSONSchemaLinkConfig {
 }
 
 export type JSONSchemaBaseOperationConfig = {
-  type: OperationTypeNode;
+  type: OperationTypeNode | 'Query' | 'Mutation' | 'Subscription';
   field: string;
   description?: string;
 

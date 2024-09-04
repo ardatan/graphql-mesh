@@ -1,0 +1,77 @@
+# Migration from GraphQL Mesh v0
+
+If you are migrating from GraphQL Mesh v0, you should be aware of the following changes:
+
+- GraphQL Mesh no longer comes with a built-in gateway. You should setup Hive Gateway to serve the
+  generated artifacts.
+- GraphQL Mesh no longer generates an executable JavaScript code in `.mesh` folder, but instead it
+  builds a GraphQL SDL (Supergraph or Subgraph) that you can use with Hive Gateway.
+- GraphQL Mesh Transforms no longer have `bare` mode. There is only `wrap` mode now, and all the
+  transforms are using Federation-compatible directives. Any transformed subgraph should be served
+  using Hive Gateway.
+- If you deploy GraphQL Mesh v0 by using the http handler provided in the artifacts under `.mesh`,
+  now you should take a look at
+  [Hive Gateway's Deployment Guide](https://graphql-hive.com/docs/gateway/deployment) to deploy your
+  gateway.
+- GraphQL Mesh no longer [GraphQL Code Generator](https://graphql-codegen.com) internally. You
+  should use it separately if you need to generate types or documents.
+- GraphQL Mesh no longer generates Persisted Operations store. You should setup your gateway based
+  on your needs.
+  [See here](https://graphql-hive.com/docs/gateway/features/performance/persisted-operations) for
+  more information.
+
+GraphQL Mesh is now only responsible of generating a GraphQL SDL file `supergraph.graphql` or
+`subgraph.graphql` that you can use with Hive Gateway, it is not responsible for serving the
+generated artifacts.
+
+<Callout>
+  Please make sure all of your `@graphql-mesh/` packages are up-to-date. Otherwise, the migration
+  script may not work as expected!
+</Callout>
+
+## Configuration Format
+
+Before Mesh used to support a configuration file in `.meshrc.yml` or `.meshrc.json` format. Now Mesh
+only supports a configuration file in `mesh.config.js` or `mesh.config.ts` format.
+
+Please install `@graphql-mesh/migrate-config-cli` package to migrate your configuration file from v0
+to v1.
+
+```sh npm2yarn
+npm install @graphql-mesh/migrate-config-cli
+```
+
+Then run the following command in your project directory:
+
+```sh
+npx mesh-migrate
+```
+
+During the migration process, you might get some errors or warnings related to the deprecated or
+removed functionalities. Please make sure to update your legacy v0 configuration and setup according
+to those warnings and errors to get the best out of the new version.
+
+## Package Changes
+
+Instead of `@graphql-mesh/cli`, you should now use `@graphql-mesh/compose-cli` and
+`@graphql-hive/gateway` packages.
+
+For example with `npm`:
+
+```bash
+npm uninstall @graphql-mesh/cli
+npm install @graphql-mesh/compose-cli @graphql-hive/gateway
+```
+
+Source handler packages are also changed, now we have `@omnigraph/*` packages instead of
+`@graphql-mesh/*` packages.
+
+## Using Artifacts
+
+GraphQL Mesh no longer generates artifacts with `execute` or `createBuiltMeshHTTPHandler` functions.
+Instead, it generates a GraphQL SDL file that you can use with Hive Gateway.
+
+Read more about [Hive Gateway's Deployment Guide](https://graphql-hive.com/docs/gateway/deployment)
+to setup your gateway with the new artifacts.
+
+If you need local execution, refer to the local execution guide [here](/v1/local-execution).

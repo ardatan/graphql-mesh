@@ -9,4 +9,5 @@ export default {
   'rate-limit': 'Rate Limit',
   auth: 'Authentication',
   'consume-in-other-gateways': 'Consume in Other Gateways',
+  'migration-from-v0': 'Migration from Mesh v0',
 };
