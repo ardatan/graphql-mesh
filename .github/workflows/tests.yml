@@ -495,8 +495,6 @@ jobs:
           wait
         shell: bash
       - name: test
-        # TODO: skipped only once so that we cache stuff
-        if: runner.os != 'macOS'
         timeout-minutes: 60
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
