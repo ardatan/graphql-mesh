@@ -5,7 +5,6 @@ const { compose, service, serve, container } = createTenv(__dirname);
 let petstore!: Container;
 beforeAll(async () => {
   petstore = await container({
-    pipeLogs: true,
     name: 'petstore',
     image: 'swaggerapi/petstore3:1.0.7',
     containerPort: 8080,
@@ -17,7 +16,6 @@ it('should compose the appropriate schema', async () => {
   const { result } = await compose({
     services: [petstore, await service('vaccination')],
     maskServicePorts: true,
-    pipeLogs: true,
   });
   expect(result).toMatchSnapshot();
 });
@@ -41,6 +39,6 @@ it.concurrent.each([
     output: 'graphql',
     services: [petstore, await service('vaccination')],
   });
-  const { execute } = await serve({ supergraph: output, pipeLogs: true });
+  const { execute } = await serve({ supergraph: output });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });

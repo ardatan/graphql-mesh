@@ -5,7 +5,6 @@ const { compose, container, serve, spawn } = createTenv(__dirname);
 let neo4j: Container;
 beforeAll(async () => {
   neo4j = await container({
-    pipeLogs: true,
     name: 'neo4j',
     image: 'neo4j:5.22.0',
     containerPort: 7687,

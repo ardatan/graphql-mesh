@@ -195,7 +195,7 @@ export interface ContainerOptions extends ProcOptions {
    */
   hostPort?: number;
   /**
-   * The healtcheck test command to run on the container.
+   * The healthcheck test command to run on the container.
    * If provided, the run function will wait for the container to become healthy.
    */
   healthcheck: string[];
@@ -594,12 +594,15 @@ export function createTenv(cwd: string): Tenv {
             ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
           ),
         },
-        Healthcheck: {
-          Test: healthcheck,
-          Interval: msToNs(interval),
-          Timeout: 0, // dont wait between tests
-          Retries: retries,
-        },
+        Healthcheck:
+          healthcheck.length > 0
+            ? {
+                Test: healthcheck,
+                Interval: msToNs(interval),
+                Timeout: 0, // dont wait between tests
+                Retries: retries,
+              }
+            : undefined,
         abortSignal: ctrl.signal,
       });
 
@@ -855,7 +858,7 @@ async function waitForPort(port: number, signal: AbortSignal) {
   }
 }
 
-async function waitForReachable(server: Server, signal: AbortSignal) {
+function waitForReachable(server: Server, signal: AbortSignal) {
   const ports = [server.port];
   if ('additionalPorts' in server) {
     ports.push(...Object.values(server.additionalPorts));
