@@ -1,5 +1,17 @@
 # @graphql-mesh/serve-runtime
 
+## 0.9.3
+
+### Patch Changes
+
+- [`81c25d3`](https://github.com/ardatan/graphql-mesh/commit/81c25d3a32ba9048303be26b5a38eeaf82a66e73)
+  Thanks [@ardatan](https://github.com/ardatan)! - DX improvements, less noisy logs by default
+
+- Updated dependencies
+  [[`81c25d3`](https://github.com/ardatan/graphql-mesh/commit/81c25d3a32ba9048303be26b5a38eeaf82a66e73)]:
+  - @graphql-mesh/fusion-runtime@0.8.7
+  - @graphql-mesh/hmac-upstream-signature@0.4.3
+
 ## 0.9.2
 
 ### Patch Changes

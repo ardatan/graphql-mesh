@@ -1,10 +1,5 @@
 import { GraphQLDirective, GraphQLSchema, isSpecifiedDirective } from 'graphql';
-import {
-  getDirectiveExtensions,
-  MapperKind,
-  mapSchema,
-  printSchemaWithDirectives,
-} from '@graphql-tools/utils';
+import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
 export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
@@ -41,10 +36,14 @@ export function importFederationDirectives(subgraph: GraphQLSchema, directives: 
   );
   if (!importStatement) {
     importStatement = {
-      url: 'https://specs.apollo.dev/federation/v2.3',
+      url: 'https://specs.apollo.dev/federation/v2.6',
       import: [],
     };
     linkDirectives.push(importStatement);
+  }
+  // v2.0 is not supported so bump to v2.6
+  if (importStatement.url === 'https://specs.apollo.dev/federation/v2.0') {
+    importStatement.url = 'https://specs.apollo.dev/federation/v2.6';
   }
   importStatement.import = [...new Set([...(importStatement.import || []), ...directives])];
   const extensions: Record<string, unknown> = (subgraph.extensions ||= {});
@@ -98,7 +97,12 @@ export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
   subgraph = mapSchema(subgraph, {
     [MapperKind.DIRECTIVE]: directive => {
       const directiveName = `@${directive.name}`;
-      if (!isSpecifiedDirective(directive) && !FEDERATION_V1_DIRECTIVES.includes(directiveName)) {
+      if (
+        !isSpecifiedDirective(directive) &&
+        !FEDERATION_V1_DIRECTIVES.includes(directiveName) &&
+        !directiveName.startsWith('@federation__') &&
+        directiveName !== '@link'
+      ) {
         meshDirectives.push(directiveName);
         if (!directive.isRepeatable && directive.args.some(arg => arg.name === 'subgraph')) {
           return new GraphQLDirective({
