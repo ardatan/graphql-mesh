@@ -49,6 +49,7 @@ const isLinux = platformName === 'linux';
 const isWindows = platformName === 'win32';
 
 if (process.env.CI && !isLinux) {
+  // TODO: containers are not starting on non-linux environments
   testMatch.push('!**/e2e/auto-type-merging/**');
   testMatch.push('!**/e2e/neo4j-example/**');
   testMatch.push('!**/e2e/soap-demo/**');
