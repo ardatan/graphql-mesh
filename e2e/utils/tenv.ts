@@ -660,11 +660,7 @@ export function createTenv(cwd: string): Tenv {
 
       // wait for healthy
       if (healthcheck.length > 0) {
-        let timedOut = false;
-        globalThis.setTimeout(() => {
-          timedOut = true;
-        }, 30_000);
-        while (!timedOut && !ctrl.signal.aborted) {
+        while (!ctrl.signal.aborted) {
           let status = '';
           try {
             const {
@@ -696,14 +692,7 @@ export function createTenv(cwd: string): Tenv {
           }
         }
       } else {
-        try {
-          await waitForReachable(
-            container,
-            AbortSignal.any([ctrl.signal, AbortSignal.timeout(30_000)]),
-          );
-        } catch (err) {
-          // Timed out, continue
-        }
+        await waitForReachable(container, ctrl.signal);
       }
       return container;
     },

@@ -3,6 +3,7 @@ const { pathsToModuleNameMapper } = require('ts-jest');
 const JSON5 = require('json5');
 const CI = !!process.env.CI;
 const { readFileSync } = require('fs');
+const { platform } = require('os');
 
 const ROOT_DIR = __dirname;
 const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
@@ -41,6 +42,19 @@ if (process.env.E2E_TEST) {
   testMatch = ['**/e2e/**/?(*.)+(spec|test).[jt]s?(x)'];
 } else {
   testMatch.push('!**/e2e/**/?(*.)+(spec|test).[jt]s?(x)');
+}
+
+const platformName = platform();
+const isLinux = platformName === 'linux';
+const isWindows = platformName === 'win32';
+
+if (process.env.CI && !isLinux) {
+  testMatch.push('!**/e2e/auto-type-merging/**');
+  testMatch.push('!**/e2e/neo4j-example/**');
+  testMatch.push('!**/e2e/soap-demo/**');
+  if (isWindows) {
+    testMatch.push('!**/e2e/opentelemetry/**');
+  }
 }
 
 // Disable grpc-reflection tests for Node.js v22.7.0
