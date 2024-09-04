@@ -162,6 +162,6 @@ jobs:
             'Windows' && '.exe.gz' || '.gz' }}
           asset_name:
             ${{ matrix.productname }}-${{ runner.os }}-${{ runner.arch }}${{ runner.os == 'Windows'
-            && '.exe' || ''}}
+            && '.exe.gz' || '.gz'}}
           tag: v${{fromJSON(steps.ver-mesh-serve.outputs.result).version}}
           overwrite: true

@@ -47,7 +47,7 @@ fetch_and_prepare_binary() {
   DOWNLOAD_URL=$(echo "$API_RESPONSE" | jq -r ".assets[] | select(.name == \"$BINARY_NAME-${architecture}\") | .browser_download_url")
 
   if [ -n "$DOWNLOAD_URL" ]; then
-    destination_file="./$BINARY_NAME-${architecture}.zip"
+    destination_file="./$BINARY_NAME-${architecture}.gz"
     echo "Downloading $BINARY_NAME from $DOWNLOAD_URL ..."
     curl -sSfL "$DOWNLOAD_URL" -o "$destination_file"
 
