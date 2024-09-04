@@ -99,6 +99,7 @@ export default class MongooseHandler implements MeshHandler {
           const resolversOption = modelConfig.options?.resolvers;
           function isResolverEnabled(operation): boolean {
             return (
+              resolversOption == null ||
               Object.prototype.hasOwnProperty.call(resolversOption, operation) ||
               resolversOption[operation] !== false
             );

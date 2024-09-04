@@ -1,11 +1,7 @@
-import { basename, join } from 'path';
-import { introspectionFromSchema, lexicographicSortSchema, printSchema } from 'graphql';
+import { join } from 'path';
+import { lexicographicSortSchema, printSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadDocuments } from '@graphql-tools/load';
-
-jest.setTimeout(30000);
 
 describe('Mongoose', () => {
   let mesh: MeshInstance;
@@ -19,6 +15,6 @@ describe('Mongoose', () => {
     expect(printSchema(lexicographicSortSchema(mesh.schema))).toMatchSnapshot();
   });
   afterAll(() => {
-    mesh.destroy();
+    mesh?.destroy();
   });
 });
