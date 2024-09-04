@@ -412,9 +412,13 @@ jobs:
         with:
           node-version: ${{matrix.setup.node-version}}
       - name: Pull Docker Images used in E2E
-        if: runner.os == 'macOS'
         run: |
-          docker image pull ${{ runner.os == 'Windows' && 'johnnyhuy/jaeger-windows:1809' || 'jaegertracing/all-in-one:1.56' }} &
+          docker image pull swaggerapi/petstore3:1.0.7 & \
+          docker image pull genschsa/mysql-employees & \
+          docker image pull neo4j:5.22.0 & \
+          docker image pull ${{ runner.os == 'Windows' && 'johnnyhuy/jaeger-windows:1809' || 'jaegertracing/all-in-one:1.56' }} & \
+          docker image pull outofcoffee/imposter & \
+          wait
         shell: bash
       - name: prepare
         run: yarn prebuild
