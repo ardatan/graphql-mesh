@@ -1,5 +1,16 @@
 # @graphql-mesh/compose-cli
 
+## 0.10.1
+
+### Patch Changes
+
+- [`81c25d3`](https://github.com/ardatan/graphql-mesh/commit/81c25d3a32ba9048303be26b5a38eeaf82a66e73)
+  Thanks [@ardatan](https://github.com/ardatan)! - DX improvements, less noisy logs by default
+
+- Updated dependencies
+  [[`28cd8b0`](https://github.com/ardatan/graphql-mesh/commit/28cd8b0fb657e9b62d6d2e15ce125bcd791c84ec)]:
+  - @graphql-mesh/fusion-composition@0.5.1
+
 ## 0.10.0
 
 ### Minor Changes

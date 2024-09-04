@@ -1,5 +1,14 @@
 # @graphql-mesh/fusion-composition
 
+## 0.5.1
+
+### Patch Changes
+
+- [`28cd8b0`](https://github.com/ardatan/graphql-mesh/commit/28cd8b0fb657e9b62d6d2e15ce125bcd791c84ec)
+  Thanks [@ardatan](https://github.com/ardatan)! - Automatically upgrade Federation v2.0 to v2.x
+  because Mesh Compose doesn't support v2.0 and it needs \`@composeDirective\` which is available
+  since v2.1
+
 ## 0.5.0
 
 ### Minor Changes
