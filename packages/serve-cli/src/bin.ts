@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { run } from './cli.js';
+import { handleNodeWarnings, run } from './cli.js';
 
 // @inject-version globalThis.__VERSION__ here
+
+handleNodeWarnings();
 
 const log = new DefaultLogger();
 

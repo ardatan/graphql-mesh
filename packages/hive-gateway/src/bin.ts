@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-import { run } from '@graphql-mesh/serve-cli';
+import { handleNodeWarnings, run } from '@graphql-mesh/serve-cli';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { hiveProductConfig } from './hiveProductConfig.js';
 
 // @inject-version globalThis.__VERSION__ here
+
+handleNodeWarnings();
 
 const log = new DefaultLogger();
 
