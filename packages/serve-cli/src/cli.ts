@@ -4,6 +4,7 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 import cluster from 'node:cluster';
 import module from 'node:module';
 import { availableParallelism, platform, release } from 'node:os';
+import { join } from 'node:path';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import type { InitializeData } from '@graphql-mesh/include/hooks';
@@ -336,4 +337,16 @@ export function handleNodeWarnings() {
       originalProcessEmitWarning(warning, ...opts);
     }
   };
+}
+
+export function enableModuleCachingIfPossible() {
+  let cacheDir: string | undefined;
+  if (globalThis.__PACKED_DEPS_PATH__) {
+    cacheDir = join(globalThis.__PACKED_DEPS_PATH__, 'node-compile-cache');
+  }
+  // @ts-expect-error - enableCompileCache has recently been added to the module object
+  if (module.enableCompileCache) {
+    // @ts-expect-error - enableCompileCache has recently been added to the module object
+    module.enableCompileCache(cacheDir);
+  }
 }
