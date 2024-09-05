@@ -11,9 +11,7 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "bin": {
-    "migrate-config-cli": "dist/cjs/bin.js"
-  },
+  "bin": "dist/cjs/bin.js",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "exports": {
@@ -44,7 +42,7 @@
     "@graphql-mesh/config": "^0.104.5",
     "@graphql-mesh/types": "^0.102.5",
     "@graphql-mesh/utils": "^0.102.5",
-    "lodash": "^4.17.21",
+    "lodash.kebabcase": "^4.1.1",
     "prettier": "^3.3.3"
   },
   "publishConfig": {

@@ -2,7 +2,7 @@
 import { writeFileSync } from 'node:fs';
 // eslint-disable-next-line import/no-nodejs-modules
 import { join } from 'node:path';
-import kebabCase from 'lodash/kebabCase';
+import kebabCase from 'lodash.kebabcase';
 import { format } from 'prettier';
 import { findConfig } from '@graphql-mesh/cli';
 import { camelCase } from '@graphql-mesh/compose-cli';
