@@ -46,7 +46,6 @@ if (process.env.E2E_TEST) {
 
 const platformName = platform();
 const isLinux = platformName === 'linux';
-const isWindows = platformName === 'win32';
 
 if (process.env.CI && !isLinux) {
   // TODO: containers are not starting on non-linux environments
@@ -54,9 +53,7 @@ if (process.env.CI && !isLinux) {
   testMatch.push('!**/e2e/neo4j-example/**');
   testMatch.push('!**/e2e/soap-demo/**');
   testMatch.push('!**/e2e/mysql-employees/**');
-  if (isWindows) {
-    testMatch.push('!**/e2e/opentelemetry/**');
-  }
+  testMatch.push('!**/e2e/opentelemetry/**');
 }
 
 // Disable grpc-reflection tests for Node.js v22.7.0
