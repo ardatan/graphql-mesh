@@ -146,7 +146,7 @@ return module.exports;
       if (includeHooksRegisterDest.test(code)) {
         code = code.replaceAll(
           includeHooksRegisterDest,
-          `register(require('node:path').join(globalThis.__PACKED_DEPS_PATH__, '@graphql-mesh', 'include', 'hooks.mjs')`,
+          `register(require('node:url').pathToFileURL(require('node:path').join(globalThis.__PACKED_DEPS_PATH__, '@graphql-mesh', 'include', 'hooks.mjs'))`,
         );
       } else {
         throw new Error(

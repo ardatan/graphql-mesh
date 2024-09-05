@@ -6252,6 +6252,7 @@ __metadata:
     "@graphql-mesh/config": "npm:^0.104.5"
     "@graphql-mesh/types": "npm:^0.102.5"
     "@graphql-mesh/utils": "npm:^0.102.5"
+    "@types/lodash.kebabcase": "npm:^4.1.9"
     lodash.kebabcase: "npm:^4.1.1"
     prettier: "npm:^3.3.3"
   peerDependencies:
@@ -13506,6 +13507,15 @@ __metadata:
   dependencies:
     "@types/lodash": "npm:*"
   checksum: 10c0/6466d9b4c1d4cf87010209923662091e771efb84973af8d10b40702b824d2ac6f6836b4111b5cf437a298c21333ed23bfe45a60713abed559aabf46e31d1ce2e
+  languageName: node
+  linkType: hard
+
+"@types/lodash.kebabcase@npm:^4.1.9":
+  version: 4.1.9
+  resolution: "@types/lodash.kebabcase@npm:4.1.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/f00fbfb891fd1883e3fab2286fa2b23a013550b3498013c8c8c5e3ed437f52543afe8e8dc899b4f3317bab8db403bb281de863274a6fa12f088667378fd7b475
   languageName: node
   linkType: hard
 
