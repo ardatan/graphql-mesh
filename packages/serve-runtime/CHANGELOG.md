@@ -1,5 +1,13 @@
 # @graphql-mesh/serve-runtime
 
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/fusion-runtime@0.8.8
+  - @graphql-mesh/hmac-upstream-signature@0.4.4
+
 ## 0.9.3
 
 ### Patch Changes

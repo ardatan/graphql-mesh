@@ -1,5 +1,13 @@
 # @graphql-mesh/config
 
+## 0.104.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7df3815`](https://github.com/ardatan/graphql-mesh/commit/7df381588b8f0934cf93d67cb9ac6268295f990e)]:
+  - @graphql-mesh/runtime@0.103.6
+
 ## 0.104.5
 
 ### Patch Changes

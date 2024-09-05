@@ -1,5 +1,21 @@
 # @graphql-mesh/serve-cli
 
+## 0.12.4
+
+### Patch Changes
+
+- [#7621](https://github.com/ardatan/graphql-mesh/pull/7621)
+  [`e7765e6`](https://github.com/ardatan/graphql-mesh/commit/e7765e636f077a2dd0d5de2e61351bb6a9f7f8f9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Suppress Node Warnings, and expose them only if
+  \`DEBUG\` env var is truthy
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.9.4
+  - @graphql-mesh/hmac-upstream-signature@0.4.4
+  - @graphql-mesh/plugin-jwt-auth@0.4.4
+  - @graphql-mesh/plugin-opentelemetry@0.4.4
+  - @graphql-mesh/plugin-prometheus@0.107.4
+
 ## 0.12.3
 
 ### Patch Changes

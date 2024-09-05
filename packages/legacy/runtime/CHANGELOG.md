@@ -1,5 +1,12 @@
 # @graphql-mesh/runtime
 
+## 0.103.6
+
+### Patch Changes
+
+- [`7df3815`](https://github.com/ardatan/graphql-mesh/commit/7df381588b8f0934cf93d67cb9ac6268295f990e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Disable transformation caching temporarily
+
 ## 0.103.5
 
 ### Patch Changes

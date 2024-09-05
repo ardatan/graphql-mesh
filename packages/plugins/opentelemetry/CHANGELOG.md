@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-opentelemetry
 
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@0.9.4
+
 ## 0.4.3
 
 ### Patch Changes
