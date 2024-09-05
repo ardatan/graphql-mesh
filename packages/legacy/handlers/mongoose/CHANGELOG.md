@@ -1,5 +1,14 @@
 # @graphql-mesh/mongoose
 
+## 0.102.6
+
+### Patch Changes
+
+- [#7034](https://github.com/ardatan/graphql-mesh/pull/7034)
+  [`0de7f93`](https://github.com/ardatan/graphql-mesh/commit/0de7f937b119fcba01ffcb4a045ac36db760115f)
+  Thanks [@jstebenne](https://github.com/jstebenne)! - Fix: filter out disabled operations in
+  Mongoose handler when generating schema
+
 ## 0.102.5
 
 ### Patch Changes

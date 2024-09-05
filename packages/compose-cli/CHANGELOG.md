@@ -1,5 +1,13 @@
 # @graphql-mesh/compose-cli
 
+## 0.10.2
+
+### Patch Changes
+
+- [#7628](https://github.com/ardatan/graphql-mesh/pull/7628)
+  [`c8984ce`](https://github.com/ardatan/graphql-mesh/commit/c8984ce7e97f9e5ae803aff13fbdeed94a8b7438)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better error messages
+
 ## 0.10.1
 
 ### Patch Changes
