@@ -47,7 +47,7 @@ if (process.env.E2E_TEST) {
 const platformName = platform();
 const isLinux = platformName === 'linux';
 
-if (process.env.CI && !isLinux) {
+if (process.env.E2E_TEST && process.env.CI && !isLinux) {
   // TODO: containers are not starting on non-linux environments
   testMatch.push('!**/e2e/auto-type-merging/**');
   testMatch.push('!**/e2e/neo4j-example/**');
