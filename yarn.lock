@@ -6258,7 +6258,7 @@ __metadata:
     graphql: "*"
     tslib: ^2.4.0
   bin:
-    migrate-config-cli: dist/cjs/bin.js
+    mesh-migrate-config: dist/cjs/bin.js
   languageName: unknown
   linkType: soft
 
