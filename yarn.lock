@@ -4790,7 +4790,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.96.2"
     "@graphql-mesh/grpc": "npm:0.104.6"
     "@graphql-mesh/transform-naming-convention": "npm:0.102.5"
-    "@grpc/grpc-js": "npm:1.11.1"
+    "@grpc/grpc-js": "npm:1.11.2"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.4"
@@ -4809,7 +4809,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.96.2"
     "@graphql-mesh/grpc": "npm:0.104.6"
     "@graphql-mesh/transform-naming-convention": "npm:0.102.5"
-    "@grpc/grpc-js": "npm:1.11.1"
+    "@grpc/grpc-js": "npm:1.11.2"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:8.2.2"
     google-protobuf: "npm:3.21.4"
@@ -8304,13 +8304,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.11.1, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
-  version: 1.11.1
-  resolution: "@grpc/grpc-js@npm:1.11.1"
+"@grpc/grpc-js@npm:1.11.2, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
+  version: 1.11.2
+  resolution: "@grpc/grpc-js@npm:1.11.2"
   dependencies:
     "@grpc/proto-loader": "npm:^0.7.13"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10c0/1b15112d91b0f99e4843b068572935ecdc3e22a330a1b2ec81be84aeefad703b29f8e557088e448a6f696a1fccf10edf37166f0a533119f7db03aae4cedd34df
+  checksum: 10c0/d69a1db3726d7a09a54394971bd54c77dfc2e8f48b23384771a2074ecc947b240ea065b4f1d74300e76fd47d7914071460d98702bd1512b7a9d6085eac6a6012
   languageName: node
   linkType: hard
 
