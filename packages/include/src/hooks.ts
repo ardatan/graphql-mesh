@@ -56,6 +56,10 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
     debug(`Fixing Windows path at "${context.parentURL}"`);
     context.parentURL = `file:///${context.parentURL.replace(/\\/g, '/')}`;
   }
+  if (path.sep === '\\' && specifier[1] === ':') {
+    debug(`Fixing Windows path at "${specifier}"`);
+    specifier = `file:///${specifier.replace(/\\/g, '/')}`;
+  }
   if (packedDepsPath) {
     try {
       const resolved = await nextResolve(
