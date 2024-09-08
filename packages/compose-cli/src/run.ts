@@ -1,11 +1,13 @@
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
-import { promises as fsPromises } from 'fs';
+import { promises as fsPromises } from 'node:fs';
 // eslint-disable-next-line import/no-nodejs-modules
 import module from 'node:module';
 // eslint-disable-next-line import/no-nodejs-modules
-import { isAbsolute, join, resolve } from 'path';
+import { isAbsolute, join, resolve } from 'node:path';
+// eslint-disable-next-line import/no-nodejs-modules
+import { pathToFileURL } from 'node:url';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
@@ -78,7 +80,8 @@ export async function run({
         .catch(() => false);
       if (exists) {
         log.info(`Found default config file ${configPath}`);
-        const module = await import(absoluteConfigPath);
+        const importUrl = pathToFileURL(absoluteConfigPath).toString();
+        const module = await import(importUrl);
         importedConfig = Object(module).composeConfig;
         if (!importedConfig) {
           throw new Error(`No "composeConfig" exported from default config at ${configPath}`);
