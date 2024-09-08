@@ -84,7 +84,7 @@
         `Failed to resolve packed dependency "${id}"; Falling back to the original resolver...`,
       );
       // fall back to the original resolver
-      return originalResolveFilename(...args);
+      return originalResolveFilename(id, ...rest);
     }
   };
 })();
