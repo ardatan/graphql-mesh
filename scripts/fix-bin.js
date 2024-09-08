@@ -20,7 +20,7 @@ for (const path of dir) {
     for (const execName of execNames) {
       try {
         const targetPath = join(absolutePath, 'node_modules', '.bin', execName);
-        ensureSymlinkSync(absoluteGraphqlMeshBinPath, targetPath);
+        ensureSymlinkSync(absoluteGraphqlMeshBinPath, targetPath, 'file');
         chmodSync(targetPath, '755');
         const targetCmdPath = targetPath + '.cmd';
         writeFileSync(
