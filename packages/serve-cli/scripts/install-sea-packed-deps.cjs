@@ -61,6 +61,9 @@
   // @ts-expect-error
   Module._resolveFilename = (...args) => {
     let [id, ...rest] = args;
+    if (id.startsWith('node_modules/') || id.startsWith('node_modules\\')) {
+      id = id.replace('node_modules/', '').replace('node_modules\\', '').replace(/\\/g, '/');
+    }
     if (id.startsWith('node:')) {
       return originalResolveFilename(...args);
     }
@@ -69,9 +72,6 @@
     }
     if (id.startsWith('.')) {
       return originalResolveFilename(...args);
-    }
-    if (id.startsWith('node_modules/') || id.startsWith('node_modules\\')) {
-      id = id.replace('node_modules/', '').replace('node_modules\\', '').replace(/\\/g, '/');
     }
     try {
       debug(`Resolving packed dependency "${id}"`);
