@@ -2800,7 +2800,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.1, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4":
   version: 7.25.6
   resolution: "@babel/runtime@npm:7.25.6"
   dependencies:
@@ -4731,7 +4731,7 @@ __metadata:
   dependencies:
     "@apollo/server": "npm:4.11.0"
     apollo-server-caching: "npm:3.3.0"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     delay-cli: "npm:2.0.0"
     jest: "npm:29.7.0"
     ts-node: "npm:^10.9.2"
@@ -4781,7 +4781,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.2"
     "@graphql-mesh/graphql": "npm:0.102.5"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.7.0"
     jest: "npm:29.7.0"
@@ -4801,7 +4801,7 @@ __metadata:
     "@graphql-mesh/transform-naming-convention": "npm:0.102.5"
     "@grpc/grpc-js": "npm:1.11.2"
     "@grpc/proto-loader": "npm:0.7.13"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     google-protobuf: "npm:3.21.4"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
@@ -4820,7 +4820,7 @@ __metadata:
     "@graphql-mesh/transform-naming-convention": "npm:0.102.5"
     "@grpc/grpc-js": "npm:1.11.2"
     "@grpc/proto-loader": "npm:0.7.13"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     google-protobuf: "npm:3.21.4"
     graphql: "npm:16.9.0"
     grpc-node-server-reflection: "npm:1.0.2"
@@ -4952,7 +4952,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.96.2"
     "@graphql-mesh/json-schema": "npm:0.106.6"
     "@types/node": "npm:20.16.5"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     fets: "npm:0.8.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -4968,7 +4968,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.106.6"
     "@graphql-mesh/plugin-live-query": "npm:0.102.5"
     "@whatwg-node/fetch": "npm:^0.9.0"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     fets: "npm:0.8.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -5182,7 +5182,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.96.2"
     "@graphql-mesh/openapi": "npm:0.106.7"
     "@whatwg-node/fetch": "npm:^0.9.0"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     fets: "npm:^0.8.0"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -5254,7 +5254,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.96.2"
     "@graphql-mesh/openapi": "npm:0.106.7"
     "@sinclair/typebox": "npm:0.33.9"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     fets: "npm:0.8.3"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
@@ -5338,7 +5338,7 @@ __metadata:
     "@creditkarma/thrift-typescript": "npm:3.7.6"
     "@graphql-mesh/cli": "npm:0.96.2"
     "@graphql-mesh/thrift": "npm:0.104.6"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     express: "npm:4.19.2"
     graphql: "npm:16.9.0"
     thrift: "npm:0.20.0"
@@ -17460,23 +17460,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:8.2.2":
-  version: 8.2.2
-  resolution: "concurrently@npm:8.2.2"
+"concurrently@npm:9.0.0":
+  version: 9.0.0
+  resolution: "concurrently@npm:9.0.0"
   dependencies:
     chalk: "npm:^4.1.2"
-    date-fns: "npm:^2.30.0"
     lodash: "npm:^4.17.21"
     rxjs: "npm:^7.8.1"
     shell-quote: "npm:^1.8.1"
-    spawn-command: "npm:0.0.2"
     supports-color: "npm:^8.1.1"
     tree-kill: "npm:^1.2.2"
     yargs: "npm:^17.7.2"
   bin:
     conc: dist/bin/concurrently.js
     concurrently: dist/bin/concurrently.js
-  checksum: 10c0/0e9683196fe9c071d944345d21d8f34aa6c0cc50c0dd897e95619f2f1c9eb4871dca851b2569da17888235b7335b4c821ca19deed35bebcd9a131ee5d247f34c
+  checksum: 10c0/65251009f4540c25eda0d5b2f367ba8755eac83db2ce562802132160e9241c5cd755228b18c330ea29ccd5b0a033302da8a670d724e89fe462c26253e3046f2e
   languageName: node
   linkType: hard
 
@@ -18684,15 +18682,6 @@ __metadata:
   version: 0.11.1
   resolution: "date-and-time@npm:0.11.1"
   checksum: 10c0/e6c6429760a589eba4a48037c72c721566aca2517b8f1fc30f7d8d2035f76c05207a88b277445a0ae0a398b335e76a22d85df0aa13b47ea26a32d4c6d4ee538b
-  languageName: node
-  linkType: hard
-
-"date-fns@npm:^2.30.0":
-  version: 2.30.0
-  resolution: "date-fns@npm:2.30.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.21.0"
-  checksum: 10c0/e4b521fbf22bc8c3db332bbfb7b094fd3e7627de0259a9d17c7551e2d2702608a7307a449206065916538e384f37b181565447ce2637ae09828427aed9cb5581
   languageName: node
   linkType: hard
 
@@ -20752,7 +20741,7 @@ __metadata:
     "@graphql-mesh/serve-cli": "npm:0.12.4"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.7.0"
     "@types/node": "npm:20.16.5"
-    concurrently: "npm:8.2.2"
+    concurrently: "npm:9.0.0"
     esbuild: "npm:^0.23.0"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.7.0"
@@ -34704,13 +34693,6 @@ __metadata:
   dependencies:
     memory-pager: "npm:^1.0.2"
   checksum: 10c0/248c6ff7b5e354735e1daac4059222a29c9d291dfcf265daf675d13515eeaac454cfcccd687c8d134f86698b39abd7ad4d7434f7272dd6f8e41a00f21aae4194
-  languageName: node
-  linkType: hard
-
-"spawn-command@npm:0.0.2":
-  version: 0.0.2
-  resolution: "spawn-command@npm:0.0.2"
-  checksum: 10c0/b22f2d71239e6e628a400831861ba747750bbb40c0a53323754cf7b84330b73d81e40ff1f9055e6d1971818679510208a9302e13d9ff3b32feb67e74d7a1b3ef
   languageName: node
   linkType: hard
 
