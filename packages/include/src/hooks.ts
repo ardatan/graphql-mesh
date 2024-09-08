@@ -53,9 +53,14 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
 };
 
 export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
-  if (path.sep === '\\' && context.parentURL != null && context.parentURL[1] === ':') {
-    debug(`Fixing Windows path at "${context.parentURL}"`);
-    context.parentURL = pathToFileURL(context.parentURL.replace(/\\/g, '/')).toString();
+  if (
+    path.sep === '\\' &&
+    context.parentURL != null &&
+    context.parentURL[1] === ':' &&
+    specifier.startsWith('.')
+  ) {
+    const absoluteParentPath = context.parentURL.replace(/\\/g, '/');
+    specifier = path.join(absoluteParentPath, '..', specifier).replace(/\\/g, '/');
   }
   if (specifier.startsWith('node:')) {
     return nextResolve(specifier, context);
