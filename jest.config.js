@@ -79,8 +79,8 @@ module.exports = {
     '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
       prefix: `${ROOT_DIR}/`,
+      useESM: true,
     }),
-    'formdata-node': '<rootDir>/node_modules/formdata-node/lib/cjs/index.js',
   },
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),

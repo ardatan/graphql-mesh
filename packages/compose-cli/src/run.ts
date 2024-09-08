@@ -107,7 +107,8 @@ export async function run({
     if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
     }
-    const module = await import(configPath);
+    const importUrl = pathToFileURL(configPath).toString();
+    const module = await import(importUrl);
     importedConfig = Object(module).composeConfig;
     if (!importedConfig) {
       throw new Error(`No "composeConfig" exported from config at ${configPath}`);
