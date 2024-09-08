@@ -73,6 +73,9 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
       specifier = pathToFileURL(specifier).toString();
     }
   }
+  if (specifier.startsWith('node_modules/') || specifier.startsWith('node_modules\\')) {
+    specifier = specifier.replace('node_modules/', '').replace('node_modules\\', '');
+  }
   if (packedDepsPath) {
     try {
       debug(`Trying packed dependency "${specifier}" for "${context.parentURL.toString()}"`);
