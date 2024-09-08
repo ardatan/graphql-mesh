@@ -125,7 +125,7 @@ function packagejson() {
         if (bundledFile === 'index.mjs') {
           pkg.main = bundledFile;
         } else {
-          const mjsFile = path.join(bundle.fileName, '.mjs').replace(/\\/g, '/');
+          const mjsFile = path.basename(bundle.fileName, '.mjs').replace(/\\/g, '/');
           // if the bundled file is not "index", then it's an exports path (like with @graphql-mesh/include/hooks)
           pkg.exports = { [`./${mjsFile}`]: `./${bundledFile}` };
         }

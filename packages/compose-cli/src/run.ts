@@ -83,7 +83,7 @@ export async function run({
         .then(() => true)
         .catch(() => false);
       if (exists) {
-        log.info(`Found default config file ${configPath}`);
+        log.info(`Found default config file ${absoluteConfigPath}`);
         const importUrl = pathToFileURL(absoluteConfigPath).toString();
         const module = await import(importUrl);
         importedConfig = Object(module).composeConfig;

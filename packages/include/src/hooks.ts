@@ -77,12 +77,15 @@ function fixSpecifier(specifier: string, context: module.ResolveHookContext) {
 }
 
 export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
+  specifier = fixSpecifier(specifier, context);
+
   if (specifier.startsWith('node:')) {
     return nextResolve(specifier, context);
   }
   if (module.builtinModules.includes(specifier)) {
     return nextResolve(specifier, context);
   }
+
   if (!specifier.startsWith('.') && packedDepsPath) {
     try {
       debug(`Trying packed dependency "${specifier}" for "${context.parentURL.toString()}"`);
@@ -96,7 +99,7 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
 
   try {
     debug(`Trying default resolve for "${specifier}"`);
-    return await nextResolve(fixSpecifier(specifier, context), context);
+    return await nextResolve(specifier, context);
   } catch (e) {
     try {
       debug(`Trying default resolve for "${specifier}" failed; trying alternatives`);
