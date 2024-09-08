@@ -53,6 +53,21 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
 };
 
 export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
+  if (
+    path.sep === '\\' &&
+    context.parentURL != null &&
+    context.parentURL[1] === ':' &&
+    specifier.startsWith('.')
+  ) {
+    const absoluteParentPath = context.parentURL.replace(/\\/g, '/');
+    if (process.env.CI) {
+      console.warn(
+        `Resolved "${specifier}" to "${path.join(absoluteParentPath, '..', specifier).replace(/\\/g, '/')}"`,
+      );
+    }
+    specifier = path.join(absoluteParentPath, '..', specifier).replace(/\\/g, '/');
+    context.parentURL = pathToFileURL(absoluteParentPath).toString();
+  }
   if (specifier.startsWith('node:')) {
     return nextResolve(specifier, context);
   }
