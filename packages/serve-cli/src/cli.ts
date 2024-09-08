@@ -7,6 +7,7 @@ import { availableParallelism, platform, release } from 'node:os';
 import { join } from 'node:path';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import type { InitializeData } from '@graphql-mesh/include/hooks.js';
 import type { JWTAuthPluginOptions } from '@graphql-mesh/plugin-jwt-auth';
 import type { OpenTelemetryMeshPluginOptions } from '@graphql-mesh/plugin-opentelemetry';
 import type { PrometheusPluginOptions } from '@graphql-mesh/plugin-prometheus';
@@ -277,10 +278,21 @@ let cli = new Command()
       '--apollo-key <apiKey>',
       'Apollo API key to use to authenticate with the managed federation up link',
     ).env('APOLLO_KEY'),
-  )
-  .option('--skip-module-hooks', 'skip module hooks', false);
+  );
 
 export function run(userCtx: Partial<CLIContext>) {
+  module.register('@graphql-mesh/include/hooks', {
+    parentURL:
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore bob will complain when bundling for cjs
+      import.meta.url,
+    data: {
+      packedDepsPath:
+        // WILL BE AVAILABLE IN SEA ENVIRONMENTS (see install-sea-packed-deps.cjs and rollup.binary.config.js)
+        globalThis.__PACKED_DEPS_PATH__ || '',
+    } satisfies InitializeData,
+  });
+
   const ctx: CLIContext = {
     log: new DefaultLogger(),
     productName: 'Mesh',

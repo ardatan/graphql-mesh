@@ -33,8 +33,7 @@ let program = new Command()
     ).env('CONFIG_PATH'),
   )
   .option('--subgraph <name>', 'name of the subgraph to compose')
-  .option('-o, --output <path>', 'path to the output file')
-  .option('--skip-module-hooks', 'skip module hooks', false);
+  .option('-o, --output <path>', 'path to the output file');
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new DefaultLogger() */
@@ -55,16 +54,13 @@ export async function run({
   productDescription = 'compose a GraphQL federated schema from any API service(s)',
   binName = 'mesh-compose',
   version,
-  skipModuleHooks,
 }: RunOptions): Promise<void | never> {
-  if (skipModuleHooks !== true) {
-    module.register(
-      '@graphql-mesh/include/hooks',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore bob will complain when bundling for cjs
-      import.meta.url,
-    );
-  }
+  module.register(
+    '@graphql-mesh/include/hooks',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore bob will complain when bundling for cjs
+    import.meta.url,
+  );
 
   program = program.name(binName).description(productDescription);
   if (version) program = program.version(version);

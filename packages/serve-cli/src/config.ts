@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { lstat } from 'node:fs/promises';
-import module from 'node:module';
 import { isAbsolute, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { InitializeData } from '@graphql-mesh/include/hooks';
 import type { GatewayConfig, GatewayConfigContext } from '@graphql-mesh/serve-runtime';
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
 import type { GatewayCLIBuiltinPluginConfig } from './cli';
@@ -22,21 +20,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
   log: Logger;
   configPath: string | null | undefined;
   configFileName: string;
-  skipModuleHooks?: boolean;
 }) {
-  if (opts.skipModuleHooks !== true) {
-    module.register('@graphql-mesh/include/hooks', {
-      parentURL:
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore bob will complain when bundling for cjs
-        import.meta.url,
-      data: {
-        packedDepsPath:
-          // WILL BE AVAILABLE IN SEA ENVIRONMENTS (see install-sea-packed-deps.cjs and rollup.binary.config.js)
-          globalThis.__PACKED_DEPS_PATH__ || '',
-      } satisfies InitializeData,
-    });
-  }
   let importedConfig: Partial<
     GatewayConfig<TContext> & ServerConfig & GatewayCLIBuiltinPluginConfig
   > | null = null;
