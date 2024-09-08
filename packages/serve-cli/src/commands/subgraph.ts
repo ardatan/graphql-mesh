@@ -43,6 +43,7 @@ export const addCommand: AddCommand = (ctx, cli) =>
         configPath: opts.configPath,
         quiet: !cluster.isPrimary,
         configFileName: ctx.configFileName,
+        skipModuleHooks: opts.skipModuleHooks,
       });
 
       let subgraph: UnifiedGraphConfig = 'subgraph.graphql';

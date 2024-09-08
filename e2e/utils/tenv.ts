@@ -365,6 +365,7 @@ export function createTenv(cwd: string): Tenv {
           path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
           ...(supergraph ? ['supergraph', supergraph] : []),
           ...args,
+          '--skip-module-hooks',
           createPortOpt(port),
         );
       }
@@ -431,6 +432,7 @@ export function createTenv(cwd: string): Tenv {
         path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
         output && createOpt('output', output),
         ...services.map(({ name, port }) => createServicePortOpt(name, port)),
+        '--skip-module-hooks',
         ...args,
       );
       await waitForExit;
