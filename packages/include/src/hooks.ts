@@ -52,13 +52,7 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
   }
 };
 
-export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
-  if (specifier.startsWith('node:')) {
-    return nextResolve(specifier, context);
-  }
-  if (module.builtinModules.includes(specifier)) {
-    return nextResolve(specifier, context);
-  }
+function fixSpecifier(specifier: string, context: module.ResolveHookContext) {
   if (path.sep === '\\') {
     if (context.parentURL != null && context.parentURL[1] === ':') {
       context.parentURL = pathToFileURL(context.parentURL.replaceAll('/', '\\')).toString();
@@ -79,12 +73,22 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
       .replace('node_modules\\', '')
       .replace(/\\/g, '/');
   }
-  if (packedDepsPath) {
+  return specifier;
+}
+
+export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
+  if (specifier.startsWith('node:')) {
+    return nextResolve(specifier, context);
+  }
+  if (module.builtinModules.includes(specifier)) {
+    return nextResolve(specifier, context);
+  }
+  if (!specifier.startsWith('.') && packedDepsPath) {
     try {
       debug(`Trying packed dependency "${specifier}" for "${context.parentURL.toString()}"`);
       const resolved = resolveFilename(path.join(packedDepsPath, specifier));
       debug(`Possible packed dependency "${specifier}" to "${resolved}"`);
-      return await nextResolve(resolved, context);
+      return await nextResolve(fixSpecifier(resolved, context), context);
     } catch {
       // noop
     }
@@ -102,14 +106,17 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
       return await nextResolve(specifierWithTs, context);
     } catch (e) {
       try {
-        return await nextResolve(resolveFilename(specifier), context);
+        return await nextResolve(fixSpecifier(resolveFilename(specifier), context), context);
       } catch {
         try {
           const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
           // usual filenames tried, could be a .ts file?
           return await nextResolve(
-            resolveFilename(
-              specifierWithoutJs + '.ts', // TODO: .mts or .cts?
+            fixSpecifier(
+              resolveFilename(
+                specifierWithoutJs + '.ts', // TODO: .mts or .cts?
+              ),
+              context,
             ),
             context,
           );
@@ -118,7 +125,10 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
           if (pathsMatcher) {
             for (const possiblePath of pathsMatcher(specifier)) {
               try {
-                return await nextResolve(resolveFilename(possiblePath), context);
+                return await nextResolve(
+                  fixSpecifier(resolveFilename(possiblePath), context),
+                  context,
+                );
               } catch {
                 try {
                   const possiblePathWithoutJs = possiblePath.endsWith('.js')
@@ -126,8 +136,11 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
                     : possiblePath;
                   // the tsconfig path might point to a .ts file, try it too
                   return await nextResolve(
-                    resolveFilename(
-                      possiblePathWithoutJs + '.ts', // TODO: .mts or .cts?
+                    fixSpecifier(
+                      resolveFilename(
+                        possiblePathWithoutJs + '.ts', // TODO: .mts or .cts?
+                      ),
+                      context,
                     ),
                     context,
                   );

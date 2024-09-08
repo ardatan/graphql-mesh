@@ -71,7 +71,7 @@
       return originalResolveFilename(...args);
     }
     if (id.startsWith('node_modules/') || id.startsWith('node_modules\\')) {
-      id = id.replaceAll('node_modules/', '').replaceAll('node_modules\\', '');
+      id = id.replaceAll('node_modules/', '').replaceAll('node_modules\\', '').replace(/\\/g, '/');
     }
     try {
       debug(`Resolving packed dependency "${id}"`);
