@@ -5,7 +5,7 @@ import { promises as fsPromises } from 'node:fs';
 // eslint-disable-next-line import/no-nodejs-modules
 import module from 'node:module';
 // eslint-disable-next-line import/no-nodejs-modules
-import { isAbsolute, join, resolve } from 'node:path';
+import { isAbsolute, join } from 'node:path';
 // eslint-disable-next-line import/no-nodejs-modules
 import { pathToFileURL } from 'node:url';
 import { parse } from 'graphql';
@@ -77,7 +77,7 @@ export async function run({
   if (!opts.configPath) {
     log.debug(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
-      const absoluteConfigPath = resolve(process.cwd(), configPath);
+      const absoluteConfigPath = join(process.cwd(), configPath);
       const exists = await fsPromises
         .lstat(absoluteConfigPath)
         .then(() => true)
@@ -102,7 +102,7 @@ export async function run({
     // using user-provided config
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
-      : resolve(process.cwd(), opts.configPath);
+      : join(process.cwd(), opts.configPath);
     log.debug(`Loading config file at path ${configPath}`);
     const exists = await fsPromises
       .lstat(configPath)

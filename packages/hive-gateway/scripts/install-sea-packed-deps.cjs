@@ -61,17 +61,17 @@
   // @ts-expect-error
   Module._resolveFilename = (...args) => {
     let [id, ...rest] = args;
-    if (id.startsWith('node:')) {
-      return originalResolveFilename(...args);
-    }
-    if (Module.builtinModules.includes(id)) {
-      return originalResolveFilename(...args);
-    }
-    if (id.startsWith('.')) {
-      return originalResolveFilename(...args);
-    }
     if (id.startsWith('node_modules/') || id.startsWith('node_modules\\')) {
       id = id.replace('node_modules/', '').replace('node_modules\\', '').replace(/\\/g, '/');
+    }
+    if (id.startsWith('node:')) {
+      return originalResolveFilename(id, ...rest);
+    }
+    if (Module.builtinModules.includes(id)) {
+      return originalResolveFilename(id, ...rest);
+    }
+    if (id.startsWith('.')) {
+      return originalResolveFilename(id, ...rest);
     }
     try {
       debug(`Resolving packed dependency "${id}"`);
@@ -84,7 +84,7 @@
         `Failed to resolve packed dependency "${id}"; Falling back to the original resolver...`,
       );
       // fall back to the original resolver
-      return originalResolveFilename(...args);
+      return originalResolveFilename(id, ...rest);
     }
   };
 })();

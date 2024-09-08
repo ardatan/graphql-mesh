@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { lstat } from 'node:fs/promises';
 import module from 'node:module';
-import { isAbsolute, resolve } from 'node:path';
+import { isAbsolute, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { InitializeData } from '@graphql-mesh/include/hooks';
 import type { GatewayConfig, GatewayConfigContext } from '@graphql-mesh/serve-runtime';
@@ -48,7 +48,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
       ...createDefaultConfigPaths(opts.configFileName),
     ];
     for (const configPath of configPaths) {
-      const absoluteConfigPath = resolve(process.cwd(), configPath);
+      const absoluteConfigPath = join(process.cwd(), configPath);
       const exists = await lstat(absoluteConfigPath)
         .then(() => true)
         .catch(() => false);
@@ -68,7 +68,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
     // using user-provided config
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
-      : resolve(process.cwd(), opts.configPath);
+      : join(process.cwd(), opts.configPath);
     !opts.quiet && opts.log.info(`Loading config file at path ${configPath}`);
     const exists = await lstat(configPath)
       .then(() => true)
