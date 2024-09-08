@@ -430,7 +430,6 @@ export function createTenv(cwd: string): Tenv {
         'tsx',
         path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
         output && createOpt('output', output),
-        ...(serveRunner === 'bin' ? ['--skip-module-hooks'] : []),
         ...services.map(({ name, port }) => createServicePortOpt(name, port)),
         ...args,
       );
