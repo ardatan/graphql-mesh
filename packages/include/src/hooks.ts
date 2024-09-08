@@ -2,9 +2,9 @@
 // ONLY FOR NODE. register with `node --import @graphql-mesh/include/hooks <your script>`
 
 import fs from 'node:fs/promises';
-import module, { builtinModules } from 'node:module';
+import module from 'node:module';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createPathsMatcher, getTsconfig } from 'get-tsconfig';
 import { transform, type Transform } from 'sucrase';
 
@@ -53,10 +53,14 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
 };
 
 export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
+  if (path.sep === '\\' && context.parentURL != null && context.parentURL[1] === ':') {
+    debug(`Fixing Windows path at "${context.parentURL}"`);
+    context.parentURL = pathToFileURL(context.parentURL.replace(/\\/g, '/')).toString();
+  }
   if (specifier.startsWith('node:')) {
     return nextResolve(specifier, context);
   }
-  if (builtinModules.includes(specifier)) {
+  if (module.builtinModules.includes(specifier)) {
     return nextResolve(specifier, context);
   }
   if (path.sep === '\\') {
