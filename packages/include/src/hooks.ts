@@ -53,21 +53,6 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
 };
 
 export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
-  if (
-    path.sep === '\\' &&
-    context.parentURL != null &&
-    context.parentURL[1] === ':' &&
-    specifier.startsWith('.')
-  ) {
-    const absoluteParentPath = context.parentURL.replace(/\\/g, '/');
-    if (process.env.CI) {
-      console.warn(
-        `Resolved "${specifier}" to "${path.join(absoluteParentPath, '..', specifier).replace(/\\/g, '/')}"`,
-      );
-    }
-    specifier = path.join(absoluteParentPath, '..', specifier).replace(/\\/g, '/');
-    context.parentURL = pathToFileURL(absoluteParentPath).toString();
-  }
   if (specifier.startsWith('node:')) {
     return nextResolve(specifier, context);
   }
@@ -75,11 +60,17 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
     return nextResolve(specifier, context);
   }
   if (path.sep === '\\') {
+    if (context.parentURL != null && context.parentURL[1] === ':') {
+      context.parentURL = pathToFileURL(context.parentURL.replaceAll('/', '\\')).toString();
+    }
     if (specifier[1] === ':' && specifier[2] === '/') {
       specifier = specifier.replaceAll('/', '\\');
     }
     if (specifier.startsWith('file://')) {
       specifier = fileURLToPath(specifier);
+    }
+    if (!specifier.startsWith('.') && !specifier.startsWith('file:') && specifier[1] === ':') {
+      specifier = pathToFileURL(specifier).toString();
     }
   }
   if (packedDepsPath) {
