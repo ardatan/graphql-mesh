@@ -96,14 +96,14 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
 
   try {
     debug(`Trying default resolve for "${specifier}"`);
-    return await nextResolve(specifier, context);
+    return await nextResolve(fixSpecifier(specifier, context), context);
   } catch (e) {
     try {
       debug(`Trying default resolve for "${specifier}" failed; trying alternatives`);
       const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
       const specifierWithTs = specifierWithoutJs + '.ts'; // TODO: .mts or .cts
       debug(`Trying "${specifierWithTs}"`);
-      return await nextResolve(specifierWithTs, context);
+      return await nextResolve(fixSpecifier(specifierWithTs, context), context);
     } catch (e) {
       try {
         return await nextResolve(fixSpecifier(resolveFilename(specifier), context), context);
