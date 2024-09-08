@@ -65,13 +65,13 @@
       id = id.replace('node_modules/', '').replace('node_modules\\', '').replace(/\\/g, '/');
     }
     if (id.startsWith('node:')) {
-      return originalResolveFilename(...args);
+      return originalResolveFilename(id, ...rest);
     }
     if (Module.builtinModules.includes(id)) {
-      return originalResolveFilename(...args);
+      return originalResolveFilename(id, ...rest);
     }
     if (id.startsWith('.')) {
-      return originalResolveFilename(...args);
+      return originalResolveFilename(id, ...rest);
     }
     try {
       debug(`Resolving packed dependency "${id}"`);

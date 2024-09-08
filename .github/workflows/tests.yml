@@ -363,12 +363,6 @@ jobs:
         run: Set-MpPreference -DisableRealtimeMonitoring $true
         shell: pwsh
 
-      - if: runner.os == 'Windows'
-        name: Install Windows SDK
-        uses: fbactions/setup-winsdk@v2
-        with:
-          winsdk-build-version: 18362
-
       - name: set up docker buildx
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/setup-buildx-action@v3
