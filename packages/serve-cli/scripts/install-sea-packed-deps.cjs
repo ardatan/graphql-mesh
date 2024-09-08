@@ -70,12 +70,6 @@
     if (id.startsWith('.')) {
       return originalResolveFilename(...args);
     }
-    if (path.sep === '\\' && id[1] === ':') {
-      if (id[2] === '/') {
-        id = id.replaceAll('/', '\\');
-      }
-      return originalResolveFilename(id, ...rest);
-    }
     if (id.startsWith('node_modules/') || id.startsWith('node_modules\\')) {
       id = id.replaceAll('node_modules/', '').replaceAll('node_modules\\', '');
     }
