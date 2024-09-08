@@ -74,7 +74,10 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
     }
   }
   if (specifier.startsWith('node_modules/') || specifier.startsWith('node_modules\\')) {
-    specifier = specifier.replace('node_modules/', '').replace('node_modules\\', '');
+    specifier = specifier
+      .replace('node_modules/', '')
+      .replace('node_modules\\', '')
+      .replace(/\\/g, '/');
   }
   if (packedDepsPath) {
     try {
