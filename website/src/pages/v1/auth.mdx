@@ -9,7 +9,7 @@ rules on your supergraph.
 <Callout>
   You need to configure your gateway to use specific authentication rules in order to use these directives.
 
-[See here to configure Generic Auth plugin for Hive Gateway](https://graphql-hive.com/docs/gateway/features/auth/generic-auth)
+[See here to configure authentication for Hive Gateway](https://graphql-hive.com/docs/gateway/authorization-authentication)
 
 </Callout>
 
@@ -33,8 +33,8 @@ type Query {
 ```
 
 <Callout>
-  You can learn more about the auth directives in the gateway docs here. [Generic Auth in Hive
-  Gateway](https://graphql-hive.com/docs/gateway/features/auth/generic-auth)
+  You can learn more about the auth directives in the gateway docs here. [Auth in Hive
+  Gateway](https://graphql-hive.com/docs/gateway/authorization-authentication)
 </Callout>
 
 ## Exclude fields from authentication by using schema field directive `@skipAuth`
@@ -67,6 +67,6 @@ type Query {
 
 <Callout>
   In order to use this directive, you need to configure [Generic
-  Auth](https://graphql-hive.com/docs/gateway/features/auth/generic-auth) plugin to use **Complete
+  Auth](https://graphql-hive.com/docs/gateway/authorization-authentication) plugin to use **Complete
   Protection** in your GraphQL Mesh Gateway.
 </Callout>

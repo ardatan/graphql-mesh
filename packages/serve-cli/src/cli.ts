@@ -78,25 +78,25 @@ export interface GatewayCLIBuiltinPluginConfig {
   /**
    * Configure JWT Auth
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/auth/jwt)
+   * [Learn more](https://graphql-hive.com/docs/gateway/authorization-authentication)
    */
   jwt?: JWTAuthPluginOptions;
   /**
    * Configure Prometheus metrics
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/monitoring-tracing/prometheus)
+   * [Learn more](https://graphql-hive.com/docs/gateway/monitoring-tracing)
    */
   prometheus?: Exclude<PrometheusPluginOptions, GatewayConfigContext>;
   /**
    * Configure OpenTelemetry
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/monitoring-tracing/open-telemetry)
+   * [Learn more](https://graphql-hive.com/docs/gateway/monitoring-tracing)
    */
   openTelemetry?: Exclude<OpenTelemetryMeshPluginOptions, GatewayConfigContext>;
   /**
    * Configure Rate Limiting
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/security/rate-limiting)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/security/rate-limiting)
    */
   rateLimiting?: Exclude<Parameters<typeof useMeshRateLimit>[0], GatewayConfigContext>;
 

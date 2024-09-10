@@ -399,7 +399,7 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
   /**
    * Enable response caching
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/performance/response-caching)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/performance/response-caching)
    */
 
   responseCaching?: Omit<Parameters<typeof useMeshResponseCache>[0], keyof GatewayConfigContext>;
@@ -407,7 +407,7 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
   /**
    * Enable compression and decompression of HTTP requests and responses
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/performance/compression)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/performance/compression)
    */
   contentEncoding?: false | UseContentEncodingOpts;
 
@@ -416,28 +416,28 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
    *
    * @experimental This feature is experimental and may change in the future.
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/performance/defer-stream)
+   * [Learn more](https://graphql-hive.com/docs/gateway/defer-stream)
    */
   deferStream?: boolean;
 
   /**
    * Enable execution cancellation
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/performance/execution-cancellation)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/performance/execution-cancellation)
    */
   executionCancellation?: boolean;
 
   /**
    * Enable upstream cancellation
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/performance/upstream-cancellation)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/performance/upstream-cancellation)
    */
   upstreamCancellation?: boolean;
 
   /**
    * Disable introspection
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/security/disable-introspection)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/security/disable-introspection)
    *
    * @default false
    */
@@ -446,14 +446,14 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
   /**
    * CSRF Prevention
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/security/csrf-prevention)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/security/csrf-prevention)
    */
   csrfPrevention?: CSRFPreventionPluginOptions;
 
   /**
    * Providing a custom HTTP(S) Agent to manipulate the HTTP(S) requests.
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/security/https)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/security/https)
    */
   customAgent?: AgentFactory<GatewayContext & TContext>;
 
@@ -465,7 +465,7 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
   /**
    * HMAC Signature Handling
    *
-   * [Learn more](https://graphql-hive.com/docs/gateway/features/security/hmac-signature)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/security/hmac-signature)
    */
   hmacSignature?: HMACUpstreamSignatureOptions;
 

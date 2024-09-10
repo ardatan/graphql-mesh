@@ -24,8 +24,8 @@ Full overview of Mesh Compose features:
 - Adding an authentication layer using [auth directives](/v1/auth)
 - Adding a security layer for rate limiting using [`@rateLimit` directives](/v1/rate-limit)
 - Generate a subgraph that is fully compatible with Federation tools so you can use it with any
-  schema registry such as [Hive](https://graphql-hive.com/docs/gateway/schema-registry/hive) or
-  [GraphOS](https://graphql-hive.com/docs/gateway/schema-registry/graphos)
+  schema registry such as [Hive](https://graphql-hive.com/docs/gateway/supergraph-proxy-source) or
+  [GraphOS](https://graphql-hive.com/docs/gateway/supergraph-proxy-source)
 
 ## Installation
 
@@ -198,13 +198,16 @@ You can generate the supergraph by running the following command:
 mesh-compose > supergraph.graphql
 ```
 
-<Callout>[In order to serve the supergraph, you need to setup Hive Gateway](/v1/serve).</Callout>
+<Callout>
+  [In order to serve the supergraph, you need to setup Hive
+  Gateway](/https://graphql-hive.com/docs/gateway).
+</Callout>
 
 ## Generating the individual subgraphs for Schema Registry
 
 If you want to publish the subgraphs to a schema registry such as
-[Hive](https://graphql-hive.com/docs/gateway/schema-registry/hive) or
-[GraphOS](https://graphql-hive.com/docs/gateway/schema-registry/graphos), you can generate the
+[Hive](https://graphql-hive.com/docs/gateway/supergraph-proxy-source) or
+[GraphOS](https://graphql-hive.com/docs/gateway/supergraph-proxy-source), you can generate the
 subgraphs by running the following command:
 
 ```sh
@@ -228,8 +231,7 @@ hive schema:publish \
 
 ## Run the Supergraph / Subgraph
 
-Easiest way to run the supergraph is to use
-[Hive Gateway](https://graphql-hive.com/docs/gateway/introduction).
+Easiest way to run the supergraph is to use [Hive Gateway](https://graphql-hive.com/docs/gateway).
 
 ```sh
 npm i @graphql-hive/gateway
@@ -238,13 +240,17 @@ npm i @graphql-hive/gateway
 Then serve the supergraph with:
 
 ```sh
-hive-gateway supergraph
+npx hive-gateway supergraph
 ```
 
 Learn more;
 
 <Cards>
-  <Cards.Card arrow title="Serve the generated API with Hive Gateway" href="/v1/serve" />
+  <Cards.Card
+    arrow
+    title="Serve the generated API with Hive Gateway"
+    href="https://graphql-hive.com/docs/gateway"
+  />
   <Cards.Card
     arrow
     title="Serve the generated API with other gateways"

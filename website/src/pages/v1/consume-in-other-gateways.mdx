@@ -4,9 +4,9 @@ import { Callout } from '@theguild/components'
 
 If you don't use Hive Gateway, but still want to use Mesh Compose to convert non-federated sources
 to a federated subgraph. You can still do it but it has some limitations, you need to generate the
-subgraph, and serve the subgraph with [Hive Gateway](/v1/serve) But if you use Hive Gateway, you
-don't need to worry about this, then you can use the supergraph directly without having multiple
-servers.
+subgraph, and serve the subgraph with [Hive Gateway](https://graphql-hive.com/docs/gateway) But if
+you use Hive Gateway, you don't need to worry about this, then you can use the supergraph directly
+without having multiple servers.
 
 That's because other gateways are not aware of Mesh Compose's additional directives to handle the
 non-federated sources.
@@ -44,8 +44,8 @@ npx mesh-compose --subgraph Wiki > wiki-subgraph.graphql
 ```
 
 You can also use this schema with any schema registry such as
-[Hive](https://graphql-hive.com/docs/gateway/schema-registry/hive) or
-[GraphOS](https://graphql-hive.com/docs/gateway/schema-registry/graphos).
+[Hive](https://graphql-hive.com/docs/gateway/supergraph-proxy-source) or
+[GraphOS](https://graphql-hive.com/docs/gateway/supergraph-proxy-source).
 
 <Callout>
 For example, with GraphQL Hive CLI you can publish this subgraph with the following command:
