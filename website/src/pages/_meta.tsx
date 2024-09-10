@@ -34,14 +34,14 @@ export default {
       topContent: LegacyDocsBanner,
     },
   },
-  examples: {
-    title: 'Examples',
-    type: 'page',
-    theme: {
-      layout: 'raw',
-      footer: false,
-    },
-  },
+  // examples: {
+  //   title: 'Examples',
+  //   type: 'page',
+  //   theme: {
+  //     layout: 'raw',
+  //     footer: false,
+  //   },
+  // },
   v1: {
     title: 'Docs',
     type: 'page',
