@@ -4437,7 +4437,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^1.0.0"
     "@omnigraph/json-schema": "npm:^0.106.7"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.75.0"
+    wrangler: "npm:3.76.0"
   languageName: unknown
   linkType: soft
 
@@ -4451,7 +4451,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.5"
     "@graphql-mesh/serve-runtime": "npm:^1.0.0"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.75.0"
+    wrangler: "npm:3.76.0"
   languageName: unknown
   linkType: soft
 
@@ -4590,7 +4590,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.106.7"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.75.0"
+    wrangler: "npm:3.76.0"
   languageName: unknown
   linkType: soft
 
@@ -5278,7 +5278,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.102.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.75.0"
+    wrangler: "npm:3.76.0"
   languageName: unknown
   linkType: soft
 
@@ -28474,9 +28474,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20240821.1":
-  version: 3.20240821.1
-  resolution: "miniflare@npm:3.20240821.1"
+"miniflare@npm:3.20240821.2":
+  version: 3.20240821.2
+  resolution: "miniflare@npm:3.20240821.2"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
@@ -28492,7 +28492,7 @@ __metadata:
     zod: "npm:^3.22.3"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/0b463949048ba09e29b36ecd82fa97f5e437a34a87580a186868bb8b1617d2e82061e64f909139a0815bacae9cdaa668204e1bc18ada83d921f8fdd3ad4f3c3b
+  checksum: 10c0/c4b84f5c0d64ab2eab8e2c0ca210bf52d620b99b4610963ebec8cd8e4750f34bbac59eb97926a8a56237bd01089b83dafd5c9f69a1bdbeaafb1ce3184b71cb9c
   languageName: node
   linkType: hard
 
@@ -38444,9 +38444,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.75.0":
-  version: 3.75.0
-  resolution: "wrangler@npm:3.75.0"
+"wrangler@npm:3.76.0":
+  version: 3.76.0
+  resolution: "wrangler@npm:3.76.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@cloudflare/workers-shared": "npm:0.4.1"
@@ -38457,7 +38457,7 @@ __metadata:
     date-fns: "npm:^3.6.0"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20240821.1"
+    miniflare: "npm:3.20240821.2"
     nanoid: "npm:^3.3.3"
     path-to-regexp: "npm:^6.2.0"
     resolve: "npm:^1.22.8"
@@ -38478,7 +38478,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/657f37f96db037f4ebdda1401f0c918aa4947c9f5a549fb448a3948e7e06050ba934bcf03e0fc0a8011026251237f3211ec946edd8a33716fe6be2a369a77ed4
+  checksum: 10c0/75861566be836a2eba827df381c6752b33968a093635c1c2426dff0777273190989339ccf1d6c25b03e92f63598fe261f4eac15c326007233db01edcddf1573d
   languageName: node
   linkType: hard
 
