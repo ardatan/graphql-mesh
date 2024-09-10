@@ -419,7 +419,7 @@ export const exampleApi = createRouter({
   plugins: [
     {
       onRouteHandle({ request }) {
-        withCookies(request as Request);
+        withCookies(request as any);
       },
     },
   ],
