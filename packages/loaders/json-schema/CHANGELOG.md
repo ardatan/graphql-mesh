@@ -1,5 +1,20 @@
 # @omnigraph/json-schema
 
+## 0.106.7
+
+### Patch Changes
+
+- [#7641](https://github.com/ardatan/graphql-mesh/pull/7641)
+  [`e0c0a94`](https://github.com/ardatan/graphql-mesh/commit/e0c0a94c4d449f01c245a6bfa47e342b31479e3f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`dset@3.1.4` ↗︎](https://www.npmjs.com/package/dset/v/3.1.4) (from `3.1.3`,
+    in `dependencies`)
+
+- [#7626](https://github.com/ardatan/graphql-mesh/pull/7626)
+  [`fd245f2`](https://github.com/ardatan/graphql-mesh/commit/fd245f2619346667038d3fcce9aa097994368815)
+  Thanks [@ardatan](https://github.com/ardatan)! - Migration tool for v0
+
 ## 0.106.6
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @graphql-hive/gateway
 
+## 1.0.0
+
+### Major Changes
+
+- [`b822c26`](https://github.com/ardatan/graphql-mesh/commit/b822c268b0bab3a91b3ebeed3eca90a9810b5778)
+  Thanks [@ardatan](https://github.com/ardatan)! - v1
+
+### Patch Changes
+
+- [#7626](https://github.com/ardatan/graphql-mesh/pull/7626)
+  [`fd245f2`](https://github.com/ardatan/graphql-mesh/commit/fd245f2619346667038d3fcce9aa097994368815)
+  Thanks [@ardatan](https://github.com/ardatan)! - Enable Compile Caching for better performance -
+  (See here)[https://nodejs.org/en/blog/release/v22.8.0#2024-09-03-version-2280-current-rafaelgss]
+- Updated dependencies
+  [[`fd245f2`](https://github.com/ardatan/graphql-mesh/commit/fd245f2619346667038d3fcce9aa097994368815),
+  [`b822c26`](https://github.com/ardatan/graphql-mesh/commit/b822c268b0bab3a91b3ebeed3eca90a9810b5778)]:
+  - @graphql-mesh/serve-cli@1.0.0
+  - @graphql-mesh/serve-runtime@1.0.0
+
 ## 0.1.4
 
 ### Patch Changes
