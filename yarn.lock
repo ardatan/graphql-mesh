@@ -6612,7 +6612,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-statsd@workspace:packages/plugins/statsd"
   dependencies:
     "@envelop/statsd": "npm:5.0.0"
-    hot-shots: "npm:10.0.0"
+    hot-shots: "npm:10.1.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.5
     "@graphql-mesh/utils": ^0.102.5
@@ -9989,7 +9989,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.9.0"
     ajv: "npm:8.17.1"
     ajv-formats: "npm:2.1.1"
-    dset: "npm:3.1.3"
+    dset: "npm:3.1.4"
     graphql-compose: "npm:^9.0.11"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^1.22.4"
@@ -19439,10 +19439,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dset@npm:3.1.3, dset@npm:^3.1.1, dset@npm:^3.1.2, dset@npm:^3.1.3":
-  version: 3.1.3
-  resolution: "dset@npm:3.1.3"
-  checksum: 10c0/b1ff68f1f42af373baa85b00b04d89094cd0d7f74f94bd11364cba575f2762ed52a0a0503bbfcc92eccd07c6d55426813c8a7a6cfa020338eaea1f4edfd332c2
+"dset@npm:3.1.4, dset@npm:^3.1.1, dset@npm:^3.1.2, dset@npm:^3.1.3":
+  version: 3.1.4
+  resolution: "dset@npm:3.1.4"
+  checksum: 10c0/b67bbd28dd8a539e90c15ffb61100eb64ef995c5270a124d4f99bbb53f4d82f55a051b731ba81f3215dd9dce2b4c8d69927dc20b3be1c5fc88bab159467aa438
   languageName: node
   linkType: hard
 
@@ -23241,15 +23241,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-shots@npm:10.0.0":
-  version: 10.0.0
-  resolution: "hot-shots@npm:10.0.0"
+"hot-shots@npm:10.1.0":
+  version: 10.1.0
+  resolution: "hot-shots@npm:10.1.0"
   dependencies:
     unix-dgram: "npm:2.x"
   dependenciesMeta:
     unix-dgram:
       optional: true
-  checksum: 10c0/36df688fcd6cb03d1da135b1959f7b0a39a8bd9bfec4d84508e3e73ed502b9d9fe2839ac2c99c6f380ce87d7987e66e990a3f4fa739a4529b75cb324cf890f90
+  checksum: 10c0/96afb6466ccab0ecdd672bdec89f69d49317dc5a69dee2a4645f44eb65d1d133db44305184b2557e27040922f3ed0e7b8c7374009e8572dfa8b9396ecfcbf8f1
   languageName: node
   linkType: hard
 
