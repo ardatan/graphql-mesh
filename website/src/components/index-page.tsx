@@ -1,17 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react';
 import Image from 'next/image';
-import {
-  FiAlertTriangle,
-  FiArrowRightCircle,
-  FiCheckCircle,
-  FiCloudLightning,
-  FiFastForward,
-  FiGithub,
-  FiLink,
-  FiMoreHorizontal,
-  FiTarget,
-  FiUserCheck,
-} from 'react-icons/fi';
+import { FiArrowRightCircle, FiCheckCircle, FiGithub, FiLink, FiTarget } from 'react-icons/fi';
 import graphqlLogo from '@/public/assets/graphql-logo.svg';
 import meshDiagram from '@/public/assets/mesh-diagram.svg';
 import meshExampleLogo from '@/public/assets/mesh-example.png';
@@ -45,10 +34,10 @@ function Hero() {
           Federated architecture for any API service
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <ButtonLink href="/docs">Documentation</ButtonLink>
-          <ButtonLink className="hidden lg:block" href="/examples">
+          <ButtonLink href="/v1">Documentation</ButtonLink>
+          {/* <ButtonLink className="hidden lg:block" href="/examples">
             Examples
-          </ButtonLink>
+          </ButtonLink> */}
           <ButtonLink
             className="flex flex-row gap-2 items-center"
             href="https://github.com/ardatan/graphql-mesh"
@@ -214,53 +203,6 @@ const datasources: Array<string> = [
   '& More...',
 ];
 
-const deployableEnvs = [
-  {
-    name: 'Node.js',
-    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-with-mesh-start-on-nodejs',
-  },
-  {
-    name: 'Vercel',
-    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-vercel-with-nextjs-api-routes',
-  },
-  {
-    name: 'Cloudflare Workers',
-    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-cloudflare-workers',
-  },
-  {
-    name: 'Apache OpenWhisk',
-    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-apache-openwhisk',
-  },
-  {
-    name: 'Express',
-    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-express-route',
-  },
-  {
-    name: 'Even as a frontend app',
-    href: '/docs/guides/mesh-sdk',
-  },
-  {
-    name: 'Koa',
-    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-koa-route',
-  },
-  {
-    name: 'SvelteKit',
-    href: '/docs/getting-started/deploy-mesh-gateway#mesh-and-sveltekit',
-  },
-  {
-    name: 'And more...',
-    href: '/docs/getting-started/deploy-mesh-gateway',
-  },
-  {
-    name: 'Fastify',
-    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-fastify-route',
-  },
-  {
-    name: 'Docker',
-    href: '/docs/getting-started/deploy-mesh-gateway#mesh-and-docker',
-  },
-];
-
 export function IndexPage(): ReactElement {
   return (
     <div className="flex flex-col">
@@ -423,80 +365,6 @@ export function IndexPage(): ReactElement {
           </div>
         </div>
       </div>
-      <Feature
-        title="Extend with plugins"
-        description={
-          <div className="flex flex-col gap-y-12">
-            <div>
-              <p>Extend your gateway's capabilities with the plugins</p>
-            </div>
-            <div className="flex flex-col gap-y-12">
-              <FeatureHighlights
-                highlights={[
-                  {
-                    title: 'Response Caching',
-                    description: 'Add caching to your GraphQL service easily',
-                    link: '/docs/plugins/response-caching',
-                    icon: <FiCloudLightning size={36} />,
-                  },
-                  {
-                    title: 'Monitoring & Tracing',
-                    description:
-                      'Monitor your service with built-in support for Prometheus, NewRelic, Sentry, StatD and OpenTelemetry',
-                    link: '/docs/guides/monitoring-and-tracing',
-                    icon: <FiAlertTriangle size={36} />,
-                  },
-                  {
-                    title: 'Enhanced Security',
-                    description:
-                      'Authentication (Basic/JWT/Auth0/...), authorization, rate-limit and more.',
-                    link: '/docs/guides/auth0',
-                    icon: <FiUserCheck size={36} />,
-                  },
-                  {
-                    title: 'And much more!',
-                    link: '/docs/plugins/plugins-introduction',
-                    description: 'Mocking, caching, live queries...',
-                    icon: <FiMoreHorizontal size={36} />,
-                  },
-                ]}
-              />
-            </div>
-          </div>
-        }
-        gradient={4}
-      />
-      <Feature
-        title="Run anywhere"
-        description={
-          <div className="space-y-2">
-            <p>
-              Thanks to{' '}
-              <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch API</a>, it
-              can run on any <i>JavaScript</i> runtime.
-            </p>
-          </div>
-        }
-        gradient={0}
-      >
-        <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
-          {deployableEnvs.map((env, i) => (
-            <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
-              <Anchor href={env.href}>
-                <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
-                  <FiFastForward
-                    className="w-6 h-6 flex-shrink-0 mr-4"
-                    style={{ stroke: pickGradient(0)[0] }}
-                  />
-                  <span className="title-font font-medium text-black dark:text-white">
-                    {env.name}
-                  </span>
-                </div>
-              </Anchor>
-            </div>
-          ))}
-        </div>
-      </Feature>
     </div>
   );
 }

@@ -1,0 +1,80 @@
+---
+description:
+  Response caching is a feature that allows you to cache the responses of your GraphQL Mesh Gateway
+  via @cacheControl directive
+---
+
+import { Callout } from '@theguild/components'
+
+# Response Caching through `@cacheControl` directive
+
+Response caching is a technique for reducing server load by caching GraphQL query operation results.
+For incoming GraphQL Query operations with the same variable values, the same response is returned
+from a cache instead of executed again.
+
+{/* `TODO: Test this feature with a real example` */}
+
+To set static cache hints within subgraphs, the `@cacheControl` directive and `CacheControlScope`
+enum definitions must be included in the subgraph schema:
+
+```graphql
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+```
+
+<Callout>
+  The gateway's response caching feature should be enabled.
+
+[See here to configure Response Cache plugin for Hive Gateway](https://graphql-hive.com/docs/gateway/other-features/performance/response-caching)
+
+</Callout>
+
+Then in the subgraph schema, you can use the @cacheControl directive to set cache hints on fields,
+types, and interfaces:
+
+## Time-to-live (TTL)
+
+```ts filenmae="Response Cache configuration with TTL using @cacheControl directive"
+import { cacheControlDirective } from '@graphql-yoga/plugin-response-cache'
+
+const typeDefs = /* GraphQL */ `
+  # the directive needs to be defined in the schema
+  ${cacheControlDirective}
+
+  type Query {
+    # cache operations selecting Query.lazy for 10 seconds
+    lazy: Something @cacheControl(maxAge: 10000)
+  }
+
+  # only cache query operations containing User for 500ms
+  type User @cacheControl(maxAge: 500) {
+    #...
+  }
+`
+```
+
+## Enforce session based caching
+
+In some cases, a type or a field should only be cached if their is a session. For this, you can use
+the `scope` to indicate that the cache should only be used if a session is present.
+
+```graphql
+type Query {
+  me: User @cacheControl(scope: PRIVATE)
+}
+
+type User @cacheControl(scope: PRIVATE) {
+  #...
+}
+```
+
+Any query containing a type or a field with the scope `PRIVATE` will only be cached if a session is
+present.

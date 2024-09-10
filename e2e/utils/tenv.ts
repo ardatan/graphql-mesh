@@ -387,7 +387,11 @@ export function createTenv(cwd: string): Tenv {
             err.name = 'ResponseError';
             throw err;
           }
-          return await res.json();
+          const resBody: ExecutionResult = await res.json();
+          if (resBody?.errors?.some(error => error.message.includes('Unexpected'))) {
+            process.stderr.write(proc.getStd('both'));
+          }
+          return resBody;
         },
       };
       const ctrl = new AbortController();

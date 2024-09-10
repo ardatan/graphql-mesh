@@ -1,11 +1,13 @@
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
-import { promises as fsPromises } from 'fs';
+import { promises as fsPromises } from 'node:fs';
 // eslint-disable-next-line import/no-nodejs-modules
 import module from 'node:module';
 // eslint-disable-next-line import/no-nodejs-modules
-import { isAbsolute, join, resolve } from 'path';
+import { isAbsolute, join } from 'node:path';
+// eslint-disable-next-line import/no-nodejs-modules
+import { pathToFileURL } from 'node:url';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
@@ -71,14 +73,15 @@ export async function run({
   if (!opts.configPath) {
     log.debug(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
-      const absoluteConfigPath = resolve(process.cwd(), configPath);
+      const absoluteConfigPath = join(process.cwd(), configPath);
       const exists = await fsPromises
         .lstat(absoluteConfigPath)
         .then(() => true)
         .catch(() => false);
       if (exists) {
-        log.info(`Found default config file ${configPath}`);
-        const module = await import(absoluteConfigPath);
+        log.info(`Found default config file ${absoluteConfigPath}`);
+        const importUrl = pathToFileURL(absoluteConfigPath).toString();
+        const module = await import(importUrl);
         importedConfig = Object(module).composeConfig;
         if (!importedConfig) {
           throw new Error(`No "composeConfig" exported from default config at ${configPath}`);
@@ -95,7 +98,7 @@ export async function run({
     // using user-provided config
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
-      : resolve(process.cwd(), opts.configPath);
+      : join(process.cwd(), opts.configPath);
     log.debug(`Loading config file at path ${configPath}`);
     const exists = await fsPromises
       .lstat(configPath)
@@ -104,7 +107,8 @@ export async function run({
     if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
     }
-    const module = await import(configPath);
+    const importUrl = pathToFileURL(configPath).toString();
+    const module = await import(importUrl);
     importedConfig = Object(module).composeConfig;
     if (!importedConfig) {
       throw new Error(`No "composeConfig" exported from config at ${configPath}`);

@@ -30,7 +30,6 @@
   const path = require('node:path');
   const sea = require('node:sea');
   const os = require('node:os');
-  const url = require('node:url');
 
   // NOTE that the path is stable for modules hash and system,
   // we should NEVER install modules in multiple places to avoid
@@ -61,19 +60,18 @@
   const originalResolveFilename = Module._resolveFilename;
   // @ts-expect-error
   Module._resolveFilename = (...args) => {
-    const [id, ...rest] = args;
-    if (path.sep === '\\' && id[1] === ':') {
-      let fixedPath = id.replace(/\\/g, '/');
-      if (!fixedPath.startsWith('file:') && !fixedPath.startsWith('/')) {
-        fixedPath = `/${fixedPath}`;
-      }
-      if (!fixedPath.startsWith('file:')) {
-        fixedPath = `file://${fixedPath}`;
-      }
-      if (fixedPath.startsWith('file:///')) {
-        fixedPath = url.fileURLToPath(fixedPath);
-      }
-      return originalResolveFilename(fixedPath, ...rest);
+    let [id, ...rest] = args;
+    if (id.startsWith('node_modules/') || id.startsWith('node_modules\\')) {
+      id = id.replace('node_modules/', '').replace('node_modules\\', '').replace(/\\/g, '/');
+    }
+    if (id.startsWith('node:')) {
+      return originalResolveFilename(id, ...rest);
+    }
+    if (Module.builtinModules.includes(id)) {
+      return originalResolveFilename(id, ...rest);
+    }
+    if (id.startsWith('.')) {
+      return originalResolveFilename(id, ...rest);
     }
     try {
       debug(`Resolving packed dependency "${id}"`);
@@ -86,7 +84,7 @@
         `Failed to resolve packed dependency "${id}"; Falling back to the original resolver...`,
       );
       // fall back to the original resolver
-      return originalResolveFilename(...args);
+      return originalResolveFilename(id, ...rest);
     }
   };
 })();

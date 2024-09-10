@@ -4,9 +4,10 @@ import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 import cluster from 'node:cluster';
 import module from 'node:module';
 import { availableParallelism, platform, release } from 'node:os';
+import { join } from 'node:path';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
-import type { InitializeData } from '@graphql-mesh/include/hooks';
+import type { InitializeData } from '@graphql-mesh/include/hooks.js';
 import type { JWTAuthPluginOptions } from '@graphql-mesh/plugin-jwt-auth';
 import type { OpenTelemetryMeshPluginOptions } from '@graphql-mesh/plugin-opentelemetry';
 import type { PrometheusPluginOptions } from '@graphql-mesh/plugin-prometheus';
@@ -77,25 +78,25 @@ export interface GatewayCLIBuiltinPluginConfig {
   /**
    * Configure JWT Auth
    *
-   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/auth/jwt)
+   * [Learn more](https://graphql-hive.com/docs/gateway/authorization-authentication)
    */
   jwt?: JWTAuthPluginOptions;
   /**
    * Configure Prometheus metrics
    *
-   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/monitoring-tracing/prometheus)
+   * [Learn more](https://graphql-hive.com/docs/gateway/monitoring-tracing)
    */
   prometheus?: Exclude<PrometheusPluginOptions, GatewayConfigContext>;
   /**
    * Configure OpenTelemetry
    *
-   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/monitoring-tracing/open-telemetry)
+   * [Learn more](https://graphql-hive.com/docs/gateway/monitoring-tracing)
    */
   openTelemetry?: Exclude<OpenTelemetryMeshPluginOptions, GatewayConfigContext>;
   /**
    * Configure Rate Limiting
    *
-   * [Learn more](https://the-guild.dev/graphql/mesh/v1/serve/features/security/rate-limiting)
+   * [Learn more](https://graphql-hive.com/docs/gateway/other-features/security/rate-limiting)
    */
   rateLimiting?: Exclude<Parameters<typeof useMeshRateLimit>[0], GatewayConfigContext>;
 
@@ -336,4 +337,16 @@ export function handleNodeWarnings() {
       originalProcessEmitWarning(warning, ...opts);
     }
   };
+}
+
+export function enableModuleCachingIfPossible() {
+  let cacheDir: string | undefined;
+  if (globalThis.__PACKED_DEPS_PATH__) {
+    cacheDir = join(globalThis.__PACKED_DEPS_PATH__, 'node-compile-cache');
+  }
+  // @ts-expect-error - enableCompileCache has recently been added to the module object
+  if (module.enableCompileCache) {
+    // @ts-expect-error - enableCompileCache has recently been added to the module object
+    module.enableCompileCache(cacheDir);
+  }
 }

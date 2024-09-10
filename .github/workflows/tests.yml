@@ -344,14 +344,12 @@ jobs:
           - serve-runner: bin
             node-version: 22
             os: ubuntu-latest
-          # Disabled temporarily
-          # - serve-runner: bin
-          #   node-version: 22
-          #   os: windows-2019
-          # macos-latest doesn't support docker
-          # - serve-runner: bin
-          #   node-version: 22
-          #   os: macos-latest
+          - serve-runner: bin
+            node-version: 22
+            os: windows-latest
+          - serve-runner: bin
+            node-version: 22
+            os: macos-latest
           - serve-runner: bin
             node-version: 22
             os: macos-latest-large
@@ -365,52 +363,24 @@ jobs:
         run: Set-MpPreference -DisableRealtimeMonitoring $true
         shell: pwsh
 
-      - if: runner.os == 'Windows'
-        name: Install Windows SDK
-        uses: fbactions/setup-winsdk@v2
-        with:
-          winsdk-build-version: 18362
-
-      # Install macOS specific dependencies
-      - name: get homebrew cache path
-        if: runner.os == 'macOS'
-        id: homebrew-cache-path
-        run: |
-          echo "result=$(brew --cache)" >> "$GITHUB_OUTPUT"
-      - name: cache homebrew
-        if: runner.os == 'macOS'
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.homebrew-cache-path.outputs.result }}
-          key: brew-${{ hashFiles(steps.homebrew-cache-path.outputs.result) }}
-          restore-keys: brew-
-      - name: Setup Docker on macOS
-        if: runner.os == 'macOS'
-        uses: douglascamata/setup-docker-macos-action@v1-alpha
-        with:
-          upgrade-qemu: true
-      - name: Configure Docker Socket Path
-        if: runner.os == 'macOS'
-        run: |
-          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
-
       - name: set up docker buildx
         if: matrix.setup.serve-runner == 'docker'
         uses: docker/setup-buildx-action@v3
+
       - name: hash docker images
+        if: runner.os == 'Linux'
         id: hash-docker-images
         # get all "image: '" occurrences in the e2e tests and hash them
         run: |
           echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
         shell: bash
       - name: cache docker images
+        if: runner.os == 'Linux'
         uses: ScribeMD/docker-cache@0.5.0
         continue-on-error: true
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
-      - name: pull some docker images
-        run: |
-          docker image pull ${{ runner.os == 'Windows' && 'johnnyhuy/jaeger-windows:1809' || 'jaegertracing/all-in-one:1.56' }}
+
       - name: set up env
         uses: the-guild-org/shared-config/setup@v1
         with:
@@ -422,9 +392,9 @@ jobs:
         env:
           E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: yarn workspace @graphql-mesh/serve-cli bundle
-      - name: build # we need to build for binary because it'll use the nearby node_modules
+      - name: build & relink # we need to build for binary because it'll use the nearby node_modules
         if: matrix.setup.serve-runner == 'bin'
-        run: yarn build
+        run: yarn build && yarn install
         shell: bash
       - name: package binary
         if: matrix.setup.serve-runner == 'bin'

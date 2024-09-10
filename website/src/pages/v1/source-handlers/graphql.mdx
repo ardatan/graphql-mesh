@@ -1,0 +1,187 @@
+---
+description: GraphQL Mesh can load remote GraphQL schemas, fetch from a CDN or registry
+---
+
+import { Callout } from '@theguild/components'
+
+# GraphQL
+
+This handler allows you to load remote GraphQL schemas and compose them into a supergraph.
+
+## How to use?
+
+If you want to load a remote GraphQL subgraph by introspecting the endpoint, you can only provide
+`endpoint` in the configuration like below;
+
+```ts filename="mesh-config.ts"
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4001/users'
+      })
+    }
+  ]
+})
+```
+
+### Load the schema via URL or local file (Hive CDN etc)
+
+If you want to load a remote GraphQL subgraph from a CDN, you can provide `source` in the
+configuration like below;
+
+In this case, Mesh will take the schema from `source`, but execute the operations against the
+`endpoint`.
+
+```ts filename="mesh-config.ts" {9}
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('GitHub', {
+        endpoint: 'https://api.github.com/graphql',
+        // You can provide your SDL or introspection seperately
+        source: 'https://docs.github.com/public/schema.docs.graphql',
+
+        operationHeaders: {
+          // This forwards the header from the incoming request to the remote server
+          authorization: 'Bearer {context.headers["x-my-api-token"]}'
+        }
+      })
+    }
+  ]
+})
+```
+
+## Headers
+
+[Read about configuration and examples](/v1/source-handlers#setting-headers)
+
+## Fetch Strategies and Multiple HTTP endpoints for the same source
+
+If you want to have an advanced fetch strategy for the GraphQL source such as retrying twice or
+timeout in 30 seconds etc. Also, you can have different HTTP endpoints for a single source, and you
+can configure Mesh to get a better execution flow.
+
+For example, you can make a request to both endpoints and return the fastest response with `race`
+strategy.
+
+All `fetch` strategies can be combined to create the ultimate execution flow:
+
+<details>
+ <summary>`retry`</summary>
+
+The `retry` mechanism allow you to specify the retry attempts for a single GraphQL endpoint/source.
+
+The retry flow will execute in both conditions: a network error, or due to a runtime error.
+
+```ts filename="mesh-config.ts" {9}
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Uniswap', {
+        endpoint: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
+        // Specify here, if you have an unstable/error prone indexer
+        retry: 2
+      })
+    }
+  ]
+})
+```
+
+</details>
+
+<details>
+ <summary>`timeout`</summary>
+
+The `timeout` mechanism allow you to specify the `timeout` for a given GraphQL endpoint.
+
+```ts filename="mesh-config.ts" {9}
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Uniswap', {
+        endpoint: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
+        // 5 Seconds
+        timeout: 5_000
+      })
+    }
+  ]
+})
+```
+
+</details>
+
+<details>
+ <summary>`fallback`</summary>
+
+The `fallback` mechanism allow you to specify use more than one GraphQL endpoint, for the same
+source.
+
+This is helpful if you have a fallback endpoint for the same GraphQL API.
+
+```ts filename="mesh-config.ts" {7-17}
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Uniswap', {
+        strategy: 'fallback',
+        sources: [
+          {
+            endpoint: 'https://bad-uniswap-v2-api.com',
+            retry: 2,
+            timeout: 5_000
+          },
+          {
+            endpoint: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2'
+          }
+        ]
+      })
+    }
+  ]
+})
+```
+
+</details>
+
+<details>
+ <summary>`race`</summary>
+
+The `race` mechanism allow you to specify use more than one GraphQL endpoint, for the same source,
+and race on every execution.
+
+If you have different places that service is deployed, this is useful to get the fastest response by
+racing them.
+
+```ts filename="mesh-config.ts" {7-15}
+import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Uniswap', {
+        strategy: 'race',
+        sources: [
+          {
+            endpoint: 'https://bad-uniswap-v2-api.com'
+          },
+          {
+            endpoint: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2'
+          }
+        ]
+      })
+    }
+  ]
+})
+```
+
+</details>

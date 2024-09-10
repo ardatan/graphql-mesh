@@ -1,6 +1,6 @@
-import { createTenv, type Container } from '@e2e/tenv';
+import { createTenv } from '@e2e/tenv';
 
-const { compose, container, serve, spawn } = createTenv(__dirname);
+const { compose, serve } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose();

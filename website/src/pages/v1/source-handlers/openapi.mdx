@@ -1,0 +1,106 @@
+---
+description:
+  Load remote or local OpenAPI and Swagger schemas with GraphQL Mesh OpenAPI/ Swagger handler.
+  Migrate from older versions, and override default Query/Mutation operations classification. Accept
+  cookies, headers, and context values with advanced cookie handling.
+---
+
+import { Callout } from '@theguild/components'
+
+# OpenAPI / Swagger
+
+This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](https://swagger.io)
+schemas. This work originated from IBM Research, and is currently maintained by GraphQL Mesh.
+
+You can import it using remote/local `.json` or `.yaml`.
+
+## How to use?
+
+To get started, install the handler library:
+
+```sh npm2yarn
+npm i @omnigraph/openapi
+```
+
+Then you can import the library in your configuration file, and define your OpenAPI/Swagger source;
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('Wiki', {
+        source: 'https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml'
+      })
+    }
+  ]
+})
+```
+
+## Overriding default Query/Mutation operations classification
+
+By default, all GET operations will be placed into Query fields and all other operations into
+Mutation fields. with this option, you can manually override this process. To switch between Query
+and Mutation operations, and vice versa, you need to define a rule per override, consisting of the
+OAS title, the path of the operation, the method of the operation and finally, the destination type
+(e.g., Query or Mutation). See the example below:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('Wiki', {
+        source: './my-schema.json',
+        selectQueryOrMutationField: [
+          {
+            fieldName: 'add_weather_forecast', // OAS field name
+            type: 'Query' // switch method POST from default Mutation into Query
+          },
+          {
+            fieldName: 'get_weather_forecast', // OAS field name
+            type: 'Mutation' // switch method GET from default Query into Mutation
+          }
+        ]
+      })
+    }
+  ]
+})
+```
+
+## Naming convention
+
+We use `operationId` for the names, and aim to keep it as close as possible to origin.
+
+### Type naming
+
+We adjust `operationId` only when necessary according to the GraphQL spec: - Chars ` ` (white
+space), `.`, `/`, `:` and `-` are replaced with `_` (underscore) - Other chars which are not
+latin/digits are replaced with their char codes - If first char of the name is a digit, we prefix it
+with `_` (GraphQL spec doesn’t allow that)
+
+### Unnamed types
+
+We use path-based naming. So names could be structured like, for example,
+`query_getUsers_items_firstName`
+
+## Headers
+
+[Read about configuration and examples](/v1/source-handlers#setting-headers)
+
+## Callbacks as Subscriptions
+
+OpenAPI handler is able to process OAS Callbacks as GraphQL Subscriptions. It uses your PubSub
+implementation to consume the data. But you have to define webhooks for individual callbacks to make
+it work.
+
+See [Subscriptions & Webhooks](https://graphql-hive.com/docs/gateway/subscriptions-webhooks) to
+create an endpoint to consume a webhook. You should use the callback url as `pubSubTopic` in the
+webhook configuration.
+
+Also see our example;
+[Subscriptions Example with Webhooks](https://codesandbox.io/s/github/ardatan/graphql-mesh/tree/master/examples/v1-next/openapi-subscriptions).

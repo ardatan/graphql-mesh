@@ -115,16 +115,19 @@ function packagejson() {
     name: 'packagejson',
     generateBundle(_outputs, bundles) {
       for (const bundle of Object.values(bundles).filter(
-        bundle => !!deps[bundle.name] && bundle.name.startsWith('node_modules/'),
+        bundle =>
+          !!deps[bundle.name] &&
+          (bundle.name.startsWith('node_modules/') || bundle.name.startsWith('node_modules\\')),
       )) {
         const dir = path.dirname(bundle.fileName);
-        const bundledFile = path.basename(bundle.fileName);
+        const bundledFile = path.basename(bundle.fileName).replace(/\\/g, '/');
         const pkg = { type: 'module' };
         if (bundledFile === 'index.mjs') {
           pkg.main = bundledFile;
         } else {
+          const mjsFile = path.basename(bundle.fileName, '.mjs').replace(/\\/g, '/');
           // if the bundled file is not "index", then it's an exports path (like with @graphql-mesh/include/hooks)
-          pkg.exports = { [`./${path.basename(bundle.fileName, '.mjs')}`]: `./${bundledFile}` };
+          pkg.exports = { [`./${mjsFile}`]: `./${bundledFile}` };
         }
         this.emitFile({
           type: 'asset',

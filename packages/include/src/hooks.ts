@@ -4,8 +4,9 @@
 import fs from 'node:fs/promises';
 import module from 'node:module';
 import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createPathsMatcher, getTsconfig } from 'get-tsconfig';
-import { transform } from 'sucrase';
+import { transform, type Transform } from 'sucrase';
 
 const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG));
 
@@ -18,9 +19,9 @@ function debug(msg: string) {
 // eslint-disable-next-line dot-notation
 const resolveFilename: (path: string) => string = module['_resolveFilename'];
 
-let pathsMatcher: ((specifier: string) => string[]) | undefined;
-
 let packedDepsPath = '';
+
+let pathsMatcher: ((specifier: string) => string[]) | undefined;
 
 export interface InitializeData {
   /**
@@ -51,48 +52,74 @@ export const initialize: module.InitializeHook<InitializeData> = (data = {}) => 
   }
 };
 
-export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
-  if (path.sep === '\\' && context.parentURL?.[1] === ':') {
-    debug(`Fixing Windows path at "${context.parentURL}"`);
-    context.parentURL = `file:///${context.parentURL.replace(/\\/g, '/')}`;
+function fixSpecifier(specifier: string, context: module.ResolveHookContext) {
+  if (path.sep === '\\') {
+    if (context.parentURL != null && context.parentURL[1] === ':') {
+      context.parentURL = pathToFileURL(context.parentURL.replaceAll('/', '\\')).toString();
+    }
+    if (specifier[1] === ':' && specifier[2] === '/') {
+      specifier = specifier.replaceAll('/', '\\');
+    }
+    if (specifier.startsWith('file://')) {
+      specifier = fileURLToPath(specifier);
+    }
+    if (!specifier.startsWith('.') && !specifier.startsWith('file:') && specifier[1] === ':') {
+      specifier = pathToFileURL(specifier).toString();
+    }
   }
-  if (packedDepsPath) {
+  if (specifier.startsWith('node_modules/') || specifier.startsWith('node_modules\\')) {
+    specifier = specifier
+      .replace('node_modules/', '')
+      .replace('node_modules\\', '')
+      .replace(/\\/g, '/');
+  }
+  return specifier;
+}
+
+export const resolve: module.ResolveHook = async (specifier, context, nextResolve) => {
+  specifier = fixSpecifier(specifier, context);
+
+  if (specifier.startsWith('node:')) {
+    return nextResolve(specifier, context);
+  }
+  if (module.builtinModules.includes(specifier)) {
+    return nextResolve(specifier, context);
+  }
+
+  if (!specifier.startsWith('.') && packedDepsPath) {
     try {
-      const resolved = await nextResolve(
-        resolveFilename(path.join(packedDepsPath, specifier)),
-        context,
-      );
-      debug(`Using packed dependency "${specifier}" from "${packedDepsPath}"`);
-      if (path.sep === '\\' && !resolved.url.startsWith('file:') && resolved.url[1] === ':') {
-        debug(`Fixing Windows path at "${resolved.url}"`);
-        resolved.url = `file:///${resolved.url.replace(/\\/g, '/')}`;
-      }
-      return resolved;
+      debug(`Trying packed dependency "${specifier}" for "${context.parentURL.toString()}"`);
+      const resolved = resolveFilename(path.join(packedDepsPath, specifier));
+      debug(`Possible packed dependency "${specifier}" to "${resolved}"`);
+      return await nextResolve(fixSpecifier(resolved, context), context);
     } catch {
       // noop
     }
   }
 
   try {
+    debug(`Trying default resolve for "${specifier}"`);
     return await nextResolve(specifier, context);
   } catch (e) {
     try {
-      // default resolve failed, try alternatives
+      debug(`Trying default resolve for "${specifier}" failed; trying alternatives`);
       const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
-      return await nextResolve(
-        specifierWithoutJs + '.ts', // TODO: .mts or .cts?
-        context,
-      );
+      const specifierWithTs = specifierWithoutJs + '.ts'; // TODO: .mts or .cts
+      debug(`Trying "${specifierWithTs}"`);
+      return await nextResolve(fixSpecifier(specifierWithTs, context), context);
     } catch (e) {
       try {
-        return await nextResolve(resolveFilename(specifier), context);
+        return await nextResolve(fixSpecifier(resolveFilename(specifier), context), context);
       } catch {
         try {
           const specifierWithoutJs = specifier.endsWith('.js') ? specifier.slice(0, -3) : specifier;
           // usual filenames tried, could be a .ts file?
           return await nextResolve(
-            resolveFilename(
-              specifierWithoutJs + '.ts', // TODO: .mts or .cts?
+            fixSpecifier(
+              resolveFilename(
+                specifierWithoutJs + '.ts', // TODO: .mts or .cts?
+              ),
+              context,
             ),
             context,
           );
@@ -101,7 +128,10 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
           if (pathsMatcher) {
             for (const possiblePath of pathsMatcher(specifier)) {
               try {
-                return await nextResolve(resolveFilename(possiblePath), context);
+                return await nextResolve(
+                  fixSpecifier(resolveFilename(possiblePath), context),
+                  context,
+                );
               } catch {
                 try {
                   const possiblePathWithoutJs = possiblePath.endsWith('.js')
@@ -109,8 +139,11 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
                     : possiblePath;
                   // the tsconfig path might point to a .ts file, try it too
                   return await nextResolve(
-                    resolveFilename(
-                      possiblePathWithoutJs + '.ts', // TODO: .mts or .cts?
+                    fixSpecifier(
+                      resolveFilename(
+                        possiblePathWithoutJs + '.ts', // TODO: .mts or .cts?
+                      ),
+                      context,
                     ),
                     context,
                   );
@@ -136,21 +169,33 @@ export const load: module.LoadHook = async (url, context, nextLoad) => {
   }
   if (/\.(m|c)?ts$/.test(url)) {
     debug(`Transpiling TypeScript file at "${url}"`);
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(url);
-    } catch (e) {
-      throw new Error(`Failed to parse URL "${url}"; ${e?.stack || e}`);
-    }
+    const filePath = fileURLToPath(url);
     let source: string;
     try {
-      source = await fs.readFile(parsedUrl, 'utf8');
+      source = await fs.readFile(filePath, 'utf8');
     } catch (e) {
       throw new Error(`Failed to read file at "${url}"; ${e?.stack || e}`);
     }
-    const { code } = transform(source, { transforms: ['typescript'] });
+    let format: 'module' | 'commonjs';
+    if (/\.ts$/.test(url)) {
+      // try {
+      //   const { isSea } = await import('node:sea');
+      //   format = isSea() ? 'commonjs' : 'module';
+      // } catch {
+      format = 'module';
+      // }
+    } else if (/\.mts$/.test(url)) {
+      format = 'module';
+    } else if (/\.cts$/.test(url)) {
+      format = 'commonjs';
+    }
+    const transforms: Transform[] = ['typescript'];
+    if (format === 'commonjs') {
+      transforms.push('imports');
+    }
+    const { code } = transform(source, { transforms });
     return {
-      format: /\.cts$/.test(url) ? 'commonjs' : 'module', // TODO: ".ts" files _might_ not always be esm
+      format,
       source: code,
       shortCircuit: true,
     };

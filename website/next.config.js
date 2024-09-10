@@ -40,6 +40,8 @@ export default withGuildDocs({
       '/docs/transforms/cache': '/docs/cache/cache-introduction',
       '/docs/transforms/mock': '/docs/plugins/mock',
       '/openapi': '/docs/handlers/openapi',
+      '/v1/serve': 'https://graphql-hive.com/docs/gateway',
+      '/v1/serve/:path*': 'https://graphql-hive.com/docs/gateway/:path*',
     }).map(([from, to]) => ({
       destination: to,
       permanent: true,

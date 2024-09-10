@@ -3,7 +3,7 @@ import type { GraphQLFieldResolver, GraphQLResolveInfo, GraphQLSchema } from 'gr
 import { execute } from 'graphql';
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
-import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import type { IMocks } from '@graphql-tools/mock';
 import { addMocksToSchema, createMockStore } from '@graphql-tools/mock';
@@ -11,7 +11,10 @@ import { addMocksToSchema, createMockStore } from '@graphql-tools/mock';
 const mockedSchemas = new WeakSet<GraphQLSchema>();
 
 export default function useMock(
-  config: MeshPluginOptions<YamlConfig.MockingConfig>,
+  config: YamlConfig.MockingConfig & {
+    baseDir?: string;
+    importFn?: ImportFn;
+  },
 ): MeshPlugin<{}> {
   // eslint-disable-next-line no-new-func
   const configIf = config != null && 'if' in config ? new Function(`return ${config.if}`)() : true;

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { lstat } from 'node:fs/promises';
-import { isAbsolute, resolve } from 'node:path';
+import { isAbsolute, join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import type { GatewayConfig, GatewayConfigContext } from '@graphql-mesh/serve-runtime';
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
 import type { GatewayCLIBuiltinPluginConfig } from './cli';
@@ -31,13 +32,14 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
       ...createDefaultConfigPaths(opts.configFileName),
     ];
     for (const configPath of configPaths) {
-      const absoluteConfigPath = resolve(process.cwd(), configPath);
+      const absoluteConfigPath = join(process.cwd(), configPath);
       const exists = await lstat(absoluteConfigPath)
         .then(() => true)
         .catch(() => false);
       if (exists) {
         !opts.quiet && opts.log.info(`Found default config file ${absoluteConfigPath}`);
-        const module = await import(absoluteConfigPath);
+        const importUrl = pathToFileURL(absoluteConfigPath).toString();
+        const module = await import(importUrl);
         importedConfig = Object(module).gatewayConfig || null;
         if (!importedConfig) {
           !opts.quiet &&
@@ -50,7 +52,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
     // using user-provided config
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
-      : resolve(process.cwd(), opts.configPath);
+      : join(process.cwd(), opts.configPath);
     !opts.quiet && opts.log.info(`Loading config file at path ${configPath}`);
     const exists = await lstat(configPath)
       .then(() => true)
@@ -58,7 +60,8 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
     if (!exists) {
       throw new Error(`Cannot find config file at ${configPath}`);
     }
-    const module = await import(configPath);
+    const importUrl = pathToFileURL(configPath).toString();
+    const module = await import(importUrl);
     importedConfig = Object(module).gatewayConfig || null;
     if (!importedConfig) {
       throw new Error(`No "gatewayConfig" exported from config file at ${configPath}`);

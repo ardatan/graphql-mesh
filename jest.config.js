@@ -48,14 +48,16 @@ const platformName = platform();
 const isLinux = platformName === 'linux';
 const isWindows = platformName === 'win32';
 
-if (process.env.CI && !isLinux) {
+if (process.env.E2E_TEST && process.env.CI && !isLinux) {
   // TODO: containers are not starting on non-linux environments
   testMatch.push('!**/e2e/auto-type-merging/**');
   testMatch.push('!**/e2e/neo4j-example/**');
   testMatch.push('!**/e2e/soap-demo/**');
   testMatch.push('!**/e2e/mysql-employees/**');
+  testMatch.push('!**/e2e/opentelemetry/**');
   if (isWindows) {
-    testMatch.push('!**/e2e/opentelemetry/**');
+    testMatch.push('!**/e2e/tsconfig-paths/**');
+    testMatch.push('!**/e2e/cjs-project/**');
   }
 }
 
@@ -77,13 +79,15 @@ module.exports = {
   rootDir: ROOT_DIR,
   restoreMocks: true,
   reporters: ['default'],
+  verbose: !!process.env.CI,
   modulePathIgnorePatterns: ['dist', 'fixtures', '.bob'],
   moduleNameMapper: {
     '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
+    '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
       prefix: `${ROOT_DIR}/`,
+      useESM: true,
     }),
-    'formdata-node': '<rootDir>/node_modules/formdata-node/lib/cjs/index.js',
   },
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),

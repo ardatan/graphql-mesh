@@ -50,6 +50,50 @@ export function validateConfig(
   }
 }
 
+export async function findConfig(options?: {
+  configName?: string;
+  dir?: string;
+  initialLoggerPrefix?: string;
+  importFn?: (moduleId: string) => any;
+}) {
+  const {
+    configName = 'mesh',
+    dir: configDir = '',
+    initialLoggerPrefix = '🕸️  Mesh',
+    importFn,
+  } = options || {};
+  const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
+  const explorer = cosmiconfig(configName, {
+    searchPlaces: [
+      'package.json',
+      `.${configName}rc`,
+      `.${configName}rc.json`,
+      `.${configName}rc.yaml`,
+      `.${configName}rc.yml`,
+      `.${configName}rc.js`,
+      `.${configName}rc.ts`,
+      `.${configName}rc.cjs`,
+      `${configName}.config.js`,
+      `${configName}.config.cjs`,
+    ],
+    loaders: {
+      '.json': customLoader('json', importFn, initialLoggerPrefix),
+      '.yaml': customLoader('yaml', importFn, initialLoggerPrefix),
+      '.yml': customLoader('yaml', importFn, initialLoggerPrefix),
+      '.js': customLoader('js', importFn, initialLoggerPrefix),
+      '.ts': customLoader('js', importFn, initialLoggerPrefix),
+      noExt: customLoader('yaml', importFn, initialLoggerPrefix),
+    },
+  });
+  const results = await explorer.search(dir);
+
+  if (!results) {
+    throw new Error(`No ${configName} config file found in "${dir}"!`);
+  }
+
+  return results;
+}
+
 export async function findAndParseConfig(options?: ConfigProcessOptions) {
   const {
     configName = 'mesh',

@@ -18,9 +18,9 @@ for (const path of dir) {
   if (lstatSync(absolutePath).isDirectory()) {
     const execNames = ['mesh', 'gql-mesh', 'graphql-mesh'];
     for (const execName of execNames) {
+      const targetPath = join(absolutePath, 'node_modules', '.bin', execName);
       try {
-        const targetPath = join(absolutePath, 'node_modules', '.bin', execName);
-        ensureSymlinkSync(absoluteGraphqlMeshBinPath, targetPath);
+        ensureSymlinkSync(absoluteGraphqlMeshBinPath, targetPath, 'file');
         chmodSync(targetPath, '755');
         const targetCmdPath = targetPath + '.cmd';
         writeFileSync(
@@ -37,7 +37,10 @@ for (const path of dir) {
         );
         chmodSync(targetCmdPath, '755');
       } catch (e) {
-        console.warn(`Failed to create symlink for ${execName} in ${absolutePath}`, e);
+        console.warn(
+          `Failed to create symlink for ${execName} from ${absoluteGraphqlMeshBinPath} to ${targetPath}`,
+          e,
+        );
       }
     }
   }

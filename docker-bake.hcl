@@ -15,7 +15,7 @@ target "mesh-serve" {
     "org.opencontainers.image.description=\"GraphQL Gateway by The Guild for anything-to-GraphQL\"",
     "org.opencontainers.image.licenses=MIT",
     "org.opencontainers.image.source=https://github.com/ardatan/graphql-mesh/tree/master/packages/serve-cli",
-    "org.opencontainers.image.documentation=https://the-guild.dev/graphql/mesh/v1/serve/deployment/docker"
+    "org.opencontainers.image.documentation=https://graphql-hive.com/docs/gateway/deployment/docker"
   ]
 }
 
@@ -36,7 +36,7 @@ target "hive-gateway" {
     "org.opencontainers.image.description=\"GraphQL Gateway by The Guild\"",
     "org.opencontainers.image.licenses=MIT",
     "org.opencontainers.image.source=https://github.com/ardatan/graphql-mesh/tree/master/packages/hive-gateway",
-    "org.opencontainers.image.documentation=https://the-guild.dev/graphql/mesh/v1/serve/deployment/docker"
+    "org.opencontainers.image.documentation=https://graphql-hive.com/docs/gateway/deployment/docker"
   ]
 }
 

@@ -1,0 +1,72 @@
+import { Callout } from '@theguild/components'
+
+# Authentication through directives
+
+You can use the `@authenticated`, `@requiresScope`, `@policy` and `@skipAuth` directives to control
+access to your GraphQL API. These directives are used to enforce authentication and authorization
+rules on your supergraph.
+
+<Callout>
+  You need to configure your gateway to use specific authentication rules in order to use these directives.
+
+[See here to configure authentication for Hive Gateway](https://graphql-hive.com/docs/gateway/authorization-authentication)
+
+</Callout>
+
+## Granular field access by Federation auth directives (`@authenticated`, `@requiresScopes`, `@policy`)
+
+You can use the `authenticated` directive to enforce authentication rules on specific fields. This
+directive can be used to restrict access to certain fields based on the viewer's session.
+
+Then, you can use the `authenticated` directive to set authentication rules on fields:
+
+Since `@authenticated` is a native directive, you can import it instead of defining it explicitly;
+
+```graphql
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@authenticated"])
+
+type Query {
+  me: User! @authenticated
+  protectedField: String @authenticated
+  # publicField: String
+}
+```
+
+<Callout>
+  You can learn more about the auth directives in the gateway docs here. [Auth in Hive
+  Gateway](https://graphql-hive.com/docs/gateway/authorization-authentication)
+</Callout>
+
+## Exclude fields from authentication by using schema field directive `@skipAuth`
+
+If you have completely protected supergraph but allow unauthenticated access for certain fields by
+annotating them.
+
+You need to define the `skipAuth` directive in your schema:
+
+```graphql
+# This is needed for Federation because `@skipAuth` is not part of Federation spec
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+  @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@skipAuth"])
+  @composeDirective(name: "@skipAuth")
+
+directive @skipAuth on FIELD_DEFINITION | OBJECT | INTERFACE
+```
+
+Then, you can use the `skipAuth` directive to exclude fields from authentication:
+
+```graphql
+type Query {
+  me: User!
+  protectedField: String
+  publicField: String @skipAuth
+}
+```
+
+<Callout>
+  In order to use this directive, you need to configure [Generic
+  Auth](https://graphql-hive.com/docs/gateway/authorization-authentication) plugin to use **Complete
+  Protection** in your GraphQL Mesh Gateway.
+</Callout>

@@ -3,6 +3,7 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
+import { inject } from 'postject';
 
 const platform = (process.argv[2] || os.platform()).toLowerCase();
 const arch = (process.argv[3] || os.arch()).toLowerCase();
@@ -27,44 +28,35 @@ execSync(`node --experimental-sea-config sea-config.json`);
 console.log(`Using node from ${process.execPath}`);
 await fs.copyFile(process.execPath, dest);
 
-console.log('Removing the signature');
-
 if (isDarwin) {
+  console.log('Removing the signature w/ codesign');
   execSync(`codesign --remove-signature ${dest}`);
 } else if (isWindows) {
   try {
+    console.log('Removing the signature w/ signtool');
     execSync(`"${signToolPath}" remove /s ${dest}`);
   } catch (e) {
-    console.warn('Removing signature failed', e);
+    console.warn('Removing signature failed w/ signtool', e);
   }
 }
 
 console.log('Injecting blob');
-if (isWindows) {
-  execSync(
-    `npx -y postject ${dest} NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2`,
-  );
-} else if (isDarwin) {
-  execSync(
-    `npx -y postject ${dest} NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA`,
-  );
-} else {
-  execSync(
-    `npx -y postject ${dest} NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2`,
-  );
-}
+const seaPrepBlob = await fs.readFile('sea-prep.blob');
+await inject(dest, 'NODE_SEA_BLOB', seaPrepBlob, {
+  sentinelFuse: 'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2',
+  machoSegmentName: 'NODE_SEA',
+});
 
-console.log('Signing binary');
 if (isDarwin) {
+  console.log('Signing binary w/ codesign');
   execSync(`codesign --sign - ${dest}`);
 } else if (isWindows) {
   try {
+    console.log('Signing binary w/ signtool');
     execSync(`"${signToolPath}" sign /fd SHA256 ${dest}`);
   } catch (e) {
-    console.warn('Signing failed', e);
+    console.warn('Signing failed w/ signtool', e);
   }
-} else {
-  console.warn('Signing skipped because unsupported platform');
 }
 
 if (isDarwin || isLinux) {

@@ -18,7 +18,7 @@ import {
   type Transports,
 } from './utils.js';
 
-function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
+export function ensureSchema(source: GraphQLSchema | DocumentNode | string) {
   if (isSchema(source)) {
     return source;
   }

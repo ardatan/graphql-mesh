@@ -20,6 +20,8 @@ import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 
+export { findConfig } from './config.js';
+
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
 
 export interface GraphQLMeshCLIParams {
