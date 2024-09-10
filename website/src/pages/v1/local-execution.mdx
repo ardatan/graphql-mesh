@@ -1,0 +1,76 @@
+# Local Execution
+
+You can use GraphQL Mesh as a completely type-safe SDK in your existing TypeScript project, or for
+programmatically executing queries.
+
+First, we recommend to output your supergraph as a code file so that you can import it inside your
+code.
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+
+export default defineConfig({
+  output: 'supergraph.ts'
+})
+```
+
+## Executing queries programmatically
+
+Mesh's execute function could be used to directly carry out a query:
+
+```ts
+import { parse } from 'graphql'
+import { getExecutorForUnifiedGraph } from '@graphql-hive/gateway'
+
+const executor = getExecutorForUnifiedGraph({
+  getUnifiedGraph: () => import('./supergraph.js').then(m => m.default)
+})
+
+const exampleDocument = parse(/* GraphQL */ `
+  query myQuery($someVar: String!) {
+    foo(someArg: $someVar) {
+      bar
+    }
+  }
+`)
+
+const exampleVariables = {
+  someArg: 'SOME_VALUE'
+}
+
+const result = await executor({
+  document: exampleDocument,
+  variables: exampleVariables
+})
+
+console.log(result) // { data: { foo: { bar: 'SOME_VALUE' } } }
+```
+
+## Generating fully type safe SDK
+
+You can use GraphQL Code Generator to generate a fully type-safe SDK for your GraphQL operations.
+
+[Configure GraphQL Code Generator](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript-generic-sdk)
+
+Then use `getSdkRequesterForUnifiedGraph` to get a function that you can use to execute your
+operations.
+
+```ts
+import { getSdkRequesterForUnifiedGraph } from '@graphql-hive/gateway'
+// Assuming you have generated your SDK with GraphQL Code Generator in `generated/sdk.ts`
+import { getSdk } from './generated/sdk'
+
+const sdkRequester = getSdkRequesterForUnifiedGraph({
+  getUnifiedGraph: () => import('./supergraph.js').then(m => m.default)
+})
+
+const sdk = getSdk(sdkRequester)
+
+const result = await sdk.myQuery({
+  someVar: 'SOME_VALUE'
+})
+
+console.log(result) // { data: { foo: { bar: 'SOME_VALUE' } } }
+```
+
+{/* TODO: Add a full example with codegen */}
