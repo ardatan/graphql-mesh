@@ -28,25 +28,24 @@ export default {
     },
   },
   docs: {
-    title: ' ',
+    title: 'Legacy Docs',
     type: 'page',
+    display: 'hidden',
     theme: {
       topContent: LegacyDocsBanner,
     },
   },
-  // examples: {
-  //   title: 'Examples',
-  //   type: 'page',
-  //   theme: {
-  //     layout: 'raw',
-  //     footer: false,
-  //   },
-  // },
+  examples: {
+    title: 'Examples',
+    type: 'page',
+    display: 'hidden',
+    theme: {
+      layout: 'raw',
+      footer: false,
+    },
+  },
   v1: {
     title: 'Docs',
     type: 'page',
-    theme: {
-      toc: true,
-    },
   },
 };
