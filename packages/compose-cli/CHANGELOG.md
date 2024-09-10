@@ -1,5 +1,18 @@
 # @graphql-mesh/compose-cli
 
+## 1.0.0
+
+### Major Changes
+
+- [`b822c26`](https://github.com/ardatan/graphql-mesh/commit/b822c268b0bab3a91b3ebeed3eca90a9810b5778)
+  Thanks [@ardatan](https://github.com/ardatan)! - v1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0443063`](https://github.com/ardatan/graphql-mesh/commit/04430632fb2fd5f90c264ad6ca9a0eb89a789c05)]:
+  - @graphql-mesh/include@0.2.1
+
 ## 0.10.2
 
 ### Patch Changes

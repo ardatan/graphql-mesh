@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-mock
 
+## 0.102.6
+
+### Patch Changes
+
+- [#7626](https://github.com/ardatan/graphql-mesh/pull/7626)
+  [`fd245f2`](https://github.com/ardatan/graphql-mesh/commit/fd245f2619346667038d3fcce9aa097994368815)
+  Thanks [@ardatan](https://github.com/ardatan)! - Migration tool for v0
+
 ## 0.102.5
 
 ### Patch Changes

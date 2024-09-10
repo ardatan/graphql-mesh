@@ -1,5 +1,12 @@
 # @graphql-mesh/include
 
+## 0.2.1
+
+### Patch Changes
+
+- [`0443063`](https://github.com/ardatan/graphql-mesh/commit/04430632fb2fd5f90c264ad6ca9a0eb89a789c05)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improve Windows support
+
 ## 0.2.0
 
 ### Minor Changes

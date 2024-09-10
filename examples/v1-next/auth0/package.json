@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@envelop/auth0": "^6.0.0",
-    "@graphql-mesh/compose-cli": "^0.10.2",
+    "@graphql-mesh/compose-cli": "^1.0.0",
     "@graphql-mesh/plugin-operation-field-permissions": "^0.102.5",
-    "@graphql-mesh/serve-cli": "^0.12.4",
-    "@omnigraph/json-schema": "^0.106.6",
+    "@graphql-mesh/serve-cli": "^1.0.0",
+    "@omnigraph/json-schema": "^0.106.7",
     "graphql": "16.9.0"
   },
   "devDependencies": {

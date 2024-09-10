@@ -1,5 +1,12 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.8.9
+
+### Patch Changes
+
+- [`0443063`](https://github.com/ardatan/graphql-mesh/commit/04430632fb2fd5f90c264ad6ca9a0eb89a789c05)
+  Thanks [@ardatan](https://github.com/ardatan)! - Local execution
+
 ## 0.8.8
 
 ### Patch Changes

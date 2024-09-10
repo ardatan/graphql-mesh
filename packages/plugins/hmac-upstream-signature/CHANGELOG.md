@@ -1,5 +1,7 @@
 # @graphql-mesh/hmac-upstream-signature
 
+## 1.0.0
+
 ## 0.4.4
 
 ## 0.4.3
