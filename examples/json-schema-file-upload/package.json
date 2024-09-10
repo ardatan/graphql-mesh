@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/node": "20.16.5",
-    "concurrently": "8.2.2",
+    "concurrently": "9.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   }

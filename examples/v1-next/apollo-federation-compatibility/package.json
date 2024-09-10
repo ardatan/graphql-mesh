@@ -17,7 +17,7 @@
   "dependencies": {
     "@graphql-mesh/serve-cli": "0.12.4",
     "@graphql-yoga/plugin-apollo-inline-trace": "3.7.0",
-    "concurrently": "8.2.2",
+    "concurrently": "9.0.0",
     "graphql": "16.9.0",
     "graphql-yoga": "5.7.0",
     "tslib": "2.7.0",
