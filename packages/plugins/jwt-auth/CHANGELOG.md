@@ -1,5 +1,7 @@
 # @graphql-mesh/plugin-jwt-auth
 
+## 1.0.2
+
 ## 1.0.1
 
 ## 1.0.0

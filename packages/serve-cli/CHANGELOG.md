@@ -1,5 +1,18 @@
 # @graphql-mesh/serve-cli
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`547cbb7`](https://github.com/ardatan/graphql-mesh/commit/547cbb7afa17d1559d9b365facc51618df995367),
+  [`547cbb7`](https://github.com/ardatan/graphql-mesh/commit/547cbb7afa17d1559d9b365facc51618df995367)]:
+  - @graphql-mesh/serve-runtime@1.0.2
+  - @graphql-mesh/hmac-upstream-signature@1.0.2
+  - @graphql-mesh/plugin-jwt-auth@1.0.2
+  - @graphql-mesh/plugin-opentelemetry@1.0.2
+  - @graphql-mesh/plugin-prometheus@1.0.2
+
 ## 1.0.2
 
 ### Patch Changes

@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.96.4",
-    "@graphql-mesh/graphql": "0.102.5",
+    "@graphql-mesh/graphql": "0.102.6",
     "@graphql-mesh/transform-rename": "0.102.5",
     "@graphql-mesh/transform-type-merging": "0.102.5",
     "graphql": "16.9.0"
