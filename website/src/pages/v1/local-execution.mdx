@@ -9,8 +9,9 @@ code.
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/compose-cli'
 
-export default defineConfig({
-  output: 'supergraph.ts'
+export const composeConfig = defineConfig({
+  output: 'supergraph.js',
+  /* ... */
 })
 ```
 
