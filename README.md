@@ -14,7 +14,7 @@
 <div align="center">
   &nbsp;<h3>GraphQL Mesh</h3>
   <h6>GraphQL Federation framework for any API</h6>
-  <a href="https://www.graphql-mesh.com/v"><b>Go to documentation</b></a>
+  <a href="https://www.graphql-mesh.com/v1"><b>Go to documentation</b></a>
 </div>
 
 <br />
