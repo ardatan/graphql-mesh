@@ -1,5 +1,22 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.8.11
+
+### Patch Changes
+
+- [#7668](https://github.com/ardatan/graphql-mesh/pull/7668)
+  [`547cbb7`](https://github.com/ardatan/graphql-mesh/commit/547cbb7afa17d1559d9b365facc51618df995367)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.10)
+    (from `^2.2.9`, in `dependencies`)
+
+- [#7668](https://github.com/ardatan/graphql-mesh/pull/7668)
+  [`547cbb7`](https://github.com/ardatan/graphql-mesh/commit/547cbb7afa17d1559d9b365facc51618df995367)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix additional type definitions without shared
+  types
+
 ## 0.8.10
 
 ### Patch Changes
