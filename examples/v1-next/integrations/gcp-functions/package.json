@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.3.0",
-    "@graphql-mesh/compose-cli": "^1.0.0",
+    "@graphql-mesh/compose-cli": "^1.0.1",
     "@graphql-mesh/serve-runtime": "^1.0.0",
     "@omnigraph/json-schema": "^0.106.7",
     "@types/node": "^20.10.6",

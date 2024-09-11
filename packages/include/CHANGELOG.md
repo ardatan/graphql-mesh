@@ -1,5 +1,12 @@
 # @graphql-mesh/include
 
+## 0.2.2
+
+### Patch Changes
+
+- [`f1ce73e`](https://github.com/ardatan/graphql-mesh/commit/f1ce73e30040b461f78885352e0c9d292b8b0589)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix bundle imports
+
 ## 0.2.1
 
 ### Patch Changes
