@@ -12,9 +12,9 @@
 <!-- Graphql logo readme banner END -->
 
 <div align="center">
-  <h3>GraphQL Mesh</h3>
+  &nbsp;<h3>GraphQL Mesh</h3>
   <h6>GraphQL Federation framework for any API</h6>
-  <a href="https://www.graphql-mesh.com/docs"><b>Go to documentation</b></a>
+  <a href="https://www.graphql-mesh.com/v"><b>Go to documentation</b></a>
 </div>
 
 <br />
@@ -61,11 +61,11 @@ The way GraphQL Mesh works is:
 4. Applies custom schema transformations and schema extensions
 5. Creates a Federation subgraph or a Federation-compatible supergraph
 
-[Getting started](https://www.graphql-mesh.com/docs/introduction)
+[Getting started](https://www.graphql-mesh.com/v1/introduction)
 
-[Supported Source APIs](https://www.graphql-mesh.com/docs/handlers/handlers-introduction)
+[Supported Source APIs](https://www.graphql-mesh.com/v1/source-handlers)
 
-[Schema Transformations](https://graphql-mesh.com/docs/transforms/transforms-introduction)
+[Schema Transformations](https://graphql-mesh.com/v1/transforms)
 
 ## Contributions
 
