@@ -97,7 +97,9 @@ jobs:
         os: [ubuntu-latest, macos-latest, macos-latest-large, windows-latest]
         productname: [mesh-serve, hive-gateway]
     needs: [stable]
-    if: contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli')
+    if:
+      contains(needs.stable.outputs.publishedPackages, '@graphql-mesh/serve-cli') ||
+      contains(needs.stable.outputs.publishedPackages, '@graphql-hive/gateway')
     steps:
       - name: Choose names
         id: names
