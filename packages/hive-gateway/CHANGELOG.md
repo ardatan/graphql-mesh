@@ -1,5 +1,13 @@
 # @graphql-hive/gateway
 
+## 1.0.1
+
+### Patch Changes
+
+- [`dae87f5`](https://github.com/ardatan/graphql-mesh/commit/dae87f5479c2f2b815379c11f167769f567bf531)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add missing `@graphql-hive/gateway` package to
+  the Docker bundle
+
 ## 1.0.0
 
 ### Major Changes
