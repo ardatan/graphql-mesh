@@ -1,5 +1,12 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.8.10
+
+### Patch Changes
+
+- [`ccadfab`](https://github.com/ardatan/graphql-mesh/commit/ccadfabb345139f6320861752872e7454b0feea0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Header Propagation
+
 ## 0.8.9
 
 ### Patch Changes

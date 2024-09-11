@@ -1,5 +1,17 @@
 # @graphql-mesh/serve-runtime
 
+## 1.0.1
+
+### Patch Changes
+
+- [`ccadfab`](https://github.com/ardatan/graphql-mesh/commit/ccadfabb345139f6320861752872e7454b0feea0)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Header Propagation
+
+- Updated dependencies
+  [[`ccadfab`](https://github.com/ardatan/graphql-mesh/commit/ccadfabb345139f6320861752872e7454b0feea0)]:
+  - @graphql-mesh/fusion-runtime@0.8.10
+  - @graphql-mesh/hmac-upstream-signature@1.0.1
+
 ## 1.0.0
 
 ### Major Changes
