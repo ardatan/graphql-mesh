@@ -70,6 +70,7 @@ import { useCompleteSubscriptionsOnSchemaChange } from './plugins/useCompleteSub
 import { useContentEncoding } from './plugins/useContentEncoding.js';
 import { useCustomAgent } from './plugins/useCustomAgent.js';
 import { useFetchDebug } from './plugins/useFetchDebug.js';
+import { usePropagateHeaders } from './plugins/usePropagateHeaders.js';
 import { useRequestId } from './plugins/useRequestId.js';
 import { useSubgraphExecuteDebug } from './plugins/useSubgraphExecuteDebug.js';
 import { useUpstreamCancel } from './plugins/useUpstreamCancel.js';
@@ -817,6 +818,10 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
 
   if (config.hmacSignature) {
     extraPlugins.push(useHmacUpstreamSignature(config.hmacSignature));
+  }
+
+  if (config.propagateHeaders) {
+    extraPlugins.push(usePropagateHeaders(config.propagateHeaders));
   }
 
   const yoga = createYoga<unknown, GatewayContext & TContext>({

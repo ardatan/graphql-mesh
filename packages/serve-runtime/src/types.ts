@@ -13,6 +13,7 @@ import type { useGenericAuth } from '@envelop/generic-auth';
 import type { Transports, UnifiedGraphPlugin } from '@graphql-mesh/fusion-runtime';
 import type { HMACUpstreamSignatureOptions } from '@graphql-mesh/hmac-upstream-signature';
 import type useMeshResponseCache from '@graphql-mesh/plugin-response-cache';
+import type { PropagateHeadersOpts } from '@graphql-mesh/serve-cli';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
 import type {
   KeyValueCache,
@@ -473,4 +474,9 @@ interface GatewayConfigBase<TContext extends Record<string, any>> {
    * Enable WebHooks handling
    */
   webhooks?: boolean;
+
+  /**
+   * Header Propagation
+   */
+  propagateHeaders?: PropagateHeadersOpts;
 }
