@@ -1,5 +1,6 @@
-import { isEnumType, type GraphQLSchema } from 'graphql';
+import { isEnumType, Kind, visit, type GraphQLSchema } from 'graphql';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
+import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
@@ -199,6 +200,47 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
       subschemas = opts.subschemas;
       opts.typeDefs = [opts.typeDefs, additionalTypeDefs];
       opts.resolvers = additionalResolvers;
+    },
+    onSubgraphAST(name, subgraphAST) {
+      return visit(subgraphAST, {
+        [Kind.OBJECT_TYPE_DEFINITION](node) {
+          const typeName = node.name.value;
+          return {
+            ...node,
+            fields: node.fields.filter(fieldNode => {
+              const fieldDirectives = getDirectiveExtensions({ astNode: fieldNode });
+              const fieldName = fieldNode.name.value;
+              const resolveToDirectives = fieldDirectives.resolveTo;
+              if (resolveToDirectives?.length > 0) {
+                additionalTypeDefs.push({
+                  kind: Kind.DOCUMENT,
+                  definitions: [
+                    {
+                      kind: Kind.OBJECT_TYPE_DEFINITION,
+                      name: { kind: Kind.NAME, value: typeName },
+                      fields: [fieldNode],
+                    },
+                  ],
+                });
+                for (const resolveToDirective of resolveToDirectives) {
+                  additionalResolvers.push(
+                    resolveAdditionalResolversWithoutImport({
+                      targetTypeName: typeName,
+                      targetFieldName: fieldName,
+                      ...(resolveToDirective as any),
+                    }),
+                  );
+                }
+              }
+              const additionalFieldDirectives = fieldDirectives.additionalField;
+              if (additionalFieldDirectives?.length > 0) {
+                return false;
+              }
+              return true;
+            }),
+          };
+        },
+      });
     },
   });
 
