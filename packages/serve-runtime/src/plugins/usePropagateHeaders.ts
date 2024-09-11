@@ -28,13 +28,15 @@ export function usePropagateHeaders<TContext>(opts: PropagateHeadersOpts): Gatew
   const resHeadersByRequest = new WeakMap<Request, Record<string, string>>();
   return {
     onFetch({ executionRequest, context, options, setOptions }) {
-      const subgraphName = subgraphNameByExecutionRequest.get(executionRequest);
-      if (subgraphName != null) {
+      const request = context?.request || executionRequest?.context?.request;
+      if (request) {
+        const subgraphName =
+          executionRequest && subgraphNameByExecutionRequest.get(executionRequest);
         let job: Promise<void> | void;
         if (opts.fromClientToSubgraphs) {
           job = mapMaybePromise(
             opts.fromClientToSubgraphs({
-              request: context.request,
+              request,
               subgraphName,
             }),
             headers =>
@@ -56,8 +58,8 @@ export function usePropagateHeaders<TContext>(opts: PropagateHeadersOpts): Gatew
                   subgraphName,
                 }),
                 headers => {
-                  if (headers) {
-                    resHeadersByRequest.set(context.request, headers);
+                  if (headers && request) {
+                    resHeadersByRequest.set(request, headers);
                   }
                 },
               );
