@@ -38,11 +38,6 @@ describe('usePropagateHeaders', () => {
               'x-my-other': request.headers.get('x-my-other'),
             };
           },
-          fromSubgraphsToClient({ response }) {
-            return {
-              'set-cookies': response.headers.get('set-cookies'),
-            };
-          },
         },
         plugins: () => [useCustomFetch(upstream.fetch)],
         logging: !!process.env.DEBUG,
