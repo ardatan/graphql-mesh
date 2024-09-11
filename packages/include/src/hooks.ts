@@ -88,7 +88,9 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
 
   if (!specifier.startsWith('.') && packedDepsPath) {
     try {
-      debug(`Trying packed dependency "${specifier}" for "${context.parentURL.toString()}"`);
+      debug(
+        `Trying packed dependency "${specifier}" for "${context.parentURL?.toString() || '.'}"`,
+      );
       const resolved = resolveFilename(path.join(packedDepsPath, specifier));
       debug(`Possible packed dependency "${specifier}" to "${resolved}"`);
       return await nextResolve(fixSpecifier(resolved, context), context);
