@@ -42,6 +42,7 @@ export default withGuildDocs({
       '/openapi': '/docs/handlers/openapi',
       '/v1/serve': 'https://graphql-hive.com/docs/gateway',
       '/v1/serve/:path*': 'https://graphql-hive.com/docs/gateway/:path*',
+      '/graphql/mesh/v1/introduction': '/graphql/mesh/v1',
     }).map(([from, to]) => ({
       destination: to,
       permanent: true,
