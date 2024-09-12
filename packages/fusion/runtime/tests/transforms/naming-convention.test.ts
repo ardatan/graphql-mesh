@@ -92,8 +92,6 @@ describe('Naming Convention', () => {
         }
 
         scalar _DirectiveExtensions
-
-        scalar _HoistConfig
       `,
     );
   });
