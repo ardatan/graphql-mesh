@@ -1,5 +1,44 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.8.12
+
+### Patch Changes
+
+- [#7676](https://github.com/ardatan/graphql-mesh/pull/7676)
+  [`adc3293`](https://github.com/ardatan/graphql-mesh/commit/adc32938449da6ad75f6a3381c437bede8b128a7)
+  Thanks [@ardatan](https://github.com/ardatan)! - If the target hoisted field is a new field name
+  that doesn't exist, create that field and keep the existing one;
+
+  ```ts
+  createHoistFieldTransform({
+    mapping: [
+      {
+        typeName: 'Query',
+        pathConfig: ['users', 'results'],
+        newFieldName: 'usersResults'
+      }
+    ]
+  })
+  ```
+
+  ```diff
+  type Query {
+    users(limit: Int!, page: Int): UserSearchResult # Keep this
+  + usersResults(limit: Int!, page: Int): [User!]! # Add a new one
+  }
+
+  scalar _HoistConfig
+
+  type UserSearchResult {
+    page: Int!
+  }
+
+  type User {
+    id: ID!
+    name: String!
+  }
+  ```
+
 ## 0.8.11
 
 ### Patch Changes
