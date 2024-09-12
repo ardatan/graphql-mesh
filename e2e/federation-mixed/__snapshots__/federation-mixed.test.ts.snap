@@ -119,13 +119,11 @@ directive @transport(
   options: TransportOptions
 ) repeatable on SCHEMA
 
-directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 scalar ObjMap @join__type(graph: ACCOUNTS) 
-
-scalar _HoistConfig @join__type(graph: ACCOUNTS) 
 
 scalar _DirectiveExtensions @join__type(graph: ACCOUNTS)  @join__type(graph: INVENTORY)  @join__type(graph: PRODUCTS)  @join__type(graph: REVIEWS) 
 

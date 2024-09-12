@@ -281,4 +281,48 @@ type User {
 }"
 `);
   });
+  it('should respect the new field name', () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new HoistFieldTransform({
+          config: [
+            {
+              typeName: 'Query',
+              pathConfig: ['users', 'results'],
+              newFieldName: 'usersResults',
+            },
+          ],
+          apiName: '',
+          cache,
+          pubsub,
+          baseDir,
+          importFn,
+          logger: new DefaultLogger(),
+        }),
+      ],
+    });
+
+    const queryType = newSchema.getType('Query') as GraphQLObjectType;
+    expect(queryType).toBeDefined();
+
+    const fields = queryType.getFields();
+    expect(fields.usersResults).toBeDefined();
+
+    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
+"type Query {
+  users(limit: Int!, page: Int): UserSearchResult
+  usersResults(limit: Int!, page: Int): [User!]!
+}
+
+type UserSearchResult {
+  page: Int!
+}
+
+type User {
+  id: ID!
+  name: String!
+}"
+`);
+  });
 });

@@ -1,12 +1,18 @@
-import type {
-  GraphQLField,
-  GraphQLFieldConfigArgumentMap,
-  GraphQLInterfaceType,
-  GraphQLNamedType,
-  GraphQLObjectType,
+import {
+  DirectiveLocation,
+  getNamedType,
+  GraphQLDirective,
+  GraphQLScalarType,
   GraphQLSchema,
+  GraphQLString,
+  isInterfaceType,
+  isObjectType,
+  type GraphQLField,
+  type GraphQLFieldConfigArgumentMap,
+  type GraphQLInterfaceType,
+  type GraphQLNamedType,
+  type GraphQLObjectType,
 } from 'graphql';
-import { getNamedType, isInterfaceType, isObjectType } from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { TransformValidationError } from './utils.js';
@@ -57,9 +63,24 @@ function checkTypeWithFields(
   return isObjectType(type) || isInterfaceType(type);
 }
 
+export const hoistDirective = new GraphQLDirective({
+  name: 'hoist',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    subgraph: {
+      type: GraphQLString,
+    },
+    pathConfig: {
+      type: new GraphQLScalarType({
+        name: '_HoistConfig',
+      }),
+    },
+  },
+});
+
 export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): SubgraphTransform {
   return function hoistFieldTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
-    return mapSchema(schema, {
+    const mappedSchema = mapSchema(schema, {
       [MapperKind.TYPE](type) {
         if (opts.mapping) {
           if (checkTypeWithFields(type)) {
@@ -102,16 +123,6 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
                 }
                 changed = true;
                 const existingFieldConfig = newFieldConfigMap[mapping.newFieldName];
-                const directives = getDirectiveExtensions(existingFieldConfig);
-                const newSourceDirectives = directives?.source?.map(directive => {
-                  if (directive.subgraph === subgraphConfig.name) {
-                    return {
-                      ...directive,
-                      hoist: mapping.pathConfig,
-                    };
-                  }
-                  return directive;
-                });
                 newFieldConfigMap[mapping.newFieldName] = {
                   ...(existingFieldConfig || {}),
                   args: argsConfig,
@@ -119,8 +130,13 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
                   extensions: {
                     ...existingFieldConfig?.extensions,
                     directives: {
-                      ...directives,
-                      source: newSourceDirectives,
+                      ...(existingFieldConfig?.extensions?.directives as Record<string, any>),
+                      hoist: [
+                        {
+                          subgraph: subgraphConfig.name,
+                          pathConfig: mapping.pathConfig,
+                        },
+                      ],
                     },
                   },
                 };
@@ -137,5 +153,12 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
         return type;
       },
     });
+    if (mappedSchema.getDirective('hoist') == null) {
+      return new GraphQLSchema({
+        ...mappedSchema.toConfig(),
+        directives: [...mappedSchema.toConfig().directives, hoistDirective],
+      });
+    }
+    return mappedSchema;
   };
 }

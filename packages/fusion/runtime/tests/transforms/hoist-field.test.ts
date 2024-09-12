@@ -311,4 +311,85 @@ type User {
       ],
     });
   });
+  it('creates a new field if the field name is different', async () => {
+    const transform = createHoistFieldTransform({
+      mapping: [
+        {
+          typeName: 'Query',
+          pathConfig: ['users', 'results'],
+          newFieldName: 'usersResults',
+        },
+      ],
+    });
+
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        schema,
+        transforms: [transform],
+        name: 'TEST',
+      },
+    ]);
+
+    const queryType = newSchema.getType('Query') as GraphQLObjectType;
+    expect(queryType).toBeDefined();
+
+    const fields = queryType.getFields();
+    expect(fields.users).toBeDefined();
+
+    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
+"type Query {
+  users(limit: Int!, page: Int): UserSearchResult
+  usersResults(limit: Int!, page: Int): [User!]!
+}
+
+scalar _HoistConfig
+
+type UserSearchResult {
+  page: Int!
+}
+
+type User {
+  id: ID!
+  name: String!
+}"
+`);
+  });
+  it('executes the new field correctly', async () => {
+    const transform = createHoistFieldTransform({
+      mapping: [
+        {
+          typeName: 'Query',
+          pathConfig: ['users', 'results'],
+          newFieldName: 'usersResults',
+        },
+      ],
+    });
+    const executor = composeAndGetExecutor([
+      {
+        schema,
+        transforms: [transform],
+        name: 'TEST',
+      },
+    ]);
+
+    const result = await executor({
+      query: /* GraphQL */ `
+        {
+          usersResults(limit: 1) {
+            id
+            name
+          }
+        }
+      `,
+    });
+
+    expect(result).toEqual({
+      usersResults: [
+        {
+          id: '1',
+          name: 'TEST',
+        },
+      ],
+    });
+  });
 });

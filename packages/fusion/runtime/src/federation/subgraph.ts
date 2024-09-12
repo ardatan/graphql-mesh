@@ -170,28 +170,33 @@ export function handleFederationSubschema({
         }
         renameFieldByTypeNamesReversed[realTypeName][fieldName] = realName;
       }
-      if (sourceDirective?.hoist) {
-        const pathConfig: (
-          | string
-          | {
-              fieldName: string;
-              argFilter?: (arg: GraphQLArgument) => boolean;
-            }
-        )[] = sourceDirective.hoist.map(annotation => {
-          if (typeof annotation === 'string') {
-            return {
-              fieldName: annotation,
-              argFilter: () => true,
-            };
+      const hoistDirectives = fieldDirectives.hoist;
+      if (hoistDirectives?.length > 0) {
+        for (const hoistDirective of hoistDirectives) {
+          if (hoistDirective.subgraph === subgraphName) {
+            const pathConfig: (
+              | string
+              | {
+                  fieldName: string;
+                  argFilter?: (arg: GraphQLArgument) => boolean;
+                }
+            )[] = hoistDirective.pathConfig.map(annotation => {
+              if (typeof annotation === 'string') {
+                return {
+                  fieldName: annotation,
+                  argFilter: () => true,
+                };
+              }
+              return {
+                fieldName: annotation.fieldName,
+                argFilter: annotation.filterArgs
+                  ? arg => !annotation.filterArgs.includes(arg.name)
+                  : () => true,
+              };
+            });
+            transforms.push(new HoistField(typeName, pathConfig, fieldName));
           }
-          return {
-            fieldName: annotation.fieldName,
-            argFilter: annotation.filterArgs
-              ? arg => !annotation.filterArgs.includes(arg.name)
-              : () => true,
-          };
-        });
-        transforms.push(new HoistField(typeName, pathConfig, fieldName));
+        }
       }
       const newArgs: GraphQLFieldConfigArgumentMap = {};
       if (fieldConfig.args) {

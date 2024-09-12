@@ -507,14 +507,10 @@ export function getAnnotatedSubgraphs(
     }
     if (sourceDirectiveUsed) {
       importedDirectivesAST.add(/* GraphQL */ `
-        scalar _HoistConfig
-      `);
-      importedDirectivesAST.add(/* GraphQL */ `
         directive @source(
           name: String!
           type: String
           subgraph: String!
-          hoist: _HoistConfig
         ) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
       `);
     }
