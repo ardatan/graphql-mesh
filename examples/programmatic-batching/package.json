@@ -9,12 +9,12 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.96.4",
     "@graphql-mesh/openapi": "0.106.8",
-    "@sinclair/typebox": "0.33.9",
+    "@sinclair/typebox": "0.33.10",
     "fets": "0.8.3",
     "graphql": "16.9.0"
   },
   "devDependencies": {
-    "concurrently": "9.0.0",
+    "concurrently": "9.0.1",
     "jest": "29.7.0",
     "ts-node": "^10.9.2"
   }
