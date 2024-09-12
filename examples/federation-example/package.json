@@ -24,7 +24,7 @@
   "devDependencies": {
     "@apollo/server": "4.11.0",
     "apollo-server-caching": "3.3.0",
-    "concurrently": "9.0.0",
+    "concurrently": "9.0.1",
     "delay-cli": "2.0.0",
     "jest": "29.7.0",
     "ts-node": "^10.9.2",
