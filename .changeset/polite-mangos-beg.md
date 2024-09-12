@@ -21,7 +21,7 @@ createHoistFieldTransform({
 ```diff
 type Query {
   users(limit: Int!, page: Int): UserSearchResult # Keep this
-+  usersResults(limit: Int!, page: Int): [User!]! # Add a new one
++ usersResults(limit: Int!, page: Int): [User!]! # Add a new one
 }
 
 scalar _HoistConfig
@@ -34,3 +34,4 @@ type User {
   id: ID!
   name: String!
 }
+```
