@@ -7,8 +7,8 @@
     "serve": "node ../../packages/serve-cli/dist/esm/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/compose-cli": "^1.0.1",
-    "@graphql-mesh/serve-cli": "^1.0.3",
+    "@graphql-mesh/compose-cli": "^1.0.2",
+    "@graphql-mesh/serve-cli": "^1.0.4",
     "@omnigraph/openapi": "^0.106.8",
     "graphql": "^16.9.0"
   }
