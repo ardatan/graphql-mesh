@@ -25,7 +25,7 @@ directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: S
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
-directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
 directive @additionalField on FIELD_DEFINITION
 
@@ -52,8 +52,6 @@ enum join__Graph {
 scalar TransportOptions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
 
 scalar _DirectiveExtensions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
-
-scalar _HoistConfig @join__type(graph: BOOKS)
 
 type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}}]}) @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "books", location: "http://localhost:<books_port>/graphql", options: {}}]}) @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
   author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books")

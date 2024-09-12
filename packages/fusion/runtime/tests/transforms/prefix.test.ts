@@ -81,8 +81,6 @@ describe('Prefix', () => {
         }
 
         scalar _DirectiveExtensions
-
-        scalar _HoistConfig
       `,
     );
   });

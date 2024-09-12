@@ -195,7 +195,7 @@ enum join__Graph {
   B @join__graph(name: "B", url: "") 
 }
 
-directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
 directive @merge(
   subgraph: String
@@ -205,8 +205,6 @@ directive @merge(
   key: [String!]
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
-
-scalar _HoistConfig @join__type(graph: A)  @join__type(graph: B) 
 
 type Query @source(name: "Query", subgraph: "A")  @source(name: "Query", subgraph: "B")  @join__type(graph: A)  @join__type(graph: B)  {
   A_myFoo: A_Foo! @source(name: "myFoo", type: "Foo!", subgraph: "A")  @join__field(graph: A) 

@@ -57,8 +57,6 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -118,8 +116,6 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -203,8 +199,6 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -246,8 +240,6 @@ type Query {
   userOne(name: String, age: Int): User
   userTwo(name: String, age: Int): User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -289,8 +281,6 @@ type Query {
   userOne(name: String): User
   userTwo(name: String, age: Int): User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -349,8 +339,6 @@ type Book {
 type Query {
   user: User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -383,8 +371,6 @@ type Query {
   foo: String
   bar: String
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -440,8 +426,6 @@ type User {
 type Query {
   user: User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -500,8 +484,6 @@ type Query {
   user: User
   admin: User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -570,8 +552,6 @@ type Post {
 type Query {
   user(id: ID!): User
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -625,8 +605,6 @@ scalar _HoistConfig
     expectTheSchemaSDLToBe(
       schema,
       /* GraphQL */ `
-scalar _HoistConfig
-
 type User {
   id: ID
   name: String
@@ -697,8 +675,6 @@ type Book {
 type Query {
   book: Book
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });
@@ -768,8 +744,6 @@ type User {
   e: String
 }
 
-scalar _HoistConfig
-
 type Book {
   id: ID
   name: String
@@ -823,8 +797,6 @@ type User {
   name: String
   username: String
 }
-
-scalar _HoistConfig
 
 type Book {
   id: ID
@@ -881,8 +853,6 @@ type Test implements ITest {
   username: String
 }
 
-scalar _HoistConfig
-
 type Query {
   test: Test
 }
@@ -915,8 +885,6 @@ type Query {
 type Query {
   foo: String
 }
-
-scalar _HoistConfig
 `.trim(),
     );
   });

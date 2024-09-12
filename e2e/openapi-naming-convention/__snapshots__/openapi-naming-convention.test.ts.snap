@@ -108,15 +108,13 @@ directive @transport(
   queryParams: [[String]]
 ) repeatable on SCHEMA
 
-directive @source(name: String!, type: String, subgraph: String!, hoist: _HoistConfig)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 directive @extraEnumValueDirective(name: String!, value: String!, directives: _DirectiveExtensions)  repeatable on OBJECT
 
 scalar ObjMap @join__type(graph: WIKI) 
-
-scalar _HoistConfig @join__type(graph: WIKI) 
 
 scalar _DirectiveExtensions @join__type(graph: WIKI) 
 
