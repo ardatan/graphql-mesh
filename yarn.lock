@@ -5128,7 +5128,7 @@ __metadata:
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.4.4"
+    vite: "npm:5.4.5"
   languageName: unknown
   linkType: soft
 
@@ -6589,7 +6589,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-statsd@workspace:packages/plugins/statsd"
   dependencies:
     "@envelop/statsd": "npm:5.0.0"
-    hot-shots: "npm:10.1.0"
+    hot-shots: "npm:10.1.1"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.5
     "@graphql-mesh/utils": ^0.102.5
@@ -23170,15 +23170,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-shots@npm:10.1.0":
-  version: 10.1.0
-  resolution: "hot-shots@npm:10.1.0"
+"hot-shots@npm:10.1.1":
+  version: 10.1.1
+  resolution: "hot-shots@npm:10.1.1"
   dependencies:
     unix-dgram: "npm:2.x"
   dependenciesMeta:
     unix-dgram:
       optional: true
-  checksum: 10c0/96afb6466ccab0ecdd672bdec89f69d49317dc5a69dee2a4645f44eb65d1d133db44305184b2557e27040922f3ed0e7b8c7374009e8572dfa8b9396ecfcbf8f1
+  checksum: 10c0/0dfcf122e124118d360c8cafb054bd433ca19f29f30d5021b396ec8cdcffaa802dcc2721a8b0e6aa1cb57733d354896996403c318571b73f715cfc639a5da483
   languageName: node
   linkType: hard
 
@@ -37456,9 +37456,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.4.4":
-  version: 5.4.4
-  resolution: "vite@npm:5.4.4"
+"vite@npm:5.4.5":
+  version: 5.4.5
+  resolution: "vite@npm:5.4.5"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
@@ -37495,7 +37495,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/2752e7dd5584ea7cc057742e8f5cbf2f2bd3a2bceb8794fbd3d52f1e88d362b5ac7f1c70be7a3d01b3d768320c8a8ad0df287fd72f253bf040423c36c67a3e89
+  checksum: 10c0/89c6459452fc238cdf8e99681b30996af171c9c557af476f96408a18a639fb5a0a6ee2d2257e005b21dc284edceb604595c34920cd4a007ad18f7ebafb654c76
   languageName: node
   linkType: hard
 
