@@ -94,7 +94,7 @@ For example, the following configuration adds `Countries_` to the types and fiel
 by using [Prefix Transform](/v1/transforms/prefix).
 
 ```ts filename="mesh.config.ts" {12-16}
-import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
+import { createPrefixTransform, defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineConfig({
   subgraphs: [
@@ -195,7 +195,7 @@ contains all the annotations for the gateway.
 You can generate the supergraph by running the following command:
 
 ```sh
-mesh-compose > supergraph.graphql
+npx mesh-compose > supergraph.graphql
 ```
 
 <Callout>
@@ -211,7 +211,7 @@ If you want to publish the subgraphs to a schema registry such as
 subgraphs by running the following command:
 
 ```sh
-mesh-compose --subgraph SUBGRAPH_NAME > subgraph.graphql
+npx mesh-compose --subgraph SUBGRAPH_NAME > subgraph.graphql
 ```
 
 <Callout>
