@@ -4451,7 +4451,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^1.0.3"
     "@omnigraph/json-schema": "npm:^0.106.7"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.3"
+    wrangler: "npm:3.78.4"
   languageName: unknown
   linkType: soft
 
@@ -4465,7 +4465,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.5"
     "@graphql-mesh/serve-runtime": "npm:^1.0.3"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.3"
+    wrangler: "npm:3.78.4"
   languageName: unknown
   linkType: soft
 
@@ -4604,7 +4604,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.106.7"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.3"
+    wrangler: "npm:3.78.4"
   languageName: unknown
   linkType: soft
 
@@ -4776,7 +4776,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.96.4"
     "@graphql-mesh/grpc": "npm:0.104.6"
     "@graphql-mesh/transform-naming-convention": "npm:0.102.5"
-    "@grpc/grpc-js": "npm:1.11.2"
+    "@grpc/grpc-js": "npm:1.11.3"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:9.0.1"
     google-protobuf: "npm:3.21.4"
@@ -4795,7 +4795,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.96.4"
     "@graphql-mesh/grpc": "npm:0.104.6"
     "@graphql-mesh/transform-naming-convention": "npm:0.102.5"
-    "@grpc/grpc-js": "npm:1.11.2"
+    "@grpc/grpc-js": "npm:1.11.3"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:9.0.1"
     google-protobuf: "npm:3.21.4"
@@ -4962,7 +4962,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.102.6"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
-    mongoose: "npm:8.6.2"
+    mongoose: "npm:8.6.3"
   languageName: unknown
   linkType: soft
 
@@ -5292,7 +5292,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.102.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.3"
+    wrangler: "npm:3.78.4"
   languageName: unknown
   linkType: soft
 
@@ -6259,7 +6259,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.6.2"
+    mongoose: "npm:8.6.3"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.5
     "@graphql-mesh/utils": ^0.102.5
@@ -8312,13 +8312,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.11.2, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
-  version: 1.11.2
-  resolution: "@grpc/grpc-js@npm:1.11.2"
+"@grpc/grpc-js@npm:1.11.3, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
+  version: 1.11.3
+  resolution: "@grpc/grpc-js@npm:1.11.3"
   dependencies:
     "@grpc/proto-loader": "npm:^0.7.13"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10c0/d69a1db3726d7a09a54394971bd54c77dfc2e8f48b23384771a2074ecc947b240ea065b4f1d74300e76fd47d7914071460d98702bd1512b7a9d6085eac6a6012
+  checksum: 10c0/2946a70c709688737603be573f6836beea26e4c132a50164591020860ae0e62375c1475c26017011fabfbaf6a9fa2bfdabfe9058aed11bab2f697e4242533afc
   languageName: node
   linkType: hard
 
@@ -28785,9 +28785,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.6.2":
-  version: 8.6.2
-  resolution: "mongoose@npm:8.6.2"
+"mongoose@npm:8.6.3":
+  version: 8.6.3
+  resolution: "mongoose@npm:8.6.3"
   dependencies:
     bson: "npm:^6.7.0"
     kareem: "npm:2.6.3"
@@ -28796,7 +28796,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/f03c7758c824f26b4a4c62a9ffbb5ca28a7b3c9215e323c3da390bb933473e24a82937009f78e0e87ad0bd5a196c476cbeb67e76026678a567e2162c221812ec
+  checksum: 10c0/60d4333077ed0248916e546efc7f4c8d08d0ad4f69f7aea625c009afeb38089b0d260561ae5bbeaef33f2cff8ce009c0a8774fda3b00be2453bd97083b61e9a7
   languageName: node
   linkType: hard
 
@@ -30483,10 +30483,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-connection-string@npm:^2.0.0, pg-connection-string@npm:^2.6.4":
+"pg-connection-string@npm:^2.0.0":
   version: 2.6.4
   resolution: "pg-connection-string@npm:2.6.4"
   checksum: 10c0/0d0b617df0fc6507bf6a94bdcd56c7a305788a1402d69bff9773350947c8f525d6d8136128065370749a3325e99658ae40fbdcce620fb8e60126181f0591a6a6
+  languageName: node
+  linkType: hard
+
+"pg-connection-string@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "pg-connection-string@npm:2.7.0"
+  checksum: 10c0/50a1496a1c858f9495d78a2c7a66d93ef3602e718aff2953bb5738f3ea616d7f727f32fc20513c9bed127650cd14c1ddc7b458396f4000e689d4b64c65c5c51e
   languageName: node
   linkType: hard
 
@@ -30504,19 +30511,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-pool@npm:^3.6.2":
-  version: 3.6.2
-  resolution: "pg-pool@npm:3.6.2"
+"pg-pool@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "pg-pool@npm:3.7.0"
   peerDependencies:
     pg: ">=8.0"
-  checksum: 10c0/14c524549490954b5e48457a4b808df8f619f6deeb3b395b0cd184a8f4ed65a9273fe0697ba0341a41d6745af197f1437eb1cf51fff0cbbf5b0fb3852ebe5392
+  checksum: 10c0/9128673cf941f288c0cb1a74ca959a9b4f6075ef73b2cc7dece5d4db3dd7043784869e7c12bce2e69ca0df22132a419cc45c2050b4373632856fe8bae9eb94b5
   languageName: node
   linkType: hard
 
-"pg-protocol@npm:*, pg-protocol@npm:^1.6.1":
+"pg-protocol@npm:*":
   version: 1.6.1
   resolution: "pg-protocol@npm:1.6.1"
   checksum: 10c0/7eadef4010ac0a3925c460be7332ca4098a5c6d5181725a62193fcfa800000ae6632d98d814f3989b42cf5fdc3b45e34c714a1959d29174e81e30730e140ae5f
+  languageName: node
+  linkType: hard
+
+"pg-protocol@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "pg-protocol@npm:1.7.0"
+  checksum: 10c0/c4af854d9b843c808231c0040fed89f2b9101006157df8da2bb2f62a7dde702de748d852228dc22df41cc7ffddfb526af3bcb34b278b581e9f76a060789186c1
   languageName: node
   linkType: hard
 
@@ -30563,13 +30577,13 @@ __metadata:
   linkType: hard
 
 "pg@npm:>=6.1.0 <9, pg@npm:^8.6.0":
-  version: 8.12.0
-  resolution: "pg@npm:8.12.0"
+  version: 8.13.0
+  resolution: "pg@npm:8.13.0"
   dependencies:
     pg-cloudflare: "npm:^1.1.1"
-    pg-connection-string: "npm:^2.6.4"
-    pg-pool: "npm:^3.6.2"
-    pg-protocol: "npm:^1.6.1"
+    pg-connection-string: "npm:^2.7.0"
+    pg-pool: "npm:^3.7.0"
+    pg-protocol: "npm:^1.7.0"
     pg-types: "npm:^2.1.0"
     pgpass: "npm:1.x"
   peerDependencies:
@@ -30580,7 +30594,7 @@ __metadata:
   peerDependenciesMeta:
     pg-native:
       optional: true
-  checksum: 10c0/973e49b5e7327c42fc62806efa8c824159ab7a0b676cefe6eeb51a59b6e226587911ec27697f36c18d69e58a7f4f0b76d0829364087194d13ed431ab7c9c417a
+  checksum: 10c0/1521189063d2293d62f3fac61e797a3096a62a69668c223827d00b83c17a320805f31f0b5316feb80f8d9eed0c6c32f95146d8aca866af05816a66fd2ba8e32a
   languageName: node
   linkType: hard
 
@@ -38384,9 +38398,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.78.3":
-  version: 3.78.3
-  resolution: "wrangler@npm:3.78.3"
+"wrangler@npm:3.78.4":
+  version: 3.78.4
+  resolution: "wrangler@npm:3.78.4"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@cloudflare/workers-shared": "npm:0.5.3"
@@ -38418,7 +38432,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/a12aaa9e5f182cd8eb9e58842b0bb819d46a7fb31bf00b5ce0d95521e5a23b08651bc054cc1c2fe286ac6d63a2238da5266dd1d9b576729b0be0fa3f1d7d3685
+  checksum: 10c0/5751aeee909d6045d5f923da6a92db20b80fb037c74a3d31372a3bbc9114760fd72b02966f4fc4b296a81829397b2feb642445bf7098f64b2294ec771295fef1
   languageName: node
   linkType: hard
 

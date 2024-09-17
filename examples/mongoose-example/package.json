@@ -9,7 +9,7 @@
     "@graphql-mesh/cli": "0.96.4",
     "@graphql-mesh/mongoose": "0.102.6",
     "graphql": "16.9.0",
-    "mongoose": "8.6.2"
+    "mongoose": "8.6.3"
   },
   "devDependencies": {
     "jest": "29.7.0"
