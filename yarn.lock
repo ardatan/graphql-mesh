@@ -4451,7 +4451,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^1.0.3"
     "@omnigraph/json-schema": "npm:^0.106.7"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.2"
+    wrangler: "npm:3.78.3"
   languageName: unknown
   linkType: soft
 
@@ -4465,7 +4465,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.5"
     "@graphql-mesh/serve-runtime": "npm:^1.0.3"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.2"
+    wrangler: "npm:3.78.3"
   languageName: unknown
   linkType: soft
 
@@ -4604,7 +4604,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.106.7"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.2"
+    wrangler: "npm:3.78.3"
   languageName: unknown
   linkType: soft
 
@@ -5128,7 +5128,7 @@ __metadata:
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.4.5"
+    vite: "npm:5.4.6"
   languageName: unknown
   linkType: soft
 
@@ -5292,7 +5292,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.102.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.2"
+    wrangler: "npm:3.78.3"
   languageName: unknown
   linkType: soft
 
@@ -28442,9 +28442,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20240909.1":
-  version: 3.20240909.1
-  resolution: "miniflare@npm:3.20240909.1"
+"miniflare@npm:3.20240909.2":
+  version: 3.20240909.2
+  resolution: "miniflare@npm:3.20240909.2"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
@@ -28460,7 +28460,7 @@ __metadata:
     zod: "npm:^3.22.3"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/e7d4fe6db4a15a1ca28f210e0b85dd5efae3b79184628e794bbb899dd035b28e1782aa499937bc336ab20a7b07998817f37e8ab294d1b542187bb7c4bf86af5d
+  checksum: 10c0/afdeef8cf30bcf76898d7b13e411720e0a02e21a19848862ba722f0a9c22590f115abb171f224e204c3128e88a6852996a8317a5ec647dc441ba546cc6ba23d2
   languageName: node
   linkType: hard
 
@@ -30415,10 +30415,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^6.2.0":
-  version: 6.2.2
-  resolution: "path-to-regexp@npm:6.2.2"
-  checksum: 10c0/4b60852d3501fd05ca9dd08c70033d73844e5eca14e41f499f069afa8364f780f15c5098002f93bd42af8b3514de62ac6e82a53b5662de881d2b08c9ef21ea6b
+"path-to-regexp@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "path-to-regexp@npm:6.3.0"
+  checksum: 10c0/73b67f4638b41cde56254e6354e46ae3a2ebc08279583f6af3d96fe4664fc75788f74ed0d18ca44fa4a98491b69434f9eee73b97bb5314bd1b5adb700f5c18d6
   languageName: node
   linkType: hard
 
@@ -37473,9 +37473,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.4.5":
-  version: 5.4.5
-  resolution: "vite@npm:5.4.5"
+"vite@npm:5.4.6":
+  version: 5.4.6
+  resolution: "vite@npm:5.4.6"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
@@ -37512,7 +37512,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/89c6459452fc238cdf8e99681b30996af171c9c557af476f96408a18a639fb5a0a6ee2d2257e005b21dc284edceb604595c34920cd4a007ad18f7ebafb654c76
+  checksum: 10c0/5f87be3a10e970eaf9ac52dfab39cf9fff583036685252fb64570b6d7bfa749f6d221fb78058f5ef4b5664c180d45a8e7a7ff68d7f3770e69e24c7c68b958bde
   languageName: node
   linkType: hard
 
@@ -38324,9 +38324,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.78.2":
-  version: 3.78.2
-  resolution: "wrangler@npm:3.78.2"
+"wrangler@npm:3.78.3":
+  version: 3.78.3
+  resolution: "wrangler@npm:3.78.3"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@cloudflare/workers-shared": "npm:0.5.3"
@@ -38337,9 +38337,9 @@ __metadata:
     date-fns: "npm:^3.6.0"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20240909.1"
+    miniflare: "npm:3.20240909.2"
     nanoid: "npm:^3.3.3"
-    path-to-regexp: "npm:^6.2.0"
+    path-to-regexp: "npm:^6.3.0"
     resolve: "npm:^1.22.8"
     resolve.exports: "npm:^2.0.2"
     selfsigned: "npm:^2.0.1"
@@ -38358,7 +38358,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/5f6cbdbde330dbe4c0fa15d7889daa9144520d70228e4b9d916c54513c5b408632a97de4b1893ed1d0c73fcebb451d468152b4f022d5368716de317461e4475d
+  checksum: 10c0/a12aaa9e5f182cd8eb9e58842b0bb819d46a7fb31bf00b5ce0d95521e5a23b08651bc054cc1c2fe286ac6d63a2238da5266dd1d9b576729b0be0fa3f1d7d3685
   languageName: node
   linkType: hard
 
