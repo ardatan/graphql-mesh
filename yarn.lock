@@ -10109,7 +10109,7 @@ __metadata:
     fast-xml-parser: "npm:^4.3.4"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.1.3"
+    soap: "npm:1.1.4"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.5
     "@graphql-mesh/utils": ^0.102.5
@@ -34571,9 +34571,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap@npm:1.1.3":
-  version: 1.1.3
-  resolution: "soap@npm:1.1.3"
+"soap@npm:1.1.4":
+  version: 1.1.4
+  resolution: "soap@npm:1.1.4"
   dependencies:
     axios: "npm:^1.7.7"
     axios-ntlm: "npm:^1.4.2"
@@ -34585,7 +34585,7 @@ __metadata:
     strip-bom: "npm:^3.0.0"
     whatwg-mimetype: "npm:4.0.0"
     xml-crypto: "npm:^6.0.0"
-  checksum: 10c0/2147d575e9eb86954b779536c7ee44caddbfa07df1b69d07fe0bb4ce1bbabd09b8d66cd9d3c6b0bbf6a307e1884ee5115691cada1427faf6371c6f5a0cf18165
+  checksum: 10c0/56a5c5dfe0c0dbe1da98b7ba3647ca137fd57579e1df408c88d1d5b9501f9a8101ee83087efea0e59a2cf3cc1060a5c7f38bb17d995bf87b41c3ec8ac19d8df1
   languageName: node
   linkType: hard
 
