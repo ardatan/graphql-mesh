@@ -27,14 +27,6 @@ export default {
       layout: 'raw',
     },
   },
-  docs: {
-    title: 'Legacy Docs',
-    type: 'page',
-    display: 'hidden',
-    theme: {
-      topContent: LegacyDocsBanner,
-    },
-  },
   examples: {
     title: 'Examples',
     type: 'page',
@@ -45,7 +37,14 @@ export default {
     },
   },
   v1: {
-    title: 'Docs',
+    title: 'v1',
     type: 'page',
+  },
+  docs: {
+    title: 'v0',
+    type: 'page',
+    theme: {
+      topContent: LegacyDocsBanner,
+    },
   },
 };
