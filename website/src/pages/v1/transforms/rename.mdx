@@ -39,22 +39,25 @@ export const composeConfig = defineConfig({
       transforms: [
         createRenameTransform({
           // Rename types
-          typeRenamer(typeName) {
-            if (typeName === 'Country') {
+          typeRenamer(opts) {
+            if (opts.typeName === 'Country') {
               return 'MyCountry'
             }
+            return ''
           }
           // Rename fields
-          fieldRenamer(fieldName, typeName) {
-            if (typeName === 'Country' && fieldName === 'name') {
+          fieldRenamer(opts) {
+            if (opts.typeName === 'Country' && opts.fieldName === 'name') {
               return 'countryName'
             }
+            return ''
           }
           // Rename field arguments
-          argRenamer(argName, fieldName, typeName) {
-            if (typeName === 'Country' && fieldName === 'name' && argName === 'lang') {
+          argRenamer(opts) {
+            if (opts.typeName === 'Country' && opts.fieldName === 'name' && opts.argName === 'lang') {
               return 'language'
             }
+            return ''
           }
         })
       ]
