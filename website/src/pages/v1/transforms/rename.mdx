@@ -44,14 +44,14 @@ export const composeConfig = defineConfig({
               return 'MyCountry'
             }
             return ''
-          }
+          },
           // Rename fields
           fieldRenamer(opts) {
             if (opts.typeName === 'Country' && opts.fieldName === 'name') {
               return 'countryName'
             }
             return ''
-          }
+          },
           // Rename field arguments
           argRenamer(opts) {
             if (opts.typeName === 'Country' && opts.fieldName === 'name' && opts.argName === 'lang') {
