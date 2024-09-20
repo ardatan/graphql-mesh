@@ -3219,10 +3219,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20240909.0":
-  version: 4.20240909.0
-  resolution: "@cloudflare/workers-types@npm:4.20240909.0"
-  checksum: 10c0/897f67d662adc39578d0c8e8200208746b544d66194edcb0b92d82e150b70c6ddc4ca3f2fa07d6b2cc1e19c2c74ccb6db6e3340c1fe422d48ac9196fe7e2ba46
+"@cloudflare/workers-types@npm:4.20240919.0":
+  version: 4.20240919.0
+  resolution: "@cloudflare/workers-types@npm:4.20240919.0"
+  checksum: 10c0/35a738d9159b528e5eb4c26b85d3d548b9302d2b666c2f7ea491db8f4d62e5cc75731987ae2e24d0c0791b4c57fa8fafdf3d6fd384d7ecfd5e326668417968fa
   languageName: node
   linkType: hard
 
@@ -4451,7 +4451,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^1.0.3"
     "@omnigraph/json-schema": "npm:^0.106.7"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.5"
+    wrangler: "npm:3.78.6"
   languageName: unknown
   linkType: soft
 
@@ -4465,7 +4465,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.5"
     "@graphql-mesh/serve-runtime": "npm:^1.0.3"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.5"
+    wrangler: "npm:3.78.6"
   languageName: unknown
   linkType: soft
 
@@ -4604,7 +4604,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.106.7"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.5"
+    wrangler: "npm:3.78.6"
   languageName: unknown
   linkType: soft
 
@@ -4740,7 +4740,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.13"
     "@types/node": "npm:20.16.5"
-    "@types/react": "npm:18.3.7"
+    "@types/react": "npm:18.3.8"
     "@types/react-dom": "npm:18.3.0"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.9.0"
@@ -5006,7 +5006,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.104.6"
     "@graphql-mesh/openapi": "npm:0.106.8"
     "@graphql-mesh/runtime": "npm:0.103.6"
-    "@types/react": "npm:18.3.7"
+    "@types/react": "npm:18.3.8"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:14.2.13"
@@ -5024,7 +5024,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.104.6"
     "@graphql-mesh/openapi": "npm:0.106.8"
     "@graphql-mesh/runtime": "npm:0.103.6"
-    "@types/react": "npm:18.3.7"
+    "@types/react": "npm:18.3.8"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:14.2.13"
@@ -5121,7 +5121,7 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.4"
-    "@types/react": "npm:18.3.7"
+    "@types/react": "npm:18.3.8"
     "@types/react-dom": "npm:18.3.0"
     "@vitejs/plugin-react": "npm:4.3.1"
     graphql: "npm:16.9.0"
@@ -5292,7 +5292,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.102.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.5"
+    wrangler: "npm:3.78.6"
   languageName: unknown
   linkType: soft
 
@@ -5843,7 +5843,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20240909.0"
+    "@cloudflare/workers-types": "npm:4.20240919.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.5
     "@graphql-mesh/utils": ^0.102.5
@@ -11805,114 +11805,114 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/rollup-android-arm-eabi@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-android-arm-eabi@npm:4.22.1"
+"@rollup/rollup-android-arm-eabi@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-android-arm-eabi@npm:4.22.2"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@rollup/rollup-android-arm64@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-android-arm64@npm:4.22.1"
+"@rollup/rollup-android-arm64@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-android-arm64@npm:4.22.2"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-darwin-arm64@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-darwin-arm64@npm:4.22.1"
+"@rollup/rollup-darwin-arm64@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-darwin-arm64@npm:4.22.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-darwin-x64@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-darwin-x64@npm:4.22.1"
+"@rollup/rollup-darwin-x64@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-darwin-x64@npm:4.22.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm-gnueabihf@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.22.1"
+"@rollup/rollup-linux-arm-gnueabihf@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.22.2"
   conditions: os=linux & cpu=arm & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm-musleabihf@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-arm-musleabihf@npm:4.22.1"
+"@rollup/rollup-linux-arm-musleabihf@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-arm-musleabihf@npm:4.22.2"
   conditions: os=linux & cpu=arm & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm64-gnu@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.22.1"
+"@rollup/rollup-linux-arm64-gnu@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.22.2"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm64-musl@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.22.1"
+"@rollup/rollup-linux-arm64-musl@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.22.2"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-powerpc64le-gnu@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-powerpc64le-gnu@npm:4.22.1"
+"@rollup/rollup-linux-powerpc64le-gnu@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-powerpc64le-gnu@npm:4.22.2"
   conditions: os=linux & cpu=ppc64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-riscv64-gnu@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.22.1"
+"@rollup/rollup-linux-riscv64-gnu@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.22.2"
   conditions: os=linux & cpu=riscv64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-s390x-gnu@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-s390x-gnu@npm:4.22.1"
+"@rollup/rollup-linux-s390x-gnu@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-s390x-gnu@npm:4.22.2"
   conditions: os=linux & cpu=s390x & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-x64-gnu@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.22.1"
+"@rollup/rollup-linux-x64-gnu@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.22.2"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-x64-musl@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-linux-x64-musl@npm:4.22.1"
+"@rollup/rollup-linux-x64-musl@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-linux-x64-musl@npm:4.22.2"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-arm64-msvc@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.22.1"
+"@rollup/rollup-win32-arm64-msvc@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.22.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-ia32-msvc@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.22.1"
+"@rollup/rollup-win32-ia32-msvc@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.22.2"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-x64-msvc@npm:4.22.1":
-  version: 4.22.1
-  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.22.1"
+"@rollup/rollup-win32-x64-msvc@npm:4.22.2":
+  version: 4.22.2
+  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.22.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -13885,13 +13885,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.3.7":
+"@types/react@npm:*":
   version: 18.3.7
   resolution: "@types/react@npm:18.3.7"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/460f40eadf1fd035344b2ff9061d5c2314db9403f76d05fff7724c78543737c95829e1628567c63d27b542647867eca5b6f284dfd38f1d3b70754f32c4cbecb7
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:18.3.8":
+  version: 18.3.8
+  resolution: "@types/react@npm:18.3.8"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/367312c9fe276639ecb142265e090a4dd04bb39f8d718cbab546de3f1ddcfddeff415e1147d0fc40f734badaa7420b7b109d511bd4304b2c4c9c36164612fdf8
   languageName: node
   linkType: hard
 
@@ -28353,9 +28363,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20240909.3":
-  version: 3.20240909.3
-  resolution: "miniflare@npm:3.20240909.3"
+"miniflare@npm:3.20240909.4":
+  version: 3.20240909.4
+  resolution: "miniflare@npm:3.20240909.4"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
@@ -28371,7 +28381,7 @@ __metadata:
     zod: "npm:^3.22.3"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/22473158e0ee09eafc6453abc2dea5810e3d2c75eebce982e3bbfc8ce79c537000511293cad5f2d442654a8262c147b175a3b11e59f7461588d14ad99e840bbe
+  checksum: 10c0/2c65c8e7d985341e876a95b1d52b02f5ea83172f9c799f49b5fe74f4cdd1ec126d3c73c7a580828828c448ac71f549d8e089095891d6dcda0ff2ee36712d9b35
   languageName: node
   linkType: hard
 
@@ -33646,25 +33656,25 @@ __metadata:
   linkType: hard
 
 "rollup@npm:^4.18.1, rollup@npm:^4.20.0":
-  version: 4.22.1
-  resolution: "rollup@npm:4.22.1"
+  version: 4.22.2
+  resolution: "rollup@npm:4.22.2"
   dependencies:
-    "@rollup/rollup-android-arm-eabi": "npm:4.22.1"
-    "@rollup/rollup-android-arm64": "npm:4.22.1"
-    "@rollup/rollup-darwin-arm64": "npm:4.22.1"
-    "@rollup/rollup-darwin-x64": "npm:4.22.1"
-    "@rollup/rollup-linux-arm-gnueabihf": "npm:4.22.1"
-    "@rollup/rollup-linux-arm-musleabihf": "npm:4.22.1"
-    "@rollup/rollup-linux-arm64-gnu": "npm:4.22.1"
-    "@rollup/rollup-linux-arm64-musl": "npm:4.22.1"
-    "@rollup/rollup-linux-powerpc64le-gnu": "npm:4.22.1"
-    "@rollup/rollup-linux-riscv64-gnu": "npm:4.22.1"
-    "@rollup/rollup-linux-s390x-gnu": "npm:4.22.1"
-    "@rollup/rollup-linux-x64-gnu": "npm:4.22.1"
-    "@rollup/rollup-linux-x64-musl": "npm:4.22.1"
-    "@rollup/rollup-win32-arm64-msvc": "npm:4.22.1"
-    "@rollup/rollup-win32-ia32-msvc": "npm:4.22.1"
-    "@rollup/rollup-win32-x64-msvc": "npm:4.22.1"
+    "@rollup/rollup-android-arm-eabi": "npm:4.22.2"
+    "@rollup/rollup-android-arm64": "npm:4.22.2"
+    "@rollup/rollup-darwin-arm64": "npm:4.22.2"
+    "@rollup/rollup-darwin-x64": "npm:4.22.2"
+    "@rollup/rollup-linux-arm-gnueabihf": "npm:4.22.2"
+    "@rollup/rollup-linux-arm-musleabihf": "npm:4.22.2"
+    "@rollup/rollup-linux-arm64-gnu": "npm:4.22.2"
+    "@rollup/rollup-linux-arm64-musl": "npm:4.22.2"
+    "@rollup/rollup-linux-powerpc64le-gnu": "npm:4.22.2"
+    "@rollup/rollup-linux-riscv64-gnu": "npm:4.22.2"
+    "@rollup/rollup-linux-s390x-gnu": "npm:4.22.2"
+    "@rollup/rollup-linux-x64-gnu": "npm:4.22.2"
+    "@rollup/rollup-linux-x64-musl": "npm:4.22.2"
+    "@rollup/rollup-win32-arm64-msvc": "npm:4.22.2"
+    "@rollup/rollup-win32-ia32-msvc": "npm:4.22.2"
+    "@rollup/rollup-win32-x64-msvc": "npm:4.22.2"
     "@types/estree": "npm:1.0.5"
     fsevents: "npm:~2.3.2"
   dependenciesMeta:
@@ -33704,7 +33714,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 10c0/0b9496e8e02e26a6277cf4cd96ed159ee58a2b9faff07afd45b51629ccfd6baa52593a0de2b7582b1fb4edbb397d36d1e8286c6376966d209449a1fd607cd8ba
+  checksum: 10c0/1e2bfde5497ebec161e9fb6dd56cf1455454f3ccc8b104e4147c67a46a71fe123c6405cc1a79a49954729a91c1141b4e00ff49c4ae79523939b45137675b288e
   languageName: node
   linkType: hard
 
@@ -37743,7 +37753,7 @@ __metadata:
     "@theguild/components": "npm:^6.5.3"
     "@theguild/tailwind-config": "npm:0.5.0"
     "@types/node": "npm:20.16.5"
-    "@types/react": "npm:18.3.7"
+    "@types/react": "npm:18.3.8"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.13"
     next: "npm:^14.1.4"
@@ -38273,9 +38283,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.78.5":
-  version: 3.78.5
-  resolution: "wrangler@npm:3.78.5"
+"wrangler@npm:3.78.6":
+  version: 3.78.6
+  resolution: "wrangler@npm:3.78.6"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@cloudflare/workers-shared": "npm:0.5.3"
@@ -38286,7 +38296,7 @@ __metadata:
     date-fns: "npm:^3.6.0"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20240909.3"
+    miniflare: "npm:3.20240909.4"
     nanoid: "npm:^3.3.3"
     path-to-regexp: "npm:^6.3.0"
     resolve: "npm:^1.22.8"
@@ -38307,7 +38317,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/ebc111f96a1d6c7122454a09d5fb676101d379b291c37739d794bcde22298b647a847e80a30753c8e22656648df2a1d2329297de6f5acb1d9e47d8dd566ec6da
+  checksum: 10c0/207bf79cadae762a5646051c337a3e06d7f8245bc74500efef9b324075dfa48e72edae4777a99ee2eb2e409ea6074975d1ebfd5794b490b34d1edc56e5c039be
   languageName: node
   linkType: hard
 
