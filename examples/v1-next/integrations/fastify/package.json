@@ -9,7 +9,7 @@
     "@graphql-mesh/compose-cli": "^1.0.2",
     "@graphql-mesh/serve-runtime": "^1.0.3",
     "@omnigraph/openapi": "^0.106.8",
-    "fastify": "^4.26.0",
+    "fastify": "^5.0.0",
     "graphql": "16.9.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "2.0.0",
