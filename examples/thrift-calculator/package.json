@@ -17,7 +17,7 @@
     "@graphql-mesh/thrift": "0.104.6",
     "express": "4.21.0",
     "graphql": "16.9.0",
-    "thrift": "0.20.0",
+    "thrift": "0.21.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   },
