@@ -116,7 +116,7 @@
     "@whatwg-node/node-fetch": "0.5.26",
     "@whatwg-node/server": "0.9.49",
     "es5-ext": "0.10.64",
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.24.0",
     "graphql": "16.9.0",
     "graphql-rate-limit@npm:^3.3.0": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
     "node-gyp": "10.2.0",
