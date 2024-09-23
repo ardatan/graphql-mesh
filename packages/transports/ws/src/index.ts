@@ -31,7 +31,7 @@ export default {
       ? getInterpolatedHeadersFactory(transportEntry.options.connectionParams)
       : undefined;
     const mergedExecutor: DisposableExecutor = function mergedExecutor(execReq) {
-      const connectionParams = connectionParamsFactory({
+      const connectionParams = connectionParamsFactory?.({
         env: process.env,
         root: execReq.rootValue,
         context: execReq.context,
