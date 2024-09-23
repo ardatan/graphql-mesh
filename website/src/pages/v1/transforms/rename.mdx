@@ -25,9 +25,9 @@ JavaScript functions to rename types, fields, and field arguments.
 
 ```ts filename="mesh.config.ts" {13-17}
 import {
+  createRenameTransform,
   defineConfig,
-  loadGraphQLHTTPSubgraph,
-  createRenameTransform
+  loadGraphQLHTTPSubgraph
 } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineConfig({
@@ -54,7 +54,11 @@ export const composeConfig = defineConfig({
           },
           // Rename field arguments
           argRenamer(opts) {
-            if (opts.typeName === 'Country' && opts.fieldName === 'name' && opts.argName === 'lang') {
+            if (
+              opts.typeName === 'Country' &&
+              opts.fieldName === 'name' &&
+              opts.argName === 'lang'
+            ) {
               return 'language'
             }
             return ''
