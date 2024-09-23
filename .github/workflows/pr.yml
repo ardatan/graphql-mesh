@@ -2,6 +2,9 @@ name: pr
 on:
   pull_request:
 
+env:
+  NO_COLOR: 1
+
 jobs:
   dependencies:
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
