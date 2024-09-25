@@ -1948,10 +1948,10 @@ type taxonomy_websearch @join__type(graph: RFAM)  {
 }
 
 type version @join__type(graph: RFAM)  {
-  rfam_release: Float!
   rfam_release_date: Date!
   number_families: Int!
   embl_release: String!
+  rfam_release: Float!
 }
 
 type Mutation @join__type(graph: RFAM)  {
@@ -3742,17 +3742,17 @@ input taxonomy_websearch_OrderByInput @join__type(graph: RFAM)  {
 }
 
 input version_WhereInput @join__type(graph: RFAM)  {
-  rfam_release: String
   rfam_release_date: String
   number_families: String
   embl_release: String
+  rfam_release: String
 }
 
 input version_OrderByInput @join__type(graph: RFAM)  {
-  rfam_release: OrderBy
   rfam_release_date: OrderBy
   number_families: OrderBy
   embl_release: OrderBy
+  rfam_release: OrderBy
 }
 
 input _annotated_file_InsertInput @join__type(graph: RFAM)  {
@@ -5118,17 +5118,17 @@ input taxonomy_websearch_UpdateInput @join__type(graph: RFAM)  {
 }
 
 input version_InsertInput @join__type(graph: RFAM)  {
-  rfam_release: Float!
   rfam_release_date: Date!
   number_families: Int!
   embl_release: String!
+  rfam_release: Float!
 }
 
 input version_UpdateInput @join__type(graph: RFAM)  {
-  rfam_release: Float
   rfam_release_date: Date
   number_families: Int
   embl_release: String
+  rfam_release: Float
 }
 
 input wikitext_InsertInput @join__type(graph: RFAM)  {
