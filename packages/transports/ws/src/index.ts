@@ -1,5 +1,4 @@
 import type { ClientOptions } from 'graphql-ws';
-import { WebSocket } from 'isomo';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
