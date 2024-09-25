@@ -48,7 +48,7 @@
   "dependencies": {
     "dotenv": "^16.3.1",
     "get-tsconfig": "^4.7.6",
-    "jiti": "^1.21.6",
+    "jiti": "^2.0.0",
     "sucrase": "^3.35.0"
   },
   "devDependencies": {
