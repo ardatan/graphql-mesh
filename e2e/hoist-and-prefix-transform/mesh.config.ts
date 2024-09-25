@@ -1,6 +1,7 @@
 import { Opts } from '@e2e/opts';
 import {
   createHoistFieldTransform,
+  createPrefixTransform,
   defineConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
@@ -14,11 +15,14 @@ export const composeConfig = defineConfig({
         endpoint: `http://localhost:${opts.getServicePort('users')}/graphql`,
       }),
       transforms: [
+        createPrefixTransform({
+          value: 'Test_',
+        }),
         createHoistFieldTransform({
           mapping: [
             {
               typeName: 'Query',
-              pathConfig: ['users', 'results'],
+              pathConfig: ['Test_users', 'results'],
               newFieldName: 'users',
             },
           ],
