@@ -349,10 +349,12 @@ jobs:
             os: windows-latest
           - serve-runner: bin
             node-version: 22
-            os: macos-latest
+            # MacOS Arm64
+            os: macos-14
           - serve-runner: bin
             node-version: 22
-            os: macos-latest-large
+            # MacOS x86_64
+            os: macos-13
     steps:
       - name: checkout
         uses: actions/checkout@v4
