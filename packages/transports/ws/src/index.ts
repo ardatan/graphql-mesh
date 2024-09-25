@@ -1,4 +1,5 @@
 import type { ClientOptions } from 'graphql-ws';
+import { WebSocket } from 'isomo';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
@@ -30,6 +31,10 @@ export default {
     const connectionParamsFactory = transportEntry.options.connectionParams
       ? getInterpolatedHeadersFactory(transportEntry.options.connectionParams)
       : undefined;
+    const headersFactory = transportEntry.headers
+      ? getInterpolatedHeadersFactory(Object.fromEntries(transportEntry.headers))
+      : undefined;
+
     const mergedExecutor: DisposableExecutor = function mergedExecutor(execReq) {
       const connectionParams = connectionParamsFactory?.({
         env: process.env,
@@ -37,7 +42,18 @@ export default {
         context: execReq.context,
         info: execReq.info,
       });
-      const hash = wsUrl + (connectionParams?.token ? '?token=' + connectionParams.token : '');
+      const headers = headersFactory?.({
+        env: process.env,
+        root: execReq.rootValue,
+        context: execReq.context,
+        info: execReq.info,
+      });
+
+      let hash = wsUrl + (connectionParams?.token ? '?token=' + connectionParams.token : '');
+      if (headers) {
+        hash += `&headers=${JSON.stringify(headers)}`;
+      }
+
       let wsExecutor = wsExecutorMap.get(hash);
       if (!wsExecutor) {
         const executorLogger = logger.child('GraphQL WS').child(hash);
@@ -46,6 +62,7 @@ export default {
           lazy: true,
           lazyCloseTimeout: 3_000,
           ...transportEntry.options,
+          headers,
           connectionParams,
           on: {
             connecting(isRetry) {

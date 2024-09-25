@@ -14,9 +14,7 @@ export type HTTPTransportOptions<
   HTTPExecutorOptions,
   'useGETForQueries' | 'method' | 'timeout' | 'credentials' | 'retry'
 > & {
-  subscriptions?: TransportEntry<
-    TSubscriptionTransportOptions | ((execReq: ExecutionRequest) => TSubscriptionTransportOptions)
-  >;
+  subscriptions?: TransportEntry<TSubscriptionTransportOptions>;
 };
 
 export default {
@@ -56,10 +54,6 @@ export default {
               payload.transportEntry.location,
             ).toString()
           : payload.transportEntry.location;
-        const subscriptionsOptions =
-          typeof payload.transportEntry.options?.subscriptions?.options === 'function'
-            ? payload.transportEntry.options.subscriptions.options(execReq)
-            : payload.transportEntry.options?.subscriptions?.options;
         return mapMaybePromise(
           payload.getTransportExecutor({
             ...payload.transportEntry,
@@ -67,7 +61,7 @@ export default {
             location: subscriptionsLocation,
             options: {
               ...payload.transportEntry.options,
-              ...subscriptionsOptions,
+              ...payload.transportEntry.options?.subscriptions?.options,
             },
           }),
           resolvedSubscriptionsExecutor => {
