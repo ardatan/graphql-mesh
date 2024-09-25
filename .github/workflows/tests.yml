@@ -350,7 +350,7 @@ jobs:
           - serve-runner: bin
             node-version: 22
             # MacOS Arm64
-            os: macos-15
+            os: macos-14
           - serve-runner: bin
             node-version: 22
             # MacOS x86_64
