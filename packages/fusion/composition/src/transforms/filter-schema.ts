@@ -194,9 +194,13 @@ export function createFilterTransform({
   return function filterTransform(schema) {
     const mappedSchema = mapSchema(schema, schemaMapper);
     const mappedSchemaConfig = mappedSchema.toConfig();
+    const newDirectives = [...mappedSchemaConfig.directives];
+    if (!newDirectives.some(directive => directive.name === 'hidden')) {
+      newDirectives.push(hiddenDirective);
+    }
     return new GraphQLSchema({
       ...mappedSchemaConfig,
-      directives: [...mappedSchemaConfig.directives, hiddenDirective],
+      directives: newDirectives,
     });
   };
 }

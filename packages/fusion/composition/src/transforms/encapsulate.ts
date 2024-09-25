@@ -99,10 +99,17 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       }
     }
     const schemaConfig = schema.toConfig();
+    const newDirectives = [...schemaConfig.directives];
+    if (!newDirectives.some(directive => directive.name === 'resolveTo')) {
+      newDirectives.push(resolveToDirective);
+    }
+    if (!newDirectives.some(directive => directive.name === 'hidden')) {
+      newDirectives.push(hiddenDirective);
+    }
     return new GraphQLSchema({
       ...schemaConfig,
       types: undefined,
-      directives: [...schemaConfig.directives, hiddenDirective, resolveToDirective],
+      directives: newDirectives,
       ...newRootTypes,
     });
   };
