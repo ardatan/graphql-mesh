@@ -58,6 +58,7 @@ export default {
           payload.getTransportExecutor({
             ...payload.transportEntry,
             kind: subscriptionsKind,
+            headers: subscriptionsKind === 'ws' ? undefined : payload.transportEntry.headers,
             location: subscriptionsLocation,
             options: {
               ...payload.transportEntry.options,
