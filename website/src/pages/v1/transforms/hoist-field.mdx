@@ -47,9 +47,13 @@ export const composeConfig = defineConfig({
       }),
       transforms: [
         createHoistFieldTransform({
-          typeName: 'Query',
-          pathConfig: ['users', 'results'],
-          newFieldName: 'users'
+          mapping: [
+            {
+              typeName: 'Query',
+              pathConfig: ['users', 'results'],
+              newFieldName: 'users'
+            }
+          ]
         })
       ]
     }
@@ -86,15 +90,19 @@ export const composeConfig = defineConfig({
       }),
       transforms: [
         createHoistFieldTransform({
-          typeName: 'Query',
-          pathConfig: [
+          mapping: [
             {
-              fieldName: 'users',
-              filterArgs: ['limit']
-            },
-            'results'
-          ],
-          newFieldName: 'users'
+              typeName: 'Query',
+              pathConfig: [
+                {
+                  fieldName: 'users',
+                  filterArgs: ['limit']
+                },
+                'results'
+              ],
+              newFieldName: 'users'
+            }
+          ]
         })
       ]
     }
