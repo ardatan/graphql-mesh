@@ -59,6 +59,8 @@ export default {
             ...payload.transportEntry,
             kind: subscriptionsKind,
             headers:
+              // WebSocket transport should not have any headers by default,
+              // `connectionParams` should be preferred.
               subscriptionsKind === 'ws'
                 ? payload.transportEntry.options.subscriptions.headers
                 : (payload.transportEntry.options.subscriptions.headers ??
