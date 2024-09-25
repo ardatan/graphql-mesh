@@ -1,6 +1,7 @@
 import { GraphQLObjectType, GraphQLSchema, printSchema, type GraphQLField } from 'graphql';
-import { createHoistFieldTransform } from '@graphql-mesh/fusion-composition';
+import { createFilterTransform, createHoistFieldTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
 
 describe('Hoist Field', () => {
@@ -391,5 +392,33 @@ type User {
         },
       ],
     });
+  });
+  it('combines with filter-schema', async () => {
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        schema,
+        transforms: [
+          createHoistFieldTransform({
+            mapping: [
+              {
+                typeName: 'Query',
+                pathConfig: ['users', 'results'],
+                newFieldName: 'userList',
+              },
+            ],
+          }),
+          createFilterTransform({
+            fieldFilter: (typeName, fieldName) => fieldName !== 'users',
+          }),
+        ],
+        name: 'TEST',
+      },
+    ]);
+
+    const queryType = newSchema.getType('Query') as GraphQLObjectType;
+    expect(queryType).toBeDefined();
+    const fields = queryType.getFields();
+    expect(fields.users).toBeUndefined();
+    expect(fields.userList).toBeDefined();
   });
 });
