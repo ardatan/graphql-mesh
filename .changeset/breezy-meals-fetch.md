@@ -1,6 +1,7 @@
 ---
-'@graphql-hive/gateway': patch
-'@graphql-mesh/serve-cli': patch
+'@graphql-hive/gateway': minor
+'@graphql-mesh/serve-cli': minor
+'@graphql-mesh/transport-ws': minor
 ---
 
 Add support for upstream WebSocket subscriptions.
