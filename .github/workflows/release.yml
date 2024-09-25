@@ -94,7 +94,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-latest-large, windows-latest]
+        os: [ubuntu-latest, macos-13, macos-15, windows-latest]
         productname: [mesh-serve, hive-gateway]
     needs: [stable]
     if:
