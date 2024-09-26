@@ -10,26 +10,24 @@ createServer(
     schema: createSchema<any>({
       typeDefs: /* GraphQL */ `
         type Query {
-          users(limit: Int!, page: Int): UserSearchResult
+          here: Weather
         }
 
-        type UserSearchResult {
-          page: Int!
-          results: [User!]!
+        type Weather {
+          rain: Rain!
         }
 
-        type User {
-          id: ID!
+        type Rain {
+          chance: Float!
         }
       `,
       resolvers: {
         Query: {
-          users: () => ({
-            page: 1,
-            results: [{ id: '1' }, { id: '2' }, { id: '3' }],
+          here: () => ({
+            rain: { chance: 1 },
           }),
         },
       },
     }),
   }),
-).listen(opts.getServicePort('users'));
+).listen(opts.getServicePort('weather'));

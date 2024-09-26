@@ -11,8 +11,8 @@ const opts = Opts(process.argv);
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadGraphQLHTTPSubgraph('users', {
-        endpoint: `http://localhost:${opts.getServicePort('users')}/graphql`,
+      sourceHandler: loadGraphQLHTTPSubgraph('weather', {
+        endpoint: `http://localhost:${opts.getServicePort('weather')}/graphql`,
       }),
       transforms: [
         createPrefixTransform({
@@ -21,9 +21,9 @@ export const composeConfig = defineConfig({
         createHoistFieldTransform({
           mapping: [
             {
-              typeName: 'Query',
-              pathConfig: ['Test_users', 'results'],
-              newFieldName: 'users',
+              typeName: 'Test_Weather',
+              pathConfig: ['rain', 'chance'],
+              newFieldName: 'chanceOfRain',
             },
           ],
         }),
