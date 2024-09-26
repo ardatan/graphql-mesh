@@ -3174,37 +3174,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-darwin-64@npm:1.20240909.0":
-  version: 1.20240909.0
-  resolution: "@cloudflare/workerd-darwin-64@npm:1.20240909.0"
+"@cloudflare/workerd-darwin-64@npm:1.20240925.0":
+  version: 1.20240925.0
+  resolution: "@cloudflare/workerd-darwin-64@npm:1.20240925.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-darwin-arm64@npm:1.20240909.0":
-  version: 1.20240909.0
-  resolution: "@cloudflare/workerd-darwin-arm64@npm:1.20240909.0"
+"@cloudflare/workerd-darwin-arm64@npm:1.20240925.0":
+  version: 1.20240925.0
+  resolution: "@cloudflare/workerd-darwin-arm64@npm:1.20240925.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-linux-64@npm:1.20240909.0":
-  version: 1.20240909.0
-  resolution: "@cloudflare/workerd-linux-64@npm:1.20240909.0"
+"@cloudflare/workerd-linux-64@npm:1.20240925.0":
+  version: 1.20240925.0
+  resolution: "@cloudflare/workerd-linux-64@npm:1.20240925.0"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-linux-arm64@npm:1.20240909.0":
-  version: 1.20240909.0
-  resolution: "@cloudflare/workerd-linux-arm64@npm:1.20240909.0"
+"@cloudflare/workerd-linux-arm64@npm:1.20240925.0":
+  version: 1.20240925.0
+  resolution: "@cloudflare/workerd-linux-arm64@npm:1.20240925.0"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-windows-64@npm:1.20240909.0":
-  version: 1.20240909.0
-  resolution: "@cloudflare/workerd-windows-64@npm:1.20240909.0"
+"@cloudflare/workerd-windows-64@npm:1.20240925.0":
+  version: 1.20240925.0
+  resolution: "@cloudflare/workerd-windows-64@npm:1.20240925.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -3219,10 +3219,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20240919.0":
-  version: 4.20240919.0
-  resolution: "@cloudflare/workers-types@npm:4.20240919.0"
-  checksum: 10c0/35a738d9159b528e5eb4c26b85d3d548b9302d2b666c2f7ea491db8f4d62e5cc75731987ae2e24d0c0791b4c57fa8fafdf3d6fd384d7ecfd5e326668417968fa
+"@cloudflare/workers-types@npm:4.20240925.0":
+  version: 4.20240925.0
+  resolution: "@cloudflare/workers-types@npm:4.20240925.0"
+  checksum: 10c0/f294a17a21c9594b3cbbb489bec0a13ab07d71f995753a03e98db118f20e6705f963d35725a0785de5009a23dff92d618fb00b7f045bcefe4ed6beef7134c2e2
   languageName: node
   linkType: hard
 
@@ -4458,7 +4458,7 @@ __metadata:
     "@graphql-mesh/serve-runtime": "npm:^1.0.3"
     "@omnigraph/json-schema": "npm:^0.106.7"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.8"
+    wrangler: "npm:3.78.10"
   languageName: unknown
   linkType: soft
 
@@ -4472,7 +4472,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.5"
     "@graphql-mesh/serve-runtime": "npm:^1.0.3"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.8"
+    wrangler: "npm:3.78.10"
   languageName: unknown
   linkType: soft
 
@@ -4611,7 +4611,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.106.7"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.8"
+    wrangler: "npm:3.78.10"
   languageName: unknown
   linkType: soft
 
@@ -4730,7 +4730,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.2"
     "@graphql-mesh/cli": "npm:0.96.4"
     "@graphql-mesh/json-schema": "npm:0.106.7"
-    "@types/node": "npm:20.16.6"
+    "@types/node": "npm:20.16.9"
     graphql: "npm:16.9.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -4746,8 +4746,8 @@ __metadata:
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.13"
-    "@types/node": "npm:20.16.6"
-    "@types/react": "npm:18.3.8"
+    "@types/node": "npm:20.16.9"
+    "@types/react": "npm:18.3.9"
     "@types/react-dom": "npm:18.3.0"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.9.0"
@@ -4935,7 +4935,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.4"
     "@graphql-mesh/json-schema": "npm:0.106.7"
-    "@types/node": "npm:20.16.6"
+    "@types/node": "npm:20.16.9"
     concurrently: "npm:9.0.1"
     fets: "npm:0.8.3"
     graphql: "npm:16.9.0"
@@ -5013,7 +5013,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.104.6"
     "@graphql-mesh/openapi": "npm:0.106.8"
     "@graphql-mesh/runtime": "npm:0.103.6"
-    "@types/react": "npm:18.3.8"
+    "@types/react": "npm:18.3.9"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:14.2.13"
@@ -5031,7 +5031,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.104.6"
     "@graphql-mesh/openapi": "npm:0.106.8"
     "@graphql-mesh/runtime": "npm:0.103.6"
-    "@types/react": "npm:18.3.8"
+    "@types/react": "npm:18.3.9"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:14.2.13"
@@ -5128,14 +5128,14 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.4"
-    "@types/react": "npm:18.3.8"
+    "@types/react": "npm:18.3.9"
     "@types/react-dom": "npm:18.3.0"
     "@vitejs/plugin-react": "npm:4.3.1"
     graphql: "npm:16.9.0"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.4.7"
+    vite: "npm:5.4.8"
   languageName: unknown
   linkType: soft
 
@@ -5223,7 +5223,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.102.5"
     "@graphql-mesh/runtime": "npm:0.103.6"
     "@graphql-mesh/transform-prefix": "npm:0.102.5"
-    "@types/node": "npm:20.16.6"
+    "@types/node": "npm:20.16.9"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -5299,7 +5299,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.102.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.78.8"
+    wrangler: "npm:3.78.10"
   languageName: unknown
   linkType: soft
 
@@ -5850,7 +5850,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20240919.0"
+    "@cloudflare/workers-types": "npm:4.20240925.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.5
     "@graphql-mesh/utils": ^0.102.5
@@ -7501,8 +7501,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor-graphql-ws@npm:^1.1.2, @graphql-tools/executor-graphql-ws@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@graphql-tools/executor-graphql-ws@npm:1.2.0"
+  version: 1.2.1
+  resolution: "@graphql-tools/executor-graphql-ws@npm:1.2.1"
   dependencies:
     "@graphql-tools/utils": "npm:^10.3.0"
     "@types/ws": "npm:^8.0.0"
@@ -7512,7 +7512,7 @@ __metadata:
     ws: "npm:^8.17.1"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/3faae1d0239d4d4ec7a000f946a8e82eead8028bcfe8599693cb4bfb85414e03b6bf5ba181360a7a2377274fc9e190aa30ce4a0ebcdfbe06539d5e1eb535d3da
+  checksum: 10c0/c1ce17af19b55e2c5650a6a6cb135692af233211f1e3be00e38b1fccb12c123e304b673d4a0308ac3581cc892a9065115a959e31566394426b4402022b00ada4
   languageName: node
   linkType: hard
 
@@ -13734,20 +13734,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^22.5.5":
-  version: 22.6.1
-  resolution: "@types/node@npm:22.6.1"
+  version: 22.7.2
+  resolution: "@types/node@npm:22.7.2"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/79fdb14f268070eb21d25f3e81811b73c10dfcc65a638a6546fd97aa3e7dfe473f31a547fd21c43b8559a435b6ab26057066a47b5453bd1b1cdffe14430ac399
+  checksum: 10c0/987e4df034e4af0ce76b938c2c0d94373da376b228f1c93081a661c77e682795c599bcad47c93c70a25b8ea443587137cf23088fb7f62ef442955f13046eae3d
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.16.6, @types/node@npm:^20.10.6":
-  version: 20.16.6
-  resolution: "@types/node@npm:20.16.6"
+"@types/node@npm:20.16.9, @types/node@npm:^20.10.6":
+  version: 20.16.9
+  resolution: "@types/node@npm:20.16.9"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/a3bd104b4061451625ed3b320c88e01e1261d41dbcaa7248d376f60a1a831e1cbc4362eef5be3445ccc1ea2d0a9178fc1ddd5e55a4f5df571dce78e5d91375a8
+  checksum: 10c0/52d7cbd6792a26e6757c913d1f6dd0fb0104ac44c93dd87480c011d1211b3a1ba282962996bf6aec03f633b5b39f61576f1bafe8436592ab08ad39464e53e4b0
   languageName: node
   linkType: hard
 
@@ -13766,11 +13766,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.11.18":
-  version: 18.19.50
-  resolution: "@types/node@npm:18.19.50"
+  version: 18.19.53
+  resolution: "@types/node@npm:18.19.53"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/36e6bc9eb47213ce94a868dad9504465ad89fba6af9f7954e22bb27fb17a32ac495f263d0cf4fdaee74becd7b2629609a446ec8c2b59b7a07bd587567c8a4782
+  checksum: 10c0/9612c38f63928abffbdabfa8e61c3adf30ff5483884eadd2fab4a790f0b2b51efdf773c76a21601c627850763da216140a4d163b27d8c6d1fa5250b0d11f683b
   languageName: node
   linkType: hard
 
@@ -13891,13 +13891,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.3.8":
+"@types/react@npm:*":
   version: 18.3.8
   resolution: "@types/react@npm:18.3.8"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/367312c9fe276639ecb142265e090a4dd04bb39f8d718cbab546de3f1ddcfddeff415e1147d0fc40f734badaa7420b7b109d511bd4304b2c4c9c36164612fdf8
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:18.3.9":
+  version: 18.3.9
+  resolution: "@types/react@npm:18.3.9"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/a92b8e061d0c833e096254782c56a802316593f4a907fb834b557cabe848a0829b9eb6056404ea239eb4d5ec5ac7b7724309761516c0a7a277916fa04dd4f805
   languageName: node
   linkType: hard
 
@@ -18741,13 +18751,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "date-fns@npm:3.6.0"
-  checksum: 10c0/0b5fb981590ef2f8e5a3ba6cd6d77faece0ea7f7158948f2eaae7bbb7c80a8f63ae30b01236c2923cf89bb3719c33aeb150c715ea4fe4e86e37dcf06bed42fb6
-  languageName: node
-  linkType: hard
-
 "date-format@npm:^4.0.14":
   version: 4.0.14
   resolution: "date-format@npm:4.0.14"
@@ -20806,7 +20809,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "npm:1.0.2"
     "@graphql-mesh/serve-cli": "npm:1.0.4"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.7.0"
-    "@types/node": "npm:20.16.6"
+    "@types/node": "npm:20.16.9"
     concurrently: "npm:9.0.1"
     esbuild: "npm:^0.24.0"
     graphql: "npm:16.9.0"
@@ -22579,7 +22582,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.13"
-    "@types/node": "npm:20.16.6"
+    "@types/node": "npm:20.16.9"
     "@typescript-eslint/eslint-plugin": "npm:8.7.0"
     "@typescript-eslint/parser": "npm:8.7.0"
     babel-jest: "npm:29.7.0"
@@ -28469,9 +28472,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20240909.5":
-  version: 3.20240909.5
-  resolution: "miniflare@npm:3.20240909.5"
+"miniflare@npm:3.20240925.0":
+  version: 3.20240925.0
+  resolution: "miniflare@npm:3.20240925.0"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
@@ -28481,13 +28484,13 @@ __metadata:
     glob-to-regexp: "npm:^0.4.1"
     stoppable: "npm:^1.1.0"
     undici: "npm:^5.28.4"
-    workerd: "npm:1.20240909.0"
+    workerd: "npm:1.20240925.0"
     ws: "npm:^8.17.1"
     youch: "npm:^3.2.2"
     zod: "npm:^3.22.3"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/6ded59caeaa23dae2075bdbd081f491e8305f98b2a27573cb09e065d987814b9037a8449fcfc0180bae3bcd942b194f27b596504cc4f25605b647318273f2dfb
+  checksum: 10c0/79586babe0d0172bb0e08631dac0af11963ed0c35c80268d13fdb2eae317e8f8dcc2a5d7c91d9b33f6b7f1c754a75253f399b1d81a27c15ad568c0b89ae2a2a3
   languageName: node
   linkType: hard
 
@@ -37524,9 +37527,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.4.7":
-  version: 5.4.7
-  resolution: "vite@npm:5.4.7"
+"vite@npm:5.4.8":
+  version: 5.4.8
+  resolution: "vite@npm:5.4.8"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
@@ -37563,7 +37566,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/0ca7ca60f71c61f3855bbabf7e33909bec32933b35914d4d281813c728183e78e7ce5be05735a7671df3a994613d3881f520a32a80715faa92effb28deee9320
+  checksum: 10c0/af70af6d6316a3af71f44ebe3ab343bd66450d4157af73af3b32239e1b6ec43ff6f651d7cc4193b21ed3bff2e9356a3de9e96aee53857f39922e4a2d9fad75a1
   languageName: node
   linkType: hard
 
@@ -37844,8 +37847,8 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^6.5.3"
     "@theguild/tailwind-config": "npm:0.5.0"
-    "@types/node": "npm:20.16.6"
-    "@types/react": "npm:18.3.8"
+    "@types/node": "npm:20.16.9"
+    "@types/react": "npm:18.3.9"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.13"
     next: "npm:^14.1.4"
@@ -38349,15 +38352,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workerd@npm:1.20240909.0":
-  version: 1.20240909.0
-  resolution: "workerd@npm:1.20240909.0"
+"workerd@npm:1.20240925.0":
+  version: 1.20240925.0
+  resolution: "workerd@npm:1.20240925.0"
   dependencies:
-    "@cloudflare/workerd-darwin-64": "npm:1.20240909.0"
-    "@cloudflare/workerd-darwin-arm64": "npm:1.20240909.0"
-    "@cloudflare/workerd-linux-64": "npm:1.20240909.0"
-    "@cloudflare/workerd-linux-arm64": "npm:1.20240909.0"
-    "@cloudflare/workerd-windows-64": "npm:1.20240909.0"
+    "@cloudflare/workerd-darwin-64": "npm:1.20240925.0"
+    "@cloudflare/workerd-darwin-arm64": "npm:1.20240925.0"
+    "@cloudflare/workerd-linux-64": "npm:1.20240925.0"
+    "@cloudflare/workerd-linux-arm64": "npm:1.20240925.0"
+    "@cloudflare/workerd-windows-64": "npm:1.20240925.0"
   dependenciesMeta:
     "@cloudflare/workerd-darwin-64":
       optional: true
@@ -38371,13 +38374,13 @@ __metadata:
       optional: true
   bin:
     workerd: bin/workerd
-  checksum: 10c0/238fb5aac81d1c2e935b4baf0ab747f0564f8381b996d4afa82fbecfb6452c35e469c5de771e1bd065ae978eff9a0b8170df8d9d35d3de88d50612fed22f03b5
+  checksum: 10c0/24699f30a4cd3a2b6183e52bfb8d634610824e9f10f8ab991c0915d34fd015d04a00b3acd8d9f652f34c1e78f81079f1c591ee02881dd2b7b264c6b526101710
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.78.8":
-  version: 3.78.8
-  resolution: "wrangler@npm:3.78.8"
+"wrangler@npm:3.78.10":
+  version: 3.78.10
+  resolution: "wrangler@npm:3.78.10"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@cloudflare/workers-shared": "npm:0.5.4"
@@ -38385,10 +38388,9 @@ __metadata:
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     blake3-wasm: "npm:^2.1.5"
     chokidar: "npm:^3.5.3"
-    date-fns: "npm:^3.6.0"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20240909.5"
+    miniflare: "npm:3.20240925.0"
     nanoid: "npm:^3.3.3"
     path-to-regexp: "npm:^6.3.0"
     resolve: "npm:^1.22.8"
@@ -38396,10 +38398,10 @@ __metadata:
     selfsigned: "npm:^2.0.1"
     source-map: "npm:^0.6.1"
     unenv: "npm:unenv-nightly@2.0.0-20240919-125358-9a64854"
-    workerd: "npm:1.20240909.0"
+    workerd: "npm:1.20240925.0"
     xxhash-wasm: "npm:^1.0.1"
   peerDependencies:
-    "@cloudflare/workers-types": ^4.20240909.0
+    "@cloudflare/workers-types": ^4.20240925.0
   dependenciesMeta:
     fsevents:
       optional: true
@@ -38409,7 +38411,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/f0fe583fad1dece2425bc3b71d684d840382bbf2525deb28f8349031240a35c2680e8ed4d53341673e78c17b3499d5fa49116765a48a6a50ba69ee4de2466280
+  checksum: 10c0/a3995e5a16e5a4069b26a5c9d9b2423c1e886c09d6881a4bfc41a73b5b366c4256bd20c3aaa6e9921c974b2228d9eeffb15ac01a03bb318d2395d396b0060494
   languageName: node
   linkType: hard
 
