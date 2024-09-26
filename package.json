@@ -111,7 +111,7 @@
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "@commander-js/extra-typings@npm:^12.1.0": "patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch",
-    "@opentelemetry/resources": "1.25.1",
+    "@opentelemetry/resources": "1.26.0",
     "@whatwg-node/fetch": "0.9.21",
     "@whatwg-node/node-fetch": "0.5.26",
     "@whatwg-node/server": "0.9.49",
