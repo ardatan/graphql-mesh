@@ -9745,12 +9745,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:14.2.7":
-  version: 14.2.7
-  resolution: "@next/bundle-analyzer@npm:14.2.7"
+"@next/bundle-analyzer@npm:14.2.8":
+  version: 14.2.8
+  resolution: "@next/bundle-analyzer@npm:14.2.8"
   dependencies:
     webpack-bundle-analyzer: "npm:4.10.1"
-  checksum: 10c0/6886f5e5dcda75e32963f83d79b7a5b5f17feb08727e9b65d4a8e7c9cc34237ca5784e0a20b91161e6da7dc766a99a6271106620c79b032c7da415e0b5472062
+  checksum: 10c0/03932a2dbc3006e0ccca3d98de225c30e97b7110426c92c66351ad375a83751c85d44da45758978fdd5322e377aa7b8c8ab245ed49b3473a57a7b10306cb9f35
   languageName: node
   linkType: hard
 
@@ -12857,11 +12857,11 @@ __metadata:
   linkType: hard
 
 "@theguild/components@npm:^6.5.3":
-  version: 6.6.5
-  resolution: "@theguild/components@npm:6.6.5"
+  version: 6.6.6
+  resolution: "@theguild/components@npm:6.6.6"
   dependencies:
     "@giscus/react": "npm:3.0.0"
-    "@next/bundle-analyzer": "npm:14.2.7"
+    "@next/bundle-analyzer": "npm:14.2.8"
     clsx: "npm:2.1.1"
     fuzzy: "npm:0.1.3"
     next-videos: "npm:1.5.0"
@@ -12875,7 +12875,7 @@ __metadata:
     next: ^13 || ^14
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/26362ca863f4c79e6be53e1f7402ca9842411f33f9cc13e35149974bd5fb247501be586b58740d214e419b1dd1e943a4eaf777318370a9a2789e6c9989ee7fca
+  checksum: 10c0/e20b4ccaf3db097fb96e051d6a506c70d689ea619ca133394b7d3dff0317dcdc3827f603c1fb0df9ee0c2b7edc0cee40389ea4083f60f5e9a71dfcc3c5722cc1
   languageName: node
   linkType: hard
 
