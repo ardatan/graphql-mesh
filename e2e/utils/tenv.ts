@@ -29,7 +29,8 @@ if (typeof jest !== 'undefined') {
   jest.setTimeout(timeout);
 }
 
-const __project = path.resolve(__dirname, '..', '..') + path.sep;
+const __project =
+  path.resolve('__dirname' in global ? __dirname : import.meta.dirname, '..', '..') + path.sep;
 
 const docker = new Dockerode();
 
@@ -703,7 +704,7 @@ export function createTenv(cwd: string): Tenv {
       for (const service of services) {
         subgraphs.push({
           name: service.name,
-          url: `http://localhost:${service.port}/graphql`,
+          url: `http://192.168.1.20:${service.port}/graphql`,
         });
       }
 
