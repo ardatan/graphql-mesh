@@ -703,7 +703,7 @@ export function createTenv(cwd: string): Tenv {
       for (const service of services) {
         subgraphs.push({
           name: service.name,
-          url: `http://192.168.1.20:${service.port}/graphql`,
+          url: `http://localhost:${service.port}/graphql`,
         });
       }
 
