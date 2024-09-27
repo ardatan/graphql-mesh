@@ -29,8 +29,7 @@ if (typeof jest !== 'undefined') {
   jest.setTimeout(timeout);
 }
 
-const __project =
-  path.resolve('__dirname' in global ? __dirname : import.meta.dirname, '..', '..') + path.sep;
+const __project = path.resolve(__dirname, '..', '..') + path.sep;
 
 const docker = new Dockerode();
 
