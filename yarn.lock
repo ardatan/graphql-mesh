@@ -7807,23 +7807,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor-graphql-ws@npm:^1.1.2":
-  version: 1.3.0
-  resolution: "@graphql-tools/executor-graphql-ws@npm:1.3.0"
-  dependencies:
-    "@graphql-tools/utils": "npm:^10.3.0"
-    "@types/ws": "npm:^8.0.0"
-    graphql-ws: "npm:^5.14.0"
-    isomorphic-ws: "npm:^5.0.0"
-    tslib: "npm:^2.4.0"
-    ws: "npm:^8.17.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/1264aea661c309eb60df789c2dff0108e78ed38d7c9333be77557b95b069b58fe5f39a0b495599dc512e5d9c3273bdfea8c9da85af539b9dac348118a70a7553
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/executor-graphql-ws@npm:^1.3.0":
+"@graphql-tools/executor-graphql-ws@npm:^1.1.2, @graphql-tools/executor-graphql-ws@npm:^1.3.0":
   version: 1.3.0
   resolution: "@graphql-tools/executor-graphql-ws@npm:1.3.0"
   dependencies:
@@ -13590,19 +13574,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-serve-static-core@npm:*, @types/express-serve-static-core@npm:^4.17.30, @types/express-serve-static-core@npm:^4.17.33":
-  version: 4.19.5
-  resolution: "@types/express-serve-static-core@npm:4.19.5"
-  dependencies:
-    "@types/node": "npm:*"
-    "@types/qs": "npm:*"
-    "@types/range-parser": "npm:*"
-    "@types/send": "npm:*"
-  checksum: 10c0/ba8d8d976ab797b2602c60e728802ff0c98a00f13d420d82770f3661b67fa36ea9d3be0b94f2ddd632afe1fbc6e41620008b01db7e4fabdd71a2beb5539b0725
-  languageName: node
-  linkType: hard
-
-"@types/express-serve-static-core@npm:^5.0.0":
+"@types/express-serve-static-core@npm:*, @types/express-serve-static-core@npm:^5.0.0":
   version: 5.0.0
   resolution: "@types/express-serve-static-core@npm:5.0.0"
   dependencies:
@@ -13614,19 +13586,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*, @types/express@npm:4.17.21, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
-  version: 4.17.21
-  resolution: "@types/express@npm:4.17.21"
+"@types/express-serve-static-core@npm:^4.17.30, @types/express-serve-static-core@npm:^4.17.33":
+  version: 4.19.5
+  resolution: "@types/express-serve-static-core@npm:4.19.5"
   dependencies:
-    "@types/body-parser": "npm:*"
-    "@types/express-serve-static-core": "npm:^4.17.33"
+    "@types/node": "npm:*"
     "@types/qs": "npm:*"
-    "@types/serve-static": "npm:*"
-  checksum: 10c0/12e562c4571da50c7d239e117e688dc434db1bac8be55613294762f84fd77fbd0658ccd553c7d3ab02408f385bc93980992369dd30e2ecd2c68c358e6af8fabf
+    "@types/range-parser": "npm:*"
+    "@types/send": "npm:*"
+  checksum: 10c0/ba8d8d976ab797b2602c60e728802ff0c98a00f13d420d82770f3661b67fa36ea9d3be0b94f2ddd632afe1fbc6e41620008b01db7e4fabdd71a2beb5539b0725
   languageName: node
   linkType: hard
 
-"@types/express@npm:^5.0.0":
+"@types/express@npm:*, @types/express@npm:^5.0.0":
   version: 5.0.0
   resolution: "@types/express@npm:5.0.0"
   dependencies:
@@ -13635,6 +13607,18 @@ __metadata:
     "@types/qs": "npm:*"
     "@types/serve-static": "npm:*"
   checksum: 10c0/0d74b53aefa69c3b3817ee9b5145fd50d7dbac52a8986afc2d7500085c446656d0b6dc13158c04e2d9f18f4324d4d93b0452337c5ff73dd086dca3e4ff11f47b
+  languageName: node
+  linkType: hard
+
+"@types/express@npm:4.17.21, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
+  version: 4.17.21
+  resolution: "@types/express@npm:4.17.21"
+  dependencies:
+    "@types/body-parser": "npm:*"
+    "@types/express-serve-static-core": "npm:^4.17.33"
+    "@types/qs": "npm:*"
+    "@types/serve-static": "npm:*"
+  checksum: 10c0/12e562c4571da50c7d239e117e688dc434db1bac8be55613294762f84fd77fbd0658ccd553c7d3ab02408f385bc93980992369dd30e2ecd2c68c358e6af8fabf
   languageName: node
   linkType: hard
 
@@ -14239,17 +14223,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
-  version: 18.3.8
-  resolution: "@types/react@npm:18.3.8"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/367312c9fe276639ecb142265e090a4dd04bb39f8d718cbab546de3f1ddcfddeff415e1147d0fc40f734badaa7420b7b109d511bd4304b2c4c9c36164612fdf8
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:18.3.9":
+"@types/react@npm:*, @types/react@npm:18.3.9":
   version: 18.3.9
   resolution: "@types/react@npm:18.3.9"
   dependencies:
