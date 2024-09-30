@@ -1,5 +1,5 @@
 export * from './createGatewayRuntime.js';
-export * from './types.js';
+export type * from './types.js';
 export * from './plugins/useCustomFetch.js';
 export * from './plugins/useStaticFiles.js';
 export * from './getProxyExecutor.js';

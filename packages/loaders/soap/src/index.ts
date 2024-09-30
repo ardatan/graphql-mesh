@@ -3,7 +3,7 @@ import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/uti
 import { SOAPLoader } from './SOAPLoader.js';
 
 export * from './SOAPLoader.js';
-export * from './types.js';
+export type * from './types.js';
 export * from '@graphql-mesh/transport-soap';
 
 export interface SOAPSubgraphLoaderOptions {

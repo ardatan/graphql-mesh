@@ -3,7 +3,7 @@ import { getMySQLExecutor } from './execution.js';
 
 export * from './execution.js';
 export * from './parseEndpointUri.js';
-export * from './types.js';
+export type * from './types.js';
 
 export default {
   getSubgraphExecutor({ subgraph }) {

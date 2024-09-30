@@ -3,7 +3,7 @@ import { getThriftExecutor } from './execution.js';
 
 export { getThriftExecutor };
 
-export * from './types.js';
+export type * from './types.js';
 
 export default {
   getSubgraphExecutor({ subgraph }) {
