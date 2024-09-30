@@ -1,5 +1,16 @@
 # @graphql-mesh/serve-cli
 
+## 1.0.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@1.0.4
+  - @graphql-mesh/hmac-upstream-signature@1.0.4
+  - @graphql-mesh/plugin-jwt-auth@1.0.4
+  - @graphql-mesh/plugin-opentelemetry@1.0.4
+  - @graphql-mesh/plugin-prometheus@1.0.4
+
 ## 1.0.4
 
 ### Patch Changes

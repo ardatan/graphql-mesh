@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.8.13
+
+### Patch Changes
+
+- [#7738](https://github.com/ardatan/graphql-mesh/pull/7738)
+  [`01f6ad9`](https://github.com/ardatan/graphql-mesh/commit/01f6ad94b8a107bb52abb3f8a356ecadef42b02d)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use source name when hoisting fields
+
 ## 0.8.12
 
 ### Patch Changes

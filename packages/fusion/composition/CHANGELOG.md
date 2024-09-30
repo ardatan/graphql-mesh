@@ -1,5 +1,14 @@
 # @graphql-mesh/fusion-composition
 
+## 0.5.3
+
+### Patch Changes
+
+- [#7722](https://github.com/ardatan/graphql-mesh/pull/7722)
+  [`e9483d6`](https://github.com/ardatan/graphql-mesh/commit/e9483d69cbfb8a774d5184fdd12665c30984d5ab)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not add another `@hidden` directive definition
+  if it already exists
+
 ## 0.5.2
 
 ### Patch Changes
