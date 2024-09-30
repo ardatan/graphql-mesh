@@ -3637,6 +3637,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/file-upload@workspace:e2e/file-upload":
+  version: 0.0.0-use.local
+  resolution: "@e2e/file-upload@workspace:e2e/file-upload"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-tools/schema": "npm:^10.0.6"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/js-config@workspace:e2e/js-config":
   version: 0.0.0-use.local
   resolution: "@e2e/js-config@workspace:e2e/js-config"
@@ -7930,7 +7941,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/schema@npm:10.0.6, @graphql-tools/schema@npm:^10.0.0, @graphql-tools/schema@npm:^10.0.3, @graphql-tools/schema@npm:^10.0.4, @graphql-tools/schema@npm:^10.0.5":
+"@graphql-tools/schema@npm:10.0.6, @graphql-tools/schema@npm:^10.0.0, @graphql-tools/schema@npm:^10.0.3, @graphql-tools/schema@npm:^10.0.4, @graphql-tools/schema@npm:^10.0.5, @graphql-tools/schema@npm:^10.0.6":
   version: 10.0.6
   resolution: "@graphql-tools/schema@npm:10.0.6"
   dependencies:
