@@ -194,7 +194,7 @@ export function handleFederationSubschema({
                   : () => true,
               };
             });
-            transforms.push(new HoistField(typeName, pathConfig, fieldName));
+            transforms.push(new HoistField(realTypeName, pathConfig, fieldName));
           }
         }
       }
