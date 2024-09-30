@@ -3536,7 +3536,6 @@ __metadata:
     "@omnigraph/openapi": "workspace:*"
     graphql: "npm:^16.9.0"
     graphql-yoga: "npm:^5.7.0"
-    tsx: "npm:^4.19.1"
   languageName: unknown
   linkType: soft
 
@@ -3563,8 +3562,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/esm-config-in-cjs-project@workspace:e2e/esm-config-in-cjs-project"
   dependencies:
-    "@graphql-mesh/compose-cli": "workspace:*"
-    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-hive/gateway": "npm:^1.0.5"
+    "@graphql-mesh/compose-cli": "npm:^1.0.2"
     graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
@@ -5759,7 +5758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/gateway@workspace:packages/hive-gateway":
+"@graphql-hive/gateway@npm:^1.0.5, @graphql-hive/gateway@workspace:packages/hive-gateway":
   version: 0.0.0-use.local
   resolution: "@graphql-hive/gateway@workspace:packages/hive-gateway"
   dependencies:
@@ -36540,7 +36539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.16.5, tsx@npm:^4.19.0, tsx@npm:^4.19.1":
+"tsx@npm:^4.16.5, tsx@npm:^4.19.0":
   version: 4.19.1
   resolution: "tsx@npm:4.19.1"
   dependencies:
