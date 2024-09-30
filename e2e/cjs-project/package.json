@@ -3,8 +3,9 @@
   "type": "commonjs",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/serve-cli": "workspace:*",
     "graphql": "16.9.0"
+  },
+  "devDependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*"
   }
 }
