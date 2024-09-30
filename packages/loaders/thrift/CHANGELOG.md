@@ -1,5 +1,15 @@
 # @omnigraph/thrift
 
+## 0.7.7
+
+### Patch Changes
+
+- [#7708](https://github.com/ardatan/graphql-mesh/pull/7708)
+  [`c024b77`](https://github.com/ardatan/graphql-mesh/commit/c024b774f5b2b9536396b235834b25d1eeb6c04d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`thrift@^0.21.0` ↗︎](https://www.npmjs.com/package/thrift/v/0.21.0) (from
+    `^0.20.0`, in `dependencies`)
+
 ## 0.7.6
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-hive/gateway
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@1.0.4
+  - @graphql-mesh/serve-cli@1.0.5
+
 ## 1.0.5
 
 ### Patch Changes
