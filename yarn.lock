@@ -3659,6 +3659,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/hoist-transform@workspace:e2e/hoist-transform":
+  version: 0.0.0-use.local
+  resolution: "@e2e/hoist-transform@workspace:e2e/hoist-transform"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@graphql-tools/schema": "npm:^10.0.6"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/js-config@workspace:e2e/js-config":
   version: 0.0.0-use.local
   resolution: "@e2e/js-config@workspace:e2e/js-config"
