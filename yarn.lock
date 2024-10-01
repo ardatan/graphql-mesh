@@ -3551,7 +3551,6 @@ __metadata:
     "@omnigraph/openapi": "workspace:*"
     graphql: "npm:^16.9.0"
     graphql-yoga: "npm:^5.7.0"
-    tsx: "npm:^4.19.1"
   languageName: unknown
   linkType: soft
 
