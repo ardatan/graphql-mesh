@@ -280,7 +280,7 @@ let cli = new Command()
     ).env('APOLLO_KEY'),
   );
 
-export function run(userCtx: Partial<CLIContext>) {
+export async function run(userCtx: Partial<CLIContext>) {
   module.register('@graphql-mesh/include/hooks', {
     parentURL:
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -313,21 +313,22 @@ export function run(userCtx: Partial<CLIContext>) {
     ctx.log = ctx.log.child(`Worker #${cluster.worker.id}`);
   }
 
-  addCommands(ctx, cli);
-
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  warnIfNodeLibcurlMissing(ctx);
-
-  return cli.parseAsync();
-}
-
-async function warnIfNodeLibcurlMissing(ctx: CLIContext) {
-  ctx.log.debug('Checking if node-libcurl is installed and available for use.');
-  if (!globalThis.libcurl) {
+  // we cannot rely on whatwg-node because it uses CJS `require` to dynamically import node-libcurl
+  // and CJS `require` is not available in ESM environments. we therefore manually import node-libcurl
+  try {
+    globalThis.libcurl = await import('node-libcurl'); // imported to the same global as @whatwg-node/fetch
+  } catch (e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      ctx.log.debug('Problem while importing node-libcurl', e);
+    }
     ctx.log.warn(
-      'node-libcurl is not installed properly which is used for better performance and developer experience. Falling back to "node:http".',
+      'For better performance and improved developer experience, make sure "node-libcurl" is available',
     );
   }
+
+  addCommands(ctx, cli);
+
+  return cli.parseAsync();
 }
 
 export function handleNodeWarnings() {
