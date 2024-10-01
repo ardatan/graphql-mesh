@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/compose-cli": "workspace:*",
+    "@graphql-mesh/compose-cli": "^1.0.3",
     "graphql": "16.9.0"
   }
 }

@@ -12,3 +12,14 @@ The supergraph schema can be created using `mesh-compose` command:
 ```bash
 $ yarn mesh-compose > supergraph.graphql
 ```
+
+## Serve
+
+The generated supergraph can then be served by the Hive Gateway:
+
+```bash
+$ yarn hive-gateway supergraph
+```
+
+> Note: This schema is not be actually executed, the actual implementation of the subgraph is not
+> provided.
