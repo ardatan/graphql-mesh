@@ -1,15 +1,24 @@
 {
   "name": "@e2e/federation-subscriptions-passthrough",
   "private": true,
+  "scripts": {
+    "compose": "rover supergraph compose --config ./supergraph.yaml",
+    "start:gateway": "hive-gateway supergraph",
+    "start:products": "tsx services/products --port=4001",
+    "start:reviews": "tsx services/reviews --port=4002"
+  },
   "devDependencies": {
+    "@apollo/rover": "^0.26.2",
     "@apollo/server": "^4.10.3",
     "@apollo/subgraph": "^2.7.2",
+    "@graphql-hive/gateway": "^1.0.5",
     "@repeaterjs/repeater": "^3.0.6",
     "@types/express": "^5.0.0",
     "@types/ws": "^8",
     "express": "^4.19.2",
     "graphql-sse": "^2.5.3",
     "graphql-ws": "^5.16.0",
+    "tsx": "^4.19.1",
     "ws": "^8.17.1"
   }
 }
