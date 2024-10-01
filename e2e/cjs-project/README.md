@@ -21,5 +21,5 @@ The generated supergraph can then be served by the Hive Gateway:
 $ yarn hive-gateway supergraph
 ```
 
-> Note: This schema is not be actually executed, the actual implementation of the subgraph is not
+> [!Note]: This schema is not be actually executed, the actual implementation of the subgraph is not
 > provided.
