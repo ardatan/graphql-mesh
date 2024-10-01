@@ -3551,6 +3551,7 @@ __metadata:
     "@omnigraph/openapi": "workspace:*"
     graphql: "npm:^16.9.0"
     graphql-yoga: "npm:^5.7.0"
+    tsx: "npm:^4.19.1"
   languageName: unknown
   linkType: soft
 
@@ -3559,7 +3560,6 @@ __metadata:
   resolution: "@e2e/cjs-project@workspace:e2e/cjs-project"
   dependencies:
     "@graphql-mesh/compose-cli": "workspace:*"
-    "@graphql-mesh/serve-cli": "workspace:*"
     graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
