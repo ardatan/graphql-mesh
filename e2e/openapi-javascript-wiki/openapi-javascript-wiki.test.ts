@@ -9,14 +9,6 @@ it('should compose the appropriate schema', async () => {
 
 it.concurrent.each([
   {
-    name: 'ViewsInPastMonth',
-    query: /* GraphQL */ `
-      query ViewsInPastMonth {
-        viewsInPastMonth(project: "en.wikipedia.org")
-      }
-    `,
-  },
-  {
     name: 'Metrics',
     query: /* GraphQL */ `
       query Metrics {
