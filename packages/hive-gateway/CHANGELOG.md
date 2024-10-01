@@ -1,5 +1,17 @@
 # @graphql-hive/gateway
 
+## 1.0.7
+
+### Patch Changes
+
+- [#7743](https://github.com/ardatan/graphql-mesh/pull/7743)
+  [`59c40fc`](https://github.com/ardatan/graphql-mesh/commit/59c40fc784befcf6c26008761290651a21f25c84)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Dynamically import node-libcurl in ESM
+
+- Updated dependencies
+  [[`59c40fc`](https://github.com/ardatan/graphql-mesh/commit/59c40fc784befcf6c26008761290651a21f25c84)]:
+  - @graphql-mesh/serve-cli@1.0.6
+
 ## 1.0.6
 
 ### Patch Changes
