@@ -313,19 +313,6 @@ export async function run(userCtx: Partial<CLIContext>) {
     ctx.log = ctx.log.child(`Worker #${cluster.worker.id}`);
   }
 
-  // we cannot rely on whatwg-node because it uses CJS `require` to dynamically import node-libcurl
-  // and CJS `require` is not available in ESM environments. we therefore manually import node-libcurl
-  try {
-    globalThis.libcurl = await import('node-libcurl'); // imported to the same global as @whatwg-node/fetch
-  } catch (e) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
-      ctx.log.debug('Problem while importing node-libcurl', e);
-    }
-    ctx.log.warn(
-      'For better performance and improved developer experience, make sure "node-libcurl" is available',
-    );
-  }
-
   addCommands(ctx, cli);
 
   return cli.parseAsync();
