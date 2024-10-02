@@ -5799,13 +5799,9 @@ __metadata:
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
     tsx: "npm:^4.16.5"
-    uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
     graphql: "*"
-  dependenciesMeta:
-    uWebSockets.js:
-      optional: true
   peerDependenciesMeta:
     "@parcel/watcher":
       optional: true
@@ -6726,13 +6722,9 @@ __metadata:
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
     tsx: "npm:^4.16.5"
-    uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
     graphql: "*"
-  dependenciesMeta:
-    uWebSockets.js:
-      optional: true
   peerDependenciesMeta:
     "@parcel/watcher":
       optional: true
@@ -36857,9 +36849,9 @@ __metadata:
   linkType: hard
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
-  version: 20.48.0
-  resolution: "uWebSockets.js@https://github.com/uNetworking/uWebSockets.js.git#commit=51ae1d1fd92dff77cbbdc7c431021f85578da1a6"
-  checksum: 10c0/b6416883a97c2e48396c6b4db0992ab1f4334d5053d88eaee26973d649b6c546747c084aa34c38147418a0638536838c289d85b62a1699904284e2f96ea1cdc9
+  version: 20.49.0
+  resolution: "uWebSockets.js@https://github.com/uNetworking/uWebSockets.js.git#commit=442087c0a01bf146acb7386910739ec81df06700"
+  checksum: 10c0/a404642ffaddc274127a44c9b47f4fd1dc604d833f1bce6aa63f7598b0d90762c3cd85bbe9e834b2b63fcb9d8b62bf888825a54762ebc35c6cfb90a4c9febb0a
   languageName: node
   linkType: hard
 
