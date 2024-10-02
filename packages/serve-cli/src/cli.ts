@@ -1,5 +1,4 @@
 import 'dotenv/config'; // inject dotenv options to process.env
-import 'json-bigint-patch'; // JSON.parse/stringify with bigints support
 
 import cluster from 'node:cluster';
 import module from 'node:module';
