@@ -1,5 +1,25 @@
 # @graphql-mesh/serve-cli
 
+## 1.0.7
+
+### Patch Changes
+
+- [#7748](https://github.com/ardatan/graphql-mesh/pull/7748)
+  [`1b58ef4`](https://github.com/ardatan/graphql-mesh/commit/1b58ef43599129669dbd0470b807afc985c72080)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Removed dependency
+    [`json-bigint-patch@^0.0.8` ↗︎](https://www.npmjs.com/package/json-bigint-patch/v/0.0.8) (from
+    `dependencies`)
+  - Removed dependency
+    [`node-libcurl@npm:@ardatan/node-libcurl@^4.0.2` ↗︎](https://www.npmjs.com/package/node-libcurl/v/4.0.2)
+    (from `dependencies`)
+
+- [#7748](https://github.com/ardatan/graphql-mesh/pull/7748)
+  [`1b58ef4`](https://github.com/ardatan/graphql-mesh/commit/1b58ef43599129669dbd0470b807afc985c72080)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Remove node-libcurl, uWebSockets.js and
+  json-bigint-patch
+
 ## 1.0.6
 
 ### Patch Changes
