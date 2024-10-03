@@ -73,12 +73,7 @@
     "@graphql-tools/utils": "^10.5.3",
     "commander": "^12.0.0",
     "dotenv": "^16.3.1",
-    "json-bigint-patch": "^0.0.8",
-    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.2",
     "parse-duration": "^1.1.0"
-  },
-  "optionalDependencies": {
-    "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
   },
   "devDependencies": {
     "@parcel/watcher": "^2.3.0",

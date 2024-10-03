@@ -1,7 +1,6 @@
 import { promises as fsPromises } from 'node:fs';
 import { createServer as createHTTPServer, type Server } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
-import os from 'node:os';
 import type { SecureContextOptions } from 'node:tls';
 import type { GatewayRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
@@ -70,8 +69,6 @@ export async function startServerForRuntime<
     }
   });
 
-  let server: AsyncDisposable;
-
   const serverOpts: ServerForRuntimeOptions = {
     log,
     host,
@@ -80,70 +77,11 @@ export async function startServerForRuntime<
     maxHeaderSize,
   };
 
-  if (os.platform().toLowerCase() === 'win32') {
-    // TODO: uWebSockets.js gives \`Segmentation fault\` error on Windows
-    server = await startNodeHttpServer(runtime, serverOpts);
-  } else {
-    try {
-      server = await startuWebSocketsServer(runtime, serverOpts);
-    } catch (e) {
-      log.debug(e.message);
-      log.warn(
-        'uWebSockets.js is not available currently so the server will fallback to node:http.',
-      );
-
-      server = await startNodeHttpServer(runtime, serverOpts);
-    }
-  }
+  const server = await startNodeHttpServer(runtime, serverOpts);
 
   terminateStack.use(server);
 
   return server;
-}
-
-async function startuWebSocketsServer(
-  /** TODO: type out */
-  handler: any,
-  opts: ServerForRuntimeOptions,
-): Promise<AsyncDisposable> {
-  const {
-    log,
-    host = defaultOptions.host,
-    port = defaultOptions.port,
-    sslCredentials,
-    maxHeaderSize,
-  } = opts;
-  process.env.UWS_HTTP_MAX_HEADERS_SIZE = maxHeaderSize?.toString();
-  // we intentionally use uws.default for CJS/ESM cross compatibility.
-  //
-  // when importing ESM of uws, the default will be flattened; but when importing
-  // CJS, that wont happen - however, the default will always be available
-  return import('uWebSockets.js').then(uWSModule => {
-    const uWS = uWSModule.default || uWSModule;
-    const protocol = sslCredentials ? 'https' : 'http';
-    const app = sslCredentials ? uWS.SSLApp(sslCredentials) : uWS.App();
-    app.any('/*', handler);
-    const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
-    log.debug(`Starting server on ${url}`);
-    return new Promise((resolve, reject) => {
-      app.listen(host, port, function listenCallback(listenSocket) {
-        if (listenSocket) {
-          log.info(`Listening on ${url}`);
-          resolve(
-            createAsyncDisposable(() => {
-              process.stderr.write('\n');
-              log.info(`Stopping the server`);
-              app.close();
-              log.info(`Stopped the server successfully`);
-              return Promise.resolve();
-            }),
-          );
-        } else {
-          reject(new Error(`Failed to start server on ${protocol}://${host}:${port}!`));
-        }
-      });
-    });
-  });
 }
 
 async function startNodeHttpServer(
