@@ -1,5 +1,19 @@
 # @graphql-hive/gateway
 
+## 1.0.8
+
+### Patch Changes
+
+- [#7748](https://github.com/ardatan/graphql-mesh/pull/7748)
+  [`1b58ef4`](https://github.com/ardatan/graphql-mesh/commit/1b58ef43599129669dbd0470b807afc985c72080)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Remove node-libcurl, uWebSockets.js and
+  json-bigint-patch
+
+- Updated dependencies
+  [[`1b58ef4`](https://github.com/ardatan/graphql-mesh/commit/1b58ef43599129669dbd0470b807afc985c72080),
+  [`1b58ef4`](https://github.com/ardatan/graphql-mesh/commit/1b58ef43599129669dbd0470b807afc985c72080)]:
+  - @graphql-mesh/serve-cli@1.0.7
+
 ## 1.0.7
 
 ### Patch Changes
