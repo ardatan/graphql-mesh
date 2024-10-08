@@ -41,12 +41,24 @@ type PrimitiveOrEvaluated<TExpectedResult, TInput = never> =
 
 export type OpenTelemetryGatewayPluginOptions = {
   /**
+   * Whether to initialize the OpenTelemetry SDK (default: true).
+   */
+  initializeNodeSDK?: boolean;
+  /**
+   * Log level to use for the OpenTelemetry SDK Diagnostics (default: WARN).
+   */
+  diagLogLevel?: DiagLogLevel;
+  /**
    * A list of OpenTelemetry exporters to use for exporting the spans.
    * You can use exporters from `@opentelemetry/exporter-*` packages, or use the built-in utility functions.
+   *
+   * Does not apply when `initializeNodeSDK` is `false`.
    */
-  exporters: SpanProcessor[];
+  exporters?: SpanProcessor[];
   /**
-   * Service name to use for the spans (default: 'Gateway').
+   * Service name to use for OpenTelemetry NodeSDK resource option (default: 'Gateway').
+   *
+   * Does not apply when `initializeNodeSDK` is `false`.
    */
   serviceName?: string;
   /**
@@ -114,7 +126,7 @@ const HeadersTextMapGetter: TextMapGetter = {
   },
 };
 
-export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): GatewayPlugin<{
+export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions = {}): GatewayPlugin<{
   opentelemetry: {
     tracer: Tracer;
     activeContext: () => Context;
@@ -125,24 +137,31 @@ export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): Ga
   const contextManager = new AsyncHooksContextManager();
   const inheritContext = options.inheritContext ?? true;
   const propagateContext = options.propagateContext ?? true;
+  const diagLogLevel = options.diagLogLevel ?? DiagLogLevel.WARN;
+  const initializeNodeSDK = options.initializeNodeSDK ?? true;
 
-  const sdk = new NodeSDK({
-    resource: new Resource({
-      [SEMRESATTRS_SERVICE_NAME]: serviceName,
-    }),
-    spanProcessors: spanProcessors as unknown as NodeSDKConfiguration['spanProcessors'],
-    contextManager,
-    instrumentations: [],
-  });
+  let sdk: NodeSDK | undefined;
+  if (initializeNodeSDK) {
+    sdk = new NodeSDK({
+      resource: new Resource({
+        [SEMRESATTRS_SERVICE_NAME]: serviceName,
+      }),
+      spanProcessors: spanProcessors as unknown as NodeSDKConfiguration['spanProcessors'],
+      contextManager,
+      instrumentations: [],
+    });
+  }
 
   const requestContextMapping = new WeakMap<Request, Context>();
   const tracer = options.tracer || trace.getTracer('gateway');
 
   return {
     onYogaInit() {
-      diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.WARN);
-      contextManager.enable();
-      sdk.start();
+      diag.setLogger(new DiagConsoleLogger(), diagLogLevel);
+      if (sdk) {
+        contextManager.enable();
+        sdk.start();
+      }
     },
     onContextBuilding({ extendContext, context }) {
       extendContext({
@@ -309,7 +328,7 @@ export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): Ga
       requestContextMapping.delete(request);
     },
     [DisposableSymbols.asyncDispose]() {
-      return sdk.shutdown();
+      return sdk?.shutdown();
     },
   };
 }
