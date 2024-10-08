@@ -5,16 +5,29 @@ export function useFetchDebug<TContext>(opts: { logger: Logger }): GatewayPlugin
   return {
     onFetch({ url, options, logger = opts.logger }) {
       logger = logger.child('fetch');
-      logger.debug('request', {
-        url,
-        ...(options || {}),
-      });
+      logger.debug(
+        'request',
+        JSON.stringify(
+          {
+            url,
+            ...(options || {}),
+          },
+          null,
+          '  ',
+        ),
+      );
       return function onFetchDone({ response }) {
-        logger.debug('response', () => ({
-          url,
-          status: response.status,
-          headers: Object.fromEntries(response.headers.entries()),
-        }));
+        logger.debug('response', () =>
+          JSON.stringify(
+            {
+              url,
+              status: response.status,
+              headers: Object.fromEntries(response.headers.entries()),
+            },
+            null,
+            '  ',
+          ),
+        );
       };
     },
   };

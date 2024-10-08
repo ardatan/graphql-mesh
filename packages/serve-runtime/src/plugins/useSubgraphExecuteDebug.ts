@@ -9,10 +9,16 @@ export function useSubgraphExecuteDebug<TContext>(opts: {
   return {
     onSubgraphExecute({ executionRequest, logger = opts.logger }) {
       if (executionRequest) {
-        logger.debug(`subgraph-execute`, () => ({
-          query: executionRequest.document && defaultPrintFn(executionRequest.document),
-          variables: executionRequest.variables,
-        }));
+        logger.debug(`subgraph-execute`, () =>
+          JSON.stringify(
+            {
+              query: executionRequest.document && defaultPrintFn(executionRequest.document),
+              variables: executionRequest.variables,
+            },
+            null,
+            '  ',
+          ),
+        );
       }
       return function onSubgraphExecuteDone({ result }) {
         if (isAsyncIterable(result)) {
@@ -26,10 +32,17 @@ export function useSubgraphExecuteDebug<TContext>(opts: {
           };
         }
         if (result) {
-          logger.debug(`subgraph-response`, {
-            data: result.data,
-            errors: result.errors,
-          });
+          logger.debug(
+            `subgraph-response`,
+            JSON.stringify(
+              {
+                data: result.data,
+                errors: result.errors,
+              },
+              null,
+              '  ',
+            ),
+          );
         }
       };
     },
