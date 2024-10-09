@@ -199,10 +199,11 @@ export function resolveAdditionalResolversWithoutImport(
             const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.additionalArgs || {}) {
+              const value = additionalResolver.additionalArgs[argPath];
               dset(
                 targetArgs,
                 argPath,
-                stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData),
+                typeof value === 'string' ? stringInterpolator.parse(value, resolverData) : value,
               );
             }
             const options: any = {
