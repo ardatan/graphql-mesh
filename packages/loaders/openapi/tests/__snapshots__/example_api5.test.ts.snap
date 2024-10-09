@@ -9,11 +9,11 @@ directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
-
 directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFINITION
 
-directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
+directive @oas_link(subgraph: String, defaultRootType: String, defaultField: String) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 type Query {
   """Basic simpleNames option test"""
@@ -35,11 +35,11 @@ type Query {
 type o_d_d___n_a_m_e_200_response {
   data: String
   """Basic link"""
-  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
+  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
   """Hardcoded link parameter"""
-  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
+  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
   """Exposed link parameter"""
-  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
+  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
 }
 
 type w_e_i_r_d___n_a_m_e_200_response {
