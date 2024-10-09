@@ -139,7 +139,7 @@ union OneOfWithAllOfsAndLink = One | Two
 type One {
   commonProp: String
   differentOneProp: String
-  testLink: String @link(subgraph: "test", defaultRootType: "Query", defaultField: "oneOfWithAllOfsAndLink")
+  testLink: String @oas_link(subgraph: "test", defaultRootType: "Query", defaultField: "oneOfWithAllOfsAndLink")
 }
 
 type Two {

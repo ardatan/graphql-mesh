@@ -702,7 +702,7 @@ function spawn(
     stderr += str;
     stdboth += str;
     if (pipeLogs) {
-      process.stderr.write(x);
+      process.stderr.write(str);
     }
   });
 
