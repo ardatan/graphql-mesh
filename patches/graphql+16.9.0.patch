@@ -1,0 +1,21 @@
+diff --git a/node_modules/graphql/type/definition.js b/node_modules/graphql/type/definition.js
+index c2f989d..8dd8746 100644
+--- a/node_modules/graphql/type/definition.js
++++ b/node_modules/graphql/type/definition.js
+@@ -690,6 +690,8 @@ class GraphQLObjectType {
+
+     this._fields = () => defineFieldMap(config);
+
++    this._links = config.links
++
+     this._interfaces = () => defineInterfaces(config);
+
+     config.isTypeOf == null ||
+@@ -727,6 +729,7 @@ class GraphQLObjectType {
+       description: this.description,
+       interfaces: this.getInterfaces(),
+       fields: fieldsToFieldsConfig(this.getFields()),
++      links: this._links,
+       isTypeOf: this.isTypeOf,
+       extensions: this.extensions,
+       astNode: this.astNode,

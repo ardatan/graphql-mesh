@@ -786,6 +786,7 @@ export function getComposerFromJSONSchema({
           }),
           description: subSchema.description,
           fields: {},
+          links: subSchema['x-links'],
           directives: [] as Directive[],
           extensions: {
             default: subSchema.default,
