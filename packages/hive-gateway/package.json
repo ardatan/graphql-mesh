@@ -63,7 +63,7 @@
     "@types/adm-zip": "^0.5.5",
     "adm-zip": "^0.5.15",
     "postject": "^1.0.0-alpha.6",
-    "rollup": "^4.18.1",
+    "rollup": "^4.22.5",
     "rollup-plugin-tsconfig-paths": "^1.5.2",
     "tsx": "^4.16.5"
   },
