@@ -71,7 +71,7 @@
     "rimraf": "^6.0.0",
     "tslib": "^2.4.0",
     "typescript": "^5.4.2",
-    "ws": "^8.17.0",
+    "ws": "^8.17.1",
     "yargs": "^17.7.1"
   },
   "optionalDependencies": {

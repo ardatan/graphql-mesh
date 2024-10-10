@@ -6257,7 +6257,7 @@ __metadata:
     tslib: "npm:^2.4.0"
     typescript: "npm:^5.4.2"
     uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
-    ws: "npm:^8.17.0"
+    ws: "npm:^8.17.1"
     yargs: "npm:^17.7.1"
   peerDependencies:
     graphql: "*"
@@ -7543,7 +7543,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
     "@graphql-mesh/utils": "npm:^0.102.5"
-    fast-xml-parser: "npm:^4.3.2"
+    fast-xml-parser: "npm:^4.5.0"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.6
     "@graphql-mesh/transport-common": ^0.7.6
@@ -10356,7 +10356,7 @@ __metadata:
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.9.0"
     dataloader: "npm:^2.2.2"
-    fast-xml-parser: "npm:^4.2.1"
+    fast-xml-parser: "npm:^4.5.0"
     graphql-compose: "npm:^9.0.11"
     graphql-parse-resolve-info: "npm:^4.13.0"
     graphql-scalars: "npm:^1.22.4"
@@ -10428,7 +10428,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
     "@graphql-mesh/transport-soap": "npm:^0.7.6"
     "@whatwg-node/fetch": "npm:^0.9.15"
-    fast-xml-parser: "npm:^4.3.4"
+    fast-xml-parser: "npm:^4.5.0"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
     soap: "npm:1.1.4"
@@ -21542,7 +21542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:^4.2.1, fast-xml-parser@npm:^4.3.2, fast-xml-parser@npm:^4.3.4":
+"fast-xml-parser@npm:^4.5.0":
   version: 4.5.0
   resolution: "fast-xml-parser@npm:4.5.0"
   dependencies:
@@ -38875,7 +38875,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.17.0, ws@npm:^8.17.1, ws@npm:^8.18.0":
+"ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.17.1, ws@npm:^8.18.0":
   version: 8.18.0
   resolution: "ws@npm:8.18.0"
   peerDependencies:
