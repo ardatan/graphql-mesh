@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.102.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.102.6
+
 ## 0.102.5
 
 ### Patch Changes
