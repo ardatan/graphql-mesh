@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/sqlite",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.6",
-    "@graphql-mesh/types": "^0.102.5",
+    "@graphql-mesh/types": "^0.102.6",
     "@graphql-tools/delegate": "^10.0.21"
   },
   "optionalDependencies": {

@@ -1,5 +1,18 @@
 # @graphql-mesh/odata
 
+## 0.104.6
+
+### Patch Changes
+
+- [`900e84c`](https://github.com/ardatan/graphql-mesh/commit/900e84c9846f84e84746860cf3f1c4724e64f377)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Bump potential CVE dependencies
+
+- Updated dependencies
+  [[`900e84c`](https://github.com/ardatan/graphql-mesh/commit/900e84c9846f84e84746860cf3f1c4724e64f377)]:
+  - @omnigraph/odata@0.0.6
+  - @graphql-mesh/store@0.102.6
+  - @graphql-mesh/types@0.102.6
+
 ## 0.104.5
 
 ### Patch Changes
