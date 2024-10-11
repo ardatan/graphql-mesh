@@ -1,5 +1,23 @@
 # @graphql-mesh/serve-runtime
 
+## 1.0.5
+
+### Patch Changes
+
+- [`9801fbb`](https://github.com/ardatan/graphql-mesh/commit/9801fbbe9a874d63ca839edf29468a49be79b565)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - JSON stringify the fetch and subgraph debug
+  outputs for full insight
+
+- Updated dependencies
+  [[`bf588d3`](https://github.com/ardatan/graphql-mesh/commit/bf588d372c0078378aaa24beea2da794af7949e6)]:
+  - @graphql-mesh/utils@0.102.6
+  - @graphql-mesh/fusion-runtime@0.8.14
+  - @graphql-mesh/plugin-hive@0.102.7
+  - @graphql-mesh/hmac-upstream-signature@1.0.5
+  - @graphql-mesh/plugin-response-cache@0.102.6
+  - @graphql-mesh/transport-http@0.6.7
+  - @graphql-mesh/transport-common@0.7.7
+
 ## 1.0.4
 
 ### Patch Changes

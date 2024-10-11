@@ -1,5 +1,18 @@
 # @graphql-mesh/transport-ws
 
+## 0.3.7
+
+### Patch Changes
+
+- [`340b933`](https://github.com/ardatan/graphql-mesh/commit/340b933afcb9d97064712f09d775d628ad843c42)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - connectionParams factory function may be
+  undefined
+
+- Updated dependencies
+  [[`bf588d3`](https://github.com/ardatan/graphql-mesh/commit/bf588d372c0078378aaa24beea2da794af7949e6)]:
+  - @graphql-mesh/utils@0.102.6
+  - @graphql-mesh/transport-common@0.7.7
+
 ## 0.3.6
 
 ### Patch Changes
