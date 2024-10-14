@@ -111,6 +111,12 @@ export async function getBuiltinPluginsFromConfig(
     );
   }
 
+  if (config.jit) {
+    const { useGraphQlJit } = await import('@envelop/graphql-jit');
+    const opts = config.jit === true ? undefined : config.jit;
+    plugins.push(useGraphQlJit(opts, opts));
+  }
+
   return plugins;
 }
 

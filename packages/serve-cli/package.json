@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "^12.1.0",
+    "@envelop/graphql-jit": "^8.0.3",
     "@graphql-mesh/cache-cfw-kv": "^0.102.7",
     "@graphql-mesh/cache-localforage": "^0.102.7",
     "@graphql-mesh/cache-redis": "^0.102.7",

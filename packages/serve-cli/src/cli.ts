@@ -6,6 +6,7 @@ import { availableParallelism, platform, release } from 'node:os';
 import { join } from 'node:path';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import type { useGraphQlJit } from '@envelop/graphql-jit';
 import type { InitializeData } from '@graphql-mesh/include/hooks.js';
 import type { JWTAuthPluginOptions } from '@graphql-mesh/plugin-jwt-auth';
 import type { OpenTelemetryMeshPluginOptions } from '@graphql-mesh/plugin-opentelemetry';
@@ -98,6 +99,15 @@ export interface GatewayCLIBuiltinPluginConfig {
    * [Learn more](https://graphql-hive.com/docs/gateway/other-features/security/rate-limiting)
    */
   rateLimiting?: Exclude<Parameters<typeof useMeshRateLimit>[0], GatewayConfigContext>;
+
+  /**
+   * Enable Just-In-Time compilation of GraphQL documents.
+   *
+   * [Learn more](https://github.com/zalando-incubator/graphql-jit?tab=readme-ov-file#benchmarks)
+   */
+  jit?:
+    | boolean
+    | Partial<Parameters<typeof useGraphQlJit>[0] & Parameters<typeof useGraphQlJit>[1]>;
 
   cache?:
     | KeyValueCache
@@ -277,7 +287,8 @@ let cli = new Command()
       '--apollo-key <apiKey>',
       'Apollo API key to use to authenticate with the managed federation up link',
     ).env('APOLLO_KEY'),
-  );
+  )
+  .option('--jit', 'Enable Just-In-Time compilation of GraphQL documents');
 
 export async function run(userCtx: Partial<CLIContext>) {
   module.register('@graphql-mesh/include/hooks', {
