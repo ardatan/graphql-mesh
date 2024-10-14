@@ -24,35 +24,10 @@ export const restoreExtraDirectives = memoize1(function restoreExtraDirectives(
 ) {
   const queryType = schema.getQueryType();
   const queryTypeExtensions = getDirectiveExtensions<{
-    extraTypeDirective?: { name: string; directives: Record<string, any[]> };
     extraSchemaDefinitionDirective?: { directives: Record<string, any[]> };
-    extraEnumValueDirective?: { name: string; value: string; directives: Record<string, any[]> };
   }>(queryType);
-  const extraTypeDirectives = queryTypeExtensions?.extraTypeDirective;
   const extraSchemaDefinitionDirectives = queryTypeExtensions?.extraSchemaDefinitionDirective;
-  const extraEnumValueDirectives = queryTypeExtensions?.extraEnumValueDirective;
-  if (
-    extraTypeDirectives?.length ||
-    extraSchemaDefinitionDirectives?.length ||
-    extraEnumValueDirectives?.length
-  ) {
-    const extraTypeDirectiveMap = new Map<string, Record<string, any[]>>();
-    if (extraTypeDirectives) {
-      for (const { name, directives } of extraTypeDirectives) {
-        extraTypeDirectiveMap.set(name, directives);
-      }
-    }
-    const extraEnumValueDirectiveMap = new Map<string, Map<string, Record<string, any[]>>>();
-    if (extraEnumValueDirectives) {
-      for (const { name, value, directives } of extraEnumValueDirectives) {
-        let enumValueDirectivesMap = extraEnumValueDirectiveMap.get(name);
-        if (!enumValueDirectivesMap) {
-          enumValueDirectivesMap = new Map();
-          extraEnumValueDirectiveMap.set(name, enumValueDirectivesMap);
-        }
-        enumValueDirectivesMap.set(value, directives);
-      }
-    }
+  if (extraSchemaDefinitionDirectives?.length) {
     schema = mapSchema(schema, {
       [MapperKind.TYPE]: type => {
         const typeDirectiveExtensions = getDirectiveExtensions(type) || {};
@@ -66,56 +41,12 @@ export const restoreExtraDirectives = memoize1(function restoreExtraDirectives(
               ...(type.extensions || {}),
               directives: {
                 ...typeDirectiveExtensions,
-                extraTypeDirective: [],
                 extraSchemaDefinitionDirective: [],
-                extraEnumValueDirective: [],
               },
             },
             // Cleanup ASTNode to prevent conflicts
             astNode: undefined,
           });
-        }
-        const extraDirectives = extraTypeDirectiveMap.get(type.name);
-        if (extraDirectives) {
-          for (const directiveName in extraDirectives) {
-            const extraDirectiveArgs = extraDirectives[directiveName];
-            if (extraDirectiveArgs?.length) {
-              typeDirectiveExtensions[directiveName] ||= [];
-              typeDirectiveExtensions[directiveName].push(...extraDirectiveArgs);
-            }
-          }
-          return new TypeCtor({
-            ...type.toConfig(),
-            extensions: {
-              ...(type.extensions || {}),
-              directives: typeDirectiveExtensions,
-            },
-            // Cleanup ASTNode to prevent conflicts
-            astNode: undefined,
-          });
-        }
-      },
-      [MapperKind.ENUM_VALUE]: (valueConfig, typeName, schema, externalValue) => {
-        const enumValueDirectivesMap = extraEnumValueDirectiveMap.get(typeName);
-        if (enumValueDirectivesMap) {
-          const enumValueDirectives = enumValueDirectivesMap.get(externalValue);
-          if (enumValueDirectives) {
-            const valueDirectives = getDirectiveExtensions(valueConfig) || {};
-            for (const directiveName in enumValueDirectives) {
-              const extraDirectives = enumValueDirectives[directiveName];
-              if (extraDirectives?.length) {
-                valueDirectives[directiveName] ||= [];
-                valueDirectives[directiveName].push(...extraDirectives);
-              }
-            }
-            return {
-              ...valueConfig,
-              extensions: {
-                ...(valueConfig.extensions || {}),
-                directives: valueDirectives,
-              },
-            };
-          }
         }
       },
     });

@@ -419,54 +419,6 @@ export function getAnnotatedSubgraphs(
       },
     });
     // Workaround to keep directives on unsupported nodes since not all of them are supported by the composition library
-    const extraTypeDirectivesMap = new Map<string, Record<string, any[]>>();
-    function saveDirectives<T extends GraphQLNamedType>(type: T, TypeCtor: Constructor<T>) {
-      const typeConfig = type.toConfig();
-
-      const directiveExtensions = getDirectiveExtensions(type);
-      if (directiveExtensions && Object.keys(directiveExtensions).length) {
-        extraTypeDirectivesMap.set(type.name, directiveExtensions);
-
-        // Cleanup directives
-        return new TypeCtor({
-          ...typeConfig,
-          extensions: {
-            ...typeConfig.extensions,
-            directives: undefined,
-          },
-          astNode: undefined,
-        });
-      }
-
-      return type;
-    }
-    const extraEnumValueDirectivesMap = new Map<string, Map<string, Record<string, any[]>>>();
-    transformedSubgraph = mapSchema(transformedSubgraph, {
-      [MapperKind.UNION_TYPE]: type => saveDirectives(type, GraphQLUnionType),
-      [MapperKind.ENUM_TYPE]: type => saveDirectives(type, GraphQLEnumType),
-      [MapperKind.ENUM_VALUE]: (valueConfig, typeName, _, externalValue) => {
-        const enumValueDirectives = getDirectiveExtensions(valueConfig);
-
-        if (enumValueDirectives && Object.keys(enumValueDirectives).length) {
-          let enumValueDirectivesMap = extraEnumValueDirectivesMap.get(typeName);
-          if (!enumValueDirectivesMap) {
-            enumValueDirectivesMap = new Map<string, Record<string, any[]>>();
-            extraEnumValueDirectivesMap.set(typeName, enumValueDirectivesMap);
-          }
-          enumValueDirectivesMap.set(externalValue, enumValueDirectives);
-
-          // Cleanup directives
-          return {
-            ...valueConfig,
-            extensions: {
-              ...valueConfig.extensions,
-              directives: undefined,
-            },
-            astNode: undefined,
-          };
-        }
-      },
-    });
     let extraSchemaDefinitionDirectives: Record<string, any> | undefined;
     const schemaDirectiveExtensions = getDirectiveExtensions(transformedSubgraph);
     if (schemaDirectiveExtensions) {
@@ -517,25 +469,6 @@ export function getAnnotatedSubgraphs(
 
     const queryType = transformedSubgraph.getQueryType();
     const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
-    if (extraTypeDirectivesMap.size) {
-      importedDirectives.add('@extraTypeDirective');
-      importedDirectivesAST.add(/* GraphQL */ `
-        scalar _DirectiveExtensions
-      `);
-      importedDirectivesAST.add(/* GraphQL */ `
-        directive @extraTypeDirective(
-          name: String!
-          directives: _DirectiveExtensions
-        ) repeatable on OBJECT
-      `);
-      queryTypeDirectives.extraTypeDirective ||= [];
-      for (const [typeName, directives] of extraTypeDirectivesMap.entries()) {
-        queryTypeDirectives.extraTypeDirective.push({
-          name: typeName,
-          directives,
-        });
-      }
-    }
 
     if (extraSchemaDefinitionDirectives) {
       importedDirectives.add('@extraSchemaDefinitionDirective');
@@ -551,30 +484,6 @@ export function getAnnotatedSubgraphs(
       queryTypeDirectives.extraSchemaDefinitionDirective.push({
         directives: extraSchemaDefinitionDirectives,
       });
-    }
-
-    if (extraEnumValueDirectivesMap.size) {
-      importedDirectives.add('@extraEnumValueDirective');
-      importedDirectivesAST.add(/* GraphQL */ `
-        scalar _DirectiveExtensions
-      `);
-      importedDirectivesAST.add(/* GraphQL */ `
-        directive @extraEnumValueDirective(
-          name: String!
-          value: String!
-          directives: _DirectiveExtensions
-        ) repeatable on OBJECT
-      `);
-      queryTypeDirectives.extraEnumValueDirective ||= [];
-      for (const [typeName, enumValueDirectivesMap] of extraEnumValueDirectivesMap) {
-        for (const [enumValueName, directives] of enumValueDirectivesMap) {
-          queryTypeDirectives.extraEnumValueDirective.push({
-            name: typeName,
-            value: enumValueName,
-            directives,
-          });
-        }
-      }
     }
 
     const queryTypeExtensions: Record<string, unknown> = (queryType.extensions ||= {});

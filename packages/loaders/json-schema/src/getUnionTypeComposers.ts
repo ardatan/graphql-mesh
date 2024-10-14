@@ -116,7 +116,7 @@ export function getUnionTypeComposers({
             name: 'statusCodeTypeName',
             args: {
               subgraph: subgraphName,
-              statusCode,
+              statusCode: statusCode.toString(),
               typeName: outputTypeComposer.getTypeName(),
             },
           });

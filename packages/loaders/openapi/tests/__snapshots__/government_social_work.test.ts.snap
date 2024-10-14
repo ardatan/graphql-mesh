@@ -8,7 +8,7 @@ exports[`openAPI loader: government_social_work should generate the schema corre
 
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
+directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
@@ -394,7 +394,7 @@ type Query {
   ): [getScoreCategories_response] @httpOperation(subgraph: "example_api", path: "/score_categories", operationSpecificHeaders: [["Content-Type", "{args.Content_Type}"], ["Accept-Language", "{args.Accept_Language}"], ["User-Agent", "{args.User_Agent:iPad}"], ["Api-Version", "{args.Api_Version:1.1.0}"], ["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
 }
 
-union getAssessmentTypes_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getAssessmentTypes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getAssessmentTypes_200_response | Error
+union getAssessmentTypes_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getAssessmentTypes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getAssessmentTypes_200_response | Error
 
 type getAssessmentTypes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -475,7 +475,7 @@ type Pagination {
   previous: String
 }
 
-union getCase_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getCase_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCase_200_response | Error
+union getCase_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getCase_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCase_200_response | Error
 
 type getCase_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -528,7 +528,7 @@ type CaseVisit {
   case: String
 }
 
-union getWorkersProfile_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getWorkersProfile_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getWorkersProfile_200_response | Error
+union getWorkersProfile_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getWorkersProfile_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getWorkersProfile_200_response | Error
 
 type getWorkersProfile_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -681,7 +681,7 @@ enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_partic
   Non_household @enum(subgraph: "example_api", value: "\\"Non-household\\"")
 }
 
-union getWorkersCases_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getWorkersCases_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getWorkersCases_200_response | Error
+union getWorkersCases_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getWorkersCases_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getWorkersCases_200_response | Error
 
 type getWorkersCases_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -690,7 +690,7 @@ type getWorkersCases_200_response {
   pagination: Pagination
 }
 
-union getWorkersFamilies_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getWorkersFamilies_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getWorkersFamilies_200_response | Error
+union getWorkersFamilies_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getWorkersFamilies_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getWorkersFamilies_200_response | Error
 
 type getWorkersFamilies_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -699,7 +699,7 @@ type getWorkersFamilies_200_response {
   pagination: Pagination
 }
 
-union getCaseVisit_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getCaseVisit_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCaseVisit_200_response | Error
+union getCaseVisit_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getCaseVisit_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCaseVisit_200_response | Error
 
 type getCaseVisit_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -707,7 +707,7 @@ type getCaseVisit_200_response {
   data: [CaseVisit]
 }
 
-union getFamily_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getFamily_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getFamily_200_response | Error
+union getFamily_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getFamily_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getFamily_200_response | Error
 
 type getFamily_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -715,7 +715,7 @@ type getFamily_200_response {
   data: [Family]
 }
 
-union getClient_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getClient_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClient_200_response | Error
+union getClient_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getClient_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClient_200_response | Error
 
 type getClient_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -723,7 +723,7 @@ type getClient_200_response {
   data: [Client]
 }
 
-union getPersons_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getPersons_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getPersons_200_response | Error
+union getPersons_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getPersons_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getPersons_200_response | Error
 
 type getPersons_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -732,7 +732,7 @@ type getPersons_200_response {
   pagination: Pagination
 }
 
-union getClientContacts_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getClientContacts_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClientContacts_200_response | Error
+union getClientContacts_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getClientContacts_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClientContacts_200_response | Error
 
 type getClientContacts_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -763,7 +763,7 @@ enum query_getClientContacts_oneOf_0_data_items_status {
   Deleted
 }
 
-union getClientSchools_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getClientSchools_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClientSchools_200_response | Error
+union getClientSchools_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getClientSchools_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClientSchools_200_response | Error
 
 type getClientSchools_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -790,7 +790,7 @@ enum query_getClientSchools_oneOf_0_data_items_status {
   Deleted
 }
 
-union getClientPhysicians_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getClientPhysicians_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClientPhysicians_200_response | Error
+union getClientPhysicians_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getClientPhysicians_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getClientPhysicians_200_response | Error
 
 type getClientPhysicians_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -820,7 +820,7 @@ enum query_getClientPhysicians_oneOf_0_data_items_status {
   Deleted
 }
 
-union getExperts_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getExperts_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getExperts_200_response | Error
+union getExperts_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getExperts_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getExperts_200_response | Error
 
 type getExperts_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -849,7 +849,7 @@ type Expert {
   role: Roles
 }
 
-union getFile_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getFile_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getFile_200_response | Error
+union getFile_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getFile_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getFile_200_response | Error
 
 type getFile_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -857,7 +857,7 @@ type getFile_200_response {
   data: [File_]
 }
 
-union getManual_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getManual_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getManual_200_response | Error
+union getManual_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getManual_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getManual_200_response | Error
 
 type getManual_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -875,7 +875,7 @@ type Manual {
   file: String
 }
 
-union getMedia_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getMedia_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getMedia_200_response | Error
+union getMedia_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getMedia_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getMedia_200_response | Error
 
 type getMedia_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -909,7 +909,7 @@ type MediaTypeName {
   mediaTypeId: String
 }
 
-union getCaseAssessments_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getCaseAssessments_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCaseAssessments_200_response | Error
+union getCaseAssessments_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getCaseAssessments_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCaseAssessments_200_response | Error
 
 type getCaseAssessments_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -985,7 +985,7 @@ enum query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommenda
   No
 }
 
-union getRecommendations_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getRecommendations_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getRecommendations_200_response | Error
+union getRecommendations_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getRecommendations_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getRecommendations_200_response | Error
 
 type getRecommendations_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1049,7 +1049,7 @@ input Recommendation_Input {
   recommendationSelection: query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection
 }
 
-union getCaseNoteTypes_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getCaseNoteTypes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCaseNoteTypes_200_response | Error
+union getCaseNoteTypes_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getCaseNoteTypes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCaseNoteTypes_200_response | Error
 
 type getCaseNoteTypes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1063,7 +1063,7 @@ type NotesType {
   notestTypeDescription: String
 }
 
-union getCaseNotes_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getCaseNotes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCaseNotes_200_response | Error
+union getCaseNotes_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getCaseNotes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getCaseNotes_200_response | Error
 
 type getCaseNotes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1090,7 +1090,7 @@ enum query_getCaseNotes_oneOf_0_data_items_status {
   Deleted
 }
 
-union getRelationships_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getRelationships_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getRelationships_200_response | Error
+union getRelationships_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getRelationships_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getRelationships_200_response | Error
 
 type getRelationships_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1099,7 +1099,7 @@ type getRelationships_200_response {
   pagination: Pagination
 }
 
-union getRelationshipTypes_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getRelationshipTypes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getRelationshipTypes_200_response | Error
+union getRelationshipTypes_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getRelationshipTypes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getRelationshipTypes_200_response | Error
 
 type getRelationshipTypes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1108,7 +1108,7 @@ type getRelationshipTypes_200_response {
   pagination: Pagination
 }
 
-union getScoreCategories_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "getScoreCategories_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getScoreCategories_200_response | Error
+union getScoreCategories_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getScoreCategories_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getScoreCategories_200_response | Error
 
 type getScoreCategories_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1420,7 +1420,7 @@ type Mutation {
   ): [deleteCaseAssessment_response] @httpOperation(subgraph: "example_api", path: "/case/{args.caseId}/case_assessment/{args.caseAssessmentId}", operationSpecificHeaders: [["Content-Type", "{args.Content_Type}"], ["Accept-Language", "{args.Accept_Language}"], ["User-Agent", "{args.User_Agent:iPad}"], ["Api-Version", "{args.Api_Version:1.1.0}"], ["accept", "application/json"]], httpMethod: PATCH)
 }
 
-union addVisit_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addVisit_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addVisit_200_response | Error
+union addVisit_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addVisit_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addVisit_200_response | Error
 
 type addVisit_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1446,7 +1446,7 @@ input CaseVisit_Input {
   case: String
 }
 
-union addPerson_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addPerson_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addPerson_200_response | Error
+union addPerson_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addPerson_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addPerson_200_response | Error
 
 type addPerson_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1518,7 +1518,7 @@ input File_Input {
   fileType: String
 }
 
-union updatePerson_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "updatePerson_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updatePerson_200_response | Error
+union updatePerson_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "updatePerson_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updatePerson_200_response | Error
 
 type updatePerson_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1527,7 +1527,7 @@ type updatePerson_200_response {
   data: Boolean
 }
 
-union updateClient_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "updateClient_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateClient_200_response | Error
+union updateClient_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "updateClient_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateClient_200_response | Error
 
 type updateClient_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1609,7 +1609,7 @@ input ClientRelationshipType_Input {
   category: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category
 }
 
-union addClientRelationship_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addClientRelationship_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addClientRelationship_200_response | Error
+union addClientRelationship_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addClientRelationship_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addClientRelationship_200_response | Error
 
 type addClientRelationship_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1617,7 +1617,7 @@ type addClientRelationship_200_response {
   data: ClientRelationship
 }
 
-union deleteClientRelationship_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "deleteClientRelationship_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = deleteClientRelationship_200_response | Error
+union deleteClientRelationship_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "deleteClientRelationship_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = deleteClientRelationship_200_response | Error
 
 type deleteClientRelationship_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1626,7 +1626,7 @@ type deleteClientRelationship_200_response {
   data: Boolean
 }
 
-union addClientContact_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addClientContact_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addClientContact_200_response | Error
+union addClientContact_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addClientContact_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addClientContact_200_response | Error
 
 type addClientContact_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1644,7 +1644,7 @@ input ClientContact_Input {
   status: query_getClientContacts_oneOf_0_data_items_status
 }
 
-union updateClientContact_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "updateClientContact_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateClientContact_200_response | Error
+union updateClientContact_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "updateClientContact_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateClientContact_200_response | Error
 
 type updateClientContact_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1653,7 +1653,7 @@ type updateClientContact_200_response {
   data: Boolean
 }
 
-union addClientSchool_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addClientSchool_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addClientSchool_200_response | Error
+union addClientSchool_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addClientSchool_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addClientSchool_200_response | Error
 
 type addClientSchool_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1673,7 +1673,7 @@ input ClientSchool_Input {
   status: query_getClientSchools_oneOf_0_data_items_status
 }
 
-union updateClientSchool_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "updateClientSchool_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateClientSchool_200_response | Error
+union updateClientSchool_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "updateClientSchool_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateClientSchool_200_response | Error
 
 type updateClientSchool_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1682,7 +1682,7 @@ type updateClientSchool_200_response {
   data: Boolean
 }
 
-union addClientPhysician_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addClientPhysician_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addClientPhysician_200_response | Error
+union addClientPhysician_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addClientPhysician_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addClientPhysician_200_response | Error
 
 type addClientPhysician_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1705,7 +1705,7 @@ input ClientPhysician_Input {
   status: query_getClientPhysicians_oneOf_0_data_items_status
 }
 
-union updateClientPhysician_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "updateClientPhysician_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateClientPhysician_200_response | Error
+union updateClientPhysician_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "updateClientPhysician_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateClientPhysician_200_response | Error
 
 type updateClientPhysician_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1714,7 +1714,7 @@ type updateClientPhysician_200_response {
   data: Boolean
 }
 
-union updateFile_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "updateFile_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateFile_200_response | Error
+union updateFile_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "updateFile_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = updateFile_200_response | Error
 
 type updateFile_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1722,7 +1722,7 @@ type updateFile_200_response {
   data: File_
 }
 
-union putFile_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "putFile_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = putFile_200_response | Error
+union putFile_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "putFile_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = putFile_200_response | Error
 
 type putFile_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1730,7 +1730,7 @@ type putFile_200_response {
   data: File_
 }
 
-union addMedia_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addMedia_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addMedia_200_response | Error
+union addMedia_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addMedia_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addMedia_200_response | Error
 
 type addMedia_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1758,7 +1758,7 @@ input MediaTypeName_Input {
   mediaTypeId: String
 }
 
-union deleteMedia_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "deleteMedia_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = deleteMedia_200_response | Error
+union deleteMedia_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "deleteMedia_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = deleteMedia_200_response | Error
 
 type deleteMedia_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1767,7 +1767,7 @@ type deleteMedia_200_response {
   data: Boolean
 }
 
-union addCaseNotes_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addCaseNotes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addCaseNotes_200_response | Error
+union addCaseNotes_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addCaseNotes_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addCaseNotes_200_response | Error
 
 type addCaseNotes_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1792,7 +1792,7 @@ input NotesType_Input {
   notestTypeDescription: String
 }
 
-union deleteCaseNote_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "deleteCaseNote_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = deleteCaseNote_200_response | Error
+union deleteCaseNote_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "deleteCaseNote_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = deleteCaseNote_200_response | Error
 
 type deleteCaseNote_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1801,7 +1801,7 @@ type deleteCaseNote_200_response {
   data: Boolean
 }
 
-union addCaseAssessment_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "addCaseAssessment_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addCaseAssessment_200_response | Error
+union addCaseAssessment_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "addCaseAssessment_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = addCaseAssessment_200_response | Error
 
 type addCaseAssessment_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""
@@ -1809,7 +1809,7 @@ type addCaseAssessment_200_response {
   data: CaseAssessment
 }
 
-union deleteCaseAssessment_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "deleteCaseAssessment_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = deleteCaseAssessment_200_response | Error
+union deleteCaseAssessment_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "deleteCaseAssessment_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = deleteCaseAssessment_200_response | Error
 
 type deleteCaseAssessment_200_response {
   """may return NO_RESULTS_FOUND for this user and search query"""

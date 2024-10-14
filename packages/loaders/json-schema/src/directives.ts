@@ -3,7 +3,6 @@ import {
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLEnumType,
-  GraphQLID,
   GraphQLInt,
   GraphQLList,
   GraphQLString,
@@ -226,7 +225,7 @@ export const StatusCodeTypeNameDirective = new GraphQLDirective({
       type: GraphQLString,
     },
     statusCode: {
-      type: GraphQLID,
+      type: GraphQLString,
     },
   },
 });

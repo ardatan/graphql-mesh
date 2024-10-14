@@ -12,7 +12,7 @@ schema
   
   @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@enum", "@httpOperation", "@transport", "@source", "@extraSchemaDefinitionDirective", "@extraEnumValueDirective"]
+  import: ["@enum", "@httpOperation", "@transport", "@source", "@extraSchemaDefinitionDirective"]
 )
 {
   query: Query
@@ -112,78 +112,12 @@ directive @source(name: String!, type: String, subgraph: String!)  repeatable on
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
-directive @extraEnumValueDirective(name: String!, value: String!, directives: _DirectiveExtensions)  repeatable on OBJECT
-
 scalar ObjMap @join__type(graph: WIKI) 
 
 scalar _DirectiveExtensions @join__type(graph: WIKI) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "ANIMAL"
-  directives: {source: [{name: "animal", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "CAREER"
-  directives: {source: [{name: "career", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "CELEBRITY"
-  directives: {source: [{name: "celebrity", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "DEV"
-  directives: {source: [{name: "dev", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "EXPLICIT"
-  directives: {source: [{name: "explicit", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "FASHION"
-  directives: {source: [{name: "fashion", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "FOOD"
-  directives: {source: [{name: "food", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "HISTORY"
-  directives: {source: [{name: "history", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "MONEY"
-  directives: {source: [{name: "money", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "MOVIE"
-  directives: {source: [{name: "movie", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "MUSIC"
-  directives: {source: [{name: "music", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "POLITICAL"
-  directives: {source: [{name: "political", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "RELIGION"
-  directives: {source: [{name: "religion", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "SCIENCE"
-  directives: {source: [{name: "science", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "SPORT"
-  directives: {source: [{name: "sport", subgraph: "Wiki"}]}
-) @extraEnumValueDirective(
-  name: "Category"
-  value: "TRAVEL"
-  directives: {source: [{name: "travel", subgraph: "Wiki"}]}
 ) @join__type(graph: WIKI)  {
   jokes_categories: [Category] @httpOperation(
     subgraph: "Wiki"
@@ -194,22 +128,22 @@ type Query @extraSchemaDefinitionDirective(
 }
 
 enum Category @join__type(graph: WIKI)  {
-  ANIMAL @join__enumValue(graph: WIKI) 
-  CAREER @join__enumValue(graph: WIKI) 
-  CELEBRITY @join__enumValue(graph: WIKI) 
-  DEV @join__enumValue(graph: WIKI) 
-  EXPLICIT @join__enumValue(graph: WIKI) 
-  FASHION @join__enumValue(graph: WIKI) 
-  FOOD @join__enumValue(graph: WIKI) 
-  HISTORY @join__enumValue(graph: WIKI) 
-  MONEY @join__enumValue(graph: WIKI) 
-  MOVIE @join__enumValue(graph: WIKI) 
-  MUSIC @join__enumValue(graph: WIKI) 
-  POLITICAL @join__enumValue(graph: WIKI) 
-  RELIGION @join__enumValue(graph: WIKI) 
-  SCIENCE @join__enumValue(graph: WIKI) 
-  SPORT @join__enumValue(graph: WIKI) 
-  TRAVEL @join__enumValue(graph: WIKI) 
+  ANIMAL @source(name: "animal", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  CAREER @source(name: "career", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  CELEBRITY @source(name: "celebrity", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  DEV @source(name: "dev", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  EXPLICIT @source(name: "explicit", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  FASHION @source(name: "fashion", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  FOOD @source(name: "food", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  HISTORY @source(name: "history", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  MONEY @source(name: "money", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  MOVIE @source(name: "movie", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  MUSIC @source(name: "music", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  POLITICAL @source(name: "political", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  RELIGION @source(name: "religion", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  SCIENCE @source(name: "science", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  SPORT @source(name: "sport", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
+  TRAVEL @source(name: "travel", subgraph: "Wiki")  @join__enumValue(graph: WIKI) 
 }
 
 enum HTTPMethod @join__type(graph: WIKI)  {

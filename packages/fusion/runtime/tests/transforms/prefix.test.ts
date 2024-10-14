@@ -79,8 +79,6 @@ describe('Prefix', () => {
           id: ID!
           title: String!
         }
-
-        scalar _DirectiveExtensions
       `,
     );
   });

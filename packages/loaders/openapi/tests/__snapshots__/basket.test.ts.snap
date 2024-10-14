@@ -6,7 +6,7 @@ exports[`Basket should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
+directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
@@ -54,7 +54,7 @@ type Mutation {
   post_basket(input: String): [post_basket_response] @httpOperation(subgraph: "basket", path: "/basket", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
 }
 
-union post_basket_response @statusCodeTypeName(subgraph: "basket", statusCode: 200, typeName: "BasketResponse") @statusCodeTypeName(subgraph: "basket", statusCode: 400, typeName: "ApiError") = BasketResponse | ApiError
+union post_basket_response @statusCodeTypeName(subgraph: "basket", statusCode: "200", typeName: "BasketResponse") @statusCodeTypeName(subgraph: "basket", statusCode: "400", typeName: "ApiError") = BasketResponse | ApiError
 
 type BasketResponse {
   products: [mutation_post_basket_oneOf_0_products_items]
