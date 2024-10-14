@@ -90,8 +90,6 @@ describe('Naming Convention', () => {
           MODERATOR
           NEWBIE
         }
-
-        scalar _DirectiveExtensions
       `,
     );
   });

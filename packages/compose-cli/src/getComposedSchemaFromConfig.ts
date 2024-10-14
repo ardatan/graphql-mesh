@@ -99,6 +99,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
   }
   const result = composeSubgraphs(subgraphConfigsForComposition);
   if (result.errors?.length) {
+    logger.error(`Failed to compose subgraphs`);
     for (const error of result.errors) {
       if (isDebug) {
         logger.error(error);
@@ -106,7 +107,6 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
         logger.error(error.message || error);
       }
     }
-    logger.error(`Failed to compose subgraphs`);
     process.exit(1);
   }
   if (!result.supergraphSdl) {

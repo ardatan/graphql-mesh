@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@resolveRootField", "@enum", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective", "@extraEnumValueDirective"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@resolveRootField", "@enum", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]) {
   query: Query
   mutation: Mutation
 }
@@ -29,8 +29,6 @@ directive @httpOperation(subgraph: String, path: String, operationSpecificHeader
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
-directive @extraEnumValueDirective(name: String!, value: String!, directives: _DirectiveExtensions) repeatable on OBJECT
 
 directive @additionalField on FIELD_DEFINITION
 
@@ -70,7 +68,7 @@ scalar ObjMap @join__type(graph: WIKI)
 
 scalar _DirectiveExtensions @join__type(graph: WIKI)
 
-type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://wikimedia.org/api/rest_v1"}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "all_activity_levels", directives: {enum: [{subgraph: "Wiki", value: "\\"all-activity-levels\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "_1__4_edits", directives: {enum: [{subgraph: "Wiki", value: "\\"1..4-edits\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "_5__24_edits", directives: {enum: [{subgraph: "Wiki", value: "\\"5..24-edits\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "_25__99_edits", directives: {enum: [{subgraph: "Wiki", value: "\\"25..99-edits\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "_100___edits", directives: {enum: [{subgraph: "Wiki", value: "\\"100..-edits\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "all_activity_levels", directives: {enum: [{subgraph: "Wiki", value: "\\"all-activity-levels\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "_1__4_edits", directives: {enum: [{subgraph: "Wiki", value: "\\"1..4-edits\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "_5__24_edits", directives: {enum: [{subgraph: "Wiki", value: "\\"5..24-edits\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "_25__99_edits", directives: {enum: [{subgraph: "Wiki", value: "\\"25..99-edits\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level", value: "_100___edits", directives: {enum: [{subgraph: "Wiki", value: "\\"100..-edits\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type", value: "all_page_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-page-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type", value: "non_content", directives: {enum: [{subgraph: "Wiki", value: "\\"non-content\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "all_editor_types", directives: {enum: [{subgraph: "Wiki", value: "\\"all-editor-types\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "group_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"group-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type", value: "name_bot", directives: {enum: [{subgraph: "Wiki", value: "\\"name-bot\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site", value: "all_sites", directives: {enum: [{subgraph: "Wiki", value: "\\"all-sites\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site", value: "desktop_site", directives: {enum: [{subgraph: "Wiki", value: "\\"desktop-site\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site", value: "mobile_site", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-site\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access", value: "all_access", directives: {enum: [{subgraph: "Wiki", value: "\\"all-access\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access", value: "mobile_app", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-app\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access", value: "mobile_web", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-web\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent", value: "all_agents", directives: {enum: [{subgraph: "Wiki", value: "\\"all-agents\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access", value: "all_access", directives: {enum: [{subgraph: "Wiki", value: "\\"all-access\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access", value: "mobile_app", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-app\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access", value: "mobile_web", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-web\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent", value: "all_agents", directives: {enum: [{subgraph: "Wiki", value: "\\"all-agents\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access", value: "all_access", directives: {enum: [{subgraph: "Wiki", value: "\\"all-access\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access", value: "mobile_app", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-app\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access", value: "mobile_web", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-web\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access", value: "all_access", directives: {enum: [{subgraph: "Wiki", value: "\\"all-access\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access", value: "mobile_app", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-app\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access", value: "mobile_web", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-web\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site", value: "all_sites", directives: {enum: [{subgraph: "Wiki", value: "\\"all-sites\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site", value: "desktop_site", directives: {enum: [{subgraph: "Wiki", value: "\\"desktop-site\\""}]}) @extraEnumValueDirective(name: "queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site", value: "mobile_site", directives: {enum: [{subgraph: "Wiki", value: "\\"mobile-site\\""}]}) @extraEnumValueDirective(name: "mutationInput_post_media_math_check_by_type_type", value: "inline_tex", directives: {enum: [{subgraph: "Wiki", value: "\\"inline-tex\\""}]}) @join__type(graph: WIKI) {
+type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://wikimedia.org/api/rest_v1"}]}) @join__type(graph: WIKI) {
   """
   Gets availability of featured feed content for the apps by wiki domain.
   
@@ -1358,10 +1356,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1371,9 +1369,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1392,10 +1390,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1415,10 +1413,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1428,9 +1426,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1449,10 +1447,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1472,10 +1470,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1485,9 +1483,9 @@ namespaces) or non-content (edited-pages in non-content namespaces). If you are
 interested in edited-pages regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1496,11 +1494,11 @@ If you want to filter by activity-level, use one of 1..4-edits, 5..24-edits,
 of their activity level, use all-activity-levels.
 """
 enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level @join__type(graph: WIKI) {
-  all_activity_levels @join__enumValue(graph: WIKI)
-  _1__4_edits @join__enumValue(graph: WIKI)
-  _5__24_edits @join__enumValue(graph: WIKI)
-  _25__99_edits @join__enumValue(graph: WIKI)
-  _100___edits @join__enumValue(graph: WIKI)
+  all_activity_levels @enum(subgraph: "Wiki", value: "\\"all-activity-levels\\"") @join__enumValue(graph: WIKI)
+  _1__4_edits @enum(subgraph: "Wiki", value: "\\"1..4-edits\\"") @join__enumValue(graph: WIKI)
+  _5__24_edits @enum(subgraph: "Wiki", value: "\\"5..24-edits\\"") @join__enumValue(graph: WIKI)
+  _25__99_edits @enum(subgraph: "Wiki", value: "\\"25..99-edits\\"") @join__enumValue(graph: WIKI)
+  _100___edits @enum(subgraph: "Wiki", value: "\\"100..-edits\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1520,10 +1518,10 @@ group nor having bot-like name). If you are interested in edits regardless of
 their editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1533,9 +1531,9 @@ namespaces) or non-content (new pages in non-content namespaces). If you are
 interested in new-articles regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1555,10 +1553,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1568,9 +1566,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1581,10 +1579,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1594,9 +1592,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1607,10 +1605,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1620,9 +1618,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1633,10 +1631,10 @@ group nor having bot-like name). If you are interested in edits regardless
 of their editor-type, use all-editor-types.
 """
 enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1646,9 +1644,9 @@ namespaces) or non-content (edits made in non-content namespaces). If you are
 interested in editors regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1657,11 +1655,11 @@ If you want to filter by activity-level, use one of 1..4-edits, 5..24-edits,
 of their activity-level, use all-activity-levels.
 """
 enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level @join__type(graph: WIKI) {
-  all_activity_levels @join__enumValue(graph: WIKI)
-  _1__4_edits @join__enumValue(graph: WIKI)
-  _5__24_edits @join__enumValue(graph: WIKI)
-  _25__99_edits @join__enumValue(graph: WIKI)
-  _100___edits @join__enumValue(graph: WIKI)
+  all_activity_levels @enum(subgraph: "Wiki", value: "\\"all-activity-levels\\"") @join__enumValue(graph: WIKI)
+  _1__4_edits @enum(subgraph: "Wiki", value: "\\"1..4-edits\\"") @join__enumValue(graph: WIKI)
+  _5__24_edits @enum(subgraph: "Wiki", value: "\\"5..24-edits\\"") @join__enumValue(graph: WIKI)
+  _25__99_edits @enum(subgraph: "Wiki", value: "\\"25..99-edits\\"") @join__enumValue(graph: WIKI)
+  _100___edits @enum(subgraph: "Wiki", value: "\\"100..-edits\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1681,10 +1679,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1694,9 +1692,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1707,10 +1705,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1720,9 +1718,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1733,10 +1731,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1746,9 +1744,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1759,10 +1757,10 @@ group nor having bot-like name). If you are interested in edits regardless
 of their editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1772,9 +1770,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type @join__type(graph: WIKI) {
-  all_page_types @join__enumValue(graph: WIKI)
+  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"") @join__enumValue(graph: WIKI)
   content @join__enumValue(graph: WIKI)
-  non_content @join__enumValue(graph: WIKI)
+  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1794,10 +1792,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type @join__type(graph: WIKI) {
-  all_editor_types @join__enumValue(graph: WIKI)
+  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"") @join__enumValue(graph: WIKI)
   anonymous @join__enumValue(graph: WIKI)
-  group_bot @join__enumValue(graph: WIKI)
-  name_bot @join__enumValue(graph: WIKI)
+  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"") @join__enumValue(graph: WIKI)
+  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
 }
 
@@ -1813,9 +1811,9 @@ enum queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_b
 If you want to filter by access site, use one of desktop-site or mobile-site. If you are interested in pagecounts regardless of access site use all-sites.
 """
 enum queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site @join__type(graph: WIKI) {
-  all_sites @join__enumValue(graph: WIKI)
-  desktop_site @join__enumValue(graph: WIKI)
-  mobile_site @join__enumValue(graph: WIKI)
+  all_sites @enum(subgraph: "Wiki", value: "\\"all-sites\\"") @join__enumValue(graph: WIKI)
+  desktop_site @enum(subgraph: "Wiki", value: "\\"desktop-site\\"") @join__enumValue(graph: WIKI)
+  mobile_site @enum(subgraph: "Wiki", value: "\\"mobile-site\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1833,10 +1831,10 @@ If you want to filter by access method, use one of desktop, mobile-app or mobile
 If you are interested in pageviews regardless of access method, use all-access.
 """
 enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access @join__type(graph: WIKI) {
-  all_access @join__enumValue(graph: WIKI)
+  all_access @enum(subgraph: "Wiki", value: "\\"all-access\\"") @join__enumValue(graph: WIKI)
   desktop @join__enumValue(graph: WIKI)
-  mobile_app @join__enumValue(graph: WIKI)
-  mobile_web @join__enumValue(graph: WIKI)
+  mobile_app @enum(subgraph: "Wiki", value: "\\"mobile-app\\"") @join__enumValue(graph: WIKI)
+  mobile_web @enum(subgraph: "Wiki", value: "\\"mobile-web\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1844,7 +1842,7 @@ If you want to filter by agent type, use one of user or spider. If you are inter
 in pageviews regardless of agent type, use all-agents.
 """
 enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent @join__type(graph: WIKI) {
-  all_agents @join__enumValue(graph: WIKI)
+  all_agents @enum(subgraph: "Wiki", value: "\\"all-agents\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
   spider @join__enumValue(graph: WIKI)
 }
@@ -1865,10 +1863,10 @@ or mobile-web. If you are interested in pageviews regardless of access method,
 use all-access.
 """
 enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access @join__type(graph: WIKI) {
-  all_access @join__enumValue(graph: WIKI)
+  all_access @enum(subgraph: "Wiki", value: "\\"all-access\\"") @join__enumValue(graph: WIKI)
   desktop @join__enumValue(graph: WIKI)
-  mobile_app @join__enumValue(graph: WIKI)
-  mobile_web @join__enumValue(graph: WIKI)
+  mobile_app @enum(subgraph: "Wiki", value: "\\"mobile-app\\"") @join__enumValue(graph: WIKI)
+  mobile_web @enum(subgraph: "Wiki", value: "\\"mobile-web\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1876,7 +1874,7 @@ If you want to filter by agent type, use one of user, bot or spider. If you are
 interested in pageviews regardless of agent type, use all-agents.
 """
 enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent @join__type(graph: WIKI) {
-  all_agents @join__enumValue(graph: WIKI)
+  all_agents @enum(subgraph: "Wiki", value: "\\"all-agents\\"") @join__enumValue(graph: WIKI)
   user @join__enumValue(graph: WIKI)
   spider @join__enumValue(graph: WIKI)
   bot @join__enumValue(graph: WIKI)
@@ -1896,10 +1894,10 @@ If you want to filter by access method, use one of desktop, mobile-app or mobile
 If you are interested in pageviews regardless of access method, use all-access.
 """
 enum queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access @join__type(graph: WIKI) {
-  all_access @join__enumValue(graph: WIKI)
+  all_access @enum(subgraph: "Wiki", value: "\\"all-access\\"") @join__enumValue(graph: WIKI)
   desktop @join__enumValue(graph: WIKI)
-  mobile_app @join__enumValue(graph: WIKI)
-  mobile_web @join__enumValue(graph: WIKI)
+  mobile_app @enum(subgraph: "Wiki", value: "\\"mobile-app\\"") @join__enumValue(graph: WIKI)
+  mobile_web @enum(subgraph: "Wiki", value: "\\"mobile-web\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1907,10 +1905,10 @@ If you want to filter by access method, use one of desktop, mobile-app or mobile
 If you are interested in pageviews regardless of access method, use all-access.
 """
 enum queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access @join__type(graph: WIKI) {
-  all_access @join__enumValue(graph: WIKI)
+  all_access @enum(subgraph: "Wiki", value: "\\"all-access\\"") @join__enumValue(graph: WIKI)
   desktop @join__enumValue(graph: WIKI)
-  mobile_app @join__enumValue(graph: WIKI)
-  mobile_web @join__enumValue(graph: WIKI)
+  mobile_app @enum(subgraph: "Wiki", value: "\\"mobile-app\\"") @join__enumValue(graph: WIKI)
+  mobile_web @enum(subgraph: "Wiki", value: "\\"mobile-web\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1927,9 +1925,9 @@ If you want to filter by accessed site, use one of desktop-site or mobile-site.
 If you are interested in unique devices regardless of accessed site, use or all-sites.
 """
 enum queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site @join__type(graph: WIKI) {
-  all_sites @join__enumValue(graph: WIKI)
-  desktop_site @join__enumValue(graph: WIKI)
-  mobile_site @join__enumValue(graph: WIKI)
+  all_sites @enum(subgraph: "Wiki", value: "\\"all-sites\\"") @join__enumValue(graph: WIKI)
+  desktop_site @enum(subgraph: "Wiki", value: "\\"desktop-site\\"") @join__enumValue(graph: WIKI)
+  mobile_site @enum(subgraph: "Wiki", value: "\\"mobile-site\\"") @join__enumValue(graph: WIKI)
 }
 
 """
@@ -1968,7 +1966,7 @@ enum queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provid
 """The input type of the given formula; can be tex or inline-tex"""
 enum mutationInput_post_media_math_check_by_type_type @join__type(graph: WIKI) {
   tex @join__enumValue(graph: WIKI)
-  inline_tex @join__enumValue(graph: WIKI)
+  inline_tex @enum(subgraph: "Wiki", value: "\\"inline-tex\\"") @join__enumValue(graph: WIKI)
   chem @join__enumValue(graph: WIKI)
 }
 
