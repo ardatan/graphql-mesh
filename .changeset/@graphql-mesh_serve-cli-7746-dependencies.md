@@ -1,0 +1,23 @@
+---
+"@graphql-mesh/serve-cli": patch
+---
+dependencies updates:
+  - Updated dependency [`@graphql-mesh/cache-cfw-kv@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-cfw-kv/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/cache-localforage@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-localforage/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/cache-redis@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-redis/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/hmac-upstream-signature@^1.0.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/hmac-upstream-signature/v/1.0.5) (from `^1.0.4`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-deduplicate-request@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-deduplicate-request/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-http-cache@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-http-cache/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-jwt-auth@^1.0.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-jwt-auth/v/1.0.5) (from `^1.0.4`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-mock@^0.102.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-mock/v/0.102.7) (from `^0.102.6`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-opentelemetry@^1.0.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-opentelemetry/v/1.0.5) (from `^1.0.4`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-prometheus@^1.0.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-prometheus/v/1.0.5) (from `^1.0.4`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-rate-limit@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-rate-limit/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-snapshot@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-snapshot/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/serve-runtime@^1.0.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/serve-runtime/v/1.0.5) (from `^1.0.4`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transport-http-callback@^0.4.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-http-callback/v/0.4.1) (from `^0.4.0`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transport-ws@^0.3.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-ws/v/0.3.7) (from `^0.3.6`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/types@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/utils@^0.102.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.102.6) (from `^0.102.5`, in `dependencies`)
+  - Removed dependency [`json-bigint-patch@^0.0.8` ↗︎](https://www.npmjs.com/package/json-bigint-patch/v/0.0.8) (from `dependencies`)
+  - Removed dependency [`node-libcurl@npm:@ardatan/node-libcurl@^4.0.2` ↗︎](https://www.npmjs.com/package/node-libcurl/v/4.0.2) (from `dependencies`)
