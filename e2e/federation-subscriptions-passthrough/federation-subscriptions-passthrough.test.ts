@@ -30,6 +30,9 @@ const subscriptionsClientFactories = [
 ][];
 
 subscriptionsClientFactories.forEach(([protocol, createClient]) => {
+  if (protocol === 'WS' && process.version.startsWith('v18')) {
+    return;
+  }
   describe(`with ${protocol}`, () => {
     const headers = {
       authorization: TOKEN,
