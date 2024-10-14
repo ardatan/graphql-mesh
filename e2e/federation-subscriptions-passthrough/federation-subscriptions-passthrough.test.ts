@@ -10,6 +10,7 @@ import {
   type ClientOptions as WSClientOptions,
 } from 'graphql-ws';
 import webSocketImpl from 'ws';
+import { getLocalHostName } from '@e2e/opts';
 import { createTenv, getAvailablePort } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 import { TOKEN } from './services/products/server';
@@ -160,9 +161,6 @@ subscriptionsClientFactories.forEach(([protocol, createClient]) => {
     });
 
     it('should subscribe and resolve via http callbacks', async () => {
-      if (process.version.startsWith('v18')) {
-        return;
-      }
       const supergraphFile = await composeWithApollo([
         await service('products'),
         await service('reviews'),
@@ -171,7 +169,7 @@ subscriptionsClientFactories.forEach(([protocol, createClient]) => {
       // Get a random available port
       const availablePort = await getAvailablePort();
 
-      const publicUrl = `http://localhost:${availablePort}`;
+      const publicUrl = `http://${getLocalHostName()}:${availablePort}`;
       await serve({
         supergraph: supergraphFile,
         port: availablePort,
