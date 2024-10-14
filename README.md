@@ -14,8 +14,6 @@
   <a href="https://www.graphql-mesh.com/v1"><b>Go to documentation</b></a>
 </div>
 
-<br />
-
 <div align="center">
 
 [![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcli)
