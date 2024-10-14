@@ -1,19 +1,21 @@
 import { createSchema, createYoga } from 'graphql-yoga';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
-import { DiagLogLevel } from '@opentelemetry/api';
 import type { NodeSDK } from '@opentelemetry/sdk-node';
 import { useOpenTelemetry } from '../src/index';
 
-const mockStartSdk = jest.fn();
-jest.mock('@opentelemetry/sdk-node', () => ({
-  NodeSDK: jest.fn(() => ({ start: mockStartSdk })),
-}));
-
-beforeEach(() => {
-  jest.clearAllMocks();
-});
-
 describe('useOpenTelemetry', () => {
+  if (process.env.LEAK_TEST) {
+    it('noop', () => {});
+    return;
+  }
+  const mockStartSdk = jest.fn();
+  jest.mock('@opentelemetry/sdk-node', () => ({
+    NodeSDK: jest.fn(() => ({ start: mockStartSdk })),
+  }));
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   describe('when not passing a custom sdk', () => {
     it('initializes and starts a new NodeSDK', async () => {
       const upstream = createYoga({
@@ -32,15 +34,15 @@ describe('useOpenTelemetry', () => {
         logging: false,
       });
 
-      const serveRuntime = createGatewayRuntime({
+      await using serveRuntime = createGatewayRuntime({
         proxy: {
           endpoint: 'https://example.com/graphql',
         },
-        plugins: () => [
+        plugins: ctx => [
           useCustomFetch(upstream.fetch),
           useOpenTelemetry({
             exporters: [],
-            diagLogLevel: DiagLogLevel.NONE,
+            ...ctx,
           }),
         ],
         logging: false,
@@ -86,13 +88,13 @@ describe('useOpenTelemetry', () => {
       });
 
       const sdk = { start: jest.fn() } as unknown as NodeSDK;
-      const serveRuntime = createGatewayRuntime({
+      await using serveRuntime = createGatewayRuntime({
         proxy: {
           endpoint: 'https://example.com/graphql',
         },
-        plugins: () => [
+        plugins: ctx => [
           useCustomFetch(upstream.fetch),
-          useOpenTelemetry({ initializeNodeSDK: false, diagLogLevel: DiagLogLevel.NONE }),
+          useOpenTelemetry({ initializeNodeSDK: false, ...ctx }),
         ],
         logging: false,
       });

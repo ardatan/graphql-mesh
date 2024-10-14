@@ -5,13 +5,12 @@ import {
 } from '@envelop/types';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
 import { DisposableSymbols, type GatewayPlugin } from '@graphql-mesh/serve-runtime';
-import type { OnFetchHookPayload } from '@graphql-mesh/types';
+import type { Logger, OnFetchHookPayload } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import {
   context,
   diag,
-  DiagConsoleLogger,
   DiagLogLevel,
   propagation,
   trace,
@@ -71,10 +70,6 @@ type OpenTelemetryGatewayPluginOptionsInit =
   | OpenTelemetryGatewayPluginOptionsWithoutInit;
 
 export type OpenTelemetryGatewayPluginOptions = OpenTelemetryGatewayPluginOptionsInit & {
-  /**
-   * Log level to use for the OpenTelemetry SDK Diagnostics (default: WARN).
-   */
-  diagLogLevel?: DiagLogLevel;
   /**
    * Tracer instance to use for creating spans (default: a tracer with name 'gateway').
    */
@@ -140,7 +135,9 @@ const HeadersTextMapGetter: TextMapGetter = {
   },
 };
 
-export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): GatewayPlugin<{
+export function useOpenTelemetry(
+  options: OpenTelemetryGatewayPluginOptions & { logger: Logger },
+): GatewayPlugin<{
   opentelemetry: {
     tracer: Tracer;
     activeContext: () => Context;
@@ -149,7 +146,6 @@ export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): Ga
   const contextManager = new AsyncHooksContextManager();
   const inheritContext = options.inheritContext ?? true;
   const propagateContext = options.propagateContext ?? true;
-  const diagLogLevel = options.diagLogLevel ?? DiagLogLevel.WARN;
 
   let sdk: NodeSDK | undefined;
   if (!('initializeNodeSDK' in options && options.initializeNodeSDK === false)) {
@@ -170,7 +166,17 @@ export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): Ga
 
   return {
     onYogaInit() {
-      diag.setLogger(new DiagConsoleLogger(), diagLogLevel);
+      const pluginLogger = options.logger.child('OpenTelemetry');
+      diag.setLogger(
+        {
+          error: (message, ...args) => pluginLogger.error(message, ...args),
+          warn: (message, ...args) => pluginLogger.warn(message, ...args),
+          info: (message, ...args) => pluginLogger.info(message, ...args),
+          debug: (message, ...args) => pluginLogger.debug(message, ...args),
+          verbose: (message, ...args) => pluginLogger.debug(message, ...args),
+        },
+        DiagLogLevel.VERBOSE,
+      );
       if (sdk) {
         contextManager.enable();
         sdk.start();
@@ -341,7 +347,7 @@ export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): Ga
       requestContextMapping.delete(request);
     },
     [DisposableSymbols.asyncDispose]() {
-      return sdk?.shutdown();
+      return sdk?.shutdown?.();
     },
   };
 }

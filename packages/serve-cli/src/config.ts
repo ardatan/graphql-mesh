@@ -80,7 +80,7 @@ export async function loadConfig<TContext extends Record<string, any> = Record<s
 
 export async function getBuiltinPluginsFromConfig(
   config: GatewayCLIBuiltinPluginConfig,
-  ctx: { cache: KeyValueCache },
+  ctx: { cache: KeyValueCache; logger: Logger },
 ) {
   const plugins = [];
   if (config.jwt) {
@@ -93,7 +93,12 @@ export async function getBuiltinPluginsFromConfig(
   }
   if (config.openTelemetry) {
     const { useOpenTelemetry } = await import('@graphql-mesh/plugin-opentelemetry');
-    plugins.push(useOpenTelemetry(config.openTelemetry));
+    plugins.push(
+      useOpenTelemetry({
+        logger: ctx.logger,
+        ...config.openTelemetry,
+      }),
+    );
   }
 
   if (config.rateLimiting) {
