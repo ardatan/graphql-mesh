@@ -41,7 +41,7 @@
     "@envelop/core": "^5.0.0",
     "@envelop/disable-introspection": "^6.0.0",
     "@envelop/generic-auth": "^8.0.0",
-    "@graphql-hive/core": "^0.8.0",
+    "@graphql-hive/core": "^0.8.1",
     "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/fusion-runtime": "^0.8.14",
     "@graphql-mesh/hmac-upstream-signature": "^1.0.5",
