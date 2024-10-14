@@ -120,20 +120,36 @@ type Mutation @join__type(graph: MOVIES)  {
   updateMovies(
     where: MovieWhere
     update: MovieUpdateInput
-    connect: MovieConnectInput
-    disconnect: MovieDisconnectInput
-    create: MovieRelationInput
-    delete: MovieDeleteInput
+    connect: MovieConnectInput @deprecated(
+      reason: "Top level connect input argument in update is deprecated. Use the nested connect field in the relationship within the update argument"
+    )
+    disconnect: MovieDisconnectInput @deprecated(
+      reason: "Top level disconnect input argument in update is deprecated. Use the nested disconnect field in the relationship within the update argument"
+    )
+    create: MovieRelationInput @deprecated(
+      reason: "Top level create input argument in update is deprecated. Use the nested create field in the relationship within the update argument"
+    )
+    delete: MovieDeleteInput @deprecated(
+      reason: "Top level delete input argument in update is deprecated. Use the nested delete field in the relationship within the update argument"
+    )
   ): UpdateMoviesMutationResponse!
   createPeople(input: [PersonCreateInput!]!) : CreatePeopleMutationResponse!
   deletePeople(where: PersonWhere, delete: PersonDeleteInput) : DeleteInfo!
   updatePeople(
     where: PersonWhere
     update: PersonUpdateInput
-    connect: PersonConnectInput
-    disconnect: PersonDisconnectInput
-    create: PersonRelationInput
-    delete: PersonDeleteInput
+    connect: PersonConnectInput @deprecated(
+      reason: "Top level connect input argument in update is deprecated. Use the nested connect field in the relationship within the update argument"
+    )
+    disconnect: PersonDisconnectInput @deprecated(
+      reason: "Top level disconnect input argument in update is deprecated. Use the nested disconnect field in the relationship within the update argument"
+    )
+    create: PersonRelationInput @deprecated(
+      reason: "Top level create input argument in update is deprecated. Use the nested create field in the relationship within the update argument"
+    )
+    delete: PersonDeleteInput @deprecated(
+      reason: "Top level delete input argument in update is deprecated. Use the nested delete field in the relationship within the update argument"
+    )
   ): UpdatePeopleMutationResponse!
 }
 

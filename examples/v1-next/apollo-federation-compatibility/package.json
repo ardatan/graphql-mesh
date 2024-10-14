@@ -24,11 +24,11 @@
     "tsx": "^4.16.5"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/cli": "5.0.3",
     "@graphql-codegen/typescript": "4.1.0",
     "@graphql-codegen/typescript-resolvers": "4.3.0",
     "@graphql-mesh/compose-cli": "1.0.4",
-    "@types/node": "20.16.9",
+    "@types/node": "20.16.11",
     "esbuild": "^0.24.0",
     "lru-cache": "11.0.1"
   }
