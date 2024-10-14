@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/compose-cli",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "^12.1.0",
-    "@graphql-mesh/fusion-composition": "^0.5.4",
+    "@graphql-mesh/fusion-composition": "^0.6.0",
     "@graphql-mesh/include": "^0.2.2",
     "@graphql-mesh/utils": "^0.102.6",
     "@graphql-tools/graphql-file-loader": "8.0.1",

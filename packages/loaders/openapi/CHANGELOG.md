@@ -1,5 +1,20 @@
 # @omnigraph/openapi
 
+## 0.107.0
+
+### Minor Changes
+
+- [#7746](https://github.com/ardatan/graphql-mesh/pull/7746)
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Remove workaround for directives on enums,
+  enum values and unions
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)]:
+  - @omnigraph/json-schema@0.107.0
+
 ## 0.106.9
 
 ### Patch Changes

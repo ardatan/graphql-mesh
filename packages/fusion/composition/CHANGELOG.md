@@ -1,5 +1,23 @@
 # @graphql-mesh/fusion-composition
 
+## 0.6.0
+
+### Minor Changes
+
+- [#7746](https://github.com/ardatan/graphql-mesh/pull/7746)
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Remove workaround for directives on enums,
+  enum values and unions
+
+### Patch Changes
+
+- [#7746](https://github.com/ardatan/graphql-mesh/pull/7746)
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@theguild/federation-composition@^0.14.0` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.14.0)
+    (from `^0.12.0`, in `dependencies`)
+
 ## 0.5.4
 
 ### Patch Changes

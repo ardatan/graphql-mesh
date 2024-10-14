@@ -1,5 +1,14 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.9.0
+
+### Minor Changes
+
+- [#7746](https://github.com/ardatan/graphql-mesh/pull/7746)
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Remove workaround for directives on enums,
+  enum values and unions
+
 ## 0.8.14
 
 ### Patch Changes

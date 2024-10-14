@@ -1,5 +1,7 @@
 # @graphql-mesh/hmac-upstream-signature
 
+## 1.1.0
+
 ## 1.0.5
 
 ### Patch Changes

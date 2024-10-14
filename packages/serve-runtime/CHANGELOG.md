@@ -1,5 +1,22 @@
 # @graphql-mesh/serve-runtime
 
+## 1.1.0
+
+### Patch Changes
+
+- [#7767](https://github.com/ardatan/graphql-mesh/pull/7767)
+  [`e2b7b14`](https://github.com/ardatan/graphql-mesh/commit/e2b7b14fa9fddd41cdfd80d5ab3ae1d97fa9a251)
+  Thanks [@kamilkisiela](https://github.com/kamilkisiela)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/core@^0.8.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.8.1)
+    (from `^0.8.0`, in `dependencies`)
+- Updated dependencies
+  [[`e2b7b14`](https://github.com/ardatan/graphql-mesh/commit/e2b7b14fa9fddd41cdfd80d5ab3ae1d97fa9a251),
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)]:
+  - @graphql-mesh/plugin-hive@0.102.8
+  - @graphql-mesh/fusion-runtime@0.9.0
+  - @graphql-mesh/hmac-upstream-signature@1.1.0
+
 ## 1.0.5
 
 ### Patch Changes
