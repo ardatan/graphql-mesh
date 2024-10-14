@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "@graphql-mesh/cache-localforage": "^0.102.6",
-    "@graphql-mesh/compose-cli": "^1.0.4",
-    "@graphql-mesh/serve-cli": "^1.0.8",
-    "@omnigraph/openapi": "^0.106.9",
+    "@graphql-mesh/compose-cli": "^1.1.0",
+    "@graphql-mesh/serve-cli": "^1.1.0",
+    "@omnigraph/openapi": "^0.107.0",
     "graphql": "^16.9.0"
   }
 }

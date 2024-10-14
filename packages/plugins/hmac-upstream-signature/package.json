@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/hmac-upstream-signature",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
     "json-stable-stringify": "^1.1.1"
   },
   "devDependencies": {
-    "@graphql-mesh/serve-runtime": "^1.0.5",
+    "@graphql-mesh/serve-runtime": "^1.1.0",
     "graphql-yoga": "^5.7.0"
   },
   "publishConfig": {
