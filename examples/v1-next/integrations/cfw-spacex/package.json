@@ -6,10 +6,10 @@
   },
   "dependencies": {
     "@envelop/depth-limit": "^4.0.0",
-    "@graphql-mesh/cache-cfw-kv": "^0.102.5",
-    "@graphql-mesh/plugin-rate-limit": "^0.102.5",
-    "@graphql-mesh/plugin-response-cache": "^0.102.5",
-    "@graphql-mesh/serve-runtime": "^1.0.4",
+    "@graphql-mesh/cache-cfw-kv": "^0.102.6",
+    "@graphql-mesh/plugin-rate-limit": "^0.102.6",
+    "@graphql-mesh/plugin-response-cache": "^0.102.6",
+    "@graphql-mesh/serve-runtime": "^1.0.5",
     "graphql": "16.9.0"
   },
   "devDependencies": {

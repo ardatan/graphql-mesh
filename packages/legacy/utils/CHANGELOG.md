@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.102.6
+
+### Patch Changes
+
+- [#7719](https://github.com/ardatan/graphql-mesh/pull/7719)
+  [`bf588d3`](https://github.com/ardatan/graphql-mesh/commit/bf588d372c0078378aaa24beea2da794af7949e6)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Allow for static values in
+  `additionalArgs` instead of only interpolated strings.
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.6
+
 ## 0.102.5
 
 ### Patch Changes
