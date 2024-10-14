@@ -12,7 +12,7 @@ export function useChangingSchema(
   return {
     onPluginInit(payload) {
       setSchema = function (schema: GraphQLSchema) {
-        if (currentSchema !== schema) {
+        if (schema != null && currentSchema !== schema) {
           currentSchema = schema;
           payload.setSchema(schema);
         }
