@@ -39,28 +39,42 @@ type PrimitiveOrEvaluated<TExpectedResult, TInput = never> =
   | TExpectedResult
   | ((input: TInput) => TExpectedResult);
 
-export type OpenTelemetryGatewayPluginOptions = {
+interface OpenTelemetryGatewayPluginOptionsWithoutInit {
   /**
    * Whether to initialize the OpenTelemetry SDK (default: true).
    */
-  initializeNodeSDK?: boolean;
+  initializeNodeSDK: false;
+}
+
+interface OpenTelemetryGatewayPluginOptionsWithInit {
   /**
-   * Log level to use for the OpenTelemetry SDK Diagnostics (default: WARN).
+   * Whether to initialize the OpenTelemetry SDK (default: true).
    */
-  diagLogLevel?: DiagLogLevel;
+  initializeNodeSDK?: true;
   /**
    * A list of OpenTelemetry exporters to use for exporting the spans.
    * You can use exporters from `@opentelemetry/exporter-*` packages, or use the built-in utility functions.
    *
    * Does not apply when `initializeNodeSDK` is `false`.
    */
-  exporters?: SpanProcessor[];
+  exporters: SpanProcessor[];
   /**
    * Service name to use for OpenTelemetry NodeSDK resource option (default: 'Gateway').
    *
    * Does not apply when `initializeNodeSDK` is `false`.
    */
   serviceName?: string;
+}
+
+type OpenTelemetryGatewayPluginOptionsInit =
+  | OpenTelemetryGatewayPluginOptionsWithInit
+  | OpenTelemetryGatewayPluginOptionsWithoutInit;
+
+export type OpenTelemetryGatewayPluginOptions = OpenTelemetryGatewayPluginOptionsInit & {
+  /**
+   * Log level to use for the OpenTelemetry SDK Diagnostics (default: WARN).
+   */
+  diagLogLevel?: DiagLogLevel;
   /**
    * Tracer instance to use for creating spans (default: a tracer with name 'gateway').
    */
@@ -126,22 +140,21 @@ const HeadersTextMapGetter: TextMapGetter = {
   },
 };
 
-export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions = {}): GatewayPlugin<{
+export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): GatewayPlugin<{
   opentelemetry: {
     tracer: Tracer;
     activeContext: () => Context;
   };
 }> {
-  const serviceName = options.serviceName ?? 'Gateway';
-  const spanProcessors = options.exporters;
   const contextManager = new AsyncHooksContextManager();
   const inheritContext = options.inheritContext ?? true;
   const propagateContext = options.propagateContext ?? true;
   const diagLogLevel = options.diagLogLevel ?? DiagLogLevel.WARN;
-  const initializeNodeSDK = options.initializeNodeSDK ?? true;
 
   let sdk: NodeSDK | undefined;
-  if (initializeNodeSDK) {
+  if (!('initializeNodeSDK' in options && options.initializeNodeSDK === false)) {
+    const serviceName = options.serviceName ?? 'Gateway';
+    const spanProcessors = options.exporters;
     sdk = new NodeSDK({
       resource: new Resource({
         [SEMRESATTRS_SERVICE_NAME]: serviceName,

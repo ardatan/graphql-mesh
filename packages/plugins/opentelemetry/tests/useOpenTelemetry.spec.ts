@@ -38,7 +38,10 @@ describe('useOpenTelemetry', () => {
         },
         plugins: () => [
           useCustomFetch(upstream.fetch),
-          useOpenTelemetry({ diagLogLevel: DiagLogLevel.NONE }),
+          useOpenTelemetry({
+            exporters: [],
+            diagLogLevel: DiagLogLevel.NONE,
+          }),
         ],
         logging: false,
       });
