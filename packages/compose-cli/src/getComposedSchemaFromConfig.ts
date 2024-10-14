@@ -1,11 +1,11 @@
 import {
   buildSchema,
+  GraphQLObjectType,
+  isNamedType,
   Kind,
   parse,
   print,
   visit,
-  isNamedType,
-  GraphQLObjectType,
   type DocumentNode,
   type GraphQLSchema,
 } from 'graphql';
@@ -57,83 +57,64 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
 
   if (config.useHATEOAS) {
     if (!config.additionalTypeDefs) {
-      config.additionalTypeDefs = "";
+      config.additionalTypeDefs = '';
     }
 
     // the operationCatalog is used to map each link path to its relevant values
-    const operationCatalog = subgraphConfigsForComposition.reduce(
-      (catalog, config) => {
-        Object.entries(config.schema.getQueryType().getFields()).forEach(
-          ([key, value]) => {
-            const httpOperation = value.astNode.directives.find(
-              directive => directive.name.value === "httpOperation"
-            );
-            if (!httpOperation) return;
-            const pathArgument = httpOperation.arguments.find(
-              arg => arg.name.value === "path"
-            );
-            if (!pathArgument) return;
-            if (pathArgument.value.kind === "StringValue") {
-              const path = pathArgument.value.value.replace(/args./, "");
-              if (isNamedType(value.type)) {
-                catalog[path.replace(/(\{[^}]+\})/, "{}")] = {
-                  sourceType: value.type.name,
-                  sourceName: config.name,
-                  sourceFieldName: key,
-                  sourceArgs: (path.match(/\{([^}]+)\}/g) || []).map(param =>
-                    param.slice(1, -1)
-                  ),
-                };
-              }
-            }
-          }
+    const operationCatalog = subgraphConfigsForComposition.reduce((catalog, config) => {
+      Object.entries(config.schema.getQueryType().getFields()).forEach(([key, value]) => {
+        const httpOperation = value.astNode.directives.find(
+          directive => directive.name.value === 'httpOperation',
         );
-        return catalog;
-      },
-      {}
-    );
+        if (!httpOperation) return;
+        const pathArgument = httpOperation.arguments.find(arg => arg.name.value === 'path');
+        if (!pathArgument) return;
+        if (pathArgument.value.kind === 'StringValue') {
+          const path = pathArgument.value.value.replace(/args./, '');
+          if (isNamedType(value.type)) {
+            catalog[path.replace(/(\{[^}]+\})/, '{}')] = {
+              sourceType: value.type.name,
+              sourceName: config.name,
+              sourceFieldName: key,
+              sourceArgs: (path.match(/\{([^}]+)\}/g) || []).map(param => param.slice(1, -1)),
+            };
+          }
+        }
+      });
+      return catalog;
+    }, {});
 
-    let additionalTypeDefsFromHATEOAS = "";
-    subgraphConfigsForComposition.forEach((conf) => {
+    let additionalTypeDefsFromHATEOAS = '';
+    subgraphConfigsForComposition.forEach(conf => {
       Object.entries(conf.schema.getTypeMap()).forEach(([key, value]) => {
         if (value instanceof GraphQLObjectType) {
           if (value.getFields()?._links) {
-            if (value.constructor.name === "GraphQLObjectType") {
+            if (value.constructor.name === 'GraphQLObjectType') {
               let subTypeDefs = `extend type ${key} {\n`;
               // @ts-ignore
               const links = value.getFields()?._links.type._links;
-              links.forEach((link) => {
+              links.forEach(link => {
                 const linkName =
-                  typeof config.useHATEOAS === "object" &&
-                  config.useHATEOAS.linkNameIdentifier
+                  typeof config.useHATEOAS === 'object' && config.useHATEOAS.linkNameIdentifier
                     ? link[config.useHATEOAS.linkNameIdentifier]
-                    : link["rel"];
+                    : link['rel'];
                 const linkPath =
-                  typeof config.useHATEOAS === "object" &&
-                  config.useHATEOAS.linkPathIdentifier
+                  typeof config.useHATEOAS === 'object' && config.useHATEOAS.linkPathIdentifier
                     ? link[config.useHATEOAS.linkPathIdentifier]
-                    : link["href"];
+                    : link['href'];
                 // remove path parameters
-                const linkPathAnonymized = linkPath?.replace(
-                  /(\{[^}]+\})/,
-                  "{}"
-                );
+                const linkPathAnonymized = linkPath?.replace(/(\{[^}]+\})/, '{}');
                 // get path parameters
-                const linkPathParams = (
-                  linkPath?.match(/\{([^}]+)\}/g) || []
-                ).map(param => param.slice(1, -1));
+                const linkPathParams = (linkPath?.match(/\{([^}]+)\}/g) || []).map(param =>
+                  param.slice(1, -1),
+                );
 
                 const matchedCatalogPath = operationCatalog[linkPathAnonymized];
                 if (matchedCatalogPath) {
-                  const requiredSelectionSet = linkPathParams
-                    .map(param => param)
-                    .join(",");
+                  const requiredSelectionSet = linkPathParams.map(param => param).join(',');
                   const sourceArgs = matchedCatalogPath.sourceArgs
-                    .map(
-                      (arg, index) =>
-                        `${arg}: "{root.${linkPathParams[index]}}"`
-                    )
-                    .join(",");
+                    .map((arg, index) => `${arg}: "{root.${linkPathParams[index]}}"`)
+                    .join(',');
 
                   subTypeDefs += `${linkName}: ${matchedCatalogPath.sourceType}\n
                     @resolveTo(\n
@@ -147,10 +128,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
               });
               subTypeDefs += `}\n`;
               // remove empty subTypeDefs
-              subTypeDefs = subTypeDefs.replace(
-                `extend type ${key} {\n}\n`,
-                ""
-              );
+              subTypeDefs = subTypeDefs.replace(`extend type ${key} {\n}\n`, '');
               additionalTypeDefsFromHATEOAS += subTypeDefs;
             }
           }
