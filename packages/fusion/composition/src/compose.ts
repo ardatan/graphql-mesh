@@ -10,6 +10,7 @@ import {
   GraphQLEnumType,
   GraphQLSchema,
   GraphQLUnionType,
+  isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
   parse,
@@ -559,7 +560,16 @@ function addAnnotationsForSemanticConventions({
   const type = getNamedType(queryFieldConfig.type);
   if (isObjectType(type)) {
     const fieldMap = type.getFields();
-    for (const fieldName in fieldMap) {
+    let fieldNames = Object.keys(fieldMap) as string[];
+    if (fieldNames.includes('id')) {
+      fieldNames = ['id'];
+    } else {
+      const nonNullOnes = fieldNames.filter(fieldName => isNonNullType(fieldMap[fieldName].type));
+      if (nonNullOnes.length) {
+        fieldNames = nonNullOnes;
+      }
+    }
+    for (const fieldName of fieldNames) {
       const objectField = fieldMap[fieldName];
       const objectFieldType = getNamedType(objectField.type);
       const argEntries = Object.entries(queryFieldConfig.args);
@@ -587,19 +597,21 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(type.name):
           case snakeCase(`get_${type.name}_by_${fieldName}`):
           case snakeCase(`${type.name}_by_${fieldName}`): {
-            directiveExtensions.merge ||= [];
-            directiveExtensions.merge.push({
-              subgraph: subgraphName,
-              keyField: fieldName,
-              keyArg: argName,
-            });
-            typeDirectives.key ||= [];
-            if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
-              typeDirectives.key.push({
-                fields: fieldName,
+            if (isNonNullType(arg.type)) {
+              directiveExtensions.merge ||= [];
+              directiveExtensions.merge.push({
+                subgraph: subgraphName,
+                keyField: fieldName,
+                keyArg: argName,
               });
-              const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
-              typeExtensions.directives = typeDirectives;
+              typeDirectives.key ||= [];
+              if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
+                typeDirectives.key.push({
+                  fields: fieldName,
+                });
+                const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+                typeExtensions.directives = typeDirectives;
+              }
             }
             break;
           }
