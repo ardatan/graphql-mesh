@@ -289,7 +289,17 @@ let cli = new Command()
     ).env('APOLLO_KEY'),
   )
   .addOption(
-    new Option('--jit', 'Enable Just-In-Time compilation of GraphQL documents').env('JIT'),
+    new Option('--jit', 'Enable Just-In-Time compilation of GraphQL documents')
+      .env('JIT')
+      .argParser(value => {
+        if (value === 'false' || value === '0') {
+          return false;
+        }
+        if (value === 'true' || value === '1') {
+          return true;
+        }
+        return true;
+      }),
   );
 
 export async function run(userCtx: Partial<CLIContext>) {
