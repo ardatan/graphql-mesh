@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@graphql-mesh/merger-stitching": "0.102.6",
-    "@graphql-tools/schema": "10.0.6"
+    "@graphql-tools/schema": "10.0.7"
   },
   "publishConfig": {
     "access": "public",
