@@ -2,6 +2,7 @@
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import type { CompilerOptions } from 'graphql-jit';
 import type { GatewayConfig, GatewayConfigContext } from '@graphql-mesh/serve-runtime';
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
 import type { GatewayCLIBuiltinPluginConfig } from './cli';
@@ -114,7 +115,12 @@ export async function getBuiltinPluginsFromConfig(
   if (config.jit) {
     const { useGraphQlJit } = await import('@envelop/graphql-jit');
     const opts = config.jit === true ? undefined : config.jit;
-    plugins.push(useGraphQlJit(opts, opts));
+    const compilerOptions: Partial<CompilerOptions> = {
+      disableLeafSerialization: true,
+      customJSONSerializer: false,
+      ...(opts || {}),
+    };
+    plugins.push(useGraphQlJit(compilerOptions, opts));
   }
 
   return plugins;
