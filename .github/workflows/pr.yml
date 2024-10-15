@@ -99,6 +99,8 @@ jobs:
     needs: [release]
     if: contains(needs.release.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     runs-on: ${{ matrix.os }}
+    needs: [release]
+    if: contains(needs.release.outputs.publishedPackages, '@graphql-mesh/serve-cli')
     strategy:
       fail-fast: false
       matrix:
