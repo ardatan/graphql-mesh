@@ -12,7 +12,7 @@ schema
   
   @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@merge", "@extraSchemaDefinitionDirective"]
+  import: ["@extraSchemaDefinitionDirective"]
 )
 {
   query: Query
@@ -84,15 +84,6 @@ enum join__Graph {
   CHINOOK @join__graph(name: "chinook", url: "chinook.db") 
 }
 
-directive @merge(
-  subgraph: String
-  argsExpr: String
-  keyArg: String
-  keyField: String
-  key: [String!]
-  additionalArgs: String
-) repeatable on FIELD_DEFINITION
-
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 """
@@ -120,7 +111,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Album @merge(subgraph: "chinook", keyField: "albumId", keyArg: "albumId") 
+  ): Album
   artists(
     limit: Int
     order: String
@@ -136,7 +127,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Artist @merge(subgraph: "chinook", keyField: "artistId", keyArg: "artistId") 
+  ): Artist
   customers(
     limit: Int
     order: String
@@ -152,7 +143,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Customer @merge(subgraph: "chinook", keyField: "customerId", keyArg: "customerId") 
+  ): Customer
   employees(
     limit: Int
     order: String
@@ -168,7 +159,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Employee @merge(subgraph: "chinook", keyField: "employeeId", keyArg: "employeeId") 
+  ): Employee
   genres(
     limit: Int
     order: String
@@ -184,7 +175,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Genre @merge(subgraph: "chinook", keyField: "genreId", keyArg: "genreId") 
+  ): Genre
   invoices(
     limit: Int
     order: String
@@ -200,7 +191,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Invoice @merge(subgraph: "chinook", keyField: "invoiceId", keyArg: "invoiceId") 
+  ): Invoice
   invoiceItems(
     limit: Int
     order: String
@@ -216,7 +207,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): InvoiceItem @merge(subgraph: "chinook", keyField: "invoiceLineId", keyArg: "invoiceLineId") 
+  ): InvoiceItem
   mediaTypes(
     limit: Int
     order: String
@@ -232,7 +223,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): MediaType @merge(subgraph: "chinook", keyField: "mediaTypeId", keyArg: "mediaTypeId") 
+  ): MediaType
   playlists(
     limit: Int
     order: String
@@ -248,7 +239,7 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Playlist @merge(subgraph: "chinook", keyField: "playlistId", keyArg: "playlistId") 
+  ): Playlist
   tracks(
     limit: Int
     order: String
@@ -264,10 +255,10 @@ type Query @extraSchemaDefinitionDirective(
     A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
     """
     where: SequelizeJSON
-  ): Track @merge(subgraph: "chinook", keyField: "trackId", keyArg: "trackId") 
+  ): Track
 }
 
-type Album @join__type(graph: CHINOOK, key: "albumId")  {
+type Album @join__type(graph: CHINOOK)  {
   albumId: Int!
   title: String!
   artistId: Int!
@@ -283,7 +274,7 @@ type Album @join__type(graph: CHINOOK, key: "albumId")  {
   artist: Artist
 }
 
-type Track @join__type(graph: CHINOOK, key: "trackId")  {
+type Track @join__type(graph: CHINOOK)  {
   trackId: Int!
   name: String!
   albumId: Int
@@ -308,7 +299,7 @@ type Track @join__type(graph: CHINOOK, key: "trackId")  {
   playlists: [Playlist]
 }
 
-type InvoiceItem @join__type(graph: CHINOOK, key: "invoiceLineId")  {
+type InvoiceItem @join__type(graph: CHINOOK)  {
   invoiceLineId: Int!
   invoiceId: Int!
   trackId: Int!
@@ -318,7 +309,7 @@ type InvoiceItem @join__type(graph: CHINOOK, key: "invoiceLineId")  {
   invoice: Invoice
 }
 
-type Invoice @join__type(graph: CHINOOK, key: "invoiceId")  {
+type Invoice @join__type(graph: CHINOOK)  {
   invoiceId: Int!
   customerId: Int!
   invoiceDate: String!
@@ -340,7 +331,7 @@ type Invoice @join__type(graph: CHINOOK, key: "invoiceId")  {
   customer: Customer
 }
 
-type Customer @join__type(graph: CHINOOK, key: "customerId")  {
+type Customer @join__type(graph: CHINOOK)  {
   customerId: Int!
   firstName: String!
   lastName: String!
@@ -366,7 +357,7 @@ type Customer @join__type(graph: CHINOOK, key: "customerId")  {
   employee: Employee
 }
 
-type Employee @join__type(graph: CHINOOK, key: "employeeId")  {
+type Employee @join__type(graph: CHINOOK)  {
   employeeId: Int!
   lastName: String!
   firstName: String!
@@ -403,7 +394,7 @@ type Employee @join__type(graph: CHINOOK, key: "employeeId")  {
   employee: Employee
 }
 
-type MediaType @join__type(graph: CHINOOK, key: "mediaTypeId")  {
+type MediaType @join__type(graph: CHINOOK)  {
   mediaTypeId: Int!
   name: String
   tracks(
@@ -417,7 +408,7 @@ type MediaType @join__type(graph: CHINOOK, key: "mediaTypeId")  {
   ): [Track]
 }
 
-type Genre @join__type(graph: CHINOOK, key: "genreId")  {
+type Genre @join__type(graph: CHINOOK)  {
   genreId: Int!
   name: String
   tracks(
@@ -431,13 +422,13 @@ type Genre @join__type(graph: CHINOOK, key: "genreId")  {
   ): [Track]
 }
 
-type Playlist @join__type(graph: CHINOOK, key: "playlistId")  {
+type Playlist @join__type(graph: CHINOOK)  {
   playlistId: Int!
   name: String
   tracks: [Track]
 }
 
-type Artist @join__type(graph: CHINOOK, key: "artistId")  {
+type Artist @join__type(graph: CHINOOK)  {
   artistId: Int!
   name: String
   albums(
