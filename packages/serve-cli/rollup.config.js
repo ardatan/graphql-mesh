@@ -52,6 +52,7 @@ const deps = {
   'node_modules/@graphql-mesh/plugin-opentelemetry/index': '../plugins/opentelemetry/src/index.ts',
   'node_modules/@envelop/generic-auth/index':
     '../../node_modules/@envelop/generic-auth/esm/index.js',
+  'node_modules/@envelop/graphql-jit/index': '../../node_modules/@envelop/graphql-jit/esm/index.js',
 };
 
 if (process.env.E2E_SERVE_RUNNER === 'docker') {
