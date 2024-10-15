@@ -288,7 +288,9 @@ let cli = new Command()
       'Apollo API key to use to authenticate with the managed federation up link',
     ).env('APOLLO_KEY'),
   )
-  .option('--jit', 'Enable Just-In-Time compilation of GraphQL documents');
+  .addOption(
+    new Option('--jit', 'Enable Just-In-Time compilation of GraphQL documents').env('JIT'),
+  );
 
 export async function run(userCtx: Partial<CLIContext>) {
   module.register('@graphql-mesh/include/hooks', {
