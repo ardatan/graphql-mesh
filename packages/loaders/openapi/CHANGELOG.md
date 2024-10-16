@@ -1,5 +1,25 @@
 # @omnigraph/openapi
 
+## 0.107.1
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.23` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.23)
+    (from `^10.0.21`, in `dependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/cross-helpers@0.4.7
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+  - @omnigraph/json-schema@0.107.1
+
 ## 0.107.0
 
 ### Minor Changes
