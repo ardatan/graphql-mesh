@@ -1,5 +1,29 @@
 # @graphql-mesh/fusion-composition
 
+## 0.6.1
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.4)
+    (from `^3.1.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `dependencies`)
+
+- [#7772](https://github.com/ardatan/graphql-mesh/pull/7772)
+  [`7c24ded`](https://github.com/ardatan/graphql-mesh/commit/7c24ded0128f098778a32f74554d9be22e63fa7f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Choose correct key fields and arguments for type
+  merging during Mesh Compose
+
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/utils@0.102.7
+
 ## 0.6.0
 
 ### Minor Changes

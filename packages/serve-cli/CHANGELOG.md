@@ -1,5 +1,45 @@
 # @graphql-mesh/serve-cli
 
+## 1.2.0
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `dependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`30ff5d1`](https://github.com/ardatan/graphql-mesh/commit/30ff5d1d5fbb0fa003adfa0d58d50fa9a59793b7)]:
+  - @graphql-mesh/cross-helpers@0.4.7
+  - @graphql-mesh/plugin-mock@0.102.8
+  - @graphql-mesh/plugin-opentelemetry@1.2.0
+  - @graphql-mesh/plugin-rate-limit@0.102.7
+  - @graphql-mesh/serve-runtime@1.1.1
+  - @graphql-mesh/transport-http-callback@0.4.2
+  - @graphql-mesh/transport-ws@0.3.8
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+  - @graphql-mesh/cache-redis@0.102.7
+  - @graphql-mesh/plugin-snapshot@0.102.7
+  - @graphql-mesh/hmac-upstream-signature@1.1.1
+  - @graphql-mesh/plugin-jwt-auth@1.1.1
+  - @graphql-mesh/plugin-prometheus@1.1.1
+  - @graphql-mesh/cache-cfw-kv@0.102.7
+  - @graphql-mesh/cache-localforage@0.102.7
+  - @graphql-mesh/plugin-deduplicate-request@0.102.7
+  - @graphql-mesh/plugin-http-cache@0.102.7
+
 ## 1.1.0
 
 ### Patch Changes
