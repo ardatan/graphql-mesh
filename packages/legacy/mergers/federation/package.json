@@ -44,7 +44,11 @@
   "dependencies": {
     "@apollo/gateway": "^2.4.1",
     "@graphql-tools/schema": "^10.0.5",
+<<<<<<< HEAD
     "@graphql-tools/wrap": "^10.0.9"
+=======
+    "@graphql-tools/wrap": "^10.0.8"
+>>>>>>> 6ad88e752 (Bump tools)
   },
   "publishConfig": {
     "access": "public",
