@@ -10,9 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.96.5",
-    "@graphql-mesh/grpc": "0.104.7",
-    "@graphql-mesh/transform-naming-convention": "0.102.6",
+    "@graphql-mesh/cli": "0.96.6",
+    "@graphql-mesh/grpc": "0.104.8",
+    "@graphql-mesh/transform-naming-convention": "0.102.7",
     "@grpc/grpc-js": "1.12.2",
     "@grpc/proto-loader": "0.7.13",
     "google-protobuf": "3.21.4",
