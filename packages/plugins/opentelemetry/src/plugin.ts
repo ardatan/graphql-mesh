@@ -5,13 +5,12 @@ import {
 } from '@envelop/types';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
 import { DisposableSymbols, type GatewayPlugin } from '@graphql-mesh/serve-runtime';
-import type { OnFetchHookPayload } from '@graphql-mesh/types';
+import type { Logger, OnFetchHookPayload } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import {
   context,
   diag,
-  DiagConsoleLogger,
   DiagLogLevel,
   propagation,
   trace,
@@ -39,16 +38,38 @@ type PrimitiveOrEvaluated<TExpectedResult, TInput = never> =
   | TExpectedResult
   | ((input: TInput) => TExpectedResult);
 
-export type OpenTelemetryGatewayPluginOptions = {
+interface OpenTelemetryGatewayPluginOptionsWithoutInit {
+  /**
+   * Whether to initialize the OpenTelemetry SDK (default: true).
+   */
+  initializeNodeSDK: false;
+}
+
+interface OpenTelemetryGatewayPluginOptionsWithInit {
+  /**
+   * Whether to initialize the OpenTelemetry SDK (default: true).
+   */
+  initializeNodeSDK?: true;
   /**
    * A list of OpenTelemetry exporters to use for exporting the spans.
    * You can use exporters from `@opentelemetry/exporter-*` packages, or use the built-in utility functions.
+   *
+   * Does not apply when `initializeNodeSDK` is `false`.
    */
   exporters: SpanProcessor[];
   /**
-   * Service name to use for the spans (default: 'Gateway').
+   * Service name to use for OpenTelemetry NodeSDK resource option (default: 'Gateway').
+   *
+   * Does not apply when `initializeNodeSDK` is `false`.
    */
   serviceName?: string;
+}
+
+type OpenTelemetryGatewayPluginOptionsInit =
+  | OpenTelemetryGatewayPluginOptionsWithInit
+  | OpenTelemetryGatewayPluginOptionsWithoutInit;
+
+export type OpenTelemetryGatewayPluginOptions = OpenTelemetryGatewayPluginOptionsInit & {
   /**
    * Tracer instance to use for creating spans (default: a tracer with name 'gateway').
    */
@@ -114,35 +135,52 @@ const HeadersTextMapGetter: TextMapGetter = {
   },
 };
 
-export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): GatewayPlugin<{
+export function useOpenTelemetry(
+  options: OpenTelemetryGatewayPluginOptions & { logger: Logger },
+): GatewayPlugin<{
   opentelemetry: {
     tracer: Tracer;
     activeContext: () => Context;
   };
 }> {
-  const serviceName = options.serviceName ?? 'Gateway';
-  const spanProcessors = options.exporters;
   const contextManager = new AsyncHooksContextManager();
   const inheritContext = options.inheritContext ?? true;
   const propagateContext = options.propagateContext ?? true;
 
-  const sdk = new NodeSDK({
-    resource: new Resource({
-      [SEMRESATTRS_SERVICE_NAME]: serviceName,
-    }),
-    spanProcessors: spanProcessors as unknown as NodeSDKConfiguration['spanProcessors'],
-    contextManager,
-    instrumentations: [],
-  });
+  let sdk: NodeSDK | undefined;
+  if (!('initializeNodeSDK' in options && options.initializeNodeSDK === false)) {
+    const serviceName = options.serviceName ?? 'Gateway';
+    const spanProcessors = options.exporters;
+    sdk = new NodeSDK({
+      resource: new Resource({
+        [SEMRESATTRS_SERVICE_NAME]: serviceName,
+      }),
+      spanProcessors: spanProcessors as unknown as NodeSDKConfiguration['spanProcessors'],
+      contextManager,
+      instrumentations: [],
+    });
+  }
 
   const requestContextMapping = new WeakMap<Request, Context>();
   const tracer = options.tracer || trace.getTracer('gateway');
 
   return {
     onYogaInit() {
-      diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.WARN);
-      contextManager.enable();
-      sdk.start();
+      const pluginLogger = options.logger.child('OpenTelemetry');
+      diag.setLogger(
+        {
+          error: (message, ...args) => pluginLogger.error(message, ...args),
+          warn: (message, ...args) => pluginLogger.warn(message, ...args),
+          info: (message, ...args) => pluginLogger.info(message, ...args),
+          debug: (message, ...args) => pluginLogger.debug(message, ...args),
+          verbose: (message, ...args) => pluginLogger.debug(message, ...args),
+        },
+        DiagLogLevel.VERBOSE,
+      );
+      if (sdk) {
+        contextManager.enable();
+        sdk.start();
+      }
     },
     onContextBuilding({ extendContext, context }) {
       extendContext({
@@ -309,7 +347,7 @@ export function useOpenTelemetry(options: OpenTelemetryGatewayPluginOptions): Ga
       requestContextMapping.delete(request);
     },
     [DisposableSymbols.asyncDispose]() {
-      return sdk.shutdown();
+      return sdk?.shutdown?.();
     },
   };
 }
