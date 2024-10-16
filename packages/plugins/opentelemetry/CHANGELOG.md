@@ -1,5 +1,35 @@
 # @graphql-mesh/plugin-opentelemetry
 
+## 1.2.0
+
+### Minor Changes
+
+- [#7755](https://github.com/ardatan/graphql-mesh/pull/7755)
+  [`30ff5d1`](https://github.com/ardatan/graphql-mesh/commit/30ff5d1d5fbb0fa003adfa0d58d50fa9a59793b7)
+  Thanks [@klippx](https://github.com/klippx)! - Make it possible to run with externally initialized
+  OpenTelemetry NodeSDK.
+
+  This fixes the issue of seeing a lot of errors on the form
+  `Error: @opentelemetry/api: Attempted duplicate registration of API: trace`.
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `dependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/serve-runtime@1.1.1
+  - @graphql-mesh/transport-common@0.7.8
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+
 ## 1.1.0
 
 ### Patch Changes
