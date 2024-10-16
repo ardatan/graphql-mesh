@@ -80,6 +80,7 @@ jobs:
           command: yarn test
 
   unit-leaks:
+    needs: [unit]
     name: unit / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -125,6 +126,7 @@ jobs:
           command: yarn test:leak
 
   integration:
+    needs: [unit]
     name: integration / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -206,6 +208,7 @@ jobs:
         run: yarn test:integration
 
   integration-leak:
+    needs: [integration]
     name: integration / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -297,6 +300,7 @@ jobs:
           command: yarn test:integration:leak
 
   integrity-check:
+    needs: [typecheck]
     name: integrity-check / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -321,6 +325,7 @@ jobs:
         run: yarn bob check
 
   e2e:
+    needs: [unit]
     name:
       e2e / runner ${{matrix.setup.serve-runner}} / os ${{ matrix.setup.os }} / node
       ${{matrix.setup.node-version}}
@@ -420,6 +425,7 @@ jobs:
         run: |
           yarn test:e2e --detectOpenHandles --forceExit
   apollo-federation-compatibility:
+    needs: [unit]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
