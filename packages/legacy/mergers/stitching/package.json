@@ -35,14 +35,14 @@
     "@graphql-mesh/store": "^0.102.6",
     "@graphql-mesh/types": "^0.102.6",
     "@graphql-mesh/utils": "^0.102.6",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.21",
+    "@graphql-tools/delegate": "^10.0.23",
     "@graphql-tools/schema": "^10.0.5",
-    "@graphql-tools/stitch": "^9.2.10"
+    "@graphql-tools/stitch": "^9.2.12"
   },
   "publishConfig": {
     "access": "public",

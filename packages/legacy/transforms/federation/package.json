@@ -34,15 +34,15 @@
   "peerDependencies": {
     "@graphql-mesh/types": "^0.102.6",
     "@graphql-mesh/utils": "^0.102.6",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@apollo/subgraph": "^2.4.1",
     "@graphql-mesh/string-interpolation": "^0.5.6",
-    "@graphql-tools/delegate": "^10.0.21",
-    "@graphql-tools/stitching-directives": "^3.1.2",
+    "@graphql-tools/delegate": "^10.0.23",
+    "@graphql-tools/stitching-directives": "^3.1.4",
     "dset": "^3.1.2",
     "graphql-transform-federation": "^2.2.0"
   },
