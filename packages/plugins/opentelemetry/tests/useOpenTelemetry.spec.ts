@@ -1,7 +1,5 @@
 import { createSchema, createYoga } from 'graphql-yoga';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
-import type { NodeSDK } from '@opentelemetry/sdk-node';
-import { useOpenTelemetry } from '../src/index';
 
 describe('useOpenTelemetry', () => {
   if (process.env.LEAK_TEST) {
@@ -18,6 +16,7 @@ describe('useOpenTelemetry', () => {
   });
   describe('when not passing a custom sdk', () => {
     it('initializes and starts a new NodeSDK', async () => {
+      const { useOpenTelemetry } = await import('../src');
       const upstream = createYoga({
         schema: createSchema({
           typeDefs: /* GraphQL */ `
@@ -71,6 +70,7 @@ describe('useOpenTelemetry', () => {
 
   describe('when passing a custom sdk', () => {
     it('does not initialize a new NodeSDK and does not start the provided sdk instance', async () => {
+      const { useOpenTelemetry } = await import('../src');
       const upstream = createYoga({
         schema: createSchema({
           typeDefs: /* GraphQL */ `
@@ -87,7 +87,6 @@ describe('useOpenTelemetry', () => {
         logging: false,
       });
 
-      const sdk = { start: jest.fn() } as unknown as NodeSDK;
       await using serveRuntime = createGatewayRuntime({
         proxy: {
           endpoint: 'https://example.com/graphql',
@@ -117,7 +116,6 @@ describe('useOpenTelemetry', () => {
       const body = await response.json<any>();
       expect(body.data?.hello).toBe('World');
       expect(mockStartSdk).not.toHaveBeenCalled();
-      expect(sdk.start).not.toHaveBeenCalled();
     });
   });
 });
