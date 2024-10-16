@@ -1,0 +1,6070 @@
+From 11f516d839c7d0b770ffe42b7d9d52d2c0b397ef Mon Sep 17 00:00:00 2001
+From: enisdenjo <denis@denelop.com>
+Date: Tue, 8 Oct 2024 18:24:19 +0200
+Subject: [PATCH] repro basic
+
+---
+ e2e/tripadvisor-repro/package.json            |    4 +
+ e2e/tripadvisor-repro/supergraph.graphql      | 5942 +++++++++++++++++
+ .../tripadvisor-repro.test.ts                 |   71 +
+ yarn.lock                                     |    6 +
+ 4 files changed, 6023 insertions(+)
+ create mode 100644 e2e/tripadvisor-repro/package.json
+ create mode 100644 e2e/tripadvisor-repro/supergraph.graphql
+ create mode 100644 e2e/tripadvisor-repro/tripadvisor-repro.test.ts
+
+diff --git a/e2e/tripadvisor-repro/package.json b/e2e/tripadvisor-repro/package.json
+new file mode 100644
+index 000000000..5e000cf91
+--- /dev/null
++++ b/e2e/tripadvisor-repro/package.json
+@@ -0,0 +1,4 @@
++{
++  "name": "@e2e/tripadvisor-repro",
++  "private": true
++}
+diff --git a/e2e/tripadvisor-repro/supergraph.graphql b/e2e/tripadvisor-repro/supergraph.graphql
+new file mode 100644
+index 000000000..bedbf7865
+--- /dev/null
++++ b/e2e/tripadvisor-repro/supergraph.graphql
+@@ -0,0 +1,5942 @@
++schema
++  @link(url: "https://specs.apollo.dev/link/v1.0")
++  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
++  @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY)
++  @link(
++    url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
++    import: ["@cacheControl", "@transport", "@merge", "@extraSchemaDefinitionDirective"]
++  ) {
++  query: Query
++  mutation: Mutation
++}
++
++directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
++
++directive @join__field(
++  graph: join__Graph
++  requires: join__FieldSet
++  provides: join__FieldSet
++  type: String
++  external: Boolean
++  override: String
++  usedOverridden: Boolean
++) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
++
++directive @join__graph(name: String!, url: String!) on ENUM_VALUE
++
++directive @join__implements(
++  graph: join__Graph!
++  interface: String!
++) repeatable on OBJECT | INTERFACE
++
++directive @join__type(
++  graph: join__Graph!
++  key: join__FieldSet
++  extension: Boolean! = false
++  resolvable: Boolean! = true
++  isInterfaceObject: Boolean! = false
++) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
++
++directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
++
++scalar join__FieldSet
++
++directive @link(
++  url: String
++  as: String
++  for: link__Purpose
++  import: [link__Import]
++) repeatable on SCHEMA
++
++scalar link__Import
++
++enum link__Purpose {
++  """
++  `SECURITY` features provide metadata necessary to securely resolve fields.
++  """
++  SECURITY
++
++  """
++  `EXECUTION` features provide metadata necessary for operation execution.
++  """
++  EXECUTION
++}
++
++directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ENUM | ENUM_VALUE | SCALAR | INPUT_OBJECT | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
++
++enum join__Graph {
++  DB @join__graph(name: "db", url: "https://prod-cc-graphql-db-v2.fly.dev/graphql")
++  META @join__graph(name: "meta", url: "https://prod-cc-graphql-meta-v2.fly.dev/graphql")
++  REVIEWS @join__graph(name: "reviews", url: "https://prod-cc-graphql-reviews-v2.fly.dev/graphql")
++  UGC @join__graph(name: "ugc", url: "https://ugc.graphql.cruisecritic.net/")
++}
++
++directive @cacheControl(
++  maxAge: Int
++  scope: CacheControlScope
++  inheritMaxAge: Boolean
++) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
++
++directive @transport(
++  kind: String!
++  subgraph: String!
++  location: String!
++  headers: [[String]]
++  options: TransportOptions
++) repeatable on SCHEMA
++
++directive @merge(
++  subgraph: String
++  argsExpr: String
++  keyArg: String
++  keyField: String
++  key: [String!]
++  additionalArgs: String
++) repeatable on FIELD_DEFINITION
++
++directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
++
++"""
++A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format.
++"""
++scalar DateTimeISO @join__type(graph: DB) @join__type(graph: META)
++
++"""
++A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
++"""
++scalar Date @join__type(graph: DB) @join__type(graph: REVIEWS)
++
++scalar TransportOptions
++  @join__type(graph: DB)
++  @join__type(graph: META)
++  @join__type(graph: REVIEWS)
++  @join__type(graph: UGC)
++
++scalar _DirectiveExtensions
++  @join__type(graph: DB)
++  @join__type(graph: META)
++  @join__type(graph: REVIEWS)
++  @join__type(graph: UGC)
++
++"""
++A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
++"""
++scalar DateTime @join__type(graph: REVIEWS) @join__type(graph: UGC)
++
++type ReviewBy
++  @join__type(graph: DB, key: "id username", extension: true)
++  @join__type(graph: META, key: "id username") {
++  id: String
++  username: String
++  totalHelpfulVotes: Float! @join__field(graph: DB)
++  totalReviews: Float! @join__field(graph: DB)
++  totalPosts: Float! @join__field(graph: META)
++  avatarUrl: String! @join__field(graph: META)
++  """
++  User's age rounded down to the nearest decade (e.g. 54 -> 50)
++  """
++  age: Float @join__field(graph: META)
++}
++
++type Question
++  @join__type(graph: DB, key: "id", extension: true)
++  @join__type(graph: UGC, key: "id") {
++  id: Int!
++  userId: Int! @join__field(graph: DB, external: true) @join__field(graph: UGC)
++  user: SsoUser @join__field(graph: DB, requires: "userId") @inaccessible
++  type: String! @join__field(graph: UGC)
++  contentTypeId: Int! @join__field(graph: UGC)
++  contentType: ContentType! @join__field(graph: UGC)
++  status: ContentStatus! @join__field(graph: UGC)
++  question: String! @join__field(graph: UGC)
++  createdAt: DateTime! @join__field(graph: UGC)
++  updatedAt: DateTime! @join__field(graph: UGC)
++  _count: QuestionCount @join__field(graph: UGC)
++  answers(
++    where: AnswerWhereInput
++    orderBy: [AnswerOrderByWithRelationInput!]
++    cursor: AnswerWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [AnswerScalarFieldEnum!]
++  ): [Answer!]! @join__field(graph: UGC)
++  reported(
++    where: ReportedWhereInput
++    orderBy: [ReportedOrderByWithRelationInput!]
++    cursor: ReportedWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [ReportedScalarFieldEnum!]
++  ): [Reported!]! @join__field(graph: UGC)
++  likes(
++    where: LikesWhereInput
++    orderBy: [LikesOrderByWithRelationInput!]
++    cursor: LikesWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [LikesScalarFieldEnum!]
++  ): [Likes!]! @join__field(graph: UGC)
++}
++
++type SsoUser @join__type(graph: DB, key: "age") {
++  """
++  User's age rounded down to the nearest decade (e.g. 54 -> 50)
++  """
++  age: Float
++  id: String!
++  firstName: String
++  lastName: String
++  email: String!
++  username: String! @deprecated(reason: "Use \"displayName\"")
++  displayName: String!
++}
++
++type Answer @join__type(graph: DB, key: "id", extension: true) @join__type(graph: UGC, key: "id") {
++  id: Int!
++  userId: Int! @join__field(graph: DB, external: true) @join__field(graph: UGC)
++  user: SsoUser @join__field(graph: DB, requires: "userId") @inaccessible
++  answer: String! @join__field(graph: UGC)
++  viewCount: Int! @join__field(graph: UGC)
++  questionId: Int! @join__field(graph: UGC)
++  createdAt: DateTime! @join__field(graph: UGC)
++  updatedAt: DateTime! @join__field(graph: UGC)
++  status: ContentStatus! @join__field(graph: UGC)
++  _count: AnswerCount @join__field(graph: UGC)
++  question: Question! @join__field(graph: UGC)
++  reported(
++    where: ReportedWhereInput
++    orderBy: [ReportedOrderByWithRelationInput!]
++    cursor: ReportedWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [ReportedScalarFieldEnum!]
++  ): [Reported!]! @join__field(graph: UGC)
++  likes(
++    where: LikesWhereInput
++    orderBy: [LikesOrderByWithRelationInput!]
++    cursor: LikesWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [LikesScalarFieldEnum!]
++  ): [Likes!]! @join__field(graph: UGC)
++}
++
++type Review @join__type(graph: DB, key: "id", extension: true) @join__type(graph: META, key: "id") {
++  id: String
++  comments: [ReviewComments!]! @join__field(graph: DB)
++  title: String @join__field(graph: META)
++  snippet: String @join__field(graph: META)
++  body: String @join__field(graph: META)
++  rating: Float @join__field(graph: META)
++  cruiseDate: String @join__field(graph: META)
++  cruiseLength: Float @join__field(graph: META)
++  url: String @join__field(graph: META)
++  cruiseExperienceLevel: CruiseExperienceLevel @join__field(graph: META)
++}
++
++type ReviewComments @join__type(graph: DB, key: "reviewId") @join__type(graph: DB, key: "comment") {
++  reviewId: Float!
++  comment: String!
++  id: Float!
++  status: Float!
++  commentBy: Float!
++  user: Users!
++}
++
++type Users @join__type(graph: DB, key: "id") {
++  id: Float!
++  firstName: String
++  lastNameFirstLetter: String
++  title: String!
++}
++
++type CruiseLineShip
++  @join__type(graph: DB, key: "id", extension: true)
++  @join__type(graph: META, key: "id") {
++  id: Float!
++  name: String @join__field(graph: DB)
++  seoName: String @join__field(graph: DB)
++}
++
++type CruiseLineDeparturePort
++  @join__type(graph: DB, key: "id", extension: true)
++  @join__type(graph: META, key: "id") {
++  id: Float!
++  name: String @join__field(graph: DB)
++  seoName: String @join__field(graph: DB)
++}
++
++type CruiseLineDestination
++  @join__type(graph: DB, key: "id", extension: true)
++  @join__type(graph: META, key: "id") {
++  id: Float!
++  name: String @join__field(graph: DB)
++  seoName: String @join__field(graph: DB)
++}
++
++type ItineraryPort
++  @join__type(graph: DB, key: "id", extension: true)
++  @join__type(graph: META, key: "id") {
++  id: Float!
++  mappedImages(identifier: SubjectImageType): [Images]! @join__field(graph: DB)
++  name: String! @join__field(graph: META)
++  imageUrl: String @join__field(graph: META)
++  averageMemberRating: Float! @join__field(graph: META)
++  latitude: Float @join__field(graph: META)
++  longitude: Float @join__field(graph: META)
++  destinationId: Float @join__field(graph: META)
++}
++
++type Images @join__type(graph: DB) {
++  id: Float!
++  type: String!
++  prefix: String!
++  slug: String
++  title: String
++  description: String
++  created_at: DateTimeISO!
++  options: String
++}
++
++type ItineraryShip
++  @join__type(graph: DB, key: "id", extension: true)
++  @join__type(graph: META, key: "id") {
++  id: Float!
++  cruisersChoiceCategories(awardYear: Float!, countryId: Float!): [CruisersChoiceCategories!]!
++    @join__field(graph: DB)
++  mappedImages(identifier: SubjectImageType): [Images]! @join__field(graph: DB)
++  cruiseStyleIds: [Float!] @join__field(graph: DB)
++  name: String! @join__field(graph: META)
++  imageUrl: String! @join__field(graph: META)
++  averageMemberRating: Float! @join__field(graph: META)
++  memberLovePercentage: Float @join__field(graph: META)
++  totalMemberReviews: Float! @join__field(graph: META)
++  snippets: ItineraryFieldSnippets! @join__field(graph: META)
++  image: ItineraryFieldImage @join__field(graph: META)
++  inclusions: ShipInclusions @join__field(graph: META)
++}
++
++type CruisersChoiceCategories @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  title: String!
++  section: String!
++  year: Float!
++  countryId: Float!
++  position: Float!
++  subjectId: Float!
++  subject_reference_id: Float
++  imageUrl: String
++  main_name: String!
++  short_name: String!
++  results(size: String, type: String): [CruisersChoiceResults!]!
++  subCategories: [String!]!
++}
++
++type CruisersChoiceResults @join__type(graph: DB) {
++  id: Float!
++  cruisersChoiceCategoryId: Float!
++  size: String!
++  rating: Float!
++  totalReviews: Float!
++  imageUrl: String!
++  caption: String!
++  createdAt: DateTimeISO!
++  updatedAt: DateTimeISO!
++  isWinner: Boolean!
++  userName: String!
++  extraData: String
++  subjectId: Float!
++  subjectReferenceId: Float!
++  type: String!
++  port: Ports
++  ship: Ships
++  cruiseLine: CruiseLines
++}
++
++type ReviewEntries
++  @join__type(graph: DB, key: "id", extension: true)
++  @join__type(graph: REVIEWS, key: "id") {
++  id: Float!
++  subjectId: Float @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  subjectReferenceId: Float @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  port: Ports @join__field(graph: DB, requires: "subjectId subjectReferenceId")
++  shoreExcursion: ShoreExcursions @join__field(graph: DB, requires: "subjectId subjectReferenceId")
++  reviewId: Float @join__field(graph: REVIEWS)
++  reviewCategory: ReviewCategory @join__field(graph: REVIEWS)
++  status: Float @join__field(graph: REVIEWS)
++  rating: Float @join__field(graph: REVIEWS)
++  content: String @join__field(graph: REVIEWS)
++  cabinPivot: [ReviewCabinPivots!] @join__field(graph: REVIEWS)
++  shorexPivot: [ReviewShoreExcursionPivots!] @join__field(graph: REVIEWS)
++}
++
++type ShoreExcursions @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  overview: String
++  imageUrl: String
++  averageMemberRating: Float
++  totalMemberReviews: Float
++  imageId: Float
++}
++
++type Reviews
++  @join__type(graph: DB, key: "id", extension: true)
++  @join__type(graph: REVIEWS, key: "id") {
++  id: Float!
++  cabinCategoryCode: String @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  shipId: Float @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  userId: String @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  imsId: String @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  embarkationPortId: Float @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  destinationId: Float @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  cruisedOn: Date @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  cruiseLength: Float @join__field(graph: DB, external: true) @join__field(graph: REVIEWS)
++  cabinCategory: CabinCategoriesUnion @join__field(graph: DB, requires: "shipId cabinCategoryCode")
++  images: [UserImages!]! @join__field(graph: DB)
++  user: SsoUser @join__field(graph: DB, requires: "userId imsId")
++  comments: [ReviewComments!]! @join__field(graph: DB)
++  departurePort: DeparturePorts @join__field(graph: DB, requires: "embarkationPortId")
++  itinerary: Itineraries @join__field(graph: DB, requires: "cruisedOn cruiseLength shipId")
++  destinations: [Destinations!]
++    @join__field(graph: DB, requires: "cruisedOn cruiseLength shipId destinationId")
++  title: String @join__field(graph: REVIEWS)
++  userName: String @join__field(graph: REVIEWS)
++  overallRating: Float @join__field(graph: REVIEWS)
++  cruiseDay: Float @join__field(graph: REVIEWS)
++  cruiseMonth: Float @join__field(graph: REVIEWS)
++  cruiseYear: Float @join__field(graph: REVIEWS)
++  hasChildren: Boolean @join__field(graph: REVIEWS)
++  withDisabled: Boolean! @join__field(graph: REVIEWS)
++  ip: String @join__field(graph: REVIEWS)
++  countryCode: String @join__field(graph: REVIEWS)
++  userAgent: String @join__field(graph: REVIEWS)
++  certification: Boolean @join__field(graph: REVIEWS)
++  numberOfCruisesTakenGroupId: Float @join__field(graph: REVIEWS)
++  shipReview: String @join__field(graph: REVIEWS)
++  shipReviewStatus: Float @join__field(graph: REVIEWS)
++  approvedBy: String @join__field(graph: REVIEWS)
++  status: Float @join__field(graph: REVIEWS)
++  providerId: Float @join__field(graph: REVIEWS)
++  isPhotoJournal: Boolean! @join__field(graph: REVIEWS)
++  abTest: String @join__field(graph: REVIEWS)
++  publishedOn: Date @join__field(graph: REVIEWS)
++  publishedAt: DateTime @join__field(graph: REVIEWS)
++  createdAt: DateTime @join__field(graph: REVIEWS)
++  updatedAt: DateTime @join__field(graph: REVIEWS)
++  createdAtTs: Float! @join__field(graph: REVIEWS)
++  updatedAtTs: Float! @join__field(graph: REVIEWS)
++  publishedAtTs: Float @join__field(graph: REVIEWS)
++  ship: Ships! @join__field(graph: REVIEWS)
++  destination: Destinations @join__field(graph: REVIEWS)
++  entries: [ReviewEntries!] @join__field(graph: REVIEWS)
++  cruiseStyles: [ReviewCruiseStyles!] @join__field(graph: REVIEWS)
++  reviewSummary: String @join__field(graph: REVIEWS)
++  helpfulVotes: Float! @join__field(graph: REVIEWS)
++  nextReview: Reviews @join__field(graph: REVIEWS)
++  previousReview: Reviews @join__field(graph: REVIEWS)
++}
++
++type CabinCategories @join__type(graph: DB, key: "id") {
++  id: Float!
++  categoryName: String
++  categoryCode: String
++  imageUrl: String
++  categoryColor: String
++  description: String
++  slug: String
++  averageMemberRating: Float
++  totalMemberReviews: Float
++}
++
++type AlsekCabinCategories @join__type(graph: DB) {
++  id: Float!
++  alsekShipVersionId: Float!
++  categoryColor: String
++  categoryCode: String
++  categoryName: String
++  cabinTypeId: Float
++  isMetaCategory: Float
++  constituentCategoriesOnThisDeck: String
++  constituentCategoriesAnywhereOnShip: String
++  cabinClassCode: String
++  extendedCabinType: String
++  sortOrder: Float
++  minimumOccupancy: Float
++  maximumOccupancy: Float
++  relatedCategories: String
++  minimumCabinAndBalconyArea: Float
++  maximumBalconyArea: Float
++  categoryIcon: String
++  shortDescription: String
++  fullDescription: String
++  smallPhoto: String
++  largePhoto: String
++  categoryFloorplan: String
++  virtualTourUrl: String
++  slug: String
++  averageMemberRating: Float
++  totalMemberReviews: Float
++}
++
++type UserImages @join__type(graph: DB) {
++  id: Float!
++  fileName: String!
++  caption: String!
++  allowOnAggregate: Boolean!
++  imageProxyUrl: String!
++  sectionTag: UserImageTags
++  imageUrl(height: Float, width: Float! = 200): String
++  review: Reviews
++}
++
++type UserImageTags @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  linkName: String
++}
++
++type CruiseLines implements ISubject
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: META, key: "id", extension: true)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  main_name: String! @join__field(graph: DB)
++  short_name: String! @join__field(graph: DB)
++  name: String! @join__field(graph: DB)
++  status: Float! @join__field(graph: DB)
++  imageUrl: String! @join__field(graph: DB)
++  image_url: String! @join__field(graph: DB) @deprecated(reason: "Use \"imageUrl\"")
++  slug: String! @join__field(graph: DB)
++  salesName: String @join__field(graph: DB)
++  sales_name: String @join__field(graph: DB) @deprecated(reason: "Use \"salesName\"")
++  shortName: String @join__field(graph: DB)
++  logoUrl: String @join__field(graph: DB)
++  logo_url: String @join__field(graph: DB) @deprecated(reason: "Use \"logoUrl\"")
++  isLuxury: Boolean! @join__field(graph: DB)
++  is_luxury: Boolean! @join__field(graph: DB) @deprecated(reason: "Use \"isLuxury\"")
++  isRiver: Boolean @join__field(graph: DB)
++  is_river: Float @join__field(graph: DB) @deprecated(reason: "Use \"isRiver\"")
++  isOwnYourOwn: Boolean! @join__field(graph: DB)
++  iconUrl: String @join__field(graph: DB)
++  seoName: String! @join__field(graph: DB)
++  seo_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"seoName\"")
++  tier: String @join__field(graph: DB)
++  logo: String! @join__field(graph: DB)
++  reviewName(countryId: Float): String! @join__field(graph: DB)
++  ships(withOnSiteUntil: Boolean! = false, sortAlphabetically: Boolean! = false): [Ships!]
++    @join__field(graph: DB)
++  mainUrl: String @join__field(graph: DB)
++  memberReviewUrl: String @join__field(graph: DB)
++  partnerMessage(countryId: Float!): CruiseLinePartnerMessages @join__field(graph: DB)
++  snippets(countryId: Float!): SubjectContentSnippets! @join__field(graph: DB)
++  cruisersChoiceAwards(countryId: Float): [CruisersChoiceCategories!]! @join__field(graph: DB)
++  cruisersChoiceDestinationAwards(countryId: Float): [CruisersChoiceCategories!]!
++    @join__field(graph: DB)
++  editorsPicksAwards(countryId: Float): [EditorsPicksCategories!]! @join__field(graph: DB)
++  editorsPicksResults: [EditorsPicksResults!]! @join__field(graph: DB)
++  image(identifier: SubjectImageType!, countryId: Float!): String @join__field(graph: DB)
++  isPopular(countryId: Float!): Boolean! @join__field(graph: DB)
++  totalReviewCount: Float! @join__field(graph: META)
++}
++
++type CruiseLinePartnerMessages @join__type(graph: DB) {
++  title: String!
++  message: String
++  link: String
++  videoLink: String
++  authorName: String!
++  authorPosition: String!
++  authorAvatarImsId: Float
++}
++
++type SubjectContentSnippets @join__type(graph: DB) {
++  intro: [Snippet!]!
++  questionsAnswers: [Snippet!]!
++  prosAndCons: [Snippet!]
++  amenities: [Snippet!]
++}
++
++type Snippet @join__type(graph: DB) {
++  snippetTitleId: Float
++  heading: String
++  question: String
++  analyticsTarget: String
++  answerMarkdown: String
++  featured: Boolean
++}
++
++type EditorsPicksCategories
++  @join__type(graph: DB, key: "categoryType")
++  @join__type(graph: DB, key: "name")
++  @join__type(graph: DB, key: "countryId")
++  @join__type(graph: DB, key: "year") {
++  categoryType: String!
++  name: String!
++  countryId: Float!
++  year: Float!
++  id: Float!
++  seoName: String
++  seo_name: String @deprecated(reason: "Use seoName")
++  sortOrder: Float!
++  result: EditorsPicksResults!
++}
++
++type EditorsPicksResults @join__type(graph: DB) {
++  name: String!
++  description: String!
++  imageUrl: String!
++  subjectId: Float!
++  subjectReferenceId: Float!
++  category: EditorsPicksCategories
++  ship: Ships
++  cruiseLine: CruiseLines
++  port: Ports
++}
++
++type CruiseStyles implements ISubject
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: DB, key: "findACruiseId")
++  @join__type(graph: META, key: "id", extension: true)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  findACruiseId: Float @join__field(graph: DB)
++  main_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"mainName\"")
++  short_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"shortName\"")
++  name: String! @join__field(graph: DB)
++  slug: String! @join__field(graph: DB)
++  iconUrl: String @join__field(graph: DB)
++  icon_url: String @join__field(graph: DB) @deprecated(reason: "Use \"iconUrl\"")
++  salesName: String! @join__field(graph: DB)
++  sales_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"salesName\"")
++  forumId: Float @join__field(graph: DB)
++  forum_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"forumId\"")
++  url: String @join__field(graph: DB)
++  h1: String @join__field(graph: DB)
++  h2: String @join__field(graph: DB)
++  status: Float! @join__field(graph: DB)
++  find_a_cruise_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"findACruiseId\"")
++  seoName: String @join__field(graph: DB)
++  seo_name: String @join__field(graph: DB) @deprecated(reason: "Use \"seoName\"")
++  mainName: String! @join__field(graph: DB)
++  shortName: String! @join__field(graph: DB)
++  reviewName(countryId: Float): String! @join__field(graph: DB)
++}
++
++type DeparturePorts implements ISubject
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: DB, key: "salesName")
++  @join__type(graph: DB, key: "sales_name")
++  @join__type(graph: DB, key: "main_name")
++  @join__type(graph: DB, key: "short_name")
++  @join__type(graph: DB, key: "name")
++  @join__type(graph: DB, key: "seoName")
++  @join__type(graph: DB, key: "seo_name")
++  @join__type(graph: DB, key: "slug")
++  @join__type(graph: META, key: "id", extension: true)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  salesName: String @join__field(graph: DB)
++  sales_name: String @join__field(graph: DB) @deprecated(reason: "Use \"salesName\"")
++  main_name: String! @join__field(graph: DB)
++  short_name: String! @join__field(graph: DB)
++  name: String! @join__field(graph: DB)
++  seoName: String @join__field(graph: DB)
++  seo_name: String @join__field(graph: DB) @deprecated(reason: "Use \"seoName\"")
++  slug: String @join__field(graph: DB)
++  portId: Float @join__field(graph: DB)
++  port_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"portId\"")
++  status: Float! @join__field(graph: DB)
++  taLocationId: Float @join__field(graph: DB)
++  ta_location_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"taLocationId\"")
++  destinations: [Destinations!] @join__field(graph: DB)
++  cruiseLines: [CruiseLines!] @join__field(graph: DB)
++  port: Ports @join__field(graph: DB)
++  isIndexable: Boolean! @join__field(graph: DB)
++  itineraryCount(departureDateInterval: Float! = 3, ipCountryId: Float!): Float!
++    @join__field(graph: META)
++}
++
++type Destinations implements ISubject
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: META, key: "id", extension: true)
++  @join__type(graph: REVIEWS, key: "id", extension: true)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  main_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"mainName\"")
++  short_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"shortName\"")
++  name: String! @join__field(graph: DB)
++  salesName: String @join__field(graph: DB)
++  customDestinations: [Float!]! @join__field(graph: DB)
++  sales_name: String @join__field(graph: DB) @deprecated(reason: "Use \"salesName\"")
++  status: Float! @join__field(graph: DB)
++  destinationAreaId: Float @join__field(graph: DB)
++  destination_area_id: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"destinationAreaId\"")
++  slug: String @join__field(graph: DB)
++  imageUrl: String @join__field(graph: DB)
++  image_url: String @join__field(graph: DB) @deprecated(reason: "Use \"imageUrl\"")
++  forumId: Float @join__field(graph: DB)
++  forum_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"forumId\"")
++  articleId: Float @join__field(graph: DB)
++  article_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"articleId\"")
++  isRiver: Boolean @join__field(graph: DB)
++  is_river: Float @join__field(graph: DB) @deprecated(reason: "Use \"isRiver\"")
++  seoName: String @join__field(graph: DB)
++  seo_name: String @join__field(graph: DB) @deprecated(reason: "Use \"seoName\"")
++  taLocationId: Float @join__field(graph: DB)
++  ta_location_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"taLocationId\"")
++  mainName: String! @join__field(graph: DB)
++  shortName: String! @join__field(graph: DB)
++  reviewName(countryId: Float): String! @join__field(graph: DB)
++  ports: [Ports!] @join__field(graph: DB)
++  image(countryId: Float!): String @join__field(graph: DB)
++  overrideName(countryId: Float, owner: OverrideOwners!): String! @join__field(graph: DB)
++  ships: [Ships!] @join__field(graph: DB)
++  naturalSeoName: String @join__field(graph: DB)
++  memberReviewUrl: String @join__field(graph: DB)
++  mainUrl: String @join__field(graph: DB)
++  subjectContentSnippets(countryId: Float!): SubjectContentSnippets @join__field(graph: DB)
++}
++
++type Features implements ISubject
++  @join__type(graph: DB)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  main_name: String! @deprecated(reason: "Use \"mainName\"")
++  short_name: String! @deprecated(reason: "Use \"shortName\"")
++  title: String
++  imageUrl: String
++  image_url: String @deprecated(reason: "Use \"imageUrl\"")
++  promoTitle: String
++  promo_title: String @deprecated(reason: "Use \"promoTitle\"")
++  promo: String
++  h1: String
++  h2: String
++  isFirstTimeCruiser: String
++  is_first_time_cruiser: String @deprecated(reason: "Use \"isFirstTimeCruiser\"")
++  mainName: String!
++  shortName: String!
++}
++
++type FirstTimeCruisers implements ISubject
++  @join__type(graph: DB)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  main_name: String! @deprecated(reason: "Use \"mainName\"")
++  short_name: String! @deprecated(reason: "Use \"shortName\"")
++  title: String!
++  mainName: String!
++  shortName: String!
++}
++
++type Itineraries implements ISubject
++  @join__type(graph: DB, key: "id")
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  main_name: String!
++  short_name: String!
++  title: String
++  length: Float
++  pastSailings(afterDate: DateTimeISO, date: DateTimeISO): [StoredSailings!]!
++  departurePort: Ports!
++  destination: Destinations!
++  ports: [Ports!]!
++  hasMap: Boolean!
++}
++
++type Ports implements ISubject
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: META, key: "id", extension: true)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  main_name: String! @join__field(graph: DB)
++  short_name: String! @join__field(graph: DB)
++  name: String! @join__field(graph: DB)
++  status: Float! @join__field(graph: DB)
++  imageUrl: String @join__field(graph: DB)
++  image_url: String @join__field(graph: DB) @deprecated(reason: "Use \"imageUrl\"")
++  forumId: Float @join__field(graph: DB)
++  forum_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"forumId\"")
++  slug: String! @join__field(graph: DB)
++  salesName: String @join__field(graph: DB)
++  sales_name: String @join__field(graph: DB) @deprecated(reason: "Use \"salesName\"")
++  destinationId: Float @join__field(graph: DB)
++  destination_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"destinationId\"")
++  longitude: String @join__field(graph: DB)
++  latitude: String @join__field(graph: DB)
++  showShoreExcursions: Boolean @join__field(graph: DB)
++  show_shore_excursions: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"showShoreExcursions\"")
++  showRestaurants: Boolean @join__field(graph: DB)
++  show_restaurants: Boolean @join__field(graph: DB) @deprecated(reason: "Use \"showRestaurants\"")
++  isRiver: Float @join__field(graph: DB)
++  is_river: Float @join__field(graph: DB) @deprecated(reason: "Use \"isRiver\"")
++  isPrivate: Boolean @join__field(graph: DB)
++  is_private: Float @join__field(graph: DB) @deprecated(reason: "Use \"isPrivate\"")
++  averageMemberRating: Float @join__field(graph: DB)
++  average_member_rating: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"averageMemberRating\"")
++  totalMemberReviews: Float @join__field(graph: DB)
++  total_member_reviews: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"totalMemberReviews\"")
++  seoName: String @join__field(graph: DB)
++  seo_name: String @join__field(graph: DB) @deprecated(reason: "Use \"seoName\"")
++  tripadvisorId: Float @join__field(graph: DB)
++  tripadvisor_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"tripadvisorId\"")
++  stateCode: String @join__field(graph: DB)
++  state_code: String @join__field(graph: DB) @deprecated(reason: "Use \"stateCode\"")
++  countryCode: String @join__field(graph: DB)
++  country_code: String @join__field(graph: DB) @deprecated(reason: "Use \"countryCode\"")
++  createdAt: DateTimeISO! @join__field(graph: DB)
++  created_at: DateTimeISO! @join__field(graph: DB) @deprecated(reason: "Use \"createdAt\"")
++  updatedAt: DateTimeISO! @join__field(graph: DB)
++  updated_at: DateTimeISO! @join__field(graph: DB) @deprecated(reason: "Use \"updatedAt\"")
++  publishedAt: DateTimeISO @join__field(graph: DB)
++  published_at: DateTimeISO @join__field(graph: DB) @deprecated(reason: "Use \"publishedAt\"")
++  adminNotes: String @join__field(graph: DB)
++  admin_notes: String @join__field(graph: DB) @deprecated(reason: "Use \"adminNotes\"")
++  professionalOverallRating: String @join__field(graph: DB)
++  professional_overall_rating: String
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"professionalOverallRating\"")
++  adminUserId: Float @join__field(graph: DB)
++  admin_user_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"adminUserId\"")
++  taLocationId: Float @join__field(graph: DB)
++  ta_location_id: Float @join__field(graph: DB) @deprecated(reason: "Use \"taLocationId\"")
++  isPrimarilyDeparturePort: Boolean! @join__field(graph: DB)
++  is_primarily_departure_port: Float!
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"isPrimarilyDeparturePort\"")
++  reviewName(countryId: Float): String! @join__field(graph: DB)
++  destination: Destinations @join__field(graph: DB)
++  departurePort: DeparturePorts @join__field(graph: DB)
++  image(countryId: Float! = 1): String @join__field(graph: DB)
++  naturalSeoName: String @join__field(graph: DB)
++  memberReviewUrl: String @join__field(graph: DB)
++  mainUrl: String @join__field(graph: DB)
++  portOverviewUrl: String @join__field(graph: DB)
++  shoreExcursionUrl: String @join__field(graph: DB)
++  subjectContentSnippets(countryId: Float!): SubjectContentSnippets @join__field(graph: DB)
++  shoreExcursionSubjectContentSnippets(countryId: Float!): SubjectContentSnippets
++    @join__field(graph: DB)
++  cruisersChoiceAwards: [CruisersChoiceCategories!]! @join__field(graph: DB)
++  cruisersChoiceDestinationAwards: [CruisersChoiceCategories!]! @join__field(graph: DB)
++  editorsPicksAwards: [EditorsPicksCategories!]! @join__field(graph: DB)
++  editorsPicksResults: [EditorsPicksResults!]! @join__field(graph: DB)
++  popularShoreExcursions(limit: Float): [ShoreExcursions!]! @join__field(graph: DB)
++  shoreExcursions(sortOrder: ShorexSortOrder, offset: Float, limit: Float): [ShoreExcursions!]!
++    @join__field(graph: DB)
++  shoreExcursionCount: Float! @join__field(graph: DB)
++  isPopularDeparturePort(countryId: Float!): Boolean! @join__field(graph: DB)
++  itineraryCount(departureDateInterval: Float! = 3, ipCountryId: Float!): Float!
++    @join__field(graph: META)
++}
++
++type StoredSailings implements ISubject
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: META, key: "id", extension: true)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  main_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"mainName\"")
++  short_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"shortName\"")
++  status: Float! @join__field(graph: DB)
++  itineraryId: Float! @join__field(graph: DB) @join__field(graph: META, external: true)
++  departureDate: String! @join__field(graph: DB)
++  title: String @join__field(graph: DB)
++  providerId: String! @join__field(graph: DB)
++  providerSailingId: Float @join__field(graph: DB)
++  minRevelexPrice: String @join__field(graph: DB)
++  createdAt: String! @join__field(graph: DB)
++  updatedAt: String! @join__field(graph: DB)
++  mainName: String! @join__field(graph: DB)
++  shortName: String! @join__field(graph: DB)
++  storedItinerary: Itineraries @join__field(graph: DB)
++  itinerary(fields: [Fields!]!, ipCountry: String!): Itinerary
++    @join__field(graph: META, requires: "itineraryId")
++}
++
++type Ships implements ISubject
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: DB, key: "cruiseLineId")
++  @join__type(graph: DB, key: "reviewStatus")
++  @join__type(graph: META, key: "id", extension: true)
++  @join__type(graph: REVIEWS, key: "id", extension: true)
++  @join__implements(graph: DB, interface: "ISubject") {
++  id: Float!
++  cruiseLineId: Float! @join__field(graph: DB) @join__field(graph: REVIEWS)
++  reviewStatus: Float @join__field(graph: DB)
++  main_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"mainName\"")
++  short_name: String! @join__field(graph: DB) @deprecated(reason: "Use \"shortName\"")
++  name: String! @join__field(graph: DB) @join__field(graph: META, external: true)
++  image_url: String! @join__field(graph: DB) @deprecated(reason: "Use \"imageUrl\"")
++  imageUrl: String! @join__field(graph: DB) @join__field(graph: META, external: true)
++  status: Float! @join__field(graph: DB)
++  onSiteUntil: String @join__field(graph: DB)
++  slug: String @join__field(graph: DB)
++  sales_name: String @join__field(graph: DB) @deprecated(reason: "Use \"salesName\"")
++  salesName: String @join__field(graph: DB)
++  professional_overall_rating: String
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"professionalOverallRating\"")
++  professionalOverallRating: String
++    @join__field(graph: DB)
++    @join__field(graph: META, external: true)
++  is_active_for_rollcalls: Float!
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"isActiveForRollcalls\"")
++  isActiveForRollcalls: Boolean! @join__field(graph: DB)
++  average_member_rating: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"averageMemberRating\"")
++  averageMemberRating: Float @join__field(graph: DB) @join__field(graph: META, external: true)
++  weighted_average_member_rating: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"weightedAverageMemberRating\"")
++  weightedAverageMemberRating: Float @join__field(graph: DB)
++  total_member_reviews: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"totalMemberReviews\"")
++  totalMemberReviews: Float @join__field(graph: DB) @join__field(graph: META, external: true)
++  member_love_percentage: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"memberLovePercentage\"")
++  memberLovePercentage: Float @join__field(graph: DB) @join__field(graph: META, external: true)
++  review_status: Float @join__field(graph: DB) @deprecated(reason: "Use \"reviewStatus\"")
++  is_luxury: Boolean! @join__field(graph: DB) @deprecated(reason: "Use \"isLuxury\"")
++  isLuxury: Boolean! @join__field(graph: DB)
++  is_active_for_mobile: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"isActiveForMobile\"")
++  isActiveForMobile: Boolean @join__field(graph: DB)
++  is_river: Float @join__field(graph: DB) @deprecated(reason: "Use \"isRiver\"")
++  isRiver: Boolean @join__field(graph: DB)
++  is_family: Float! @join__field(graph: DB) @deprecated(reason: "Use \"isFamily\"")
++  isFamily: Boolean! @join__field(graph: DB)
++  popularity_score: Float @join__field(graph: DB) @deprecated(reason: "Use \"popularityScore\"")
++  popularityScore: Float @join__field(graph: DB)
++  seo_name: String @join__field(graph: DB) @deprecated(reason: "Use \"seoName\"")
++  seoName: String @join__field(graph: DB)
++  profile_layout: String! @join__field(graph: DB) @deprecated(reason: "Use \"profileLayout\"")
++  profileLayout: String! @join__field(graph: DB)
++  profile_layout_revert: String
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"profileLayoutRevert\"")
++  profileLayoutRevert: String @join__field(graph: DB)
++  is_disabled_for_meet_and_mingle: Boolean!
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"isDisabledForMeetAndMingle\"")
++  isDisabledForMeetAndMingle: Boolean! @join__field(graph: DB)
++  alternate_member_love_percentage: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"alternateMemberLovePercentage\"")
++  alternateMemberLovePercentage: Float @join__field(graph: DB)
++  first_glimpse_publish_date: DateTimeISO
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"firstGlimpsePublishDate\"")
++  firstGlimpsePublishDate: DateTimeISO @join__field(graph: DB)
++  full_review_publish_date: DateTimeISO
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"fullReviewPublishDate\"")
++  fullReviewPublishDate: DateTimeISO @join__field(graph: DB)
++  is_disabled_for_review: Float
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"isDisabledForReview\"")
++  isDisabledForReview: Boolean @join__field(graph: DB)
++  admin_notes: String @join__field(graph: DB) @deprecated(reason: "Use \"adminNotes\"")
++  adminNotes: String @join__field(graph: DB)
++  mainName: String! @join__field(graph: DB)
++  shortName: String! @join__field(graph: DB)
++  reviewName(countryId: Float): String! @join__field(graph: DB)
++  shipClass: ShipClasses @join__field(graph: DB)
++  cruiseLine: CruiseLines @join__field(graph: DB)
++  slideshow: Slideshows @join__field(graph: DB)
++  cleanSeoName: String @join__field(graph: DB)
++  seo(countryId: Float!): Seo @join__field(graph: DB)
++  mappedImage(identifier: SubjectImageType!): Images
++    @join__field(graph: DB)
++    @deprecated(reason: "Please use \"mappedImages\"")
++  image: String
++    @join__field(graph: DB)
++    @deprecated(reason: "Please use \"mappedImage\" with identifier = \"primary\"")
++  mappedImages(countryId: Float, identifier: [String!]): [ImageMappings!]! @join__field(graph: DB)
++  snippets(snippetType: ShipSnippetTitle!, countryId: Float!): [ShipSnippets!]
++    @join__field(graph: DB)
++  hasUserPhotos: Boolean! @join__field(graph: DB)
++  hasItineraries: Boolean! @join__field(graph: DB)
++  snippetsForTypes(snippetTypes: [ShipSnippetTitle!]!, countryId: Float!): [ShipSnippets!]
++    @join__field(graph: DB)
++  deckPlanSlug: String @join__field(graph: DB)
++  hasDeckPlans: Boolean! @join__field(graph: DB)
++  decks: [Deck!] @join__field(graph: DB)
++  attributes: ShipAttributes @join__field(graph: DB)
++  ratio: String @join__field(graph: DB)
++  size: String @join__field(graph: DB)
++  amenitiesByType(countryId: Float! = 1): ShipAmenityResponse @join__field(graph: DB)
++  destinations(countryId: Float!): [Destinations!]! @join__field(graph: DB)
++  departurePorts(countryId: Float!): [DeparturePorts!] @join__field(graph: DB)
++  ports(countryId: Float!): [Ports!] @join__field(graph: DB)
++  pastSailings(afterDate: DateTimeISO, date: DateTimeISO): [StoredSailings!]!
++    @join__field(graph: DB)
++  author: AdminUsers @join__field(graph: DB)
++  cruisersChoiceAwards(countryId: Float): [CruisersChoiceCategories!]! @join__field(graph: DB)
++  cruisersChoiceDestinationAwards(countryId: Float): [CruisersChoiceCategories!]!
++    @join__field(graph: DB)
++  editorsPicksAwards(countryId: Float): [EditorsPicksCategories!]! @join__field(graph: DB)
++  editorsPicksResults: [EditorsPicksResults!]! @join__field(graph: DB)
++  cruiseStyles: [CruiseStyles!]! @join__field(graph: DB)
++  totalShoreExcursions: Float! @join__field(graph: DB)
++  reviewsSummary: ReviewSummaries @join__field(graph: DB)
++  reviewSnippetsByCategory(limitPerCategory: Float): ReviewSnippetsByCategory!
++    @join__field(graph: DB)
++  maidenDate: String @join__field(graph: META)
++  maidenYear: Float @join__field(graph: META)
++  primaryImage: Image @join__field(graph: META)
++  lowestPricePerNight: Float @join__field(graph: META)
++  reviewsUrl: String @join__field(graph: META)
++  reviews(
++    minimumRating: Float! = 3
++    maximumRating: Float! = 5
++    limit: Float! = 4
++    sortByHelpfulVotes: Boolean! = false
++    """
++    ISO 8601 duration
++    """
++    maxAge: String
++  ): [SearchReviewsResults!]! @join__field(graph: META)
++  categoryRating(category: ReviewCategory!): Float
++    @join__field(graph: REVIEWS, requires: "cruiseLineId")
++}
++
++type ShipClasses @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  cruiseLine: CruiseLines!
++}
++
++type Slideshows @join__type(graph: DB) {
++  id: Float!
++  title: String!
++  status: Float!
++  isGlobal: Boolean!
++  is_global: Float! @deprecated(reason: "Use \"isGlobal\"")
++  updatedAt: DateTimeISO!
++  updated_at: DateTimeISO! @deprecated(reason: "Use \"updatedAt\"")
++  slides: [SlideshowSlides!]!
++  subject: Subjects!
++}
++
++type SlideshowSlides @join__type(graph: DB) {
++  id: Float!
++  caption: String!
++  imageUrl: String!
++  image_url: String! @deprecated(reason: "Use \"imageUrl\"")
++  sortOrder: Float!
++  sort_order: Float! @deprecated(reason: "Use \"sortOrder\"")
++  heading: String!
++  subheading: String!
++  isIntro: Boolean!
++  is_intro: Float! @deprecated(reason: "Use \"isIntro\"")
++  country: Countries
++  slideshow: Slideshows
++}
++
++type Countries @join__type(graph: DB, key: "id") {
++  id: Float!
++  name: String!
++  shortName: String!
++  short_name: String! @deprecated(reason: "Use \"shortName\"")
++  domain: String
++  override: Float
++  status: Float
++  hrefLanguage: String
++  href_language: String @deprecated(reason: "Use \"hrefLanguage\"")
++  billingCurrency: BillingCurrencies
++}
++
++type BillingCurrencies @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  symbol: String!
++}
++
++type Subjects @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  key: String!
++}
++
++type Seo @join__type(graph: DB) {
++  metaTitle: String
++  meta_title: String @deprecated(reason: "Use \"metaTitle\"")
++  metaKeywords: String
++  meta_keywords: String @deprecated(reason: "Use \"metaKeywords\"")
++  metaDescription: String
++  meta_description: String @deprecated(reason: "Use \"metaDescription\"")
++  isNoindex: Boolean
++  is_noindex: Float @deprecated(reason: "Use \"isNoindex\"")
++}
++
++type ImageMappings
++  @join__type(graph: DB, key: "subjectId")
++  @join__type(graph: DB, key: "subjectReferenceId")
++  @join__type(graph: DB, key: "identifier")
++  @join__type(graph: DB, key: "countryId") {
++  subjectId: Float!
++  subjectReferenceId: Float!
++  identifier: String
++  countryId: Float
++  id: Float!
++  imageUrl: String
++  title: String
++  sortOrder: Float
++  imageId: Float
++  image: Images
++}
++
++type ShipSnippets @join__type(graph: DB) {
++  id: Float!
++  ship_id: Float!
++  ship_snippet_title_id: Float!
++  snippet: String!
++  rating: Float
++  updatedAt: DateTimeISO
++}
++
++type Deck @join__type(graph: DB) {
++  id: Float!
++  name: String
++  number: Float!
++  imageUrl: String
++}
++
++type ShipAttributes @join__type(graph: DB) {
++  id: Float!
++  shipId: Float!
++  totalCrew: String
++  totalDecks: String
++  maidenDate: String
++  tonnage: String
++  passengerCapacity: String
++  placeOfRegistry: String
++  cdcScore: String
++  viewerImageCount: Float
++  launchDatetime: String
++  launchTimezone: String
++}
++
++type ShipAmenityResponse @join__type(graph: DB) {
++  shipId: Float!
++  activity: [ShipAmenity!]
++  dining: [ShipAmenity!]
++  entertainment: [ShipAmenity!]
++  other: [ShipAmenity!]
++}
++
++type ShipAmenity @join__type(graph: DB) {
++  additionalFees: Boolean
++  isDeckOnly: Boolean
++  aggregateCount: Float
++  title: String
++  subtitle: String
++}
++
++type AdminUsers @join__type(graph: DB) {
++  id: Float!
++  fullName: String
++  headshotImageId: Int
++  jobTitle: String
++  articles(
++    offset: Float
++    limit: Float
++    order: ArticleOrder
++    countryId: Float!
++    type: String! = "article"
++  ): [Articles!]!
++  snippets(snippetType: ShipSnippetTitle!, countryId: Float!): [ShipSnippets!]!
++}
++
++type Articles
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: DB, key: "primarySubjectReferenceId")
++  @join__type(graph: DB, key: "isNegative")
++  @join__type(graph: DB, key: "type") {
++  id: Float!
++  primarySubjectReferenceId: Float
++  isNegative: Boolean
++  type: String!
++  status: Float
++  updatedAt: DateTimeISO!
++  updated_at: DateTimeISO! @deprecated(reason: "Use \"updatedAt\"")
++  primarySubjectId: Float
++  primary_subject_id: Float @deprecated(reason: "Use \"primarySubjectId\"")
++  primary_subject_reference_id: Float @deprecated(reason: "Use \"primarySubjectReferenceId\"")
++  slideshowId: Float
++  slideshow_id: Float @deprecated(reason: "Use \"slideshowId\"")
++  noIndex: Float
++  no_index: Float @deprecated(reason: "Use \"noIndex\"")
++  createdAt: DateTimeISO!
++  created_at: DateTimeISO! @deprecated(reason: "Use \"createdAt\"")
++  isMigrated: Boolean
++  is_migrated: Float @deprecated(reason: "Use \"isMigrated\"")
++  bookingPhase: String
++  booking_phase: String @deprecated(reason: "Use \"bookingPhase\"")
++  is_negative: Float @deprecated(reason: "Use \"isNegative\"")
++  adminUserId: Float
++  admin_user_id: Float @deprecated(reason: "Use \"adminUserId\"")
++  sponsoredContentTarget: String
++  sponsored_content_target: String @deprecated(reason: "Use \"sponsoredContentTarget\"")
++  eventDate: String
++  event_date: String @deprecated(reason: "Use \"eventDate\"")
++  lastUpdatedOn: String
++  publishDate: String
++  publish_date: String @deprecated(reason: "Use \"publishDate\"")
++  startDate: DateTimeISO
++  clientKey: String!
++  client_key: String! @deprecated(reason: "Use \"clientKey\"")
++  syndicationId: Float!
++  syndication_id: Float! @deprecated(reason: "Use \"syndicationId\"")
++  toc: String!
++  isNews: Boolean!
++  articleVersionsId: Float!
++  slug: String
++  articleDate: String
++  subjects(types: [SubjectType!]!): [ISubject!]
++  title(countryId: Float!): String!
++  description(countryId: Float!): String!
++  promo(countryId: Float!): String!
++  body(countryId: Float!): [ArticleSnippets!]!
++  articleVersion: ArticleVersions!
++  adminUsers(countryId: Float!): [AdminUsers!]
++  articleImage(countryId: Float!): ArticleImage @cacheControl(maxAge: 0)
++  countries: [Countries!]!
++  popularity(countryId: Float!): Float
++  breadcrumbs: [ISubject!]
++  seo(countryId: Float!): [Seo!]
++}
++
++type ArticleSnippets @join__type(graph: DB) {
++  snippetHeader: String
++  snippet_header: String @deprecated(reason: "Use \"snippetHeader\"")
++  snippet: String!
++  sortOrder: Float
++  sort_order: Float @deprecated(reason: "Use \"sortOrder\"")
++  countryId: Float
++  country_id: Float @deprecated(reason: "Use \"countryId\"")
++  showRelatedContent: Boolean!
++  show_related_content: Boolean! @deprecated(reason: "Use \"showRelatedContent\"")
++}
++
++type ArticleVersions @join__type(graph: DB) {
++  id: Float!
++  publishedArticleId: Float
++  status: Float
++  eventDate: String
++  publishDate: String
++  startDate: DateTimeISO
++  lastUpdatedOn: String
++}
++
++type ArticleImage @join__type(graph: DB) {
++  url: String
++  title: String
++}
++
++type ReviewSummaries @join__type(graph: DB) {
++  id: Float!
++  summary: String!
++}
++
++type ReviewSnippetsByCategory @join__type(graph: DB) {
++  enrichmentActivities: [ReviewSnippet!]
++  valueForMoney: [ReviewSnippet!]
++  embarkation: [ReviewSnippet!]
++  dining: [ReviewSnippet!]
++  publicRooms: [ReviewSnippet!]
++  entertainment: [ReviewSnippet!]
++  cabin: [ReviewSnippet!]
++  fitnessAndRecreation: [ReviewSnippet!]
++  shoreExcursions: [ReviewSnippet!]
++  rates: [ReviewSnippet!]
++  underThree: [ReviewSnippet!]
++  threeToSix: [ReviewSnippet!]
++  sevenToNine: [ReviewSnippet!]
++  tenToTwelve: [ReviewSnippet!]
++  thirteenToFifteen: [ReviewSnippet!]
++  sixteenPlus: [ReviewSnippet!]
++  service: [ReviewSnippet!]
++  onboardExperience: [ReviewSnippet!]
++  family: [ReviewSnippet!]
++  childrenPrograms: [ReviewSnippet!]
++}
++
++type ReviewSnippet @join__type(graph: DB) {
++  id: Float!
++  reviewId: Float!
++  snippet: String!
++  sentiment: ReviewSnippetSentiment
++  categories: [ReviewsCategory!]
++}
++
++type ReviewsCategory @join__type(graph: DB) {
++  id: Float!
++  name: String!
++}
++
++type Query
++  @extraSchemaDefinitionDirective(
++    directives: {
++      transport: [
++        {
++          kind: "http"
++          subgraph: "db"
++          location: "https://prod-cc-graphql-db-v2.fly.dev/graphql"
++          options: {}
++        }
++      ]
++    }
++  )
++  @extraSchemaDefinitionDirective(
++    directives: {
++      transport: [
++        {
++          kind: "http"
++          subgraph: "meta"
++          location: "https://prod-cc-graphql-meta-v2.fly.dev/graphql"
++          options: {}
++        }
++      ]
++    }
++  )
++  @extraSchemaDefinitionDirective(
++    directives: {
++      transport: [
++        {
++          kind: "http"
++          subgraph: "reviews"
++          location: "https://prod-cc-graphql-reviews-v2.fly.dev/graphql"
++          options: {}
++        }
++      ]
++    }
++  )
++  @extraSchemaDefinitionDirective(
++    directives: {
++      transport: [
++        {
++          kind: "http"
++          subgraph: "ugc"
++          location: "https://ugc.graphql.cruisecritic.net/"
++          options: {}
++        }
++      ]
++    }
++  )
++  @join__type(graph: DB)
++  @join__type(graph: META)
++  @join__type(graph: REVIEWS)
++  @join__type(graph: UGC) {
++  abtest(locale: Locale, device: DeviceType, name: String!): AbTests
++    @cacheControl(maxAge: 300)
++    @join__field(graph: DB)
++  abTests(
++    locale: Locale
++    deviceType: DeviceType
++    activeOnly: Boolean! = true
++    name: [String!]!
++  ): [AbTests!]!
++    @cacheControl(maxAge: 300)
++    @merge(subgraph: "db", keyField: "name", keyArg: "name")
++    @join__field(graph: DB)
++  activeAdvertorials(countryId: Float!): [Advertorials!]! @join__field(graph: DB)
++  advertorial(slug: String!): Advertorials @cacheControl(maxAge: 0) @join__field(graph: DB)
++  showArticleNewsUrls(offset: Float, limit: Float, countryId: Float!): [SitemapUrl!]!
++    @join__field(graph: DB)
++  article(
++    status: Float
++    type: String
++    clientKey: String
++    syndicationId: Float
++    countryId: Float
++    id: Float!
++  ): Articles @cacheControl(maxAge: 0) @join__field(graph: DB)
++  articlesByIds(ids: [Float!]!): [Articles!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "ids")
++    @join__field(graph: DB)
++  articles(
++    offset: Float
++    limit: Float
++    contentHubId: Float
++    populationType: ContentHubPopulationType! = tagging
++    ignoreExpired: Boolean! = false
++    order: ArticleOrder
++    cruiseStyleIds: [Float!]
++    ftcIds: [Float!]
++    shipIds: [Float!]
++    portIds: [Float!]
++    destinationIds: [Float!]
++    cruiseLineIds: [Float!]
++    destinationId: Float
++    cruiseLineId: Float
++    keyword: String
++    primarySubjectReferenceId: Float
++    primarySubjectType: SubjectType
++    isNegative: Float
++    countryId: Float! = 1
++    type: String! = "article"
++  ): [Articles!]!
++    @merge(
++      subgraph: "db"
++      keyField: "primarySubjectReferenceId"
++      keyArg: "primarySubjectReferenceId"
++    )
++    @merge(subgraph: "db", keyField: "isNegative", keyArg: "isNegative")
++    @merge(subgraph: "db", keyField: "type", keyArg: "type")
++    @join__field(graph: DB)
++  news(
++    offset: Float
++    limit: Float
++    includeDrafts: Boolean! = false
++    ignoreExpired: Boolean! = false
++    order: ArticleOrder
++    cruiseStyleIds: [Float!]
++    ftcIds: [Float!]
++    shipIds: [Float!]
++    portIds: [Float!]
++    destinationIds: [Float!]
++    cruiseLineIds: [Float!]
++    destinationId: Float
++    cruiseLineId: Float
++    keyword: String
++    primarySubjectReferenceId: Float
++    primarySubjectType: SubjectType
++    isNegative: Float
++    countryId: Float! = 1
++    type: String! = "news"
++  ): [Articles!]! @cacheControl(maxAge: 1800) @join__field(graph: DB)
++  cruiseTips(
++    countryId: Float!
++    cruiseStyleIds: [Float!]
++    cruiseLineId: Float
++    destinationId: Float
++    shipId: Float
++  ): CruiseTips! @cacheControl(maxAge: 1800) @join__field(graph: DB)
++  articleSSGIds(syndicationId: Float, type: String, offset: Float, limit: Float): [Float!]!
++    @join__field(graph: DB)
++  articlePopularityStats(countryId: Float!): PopularityStats! @join__field(graph: DB)
++  getUserFromResetHash(hash: String!): UserResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  me(domain: String): User @cacheControl(maxAge: 0) @join__field(graph: DB)
++  author(id: Float!): AdminUsers! @join__field(graph: DB)
++  authors: [AdminUsers!]! @join__field(graph: DB)
++  shipCabinCategories(cabinTypeId: Float, shipId: Float!): [CabinCategory!] @join__field(graph: DB)
++  cabinDetail(shipId: Float!): CabinDetailResponse! @join__field(graph: DB)
++  cabinType(id: Float!): CabinTypes @join__field(graph: DB)
++  cabinTypeBySlug(slug: String!): CabinTypes @join__field(graph: DB)
++  cpcFromCode(code: String!): String @join__field(graph: DB)
++  urlHash(url: String!): String! @join__field(graph: DB)
++  checkPriceVendor(id: Float!): CheckPriceVendors! @join__field(graph: DB)
++  contentBlockItem(id: Float!): ContentBlockItems @join__field(graph: DB)
++  contentBlockItems(offset: Float, limit: Float): [ContentBlockItems!] @join__field(graph: DB)
++  contentBlockItemsByContentBlockId(
++    countryId: Float! = 1
++    contentBlockId: Float!
++  ): [ContentBlockItems!]
++    @merge(subgraph: "db", keyField: "contentBlockId", keyArg: "contentBlockId")
++    @join__field(graph: DB)
++  contentBlock(id: Float!): ContentBlocks @join__field(graph: DB)
++  contentBlocks(offset: Float, limit: Float): [ContentBlocks!] @join__field(graph: DB)
++  contentHub(
++    primarySubjectReferenceId: Float
++    primarySubjectType: SubjectType
++    displayAll: Boolean! = false
++    contentHubId: Float
++    countryId: Float
++    urlSlug: String
++  ): [ContentHub!]!
++    @cacheControl(maxAge: 0)
++    @merge(subgraph: "db", keyField: "urlSlug", keyArg: "urlSlug")
++    @merge(subgraph: "db", keyField: "countryId", keyArg: "countryId")
++    @merge(
++      subgraph: "db"
++      keyField: "primarySubjectReferenceId"
++      keyArg: "primarySubjectReferenceId"
++    )
++    @join__field(graph: DB)
++  contentHubUrls(countryId: Float!): [SitemapUrl!]! @join__field(graph: DB)
++  countries: [Countries!]! @join__field(graph: DB)
++  country(id: Float!): Countries! @join__field(graph: DB)
++  bucketedCountries(countryCode: String!): [BucketedCountryMapping!]! @join__field(graph: DB)
++  cruiseLineDeparturePortName(cruiseLineDeparturePortId: Float!): String @join__field(graph: DB)
++  cruiseLineDeparturePortSeoName(cruiseLineDeparturePortId: Float!): String @join__field(graph: DB)
++  cruiseLineDestinationName(cruiseLineDestinationId: Float!): String @join__field(graph: DB)
++  cruiseLineDestinationSeoName(cruiseLineDestinationId: Float!): String @join__field(graph: DB)
++  cruisersChoiceAwards(
++    isDestination: Boolean! = false
++    year: Float
++    subjectReferenceId: Float!
++    subjectId: Float!
++  ): [CruisersChoiceCategories!] @join__field(graph: DB)
++  cruisersChoiceDestinationAwards(
++    year: Float
++    subjectReferenceId: Float!
++    subjectId: Float!
++  ): [CruisersChoiceCategories!] @join__field(graph: DB)
++  cruisersChoiceCategoriesAwards(
++    countryId: Float
++    name: String
++    subjectId: Float!
++    year: Float!
++  ): [CruisersChoiceCategories!] @join__field(graph: DB)
++  cruisersChoiceCategories(where: CruisersChoiceCategoriesInput): [CruisersChoiceCategories!]!
++    @join__field(graph: DB)
++  editorsPicksAwards(
++    year: Float
++    subjectReferenceId: Float!
++    subjectId: Float!
++  ): [EditorsPicksCategories!] @join__field(graph: DB)
++  editorsPicksCategories(
++    categoryType: String
++    countryId: Float
++    year: Float
++    name: String
++  ): [EditorsPicksCategories!]!
++    @merge(subgraph: "db", keyField: "categoryType", keyArg: "categoryType")
++    @merge(subgraph: "db", keyField: "name", keyArg: "name")
++    @merge(subgraph: "db", keyField: "countryId", keyArg: "countryId")
++    @merge(subgraph: "db", keyField: "year", keyArg: "year")
++    @join__field(graph: DB)
++  cruiseline(id: Float!): CruiseLines @join__field(graph: DB)
++  cruiselineBySlug(slug: String!): CruiseLines @join__field(graph: DB)
++  cruiselinesWithRollcalls: [CruiseLines!]!
++    @join__field(graph: DB)
++    @deprecated(reason: "Use \"cruiselines(where: {isActiveForRollcalls: true})\" query instead")
++  cruiselines(where: CruiseLinesInput = {}, offset: Float, limit: Float): [CruiseLines!]
++    @join__field(graph: DB)
++  cruiseLinesByIds(ids: [Float!]!): [CruiseLines!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "ids")
++    @join__field(graph: DB)
++  cruiseLineShipName(cruiseLineShipId: Float!): String @join__field(graph: DB)
++  cruiseLineShipSeoName(cruiseLineShipId: Float!): String @join__field(graph: DB)
++  cruiseStyle(id: Float!): CruiseStyles @join__field(graph: DB)
++  cruiseStyleBySlug(slug: String!): CruiseStyles @join__field(graph: DB)
++  cruiseStyles(
++    where: CruiseStylesInput! = { status: [true] }
++    offset: Float
++    limit: Float
++  ): [CruiseStyles!] @join__field(graph: DB)
++  cruiseStylesByIds(ids: [Float!]!): [CruiseStyles!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "ids")
++    @join__field(graph: DB)
++  cruisersChoiceDestinationAwardsByCategory(
++    subjectId: Float!
++    size: String
++    cruisersChoiceCategoryId: Float!
++  ): [CruisersChoiceDestinationAwards!] @join__field(graph: DB)
++  dealAdvertiser(id: Float!): DealAdvertisers @join__field(graph: DB)
++  dealCountByIsLuxury(isLuxury: Boolean!): Float! @join__field(graph: DB)
++  dealNewsletterLink(id: Float!): DealNewsletterLinks
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  dealNewsletterLinkFormEnabled(countryId: Float!): Boolean!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  dealNewsletterLinkFormOpenTimes(countryId: Float!): String! @join__field(graph: DB)
++  dealNewsletterLinks(offset: Float, limit: Float): [DealNewsletterLinks!]! @join__field(graph: DB)
++  dealPromo(id: Float!): DealPromos @join__field(graph: DB)
++  dealPromos(countryId: Float!): [DealPromos!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "countryId")
++    @merge(subgraph: "db", keyField: "dealPromoTypeId", keyArg: "countryId")
++    @join__field(graph: DB)
++  dealPromoFormEnabled(countryId: Float!): Boolean! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  dealPromoFormOpenTimes(countryId: Float!): String! @join__field(graph: DB)
++  departurePort(id: Float!): DeparturePorts @join__field(graph: DB)
++  departurePortsByIds(ids: [Float!]!): [DeparturePorts!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "ids")
++    @join__field(graph: DB)
++  departurePortsBySalesName(salesNames: [String!]!): [DeparturePorts!]
++    @merge(subgraph: "db", keyField: "salesName", keyArg: "salesNames")
++    @merge(subgraph: "db", keyField: "sales_name", keyArg: "salesNames")
++    @join__field(graph: DB)
++  departurePortsBySearchTerm(
++    minScore: Float
++    numResults: Float
++    searchTerm: String!
++  ): [DeparturePorts!] @join__field(graph: DB)
++  allDeparturePorts(status: Float, offset: Float, limit: Float): [DeparturePorts!]!
++    @join__field(graph: DB)
++  departurePorts(locale: String!): [DeparturePorts!]
++    @merge(subgraph: "db", keyField: "main_name", keyArg: "locale")
++    @merge(subgraph: "db", keyField: "short_name", keyArg: "locale")
++    @merge(subgraph: "db", keyField: "name", keyArg: "locale")
++    @merge(subgraph: "db", keyField: "salesName", keyArg: "locale")
++    @merge(subgraph: "db", keyField: "sales_name", keyArg: "locale")
++    @merge(subgraph: "db", keyField: "seoName", keyArg: "locale")
++    @merge(subgraph: "db", keyField: "seo_name", keyArg: "locale")
++    @merge(subgraph: "db", keyField: "slug", keyArg: "locale")
++    @join__field(graph: DB)
++  nearestDeparturePorts(
++    offset: Float
++    limit: Float
++    range: Float
++    latitude: Float!
++    longitude: Float!
++  ): [DeparturePorts!] @join__field(graph: DB)
++  destination(id: Float!): Destinations @join__field(graph: DB)
++  destinationBySlug(slug: String!): Destinations @join__field(graph: DB)
++  destinations(
++    exclude: [Float!]
++    requireSlug: Boolean! = false
++    hasDestinationArea: Boolean! = true
++    offset: Float
++    limit: Float
++    keyword: String
++  ): [Destinations!] @join__field(graph: DB)
++  destinationsByIds(ids: [Float!]!): [Destinations!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "ids")
++    @join__field(graph: DB)
++  destinationsBySearchTerm(
++    minScore: Float
++    numResults: Float
++    searchTerm: String!
++  ): [Destinations!] @join__field(graph: DB)
++  destinationsPorts(destinationId: Float!): [Ports!] @join__field(graph: DB)
++  destinationsImage(countryId: Float!, destinationId: Float!): String @join__field(graph: DB)
++  destinationsOverrideName(
++    countryId: Float
++    owner: OverrideOwners!
++    destinationName: String!
++    destinationId: Float!
++  ): String! @join__field(graph: DB)
++  destinationsShips(destinationId: Float!): [Ships!] @join__field(graph: DB)
++  destinationsNaturalSeoName(seoName: String): String @join__field(graph: DB)
++  destinationsMemberReviewUrl(slug: String!, destinationId: Float!): String @join__field(graph: DB)
++  destinationsMainUrl(slug: String!): String @join__field(graph: DB)
++  destinationsSubjectContentSnippets(
++    countryId: Float!
++    seoName: String!
++    destinationId: Float!
++  ): SubjectContentSnippets @join__field(graph: DB)
++  facHeroImage(
++    hasAdditionalFilters: Boolean! = false
++    filters: FacHeroImageFilters! = {}
++    countryId: Float!
++  ): FacHeroImage @join__field(graph: DB)
++  feature(id: Float!): Features @join__field(graph: DB)
++  Features(offset: Float, limit: Float): [Features!] @join__field(graph: DB)
++  firstTimeCruiser(id: Float!): FirstTimeCruisers @join__field(graph: DB)
++  FirstTimeCruisers(offset: Float, limit: Float): [FirstTimeCruisers!] @join__field(graph: DB)
++  homeHeroImage(hphId: Float, locale: Locale!): HeroImage
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  heroImage(listId: Float!): HeroImage
++    @merge(subgraph: "db", keyField: "imageId", keyArg: "listId")
++    @merge(subgraph: "db", keyField: "rating", keyArg: "listId")
++    @join__field(graph: DB)
++  imageMappings(
++    subjectId: Float!
++    subjectReferenceId: Float!
++    identifier: [String!]
++    countryId: Float
++  ): [ImageMappings!]!
++    @merge(subgraph: "db", keyField: "subjectId", keyArg: "subjectId")
++    @merge(subgraph: "db", keyField: "subjectReferenceId", keyArg: "subjectReferenceId")
++    @merge(subgraph: "db", keyField: "identifier", keyArg: "identifier")
++    @merge(subgraph: "db", keyField: "countryId", keyArg: "countryId")
++    @join__field(graph: DB)
++  mappedImages(
++    identifier: SubjectImageType
++    subjectReferenceIds: [Float!]!
++    subjectId: Float!
++  ): [Images]! @join__field(graph: DB)
++  mappedHeroImage(
++    preferredImageType: SubjectImageType
++    countryId: Float!
++    subjectReferenceId: Float!
++    subjectId: Float!
++  ): HeroImage @join__field(graph: DB)
++  itineraryPortMappedImages(identifier: SubjectImageType, itineraryPortId: Float!): [Images]!
++    @join__field(graph: DB)
++  storedItinerary(id: Float!): Itineraries! @join__field(graph: DB)
++  storedItineraries: [Itineraries!]! @join__field(graph: DB)
++  itineraryShipCruisersChoiceCategories(
++    awardYear: Float!
++    countryId: Float!
++    itineraryShipId: Float!
++  ): [CruisersChoiceCategories!]! @join__field(graph: DB)
++  itineraryShipCruiseStyleIds(itineraryShipId: Float!): [Float!] @join__field(graph: DB)
++  listItem(id: Float!): ListItems @join__field(graph: DB)
++  listItems(
++    offset: Float
++    limit: Float
++    extraData: String
++    listId: Float!
++    countryId: Float
++  ): [ListItems!]
++    @merge(subgraph: "db", keyField: "listId", keyArg: "listId")
++    @merge(subgraph: "db", keyField: "countryId", keyArg: "countryId")
++    @merge(subgraph: "db", keyField: "extraData", keyArg: "extraData")
++    @join__field(graph: DB)
++  latestNewsPromos(limit: Float! = 1, countryId: Float!): [NewsPromos!]! @join__field(graph: DB)
++  packageType(id: Float!): PackageTypes! @join__field(graph: DB)
++  pointsOfSale: [PointOfSale!]! @join__field(graph: DB)
++  polls(offset: Float, limit: Float): [Polls!]! @join__field(graph: DB)
++  activePoll(countryId: Float! = 1): Polls @join__field(graph: DB)
++  port(id: Float!): Ports @join__field(graph: DB)
++  portBySlug(slug: String!): Ports @join__field(graph: DB)
++  portsByIds(ids: [Float!]!): [Ports!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "ids")
++    @join__field(graph: DB)
++  ports(onlyShoreExcursions: Boolean, offset: Float, limit: Float, keyword: String): [Ports!]
++    @join__field(graph: DB)
++  priceAlert(id: Float): PriceAlerts @join__field(graph: DB)
++  subscriber(hashedEmail: String!): PriceAlertSubscribers
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  quizCruiseTags: [QuizCruiseTags!]! @join__field(graph: DB)
++  recommendedItineraries(
++    userId: String!
++    limit: Float! = 1
++    scenario: String!
++    country: CountryCode
++  ): RecommendedItineraries! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  recommendedFACSearches(
++    userId: String!
++    limit: Float! = 1
++    scenario: String!
++    country: CountryCode
++  ): RecommendedFACSearches! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  quizRecommendations(
++    userId: String!
++    limit: Float! = 1
++    country: CountryCode! = US
++    tags: [String!]! = []
++    destinations: [Float!]! = []
++    minPrice: Float! = 0
++    maxPrice: Float! = 10000
++  ): RecommendedItineraries! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  recommendedItinerariesBatch(
++    userId: String!
++    country: CountryCode!
++    segments: [RecommendedSegment!]! = []
++    maxResultsPerScenario: Float! = 1
++    scenarios: [String!]! = []
++  ): RecommendedItinerariesBatchResponse! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  recommendedStories(
++    userId: String!
++    limit: Float! = 1
++    scenario: String!
++    country: CountryCode!
++    excludeStories: [String!]
++    cruiseLineIds: [Float!]
++    cruiseStyleId: String
++    tag: String
++    tags: [String!]
++    storyId: Int
++  ): RecommendedStories! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  getRedirect(countryId: Float! = 1, fromUrl: String!): Redirects @join__field(graph: DB)
++  reviewByTotalHelpfulVotes(reviewByUsername: String!): Float! @join__field(graph: DB)
++  reviewByTotalReviews(reviewByUsername: String!): Float! @join__field(graph: DB)
++  reviewEntriesPort(subjectReferenceId: Float, subjectId: Float): Ports @join__field(graph: DB)
++  reviewEntriesShoreExcursion(subjectReferenceId: Float, subjectId: Float): ShoreExcursions
++    @join__field(graph: DB)
++  reviewComments(reviewId: String!): [ReviewComments!]!
++    @merge(subgraph: "db", keyField: "comment", keyArg: "reviewId")
++    @join__field(graph: DB)
++  reviewStats(isRiver: Boolean): ReviewStats @join__field(graph: DB)
++  reviewsCabinCategory(cabinCategoryCode: String, shipId: Float): CabinCategoriesUnion
++    @join__field(graph: DB)
++  reviewsImages(reviewsId: Float!): [UserImages!]! @join__field(graph: DB)
++  reviewsUser(imsId: String, userId: String): SsoUser @join__field(graph: DB)
++  reviewsComments(reviewId: Float!): [ReviewComments!]! @join__field(graph: DB)
++  reviewsDeparturePort(embarkationPortId: Float): DeparturePorts @join__field(graph: DB)
++  reviewsItinerary(shipId: Float, cruiseLength: Float, cruisedOn: Date): Itineraries
++    @join__field(graph: DB)
++  reviewsDestinations(
++    destinationId: Float
++    shipId: Float
++    cruiseLength: Float
++    cruisedOn: Date
++  ): [Destinations!] @join__field(graph: DB)
++  sailingsByShip(
++    maxDepartureDate: String
++    minDepartureDate: String
++    shipId: Float!
++  ): [StoredSailings!] @join__field(graph: DB)
++  sailingFee(
++    providerId: Float! = 1
++    countryId: Float!
++    cabinTypeId: Float!
++    sailingId: Float!
++  ): SailingFees @join__field(graph: DB)
++  rollCallSailingDate(eventTime: String!, title: String!): String! @join__field(graph: DB)
++  searchAutocomplete(q: String): SearchAutocompleteOptions! @join__field(graph: DB)
++  shipAmenity(countryId: Float! = 1, shipId: Float!): ShipAmenityResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  shipClass(id: Float!): ShipClasses! @join__field(graph: DB)
++  ship(id: Float!): Ships @join__field(graph: DB)
++  shipBySlug(slug: String!): Ships @join__field(graph: DB)
++  shipsByIds(ids: [Float!]!): [Ships!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "ids")
++    @join__field(graph: DB)
++  ships(
++    order: ShipsOrder
++    cruiseLineIds: [Float!]
++    reviewStatus: Float
++    offset: Float
++    limit: Float
++    keyword: String
++  ): [Ships!]
++    @merge(subgraph: "db", keyField: "cruiseLineId", keyArg: "cruiseLineIds")
++    @merge(subgraph: "db", keyField: "reviewStatus", keyArg: "reviewStatus")
++    @join__field(graph: DB)
++  shipsWithRollcalls(cruiseLineId: Float): [Ships!]! @join__field(graph: DB)
++  newShips(offset: Float, limit: Float): [Ships!]! @join__field(graph: DB)
++  shipsShipClass(shipClassId: Float): ShipClasses @join__field(graph: DB)
++  shipsCruiseLine(cruiseLineId: Float!): CruiseLines @join__field(graph: DB)
++  shipsSlideshow(slideshowId: Float): Slideshows @join__field(graph: DB)
++  shipsCleanSeoName(seoName: String): String @join__field(graph: DB)
++  shipsSeo(countryId: Float!, shipId: Float!): Seo @join__field(graph: DB)
++  shipsMappedImage(identifier: SubjectImageType!, shipId: Float!): Images
++    @join__field(graph: DB)
++    @deprecated(reason: "Please use \"mappedImages\"")
++  shipsImage(shipId: Float!): String
++    @join__field(graph: DB)
++    @deprecated(reason: "Please use \"mappedImage\" with identifier = \"primary\"")
++  shipsMappedImages(countryId: Float, identifier: [String!], shipId: Float!): [ImageMappings!]!
++    @join__field(graph: DB)
++  shipsSnippets(snippetType: ShipSnippetTitle!, countryId: Float!, shipId: Float!): [ShipSnippets!]
++    @join__field(graph: DB)
++  shipsHasUserPhotos(shipId: Float!): Boolean! @join__field(graph: DB)
++  shipsHasItineraries(shipId: Float!): Boolean! @join__field(graph: DB)
++  shipsSnippetsForTypes(
++    snippetTypes: [ShipSnippetTitle!]!
++    countryId: Float!
++    shipId: Float!
++  ): [ShipSnippets!] @join__field(graph: DB)
++  shipsDeckPlanSlug(shipSlug: String!): String @join__field(graph: DB)
++  shipsHasDeckPlans(deckPlanProviderId: Float!, shipId: Float!): Boolean! @join__field(graph: DB)
++  shipsDecks(deckPlanProviderId: Float!, shipId: Float!): [Deck!] @join__field(graph: DB)
++  shipsAttributes(shipId: Float!): ShipAttributes @join__field(graph: DB)
++  shipsRatio(shipId: Float!): String @join__field(graph: DB)
++  shipsSize(isRiver: Boolean!, shipId: Float!): String @join__field(graph: DB)
++  shipsAmenitiesByType(countryId: Float! = 1, shipId: Float!): ShipAmenityResponse
++    @join__field(graph: DB)
++  shipsDestinations(countryId: Float!, shipId: Float!): [Destinations!]! @join__field(graph: DB)
++  shipsDeparturePorts(countryId: Float!, shipId: Float!): [DeparturePorts!] @join__field(graph: DB)
++  shipsPorts(countryId: Float!, shipId: Float!): [Ports!] @join__field(graph: DB)
++  shipsPastSailings(afterDate: DateTimeISO, date: DateTimeISO, shipId: Float!): [StoredSailings!]!
++    @join__field(graph: DB)
++  shipsAuthor(adminUserId: Float!): AdminUsers @join__field(graph: DB)
++  shipsCruisersChoiceAwards(countryId: Float, shipId: Float!): [CruisersChoiceCategories!]!
++    @join__field(graph: DB)
++  shipsCruisersChoiceDestinationAwards(
++    countryId: Float
++    shipId: Float!
++  ): [CruisersChoiceCategories!]! @join__field(graph: DB)
++  shipsEditorsPicksAwards(countryId: Float, shipId: Float!): [EditorsPicksCategories!]!
++    @join__field(graph: DB)
++  shipsEditorsPicksResults(shipId: Float!): [EditorsPicksResults!]! @join__field(graph: DB)
++  shipsCruiseStyles(shipId: Float!): [CruiseStyles!]! @join__field(graph: DB)
++  shipsTotalShoreExcursions(shipId: Float!): Float! @join__field(graph: DB)
++  viatorUrl(portId: Float!): ViatorUrl @join__field(graph: DB)
++  getExcursions(
++    count: Float! = 10
++    start: Float! = 1
++    countryId: Float! = 1
++    portId: Float!
++  ): [Excursion!] @join__field(graph: DB)
++  shoreExcursionUrls: [SitemapUrl!]! @join__field(graph: DB)
++  sponsoredContent(countryId: Float! = 1, urlSlug: String!): SponsoredContent
++    @merge(subgraph: "db", keyField: "urlSlug", keyArg: "urlSlug")
++    @merge(subgraph: "db", keyField: "countryId", keyArg: "countryId")
++    @join__field(graph: DB)
++  ssoUser(id: [Float!]!): [SsoUser!]
++    @merge(subgraph: "db", keyField: "age", keyArg: "id")
++    @join__field(graph: DB)
++  travelLeadersGroupMappings(subjectReferenceIds: [Float!]!, subjectId: Float!): [Float!]!
++    @join__field(graph: DB)
++  userImages(
++    withNonAggregate: Boolean! = true
++    sortByNewest: Boolean = false
++    limit: Float
++    subjectId: Float!
++    subjectReferenceId: Float!
++    sectionTagIds: [Float!]
++  ): [UserImages!]! @join__field(graph: DB)
++  usersByIds(ids: [Float!]!): [Users!]
++    @merge(subgraph: "db", keyField: "id", keyArg: "ids")
++    @join__field(graph: DB)
++  widget(id: Float!): Widgets @join__field(graph: DB)
++  bonusOfferCategorization(bonusOffers: [String!]!): [BonusOfferCategorization!]
++    @merge(subgraph: "meta", keyField: "id", keyArg: "bonusOffers")
++    @merge(subgraph: "meta", keyField: "offerString", keyArg: "bonusOffers")
++    @join__field(graph: META)
++  cabinTypeAggs(shipId: Float!): [CabinTypeAggsResult!] @join__field(graph: META)
++  cruiseLineRelatedLinks(countryId: Float!, cruiseLineId: Float!): [CruiseLineRelatedLinks!]
++    @join__field(graph: META)
++  totalCruiselineReviewCount(cruiseLineId: Float!): Float! @join__field(graph: META)
++  departurePortsItineraryCount(
++    departureDateInterval: Float! = 3
++    ipCountryId: Float!
++    departurePortsId: Float!
++  ): Float! @join__field(graph: META)
++  itineraryCount(
++    ipCountryId: Float!
++    filters: ItineraryFilterInput! = { hideSoldOut: true, departureDateInterval: 3 }
++  ): Float! @join__field(graph: META)
++  itineraryCounts(ipCountryId: Float!, filters: [ItineraryFilterInput!]!): [Float!]!
++    @join__field(graph: META)
++  itinerary(fields: [Fields!]!, ipCountry: String!, id: Float): Itinerary
++    @merge(subgraph: "meta", keyField: "id", keyArg: "id")
++    @join__field(graph: META)
++  itineraries(
++    userId: String
++    recommendationScenario: String
++    withStatsCache: Boolean = false
++    ipCountry: String!
++    page: Float
++    limit: Float
++    order: ItinerarySortOrder
++    viewport: MetaDeviceType
++    filterOrder: FilterOrder
++    inject: [ItineraryInjectName!]! = []
++    injectPosition: Float! = 2
++    filters: ItineraryFilterInput! = { hideSoldOut: true, departureDateInterval: 3 }
++  ): ItinerariesResult! @join__field(graph: META)
++  searchItinerariesWithLoosenedFilters(
++    userId: String
++    recommendationScenario: String
++    withStatsCache: Boolean = false
++    ipCountry: String!
++    page: Float
++    limit: Float
++    order: ItinerarySortOrder
++    viewport: MetaDeviceType
++    filterOrder: FilterOrder
++    inject: [ItineraryInjectName!]! = []
++    injectPosition: Float! = 2
++    filters: ItineraryFilterInput! = { hideSoldOut: true, departureDateInterval: 3 }
++  ): ItinerariesResultWithFallback! @join__field(graph: META)
++  sponsoredItineraries(
++    ipCountry: String!
++    countryId: Float!
++    viewport: MetaDeviceType
++    fields: [Fields!]
++  ): SponsoredItinerariesResult! @cacheControl(maxAge: 600) @join__field(graph: META)
++  findACruiseNLS(search: String!): AnalysedFindACruiseNLS! @join__field(graph: META)
++  findACruiseNLSWithItineraries(
++    search: String!
++    userId: String
++    recommendationScenario: String
++    withStatsCache: Boolean = false
++    ipCountry: String!
++    page: Float
++    limit: Float
++    order: ItinerarySortOrder
++    viewport: MetaDeviceType
++    filterOrder: FilterOrder
++    inject: [ItineraryInjectName!]! = []
++    injectPosition: Float! = 2
++  ): AnalysedFindACruiseNLSWithItineraries! @join__field(graph: META)
++  findACruiseUrls(countryId: Float!): [SitemapUrl!]! @join__field(graph: META)
++  findACruiseDealUrls(
++    viewport: String! = "large"
++    dealType: DealType!
++    countryId: Float!
++  ): [SitemapUrl!]! @join__field(graph: META)
++  lowestPrices(
++    ipCountry: String!
++    page: Float
++    limit: Float
++    order: ItinerarySortOrder
++    viewport: MetaDeviceType
++    filterOrder: FilterOrder
++    inject: [ItineraryInjectName!]! = []
++    injectPosition: Float! = 2
++    filters: LowestPricesInput!
++  ): LowestPrices! @join__field(graph: META)
++  portsItineraryCount(
++    departureDateInterval: Float! = 3
++    ipCountryId: Float!
++    portsId: Float!
++  ): Float! @join__field(graph: META)
++  recommendedArticles(
++    countryId: Float
++    operator: String!
++    type: String!
++    fields: [String!]!
++    search: String!
++  ): [RelatedArticle!] @join__field(graph: META)
++  recommendedReviews(
++    scale: String!
++    operator: String!
++    type: String!
++    fields: [String!]!
++    search: String!
++  ): [RecommendedReview!] @join__field(graph: META)
++  relatedArticles(
++    type: ArticleType = article
++    countryId: Float
++    id: Float
++  ): [RelatedArticleResults!] @join__field(graph: META)
++  relatedArticleFromText(countryId: Float, text: String, id: Float): [RelatedArticleResults!]
++    @join__field(graph: META)
++  reviewsAggregateUrls: [SitemapUrl!]! @join__field(graph: META)
++  sailings(
++    ipCountry: String!
++    page: Float
++    limit: Float
++    order: ItinerarySortOrder
++    viewport: MetaDeviceType
++    filterOrder: FilterOrder
++    inject: [ItineraryInjectName!]! = []
++    injectPosition: Float! = 2
++    useHighestCpcVendor: Boolean
++    hideSoldOut: Boolean! = false
++    sponsoredListingId: Float
++    filters: SailingFilterInput
++    fields: [SailingsFields!]
++    itineraryId: Float!
++  ): Sailings! @cacheControl(maxAge: 0) @join__field(graph: META)
++  sailingsById(
++    ipCountry: String!
++    page: Float
++    limit: Float
++    order: ItinerarySortOrder
++    viewport: MetaDeviceType
++    filterOrder: FilterOrder
++    inject: [ItineraryInjectName!]! = []
++    injectPosition: Float! = 2
++    fields: [SailingFields!]
++    sailingIds: [Float!]!
++  ): [Sailing!]! @cacheControl(maxAge: 0) @join__field(graph: META)
++  sailingsByShipSlugAndDate(
++    ipCountry: String!
++    page: Float
++    limit: Float
++    order: ItinerarySortOrder
++    viewport: MetaDeviceType
++    filterOrder: FilterOrder
++    inject: [ItineraryInjectName!]! = []
++    injectPosition: Float! = 2
++    fields: [SailingsFields!]
++    filters: SailingFilterInput
++    length: Float!
++    departureDate: String!
++    shipSlug: String!
++  ): ItineraryAndSailings! @cacheControl(maxAge: 0) @join__field(graph: META)
++  searchReviews(
++    cruiseMonth: [Float!]
++    subjectId: Float
++    shouldHighlight: Boolean
++    reviewQuery: String
++    highlightPhrase: String
++    offset: Float! = 0
++    limit: Float! = 4
++    maximumRating: Float! = 5
++    minimumRating: Float! = 3
++    subjectIds: [Float!]! = [3]
++    filters: ItineraryFilterInput!
++  ): [SearchReviewsResults!] @join__field(graph: META)
++  searchReviewsWithFilters(
++    offset: Float
++    limit: Float
++    filters: SearchReviewInput!
++  ): SearchReviewResponse! @join__field(graph: META)
++  shipSearch(
++    ipCountry: String!
++    posCountry: PosCountry!
++    page: Float! = 1
++    limit: Float! = 10
++    destinationIds: [Float!]
++    cruiseLineIds: [Float!]
++    viewport: SearchDeviceType!
++    sortBy: ShipSearchSortOrder = Popularity
++  ): ShipSearchResult! @join__field(graph: META)
++  shipMaidenYear(shipId: Float!): Float @join__field(graph: META)
++  shipMaidenDate(shipId: Float!): String @join__field(graph: META)
++  shipPrimaryImage(shipId: Float!): Image @join__field(graph: META)
++  shipsReviews(
++    minimumRating: Float! = 3
++    maximumRating: Float! = 5
++    limit: Float! = 4
++    sortByHelpfulVotes: Boolean! = false
++    """
++    ISO 8601 duration
++    """
++    maxAge: String
++    shipId: Float!
++  ): [SearchReviewsResults!]! @join__field(graph: META)
++  reviewSlugBySlug(owner: ReviewSlugOwners!, slug: String!): ReviewSlugs
++    @join__field(graph: REVIEWS)
++  mraUrl(filters: MraUrlInput!): String @join__field(graph: REVIEWS)
++  mraUrls(filters: [MraUrlInputs!]!): [MraUrl!] @join__field(graph: REVIEWS)
++  review(id: Float!): Reviews @join__field(graph: REVIEWS)
++  reviews(where: ReviewFilterInput! = {}, offset: Float, limit: Float): [Reviews!]!
++    @join__field(graph: REVIEWS)
++  reviewCountByUser(userName: String!): Float! @join__field(graph: REVIEWS)
++  userReviews(imsId: String, userId: Float): [Reviews!]! @join__field(graph: REVIEWS)
++  helpfulVotesByUser(userName: String!): Float! @join__field(graph: REVIEWS)
++  shipsCategoryRating(category: ReviewCategory!, cruiseLineId: Float!, shipId: Float!): Float
++    @join__field(graph: REVIEWS)
++  answers(
++    where: AnswerWhereInput
++    orderBy: [AnswerOrderByWithRelationInput!]
++    cursor: AnswerWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [AnswerScalarFieldEnum!]
++  ): [Answer!]! @join__field(graph: UGC)
++  answer(where: AnswerWhereUniqueInput!): Answer @join__field(graph: UGC)
++  questions(
++    where: QuestionWhereInput
++    orderBy: [QuestionOrderByWithRelationInput!]
++    cursor: QuestionWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [QuestionScalarFieldEnum!]
++  ): [Question!]! @join__field(graph: UGC)
++  question(where: QuestionWhereUniqueInput!): Question @join__field(graph: UGC)
++  reportedReasons(
++    where: ReportedReasonWhereInput
++    orderBy: [ReportedReasonOrderByWithRelationInput!]
++    cursor: ReportedReasonWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [ReportedReasonScalarFieldEnum!]
++  ): [ReportedReason!]! @join__field(graph: UGC)
++  paginatedQuestions(
++    page: Float!
++    limit: Float!
++    where: QuestionWhereInput
++    orderBy: [QuestionOrderByWithRelationInput!]
++    cursor: QuestionWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [QuestionScalarFieldEnum!]
++  ): QuestionsPage! @join__field(graph: UGC)
++  paginatedAnswers(
++    page: Float!
++    limit: Float!
++    where: AnswerWhereInput
++    orderBy: [AnswerOrderByWithRelationInput!]
++    cursor: AnswerWhereUniqueInput
++    take: Int
++    skip: Int
++    distinct: [AnswerScalarFieldEnum!]
++  ): AnswersPage! @join__field(graph: UGC)
++}
++
++type AbTests @join__type(graph: DB, key: "name") {
++  name: String!
++  id: Float!
++  evar: Float!
++  status: Float!
++  urlSite: String
++  url_site: String @deprecated(reason: "Use \"urlSite\"")
++  countryId: Float
++  country_id: Float @deprecated(reason: "Use \"countryId\"")
++  deviceAudience: String!
++  device_audience: String! @deprecated(reason: "Use \"deviceAudience\"")
++  variationForUser: AbTestVariations!
++  variations: [AbTestVariations!]!
++}
++
++type AbTestVariations @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  min: Float!
++  max: Float!
++  status: Float!
++  ccVariationCpmValue: Float!
++}
++
++type Advertorials @join__type(graph: DB) {
++  id: Float!
++  title: String!
++  status: Boolean!
++  cruiseLineId: Float
++  countryId: Float!
++  syndicationId: Float!
++  slug: String!
++  template: String!
++  dateStart: String
++  dateEnd: String
++  guaranteedVisits: Float!
++  vendorName: String
++  updatedAt: DateTimeISO!
++  advertorialAttributes: AdvertorialResponse @cacheControl(maxAge: 0)
++}
++
++type AdvertorialResponse @join__type(graph: DB) {
++  topBanner: AdvertorialBorderBottom
++  blockHeader: AdvertorialBorderBottom
++  primaryBgColor: Color
++  primaryColor: Color
++  secondaryColor: Color
++  seeDetails: Color
++  expandButton: Color
++  ad: AdvertorialAdImage
++  banners: [AdvertorialBanner!]
++  blocks: AdvertorialBlocks
++  blockAd: AdvertorialBlock
++  blockF: AdvertorialBlock
++  blockG: AdvertorialBlock
++  blockSliver: AdvertorialBlock
++  bottomShelf: AdvertorialShelf
++  countdownEnd: String
++  currency: AdvertorialCurrency
++  expandVideo: String
++  experienceRow: ExperienceRow
++  facButton: AdvertorialFacButton
++  footer: AdvertorialFooter
++  callout: AdvertorialCallouts
++  digioh: AdvertorialDigioh
++  hero: AdvertorialMedia
++  horizontal: HorizontalBlocks
++  imageGallery: AdvertorialImageGallery
++  impressionPixel: String
++  intro: AdvertorialIntro
++  main: AdvertorialContent
++  middleHighlight: AdvertorialMedia
++  nav: AdvertorialNavBtn
++  rawCss: String
++  rawJs: String
++  reviews: [String!]
++  reviewsHeader: String
++  secondaryShelf: AdvertorialSecondaryShelf
++  socialLinks: [AdvertorialSocialLink!]
++  sponsoredBy: String
++  sponsoredLogo: String
++  sponsoredLogoWidth: Float
++  showSponsoredLogo: Boolean!
++  showReturnToSeasLogo: Boolean!
++  switches: AdvertorialSwitches
++  taTitleImage: String
++  topShelf: AdvertorialShelf
++  vertical: AdvertorialVerticalBlocks
++  youtubeId: String
++  isImage: Boolean!
++  image: String
++  vendorsFlipclockCss: String
++  vendorsFlipclockMinJs: String
++}
++
++type AdvertorialBorderBottom @join__type(graph: DB) {
++  borderBottom: String
++}
++
++type Color @join__type(graph: DB) {
++  backgroundColor: String
++  color: String
++}
++
++type AdvertorialAdImage @join__type(graph: DB) {
++  href: String
++  image: String
++}
++
++type AdvertorialBanner @join__type(graph: DB) {
++  btnText: String
++  hasSubContent: String
++  subContent: AdvertorialSections
++  href: String
++  image: String
++  title: String
++}
++
++type AdvertorialSections @join__type(graph: DB) {
++  sections: [AdvertorialSection!]
++  title: String
++}
++
++type AdvertorialSection @join__type(graph: DB) {
++  content: [AdvertorialContent!]
++  type: String
++}
++
++type AdvertorialContent @join__type(graph: DB) {
++  title: String
++  text: String
++  description: String
++  href: String
++  image: String
++  type: String
++  showButton: Boolean!
++  buttonText: String
++  buttonLink: String
++  buttonColor: String
++  buttonBackgroundColor: String
++}
++
++type AdvertorialBlocks @join__type(graph: DB) {
++  blockA: AdvertorialBlock
++  blockB: AdvertorialBlock
++  blockC: AdvertorialBlock
++  blockD: AdvertorialBlock
++  blockE: AdvertorialBlock
++  title: AdvertorialBlock
++}
++
++type AdvertorialBlock @join__type(graph: DB) {
++  copy: String
++  header: String
++  href: String
++  image: AdvertorialImage
++  subHeader: String
++  isWeather: String
++  weatherKey: String
++}
++
++type AdvertorialImage @join__type(graph: DB) {
++  id: String
++  options: AdvertorialOptions
++}
++
++type AdvertorialOptions @join__type(graph: DB) {
++  height: String
++  width: String
++}
++
++type AdvertorialShelf @join__type(graph: DB) {
++  mediaPosition: String
++  rows: [AdvertorialShelfRow!]
++  sideByButtonBackgroundColor: String
++  sideByButtonTextColor: String
++  sideByTagColor: String
++  sideByHeaderColor: String
++}
++
++type AdvertorialShelfRow @join__type(graph: DB) {
++  description: String
++  header: String
++  href: String
++  linkText: String
++  media: AdvertorialShelfMedia
++  tag: String
++  image: String
++}
++
++type AdvertorialShelfMedia @join__type(graph: DB) {
++  image: String
++  isImage: String
++  youtubeId: String
++}
++
++type AdvertorialCurrency @join__type(graph: DB) {
++  name: String
++  symbol: String
++}
++
++type ExperienceRow @join__type(graph: DB) {
++  btnText: String
++}
++
++type AdvertorialFacButton @join__type(graph: DB) {
++  href: String
++  name: String
++  path: String
++  text: String
++}
++
++type AdvertorialFooter @join__type(graph: DB) {
++  image: String
++  logo: String
++  logoHeight: String
++  mainDescription: String
++  subDescription: String
++  title: String
++}
++
++type AdvertorialCallouts @join__type(graph: DB) {
++  title: String
++  reviewLink: String
++  cruiseLink: String
++  tipLink: String
++  boardLink: String
++}
++
++type AdvertorialDigioh @join__type(graph: DB) {
++  surveyID: String
++  emailID: String
++}
++
++type AdvertorialMedia @join__type(graph: DB) {
++  description: String
++  header: String
++  image: String
++  isSlideShow: String
++  linkText: String
++  href: String
++  logo: AdvertorialLogo
++  mediaPosition: String
++  mediaPositon: String
++  review: String
++  slideShow: AdvertorialSlideShow
++  title: String
++  titleBackground: Boolean!
++  titleBackgroundColor: String
++  titleBackgroundTextColor: String
++  positions: Float
++}
++
++type AdvertorialLogo @join__type(graph: DB) {
++  text: String
++  id: String
++}
++
++type AdvertorialSlideShow @join__type(graph: DB) {
++  autoPlay: String
++  slides: [String!]
++  slideTransitionTime: String
++}
++
++type HorizontalBlocks @join__type(graph: DB) {
++  blocks: [AdvertorialContent!]
++}
++
++type AdvertorialImageGallery @join__type(graph: DB) {
++  header: String
++  images: [AdvertorialContent!]
++}
++
++type AdvertorialIntro @join__type(graph: DB) {
++  description: String
++  header: String
++  youtubeId: String
++}
++
++type AdvertorialNavBtn @join__type(graph: DB) {
++  title: String
++  backgroundColor: String
++  linkTextColor: String
++  btns: [AdvertorialContent!]
++}
++
++type AdvertorialSecondaryShelf @join__type(graph: DB) {
++  header: String
++  items: [AdvertorialShelfRow!]
++}
++
++type AdvertorialSocialLink @join__type(graph: DB) {
++  href: String
++  network: String
++}
++
++type AdvertorialSwitches @join__type(graph: DB) {
++  comingSoon: String
++  countdownClock: String
++  experienceRow: String
++  footer: String
++}
++
++type AdvertorialVerticalBlocks @join__type(graph: DB) {
++  blocks: [AdvertorialVerticalBlockItems!]
++}
++
++type AdvertorialVerticalBlockItems @join__type(graph: DB) {
++  buttonText: String
++  descriptionPreview: String
++  href: String
++  image: String
++  price: String
++  title: String
++}
++
++type SitemapUrl @join__type(graph: DB) @join__type(graph: META) {
++  url: String!
++  lastModified: String!
++}
++
++type CruiseTips @join__type(graph: DB) {
++  whatToKnow: [Articles!]!
++  destinationGuides: [Articles!]!
++  shipAndCruiseLine: [Articles!]!
++}
++
++type PopularityStats @join__type(graph: DB) {
++  min: Float!
++  max: Float!
++}
++
++type UserResponse @join__type(graph: DB) {
++  user: User
++  errors: FieldError
++  tokens: UserTokens
++  debug: String
++}
++
++type User @join__type(graph: DB) {
++  id: String!
++  username: String!
++  email: String!
++  dob: String!
++  verified: Boolean!
++  requiresModeration: Boolean!
++  level: Float!
++}
++
++type FieldError @join__type(graph: DB) {
++  path: String!
++  message: String!
++}
++
++type UserTokens @join__type(graph: DB) {
++  access: String
++  refresh: String
++}
++
++type CabinCategory @join__type(graph: DB) {
++  id: Float!
++  cabinTypeId: Float
++  categoryName: String
++  categoryCode: String
++  imageUrl: String
++  categoryColor: String
++  description: String
++  shipId: Float
++  slug: String
++  averageMemberRating: Float
++  totalMemberReviews: Float
++  providerId: Float
++  shipVersion: Float
++  decks: [Deck!]
++}
++
++type CabinDetailResponse @join__type(graph: DB) {
++  shipId: Float
++  balcony: CabinDetail
++  inside: CabinDetail
++  outside: CabinDetail
++  suite: CabinDetail
++}
++
++type CabinDetail @join__type(graph: DB) {
++  cabinTypeId: Float
++  sizeMin: Float
++  sizeMax: Float
++  connected: Float
++  accessible: Float
++  passengers: Float
++  total: Float
++}
++
++type CabinTypes
++  @join__type(graph: DB, key: "id")
++  @join__type(graph: META, key: "id", extension: true) {
++  id: Float!
++  name: String @join__field(graph: DB)
++  slug: String @join__field(graph: DB)
++}
++
++type CheckPriceVendors @join__type(graph: DB) {
++  id: Float!
++  billingCurrencyId: Float!
++  cpc(input: CpcInput!): String!
++  billingCurrency: String!
++}
++
++type ContentBlockItems @join__type(graph: DB, key: "contentBlockId") {
++  contentBlockId: String!
++  id: Float!
++  content_block_id: String! @deprecated(reason: "Use \"contentBlockId\"")
++  key: String!
++  value: String!
++  countryId: Float!
++  country_id: Float! @deprecated(reason: "Use \"countryId\"")
++}
++
++type ContentBlocks @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  updatedAt: DateTimeISO!
++  updated_at: DateTimeISO! @deprecated(reason: "Use \"updatedAt\"")
++}
++
++type ContentHub
++  @join__type(graph: DB, key: "urlSlug")
++  @join__type(graph: DB, key: "countryId")
++  @join__type(graph: DB, key: "primarySubjectReferenceId") {
++  urlSlug: String!
++  countryId: Float!
++  primarySubjectReferenceId: Float
++  id: Float!
++  route: String!
++  title: String!
++  keyTargeting: String
++  metaKeywords: String
++  metaDescription: String
++  primarySubjectId: Float
++  headlineTitle: String!
++  populationType: ContentHubPopulationType!
++  status: Float!
++  syndicationId: Float!
++  topContentHero: String
++  topContentVideo: String
++  topContentBody: String
++  topContentHeadline: String
++  primaryHeadLine: String
++  primaryPhoto: String
++  primaryBody: String
++  primaryLink: String
++  listOrder: String
++  listType: ListType
++  createdAt: DateTimeISO!
++  contentHubBlocks: [ContentHubBlocks!] @cacheControl(maxAge: 0)
++  contentHubArticles: [ContentHubArticles!] @cacheControl(maxAge: 0)
++  subjects(types: [SubjectType!]!): [ISubject!] @cacheControl(maxAge: 0)
++}
++
++type ContentHubBlocks @join__type(graph: DB) {
++  id: Float!
++  contentHubId: Float!
++  title: String!
++  imageUrl: String!
++  body: String!
++  linkUrl: String
++  sortOrder: Float!
++}
++
++type ContentHubArticles @join__type(graph: DB) {
++  id: Float!
++  contentHubId: Float!
++  articleId: Float!
++}
++
++type BucketedCountryMapping @join__type(graph: DB) {
++  type: CountryMappingType!
++  bucketedCountryCode: CountryCode
++  bucketedCountry: Countries
++}
++
++type CruisersChoiceDestinationAwards @join__type(graph: DB) {
++  imageUrl: String
++  caption: String
++  size: String
++  userName: String
++  extraData: String
++  shipName: String
++  cruiseLineName: String
++  portName: String
++  portId: Float
++  portSlug: String
++  categoryName: String
++  title: String
++}
++
++type DealAdvertisers @join__type(graph: DB) {
++  id: Float!
++  name: String!
++  hasAccess: Float!
++  countryId: Float!
++  isLuxury: Float!
++}
++
++type DealNewsletterLinks @join__type(graph: DB) {
++  id: Float!
++  advertiserId: Float
++  advertiser: DealAdvertisers
++  title: String
++  url: String
++  promoImageUrl: String
++  destinationId: Float
++  destination: Destinations
++  shipId: Float
++  ship: Ships
++  sailDate: DateTimeISO
++  submissionDate: DateTimeISO
++  firstName: String
++  lastName: String
++  phoneNumber: String
++  emailAddress: String
++  isVerified: Float
++  isArchived: Float
++  isLuxury: Float
++  startDate: DateTimeISO
++  endDate: DateTimeISO
++  countryId: Float
++  ipAddress: String
++  status: Float
++  isTransatlantic: Boolean!
++  isWorldwide: Boolean!
++}
++
++type DealPromos @join__type(graph: DB, key: "id") @join__type(graph: DB, key: "dealPromoTypeId") {
++  id: Float!
++  dealPromoTypeId: Float!
++  title: String
++  snippet: String
++  url: String
++}
++
++type FacHeroImage @join__type(graph: DB) {
++  id: Float!
++  advertiserName: String!
++  imageId: Float!
++  contentPosition: String!
++  reviewSnippet: String!
++  memberName: String!
++  rating: Float!
++  readMoreLabel: String
++  url: String
++  impressionPixel: String
++}
++
++type HeroImage @join__type(graph: DB, key: "imageId") @join__type(graph: DB, key: "rating") {
++  imageId: Float!
++  rating: Float
++  description: String
++  imageDescription: String
++  imageTitle: String!
++  position: String!
++  review: Reviews
++  advertorial: HeroImageAdvertorial
++}
++
++type HeroImageAdvertorial @join__type(graph: DB) {
++  author: String
++  rating: Float
++  adUrl: String
++  attribution: String
++  label: String
++  pixel: String
++}
++
++type ListItems
++  @join__type(graph: DB, key: "listId")
++  @join__type(graph: DB, key: "countryId")
++  @join__type(graph: DB, key: "extraData") {
++  listId: Float
++  countryId: Float!
++  extraData: String
++  id: Float!
++  description: String
++  url: String
++  subjectId: Float
++  subjectReferenceId: Float
++  sortOrder: Float!
++  status: Float!
++  imageUrl: String
++  title: String
++  image: String
++  destination: Destinations
++  departurePort: DeparturePorts
++  port: Ports
++  ship: Ships
++  cruiseLine: CruiseLines
++}
++
++type NewsPromos @join__type(graph: DB) {
++  id: Float!
++  title: String
++  snippet: String
++  url: String
++  imageUrl: String
++  relatedLinks: String
++  countryId: Float
++  status: Float
++}
++
++type PackageTypes @join__type(graph: DB, key: "id") @join__type(graph: DB, key: "type") {
++  id: Float!
++  type: PackageType!
++  name: String!
++}
++
++type PointOfSale @join__type(graph: DB) {
++  countryId: Float!
++  country: String!
++  currency: String!
++  currencySymbol: String!
++}
++
++type Polls @join__type(graph: DB) {
++  id: Float!
++  title: String
++  createdAt: DateTimeISO
++  options: [PollOptions!]!
++  totalVotes: Float!
++}
++
++type PollOptions @join__type(graph: DB) {
++  id: Float!
++  pollId: Float
++  title: String
++  sortOrder: Float
++  """
++  Percentage of the total votes in the poll that are for this option
++  """
++  totalVotes: Float
++}
++
++type PriceAlerts @join__type(graph: DB) {
++  sailingId: Float!
++  cabinTypeId: Float!
++  filters: [PriceAlertSubscriptionFilters!]!
++  prices: PriceAlertPrices!
++  sailing: StoredSailings!
++}
++
++type PriceAlertSubscriptionFilters @join__type(graph: DB) {
++  subjectId: Float
++  subjectReferenceId: String
++}
++
++type PriceAlertPrices @join__type(graph: DB) {
++  price: String!
++}
++
++type PriceAlertSubscribers @join__type(graph: DB) {
++  id: Float!
++  countryId: Float!
++  email: String!
++  createdAt: DateTimeISO!
++  subscriptions: [PriceAlertSubscriptions!]!
++}
++
++type PriceAlertSubscriptions @join__type(graph: DB) {
++  id: Float!
++  priceAlertSubscriberId: Float!
++  status: Float!
++  createdAt: DateTimeISO!
++  updatedAt: DateTimeISO!
++  name: String!
++}
++
++type QuizCruiseTags @join__type(graph: DB) {
++  id: Float!
++  tag: String!
++  cruiseLineId: Float
++  destinationId: Float
++  isRiver: Float
++}
++
++type RecommendedItineraries @join__type(graph: DB) {
++  recommId: String!
++  currency: Currency!
++  recommendations: [RecommendedItinerary!]!
++}
++
++type RecommendedItinerary @join__type(graph: DB) {
++  id: Float!
++  title: String!
++  available: Boolean!
++  avgPricePerNight: Float
++  country: [CountryCode!]!
++  cruiseLineId: Float!
++  cruiseLineImageUrl: String
++  cruiseLineName: String!
++  cruiseType: String!
++  departureLatitude: String!
++  departureLongitude: String!
++  departurePortId: Float!
++  departurePortImageUrl: String
++  departurePortName: String!
++  destinationIds: [Float!]!
++  destinationImageUrl: String
++  destinationNames: [String!]!
++  leadPrice: Float
++  length: Float!
++  portIds: [Float!]!
++  portNames: [String!]!
++  shipAverageMemberRating: Float!
++  shipId: Float!
++  shipImageUrl: String
++  shipMaidenYear: Float!
++  shipName: String!
++  shipProMemberRating: Float!
++  shipSizeCategory: String!
++  shipStyles: [String!]!
++  shipTotalMemberReviews: Float!
++  tags: [String!]!
++  type: String!
++  url: String
++}
++
++type RecommendedFACSearches @join__type(graph: DB) {
++  recommId: String!
++  recommendations: [RecommendedFACSearch!]!
++}
++
++type RecommendedFACSearch @join__type(graph: DB) {
++  id: String!
++  title: String
++  url: String
++}
++
++type RecommendedItinerariesBatchResponse @join__type(graph: DB) {
++  responses: [RecommendedItinerariesBatch!]!
++}
++
++type RecommendedItinerariesBatch @join__type(graph: DB) {
++  scenario: String!
++  segment: RecommendationSegment
++  recommId: String
++  currency: Currency!
++  recommendations: [RecommendedItinerary!]
++}
++
++type RecommendationSegment @join__type(graph: DB) {
++  id: String!
++  title: String
++}
++
++type RecommendedStories @join__type(graph: DB) {
++  recommId: String!
++  recommendations: [RecommendedStory!]!
++}
++
++type RecommendedStory @join__type(graph: DB) {
++  id: String!
++  authors: [String!]
++  available: Boolean
++  country: [CountryCode!]
++  cruiseLineId: Float
++  cruiseLineImageUrl: String
++  cruiseLineName: String
++  destinationId: Float
++  destinationIds: [Float!]
++  destinationImageUrl: String
++  excerpt: String
++  destinationNames: [String!]
++  shipId: Float
++  shipImageUrl: String
++  shipIds: [Float!]
++  portIds: [Float!]
++  portNames: [String!]
++  shipName: String
++  shipStyles: [String!]
++  type: String
++  title: String
++  tags: [String!]
++  isNegative: Boolean
++  url: String
++  primaryImage: String
++  images: [String!]
++  readingTime: Float
++  published: String
++}
++
++type Redirects @join__type(graph: DB) {
++  id: Float!
++  toUrl: String!
++  fromUrl: String!
++  countryId: Float!
++}
++
++type ReviewStats @join__type(graph: DB) {
++  count: Float!
++}
++
++type SailingFees @join__type(graph: DB) {
++  sailingId: Float!
++  cabinTypeId: Float!
++  countryId: Float!
++  providerId: Float!
++  fees: Float!
++  taxes: Float!
++}
++
++type SearchAutocompleteOptions @join__type(graph: DB) {
++  destination: [SearchAutocompleteOption!]!
++  oysterImage: [SearchAutocompleteOption!]!
++  article: [SearchAutocompleteOption!]!
++  port: [SearchAutocompleteOption!]!
++  ship: [SearchAutocompleteOption!]!
++  cruiseLine: [SearchAutocompleteOption!]!
++  page: [SearchAutocompleteOption!]!
++}
++
++type SearchAutocompleteOption @join__type(graph: DB) {
++  id: String!
++  type: String!
++  text: String!
++  highlight: String!
++  href: String!
++  links: [SearchAutocompleteLink!]!
++  score: Float!
++}
++
++type SearchAutocompleteLink @join__type(graph: DB) {
++  text: String!
++  href: String!
++}
++
++type ViatorUrl @join__type(graph: DB) {
++  url: String!
++  checksum: String!
++}
++
++type Excursion @join__type(graph: DB) {
++  productCode: String
++  title: String
++  description: String
++  averageRating: Float
++  totalReviews: Float
++  images: [ExcursionImage!]
++  pricing: ExcursionPricing
++  productUrl: String
++  checksum: String
++  tags: [String!]
++  flags: [String!]
++  isCached: Boolean!
++}
++
++type ExcursionImage @join__type(graph: DB) {
++  variants: [ExcursionImageVariant!]
++  caption: String
++}
++
++type ExcursionImageVariant @join__type(graph: DB) {
++  width: Float
++  height: Float
++  url: String
++}
++
++type ExcursionPricing @join__type(graph: DB) {
++  fromPrice: Float
++  currency: String
++}
++
++type SponsoredContent
++  @join__type(graph: DB, key: "urlSlug")
++  @join__type(graph: DB, key: "countryId") {
++  urlSlug: String!
++  countryId: Float!
++  id: Float!
++  title: String!
++  sponsoredBy: String
++  sponsoredByUrl: String
++  keyTargeting: String
++  imageUrl: String!
++  body: String
++  templateType: String!
++  status: Float!
++  syndicationId: Float!
++  cruiseLineId: Float
++  endDate: String
++  impressionPixel: String
++  sponsoredContentBlocks: [SponsoredContentBlocks!]
++}
++
++type SponsoredContentBlocks @join__type(graph: DB) {
++  id: Float!
++  sponsoredContentId: Float!
++  title: String!
++  imageUrl: String!
++  body: String!
++  linkUrl: String
++  sortOrder: Float!
++}
++
++type Widgets @join__type(graph: DB) {
++  id: Float!
++  type: String!
++  data: String
++  subjectId: Float
++  subjectReferenceId: Float
++}
++
++type Mutation @join__type(graph: DB) @join__type(graph: REVIEWS) @join__type(graph: UGC) {
++  createAdRequest(input: AdRequestInput!): AdRequestResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  updatePopularity(articleSnippets: BulkSnippetUpdate!, countryId: Float!): StatusMessageResponse!
++    @join__field(graph: DB)
++  createArticle(data: ArticleInput!): Articles! @join__field(graph: DB)
++  updateArticle(data: UpdateArticleInput!, id: Float!): Articles! @join__field(graph: DB)
++  deleteArticle(id: Float!): Articles! @join__field(graph: DB)
++  publishArticle(id: Float!): Boolean! @join__field(graph: DB)
++  updateArticleVersions(data: UpdateArticleVersionsInput!, id: Float!): ArticleVersions!
++    @join__field(graph: DB)
++  register(
++    recaptchaToken: String!
++    dateOfBirth: DateTimeISO!
++    username: String!
++    password: String!
++    email: String!
++  ): AccountResponse! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  verify(sendEmail: Boolean!, hash: String!): Boolean!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  login(domain: String, input: AuthInput!): UserResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  logout(domain: String): AccountResponse! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  resetPassword(password: String!, hash: String!): AccountResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  forgotPassword(email: String!): AccountResponse! @cacheControl(maxAge: 0) @join__field(graph: DB)
++  changePassword(newPassword: String!, oldPassword: String!, email: String!): AccountResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  updateContentHubBlock(contentHubBlock: [ContentHubBlockInput!]!): StatusMessageResponse!
++    @join__field(graph: DB)
++  createContentHubBlock(contentHubBlock: [ContentHubBlockInput!]!): StatusMessageResponse!
++    @join__field(graph: DB)
++  updateContentHub(contentHub: ContentHubInput!, contentHubId: Float!): StatusMessageResponse!
++    @join__field(graph: DB)
++  createContentHub(contentHub: ContentHubInput!): StatusMessageResponse! @join__field(graph: DB)
++  deleteContentHubArticles(contentHubId: Float!): StatusMessageResponse! @join__field(graph: DB)
++  createContentHubArticles(
++    contentHubArticleId: Float!
++    contentHubId: Float!
++  ): StatusMessageResponse! @join__field(graph: DB)
++  createContentHubRelationships(
++    relationships: [ContentHubRelationshipSubjectInput!]!
++    contentHubId: Float!
++  ): StatusMessageResponse! @join__field(graph: DB)
++  upsertDealNewsletterLink(input: DealNewsletterLinkInput!): GenericResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  createDealPromo(input: DealPromoInput!): GenericResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  submitFeedback(input: SubmitFeedbackInput!): SubmitFeedbackResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  newsletterSubscribe(
++    email: String!
++    referer: String!
++    type: String!
++    siteOrigin: String!
++    sourcePage: String!
++    templateName: String!
++    ipCountry: String!
++    tpUuid: String!
++    ip: String
++  ): Boolean! @join__field(graph: DB)
++  updateNewsletterSubscription(
++    email: String!
++    type: String!
++    referer: String!
++    queryString: String
++  ): Boolean! @join__field(graph: DB)
++  addPollResult(optionId: Float!, pollId: Float!): Boolean! @join__field(graph: DB)
++  unsubscribeFromPriceAlert(hashedEmail: String!, subscriptionId: Float!): PriceAlertSubscriptions
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  addPriceAlertSubscription(input: PriceAlertSubscriptionInput!): PriceAlertSubscriptionResponse!
++    @cacheControl(maxAge: 0)
++    @join__field(graph: DB)
++  reportUserImage(reason: String!, userImageId: Float!): Boolean! @join__field(graph: DB)
++  addMemberPhoto(domain: String, photos: [MemberPhotoInput!]!, reviewId: Float!): Boolean!
++    @join__field(graph: DB)
++  addHelpfulVote(domain: String, reviewId: Float!): Boolean! @join__field(graph: REVIEWS)
++  indexReview(id: Float!): Boolean! @join__field(graph: REVIEWS)
++  updateReviewsMapping: Boolean! @join__field(graph: REVIEWS)
++  createReview(domain: String, data: ReviewCreateInput!): Reviews! @join__field(graph: REVIEWS)
++  addReviewEntries(domain: String, inputs: [ReviewEntryInput!]!, reviewId: Float!): Boolean!
++    @join__field(graph: REVIEWS)
++  updateReview(data: ReviewUpdateInput!, id: Float!): Reviews! @join__field(graph: REVIEWS)
++  createQuestion(data: QuestionCreateInput!): Question! @join__field(graph: UGC)
++  updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
++    @join__field(graph: UGC)
++  reportQuestion(questionId: Float!, description: String!, reasonId: Float!): Boolean!
++    @join__field(graph: UGC)
++  createAnswer(data: AnswerCreateInput!): Answer! @join__field(graph: UGC)
++  updateAnswer(data: AnswerUpdateInput!, where: AnswerWhereUniqueInput!): Answer
++    @join__field(graph: UGC)
++  reportAnswer(answerId: Float!, description: String!, reasonId: Float!): Boolean!
++    @join__field(graph: UGC)
++}
++
++type AdRequestResponse @join__type(graph: DB) {
++  message: String
++  success: Boolean!
++}
++
++type StatusMessageResponse @join__type(graph: DB) {
++  message: String
++  success: Boolean!
++}
++
++type AccountResponse @join__type(graph: DB) {
++  success: Boolean!
++  errors: [FieldError!]
++}
++
++type GenericResponse @join__type(graph: DB) {
++  message: String!
++  success: Boolean!
++}
++
++type SubmitFeedbackResponse @join__type(graph: DB) {
++  success: Boolean
++  errors: String
++}
++
++type PriceAlertSubscriptionResponse @join__type(graph: DB) {
++  success: Boolean
++  message: String
++  subscriptionId: Float
++}
++
++type ProviderDealBenefitTypes @join__type(graph: META, key: "id", extension: true) {
++  id: String!
++}
++
++type Itinerary @join__type(graph: META, key: "id") {
++  id: Float!
++  title: String!
++  length: Float!
++  isSponsored: Boolean!
++  sponsoredListingId: Float
++  sponsoredVendorId: Float
++  impressionPixel: String
++  score: Float!
++  sponsoredFeaturedDealId: Float
++  ship: ItineraryShip!
++  cruiseLine: ItineraryCruiseLine!
++  destination: ItineraryDestination!
++  arrivalPort: ItineraryPort!
++  departurePort: ItineraryPort!
++  itinerary: Schedule!
++  departurePorts: ItineraryDeparturePorts!
++  sailings: Sailings
++  allSailings: Sailings
++  lowestPricedSailing: Sailing
++  dealSailing: Sailing
++  injectName: ItineraryInjectName
++}
++
++type ItineraryFieldSnippets @join__type(graph: META) {
++  totalResults: Float!
++  results: [String!]!
++}
++
++type ItineraryFieldImage @join__type(graph: META) {
++  id: Float!
++  format: String!
++  ratios: [Float!]!
++}
++
++type ShipInclusions @join__type(graph: META) {
++  totalResults: Float!
++  results: [ShipInclusion!]!
++}
++
++type ShipInclusion @join__type(graph: META) {
++  name: String!
++  value: String!
++  description: String
++}
++
++type ItineraryCruiseLine @join__type(graph: META) {
++  id: Float!
++  name: String
++  shortName: String
++  slug: String
++  iconUrl: String
++  logoUrl: String
++  tier: CruiseLineTier
++  snippets: ItineraryFieldSnippets!
++  image: ItineraryFieldImage
++}
++
++type ItineraryDestination @join__type(graph: META) {
++  id: Float!
++  name: String!
++  seoName: String!
++  imageUrl: String!
++  image: ItineraryFieldImage!
++  taLocationId: Float
++}
++
++type Schedule @join__type(graph: META) {
++  totalResults: Float!
++  results: [Day!]!
++}
++
++type Day @join__type(graph: META) {
++  day: Float!
++  port: ItineraryPort!
++}
++
++type ItineraryDeparturePorts @join__type(graph: META) {
++  totalResults: Float!
++  results: [ItineraryDeparturePort!]!
++}
++
++type ItineraryDeparturePort @join__type(graph: META) {
++  id: Float!
++  name: String!
++  portId: Float!
++}
++
++type Sailings @join__type(graph: META) {
++  totalResults: Float!
++  results: [Sailing!]!
++}
++
++type Sailing @join__type(graph: META) {
++  id: Float!
++  departureDate: String!
++  meta: Meta
++  lowestPrice: LowestPriceWithVendor
++}
++
++type Meta @join__type(graph: META) {
++  currency: String!
++  totalResults: Float!
++  results: [MetaItem!]!
++}
++
++type MetaItem @join__type(graph: META) {
++  vendor: MetaVendor!
++  prices: MetaPrices!
++}
++
++type MetaVendor @join__type(graph: META) {
++  id: Float!
++  name: String!
++  imageUrl: String!
++  phoneNumber: String
++  c2cTracker: String
++}
++
++type MetaPrices @join__type(graph: META) {
++  totalResults: Float!
++  results: [MetaPrice!]!
++}
++
++type MetaPrice @join__type(graph: META) {
++  cabinType: MetaCabinType!
++  price: String!
++  priceFormatted: String!
++  packageType: PackageType
++  packageTypeFormatted: String
++  url: String!
++  sponsoredFeatureDealUrls: [String!]!
++  bonusOffers: ItineraryFieldSnippets!
++  highestPrice: String!
++  highestPriceFormatted: String!
++  pricePerNight: String!
++  pricePerNightFormatted: String!
++  deals: Deals
++}
++
++type MetaCabinType @join__type(graph: META) {
++  id: Float!
++  name: SailingCabinType!
++}
++
++type Deals @join__type(graph: META) {
++  totalResults: Float!
++  results: [Deal!]!
++}
++
++type Deal @join__type(graph: META) {
++  vendor: MetaVendor!
++  dropPercentage: Float!
++  pricePerNight: Float!
++  type: String!
++  pricing: DealPricing!
++  cabinTypeId: Float!
++  dealType: String!
++  pricePerNightFormatted: String!
++}
++
++type DealPricing @join__type(graph: META) {
++  highestPrice14: Float!
++  sponsoredListingUrls: [String!]!
++  boostFactorCpc: Float
++  price: Float!
++  sponsoredFeaturedDealUrls: [String!]!
++  cpc: String!
++  pricePerNight: Float!
++  highestPrice: Float!
++  bonusOffers: [String!]!
++  cabinType: MetaCabinType!
++  packageType: PackageType!
++  url: String!
++}
++
++type LowestPriceWithVendor @join__type(graph: META) {
++  price: MetaPrice!
++  vendor: MetaVendor!
++}
++
++type BonusOfferCategorization
++  @join__type(graph: META, key: "id")
++  @join__type(graph: META, key: "offerString") {
++  id: String
++  offerString: String
++  benefitType: ProviderDealBenefitTypes
++}
++
++type CabinTypeAggsResult @join__type(graph: META) {
++  cabinTypeId: Float!
++  totalReviews: Float!
++  averageMemberRating: Float!
++}
++
++type CruiseLineRelatedLinks @join__type(graph: META) {
++  ship: CruiseLineShip!
++  departurePorts: [CruiseLineDeparturePort!]!
++  destinations: [CruiseLineDestination!]!
++}
++
++type ItinerariesResult @join__type(graph: META) {
++  totalResults: Float!
++  results: [Itinerary!]
++  filters: ItineraryFilters
++  stats: ItineraryStats
++  brandBox: BrandBox
++  facHero: FacHero
++  currency: Currency!
++  recommId: String
++}
++
++type ItineraryFilters @join__type(graph: META) {
++  destinations: DestinationItineraryFilterSet!
++  lifestyles: LifestyleItineraryFilterSet!
++  cruiseLines: CruiseLineItineraryFilterSet!
++  ships: ShipItineraryFilterSet!
++  departurePorts: DeparturePortItineraryFilterSet!
++  arrivalPorts: ArrivalPortItineraryFilterSet!
++  roundTrip: RoundTripItineraryFilterSet!
++  ports: PortItineraryFilterSet!
++  lengths: LengthItineraryFilterSet!
++  departureMonths: DepartureMonthItineraryFilterSet!
++  deals: DealItineraryFilterSet!
++  packageTypes: PackageTypeItineraryFilterSet!
++  cabinTypes: CabinTypeItineraryFilterSet!
++  bonusOffers: BonusOffersItineraryFilterSet!
++  price: PriceFilter!
++}
++
++type DestinationItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [DestinationItineraryFilter!]!
++}
++
++type DestinationItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type LifestyleItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [LifestyleItineraryFilter!]!
++}
++
++type LifestyleItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type CruiseLineItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [CruiseLineItineraryFilter!]!
++}
++
++type CruiseLineItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type ShipItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [ShipItineraryFilter!]!
++}
++
++type ShipItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type DeparturePortItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [DeparturePortItineraryFilter!]!
++}
++
++type DeparturePortItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type ArrivalPortItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [ArrivalPortItineraryFilter!]!
++}
++
++type ArrivalPortItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type RoundTripItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [RoundTripItineraryFilter!]!
++}
++
++type RoundTripItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type PortItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [PortItineraryFilter!]!
++}
++
++type PortItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type LengthItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [LengthItineraryFilter!]!
++}
++
++type LengthItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type DepartureMonthItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [DepartureMonthItineraryFilter!]!
++}
++
++type DepartureMonthItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type DealItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [DealItineraryFilter!]!
++}
++
++type DealItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type PackageTypeItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [PackageTypeItineraryFilter!]!
++}
++
++type PackageTypeItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type CabinTypeItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [CabinTypeItineraryFilter!]!
++}
++
++type CabinTypeItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type BonusOffersItineraryFilterSet @join__type(graph: META) {
++  totalResults: Float!
++  results: [BonusOfferItineraryFilter!]!
++}
++
++type BonusOfferItineraryFilter @join__type(graph: META) {
++  id: String!
++  name: String!
++  totalResults: Float!
++  lowestPrice: Float
++}
++
++type PriceFilter @join__type(graph: META) {
++  min: Float!
++  max: Float!
++}
++
++type ItineraryStats @join__type(graph: META) {
++  filters: FilterStats
++  deals: DealStats
++  pricing: PricingStats!
++  pricingPerMonth: [PricingPerMonth!]!
++  itineraries: ItinerariesStats
++  isCached: Boolean!
++  cachedAt: DateTimeISO
++}
++
++type FilterStats @join__type(graph: META) {
++  topLengthName: String!
++  topDealIds: [String!]!
++  topLengthIds: [String!]!
++  departureMonths: [FilterStatsDepartureMonth!]!
++  topDestinationIds: [String!]!
++  topCruiseStyleIds: [String!]!
++  topCruiseLinesIds: [String!]!
++  topShipIds: [String!]!
++  topDeparturePortsIds: [String!]!
++  topPortsIds: [String!]!
++}
++
++type FilterStatsDepartureMonth @join__type(graph: META) {
++  id: String!
++  name: String!
++}
++
++type DealStats @join__type(graph: META) {
++  maxDropPercentage: Float!
++}
++
++type PricingStats @join__type(graph: META) {
++  minPrice: Float!
++  minPriceFormatted: String
++  maxPrice: Float!
++  maxPriceFormatted: String!
++  minPricePerNight: Float!
++  minPricePerNightFormatted: String!
++  maxPricePerNight: Float!
++}
++
++type PricingPerMonth @join__type(graph: META) {
++  departureMonth: String!
++  totalResults: Float!
++  minPrice: Float!
++  minPriceFormatted: String!
++}
++
++type ItinerariesStats @join__type(graph: META) {
++  averageLength: Float
++}
++
++type BrandBox @join__type(graph: META) {
++  id: Float
++  mainImageId: Float
++  header: String
++  subHeader: String
++  bullets: [String]
++  vendor: BrandBoxVendor!
++  callToAction: String
++  url: String
++  impressionTracker: String
++}
++
++type BrandBoxVendor @join__type(graph: META) {
++  id: Float
++  name: String
++  salesforceName: String
++  logoUrl: String
++  imageId: Float
++}
++
++type FacHero @join__type(graph: META) {
++  id: Float!
++  advertiserName: String
++  imageId: Float
++  contentPosition: String!
++  reviewSnippet: String!
++  memberName: String!
++  rating: Float!
++  readMoreLabel: String
++  url: String
++  impressionPixel: String
++}
++
++type ItinerariesResultWithFallback @join__type(graph: META) {
++  result: ItinerariesResult
++  fallbackResult: ItinerariesResult
++  fallbackFilterSet: NLSItineraryFiltersInput
++}
++
++type NLSItineraryFiltersInput @join__type(graph: META) {
++  length: [String!]
++  departureDate: String
++  hideSoldOut: Boolean!
++  destinationId: [Float!]
++  itineraryId: Float
++  cruiseLineId: [Float!]
++  shipId: [Float!]
++  portId: [Float!]
++  departurePortId: [Float!]
++  cruiseStyleId: [Float!]
++  departureDateEnd: String
++  departureDateInterval: Float!
++  minPrice: Float
++  maxPrice: Float
++  cabinTypeId: Float
++  cabinType: CabinType
++  hasPricingAvailable: Float
++  includeSponsoredItinerary: Boolean
++  lowestPriceNumberOfSailings: Float
++  fields: [Fields!]
++}
++
++type SponsoredItinerariesResult @join__type(graph: META) {
++  items: [Itinerary!]
++}
++
++type AnalysedFindACruiseNLS @join__type(graph: META) {
++  querySummary: String!
++  intent: NLSIntent!
++  filterInput: NLSItineraryFiltersInput!
++  order: NLSItinerarySortOrder
++  unknownFilters: NLSUnknownItineraryFiltersInput!
++}
++
++type NLSUnknownItineraryFiltersInput @join__type(graph: META) {
++  destination: [String!]
++  departurePort: [String!]
++  cruiseLine: [String!]
++  ship: [String!]
++}
++
++type AnalysedFindACruiseNLSWithItineraries @join__type(graph: META) {
++  querySummary: String!
++  intent: NLSIntent!
++  filterInput: NLSItineraryFiltersInput!
++  order: NLSItinerarySortOrder
++  unknownFilters: NLSUnknownItineraryFiltersInput!
++  itineraries: ItinerariesResult
++  isFallback: Boolean
++}
++
++type LowestPrices @join__type(graph: META) {
++  results: [LowestPrice!]!
++}
++
++type LowestPrice @join__type(graph: META) {
++  key: String!
++  itineraryId: Float
++  sailingId: Float
++  departureDate: String
++  price: String
++  highestPrice: String
++  currency: String
++  vendor: MetaVendor!
++}
++
++type RelatedArticle @join__type(graph: META) {
++  id: Float
++  title: String
++}
++
++type RecommendedReview @join__type(graph: META) {
++  id: Float
++}
++
++type RelatedArticleResults @join__type(graph: META) {
++  relatedArticles: [RelatedArticle!]
++}
++
++type ItineraryAndSailings @join__type(graph: META) {
++  itinerary: Itinerary
++  sailings: Sailings
++}
++
++type SearchReviewsResults @join__type(graph: META) {
++  review: Review
++  ship: Ships
++    @join__field(
++      graph: META
++      provides: "name memberLovePercentage averageMemberRating professionalOverallRating totalMemberReviews imageUrl"
++    )
++  cruiseLine: CruiseLines
++  departurePort: Ports
++  destination: Destinations
++  helpfulVotes: Float
++  totalImages: Float
++  images(limit: Float): [SearchReviewsResultsImage!]
++  user: ReviewBy
++}
++
++type Image @join__type(graph: META) {
++  id: Float!
++  format: String!
++}
++
++type SearchReviewsResultsImage @join__type(graph: META) {
++  id: Float!
++  fileName: String
++}
++
++type SearchReviewResponse @join__type(graph: META) {
++  totalResults: Float!
++  results: [SearchReviewsResults!]!
++  filters: SearchReviewFilters!
++  stats: SearchReviewStats!
++  mostHelpfulReview: SearchReviewsResults
++}
++
++type SearchReviewFilters @join__type(graph: META) {
++  cruiseLines: [SearchReviewFilterCruiseLine!]
++  ships: [SearchReviewFilterShip!]
++  destinations: [SearchReviewFilterDestination!]
++  departurePortPorts: [SearchReviewFilterDeparturePortPort!]
++  cruiseStyles: [SearchReviewFilterCruiseStyle!]
++  ratings: [SearchReviewFilterRating!]
++  cabinTypes: [SearchReviewFilterCabinType!]
++}
++
++type SearchReviewFilterCruiseLine @join__type(graph: META) {
++  subject: CruiseLines!
++  totalEntries: Float!
++  isPopular: Boolean!
++}
++
++type SearchReviewFilterShip @join__type(graph: META) {
++  subject: Ships!
++  totalEntries: Float!
++}
++
++type SearchReviewFilterDestination @join__type(graph: META) {
++  subject: Destinations!
++  totalEntries: Float!
++}
++
++type SearchReviewFilterDeparturePortPort @join__type(graph: META) {
++  subject: Ports!
++  totalEntries: Float!
++  isPopular: Boolean!
++}
++
++type SearchReviewFilterCruiseStyle @join__type(graph: META) {
++  subject: CruiseStyles!
++  totalEntries: Float!
++}
++
++type SearchReviewFilterRating @join__type(graph: META) {
++  subject: SearchReviewRating!
++  totalEntries: Float!
++}
++
++type SearchReviewRating @join__type(graph: META) {
++  id: Float!
++  name: String
++}
++
++type SearchReviewFilterCabinType @join__type(graph: META) {
++  subject: CabinTypes!
++  totalEntries: Float!
++}
++
++type SearchReviewStats @join__type(graph: META) {
++  maxCruiseYear: Float
++  maxPublishYear: Float
++  averageMemberRating: Float
++}
++
++type ShipSearchResult @join__type(graph: META) {
++  results: [Ships!]!
++  totalResults: Float!
++  currentPage: Float!
++  totalPages: Float!
++  previousPage: Float
++  nextPage: Float
++}
++
++type ReviewCabinPivots @join__type(graph: REVIEWS) {
++  id: Float!
++  reviewEntryId: Float!
++  cabinCategory: String
++  cabinNumber: String
++}
++
++type ReviewShoreExcursionPivots @join__type(graph: REVIEWS) {
++  id: Float!
++  reviewEntryId: Float!
++  isBookedWithCruiseLine: Float
++  independentOperatorName: String
++  otherName: String
++  portId: Float
++}
++
++type ReviewSlugs @join__type(graph: REVIEWS) {
++  id: Float!
++  slug: String!
++  reviewSlugOwner: ReviewSlugOwners!
++  cruiseLineId: Float!
++  destinationId: Float!
++  cruiseStyleId: Float!
++  shipId: Float!
++  departurePortId: Float!
++}
++
++type MraUrl @join__type(graph: REVIEWS) {
++  name: String!
++  url: String
++}
++
++type ReviewCruiseStyles @join__type(graph: REVIEWS) {
++  id: Float!
++  reviewId: Float!
++  cruiseStyleId: Float!
++  review: Reviews!
++}
++
++type AnswerCount @join__type(graph: UGC) {
++  reported: Int!
++  likes: Int!
++}
++
++type QuestionCount @join__type(graph: UGC) {
++  answers: Int!
++  reported: Int!
++  likes: Int!
++}
++
++type Reported @join__type(graph: UGC) {
++  id: Int!
++  recordType: String!
++  recordId: Int!
++  userId: Int!
++  reasonId: Int!
++  notes: String!
++  _count: ReportedCount
++}
++
++type ReportedCount @join__type(graph: UGC) {
++  reportedQuestions: Int!
++  reportedAnswer: Int!
++}
++
++type Likes @join__type(graph: UGC) {
++  id: Int!
++  recordType: String!
++  recordTypeId: Int!
++  userId: Int!
++  createdAt: DateTime!
++  updatedAt: DateTime!
++  _count: LikesCount
++}
++
++type LikesCount @join__type(graph: UGC) {
++  questionLikes: Int!
++  answerLikes: Int!
++}
++
++type ReportedReason @join__type(graph: UGC) {
++  id: Int!
++  title: String!
++  description: String!
++  _count: ReportedReasonCount
++}
++
++type ReportedReasonCount @join__type(graph: UGC) {
++  reported: Int!
++}
++
++type QuestionsPage @join__type(graph: UGC) {
++  results: [Question!]!
++  totalResults: Float!
++  nextPage: Float
++  currentPage: Float!
++  previousPage: Float
++  totalPages: Float!
++}
++
++type AnswersPage @join__type(graph: UGC) {
++  results: [Answer!]!
++  totalResults: Float!
++  nextPage: Float
++  currentPage: Float!
++  previousPage: Float
++  totalPages: Float!
++}
++
++interface ISubject @join__type(graph: DB) {
++  id: Float!
++  main_name: String!
++  short_name: String!
++}
++
++union CabinCategoriesUnion
++  @join__type(graph: DB)
++  @join__unionMember(graph: DB, member: "CabinCategories")
++  @join__unionMember(graph: DB, member: "AlsekCabinCategories") =
++  | CabinCategories
++  | AlsekCabinCategories
++
++enum CacheControlScope @join__type(graph: DB) @join__type(graph: META) @join__type(graph: REVIEWS) {
++  PUBLIC @join__enumValue(graph: DB) @join__enumValue(graph: META) @join__enumValue(graph: REVIEWS)
++  PRIVATE @join__enumValue(graph: DB) @join__enumValue(graph: META) @join__enumValue(graph: REVIEWS)
++}
++
++enum SubjectImageType @join__type(graph: DB) {
++  PRIMARY @join__enumValue(graph: DB)
++  PRIMARY_ACTIVITY @join__enumValue(graph: DB)
++  PRIMARY_CABIN @join__enumValue(graph: DB)
++  PRIMARY_COLLAGE @join__enumValue(graph: DB)
++  PRIMARY_DINING @join__enumValue(graph: DB)
++  PRIMARY_SPOTLIGHT @join__enumValue(graph: DB)
++  PRIMARY_SQUARE_LOGO @join__enumValue(graph: DB)
++}
++
++enum OverrideOwners @join__type(graph: DB) {
++  findACruiseCheckPrices @join__enumValue(graph: DB)
++  memberReviews @join__enumValue(graph: DB)
++  firstTimeCruiser @join__enumValue(graph: DB)
++  deal @join__enumValue(graph: DB)
++  portName @join__enumValue(graph: DB)
++  thirdPartyTraqFeed @join__enumValue(graph: DB)
++}
++
++enum ShorexSortOrder @join__type(graph: DB) {
++  name @join__enumValue(graph: DB)
++  rating @join__enumValue(graph: DB)
++  totalReviews @join__enumValue(graph: DB)
++}
++
++enum ShipSnippetTitle @join__type(graph: DB) {
++  whyGo @join__enumValue(graph: DB)
++  whatsNew @join__enumValue(graph: DB)
++  overview @join__enumValue(graph: DB)
++  author @join__enumValue(graph: DB)
++  fellowPassengers @join__enumValue(graph: DB)
++  dressCode @join__enumValue(graph: DB)
++  gratuity @join__enumValue(graph: DB)
++  cabins @join__enumValue(graph: DB)
++  dining @join__enumValue(graph: DB)
++  entertainment @join__enumValue(graph: DB)
++  publicRooms @join__enumValue(graph: DB)
++  fitnessRecreation @join__enumValue(graph: DB)
++  family @join__enumValue(graph: DB)
++  shoreExcursions @join__enumValue(graph: DB)
++  enrichment @join__enumValue(graph: DB)
++  service @join__enumValue(graph: DB)
++  valueForMoney @join__enumValue(graph: DB)
++  rates @join__enumValue(graph: DB)
++  custom @join__enumValue(graph: DB)
++  itineraries @join__enumValue(graph: DB)
++  smallIntro @join__enumValue(graph: DB)
++  inclusions @join__enumValue(graph: DB)
++  exclusions @join__enumValue(graph: DB)
++  highlights @join__enumValue(graph: DB)
++}
++
++enum ArticleOrder @join__type(graph: DB) {
++  recency @join__enumValue(graph: DB)
++  popular @join__enumValue(graph: DB)
++}
++
++enum SubjectType @join__type(graph: DB) {
++  destinations @join__enumValue(graph: DB)
++  ports @join__enumValue(graph: DB)
++  ships @join__enumValue(graph: DB)
++  cruiseLines @join__enumValue(graph: DB)
++  cruiseStyles @join__enumValue(graph: DB)
++  departurePorts @join__enumValue(graph: DB)
++  articles @join__enumValue(graph: DB)
++  firstTimeCruisers @join__enumValue(graph: DB)
++  features @join__enumValue(graph: DB)
++  itineraries @join__enumValue(graph: DB)
++  sailings @join__enumValue(graph: DB)
++  contentHub @join__enumValue(graph: DB)
++  contentHubId @join__enumValue(graph: DB)
++  contentHubs @join__enumValue(graph: DB)
++  healthAndSafety @join__enumValue(graph: DB)
++}
++
++enum ReviewSnippetSentiment @join__type(graph: DB) {
++  positive @join__enumValue(graph: DB)
++  negative @join__enumValue(graph: DB)
++  neutral @join__enumValue(graph: DB)
++}
++
++enum Locale @join__type(graph: DB) {
++  en_US @join__enumValue(graph: DB)
++  en_UK @join__enumValue(graph: DB)
++  en_AU @join__enumValue(graph: DB)
++}
++
++enum DeviceType @join__type(graph: DB) {
++  DESKTOP_TABLET @join__enumValue(graph: DB)
++  MOBILE @join__enumValue(graph: DB)
++}
++
++enum ContentHubPopulationType @join__type(graph: DB) {
++  manual @join__enumValue(graph: DB)
++  tagging @join__enumValue(graph: DB)
++  recency @join__enumValue(graph: DB)
++  popular @join__enumValue(graph: DB)
++}
++
++enum CountryCode @join__type(graph: DB) {
++  US @join__enumValue(graph: DB)
++  GB @join__enumValue(graph: DB)
++  AU @join__enumValue(graph: DB)
++}
++
++enum ShipsOrder @join__type(graph: DB) {
++  name @join__enumValue(graph: DB)
++  publishDate @join__enumValue(graph: DB)
++}
++
++enum MetaDeviceType @join__type(graph: DB) @join__type(graph: META) {
++  SMALL_MOBILE @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  MOBILE @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  TABLET @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  DESKTOP @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  WIDESCREEN @join__enumValue(graph: DB) @join__enumValue(graph: META)
++}
++
++enum ListType @join__type(graph: DB) {
++  article @join__enumValue(graph: DB)
++  news @join__enumValue(graph: DB)
++}
++
++enum CountryMappingType @join__type(graph: DB) {
++  domain @join__enumValue(graph: DB)
++  meta @join__enumValue(graph: DB)
++}
++
++enum PackageType @join__type(graph: DB) @join__type(graph: META) {
++  cruiseOnly @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  cruiseAndHotel @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  cruiseAndFlight @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  notApplicable @join__enumValue(graph: DB) @join__enumValue(graph: META)
++}
++
++enum Currency @join__type(graph: DB) @join__type(graph: META) {
++  AUD @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  GBP @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  USD @join__enumValue(graph: DB) @join__enumValue(graph: META)
++}
++
++enum ArticleBookingPhase @join__type(graph: DB) {
++  pre @join__enumValue(graph: DB)
++  post @join__enumValue(graph: DB)
++}
++
++enum ArticleType @join__type(graph: DB) @join__type(graph: META) {
++  article @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  slideshow @join__enumValue(graph: DB) @join__enumValue(graph: META)
++  news @join__enumValue(graph: DB) @join__enumValue(graph: META)
++}
++
++enum ArticleToc @join__type(graph: DB) {
++  off @join__enumValue(graph: DB)
++  bullet @join__enumValue(graph: DB)
++  number @join__enumValue(graph: DB)
++}
++
++enum ArticleTocLayout @join__type(graph: DB) {
++  none @join__enumValue(graph: DB)
++  wrap @join__enumValue(graph: DB)
++}
++
++enum UserImageTag @join__type(graph: DB) {
++  activity @join__enumValue(graph: DB)
++  food @join__enumValue(graph: DB)
++  cabin @join__enumValue(graph: DB)
++  ship @join__enumValue(graph: DB)
++  port @join__enumValue(graph: DB)
++  shorex @join__enumValue(graph: DB)
++  poolSpaFitness @join__enumValue(graph: DB)
++  misc @join__enumValue(graph: DB)
++}
++
++enum ItineraryInjectName @join__type(graph: META) {
++  cheapest @join__enumValue(graph: META)
++  priceDrop @join__enumValue(graph: META)
++  lastMinute @join__enumValue(graph: META)
++}
++
++enum CruiseLineTier @join__type(graph: META) {
++  mainstream @join__enumValue(graph: META)
++  premium @join__enumValue(graph: META)
++  luxuryLite @join__enumValue(graph: META)
++  luxury @join__enumValue(graph: META)
++}
++
++enum SailingCabinType @join__type(graph: META) {
++  inside @join__enumValue(graph: META)
++  outside @join__enumValue(graph: META)
++  balcony @join__enumValue(graph: META)
++  suite @join__enumValue(graph: META)
++}
++
++enum Fields @join__type(graph: META) {
++  default @join__enumValue(graph: META)
++  sailings @join__enumValue(graph: META)
++  allSailings @join__enumValue(graph: META)
++  pricing @join__enumValue(graph: META)
++  lowestPricedSailing @join__enumValue(graph: META)
++  dealSailing @join__enumValue(graph: META)
++  cruisersChoice @join__enumValue(graph: META)
++  filters @join__enumValue(graph: META)
++  filtersOnly @join__enumValue(graph: META)
++  shipAttributes @join__enumValue(graph: META)
++  deals @join__enumValue(graph: META)
++  shipInclusions @join__enumValue(graph: META)
++  stats @join__enumValue(graph: META)
++  brandBox @join__enumValue(graph: META)
++  facHero @join__enumValue(graph: META)
++  lowestPriceFilters @join__enumValue(graph: META)
++}
++
++enum ItinerarySortOrder @join__type(graph: META) {
++  popularity @join__enumValue(graph: META)
++  popularitySem @join__enumValue(graph: META)
++  popularityTest @join__enumValue(graph: META)
++  popularitySemTest @join__enumValue(graph: META)
++  popularityQuery @join__enumValue(graph: META)
++  popularityQuerySem @join__enumValue(graph: META)
++  popularityQueryV3 @join__enumValue(graph: META)
++  popularityQuerySemV3 @join__enumValue(graph: META)
++  score @join__enumValue(graph: META)
++  departureDate @join__enumValue(graph: META)
++  cruiseLine @join__enumValue(graph: META)
++  ship @join__enumValue(graph: META)
++  length @join__enumValue(graph: META)
++  rating @join__enumValue(graph: META)
++  price @join__enumValue(graph: META)
++  priceDesc @join__enumValue(graph: META)
++  recommended @join__enumValue(graph: META)
++}
++
++enum FilterOrder @join__type(graph: META) {
++  totalResults @join__enumValue(graph: META)
++  alphabetical @join__enumValue(graph: META)
++}
++
++enum DealType @join__type(graph: META) {
++  all @join__enumValue(graph: META)
++  lastMinute @join__enumValue(graph: META)
++}
++
++enum SailingsFields @join__type(graph: META) {
++  pricing @join__enumValue(graph: META)
++  checkPrices @join__enumValue(graph: META)
++  deals @join__enumValue(graph: META)
++}
++
++enum SailingFields @join__type(graph: META) {
++  pricing @join__enumValue(graph: META)
++  default @join__enumValue(graph: META)
++  minimal @join__enumValue(graph: META)
++}
++
++enum PosCountry @join__type(graph: META) {
++  AU @join__enumValue(graph: META)
++  GB @join__enumValue(graph: META)
++  US @join__enumValue(graph: META)
++}
++
++enum SearchDeviceType @join__type(graph: META) {
++  MOBILE @join__enumValue(graph: META)
++  TABLET @join__enumValue(graph: META)
++  DESKTOP @join__enumValue(graph: META)
++}
++
++enum ShipSearchSortOrder @join__type(graph: META) {
++  NameAscending @join__enumValue(graph: META)
++  NameDescending @join__enumValue(graph: META)
++  DateLaunched @join__enumValue(graph: META)
++  Rating @join__enumValue(graph: META)
++  Price @join__enumValue(graph: META)
++  Popularity @join__enumValue(graph: META)
++}
++
++enum CabinType @join__type(graph: META) {
++  inside @join__enumValue(graph: META)
++  outside @join__enumValue(graph: META)
++  balcony @join__enumValue(graph: META)
++  suite @join__enumValue(graph: META)
++}
++
++enum NLSIntent @join__type(graph: META) {
++  None @join__enumValue(graph: META)
++  SpecificCruiseQuery @join__enumValue(graph: META)
++  VagueCruisePreference @join__enumValue(graph: META)
++}
++
++enum NLSItinerarySortOrder @join__type(graph: META) {
++  popularity @join__enumValue(graph: META)
++  popularitySem @join__enumValue(graph: META)
++  popularityTest @join__enumValue(graph: META)
++  popularitySemTest @join__enumValue(graph: META)
++  popularityQuery @join__enumValue(graph: META)
++  popularityQuerySem @join__enumValue(graph: META)
++  popularityQueryV3 @join__enumValue(graph: META)
++  popularityQuerySemV3 @join__enumValue(graph: META)
++  score @join__enumValue(graph: META)
++  departureDate @join__enumValue(graph: META)
++  cruiseLine @join__enumValue(graph: META)
++  ship @join__enumValue(graph: META)
++  length @join__enumValue(graph: META)
++  rating @join__enumValue(graph: META)
++  price @join__enumValue(graph: META)
++  priceDesc @join__enumValue(graph: META)
++  recommended @join__enumValue(graph: META)
++}
++
++enum PartitionBy @join__type(graph: META) {
++  cruiseLineId @join__enumValue(graph: META)
++  shipId @join__enumValue(graph: META)
++  portId @join__enumValue(graph: META)
++  departurePortId @join__enumValue(graph: META)
++  destinationId @join__enumValue(graph: META)
++  cruiseStyleId @join__enumValue(graph: META)
++  departureDate @join__enumValue(graph: META)
++  length @join__enumValue(graph: META)
++  itineraryId @join__enumValue(graph: META)
++  cabinType @join__enumValue(graph: META)
++  sailingId @join__enumValue(graph: META)
++}
++
++enum LowestPricesFields @join__type(graph: META) {
++  default @join__enumValue(graph: META)
++  vendor @join__enumValue(graph: META)
++}
++
++"""
++How often a user has been on a cruise
++"""
++enum CruiseExperienceLevel @join__type(graph: META) {
++  one @join__enumValue(graph: META)
++  couple @join__enumValue(graph: META)
++  few @join__enumValue(graph: META)
++  many @join__enumValue(graph: META)
++}
++
++enum ReviewCategory @join__type(graph: REVIEWS) {
++  enrichmentActivities @join__enumValue(graph: REVIEWS)
++  valueForMoney @join__enumValue(graph: REVIEWS)
++  embarkation @join__enumValue(graph: REVIEWS)
++  dining @join__enumValue(graph: REVIEWS)
++  publicRooms @join__enumValue(graph: REVIEWS)
++  entertainment @join__enumValue(graph: REVIEWS)
++  cabin @join__enumValue(graph: REVIEWS)
++  fitnessAndRecreation @join__enumValue(graph: REVIEWS)
++  shoreExcursions @join__enumValue(graph: REVIEWS)
++  rates @join__enumValue(graph: REVIEWS)
++  underThree @join__enumValue(graph: REVIEWS)
++  threeToSix @join__enumValue(graph: REVIEWS)
++  sevenToNine @join__enumValue(graph: REVIEWS)
++  tenToTwelve @join__enumValue(graph: REVIEWS)
++  thirteenToFifteen @join__enumValue(graph: REVIEWS)
++  sixteenPlus @join__enumValue(graph: REVIEWS)
++  service @join__enumValue(graph: REVIEWS)
++  onboardExperience @join__enumValue(graph: REVIEWS)
++  family @join__enumValue(graph: REVIEWS)
++  childrenPrograms @join__enumValue(graph: REVIEWS)
++}
++
++enum ReviewSlugOwners @join__type(graph: REVIEWS) {
++  cruiseLineDestination @join__enumValue(graph: REVIEWS)
++  cruiseLineCruiseStyle @join__enumValue(graph: REVIEWS)
++  cruiseLineDeparturePort @join__enumValue(graph: REVIEWS)
++  cruiseLineCaribbean @join__enumValue(graph: REVIEWS)
++  cruiseLineEurope @join__enumValue(graph: REVIEWS)
++  cruiseLineMediterranean @join__enumValue(graph: REVIEWS)
++  shipDestination @join__enumValue(graph: REVIEWS)
++  destinationCruiseStyle @join__enumValue(graph: REVIEWS)
++  shipCruiseStyle @join__enumValue(graph: REVIEWS)
++}
++
++enum AnswerScalarFieldEnum @join__type(graph: UGC) {
++  id @join__enumValue(graph: UGC)
++  userId @join__enumValue(graph: UGC)
++  answer @join__enumValue(graph: UGC)
++  viewCount @join__enumValue(graph: UGC)
++  questionId @join__enumValue(graph: UGC)
++  createdAt @join__enumValue(graph: UGC)
++  updatedAt @join__enumValue(graph: UGC)
++  status @join__enumValue(graph: UGC)
++}
++
++enum QuestionScalarFieldEnum @join__type(graph: UGC) {
++  id @join__enumValue(graph: UGC)
++  type @join__enumValue(graph: UGC)
++  contentTypeId @join__enumValue(graph: UGC)
++  contentType @join__enumValue(graph: UGC)
++  status @join__enumValue(graph: UGC)
++  question @join__enumValue(graph: UGC)
++  userId @join__enumValue(graph: UGC)
++  createdAt @join__enumValue(graph: UGC)
++  updatedAt @join__enumValue(graph: UGC)
++}
++
++enum ReportedReasonScalarFieldEnum @join__type(graph: UGC) {
++  id @join__enumValue(graph: UGC)
++  title @join__enumValue(graph: UGC)
++  description @join__enumValue(graph: UGC)
++}
++
++enum ContentStatus @join__type(graph: UGC) {
++  PENDING_AUTO_CHECKS @join__enumValue(graph: UGC)
++  APPROVED @join__enumValue(graph: UGC)
++  REJECTED_COMMUNITY_REPORTED @join__enumValue(graph: UGC)
++  REJECTED_ADMIN @join__enumValue(graph: UGC)
++  REJECTED_AUTO_FRAUD_CHECKS @join__enumValue(graph: UGC)
++}
++
++enum ReportedScalarFieldEnum @join__type(graph: UGC) {
++  id @join__enumValue(graph: UGC)
++  recordType @join__enumValue(graph: UGC)
++  recordId @join__enumValue(graph: UGC)
++  userId @join__enumValue(graph: UGC)
++  reasonId @join__enumValue(graph: UGC)
++  notes @join__enumValue(graph: UGC)
++}
++
++enum LikesScalarFieldEnum @join__type(graph: UGC) {
++  id @join__enumValue(graph: UGC)
++  recordType @join__enumValue(graph: UGC)
++  recordTypeId @join__enumValue(graph: UGC)
++  userId @join__enumValue(graph: UGC)
++  createdAt @join__enumValue(graph: UGC)
++  updatedAt @join__enumValue(graph: UGC)
++}
++
++enum ContentType @join__type(graph: UGC) {
++  SHIP @join__enumValue(graph: UGC)
++  PORT @join__enumValue(graph: UGC)
++  DESTINATION @join__enumValue(graph: UGC)
++  CRUISE_LINE @join__enumValue(graph: UGC)
++  DEALS @join__enumValue(graph: UGC)
++}
++
++enum SortOrder @join__type(graph: UGC) {
++  asc @join__enumValue(graph: UGC)
++  desc @join__enumValue(graph: UGC)
++}
++
++input CpcInput @join__type(graph: DB) {
++  date: String!
++  cruiseLine: Float!
++  ship: Float!
++  destination: Float!
++  section: String!
++  ip: String
++  productId: Float!
++  sponsoredListingId: Float
++  viewport: MetaDeviceType!
++}
++
++input CruisersChoiceCategoriesInput @join__type(graph: DB) {
++  name: String
++  year: Float
++  section: String
++  countryId: Float
++  subjectId: Float
++}
++
++input CruiseLinesInput @join__type(graph: DB) {
++  slug: String
++  isActiveForRollcalls: String
++}
++
++input CruiseStylesInput @join__type(graph: DB) {
++  id: [Float!]
++  slug: [String!]
++  status: [Boolean!] = [true]
++}
++
++input FacHeroImageFilters @join__type(graph: DB) {
++  destinationId: [Float!]
++  cruiseLineId: [Float!]
++  portId: [Float!]
++}
++
++input RecommendedSegment @join__type(graph: DB) {
++  maxSegments: Float! = 1
++  lookupScenario: String!
++  resultScenario: String!
++}
++
++input AdRequestInput @join__type(graph: DB) {
++  name: String!
++  email: String!
++  title: String = ""
++  company: String = ""
++  phone: String = ""
++  address: String = ""
++  city: String = ""
++  state: String = ""
++  postalCode: String = ""
++  webAddress: String = ""
++  areasOfInterest: String = ""
++  budget: String = ""
++  additionalInfo: String = ""
++  recipients: [String!] @deprecated(reason: "Recipients shouldn't be configurable")
++  recaptchaToken: String!
++}
++
++input BulkSnippetUpdate @join__type(graph: DB) {
++  snippets: [ArticleSnippetInput!]!
++}
++
++input ArticleSnippetInput @join__type(graph: DB) {
++  articleId: Float!
++  popularity: Float!
++}
++
++input ArticleInput @join__type(graph: DB) {
++  status: Boolean! = false
++  adminNotes: String
++  primarySubjectId: Float
++  primarySubjectReferenceId: Float
++  slideshowId: Float
++  noIndex: Boolean! = false
++  ignoreSlideShowTitle: Boolean! = false
++  isMigrated: Boolean! = false
++  bookingPhase: ArticleBookingPhase
++  isNegative: Boolean
++  adminUserId: Float
++  sponsoredContentTarget: String
++  eventDate: String
++  expireDate: String
++  publishDate: String
++  startDate: String
++  type: ArticleType!
++  shoreExcursionRelated: Boolean! = false
++  clientKey: String!
++  syndicationId: Float! = 1
++  toc: ArticleToc! = number
++  tocLayout: ArticleTocLayout! = none
++  lastUpdatedOn: String!
++  articleVersionsId: Float
++  snippets: [CreateArticleSnippetInput!]!
++}
++
++input CreateArticleSnippetInput @join__type(graph: DB) {
++  articleSnippetTitleId: Float!
++  snippetHeader: String
++  snippet: String!
++  sortOrder: Float
++  countryId: Float! = 1
++  updatedAt: String!
++  showRelatedContent: Boolean!
++}
++
++input UpdateArticleInput @join__type(graph: DB) {
++  status: Boolean! = false
++  adminNotes: String
++  primarySubjectId: Float
++  primarySubjectReferenceId: Float
++  slideshowId: Float
++  noIndex: Boolean! = false
++  ignoreSlideShowTitle: Boolean! = false
++  isMigrated: Boolean! = false
++  bookingPhase: ArticleBookingPhase
++  isNegative: Boolean
++  adminUserId: Float
++  sponsoredContentTarget: String
++  eventDate: String
++  expireDate: String
++  publishDate: String
++  startDate: String
++  type: ArticleType!
++  shoreExcursionRelated: Boolean! = false
++  clientKey: String!
++  syndicationId: Float! = 1
++  toc: ArticleToc! = number
++  tocLayout: ArticleTocLayout! = none
++  lastUpdatedOn: String!
++  snippets: [UpdateArticleSnippetInput!]!
++}
++
++input UpdateArticleSnippetInput @join__type(graph: DB) {
++  articleSnippetTitleId: Float!
++  snippetHeader: String
++  snippet: String!
++  sortOrder: Float
++  countryId: Float! = 1
++  updatedAt: String!
++  showRelatedContent: Boolean!
++  id: Float
++}
++
++input UpdateArticleVersionsInput @join__type(graph: DB) {
++  status: Boolean
++  publishedArticleId: Float
++  eventDate: String
++  expireDate: String
++  publishDate: String
++  startDate: String
++  lastUpdatedOn: String
++}
++
++input AuthInput @join__type(graph: DB) {
++  password: String!
++  email: String!
++}
++
++input ContentHubBlockInput @join__type(graph: DB) {
++  contentHubId: Float!
++  title: String!
++  imageUrl: String!
++  body: String!
++  linkUrl: String = ""
++  sortOrder: Float!
++}
++
++input ContentHubInput @join__type(graph: DB) {
++  urlSlug: String!
++  title: String!
++  keyTargeting: String
++  metaKeywords: String
++  metaDescription: String
++  countryId: Float
++  primarySubjectId: Float!
++  primarySubjectReferenceId: Float!
++  headlineTitle: String
++  populationType: ContentHubPopulationType
++  status: Float
++  syndicationId: Float
++  topContentHero: String
++  topContentVideo: String
++  topContentBody: String
++  topContentHeadline: String
++  primaryHeadLine: String
++  primaryPhoto: String
++  primaryBody: String
++  primaryLink: String
++  listOrder: String
++  listType: ListType
++}
++
++input ContentHubRelationshipSubjectInput @join__type(graph: DB) {
++  subjectId: Float!
++  subjectReferenceId: Float!
++}
++
++input DealNewsletterLinkInput @join__type(graph: DB) {
++  id: Float
++  advertiserId: Float!
++  firstName: String!
++  lastName: String!
++  phone: String!
++  email: String!
++  title: String!
++  url: String!
++  promoImageUrl: String!
++  sailDate: String!
++  destinationId: Float!
++  isTransatlantic: Boolean!
++  isWorldwide: Boolean!
++  shipId: Float!
++  countryId: Float!
++  sendEmail: Boolean = true
++}
++
++input DealPromoInput @join__type(graph: DB) {
++  dealPromoTypeId: Float!
++  title: String!
++  snippet: String!
++  url: String!
++  promoImageUrl: String!
++  logoImage: String = ""
++  countryId: Float!
++  firstName: String!
++  lastName: String!
++  phone: String!
++  email: String!
++  sendEmail: Boolean = true
++}
++
++input SubmitFeedbackInput @join__type(graph: DB) {
++  siteSection: String!
++  url: String!
++  surveyResponse: String!
++}
++
++input PriceAlertSubscriptionInput @join__type(graph: DB) {
++  email: String
++  userId: Float
++  countryId: Float
++  cruiseLineId: Float
++  shipId: Float
++  portId: Float
++  departurePortId: Float
++  destinationId: Float
++  cruiseStyleId: Float
++  itineraryId: Float
++  sailingId: Float
++  month: String
++  city: String
++  region: String
++  country: String
++}
++
++input MemberPhotoInput @join__type(graph: DB) {
++  fileName: String!
++  description: String!
++  tags: [UserImageTag!]
++  portId: Float
++}
++
++input ItineraryFilterInput @join__type(graph: META) {
++  deals: DealType
++  length: [String!]
++  sailingId: [Float!]
++  packageType: [PackageType!]
++  departureDate: String
++  hideSoldOut: Boolean! = true
++  vendorIds: [Float!]
++  destinationId: [Float!]
++  itineraryId: Float
++  cruiseLineId: [Float!]
++  shipId: [Float!]
++  portId: [Float!]
++  departurePortId: [Float!]
++  arrivalPortId: [Float!]
++  cruiseStyleId: [Float!]
++  departureDateEnd: String
++  departureDateInterval: Float! = 3
++  minPrice: Float
++  maxPrice: Float
++  cabinType: CabinType
++  cabinTypeId: Float
++  bonusOfferIds: [String!]
++  hasPricingForViewport: Boolean
++  roundTrip: Boolean
++  cruiseLineTier: CruiseLineTier
++  hasPricingAvailable: Float
++  includeSponsoredItinerary: Boolean
++  lowestPriceNumberOfSailings: Float
++  fields: [Fields!]
++}
++
++input LowestPricesInput @join__type(graph: META) {
++  subjectId: Float
++  partitionBy: PartitionBy
++  partitionValues: [String!]!
++  length: [String!]
++  sailingId: [Float!]
++  departureDate: String
++  destinationId: [Float!]
++  itineraryId: Float
++  cruiseLineId: [Float!]
++  shipId: [Float!]
++  portId: [Float!]
++  departurePortId: [Float!]
++  cruiseStyleId: [Float!]
++  departureDateEnd: String
++  departureDateInterval: Float! = 3
++  cabinType: CabinType
++  cabinTypeId: Float
++  fields: [LowestPricesFields!]
++}
++
++input SailingFilterInput @join__type(graph: META) {
++  packageType: [PackageType!]
++  departureDate: String
++  departureDateEnd: String
++  departureDateInterval: Float! = 3
++  minPrice: Float
++  maxPrice: Float
++  cabinType: CabinType
++  cabinTypeId: Float
++}
++
++input SearchReviewInput @join__type(graph: META) {
++  reviewId: [Float!]
++  cruiseLineId: [Float!]
++  shipId: [Float!]
++  destinationId: [Float!]
++  departurePortPortId: [Float!]
++  portId: [Float!]
++  cruiseStyleId: [Float!]
++  rating: [Float!]
++  subjectId: [Float!]! = [3]
++  isPhotoJournal: Boolean
++  cabinTypeId: [Float!]
++}
++
++input MraUrlInput @join__type(graph: REVIEWS) {
++  cruiseLineId: Float
++  shipId: Float
++  portId: Float
++  destinationId: Float
++  cruiseStyleId: Float
++  rating: String
++  cabinTypeId: Float
++}
++
++input MraUrlInputs @join__type(graph: REVIEWS) {
++  name: String!
++  filters: MraUrlInput!
++}
++
++input ReviewFilterInput @join__type(graph: REVIEWS) {
++  id: [Float!]
++  shipId: Float
++  cruiseLineId: Float
++  cruiseLineSlug: String
++  destinationId: Float
++  destinationSlug: String
++  departurePortId: Float
++  cruiseStyleId: Float
++  cruiseStyleSlug: String
++  rating: Float
++  reviewSlug: String
++  reviewSlugOwner: ReviewSlugOwners
++}
++
++input ReviewCreateInput @join__type(graph: REVIEWS) {
++  locale: String!
++  countryCode: String
++  title: String!
++  shipId: Float!
++  cruiseLineId: Float!
++  embarkationPortId: Float!
++  destinationId: Float!
++  cruiseLength: Float!
++  cruiseDay: Float!
++  cruiseMonth: Float!
++  cruiseYear: Float!
++  shipReview: String!
++  overallRating: Float!
++  hasChildren: Boolean!
++  withDisabled: Boolean
++  certification: Boolean!
++  numberOfCruisesTakenGroupId: Float!
++  providerId: Float = 2
++  entries: [ReviewEntryInput!]!
++  cruiseStyles: [ReviewCruiseStyleInput!]! = []
++    @deprecated(reason: "Cruise styles will no longer be used on the site")
++}
++
++input ReviewEntryInput @join__type(graph: REVIEWS) {
++  reviewCategory: ReviewCategory
++  rating: Float!
++  content: String
++  portName: String
++  portId: Float
++  cabinPivot: ReviewCabinPivotInput
++  shoreExcursionPivot: ReviewShoreExcursionPivotInput
++}
++
++input ReviewCabinPivotInput @join__type(graph: REVIEWS) {
++  cabinCategory: String!
++  cabinNumber: String
++}
++
++input ReviewShoreExcursionPivotInput @join__type(graph: REVIEWS) {
++  isBookedWithCruiseLine: Float
++  independentOperatorName: String
++  otherName: String
++  shoreExcursionId: Float
++}
++
++input ReviewCruiseStyleInput @join__type(graph: REVIEWS) {
++  cruiseStyleId: Float!
++}
++
++input ReviewUpdateInput @join__type(graph: REVIEWS) {
++  title: String
++  cruisedOn: String
++}
++
++input AnswerWhereInput @join__type(graph: UGC) {
++  AND: [AnswerWhereInput!]
++  OR: [AnswerWhereInput!]
++  NOT: [AnswerWhereInput!]
++  id: IntFilter
++  userId: IntFilter
++  answer: StringFilter
++  viewCount: IntFilter
++  question: QuestionRelationFilter
++  questionId: IntFilter
++  createdAt: DateTimeFilter
++  updatedAt: DateTimeFilter
++  status: EnumContentStatusFilter
++  reported: ReportedListRelationFilter
++  likes: LikesListRelationFilter
++}
++
++input IntFilter @join__type(graph: UGC) {
++  equals: Int
++  in: [Int!]
++  notIn: [Int!]
++  lt: Int
++  lte: Int
++  gt: Int
++  gte: Int
++  not: NestedIntFilter
++}
++
++input NestedIntFilter @join__type(graph: UGC) {
++  equals: Int
++  in: [Int!]
++  notIn: [Int!]
++  lt: Int
++  lte: Int
++  gt: Int
++  gte: Int
++  not: NestedIntFilter
++}
++
++input StringFilter @join__type(graph: UGC) {
++  equals: String
++  in: [String!]
++  notIn: [String!]
++  lt: String
++  lte: String
++  gt: String
++  gte: String
++  contains: String
++  startsWith: String
++  endsWith: String
++  not: NestedStringFilter
++}
++
++input NestedStringFilter @join__type(graph: UGC) {
++  equals: String
++  in: [String!]
++  notIn: [String!]
++  lt: String
++  lte: String
++  gt: String
++  gte: String
++  contains: String
++  startsWith: String
++  endsWith: String
++  not: NestedStringFilter
++}
++
++input QuestionRelationFilter @join__type(graph: UGC) {
++  is: QuestionWhereInput
++  isNot: QuestionWhereInput
++}
++
++input QuestionWhereInput @join__type(graph: UGC) {
++  AND: [QuestionWhereInput!]
++  OR: [QuestionWhereInput!]
++  NOT: [QuestionWhereInput!]
++  id: IntFilter
++  type: StringFilter
++  contentTypeId: IntFilter
++  contentType: EnumContentTypeFilter
++  status: EnumContentStatusFilter
++  question: StringFilter
++  userId: IntFilter
++  answers: AnswerListRelationFilter
++  createdAt: DateTimeFilter
++  updatedAt: DateTimeFilter
++  reported: ReportedListRelationFilter
++  likes: LikesListRelationFilter
++}
++
++input EnumContentTypeFilter @join__type(graph: UGC) {
++  equals: ContentType
++  in: [ContentType!]
++  notIn: [ContentType!]
++  not: NestedEnumContentTypeFilter
++}
++
++input NestedEnumContentTypeFilter @join__type(graph: UGC) {
++  equals: ContentType
++  in: [ContentType!]
++  notIn: [ContentType!]
++  not: NestedEnumContentTypeFilter
++}
++
++input EnumContentStatusFilter @join__type(graph: UGC) {
++  equals: ContentStatus
++  in: [ContentStatus!]
++  notIn: [ContentStatus!]
++  not: NestedEnumContentStatusFilter
++}
++
++input NestedEnumContentStatusFilter @join__type(graph: UGC) {
++  equals: ContentStatus
++  in: [ContentStatus!]
++  notIn: [ContentStatus!]
++  not: NestedEnumContentStatusFilter
++}
++
++input AnswerListRelationFilter @join__type(graph: UGC) {
++  every: AnswerWhereInput
++  some: AnswerWhereInput
++  none: AnswerWhereInput
++}
++
++input DateTimeFilter @join__type(graph: UGC) {
++  equals: DateTime
++  in: [DateTime!]
++  notIn: [DateTime!]
++  lt: DateTime
++  lte: DateTime
++  gt: DateTime
++  gte: DateTime
++  not: NestedDateTimeFilter
++}
++
++input NestedDateTimeFilter @join__type(graph: UGC) {
++  equals: DateTime
++  in: [DateTime!]
++  notIn: [DateTime!]
++  lt: DateTime
++  lte: DateTime
++  gt: DateTime
++  gte: DateTime
++  not: NestedDateTimeFilter
++}
++
++input ReportedListRelationFilter @join__type(graph: UGC) {
++  every: ReportedWhereInput
++  some: ReportedWhereInput
++  none: ReportedWhereInput
++}
++
++input ReportedWhereInput @join__type(graph: UGC) {
++  AND: [ReportedWhereInput!]
++  OR: [ReportedWhereInput!]
++  NOT: [ReportedWhereInput!]
++  id: IntFilter
++  recordType: StringFilter
++  recordId: IntFilter
++  userId: IntFilter
++  reason: ReportedReasonRelationFilter
++  reasonId: IntFilter
++  notes: StringFilter
++  reportedQuestions: QuestionListRelationFilter
++  reportedAnswer: AnswerListRelationFilter
++}
++
++input ReportedReasonRelationFilter @join__type(graph: UGC) {
++  is: ReportedReasonWhereInput
++  isNot: ReportedReasonWhereInput
++}
++
++input ReportedReasonWhereInput @join__type(graph: UGC) {
++  AND: [ReportedReasonWhereInput!]
++  OR: [ReportedReasonWhereInput!]
++  NOT: [ReportedReasonWhereInput!]
++  id: IntFilter
++  title: StringFilter
++  description: StringFilter
++  reported: ReportedListRelationFilter
++}
++
++input QuestionListRelationFilter @join__type(graph: UGC) {
++  every: QuestionWhereInput
++  some: QuestionWhereInput
++  none: QuestionWhereInput
++}
++
++input LikesListRelationFilter @join__type(graph: UGC) {
++  every: LikesWhereInput
++  some: LikesWhereInput
++  none: LikesWhereInput
++}
++
++input LikesWhereInput @join__type(graph: UGC) {
++  AND: [LikesWhereInput!]
++  OR: [LikesWhereInput!]
++  NOT: [LikesWhereInput!]
++  id: IntFilter
++  recordType: StringFilter
++  recordTypeId: IntFilter
++  userId: IntFilter
++  createdAt: DateTimeFilter
++  updatedAt: DateTimeFilter
++  questionLikes: QuestionListRelationFilter
++  answerLikes: AnswerListRelationFilter
++}
++
++input AnswerOrderByWithRelationInput @join__type(graph: UGC) {
++  id: SortOrder
++  userId: SortOrder
++  answer: SortOrder
++  viewCount: SortOrder
++  question: QuestionOrderByWithRelationInput
++  questionId: SortOrder
++  createdAt: SortOrder
++  updatedAt: SortOrder
++  status: SortOrder
++  reported: ReportedOrderByRelationAggregateInput
++  likes: LikesOrderByRelationAggregateInput
++}
++
++input QuestionOrderByWithRelationInput @join__type(graph: UGC) {
++  id: SortOrder
++  type: SortOrder
++  contentTypeId: SortOrder
++  contentType: SortOrder
++  status: SortOrder
++  question: SortOrder
++  userId: SortOrder
++  answers: AnswerOrderByRelationAggregateInput
++  createdAt: SortOrder
++  updatedAt: SortOrder
++  reported: ReportedOrderByRelationAggregateInput
++  likes: LikesOrderByRelationAggregateInput
++}
++
++input AnswerOrderByRelationAggregateInput @join__type(graph: UGC) {
++  _count: SortOrder
++}
++
++input ReportedOrderByRelationAggregateInput @join__type(graph: UGC) {
++  _count: SortOrder
++}
++
++input LikesOrderByRelationAggregateInput @join__type(graph: UGC) {
++  _count: SortOrder
++}
++
++input AnswerWhereUniqueInput @join__type(graph: UGC) {
++  id: Int
++}
++
++input ReportedOrderByWithRelationInput @join__type(graph: UGC) {
++  id: SortOrder
++  recordType: SortOrder
++  recordId: SortOrder
++  userId: SortOrder
++  reason: ReportedReasonOrderByWithRelationInput
++  reasonId: SortOrder
++  notes: SortOrder
++  reportedQuestions: QuestionOrderByRelationAggregateInput
++  reportedAnswer: AnswerOrderByRelationAggregateInput
++}
++
++input ReportedReasonOrderByWithRelationInput @join__type(graph: UGC) {
++  id: SortOrder
++  title: SortOrder
++  description: SortOrder
++  reported: ReportedOrderByRelationAggregateInput
++}
++
++input QuestionOrderByRelationAggregateInput @join__type(graph: UGC) {
++  _count: SortOrder
++}
++
++input ReportedWhereUniqueInput @join__type(graph: UGC) {
++  id: Int
++}
++
++input LikesOrderByWithRelationInput @join__type(graph: UGC) {
++  id: SortOrder
++  recordType: SortOrder
++  recordTypeId: SortOrder
++  userId: SortOrder
++  createdAt: SortOrder
++  updatedAt: SortOrder
++  questionLikes: QuestionOrderByRelationAggregateInput
++  answerLikes: AnswerOrderByRelationAggregateInput
++}
++
++input LikesWhereUniqueInput @join__type(graph: UGC) {
++  id: Int
++  recordType_recordTypeId_userId: LikesRecordTypeRecordTypeIdUserIdCompoundUniqueInput
++}
++
++input LikesRecordTypeRecordTypeIdUserIdCompoundUniqueInput @join__type(graph: UGC) {
++  recordType: String!
++  recordTypeId: Int!
++  userId: Int!
++}
++
++input QuestionWhereUniqueInput @join__type(graph: UGC) {
++  id: Int
++}
++
++input ReportedReasonWhereUniqueInput @join__type(graph: UGC) {
++  id: Int
++  title: String
++}
++
++input QuestionCreateInput @join__type(graph: UGC) {
++  type: String!
++  contentTypeId: Int!
++  contentType: ContentType!
++  question: String!
++  answers: AnswerCreateNestedManyWithoutQuestionInput
++  reported: ReportedCreateNestedManyWithoutReportedQuestionsInput
++  likes: LikesCreateNestedManyWithoutQuestionLikesInput
++}
++
++input AnswerCreateNestedManyWithoutQuestionInput @join__type(graph: UGC) {
++  create: [AnswerCreateWithoutQuestionInput!]
++  connectOrCreate: [AnswerCreateOrConnectWithoutQuestionInput!]
++  createMany: AnswerCreateManyQuestionInputEnvelope
++  connect: [AnswerWhereUniqueInput!]
++}
++
++input AnswerCreateWithoutQuestionInput @join__type(graph: UGC) {
++  answer: String!
++  viewCount: Int
++  createdAt: DateTime
++  updatedAt: DateTime
++  reported: ReportedCreateNestedManyWithoutReportedAnswerInput
++  likes: LikesCreateNestedManyWithoutAnswerLikesInput
++}
++
++input ReportedCreateNestedManyWithoutReportedAnswerInput @join__type(graph: UGC) {
++  create: [ReportedCreateWithoutReportedAnswerInput!]
++  connectOrCreate: [ReportedCreateOrConnectWithoutReportedAnswerInput!]
++  connect: [ReportedWhereUniqueInput!]
++}
++
++input ReportedCreateWithoutReportedAnswerInput @join__type(graph: UGC) {
++  recordType: String!
++  recordId: Int!
++  userId: Int!
++  reason: ReportedReasonCreateNestedOneWithoutReportedInput!
++  notes: String!
++  reportedQuestions: QuestionCreateNestedManyWithoutReportedInput
++}
++
++input ReportedReasonCreateNestedOneWithoutReportedInput @join__type(graph: UGC) {
++  create: ReportedReasonCreateWithoutReportedInput
++  connectOrCreate: ReportedReasonCreateOrConnectWithoutReportedInput
++  connect: ReportedReasonWhereUniqueInput
++}
++
++input ReportedReasonCreateWithoutReportedInput @join__type(graph: UGC) {
++  title: String!
++  description: String!
++}
++
++input ReportedReasonCreateOrConnectWithoutReportedInput @join__type(graph: UGC) {
++  where: ReportedReasonWhereUniqueInput!
++  create: ReportedReasonCreateWithoutReportedInput!
++}
++
++input QuestionCreateNestedManyWithoutReportedInput @join__type(graph: UGC) {
++  create: [QuestionCreateWithoutReportedInput!]
++  connectOrCreate: [QuestionCreateOrConnectWithoutReportedInput!]
++  connect: [QuestionWhereUniqueInput!]
++}
++
++input QuestionCreateWithoutReportedInput @join__type(graph: UGC) {
++  type: String!
++  contentTypeId: Int!
++  contentType: ContentType!
++  question: String!
++  answers: AnswerCreateNestedManyWithoutQuestionInput
++  likes: LikesCreateNestedManyWithoutQuestionLikesInput
++}
++
++input LikesCreateNestedManyWithoutQuestionLikesInput @join__type(graph: UGC) {
++  create: [LikesCreateWithoutQuestionLikesInput!]
++  connectOrCreate: [LikesCreateOrConnectWithoutQuestionLikesInput!]
++  connect: [LikesWhereUniqueInput!]
++}
++
++input LikesCreateWithoutQuestionLikesInput @join__type(graph: UGC) {
++  recordType: String!
++  recordTypeId: Int!
++  userId: Int!
++  createdAt: DateTime
++  updatedAt: DateTime
++  answerLikes: AnswerCreateNestedManyWithoutLikesInput
++}
++
++input AnswerCreateNestedManyWithoutLikesInput @join__type(graph: UGC) {
++  create: [AnswerCreateWithoutLikesInput!]
++  connectOrCreate: [AnswerCreateOrConnectWithoutLikesInput!]
++  connect: [AnswerWhereUniqueInput!]
++}
++
++input AnswerCreateWithoutLikesInput @join__type(graph: UGC) {
++  answer: String!
++  viewCount: Int
++  question: QuestionCreateNestedOneWithoutAnswersInput!
++  createdAt: DateTime
++  updatedAt: DateTime
++  reported: ReportedCreateNestedManyWithoutReportedAnswerInput
++}
++
++input QuestionCreateNestedOneWithoutAnswersInput @join__type(graph: UGC) {
++  create: QuestionCreateWithoutAnswersInput
++  connectOrCreate: QuestionCreateOrConnectWithoutAnswersInput
++  connect: QuestionWhereUniqueInput
++}
++
++input QuestionCreateWithoutAnswersInput @join__type(graph: UGC) {
++  type: String!
++  contentTypeId: Int!
++  contentType: ContentType!
++  question: String!
++  reported: ReportedCreateNestedManyWithoutReportedQuestionsInput
++  likes: LikesCreateNestedManyWithoutQuestionLikesInput
++}
++
++input ReportedCreateNestedManyWithoutReportedQuestionsInput @join__type(graph: UGC) {
++  create: [ReportedCreateWithoutReportedQuestionsInput!]
++  connectOrCreate: [ReportedCreateOrConnectWithoutReportedQuestionsInput!]
++  connect: [ReportedWhereUniqueInput!]
++}
++
++input ReportedCreateWithoutReportedQuestionsInput @join__type(graph: UGC) {
++  recordType: String!
++  recordId: Int!
++  userId: Int!
++  reason: ReportedReasonCreateNestedOneWithoutReportedInput!
++  notes: String!
++  reportedAnswer: AnswerCreateNestedManyWithoutReportedInput
++}
++
++input AnswerCreateNestedManyWithoutReportedInput @join__type(graph: UGC) {
++  create: [AnswerCreateWithoutReportedInput!]
++  connectOrCreate: [AnswerCreateOrConnectWithoutReportedInput!]
++  connect: [AnswerWhereUniqueInput!]
++}
++
++input AnswerCreateWithoutReportedInput @join__type(graph: UGC) {
++  answer: String!
++  viewCount: Int
++  question: QuestionCreateNestedOneWithoutAnswersInput!
++  createdAt: DateTime
++  updatedAt: DateTime
++  likes: LikesCreateNestedManyWithoutAnswerLikesInput
++}
++
++input LikesCreateNestedManyWithoutAnswerLikesInput @join__type(graph: UGC) {
++  create: [LikesCreateWithoutAnswerLikesInput!]
++  connectOrCreate: [LikesCreateOrConnectWithoutAnswerLikesInput!]
++  connect: [LikesWhereUniqueInput!]
++}
++
++input LikesCreateWithoutAnswerLikesInput @join__type(graph: UGC) {
++  recordType: String!
++  recordTypeId: Int!
++  userId: Int!
++  createdAt: DateTime
++  updatedAt: DateTime
++  questionLikes: QuestionCreateNestedManyWithoutLikesInput
++}
++
++input QuestionCreateNestedManyWithoutLikesInput @join__type(graph: UGC) {
++  create: [QuestionCreateWithoutLikesInput!]
++  connectOrCreate: [QuestionCreateOrConnectWithoutLikesInput!]
++  connect: [QuestionWhereUniqueInput!]
++}
++
++input QuestionCreateWithoutLikesInput @join__type(graph: UGC) {
++  type: String!
++  contentTypeId: Int!
++  contentType: ContentType!
++  question: String!
++  answers: AnswerCreateNestedManyWithoutQuestionInput
++  reported: ReportedCreateNestedManyWithoutReportedQuestionsInput
++}
++
++input QuestionCreateOrConnectWithoutLikesInput @join__type(graph: UGC) {
++  where: QuestionWhereUniqueInput!
++  create: QuestionCreateWithoutLikesInput!
++}
++
++input LikesCreateOrConnectWithoutAnswerLikesInput @join__type(graph: UGC) {
++  where: LikesWhereUniqueInput!
++  create: LikesCreateWithoutAnswerLikesInput!
++}
++
++input AnswerCreateOrConnectWithoutReportedInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  create: AnswerCreateWithoutReportedInput!
++}
++
++input ReportedCreateOrConnectWithoutReportedQuestionsInput @join__type(graph: UGC) {
++  where: ReportedWhereUniqueInput!
++  create: ReportedCreateWithoutReportedQuestionsInput!
++}
++
++input QuestionCreateOrConnectWithoutAnswersInput @join__type(graph: UGC) {
++  where: QuestionWhereUniqueInput!
++  create: QuestionCreateWithoutAnswersInput!
++}
++
++input AnswerCreateOrConnectWithoutLikesInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  create: AnswerCreateWithoutLikesInput!
++}
++
++input LikesCreateOrConnectWithoutQuestionLikesInput @join__type(graph: UGC) {
++  where: LikesWhereUniqueInput!
++  create: LikesCreateWithoutQuestionLikesInput!
++}
++
++input QuestionCreateOrConnectWithoutReportedInput @join__type(graph: UGC) {
++  where: QuestionWhereUniqueInput!
++  create: QuestionCreateWithoutReportedInput!
++}
++
++input ReportedCreateOrConnectWithoutReportedAnswerInput @join__type(graph: UGC) {
++  where: ReportedWhereUniqueInput!
++  create: ReportedCreateWithoutReportedAnswerInput!
++}
++
++input AnswerCreateOrConnectWithoutQuestionInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  create: AnswerCreateWithoutQuestionInput!
++}
++
++input AnswerCreateManyQuestionInputEnvelope @join__type(graph: UGC) {
++  data: [AnswerCreateManyQuestionInput!]!
++  skipDuplicates: Boolean
++}
++
++input AnswerCreateManyQuestionInput @join__type(graph: UGC) {
++  id: Int
++  answer: String!
++  viewCount: Int
++  createdAt: DateTime
++  updatedAt: DateTime
++}
++
++input QuestionUpdateInput @join__type(graph: UGC) {
++  type: StringFieldUpdateOperationsInput
++  contentTypeId: IntFieldUpdateOperationsInput
++  contentType: EnumContentTypeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  question: StringFieldUpdateOperationsInput
++  answers: AnswerUpdateManyWithoutQuestionNestedInput
++  reported: ReportedUpdateManyWithoutReportedQuestionsNestedInput
++  likes: LikesUpdateManyWithoutQuestionLikesNestedInput
++}
++
++input StringFieldUpdateOperationsInput @join__type(graph: UGC) {
++  set: String
++}
++
++input IntFieldUpdateOperationsInput @join__type(graph: UGC) {
++  set: Int
++  increment: Int
++  decrement: Int
++  multiply: Int
++  divide: Int
++}
++
++input EnumContentTypeFieldUpdateOperationsInput @join__type(graph: UGC) {
++  set: ContentType
++}
++
++input EnumContentStatusFieldUpdateOperationsInput @join__type(graph: UGC) {
++  set: ContentStatus
++}
++
++input AnswerUpdateManyWithoutQuestionNestedInput @join__type(graph: UGC) {
++  create: [AnswerCreateWithoutQuestionInput!]
++  connectOrCreate: [AnswerCreateOrConnectWithoutQuestionInput!]
++  upsert: [AnswerUpsertWithWhereUniqueWithoutQuestionInput!]
++  createMany: AnswerCreateManyQuestionInputEnvelope
++  set: [AnswerWhereUniqueInput!]
++  disconnect: [AnswerWhereUniqueInput!]
++  delete: [AnswerWhereUniqueInput!]
++  connect: [AnswerWhereUniqueInput!]
++  update: [AnswerUpdateWithWhereUniqueWithoutQuestionInput!]
++  updateMany: [AnswerUpdateManyWithWhereWithoutQuestionInput!]
++  deleteMany: [AnswerScalarWhereInput!]
++}
++
++input AnswerUpsertWithWhereUniqueWithoutQuestionInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  update: AnswerUpdateWithoutQuestionInput!
++  create: AnswerCreateWithoutQuestionInput!
++}
++
++input AnswerUpdateWithoutQuestionInput @join__type(graph: UGC) {
++  answer: StringFieldUpdateOperationsInput
++  viewCount: IntFieldUpdateOperationsInput
++  createdAt: DateTimeFieldUpdateOperationsInput
++  updatedAt: DateTimeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  reported: ReportedUpdateManyWithoutReportedAnswerNestedInput
++  likes: LikesUpdateManyWithoutAnswerLikesNestedInput
++}
++
++input DateTimeFieldUpdateOperationsInput @join__type(graph: UGC) {
++  set: DateTime
++}
++
++input ReportedUpdateManyWithoutReportedAnswerNestedInput @join__type(graph: UGC) {
++  create: [ReportedCreateWithoutReportedAnswerInput!]
++  connectOrCreate: [ReportedCreateOrConnectWithoutReportedAnswerInput!]
++  upsert: [ReportedUpsertWithWhereUniqueWithoutReportedAnswerInput!]
++  set: [ReportedWhereUniqueInput!]
++  disconnect: [ReportedWhereUniqueInput!]
++  delete: [ReportedWhereUniqueInput!]
++  connect: [ReportedWhereUniqueInput!]
++  update: [ReportedUpdateWithWhereUniqueWithoutReportedAnswerInput!]
++  updateMany: [ReportedUpdateManyWithWhereWithoutReportedAnswerInput!]
++  deleteMany: [ReportedScalarWhereInput!]
++}
++
++input ReportedUpsertWithWhereUniqueWithoutReportedAnswerInput @join__type(graph: UGC) {
++  where: ReportedWhereUniqueInput!
++  update: ReportedUpdateWithoutReportedAnswerInput!
++  create: ReportedCreateWithoutReportedAnswerInput!
++}
++
++input ReportedUpdateWithoutReportedAnswerInput @join__type(graph: UGC) {
++  recordType: StringFieldUpdateOperationsInput
++  recordId: IntFieldUpdateOperationsInput
++  userId: IntFieldUpdateOperationsInput
++  reason: ReportedReasonUpdateOneRequiredWithoutReportedNestedInput
++  notes: StringFieldUpdateOperationsInput
++  reportedQuestions: QuestionUpdateManyWithoutReportedNestedInput
++}
++
++input ReportedReasonUpdateOneRequiredWithoutReportedNestedInput @join__type(graph: UGC) {
++  create: ReportedReasonCreateWithoutReportedInput
++  connectOrCreate: ReportedReasonCreateOrConnectWithoutReportedInput
++  upsert: ReportedReasonUpsertWithoutReportedInput
++  connect: ReportedReasonWhereUniqueInput
++  update: ReportedReasonUpdateWithoutReportedInput
++}
++
++input ReportedReasonUpsertWithoutReportedInput @join__type(graph: UGC) {
++  update: ReportedReasonUpdateWithoutReportedInput!
++  create: ReportedReasonCreateWithoutReportedInput!
++}
++
++input ReportedReasonUpdateWithoutReportedInput @join__type(graph: UGC) {
++  title: StringFieldUpdateOperationsInput
++  description: StringFieldUpdateOperationsInput
++}
++
++input QuestionUpdateManyWithoutReportedNestedInput @join__type(graph: UGC) {
++  create: [QuestionCreateWithoutReportedInput!]
++  connectOrCreate: [QuestionCreateOrConnectWithoutReportedInput!]
++  upsert: [QuestionUpsertWithWhereUniqueWithoutReportedInput!]
++  set: [QuestionWhereUniqueInput!]
++  disconnect: [QuestionWhereUniqueInput!]
++  delete: [QuestionWhereUniqueInput!]
++  connect: [QuestionWhereUniqueInput!]
++  update: [QuestionUpdateWithWhereUniqueWithoutReportedInput!]
++  updateMany: [QuestionUpdateManyWithWhereWithoutReportedInput!]
++  deleteMany: [QuestionScalarWhereInput!]
++}
++
++input QuestionUpsertWithWhereUniqueWithoutReportedInput @join__type(graph: UGC) {
++  where: QuestionWhereUniqueInput!
++  update: QuestionUpdateWithoutReportedInput!
++  create: QuestionCreateWithoutReportedInput!
++}
++
++input QuestionUpdateWithoutReportedInput @join__type(graph: UGC) {
++  type: StringFieldUpdateOperationsInput
++  contentTypeId: IntFieldUpdateOperationsInput
++  contentType: EnumContentTypeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  question: StringFieldUpdateOperationsInput
++  answers: AnswerUpdateManyWithoutQuestionNestedInput
++  likes: LikesUpdateManyWithoutQuestionLikesNestedInput
++}
++
++input LikesUpdateManyWithoutQuestionLikesNestedInput @join__type(graph: UGC) {
++  create: [LikesCreateWithoutQuestionLikesInput!]
++  connectOrCreate: [LikesCreateOrConnectWithoutQuestionLikesInput!]
++  upsert: [LikesUpsertWithWhereUniqueWithoutQuestionLikesInput!]
++  set: [LikesWhereUniqueInput!]
++  disconnect: [LikesWhereUniqueInput!]
++  delete: [LikesWhereUniqueInput!]
++  connect: [LikesWhereUniqueInput!]
++  update: [LikesUpdateWithWhereUniqueWithoutQuestionLikesInput!]
++  updateMany: [LikesUpdateManyWithWhereWithoutQuestionLikesInput!]
++  deleteMany: [LikesScalarWhereInput!]
++}
++
++input LikesUpsertWithWhereUniqueWithoutQuestionLikesInput @join__type(graph: UGC) {
++  where: LikesWhereUniqueInput!
++  update: LikesUpdateWithoutQuestionLikesInput!
++  create: LikesCreateWithoutQuestionLikesInput!
++}
++
++input LikesUpdateWithoutQuestionLikesInput @join__type(graph: UGC) {
++  recordType: StringFieldUpdateOperationsInput
++  recordTypeId: IntFieldUpdateOperationsInput
++  userId: IntFieldUpdateOperationsInput
++  createdAt: DateTimeFieldUpdateOperationsInput
++  updatedAt: DateTimeFieldUpdateOperationsInput
++  answerLikes: AnswerUpdateManyWithoutLikesNestedInput
++}
++
++input AnswerUpdateManyWithoutLikesNestedInput @join__type(graph: UGC) {
++  create: [AnswerCreateWithoutLikesInput!]
++  connectOrCreate: [AnswerCreateOrConnectWithoutLikesInput!]
++  upsert: [AnswerUpsertWithWhereUniqueWithoutLikesInput!]
++  set: [AnswerWhereUniqueInput!]
++  disconnect: [AnswerWhereUniqueInput!]
++  delete: [AnswerWhereUniqueInput!]
++  connect: [AnswerWhereUniqueInput!]
++  update: [AnswerUpdateWithWhereUniqueWithoutLikesInput!]
++  updateMany: [AnswerUpdateManyWithWhereWithoutLikesInput!]
++  deleteMany: [AnswerScalarWhereInput!]
++}
++
++input AnswerUpsertWithWhereUniqueWithoutLikesInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  update: AnswerUpdateWithoutLikesInput!
++  create: AnswerCreateWithoutLikesInput!
++}
++
++input AnswerUpdateWithoutLikesInput @join__type(graph: UGC) {
++  answer: StringFieldUpdateOperationsInput
++  viewCount: IntFieldUpdateOperationsInput
++  question: QuestionUpdateOneRequiredWithoutAnswersNestedInput
++  createdAt: DateTimeFieldUpdateOperationsInput
++  updatedAt: DateTimeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  reported: ReportedUpdateManyWithoutReportedAnswerNestedInput
++}
++
++input QuestionUpdateOneRequiredWithoutAnswersNestedInput @join__type(graph: UGC) {
++  create: QuestionCreateWithoutAnswersInput
++  connectOrCreate: QuestionCreateOrConnectWithoutAnswersInput
++  upsert: QuestionUpsertWithoutAnswersInput
++  connect: QuestionWhereUniqueInput
++  update: QuestionUpdateWithoutAnswersInput
++}
++
++input QuestionUpsertWithoutAnswersInput @join__type(graph: UGC) {
++  update: QuestionUpdateWithoutAnswersInput!
++  create: QuestionCreateWithoutAnswersInput!
++}
++
++input QuestionUpdateWithoutAnswersInput @join__type(graph: UGC) {
++  type: StringFieldUpdateOperationsInput
++  contentTypeId: IntFieldUpdateOperationsInput
++  contentType: EnumContentTypeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  question: StringFieldUpdateOperationsInput
++  reported: ReportedUpdateManyWithoutReportedQuestionsNestedInput
++  likes: LikesUpdateManyWithoutQuestionLikesNestedInput
++}
++
++input ReportedUpdateManyWithoutReportedQuestionsNestedInput @join__type(graph: UGC) {
++  create: [ReportedCreateWithoutReportedQuestionsInput!]
++  connectOrCreate: [ReportedCreateOrConnectWithoutReportedQuestionsInput!]
++  upsert: [ReportedUpsertWithWhereUniqueWithoutReportedQuestionsInput!]
++  set: [ReportedWhereUniqueInput!]
++  disconnect: [ReportedWhereUniqueInput!]
++  delete: [ReportedWhereUniqueInput!]
++  connect: [ReportedWhereUniqueInput!]
++  update: [ReportedUpdateWithWhereUniqueWithoutReportedQuestionsInput!]
++  updateMany: [ReportedUpdateManyWithWhereWithoutReportedQuestionsInput!]
++  deleteMany: [ReportedScalarWhereInput!]
++}
++
++input ReportedUpsertWithWhereUniqueWithoutReportedQuestionsInput @join__type(graph: UGC) {
++  where: ReportedWhereUniqueInput!
++  update: ReportedUpdateWithoutReportedQuestionsInput!
++  create: ReportedCreateWithoutReportedQuestionsInput!
++}
++
++input ReportedUpdateWithoutReportedQuestionsInput @join__type(graph: UGC) {
++  recordType: StringFieldUpdateOperationsInput
++  recordId: IntFieldUpdateOperationsInput
++  userId: IntFieldUpdateOperationsInput
++  reason: ReportedReasonUpdateOneRequiredWithoutReportedNestedInput
++  notes: StringFieldUpdateOperationsInput
++  reportedAnswer: AnswerUpdateManyWithoutReportedNestedInput
++}
++
++input AnswerUpdateManyWithoutReportedNestedInput @join__type(graph: UGC) {
++  create: [AnswerCreateWithoutReportedInput!]
++  connectOrCreate: [AnswerCreateOrConnectWithoutReportedInput!]
++  upsert: [AnswerUpsertWithWhereUniqueWithoutReportedInput!]
++  set: [AnswerWhereUniqueInput!]
++  disconnect: [AnswerWhereUniqueInput!]
++  delete: [AnswerWhereUniqueInput!]
++  connect: [AnswerWhereUniqueInput!]
++  update: [AnswerUpdateWithWhereUniqueWithoutReportedInput!]
++  updateMany: [AnswerUpdateManyWithWhereWithoutReportedInput!]
++  deleteMany: [AnswerScalarWhereInput!]
++}
++
++input AnswerUpsertWithWhereUniqueWithoutReportedInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  update: AnswerUpdateWithoutReportedInput!
++  create: AnswerCreateWithoutReportedInput!
++}
++
++input AnswerUpdateWithoutReportedInput @join__type(graph: UGC) {
++  answer: StringFieldUpdateOperationsInput
++  viewCount: IntFieldUpdateOperationsInput
++  question: QuestionUpdateOneRequiredWithoutAnswersNestedInput
++  createdAt: DateTimeFieldUpdateOperationsInput
++  updatedAt: DateTimeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  likes: LikesUpdateManyWithoutAnswerLikesNestedInput
++}
++
++input LikesUpdateManyWithoutAnswerLikesNestedInput @join__type(graph: UGC) {
++  create: [LikesCreateWithoutAnswerLikesInput!]
++  connectOrCreate: [LikesCreateOrConnectWithoutAnswerLikesInput!]
++  upsert: [LikesUpsertWithWhereUniqueWithoutAnswerLikesInput!]
++  set: [LikesWhereUniqueInput!]
++  disconnect: [LikesWhereUniqueInput!]
++  delete: [LikesWhereUniqueInput!]
++  connect: [LikesWhereUniqueInput!]
++  update: [LikesUpdateWithWhereUniqueWithoutAnswerLikesInput!]
++  updateMany: [LikesUpdateManyWithWhereWithoutAnswerLikesInput!]
++  deleteMany: [LikesScalarWhereInput!]
++}
++
++input LikesUpsertWithWhereUniqueWithoutAnswerLikesInput @join__type(graph: UGC) {
++  where: LikesWhereUniqueInput!
++  update: LikesUpdateWithoutAnswerLikesInput!
++  create: LikesCreateWithoutAnswerLikesInput!
++}
++
++input LikesUpdateWithoutAnswerLikesInput @join__type(graph: UGC) {
++  recordType: StringFieldUpdateOperationsInput
++  recordTypeId: IntFieldUpdateOperationsInput
++  userId: IntFieldUpdateOperationsInput
++  createdAt: DateTimeFieldUpdateOperationsInput
++  updatedAt: DateTimeFieldUpdateOperationsInput
++  questionLikes: QuestionUpdateManyWithoutLikesNestedInput
++}
++
++input QuestionUpdateManyWithoutLikesNestedInput @join__type(graph: UGC) {
++  create: [QuestionCreateWithoutLikesInput!]
++  connectOrCreate: [QuestionCreateOrConnectWithoutLikesInput!]
++  upsert: [QuestionUpsertWithWhereUniqueWithoutLikesInput!]
++  set: [QuestionWhereUniqueInput!]
++  disconnect: [QuestionWhereUniqueInput!]
++  delete: [QuestionWhereUniqueInput!]
++  connect: [QuestionWhereUniqueInput!]
++  update: [QuestionUpdateWithWhereUniqueWithoutLikesInput!]
++  updateMany: [QuestionUpdateManyWithWhereWithoutLikesInput!]
++  deleteMany: [QuestionScalarWhereInput!]
++}
++
++input QuestionUpsertWithWhereUniqueWithoutLikesInput @join__type(graph: UGC) {
++  where: QuestionWhereUniqueInput!
++  update: QuestionUpdateWithoutLikesInput!
++  create: QuestionCreateWithoutLikesInput!
++}
++
++input QuestionUpdateWithoutLikesInput @join__type(graph: UGC) {
++  type: StringFieldUpdateOperationsInput
++  contentTypeId: IntFieldUpdateOperationsInput
++  contentType: EnumContentTypeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  question: StringFieldUpdateOperationsInput
++  answers: AnswerUpdateManyWithoutQuestionNestedInput
++  reported: ReportedUpdateManyWithoutReportedQuestionsNestedInput
++}
++
++input QuestionUpdateWithWhereUniqueWithoutLikesInput @join__type(graph: UGC) {
++  where: QuestionWhereUniqueInput!
++  data: QuestionUpdateWithoutLikesInput!
++}
++
++input QuestionUpdateManyWithWhereWithoutLikesInput @join__type(graph: UGC) {
++  where: QuestionScalarWhereInput!
++  data: QuestionUpdateManyMutationInput!
++}
++
++input QuestionScalarWhereInput @join__type(graph: UGC) {
++  AND: [QuestionScalarWhereInput!]
++  OR: [QuestionScalarWhereInput!]
++  NOT: [QuestionScalarWhereInput!]
++  id: IntFilter
++  type: StringFilter
++  contentTypeId: IntFilter
++  contentType: EnumContentTypeFilter
++  status: EnumContentStatusFilter
++  question: StringFilter
++  userId: IntFilter
++  createdAt: DateTimeFilter
++  updatedAt: DateTimeFilter
++}
++
++input QuestionUpdateManyMutationInput @join__type(graph: UGC) {
++  type: StringFieldUpdateOperationsInput
++  contentTypeId: IntFieldUpdateOperationsInput
++  contentType: EnumContentTypeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  question: StringFieldUpdateOperationsInput
++}
++
++input LikesUpdateWithWhereUniqueWithoutAnswerLikesInput @join__type(graph: UGC) {
++  where: LikesWhereUniqueInput!
++  data: LikesUpdateWithoutAnswerLikesInput!
++}
++
++input LikesUpdateManyWithWhereWithoutAnswerLikesInput @join__type(graph: UGC) {
++  where: LikesScalarWhereInput!
++  data: LikesUpdateManyMutationInput!
++}
++
++input LikesScalarWhereInput @join__type(graph: UGC) {
++  AND: [LikesScalarWhereInput!]
++  OR: [LikesScalarWhereInput!]
++  NOT: [LikesScalarWhereInput!]
++  id: IntFilter
++  recordType: StringFilter
++  recordTypeId: IntFilter
++  userId: IntFilter
++  createdAt: DateTimeFilter
++  updatedAt: DateTimeFilter
++}
++
++input LikesUpdateManyMutationInput @join__type(graph: UGC) {
++  recordType: StringFieldUpdateOperationsInput
++  recordTypeId: IntFieldUpdateOperationsInput
++  userId: IntFieldUpdateOperationsInput
++  createdAt: DateTimeFieldUpdateOperationsInput
++  updatedAt: DateTimeFieldUpdateOperationsInput
++}
++
++input AnswerUpdateWithWhereUniqueWithoutReportedInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  data: AnswerUpdateWithoutReportedInput!
++}
++
++input AnswerUpdateManyWithWhereWithoutReportedInput @join__type(graph: UGC) {
++  where: AnswerScalarWhereInput!
++  data: AnswerUpdateManyMutationInput!
++}
++
++input AnswerScalarWhereInput @join__type(graph: UGC) {
++  AND: [AnswerScalarWhereInput!]
++  OR: [AnswerScalarWhereInput!]
++  NOT: [AnswerScalarWhereInput!]
++  id: IntFilter
++  userId: IntFilter
++  answer: StringFilter
++  viewCount: IntFilter
++  questionId: IntFilter
++  createdAt: DateTimeFilter
++  updatedAt: DateTimeFilter
++  status: EnumContentStatusFilter
++}
++
++input AnswerUpdateManyMutationInput @join__type(graph: UGC) {
++  answer: StringFieldUpdateOperationsInput
++  viewCount: IntFieldUpdateOperationsInput
++  createdAt: DateTimeFieldUpdateOperationsInput
++  updatedAt: DateTimeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++}
++
++input ReportedUpdateWithWhereUniqueWithoutReportedQuestionsInput @join__type(graph: UGC) {
++  where: ReportedWhereUniqueInput!
++  data: ReportedUpdateWithoutReportedQuestionsInput!
++}
++
++input ReportedUpdateManyWithWhereWithoutReportedQuestionsInput @join__type(graph: UGC) {
++  where: ReportedScalarWhereInput!
++  data: ReportedUpdateManyMutationInput!
++}
++
++input ReportedScalarWhereInput @join__type(graph: UGC) {
++  AND: [ReportedScalarWhereInput!]
++  OR: [ReportedScalarWhereInput!]
++  NOT: [ReportedScalarWhereInput!]
++  id: IntFilter
++  recordType: StringFilter
++  recordId: IntFilter
++  userId: IntFilter
++  reasonId: IntFilter
++  notes: StringFilter
++}
++
++input ReportedUpdateManyMutationInput @join__type(graph: UGC) {
++  recordType: StringFieldUpdateOperationsInput
++  recordId: IntFieldUpdateOperationsInput
++  userId: IntFieldUpdateOperationsInput
++  notes: StringFieldUpdateOperationsInput
++}
++
++input AnswerUpdateWithWhereUniqueWithoutLikesInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  data: AnswerUpdateWithoutLikesInput!
++}
++
++input AnswerUpdateManyWithWhereWithoutLikesInput @join__type(graph: UGC) {
++  where: AnswerScalarWhereInput!
++  data: AnswerUpdateManyMutationInput!
++}
++
++input LikesUpdateWithWhereUniqueWithoutQuestionLikesInput @join__type(graph: UGC) {
++  where: LikesWhereUniqueInput!
++  data: LikesUpdateWithoutQuestionLikesInput!
++}
++
++input LikesUpdateManyWithWhereWithoutQuestionLikesInput @join__type(graph: UGC) {
++  where: LikesScalarWhereInput!
++  data: LikesUpdateManyMutationInput!
++}
++
++input QuestionUpdateWithWhereUniqueWithoutReportedInput @join__type(graph: UGC) {
++  where: QuestionWhereUniqueInput!
++  data: QuestionUpdateWithoutReportedInput!
++}
++
++input QuestionUpdateManyWithWhereWithoutReportedInput @join__type(graph: UGC) {
++  where: QuestionScalarWhereInput!
++  data: QuestionUpdateManyMutationInput!
++}
++
++input ReportedUpdateWithWhereUniqueWithoutReportedAnswerInput @join__type(graph: UGC) {
++  where: ReportedWhereUniqueInput!
++  data: ReportedUpdateWithoutReportedAnswerInput!
++}
++
++input ReportedUpdateManyWithWhereWithoutReportedAnswerInput @join__type(graph: UGC) {
++  where: ReportedScalarWhereInput!
++  data: ReportedUpdateManyMutationInput!
++}
++
++input AnswerUpdateWithWhereUniqueWithoutQuestionInput @join__type(graph: UGC) {
++  where: AnswerWhereUniqueInput!
++  data: AnswerUpdateWithoutQuestionInput!
++}
++
++input AnswerUpdateManyWithWhereWithoutQuestionInput @join__type(graph: UGC) {
++  where: AnswerScalarWhereInput!
++  data: AnswerUpdateManyMutationInput!
++}
++
++input AnswerCreateInput @join__type(graph: UGC) {
++  answer: String!
++  viewCount: Int
++  question: QuestionCreateNestedOneWithoutAnswersInput!
++  createdAt: DateTime
++  updatedAt: DateTime
++  reported: ReportedCreateNestedManyWithoutReportedAnswerInput
++  likes: LikesCreateNestedManyWithoutAnswerLikesInput
++}
++
++input AnswerUpdateInput @join__type(graph: UGC) {
++  answer: StringFieldUpdateOperationsInput
++  viewCount: IntFieldUpdateOperationsInput
++  question: QuestionUpdateOneRequiredWithoutAnswersNestedInput
++  createdAt: DateTimeFieldUpdateOperationsInput
++  updatedAt: DateTimeFieldUpdateOperationsInput
++  status: EnumContentStatusFieldUpdateOperationsInput
++  reported: ReportedUpdateManyWithoutReportedAnswerNestedInput
++  likes: LikesUpdateManyWithoutAnswerLikesNestedInput
++}
+diff --git a/e2e/tripadvisor-repro/tripadvisor-repro.test.ts b/e2e/tripadvisor-repro/tripadvisor-repro.test.ts
+new file mode 100644
+index 000000000..71031c741
+--- /dev/null
++++ b/e2e/tripadvisor-repro/tripadvisor-repro.test.ts
+@@ -0,0 +1,71 @@
++import { createTenv } from '@e2e/tenv';
++
++const { serve } = createTenv(__dirname);
++
++it('should search ships and get the "id" field', async () => {
++  const { execute } = await serve({ supergraph: 'supergraph.graphql' });
++  await expect(
++    execute({
++      query: /* GraphQL */ `
++        query ShipSearchWithID {
++          shipSearch(
++            ipCountry: "US"
++            cruiseLineIds: []
++            posCountry: US
++            viewport: DESKTOP
++            limit: 1
++            page: 1
++          ) {
++            results {
++              id
++            }
++          }
++        }
++      `,
++    }),
++  ).resolves.toEqual(
++    expect.objectContaining({
++      data: {
++        shipSearch: {
++          results: {
++            id: expect.anything(),
++          },
++        },
++      },
++    }),
++  );
++});
++
++it('should search ships and get the "name" field', async () => {
++  const { execute } = await serve({ supergraph: 'supergraph.graphql' });
++  await expect(
++    execute({
++      query: /* GraphQL */ `
++        query ShipSearchWithID {
++          shipSearch(
++            ipCountry: "US"
++            cruiseLineIds: []
++            posCountry: US
++            viewport: DESKTOP
++            limit: 1
++            page: 1
++          ) {
++            results {
++              name
++            }
++          }
++        }
++      `,
++    }),
++  ).resolves.toEqual(
++    expect.objectContaining({
++      data: {
++        shipSearch: {
++          results: {
++            name: expect.anything(),
++          },
++        },
++      },
++    }),
++  );
++});
+diff --git a/yarn.lock b/yarn.lock
+index 6117a4050..1d782d07a 100644
+--- a/yarn.lock
++++ b/yarn.lock
+@@ -4199,6 +4199,12 @@ __metadata:
+   languageName: unknown
+   linkType: soft
+
++"@e2e/tripadvisor-repro@workspace:e2e/tripadvisor-repro":
++  version: 0.0.0-use.local
++  resolution: "@e2e/tripadvisor-repro@workspace:e2e/tripadvisor-repro"
++  languageName: unknown
++  linkType: soft
++
+ "@e2e/type-merging-batching@workspace:e2e/type-merging-batching":
+   version: 0.0.0-use.local
+   resolution: "@e2e/type-merging-batching@workspace:e2e/type-merging-batching"
+--
+2.45.1
+
