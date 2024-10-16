@@ -34,13 +34,13 @@
   "peerDependencies": {
     "@graphql-mesh/types": "^0.102.6",
     "@graphql-mesh/utils": "^0.102.6",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.21",
-    "@graphql-tools/wrap": "^10.0.5"
+    "@graphql-tools/delegate": "^10.0.22",
+    "@graphql-tools/wrap": "^10.0.7"
   },
   "devDependencies": {
     "@graphql-tools/schema": "10.0.7"

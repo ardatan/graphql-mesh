@@ -39,8 +39,8 @@
     "@graphql-mesh/transport-common": "^0.7.7",
     "@graphql-mesh/types": "^0.102.6",
     "@graphql-mesh/utils": "^0.102.6",
-    "@graphql-tools/delegate": "^10.0.21",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-tools/delegate": "^10.0.22",
+    "@graphql-tools/utils": "^10.5.5",
     "@neo4j/graphql": "^5.0.0",
     "graphql-scalars": "^1.22.4",
     "neo4j-driver": "^5.17.0"

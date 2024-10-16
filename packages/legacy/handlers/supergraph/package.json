@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.6",
-    "@graphql-tools/federation": "^2.2.10",
+    "@graphql-tools/federation": "^2.2.12",
     "@graphql-tools/url-loader": "^8.0.2",
     "@graphql-tools/utils": "^10.2.2",
     "lodash.get": "^4.4.2"

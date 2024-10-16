@@ -34,7 +34,7 @@
   "peerDependencies": {
     "@graphql-mesh/types": "^0.102.6",
     "@graphql-mesh/utils": "^0.102.6",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },

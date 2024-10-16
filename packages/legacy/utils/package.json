@@ -34,13 +34,13 @@
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/types": "^0.102.6",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.6",
-    "@graphql-tools/delegate": "^10.0.21",
+    "@graphql-tools/delegate": "^10.0.22",
     "@whatwg-node/disposablestack": "^0.0.5",
     "@whatwg-node/fetch": "^0.9.13",
     "dset": "^3.1.2",
