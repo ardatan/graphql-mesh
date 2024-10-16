@@ -80,6 +80,7 @@ jobs:
           command: yarn test
 
   unit-leaks:
+    needs: [unit]
     name: unit / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -125,6 +126,7 @@ jobs:
           command: yarn test:leak
 
   integration:
+    needs: [unit]
     name: integration / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -206,6 +208,7 @@ jobs:
         run: yarn test:integration
 
   integration-leak:
+    needs: [integration]
     name: integration / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -297,6 +300,7 @@ jobs:
           command: yarn test:integration:leak
 
   integrity-check:
+    needs: [typecheck]
     name: integrity-check / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -321,6 +325,7 @@ jobs:
         run: yarn bob check
 
   e2e:
+    needs: [unit]
     name:
       e2e / runner ${{matrix.setup.serve-runner}} / os ${{ matrix.setup.os }} / node
       ${{matrix.setup.node-version}}
@@ -420,6 +425,7 @@ jobs:
         run: |
           yarn test:e2e --detectOpenHandles --forceExit
   apollo-federation-compatibility:
+    needs: [unit]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -447,3 +453,35 @@ jobs:
           failOnWarning: true
           failOnRequired: true
           debug: true
+
+  loadtest-e2e:
+    needs: [e2e]
+    name: node ${{matrix.node-version}}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          - 18
+          - 20
+          - 22
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: the-guild-org/shared-config/setup@v1
+        name: setup env
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: Prepare for build
+        run: yarn prebuild
+      - name: hash docker images
+        id: hash-docker-images
+        # get all "image: '" occurrences in the e2e tests and hash them
+        run: |
+          echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
+      - name: cache docker images
+        uses: enisdenjo/docker-cache@0.5.1
+        with:
+          key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
+      - name: loadtest
+        run: yarn loadtest:e2e

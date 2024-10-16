@@ -35,7 +35,7 @@
     "@graphql-mesh/cross-helpers": "^0.4.6",
     "@graphql-mesh/types": "^0.102.6",
     "@graphql-mesh/utils": "^0.102.6",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.102.6",
     "@graphql-tools/schema": "10.0.7",
-    "@graphql-tools/wrap": "10.0.6"
+    "@graphql-tools/wrap": "10.0.7"
   },
   "publishConfig": {
     "access": "public",
