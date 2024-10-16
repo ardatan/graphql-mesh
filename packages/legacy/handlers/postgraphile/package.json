@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.6",
-    "@graphql-tools/delegate": "^10.0.22",
+    "@graphql-tools/delegate": "^10.0.23",
     "pg": "^8.6.0",
     "postgraphile": "^4.13.0",
     "postgraphile-core": "^4.13.0"

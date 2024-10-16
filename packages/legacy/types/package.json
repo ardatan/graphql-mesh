@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@graphql-tools/batch-delegate": "^9.0.5",
-    "@graphql-tools/delegate": "^10.0.22",
+    "@graphql-tools/delegate": "^10.0.23",
     "@graphql-typed-document-node/core": "^3.2.0"
   },
   "publishConfig": {
