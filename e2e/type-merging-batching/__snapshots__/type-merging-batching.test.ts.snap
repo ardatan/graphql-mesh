@@ -56,8 +56,8 @@ scalar _DirectiveExtensions @join__type(graph: AUTHORS) @join__type(graph: BOOKS
 type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}}]}) @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "books", location: "http://localhost:<books_port>/graphql", options: {}}]}) @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
   author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books")
   authors(ids: [ID]): [Author] @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @join__field(graph: AUTHORS)
-  book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "authorId", keyArg: "id") @join__field(graph: BOOKS)
-  books(ids: [ID]): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @merge(subgraph: "books", keyField: "authorId", keyArg: "ids") @join__field(graph: BOOKS)
+  book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @join__field(graph: BOOKS)
+  books(ids: [ID]): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @join__field(graph: BOOKS)
 }
 
 type Author @source(name: "AuthorWithBooks", subgraph: "books") @join__type(graph: AUTHORS, key: "id") @join__type(graph: BOOKS, key: "id") {
@@ -66,10 +66,10 @@ type Author @source(name: "AuthorWithBooks", subgraph: "books") @join__type(grap
   books: [Book!]! @join__field(graph: BOOKS)
 }
 
-type Book @join__type(graph: BOOKS, key: "id") @join__type(graph: BOOKS, key: "authorId") {
+type Book @join__type(graph: BOOKS, key: "id") {
   id: ID!
-  authorId: ID!
   title: String!
+  authorId: ID!
   author: Author @resolveTo(sourceName: "authors", sourceTypeName: "Query", sourceFieldName: "authors", keyField: "authorId", keysArg: "ids") @additionalField
 }
 "
