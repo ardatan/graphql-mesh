@@ -4751,7 +4751,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.2"
     "@graphql-mesh/cli": "npm:0.96.6"
     "@graphql-mesh/json-schema": "npm:0.107.1"
-    "@types/node": "npm:20.16.11"
+    "@types/node": "npm:20.16.12"
     graphql: "npm:16.9.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -4767,7 +4767,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.13"
-    "@types/node": "npm:20.16.11"
+    "@types/node": "npm:20.16.12"
     "@types/react": "npm:18.3.11"
     "@types/react-dom": "npm:18.3.1"
     apollo-upload-client: "npm:18.0.1"
@@ -4956,7 +4956,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.6"
     "@graphql-mesh/json-schema": "npm:0.107.1"
-    "@types/node": "npm:20.16.11"
+    "@types/node": "npm:20.16.12"
     concurrently: "npm:9.0.1"
     fets: "npm:0.8.3"
     graphql: "npm:16.9.0"
@@ -5244,7 +5244,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.102.7"
     "@graphql-mesh/runtime": "npm:0.103.8"
     "@graphql-mesh/transform-prefix": "npm:0.102.7"
-    "@types/node": "npm:20.16.11"
+    "@types/node": "npm:20.16.12"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -14249,20 +14249,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^22.5.5":
-  version: 22.7.5
-  resolution: "@types/node@npm:22.7.5"
+  version: 22.7.6
+  resolution: "@types/node@npm:22.7.6"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/cf11f74f1a26053ec58066616e3a8685b6bcd7259bc569738b8f752009f9f0f7f85a1b2d24908e5b0f752482d1e8b6babdf1fbb25758711ec7bb9500bfcd6e60
+  checksum: 10c0/d4406a63afce981c363fb1d1954aaf1759ad2d487c0833ebf667565ea4e45ff217d6fab4b5343badbdeccdf9d2e4a0841d633e0c929ceabcb33c288663dd0c73
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.16.11, @types/node@npm:^20.10.6":
-  version: 20.16.11
-  resolution: "@types/node@npm:20.16.11"
+"@types/node@npm:20.16.12, @types/node@npm:^20.10.6":
+  version: 20.16.12
+  resolution: "@types/node@npm:20.16.12"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/bba43f447c3c80548513954dae174e18132e9149d572c09df4a282772960d33e229d05680fb5364997c03489c22fe377d1dbcd018a3d4ff1cfbcfcdaa594a9c3
+  checksum: 10c0/f6a3c90c6745881d47f8dae7eb39d0dd6df9a4060c8f1ab7004690f60b9b183d862c9c6b380b9e8d5a17dd670ac7b19d6318f24c170897c85a9729f9804f47cf
   languageName: node
   linkType: hard
 
@@ -14281,11 +14281,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.11.18":
-  version: 18.19.55
-  resolution: "@types/node@npm:18.19.55"
+  version: 18.19.56
+  resolution: "@types/node@npm:18.19.56"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/19ffeca0086b45cba08d4585623cd0d80fbacb659debde82a4baa008fc0c25ba6c21cd721f3a9f0be74f70940694b00458cac61c89f8b2a1e55ca4322a9aad2b
+  checksum: 10c0/4cc4a6e9051d2d4458bfef4cbaee3c5f920dd318f6e940a5e0c378b1b2ec5e716d0973a406270cc51096a682069524d8a5aeee02046d4430addf56f41af47375
   languageName: node
   linkType: hard
 
@@ -21235,7 +21235,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "npm:1.1.1"
     "@graphql-mesh/serve-cli": "npm:1.2.0"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.7.0"
-    "@types/node": "npm:20.16.11"
+    "@types/node": "npm:20.16.12"
     concurrently: "npm:9.0.1"
     esbuild: "npm:^0.24.0"
     graphql: "npm:16.9.0"
@@ -23014,7 +23014,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.13"
-    "@types/node": "npm:20.16.11"
+    "@types/node": "npm:20.16.12"
     "@typescript-eslint/eslint-plugin": "npm:8.9.0"
     "@typescript-eslint/parser": "npm:8.9.0"
     babel-jest: "npm:29.7.0"
@@ -38120,7 +38120,7 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^7.0.0"
     "@theguild/tailwind-config": "npm:0.5.0"
-    "@types/node": "npm:20.16.11"
+    "@types/node": "npm:20.16.12"
     "@types/react": "npm:18.3.11"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.15"
