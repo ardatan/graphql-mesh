@@ -38,8 +38,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.24",
-    "@graphql-tools/wrap": "^10.0.8"
+    "@graphql-tools/delegate": "^10.0.26",
+    "@graphql-tools/wrap": "^10.0.10"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.102.7"
