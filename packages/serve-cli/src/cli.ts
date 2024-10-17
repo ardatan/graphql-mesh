@@ -277,7 +277,8 @@ let cli = new Command()
       '--apollo-key <apiKey>',
       'Apollo API key to use to authenticate with the managed federation up link',
     ).env('APOLLO_KEY'),
-  );
+  )
+  .option('--no-websockets', 'Disable WebSockets support');
 
 export async function run(userCtx: Partial<CLIContext>) {
   module.register('@graphql-mesh/include/hooks', {

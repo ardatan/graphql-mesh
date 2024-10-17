@@ -2,6 +2,7 @@ import { promises as fsPromises } from 'node:fs';
 import { createServer as createHTTPServer, type Server } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
 import type { SecureContextOptions } from 'node:tls';
+import type { execute, ExecutionArgs, subscribe } from 'graphql';
 import type { GatewayRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { createAsyncDisposable, getTerminateStack } from '@graphql-mesh/utils';
@@ -32,6 +33,12 @@ export interface ServerConfig {
    * @default 16384
    */
   maxHeaderSize?: number;
+  /**
+   * Disable WebSockets
+   *
+   * @default true
+   */
+  disableWebsockets?: boolean;
 }
 
 export interface ServerConfigSSLCredentials {
@@ -58,6 +65,7 @@ export async function startServerForRuntime<
     port = defaultOptions.port,
     sslCredentials,
     maxHeaderSize = 16_384,
+    disableWebsockets = false,
   }: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
   const terminateStack = getTerminateStack();
@@ -75,6 +83,7 @@ export async function startServerForRuntime<
     port,
     sslCredentials,
     maxHeaderSize,
+    disableWebsockets,
   };
 
   const server = await startNodeHttpServer(runtime, serverOpts);
@@ -84,9 +93,8 @@ export async function startServerForRuntime<
   return server;
 }
 
-async function startNodeHttpServer(
-  /** TODO: type out */
-  handler: any,
+async function startNodeHttpServer<TContext>(
+  gwRuntime: GatewayRuntime<TContext>,
   opts: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
   const {
@@ -95,6 +103,7 @@ async function startNodeHttpServer(
     port = defaultOptions.port,
     sslCredentials,
     maxHeaderSize,
+    disableWebsockets,
   } = opts;
   let server: Server;
   let protocol: string;
@@ -123,20 +132,36 @@ async function startNodeHttpServer(
     if (sslCredentials.ssl_prefer_low_memory_usage) {
       sslOptionsForNodeHttp.honorCipherOrder = true;
     }
-    server = createHTTPSServer(sslOptionsForNodeHttp, handler);
+    server = createHTTPSServer(
+      {
+        ...sslOptionsForNodeHttp,
+        maxHeaderSize,
+      },
+      gwRuntime,
+    );
   } else {
     protocol = 'http';
     server = createHTTPServer(
       {
         maxHeaderSize,
       },
-      handler,
+      gwRuntime,
     );
   }
 
   const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
 
   log.debug(`Starting server on ${url}`);
+  if (!disableWebsockets) {
+    const { WebSocketServer } = await import('ws');
+    const wsServer = new WebSocketServer({
+      path: gwRuntime.graphqlEndpoint,
+      server,
+    });
+    const graphqlWSOptions = getGraphQLWSOptions(gwRuntime);
+    const { useServer } = await import('graphql-ws/lib/use/ws');
+    useServer(graphqlWSOptions, wsServer);
+  }
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
@@ -157,4 +182,45 @@ async function startNodeHttpServer(
       );
     });
   });
+}
+
+export function getGraphQLWSOptions<TContext>(gwRuntime: GatewayRuntime<TContext>) {
+  // yoga's envelop may augment the `execute` and `subscribe` operations
+  // so we need to make sure we always use the freshest instance
+  type EnvelopedExecutionArgs = ExecutionArgs & {
+    rootValue: {
+      execute: typeof execute;
+      subscribe: typeof subscribe;
+    };
+  };
+  return {
+    execute: (args: EnvelopedExecutionArgs) => args.rootValue.execute(args),
+    subscribe: (args: EnvelopedExecutionArgs) => args.rootValue.subscribe(args),
+    onSubscribe: async (ctx, msg) => {
+      const { schema, execute, subscribe, contextFactory, parse, validate } =
+        gwRuntime.getEnveloped({
+          connectionParams: ctx.connectionParams,
+          req: ctx.extra.request,
+        });
+
+      const args: EnvelopedExecutionArgs = {
+        schema: schema || (await gwRuntime.getSchema()),
+        operationName: msg.payload.operationName,
+        document: parse(msg.payload.query),
+        variableValues: msg.payload.variables,
+        contextValue: await contextFactory(),
+        rootValue: {
+          execute,
+          subscribe,
+        },
+      };
+
+      if (args.schema) {
+        const errors = validate(args.schema, args.document);
+        if (errors.length) return errors;
+      }
+      return args;
+    },
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  } as Parameters<typeof import('graphql-ws/lib/use/ws.js').useServer>[0];
 }
