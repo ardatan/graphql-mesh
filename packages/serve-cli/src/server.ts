@@ -3,8 +3,6 @@ import { createServer as createHTTPServer, type Server } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
 import type { SecureContextOptions } from 'node:tls';
 import type { execute, ExecutionArgs, subscribe } from 'graphql';
-import { useServer } from 'graphql-ws/lib/use/ws';
-import { WebSocketServer } from 'ws';
 import type { GatewayRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { createAsyncDisposable, getTerminateStack } from '@graphql-mesh/utils';
@@ -35,6 +33,12 @@ export interface ServerConfig {
    * @default 16384
    */
   maxHeaderSize?: number;
+  /**
+   * Disable WebSockets
+   *
+   * @default true
+   */
+  disableWebsockets?: boolean;
 }
 
 export interface ServerConfigSSLCredentials {
@@ -61,6 +65,7 @@ export async function startServerForRuntime<
     port = defaultOptions.port,
     sslCredentials,
     maxHeaderSize = 16_384,
+    disableWebsockets = false,
   }: ServerForRuntimeOptions,
 ): Promise<AsyncDisposable> {
   const terminateStack = getTerminateStack();
@@ -78,6 +83,7 @@ export async function startServerForRuntime<
     port,
     sslCredentials,
     maxHeaderSize,
+    disableWebsockets,
   };
 
   const server = await startNodeHttpServer(runtime, serverOpts);
@@ -97,6 +103,7 @@ async function startNodeHttpServer<TContext>(
     port = defaultOptions.port,
     sslCredentials,
     maxHeaderSize,
+    disableWebsockets,
   } = opts;
   let server: Server;
   let protocol: string;
@@ -145,12 +152,16 @@ async function startNodeHttpServer<TContext>(
   const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
 
   log.debug(`Starting server on ${url}`);
-  const wsServer = new WebSocketServer({
-    path: gwRuntime.graphqlEndpoint,
-    server,
-  });
-  const graphqlWSOptions = getGraphQLWSOptions(gwRuntime);
-  useServer(graphqlWSOptions, wsServer);
+  if (!disableWebsockets) {
+    const { WebSocketServer } = await import('ws');
+    const wsServer = new WebSocketServer({
+      path: gwRuntime.graphqlEndpoint,
+      server,
+    });
+    const graphqlWSOptions = getGraphQLWSOptions(gwRuntime);
+    const { useServer } = await import('graphql-ws/lib/use/ws');
+    useServer(graphqlWSOptions, wsServer);
+  }
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, host, () => {
