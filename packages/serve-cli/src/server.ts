@@ -3,6 +3,8 @@ import { createServer as createHTTPServer, type Server } from 'node:http';
 import { createServer as createHTTPSServer } from 'node:https';
 import type { SecureContextOptions } from 'node:tls';
 import type { execute, ExecutionArgs, subscribe } from 'graphql';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { WebSocketServer } from 'ws';
 import type { GatewayRuntime } from '@graphql-mesh/serve-runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { createAsyncDisposable, getTerminateStack } from '@graphql-mesh/utils';
@@ -143,13 +145,11 @@ async function startNodeHttpServer<TContext>(
   const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
 
   log.debug(`Starting server on ${url}`);
-  const { WebSocketServer } = await import('ws');
   const wsServer = new WebSocketServer({
     path: gwRuntime.graphqlEndpoint,
     server,
   });
   const graphqlWSOptions = getGraphQLWSOptions(gwRuntime);
-  const { useServer } = await import('graphql-ws/lib/use/ws');
   useServer(graphqlWSOptions, wsServer);
   return new Promise((resolve, reject) => {
     server.once('error', reject);
