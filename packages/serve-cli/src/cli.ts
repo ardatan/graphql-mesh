@@ -172,8 +172,9 @@ export type AddCommand = (ctx: CLIContext, cli: CLI) => void;
 
 // we dont use `Option.default()` in the command definitions because we want the CLI options to
 // override the config file (with option defaults, config file will always be overwritten)
+const maxAvailableFork = Math.max(availableParallelism() - 1, 1);
 export const defaultOptions = {
-  fork: process.env.NODE_ENV === 'production' ? availableParallelism() : 1,
+  fork: process.env.NODE_ENV === 'production' ? maxAvailableFork : 1,
   host:
     platform().toLowerCase() === 'win32' ||
     // is WSL?
@@ -200,6 +201,9 @@ let cli = new Command()
         const count = parseInt(v);
         if (isNaN(count)) {
           throw new InvalidArgumentError('not a number.');
+        }
+        if (count > maxAvailableFork) {
+          return maxAvailableFork;
         }
         return count;
       }),
