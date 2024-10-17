@@ -38,11 +38,7 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.7",
     "@graphql-mesh/types": "^0.102.7",
-<<<<<<< HEAD
     "@graphql-tools/delegate": "^10.0.25"
-=======
-    "@graphql-tools/delegate": "^10.0.24"
->>>>>>> 6ad88e752 (Bump tools)
   },
   "optionalDependencies": {
     "tuql": "^1.7.0"

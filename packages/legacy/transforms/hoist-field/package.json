@@ -38,13 +38,8 @@
     "graphql": "*"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@graphql-tools/delegate": "^10.0.25",
-    "@graphql-tools/wrap": "^10.0.9"
-=======
     "@graphql-tools/delegate": "^10.0.24",
     "@graphql-tools/wrap": "^10.0.8"
->>>>>>> 6ad88e752 (Bump tools)
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.102.7"

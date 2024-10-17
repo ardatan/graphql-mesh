@@ -38,11 +38,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.1",
-<<<<<<< HEAD
     "@graphql-tools/delegate": "^10.0.25",
-=======
-    "@graphql-tools/delegate": "^10.0.24",
->>>>>>> 6ad88e752 (Bump tools)
     "@graphql-tools/utils": "^10.5.5"
   },
   "publishConfig": {

@@ -50,7 +50,6 @@
     "@graphql-mesh/transport-common": "^0.7.8",
     "@graphql-mesh/transport-http": "^0.6.8",
     "@graphql-mesh/utils": "^0.102.7",
-<<<<<<< HEAD
     "@graphql-tools/batch-delegate": "^9.0.7",
     "@graphql-tools/delegate": "^10.0.25",
     "@graphql-tools/executor-http": "^1.1.5",
@@ -58,15 +57,6 @@
     "@graphql-tools/stitch": "^9.2.14",
     "@graphql-tools/utils": "^10.5.5",
     "@graphql-tools/wrap": "^10.0.9",
-=======
-    "@graphql-tools/batch-delegate": "^9.0.6",
-    "@graphql-tools/delegate": "^10.0.24",
-    "@graphql-tools/executor-http": "^1.1.5",
-    "@graphql-tools/federation": "^2.2.13",
-    "@graphql-tools/stitch": "^9.2.13",
-    "@graphql-tools/utils": "^10.5.5",
-    "@graphql-tools/wrap": "^10.0.8",
->>>>>>> 6ad88e752 (Bump tools)
     "@graphql-yoga/plugin-apollo-usage-report": "^0.1.0",
     "@graphql-yoga/plugin-csrf-prevention": "^3.7.0",
     "@graphql-yoga/plugin-defer-stream": "^3.7.0",
