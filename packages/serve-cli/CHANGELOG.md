@@ -1,5 +1,13 @@
 # @graphql-mesh/serve-cli
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`93aa824`](https://github.com/ardatan/graphql-mesh/commit/93aa8246ebec89fb2aef9ae3e60e01f5ced43d55)]:
+  - @graphql-mesh/plugin-opentelemetry@1.2.1
+
 ## 1.2.0
 
 ### Patch Changes
