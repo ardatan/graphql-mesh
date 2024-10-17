@@ -6555,7 +6555,7 @@ __metadata:
     "@graphql-mesh/transport-common": "npm:^0.7.8"
     "@graphql-tools/utils": "npm:^10.5.5"
     "@opentelemetry/api": "npm:^1.9.0"
-    "@opentelemetry/auto-instrumentations-node": "npm:^0.50.0"
+    "@opentelemetry/auto-instrumentations-node": "npm:^0.51.0"
     "@opentelemetry/context-async-hooks": "npm:^1.25.1"
     "@opentelemetry/exporter-trace-otlp-grpc": "npm:^0.52.1"
     "@opentelemetry/exporter-trace-otlp-http": "npm:^0.52.1"
@@ -10347,9 +10347,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/auto-instrumentations-node@npm:^0.50.0":
-  version: 0.50.2
-  resolution: "@opentelemetry/auto-instrumentations-node@npm:0.50.2"
+"@opentelemetry/auto-instrumentations-node@npm:^0.51.0":
+  version: 0.51.0
+  resolution: "@opentelemetry/auto-instrumentations-node@npm:0.51.0"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.53.0"
     "@opentelemetry/instrumentation-amqplib": "npm:^0.42.0"
@@ -10381,7 +10381,7 @@ __metadata:
     "@opentelemetry/instrumentation-mysql2": "npm:^0.41.0"
     "@opentelemetry/instrumentation-nestjs-core": "npm:^0.40.0"
     "@opentelemetry/instrumentation-net": "npm:^0.39.0"
-    "@opentelemetry/instrumentation-pg": "npm:^0.45.1"
+    "@opentelemetry/instrumentation-pg": "npm:^0.46.0"
     "@opentelemetry/instrumentation-pino": "npm:^0.42.0"
     "@opentelemetry/instrumentation-redis": "npm:^0.42.0"
     "@opentelemetry/instrumentation-redis-4": "npm:^0.42.1"
@@ -10394,13 +10394,13 @@ __metadata:
     "@opentelemetry/resource-detector-alibaba-cloud": "npm:^0.29.3"
     "@opentelemetry/resource-detector-aws": "npm:^1.6.2"
     "@opentelemetry/resource-detector-azure": "npm:^0.2.11"
-    "@opentelemetry/resource-detector-container": "npm:^0.4.3"
+    "@opentelemetry/resource-detector-container": "npm:^0.4.4"
     "@opentelemetry/resource-detector-gcp": "npm:^0.29.12"
     "@opentelemetry/resources": "npm:^1.24.0"
     "@opentelemetry/sdk-node": "npm:^0.53.0"
   peerDependencies:
     "@opentelemetry/api": ^1.4.1
-  checksum: 10c0/4a532b92f9145966fb0adb9e68241aa34b154c48e6bf4780409575001c1dad5226aee86aad20b7c266f8d091f5e26ddab6c6825bb40997548ef85af8c55a0523
+  checksum: 10c0/81ab1b15359a1f8ce26b522c669c86fb44314a79e115fee41dcbe262de1901877364a7f8b316799264ea261ffa4b093f083c16c9e09fc14e8dd64fdfd5defe7b
   languageName: node
   linkType: hard
 
@@ -10976,9 +10976,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/instrumentation-pg@npm:^0.45.1":
-  version: 0.45.1
-  resolution: "@opentelemetry/instrumentation-pg@npm:0.45.1"
+"@opentelemetry/instrumentation-pg@npm:^0.46.0":
+  version: 0.46.0
+  resolution: "@opentelemetry/instrumentation-pg@npm:0.46.0"
   dependencies:
     "@opentelemetry/core": "npm:^1.26.0"
     "@opentelemetry/instrumentation": "npm:^0.53.0"
@@ -10988,7 +10988,7 @@ __metadata:
     "@types/pg-pool": "npm:2.0.6"
   peerDependencies:
     "@opentelemetry/api": ^1.3.0
-  checksum: 10c0/c5827d89041698cdf3af6d545e145055d3fabebf02d1957817c12482397272de9f0878df3fb5a487c3132046b5c54a648df4c847b2341f0ff6978c80a13b3229
+  checksum: 10c0/c9dd959021a9431d32cd20ae516ec5987ce234e156ca58f15696ea066db747ff3e6ff403af0e42065ffa610b28338f59772dc63e1819721b261962459c73155b
   languageName: node
   linkType: hard
 
@@ -11333,16 +11333,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/resource-detector-container@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "@opentelemetry/resource-detector-container@npm:0.4.3"
+"@opentelemetry/resource-detector-container@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "@opentelemetry/resource-detector-container@npm:0.4.4"
   dependencies:
     "@opentelemetry/core": "npm:^1.26.0"
     "@opentelemetry/resources": "npm:^1.10.0"
     "@opentelemetry/semantic-conventions": "npm:^1.27.0"
   peerDependencies:
     "@opentelemetry/api": ^1.0.0
-  checksum: 10c0/1e3eb2d6ff2e05f2501f942ceba691c136cdcdf198f0fbe20078aef1ed7dd28a13200d7fcbfac84ac9ee87ed50fb153e32e4b3d3f5068fe8237b335e21467b0d
+  checksum: 10c0/3ac56f9fb56da408a60f31e08208cca2946dea92dcba64b9b62253a5b527c255dfd032541d87fc43d8027cf5c9d8dee33124325159a136d3c2ec25b5b5ff9ee7
   languageName: node
   linkType: hard
 
