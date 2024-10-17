@@ -5258,7 +5258,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.6"
     "@graphql-mesh/openapi": "npm:0.107.1"
-    "@sinclair/typebox": "npm:0.33.16"
+    "@sinclair/typebox": "npm:0.33.17"
     concurrently: "npm:9.0.1"
     fets: "npm:0.8.3"
     graphql: "npm:16.9.0"
@@ -12518,10 +12518,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.33.16, @sinclair/typebox@npm:^0.33.0":
-  version: 0.33.16
-  resolution: "@sinclair/typebox@npm:0.33.16"
-  checksum: 10c0/b586c775ed43ce3b8e2e5acbacdfdcfaa884662e1a4504ac0187d69b6fefd2046d2ef6503ebdb09f3c6124ef398561e072bf856847dd95bb98c59e581a0f2443
+"@sinclair/typebox@npm:0.33.17":
+  version: 0.33.17
+  resolution: "@sinclair/typebox@npm:0.33.17"
+  checksum: 10c0/7808ee635fed449eebdfb7e86cf1e84aeff6b27232923277b6a6a0e57f3d38b8ac3dbc3d30bcd60a2e93c5fadc3aad20d387e3a85670a0f893eebed0ef5ca6a6
   languageName: node
   linkType: hard
 
@@ -12536,6 +12536,13 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+  languageName: node
+  linkType: hard
+
+"@sinclair/typebox@npm:^0.33.0":
+  version: 0.33.16
+  resolution: "@sinclair/typebox@npm:0.33.16"
+  checksum: 10c0/b586c775ed43ce3b8e2e5acbacdfdcfaa884662e1a4504ac0187d69b6fefd2046d2ef6503ebdb09f3c6124ef398561e072bf856847dd95bb98c59e581a0f2443
   languageName: node
   linkType: hard
 
