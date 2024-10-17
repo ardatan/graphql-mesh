@@ -333,34 +333,34 @@ export function getAnnotatedSubgraphs(
       const fieldDirectives = getDirectiveExtensions(fieldConfig);
       const sourceDirectives = fieldDirectives?.source;
       const typeNameSourceDirectives = getDirectiveExtensions(fieldConfig.type.ofType || fieldConfig.type)?.source;
-            // Find the @source directive that has the type's name by ignoring the one that might be present for type translation.
-            const typeNameSourceDirectiveName = typeNameSourceDirectives?.find(sourceDirective => !sourceDirective.type)?.name;
+      // Find the @source directive that has the type's name by ignoring the one that might be present for type translation.
+      const typeNameSourceDirectiveName = typeNameSourceDirectives?.find(sourceDirective => !sourceDirective.type)?.name;
 
-            if (sourceDirectives?.length) {
-                const filteredSourceDirectives = sourceDirectives.filter(sourceDirective => {
-                    // @source directive is redundant if fieldName and source type are same as in the field definition.
-                    return sourceDirective.name !== fieldName ||
-                        // If the field name is same as the @source directive name, we need to make sure the type value is mapped to the existing
-                        // schema defined name or should map to the type's @source directive name.
-                        (sourceDirective.type !== fieldConfig.type.toString() && sourceDirective.type === typeNameSourceDirectiveName);
-                });
+      if (sourceDirectives?.length) {
+      const filteredSourceDirectives = sourceDirectives.filter(sourceDirective => {
+          // @source directive is redundant if fieldName and source type are same as in the field definition.
+          return sourceDirective.name !== fieldName ||
+              // If the field name is same as the @source directive name, we need to make sure the type value is mapped to the existing
+              // schema defined name or should map to the type's @source directive name.
+              (sourceDirective.type !== fieldConfig.type.toString() && sourceDirective.type === typeNameSourceDirectiveName);
+      });
 
-                // For each type @source directive, make sure the type is mapped to the correct schema type.
-                // If not, set it to a reasonable value.
-                for (const filteredSourceDirective of filteredSourceDirectives) {
-                    if (!filteredSourceDirective.type) {
-                        continue;
-                    }
-                    const isTypeMapped = filteredSourceDirective.type === fieldConfig.type.toString() ||
-                      // The type's @source directive name will not have list or non-null representation.
-                      filteredSourceDirective.type.search(new RegExp(`^\\[?${typeNameSourceDirectiveName}!?\\]?!?$`)) > -1;
+      // For each type @source directive, make sure the type is mapped to the correct schema type.
+      // If not, set it to a reasonable value.
+      for (const filteredSourceDirective of filteredSourceDirectives) {
+          if (!filteredSourceDirective.type) {
+              continue;
+          }
+          const isTypeMapped = filteredSourceDirective.type === fieldConfig.type?.toString() ||
+            // The type's @source directive name will not have list or non-null representation.
+            filteredSourceDirective.type.search(new RegExp(`^\\[?${typeNameSourceDirectiveName}!?\\]?!?$`)) > -1;
 
-                    if (!isTypeMapped) {
-                        filteredSourceDirective.type =
-                          fieldConfig.type.toString().replace(/^(\[)?(.*)(!?\]!?|!)$/, `$1${typeNameSourceDirectiveName || '$2'}$3`);
-                    }
-                }
-                fieldDirectives.source = filteredSourceDirectives;
+          if (!isTypeMapped) {
+              filteredSourceDirective.type =
+                fieldConfig.type?.toString().replace(/^(\[)?(.*)(!?\]!?|!)$/, `$1${typeNameSourceDirectiveName || '$2'}$3`);
+          }
+      }
+      fieldDirectives.source = filteredSourceDirectives;
       }
       if ('args' in fieldConfig) {
         const newArgs: GraphQLFieldConfigArgumentMap = {};
