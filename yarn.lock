@@ -5151,7 +5151,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.96.6"
     "@types/react": "npm:18.3.11"
     "@types/react-dom": "npm:18.3.1"
-    "@vitejs/plugin-react": "npm:4.3.2"
+    "@vitejs/plugin-react": "npm:4.3.3"
     graphql: "npm:16.9.0"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
@@ -6674,7 +6674,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-statsd@workspace:packages/plugins/statsd"
   dependencies:
     "@envelop/statsd": "npm:5.0.0"
-    hot-shots: "npm:10.2.0"
+    hot-shots: "npm:10.2.1"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.7
     "@graphql-mesh/utils": ^0.102.7
@@ -15108,9 +15108,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react@npm:4.3.2":
-  version: 4.3.2
-  resolution: "@vitejs/plugin-react@npm:4.3.2"
+"@vitejs/plugin-react@npm:4.3.3":
+  version: 4.3.3
+  resolution: "@vitejs/plugin-react@npm:4.3.3"
   dependencies:
     "@babel/core": "npm:^7.25.2"
     "@babel/plugin-transform-react-jsx-self": "npm:^7.24.7"
@@ -15119,7 +15119,7 @@ __metadata:
     react-refresh: "npm:^0.14.2"
   peerDependencies:
     vite: ^4.2.0 || ^5.0.0
-  checksum: 10c0/945f357175bea45031dc98d379e63cd34cd60a51b3dd394b66138696625ac8b55bc913a23481f78bbe15ca558c21ea4699b936abbd8242003d7c0ad51d298727
+  checksum: 10c0/b370c25fb47bb96f0cc51f3aadbbcfce54e40f95a4de67cf932e5ec526f139648da703725c6ea2c71a1b525eb3dd6e3e8ff877da143627cd2575de5ec4f00aa3
   languageName: node
   linkType: hard
 
@@ -23788,15 +23788,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-shots@npm:10.2.0":
-  version: 10.2.0
-  resolution: "hot-shots@npm:10.2.0"
+"hot-shots@npm:10.2.1":
+  version: 10.2.1
+  resolution: "hot-shots@npm:10.2.1"
   dependencies:
     unix-dgram: "npm:2.x"
   dependenciesMeta:
     unix-dgram:
       optional: true
-  checksum: 10c0/84d0e010f2e89a2fa723c970d0ecdc45f95cafe650d366fb0f63806c8d981b599b1ce2368e880f1ba6cf2133459d576cd8d310d8b288fed7edb91a1d6c9d6f79
+  checksum: 10c0/ee6bfec08427df6a22c705e31e6e9cfd6a74033cf246f33d91aa19b991a6dcea4f981e008c8f0e79c54c5f390f5ea19b2c53325ccbc5a686ca27593ff3419813
   languageName: node
   linkType: hard
 
