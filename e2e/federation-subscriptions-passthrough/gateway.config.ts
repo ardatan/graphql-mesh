@@ -6,7 +6,6 @@ import {
 
 export const gatewayConfig = defineConfig({
   webhooks: true,
-  maskedErrors: false,
   transportEntries: {
     products: {
       options: {
