@@ -19,6 +19,10 @@ export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   subgraph?: string;
   fetch?: MeshFetch;
   cwd?: string;
+  /**
+   * Experimental feature proposed by @BouyguesTelecom
+   */
+  useHATEOAS?: boolean | HATEOASConfig;
 }
 
 export interface MeshComposeCLISubgraphConfig {
@@ -37,6 +41,17 @@ export interface LoaderContext {
   fetch: MeshFetch;
   cwd: string;
   logger: Logger;
+}
+
+export interface HATEOASConfig {
+  /**
+   * @default "rel"
+   */
+  linkNameIdentifier?: string;
+  /**
+   * @default "href"
+   */
+  linkPathIdentifier?: string;
 }
 
 /**
