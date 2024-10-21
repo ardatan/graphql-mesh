@@ -1,4 +1,5 @@
 export * from './cli.js';
+export { getBuiltinPluginsFromConfig, getCacheInstanceFromConfig } from './config.js';
 export * from '@graphql-mesh/serve-runtime';
 export { PubSub } from '@graphql-mesh/utils';
 export * from '@graphql-mesh/plugin-jwt-auth';
