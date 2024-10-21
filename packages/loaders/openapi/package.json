@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.6",
-    "@graphql-tools/delegate": "^10.0.23",
+    "@graphql-tools/delegate": "^10.0.26",
     "@omnigraph/json-schema": "^0.107.1",
     "change-case": "^4.1.2",
     "json-machete": "^0.97.4",
