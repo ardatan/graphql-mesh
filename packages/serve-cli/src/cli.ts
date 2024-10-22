@@ -191,7 +191,7 @@ let cli = new Command()
   .addOption(
     new Option(
       '--fork <count>',
-      `count of workers to spawn. uses ${maxAvailableFork} (available parallelism) workers when NODE_ENV is "production", otherwise 1 (the main) worker (default: ${JSON.stringify(defaultOptions.fork)}`,
+      `count of workers to spawn. uses "${maxAvailableFork}" (available parallelism) workers when NODE_ENV is "production", otherwise "1" (the main) worker (default: ${JSON.stringify(defaultOptions.fork)}`,
     )
       .env('FORK')
       .argParser(v => {
@@ -201,7 +201,7 @@ let cli = new Command()
         }
         if (count > maxAvailableFork) {
           throw new InvalidArgumentError(
-            `exceedes number of available parallelism (${maxAvailableFork}).`,
+            `exceedes number of available parallelism "${maxAvailableFork}".`,
           );
         }
         return count;
