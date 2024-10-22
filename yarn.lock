@@ -6473,7 +6473,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-jit@workspace:packages/plugins/jit"
   dependencies:
-    graphql-jit: "npm:^0.8.6"
+    graphql-jit: "npm:^0.8.7"
   peerDependencies:
     "@envelop/core": ^5.0.2
     "@graphql-mesh/utils": ^0.102.7
@@ -6745,7 +6745,7 @@ __metadata:
     "@graphql-tools/schema": "npm:10.0.7"
     "@graphql-tools/wrap": "npm:^10.0.10"
     "@whatwg-node/fetch": "npm:^0.9.0"
-    graphql-jit: "npm:0.8.7"
+    graphql-jit: "npm:^0.8.7"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.7
     "@graphql-mesh/types": ^0.102.7
@@ -23130,7 +23130,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-jit@npm:0.8.6, graphql-jit@npm:^0.8.6":
+"graphql-jit@npm:0.8.6":
   version: 0.8.6
   resolution: "graphql-jit@npm:0.8.6"
   dependencies:
@@ -23146,7 +23146,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-jit@npm:0.8.7":
+"graphql-jit@npm:^0.8.7":
   version: 0.8.7
   resolution: "graphql-jit@npm:0.8.7"
   dependencies:
