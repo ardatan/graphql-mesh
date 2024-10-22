@@ -1,5 +1,46 @@
 # @graphql-mesh/serve-runtime
 
+## 1.2.0
+
+### Minor Changes
+
+- [#7766](https://github.com/ardatan/graphql-mesh/pull/7766)
+  [`cc53c6c`](https://github.com/ardatan/graphql-mesh/commit/cc53c6c6056dcb38477b260e916825d4c8864b57)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix/Implement WebSockets support for the Gateway
+  and Client communication
+
+### Patch Changes
+
+- [#7769](https://github.com/ardatan/graphql-mesh/pull/7769)
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@^9.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/9.0.8)
+    (from `^9.0.5`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.26)
+    (from `^10.0.23`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.16)
+    (from `^2.2.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitch@^9.2.15` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.2.15)
+    (from `^9.2.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.10)
+    (from `^10.0.7`, in `dependencies`)
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/fusion-runtime@0.9.2
+  - @graphql-mesh/transport-common@0.7.9
+  - @graphql-mesh/utils@0.102.8
+  - @graphql-mesh/hmac-upstream-signature@1.2.0
+  - @graphql-mesh/transport-http@0.6.9
+  - @graphql-mesh/plugin-hive@0.102.10
+  - @graphql-mesh/plugin-response-cache@0.102.8
+
 ## 1.1.1
 
 ### Patch Changes

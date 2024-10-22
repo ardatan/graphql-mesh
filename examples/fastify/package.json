@@ -6,8 +6,8 @@
     "start": "ts-node-dev src/index.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.96.6",
-    "@graphql-mesh/graphql": "0.102.8",
+    "@graphql-mesh/cli": "0.96.7",
+    "@graphql-mesh/graphql": "0.102.9",
     "fastify": "5.0.0",
     "graphql": "16.9.0",
     "ts-node": "^10.9.2",
