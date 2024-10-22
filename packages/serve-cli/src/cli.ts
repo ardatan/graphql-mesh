@@ -191,13 +191,18 @@ let cli = new Command()
   .addOption(
     new Option(
       '--fork <count>',
-      `count of workers to spawn. defaults to "os.availableParallelism()" when NODE_ENV is "production", otherwise only one (the main) worker (default: ${JSON.stringify(defaultOptions.fork)}`,
+      `count of workers to spawn. uses ${maxAvailableFork} (available parallelism) workers when NODE_ENV is "production", otherwise 1 (the main) worker (default: ${JSON.stringify(defaultOptions.fork)}`,
     )
       .env('FORK')
       .argParser(v => {
         const count = parseInt(v);
-        if (isNaN(count) || count > maxAvailableFork) {
-          return maxAvailableFork;
+        if (isNaN(count)) {
+          throw new InvalidArgumentError('not a number.');
+        }
+        if (count > maxAvailableFork) {
+          throw new InvalidArgumentError(
+            `exceedes number of available parallelism (${maxAvailableFork}).`,
+          );
         }
         return count;
       }),
