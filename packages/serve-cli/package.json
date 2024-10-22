@@ -59,6 +59,7 @@
     "@graphql-mesh/include": "^0.2.2",
     "@graphql-mesh/plugin-deduplicate-request": "^0.102.7",
     "@graphql-mesh/plugin-http-cache": "^0.102.7",
+    "@graphql-mesh/plugin-jit": "^0.0.0",
     "@graphql-mesh/plugin-jwt-auth": "^1.1.1",
     "@graphql-mesh/plugin-mock": "^0.102.8",
     "@graphql-mesh/plugin-opentelemetry": "^1.2.0",

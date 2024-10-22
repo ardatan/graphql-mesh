@@ -44,14 +44,12 @@ const deps = {
   'node_modules/@graphql-mesh/transport-common/index': '../transports/common/src/index.ts',
   'node_modules/@graphql-mesh/transport-http/index': '../transports/http/src/index.ts',
   // extras for docker only
-  'node_modules/@graphql-mesh/plugin-prometheus/index': '../plugins/prometheus/src/index.ts',
+  'node_modules/@graphql-mesh/transport-ws/index': '../transports/ws/src/index.ts',
+  'node_modules/@graphql-mesh/transport-http-callback/index':
+    '../transports/http-callback/src/index.ts',
   'node_modules/@graphql-mesh/plugin-http-cache/index': '../plugins/http-cache/src/index.ts',
-  'node_modules/@graphql-mesh/plugin-jwt-auth/index': '../plugins/jwt-auth/src/index.ts',
   'node_modules/@graphql-mesh/hmac-upstream-signature/index':
     '../plugins/hmac-upstream-signature/src/index.ts',
-  'node_modules/@graphql-mesh/plugin-opentelemetry/index': '../plugins/opentelemetry/src/index.ts',
-  'node_modules/@envelop/generic-auth/index':
-    '../../node_modules/@envelop/generic-auth/esm/index.js',
 };
 
 if (process.env.E2E_SERVE_RUNNER === 'docker') {
@@ -61,9 +59,6 @@ if (process.env.E2E_SERVE_RUNNER === 'docker') {
   deps['node_modules/@e2e/opts/index'] = '../../e2e/utils/opts.ts';
   deps['node_modules/@graphql-mesh/utils/index'] = '../legacy/utils/src/index.ts';
   deps['node_modules/@omnigraph/openapi/index'] = '../loaders/openapi/src/index.ts';
-  deps['node_modules/@graphql-mesh/transport-ws/index'] = '../transports/ws/src/index.ts';
-  deps['node_modules/@graphql-mesh/transport-http-callback/index'] =
-    '../transports/http-callback/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-rest/index'] = '../transports/rest/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-soap/index'] = '../transports/soap/src/index.ts';
   deps['node_modules/@graphql-mesh/transport-mysql/index'] = '../transports/mysql/src/index.ts';
