@@ -49,7 +49,7 @@
     "@graphql-tools/executor": "^1.3.2",
     "@graphql-tools/wrap": "^10.0.7",
     "@whatwg-node/fetch": "^0.9.0",
-    "graphql-jit": "0.8.6"
+    "graphql-jit": "0.8.7"
   },
   "devDependencies": {
     "@graphql-tools/schema": "10.0.7"
