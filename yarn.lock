@@ -6731,7 +6731,7 @@ __metadata:
     "@graphql-tools/schema": "npm:10.0.7"
     "@graphql-tools/wrap": "npm:^10.0.7"
     "@whatwg-node/fetch": "npm:^0.9.0"
-    graphql-jit: "npm:0.8.6"
+    graphql-jit: "npm:0.8.7"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.7
     "@graphql-mesh/types": ^0.102.7
@@ -21685,7 +21685,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-json-stringify@npm:^5.8.0":
+"fast-json-stringify@npm:^5.16.1, fast-json-stringify@npm:^5.8.0":
   version: 5.16.1
   resolution: "fast-json-stringify@npm:5.16.1"
   dependencies:
@@ -23128,6 +23128,22 @@ __metadata:
   peerDependencies:
     graphql: ">=15"
   checksum: 10c0/b83d469e14d482f00046c0028cf9228344b3d9bd890902a522b8976ef88f4f38ed43f7db798b33ce281fa476c0b89a7a060d80a8b2b4657b3d5aed2251c8c235
+  languageName: node
+  linkType: hard
+
+"graphql-jit@npm:0.8.7":
+  version: 0.8.7
+  resolution: "graphql-jit@npm:0.8.7"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.2.0"
+    fast-json-stringify: "npm:^5.16.1"
+    generate-function: "npm:^2.3.1"
+    lodash.memoize: "npm:^4.1.2"
+    lodash.merge: "npm:4.6.2"
+    lodash.mergewith: "npm:4.6.2"
+  peerDependencies:
+    graphql: ">=15"
+  checksum: 10c0/b261c259ec5db6c1291d002fba87a3b99faf4104b5c7dd90d35904eedaa2fe7e6b1a56c20e46a05211a7029f92304105f68af739d341637fdb9234e12466a611
   languageName: node
   linkType: hard
 
