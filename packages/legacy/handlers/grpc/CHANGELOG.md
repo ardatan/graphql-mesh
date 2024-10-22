@@ -1,5 +1,14 @@
 # @graphql-mesh/grpc
 
+## 0.104.10
+
+### Patch Changes
+
+- [#7807](https://github.com/ardatan/graphql-mesh/pull/7807)
+  [`4f619a8`](https://github.com/ardatan/graphql-mesh/commit/4f619a87312862377a556e61cf618e107a51b7c5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle multiple services introspected from gRPC
+  service
+
 ## 0.104.9
 
 ### Patch Changes
