@@ -2,6 +2,7 @@
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import type { CompilerOptions } from 'graphql-jit';
 import type { GatewayConfig, GatewayConfigContext } from '@graphql-mesh/serve-runtime';
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
 import type { GatewayCLIBuiltinPluginConfig } from './cli';
@@ -109,6 +110,11 @@ export async function getBuiltinPluginsFromConfig(
         ...config.rateLimiting,
       }),
     );
+  }
+
+  if (config.jit) {
+    const { useJIT } = await import('@graphql-mesh/plugin-jit');
+    plugins.push(useJIT());
   }
 
   return plugins;

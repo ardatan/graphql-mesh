@@ -156,11 +156,17 @@ export const addCommand: AddCommand = (ctx, cli) =>
         pubsub,
         logger: ctx.log,
       });
-      const builtinPlugins = await getBuiltinPluginsFromConfig(loadedConfig, {
-        cache,
-        logger: ctx.log,
-      });
 
+      const builtinPlugins = await getBuiltinPluginsFromConfig(
+        {
+          ...loadedConfig,
+          ...opts,
+        },
+        {
+          cache,
+          logger: ctx.log,
+        },
+      );
       const config: SupergraphConfig = {
         ...defaultOptions,
         ...loadedConfig,
