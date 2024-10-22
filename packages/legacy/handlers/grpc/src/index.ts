@@ -3,6 +3,7 @@ import globby from 'globby';
 import type { GraphQLFieldResolver, GraphQLScalarType, GraphQLSchema } from 'graphql';
 import { buildSchema, isEnumType, specifiedDirectives } from 'graphql';
 import type {
+  Directive,
   EnumTypeComposerValueConfigDefinition,
   ObjectTypeComposerFieldConfigAsObjectDefinition,
 } from 'graphql-compose';
@@ -38,6 +39,7 @@ import type {
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import {
   getDirective,
+  getDirectiveExtensions,
   getDirectives,
   getRootTypes,
   GraphQLStreamDirective,
@@ -766,6 +768,7 @@ export default class GrpcHandler implements MeshHandler {
       this.logger.debug(`Getting stored root and decoded descriptor set objects`);
       const descriptorSets = await this.getDescriptorSets(creds);
 
+      const directives: Directive[] = [];
       for (const { name: rootJsonName, rootJson } of descriptorSets) {
         const rootLogger = this.logger.child(rootJsonName);
 
@@ -787,11 +790,15 @@ export default class GrpcHandler implements MeshHandler {
         });
 
         this.schemaComposer.addDirective(grpcRootJsonDirective);
-        this.schemaComposer.Query.setDirectiveByName('grpcRootJson', {
-          name: rootJsonName,
-          rootJson,
+        directives.push({
+          name: 'grpcRootJson',
+          args: {
+            name: rootJsonName,
+            rootJson,
+          },
         });
       }
+      this.schemaComposer.Query.setDirectives(directives);
 
       // graphql-compose doesn't add @defer and @stream to the schema
       specifiedDirectives.forEach(directive => this.schemaComposer.addDirective(directive));
