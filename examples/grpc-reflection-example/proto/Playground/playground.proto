@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option csharp_namespace = "Artnet.Manager.CoreData.GrpcHost.Services.Playground";
+import "google/protobuf/wrappers.proto";
+
+package artnet.coredata.playground;
+
+service Playground {
+  rpc GetInput (EchoInputRequest) returns (EchoInputRequest);
+  rpc GetSnailMail (SnailMailRequest) returns (SnailMailResponse);
+  rpc GetUserInfo (EchoUserInfoRequest) returns (EchoUserInfoResponse);
+}
+
+message EchoInputRequest {
+	PlayGroundPriceFilter price = 3; // USD standarize
+}
+
+message EchoUserInfoRequest {
+
+}
+
+message EchoUserInfoResponse {
+	string user_info = 1;
+}
+
+message PlayGroundPriceFilter {
+	PlayGroundPriceRange range = 1;
+}
+
+message PlayGroundPriceRange {
+	google.protobuf.DoubleValue value_double = 1;
+	google.protobuf.FloatValue value_float = 2;
+	google.protobuf.Int64Value value_long = 3;
+	google.protobuf.Int64Value value_int = 4;
+	int64 value_long_notnull = 5;
+}
+
+message SnailMailRequest {
+	bool allow_cancellation = 1;
+	int32 fake_data_length = 2;
+	int32 wait_seconds = 3;
+}
+
+message SnailMailResponse {
+	string fake_data = 1;
+}
