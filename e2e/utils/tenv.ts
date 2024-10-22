@@ -833,14 +833,15 @@ export function getAvailablePort(): Promise<number> {
   const server = createServer();
   return new Promise((resolve, reject) => {
     try {
+      server.once('error', reject);
       server.listen(0, () => {
-        try {
-          const addressInfo = server.address() as AddressInfo;
+        const addressInfo = server.address() as AddressInfo;
+        server.close(err => {
+          if (err) {
+            reject(err);
+          }
           resolve(addressInfo.port);
-          server.close();
-        } catch (err) {
-          reject(err);
-        }
+        });
       });
     } catch (err) {
       reject(err);
