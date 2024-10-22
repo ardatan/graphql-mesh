@@ -456,7 +456,7 @@ jobs:
 
   loadtest-e2e:
     needs: [e2e]
-    name: node ${{matrix.node-version}}
+    name: loadtest / e2e / node ${{matrix.node-version}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
