@@ -34,9 +34,9 @@ export interface ServerConfig {
    */
   maxHeaderSize?: number;
   /**
-   * Disable WebSockets
+   * Whether to disable setting up a WebSocket server.
    *
-   * @default true
+   * @default false
    */
   disableWebsockets?: boolean;
 }
