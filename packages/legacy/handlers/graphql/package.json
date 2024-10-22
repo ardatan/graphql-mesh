@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/graphql",
-  "version": "0.102.9",
+  "version": "0.102.10",
   "type": "module",
   "repository": {
     "type": "git",

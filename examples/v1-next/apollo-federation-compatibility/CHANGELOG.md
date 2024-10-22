@@ -1,5 +1,12 @@
 # example-apollo-federation-compatibility
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@1.3.1
+
 ## 1.3.0
 
 ### Patch Changes
