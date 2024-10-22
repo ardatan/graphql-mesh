@@ -1,5 +1,62 @@
 # @graphql-mesh/serve-cli
 
+## 1.3.0
+
+### Minor Changes
+
+- [#7766](https://github.com/ardatan/graphql-mesh/pull/7766)
+  [`cc53c6c`](https://github.com/ardatan/graphql-mesh/commit/cc53c6c6056dcb38477b260e916825d4c8864b57)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix/Implement WebSockets support for the Gateway
+  and Client communication
+
+- [#7769](https://github.com/ardatan/graphql-mesh/pull/7769)
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add `--jit` CLI option and `jit` configuration
+  option to enable JIT compilation for better performance
+
+### Patch Changes
+
+- [#7766](https://github.com/ardatan/graphql-mesh/pull/7766)
+  [`cc53c6c`](https://github.com/ardatan/graphql-mesh/commit/cc53c6c6056dcb38477b260e916825d4c8864b57)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`graphql-ws@^5.16.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.16.0)
+    (to `dependencies`)
+  - Added dependency [`ws@^8.18.0` ↗︎](https://www.npmjs.com/package/ws/v/8.18.0) (to
+    `dependencies`)
+
+- [#7769](https://github.com/ardatan/graphql-mesh/pull/7769)
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/plugin-jit@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-jit/v/0.0.0)
+    (to `dependencies`)
+- Updated dependencies
+  [[`93aa824`](https://github.com/ardatan/graphql-mesh/commit/93aa8246ebec89fb2aef9ae3e60e01f5ced43d55),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`cc53c6c`](https://github.com/ardatan/graphql-mesh/commit/cc53c6c6056dcb38477b260e916825d4c8864b57),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/plugin-opentelemetry@1.3.0
+  - @graphql-mesh/serve-runtime@1.2.0
+  - @graphql-mesh/types@0.102.8
+  - @graphql-mesh/utils@0.102.8
+  - @graphql-mesh/transport-http-callback@0.5.0
+  - @graphql-mesh/plugin-jit@0.0.1
+  - @graphql-mesh/hmac-upstream-signature@1.2.0
+  - @graphql-mesh/plugin-jwt-auth@1.2.0
+  - @graphql-mesh/plugin-prometheus@1.2.0
+  - @graphql-mesh/transport-ws@0.3.9
+  - @graphql-mesh/cache-cfw-kv@0.102.8
+  - @graphql-mesh/cache-localforage@0.102.8
+  - @graphql-mesh/cache-redis@0.102.8
+  - @graphql-mesh/plugin-deduplicate-request@0.102.8
+  - @graphql-mesh/plugin-http-cache@0.102.8
+  - @graphql-mesh/plugin-mock@0.102.9
+  - @graphql-mesh/plugin-rate-limit@0.102.8
+  - @graphql-mesh/plugin-snapshot@0.102.8
+
 ## 1.2.0
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @graphql-mesh/types
 
+## 0.102.8
+
+### Patch Changes
+
+- [#7769](https://github.com/ardatan/graphql-mesh/pull/7769)
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@^9.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/9.0.8)
+    (from `^9.0.5`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.26)
+    (from `^10.0.23`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/store@0.102.8
+
 ## 0.102.7
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.103.8",
+  "version": "0.103.9",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,14 +32,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/store": "^0.102.7",
-    "@graphql-mesh/types": "^0.102.7",
-    "@graphql-mesh/utils": "^0.102.7",
+    "@graphql-mesh/store": "^0.102.8",
+    "@graphql-mesh/types": "^0.102.8",
+    "@graphql-mesh/utils": "^0.102.8",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/neo4j": "^0.7.8"
+    "@omnigraph/neo4j": "^0.7.9"
   },
   "publishConfig": {
     "access": "public",
