@@ -15,7 +15,7 @@ it('should compose the appropriate schema', async () => {
       const servePort = await getAvailablePort();
       const api = await service('api', { servePort });
       const { output } = await compose({ output: 'graphql', services: [api] });
-      const { execute } = await serve({ supergraph: output, port: servePort, pipeLogs: true });
+      const { execute } = await serve({ supergraph: output, port: servePort });
 
       await expect(
         execute({
