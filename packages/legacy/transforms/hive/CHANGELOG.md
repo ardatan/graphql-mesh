@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-hive
 
+## 0.102.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.9
+
 ## 0.102.10
 
 ### Patch Changes

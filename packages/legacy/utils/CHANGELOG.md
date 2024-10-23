@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.102.9
+
+### Patch Changes
+
+- [#7816](https://github.com/ardatan/graphql-mesh/pull/7816)
+  [`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix subscription fields fed by webhooks and
+  defined in \`additionalTypeDefs\` with \`@resolveTo\`
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.9
+
 ## 0.102.8
 
 ### Patch Changes
