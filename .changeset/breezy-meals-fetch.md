@@ -4,7 +4,7 @@
 '@graphql-mesh/transport-ws': minor
 ---
 
-Add support for upstream WebSocket subscriptions.
+Add support for upstream WebSocket subscriptions in Docker and binary distributions.
 
 Subscriptions can now use WebSockets for transport between gateway and subgraphs when used with
 Docker or binaries versions.
