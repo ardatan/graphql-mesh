@@ -1,5 +1,15 @@
 # @graphql-mesh/transport-sqlite
 
+## 0.7.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @omnigraph/sqlite@0.6.9
+  - @graphql-mesh/transport-common@0.7.10
+
 ## 0.7.3
 
 ### Patch Changes

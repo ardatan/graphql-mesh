@@ -6,12 +6,12 @@
     "start": "wrangler dev"
   },
   "dependencies": {
-    "@graphql-mesh/cache-cfw-kv": "^0.102.8",
-    "@graphql-mesh/cache-localforage": "^0.102.8",
-    "@graphql-mesh/compose-cli": "^1.1.2",
-    "@graphql-mesh/plugin-response-cache": "^0.102.8",
-    "@graphql-mesh/serve-runtime": "^1.2.1",
-    "@omnigraph/json-schema": "^0.107.2",
+    "@graphql-mesh/cache-cfw-kv": "^0.102.9",
+    "@graphql-mesh/cache-localforage": "^0.102.9",
+    "@graphql-mesh/compose-cli": "^1.1.3",
+    "@graphql-mesh/plugin-response-cache": "^0.102.9",
+    "@graphql-mesh/serve-runtime": "^1.2.2",
+    "@omnigraph/json-schema": "^0.107.3",
     "graphql": "16.9.0"
   },
   "devDependencies": {

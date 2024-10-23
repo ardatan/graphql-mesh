@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/hmac-upstream-signature",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,17 +32,17 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.102.8",
-    "@graphql-mesh/utils": "^0.102.8",
+    "@graphql-mesh/types": "^0.102.9",
+    "@graphql-mesh/utils": "^0.102.9",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/transport-common": "^0.7.9",
+    "@graphql-mesh/transport-common": "^0.7.10",
     "json-stable-stringify": "^1.1.1"
   },
   "devDependencies": {
-    "@graphql-mesh/serve-runtime": "^1.2.1",
+    "@graphql-mesh/serve-runtime": "^1.2.2",
     "graphql-yoga": "^5.7.0"
   },
   "publishConfig": {

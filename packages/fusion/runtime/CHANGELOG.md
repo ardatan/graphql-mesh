@@ -1,5 +1,29 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.9.4
+
+### Patch Changes
+
+- [#7816](https://github.com/ardatan/graphql-mesh/pull/7816)
+  [`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/merge@^9.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.0.8)
+    (to `dependencies`)
+
+- [#7816](https://github.com/ardatan/graphql-mesh/pull/7816)
+  [`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix subscription fields fed by webhooks and
+  defined in \`additionalTypeDefs\` with \`@resolveTo\`
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/runtime@0.103.10
+  - @graphql-mesh/types@0.102.9
+  - @graphql-mesh/transport-common@0.7.10
+
 ## 0.9.3
 
 ### Patch Changes
