@@ -6958,9 +6958,13 @@ __metadata:
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
     tsx: "npm:^4.16.5"
+    uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
     graphql: "*"
+  dependenciesMeta:
+    uWebSockets.js:
+      optional: true
   peerDependenciesMeta:
     "@parcel/watcher":
       optional: true
@@ -7897,10 +7901,14 @@ __metadata:
     rollup: "npm:^4.18.1"
     rollup-plugin-tsconfig-paths: "npm:^1.5.2"
     tsx: "npm:^4.16.5"
+    uWebSockets.js: "uNetworking/uWebSockets.js#semver:^20"
     ws: "npm:^8.18.0"
   peerDependencies:
     "@parcel/watcher": ^2.1.0
     graphql: "*"
+  dependenciesMeta:
+    uWebSockets.js:
+      optional: true
   peerDependenciesMeta:
     "@parcel/watcher":
       optional: true

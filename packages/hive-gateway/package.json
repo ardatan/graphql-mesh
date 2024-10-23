@@ -54,6 +54,9 @@
     "@graphql-mesh/serve-runtime": "^1.2.2",
     "@graphql-mesh/utils": "^0.102.9"
   },
+  "optionalDependencies": {
+    "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
+  },
   "devDependencies": {
     "@parcel/watcher": "^2.3.0",
     "@rollup/plugin-commonjs": "^28.0.0",
