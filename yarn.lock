@@ -4317,10 +4317,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20241018.0":
-  version: 4.20241018.0
-  resolution: "@cloudflare/workers-types@npm:4.20241018.0"
-  checksum: 10c0/c86bc61f5d5649e2908c2b547e974253fc71ec24734135d6eca22eb27fd4e9c2e7eedb1a6782ac70e73d8d39c4f14a41da2b4ab871445ec2fbe7290eab8b7956
+"@cloudflare/workers-types@npm:4.20241022.0":
+  version: 4.20241022.0
+  resolution: "@cloudflare/workers-types@npm:4.20241022.0"
+  checksum: 10c0/1ed42846adab00f5a5d8c215e1b7d5c287e1fe374cab6da169438772a73fd4382c24ac2f838f0663243fa557d4428a5592b18efc646c2a13a7f8f731600572c4
   languageName: node
   linkType: hard
 
@@ -5850,7 +5850,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.2"
     "@graphql-mesh/cli": "npm:0.96.7"
     "@graphql-mesh/json-schema": "npm:0.107.2"
-    "@types/node": "npm:20.16.14"
+    "@types/node": "npm:20.16.15"
     graphql: "npm:16.9.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -5865,9 +5865,9 @@ __metadata:
     "@testing-library/react": "npm:16.0.1"
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
-    "@types/jest": "npm:29.5.13"
-    "@types/node": "npm:20.16.14"
-    "@types/react": "npm:18.3.11"
+    "@types/jest": "npm:29.5.14"
+    "@types/node": "npm:20.16.15"
+    "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.9.0"
@@ -6055,7 +6055,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.7"
     "@graphql-mesh/json-schema": "npm:0.107.2"
-    "@types/node": "npm:20.16.14"
+    "@types/node": "npm:20.16.15"
     concurrently: "npm:9.0.1"
     fets: "npm:0.8.3"
     graphql: "npm:16.9.0"
@@ -6133,7 +6133,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.104.9"
     "@graphql-mesh/openapi": "npm:0.107.2"
     "@graphql-mesh/runtime": "npm:0.103.9"
-    "@types/react": "npm:18.3.11"
+    "@types/react": "npm:18.3.12"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:14.2.16"
@@ -6151,7 +6151,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.104.9"
     "@graphql-mesh/openapi": "npm:0.107.2"
     "@graphql-mesh/runtime": "npm:0.103.9"
-    "@types/react": "npm:18.3.11"
+    "@types/react": "npm:18.3.12"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:14.2.16"
@@ -6248,14 +6248,14 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.7"
-    "@types/react": "npm:18.3.11"
+    "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
     "@vitejs/plugin-react": "npm:4.3.3"
     graphql: "npm:16.9.0"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.4.2"
-    vite: "npm:5.4.9"
+    vite: "npm:5.4.10"
   languageName: unknown
   linkType: soft
 
@@ -6343,7 +6343,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.102.8"
     "@graphql-mesh/runtime": "npm:0.103.9"
     "@graphql-mesh/transform-prefix": "npm:0.102.8"
-    "@types/node": "npm:20.16.14"
+    "@types/node": "npm:20.16.15"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -7027,7 +7027,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20241018.0"
+    "@cloudflare/workers-types": "npm:4.20241022.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.8
     "@graphql-mesh/utils": ^0.102.8
@@ -15065,13 +15065,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.5.13":
-  version: 29.5.13
-  resolution: "@types/jest@npm:29.5.13"
+"@types/jest@npm:29.5.14":
+  version: 29.5.14
+  resolution: "@types/jest@npm:29.5.14"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: 10c0/9c31af0b155387b9860908830de63c6b79011d7c87c8b61b39da124e26e55423dd51b006749aafe4f0ef3a065016619a1f93ef4b055157d43727f448e67824b7
+  checksum: 10c0/18e0712d818890db8a8dab3d91e9ea9f7f19e3f83c2e50b312f557017dc81466207a71f3ed79cf4428e813ba939954fa26ffa0a9a7f153181ba174581b1c2aed
   languageName: node
   linkType: hard
 
@@ -15345,12 +15345,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.16.14":
-  version: 20.16.14
-  resolution: "@types/node@npm:20.16.14"
+"@types/node@npm:20.16.15, @types/node@npm:^20.10.6":
+  version: 20.16.15
+  resolution: "@types/node@npm:20.16.15"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/297da38ff6668ecd672b17a100b715166cab33bc8d586521fa28b2d2fb47b04475e1ad9f55e8a436c31d72c1fefa7bd4485a8ad66d2adc9b4515d8a28937e8b9
+  checksum: 10c0/a739efea59a62efd1232210e2323a2fd8935a4e7370d453fcc235181b599116f8c74a8dc8a9fac53b9f1fbab32f58db9517ed9576e313fed531244862f12ac07
   languageName: node
   linkType: hard
 
@@ -15374,15 +15374,6 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/6ef007a560b505eea8285f84cd9f689c6ec209ec15462bbc0a5cc9b69d19bcc6e0795ef74cd4edc77aac8d52001a49969f94a3cb4b26ff5987da943b835b9456
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^20.10.6":
-  version: 20.16.15
-  resolution: "@types/node@npm:20.16.15"
-  dependencies:
-    undici-types: "npm:~6.19.2"
-  checksum: 10c0/a739efea59a62efd1232210e2323a2fd8935a4e7370d453fcc235181b599116f8c74a8dc8a9fac53b9f1fbab32f58db9517ed9576e313fed531244862f12ac07
   languageName: node
   linkType: hard
 
@@ -15503,13 +15494,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.3.11":
+"@types/react@npm:*":
   version: 18.3.11
   resolution: "@types/react@npm:18.3.11"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/ce80512246ca5bda69db85b9f4f1835189334acfb6b2c4f3eda8cabff1ff1a3ea9ce4f3b895bdbc18c94140aa45592331aa3fdeb557f525c1b048de7ce84fc0e
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:18.3.12":
+  version: 18.3.12
+  resolution: "@types/react@npm:18.3.12"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/8bae8d9a41619804561574792e29112b413044eb0d53746dde2b9720c1f9a59f71c895bbd7987cd8ce9500b00786e53bc032dced38cddf42910458e145675290
   languageName: node
   linkType: hard
 
@@ -22489,7 +22490,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "npm:1.1.2"
     "@graphql-mesh/serve-cli": "npm:1.3.2"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.7.0"
-    "@types/node": "npm:20.16.14"
+    "@types/node": "npm:20.16.15"
     concurrently: "npm:9.0.1"
     esbuild: "npm:^0.24.0"
     graphql: "npm:16.9.0"
@@ -24283,8 +24284,8 @@ __metadata:
     "@theguild/prettier-config": "npm:2.0.7"
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
-    "@types/jest": "npm:29.5.13"
-    "@types/node": "npm:20.16.14"
+    "@types/jest": "npm:29.5.14"
+    "@types/node": "npm:20.16.15"
     "@typescript-eslint/eslint-plugin": "npm:8.11.0"
     "@typescript-eslint/parser": "npm:8.11.0"
     babel-jest: "npm:29.7.0"
@@ -39081,9 +39082,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:5.4.9":
-  version: 5.4.9
-  resolution: "vite@npm:5.4.9"
+"vite@npm:5.4.10":
+  version: 5.4.10
+  resolution: "vite@npm:5.4.10"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
@@ -39120,7 +39121,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/e9c59f2c639047e37c79bbbb151c7a55a3dc27932957cf4cf0447ee0bdcc1ddfd9b1fb3ba0465371c01ba3616d62561327855794c2d652213c3a10a32e6d369d
+  checksum: 10c0/4ef4807d2fd166a920de244dbcec791ba8a903b017a7d8e9f9b4ac40d23f8152c1100610583d08f542b47ca617a0505cfc5f8407377d610599d58296996691ed
   languageName: node
   linkType: hard
 
@@ -39443,8 +39444,8 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^7.0.0"
     "@theguild/tailwind-config": "npm:0.5.0"
-    "@types/node": "npm:20.16.14"
-    "@types/react": "npm:18.3.11"
+    "@types/node": "npm:20.16.15"
+    "@types/react": "npm:18.3.12"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:14.2.16"
     next: "npm:^14.1.4"
