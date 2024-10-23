@@ -1,5 +1,17 @@
 # @graphql-mesh/serve-cli
 
+## 1.3.2
+
+### Patch Changes
+
+- [`b256868`](https://github.com/ardatan/graphql-mesh/commit/b25686859d5eb622da8b980c20cbccc7c9d5a450)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix typings for `cache` and `responseCaching`
+  definition in the configuration
+
+- [`23631a7`](https://github.com/ardatan/graphql-mesh/commit/23631a72cf9eec81e677aab400ca6b582c0e9b4b)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - `--fork` option wont fail silently if NaN is
+  provided or the number exceeds available parallelism
+
 ## 1.3.1
 
 ### Patch Changes
