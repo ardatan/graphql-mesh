@@ -1,0 +1,88 @@
+---
+description:
+  Handle Webhooks with GraphQL Subscriptions in your unified schema using GraphQL Mesh. Use PubSub
+  implementation to bind webhook paths to specific topics and consume them as subscription root
+  fields. You can also generate GraphQL type definitions from sample JSON responses using the JSON
+  Schema Handler.
+---
+
+import { Callout } from '@theguild/components'
+
+# Handle Webhooks with GraphQL Subscriptions
+
+GraphQL Mesh can consume Webhooks as GraphQL Subscriptions in the unified schema by using the
+built-in PubSub implementation
+
+## Add a new Subscription field
+
+You can use `additionalTypeDefs` and `resolveTo` directive to add subscription root fields to your
+unified schema.
+
+If you subscribe a pubSub topic with `webhook:EXPECTED_METHOD:EXPECTED_PATH`, the server will
+automatically bind that path to that topic.
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  additionalTypeDefs: /* GraphQL */ `
+    # If you don't have Subscription type defined anywhere
+    # You have to extend subscription definition
+    extend schema {
+      subscription: Subscription
+    }
+    type Subscription {
+      todoAdded: Todo @resolveTo(
+        pubsubTopic: "webhook:post:/webhooks/todo_added"
+      # result: "data.someProp.someOtherProp", # You can get nested fields
+      # filterBy: "root.userId === args.userId" # You can filter the payload by `userId` for example
+      )
+    }
+  `
+})
+```
+
+We can use existing types from our unified schema, and this root field is subscribed to our specific
+`topic` in our PubSub service.
+
+But you have to enable `webhooks` flag in Hive Gateway in this case;
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+
+export const gatewayConfig = defineGatewayConfig({
+  webhooks: true
+})
+```
+
+### Use JSON Schema Handler instead
+
+You can also use the JSON Schema handler if you don't want to write an extra GraphQL type
+definition. You can generate GraphQL type definitions from sample JSON response;
+
+Just add the following to your existing JSON schema handler configuration in `.meshrc.yml` file;
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadJSONSchemaSubgraph('API', {
+        /* Other configuration options */
+        operations: [
+          /** Other operations */
+          {
+            type: OperationTypeNode.SUBSCRIPTION,
+            field: 'todoAdded',
+            pubsubTopic: 'webhook:post:/webhooks/todo_added',
+            responseSample: './todo.json',
+            responseTypeName: 'Todo'
+          }
+        ]
+      })
+    }
+  ]
+})
+```

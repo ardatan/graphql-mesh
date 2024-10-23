@@ -468,9 +468,9 @@ export async function processConfig(
         scalar ResolveToSourceArgs
         directive @resolveTo(
           requiredSelectionSet: String
-          sourceName: String!
-          sourceTypeName: String!
-          sourceFieldName: String!
+          sourceName: String
+          sourceTypeName: String
+          sourceFieldName: String
           sourceSelectionSet: String
           sourceArgs: ResolveToSourceArgs
           keyField: String

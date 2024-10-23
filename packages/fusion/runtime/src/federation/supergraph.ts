@@ -1,8 +1,17 @@
-import { isEnumType, Kind, visit, type GraphQLSchema } from 'graphql';
+import {
+  isEnumType,
+  Kind,
+  print,
+  visit,
+  type GraphQLSchema,
+  type ObjectTypeDefinitionNode,
+} from 'graphql';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
+import type { YamlConfig } from '@graphql-mesh/types';
 import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
+import { mergeTypeDefs } from '@graphql-tools/merge';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   asArray,
@@ -122,17 +131,39 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         schemaDirectives,
         transportEntryMap,
         additionalTypeDefs,
-        additionalResolvers,
         stitchingDirectivesTransformer,
         onSubgraphExecute,
       }),
     batch,
     onStitchingOptions(opts: any) {
       subschemas = opts.subschemas;
-      opts.typeDefs = [opts.typeDefs, additionalTypeDefs];
+      const mergedTypeDefs = mergeTypeDefs([opts.typeDefs, additionalTypeDefs]);
+      visit(mergedTypeDefs, {
+        [Kind.FIELD_DEFINITION](field, _key, _parent, _path, ancestors) {
+          const fieldDirectives = getDirectiveExtensions<{
+            resolveTo: YamlConfig.AdditionalStitchingResolverObject;
+          }>({ astNode: field });
+          const resolveToDirectives = fieldDirectives?.resolveTo;
+          if (resolveToDirectives?.length) {
+            const targetTypeName = (ancestors[ancestors.length - 1] as ObjectTypeDefinitionNode)
+              .name.value;
+            const targetFieldName = field.name.value;
+            for (const resolveToDirective of resolveToDirectives) {
+              additionalResolvers.push(
+                resolveAdditionalResolversWithoutImport({
+                  targetTypeName,
+                  targetFieldName,
+                  ...resolveToDirective,
+                }),
+              );
+            }
+          }
+        },
+      });
+      opts.typeDefs = mergedTypeDefs;
       opts.resolvers = additionalResolvers;
     },
-    onSubgraphAST(name, subgraphAST) {
+    onSubgraphAST(_name, subgraphAST) {
       return visit(subgraphAST, {
         [Kind.OBJECT_TYPE_DEFINITION](node) {
           const typeName = node.name.value;
@@ -140,7 +171,6 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
             ...node,
             fields: node.fields.filter(fieldNode => {
               const fieldDirectives = getDirectiveExtensions({ astNode: fieldNode });
-              const fieldName = fieldNode.name.value;
               const resolveToDirectives = fieldDirectives.resolveTo;
               if (resolveToDirectives?.length > 0) {
                 additionalTypeDefs.push({
@@ -153,15 +183,6 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
                     },
                   ],
                 });
-                for (const resolveToDirective of resolveToDirectives) {
-                  additionalResolvers.push(
-                    resolveAdditionalResolversWithoutImport({
-                      targetTypeName: typeName,
-                      targetFieldName: fieldName,
-                      ...(resolveToDirective as any),
-                    }),
-                  );
-                }
               }
               const additionalFieldDirectives = fieldDirectives.additionalField;
               if (additionalFieldDirectives?.length > 0) {

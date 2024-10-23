@@ -40,7 +40,6 @@ export interface HandleFederationSubschemaOpts {
   schemaDirectives?: Record<string, any>;
   transportEntryMap: Record<string, TransportEntry>;
   additionalTypeDefs: TypeSource[];
-  additionalResolvers: IResolvers<unknown, any>[];
   stitchingDirectivesTransformer: (subschemaConfig: SubschemaConfig) => SubschemaConfig;
   onSubgraphExecute: ReturnType<typeof getOnSubgraphExecute>;
 }
@@ -51,7 +50,6 @@ export function handleFederationSubschema({
   schemaDirectives,
   transportEntryMap,
   additionalTypeDefs,
-  additionalResolvers,
   stitchingDirectivesTransformer,
   onSubgraphExecute,
 }: HandleFederationSubschemaOpts) {
@@ -140,15 +138,6 @@ export function handleFederationSubschema({
             },
           ],
         });
-        for (const resolveToDirective of resolveToDirectives) {
-          additionalResolvers.push(
-            resolveAdditionalResolversWithoutImport({
-              targetTypeName: typeName,
-              targetFieldName: fieldName,
-              ...resolveToDirective,
-            }),
-          );
-        }
       }
       const additionalFieldDirectives = fieldDirectives.additionalField;
       if (additionalFieldDirectives?.length > 0) {
