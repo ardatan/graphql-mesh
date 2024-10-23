@@ -126,7 +126,7 @@ jobs:
           command: yarn test:leak
 
   integration:
-    needs: [unit]
+    needs: [typecheck, unit]
     name: integration / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest

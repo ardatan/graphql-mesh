@@ -370,7 +370,6 @@ export function createGatewayRuntime<TContext extends Record<string, any> = Reco
             subschemaConfig,
             transportEntryMap,
             additionalTypeDefs,
-            additionalResolvers,
             stitchingDirectivesTransformer,
             onSubgraphExecute,
           });
