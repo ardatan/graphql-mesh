@@ -16,11 +16,11 @@
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.96.7",
-    "@types/react": "18.3.11",
+    "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
     "@vitejs/plugin-react": "4.3.3",
     "typescript": "^5.4.2",
-    "vite": "5.4.9"
+    "vite": "5.4.10"
   },
   "browserslist": {
     "production": [
