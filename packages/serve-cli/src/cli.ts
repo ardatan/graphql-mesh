@@ -42,7 +42,8 @@ export type GatewayCLIConfig = (
     pollingInterval?: number;
   } & GatewayCLIBuiltinPluginConfig;
 
-export interface GatewayCLISupergraphConfig extends Omit<GatewayConfigSupergraph, 'supergraph'> {
+export interface GatewayCLISupergraphConfig
+  extends Omit<GatewayConfigSupergraph, 'supergraph' | 'cache'> {
   /**
    * SDL, path or an URL to the Federation Supergraph.
    *
@@ -54,7 +55,8 @@ export interface GatewayCLISupergraphConfig extends Omit<GatewayConfigSupergraph
   supergraph?: GatewayConfigSupergraph['supergraph'];
 }
 
-export interface GatewayCLISubgraphConfig extends Omit<GatewayConfigSubgraph, 'subgraph'> {
+export interface GatewayCLISubgraphConfig
+  extends Omit<GatewayConfigSubgraph, 'subgraph' | 'cache'> {
   /**
    * SDL, path or an URL to the Federation Supergraph.
    *
@@ -66,7 +68,7 @@ export interface GatewayCLISubgraphConfig extends Omit<GatewayConfigSubgraph, 's
   subgraph?: GatewayConfigSubgraph['subgraph'];
 }
 
-export interface GatewayCLIProxyConfig extends Omit<GatewayConfigProxy, 'proxy'> {
+export interface GatewayCLIProxyConfig extends Omit<GatewayConfigProxy, 'proxy' | 'cache'> {
   /**
    * HTTP executor to proxy all incoming requests to another HTTP endpoint.
    */
