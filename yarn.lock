@@ -8371,6 +8371,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j"
   dependencies:
+    "@graphql-mesh/cross-helpers": "npm:^0.4.7"
     "@graphql-mesh/transport-common": "npm:^0.7.9"
     "@graphql-mesh/types": "npm:^0.102.8"
     "@graphql-mesh/utils": "npm:^0.102.8"
