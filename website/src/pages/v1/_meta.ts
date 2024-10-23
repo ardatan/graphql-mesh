@@ -8,6 +8,7 @@ export default {
   'response-caching': 'Response Caching',
   'rate-limit': 'Rate Limit',
   auth: 'Authentication',
+  'subscriptions-webhooks': 'Subscriptions & Webhooks',
   'consume-in-other-gateways': 'Consume in Other Gateways',
   'local-execution': 'Local Execution',
   'migration-from-v0': 'Migration from Mesh v0',
