@@ -30,12 +30,14 @@ export const composeConfig = defineComposeConfig({
             method: 'POST',
             requestSample: './addTodo.json',
             responseSample: './todo.json',
+            responseTypeName: 'Todo',
           },
           {
             type: OperationTypeNode.SUBSCRIPTION,
-            field: 'todoAdded',
+            field: 'todoAddedFromSource',
             pubsubTopic: 'webhook:post:/webhooks/todo_added',
             responseSample: './todo.json',
+            responseTypeName: 'Todo',
           },
         ],
       }),
@@ -43,6 +45,16 @@ export const composeConfig = defineComposeConfig({
   ],
   additionalTypeDefs: /* GraphQL */ `
     directive @live on QUERY
+
+    # If you don't have Subscription type defined anywhere
+    # You have to extend subscription definition
+    extend schema {
+      subscription: Subscription
+    }
+
+    type Subscription {
+      todoAddedFromExtensions: Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_added")
+    }
   `,
 });
 

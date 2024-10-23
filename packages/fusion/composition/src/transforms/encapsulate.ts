@@ -132,9 +132,9 @@ export const resolveToDirective = new GraphQLDirective({
     result: { type: GraphQLString },
     resultType: { type: GraphQLString },
     sourceArgs: { type: resolveToSourceArgsScalar },
-    sourceFieldName: { type: new GraphQLNonNull(GraphQLString) },
-    sourceName: { type: new GraphQLNonNull(GraphQLString) },
+    sourceFieldName: { type: GraphQLString },
+    sourceName: { type: GraphQLString },
     sourceSelectionSet: { type: GraphQLString },
-    sourceTypeName: { type: new GraphQLNonNull(GraphQLString) },
+    sourceTypeName: { type: GraphQLString },
   },
 });

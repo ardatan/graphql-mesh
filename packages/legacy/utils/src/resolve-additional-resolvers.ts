@@ -11,6 +11,7 @@ import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind } fro
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import { process } from '@graphql-mesh/cross-helpers';
+import type { MeshContext } from '@graphql-mesh/runtime';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import type { IResolvers } from '@graphql-tools/utils';
@@ -162,10 +163,10 @@ export function resolveAdditionalResolversWithoutImport(
       [additionalResolver.targetTypeName]: {
         [additionalResolver.targetFieldName]: {
           subscribe: withFilter(
-            (root, args, context, info) => {
+            (root, args, context: MeshContext, info) => {
               const resolverData = { root, args, context, info, env: process.env };
               const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
-              return (pubsub || context.pubsub).asyncIterator(topic) as AsyncIterableIterator<any>;
+              return (pubsub || context.pubsub).asyncIterator(topic)[Symbol.asyncIterator]();
             },
             (root, args, context, info) => {
               return additionalResolver.filterBy
