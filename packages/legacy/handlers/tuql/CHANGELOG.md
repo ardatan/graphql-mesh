@@ -1,5 +1,13 @@
 # @graphql-mesh/tuql
 
+## 0.103.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.9
+  - @omnigraph/sqlite@0.6.9
+
 ## 0.103.8
 
 ### Patch Changes

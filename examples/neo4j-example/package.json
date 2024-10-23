@@ -6,9 +6,9 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cache-file": "0.102.8",
-    "@graphql-mesh/cli": "0.96.7",
-    "@graphql-mesh/neo4j": "0.103.9",
+    "@graphql-mesh/cache-file": "0.102.9",
+    "@graphql-mesh/cli": "0.96.8",
+    "@graphql-mesh/neo4j": "0.103.10",
     "graphql": "16.9.0"
   },
   "resolutions": {

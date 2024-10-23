@@ -1,5 +1,30 @@
 # @graphql-mesh/serve-cli
 
+## 1.3.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/serve-runtime@1.2.2
+  - @graphql-mesh/cache-cfw-kv@0.102.9
+  - @graphql-mesh/cache-localforage@0.102.9
+  - @graphql-mesh/cache-redis@0.102.9
+  - @graphql-mesh/plugin-deduplicate-request@0.102.9
+  - @graphql-mesh/hmac-upstream-signature@1.2.2
+  - @graphql-mesh/plugin-http-cache@0.102.9
+  - @graphql-mesh/plugin-jit@0.0.2
+  - @graphql-mesh/plugin-jwt-auth@1.2.2
+  - @graphql-mesh/plugin-mock@0.102.10
+  - @graphql-mesh/plugin-opentelemetry@1.3.2
+  - @graphql-mesh/plugin-prometheus@1.2.2
+  - @graphql-mesh/plugin-rate-limit@0.102.9
+  - @graphql-mesh/plugin-snapshot@0.102.9
+  - @graphql-mesh/transport-http-callback@0.5.1
+  - @graphql-mesh/transport-ws@0.3.10
+  - @graphql-mesh/types@0.102.9
+
 ## 1.3.2
 
 ### Patch Changes
