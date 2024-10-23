@@ -36,6 +36,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "^0.4.7",
     "@graphql-mesh/transport-common": "^0.7.9",
     "@graphql-mesh/types": "^0.102.8",
     "@graphql-mesh/utils": "^0.102.8",

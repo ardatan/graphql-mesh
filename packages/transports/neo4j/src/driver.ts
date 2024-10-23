@@ -15,5 +15,6 @@ export function getDriverFromOpts(opts: Neo4JDriverOpts) {
     logging: opts.logger && {
       logger: (level, message) => opts.logger[level](message),
     },
+    trustedCertificates: [],
   });
 }
