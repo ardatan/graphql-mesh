@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-common",
-  "version": "0.7.10",
+  "version": "0.7.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.102.9",
+    "@graphql-mesh/types": "^0.102.10",
     "graphql": "*",
     "tslib": "^2.4.0"
   },

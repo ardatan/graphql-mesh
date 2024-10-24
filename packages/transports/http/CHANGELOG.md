@@ -1,5 +1,28 @@
 # @graphql-mesh/transport-http
 
+## 0.6.11
+
+### Patch Changes
+
+- [#7826](https://github.com/ardatan/graphql-mesh/pull/7826)
+  [`e59191f`](https://github.com/ardatan/graphql-mesh/commit/e59191f3ec34c2c15d65174459a5c848cab67e13)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/cross-helpers@^0.4.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.7)
+    (to `dependencies`)
+
+- [#7826](https://github.com/ardatan/graphql-mesh/pull/7826)
+  [`e59191f`](https://github.com/ardatan/graphql-mesh/commit/e59191f3ec34c2c15d65174459a5c848cab67e13)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add missing \`process\` import for cross platform
+  support
+
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/transport-common@0.7.11
+  - @graphql-mesh/utils@0.102.10
+
 ## 0.6.10
 
 ### Patch Changes
