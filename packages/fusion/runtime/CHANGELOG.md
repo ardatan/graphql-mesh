@@ -1,5 +1,34 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.9.5
+
+### Patch Changes
+
+- [#7828](https://github.com/ardatan/graphql-mesh/pull/7828)
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.27)
+    (from `^10.0.26`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.19)
+    (from `^2.2.17`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.8)
+    (from `^3.1.7`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.11)
+    (from `^10.0.10`, in `dependencies`)
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/runtime@0.103.11
+  - @graphql-mesh/transport-common@0.7.11
+  - @graphql-mesh/types@0.102.10
+  - @graphql-mesh/utils@0.102.10
+
 ## 0.9.4
 
 ### Patch Changes
