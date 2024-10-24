@@ -182,7 +182,11 @@ function getMaxConcurrencyPerCpu() {
 }
 
 function getMaxConcurrency() {
-  return Math.min(getMaxConcurrencyPerMem(), getMaxConcurrencyPerCpu(), 1);
+  const result = Math.min(getMaxConcurrencyPerMem(), getMaxConcurrencyPerCpu());
+  if (result < 1) {
+    return result;
+  }
+  return result;
 }
 
 // we dont use `Option.default()` in the command definitions because we want the CLI options to
