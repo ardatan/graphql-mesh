@@ -35,6 +35,7 @@ const server = new ApolloServer({ schema, plugins: [ApolloServerPluginSubscripti
 
 export async function start(port: number): Promise<ApolloServer> {
   await startStandaloneServer(server, { listen: { port } });
+  console.log(`Server is running on http://localhost:${port}/graphql`);
   return server;
 }
 
