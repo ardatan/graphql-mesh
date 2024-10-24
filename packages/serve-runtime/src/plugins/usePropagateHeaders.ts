@@ -1,8 +1,6 @@
 import { mapMaybePromise } from '@envelop/core';
 import { subgraphNameByExecutionRequest } from '@graphql-mesh/fusion-runtime';
-import type { TransportEntry } from '@graphql-mesh/transport-common';
 import type { OnFetchHookDone } from '@graphql-mesh/types';
-import type { MaybePromise } from '@graphql-tools/utils';
 import type { GatewayPlugin } from '../types';
 
 interface FromClientToSubgraphsPayload {
@@ -21,11 +19,14 @@ export interface PropagateHeadersOpts {
   ) => Record<string, string> | void | Promise<Record<string, string | null | undefined> | void>;
   fromSubgraphsToClient?: (
     payload: FromSubgraphsToClientPayload,
-  ) => Record<string, string> | void | Promise<Record<string, string | null | undefined> | void>;
+  ) =>
+    | Record<string, string | string[]>
+    | void
+    | Promise<Record<string, string | string[] | null | undefined> | void>;
 }
 
 export function usePropagateHeaders<TContext>(opts: PropagateHeadersOpts): GatewayPlugin<TContext> {
-  const resHeadersByRequest = new WeakMap<Request, Record<string, string>>();
+  const resHeadersByRequest = new WeakMap<Request, Record<string, string[]>>();
   return {
     onFetch({ executionRequest, context, options, setOptions }) {
       const request = context?.request || executionRequest?.context?.request;
@@ -59,7 +60,24 @@ export function usePropagateHeaders<TContext>(opts: PropagateHeadersOpts): Gatew
                 }),
                 headers => {
                   if (headers && request) {
-                    resHeadersByRequest.set(request, headers);
+                    let existingHeaders = resHeadersByRequest.get(request);
+                    if (!existingHeaders) {
+                      existingHeaders = {};
+                      resHeadersByRequest.set(request, existingHeaders);
+                    }
+
+                    // Merge headers across multiple subgraph calls
+                    for (const key in headers) {
+                      const value = headers[key];
+                      if (value) {
+                        const headerAsArray = Array.isArray(value) ? value : [value];
+                        if (existingHeaders[key]) {
+                          existingHeaders[key].push(...headerAsArray);
+                        } else {
+                          existingHeaders[key] = headerAsArray;
+                        }
+                      }
+                    }
                   }
                 },
               );
@@ -74,7 +92,9 @@ export function usePropagateHeaders<TContext>(opts: PropagateHeadersOpts): Gatew
         for (const key in headers) {
           const value = headers[key];
           if (value) {
-            response.headers.set(key, value);
+            for (const v of value) {
+              response.headers.append(key, v);
+            }
           }
         }
       }
