@@ -1,3 +1,4 @@
+import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
   defaultPrintFn,
@@ -20,6 +21,7 @@ export type HTTPTransportOptions<
 export default {
   getSubgraphExecutor(payload) {
     let headersInConfig: Record<string, string> | undefined;
+
     if (typeof payload.transportEntry.headers === 'string') {
       headersInConfig = JSON.parse(payload.transportEntry.headers);
     }
@@ -27,17 +29,21 @@ export default {
       headersInConfig = Object.fromEntries(payload.transportEntry.headers);
     }
 
-    const headersFactory = getInterpolatedHeadersFactory(headersInConfig);
+    const headersFactory = headersInConfig
+      ? getInterpolatedHeadersFactory(headersInConfig)
+      : undefined;
 
     const httpExecutor = buildHTTPExecutor({
       endpoint: payload.transportEntry.location,
-      headers: execReq =>
-        headersFactory({
-          env: process.env,
-          root: execReq.rootValue,
-          context: execReq.context,
-          info: execReq.info,
-        }),
+      headers: headersFactory
+        ? execReq =>
+            headersFactory({
+              env: process.env,
+              root: execReq.rootValue,
+              context: execReq.context,
+              info: execReq.info,
+            })
+        : undefined,
       print: defaultPrintFn,
       ...payload.transportEntry.options,
       // @ts-expect-error - TODO: Fix this in executor-http
