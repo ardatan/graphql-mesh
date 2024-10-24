@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/neo4j",
-  "version": "0.7.10",
+  "version": "0.7.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,12 +32,12 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.102.9",
+    "@graphql-mesh/types": "^0.102.10",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/transport-neo4j": "^0.7.10",
+    "@graphql-mesh/transport-neo4j": "^0.7.11",
     "@graphql-tools/delegate": "^10.0.27",
     "@graphql-tools/schema": "^10.0.5",
     "@neo4j/introspector": "^3.0.0",
