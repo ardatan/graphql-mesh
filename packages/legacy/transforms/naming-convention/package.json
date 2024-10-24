@@ -39,8 +39,8 @@
     "tslib": "^2.5.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.26",
-    "@graphql-tools/wrap": "^10.0.10",
+    "@graphql-tools/delegate": "^10.0.27",
+    "@graphql-tools/wrap": "^10.0.11",
     "change-case": "^4.1.2",
     "graphql-scalars": "^1.22.4",
     "lower-case": "^2.0.2",
