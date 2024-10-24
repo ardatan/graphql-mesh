@@ -8,10 +8,10 @@ import { buildGraphQLWSExecutor } from '@graphql-tools/executor-graphql-ws';
 import wsTransport, { type WSTransportOptions } from '../src';
 
 jest.mock('@graphql-tools/executor-graphql-ws', () => ({
-  buildGraphQLWSExecutor: jest.fn(() => wsExecutorMock),
+  buildGraphQLWSExecutor: jest.fn(() => mockWsExecutor),
 }));
 
-const wsExecutorMock = jest.fn(() => ({ data: null }));
+const mockWsExecutor = jest.fn(() => ({ data: null }));
 const buildExecutorMock = jest.mocked(buildGraphQLWSExecutor);
 
 describe('HTTP Transport', () => {
