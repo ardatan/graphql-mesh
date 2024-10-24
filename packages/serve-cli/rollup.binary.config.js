@@ -20,6 +20,7 @@ export default defineConfig({
   },
   external: [
     '@parcel/watcher',
+    'uWebSockets.js', // will be installed
     /node_modules\/graphql/, // will be packed as dep
     /node_modules\\graphql/, // will be packed as dep
   ],
@@ -40,6 +41,31 @@ function packDeps() {
   }
 
   const zip = new ADMZip();
+
+  /* Handle uWS - START */
+  let uwsAddonAdded = false;
+  const uwsAddonForThisSystem = `uws_${process.platform}_${process.arch}_${process.versions.modules}.node`;
+  const uWSDir = path.join('..', '..', 'node_modules', 'uWebSockets.js');
+  const packedFiles = [
+    uwsAddonForThisSystem,
+    'package.json',
+    'uws.js', // cjs
+    'ESM_wrapper.mjs', // esm
+    'index.d.ts', // types (unused, but why not)
+  ];
+  zip.addLocalFolder(uWSDir, './uWebSockets.js', filename => {
+    filename = filename.replace('uWebSockets.js' + path.sep, '');
+    if (packedFiles.includes(filename)) {
+      console.log(`Packing ${filename}`);
+    }
+    if (filename === uwsAddonForThisSystem) uwsAddonAdded = true;
+    return packedFiles.includes(filename);
+  });
+  if (!uwsAddonAdded) {
+    console.warn(`uWebSockets.js doesnt have the "${uwsAddonForThisSystem}" addon for this system`);
+  }
+  /* Handle uWS - END */
+
   const graphqlPath = path.join('..', '..', 'node_modules', 'graphql');
   zip.addLocalFolder(graphqlPath, './graphql'); // graphql is zero-dep
   zip.addLocalFolder('bundle/node_modules');

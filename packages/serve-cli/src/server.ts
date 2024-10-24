@@ -86,11 +86,69 @@ export async function startServerForRuntime<
     disableWebsockets,
   };
 
-  const server = await startNodeHttpServer(runtime, serverOpts);
+  let server: AsyncDisposable;
+
+  try {
+    server = await startuWebSocketsServer(runtime, serverOpts);
+  } catch (e) {
+    log.debug(e.message);
+    log.warn('uWebSockets.js is not available currently so the server will fallback to node:http.');
+    server = await startNodeHttpServer(runtime, serverOpts);
+  }
 
   terminateStack.use(server);
 
   return server;
+}
+
+async function startuWebSocketsServer<TContext>(
+  gwRuntime: GatewayRuntime<TContext>,
+  opts: ServerForRuntimeOptions,
+): Promise<AsyncDisposable> {
+  const {
+    log,
+    host = defaultOptions.host,
+    port = defaultOptions.port,
+    sslCredentials,
+    maxHeaderSize,
+    disableWebsockets = false,
+  } = opts;
+  process.env.UWS_HTTP_MAX_HEADERS_SIZE = maxHeaderSize?.toString();
+  // we intentionally use uws.default for CJS/ESM cross compatibility.
+  //
+  // when importing ESM of uws, the default will be flattened; but when importing
+  // CJS, that wont happen - however, the default will always be available
+  return import('uWebSockets.js').then(async uWSModule => {
+    const uWS = uWSModule.default || uWSModule;
+    const protocol = sslCredentials ? 'https' : 'http';
+    let app = sslCredentials ? uWS.SSLApp(sslCredentials) : uWS.App();
+    app = app.any('/*', gwRuntime);
+    const url = `${protocol}://${host}:${port}`.replace('0.0.0.0', 'localhost');
+    log.debug(`Starting server on ${url}`);
+    if (!disableWebsockets) {
+      const graphqlWSOptions = getGraphQLWSOptions(gwRuntime);
+      const { makeBehavior } = await import('graphql-ws/lib/use/uWebSockets');
+      app = app.ws('/*', makeBehavior(graphqlWSOptions));
+    }
+    return new Promise((resolve, reject) => {
+      app = app.listen(host, port, function listenCallback(listenSocket) {
+        if (listenSocket) {
+          log.info(`Listening on ${url}`);
+          resolve(
+            createAsyncDisposable(() => {
+              process.stderr.write('\n');
+              log.info(`Stopping the server`);
+              app.close();
+              log.info(`Stopped the server successfully`);
+              return Promise.resolve();
+            }),
+          );
+        } else {
+          reject(new Error(`Failed to start server on ${protocol}://${host}:${port}!`));
+        }
+      });
+    });
+  });
 }
 
 async function startNodeHttpServer<TContext>(
@@ -163,8 +221,7 @@ async function startNodeHttpServer<TContext>(
     useServer(graphqlWSOptions, wsServer);
   }
   return new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(port, host, () => {
+    server = server.once('error', reject).listen(port, host, () => {
       log.info(`Listening on ${url}`);
       resolve(
         createAsyncDisposable(
@@ -173,7 +230,7 @@ async function startNodeHttpServer<TContext>(
               process.stderr.write('\n');
               log.info(`Stopping the server`);
               server.closeAllConnections();
-              server.close(() => {
+              server = server.close(() => {
                 log.info(`Stopped the server successfully`);
                 resolve();
               });

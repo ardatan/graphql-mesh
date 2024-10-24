@@ -6,8 +6,9 @@ WORKDIR /install
 
 RUN apt-get update && apt-get install -y \
   curl libcurl4-openssl-dev libssl-dev git python3 build-essential
-
-RUN npm i graphql@^16.9.0
+RUN npm i \
+  uNetworking/uWebSockets.js#semver:^20 \
+  graphql@^16.9.0
 
 #
 

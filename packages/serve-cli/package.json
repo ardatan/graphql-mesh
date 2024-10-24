@@ -78,6 +78,9 @@
     "parse-duration": "^1.1.0",
     "ws": "^8.18.0"
   },
+  "optionalDependencies": {
+    "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
+  },
   "devDependencies": {
     "@parcel/watcher": "^2.3.0",
     "@rollup/plugin-commonjs": "^28.0.0",
