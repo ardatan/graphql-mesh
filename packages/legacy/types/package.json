@@ -38,8 +38,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/batch-delegate": "^9.0.8",
-    "@graphql-tools/delegate": "^10.0.26",
+    "@graphql-tools/batch-delegate": "^9.0.9",
+    "@graphql-tools/delegate": "^10.0.27",
     "@graphql-typed-document-node/core": "^3.2.0"
   },
   "publishConfig": {
