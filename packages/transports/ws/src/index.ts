@@ -27,9 +27,13 @@ export default {
   getSubgraphExecutor({ transportEntry, logger }) {
     const wsExecutorMap = new Map<string, DisposableExecutor>();
     const wsUrl = switchProtocols(transportEntry.location);
-    const connectionParamsFactory = transportEntry.options.connectionParams
+    const connectionParamsFactory = transportEntry.options?.connectionParams
       ? getInterpolatedHeadersFactory(transportEntry.options.connectionParams)
       : undefined;
+    const headersFactory = transportEntry.headers
+      ? getInterpolatedHeadersFactory(Object.fromEntries(transportEntry.headers))
+      : undefined;
+
     const mergedExecutor: DisposableExecutor = function mergedExecutor(execReq) {
       const connectionParams = connectionParamsFactory?.({
         env: process.env,
@@ -37,7 +41,15 @@ export default {
         context: execReq.context,
         info: execReq.info,
       });
-      const hash = wsUrl + (connectionParams?.token ? '?token=' + connectionParams.token : '');
+      const headers = headersFactory?.({
+        env: process.env,
+        root: execReq.rootValue,
+        context: execReq.context,
+        info: execReq.info,
+      });
+
+      const hash = `${wsUrl}?connectionParams=${JSON.stringify(connectionParams)}&headers=${JSON.stringify(headers)}`;
+
       let wsExecutor = wsExecutorMap.get(hash);
       if (!wsExecutor) {
         const executorLogger = logger.child('GraphQL WS').child(hash);
@@ -46,6 +58,7 @@ export default {
           lazy: true,
           lazyCloseTimeout: 3_000,
           ...transportEntry.options,
+          headers,
           connectionParams,
           on: {
             connecting(isRetry) {
