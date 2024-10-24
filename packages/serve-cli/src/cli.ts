@@ -2,7 +2,7 @@ import 'dotenv/config'; // inject dotenv options to process.env
 
 import cluster from 'node:cluster';
 import module from 'node:module';
-import { availableParallelism, platform, release } from 'node:os';
+import { availableParallelism, freemem, platform, release } from 'node:os';
 import { join } from 'node:path';
 import parseDuration from 'parse-duration';
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
@@ -169,9 +169,26 @@ export type CLI = typeof cli;
 
 export type AddCommand = (ctx: CLIContext, cli: CLI) => void;
 
+function getFreeMemInGb() {
+  return freemem() / 1024 ** 3;
+}
+
+function getMaxConcurrencyPerMem() {
+  return parseInt(String(getFreeMemInGb()));
+}
+
+function getMaxConcurrencyPerCpu() {
+  return availableParallelism();
+}
+
+function getMaxConcurrency() {
+  return Math.min(getMaxConcurrencyPerMem(), getMaxConcurrencyPerCpu(), 1);
+}
+
 // we dont use `Option.default()` in the command definitions because we want the CLI options to
 // override the config file (with option defaults, config file will always be overwritten)
-const maxAvailableFork = Math.max(availableParallelism() - 1, 1);
+const maxAvailableFork = getMaxConcurrency();
+
 export const defaultOptions = {
   fork: process.env.NODE_ENV === 'production' ? maxAvailableFork : 1,
   host:
