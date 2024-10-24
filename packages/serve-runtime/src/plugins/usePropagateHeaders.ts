@@ -18,10 +18,16 @@ interface FromSubgraphsToClientPayload {
 export interface PropagateHeadersOpts {
   fromClientToSubgraphs?: (
     payload: FromClientToSubgraphsPayload,
-  ) => Record<string, string> | void | Promise<Record<string, string | null | undefined> | void>;
+  ) =>
+    | Record<string, string | string[]>
+    | void
+    | Promise<Record<string, string | string[] | null | undefined> | void>;
   fromSubgraphsToClient?: (
     payload: FromSubgraphsToClientPayload,
-  ) => Record<string, string> | void | Promise<Record<string, string | null | undefined> | void>;
+  ) =>
+    | Record<string, string | string[]>
+    | void
+    | Promise<Record<string, string | string[] | null | undefined> | void>;
 }
 
 export function usePropagateHeaders<TContext>(opts: PropagateHeadersOpts): GatewayPlugin<TContext> {
@@ -74,7 +80,13 @@ export function usePropagateHeaders<TContext>(opts: PropagateHeadersOpts): Gatew
         for (const key in headers) {
           const value = headers[key];
           if (value) {
-            response.headers.set(key, value);
+            if (Array.isArray(value)) {
+              for (const v of value) {
+                response.headers.append(key, v);
+              }
+            } else {
+              response.headers.set(key, value);
+            }
           }
         }
       }
