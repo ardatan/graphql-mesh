@@ -21,12 +21,10 @@ function switchProtocols(url: string) {
 
 export type WSTransportOptions = Omit<ClientOptions, 'url' | 'on' | 'connectionParams'> & {
   connectionParams?: Record<string, string>;
-  buildGraphQLWSExecutor?: typeof buildGraphQLWSExecutor;
 };
 
 export default {
   getSubgraphExecutor({ transportEntry, logger }) {
-    const buildExecutor = transportEntry.options?.buildGraphQLWSExecutor ?? buildGraphQLWSExecutor;
     const wsExecutorMap = new Map<string, DisposableExecutor>();
     const wsUrl = switchProtocols(transportEntry.location);
     const connectionParamsFactory = transportEntry.options?.connectionParams
@@ -55,7 +53,7 @@ export default {
       let wsExecutor = wsExecutorMap.get(hash);
       if (!wsExecutor) {
         const executorLogger = logger.child('GraphQL WS').child(hash);
-        wsExecutor = buildExecutor({
+        wsExecutor = buildGraphQLWSExecutor({
           url: wsUrl,
           lazy: true,
           lazyCloseTimeout: 3_000,

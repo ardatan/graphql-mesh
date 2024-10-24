@@ -1,13 +1,18 @@
-import { buildSchema, parse } from 'graphql';
+import { parse } from 'graphql';
 import type {
   TransportEntry,
   TransportGetSubgraphExecutorOptions,
 } from '@graphql-mesh/transport-common';
 import { DefaultLogger, dispose, makeAsyncDisposable, makeDisposable } from '@graphql-mesh/utils';
+import { buildGraphQLWSExecutor } from '@graphql-tools/executor-graphql-ws';
 import wsTransport, { type WSTransportOptions } from '../src';
 
-const wsExecutorMock = jest.fn().mockReturnValue({ data: null });
-const buildExecutorMock = jest.fn().mockReturnValue(wsExecutorMock);
+jest.mock('@graphql-tools/executor-graphql-ws', () => ({
+  buildGraphQLWSExecutor: jest.fn(() => wsExecutorMock),
+}));
+
+const wsExecutorMock = jest.fn(() => ({ data: null }));
+const buildExecutorMock = jest.mocked(buildGraphQLWSExecutor);
 
 describe('HTTP Transport', () => {
   beforeEach(() => {
@@ -101,6 +106,7 @@ describe('HTTP Transport', () => {
     const executor = makeExecutor();
 
     await executor({ document });
+    // @ts-ignore
     buildExecutorMock.mock.lastCall[0].on.closed();
     await executor({ document });
 
@@ -134,10 +140,6 @@ function makeExecutor(transportEntry?: Partial<TransportEntry<WSTransportOptions
     transportEntry: {
       location: '/ws',
       ...transportEntry,
-      options: {
-        ...transportEntry?.options,
-        buildGraphQLWSExecutor: buildExecutorMock,
-      },
     },
     logger: new DefaultLogger(),
   } as unknown as TransportGetSubgraphExecutorOptions<WSTransportOptions>);
