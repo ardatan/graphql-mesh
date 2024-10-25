@@ -42,7 +42,7 @@
     "@graphql-mesh/transport-common": "^0.7.11",
     "@graphql-tools/utils": "^10.5.5",
     "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.51.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.52.0",
     "@opentelemetry/context-async-hooks": "^1.25.1",
     "@opentelemetry/exporter-trace-otlp-grpc": "^0.52.1",
     "@opentelemetry/exporter-trace-otlp-http": "^0.52.1",
