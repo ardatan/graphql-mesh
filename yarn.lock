@@ -4076,6 +4076,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/grpc@workspace:e2e/grpc-example":
+  version: 0.0.0-use.local
+  resolution: "@e2e/grpc@workspace:e2e/grpc-example"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/serve-cli": "workspace:*"
+    "@grpc/grpc-js": "npm:^1.12.2"
+    "@grpc/proto-loader": "npm:^0.7.13"
+    "@omnigraph/grpc": "workspace:*"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/hoist-and-prefix-transform@workspace:e2e/hoist-and-prefix-transform":
   version: 0.0.0-use.local
   resolution: "@e2e/hoist-and-prefix-transform@workspace:e2e/hoist-and-prefix-transform"
@@ -6562,25 +6575,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/grpc@workspace:packages/legacy/handlers/grpc"
   dependencies:
-    "@ardatan/grpc-reflection-js": "npm:^0.0.2"
-    "@graphql-mesh/string-interpolation": "npm:^0.5.6"
-    "@graphql-mesh/transport-common": "npm:^0.7.11"
-    "@grpc/grpc-js": "npm:^1.1.7"
-    "@grpc/proto-loader": "npm:^0.7.8"
-    "@types/lodash.has": "npm:4.5.9"
-    globby: "npm:^11.1.0"
-    graphql-compose: "npm:^9.0.11"
-    graphql-scalars: "npm:^1.22.4"
-    lodash.get: "npm:^4.4.2"
-    lodash.has: "npm:^4.5.2"
-    long: "npm:4.0.0"
-    protobufjs: "npm:^7.2.5"
+    "@graphql-mesh/transport-grpc": "npm:^0.0.0"
+    "@omnigraph/grpc": "npm:^0.0.0"
   peerDependencies:
-    "@graphql-mesh/cross-helpers": ^0.4.7
     "@graphql-mesh/store": ^0.102.10
     "@graphql-mesh/types": ^0.102.10
     "@graphql-mesh/utils": ^0.102.10
-    "@graphql-tools/utils": ^10.5.5
     graphql: "*"
     tslib: ^2.4.0
   languageName: unknown
@@ -7587,6 +7587,27 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.5.5"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.10
+    graphql: "*"
+    tslib: ^2.4.0
+  languageName: unknown
+  linkType: soft
+
+"@graphql-mesh/transport-grpc@npm:^0.0.0, @graphql-mesh/transport-grpc@workspace:packages/transports/grpc":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/transport-grpc@workspace:packages/transports/grpc"
+  dependencies:
+    "@graphql-mesh/string-interpolation": "npm:^0.5.6"
+    "@graphql-mesh/transport-common": "npm:^0.7.11"
+    "@grpc/grpc-js": "npm:^1.1.7"
+    "@grpc/proto-loader": "npm:^0.7.8"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
+    graphql-scalars: "npm:^1.22.4"
+    lodash.get: "npm:^4.4.2"
+    protobufjs: "npm:^7.2.5"
+  peerDependencies:
+    "@graphql-mesh/types": ^0.102.10
+    "@graphql-mesh/utils": ^0.102.10
+    "@graphql-tools/utils": ^10.5.5
     graphql: "*"
     tslib: ^2.4.0
   languageName: unknown
@@ -8846,7 +8867,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.12.2, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
+"@grpc/grpc-js@npm:1.12.2, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
   version: 1.12.2
   resolution: "@grpc/grpc-js@npm:1.12.2"
   dependencies:
@@ -10536,6 +10557,26 @@ __metadata:
   checksum: 10c0/7d6e357fc9b6014e238e6a28822e0f54efd2accd862f1736f0a35dfc44fbf5409c553e1ffe0dc47b97c998e18101a93c128976979043ca910e14699ad6a911d4
   languageName: node
   linkType: hard
+
+"@omnigraph/grpc@npm:^0.0.0, @omnigraph/grpc@workspace:*, @omnigraph/grpc@workspace:packages/loaders/grpc":
+  version: 0.0.0-use.local
+  resolution: "@omnigraph/grpc@workspace:packages/loaders/grpc"
+  dependencies:
+    "@ardatan/grpc-reflection-js": "npm:^0.0.2"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.6"
+    "@graphql-mesh/transport-common": "npm:^0.7.11"
+    "@graphql-tools/utils": "npm:^10.5.5"
+    "@grpc/grpc-js": "npm:^1.1.7"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
+    globby: "npm:^11.1.0"
+    graphql-compose: "npm:^9.0.11"
+    graphql-scalars: "npm:^1.23.0"
+    lodash.has: "npm:^4.5.2"
+    protobufjs: "npm:^7.2.5"
+  peerDependencies:
+    graphql: "*"
+  languageName: unknown
+  linkType: soft
 
 "@omnigraph/json-schema@npm:0.107.4, @omnigraph/json-schema@npm:^0.107.4, @omnigraph/json-schema@workspace:*, @omnigraph/json-schema@workspace:packages/loaders/json-schema":
   version: 0.0.0-use.local
@@ -14339,15 +14380,6 @@ __metadata:
   dependencies:
     "@types/lodash": "npm:*"
   checksum: 10c0/934ae4f02831afdb9216cb5fcb702f8f4e0b45e13f2d10ed9c7ce7e891800e5dea726b513c98b8370d6292d42ad7745c622ae75733676746b711bea95b6259d5
-  languageName: node
-  linkType: hard
-
-"@types/lodash.has@npm:4.5.9":
-  version: 4.5.9
-  resolution: "@types/lodash.has@npm:4.5.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10c0/6466d9b4c1d4cf87010209923662091e771efb84973af8d10b40702b824d2ac6f6836b4111b5cf437a298c21333ed23bfe45a60713abed559aabf46e31d1ce2e
   languageName: node
   linkType: hard
 
@@ -27784,7 +27816,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"long@npm:4.0.0, long@npm:^4.0.0":
+"long@npm:^4.0.0":
   version: 4.0.0
   resolution: "long@npm:4.0.0"
   checksum: 10c0/50a6417d15b06104dbe4e3d4a667c39b137f130a9108ea8752b352a4cfae047531a3ac351c181792f3f8768fe17cca6b0f406674a541a86fb638aaac560d83ed

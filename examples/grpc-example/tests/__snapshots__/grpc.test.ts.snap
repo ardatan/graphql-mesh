@@ -102,18 +102,18 @@ exports[`gRPC Example should fetch movies by cast as a subscription correctly: m
 `;
 
 exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
-"schema {
+"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost:50051", options: {requestTimeout: 200000, metaData: {someKey: "someValue", connection_type: "{context.headers.connection}"}}) {
   query: Query
   subscription: Subscription
 }
 
-directive @grpcMethod(rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
+directive @grpcMethod(subgraph: String, rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
 
-directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
+directive @grpcConnectivityState(subgraph: String, rootJsonName: String, objPath: String) on FIELD_DEFINITION
 
-directive @enum(value: String) on ENUM_VALUE
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+directive @grpcRootJson(subgraph: String, name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
 """
 Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
@@ -127,17 +127,17 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-type Query @grpcRootJson(name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int64\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
+type Query @grpcRootJson(subgraph: "grpc", name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int64\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
   """get all movies"""
-  exampleGetMovies(input: MovieRequest_Input): MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "Example", methodName: "GetMovies", responseStream: false)
+  exampleGetMovies(input: MovieRequest_Input): MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "Example", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @grpcMethod(rootJsonName: "Root0", objPath: "Example", methodName: "SearchMoviesByCast", responseStream: true)
-  exampleConnectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "Example")
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "Example", methodName: "SearchMoviesByCast", responseStream: true)
+  exampleConnectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "Example")
   """get all movies"""
-  anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "AnotherExample", methodName: "GetMovies", responseStream: false)
+  anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "AnotherExample", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @grpcMethod(rootJsonName: "Root0", objPath: "AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
-  anotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "AnotherExample")
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  anotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "AnotherExample")
 }
 
 """movie result message, contains list of movies"""
@@ -168,9 +168,9 @@ type google__protobuf__Timestamp {
 }
 
 enum Genre {
-  UNSPECIFIED @enum(value: "0")
-  ACTION @enum(value: "1")
-  DRAMA @enum(value: "2")
+  UNSPECIFIED @enum(subgraph: "grpc", value: "0")
+  ACTION @enum(subgraph: "grpc", value: "1")
+  DRAMA @enum(subgraph: "grpc", value: "2")
 }
 
 input MovieRequest_Input {
@@ -207,9 +207,9 @@ enum ConnectivityState {
 
 type Subscription {
   """search movies by the name of the cast"""
-  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @grpcMethod(rootJsonName: "Root0", objPath: "Example", methodName: "SearchMoviesByCast", responseStream: true)
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "Example", methodName: "SearchMoviesByCast", responseStream: true)
   """search movies by the name of the cast"""
-  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @grpcMethod(rootJsonName: "Root0", objPath: "AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"

@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/grpc",
-  "version": "0.104.12",
+  "name": "@graphql-mesh/transport-grpc",
+  "version": "0.0.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "ardatan/graphql-mesh",
-    "directory": "packages/legacy/handlers/grpc"
+    "directory": "packages/transports/grpc"
   },
   "license": "MIT",
   "engines": {
@@ -32,15 +32,21 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/store": "^0.102.10",
     "@graphql-mesh/types": "^0.102.10",
     "@graphql-mesh/utils": "^0.102.10",
+    "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/transport-grpc": "^0.0.0",
-    "@omnigraph/grpc": "^0.0.0"
+    "@graphql-mesh/string-interpolation": "^0.5.6",
+    "@graphql-mesh/transport-common": "^0.7.11",
+    "@grpc/grpc-js": "^1.1.7",
+    "@grpc/proto-loader": "^0.7.8",
+    "@whatwg-node/disposablestack": "^0.0.5",
+    "graphql-scalars": "^1.22.4",
+    "lodash.get": "^4.4.2",
+    "protobufjs": "^7.2.5"
   },
   "publishConfig": {
     "access": "public",

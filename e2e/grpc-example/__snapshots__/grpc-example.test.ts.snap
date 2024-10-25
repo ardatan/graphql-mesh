@@ -1,0 +1,415 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`gRPC Example generates the correct schema 1`] = `
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@grpcMethod", "@grpcConnectivityState", "@enum", "@grpcRootJson", "@stream", "@source", "@extraSchemaDefinitionDirective"]
+)
+{
+  query: Query
+  
+  subscription: Subscription
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  MOVIES @join__graph(name: "movies", url: "localhost:<movies_port>") 
+}
+
+directive @grpcMethod(
+  subgraph: String
+  rootJsonName: String
+  objPath: String
+  methodName: String
+  responseStream: Boolean
+) repeatable on FIELD_DEFINITION
+
+directive @grpcConnectivityState(subgraph: String, rootJsonName: String, objPath: String)  repeatable on FIELD_DEFINITION
+
+directive @enum(subgraph: String, value: String)  repeatable on ENUM_VALUE
+
+directive @grpcRootJson(subgraph: String, name: String, rootJson: ObjMap, loadOptions: ObjMap)  repeatable on OBJECT
+
+directive @stream(if: Boolean!, label: String, initialCount: Int)  on FIELD
+
+directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt @join__type(graph: MOVIES) 
+
+scalar ObjMap @join__type(graph: MOVIES) 
+
+scalar _DirectiveExtensions @join__type(graph: MOVIES) 
+
+type Query @grpcRootJson(
+  subgraph: "movies"
+  name: "Root0"
+  rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int64\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"
+) @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "movies", kind: "grpc", location: "localhost:<movies_port>", options: {requestTimeout: 200000, metaData: {someKey: "someValue", connection_type: "{context.headers.connection}"}}}]}
+) @join__type(graph: MOVIES)  {
+  """
+  get all movies
+  """
+  exampleGetMovies(input: MovieRequest_Input) : MoviesResult @grpcMethod(
+    subgraph: "movies"
+    rootJsonName: "Root0"
+    objPath: "Example"
+    methodName: "GetMovies"
+    responseStream: false
+  ) @source(name: "Example_GetMovies", type: "MoviesResult", subgraph: "movies") 
+  """
+  search movies by the name of the cast
+  """
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input) : [Movie] @grpcMethod(
+    subgraph: "movies"
+    rootJsonName: "Root0"
+    objPath: "Example"
+    methodName: "SearchMoviesByCast"
+    responseStream: true
+  ) @source(name: "Example_SearchMoviesByCast", type: "[Movie]", subgraph: "movies") 
+  exampleConnectivityState(tryToConnect: Boolean) : ConnectivityState @grpcConnectivityState(subgraph: "movies", rootJsonName: "Root0", objPath: "Example")  @source(
+    name: "Example_connectivityState"
+    type: "ConnectivityState"
+    subgraph: "movies"
+  )
+  """
+  get all movies
+  """
+  anotherExampleGetMovies(input: MovieRequest_Input) : MoviesResult @grpcMethod(
+    subgraph: "movies"
+    rootJsonName: "Root0"
+    objPath: "AnotherExample"
+    methodName: "GetMovies"
+    responseStream: false
+  ) @source(name: "AnotherExample_GetMovies", type: "MoviesResult", subgraph: "movies") 
+  """
+  search movies by the name of the cast
+  """
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input) : [Movie] @grpcMethod(
+    subgraph: "movies"
+    rootJsonName: "Root0"
+    objPath: "AnotherExample"
+    methodName: "SearchMoviesByCast"
+    responseStream: true
+  ) @source(
+    name: "AnotherExample_SearchMoviesByCast"
+    type: "[Movie]"
+    subgraph: "movies"
+  )
+  anotherExampleConnectivityState(tryToConnect: Boolean) : ConnectivityState @grpcConnectivityState(subgraph: "movies", rootJsonName: "Root0", objPath: "AnotherExample")  @source(
+    name: "AnotherExample_connectivityState"
+    type: "ConnectivityState"
+    subgraph: "movies"
+  )
+}
+
+"""
+movie result message, contains list of movies
+"""
+type MoviesResult @join__type(graph: MOVIES)  {
+  """
+  list of movies
+  """
+  result: [Movie]
+}
+
+"""
+movie message payload
+"""
+type Movie @join__type(graph: MOVIES)  {
+  name: String
+  year: BigInt
+  rating: Float
+  """
+  list of cast
+  """
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: Genre
+}
+
+type google__protobuf__Timestamp @join__type(graph: MOVIES)  {
+  seconds: BigInt
+  nanos: Int
+}
+
+type Subscription @join__type(graph: MOVIES)  {
+  """
+  search movies by the name of the cast
+  """
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input) : Movie @grpcMethod(
+    subgraph: "movies"
+    rootJsonName: "Root0"
+    objPath: "Example"
+    methodName: "SearchMoviesByCast"
+    responseStream: true
+  ) @source(name: "Example_SearchMoviesByCast", type: "Movie", subgraph: "movies") 
+  """
+  search movies by the name of the cast
+  """
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input) : Movie @grpcMethod(
+    subgraph: "movies"
+    rootJsonName: "Root0"
+    objPath: "AnotherExample"
+    methodName: "SearchMoviesByCast"
+    responseStream: true
+  ) @source(name: "AnotherExample_SearchMoviesByCast", type: "Movie", subgraph: "movies") 
+}
+
+enum ConnectivityState @join__type(graph: MOVIES)  {
+  IDLE @join__enumValue(graph: MOVIES) 
+  CONNECTING @join__enumValue(graph: MOVIES) 
+  READY @join__enumValue(graph: MOVIES) 
+  TRANSIENT_FAILURE @join__enumValue(graph: MOVIES) 
+  SHUTDOWN @join__enumValue(graph: MOVIES) 
+}
+
+enum Genre @join__type(graph: MOVIES)  {
+  UNSPECIFIED @enum(subgraph: "movies", value: "0")  @join__enumValue(graph: MOVIES) 
+  ACTION @enum(subgraph: "movies", value: "1")  @join__enumValue(graph: MOVIES) 
+  DRAMA @enum(subgraph: "movies", value: "2")  @join__enumValue(graph: MOVIES) 
+}
+
+input MovieRequest_Input @join__type(graph: MOVIES)  {
+  movie: Movie_Input
+}
+
+"""
+movie message payload
+"""
+input Movie_Input @join__type(graph: MOVIES)  {
+  name: String
+  year: BigInt
+  rating: Float
+  """
+  list of cast
+  """
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: Genre
+}
+
+input google__protobuf__Timestamp_Input @join__type(graph: MOVIES)  {
+  seconds: BigInt
+  nanos: Int
+}
+
+input SearchByCastRequest_Input @join__type(graph: MOVIES)  {
+  castName: String
+}
+    
+"
+`;
+
+exports[`gRPC Example gets movies correctly: get-movies-grpc-example-result 1`] = `
+{
+  "data": {
+    "exampleGetMovies": {
+      "result": [
+        {
+          "cast": [
+            "Leonardo DiCaprio",
+            "Jonah Hill",
+            "Margot Robbie",
+          ],
+          "name": "The Wolf of Wall Street",
+          "rating": 0.7799999713897705,
+          "time": {
+            "seconds": 1608422400000,
+          },
+          "year": 0,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 0 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 1 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 0,
+      },
+    ],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 2 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 0,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 0,
+      },
+    ],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 3 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 0,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 0,
+      },
+      null,
+    ],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 0,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 0,
+      },
+      null,
+    ],
+  },
+}
+`;

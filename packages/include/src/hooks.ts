@@ -100,7 +100,7 @@ export const resolve: module.ResolveHook = async (specifier, context, nextResolv
   }
 
   try {
-    debug(`Trying default resolve for "${specifier}"`);
+    // debug(`Trying default resolve for "${specifier}"`);
     return await nextResolve(specifier, context);
   } catch (e) {
     try {
@@ -170,7 +170,7 @@ export const load: module.LoadHook = async (url, context, nextLoad) => {
     url = `file:///${url.replace(/\\/g, '/')}`;
   }
   if (/\.(m|c)?ts$/.test(url)) {
-    debug(`Transpiling TypeScript file at "${url}"`);
+    // debug(`Transpiling TypeScript file at "${url}"`);
     const filePath = fileURLToPath(url);
     let source: string;
     try {

@@ -727,7 +727,11 @@ async function waitForPort(port: number, signal: AbortSignal) {
       try {
         await fetch(`http://${localHostname}:${port}`, { signal });
         break outer;
-      } catch (err) {}
+      } catch (err) {
+        if (err.toString().toLowerCase().includes('unsupported')) {
+          break outer;
+        }
+      }
     }
     // no need to track retries, jest will time out aborting the signal
     signal.throwIfAborted();
