@@ -1,4 +1,4 @@
-import { getGraphQLScalar, isScalarType } from '../src/scalars.js';
+import { getGraphQLScalarForGrpc, isGrpcScalar } from '../src/scalars.js';
 
 describe.each<[string, string]>([
   ['bool', 'Boolean'],
@@ -18,18 +18,18 @@ describe.each<[string, string]>([
   ['uint64', 'BigInt'],
 ])('Valid Scalars', (scalarType, scalarGqlType) => {
   test(`getGraphQLScalar should return the proper graphql scalar for ${scalarType}`, () => {
-    expect(getGraphQLScalar(scalarType)).toBe(scalarGqlType);
+    expect(getGraphQLScalarForGrpc(scalarType)).toBe(scalarGqlType);
   });
   test(`isScalarType should return true for ${scalarType}`, () => {
-    expect(isScalarType(scalarType)).toBe(true);
+    expect(isGrpcScalar(scalarType)).toBe(true);
   });
 });
 
 describe('Invalid Scalars', () => {
   test('getGraphQLScalar should throw an error', () => {
-    expect(() => getGraphQLScalar('randomType')).toThrow(/Could not find GraphQL Scalar for type/);
+    expect(() => getGraphQLScalarForGrpc('randomType')).toThrow(/Could not find GraphQL Scalar for type/);
   });
   test('isScalarType should return false for none scalars', () => {
-    expect(isScalarType('randomType')).toBe(false);
+    expect(isGrpcScalar('randomType')).toBe(false);
   });
 });

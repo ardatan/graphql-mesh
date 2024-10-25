@@ -2,7 +2,7 @@ import type { Logger, YamlConfig } from "@graphql-mesh/types";
 import { specifiedDirectives } from "graphql";
 import { SchemaComposer, type Directive, type EnumTypeComposerValueConfigDefinition, type ObjectTypeComposerFieldConfigAsObjectDefinition } from "graphql-compose";
 import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt, GraphQLVoid, GraphQLJSON } from "graphql-scalars";
-import { EnumDirective, grpcConnectivityStateDirective, grpcMethodDirective, grpcRootJsonDirective } from "./directives.js";
+import { EnumDirective, grpcConnectivityStateDirective, grpcMethodDirective, grpcRootJsonDirective, transportDirective } from "./directives.js";
 import { credentials, type ChannelCredentials } from '@grpc/grpc-js';
 import protobufjs, { type AnyNestedObject, type IParseOptions, type RootConstructor } from 'protobufjs';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
@@ -103,6 +103,7 @@ export class gRPCLoader implements AsyncDisposable {
     }
 
     this.logger.debug(`Building the final GraphQL Schema`);
+    this.schemaComposer.addDirective(transportDirective);
     const schema = this.schemaComposer.buildSchema();
     const schemaExtensions: Record<string, any> = schema.extensions = schema.extensions || {};
     const directiveExtensions = schemaExtensions.directives = schemaExtensions.directives || {};

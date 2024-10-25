@@ -228,7 +228,6 @@ export class gRPCTransport extends DisposableStack {
                     isResponseStream: responseStream,
                   });
                   field.resolve = function identityFn(root) {
-                    console.log('geldi')
                     return root;
                   };
                 } else {
