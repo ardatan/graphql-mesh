@@ -31,7 +31,7 @@ function createExecuteFnWithJit() {
   };
 }
 
-export function useJIT(): Plugin {
+export function useJIT<PluginContext extends Record<string, any> = {}>(): Plugin<PluginContext> {
   const executeFnWithJit = createExecuteFnWithJit();
   return {
     onExecute({ setExecuteFn }) {
