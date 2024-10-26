@@ -1,5 +1,16 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.9.6
+
+### Patch Changes
+
+- [#7712](https://github.com/ardatan/graphql-mesh/pull/7712)
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - WebSocket connections are now cached
+  against the whole `connectionParams` object and forwarded `headers`. The fixes WebSocket
+  connection being reused wrongly when `connectionParams.token` is stable while other fields are
+  changing.
+
 ## 0.9.5
 
 ### Patch Changes

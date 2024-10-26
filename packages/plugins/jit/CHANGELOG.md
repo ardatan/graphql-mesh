@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-jit
 
+## 0.0.4
+
+### Patch Changes
+
+- [`bb40dbf`](https://github.com/ardatan/graphql-mesh/commit/bb40dbf52ced8d5d182b2ec5ceb8792981256f89)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Accept context generic for proper inheritance
+
 ## 0.0.3
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-hive/gateway",
-  "version": "1.3.4",
+  "version": "1.4.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -50,8 +50,8 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/serve-cli": "^1.3.4",
-    "@graphql-mesh/serve-runtime": "^1.2.3",
+    "@graphql-mesh/serve-cli": "^1.4.0",
+    "@graphql-mesh/serve-runtime": "^1.2.4",
     "@graphql-mesh/utils": "^0.102.10"
   },
   "devDependencies": {
