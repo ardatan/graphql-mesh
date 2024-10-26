@@ -1,5 +1,7 @@
 # @graphql-mesh/plugin-jwt-auth
 
+## 1.2.4
+
 ## 1.2.3
 
 ### Patch Changes
