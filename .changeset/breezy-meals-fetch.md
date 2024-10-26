@@ -13,6 +13,8 @@ The HTTP headers of the incoming client's request can now be forwarded to the up
 upgrade request:
 
 ```ts
+import { defineConfig } from '@graphql-hive/gateway';
+
 export const gatewayConfig = defineConfig({
   transportEntries: {
     ['*.http']: {
