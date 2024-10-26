@@ -53,7 +53,7 @@ export default {
     if (payload.transportEntry.options && 'subscriptions' in payload.transportEntry.options) {
       let subscriptionsExecutor = function (execReq) {
         const subscriptionsKind =
-          payload.transportEntry.options?.subscriptions?.kind || payload.transportEntry.kind;
+          payload.transportEntry.options.subscriptions.kind || payload.transportEntry.kind;
         const subscriptionsLocation = payload.transportEntry.options?.subscriptions?.location
           ? new URL(
               payload.transportEntry.options.subscriptions.location,
