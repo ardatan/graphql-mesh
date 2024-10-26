@@ -1,5 +1,16 @@
 # @graphql-mesh/serve-runtime
 
+## 1.2.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5),
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)]:
+  - @graphql-mesh/fusion-runtime@0.9.6
+  - @graphql-mesh/transport-http@0.6.12
+  - @graphql-mesh/hmac-upstream-signature@1.2.4
+
 ## 1.2.3
 
 ### Patch Changes

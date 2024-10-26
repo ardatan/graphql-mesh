@@ -1,5 +1,52 @@
 # @graphql-mesh/transport-ws
 
+## 0.4.0
+
+### Minor Changes
+
+- [#7712](https://github.com/ardatan/graphql-mesh/pull/7712)
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Add support for upstream WebSocket
+  subscriptions in Docker and binary distributions.
+
+  The HTTP headers of the incoming client's request can now be forwarded to the upstream in the
+  [WebSocket HTTP upgrade request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Protocol_upgrade_mechanism#upgrading_http1.1_connections):
+
+  ```ts
+  import { defineConfig } from '@graphql-hive/gateway'
+
+  export const gatewayConfig = defineConfig({
+    transportEntries: {
+      ['*.http']: {
+        options: {
+          subscriptions: {
+            kind: 'ws',
+            location: '/subscriptions',
+            headers: [['authentication', '{context.headers.authentication}']]
+          }
+        }
+      }
+    }
+  })
+  ```
+
+### Patch Changes
+
+- [#7712](https://github.com/ardatan/graphql-mesh/pull/7712)
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/executor-graphql-ws@^1.3.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor-graphql-ws/v/1.3.0)
+    (from `^1.2.0`, in `dependencies`)
+
+- [#7712](https://github.com/ardatan/graphql-mesh/pull/7712)
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - WebSocket connections are now cached
+  against the whole `connectionParams` object and forwarded `headers`. The fixes WebSocket
+  connection being reused wrongly when `connectionParams.token` is stable while other fields are
+  changing.
+
 ## 0.3.11
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @graphql-mesh/plugin-opentelemetry
 
+## 1.3.4
+
+### Patch Changes
+
+- [#7836](https://github.com/ardatan/graphql-mesh/pull/7836)
+  [`1647023`](https://github.com/ardatan/graphql-mesh/commit/1647023b13de81226a5436ae1037b248671e2ae3)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@opentelemetry/auto-instrumentations-node@^0.52.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/auto-instrumentations-node/v/0.52.0)
+    (from `^0.51.0`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@1.2.4
+
 ## 1.3.3
 
 ### Patch Changes

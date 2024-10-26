@@ -1,5 +1,14 @@
 # @graphql-mesh/transport-http
 
+## 0.6.12
+
+### Patch Changes
+
+- [#7712](https://github.com/ardatan/graphql-mesh/pull/7712)
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Transport entries `headers` option can
+  now be overridden in the `subscriptions` transport
+
 ## 0.6.11
 
 ### Patch Changes
