@@ -48,7 +48,7 @@ export default {
         info: execReq.info,
       });
 
-      const hash = `${wsUrl}?connectionParams=${JSON.stringify(connectionParams)}&headers=${JSON.stringify(headers)}`;
+      const hash = JSON.stringify({ wsUrl, connectionParams, headers });
 
       let wsExecutor = wsExecutorMap.get(hash);
       if (!wsExecutor) {
