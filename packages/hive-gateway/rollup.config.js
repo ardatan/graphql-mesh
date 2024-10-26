@@ -51,6 +51,7 @@ const deps = {
   'node_modules/@graphql-mesh/plugin-http-cache/index': '../plugins/http-cache/src/index.ts',
   'node_modules/@graphql-mesh/hmac-upstream-signature/index':
     '../plugins/hmac-upstream-signature/src/index.ts',
+  'node_modules/@graphql-mesh/transport-ws/index': '../transports/ws/src/index.ts',
 };
 
 if (process.env.E2E_SERVE_RUNNER === 'docker') {
