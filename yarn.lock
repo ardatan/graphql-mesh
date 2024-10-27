@@ -14097,9 +14097,9 @@ __metadata:
   linkType: hard
 
 "@tsconfig/recommended@npm:^1.0.5":
-  version: 1.0.7
-  resolution: "@tsconfig/recommended@npm:1.0.7"
-  checksum: 10c0/54bdf928a779fa8f3734373b367017e5a9be55230d51df36d0a0a05487eebe05f6bd5072e4db36ebd61e06b34072b2ac4a8002a9cd3ce6c8777073cf0c251c6b
+  version: 1.0.8
+  resolution: "@tsconfig/recommended@npm:1.0.8"
+  checksum: 10c0/bd6517e3f69cf96108ab8b7d2ee70a7e64ee457bb72326524acdef6e2219813b298654e9aa57ce2f8899901c9b8fd66388b036b9ca0aa062952a83adb59bec17
   languageName: node
   linkType: hard
 
