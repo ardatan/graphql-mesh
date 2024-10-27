@@ -54,7 +54,7 @@
     "postchangeset": "yarn install --no-immutable",
     "postgenerate-config-schema": "node scripts/create-config-schema-ts.js && npx prettier --write ./packages/legacy/types/src",
     "postinstall": "husky install && patch-package",
-    "prebuild": "yarn clean && yarn generate-config-schema && yarn workspace @graphql-mesh/serve-runtime generate-landing-page-html",
+    "prebuild": "yarn clean && yarn generate-config-schema",
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "yarn build && changeset publish",
