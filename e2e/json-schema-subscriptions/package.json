@@ -2,10 +2,7 @@
   "name": "@e2e/json-schema-subscriptions",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/plugin-live-query": "workspace:*",
-    "@graphql-mesh/serve-cli": "workspace:*",
-    "@omnigraph/json-schema": "workspace:*",
+    "@graphql-hive/gateway": "^1.4.0",
     "fets": "^0.8.0",
     "graphql": "16.9.0",
     "graphql-sse": "^2.5.3"

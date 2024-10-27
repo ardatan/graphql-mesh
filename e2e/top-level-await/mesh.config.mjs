@@ -1,6 +1,6 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
 
 // top level await
 await Promise.resolve();

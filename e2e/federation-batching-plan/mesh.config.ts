@@ -1,5 +1,5 @@
 import { print } from 'graphql';
-import { defineConfig } from '@graphql-mesh/serve-cli';
+import { defineConfig } from '@graphql-hive/gateway';
 import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
 
 export function useExplainQueryPlan(): GatewayPlugin {
