@@ -63,6 +63,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@graphql-mesh/serve-runtime": "^1.2.4",
     "@types/minimatch": "5.1.2",
     "@types/pluralize": "^0.0.33"
   },

@@ -6456,6 +6456,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-composition@workspace:packages/fusion/composition"
   dependencies:
+    "@graphql-mesh/serve-runtime": "npm:^1.2.4"
     "@graphql-mesh/utils": "npm:^0.102.10"
     "@graphql-tools/schema": "npm:^10.0.5"
     "@graphql-tools/stitching-directives": "npm:^3.1.8"
@@ -6827,6 +6828,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-jit@workspace:packages/plugins/jit"
   dependencies:
+    "@graphql-mesh/serve-runtime": "npm:^1.2.4"
     graphql-jit: "npm:^0.8.7"
   peerDependencies:
     "@envelop/core": ^5.0.2
