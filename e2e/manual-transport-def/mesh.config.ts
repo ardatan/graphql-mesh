@@ -1,9 +1,9 @@
 import { Opts } from '@e2e/opts';
-import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import {
   defineConfig as defineComposeConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
 import rest from '@graphql-mesh/transport-rest';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 

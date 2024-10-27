@@ -2,7 +2,7 @@ import {
   defineConfig,
   type HTTPCallbackTransportOptions,
   type WSTransportOptions,
-} from '@graphql-hive/gateway';
+} from '@graphql-mesh/serve-cli';
 
 export const gatewayConfig = defineConfig({
   webhooks: true,
