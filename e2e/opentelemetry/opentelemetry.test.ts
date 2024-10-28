@@ -1,15 +1,12 @@
 import os from 'os';
 import { setTimeout } from 'timers/promises';
-import { boolEnv, createTenv, type Container } from '@e2e/tenv';
+import { createTenv, type Container } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
-const { service, serve, container, composeWithApollo, serveRunner } = createTenv(__dirname);
+const { service, serve, container, composeWithApollo } = createTenv(__dirname);
 
 let supergraph!: string;
 let jaeger: Container;
-
-const JAEGER_HOSTNAME =
-  serveRunner === 'docker' ? (boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal') : 'localhost';
 
 const TEST_QUERY = /* GraphQL */ `
   fragment User on User {
@@ -131,7 +128,7 @@ describe('opentelemetry', () => {
     const { execute } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
@@ -178,7 +175,7 @@ describe('opentelemetry', () => {
     const { execute } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
@@ -231,7 +228,7 @@ describe('opentelemetry', () => {
     const { execute } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
@@ -288,7 +285,7 @@ describe('opentelemetry', () => {
     const { port } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
@@ -329,7 +326,7 @@ describe('opentelemetry', () => {
     const { execute, port } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });

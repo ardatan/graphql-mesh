@@ -2,9 +2,7 @@
   "name": "@e2e/mysql-employees",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/serve-cli": "workspace:*",
-    "@omnigraph/mysql": "workspace:*",
+    "@graphql-mesh/serve-cli": "^1.4.0",
     "graphql": "^16.9.0"
   }
 }

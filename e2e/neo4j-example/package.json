@@ -3,10 +3,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/serve-cli": "workspace:*",
-    "@graphql-mesh/utils": "workspace:*",
-    "@omnigraph/neo4j": "workspace:*",
+    "@graphql-mesh/serve-cli": "^1.4.0",
     "graphql": "^16.9.0"
   }
 }

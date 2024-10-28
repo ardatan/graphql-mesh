@@ -27,7 +27,6 @@
     "verbatimModuleSyntax": true,
 
     "paths": {
-      "@graphql-hive/gateway": ["packages/hive-gateway/src/index.ts"],
       "@graphql-mesh/migrate-config-cli": ["packages/legacy/migrate-config-cli/src/index.ts"],
       "@graphql-mesh/include": ["packages/include/src/index.ts"],
       "@graphql-mesh/include/*": ["packages/include/src/*"],
@@ -49,15 +48,12 @@
       "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index.ts"],
       "@graphql-mesh/fusion-*": ["packages/fusion/*/src/index.ts"],
       "@graphql-mesh/compose-cli": ["packages/compose-cli/src/index.ts"],
-      "@graphql-mesh/serve-cli": ["packages/serve-cli/src/index.ts"],
-      "@graphql-mesh/serve-runtime": ["packages/serve-runtime/src/index.ts"],
       "@graphql-mesh/transport-*": ["packages/transports/*/src/index.ts"],
       "@graphql-mesh/*": ["packages/legacy/handlers/*/src/index.ts"],
       "json-machete": ["packages/json-machete/src/index.ts"],
       "@omnigraph/*": ["packages/loaders/*/src/index.ts"],
       "@e2e/opts": ["e2e/utils/opts.ts"],
-      "@e2e/tenv": ["e2e/utils/tenv.ts"],
-      "@e2e/tbench": ["e2e/utils/tbench.ts"]
+      "@e2e/tenv": ["e2e/utils/tenv.ts"]
     }
   },
   "include": ["declarations.d.ts", "packages", "e2e"],

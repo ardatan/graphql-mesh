@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/serve-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "^1.4.0",
     "@omnigraph/json-schema": "workspace:*",
     "graphql": "16.9.0"
   }

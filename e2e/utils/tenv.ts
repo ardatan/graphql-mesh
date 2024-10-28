@@ -33,37 +33,6 @@ const __project = path.resolve(__dirname, '..', '..') + path.sep;
 
 const docker = new Dockerode();
 
-const E2E_SERVE_RUNNERS = ['node', 'docker', 'bin'] as const;
-
-type ServeRunner = (typeof E2E_SERVE_RUNNERS)[number];
-
-const serveRunner = (function getServeRunner() {
-  const runner = (process.env.E2E_SERVE_RUNNER || 'node').trim().toLowerCase();
-  if (
-    !E2E_SERVE_RUNNERS.includes(
-      // @ts-expect-error
-      runner,
-    )
-  ) {
-    throw new Error(`Unsupported E2E serve runner "${runner}"`);
-  }
-  if (runner === 'docker' && !process.env.CI) {
-    process.stderr.write(`
-⚠️ Using docker serve runner! Make sure you have built the containers with:
-E2E_SERVE_RUNNER=docker yarn bundle && docker buildx bake e2e
-
-`);
-  }
-  if (runner === 'bin' && !process.env.CI) {
-    process.stderr.write(`
-⚠️ Using bin serve runner! Make sure you have built the binary with:
-yarn build && yarn bundle && yarn package-binary
-
-`);
-  }
-  return runner as ServeRunner;
-})();
-
 export interface ProcOptions {
   /**
    * Pipe the logs from the spawned process to the current process.
@@ -225,7 +194,6 @@ export interface Tenv {
     command: string | (string | number)[],
     opts?: ProcOptions,
   ): Promise<[proc: Proc, waitForExit: Promise<void>]>;
-  serveRunner: ServeRunner;
   serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
@@ -262,112 +230,23 @@ export function createTenv(cwd: string): Tenv {
       const [cmd, ...args] = Array.isArray(command) ? command : command.split(' ');
       return spawn({ ...opts, cwd }, String(cmd), ...args, ...extraArgs);
     },
-    serveRunner,
     async serve(opts) {
       let {
         port = await getAvailablePort(),
         supergraph,
         pipeLogs = boolEnv('DEBUG'),
         env,
-        runner,
         args = [],
       } = opts || {};
 
-      let proc: Proc,
-        waitForExit: Promise<void> | null = null;
-
-      if (serveRunner === 'docker') {
-        const volumes: ContainerOptions['volumes'] = runner?.docker?.volumes || [];
-
-        if (supergraph) {
-          // we need to replace all local servers in the supergraph to use docker's local hostname.
-          // without this, the services running on the host wont be accessible by the docker container
-          if (/^http(s?):\/\//.test(supergraph)) {
-            // supergraph is a url
-            supergraph = supergraph
-              // docker for linux (which is used in the CI) will have the host be on 172.17.0.1,
-              // and locally the host.docker.internal (or just on macos?) should just work
-              .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
-              .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal');
-          } else {
-            // supergraph is a path
-            await fs.writeFile(
-              supergraph,
-              (await fs.readFile(supergraph, 'utf8'))
-                // docker for linux (which is used in the CI) will have the host be on 172.17.0.1,
-                // and locally the host.docker.internal (or just on macos?) should just work
-                .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
-                .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
-            );
-            volumes.push({ host: supergraph, container: `/serve/${path.basename(supergraph)}` });
-            supergraph = path.basename(supergraph);
-          }
-        }
-        const configFileNames = ['mesh.config.*', 'gateway.config.*'];
-        const configFiles = (
-          await Promise.all(configFileNames.map(configFileName => glob(configFileName, { cwd })))
-        ).flat();
-        for (const configfile of configFiles) {
-          const contents = await fs.readFile(path.join(cwd, configfile), 'utf8');
-          if (contents.includes('@graphql-mesh/serve-cli')) {
-            volumes.push({ host: configfile, container: `/serve/${path.basename(configfile)}` });
-          }
-        }
-        for (const dbfile of await glob('*.db', { cwd })) {
-          volumes.push({ host: dbfile, container: `/serve/${path.basename(dbfile)}` });
-        }
-        const packageJsonExists = await fs
-          .stat(path.join(cwd, 'package.json'))
-          .then(() => true)
-          .catch(() => false);
-        if (packageJsonExists) {
-          volumes.push({ host: 'package.json', container: '/serve/package.json' });
-        }
-
-        const dockerfileExists = await fs
-          .stat(path.join(cwd, 'serve.Dockerfile'))
-          .then(() => true)
-          .catch(() => false);
-
-        const cont = await tenv.container({
-          env,
-          name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
-          image:
-            'ghcr.io/ardatan/mesh-serve:' +
-            (dockerfileExists
-              ? // if the test contains a serve dockerfile, use it instead of the default e2e image
-                `e2e.${path.basename(cwd)}`
-              : 'e2e'),
-          // TODO: changing port from within mesh.config.ts or gateway.config.ts wont work in docker runner
-          hostPort: port,
-          containerPort: port,
-          healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
-          cmd: [createPortOpt(port), ...(supergraph ? ['supergraph', supergraph] : []), ...args],
-          volumes,
-          pipeLogs,
-        });
-        proc = cont;
-      } else if (serveRunner === 'bin') {
-        [proc, waitForExit] = await spawn(
-          { env, cwd, pipeLogs },
-          path.resolve(__project, 'packages', 'serve-cli', 'mesh-serve'),
-          'supergraph',
-          supergraph,
-          createPortOpt(port),
-          ...args,
-        );
-      } /* serveRunner === 'node' */ else {
-        [proc, waitForExit] = await spawn(
-          { env, cwd, pipeLogs },
-          'node',
-          '--import',
-          'tsx',
-          path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
-          ...(supergraph ? ['supergraph', supergraph] : []),
-          ...args,
-          createPortOpt(port),
-        );
-      }
+      const [proc, waitForExit] = await spawn(
+        { env, cwd, pipeLogs },
+        'node', // TODO: using yarn does not work on Windows in the CI
+        path.join(__project, 'node_modules', '@graphql-mesh', 'serve-cli', 'esm', 'bin.js'),
+        ...(supergraph ? ['supergraph', supergraph] : []),
+        ...args,
+        createPortOpt(port),
+      );
 
       const serve: Serve = {
         ...proc,
@@ -530,40 +409,33 @@ export function createTenv(cwd: string): Tenv {
         return ms * 1000000;
       }
 
-      const bakedImage = await fs
-        .readFile(path.join(__project, 'docker-bake.hcl'))
-        .then(c => c.includes(`"${image}"`));
-
       const ctrl = new AbortController();
 
-      if (!bakedImage) {
-        // pull image if it doesnt exist and wait for finish
-        const exists = await docker
-          .getImage(image)
-          .get()
-          .then(() => true)
-          .catch(() => false);
-        if (!exists) {
-          const imageStream = (await docker.pull(image)) as Readable;
-          leftoverStack.defer(() => {
-            imageStream.destroy();
-          });
-          ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
-          await new Promise((resolve, reject) => {
-            docker.modem.followProgress(
-              imageStream,
-              (err, res) => (err ? reject(err) : resolve(res)),
-              pipeLogs
-                ? e => {
-                    process.stderr.write(JSON.stringify(e));
-                  }
-                : undefined,
-            );
-          });
-        } else {
-          if (pipeLogs) {
-            process.stderr.write(`Image "${image}" exists, pull skipped`);
-          }
+      const exists = await docker
+        .getImage(image)
+        .get()
+        .then(() => true)
+        .catch(() => false);
+      if (!exists) {
+        const imageStream = (await docker.pull(image)) as Readable;
+        leftoverStack.defer(() => {
+          imageStream.destroy();
+        });
+        ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
+        await new Promise((resolve, reject) => {
+          docker.modem.followProgress(
+            imageStream,
+            (err, res) => (err ? reject(err) : resolve(res)),
+            pipeLogs
+              ? e => {
+                  process.stderr.write(JSON.stringify(e));
+                }
+              : undefined,
+          );
+        });
+      } else {
+        if (pipeLogs) {
+          process.stderr.write(`Image "${image}" exists, pull skipped`);
         }
       }
 
