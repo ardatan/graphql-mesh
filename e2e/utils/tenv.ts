@@ -409,42 +409,7 @@ export function createTenv(cwd: string): Tenv {
         return ms * 1000000;
       }
 
-      const bakedImage = await fs
-        .readFile(path.join(__project, 'docker-bake.hcl'))
-        .then(c => c.includes(`"${image}"`));
-
       const ctrl = new AbortController();
-
-      if (!bakedImage) {
-        // pull image if it doesnt exist and wait for finish
-        const exists = await docker
-          .getImage(image)
-          .get()
-          .then(() => true)
-          .catch(() => false);
-        if (!exists) {
-          const imageStream = (await docker.pull(image)) as Readable;
-          leftoverStack.defer(() => {
-            imageStream.destroy();
-          });
-          ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
-          await new Promise((resolve, reject) => {
-            docker.modem.followProgress(
-              imageStream,
-              (err, res) => (err ? reject(err) : resolve(res)),
-              pipeLogs
-                ? e => {
-                    process.stderr.write(JSON.stringify(e));
-                  }
-                : undefined,
-            );
-          });
-        } else {
-          if (pipeLogs) {
-            process.stderr.write(`Image "${image}" exists, pull skipped`);
-          }
-        }
-      }
 
       const ctr = await docker.createContainer({
         name: containerName,
