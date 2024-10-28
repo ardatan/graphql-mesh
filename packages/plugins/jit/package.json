@@ -41,6 +41,9 @@
   "dependencies": {
     "graphql-jit": "^0.8.7"
   },
+  "devDependencies": {
+    "@graphql-mesh/serve-runtime": "^1.2.4"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

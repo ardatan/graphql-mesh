@@ -5,7 +5,7 @@
     "gateway:start": "yarn mesh-serve supergraph"
   },
   "dependencies": {
-    "@graphql-mesh/serve-cli": "workspace:*",
+    "@graphql-mesh/serve-cli": "^1.4.0",
     "dotenv": "^16.4.5",
     "graphql": "16.9.0"
   }

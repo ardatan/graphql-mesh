@@ -2,9 +2,7 @@
   "name": "@e2e/openapi-naming-convention",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/serve-cli": "workspace:*",
-    "@omnigraph/openapi": "workspace:*",
+    "@graphql-mesh/serve-cli": "^1.4.0",
     "graphql": "16.9.0",
     "moment": "2.30.1"
   }
