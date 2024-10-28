@@ -411,6 +411,34 @@ export function createTenv(cwd: string): Tenv {
 
       const ctrl = new AbortController();
 
+      const exists = await docker
+        .getImage(image)
+        .get()
+        .then(() => true)
+        .catch(() => false);
+      if (!exists) {
+        const imageStream = (await docker.pull(image)) as Readable;
+        leftoverStack.defer(() => {
+          imageStream.destroy();
+        });
+        ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
+        await new Promise((resolve, reject) => {
+          docker.modem.followProgress(
+            imageStream,
+            (err, res) => (err ? reject(err) : resolve(res)),
+            pipeLogs
+              ? e => {
+                  process.stderr.write(JSON.stringify(e));
+                }
+              : undefined,
+          );
+        });
+      } else {
+        if (pipeLogs) {
+          process.stderr.write(`Image "${image}" exists, pull skipped`);
+        }
+      }
+
       const ctr = await docker.createContainer({
         name: containerName,
         Image: image,
