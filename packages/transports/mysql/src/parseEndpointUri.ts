@@ -1,5 +1,6 @@
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { URL } from '@whatwg-node/fetch';
 import type { MySQLSSLOptions } from './types.js';
 
 export function getConnectionOptsFromEndpointUri(endpointUri: string) {
