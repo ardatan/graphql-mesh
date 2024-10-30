@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>the-guild-org/shared-config:renovate"],
   "automerge": true,
+  "rebaseWhen": "conflicted",
   "major": {
     "automerge": false
   },
