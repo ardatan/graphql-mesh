@@ -15,7 +15,7 @@
     "@graphql-mesh/compose-cli": "^1.1.4",
     "@graphql-mesh/serve-runtime": "^1.2.4",
     "@omnigraph/json-schema": "^0.107.4",
-    "@types/node": "^20.10.6",
+    "@types/node": "^22.0.0",
     "graphql": "^16.9.0",
     "typescript": "^5.4.2"
   }
