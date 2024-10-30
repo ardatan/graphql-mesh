@@ -7165,6 +7165,7 @@ __metadata:
     "@whatwg-node/disposablestack": "npm:^0.0.5"
     graphql-scalars: "npm:^1.22.4"
     lodash.get: "npm:^4.4.2"
+    long: "npm:4.0.0"
     protobufjs: "npm:^7.2.5"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.10
@@ -27053,7 +27054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"long@npm:^4.0.0":
+"long@npm:4.0.0, long@npm:^4.0.0":
   version: 4.0.0
   resolution: "long@npm:4.0.0"
   checksum: 10c0/50a6417d15b06104dbe4e3d4a667c39b137f130a9108ea8752b352a4cfae047531a3ac351c181792f3f8768fe17cca6b0f406674a541a86fb638aaac560d83ed
