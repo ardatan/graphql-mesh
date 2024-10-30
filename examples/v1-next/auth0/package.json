@@ -11,9 +11,9 @@
   "dependencies": {
     "@envelop/auth0": "^6.0.0",
     "@graphql-hive/gateway": "^1.4.1",
-    "@graphql-mesh/compose-cli": "^1.1.4",
-    "@graphql-mesh/plugin-operation-field-permissions": "^0.102.10",
-    "@omnigraph/json-schema": "^0.107.4",
+    "@graphql-mesh/compose-cli": "^1.1.5",
+    "@graphql-mesh/plugin-operation-field-permissions": "^0.102.11",
+    "@omnigraph/json-schema": "^0.107.5",
     "graphql": "16.9.0"
   },
   "devDependencies": {

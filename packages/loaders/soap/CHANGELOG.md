@@ -1,5 +1,16 @@
 # @omnigraph/soap
 
+## 0.104.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/types@0.102.11
+  - @graphql-mesh/utils@0.102.11
+  - @graphql-mesh/transport-soap@0.7.12
+
 ## 0.104.11
 
 ### Patch Changes
