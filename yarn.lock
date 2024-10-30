@@ -4440,7 +4440,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.11"
     "@omnigraph/json-schema": "npm:^0.107.5"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.83.0"
+    wrangler: "npm:3.84.0"
   languageName: unknown
   linkType: soft
 
@@ -4454,7 +4454,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.102.11"
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.11"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.83.0"
+    wrangler: "npm:3.84.0"
   languageName: unknown
   linkType: soft
 
@@ -4592,7 +4592,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.107.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.11"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.83.0"
+    wrangler: "npm:3.84.0"
   languageName: unknown
   linkType: soft
 
@@ -5280,7 +5280,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.102.11"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.11"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.83.0"
+    wrangler: "npm:3.84.0"
   languageName: unknown
   linkType: soft
 
@@ -36853,15 +36853,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unenv@npm:unenv-nightly@2.0.0-20241018-011344-e666fcf":
-  version: 2.0.0-20241018-011344-e666fcf
-  resolution: "unenv-nightly@npm:2.0.0-20241018-011344-e666fcf"
+"unenv@npm:unenv-nightly@2.0.0-20241024-111401-d4156ac":
+  version: 2.0.0-20241024-111401-d4156ac
+  resolution: "unenv-nightly@npm:2.0.0-20241024-111401-d4156ac"
   dependencies:
     defu: "npm:^6.1.4"
     ohash: "npm:^1.1.4"
     pathe: "npm:^1.1.2"
     ufo: "npm:^1.5.4"
-  checksum: 10c0/3f2173a8d341c43e444fe4cf1b19a8ce9e4e7985e41f41c932e9b9e5a7f053fb1724ef3f58bf297c6363a4b3c48a2b4a4286ba34f8eceb1be007c671b2cdb5f4
+  checksum: 10c0/22c0d93fd72629d94f3a2730790cda817d63813b9d349147c611cfcc0e489416b5dba926e1b8e517e6c7a992016edb6267446a9c26a79c3bb7e90ec899be98e3
   languageName: node
   linkType: hard
 
@@ -38377,9 +38377,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.83.0":
-  version: 3.83.0
-  resolution: "wrangler@npm:3.83.0"
+"wrangler@npm:3.84.0":
+  version: 3.84.0
+  resolution: "wrangler@npm:3.84.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@cloudflare/workers-shared": "npm:0.7.0"
@@ -38398,7 +38398,7 @@ __metadata:
     resolve.exports: "npm:^2.0.2"
     selfsigned: "npm:^2.0.1"
     source-map: "npm:^0.6.1"
-    unenv: "npm:unenv-nightly@2.0.0-20241018-011344-e666fcf"
+    unenv: "npm:unenv-nightly@2.0.0-20241024-111401-d4156ac"
     workerd: "npm:1.20241022.0"
     xxhash-wasm: "npm:^1.0.1"
   peerDependencies:
@@ -38412,7 +38412,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/48ad2595a90d13995602289214c1a7b38cc081765849aa234321769235e27a1e301345d14d12d91addc6bcd3ed504897685c44856e32d09ac9b8efdca087fa00
+  checksum: 10c0/e55c0dbd7522577e6666388f617af483af7618bc0f6cc9401a235bea1359370d528ec762a3ea9b2ac13a3bbe5f3da2e079394a2ed2610d20cb405b9a628f7b19
   languageName: node
   linkType: hard
 
