@@ -262,9 +262,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:4.11.0, @apollo/server@npm:^4.10.3":
-  version: 4.11.0
-  resolution: "@apollo/server@npm:4.11.0"
+"@apollo/server@npm:4.11.2, @apollo/server@npm:^4.10.3":
+  version: 4.11.2
+  resolution: "@apollo/server@npm:4.11.2"
   dependencies:
     "@apollo/cache-control-types": "npm:^1.0.3"
     "@apollo/server-gateway-interface": "npm:^1.1.1"
@@ -282,7 +282,7 @@ __metadata:
     "@types/node-fetch": "npm:^2.6.1"
     async-retry: "npm:^1.2.1"
     cors: "npm:^2.8.5"
-    express: "npm:^4.17.1"
+    express: "npm:^4.21.1"
     loglevel: "npm:^1.6.8"
     lru-cache: "npm:^7.10.1"
     negotiator: "npm:^0.6.3"
@@ -292,7 +292,7 @@ __metadata:
     whatwg-mimetype: "npm:^3.0.0"
   peerDependencies:
     graphql: ^16.6.0
-  checksum: 10c0/5c07f818ba2a943c176a3e3d50115c6fba2dc1b6e818635202cf22f0dacc6e2b39e0c53315399d1e46357072db438bbcd4ebc13afeb0f18bb5378134c100f8f5
+  checksum: 10c0/2aadc790d2596e9bb5c0d2cdaabee2c93a1cefca8012f285db95ff4fc47b40bdf8f0c597e0c94d5434bd4261d37996d653ad6178e34a08cbe8f7dc1c90454b26
   languageName: node
   linkType: hard
 
@@ -5057,7 +5057,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
   dependencies:
-    "@apollo/server": "npm:4.11.0"
+    "@apollo/server": "npm:4.11.2"
     "@apollo/subgraph": "npm:2.9.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -5069,7 +5069,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-accounts@workspace:examples/federation-example/services/accounts"
   dependencies:
-    "@apollo/server": "npm:4.11.0"
+    "@apollo/server": "npm:4.11.2"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
@@ -5080,7 +5080,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-inventory@workspace:examples/federation-example/services/inventory"
   dependencies:
-    "@apollo/server": "npm:4.11.0"
+    "@apollo/server": "npm:4.11.2"
     "@apollo/subgraph": "npm:2.9.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -5092,7 +5092,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-products@workspace:examples/federation-example/services/products"
   dependencies:
-    "@apollo/server": "npm:4.11.0"
+    "@apollo/server": "npm:4.11.2"
     "@apollo/subgraph": "npm:2.9.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -5104,7 +5104,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-reviews@workspace:examples/federation-example/services/reviews"
   dependencies:
-    "@apollo/server": "npm:4.11.0"
+    "@apollo/server": "npm:4.11.2"
     "@apollo/subgraph": "npm:2.9.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -5116,7 +5116,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example@workspace:examples/federation-example"
   dependencies:
-    "@apollo/server": "npm:4.11.0"
+    "@apollo/server": "npm:4.11.2"
     apollo-server-caching: "npm:3.3.0"
     concurrently: "npm:9.0.1"
     delay-cli: "npm:2.0.0"
@@ -5133,7 +5133,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.2"
     "@graphql-mesh/cli": "npm:0.96.9"
     "@graphql-mesh/json-schema": "npm:0.107.4"
-    "@types/node": "npm:20.17.2"
+    "@types/node": "npm:20.17.3"
     graphql: "npm:16.9.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -5149,7 +5149,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:20.17.2"
+    "@types/node": "npm:20.17.3"
     "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
     apollo-upload-client: "npm:18.0.1"
@@ -5338,7 +5338,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.96.9"
     "@graphql-mesh/json-schema": "npm:0.107.4"
-    "@types/node": "npm:20.17.2"
+    "@types/node": "npm:20.17.3"
     concurrently: "npm:9.0.1"
     fets: "npm:0.8.3"
     graphql: "npm:16.9.0"
@@ -5626,7 +5626,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.102.10"
     "@graphql-mesh/runtime": "npm:0.103.11"
     "@graphql-mesh/transform-prefix": "npm:0.102.10"
-    "@types/node": "npm:20.17.2"
+    "@types/node": "npm:20.17.3"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -7818,7 +7818,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/utils@workspace:packages/legacy/utils"
   dependencies:
-    "@apollo/server": "npm:4.11.0"
+    "@apollo/server": "npm:4.11.2"
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
     "@graphql-tools/delegate": "npm:^10.0.27"
     "@types/js-yaml": "npm:4.0.9"
@@ -14535,20 +14535,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^22.5.5":
-  version: 22.8.2
-  resolution: "@types/node@npm:22.8.2"
+  version: 22.8.4
+  resolution: "@types/node@npm:22.8.4"
   dependencies:
     undici-types: "npm:~6.19.8"
-  checksum: 10c0/c6fa6c54c23e61015cace1517c4101602cae0ff3c4f6604f6cdb89875143921830e5602cabe8b4f90f90363451687a0497f1d07d30be8104fee758d6d44c90ac
+  checksum: 10c0/f88d030480630194a9168772462ec09b2d86454f34368c46d2b7fda5dc6e14594b1576fcc5c35cc53b57a4d1e8dd2865a85ae81f34ded0d1af753a0f5d294c25
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.17.2, @types/node@npm:^20.10.6":
-  version: 20.17.2
-  resolution: "@types/node@npm:20.17.2"
+"@types/node@npm:20.17.3, @types/node@npm:^20.10.6":
+  version: 20.17.3
+  resolution: "@types/node@npm:20.17.3"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/453ca052f9544ad66a9988ff881024588008795690c9ea7252e0594333ea11cec7d176a76c5e0f6b89ba42427c6e4684321427f9f515e8a9ba9a729f80c13054
+  checksum: 10c0/31e5076665e906fd5c04fbe840976947fdacb6e69613fde4b129778d54b7447999a96300d5c12f04cc177875b8d1e4c8f9f8fe604cab484efdfc1e33184a695b
   languageName: node
   linkType: hard
 
@@ -14567,11 +14567,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.11.18":
-  version: 18.19.60
-  resolution: "@types/node@npm:18.19.60"
+  version: 18.19.61
+  resolution: "@types/node@npm:18.19.61"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/27f15a7b00ca1ae665cb6adaf43b83e002b3feaef67c6d232d7320ee86617d71353002285026cd104303113f9b203508c9109f5eb5a288de454c98b29ad91351
+  checksum: 10c0/a75a9f25f6012f65242ccd79c70d9f49c8e716d276a024a6557b93b2cc2a4921cdce7afd34681395051be6e860e1bbfea7e93c097bf1c71fb921d10e14ddffc6
   languageName: node
   linkType: hard
 
@@ -21715,7 +21715,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "npm:1.1.4"
     "@graphql-mesh/serve-cli": "npm:1.4.0"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.7.0"
-    "@types/node": "npm:20.17.2"
+    "@types/node": "npm:20.17.3"
     concurrently: "npm:9.0.1"
     esbuild: "npm:^0.24.0"
     graphql: "npm:16.9.0"
@@ -21892,7 +21892,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:4.21.1, express@npm:^4.16.4, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.2, express@npm:^4.19.2":
+"express@npm:4.21.1, express@npm:^4.16.4, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.2, express@npm:^4.19.2, express@npm:^4.21.1":
   version: 4.21.1
   resolution: "express@npm:4.21.1"
   dependencies:
@@ -23503,7 +23503,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:20.17.2"
+    "@types/node": "npm:20.17.3"
     "@typescript-eslint/eslint-plugin": "npm:8.12.2"
     "@typescript-eslint/parser": "npm:8.12.2"
     babel-jest: "npm:29.7.0"
@@ -38625,7 +38625,7 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^7.0.0"
     "@theguild/tailwind-config": "npm:0.5.0"
-    "@types/node": "npm:20.17.2"
+    "@types/node": "npm:20.17.3"
     "@types/react": "npm:18.3.12"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:15.0.2"
