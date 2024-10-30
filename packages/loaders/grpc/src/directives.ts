@@ -91,9 +91,8 @@ export const GrpcCredentialsSsl = new GraphQLInputObjectType({
     privateKey: {
       type: GraphQLString,
     },
-  }
-})
-
+  },
+});
 
 export const TransportOptions = new GraphQLInputObjectType({
   name: 'TransportOptions',
@@ -109,9 +108,9 @@ export const TransportOptions = new GraphQLInputObjectType({
     },
     metaData: {
       type: ObjMapScalar,
-    }
-  }
-})
+    },
+  },
+});
 
 export const transportDirective = new GraphQLDirective({
   name: 'transport',
@@ -127,8 +126,8 @@ export const transportDirective = new GraphQLDirective({
     },
     options: {
       type: TransportOptions,
-    }
+    },
   },
   isRepeatable: true,
   locations: [DirectiveLocation.SCHEMA],
-})
+});

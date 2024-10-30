@@ -27,7 +27,9 @@ describe.each<[string, string]>([
 
 describe('Invalid Scalars', () => {
   test('getGraphQLScalar should throw an error', () => {
-    expect(() => getGraphQLScalarForGrpc('randomType')).toThrow(/Could not find GraphQL Scalar for type/);
+    expect(() => getGraphQLScalarForGrpc('randomType')).toThrow(
+      /Could not find GraphQL Scalar for type/,
+    );
   });
   test('isScalarType should return false for none scalars', () => {
     expect(isGrpcScalar('randomType')).toBe(false);

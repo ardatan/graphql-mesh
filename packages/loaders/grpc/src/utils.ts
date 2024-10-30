@@ -1,19 +1,18 @@
-import { existsSync } from "fs";
-import type { SchemaComposer } from "graphql-compose";
-import { isAbsolute, join } from "path";
-import type { INamespace, Root } from "protobufjs";
-import { getGraphQLScalarForGrpc, isGrpcScalar } from "./scalars.js";
+import type { SchemaComposer } from 'graphql-compose';
 import lodashHas from 'lodash.has';
+import type { INamespace, Root } from 'protobufjs';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
+import { getGraphQLScalarForGrpc, isGrpcScalar } from './scalars.js';
 
 export function addIncludePathResolver(root: Root, includePaths: string[]): void {
   const originalResolvePath = root.resolvePath;
   root.resolvePath = (origin: string, target: string) => {
-    if (isAbsolute(target)) {
+    if (pathModule.isAbsolute(target)) {
       return target;
     }
     for (const directory of includePaths) {
-      const fullPath: string = join(directory, target);
-      if (existsSync(fullPath)) {
+      const fullPath: string = pathModule.join(directory, target);
+      if (fs.existsSync(fullPath)) {
         return fullPath;
       }
     }
