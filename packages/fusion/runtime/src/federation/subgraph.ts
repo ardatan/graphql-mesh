@@ -22,6 +22,7 @@ import {
 } from '@graphql-tools/utils';
 import {
   HoistField,
+  PruneSchema,
   RenameInputObjectFields,
   RenameInterfaceFields,
   RenameObjectFieldArguments,
@@ -180,7 +181,7 @@ export function handleFederationSubschema({
                   : () => true,
               };
             });
-            transforms.push(new HoistField(realTypeName, pathConfig, fieldName));
+            transforms.push(new HoistField(realTypeName, pathConfig, fieldName), new PruneSchema());
           }
         }
       }
