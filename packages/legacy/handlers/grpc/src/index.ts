@@ -3,6 +3,7 @@ import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { GrpcTransportHelper } from '@graphql-mesh/transport-grpc';
 import type {
   ImportFn,
   Logger,
@@ -13,7 +14,6 @@ import type {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { gRPCTransport } from '@graphql-mesh/transport-grpc';
 import { loadGrpcSubgraph } from '@omnigraph/grpc';
 
 export default class GrpcHandler implements MeshHandler {
@@ -64,7 +64,7 @@ export default class GrpcHandler implements MeshHandler {
   }
 
   getMeshSource() {
-    const transport = new gRPCTransport(
+    const transport = new GrpcTransportHelper(
       this.baseDir,
       this.logger,
       this.config.endpoint,

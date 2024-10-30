@@ -1,7 +1,9 @@
-import { createTenv, type Service } from '@e2e/tenv';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
-import { parse } from 'graphql';
 import { inspect } from 'util';
+import { parse } from 'graphql';
+import { createTenv, type Service } from '@e2e/tenv';
+import { handleSerializedErrors } from '@e2e/utils/handleSerializedErrors';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { createGraphQLError, isAsyncIterable } from '@graphql-tools/utils';
 
 describe('gRPC Example', () => {
   const { compose, serve, service } = createTenv(__dirname);
@@ -35,7 +37,7 @@ describe('gRPC Example', () => {
   });
   it('streams movies by cast correctly', async () => {
     const { output } = await compose({ services: [movies], output: 'graphql' });
-    const { port } = await serve({ supergraph: output, pipeLogs: true });
+    const { port } = await serve({ supergraph: output });
     const executor = buildHTTPExecutor({
       endpoint: `http://localhost:${port}/graphql`,
     });
@@ -50,14 +52,13 @@ describe('gRPC Example', () => {
       }
     `);
     const result = await executor({ document });
-    if (!(Symbol.asyncIterator in result)) {
+    if (!isAsyncIterable(result)) {
+      handleSerializedErrors(result);
       throw new Error('Expected an async iterable but received ' + inspect(result));
     }
     let i = 0;
     for await (const item of result) {
-      if (item.errors?.length) {
-        throw new AggregateError(item.errors, `Error in item ${i}; ${inspect(item)}`);
-      }
+      handleSerializedErrors(item);
       expect(item).toMatchSnapshot(i.toString());
       i++;
     }
@@ -79,16 +80,15 @@ describe('gRPC Example', () => {
       }
     `);
     const result = await executor({ document });
-    if (!(Symbol.asyncIterator in result)) {
-      throw new Error('Expected an async iterable');
+    if (!isAsyncIterable(result)) {
+      handleSerializedErrors(result);
+      throw new Error('Expected an async iterable but received ' + inspect(result));
     }
     let i = 0;
     for await (const item of result) {
-      if (item.errors?.length) {
-        throw new AggregateError(item.errors, `Error in item ${i}; ${inspect(item)}`);
-      }
+      handleSerializedErrors(item);
       expect(item).toMatchSnapshot(i.toString());
       i++;
     }
-  })
+  });
 });

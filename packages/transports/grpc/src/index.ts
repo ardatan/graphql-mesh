@@ -1,19 +1,28 @@
-import { createDefaultExecutor, ObjMapScalar, type Transport } from "@graphql-mesh/transport-common";
-import { path, fs, process } from '@graphql-mesh/cross-helpers';
-import type { Logger } from "@graphql-mesh/types";
+import {
+  isEnumType,
+  type GraphQLFieldResolver,
+  type GraphQLScalarType,
+  type GraphQLSchema,
+} from 'graphql';
+import { resolvers as scalarResolvers } from 'graphql-scalars';
+import lodashGet from 'lodash.get';
+import type protobufjs from 'protobufjs';
+import { fs, path, process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  createDefaultExecutor,
+  ObjMapScalar,
+  type Transport,
+} from '@graphql-mesh/transport-common';
+import type { Logger } from '@graphql-mesh/types';
+import { mapMaybePromise } from '@graphql-mesh/utils';
+import { getDirective, getDirectives, getRootTypes, type MaybePromise } from '@graphql-tools/utils';
 import type { ChannelCredentials } from '@grpc/grpc-js';
 import { credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import type { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
-import protobufjs from 'protobufjs';
 import { fromJSON } from '@grpc/proto-loader';
-import lodashGet from 'lodash.get';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { DisposableStack } from '@whatwg-node/disposablestack';
-import { isEnumType, type GraphQLFieldResolver, type GraphQLScalarType, type GraphQLSchema } from "graphql";
-import { addExecutionLogicToScalar, addMetaDataToCall } from "./utils.js";
-import { resolvers as scalarResolvers } from 'graphql-scalars';
-import { getDirective, getDirectives, getRootTypes, type MaybePromise } from '@graphql-tools/utils';
-import { mapMaybePromise } from "@graphql-mesh/utils";
+import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
 import './patchLongJs.js';
 
 /**
@@ -48,7 +57,7 @@ interface LoadOptions {
   includeDirs?: string[];
 }
 
-export class gRPCTransport extends DisposableStack {
+export class GrpcTransportHelper extends DisposableStack {
   constructor(
     private baseDir: string,
     private logger: Logger,
@@ -57,6 +66,7 @@ export class gRPCTransport extends DisposableStack {
   ) {
     super();
   }
+
   getCredentials(): MaybePromise<ChannelCredentials> {
     this.logger.debug(`Getting channel credentials`);
     if (this.config.credentialsSsl) {
@@ -134,8 +144,7 @@ export class gRPCTransport extends DisposableStack {
         throw new Error(`Object at path ${objPath} is not a Service constructor`);
       }
       client = new ServiceClient(
-        stringInterpolator.parse(this.endpoint, { env: process.env }) ??
-        this.endpoint,
+        stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint,
         creds,
       );
       this.defer(() => client.close());
@@ -287,7 +296,7 @@ export class gRPCTransport extends DisposableStack {
 
 export default {
   getSubgraphExecutor({ transportEntry, subgraph, cwd, logger }) {
-    const transport = new gRPCTransport(
+    const transport = new GrpcTransportHelper(
       cwd,
       logger,
       transportEntry.location,
@@ -296,6 +305,6 @@ export default {
     return mapMaybePromise(transport.getCredentials(), creds => {
       transport.processDirectives({ schema: subgraph, creds });
       return createDefaultExecutor(subgraph);
-    })
-  }
-} satisfies Transport<gRPCTransportOptions>
+    });
+  },
+} satisfies Transport<gRPCTransportOptions>;

@@ -1,9 +1,9 @@
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import {
   createNamingConventionTransform,
   defineConfig as defineComposeConfig,
   upperCase,
 } from '@graphql-mesh/compose-cli';
-import { defineConfig as defineGatewayConfig } from '@graphql-mesh/serve-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
 
 export const composeConfig = defineComposeConfig({

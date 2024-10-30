@@ -1,7 +1,4 @@
-import {
-  createOtlpHttpExporter,
-  defineConfig as defineGatewayConfig,
-} from '@graphql-mesh/serve-cli';
+import { createOtlpHttpExporter, defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
 import type { MeshFetchRequestInit } from '@graphql-mesh/types';
 

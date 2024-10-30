@@ -242,7 +242,7 @@ export function createTenv(cwd: string): Tenv {
       const [proc, waitForExit] = await spawn(
         { env, cwd, pipeLogs },
         'node', // TODO: using yarn does not work on Windows in the CI
-        path.join(__project, 'node_modules', '@graphql-mesh', 'serve-cli', 'esm', 'bin.js'),
+        path.join(__project, 'node_modules', '@graphql-hive', 'gateway', 'dist', 'bin.js'),
         ...(supergraph ? ['supergraph', supergraph] : []),
         ...args,
         createPortOpt(port),

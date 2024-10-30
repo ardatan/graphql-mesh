@@ -1,8 +1,6 @@
 import {
   isEnumType,
   Kind,
-  parse,
-  print,
   visit,
   type GraphQLSchema,
   type ObjectTypeDefinitionNode,

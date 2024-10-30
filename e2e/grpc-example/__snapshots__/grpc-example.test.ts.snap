@@ -1,5 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`gRPC Example fetches movies by cast as a subscription correctly: 0 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": {
+      "cast": [
+        "Tom Cruise",
+        "Simon Pegg",
+        "Jeremy Renner",
+      ],
+      "name": "Mission: Impossible Rogue Nation",
+      "rating": 0.9700000286102295,
+      "year": 0,
+    },
+  },
+}
+`;
+
+exports[`gRPC Example fetches movies by cast as a subscription correctly: 1 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": {
+      "cast": [
+        "Tom Cruise",
+        "Simon Pegg",
+        "Henry Cavill",
+      ],
+      "name": "Mission: Impossible - Fallout",
+      "rating": 0.9300000071525574,
+      "year": 0,
+    },
+  },
+}
+`;
+
 exports[`gRPC Example generates the correct schema 1`] = `
 "
 schema
@@ -12,7 +46,7 @@ schema
   
   @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@grpcMethod", "@grpcConnectivityState", "@enum", "@grpcRootJson", "@stream", "@source", "@extraSchemaDefinitionDirective"]
+  import: ["@grpcMethod", "@grpcConnectivityState", "@enum", "@grpcRootJson", "@transport", "@source", "@extraSchemaDefinitionDirective"]
 )
 {
   query: Query
@@ -98,7 +132,7 @@ directive @enum(subgraph: String, value: String)  repeatable on ENUM_VALUE
 
 directive @grpcRootJson(subgraph: String, name: String, rootJson: ObjMap, loadOptions: ObjMap)  repeatable on OBJECT
 
-directive @stream(if: Boolean!, label: String, initialCount: Int)  on FIELD
+directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions)  repeatable on SCHEMA
 
 directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
@@ -269,6 +303,19 @@ input google__protobuf__Timestamp_Input @join__type(graph: MOVIES)  {
 
 input SearchByCastRequest_Input @join__type(graph: MOVIES)  {
   castName: String
+}
+
+input TransportOptions @join__type(graph: MOVIES)  {
+  requestTimeout: Int
+  credentialsSsl: GrpcCredentialsSsl
+  useHttps: Boolean @source(name: "useHTTPS", type: "Boolean", subgraph: "movies") 
+  metaData: ObjMap
+}
+
+input GrpcCredentialsSsl @join__type(graph: MOVIES)  {
+  rootCa: String @source(name: "rootCA", type: "String", subgraph: "movies") 
+  certChain: String
+  privateKey: String
 }
     
 "

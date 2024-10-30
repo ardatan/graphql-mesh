@@ -23,7 +23,6 @@ import {
   getDocumentNodeFromSchema,
   MapperKind,
   mapSchema,
-  type Constructor,
   type FieldMapper,
 } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
