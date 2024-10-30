@@ -16,6 +16,9 @@ const esm = 'import.meta.url';
   });
 
   for (const scriptPath of scriptPaths) {
+    if (scriptPath.includes('ts-artifacts')) {
+      continue;
+    }
     const script = path.join(__packages, scriptPath);
     const content = await fs.readFile(script, 'utf8');
     if (!content.includes(esm)) {
