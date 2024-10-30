@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+enum Genre {
+    UNSPECIFIED = 0;
+    ACTION = 1;
+    DRAMA = 2;
+}
+
+/**
+ * movie message payload
+ */
+message Movie {
+    string name = 1;
+    int64 year = 2;
+    float rating = 3;
+
+    /**
+     * list of cast
+     */
+    repeated string cast = 4;
+    google.protobuf.Timestamp time = 5;
+    Genre genre = 6;
+}

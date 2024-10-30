@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "compose": "node ../../packages/compose-cli/dist/esm/bin.js > supergraph.graphql",
-    "serve": "node ../../packages/serve-cli/dist/esm/bin.js"
+    "start": "npx hive-gateway"
   },
   "dependencies": {
+    "@graphql-hive/gateway": "^1.4.1",
     "@graphql-mesh/compose-cli": "^1.1.4",
-    "@graphql-mesh/serve-cli": "^1.4.0",
     "@omnigraph/openapi": "^0.107.4",
     "graphql": "^16.9.0"
   }

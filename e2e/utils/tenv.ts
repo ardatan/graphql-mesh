@@ -242,7 +242,7 @@ export function createTenv(cwd: string): Tenv {
       const [proc, waitForExit] = await spawn(
         { env, cwd, pipeLogs },
         'node', // TODO: using yarn does not work on Windows in the CI
-        path.join(__project, 'node_modules', '@graphql-mesh', 'serve-cli', 'esm', 'bin.js'),
+        path.join(__project, 'node_modules', '@graphql-hive', 'gateway', 'dist', 'bin.js'),
         ...(supergraph ? ['supergraph', supergraph] : []),
         ...args,
         createPortOpt(port),
@@ -727,7 +727,11 @@ async function waitForPort(port: number, signal: AbortSignal) {
       try {
         await fetch(`http://${localHostname}:${port}`, { signal });
         break outer;
-      } catch (err) {}
+      } catch (err) {
+        if (err.toString().toLowerCase().includes('unsupported')) {
+          break outer;
+        }
+      }
     }
     // no need to track retries, jest will time out aborting the signal
     signal.throwIfAborted();

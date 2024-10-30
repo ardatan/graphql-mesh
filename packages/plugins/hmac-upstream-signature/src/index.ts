@@ -1,7 +1,7 @@
 import type { FetchAPI, GraphQLParams, YogaLogger, Plugin as YogaPlugin } from 'graphql-yoga';
 import jsonStableStringify from 'json-stable-stringify';
+import type { GatewayPlugin } from '@graphql-hive/gateway';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
-import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
 import { defaultPrintFn } from '@graphql-mesh/transport-common';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import type { ExecutionRequest, MaybePromise } from '@graphql-tools/utils';

@@ -1,5 +1,5 @@
 import { OperationTypeNode } from 'graphql';
-import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 import { composeSubgraphs } from '../src/compose';
 

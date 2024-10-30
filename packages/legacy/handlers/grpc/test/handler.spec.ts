@@ -60,7 +60,7 @@ describe('gRPC Handler', () => {
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
-      const { schema } = await handler.getMeshSource({ fetchFn });
+      const { schema } = await handler.getMeshSource();
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);
@@ -68,8 +68,6 @@ describe('gRPC Handler', () => {
       expect(printedSDL).toMatchSnapshot();
       const loadedFromPrintedSDL = buildSchema(printedSDL, { noLocation: true });
       expect(validateSchema(loadedFromPrintedSDL)).toHaveLength(0);
-      const creds = await handler.getCredentials();
-      handler.processDirectives({ schema: loadedFromPrintedSDL, creds });
     });
   });
 
@@ -95,7 +93,7 @@ describe('gRPC Handler', () => {
         baseDir: __dirname,
       });
 
-      const { schema } = await handler.getMeshSource({ fetchFn });
+      const { schema } = await handler.getMeshSource();
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);

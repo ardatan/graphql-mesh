@@ -1,7 +1,4 @@
-import type { SchemaComposer } from 'graphql-compose';
 import lodashGet from 'lodash.get';
-import type { Root } from 'protobufjs';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { withCancel } from '@graphql-mesh/utils';
@@ -12,45 +9,7 @@ import type {
   MetadataValue,
 } from '@grpc/grpc-js';
 import { Metadata } from '@grpc/grpc-js';
-import { getGraphQLScalar, isScalarType } from './scalars.js';
-
-export function getTypeName(
-  schemaComposer: SchemaComposer,
-  pathWithName: string[] | undefined,
-  isInput: boolean,
-) {
-  if (pathWithName?.length) {
-    const baseTypeName = pathWithName.filter(Boolean).join('__');
-    if (isScalarType(baseTypeName)) {
-      return getGraphQLScalar(baseTypeName);
-    }
-    if (schemaComposer.isEnumType(baseTypeName)) {
-      return baseTypeName;
-    }
-    return isInput ? baseTypeName + '_Input' : baseTypeName;
-  }
-  return 'Void';
-}
-
-export function addIncludePathResolver(root: Root, includePaths: string[]): void {
-  const originalResolvePath = root.resolvePath;
-  root.resolvePath = (origin: string, target: string) => {
-    if (pathModule.isAbsolute(target)) {
-      return target;
-    }
-    for (const directory of includePaths) {
-      const fullPath: string = pathModule.join(directory, target);
-      if (fs.existsSync(fullPath)) {
-        return fullPath;
-      }
-    }
-    const path = originalResolvePath(origin, target);
-    if (path === null) {
-      console.warn(`${target} not found in any of the include paths ${includePaths}`);
-    }
-    return path;
-  };
-}
+import type { GraphQLScalarType } from 'graphql';
 
 function isBlob(input: any): input is Blob {
   return input != null && input.stream instanceof Function;
@@ -113,5 +72,28 @@ export function addMetaDataToCall(
         (blobStream as any).pipe(call);
       }
     }
+  });
+}
+
+export function addExecutionLogicToScalar(
+  nonExecutableScalar: GraphQLScalarType,
+  actualScalar: GraphQLScalarType,
+) {
+  Object.defineProperties(nonExecutableScalar, {
+    serialize: {
+      value: actualScalar.serialize,
+    },
+    parseValue: {
+      value: actualScalar.parseValue,
+    },
+    parseLiteral: {
+      value: actualScalar.parseLiteral,
+    },
+    extensions: {
+      value: {
+        ...actualScalar.extensions,
+        ...nonExecutableScalar.extensions,
+      },
+    },
   });
 }

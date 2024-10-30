@@ -1,5 +1,3 @@
-import type { GraphQLScalarType } from 'graphql';
-
 type ScalarMap = Map<string, string>;
 
 const SCALARS: ScalarMap = new Map([
@@ -20,11 +18,11 @@ const SCALARS: ScalarMap = new Map([
   ['uint64', 'BigInt'], // A new scalar might be needed
 ]);
 
-export function isScalarType(type: string): boolean {
+export function isGrpcScalar(type: string): boolean {
   return SCALARS.has(type);
 }
 
-export function getGraphQLScalar(scalarType: string): string {
+export function getGraphQLScalarForGrpc(scalarType: string): string {
   const gqlScalar = SCALARS.get(scalarType);
   if (!gqlScalar) {
     throw new Error(`Could not find GraphQL Scalar for type ${scalarType}`);
@@ -32,25 +30,3 @@ export function getGraphQLScalar(scalarType: string): string {
   return SCALARS.get(scalarType);
 }
 
-export function addExecutionLogicToScalar(
-  nonExecutableScalar: GraphQLScalarType,
-  actualScalar: GraphQLScalarType,
-) {
-  Object.defineProperties(nonExecutableScalar, {
-    serialize: {
-      value: actualScalar.serialize,
-    },
-    parseValue: {
-      value: actualScalar.parseValue,
-    },
-    parseLiteral: {
-      value: actualScalar.parseLiteral,
-    },
-    extensions: {
-      value: {
-        ...actualScalar.extensions,
-        ...nonExecutableScalar.extensions,
-      },
-    },
-  });
-}

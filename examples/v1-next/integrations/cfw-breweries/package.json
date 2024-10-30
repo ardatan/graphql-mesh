@@ -6,11 +6,11 @@
     "start": "wrangler dev"
   },
   "dependencies": {
+    "@graphql-hive/gateway": "^1.4.1",
     "@graphql-mesh/cache-cfw-kv": "^0.102.10",
     "@graphql-mesh/cache-localforage": "^0.102.10",
     "@graphql-mesh/compose-cli": "^1.1.4",
     "@graphql-mesh/plugin-response-cache": "^0.102.10",
-    "@graphql-mesh/serve-runtime": "^1.2.4",
     "@omnigraph/json-schema": "^0.107.4",
     "graphql": "16.9.0"
   },

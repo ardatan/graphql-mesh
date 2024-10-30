@@ -2,7 +2,7 @@ import { parse, type ExecutionResult } from 'graphql';
 import { createYoga } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
 import { buildSubgraphSchema } from '@apollo/subgraph';
-import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway';
 import { composeWithApollo } from '../../../testing/composeWithApollo';
 import useJWT, { createInlineSigningKeyProvider, type JWTExtendContextFields } from '../src/index';
 

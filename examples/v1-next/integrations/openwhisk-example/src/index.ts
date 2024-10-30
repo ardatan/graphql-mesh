@@ -1,4 +1,4 @@
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-hive/gateway';
 
 const httpHandler = createGatewayRuntime({
   http: {

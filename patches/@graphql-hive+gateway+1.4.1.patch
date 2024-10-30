@@ -1,0 +1,13 @@
+diff --git a/node_modules/@graphql-hive/gateway/dist/cli-CPBzYl_Z.js b/node_modules/@graphql-hive/gateway/dist/cli-CPBzYl_Z.js
+index 3614ea5..f353703 100644
+--- a/node_modules/@graphql-hive/gateway/dist/cli-CPBzYl_Z.js
++++ b/node_modules/@graphql-hive/gateway/dist/cli-CPBzYl_Z.js
+@@ -22,7 +22,7 @@ const defaultConfigExtensions = [
+   ".mjs",
+   ".cjs"
+ ];
+-const defaultConfigFileName = "gateway.config";
++const defaultConfigFileName = "mesh.config";
+ function createDefaultConfigPaths(configFileName) {
+   return defaultConfigExtensions.map((ext) => `${configFileName}${ext}`);
+ }

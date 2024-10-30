@@ -2,7 +2,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { createHmac } from 'node:crypto';
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
-import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway';
 import { defaultParamsSerializer, useHmacSignatureValidation } from './index';
 
 describe('useHmacSignatureValidation', () => {

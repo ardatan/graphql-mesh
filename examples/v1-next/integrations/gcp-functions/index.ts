@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-hive/gateway';
 
 const functionBasePath = '/mesh';
 

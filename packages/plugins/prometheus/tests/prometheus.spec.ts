@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema } from 'graphql-yoga';
 import { register as registry } from 'prom-client';
+import { createGatewayRuntime } from '@graphql-hive/gateway';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import usePrometheus from '../src/index.js';
 
