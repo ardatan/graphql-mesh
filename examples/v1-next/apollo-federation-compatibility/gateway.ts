@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { createServer } from 'http';
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-hive/gateway';
 import http from '@graphql-mesh/transport-http';
 import { useApolloInlineTrace } from '@graphql-yoga/plugin-apollo-inline-trace';
 

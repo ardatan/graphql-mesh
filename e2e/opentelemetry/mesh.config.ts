@@ -1,5 +1,5 @@
 import { createOtlpHttpExporter, defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
-import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
+import type { GatewayPlugin } from '@graphql-hive/gateway';
 import type { MeshFetchRequestInit } from '@graphql-mesh/types';
 
 // The following plugin is used to trace the fetch calls made by Mesh.

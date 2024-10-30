@@ -1,20 +1,40 @@
-import type { Logger, YamlConfig } from "@graphql-mesh/types";
-import { specifiedDirectives } from "graphql";
-import { SchemaComposer, type Directive, type EnumTypeComposerValueConfigDefinition, type ObjectTypeComposerFieldConfigAsObjectDefinition } from "graphql-compose";
-import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt, GraphQLVoid, GraphQLJSON } from "graphql-scalars";
-import { EnumDirective, grpcConnectivityStateDirective, grpcMethodDirective, grpcRootJsonDirective, transportDirective } from "./directives.js";
-import { credentials, type ChannelCredentials } from '@grpc/grpc-js';
-import protobufjs, { type AnyNestedObject, type IParseOptions, type RootConstructor } from 'protobufjs';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { isAbsolute, join } from "node:path";
-import { fs } from "@graphql-mesh/cross-helpers";
-import globby from "globby";
-import { addIncludePathResolver, getTypeName, walkToFindTypePath } from "./utils.js";
-import { GraphQLStreamDirective, type MaybePromise } from "@graphql-tools/utils";
+import globby from 'globby';
+import { specifiedDirectives } from 'graphql';
+import {
+  SchemaComposer,
+  type Directive,
+  type EnumTypeComposerValueConfigDefinition,
+  type ObjectTypeComposerFieldConfigAsObjectDefinition,
+} from 'graphql-compose';
+import {
+  GraphQLBigInt,
+  GraphQLByte,
+  GraphQLJSON,
+  GraphQLUnsignedInt,
+  GraphQLVoid,
+} from 'graphql-scalars';
+import protobufjs, {
+  type AnyNestedObject,
+  type IParseOptions,
+  type RootConstructor,
+} from 'protobufjs';
 import type { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 import { Client } from '@ardatan/grpc-reflection-js';
+import { fs, path } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import type { Logger, YamlConfig } from '@graphql-mesh/types';
+import { GraphQLStreamDirective, type MaybePromise } from '@graphql-tools/utils';
+import { credentials, type ChannelCredentials } from '@grpc/grpc-js';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import {
+  EnumDirective,
+  grpcConnectivityStateDirective,
+  grpcMethodDirective,
+  grpcRootJsonDirective,
+  transportDirective,
+} from './directives.js';
+import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
 
 const { Root } = protobufjs;
 
@@ -26,14 +46,14 @@ type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
 const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
 
-export class gRPCLoader implements AsyncDisposable {
+export class GrpcLoaderHelper implements AsyncDisposable {
   private schemaComposer = new SchemaComposer();
-  private asyncDisposableStack = new AsyncDisposableStack
+  private asyncDisposableStack = new AsyncDisposableStack();
   constructor(
     private subgraphName: string,
     private baseDir: string,
     private logger: Logger,
-    private config: YamlConfig.GrpcHandler
+    private config: YamlConfig.GrpcHandler,
   ) {}
 
   [Symbol.asyncDispose]() {
@@ -105,8 +125,8 @@ export class gRPCLoader implements AsyncDisposable {
     this.logger.debug(`Building the final GraphQL Schema`);
     this.schemaComposer.addDirective(transportDirective);
     const schema = this.schemaComposer.buildSchema();
-    const schemaExtensions: Record<string, any> = schema.extensions = schema.extensions || {};
-    const directiveExtensions = schemaExtensions.directives = schemaExtensions.directives || {};
+    const schemaExtensions: Record<string, any> = (schema.extensions = schema.extensions || {});
+    const directiveExtensions = (schemaExtensions.directives = schemaExtensions.directives || {});
     directiveExtensions.transport = {
       subgraph: this.subgraphName,
       kind: 'grpc',
@@ -117,7 +137,7 @@ export class gRPCLoader implements AsyncDisposable {
         useHTTPS: this.config.useHTTPS,
         metaData: this.config.metaData,
       },
-    }
+    };
     return schema;
   }
 
@@ -127,13 +147,14 @@ export class gRPCLoader implements AsyncDisposable {
     this.logger.debug(`Creating gRPC Reflection Client`);
     const reflectionClient = new Client(reflectionEndpoint, creds);
     this.asyncDisposableStack.defer(() => reflectionClient.grpcClient.close());
-    return reflectionClient.listServices().then(services => ((services.filter(
-      service => service && !service?.startsWith('grpc.'),
-    ) as string[])
-    .map(service => {
-      this.logger.debug(`Resolving root of Service: ${service} from the reflection response`);
-      return reflectionClient.fileContainingSymbol(service);
-    })));
+    return reflectionClient.listServices().then(services =>
+      (services.filter(service => service && !service?.startsWith('grpc.')) as string[]).map(
+        service => {
+          this.logger.debug(`Resolving root of Service: ${service} from the reflection response`);
+          return reflectionClient.fileContainingSymbol(service);
+        },
+      ),
+    );
   }
 
   private async processDescriptorFile() {
@@ -144,16 +165,16 @@ export class gRPCLoader implements AsyncDisposable {
       options = {
         ...this.config.source.load,
         includeDirs: this.config.source.load.includeDirs?.map(includeDir =>
-          isAbsolute(includeDir) ? includeDir : join(this.baseDir, includeDir),
+          path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir),
         ),
       };
     } else {
       fileName = this.config.source;
     }
     fileName = stringInterpolator.parse(fileName, { env: process.env });
-    const absoluteFilePath = isAbsolute(fileName)
+    const absoluteFilePath = path.isAbsolute(fileName)
       ? fileName
-      : join(this.baseDir, fileName);
+      : path.join(this.baseDir, fileName);
     this.logger.debug(`Using the descriptor set from ${absoluteFilePath} `);
     const descriptorSetBuffer = await fs.promises.readFile(absoluteFilePath);
     this.logger.debug(`Reading ${absoluteFilePath} `);
@@ -194,7 +215,7 @@ export class gRPCLoader implements AsyncDisposable {
         ...options,
         ...this.config.source.load,
         includeDirs: this.config.source.load?.includeDirs?.map(includeDir =>
-          isAbsolute(includeDir) ? includeDir : join(this.baseDir, includeDir),
+          path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir),
         ),
       };
       if (options.includeDirs) {
@@ -215,7 +236,7 @@ export class gRPCLoader implements AsyncDisposable {
     this.logger.debug(`Loading proto files(${fileGlob}); \n ${fileNames.join('\n')} `);
     protoRoot = await protoRoot.load(
       fileNames.map(filePath =>
-        isAbsolute(filePath) ? filePath : join(this.baseDir, filePath),
+        path.isAbsolute(filePath) ? filePath : path.join(this.baseDir, filePath),
       ),
       options,
     );
@@ -256,6 +277,7 @@ export class gRPCLoader implements AsyncDisposable {
       }),
     );
   }
+
   getCredentials(): MaybePromise<ChannelCredentials> {
     this.logger.debug(`Getting channel credentials`);
     if (this.config.credentialsSsl) {
@@ -263,24 +285,26 @@ export class gRPCLoader implements AsyncDisposable {
         () =>
           `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
       );
-      const absolutePrivateKeyPath = isAbsolute(this.config.credentialsSsl.privateKey)
+      const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
-        : join(this.baseDir, this.config.credentialsSsl.privateKey);
-      const absoluteCertChainPath = isAbsolute(this.config.credentialsSsl.certChain)
+        : path.join(this.baseDir, this.config.credentialsSsl.privateKey);
+      const absoluteCertChainPath = path.isAbsolute(this.config.credentialsSsl.certChain)
         ? this.config.credentialsSsl.certChain
-        : join(this.baseDir, this.config.credentialsSsl.certChain);
+        : path.join(this.baseDir, this.config.credentialsSsl.certChain);
 
       const sslFiles = [
         fs.promises.readFile(absolutePrivateKeyPath),
         fs.promises.readFile(absoluteCertChainPath),
       ];
       if (this.config.credentialsSsl.rootCA !== 'rootCA') {
-        const absoluteRootCAPath = isAbsolute(this.config.credentialsSsl.rootCA)
+        const absoluteRootCAPath = path.isAbsolute(this.config.credentialsSsl.rootCA)
           ? this.config.credentialsSsl.rootCA
-          : join(this.baseDir, this.config.credentialsSsl.rootCA);
+          : path.join(this.baseDir, this.config.credentialsSsl.rootCA);
         sslFiles.unshift(fs.promises.readFile(absoluteRootCAPath));
       }
-      return Promise.all(sslFiles).then(([rootCA, privateKey, certChain]) => credentials.createSsl(rootCA, privateKey, certChain));
+      return Promise.all(sslFiles).then(([rootCA, privateKey, certChain]) =>
+        credentials.createSsl(rootCA, privateKey, certChain),
+      );
     } else if (this.config.useHTTPS) {
       this.logger.debug(`Using SSL Connection`);
       return credentials.createSsl();
@@ -288,6 +312,7 @@ export class gRPCLoader implements AsyncDisposable {
     this.logger.debug(`Using insecure connection`);
     return credentials.createInsecure();
   }
+
   visit({
     nested,
     name,

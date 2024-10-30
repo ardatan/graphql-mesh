@@ -1,4 +1,5 @@
 import { Opts } from '@e2e/opts';
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import {
   createNamingConventionTransform,
   defineConfig as defineComposeConfig,
@@ -25,4 +26,8 @@ export const composeConfig = defineComposeConfig({
       ],
     },
   ],
+});
+
+export const gatewayConfig = defineGatewayConfig({
+  deferStream: true,
 });

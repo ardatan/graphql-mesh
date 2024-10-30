@@ -3,8 +3,8 @@ import {
   type OnParseEventPayload,
   type OnValidateEventPayload,
 } from '@envelop/types';
+import { DisposableSymbols, type GatewayPlugin } from '@graphql-hive/gateway';
 import type { OnSubgraphExecutePayload } from '@graphql-mesh/fusion-runtime';
-import { DisposableSymbols, type GatewayPlugin } from '@graphql-mesh/serve-runtime';
 import type { Logger, OnFetchHookPayload } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { isAsyncIterable } from '@graphql-tools/utils';

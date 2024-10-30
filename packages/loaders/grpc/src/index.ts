@@ -1,5 +1,5 @@
-import type { Logger, YamlConfig } from "@graphql-mesh/types";
-import { gRPCLoader } from "./gRPCLoader";
+import type { Logger, YamlConfig } from '@graphql-mesh/types';
+import { GrpcLoaderHelper } from './grpcLoaderHelper.js';
 
 interface LoaderContext {
   cwd: string;
@@ -9,6 +9,6 @@ interface LoaderContext {
 export function loadGrpcSubgraph(name: string, options: YamlConfig.GrpcHandler) {
   return (ctx: LoaderContext) => ({
     name,
-    schema$: new gRPCLoader(name, ctx.cwd, ctx.logger, options).buildSchema(),
+    schema$: new GrpcLoaderHelper(name, ctx.cwd, ctx.logger, options).buildSchema(),
   });
 }

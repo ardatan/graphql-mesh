@@ -3,7 +3,7 @@ import { parse } from 'graphql';
 import { createTenv, type Service } from '@e2e/tenv';
 import { handleSerializedErrors } from '@e2e/utils/handleSerializedErrors';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
-import { createGraphQLError, isAsyncIterable } from '@graphql-tools/utils';
+import { isAsyncIterable } from '@graphql-tools/utils';
 
 describe('gRPC Example', () => {
   const { compose, serve, service } = createTenv(__dirname);

@@ -1,6 +1,6 @@
 import { join } from 'path';
 import fastify from 'fastify';
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime } from '@graphql-hive/gateway';
 
 export const app = fastify();
 

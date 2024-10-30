@@ -1,4 +1,4 @@
-import type { GatewayContext, GatewayPlugin } from '@graphql-mesh/serve-runtime';
+import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway';
 import type { MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj, mapMaybePromise } from '@graphql-mesh/utils';
 

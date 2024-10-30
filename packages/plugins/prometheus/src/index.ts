@@ -1,7 +1,7 @@
 import { isAsyncIterable, type Plugin as YogaPlugin } from 'graphql-yoga';
 import type { Registry } from 'prom-client';
 import { register as defaultRegistry } from 'prom-client';
-import { DisposableSymbols, type GatewayPlugin } from '@graphql-mesh/serve-runtime';
+import { DisposableSymbols, type GatewayPlugin } from '@graphql-hive/gateway';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
 import type { ImportFn, Logger, MeshFetchRequestInit, MeshPlugin } from '@graphql-mesh/types';
 import {

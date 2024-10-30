@@ -1,5 +1,4 @@
 import { createSchema, createYoga } from 'graphql-yoga';
-import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
 
 describe('useOpenTelemetry', () => {
   if (process.env.LEAK_TEST) {
@@ -10,6 +9,10 @@ describe('useOpenTelemetry', () => {
   jest.mock('@opentelemetry/sdk-node', () => ({
     NodeSDK: jest.fn(() => ({ start: mockStartSdk })),
   }));
+  const {
+    createGatewayRuntime,
+    useCustomFetch,
+  }: typeof import('@graphql-hive/gateway') = require('@graphql-hive/gateway');
 
   beforeEach(() => {
     jest.clearAllMocks();
