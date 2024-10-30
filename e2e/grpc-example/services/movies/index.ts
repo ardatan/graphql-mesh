@@ -1,4 +1,5 @@
 import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import { Opts } from '@e2e/opts';
 import {
   loadPackageDefinition,
@@ -7,7 +8,6 @@ import {
   type ServiceClientConstructor,
 } from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
-import { fileURLToPath } from 'url';
 
 const opts = Opts(process.argv);
 
@@ -53,7 +53,7 @@ const Movies = [
 ];
 
 async function startServer(subscriptionInterval = 1000, debug = false): Promise<Server> {
-  const logger = debug ? (...args) => console.log(...args) : () => { };
+  const logger = debug ? (...args) => console.log(...args) : () => {};
   const server = new Server();
 
   const packageDefinition = await load('./service.proto', {

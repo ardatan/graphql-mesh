@@ -29,4 +29,3 @@ export function getGraphQLScalarForGrpc(scalarType: string): string {
   }
   return SCALARS.get(scalarType);
 }
-

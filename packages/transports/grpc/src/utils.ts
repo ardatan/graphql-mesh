@@ -1,3 +1,4 @@
+import type { GraphQLScalarType } from 'graphql';
 import lodashGet from 'lodash.get';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
@@ -9,7 +10,6 @@ import type {
   MetadataValue,
 } from '@grpc/grpc-js';
 import { Metadata } from '@grpc/grpc-js';
-import type { GraphQLScalarType } from 'graphql';
 
 function isBlob(input: any): input is Blob {
   return input != null && input.stream instanceof Function;
