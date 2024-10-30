@@ -7223,6 +7223,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.102.10"
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/utils": "npm:^10.5.5"
+    "@whatwg-node/fetch": "npm:^0.9.22"
     graphql-fields: "npm:^2.0.3"
     mysql: "npm:^2.18.1"
     mysql-utilities: "npm:^1.1.4"
