@@ -23,13 +23,13 @@ npm i @omnigraph/grpc
 Then you can use it in your Mesh configuration:
 
 ```ts filename="mesh.config.ts"
-import loadGRPCSubgraph from '@omnigraph/grpc'
+import loadGrpcSubgraph from '@omnigraph/grpc'
 import { defineConfig } from '@graphql-mesh/compose-cli'
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadGRPCSubgraph('MyGrpcApi', {
+      sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
         // gRPC Endpoint
         endpoint: 'localhost:50051',
         // Path to the proto file
@@ -74,12 +74,12 @@ If you have configured reflection in your gRPC server, you don't need to provide
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/compose-cli'
-import loadGRPCSubgraph from '@omnigraph/grpc'
+import loadGrpcSubgraph from '@omnigraph/grpc'
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadGRPCSubgraph('MyGrpcApi', {
+      sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
         endpoint: 'localhost:50051'
       })
     }
@@ -93,12 +93,12 @@ Here you can use `metaData` field to pass some custom metadata from the context.
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/compose-cli'
-import loadGRPCSubgraph from '@omnigraph/grpc'
+import loadGrpcSubgraph from '@omnigraph/grpc'
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadGRPCSubgraph('MyGrpcApi', {
+      sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
         endpoint: 'localhost:50051',
         metaData: {
           authorization: "Bearer {context.headers['x-my-token']}",

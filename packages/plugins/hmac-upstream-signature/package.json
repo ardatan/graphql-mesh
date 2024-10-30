@@ -42,7 +42,7 @@
     "json-stable-stringify": "^1.1.1"
   },
   "devDependencies": {
-    "@graphql-mesh/serve-runtime": "^1.2.4",
+    "@graphql-hive/gateway": "^1.4.1",
     "graphql-yoga": "^5.7.0"
   },
   "publishConfig": {

@@ -1,6 +1,6 @@
+import { createGatewayRuntime } from '@graphql-hive/gateway';
 import CFWorkerKVCache from '@graphql-mesh/cache-cfw-kv';
 import useResponseCache from '@graphql-mesh/plugin-response-cache';
-import { createGatewayRuntime } from '@graphql-mesh/serve-runtime';
 import * as rest from '@omnigraph/json-schema';
 import supergraph from './supergraph.graphql';
 

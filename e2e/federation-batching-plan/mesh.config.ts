@@ -1,6 +1,6 @@
 import { print } from 'graphql';
-import { defineConfig } from '@graphql-mesh/serve-cli';
-import type { GatewayPlugin } from '@graphql-mesh/serve-runtime';
+import { defineConfig } from '@graphql-hive/gateway';
+import type { GatewayPlugin } from '@graphql-hive/gateway';
 
 export function useExplainQueryPlan(): GatewayPlugin {
   const plans = new WeakMap<

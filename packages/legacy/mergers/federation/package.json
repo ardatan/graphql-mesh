@@ -44,7 +44,7 @@
   "dependencies": {
     "@apollo/gateway": "^2.4.1",
     "@graphql-tools/schema": "^10.0.5",
-    "@graphql-tools/wrap": "^10.0.11"
+    "@graphql-tools/wrap": "^10.0.12"
   },
   "publishConfig": {
     "access": "public",

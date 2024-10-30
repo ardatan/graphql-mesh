@@ -101,6 +101,7 @@ export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
         !isSpecifiedDirective(directive) &&
         !FEDERATION_V1_DIRECTIVES.includes(directiveName) &&
         !directiveName.startsWith('@federation__') &&
+        directiveName !== '@stream' &&
         directiveName !== '@link'
       ) {
         meshDirectives.push(directiveName);

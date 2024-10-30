@@ -1,6 +1,6 @@
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
-import { createGatewayRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway';
 import {
   createInlineSigningKeyProvider,
   type JWTExtendContextFields,

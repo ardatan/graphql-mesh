@@ -42,7 +42,7 @@
     "graphql-jit": "^0.8.7"
   },
   "devDependencies": {
-    "@graphql-mesh/serve-runtime": "^1.2.4"
+    "@graphql-hive/gateway": "^1.4.1"
   },
   "publishConfig": {
     "access": "public",

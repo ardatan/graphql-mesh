@@ -83,8 +83,6 @@ module.exports = {
   modulePathIgnorePatterns: ['dist', 'fixtures', '.bob'],
   moduleNameMapper: {
     '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
-    '@graphql-mesh/serve-runtime':
-      '<rootDir>/node_modules/@graphql-mesh/serve-runtime/cjs/index.js',
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
       prefix: `${ROOT_DIR}/`,

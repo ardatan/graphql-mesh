@@ -11,20 +11,18 @@ import {
   typeFromAST,
   visit,
 } from 'graphql';
-import type { AdditionalStitchingResolverObject } from 'packages/legacy/types/src/config.js';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
-import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
 import type { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import {
   astFromField,
   getDirectiveExtensions,
   MapperKind,
   mapSchema,
-  type IResolvers,
   type TypeSource,
 } from '@graphql-tools/utils';
 import {
   HoistField,
+  PruneSchema,
   RenameInputObjectFields,
   RenameInterfaceFields,
   RenameObjectFieldArguments,
@@ -183,7 +181,7 @@ export function handleFederationSubschema({
                   : () => true,
               };
             });
-            transforms.push(new HoistField(realTypeName, pathConfig, fieldName));
+            transforms.push(new HoistField(realTypeName, pathConfig, fieldName), new PruneSchema());
           }
         }
       }
