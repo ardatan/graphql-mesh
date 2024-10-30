@@ -1,5 +1,12 @@
 # @graphql-mesh/cli
 
+## 0.96.11
+
+### Patch Changes
+
+- [`e7d48d4`](https://github.com/ardatan/graphql-mesh/commit/e7d48d4299143a1ad078cf94d5dbcb65baaaec54)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix ESM build
+
 ## 0.96.10
 
 ### Patch Changes
