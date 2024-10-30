@@ -6196,7 +6196,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.102.10"
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/executor": "npm:^1.3.2"
-    "@graphql-tools/federation": "npm:^2.2.20"
+    "@graphql-tools/federation": "npm:^2.2.21"
     "@graphql-tools/merge": "npm:^9.0.8"
     "@graphql-tools/stitch": "npm:^9.2.17"
     "@graphql-tools/stitching-directives": "npm:^3.1.9"
@@ -6217,7 +6217,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
     "@graphql-tools/delegate": "npm:^10.0.28"
-    "@graphql-tools/federation": "npm:^2.2.20"
+    "@graphql-tools/federation": "npm:^2.2.21"
     "@graphql-tools/url-loader": "npm:^8.0.9"
     lodash.get: "npm:^4.4.2"
   peerDependencies:
@@ -6938,7 +6938,7 @@ __metadata:
   resolution: "@graphql-mesh/supergraph@workspace:packages/legacy/handlers/supergraph"
   dependencies:
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
-    "@graphql-tools/federation": "npm:^2.2.20"
+    "@graphql-tools/federation": "npm:^2.2.21"
     "@graphql-tools/url-loader": "npm:^8.0.9"
     "@graphql-tools/utils": "npm:^10.5.5"
     lodash.get: "npm:^4.4.2"
@@ -7718,9 +7718,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/federation@npm:^2.2.10, @graphql-tools/federation@npm:^2.2.19, @graphql-tools/federation@npm:^2.2.20":
-  version: 2.2.20
-  resolution: "@graphql-tools/federation@npm:2.2.20"
+"@graphql-tools/federation@npm:^2.2.10, @graphql-tools/federation@npm:^2.2.19, @graphql-tools/federation@npm:^2.2.21":
+  version: 2.2.21
+  resolution: "@graphql-tools/federation@npm:2.2.21"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0"
     "@graphql-tools/delegate": "npm:^10.0.28"
@@ -7738,7 +7738,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/a05809269afdd8dea3d0708823d25d30e73eaa8395efee3c498f797e6bb3e22f15a42b513e7fad7d66f7e6b4ca29a2340e37f5a0868906b5ee891121dfae16d7
+  checksum: 10c0/3eb7343659bcbd7e2d11e57d4ee03a16955856b8d18d62dec2099a9d7b3daa9fa2fadf85c1bd0ead24c0246bd6e9c43648e2d90a2450694f85f90dd12c7dab98
   languageName: node
   linkType: hard
 
