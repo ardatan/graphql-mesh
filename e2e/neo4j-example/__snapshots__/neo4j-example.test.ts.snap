@@ -12,7 +12,7 @@ schema
   
   @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@relationshipProperties", "@relationship", "@introspection", "@transport", "@extraSchemaDefinitionDirective"]
+  import: ["@relationshipProperties", "@relationship", "@introspection", "@transport", "@node", "@extraSchemaDefinitionDirective"]
 )
 {
   query: Query
@@ -90,16 +90,18 @@ directive @relationship(type: String, direction: _RelationDirections, properties
 
 directive @introspection(subgraph: String)  repeatable on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
 
-directive @transport(kind: String, subgraph: String, location: String, options: Any)  repeatable on SCHEMA
+directive @transport(kind: String, subgraph: String, location: String, options: TransportOptions)  repeatable on SCHEMA
+
+directive @node on OBJECT
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
-
-scalar Any @join__type(graph: MOVIES) 
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
 scalar BigInt @join__type(graph: MOVIES) 
+
+scalar TransportOptions @join__type(graph: MOVIES) 
 
 scalar _DirectiveExtensions @join__type(graph: MOVIES) 
 
@@ -181,7 +183,7 @@ type DeleteInfo @join__type(graph: MOVIES)  {
   relationshipsDeleted: Int!
 }
 
-type Movie @introspection @join__type(graph: MOVIES)  {
+type Movie @introspection @node @join__type(graph: MOVIES)  {
   released: BigInt! @introspection
   tagline: String @introspection
   title: String! @introspection
@@ -469,7 +471,7 @@ type PeopleConnection @join__type(graph: MOVIES)  {
   edges: [PersonEdge!]!
 }
 
-type Person @introspection @join__type(graph: MOVIES)  {
+type Person @introspection @node @join__type(graph: MOVIES)  {
   born: BigInt @introspection
   name: String! @introspection
   actedInMoviesAggregate(

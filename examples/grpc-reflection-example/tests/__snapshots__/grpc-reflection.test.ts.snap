@@ -129,18 +129,7 @@ scalar artnet__coredata__playground__EchoUserInfoRequest_Input @specifiedBy(url:
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Reflection Example should get greeting correctly: greeting-result 1`] = `

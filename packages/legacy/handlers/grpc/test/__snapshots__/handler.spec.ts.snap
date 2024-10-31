@@ -97,18 +97,7 @@ input foo__DeleteSampleRequest_Input {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Custom Message proto 1`] = `
@@ -173,18 +162,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Custom Message2 proto 1`] = `
@@ -244,18 +222,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Empty proto 1`] = `
@@ -376,18 +343,7 @@ type Subscription {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Enums proto 1`] = `
@@ -451,18 +407,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Import Nested proto 1`] = `
@@ -523,18 +468,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Input bug 5880 proto 1`] = `
@@ -589,18 +523,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Map proto 1`] = `
@@ -656,18 +579,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Movie proto 1`] = `
@@ -785,18 +697,7 @@ type Subscription {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Nested proto 1`] = `
@@ -855,18 +756,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the No Package Nested proto 1`] = `
@@ -925,18 +815,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Outside proto 1`] = `
@@ -1064,18 +943,7 @@ type Subscription {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the With All Values proto 1`] = `
@@ -1169,18 +1037,7 @@ enum ConnectivityState {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the With Underscores proto 1`] = `
@@ -1298,18 +1155,7 @@ type Subscription {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Load proto with prefixQueryMethod should load the retrieve-movie.proto 1`] = `
@@ -1439,16 +1285,5 @@ type Subscription {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHTTPS: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCA: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;

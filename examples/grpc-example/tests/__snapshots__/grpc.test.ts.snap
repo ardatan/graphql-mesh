@@ -102,7 +102,7 @@ exports[`gRPC Example should fetch movies by cast as a subscription correctly: m
 `;
 
 exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost:50051", options: {requestTimeout: 200000, metaData: "{\\"someKey\\":\\"someValue\\",\\"connection_type\\":\\"{context.headers.connection}\\"}"}) {
+"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost:50051", options: {requestTimeout: 200000, metaData: {someKey: "someValue", connection_type: "{context.headers.connection}"}}) {
   query: Query
   subscription: Subscription
 }
@@ -216,18 +216,7 @@ type Subscription {
 
 scalar ObjMap
 
-input TransportOptions {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHttps: Boolean
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl {
-  rootCa: String
-  certChain: String
-  privateKey: String
-}"
+scalar TransportOptions"
 `;
 
 exports[`gRPC Example should get movies correctly: get-movies-grpc-example-result 1`] = `
