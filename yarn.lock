@@ -7049,7 +7049,7 @@ __metadata:
     "@graphql-mesh/cache-localforage": "npm:0.102.11"
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
     "@graphql-tools/schema": "npm:10.0.7"
-    "@graphql-tools/wrap": "npm:10.0.13"
+    "@graphql-tools/wrap": "npm:10.0.14"
     minimatch: "npm:^10.0.0"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.7
@@ -8188,18 +8188,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/wrap@npm:10.0.13":
-  version: 10.0.13
-  resolution: "@graphql-tools/wrap@npm:10.0.13"
+"@graphql-tools/wrap@npm:10.0.14, @graphql-tools/wrap@npm:^10.0.12, @graphql-tools/wrap@npm:^10.0.13, @graphql-tools/wrap@npm:^10.0.14":
+  version: 10.0.14
+  resolution: "@graphql-tools/wrap@npm:10.0.14"
   dependencies:
-    "@graphql-tools/delegate": "npm:^10.0.29"
+    "@graphql-tools/delegate": "npm:^10.1.0"
     "@graphql-tools/schema": "npm:^10.0.7"
     "@graphql-tools/utils": "npm:^10.5.5"
     tslib: "npm:^2.4.0"
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/0c055764f7e4589eceacc751a9f786f0f710370618873b778e3e7ea34b2dd233d9a427ac377030b2efb38ddcc9c7739a8dce8896f5ece5d4bccade28304601d0
+  checksum: 10c0/9517a05d04d4f92aa4ff2276438e79ccba7c8b26d3854ae5fddbfc9fab956cc509c29a1512e1f6e5c298ab59a508475455eeb7fe314897f3411f2f06d40616ce
   languageName: node
   linkType: hard
 
@@ -8216,21 +8216,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0
   checksum: 10c0/f566410eb1c501ea6c277cbb26fd93595577ded36c1dd1d9c57b15d57e240434291ff6f85deb1a75529237e00bcf48b277c34db4d9520ee5b5d116d2fbf55d25
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/wrap@npm:^10.0.12, @graphql-tools/wrap@npm:^10.0.13, @graphql-tools/wrap@npm:^10.0.14":
-  version: 10.0.14
-  resolution: "@graphql-tools/wrap@npm:10.0.14"
-  dependencies:
-    "@graphql-tools/delegate": "npm:^10.1.0"
-    "@graphql-tools/schema": "npm:^10.0.7"
-    "@graphql-tools/utils": "npm:^10.5.5"
-    tslib: "npm:^2.4.0"
-    value-or-promise: "npm:^1.0.12"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/9517a05d04d4f92aa4ff2276438e79ccba7c8b26d3854ae5fddbfc9fab956cc509c29a1512e1f6e5c298ab59a508475455eeb7fe314897f3411f2f06d40616ce
   languageName: node
   linkType: hard
 
