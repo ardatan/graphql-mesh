@@ -7,7 +7,7 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.96.11",
+    "@graphql-mesh/cli": "0.96.12",
     "@graphql-mesh/openapi": "0.107.5",
     "@whatwg-node/fetch": "^0.9.0",
     "concurrently": "9.0.1",

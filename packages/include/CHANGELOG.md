@@ -1,5 +1,15 @@
 # @graphql-mesh/include
 
+## 0.2.3
+
+### Patch Changes
+
+- [#7725](https://github.com/ardatan/graphql-mesh/pull/7725)
+  [`4da6db4`](https://github.com/ardatan/graphql-mesh/commit/4da6db4c8eb570b7bdd3a2de0b026a8fff1a20b2)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`jiti@^2.0.0` ↗︎](https://www.npmjs.com/package/jiti/v/2.0.0) (from
+    `^1.21.6`, in `dependencies`)
+
 ## 0.2.2
 
 ### Patch Changes
