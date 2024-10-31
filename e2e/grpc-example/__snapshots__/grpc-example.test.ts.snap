@@ -145,6 +145,8 @@ scalar BigInt @join__type(graph: MOVIES)
 
 scalar ObjMap @join__type(graph: MOVIES) 
 
+scalar TransportOptions @join__type(graph: MOVIES) 
+
 scalar _DirectiveExtensions @join__type(graph: MOVIES) 
 
 type Query @grpcRootJson(
@@ -304,19 +306,6 @@ input google__protobuf__Timestamp_Input @join__type(graph: MOVIES)  {
 input SearchByCastRequest_Input @join__type(graph: MOVIES)  {
   castName: String
 }
-
-input TransportOptions @join__type(graph: MOVIES)  {
-  requestTimeout: Int
-  credentialsSsl: GrpcCredentialsSsl
-  useHttps: Boolean @source(name: "useHTTPS", type: "Boolean", subgraph: "movies") 
-  metaData: ObjMap
-}
-
-input GrpcCredentialsSsl @join__type(graph: MOVIES)  {
-  rootCa: String @source(name: "rootCA", type: "String", subgraph: "movies") 
-  certChain: String
-  privateKey: String
-}
     
 "
 `;
@@ -341,122 +330,6 @@ exports[`gRPC Example gets movies correctly: get-movies-grpc-example-result 1`] 
         },
       ],
     },
-  },
-}
-`;
-
-exports[`gRPC Example streams movies by cast correctly: 0 1`] = `
-{
-  "data": {
-    "exampleSearchMoviesByCast": [],
-  },
-}
-`;
-
-exports[`gRPC Example streams movies by cast correctly: 1 1`] = `
-{
-  "data": {
-    "exampleSearchMoviesByCast": [
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Jeremy Renner",
-        ],
-        "name": "Mission: Impossible Rogue Nation",
-        "rating": 0.9700000286102295,
-        "year": 0,
-      },
-    ],
-  },
-}
-`;
-
-exports[`gRPC Example streams movies by cast correctly: 2 1`] = `
-{
-  "data": {
-    "exampleSearchMoviesByCast": [
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Jeremy Renner",
-        ],
-        "name": "Mission: Impossible Rogue Nation",
-        "rating": 0.9700000286102295,
-        "year": 0,
-      },
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Henry Cavill",
-        ],
-        "name": "Mission: Impossible - Fallout",
-        "rating": 0.9300000071525574,
-        "year": 0,
-      },
-    ],
-  },
-}
-`;
-
-exports[`gRPC Example streams movies by cast correctly: 3 1`] = `
-{
-  "data": {
-    "exampleSearchMoviesByCast": [
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Jeremy Renner",
-        ],
-        "name": "Mission: Impossible Rogue Nation",
-        "rating": 0.9700000286102295,
-        "year": 0,
-      },
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Henry Cavill",
-        ],
-        "name": "Mission: Impossible - Fallout",
-        "rating": 0.9300000071525574,
-        "year": 0,
-      },
-      null,
-    ],
-  },
-}
-`;
-
-exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
-{
-  "data": {
-    "exampleSearchMoviesByCast": [
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Jeremy Renner",
-        ],
-        "name": "Mission: Impossible Rogue Nation",
-        "rating": 0.9700000286102295,
-        "year": 0,
-      },
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Henry Cavill",
-        ],
-        "name": "Mission: Impossible - Fallout",
-        "rating": 0.9300000071525574,
-        "year": 0,
-      },
-      null,
-    ],
   },
 }
 `;

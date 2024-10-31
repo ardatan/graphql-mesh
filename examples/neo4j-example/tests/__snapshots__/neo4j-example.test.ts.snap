@@ -9,11 +9,13 @@ exports[`Neo4j should generate correct schema 1`] = `
 
 directive @introspection(subgraph: String) on ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
+directive @node on OBJECT
+
 directive @relationship(direction: _RelationDirections, properties: String, type: String) on FIELD_DEFINITION
 
 directive @relationshipProperties on OBJECT
 
-directive @transport(kind: String, location: String, options: Any, subgraph: String) on SCHEMA
+directive @transport(kind: String, location: String, options: TransportOptions, subgraph: String) on SCHEMA
 
 """
 The edge properties for the following fields:
@@ -46,8 +48,6 @@ input ActedInPropertiesWhere {
   roles_EQ: [String]
   roles_INCLUDES: String
 }
-
-scalar Any
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
@@ -95,7 +95,7 @@ enum EventType {
   UPDATE
 }
 
-type Movie @introspection {
+type Movie @introspection @node {
   peopleActedIn(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
   peopleActedInAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleActedInAggregationSelection
   peopleActedInConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [MoviePeopleActedInConnectionSort!], where: MoviePeopleActedInConnectionWhere): MoviePeopleActedInConnection!
@@ -1103,7 +1103,7 @@ type PeopleConnection {
   totalCount: Int!
 }
 
-type Person @introspection {
+type Person @introspection @node {
   actedInMovies(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: MovieOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
   actedInMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieActedInMoviesAggregationSelection
   actedInMoviesConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [PersonActedInMoviesConnectionSort!], where: PersonActedInMoviesConnectionWhere): PersonActedInMoviesConnection!
@@ -2664,6 +2664,8 @@ type Subscription {
   personDeleted(where: PersonSubscriptionWhere): PersonDeletedEvent!
   personUpdated(where: PersonSubscriptionWhere): PersonUpdatedEvent!
 }
+
+scalar TransportOptions
 
 """
 Information about the number of nodes and relationships created and deleted during an update mutation
