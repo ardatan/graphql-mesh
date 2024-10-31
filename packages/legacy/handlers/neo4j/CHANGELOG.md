@@ -1,5 +1,14 @@
 # @graphql-mesh/neo4j
 
+## 0.104.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0788b5d`](https://github.com/ardatan/graphql-mesh/commit/0788b5d76b7439af804781a33cb3c065c524dd63),
+  [`0788b5d`](https://github.com/ardatan/graphql-mesh/commit/0788b5d76b7439af804781a33cb3c065c524dd63)]:
+  - @omnigraph/neo4j@0.8.0
+
 ## 0.103.12
 
 ### Patch Changes

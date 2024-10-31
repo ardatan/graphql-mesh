@@ -1,5 +1,13 @@
 # @graphql-mesh/grpc
 
+## 0.105.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0788b5d`](https://github.com/ardatan/graphql-mesh/commit/0788b5d76b7439af804781a33cb3c065c524dd63)]:
+  - @omnigraph/grpc@0.1.0
+
 ## 0.104.13
 
 ### Patch Changes

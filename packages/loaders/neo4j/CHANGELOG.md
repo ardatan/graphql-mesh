@@ -1,5 +1,26 @@
 # @omnigraph/neo4j
 
+## 0.8.0
+
+### Minor Changes
+
+- [#7866](https://github.com/ardatan/graphql-mesh/pull/7866)
+  [`0788b5d`](https://github.com/ardatan/graphql-mesh/commit/0788b5d76b7439af804781a33cb3c065c524dd63)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Use shared TransportOptions scalar in all
+  transport directive definitions
+
+### Patch Changes
+
+- [#7866](https://github.com/ardatan/graphql-mesh/pull/7866)
+  [`0788b5d`](https://github.com/ardatan/graphql-mesh/commit/0788b5d76b7439af804781a33cb3c065c524dd63)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/introspector@^4.0.0` ↗︎](https://www.npmjs.com/package/@neo4j/introspector/v/4.0.0)
+    (from `^3.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`d8c0d29`](https://github.com/ardatan/graphql-mesh/commit/d8c0d292636d16f43513be7fe859a251c2ccd5e6)]:
+  - @graphql-mesh/transport-neo4j@0.7.13
+
 ## 0.7.12
 
 ### Patch Changes
