@@ -9,7 +9,7 @@
     "@graphql-hive/gateway": "^1.4.1",
     "@graphql-mesh/cache-cfw-kv": "^0.102.11",
     "@graphql-mesh/cache-localforage": "^0.102.11",
-    "@graphql-mesh/compose-cli": "^1.1.5",
+    "@graphql-mesh/compose-cli": "^1.1.6",
     "@graphql-mesh/plugin-response-cache": "^0.102.11",
     "@omnigraph/json-schema": "^0.107.5",
     "graphql": "16.9.0"

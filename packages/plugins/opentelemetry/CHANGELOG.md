@@ -1,5 +1,25 @@
 # @graphql-mesh/plugin-opentelemetry
 
+## 1.3.6
+
+### Patch Changes
+
+- [#7604](https://github.com/ardatan/graphql-mesh/pull/7604)
+  [`4e7134a`](https://github.com/ardatan/graphql-mesh/commit/4e7134ae009b01fbec7825cc71673e4247d5f875)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@opentelemetry/exporter-trace-otlp-grpc@^0.54.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/exporter-trace-otlp-grpc/v/0.54.0)
+    (from `^0.52.1`, in `dependencies`)
+  - Updated dependency
+    [`@opentelemetry/exporter-trace-otlp-http@^0.54.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/exporter-trace-otlp-http/v/0.54.0)
+    (from `^0.52.1`, in `dependencies`)
+  - Updated dependency
+    [`@opentelemetry/instrumentation@^0.54.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/instrumentation/v/0.54.0)
+    (from `^0.52.1`, in `dependencies`)
+  - Updated dependency
+    [`@opentelemetry/sdk-node@^0.54.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/sdk-node/v/0.54.0)
+    (from `^0.52.1`, in `dependencies`)
+
 ## 1.3.5
 
 ### Patch Changes
