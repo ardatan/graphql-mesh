@@ -2,8 +2,6 @@ import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { DEFAULT_CLI_PARAMS, graphqlMesh } from '../src/index';
 
 describe('runtime', () => {
-  it('dummy', async () => {});
-
   describe('build', () => {
     const generatedMeshConfiguration = '.mesh';
 

@@ -8,10 +8,6 @@ import { getMesh } from '@graphql-mesh/runtime';
 import { createApp } from '../api/app';
 
 describe('OpenAPI Subscriptions', () => {
-  if (process.versions.node.startsWith('14')) {
-    it('dummy', () => {});
-    return;
-  }
   let config: ProcessedConfig;
   let appWrapper: ReturnType<typeof createApp>;
   let meshHandler: ReturnType<typeof createMeshHTTPHandler>;
@@ -32,7 +28,6 @@ describe('OpenAPI Subscriptions', () => {
     const mesh$ = Promise.resolve().then(() =>
       getMesh({
         ...config,
-        // @ts-expect-error TODO: Fix fetch signature
         fetchFn: appWrapper.app.fetch,
       }),
     );
