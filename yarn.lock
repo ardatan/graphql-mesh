@@ -6271,7 +6271,7 @@ __metadata:
     dotenv: "npm:^16.3.1"
     get-tsconfig: "npm:^4.7.6"
     glob: "npm:^11.0.0"
-    jiti: "npm:^1.21.6"
+    jiti: "npm:^2.0.0"
     sucrase: "npm:^3.35.0"
   languageName: unknown
   linkType: soft
@@ -25647,7 +25647,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.17.1, jiti@npm:^1.21.0, jiti@npm:^1.21.6":
+"jiti@npm:^1.17.1, jiti@npm:^1.21.0":
   version: 1.21.6
   resolution: "jiti@npm:1.21.6"
   bin:
