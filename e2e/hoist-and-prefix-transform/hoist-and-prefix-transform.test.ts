@@ -24,7 +24,7 @@ it('should compose and execute', async () => {
   expect(supergraph).toContain('Test_Weather');
   expect(supergraph).toContain('chanceOfRain');
 
-  const { execute } = await serve({ supergraph: output, pipeLogs: true });
+  const { execute } = await serve({ supergraph: output });
   await expect(
     execute({
       query: /* GraphQL */ `

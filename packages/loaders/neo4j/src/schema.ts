@@ -94,7 +94,6 @@ export async function loadGraphQLSchemaFromNeo4J(
   (typeDefs.definitions as DefinitionNode[]).push(
     ...parse(
       /* GraphQL */ `
-        scalar Any
         directive @relationshipProperties on OBJECT
         directive @relationship(
           type: String
@@ -112,8 +111,10 @@ export async function loadGraphQLSchemaFromNeo4J(
           kind: String
           subgraph: String
           location: String
-          options: Any
+          options: TransportOptions
         ) on SCHEMA
+        scalar TransportOptions
+        directive @node on OBJECT
       `,
       {
         noLocation: true,

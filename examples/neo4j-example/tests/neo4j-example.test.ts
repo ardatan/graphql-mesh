@@ -12,6 +12,16 @@ describe('Neo4j', () => {
     config = await findAndParseConfig({
       dir: join(__dirname, '..'),
     });
+    config.logger = {
+      debug: jest.fn(),
+      error: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      log: jest.fn(),
+      child() {
+        return this;
+      },
+    };
     mesh = await getMesh(config);
   });
   jest.setTimeout(120_000);

@@ -9753,16 +9753,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/introspector@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "@neo4j/introspector@npm:3.0.1"
+"@neo4j/introspector@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@neo4j/introspector@npm:4.0.0"
   dependencies:
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     pluralize: "npm:^8.0.0"
   peerDependencies:
     neo4j-driver: ^5.8.0
-  checksum: 10c0/1d69d910478d6dbda69acccc625bf250c80ff6c7c5add83b959d83e9b70b218cfbb80eafeb34d568d4ca6a3d13ea48a61ce57a9a3eb62da8cd9e207071b92ef0
+  checksum: 10c0/612b9783c57b8dd1a807d665eec428f7dab75af07237a218c7491736deb49ffa0279719a401f2f59a30687446f799d3b937c8df36249bfd9c0e23f78be3f63e4
   languageName: node
   linkType: hard
 
@@ -10152,7 +10152,7 @@ __metadata:
     "@graphql-mesh/transport-neo4j": "npm:^0.7.12"
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/schema": "npm:^10.0.5"
-    "@neo4j/introspector": "npm:^3.0.0"
+    "@neo4j/introspector": "npm:^4.0.0"
     neo4j-driver: "npm:^5.9.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.11
