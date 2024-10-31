@@ -333,3 +333,119 @@ exports[`gRPC Example gets movies correctly: get-movies-grpc-example-result 1`] 
   },
 }
 `;
+
+exports[`gRPC Example streams movies by cast correctly: 0 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 1 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 0,
+      },
+    ],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 2 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 0,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 0,
+      },
+    ],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 3 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 0,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 0,
+      },
+      null,
+    ],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Jeremy Renner",
+        ],
+        "name": "Mission: Impossible Rogue Nation",
+        "rating": 0.9700000286102295,
+        "year": 0,
+      },
+      {
+        "cast": [
+          "Tom Cruise",
+          "Simon Pegg",
+          "Henry Cavill",
+        ],
+        "name": "Mission: Impossible - Fallout",
+        "rating": 0.9300000071525574,
+        "year": 0,
+      },
+      null,
+    ],
+  },
+}
+`;
