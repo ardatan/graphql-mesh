@@ -20727,7 +20727,7 @@ __metadata:
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.8.0"
     lru-cache: "npm:11.0.2"
-    tslib: "npm:2.8.0"
+    tslib: "npm:2.8.1"
     tsx: "npm:^4.16.5"
   languageName: unknown
   linkType: soft
@@ -36217,10 +36217,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.8.0":
-  version: 2.8.0
-  resolution: "tslib@npm:2.8.0"
-  checksum: 10c0/31e4d14dc1355e9b89e4d3c893a18abb7f90b6886b089c2da91224d0a7752c79f3ddc41bc1aa0a588ac895bd97bb99c5bc2bfdb2f86de849f31caeb3ba79bbe5
+"tslib@npm:2.8.1":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
   languageName: node
   linkType: hard
 
