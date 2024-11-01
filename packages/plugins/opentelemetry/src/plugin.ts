@@ -18,12 +18,12 @@ import {
   type TextMapGetter,
   type Tracer,
 } from '@opentelemetry/api';
-import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks';
+import { ZoneContextManager } from '@opentelemetry/context-zone';
 import { Resource } from '@opentelemetry/resources';
-import { NodeSDK, type NodeSDKConfiguration } from '@opentelemetry/sdk-node';
-import { type SpanProcessor } from '@opentelemetry/sdk-trace-node';
+import { type SpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import type { OnRequestEventPayload } from '@whatwg-node/server';
-import { SEMRESATTRS_SERVICE_NAME } from './attributes.js';
+import { ATTR_SERVICE_NAME } from './attributes.js';
 import {
   completeHttpSpan,
   createGraphQLExecuteSpan,
@@ -143,22 +143,23 @@ export function useOpenTelemetry(
     activeContext: () => Context;
   };
 }> {
-  const contextManager = new AsyncHooksContextManager();
+  const contextManager = new ZoneContextManager();
   const inheritContext = options.inheritContext ?? true;
   const propagateContext = options.propagateContext ?? true;
 
-  let sdk: NodeSDK | undefined;
+  let provider: WebTracerProvider | undefined;
   if (!('initializeNodeSDK' in options && options.initializeNodeSDK === false)) {
     const serviceName = options.serviceName ?? 'Gateway';
     const spanProcessors = options.exporters;
-    sdk = new NodeSDK({
+    provider = new WebTracerProvider({
       resource: new Resource({
-        [SEMRESATTRS_SERVICE_NAME]: serviceName,
+        [ATTR_SERVICE_NAME]: serviceName,
       }),
-      spanProcessors: spanProcessors as unknown as NodeSDKConfiguration['spanProcessors'],
-      contextManager,
-      instrumentations: [],
     });
+    provider.register({
+      contextManager,
+    });
+    spanProcessors.forEach(spanProcessor => provider.addSpanProcessor(spanProcessor));
   }
 
   const requestContextMapping = new WeakMap<Request, Context>();
@@ -177,9 +178,8 @@ export function useOpenTelemetry(
         },
         DiagLogLevel.VERBOSE,
       );
-      if (sdk) {
+      if (provider) {
         contextManager.enable();
-        sdk.start();
       }
     },
     onContextBuilding({ extendContext, context }) {
@@ -347,7 +347,7 @@ export function useOpenTelemetry(
       requestContextMapping.delete(request);
     },
     [DisposableSymbols.asyncDispose]() {
-      return sdk?.shutdown?.();
+      return provider?.shutdown?.();
     },
   };
 }

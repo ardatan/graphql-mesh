@@ -5,9 +5,9 @@ describe('useOpenTelemetry', () => {
     it('noop', () => {});
     return;
   }
-  const mockStartSdk = jest.fn();
-  jest.mock('@opentelemetry/sdk-node', () => ({
-    NodeSDK: jest.fn(() => ({ start: mockStartSdk })),
+  const mockRegisterProvider = jest.fn();
+  jest.mock('@opentelemetry/sdk-trace-web', () => ({
+    WebTracerProvider: jest.fn(() => ({ register: mockRegisterProvider })),
   }));
   const {
     createGatewayRuntime,
@@ -17,8 +17,8 @@ describe('useOpenTelemetry', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe('when not passing a custom sdk', () => {
-    it('initializes and starts a new NodeSDK', async () => {
+  describe('when not passing a custom provider', () => {
+    it('initializes and starts a new provider', async () => {
       const { useOpenTelemetry } = await import('../src');
       const upstream = createYoga({
         schema: createSchema({
@@ -67,12 +67,12 @@ describe('useOpenTelemetry', () => {
       expect(response.status).toBe(200);
       const body = await response.json<any>();
       expect(body.data?.hello).toBe('World');
-      expect(mockStartSdk).toHaveBeenCalledTimes(1);
+      expect(mockRegisterProvider).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('when passing a custom sdk', () => {
-    it('does not initialize a new NodeSDK and does not start the provided sdk instance', async () => {
+  describe('when passing a custom provider', () => {
+    it('does not initialize a new provider and does not start the provided provider instance', async () => {
       const { useOpenTelemetry } = await import('../src');
       const upstream = createYoga({
         schema: createSchema({
@@ -118,7 +118,7 @@ describe('useOpenTelemetry', () => {
       expect(response.status).toBe(200);
       const body = await response.json<any>();
       expect(body.data?.hello).toBe('World');
-      expect(mockStartSdk).not.toHaveBeenCalled();
+      expect(mockRegisterProvider).not.toHaveBeenCalled();
     });
   });
 });

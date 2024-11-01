@@ -13,7 +13,7 @@ import {
   type BufferConfig,
   type SpanExporter,
   type SpanProcessor,
-} from '@opentelemetry/sdk-trace-node';
+} from '@opentelemetry/sdk-trace-base';
 
 export type BatchingConfig = boolean | BufferConfig;
 
