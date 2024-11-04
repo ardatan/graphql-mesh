@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-operation-headers
 
+## 1.2.6
+
+### Patch Changes
+
+- [#7875](https://github.com/ardatan/graphql-mesh/pull/7875)
+  [`bc81857`](https://github.com/ardatan/graphql-mesh/commit/bc81857ee8b632e9aedc9cd96668aa7e2abde1af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/gateway@^1.4.8` ↗︎](https://www.npmjs.com/package/@graphql-hive/gateway/v/1.4.8)
+    (from `^1.4.1`, in `peerDependencies`)
+
 ## 1.2.5
 
 ### Patch Changes
