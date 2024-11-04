@@ -5801,9 +5801,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/gateway-runtime@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@graphql-hive/gateway-runtime@npm:1.1.2"
+"@graphql-hive/gateway-runtime@npm:1.1.3":
+  version: 1.1.3
+  resolution: "@graphql-hive/gateway-runtime@npm:1.1.3"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
     "@envelop/disable-introspection": "npm:^6.0.0"
@@ -5816,7 +5816,6 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.6"
     "@graphql-mesh/store": "npm:^0.102.10"
     "@graphql-mesh/transport-common": "npm:^0.7.7"
-    "@graphql-mesh/transport-http": "npm:^0.6.7"
     "@graphql-mesh/types": "npm:^0.102.10"
     "@graphql-mesh/utils": "npm:^0.102.10"
     "@graphql-tools/batch-delegate": "npm:^9.0.13"
@@ -5841,17 +5840,17 @@ __metadata:
   peerDependenciesMeta:
     "@parcel/watcher":
       optional: true
-  checksum: 10c0/0bd5bf8be3f16b9f535ec4d7f86abbb9b6006ec0d02cb3e28cce2a7e73bd4b626f58a8f7bca9163a03fbb37993c5171d161ea7fa70ef9691e952c2adb3a75a2e
+  checksum: 10c0/606a4f2feb84d06cb12e0b87ef0a76eea414591a9f6334dc9a9ad4b8dda50cacf7c1120a14f5d3cc3b85c8e0637a667bca182ddd49e66f9da2d4832fc3eedd7f
   languageName: node
   linkType: hard
 
-"@graphql-hive/gateway@npm:1.4.8, @graphql-hive/gateway@npm:^1.4.8":
-  version: 1.4.8
-  resolution: "@graphql-hive/gateway@npm:1.4.8"
+"@graphql-hive/gateway@npm:1.4.9, @graphql-hive/gateway@npm:^1.4.8":
+  version: 1.4.9
+  resolution: "@graphql-hive/gateway@npm:1.4.9"
   dependencies:
     "@commander-js/extra-typings": "npm:^12.1.0"
     "@envelop/core": "npm:^5.0.2"
-    "@graphql-hive/gateway-runtime": "npm:1.1.2"
+    "@graphql-hive/gateway-runtime": "npm:1.1.3"
     "@graphql-mesh/cache-cfw-kv": "npm:^0.102.6"
     "@graphql-mesh/cache-localforage": "npm:^0.102.6"
     "@graphql-mesh/cache-redis": "npm:^0.102.6"
@@ -5868,6 +5867,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.102.6"
     "@graphql-mesh/plugin-snapshot": "npm:^0.102.6"
     "@graphql-mesh/store": "npm:^0.102.10"
+    "@graphql-mesh/transport-http": "npm:^0.6.7"
     "@graphql-mesh/transport-http-callback": "npm:^0.5.2"
     "@graphql-mesh/transport-ws": "npm:^0.4.0"
     "@graphql-mesh/types": "npm:^0.102.10"
@@ -5888,7 +5888,7 @@ __metadata:
       optional: true
   bin:
     hive-gateway: ./dist/bin.js
-  checksum: 10c0/4dc5582e0a1c81947847041231d77b6ace17297cfe0b1c13148fba22cc3c260675207a24486fec5436133f15212307914b188dc5e3f5089ae221694f0da6786a
+  checksum: 10c0/57a0c547d439e1990a5e0f4e568e7654641dbccb6d03c0006865125a966e085574abef4ed77f09bb527709fa6ac23f85704a1c3467f5c39640078e0ac1c79aac
   languageName: node
   linkType: hard
 
@@ -21026,7 +21026,7 @@ __metadata:
     "@graphql-codegen/cli": "npm:5.0.3"
     "@graphql-codegen/typescript": "npm:4.1.1"
     "@graphql-codegen/typescript-resolvers": "npm:4.4.0"
-    "@graphql-hive/gateway": "npm:1.4.8"
+    "@graphql-hive/gateway": "npm:1.4.9"
     "@graphql-mesh/compose-cli": "npm:1.1.6"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.8.0"
     "@types/node": "npm:22.8.7"
