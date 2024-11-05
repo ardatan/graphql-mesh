@@ -12,7 +12,11 @@ export async function getLocalHostName(port: number) {
       try {
         const res = await fetch(`http://${hostname}:${port}`, { signal: timeoutSignal });
         await res.text();
-      } catch (e) {
+      } catch (err) {
+        const errString = err.toString().toLowerCase();
+        if (errString.includes('unsupported') || errString.includes('parse error')) {
+          return hostname;
+        }
         if (process.env.DEBUG) {
           console.log(`Failed to connect to hostname: ${hostname}`);
         }

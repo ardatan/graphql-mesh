@@ -428,14 +428,14 @@ export function createTenv(cwd: string): Tenv {
             (err, res) => (err ? reject(err) : resolve(res)),
             pipeLogs
               ? e => {
-                  process.stderr.write(JSON.stringify(e));
+                  process.stderr.write(JSON.stringify(e) + '\n\n');
                 }
               : undefined,
           );
         });
       } else {
         if (pipeLogs) {
-          process.stderr.write(`Image "${image}" exists, pull skipped`);
+          process.stderr.write(`Image "${image}" exists, pull skipped\n\n`);
         }
       }
 
@@ -728,7 +728,8 @@ async function waitForPort(port: number, signal: AbortSignal) {
         await fetch(`http://${localHostname}:${port}`, { signal });
         break outer;
       } catch (err) {
-        if (err.toString().toLowerCase().includes('unsupported')) {
+        const errString = err.toString().toLowerCase();
+        if (errString.includes('unsupported') || errString.includes('parse error')) {
           break outer;
         }
       }

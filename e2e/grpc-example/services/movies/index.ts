@@ -1,4 +1,5 @@
 import { dirname, join } from 'path';
+import { setTimeout } from 'timers/promises';
 import { fileURLToPath } from 'url';
 import { Opts } from '@e2e/opts';
 import {
@@ -82,7 +83,7 @@ async function startServer(subscriptionInterval = 1000, debug = false): Promise<
         call.end();
       });
       for (const movie of Movies) {
-        await new Promise(resolve => setTimeout(resolve, subscriptionInterval));
+        await setTimeout(subscriptionInterval);
         if (call.cancelled || call.destroyed) {
           logger('call ended');
           return;
