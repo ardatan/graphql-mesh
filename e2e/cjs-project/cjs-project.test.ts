@@ -1,6 +1,5 @@
 import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
-import { getLocalHostName } from '../../packages/testing/getLocalHostName';
 
 const { serve, compose, fs } = createTenv(__dirname);
 
@@ -8,8 +7,7 @@ it('should serve', async () => {
   const proc = await serve({
     supergraph: await fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
   });
-  const hostname = await getLocalHostName(proc.port);
-  const res = await fetch(`http://${hostname}:${proc.port}/healthcheck`);
+  const res = await fetch(`http://${proc.hostname}:${proc.port}/healthcheck`);
   expect(res.ok).toBeTruthy();
 });
 

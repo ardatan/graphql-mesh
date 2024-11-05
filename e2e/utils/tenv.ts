@@ -62,6 +62,7 @@ export interface Proc extends AsyncDisposable {
 }
 
 export interface Server extends Proc {
+  hostname: string;
   port: number;
 }
 
@@ -253,6 +254,9 @@ export function createTenv(cwd: string): Tenv {
       const serve: Serve = {
         ...proc,
         port,
+        get hostname() {
+          return hostName;
+        },
         async execute({ headers, ...args }) {
           const res = await fetch(`http://${hostName || 'localhost'}:${port}/graphql`, {
             method: 'POST',
@@ -361,8 +365,16 @@ export function createTenv(cwd: string): Tenv {
         servePort && createPortOpt(servePort),
         ...args,
       );
-      const service: Service = { ...proc, name, port };
-      await Promise.race([
+      let hostName: string;
+      const service: Service = {
+        ...proc,
+        name,
+        get hostname() {
+          return hostName;
+        },
+        port,
+      };
+      const hostnames = await Promise.race([
         waitForExit
           .then(() =>
             Promise.reject(
@@ -375,6 +387,7 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(service, ctrl.signal),
       ]);
+      hostName = hostnames?.[0];
       return service;
     },
     async container({
@@ -501,10 +514,15 @@ export function createTenv(cwd: string): Tenv {
 
       await ctr.start();
 
+      let hostname: string;
+
       const container: Container = {
         containerName,
         name,
         port: hostPort,
+        get hostname() {
+          return hostname;
+        },
         additionalPorts,
         getStd() {
           // TODO: distinguish stdout and stderr
@@ -569,7 +587,8 @@ export function createTenv(cwd: string): Tenv {
           }
         }
       } else {
-        await waitForReachable(container, ctrl.signal);
+        const hostnames = await waitForReachable(container, ctrl.signal);
+        hostname = hostnames?.[0];
       }
       return container;
     },

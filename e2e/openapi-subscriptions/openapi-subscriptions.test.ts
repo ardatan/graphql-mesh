@@ -1,7 +1,6 @@
 import { createClient } from 'graphql-sse';
 import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
-import { getLocalHostName } from '../../packages/testing/getLocalHostName';
 
 const { compose, service, serve } = createTenv(__dirname);
 
@@ -15,9 +14,8 @@ it('should compose the appropriate schema', async () => {
 
 it('should listen for webhooks', async () => {
   const { output } = await compose({ output: 'graphql', services: [await service('api')] });
-  const { execute, port } = await serve({ supergraph: output });
+  const { hostname, execute, port } = await serve({ supergraph: output });
 
-  const hostname = await getLocalHostName(port);
   const res = await execute({
     query: /* GraphQL */ `
       mutation StartWebhook($url: URL!) {
