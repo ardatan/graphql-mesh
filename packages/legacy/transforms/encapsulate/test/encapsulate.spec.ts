@@ -1,7 +1,6 @@
 import { getIntrospectionQuery, parse } from 'graphql';
-import { envelop } from '@envelop/core';
+import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { useSubschema } from '@graphql-mesh/runtime';
 import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { Subschema } from '@graphql-tools/delegate';
@@ -389,12 +388,15 @@ describe('encapsulate', () => {
     }
   });
 
-  // Todo
-  it.skip('should handle subscriptions without wrapSchema', async () => {
+  it('should handle subscriptions', async () => {
     const getEnveloped = envelop({
       plugins: [
-        useSubschema(
-          new Subschema({
+        useEngine({
+          execute: normalizedExecutor,
+          subscribe: normalizedExecutor,
+        }),
+        useSchema(
+          wrapSchema({
             schema,
             transforms: [
               new Transform({
