@@ -248,12 +248,13 @@ export function createTenv(cwd: string): Tenv {
         createPortOpt(port),
       );
 
+      let hostName: string;
+
       const serve: Serve = {
         ...proc,
         port,
         async execute({ headers, ...args }) {
-          const hostName = await getLocalHostName(port);
-          const res = await fetch(`http://${hostName}:${port}/graphql`, {
+          const res = await fetch(`http://${hostName || 'localhost'}:${port}/graphql`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
@@ -275,7 +276,7 @@ export function createTenv(cwd: string): Tenv {
         },
       };
       const ctrl = new AbortController();
-      await Promise.race([
+      const hostnames = await Promise.race([
         waitForExit
           ?.then(() =>
             Promise.reject(
@@ -286,6 +287,7 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(serve, ctrl.signal),
       ]);
+      hostName = hostnames?.[0];
       return serve;
     },
     async compose(opts) {
@@ -724,15 +726,15 @@ export function getAvailablePort(): Promise<number> {
 }
 
 async function waitForPort(port: number, signal: AbortSignal) {
-  outer: while (!signal.aborted) {
+  while (!signal.aborted) {
     for (const localHostname of localHostnames) {
       try {
         await fetch(`http://${localHostname}:${port}`, { signal });
-        break outer;
+        return localHostname;
       } catch (err) {
         const errString = err.toString().toLowerCase();
         if (errString.includes('unsupported') || errString.includes('parse error')) {
-          break outer;
+          return localHostname;
         }
       }
     }
