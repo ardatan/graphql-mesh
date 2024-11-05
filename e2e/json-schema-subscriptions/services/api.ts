@@ -2,6 +2,7 @@ import { createServer } from 'http';
 import { createRouter, Response } from 'fets';
 import { Opts } from '@e2e/opts';
 import { fetch } from '@whatwg-node/fetch';
+import { getLocalHostName } from '../../../packages/testing/getLocalHostName';
 
 const opts = Opts(process.argv);
 
@@ -23,25 +24,28 @@ const app = createRouter<FetchEvent>()
         ...reqBody,
       };
       todos.push(todo);
+      const port = opts.getPort(true);
       waitUntil(
-        fetch(`http://localhost:${opts.getPort(true)}/webhooks/todo_added`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(todo),
-        })
-          .then(res =>
-            res.text().then(resText =>
-              console.log('Webhook payload sent', {
-                status: res.status,
-                statusText: res.statusText,
-                body: resText,
-                headers: Object.fromEntries(res.headers.entries()),
-              }),
-            ),
-          )
-          .catch(err => console.error('Webhook payload failed', err)),
+        getLocalHostName(port).then(hostname =>
+          fetch(`http://${hostname}:${port}/webhooks/todo_added`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(todo),
+          })
+            .then(res =>
+              res.text().then(resText =>
+                console.log('Webhook payload sent', {
+                  status: res.status,
+                  statusText: res.statusText,
+                  body: resText,
+                  headers: Object.fromEntries(res.headers.entries()),
+                }),
+              ),
+            )
+            .catch(err => console.error('Webhook payload failed', err)),
+        ),
       );
       return Response.json(todo);
     },
