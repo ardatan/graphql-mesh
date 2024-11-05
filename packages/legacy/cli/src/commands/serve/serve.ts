@@ -10,6 +10,7 @@ import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import type { GraphQLMeshCLIParams } from '../../index.js';
+import { getMaxConcurrency } from './getMaxConcurency.js';
 import { startNodeHttpServer } from './node-http.js';
 
 function portSelectorFn(sources: [number, number, number], logger: Logger) {
@@ -67,15 +68,7 @@ export async function serveMesh(
 
   let defaultForkNum = 0;
 
-  try {
-    defaultForkNum = os.availableParallelism();
-  } catch (e) {
-    try {
-      defaultForkNum = os.cpus().length;
-    } catch (e) {
-      // ignore
-    }
-  }
+  defaultForkNum = getMaxConcurrency();
 
   if (envFork != null) {
     if (envFork === 'false' || envFork === '0') {
@@ -108,11 +101,20 @@ export async function serveMesh(
       registerTerminateHandler(eventName => worker.kill(eventName));
     }
     logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
+    let diedWorkers = 0;
     cluster.on('exit', (worker, code, signal) => {
       if (!mainProcessKilled) {
         logger.child(`Worker ${worker.id}`).error(`died with ${signal || code}. Restarting...`);
-        const newWorker = cluster.fork();
-        registerTerminateHandler(eventName => newWorker.kill(eventName));
+        diedWorkers++;
+        if (diedWorkers === forkNum) {
+          logger.error('All workers died. Exiting...');
+          process.exit(1);
+        } else {
+          setTimeout(() => {
+            const newWorker = cluster.fork();
+            registerTerminateHandler(eventName => newWorker.kill(eventName));
+          }, 1000);
+        }
       }
     });
   } else {

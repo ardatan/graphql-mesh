@@ -98,8 +98,6 @@ export function startServer(subscriptionInterval = 1000, debug = false): Promise
           reject(error);
           return;
         }
-        server.start();
-
         logger('Server started, listening: 0.0.0.0:' + port);
         resolve(server);
       });
