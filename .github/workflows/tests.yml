@@ -112,9 +112,6 @@ jobs:
           restore-keys: |
             ${{runner.os}}-${{matrix.node-version}}-jest-unit-
 
-      - name: Remove node-libcurl
-        run: rm -rf node_modules/node-libcurl
-
       - name: Prepare for build
         run: yarn prebuild
 
@@ -290,8 +287,6 @@ jobs:
         run: yarn build
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
-      - name: Remove node-libcurl
-        run: rm -rf node_modules/node-libcurl
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
