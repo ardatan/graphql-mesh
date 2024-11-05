@@ -14,7 +14,7 @@ it('should compose the appropriate schema', async () => {
 
 it('should listen for webhooks', async () => {
   const { output } = await compose({ output: 'graphql', services: [await service('api')] });
-  const { execute, port } = await serve({ supergraph: output });
+  const { hostname, execute, port } = await serve({ supergraph: output });
 
   const res = await execute({
     query: /* GraphQL */ `
@@ -25,7 +25,7 @@ it('should listen for webhooks', async () => {
       }
     `,
     variables: {
-      url: `http://localhost:${port.toString()}/callback`,
+      url: `http://${hostname}:${port.toString()}/callback`,
     },
   });
 
@@ -33,7 +33,7 @@ it('should listen for webhooks', async () => {
   expect(subscriptionId).toBeTruthy();
 
   const sse = createClient({
-    url: `http://localhost:${port}/graphql`,
+    url: `http://${hostname}:${port}/graphql`,
     retryAttempts: 0,
     fetchFn: fetch,
   });

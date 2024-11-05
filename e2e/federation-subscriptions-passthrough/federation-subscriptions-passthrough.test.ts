@@ -42,10 +42,10 @@ subscriptionsClientFactories.forEach(([protocol, createClient]) => {
         await service('products'),
         await service('reviews'),
       ]);
-      const { port } = await serve({ supergraph: supergraphFile });
+      const { hostname, port } = await serve({ supergraph: supergraphFile });
 
       client = createClient({
-        url: `http://localhost:${port}/graphql`,
+        url: `http://${hostname}:${port}/graphql`,
         retryAttempts: 0,
         headers,
         connectionParams: headers,
@@ -129,10 +129,10 @@ subscriptionsClientFactories.forEach(([protocol, createClient]) => {
         await service('products'),
         await service('reviews'),
       ]);
-      const { port } = await serve({ supergraph: supergraphFile });
+      const { hostname, port } = await serve({ supergraph: supergraphFile });
 
       client = createClient({
-        url: `http://localhost:${port}/graphql`,
+        url: `http://${hostname}:${port}/graphql`,
         retryAttempts: 0,
         headers,
         connectionParams: headers,

@@ -37,9 +37,9 @@ describe('gRPC Example', () => {
   });
   it('streams movies by cast correctly', async () => {
     const { output } = await compose({ services: [movies], output: 'graphql' });
-    const { port } = await serve({ supergraph: output });
+    const { hostname, port } = await serve({ supergraph: output });
     const executor = buildHTTPExecutor({
-      endpoint: `http://localhost:${port}/graphql`,
+      endpoint: `http://${hostname}:${port}/graphql`,
     });
     const document = parse(/* GraphQL */ `
       query SearchMoviesByCast {
@@ -65,9 +65,9 @@ describe('gRPC Example', () => {
   });
   it('fetches movies by cast as a subscription correctly', async () => {
     const { output } = await compose({ services: [movies], output: 'graphql' });
-    const { port } = await serve({ supergraph: output });
+    const { hostname, port } = await serve({ supergraph: output });
     const executor = buildHTTPExecutor({
-      endpoint: `http://localhost:${port}/graphql`,
+      endpoint: `http://${hostname}:${port}/graphql`,
     });
     const document = parse(/* GraphQL */ `
       subscription SearchMoviesByCast {

@@ -42,10 +42,17 @@ export async function startNodeHttpServer({
     server.once('error', err => reject(err));
     server.listen(port, hostname, () => {
       resolve({
-        stop: () => {
-          server.closeAllConnections();
-          server.close();
-        },
+        stop: () =>
+          new Promise<void>((resolve, reject) => {
+            server.closeAllConnections();
+            server.close(err => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+          }),
       });
     });
   });

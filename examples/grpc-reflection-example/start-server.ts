@@ -27,8 +27,6 @@ export default async function startServer() {
         reject(error);
         return;
       }
-      server.start();
-
       console.log('gRPC Server started, listening: 0.0.0.0:' + port);
       resolve(server);
     });

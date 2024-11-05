@@ -12,5 +12,5 @@ export interface ServerStartOptions {
 }
 
 export interface ServerStartResult {
-  stop: VoidFunction;
+  stop: () => Promise<void> | void;
 }

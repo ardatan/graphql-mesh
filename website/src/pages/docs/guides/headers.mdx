@@ -17,16 +17,6 @@ in this doc.
 
 </Callout>
 
-<Callout emoji="⚠️" type="warning">
-  Using (very) long headers?
-
-Under the hood, Mesh is using `uWebSockets` to serve the GraphQL API. `uWebSockets` has a length
-limit, and responds with 431 code if the header is too long. In case you are using long headers, you
-may need to set `UWS_HTTP_MAX_HEADERS_SIZE` environment variable with a higher value. For example,
-you can set it to 16384 (16KB).
-
-</Callout>
-
 ## Setting configurations
 
 There are two headers-designated configuration fields under each handler - `schemaHeaders` and

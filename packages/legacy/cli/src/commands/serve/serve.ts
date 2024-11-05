@@ -8,9 +8,10 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
+import { mapMaybePromise } from '@graphql-mesh/utils';
 import type { GraphQLMeshCLIParams } from '../../index.js';
+import { getMaxConcurrency } from './getMaxConcurency.js';
 import { startNodeHttpServer } from './node-http.js';
-import { startuWebSocketsServer } from './uWebsockets.js';
 
 function portSelectorFn(sources: [number, number, number], logger: Logger) {
   const port = sources.find(source => Boolean(source)) || 4000;
@@ -67,15 +68,7 @@ export async function serveMesh(
 
   let defaultForkNum = 0;
 
-  try {
-    defaultForkNum = os.availableParallelism();
-  } catch (e) {
-    try {
-      defaultForkNum = os.cpus().length;
-    } catch (e) {
-      // ignore
-    }
-  }
+  defaultForkNum = getMaxConcurrency();
 
   if (envFork != null) {
     if (envFork === 'false' || envFork === '0') {
@@ -108,11 +101,20 @@ export async function serveMesh(
       registerTerminateHandler(eventName => worker.kill(eventName));
     }
     logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
+    let diedWorkers = 0;
     cluster.on('exit', (worker, code, signal) => {
       if (!mainProcessKilled) {
         logger.child(`Worker ${worker.id}`).error(`died with ${signal || code}. Restarting...`);
-        const newWorker = cluster.fork();
-        registerTerminateHandler(eventName => newWorker.kill(eventName));
+        diedWorkers++;
+        if (diedWorkers === forkNum) {
+          logger.error('All workers died. Exiting...');
+          process.exit(1);
+        } else {
+          setTimeout(() => {
+            const newWorker = cluster.fork();
+            registerTerminateHandler(eventName => newWorker.kill(eventName));
+          }, 1000);
+        }
       }
     });
   } else {
@@ -137,18 +139,7 @@ export async function serveMesh(
       playgroundTitle,
     });
 
-    let uWebSocketsAvailable = false;
-    try {
-      await import('uWebSockets.js');
-      uWebSocketsAvailable = true;
-    } catch (err) {
-      logger.warn(
-        'uWebSockets.js is not available currently so the server will fallback to node:http.',
-      );
-    }
-
-    const startServer = uWebSocketsAvailable ? startuWebSocketsServer : startNodeHttpServer;
-    const { stop } = await startServer({
+    const { stop } = await startNodeHttpServer({
       meshHTTPHandler,
       getBuiltMesh,
       sslCredentials,
@@ -157,11 +148,12 @@ export async function serveMesh(
       port,
     });
 
-    registerTerminateHandler(async eventName => {
+    registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}  💀`);
       eventLogger.debug(`Stopping HTTP Server`);
-      stop();
-      eventLogger.debug(`HTTP Server has been stopped`);
+      mapMaybePromise(stop(), () => {
+        eventLogger.debug(`HTTP Server has been stopped`);
+      });
     });
     if (browser) {
       open(

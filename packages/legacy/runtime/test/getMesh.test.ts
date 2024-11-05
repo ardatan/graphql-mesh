@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { buildSchema, OperationTypeNode, parse, validateSchema } from 'graphql';
+import { buildSchema, parse, validateSchema } from 'graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import JsonSchemaHandler from '@graphql-mesh/json-schema';
@@ -170,7 +170,6 @@ describe('getMesh', () => {
     expect(result).toMatchInlineSnapshot(`
       {
         "data": {},
-        "stringify": [Function],
       }
     `);
   });
@@ -224,7 +223,6 @@ describe('getMesh', () => {
         "data": {
           "strikeBack": "Hello from serviceFoo",
         },
-        "stringify": [Function],
       }
     `);
   });
@@ -278,7 +276,6 @@ describe('getMesh', () => {
         "errors": [
           [GraphQLError: This is an error],
         ],
-        "stringify": [Function],
       }
     `);
 

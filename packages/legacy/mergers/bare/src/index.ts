@@ -67,7 +67,7 @@ export default class BareMerger implements MeshMerger {
     };
   }
 
-  async getUnifiedSchema({ rawSources, typeDefs, resolvers }: MeshMergerContext) {
+  getUnifiedSchema({ rawSources, typeDefs, resolvers }: MeshMergerContext) {
     if (rawSources.length === 1) {
       if (
         (rawSources[0].executor || rawSources[0].transforms?.length) &&

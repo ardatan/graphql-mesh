@@ -1,7 +1,7 @@
-import type { ASTNode, GraphQLInputType, GraphQLSchema } from 'graphql';
-import { BREAK, getNamedType, GraphQLInputObjectType, visit } from 'graphql';
+import type { ASTNode } from 'graphql';
+import { BREAK, visit } from 'graphql';
 import { getDocumentString, isGraphQLError } from '@envelop/core';
-import { MapperKind, mapSchema, memoize1 } from '@graphql-tools/utils';
+import { memoize1 } from '@graphql-tools/utils';
 
 export const isStreamOperation = memoize1(function isStreamOperation(astNode: ASTNode): boolean {
   if (globalThis.process?.env?.DISABLE_JIT) {
@@ -23,49 +23,6 @@ export const isStreamOperation = memoize1(function isStreamOperation(astNode: AS
     });
   }
   return isStream;
-});
-
-export const isGraphQLJitCompatible = memoize1(function isGraphQLJitCompatible(
-  schema: GraphQLSchema,
-) {
-  if (globalThis.process?.env?.DISABLE_JIT) {
-    return false;
-  }
-  let compatibleSchema = true;
-  mapSchema(schema, {
-    [MapperKind.INPUT_OBJECT_TYPE]: type => {
-      const seenTypes = new Set<string>();
-      function visitInputType(type: GraphQLInputObjectType) {
-        if (seenTypes.has(type.toString())) {
-          compatibleSchema = false;
-          return false;
-        }
-        seenTypes.add(type.toString());
-        const fields = type.getFields();
-        for (const field of Object.values(fields)) {
-          const fieldType = getNamedType(field.type) as GraphQLInputType;
-          if (fieldType instanceof GraphQLInputObjectType) {
-            if (!visitInputType(fieldType)) {
-              return false;
-            }
-          }
-        }
-        return true;
-      }
-      visitInputType(type);
-      return type;
-    },
-  });
-  if (compatibleSchema) {
-    try {
-      // eslint-disable-next-line no-new-func
-      const a = new Function('return true');
-      return a();
-    } catch (e) {
-      return false;
-    }
-  }
-  return false;
 });
 
 export function getOriginalError(error: Error) {

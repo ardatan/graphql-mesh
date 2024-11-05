@@ -63,6 +63,23 @@ exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-
 
 exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-3 1`] = `
 {
+  "hasNext": true,
+  "incremental": [
+    {
+      "items": [
+        null,
+      ],
+      "path": [
+        "exampleSearchMoviesByCast",
+        2,
+      ],
+    },
+  ],
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-4 1`] = `
+{
   "hasNext": false,
 }
 `;
@@ -240,6 +257,5 @@ exports[`gRPC Example should get movies correctly: get-movies-grpc-example-resul
       ],
     },
   },
-  "stringify": [Function],
 }
 `;

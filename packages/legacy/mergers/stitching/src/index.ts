@@ -15,7 +15,7 @@ export default class StitchingMerger implements MeshMerger {
     this.logger = options.logger;
   }
 
-  async getUnifiedSchema(context: MeshMergerContext) {
+  getUnifiedSchema(context: MeshMergerContext) {
     const { rawSources, typeDefs, resolvers } = context;
     this.logger.debug(`Stitching the source schemas`);
     const unifiedSchema = stitchSchemas({
