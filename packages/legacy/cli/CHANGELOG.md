@@ -1,5 +1,28 @@
 # @graphql-mesh/cli
 
+## 0.97.0
+
+### Minor Changes
+
+- [#7887](https://github.com/ardatan/graphql-mesh/pull/7887)
+  [`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482)
+  Thanks [@ardatan](https://github.com/ardatan)! - Relax runtime and CLI packages, remove
+  node-libcurl and uWebSockets
+
+### Patch Changes
+
+- [#7887](https://github.com/ardatan/graphql-mesh/pull/7887)
+  [`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Removed dependency
+    [`node-libcurl@npm:@ardatan/node-libcurl@^4.0.2` ↗︎](https://www.npmjs.com/package/node-libcurl/v/4.0.2)
+    (from `dependencies`)
+- Updated dependencies
+  [[`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482)]:
+  - @graphql-mesh/runtime@0.104.0
+  - @graphql-mesh/config@0.105.0
+  - @graphql-mesh/http@0.104.0
+
 ## 0.96.12
 
 ### Patch Changes
