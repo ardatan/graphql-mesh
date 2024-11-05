@@ -16,9 +16,9 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
-import { localHostnames } from '../../packages/testing/getLocalHostName';
+import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
 import { leftoverStack } from './leftoverStack';
-import { createOpt, createPortOpt, createServicePortOpt, getLocalHostName } from './opts';
+import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
 
 export const retries = 120,
@@ -62,6 +62,7 @@ export interface Proc extends AsyncDisposable {
 }
 
 export interface Server extends Proc {
+  hostname: string;
   port: number;
 }
 
@@ -248,11 +249,16 @@ export function createTenv(cwd: string): Tenv {
         createPortOpt(port),
       );
 
+      let hostName: string;
+
       const serve: Serve = {
         ...proc,
         port,
+        get hostname() {
+          return hostName;
+        },
         async execute({ headers, ...args }) {
-          const res = await fetch(`http://localhost:${port}/graphql`, {
+          const res = await fetch(`http://${hostName || 'localhost'}:${port}/graphql`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
@@ -274,7 +280,7 @@ export function createTenv(cwd: string): Tenv {
         },
       };
       const ctrl = new AbortController();
-      await Promise.race([
+      const hostnames = await Promise.race([
         waitForExit
           ?.then(() =>
             Promise.reject(
@@ -285,6 +291,7 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(serve, ctrl.signal),
       ]);
+      hostName = hostnames?.[0];
       return serve;
     },
     async compose(opts) {
@@ -358,8 +365,16 @@ export function createTenv(cwd: string): Tenv {
         servePort && createPortOpt(servePort),
         ...args,
       );
-      const service: Service = { ...proc, name, port };
-      await Promise.race([
+      let hostName: string;
+      const service: Service = {
+        ...proc,
+        name,
+        get hostname() {
+          return hostName;
+        },
+        port,
+      };
+      const hostnames = await Promise.race([
         waitForExit
           .then(() =>
             Promise.reject(
@@ -372,6 +387,7 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(service, ctrl.signal),
       ]);
+      hostName = hostnames?.[0];
       return service;
     },
     async container({
@@ -428,14 +444,14 @@ export function createTenv(cwd: string): Tenv {
             (err, res) => (err ? reject(err) : resolve(res)),
             pipeLogs
               ? e => {
-                  process.stderr.write(JSON.stringify(e));
+                  process.stderr.write(JSON.stringify(e) + '\n\n');
                 }
               : undefined,
           );
         });
       } else {
         if (pipeLogs) {
-          process.stderr.write(`Image "${image}" exists, pull skipped`);
+          process.stderr.write(`Image "${image}" exists, pull skipped\n\n`);
         }
       }
 
@@ -498,10 +514,15 @@ export function createTenv(cwd: string): Tenv {
 
       await ctr.start();
 
+      let hostname: string;
+
       const container: Container = {
         containerName,
         name,
         port: hostPort,
+        get hostname() {
+          return hostname;
+        },
         additionalPorts,
         getStd() {
           // TODO: distinguish stdout and stderr
@@ -566,16 +587,18 @@ export function createTenv(cwd: string): Tenv {
           }
         }
       } else {
-        await waitForReachable(container, ctrl.signal);
+        const hostnames = await waitForReachable(container, ctrl.signal);
+        hostname = hostnames?.[0];
       }
       return container;
     },
     async composeWithApollo(services) {
       const subgraphs: ServiceEndpointDefinition[] = [];
       for (const service of services) {
+        const hostname = await getLocalHostName(service.port);
         subgraphs.push({
           name: service.name,
-          url: `http://localhost:${service.port}/graphql`,
+          url: `http://${hostname}:${service.port}/graphql`,
         });
       }
 
@@ -722,14 +745,15 @@ export function getAvailablePort(): Promise<number> {
 }
 
 async function waitForPort(port: number, signal: AbortSignal) {
-  outer: while (!signal.aborted) {
+  while (!signal.aborted) {
     for (const localHostname of localHostnames) {
       try {
         await fetch(`http://${localHostname}:${port}`, { signal });
-        break outer;
+        return localHostname;
       } catch (err) {
-        if (err.toString().toLowerCase().includes('unsupported')) {
-          break outer;
+        const errString = err.toString().toLowerCase();
+        if (errString.includes('unsupported') || errString.includes('parse error')) {
+          return localHostname;
         }
       }
     }

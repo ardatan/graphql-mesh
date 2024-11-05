@@ -40,9 +40,6 @@
     "@graphql-mesh/utils": "^0.102.11",
     "@omnigraph/sqlite": "^0.6.11"
   },
-  "devDependencies": {
-    "sqlite3": "^5.1.7"
-  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

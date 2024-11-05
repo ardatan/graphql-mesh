@@ -59,6 +59,5 @@ exports[`Batching Example should give correct response for the batched example q
       "name": "John Doe",
     },
   },
-  "stringify": [Function],
 }
 `;

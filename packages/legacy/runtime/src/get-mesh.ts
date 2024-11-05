@@ -2,7 +2,6 @@ import type { DocumentNode, GraphQLObjectType, GraphQLSchema, OperationTypeNode 
 import { getOperationAST, specifiedRules, validate } from 'graphql';
 import type { Plugin } from '@envelop/core';
 import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
-import { useGraphQlJit } from '@envelop/graphql-jit';
 import { process } from '@graphql-mesh/cross-helpers';
 import type {
   GraphQLOperation,
@@ -39,12 +38,12 @@ import {
   mapAsyncIterator,
   memoize1,
 } from '@graphql-tools/utils';
+import { wrapSchema } from '@graphql-tools/wrap';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
-import { useSubschema } from './useSubschema.js';
-import { getOriginalError, isGraphQLJitCompatible, isStreamOperation } from './utils.js';
+import { getOriginalError } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -249,36 +248,21 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   let inContextSDK: Record<string, any>;
 
-  let subschema: Subschema;
+  let schema: GraphQLSchema = unifiedSubschema.schema;
 
   if (unifiedSubschema.executor != null || unifiedSubschema.transforms?.length) {
-    subschema = new Subschema(unifiedSubschema);
+    schema = wrapSchema(unifiedSubschema);
   }
 
   const plugins = [
     useEngine({
       execute: normalizedExecutor,
+      subscribe: normalizedExecutor,
       validate,
       parse: parseWithCache,
       specifiedRules,
     }),
-    ...(subschema
-      ? [useSubschema(new Subschema(unifiedSubschema))]
-      : [
-          useSchema(unifiedSubschema.schema),
-          useGraphQlJit(
-            {
-              // TODO: Disable for now
-              customJSONSerializer: false,
-              disableLeafSerialization: true,
-            },
-            {
-              enableIf(args) {
-                return isGraphQLJitCompatible(args.schema) && !isStreamOperation(args.document);
-              },
-            },
-          ),
-        ]),
+    useSchema(schema),
     useExtendContext(() => {
       if (!inContextSDK) {
         const onDelegateHooks: OnDelegateHook<any>[] = [];
@@ -287,12 +271,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
             onDelegateHooks.push(plugin.onDelegate);
           }
         }
-        inContextSDK = getInContextSDK(
-          subschema ? subschema.transformedSchema : unifiedSubschema.schema,
-          rawSources,
-          logger,
-          onDelegateHooks,
-        );
+        inContextSDK = getInContextSDK(schema, rawSources, logger, onDelegateHooks);
       }
       return inContextSDK;
     }),
@@ -391,9 +370,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   return makeDisposable(
     {
-      get schema() {
-        return subschema ? subschema.transformedSchema : unifiedSubschema.schema;
-      },
+      schema,
       rawSources,
       cache,
       pubsub,
