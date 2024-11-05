@@ -15,7 +15,7 @@ it('should compose the appropriate schema', async () => {
       const servePort = await getAvailablePort();
       const api = await service('api', { servePort });
       const { output } = await compose({ output: 'graphql', services: [api] });
-      const { execute } = await serve({ supergraph: output, port: servePort });
+      const { hostname, execute } = await serve({ supergraph: output, port: servePort });
 
       await expect(
         execute({
@@ -37,7 +37,7 @@ it('should compose the appropriate schema', async () => {
 `);
 
       const sse = createClient({
-        url: `http://localhost:${servePort}/graphql`,
+        url: `http://${hostname}:${servePort}/graphql`,
         retryAttempts: 0,
         fetchFn: fetch,
       });
