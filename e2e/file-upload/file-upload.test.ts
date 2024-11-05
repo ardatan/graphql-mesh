@@ -1,5 +1,6 @@
 import { createTenv } from '@e2e/tenv';
 import { fetch, File, FormData } from '@whatwg-node/fetch';
+import { getLocalHostName } from '../../packages/testing/getLocalHostName';
 
 const { compose, serve, service } = createTenv(__dirname);
 
@@ -23,7 +24,8 @@ it('should upload file', async () => {
   );
   form.append('map', JSON.stringify({ 0: ['variables.file'] }));
   form.append('0', new File(['Hello World!'], 'hello.txt', { type: 'text/plain' }));
-  const res = await fetch(`http://localhost:${port}/graphql`, {
+  const hostname = await getLocalHostName(port);
+  const res = await fetch(`http://${hostname}:${port}/graphql`, {
     method: 'POST',
     body: form,
   });
