@@ -1,5 +1,14 @@
 # @graphql-mesh/runtime
 
+## 0.104.0
+
+### Minor Changes
+
+- [#7887](https://github.com/ardatan/graphql-mesh/pull/7887)
+  [`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482)
+  Thanks [@ardatan](https://github.com/ardatan)! - Relax runtime and CLI packages, remove
+  node-libcurl and uWebSockets
+
 ## 0.103.12
 
 ### Patch Changes
