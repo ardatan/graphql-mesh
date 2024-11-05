@@ -1,5 +1,13 @@
 # @graphql-mesh/urql-exchange
 
+## 0.104.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482)]:
+  - @graphql-mesh/runtime@0.104.0
+
 ## 0.103.12
 
 ### Patch Changes
