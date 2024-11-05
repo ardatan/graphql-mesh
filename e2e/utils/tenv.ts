@@ -16,9 +16,9 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
-import { localHostnames } from '../../packages/testing/getLocalHostName';
+import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
 import { leftoverStack } from './leftoverStack';
-import { createOpt, createPortOpt, createServicePortOpt, getLocalHostName } from './opts';
+import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
 
 export const retries = 120,
@@ -252,7 +252,8 @@ export function createTenv(cwd: string): Tenv {
         ...proc,
         port,
         async execute({ headers, ...args }) {
-          const res = await fetch(`http://localhost:${port}/graphql`, {
+          const hostName = await getLocalHostName(port);
+          const res = await fetch(`http://${hostName}:${port}/graphql`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
@@ -573,9 +574,10 @@ export function createTenv(cwd: string): Tenv {
     async composeWithApollo(services) {
       const subgraphs: ServiceEndpointDefinition[] = [];
       for (const service of services) {
+        const hostname = await getLocalHostName(service.port);
         subgraphs.push({
           name: service.name,
-          url: `http://localhost:${service.port}/graphql`,
+          url: `http://${hostname}:${service.port}/graphql`,
         });
       }
 
