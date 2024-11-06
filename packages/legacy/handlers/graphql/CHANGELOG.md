@@ -1,5 +1,12 @@
 # @graphql-mesh/graphql
 
+## 0.102.14
+
+### Patch Changes
+
+- [`4d1893d`](https://github.com/ardatan/graphql-mesh/commit/4d1893da99ea0bc18a906c70fa5560a4ad6ccc62)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle interpolation on `source`
+
 ## 0.102.13
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-mesh/compose-cli
 
+## 1.1.7
+
+### Patch Changes
+
+- [`56e7b60`](https://github.com/ardatan/graphql-mesh/commit/56e7b602ec8a17b52127eecb3457cf16e6030ae9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Pass `ignoreSemanticConventions` to the
+  composition
+
 ## 1.1.6
 
 ### Patch Changes
