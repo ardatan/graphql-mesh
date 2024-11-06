@@ -183,7 +183,12 @@ export default class GraphQLHandler implements MeshHandler {
     const schemaHeadersFactory = getInterpolatedHeadersFactory(
       httpSourceConfig.schemaHeaders || {},
     );
-    if (httpSourceConfig.source) {
+    const interpolatedSourcePath =
+      httpSourceConfig.source &&
+      stringInterpolator.parse(httpSourceConfig.source, {
+        env: process.env,
+      });
+    if (interpolatedSourcePath) {
       const opts = {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
@@ -191,10 +196,10 @@ export default class GraphQLHandler implements MeshHandler {
         fetch: this.fetchFn,
         logger: this.logger,
       };
-      if (!isUrl(httpSourceConfig.source)) {
+      if (!isUrl(interpolatedSourcePath)) {
         return this.nonExecutableSchema.getWithSet(async () => {
           const sdlOrIntrospection = await readFile<string | IntrospectionQuery | DocumentNode>(
-            httpSourceConfig.source,
+            interpolatedSourcePath,
             opts,
           );
           return this.getSchemaFromContent(sdlOrIntrospection);
@@ -204,7 +209,7 @@ export default class GraphQLHandler implements MeshHandler {
         env: process.env,
       });
       const sdlOrIntrospection = await readUrl<string | IntrospectionQuery | DocumentNode>(
-        httpSourceConfig.source,
+        interpolatedSourcePath,
         {
           ...opts,
           headers,
