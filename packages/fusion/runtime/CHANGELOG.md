@@ -1,5 +1,12 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.10.1
+
+### Patch Changes
+
+- [`9975782`](https://github.com/ardatan/graphql-mesh/commit/9975782984a2cf564f835055669a35b262eaefc7)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the signature of sdk requester
+
 ## 0.10.0
 
 ### Patch Changes
