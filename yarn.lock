@@ -3800,6 +3800,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/openapi-rename@workspace:e2e/openapi-rename":
+  version: 0.0.0-use.local
+  resolution: "@e2e/openapi-rename@workspace:e2e/openapi-rename"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^1.4.8"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions"
