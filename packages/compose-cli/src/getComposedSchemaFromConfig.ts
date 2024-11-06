@@ -89,7 +89,9 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
     }
   }
   if (config.subgraph) {
-    const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphConfigsForComposition);
+    const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphConfigsForComposition, {
+      ignoreSemanticConventions: config.ignoreSemanticConventions,
+    });
     const subgraph = annotatedSubgraphs.find(sg => sg.name === config.subgraph);
     if (!subgraph) {
       logger.error(`Subgraph ${config.subgraph} not found`);
