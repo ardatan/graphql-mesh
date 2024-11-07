@@ -399,6 +399,11 @@ const handlerInfoMap = {
     oldPackageName: '@graphql-mesh/raml',
     importName: 'loadRAMLSubgraph',
   },
+  openapi: {
+    packageName: '@omnigraph/openapi',
+    oldPackageName: '@graphql-mesh/openapi',
+    importName: 'loadOpenAPISubgraph',
+  },
   soap: {
     packageName: '@omnigraph/soap',
     oldPackageName: '@graphql-mesh/soap',
