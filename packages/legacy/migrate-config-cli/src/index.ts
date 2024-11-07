@@ -53,7 +53,9 @@ check Hive Gateway's docs to consume a supergraph.`,
     const handlerConfig = legacySource.handler[handlerName];
     const handlerInfo = handlerInfoMap[handlerName];
     if (!handlerInfo) {
-      console.error(`Handler ${handlerName} is not supported in Mesh Compose CLI`);
+      console.error(
+        `Handler ${handlerName} is not supported currently in Mesh Migrate CLI, please do the migration manually.`,
+      );
       process.exit(1);
     }
     addImport(importMap, handlerInfo.packageName, handlerInfo.importName);
