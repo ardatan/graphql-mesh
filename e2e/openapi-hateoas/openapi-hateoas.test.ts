@@ -1,8 +1,9 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve } = createTenv(__dirname);
-
-it('should compose', async () => {
-  const { result } = await compose({ output: 'graphql' });
-  expect(result).toMatchSnapshot();
+describe('OpenAPI HATEOAS', () => {
+  const { compose, serve, service } = createTenv(__dirname);
+  it('composes the schema', async () => {
+    const { result } = await compose({ output: 'graphql' });
+    expect(result).toMatchSnapshot();
+  });
 });

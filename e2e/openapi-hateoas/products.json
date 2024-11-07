@@ -75,7 +75,7 @@
           },
           {
             "rel": "supplier",
-            "href": "/suppliers/{id}"
+            "href": "/suppliers/{supplierId}"
           }
         ]
       },

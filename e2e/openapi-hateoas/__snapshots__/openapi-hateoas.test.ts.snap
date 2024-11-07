@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should compose 1`] = `
+exports[`OpenAPI HATEOAS composes the schema 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@httpOperation", "@transport", "@merge", "@extraSchemaDefinitionDirective"]) {
   query: Query
 }
@@ -73,7 +73,7 @@ type Product @join__type(graph: PRODUCTS, key: "id") {
   price: Float
   supplierId: Int
   self: Product @resolveTo(sourceName: "Products", sourceTypeName: "Query", sourceFieldName: "getProductById", requiredSelectionSet: "{ id }", sourceArgs: {id: "{root.id}"}) @additionalField
-  supplier: Supplier @resolveTo(sourceName: "Suppliers", sourceTypeName: "Query", sourceFieldName: "getSupplierById", requiredSelectionSet: "{ id }", sourceArgs: {id: "{root.id}"}) @additionalField
+  supplier: Supplier @resolveTo(sourceName: "Suppliers", sourceTypeName: "Query", sourceFieldName: "getSupplierById", requiredSelectionSet: "{ supplierId }", sourceArgs: {id: "{root.supplierId}"}) @additionalField
 }
 
 type ProductLinks @join__type(graph: PRODUCTS) {
