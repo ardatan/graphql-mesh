@@ -1,5 +1,12 @@
 # @graphql-mesh/migrate-config-cli
 
+## 1.2.2
+
+### Patch Changes
+
+- [`c365684`](https://github.com/ardatan/graphql-mesh/commit/c3656845e8f469c83410b8f57b11993a3f04facb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix for openapi support
+
 ## 1.2.1
 
 ### Patch Changes
