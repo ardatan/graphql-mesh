@@ -3,14 +3,14 @@
   "private": true,
   "dependencies": {
     "@envelop/depth-limit": "4.0.0",
-    "@graphql-mesh/cache-cfw-kv": "0.102.6",
-    "@graphql-mesh/cli": "0.96.5",
-    "@graphql-mesh/graphql": "0.102.7",
-    "@graphql-mesh/plugin-rate-limit": "0.102.6",
-    "@graphql-mesh/plugin-response-cache": "0.102.6",
+    "@graphql-mesh/cache-cfw-kv": "0.102.11",
+    "@graphql-mesh/cli": "0.97.0",
+    "@graphql-mesh/graphql": "0.102.14",
+    "@graphql-mesh/plugin-rate-limit": "0.102.11",
+    "@graphql-mesh/plugin-response-cache": "0.102.11",
     "graphql": "16.9.0"
   },
   "devDependencies": {
-    "wrangler": "3.78.10"
+    "wrangler": "3.85.0"
   }
 }

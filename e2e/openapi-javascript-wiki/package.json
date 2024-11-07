@@ -2,9 +2,7 @@
   "name": "@e2e/openapi-javascript-wiki",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/serve-cli": "workspace:*",
-    "@omnigraph/openapi": "workspace:*",
+    "@graphql-hive/gateway": "^1.4.8",
     "graphql": "16.9.0",
     "moment": "2.30.1"
   }

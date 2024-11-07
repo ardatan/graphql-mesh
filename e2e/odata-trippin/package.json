@@ -3,10 +3,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/compose-cli": "workspace:*",
-    "@graphql-mesh/serve-cli": "workspace:*",
-    "@graphql-mesh/utils": "workspace:*",
-    "@omnigraph/odata": "workspace:*",
+    "@graphql-hive/gateway": "^1.4.8",
     "graphql": "^16.9.0"
   }
 }

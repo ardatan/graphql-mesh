@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+import "movie.proto";
+
+message EmptyRequest {}
+
+message MovieRequest {
+    Movie movie = 1;
+}
+
+message SearchByCastRequest {
+    string castName = 1;
+}
+
+/**
+ * movie result message, contains list of movies
+ */
+message MoviesResult {
+    /**
+     * list of movies
+     */
+    repeated Movie result = 1;
+}
+
+service Example {
+  /**
+  * get all movies
+  */
+  rpc GetMovies (MovieRequest) returns (MoviesResult) {}
+
+  /**
+  * search movies by the name of the cast
+  */
+  rpc SearchMoviesByCast (SearchByCastRequest) returns (stream Movie) {}
+
+}
+
+service AnotherExample {
+  /**
+  * get all movies
+  */
+  rpc GetMovies (MovieRequest) returns (MoviesResult) {}
+
+  /**
+  * search movies by the name of the cast
+  */
+  rpc SearchMoviesByCast (SearchByCastRequest) returns (stream Movie) {}
+
+}

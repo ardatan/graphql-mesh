@@ -1,7 +1,14 @@
 import type { DocumentNode } from 'graphql';
 import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import { mapMaybePromise } from '@graphql-mesh/utils';
-import type { DisposableExecutor, ExecutionRequest, MaybePromise } from '@graphql-tools/utils';
+import {
+  isAsyncIterable,
+  mapAsyncIterator,
+  type DisposableExecutor,
+  type ExecutionRequest,
+  type ExecutionResult,
+  type MaybePromise,
+} from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { UnifiedGraphManager, type UnifiedGraphManagerOptions } from './unifiedGraphManager.js';
 
@@ -30,10 +37,28 @@ export function getSdkRequesterForUnifiedGraph(
 ): SdkRequester {
   const unifiedGraphExecutor = getExecutorForUnifiedGraph(opts);
   return function sdkRequester(document: DocumentNode, variables?: any, operationContext?: any) {
-    return unifiedGraphExecutor({
-      document,
-      variables,
-      context: operationContext,
-    });
+    return mapMaybePromise(
+      unifiedGraphExecutor({
+        document,
+        variables,
+        context: operationContext,
+      }),
+      result => {
+        if (isAsyncIterable(result)) {
+          return mapAsyncIterator(result, extractDataOrThrowErrors);
+        }
+        return extractDataOrThrowErrors(result);
+      },
+    );
   };
+}
+
+function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {
+  if (result.errors) {
+    if (result.errors.length === 1) {
+      throw result.errors[0];
+    }
+    throw new AggregateError(result.errors);
+  }
+  return result.data;
 }

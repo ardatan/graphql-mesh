@@ -500,7 +500,7 @@ describe('odata', () => {
     };
     let sentRequest: Request;
     addMock(correctUrl, async request => {
-      sentRequest = request.clone();
+      sentRequest = request.clone() as Request;
       const returnBody: any = await request.json();
       returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(returnBody));

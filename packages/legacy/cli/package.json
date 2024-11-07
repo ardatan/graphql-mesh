@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.96.5",
+  "version": "0.97.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -47,15 +47,15 @@
     "@graphql-codegen/typescript-generic-sdk": "^3.1.0",
     "@graphql-codegen/typescript-operations": "^4.0.0",
     "@graphql-codegen/typescript-resolvers": "^4.0.0",
-    "@graphql-mesh/config": "^0.104.7",
-    "@graphql-mesh/cross-helpers": "^0.4.6",
-    "@graphql-mesh/http": "^0.103.7",
-    "@graphql-mesh/include": "^0.2.2",
-    "@graphql-mesh/runtime": "^0.103.7",
-    "@graphql-mesh/store": "^0.102.6",
-    "@graphql-mesh/types": "^0.102.6",
-    "@graphql-mesh/utils": "^0.102.6",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-mesh/config": "^0.105.0",
+    "@graphql-mesh/cross-helpers": "^0.4.7",
+    "@graphql-mesh/http": "^0.104.0",
+    "@graphql-mesh/include": "^0.2.3",
+    "@graphql-mesh/runtime": "^0.104.0",
+    "@graphql-mesh/store": "^0.102.11",
+    "@graphql-mesh/types": "^0.102.11",
+    "@graphql-mesh/utils": "^0.102.11",
+    "@graphql-tools/utils": "^10.5.5",
     "ajv": "^8.12.0",
     "change-case": "^4.1.2",
     "cosmiconfig": "^9.0.0",
@@ -65,7 +65,6 @@
     "json-bigint-patch": "^0.0.8",
     "json5": "^2.2.3",
     "mkdirp": "^3.0.0",
-    "node-libcurl": "npm:@ardatan/node-libcurl@^4.0.2",
     "open": "^7.4.2",
     "pascal-case": "^3.1.2",
     "rimraf": "^6.0.0",
@@ -74,14 +73,11 @@
     "ws": "^8.17.1",
     "yargs": "^17.7.1"
   },
-  "optionalDependencies": {
-    "uWebSockets.js": "uNetworking/uWebSockets.js#semver:^20"
-  },
   "devDependencies": {
     "@types/lodash.get": "4.4.9",
     "@types/mkdirp": "2.0.0",
     "@types/rimraf": "4.0.5",
-    "@types/ws": "8.5.12",
+    "@types/ws": "8.5.13",
     "@types/yargs": "17.0.33"
   },
   "publishConfig": {

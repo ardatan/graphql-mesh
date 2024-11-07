@@ -11,20 +11,18 @@ import {
   typeFromAST,
   visit,
 } from 'graphql';
-import type { AdditionalStitchingResolverObject } from 'packages/legacy/types/src/config.js';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
-import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
 import type { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import {
   astFromField,
   getDirectiveExtensions,
   MapperKind,
   mapSchema,
-  type IResolvers,
   type TypeSource,
 } from '@graphql-tools/utils';
 import {
   HoistField,
+  PruneSchema,
   RenameInputObjectFields,
   RenameInterfaceFields,
   RenameObjectFieldArguments,
@@ -40,7 +38,6 @@ export interface HandleFederationSubschemaOpts {
   schemaDirectives?: Record<string, any>;
   transportEntryMap: Record<string, TransportEntry>;
   additionalTypeDefs: TypeSource[];
-  additionalResolvers: IResolvers<unknown, any>[];
   stitchingDirectivesTransformer: (subschemaConfig: SubschemaConfig) => SubschemaConfig;
   onSubgraphExecute: ReturnType<typeof getOnSubgraphExecute>;
 }
@@ -51,7 +48,6 @@ export function handleFederationSubschema({
   schemaDirectives,
   transportEntryMap,
   additionalTypeDefs,
-  additionalResolvers,
   stitchingDirectivesTransformer,
   onSubgraphExecute,
 }: HandleFederationSubschemaOpts) {
@@ -140,15 +136,6 @@ export function handleFederationSubschema({
             },
           ],
         });
-        for (const resolveToDirective of resolveToDirectives) {
-          additionalResolvers.push(
-            resolveAdditionalResolversWithoutImport({
-              targetTypeName: typeName,
-              targetFieldName: fieldName,
-              ...resolveToDirective,
-            }),
-          );
-        }
       }
       const additionalFieldDirectives = fieldDirectives.additionalField;
       if (additionalFieldDirectives?.length > 0) {
@@ -194,7 +181,7 @@ export function handleFederationSubschema({
                   : () => true,
               };
             });
-            transforms.push(new HoistField(realTypeName, pathConfig, fieldName));
+            transforms.push(new HoistField(realTypeName, pathConfig, fieldName), new PruneSchema());
           }
         }
       }

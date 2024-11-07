@@ -1,3 +1,0 @@
-describe('tuql', () => {
-  it('dummy', () => {});
-});

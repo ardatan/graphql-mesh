@@ -1,5 +1,102 @@
 # @graphql-mesh/fusion-composition
 
+## 0.6.5
+
+### Patch Changes
+
+- [#7838](https://github.com/ardatan/graphql-mesh/pull/7838)
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.9)
+    (from `^3.1.8`, in `dependencies`)
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/utils@0.102.11
+
+## 0.6.4
+
+### Patch Changes
+
+- [#7828](https://github.com/ardatan/graphql-mesh/pull/7828)
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.8)
+    (from `^3.1.7`, in `dependencies`)
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/utils@0.102.10
+
+## 0.6.3
+
+### Patch Changes
+
+- [#7816](https://github.com/ardatan/graphql-mesh/pull/7816)
+  [`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix subscription fields fed by webhooks and
+  defined in \`additionalTypeDefs\` with \`@resolveTo\`
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+
+## 0.6.2
+
+### Patch Changes
+
+- [#7769](https://github.com/ardatan/graphql-mesh/pull/7769)
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.7)
+    (from `^3.1.4`, in `dependencies`)
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/utils@0.102.8
+
+## 0.6.1
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.4)
+    (from `^3.1.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `dependencies`)
+
+- [#7772](https://github.com/ardatan/graphql-mesh/pull/7772)
+  [`7c24ded`](https://github.com/ardatan/graphql-mesh/commit/7c24ded0128f098778a32f74554d9be22e63fa7f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Choose correct key fields and arguments for type
+  merging during Mesh Compose
+
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/utils@0.102.7
+
+## 0.6.0
+
+### Minor Changes
+
+- [#7746](https://github.com/ardatan/graphql-mesh/pull/7746)
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Remove workaround for directives on enums,
+  enum values and unions
+
+### Patch Changes
+
+- [#7746](https://github.com/ardatan/graphql-mesh/pull/7746)
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@theguild/federation-composition@^0.14.0` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.14.0)
+    (from `^0.12.0`, in `dependencies`)
+
 ## 0.5.4
 
 ### Patch Changes

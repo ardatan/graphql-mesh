@@ -80,6 +80,7 @@ jobs:
           command: yarn test
 
   unit-leaks:
+    needs: [unit]
     name: unit / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -111,9 +112,6 @@ jobs:
           restore-keys: |
             ${{runner.os}}-${{matrix.node-version}}-jest-unit-
 
-      - name: Remove node-libcurl
-        run: rm -rf node_modules/node-libcurl
-
       - name: Prepare for build
         run: yarn prebuild
 
@@ -125,6 +123,7 @@ jobs:
           command: yarn test:leak
 
   integration:
+    needs: [typecheck, unit]
     name: integration / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -206,6 +205,7 @@ jobs:
         run: yarn test:integration
 
   integration-leak:
+    needs: [integration]
     name: integration / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -287,8 +287,6 @@ jobs:
         run: yarn build
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
-      - name: Remove node-libcurl
-        run: rm -rf node_modules/node-libcurl
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -297,6 +295,7 @@ jobs:
           command: yarn test:integration:leak
 
   integrity-check:
+    needs: [typecheck]
     name: integrity-check / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -321,54 +320,16 @@ jobs:
         run: yarn bob check
 
   e2e:
-    name:
-      e2e / runner ${{matrix.setup.serve-runner}} / os ${{ matrix.setup.os }} / node
-      ${{matrix.setup.node-version}}
-    runs-on: ${{ matrix.setup.os }}
+    needs: [unit]
+    name: e2e / node v${{matrix.node-version}}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        setup:
-          - serve-runner: node
-            node-version: 18
-            os: ubuntu-latest
-          - serve-runner: node
-            node-version: 20
-            os: ubuntu-latest
-          - serve-runner: node
-            node-version: 22
-            os: ubuntu-latest
-          - serve-runner: docker
-            node-version: 22
-            os: ubuntu-latest
-          - serve-runner: bin
-            node-version: 22
-            os: ubuntu-latest
-          - serve-runner: bin
-            node-version: 22
-            os: windows-latest
-          - serve-runner: bin
-            node-version: 22
-            # MacOS Arm64
-            os: macos-14
-          - serve-runner: bin
-            node-version: 22
-            # MacOS x86_64
-            os: macos-13
+        node-version: [18, 20, 22]
     steps:
       - name: checkout
         uses: actions/checkout@v4
-
-      # Install Windows specific dependencies
-      - if: runner.os == 'Windows'
-        name: Disable Windows Defender
-        run: Set-MpPreference -DisableRealtimeMonitoring $true
-        shell: pwsh
-
-      - name: set up docker buildx
-        if: matrix.setup.serve-runner == 'docker'
-        uses: docker/setup-buildx-action@v3
-
       - name: hash docker images
         if: runner.os == 'Linux'
         id: hash-docker-images
@@ -382,44 +343,20 @@ jobs:
         continue-on-error: true
         with:
           key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
-
       - name: set up env
         uses: the-guild-org/shared-config/setup@v1
         with:
-          node-version: ${{matrix.setup.node-version}}
-      - name: prepare
-        run: yarn prebuild
-      - name: bundle
-        if: matrix.setup.serve-runner == 'docker' || matrix.setup.serve-runner == 'bin'
-        env:
-          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
-        run: yarn workspace @graphql-mesh/serve-cli bundle
-      - name: build & relink # we need to build for binary because it'll use the nearby node_modules
-        if: matrix.setup.serve-runner == 'bin'
-        run: yarn build && yarn install
-        shell: bash
-      - name: package binary
-        if: matrix.setup.serve-runner == 'bin'
-        working-directory: packages/serve-cli
-        run: yarn workspace @graphql-mesh/serve-cli package-binary
-      - name: bake
-        if: matrix.setup.serve-runner == 'docker'
-        uses: docker/bake-action@v5
-        with:
-          targets: e2e
-          set: |
-            *.cache-from=type=gha
-            *.cache-to=type=gha,mode=max
-          # we must load so that the e2e tests can use the cached image
-          # also, in order for loading to work - we must define the platform above
-          load: true
+          node-version: ${{matrix.node-version}}
+      - name: build
+        run: yarn build
+      - name: relink
+        run: yarn
       - name: test
         timeout-minutes: 60
-        env:
-          E2E_SERVE_RUNNER: ${{matrix.setup.serve-runner}}
         run: |
           yarn test:e2e --detectOpenHandles --forceExit
   apollo-federation-compatibility:
+    needs: [unit]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository

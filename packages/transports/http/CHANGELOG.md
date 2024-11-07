@@ -1,5 +1,82 @@
 # @graphql-mesh/transport-http
 
+## 0.6.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/transport-common@0.7.12
+  - @graphql-mesh/utils@0.102.11
+
+## 0.6.12
+
+### Patch Changes
+
+- [#7712](https://github.com/ardatan/graphql-mesh/pull/7712)
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Transport entries `headers` option can
+  now be overridden in the `subscriptions` transport
+
+## 0.6.11
+
+### Patch Changes
+
+- [#7826](https://github.com/ardatan/graphql-mesh/pull/7826)
+  [`e59191f`](https://github.com/ardatan/graphql-mesh/commit/e59191f3ec34c2c15d65174459a5c848cab67e13)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/cross-helpers@^0.4.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.7)
+    (to `dependencies`)
+
+- [#7826](https://github.com/ardatan/graphql-mesh/pull/7826)
+  [`e59191f`](https://github.com/ardatan/graphql-mesh/commit/e59191f3ec34c2c15d65174459a5c848cab67e13)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add missing \`process\` import for cross platform
+  support
+
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/transport-common@0.7.11
+  - @graphql-mesh/utils@0.102.10
+
+## 0.6.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/transport-common@0.7.10
+
+## 0.6.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/transport-common@0.7.9
+  - @graphql-mesh/utils@0.102.8
+
+## 0.6.8
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `dependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/transport-common@0.7.8
+  - @graphql-mesh/utils@0.102.7
+
 ## 0.6.7
 
 ### Patch Changes

@@ -16,9 +16,9 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
-import { localHostnames } from '../../packages/testing/getLocalHostName';
+import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
 import { leftoverStack } from './leftoverStack';
-import { createOpt, createPortOpt, createServicePortOpt, getLocalHostName } from './opts';
+import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
 
 export const retries = 120,
@@ -32,37 +32,6 @@ if (typeof jest !== 'undefined') {
 const __project = path.resolve(__dirname, '..', '..') + path.sep;
 
 const docker = new Dockerode();
-
-const E2E_SERVE_RUNNERS = ['node', 'docker', 'bin'] as const;
-
-type ServeRunner = (typeof E2E_SERVE_RUNNERS)[number];
-
-const serveRunner = (function getServeRunner() {
-  const runner = (process.env.E2E_SERVE_RUNNER || 'node').trim().toLowerCase();
-  if (
-    !E2E_SERVE_RUNNERS.includes(
-      // @ts-expect-error
-      runner,
-    )
-  ) {
-    throw new Error(`Unsupported E2E serve runner "${runner}"`);
-  }
-  if (runner === 'docker' && !process.env.CI) {
-    process.stderr.write(`
-⚠️ Using docker serve runner! Make sure you have built the containers with:
-E2E_SERVE_RUNNER=docker yarn bundle && docker buildx bake e2e
-
-`);
-  }
-  if (runner === 'bin' && !process.env.CI) {
-    process.stderr.write(`
-⚠️ Using bin serve runner! Make sure you have built the binary with:
-yarn build && yarn bundle && yarn package-binary
-
-`);
-  }
-  return runner as ServeRunner;
-})();
 
 export interface ProcOptions {
   /**
@@ -93,6 +62,7 @@ export interface Proc extends AsyncDisposable {
 }
 
 export interface Server extends Proc {
+  hostname: string;
   port: number;
 }
 
@@ -225,7 +195,6 @@ export interface Tenv {
     command: string | (string | number)[],
     opts?: ProcOptions,
   ): Promise<[proc: Proc, waitForExit: Promise<void>]>;
-  serveRunner: ServeRunner;
   serve(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
@@ -262,118 +231,34 @@ export function createTenv(cwd: string): Tenv {
       const [cmd, ...args] = Array.isArray(command) ? command : command.split(' ');
       return spawn({ ...opts, cwd }, String(cmd), ...args, ...extraArgs);
     },
-    serveRunner,
     async serve(opts) {
       let {
         port = await getAvailablePort(),
         supergraph,
         pipeLogs = boolEnv('DEBUG'),
         env,
-        runner,
         args = [],
       } = opts || {};
 
-      let proc: Proc,
-        waitForExit: Promise<void> | null = null;
+      const [proc, waitForExit] = await spawn(
+        { env, cwd, pipeLogs },
+        'node', // TODO: using yarn does not work on Windows in the CI
+        path.join(__project, 'node_modules', '@graphql-hive', 'gateway', 'dist', 'bin.js'),
+        ...(supergraph ? ['supergraph', supergraph] : []),
+        ...args,
+        createPortOpt(port),
+      );
 
-      if (serveRunner === 'docker') {
-        const volumes: ContainerOptions['volumes'] = runner?.docker?.volumes || [];
-
-        if (supergraph) {
-          // we need to replace all local servers in the supergraph to use docker's local hostname.
-          // without this, the services running on the host wont be accessible by the docker container
-          if (/^http(s?):\/\//.test(supergraph)) {
-            // supergraph is a url
-            supergraph = supergraph
-              // docker for linux (which is used in the CI) will have the host be on 172.17.0.1,
-              // and locally the host.docker.internal (or just on macos?) should just work
-              .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
-              .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal');
-          } else {
-            // supergraph is a path
-            await fs.writeFile(
-              supergraph,
-              (await fs.readFile(supergraph, 'utf8'))
-                // docker for linux (which is used in the CI) will have the host be on 172.17.0.1,
-                // and locally the host.docker.internal (or just on macos?) should just work
-                .replaceAll('0.0.0.0', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal')
-                .replaceAll('localhost', boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal'),
-            );
-            volumes.push({ host: supergraph, container: `/serve/${path.basename(supergraph)}` });
-            supergraph = path.basename(supergraph);
-          }
-        }
-        const configFileNames = ['mesh.config.*', 'gateway.config.*'];
-        const configFiles = (
-          await Promise.all(configFileNames.map(configFileName => glob(configFileName, { cwd })))
-        ).flat();
-        for (const configfile of configFiles) {
-          const contents = await fs.readFile(path.join(cwd, configfile), 'utf8');
-          if (contents.includes('@graphql-mesh/serve-cli')) {
-            volumes.push({ host: configfile, container: `/serve/${path.basename(configfile)}` });
-          }
-        }
-        for (const dbfile of await glob('*.db', { cwd })) {
-          volumes.push({ host: dbfile, container: `/serve/${path.basename(dbfile)}` });
-        }
-        const packageJsonExists = await fs
-          .stat(path.join(cwd, 'package.json'))
-          .then(() => true)
-          .catch(() => false);
-        if (packageJsonExists) {
-          volumes.push({ host: 'package.json', container: '/serve/package.json' });
-        }
-
-        const dockerfileExists = await fs
-          .stat(path.join(cwd, 'serve.Dockerfile'))
-          .then(() => true)
-          .catch(() => false);
-
-        const cont = await tenv.container({
-          env,
-          name: 'mesh-serve-e2e-' + Math.random().toString(32).slice(6),
-          image:
-            'ghcr.io/ardatan/mesh-serve:' +
-            (dockerfileExists
-              ? // if the test contains a serve dockerfile, use it instead of the default e2e image
-                `e2e.${path.basename(cwd)}`
-              : 'e2e'),
-          // TODO: changing port from within mesh.config.ts or gateway.config.ts wont work in docker runner
-          hostPort: port,
-          containerPort: port,
-          healthcheck: ['CMD-SHELL', `wget --spider http://0.0.0.0:${port}/healthcheck`],
-          cmd: [createPortOpt(port), ...(supergraph ? ['supergraph', supergraph] : []), ...args],
-          volumes,
-          pipeLogs,
-        });
-        proc = cont;
-      } else if (serveRunner === 'bin') {
-        [proc, waitForExit] = await spawn(
-          { env, cwd, pipeLogs },
-          path.resolve(__project, 'packages', 'serve-cli', 'mesh-serve'),
-          'supergraph',
-          supergraph,
-          createPortOpt(port),
-          ...args,
-        );
-      } /* serveRunner === 'node' */ else {
-        [proc, waitForExit] = await spawn(
-          { env, cwd, pipeLogs },
-          'node',
-          '--import',
-          'tsx',
-          path.resolve(__project, 'packages', 'serve-cli', 'src', 'bin.ts'),
-          ...(supergraph ? ['supergraph', supergraph] : []),
-          ...args,
-          createPortOpt(port),
-        );
-      }
+      let hostName: string;
 
       const serve: Serve = {
         ...proc,
         port,
+        get hostname() {
+          return hostName;
+        },
         async execute({ headers, ...args }) {
-          const res = await fetch(`http://localhost:${port}/graphql`, {
+          const res = await fetch(`http://${hostName || 'localhost'}:${port}/graphql`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
@@ -395,7 +280,7 @@ export function createTenv(cwd: string): Tenv {
         },
       };
       const ctrl = new AbortController();
-      await Promise.race([
+      const hostnames = await Promise.race([
         waitForExit
           ?.then(() =>
             Promise.reject(
@@ -406,6 +291,7 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(serve, ctrl.signal),
       ]);
+      hostName = hostnames?.[0];
       return serve;
     },
     async compose(opts) {
@@ -479,8 +365,16 @@ export function createTenv(cwd: string): Tenv {
         servePort && createPortOpt(servePort),
         ...args,
       );
-      const service: Service = { ...proc, name, port };
-      await Promise.race([
+      let hostName: string;
+      const service: Service = {
+        ...proc,
+        name,
+        get hostname() {
+          return hostName;
+        },
+        port,
+      };
+      const hostnames = await Promise.race([
         waitForExit
           .then(() =>
             Promise.reject(
@@ -493,6 +387,7 @@ export function createTenv(cwd: string): Tenv {
           .finally(() => ctrl.abort()),
         waitForReachable(service, ctrl.signal),
       ]);
+      hostName = hostnames?.[0];
       return service;
     },
     async container({
@@ -530,40 +425,33 @@ export function createTenv(cwd: string): Tenv {
         return ms * 1000000;
       }
 
-      const bakedImage = await fs
-        .readFile(path.join(__project, 'docker-bake.hcl'))
-        .then(c => c.includes(`"${image}"`));
-
       const ctrl = new AbortController();
 
-      if (!bakedImage) {
-        // pull image if it doesnt exist and wait for finish
-        const exists = await docker
-          .getImage(image)
-          .get()
-          .then(() => true)
-          .catch(() => false);
-        if (!exists) {
-          const imageStream = (await docker.pull(image)) as Readable;
-          leftoverStack.defer(() => {
-            imageStream.destroy();
-          });
-          ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
-          await new Promise((resolve, reject) => {
-            docker.modem.followProgress(
-              imageStream,
-              (err, res) => (err ? reject(err) : resolve(res)),
-              pipeLogs
-                ? e => {
-                    process.stderr.write(JSON.stringify(e));
-                  }
-                : undefined,
-            );
-          });
-        } else {
-          if (pipeLogs) {
-            process.stderr.write(`Image "${image}" exists, pull skipped`);
-          }
+      const exists = await docker
+        .getImage(image)
+        .get()
+        .then(() => true)
+        .catch(() => false);
+      if (!exists) {
+        const imageStream = (await docker.pull(image)) as Readable;
+        leftoverStack.defer(() => {
+          imageStream.destroy();
+        });
+        ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
+        await new Promise((resolve, reject) => {
+          docker.modem.followProgress(
+            imageStream,
+            (err, res) => (err ? reject(err) : resolve(res)),
+            pipeLogs
+              ? e => {
+                  process.stderr.write(JSON.stringify(e) + '\n\n');
+                }
+              : undefined,
+          );
+        });
+      } else {
+        if (pipeLogs) {
+          process.stderr.write(`Image "${image}" exists, pull skipped\n\n`);
         }
       }
 
@@ -626,10 +514,15 @@ export function createTenv(cwd: string): Tenv {
 
       await ctr.start();
 
+      let hostname: string;
+
       const container: Container = {
         containerName,
         name,
         port: hostPort,
+        get hostname() {
+          return hostname;
+        },
         additionalPorts,
         getStd() {
           // TODO: distinguish stdout and stderr
@@ -694,16 +587,18 @@ export function createTenv(cwd: string): Tenv {
           }
         }
       } else {
-        await waitForReachable(container, ctrl.signal);
+        const hostnames = await waitForReachable(container, ctrl.signal);
+        hostname = hostnames?.[0];
       }
       return container;
     },
     async composeWithApollo(services) {
       const subgraphs: ServiceEndpointDefinition[] = [];
       for (const service of services) {
+        const hostname = await getLocalHostName(service.port);
         subgraphs.push({
           name: service.name,
-          url: `http://localhost:${service.port}/graphql`,
+          url: `http://${hostname}:${service.port}/graphql`,
         });
       }
 
@@ -833,14 +728,15 @@ export function getAvailablePort(): Promise<number> {
   const server = createServer();
   return new Promise((resolve, reject) => {
     try {
+      server.once('error', reject);
       server.listen(0, () => {
-        try {
-          const addressInfo = server.address() as AddressInfo;
+        const addressInfo = server.address() as AddressInfo;
+        server.close(err => {
+          if (err) {
+            reject(err);
+          }
           resolve(addressInfo.port);
-          server.close();
-        } catch (err) {
-          reject(err);
-        }
+        });
       });
     } catch (err) {
       reject(err);
@@ -849,12 +745,17 @@ export function getAvailablePort(): Promise<number> {
 }
 
 async function waitForPort(port: number, signal: AbortSignal) {
-  outer: while (!signal.aborted) {
+  while (!signal.aborted) {
     for (const localHostname of localHostnames) {
       try {
         await fetch(`http://${localHostname}:${port}`, { signal });
-        break outer;
-      } catch (err) {}
+        return localHostname;
+      } catch (err) {
+        const errString = err.toString().toLowerCase();
+        if (errString.includes('unsupported') || errString.includes('parse error')) {
+          return localHostname;
+        }
+      }
     }
     // no need to track retries, jest will time out aborting the signal
     signal.throwIfAborted();

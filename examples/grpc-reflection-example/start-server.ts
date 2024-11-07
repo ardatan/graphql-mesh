@@ -7,23 +7,26 @@ const wrapServerWithReflection = require('grpc-node-server-reflection').default;
 export default async function startServer() {
   const server: Server = wrapServerWithReflection(new Server());
 
-  const packageDefinition = await load('./service.proto', {
+  const helloworldPackageDefinition = await load('./helloworld.proto', {
     includeDirs: [join(__dirname, './proto')],
   });
-  const grpcObject = loadPackageDefinition(packageDefinition);
-  server.addService(grpcObject.GreetingService.service, {
+  const helloworldGrpcObject = loadPackageDefinition(helloworldPackageDefinition);
+  server.addService(helloworldGrpcObject.helloworld.GreetingService.service, {
     getGreeting(call, callback) {
       callback(null, { greeting: 'Hello ' + call.request.name });
     },
   });
+  const playgroundPackageDefinition = await load('./Playground/playground.proto', {
+    includeDirs: [join(__dirname, './proto')],
+  });
+  const playgroundGrpcObject = loadPackageDefinition(playgroundPackageDefinition);
+  server.addService(playgroundGrpcObject.artnet.coredata.playground.Playground.service, {});
   return new Promise<Server>((resolve, reject) => {
     server.bindAsync('0.0.0.0:50052', ServerCredentials.createInsecure(), (error, port) => {
       if (error) {
         reject(error);
         return;
       }
-      server.start();
-
       console.log('gRPC Server started, listening: 0.0.0.0:' + port);
       resolve(server);
     });

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-newrelic",
-  "version": "0.102.6",
+  "version": "0.102.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,9 +32,9 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.6",
-    "@graphql-mesh/types": "^0.102.6",
-    "@graphql-mesh/utils": "^0.102.6",
+    "@graphql-mesh/cross-helpers": "^0.4.7",
+    "@graphql-mesh/types": "^0.102.11",
+    "@graphql-mesh/utils": "^0.102.11",
     "graphql": "*",
     "graphql-yoga": "^4.0.5 || ^5.0.0",
     "newrelic": "^7 || ^8.0.0 || ^10.0.0",
@@ -47,8 +47,8 @@
   },
   "devDependencies": {
     "@newrelic/test-utilities": "6.5.5",
-    "@types/newrelic": "9.14.4",
-    "graphql-yoga": "5.7.0",
+    "@types/newrelic": "9.14.5",
+    "graphql-yoga": "5.8.0",
     "newrelic": "10.6.2"
   },
   "publishConfig": {

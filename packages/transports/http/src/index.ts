@@ -1,3 +1,4 @@
+import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
   defaultPrintFn,
@@ -6,7 +7,7 @@ import {
 } from '@graphql-mesh/transport-common';
 import { dispose, isDisposable, makeAsyncDisposable, mapMaybePromise } from '@graphql-mesh/utils';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
-import { type AsyncExecutor, type ExecutionRequest } from '@graphql-tools/utils';
+import { type AsyncExecutor, type ExecutionRequest, type Executor } from '@graphql-tools/utils';
 
 export type HTTPTransportOptions<
   TSubscriptionTransportOptions extends Record<string, any> = Record<string, any>,
@@ -20,6 +21,7 @@ export type HTTPTransportOptions<
 export default {
   getSubgraphExecutor(payload) {
     let headersInConfig: Record<string, string> | undefined;
+
     if (typeof payload.transportEntry.headers === 'string') {
       headersInConfig = JSON.parse(payload.transportEntry.headers);
     }
@@ -27,17 +29,21 @@ export default {
       headersInConfig = Object.fromEntries(payload.transportEntry.headers);
     }
 
-    const headersFactory = getInterpolatedHeadersFactory(headersInConfig);
+    const headersFactory = headersInConfig
+      ? getInterpolatedHeadersFactory(headersInConfig)
+      : undefined;
 
     const httpExecutor = buildHTTPExecutor({
       endpoint: payload.transportEntry.location,
-      headers: execReq =>
-        headersFactory({
-          env: process.env,
-          root: execReq.rootValue,
-          context: execReq.context,
-          info: execReq.info,
-        }),
+      headers: headersFactory
+        ? execReq =>
+            headersFactory({
+              env: process.env,
+              root: execReq.rootValue,
+              context: execReq.context,
+              info: execReq.info,
+            })
+        : undefined,
       print: defaultPrintFn,
       ...payload.transportEntry.options,
       // @ts-expect-error - TODO: Fix this in executor-http
@@ -45,9 +51,9 @@ export default {
     });
 
     if (payload.transportEntry.options && 'subscriptions' in payload.transportEntry.options) {
-      let subscriptionsExecutor = function (execReq) {
+      let subscriptionsExecutor: Executor = function (execReq) {
         const subscriptionsKind =
-          payload.transportEntry.options?.subscriptions?.kind || payload.transportEntry.kind;
+          payload.transportEntry.options.subscriptions.kind || payload.transportEntry.kind;
         const subscriptionsLocation = payload.transportEntry.options?.subscriptions?.location
           ? new URL(
               payload.transportEntry.options.subscriptions.location,
@@ -58,10 +64,17 @@ export default {
           payload.getTransportExecutor({
             ...payload.transportEntry,
             kind: subscriptionsKind,
+            headers:
+              // WebSocket transport should not have any headers by default,
+              // `connectionParams` should be preferred.
+              subscriptionsKind === 'ws'
+                ? payload.transportEntry.options.subscriptions.headers
+                : (payload.transportEntry.options.subscriptions.headers ??
+                  payload.transportEntry.headers),
             location: subscriptionsLocation,
             options: {
               ...payload.transportEntry.options,
-              ...payload.transportEntry.options?.subscriptions?.options,
+              ...payload.transportEntry.options.subscriptions.options,
             },
           }),
           resolvedSubscriptionsExecutor => {
@@ -70,7 +83,7 @@ export default {
           },
         );
       };
-      return makeAsyncDisposable<AsyncExecutor>(
+      return makeAsyncDisposable(
         function hybridExecutor(executionRequest: ExecutionRequest) {
           if (subscriptionsExecutor && executionRequest.operationType === 'subscription') {
             return subscriptionsExecutor(executionRequest);
@@ -87,4 +100,4 @@ export default {
 
     return httpExecutor;
   },
-} satisfies Transport;
+} satisfies Transport<HTTPTransportOptions>;

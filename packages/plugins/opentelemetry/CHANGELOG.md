@@ -1,5 +1,162 @@
 # @graphql-mesh/plugin-opentelemetry
 
+## 1.3.7
+
+### Patch Changes
+
+- [#7875](https://github.com/ardatan/graphql-mesh/pull/7875)
+  [`bc81857`](https://github.com/ardatan/graphql-mesh/commit/bc81857ee8b632e9aedc9cd96668aa7e2abde1af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/gateway@^1.4.8` ↗︎](https://www.npmjs.com/package/@graphql-hive/gateway/v/1.4.8)
+    (from `^1.4.1`, in `dependencies`)
+
+## 1.3.6
+
+### Patch Changes
+
+- [#7604](https://github.com/ardatan/graphql-mesh/pull/7604)
+  [`4e7134a`](https://github.com/ardatan/graphql-mesh/commit/4e7134ae009b01fbec7825cc71673e4247d5f875)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@opentelemetry/exporter-trace-otlp-grpc@^0.54.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/exporter-trace-otlp-grpc/v/0.54.0)
+    (from `^0.52.1`, in `dependencies`)
+  - Updated dependency
+    [`@opentelemetry/exporter-trace-otlp-http@^0.54.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/exporter-trace-otlp-http/v/0.54.0)
+    (from `^0.52.1`, in `dependencies`)
+  - Updated dependency
+    [`@opentelemetry/instrumentation@^0.54.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/instrumentation/v/0.54.0)
+    (from `^0.52.1`, in `dependencies`)
+  - Updated dependency
+    [`@opentelemetry/sdk-node@^0.54.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/sdk-node/v/0.54.0)
+    (from `^0.52.1`, in `dependencies`)
+
+## 1.3.5
+
+### Patch Changes
+
+- [#7838](https://github.com/ardatan/graphql-mesh/pull/7838)
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-hive/gateway@^1.4.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/gateway/v/1.4.1)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/serve-runtime@^1.2.4` ↗︎](https://www.npmjs.com/package/@graphql-mesh/serve-runtime/v/1.2.4)
+    (from `dependencies`)
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/transport-common@0.7.12
+  - @graphql-mesh/types@0.102.11
+  - @graphql-mesh/utils@0.102.11
+
+## 1.3.4
+
+### Patch Changes
+
+- [#7836](https://github.com/ardatan/graphql-mesh/pull/7836)
+  [`1647023`](https://github.com/ardatan/graphql-mesh/commit/1647023b13de81226a5436ae1037b248671e2ae3)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@opentelemetry/auto-instrumentations-node@^0.52.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/auto-instrumentations-node/v/0.52.0)
+    (from `^0.51.0`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/serve-runtime@1.2.4
+
+## 1.3.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/serve-runtime@1.2.3
+  - @graphql-mesh/transport-common@0.7.11
+  - @graphql-mesh/types@0.102.10
+  - @graphql-mesh/utils@0.102.10
+
+## 1.3.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/serve-runtime@1.2.2
+  - @graphql-mesh/types@0.102.9
+  - @graphql-mesh/transport-common@0.7.10
+
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f7ad933`](https://github.com/ardatan/graphql-mesh/commit/f7ad933b242ca5facb219364f73d1a3befc2bc17)]:
+  - @graphql-mesh/serve-runtime@1.2.1
+
+## 1.3.0
+
+### Patch Changes
+
+- [#7785](https://github.com/ardatan/graphql-mesh/pull/7785)
+  [`93aa824`](https://github.com/ardatan/graphql-mesh/commit/93aa8246ebec89fb2aef9ae3e60e01f5ced43d55)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@opentelemetry/auto-instrumentations-node@^0.51.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/auto-instrumentations-node/v/0.51.0)
+    (from `^0.50.0`, in `dependencies`)
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`cc53c6c`](https://github.com/ardatan/graphql-mesh/commit/cc53c6c6056dcb38477b260e916825d4c8864b57)]:
+  - @graphql-mesh/serve-runtime@1.2.0
+  - @graphql-mesh/transport-common@0.7.9
+  - @graphql-mesh/types@0.102.8
+  - @graphql-mesh/utils@0.102.8
+
+## 1.2.0
+
+### Minor Changes
+
+- [#7755](https://github.com/ardatan/graphql-mesh/pull/7755)
+  [`30ff5d1`](https://github.com/ardatan/graphql-mesh/commit/30ff5d1d5fbb0fa003adfa0d58d50fa9a59793b7)
+  Thanks [@klippx](https://github.com/klippx)! - Make it possible to run with externally initialized
+  OpenTelemetry NodeSDK.
+
+  This fixes the issue of seeing a lot of errors on the form
+  `Error: @opentelemetry/api: Attempted duplicate registration of API: trace`.
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `dependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/serve-runtime@1.1.1
+  - @graphql-mesh/transport-common@0.7.8
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+
+## 1.1.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2b7b14`](https://github.com/ardatan/graphql-mesh/commit/e2b7b14fa9fddd41cdfd80d5ab3ae1d97fa9a251)]:
+  - @graphql-mesh/serve-runtime@1.1.0
+
 ## 1.0.5
 
 ### Patch Changes

@@ -10,6 +10,7 @@ import {
   GraphQLEnumType,
   GraphQLSchema,
   GraphQLUnionType,
+  isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
   parse,
@@ -22,7 +23,6 @@ import {
   getDocumentNodeFromSchema,
   MapperKind,
   mapSchema,
-  type Constructor,
   type FieldMapper,
 } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
@@ -419,54 +419,6 @@ export function getAnnotatedSubgraphs(
       },
     });
     // Workaround to keep directives on unsupported nodes since not all of them are supported by the composition library
-    const extraTypeDirectivesMap = new Map<string, Record<string, any[]>>();
-    function saveDirectives<T extends GraphQLNamedType>(type: T, TypeCtor: Constructor<T>) {
-      const typeConfig = type.toConfig();
-
-      const directiveExtensions = getDirectiveExtensions(type);
-      if (directiveExtensions && Object.keys(directiveExtensions).length) {
-        extraTypeDirectivesMap.set(type.name, directiveExtensions);
-
-        // Cleanup directives
-        return new TypeCtor({
-          ...typeConfig,
-          extensions: {
-            ...typeConfig.extensions,
-            directives: undefined,
-          },
-          astNode: undefined,
-        });
-      }
-
-      return type;
-    }
-    const extraEnumValueDirectivesMap = new Map<string, Map<string, Record<string, any[]>>>();
-    transformedSubgraph = mapSchema(transformedSubgraph, {
-      [MapperKind.UNION_TYPE]: type => saveDirectives(type, GraphQLUnionType),
-      [MapperKind.ENUM_TYPE]: type => saveDirectives(type, GraphQLEnumType),
-      [MapperKind.ENUM_VALUE]: (valueConfig, typeName, _, externalValue) => {
-        const enumValueDirectives = getDirectiveExtensions(valueConfig);
-
-        if (enumValueDirectives && Object.keys(enumValueDirectives).length) {
-          let enumValueDirectivesMap = extraEnumValueDirectivesMap.get(typeName);
-          if (!enumValueDirectivesMap) {
-            enumValueDirectivesMap = new Map<string, Record<string, any[]>>();
-            extraEnumValueDirectivesMap.set(typeName, enumValueDirectivesMap);
-          }
-          enumValueDirectivesMap.set(externalValue, enumValueDirectives);
-
-          // Cleanup directives
-          return {
-            ...valueConfig,
-            extensions: {
-              ...valueConfig.extensions,
-              directives: undefined,
-            },
-            astNode: undefined,
-          };
-        }
-      },
-    });
     let extraSchemaDefinitionDirectives: Record<string, any> | undefined;
     const schemaDirectiveExtensions = getDirectiveExtensions(transformedSubgraph);
     if (schemaDirectiveExtensions) {
@@ -517,25 +469,6 @@ export function getAnnotatedSubgraphs(
 
     const queryType = transformedSubgraph.getQueryType();
     const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
-    if (extraTypeDirectivesMap.size) {
-      importedDirectives.add('@extraTypeDirective');
-      importedDirectivesAST.add(/* GraphQL */ `
-        scalar _DirectiveExtensions
-      `);
-      importedDirectivesAST.add(/* GraphQL */ `
-        directive @extraTypeDirective(
-          name: String!
-          directives: _DirectiveExtensions
-        ) repeatable on OBJECT
-      `);
-      queryTypeDirectives.extraTypeDirective ||= [];
-      for (const [typeName, directives] of extraTypeDirectivesMap.entries()) {
-        queryTypeDirectives.extraTypeDirective.push({
-          name: typeName,
-          directives,
-        });
-      }
-    }
 
     if (extraSchemaDefinitionDirectives) {
       importedDirectives.add('@extraSchemaDefinitionDirective');
@@ -551,30 +484,6 @@ export function getAnnotatedSubgraphs(
       queryTypeDirectives.extraSchemaDefinitionDirective.push({
         directives: extraSchemaDefinitionDirectives,
       });
-    }
-
-    if (extraEnumValueDirectivesMap.size) {
-      importedDirectives.add('@extraEnumValueDirective');
-      importedDirectivesAST.add(/* GraphQL */ `
-        scalar _DirectiveExtensions
-      `);
-      importedDirectivesAST.add(/* GraphQL */ `
-        directive @extraEnumValueDirective(
-          name: String!
-          value: String!
-          directives: _DirectiveExtensions
-        ) repeatable on OBJECT
-      `);
-      queryTypeDirectives.extraEnumValueDirective ||= [];
-      for (const [typeName, enumValueDirectivesMap] of extraEnumValueDirectivesMap) {
-        for (const [enumValueName, directives] of enumValueDirectivesMap) {
-          queryTypeDirectives.extraEnumValueDirective.push({
-            name: typeName,
-            value: enumValueName,
-            directives,
-          });
-        }
-      }
     }
 
     const queryTypeExtensions: Record<string, unknown> = (queryType.extensions ||= {});
@@ -650,7 +559,16 @@ function addAnnotationsForSemanticConventions({
   const type = getNamedType(queryFieldConfig.type);
   if (isObjectType(type)) {
     const fieldMap = type.getFields();
-    for (const fieldName in fieldMap) {
+    let fieldNames = Object.keys(fieldMap) as string[];
+    if (fieldNames.includes('id')) {
+      fieldNames = ['id'];
+    } else {
+      const nonNullOnes = fieldNames.filter(fieldName => isNonNullType(fieldMap[fieldName].type));
+      if (nonNullOnes.length) {
+        fieldNames = nonNullOnes;
+      }
+    }
+    for (const fieldName of fieldNames) {
       const objectField = fieldMap[fieldName];
       const objectFieldType = getNamedType(objectField.type);
       const argEntries = Object.entries(queryFieldConfig.args);
@@ -678,19 +596,21 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(type.name):
           case snakeCase(`get_${type.name}_by_${fieldName}`):
           case snakeCase(`${type.name}_by_${fieldName}`): {
-            directiveExtensions.merge ||= [];
-            directiveExtensions.merge.push({
-              subgraph: subgraphName,
-              keyField: fieldName,
-              keyArg: argName,
-            });
-            typeDirectives.key ||= [];
-            if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
-              typeDirectives.key.push({
-                fields: fieldName,
+            if (isNonNullType(arg.type)) {
+              directiveExtensions.merge ||= [];
+              directiveExtensions.merge.push({
+                subgraph: subgraphName,
+                keyField: fieldName,
+                keyArg: argName,
               });
-              const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
-              typeExtensions.directives = typeDirectives;
+              typeDirectives.key ||= [];
+              if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
+                typeDirectives.key.push({
+                  fields: fieldName,
+                });
+                const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+                typeExtensions.directives = typeDirectives;
+              }
             }
             break;
           }

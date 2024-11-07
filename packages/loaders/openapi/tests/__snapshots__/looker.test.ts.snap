@@ -14,7 +14,7 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
+directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
@@ -7453,7 +7453,7 @@ type LocalizationSettings {
   localization_level: String
 }
 
-union project_validation_results_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "ProjectValidationCache") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = ProjectValidationCache | Void_container
+union project_validation_results_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "ProjectValidationCache") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = ProjectValidationCache | Void_container
 
 type ProjectValidationCache {
   """A list of project errors"""
@@ -12859,7 +12859,7 @@ type DBConnectionTestResult {
   status: String
 }
 
-union lock_all_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = String_container | Void_container
+union lock_all_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
 
 type String_container {
   String: String @resolveRoot(subgraph: "test")
@@ -13855,9 +13855,9 @@ input LegacyFeature_Input {
   has_disabled_on_upgrade: Boolean
 }
 
-union copy_look_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "LookWithQuery") @statusCodeTypeName(subgraph: "test", statusCode: 201, typeName: "Look") = LookWithQuery | Look
+union copy_look_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "LookWithQuery") @statusCodeTypeName(subgraph: "test", statusCode: "201", typeName: "Look") = LookWithQuery | Look
 
-union move_look_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "LookWithQuery") @statusCodeTypeName(subgraph: "test", statusCode: 201, typeName: "Look") = LookWithQuery | Look
+union move_look_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "LookWithQuery") @statusCodeTypeName(subgraph: "test", statusCode: "201", typeName: "Look") = LookWithQuery | Look
 
 input LookmlModel_Input {
   """Operations the current user is able to perform on this object"""
@@ -14018,7 +14018,7 @@ input UserPublic_Input {
   url: UriReference
 }
 
-union activate_app_user_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = String_container | Void_container
+union activate_app_user_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
 
 input OIDCConfig_Input {
   """Operations the current user is able to perform on this object"""
@@ -14174,13 +14174,13 @@ input PasswordConfig_Input {
   require_special: Boolean!
 }
 
-union deploy_ref_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = String_container | Void_container
+union deploy_ref_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
 
-union deploy_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = String_container | Void_container
+union deploy_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
 
-union reset_project_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = String_container | Void_container
+union reset_project_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
 
-union reset_project_to_remote_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = String_container | Void_container
+union reset_project_to_remote_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
 
 input Project_Input {
   """Operations the current user is able to perform on this object"""
@@ -14257,7 +14257,7 @@ type ProjectValidation {
   computation_time: Float
 }
 
-union tag_ref_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "Project") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = Project | Void_container
+union tag_ref_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "Project") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = Project | Void_container
 
 input CreateDashboardRenderTask_Input {
   """Filter values to apply to the dashboard queries, in URL query format"""
@@ -14890,7 +14890,7 @@ input ThemeSettings_Input {
   box_shadow: String!
 }
 
-union validate_theme_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "ValidationError") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "String_container") = ValidationError | String_container
+union validate_theme_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "ValidationError") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "String_container") = ValidationError | String_container
 
 input SshServer_Input {
   """A unique id used to identify this SSH Server"""

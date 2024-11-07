@@ -1,5 +1,114 @@
 # @graphql-mesh/config
 
+## 0.105.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482)]:
+  - @graphql-mesh/merger-stitching@0.103.0
+  - @graphql-mesh/merger-bare@0.103.0
+  - @graphql-mesh/runtime@0.104.0
+
+## 0.104.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/merger-stitching@0.102.11
+  - @graphql-mesh/runtime@0.103.12
+  - @graphql-mesh/types@0.102.11
+  - @graphql-mesh/utils@0.102.11
+  - @graphql-mesh/merger-bare@0.102.11
+  - @graphql-mesh/cache-localforage@0.102.11
+  - @graphql-mesh/store@0.102.11
+
+## 0.104.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/merger-stitching@0.102.10
+  - @graphql-mesh/runtime@0.103.11
+  - @graphql-mesh/types@0.102.10
+  - @graphql-mesh/utils@0.102.10
+  - @graphql-mesh/merger-bare@0.102.10
+  - @graphql-mesh/cache-localforage@0.102.10
+  - @graphql-mesh/store@0.102.10
+
+## 0.104.10
+
+### Patch Changes
+
+- [#7816](https://github.com/ardatan/graphql-mesh/pull/7816)
+  [`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix subscription fields fed by webhooks and
+  defined in \`additionalTypeDefs\` with \`@resolveTo\`
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/cache-localforage@0.102.9
+  - @graphql-mesh/merger-bare@0.102.9
+  - @graphql-mesh/merger-stitching@0.102.9
+  - @graphql-mesh/runtime@0.103.10
+  - @graphql-mesh/store@0.102.9
+  - @graphql-mesh/types@0.102.9
+
+## 0.104.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`359da22`](https://github.com/ardatan/graphql-mesh/commit/359da22a9785fbea4402b282a4104ff14697cc45),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/merger-stitching@0.102.8
+  - @graphql-mesh/runtime@0.103.9
+  - @graphql-mesh/types@0.102.8
+  - @graphql-mesh/utils@0.102.8
+  - @graphql-mesh/merger-bare@0.102.8
+  - @graphql-mesh/cache-localforage@0.102.8
+  - @graphql-mesh/store@0.102.8
+
+## 0.104.8
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `peerDependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`0c789f3`](https://github.com/ardatan/graphql-mesh/commit/0c789f3e9764c9b1ca8418e33dfa0c11ade35efb),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/cross-helpers@0.4.7
+  - @graphql-mesh/merger-bare@0.102.7
+  - @graphql-mesh/merger-stitching@0.102.7
+  - @graphql-mesh/runtime@0.103.8
+  - @graphql-mesh/store@0.102.7
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+  - @graphql-mesh/cache-localforage@0.102.7
+
 ## 0.104.7
 
 ### Patch Changes

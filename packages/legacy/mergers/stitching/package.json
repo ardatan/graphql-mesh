@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-stitching",
-  "version": "0.102.6",
+  "version": "0.103.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,17 +32,17 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/store": "^0.102.6",
-    "@graphql-mesh/types": "^0.102.6",
-    "@graphql-mesh/utils": "^0.102.6",
-    "@graphql-tools/utils": "^10.5.3",
+    "@graphql-mesh/store": "^0.102.11",
+    "@graphql-mesh/types": "^0.102.11",
+    "@graphql-mesh/utils": "^0.102.11",
+    "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.21",
+    "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/schema": "^10.0.5",
-    "@graphql-tools/stitch": "^9.2.10"
+    "@graphql-tools/stitch": "^9.2.17"
   },
   "publishConfig": {
     "access": "public",

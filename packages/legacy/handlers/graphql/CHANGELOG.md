@@ -1,5 +1,131 @@
 # @graphql-mesh/graphql
 
+## 0.102.14
+
+### Patch Changes
+
+- [`4d1893d`](https://github.com/ardatan/graphql-mesh/commit/4d1893da99ea0bc18a906c70fa5560a4ad6ccc62)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle interpolation on `source`
+
+## 0.102.13
+
+### Patch Changes
+
+- [#7838](https://github.com/ardatan/graphql-mesh/pull/7838)
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.28` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.28)
+    (from `^10.0.27`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.21` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.21)
+    (from `^2.2.19`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/url-loader@^8.0.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/8.0.9)
+    (from `^8.0.8`, in `dependencies`)
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/types@0.102.11
+  - @graphql-mesh/utils@0.102.11
+  - @graphql-mesh/store@0.102.11
+
+## 0.102.12
+
+### Patch Changes
+
+- [#7828](https://github.com/ardatan/graphql-mesh/pull/7828)
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.27)
+    (from `^10.0.26`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.19)
+    (from `^2.2.17`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/url-loader@^8.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/8.0.8)
+    (from `^8.0.7`, in `dependencies`)
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/types@0.102.10
+  - @graphql-mesh/utils@0.102.10
+  - @graphql-mesh/store@0.102.10
+
+## 0.102.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/store@0.102.9
+  - @graphql-mesh/types@0.102.9
+
+## 0.102.10
+
+### Patch Changes
+
+- [#7805](https://github.com/ardatan/graphql-mesh/pull/7805)
+  [`f7ad933`](https://github.com/ardatan/graphql-mesh/commit/f7ad933b242ca5facb219364f73d1a3befc2bc17)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.17)
+    (from `^2.2.16`, in `dependencies`)
+
+## 0.102.9
+
+### Patch Changes
+
+- [#7769](https://github.com/ardatan/graphql-mesh/pull/7769)
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.26)
+    (from `^10.0.23`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.16)
+    (from `^2.2.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/url-loader@^8.0.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/8.0.7)
+    (from `^8.0.4`, in `dependencies`)
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/types@0.102.8
+  - @graphql-mesh/utils@0.102.8
+  - @graphql-mesh/store@0.102.8
+
+## 0.102.8
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.23` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.23)
+    (from `^10.0.21`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.12)
+    (from `^2.2.10`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/url-loader@^8.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/8.0.4)
+    (from `^8.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `peerDependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/cross-helpers@0.4.7
+  - @graphql-mesh/store@0.102.7
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+
 ## 0.102.7
 
 ### Patch Changes

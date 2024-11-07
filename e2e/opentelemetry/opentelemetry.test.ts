@@ -1,15 +1,12 @@
 import os from 'os';
 import { setTimeout } from 'timers/promises';
-import { boolEnv, createTenv, type Container } from '@e2e/tenv';
+import { createTenv, type Container } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
-const { service, serve, container, composeWithApollo, serveRunner } = createTenv(__dirname);
+const { service, serve, container, composeWithApollo } = createTenv(__dirname);
 
 let supergraph!: string;
 let jaeger: Container;
-
-const JAEGER_HOSTNAME =
-  serveRunner === 'docker' ? (boolEnv('CI') ? '172.17.0.1' : 'host.docker.internal') : 'localhost';
 
 const TEST_QUERY = /* GraphQL */ `
   fragment User on User {
@@ -131,7 +128,7 @@ describe('opentelemetry', () => {
     const { execute } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
@@ -178,7 +175,7 @@ describe('opentelemetry', () => {
     const { execute } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
@@ -231,7 +228,7 @@ describe('opentelemetry', () => {
     const { execute } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
@@ -285,15 +282,14 @@ describe('opentelemetry', () => {
 
   it('should report http failures', async () => {
     const serviceName = 'mesh-e2e-test-4';
-    const { port } = await serve({
+    const { hostname, port } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
-
-    await fetch(`http://localhost:${port}/non-existing`).catch(() => {});
+    await fetch(`http://${hostname}:${port}/non-existing`).catch(() => {});
     const traces = await getJaegerTraces(serviceName, 2);
     expect(traces.data.length).toBe(2);
     const relevantTrace = traces.data.find(trace =>
@@ -326,10 +322,10 @@ describe('opentelemetry', () => {
   it('context propagation should work correctly', async () => {
     const traceId = '0af7651916cd43dd8448eb211c80319c';
     const serviceName = 'mesh-e2e-test-5';
-    const { execute, port } = await serve({
+    const { execute, hostname, port } = await serve({
       supergraph,
       env: {
-        OTLP_EXPORTER_URL: `http://${JAEGER_HOSTNAME}:${jaeger.port}/v1/traces`,
+        OTLP_EXPORTER_URL: `http://localhost:${jaeger.port}/v1/traces`,
         OTLP_SERVICE_NAME: serviceName,
       },
     });
@@ -343,7 +339,7 @@ describe('opentelemetry', () => {
       }),
     ).resolves.toMatchSnapshot();
 
-    const upstreamHttpCalls = await fetch(`http://localhost:${port}/upstream-fetch`).then(r =>
+    const upstreamHttpCalls = await fetch(`http://${hostname}:${port}/upstream-fetch`).then(r =>
       r.json<
         Array<{
           url: string;

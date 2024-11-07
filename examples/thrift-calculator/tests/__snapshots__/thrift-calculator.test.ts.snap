@@ -25,6 +25,5 @@ exports[`Thrift Calculator should give correct response for example queries: exa
   "data": {
     "add": 5,
   },
-  "errors": undefined,
 }
 `;

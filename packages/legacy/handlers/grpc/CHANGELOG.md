@@ -1,5 +1,140 @@
 # @graphql-mesh/grpc
 
+## 0.105.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0788b5d`](https://github.com/ardatan/graphql-mesh/commit/0788b5d76b7439af804781a33cb3c065c524dd63)]:
+  - @omnigraph/grpc@0.1.0
+
+## 0.104.13
+
+### Patch Changes
+
+- [#7838](https://github.com/ardatan/graphql-mesh/pull/7838)
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/transport-grpc@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-grpc/v/0.0.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@omnigraph/grpc@^0.0.0` ↗︎](https://www.npmjs.com/package/@omnigraph/grpc/v/0.0.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@ardatan/grpc-reflection-js@^0.0.2` ↗︎](https://www.npmjs.com/package/@ardatan/grpc-reflection-js/v/0.0.2)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/string-interpolation@^0.5.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.6)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/transport-common@^0.7.11` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/0.7.11)
+    (from `dependencies`)
+  - Removed dependency
+    [`@grpc/grpc-js@^1.1.7` ↗︎](https://www.npmjs.com/package/@grpc/grpc-js/v/1.1.7) (from
+    `dependencies`)
+  - Removed dependency
+    [`@grpc/proto-loader@^0.7.8` ↗︎](https://www.npmjs.com/package/@grpc/proto-loader/v/0.7.8)
+    (from `dependencies`)
+  - Removed dependency [`globby@^11.1.0` ↗︎](https://www.npmjs.com/package/globby/v/11.1.0) (from
+    `dependencies`)
+  - Removed dependency
+    [`graphql-compose@^9.0.11` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.11) (from
+    `dependencies`)
+  - Removed dependency
+    [`graphql-scalars@^1.22.4` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.22.4) (from
+    `dependencies`)
+  - Removed dependency [`lodash.get@^4.4.2` ↗︎](https://www.npmjs.com/package/lodash.get/v/4.4.2)
+    (from `dependencies`)
+  - Removed dependency [`lodash.has@^4.5.2` ↗︎](https://www.npmjs.com/package/lodash.has/v/4.5.2)
+    (from `dependencies`)
+  - Removed dependency [`long@4.0.0` ↗︎](https://www.npmjs.com/package/long/v/4.0.0) (from
+    `dependencies`)
+  - Removed dependency [`protobufjs@^7.2.5` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.2.5)
+    (from `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/cross-helpers@^0.4.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.7)
+    (from `peerDependencies`)
+  - Removed dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `peerDependencies`)
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/types@0.102.11
+  - @graphql-mesh/utils@0.102.11
+  - @omnigraph/grpc@0.0.1
+  - @graphql-mesh/transport-grpc@0.0.1
+  - @graphql-mesh/store@0.102.11
+
+## 0.104.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/transport-common@0.7.11
+  - @graphql-mesh/types@0.102.10
+  - @graphql-mesh/utils@0.102.10
+  - @graphql-mesh/store@0.102.10
+
+## 0.104.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/store@0.102.9
+  - @graphql-mesh/types@0.102.9
+  - @graphql-mesh/transport-common@0.7.10
+
+## 0.104.10
+
+### Patch Changes
+
+- [#7807](https://github.com/ardatan/graphql-mesh/pull/7807)
+  [`4f619a8`](https://github.com/ardatan/graphql-mesh/commit/4f619a87312862377a556e61cf618e107a51b7c5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle multiple services introspected from gRPC
+  service
+
+## 0.104.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/transport-common@0.7.9
+  - @graphql-mesh/types@0.102.8
+  - @graphql-mesh/utils@0.102.8
+  - @graphql-mesh/store@0.102.8
+
+## 0.104.8
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `peerDependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/cross-helpers@0.4.7
+  - @graphql-mesh/store@0.102.7
+  - @graphql-mesh/transport-common@0.7.8
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+
 ## 0.104.7
 
 ### Patch Changes

@@ -6,8 +6,8 @@
     "start": "ts-node index.ts"
   },
   "dependencies": {
-    "@apollo/server": "4.11.0",
-    "@apollo/subgraph": "2.9.1",
+    "@apollo/server": "4.11.2",
+    "@apollo/subgraph": "2.9.3",
     "graphql": "16.9.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"

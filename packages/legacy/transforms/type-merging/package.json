@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-type-merging",
-  "version": "0.102.6",
+  "version": "0.102.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,14 +32,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.102.6",
-    "@graphql-mesh/utils": "^0.102.6",
+    "@graphql-mesh/types": "^0.102.11",
+    "@graphql-mesh/utils": "^0.102.11",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^10.0.21",
-    "@graphql-tools/stitching-directives": "^3.1.2"
+    "@graphql-tools/delegate": "^10.0.28",
+    "@graphql-tools/stitching-directives": "^3.1.9"
   },
   "publishConfig": {
     "access": "public",

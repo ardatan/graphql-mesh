@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@example", "@httpOperation", "@pubsubOperation", "@transport", "@extraSchemaDefinitionDirective"]) {
+"schema @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0") {
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -30,6 +30,8 @@ directive @pubsubOperation(subgraph: String, pubsubTopic: String) repeatable on 
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
+
+directive @additionalField on FIELD_DEFINITION
 
 directive @live on QUERY
 
@@ -67,10 +69,10 @@ type query_todos_items @join__type(graph: API) {
 }
 
 type Mutation @join__type(graph: API) {
-  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST)
+  addTodo(input: mutationInput_addTodo_input_Input): Todo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST)
 }
 
-type mutation_addTodo @example(subgraph: "API", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+type Todo @example(subgraph: "API", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
   id: Int
   name: String
   content: String
@@ -78,13 +80,8 @@ type mutation_addTodo @example(subgraph: "API", value: "{\\"id\\":0,\\"name\\":\
 
 type Subscription @join__type(graph: API) {
   """PubSub Topic: webhook:post:/webhooks/todo_added"""
-  todoAdded: subscription_todoAdded @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added")
-}
-
-type subscription_todoAdded @example(subgraph: "API", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
-  id: Int
-  name: String
-  content: String
+  todoAddedFromSource: Todo @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added")
+  todoAddedFromExtensions: Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_added") @additionalField
 }
 
 enum HTTPMethod @join__type(graph: API) {

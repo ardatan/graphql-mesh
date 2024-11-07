@@ -1,5 +1,76 @@
 # example-apollo-federation-compatibility
 
+## 1.4.3
+
+## 1.4.2
+
+## 1.4.1
+
+## 1.4.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5),
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)]:
+  - @graphql-mesh/serve-cli@1.4.0
+
+## 1.3.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@1.3.4
+
+## 1.3.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@1.3.3
+
+## 1.3.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b256868`](https://github.com/ardatan/graphql-mesh/commit/b25686859d5eb622da8b980c20cbccc7c9d5a450),
+  [`23631a7`](https://github.com/ardatan/graphql-mesh/commit/23631a72cf9eec81e677aab400ca6b582c0e9b4b)]:
+  - @graphql-mesh/serve-cli@1.3.2
+
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@1.3.1
+
+## 1.3.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`cc53c6c`](https://github.com/ardatan/graphql-mesh/commit/cc53c6c6056dcb38477b260e916825d4c8864b57),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`cc53c6c`](https://github.com/ardatan/graphql-mesh/commit/cc53c6c6056dcb38477b260e916825d4c8864b57),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/serve-cli@1.3.0
+
+## 1.2.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/serve-cli@1.2.0
+
+## 1.1.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/serve-cli@1.1.0
+
 ## 1.0.8
 
 ### Patch Changes

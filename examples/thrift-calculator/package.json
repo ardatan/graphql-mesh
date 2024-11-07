@@ -13,15 +13,15 @@
     "@creditkarma/thrift-server-core": "1.0.4",
     "@creditkarma/thrift-server-express": "1.0.4",
     "@creditkarma/thrift-typescript": "3.7.6",
-    "@graphql-mesh/cli": "0.96.5",
-    "@graphql-mesh/thrift": "0.104.8",
-    "express": "4.21.0",
+    "@graphql-mesh/cli": "0.97.0",
+    "@graphql-mesh/thrift": "0.104.13",
+    "express": "4.21.1",
     "graphql": "16.9.0",
     "thrift": "0.21.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   },
   "devDependencies": {
-    "concurrently": "9.0.1"
+    "concurrently": "9.1.0"
   }
 }

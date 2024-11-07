@@ -5,15 +5,15 @@
   "scripts": {
     "compose": "node ../../packages/compose-cli/dist/esm/bin.js",
     "pretest": "npm run compose",
-    "start": "node ../../packages/serve-cli/dist/esm/bin.js",
+    "start": "npx hive-gateway",
     "test": "jest"
   },
   "dependencies": {
     "@envelop/auth0": "^6.0.0",
-    "@graphql-mesh/compose-cli": "^1.0.4",
-    "@graphql-mesh/plugin-operation-field-permissions": "^0.102.6",
-    "@graphql-mesh/serve-cli": "^1.0.8",
-    "@omnigraph/json-schema": "^0.106.8",
+    "@graphql-hive/gateway": "^1.4.8",
+    "@graphql-mesh/compose-cli": "^1.1.7",
+    "@graphql-mesh/plugin-operation-field-permissions": "^0.102.11",
+    "@omnigraph/json-schema": "^0.107.5",
     "graphql": "16.9.0"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 import type { DocumentNode, GraphQLSchema } from 'graphql';
 import { buildASTSchema, buildSchema, isSchema } from 'graphql';
+import type { TransportEntryAdditions } from '@graphql-hive/gateway';
 import { getInContextSDK } from '@graphql-mesh/runtime';
-import type { TransportEntryAdditions } from '@graphql-mesh/serve-runtime';
 import type { TransportContext, TransportEntry } from '@graphql-mesh/transport-common';
 import type { OnDelegateHook } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';

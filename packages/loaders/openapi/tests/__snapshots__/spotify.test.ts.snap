@@ -16,7 +16,7 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
+directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
@@ -3232,7 +3232,7 @@ type ManyGenres_response {
   genres: [String]!
 }
 
-union get_information_about_the_users_current_playback_response @statusCodeTypeName(subgraph: "test", statusCode: 200, typeName: "CurrentlyPlayingContextObject") @statusCodeTypeName(subgraph: "test", statusCode: 204, typeName: "Void_container") = CurrentlyPlayingContextObject | Void_container
+union get_information_about_the_users_current_playback_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "CurrentlyPlayingContextObject") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = CurrentlyPlayingContextObject | Void_container
 
 """Information about playback"""
 type CurrentlyPlayingContextObject {

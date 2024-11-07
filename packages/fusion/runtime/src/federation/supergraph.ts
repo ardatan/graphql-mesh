@@ -1,8 +1,16 @@
-import { isEnumType, Kind, visit, type GraphQLSchema } from 'graphql';
+import {
+  isEnumType,
+  Kind,
+  visit,
+  type GraphQLSchema,
+  type ObjectTypeDefinitionNode,
+} from 'graphql';
 import type { TransportEntry } from '@graphql-mesh/transport-common';
+import type { YamlConfig } from '@graphql-mesh/types';
 import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
+import { mergeTypeDefs } from '@graphql-tools/merge';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   asArray,
@@ -24,35 +32,10 @@ export const restoreExtraDirectives = memoize1(function restoreExtraDirectives(
 ) {
   const queryType = schema.getQueryType();
   const queryTypeExtensions = getDirectiveExtensions<{
-    extraTypeDirective?: { name: string; directives: Record<string, any[]> };
     extraSchemaDefinitionDirective?: { directives: Record<string, any[]> };
-    extraEnumValueDirective?: { name: string; value: string; directives: Record<string, any[]> };
   }>(queryType);
-  const extraTypeDirectives = queryTypeExtensions?.extraTypeDirective;
   const extraSchemaDefinitionDirectives = queryTypeExtensions?.extraSchemaDefinitionDirective;
-  const extraEnumValueDirectives = queryTypeExtensions?.extraEnumValueDirective;
-  if (
-    extraTypeDirectives?.length ||
-    extraSchemaDefinitionDirectives?.length ||
-    extraEnumValueDirectives?.length
-  ) {
-    const extraTypeDirectiveMap = new Map<string, Record<string, any[]>>();
-    if (extraTypeDirectives) {
-      for (const { name, directives } of extraTypeDirectives) {
-        extraTypeDirectiveMap.set(name, directives);
-      }
-    }
-    const extraEnumValueDirectiveMap = new Map<string, Map<string, Record<string, any[]>>>();
-    if (extraEnumValueDirectives) {
-      for (const { name, value, directives } of extraEnumValueDirectives) {
-        let enumValueDirectivesMap = extraEnumValueDirectiveMap.get(name);
-        if (!enumValueDirectivesMap) {
-          enumValueDirectivesMap = new Map();
-          extraEnumValueDirectiveMap.set(name, enumValueDirectivesMap);
-        }
-        enumValueDirectivesMap.set(value, directives);
-      }
-    }
+  if (extraSchemaDefinitionDirectives?.length) {
     schema = mapSchema(schema, {
       [MapperKind.TYPE]: type => {
         const typeDirectiveExtensions = getDirectiveExtensions(type) || {};
@@ -66,56 +49,12 @@ export const restoreExtraDirectives = memoize1(function restoreExtraDirectives(
               ...(type.extensions || {}),
               directives: {
                 ...typeDirectiveExtensions,
-                extraTypeDirective: [],
                 extraSchemaDefinitionDirective: [],
-                extraEnumValueDirective: [],
               },
             },
             // Cleanup ASTNode to prevent conflicts
             astNode: undefined,
           });
-        }
-        const extraDirectives = extraTypeDirectiveMap.get(type.name);
-        if (extraDirectives) {
-          for (const directiveName in extraDirectives) {
-            const extraDirectiveArgs = extraDirectives[directiveName];
-            if (extraDirectiveArgs?.length) {
-              typeDirectiveExtensions[directiveName] ||= [];
-              typeDirectiveExtensions[directiveName].push(...extraDirectiveArgs);
-            }
-          }
-          return new TypeCtor({
-            ...type.toConfig(),
-            extensions: {
-              ...(type.extensions || {}),
-              directives: typeDirectiveExtensions,
-            },
-            // Cleanup ASTNode to prevent conflicts
-            astNode: undefined,
-          });
-        }
-      },
-      [MapperKind.ENUM_VALUE]: (valueConfig, typeName, schema, externalValue) => {
-        const enumValueDirectivesMap = extraEnumValueDirectiveMap.get(typeName);
-        if (enumValueDirectivesMap) {
-          const enumValueDirectives = enumValueDirectivesMap.get(externalValue);
-          if (enumValueDirectives) {
-            const valueDirectives = getDirectiveExtensions(valueConfig) || {};
-            for (const directiveName in enumValueDirectives) {
-              const extraDirectives = enumValueDirectives[directiveName];
-              if (extraDirectives?.length) {
-                valueDirectives[directiveName] ||= [];
-                valueDirectives[directiveName].push(...extraDirectives);
-              }
-            }
-            return {
-              ...valueConfig,
-              extensions: {
-                ...(valueConfig.extensions || {}),
-                directives: valueDirectives,
-              },
-            };
-          }
         }
       },
     });
@@ -191,17 +130,39 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
         schemaDirectives,
         transportEntryMap,
         additionalTypeDefs,
-        additionalResolvers,
         stitchingDirectivesTransformer,
         onSubgraphExecute,
       }),
     batch,
     onStitchingOptions(opts: any) {
       subschemas = opts.subschemas;
-      opts.typeDefs = [opts.typeDefs, additionalTypeDefs];
+      const mergedTypeDefs = mergeTypeDefs([opts.typeDefs, additionalTypeDefs]);
+      visit(mergedTypeDefs, {
+        [Kind.FIELD_DEFINITION](field, _key, _parent, _path, ancestors) {
+          const fieldDirectives = getDirectiveExtensions<{
+            resolveTo: YamlConfig.AdditionalStitchingResolverObject;
+          }>({ astNode: field });
+          const resolveToDirectives = fieldDirectives?.resolveTo;
+          if (resolveToDirectives?.length) {
+            const targetTypeName = (ancestors[ancestors.length - 1] as ObjectTypeDefinitionNode)
+              .name.value;
+            const targetFieldName = field.name.value;
+            for (const resolveToDirective of resolveToDirectives) {
+              additionalResolvers.push(
+                resolveAdditionalResolversWithoutImport({
+                  targetTypeName,
+                  targetFieldName,
+                  ...resolveToDirective,
+                }),
+              );
+            }
+          }
+        },
+      });
+      opts.typeDefs = mergedTypeDefs;
       opts.resolvers = additionalResolvers;
     },
-    onSubgraphAST(name, subgraphAST) {
+    onSubgraphAST(_name, subgraphAST) {
       return visit(subgraphAST, {
         [Kind.OBJECT_TYPE_DEFINITION](node) {
           const typeName = node.name.value;
@@ -209,7 +170,6 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
             ...node,
             fields: node.fields.filter(fieldNode => {
               const fieldDirectives = getDirectiveExtensions({ astNode: fieldNode });
-              const fieldName = fieldNode.name.value;
               const resolveToDirectives = fieldDirectives.resolveTo;
               if (resolveToDirectives?.length > 0) {
                 additionalTypeDefs.push({
@@ -222,15 +182,6 @@ export const handleFederationSupergraph: UnifiedGraphHandler = function ({
                     },
                   ],
                 });
-                for (const resolveToDirective of resolveToDirectives) {
-                  additionalResolvers.push(
-                    resolveAdditionalResolversWithoutImport({
-                      targetTypeName: typeName,
-                      targetFieldName: fieldName,
-                      ...(resolveToDirective as any),
-                    }),
-                  );
-                }
               }
               const additionalFieldDirectives = fieldDirectives.additionalField;
               if (additionalFieldDirectives?.length > 0) {

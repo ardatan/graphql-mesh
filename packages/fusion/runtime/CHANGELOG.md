@@ -1,5 +1,209 @@
 # @graphql-mesh/fusion-runtime
 
+## 0.10.1
+
+### Patch Changes
+
+- [`9975782`](https://github.com/ardatan/graphql-mesh/commit/9975782984a2cf564f835055669a35b262eaefc7)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the signature of sdk requester
+
+## 0.10.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482)]:
+  - @graphql-mesh/runtime@0.104.0
+
+## 0.9.7
+
+### Patch Changes
+
+- [#7838](https://github.com/ardatan/graphql-mesh/pull/7838)
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.28` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.28)
+    (from `^10.0.27`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.21` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.21)
+    (from `^2.2.19`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitch@^9.2.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.2.17)
+    (from `^9.2.15`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.9)
+    (from `^3.1.8`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.12)
+    (from `^10.0.11`, in `dependencies`)
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/runtime@0.103.12
+  - @graphql-mesh/transport-common@0.7.12
+  - @graphql-mesh/types@0.102.11
+  - @graphql-mesh/utils@0.102.11
+
+## 0.9.6
+
+### Patch Changes
+
+- [#7712](https://github.com/ardatan/graphql-mesh/pull/7712)
+  [`dc54d58`](https://github.com/ardatan/graphql-mesh/commit/dc54d589afa0d08378565e1153b679397f2853a5)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - WebSocket connections are now cached
+  against the whole `connectionParams` object and forwarded `headers`. The fixes WebSocket
+  connection being reused wrongly when `connectionParams.token` is stable while other fields are
+  changing.
+
+## 0.9.5
+
+### Patch Changes
+
+- [#7828](https://github.com/ardatan/graphql-mesh/pull/7828)
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.27)
+    (from `^10.0.26`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.19)
+    (from `^2.2.17`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.8)
+    (from `^3.1.7`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.11)
+    (from `^10.0.10`, in `dependencies`)
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/runtime@0.103.11
+  - @graphql-mesh/transport-common@0.7.11
+  - @graphql-mesh/types@0.102.10
+  - @graphql-mesh/utils@0.102.10
+
+## 0.9.4
+
+### Patch Changes
+
+- [#7816](https://github.com/ardatan/graphql-mesh/pull/7816)
+  [`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/merge@^9.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.0.8)
+    (to `dependencies`)
+
+- [#7816](https://github.com/ardatan/graphql-mesh/pull/7816)
+  [`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix subscription fields fed by webhooks and
+  defined in \`additionalTypeDefs\` with \`@resolveTo\`
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/runtime@0.103.10
+  - @graphql-mesh/types@0.102.9
+  - @graphql-mesh/transport-common@0.7.10
+
+## 0.9.3
+
+### Patch Changes
+
+- [#7805](https://github.com/ardatan/graphql-mesh/pull/7805)
+  [`f7ad933`](https://github.com/ardatan/graphql-mesh/commit/f7ad933b242ca5facb219364f73d1a3befc2bc17)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.17)
+    (from `^2.2.16`, in `dependencies`)
+
+## 0.9.2
+
+### Patch Changes
+
+- [#7769](https://github.com/ardatan/graphql-mesh/pull/7769)
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.26)
+    (from `^10.0.23`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.16)
+    (from `^2.2.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitch@^9.2.15` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.2.15)
+    (from `^9.2.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.7)
+    (from `^3.1.4`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.10)
+    (from `^10.0.7`, in `dependencies`)
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`359da22`](https://github.com/ardatan/graphql-mesh/commit/359da22a9785fbea4402b282a4104ff14697cc45),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/runtime@0.103.9
+  - @graphql-mesh/transport-common@0.7.9
+  - @graphql-mesh/types@0.102.8
+  - @graphql-mesh/utils@0.102.8
+
+## 0.9.1
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.23` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.23)
+    (from `^10.0.21`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/executor@^1.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.3.2)
+    (from `^1.3.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.12)
+    (from `^2.2.10`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitch@^9.2.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.2.12)
+    (from `^9.2.10`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^3.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.4)
+    (from `^3.1.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.7)
+    (from `^10.0.5`, in `dependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/cross-helpers@0.4.7
+  - @graphql-mesh/runtime@0.103.8
+  - @graphql-mesh/transport-common@0.7.8
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+
+## 0.9.0
+
+### Minor Changes
+
+- [#7746](https://github.com/ardatan/graphql-mesh/pull/7746)
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Remove workaround for directives on enums,
+  enum values and unions
+
 ## 0.8.14
 
 ### Patch Changes

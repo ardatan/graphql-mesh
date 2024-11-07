@@ -1,5 +1,110 @@
 # @graphql-mesh/compose-cli
 
+## 1.1.7
+
+### Patch Changes
+
+- [`56e7b60`](https://github.com/ardatan/graphql-mesh/commit/56e7b602ec8a17b52127eecb3457cf16e6030ae9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Pass `ignoreSemanticConventions` to the
+  composition
+
+## 1.1.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4da6db4`](https://github.com/ardatan/graphql-mesh/commit/4da6db4c8eb570b7bdd3a2de0b026a8fff1a20b2)]:
+  - @graphql-mesh/include@0.2.3
+
+## 1.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/fusion-composition@0.6.5
+  - @graphql-mesh/types@0.102.11
+  - @graphql-mesh/utils@0.102.11
+
+## 1.1.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/fusion-composition@0.6.4
+  - @graphql-mesh/types@0.102.10
+  - @graphql-mesh/utils@0.102.10
+
+## 1.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/fusion-composition@0.6.3
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/types@0.102.9
+
+## 1.1.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/fusion-composition@0.6.2
+  - @graphql-mesh/types@0.102.8
+  - @graphql-mesh/utils@0.102.8
+
+## 1.1.1
+
+### Patch Changes
+
+- [#7773](https://github.com/ardatan/graphql-mesh/pull/7773)
+  [`0c789f3`](https://github.com/ardatan/graphql-mesh/commit/0c789f3e9764c9b1ca8418e33dfa0c11ade35efb)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/graphql-file-loader@8.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.2)
+    (from `8.0.1`, in `dependencies`)
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.5)
+    (from `^10.5.3`, in `dependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`7c24ded`](https://github.com/ardatan/graphql-mesh/commit/7c24ded0128f098778a32f74554d9be22e63fa7f)]:
+  - @graphql-mesh/fusion-composition@0.6.1
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+
+## 1.1.0
+
+### Minor Changes
+
+- [#7746](https://github.com/ardatan/graphql-mesh/pull/7746)
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Remove workaround for directives on enums,
+  enum values and unions
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e),
+  [`c8b1309`](https://github.com/ardatan/graphql-mesh/commit/c8b1309a707c358dc446799a986c99e120767d0e)]:
+  - @graphql-mesh/fusion-composition@0.6.0
+
 ## 1.0.4
 
 ### Patch Changes

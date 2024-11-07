@@ -68,12 +68,6 @@ describe('Hoist Field', () => {
   users(limit: Int!, page: Int): [User!]!
 }
 
-scalar _HoistConfig
-
-type UserSearchResult {
-  page: Int!
-}
-
 type User {
   id: ID!
   name: String!
@@ -114,12 +108,6 @@ type User {
   users(limit: Int!, page: Int): [User!]!
 }
 
-scalar _HoistConfig
-
-type UserSearchResult {
-  page: Int!
-}
-
 type User {
   id: ID!
   name: String!
@@ -156,12 +144,6 @@ type User {
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
 "type Query {
   users: [User!]!
-}
-
-scalar _HoistConfig
-
-type UserSearchResult {
-  page: Int!
 }
 
 type User {
@@ -206,12 +188,6 @@ type User {
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
 "type Query {
   users(page: Int): [User!]!
-}
-
-scalar _HoistConfig
-
-type UserSearchResult {
-  page: Int!
 }
 
 type User {
@@ -259,12 +235,6 @@ type User {
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
 "type Query {
   users(page: Int): [User!]!
-}
-
-scalar _HoistConfig
-
-type UserSearchResult {
-  page: Int!
 }
 
 type User {
@@ -342,8 +312,6 @@ type User {
   users(limit: Int!, page: Int): UserSearchResult
   usersResults(limit: Int!, page: Int): [User!]!
 }
-
-scalar _HoistConfig
 
 type UserSearchResult {
   page: Int!
