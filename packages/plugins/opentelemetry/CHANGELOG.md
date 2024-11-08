@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-opentelemetry
 
+## 1.3.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eee53b9`](https://github.com/ardatan/graphql-mesh/commit/eee53b9f455653166c39bca627b3261fbefe4eb7)]:
+  - @graphql-mesh/utils@0.102.12
+  - @graphql-mesh/types@0.102.12
+  - @graphql-mesh/transport-common@0.7.13
+
 ## 1.3.7
 
 ### Patch Changes

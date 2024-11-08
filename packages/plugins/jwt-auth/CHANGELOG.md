@@ -1,5 +1,18 @@
 # @graphql-mesh/plugin-jwt-auth
 
+## 1.2.6
+
+### Patch Changes
+
+- [#7910](https://github.com/ardatan/graphql-mesh/pull/7910)
+  [`e3e6201`](https://github.com/ardatan/graphql-mesh/commit/e3e620120c7754c0e9186b9ed8c32a5c3cb81a3f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Bump underlying Yoga package
+
+- Updated dependencies
+  [[`eee53b9`](https://github.com/ardatan/graphql-mesh/commit/eee53b9f455653166c39bca627b3261fbefe4eb7)]:
+  - @graphql-mesh/utils@0.102.12
+  - @graphql-mesh/types@0.102.12
+
 ## 1.2.5
 
 ### Patch Changes
