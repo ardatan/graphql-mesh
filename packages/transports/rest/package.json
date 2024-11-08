@@ -37,7 +37,7 @@
     "@graphql-mesh/types": "^0.102.11",
     "@graphql-mesh/utils": "^0.102.11",
     "@graphql-tools/utils": "^10.5.5",
-    "@whatwg-node/fetch": "^0.9.15",
+    "@whatwg-node/fetch": "^0.9.15 || ^0.10.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
