@@ -15083,15 +15083,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/node-fetch@npm:0.6.0":
-  version: 0.6.0
-  resolution: "@whatwg-node/node-fetch@npm:0.6.0"
+"@whatwg-node/node-fetch@npm:0.7.0":
+  version: 0.7.0
+  resolution: "@whatwg-node/node-fetch@npm:0.7.0"
   dependencies:
     "@kamilkisiela/fast-url-parser": "npm:^1.1.4"
     busboy: "npm:^1.6.0"
     fast-querystring: "npm:^1.1.1"
     tslib: "npm:^2.6.3"
-  checksum: 10c0/3ec3405e581abd811823f7c5f7dcb2e4c291d01a7a714c34b6b368eefff8b72f92b4d749322433d754b76725c814b03714cc6e929083021568e1ebd8240a04a8
+  checksum: 10c0/9c55d2cfcb4f3bca595230aba21cd06040a11f08f5d20de73530c6ff393006ef16b7082918673bb910b749be67d2082a372b1ee3372bfd26cb92b4ee2ef7b9aa
   languageName: node
   linkType: hard
 
