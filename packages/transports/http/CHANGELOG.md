@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-http
 
+## 0.6.15
+
+### Patch Changes
+
+- [`38526dd`](https://github.com/ardatan/graphql-mesh/commit/38526dd613935248df1a313263c56f6b88725c06)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Bump @graphql-tools/executor-http. Latest
+  includes a fix for canceling SSE streams even while waiting for next event
+
 ## 0.6.14
 
 ### Patch Changes
