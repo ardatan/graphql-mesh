@@ -42,7 +42,7 @@
     "@graphql-mesh/utils": "^0.102.11",
     "@graphql-tools/utils": "^10.5.5",
     "@repeaterjs/repeater": "^3.0.6",
-    "@whatwg-node/fetch": "^0.9.18"
+    "@whatwg-node/fetch": "^0.10.0"
   },
   "devDependencies": {
     "@types/ws": "^8"
