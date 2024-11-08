@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.6",
     "@graphql-mesh/transport-common": "^0.7.13",
     "@graphql-mesh/utils": "^0.102.12",
-    "@graphql-tools/executor-http": "^1.1.5",
+    "@graphql-tools/executor-http": "^1.1.8",
     "@graphql-tools/utils": "^10.5.5",
     "graphql-ws": "^5.16.0",
     "ws": "^8.18.0"
