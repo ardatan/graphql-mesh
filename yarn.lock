@@ -7210,7 +7210,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
     "@graphql-mesh/transport-common": "npm:^0.7.13"
     "@graphql-mesh/utils": "npm:^0.102.12"
-    "@graphql-tools/executor-http": "npm:^1.1.5"
+    "@graphql-tools/executor-http": "npm:^1.1.8"
     "@graphql-tools/utils": "npm:^10.5.5"
     "@types/ws": "npm:^8"
     graphql-ws: "npm:^5.16.0"
@@ -7595,6 +7595,23 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/3110bcafc7ce7132f6508c47722f901eacac01077618317a2e7532e5a0557ab1e9060e18949f60637b896b1d5b1396e7bb0a7d44c6090ed05455c73ee544aacd
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/executor-http@npm:^1.1.8":
+  version: 1.1.8
+  resolution: "@graphql-tools/executor-http@npm:1.1.8"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.5.5"
+    "@repeaterjs/repeater": "npm:^3.0.4"
+    "@whatwg-node/fetch": "npm:^0.10.0"
+    extract-files: "npm:^11.0.0"
+    meros: "npm:^1.2.1"
+    tslib: "npm:^2.4.0"
+    value-or-promise: "npm:^1.0.12"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/3d30b1e8554faea79d1a6c0a3e0dc30177847475b8d8de00865fe1867e23c820ea994ea835e931cd702a5cad2a16947d32e39288d03d81f26d98026013b906f9
   languageName: node
   linkType: hard
 
