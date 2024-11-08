@@ -17,7 +17,7 @@ export {
   type ExtractTokenFunction,
 } from '@graphql-yoga/plugin-jwt';
 
-export type JWTAuthPluginOptions = Omit<JwtPluginOptions, 'extendContext'> & {
+export type JWTAuthPluginOptions = JwtPluginOptions & {
   forward?: {
     payload?: boolean | string;
     token?: boolean | string;
@@ -63,7 +63,7 @@ export function useJWT(
   return {
     onPluginInit({ addPlugin }) {
       // TODO: fix useYogaJWT typings to inherit the context
-      addPlugin(useYogaJWT(options) as any);
+      addPlugin(useYogaJWT(options));
     },
     // When a subgraph is about to be executed, we check if the initial request has a JWT token
     // that needs to be passed. At the moment, only GraphQL subgraphs will have the option to forward tokens/payload.
