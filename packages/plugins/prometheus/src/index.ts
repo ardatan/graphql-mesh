@@ -23,7 +23,7 @@ import {
   createSummary,
   getCounterFromConfig,
   getHistogramFromConfig,
-  usePrometheus,
+  usePrometheus as useYogaPrometheus,
 } from '@graphql-yoga/plugin-prometheus';
 
 export { createCounter, createHistogram, createSummary };
@@ -138,7 +138,7 @@ type SubgraphMetricsLabelParams = {
   executionRequest: ExecutionRequest;
 };
 
-export default function useMeshPrometheus(
+export default function usePrometheus(
   pluginOptions: Omit<
     PrometheusPluginOptions,
     // Remove this after Mesh v1 is released;
@@ -245,7 +245,7 @@ export default function useMeshPrometheus(
 
   return {
     onPluginInit({ addPlugin }) {
-      addPlugin(usePrometheus(config));
+      addPlugin(useYogaPrometheus(config));
     },
     onSubgraphExecute(payload) {
       if (subgraphExecuteHistogram) {
@@ -313,6 +313,8 @@ export default function useMeshPrometheus(
     },
   };
 }
+
+export { usePrometheus };
 
 function registryFromYamlConfig(config: YamlConfig & { logger: Logger }): Registry {
   const registry$ = loadFromModuleExportExpression<Registry>(config.registry, {
