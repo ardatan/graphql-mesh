@@ -1,5 +1,20 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.102.12
+
+### Patch Changes
+
+- [#7914](https://github.com/ardatan/graphql-mesh/pull/7914)
+  [`eee53b9`](https://github.com/ardatan/graphql-mesh/commit/eee53b9f455653166c39bca627b3261fbefe4eb7)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/fetch@^0.10.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.0)
+    (from `^0.9.0`, in `dependencies`)
+- Updated dependencies
+  [[`eee53b9`](https://github.com/ardatan/graphql-mesh/commit/eee53b9f455653166c39bca627b3261fbefe4eb7)]:
+  - @graphql-mesh/utils@0.102.12
+  - @graphql-mesh/types@0.102.12
+
 ## 0.102.11
 
 ### Patch Changes

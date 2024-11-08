@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-composition
 
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eee53b9`](https://github.com/ardatan/graphql-mesh/commit/eee53b9f455653166c39bca627b3261fbefe4eb7)]:
+  - @graphql-mesh/utils@0.102.12
+
 ## 0.6.5
 
 ### Patch Changes
