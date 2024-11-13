@@ -1,6 +1,6 @@
 import { buildSchema, printSchema } from 'graphql';
 import { createFilterTransform, createPruneTransform } from '@graphql-mesh/fusion-composition';
-import { composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils.js';
+import { composeAndGetPublicSchema, expectTheSchemaSDLToBe } from './utils.js';
 
 describe('filter-schema', () => {
   it('filters correctly with array of rules', async () => {
