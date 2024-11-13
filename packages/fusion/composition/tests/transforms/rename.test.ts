@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { createRenameTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
+import { composeAndGetExecutor, composeAndGetPublicSchema } from './utils';
 
 describe('Rename', () => {
   let schema: GraphQLSchema;

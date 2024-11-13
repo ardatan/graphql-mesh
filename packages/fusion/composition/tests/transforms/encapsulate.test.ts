@@ -4,7 +4,7 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
-import { composeAndGetExecutor, composeAndGetPublicSchema } from '../utils';
+import { composeAndGetExecutor, composeAndGetPublicSchema } from './utils';
 
 describe('encapsulate', () => {
   let schema: GraphQLSchema;
