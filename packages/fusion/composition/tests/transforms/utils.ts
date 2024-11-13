@@ -7,11 +7,11 @@ import {
   validate,
 } from 'graphql';
 import { getUnifiedGraphGracefully, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
+import { UnifiedGraphManager } from '@graphql-mesh/fusion-runtime';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { isAsyncIterable } from '@graphql-tools/utils';
-import { UnifiedGraphManager } from '../src/unifiedGraphManager.js';
 
 export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
   const manager = new UnifiedGraphManager({
