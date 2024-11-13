@@ -5956,16 +5956,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-inspector/core@npm:6.1.0":
-  version: 6.1.0
-  resolution: "@graphql-inspector/core@npm:6.1.0"
+"@graphql-inspector/core@npm:6.2.0":
+  version: 6.2.0
+  resolution: "@graphql-inspector/core@npm:6.2.0"
   dependencies:
     dependency-graph: "npm:1.0.0"
-    object-inspect: "npm:1.13.1"
+    object-inspect: "npm:1.13.2"
     tslib: "npm:2.6.2"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/8ac831bafa56fd236a43c52eebbd070b20aa0eccf1bfacbc557fda16bcbca326199ac5bca8a8c3b06ffe70802fd59915ca22e468042054f9c9e883c7b84df3eb
+  checksum: 10c0/f5c126cf0ce31988457a1a76919ef2aae68c0caadf9e493e2f4ee2ea22fac6dc8ac272a3337499622ea2dbc4b2a4f20612766083290739ff0a8c9f587a28a88a
   languageName: node
   linkType: hard
 
@@ -6817,7 +6817,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/store@workspace:packages/legacy/store"
   dependencies:
-    "@graphql-inspector/core": "npm:6.1.0"
+    "@graphql-inspector/core": "npm:6.2.0"
     graphql: "npm:16.9.0"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.7
@@ -29405,10 +29405,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-inspect@npm:1.13.1":
-  version: 1.13.1
-  resolution: "object-inspect@npm:1.13.1"
-  checksum: 10c0/fad603f408e345c82e946abdf4bfd774260a5ed3e5997a0b057c44153ac32c7271ff19e3a5ae39c858da683ba045ccac2f65245c12763ce4e8594f818f4a648d
+"object-inspect@npm:1.13.2":
+  version: 1.13.2
+  resolution: "object-inspect@npm:1.13.2"
+  checksum: 10c0/b97835b4c91ec37b5fd71add84f21c3f1047d1d155d00c0fcd6699516c256d4fcc6ff17a1aced873197fe447f91a3964178fd2a67a1ee2120cdaf60e81a050b4
   languageName: node
   linkType: hard
 
