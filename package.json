@@ -80,8 +80,8 @@
     "@tsconfig/recommended": "^1.0.5",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
-    "@typescript-eslint/eslint-plugin": "8.13.0",
-    "@typescript-eslint/parser": "8.13.0",
+    "@typescript-eslint/eslint-plugin": "8.14.0",
+    "@typescript-eslint/parser": "8.14.0",
     "babel-jest": "29.7.0",
     "bob-the-bundler": "7.0.1",
     "cp-cli": "^2.0.0",
@@ -90,7 +90,7 @@
     "eslint-config-prettier": "9.1.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-n": "17.13.0",
+    "eslint-plugin-n": "17.13.1",
     "eslint-plugin-promise": "7.1.0",
     "eslint-plugin-standard": "5.0.0",
     "globby": "11.1.0",
@@ -111,9 +111,9 @@
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "@commander-js/extra-typings@npm:^12.1.0": "patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch",
     "@opentelemetry/resources": "1.27.0",
-    "@whatwg-node/fetch": "0.9.23",
-    "@whatwg-node/node-fetch": "0.6.0",
-    "@whatwg-node/server": "0.9.52",
+    "@whatwg-node/fetch": "0.10.1",
+    "@whatwg-node/node-fetch": "0.7.2",
+    "@whatwg-node/server": "0.9.54",
     "es5-ext": "0.10.64",
     "esbuild": "^0.24.0",
     "graphql": "16.9.0",
@@ -122,7 +122,7 @@
     "sqlite3": "^5.1.7",
     "tslib": "2.8.1",
     "undici": "6.20.1",
-    "uuid": "11.0.2"
+    "uuid": "11.0.3"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [

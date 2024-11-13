@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/config",
-  "version": "0.105.0",
+  "version": "0.105.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,24 +33,24 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.7",
-    "@graphql-mesh/runtime": "^0.104.0",
-    "@graphql-mesh/store": "^0.102.11",
-    "@graphql-mesh/types": "^0.102.11",
-    "@graphql-mesh/utils": "^0.102.11",
+    "@graphql-mesh/runtime": "^0.104.1",
+    "@graphql-mesh/store": "^0.102.12",
+    "@graphql-mesh/types": "^0.102.12",
+    "@graphql-mesh/utils": "^0.102.12",
     "@graphql-tools/utils": "^10.5.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@envelop/core": "^5.0.0",
-    "@graphql-mesh/cache-localforage": "^0.102.11",
-    "@graphql-mesh/merger-bare": "^0.103.0",
-    "@graphql-mesh/merger-stitching": "^0.103.0",
+    "@graphql-mesh/cache-localforage": "^0.102.12",
+    "@graphql-mesh/merger-bare": "^0.103.1",
+    "@graphql-mesh/merger-stitching": "^0.103.1",
     "@graphql-tools/code-file-loader": "^8.0.0",
     "@graphql-tools/graphql-file-loader": "^8.0.0",
     "@graphql-tools/load": "^8.0.0",
     "@graphql-yoga/plugin-persisted-operations": "^3.0.0",
-    "@whatwg-node/fetch": "^0.9.0",
+    "@whatwg-node/fetch": "^0.10.0",
     "camel-case": "^4.1.2",
     "param-case": "^3.0.4",
     "pascal-case": "^3.1.2"

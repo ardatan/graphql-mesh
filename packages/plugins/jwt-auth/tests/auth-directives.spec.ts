@@ -107,7 +107,7 @@ describe('Auth Directives', () => {
         plugins: () => [
           useCustomFetch(subgraphAServer.fetch),
           useJWT({
-            singingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
+            signingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
           }),
         ],
       });
@@ -223,7 +223,7 @@ describe('Auth Directives', () => {
         plugins: () => [
           useCustomFetch(subgraphAServer.fetch),
           useJWT({
-            singingKeyProviders: [createInlineSigningKeyProvider('secret')],
+            signingKeyProviders: [createInlineSigningKeyProvider('secret')],
             reject: {
               invalidToken: false,
               missingToken: false,
@@ -389,7 +389,7 @@ describe('Auth Directives', () => {
               return Response.error();
             }),
             useJWT({
-              singingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
+              signingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
               reject: {
                 invalidToken: false,
                 missingToken: false,
@@ -455,7 +455,7 @@ describe('Auth Directives', () => {
               return Response.error();
             }),
             useJWT({
-              singingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
+              signingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
               reject: {
                 invalidToken: false,
                 missingToken: false,
@@ -572,7 +572,7 @@ describe('Auth Directives', () => {
         plugins: () => [
           useCustomFetch(subgraphServer.fetch),
           useJWT({
-            singingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
+            signingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
             reject: {
               invalidToken: false,
               missingToken: false,
@@ -711,7 +711,7 @@ describe('Auth Directives', () => {
         plugins: () => [
           useCustomFetch(subgraphServer.fetch),
           useJWT({
-            singingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
+            signingKeyProviders: [createInlineSigningKeyProvider(signingKey)],
             reject: {
               invalidToken: false,
               missingToken: false,

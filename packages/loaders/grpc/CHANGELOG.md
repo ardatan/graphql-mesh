@@ -1,5 +1,12 @@
 # @omnigraph/grpc
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-common@0.7.13
+
 ## 0.1.0
 
 ### Minor Changes

@@ -1,7 +1,7 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { createPrefixTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from '../utils';
+import { composeAndGetExecutor, composeAndGetPublicSchema, expectTheSchemaSDLToBe } from './utils';
 
 describe('Prefix', () => {
   let schema: GraphQLSchema;
