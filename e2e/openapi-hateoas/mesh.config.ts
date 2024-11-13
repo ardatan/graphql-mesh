@@ -5,12 +5,14 @@ export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
       sourceHandler: loadOpenAPISubgraph('Products', {
-        source: './products.json'
+        source: './products.json',
+        endpoint: 'http://localhost:3000',
       }),
     },
     {
       sourceHandler: loadOpenAPISubgraph('Suppliers', {
-        source: './suppliers.json'
+        source: './suppliers.json',
+        endpoint: 'http://localhost:3000',
       }),
     },
   ],

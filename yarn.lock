@@ -3801,6 +3801,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-hateoas@workspace:e2e/openapi-hateoas"
   dependencies:
+    "@graphql-hive/gateway": "npm:^1.4.8"
     graphql: "npm:16.9.0"
     moment: "npm:2.30.1"
   languageName: unknown
