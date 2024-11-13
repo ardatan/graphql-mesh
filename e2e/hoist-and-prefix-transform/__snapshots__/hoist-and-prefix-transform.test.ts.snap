@@ -12,7 +12,7 @@ schema
   
   @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@transport", "@hoist", "@source", "@extraSchemaDefinitionDirective"]
+  import: ["@hoist", "@source"]
 )
 {
   query: Query
@@ -84,29 +84,15 @@ enum join__Graph {
   WEATHER @join__graph(name: "weather", url: "http://localhost:<weather_port>/graphql") 
 }
 
-directive @transport(
-  kind: String!
-  subgraph: String!
-  location: String!
-  headers: [[String]]
-  options: Test_TransportOptions
-) repeatable on SCHEMA
-
 directive @hoist(subgraph: String, pathConfig: _HoistConfig)  repeatable on FIELD_DEFINITION
 
 directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 scalar Test_TransportOptions @source(name: "TransportOptions", subgraph: "weather")  @join__type(graph: WEATHER) 
 
 scalar _HoistConfig @join__type(graph: WEATHER) 
 
-scalar _DirectiveExtensions @join__type(graph: WEATHER) 
-
-type Query @source(name: "Query", subgraph: "weather")  @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "http", subgraph: "weather", location: "http://localhost:<weather_port>/graphql", options: {}}]}
-) @join__type(graph: WEATHER)  {
+type Query @source(name: "Query", subgraph: "weather")  @join__type(graph: WEATHER)  {
   here: Test_Weather @source(name: "here", type: "Weather", subgraph: "weather") 
 }
 

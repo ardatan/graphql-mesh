@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport", "@merge", "@extraSchemaDefinitionDirective", "@source"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@source"]) {
   query: Query
 }
 
@@ -19,11 +19,7 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-directive @transport(kind: String!, subgraph: String!, location: String!, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
-
 directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
 directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
@@ -51,9 +47,7 @@ enum join__Graph {
 
 scalar TransportOptions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
 
-scalar _DirectiveExtensions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
-
-type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "authors", location: "http://localhost:<authors_port>/graphql", options: {}}]}) @extraSchemaDefinitionDirective(directives: {transport: [{kind: "http", subgraph: "books", location: "http://localhost:<books_port>/graphql", options: {}}]}) @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
+type Query @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
   author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books")
   authors(ids: [ID]): [Author] @merge(subgraph: "authors", keyField: "id", keyArg: "ids") @join__field(graph: AUTHORS)
   book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @join__field(graph: BOOKS)

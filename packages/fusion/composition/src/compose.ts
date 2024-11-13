@@ -64,6 +64,18 @@ export function getUnifiedGraphGracefully(subgraphs: SubgraphConfig[]) {
   return result.supergraphSdl;
 }
 
+function isEmptyObject(obj: any) {
+  if (!obj) {
+    return true;
+  }
+  for (const key in obj) {
+    if (obj[key] != null) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
@@ -74,13 +86,26 @@ export function getAnnotatedSubgraphs(
     let url: string = subgraphConfig.url;
     const subgraphSchemaExtensions = getDirectiveExtensions(schema);
     const transportDirectives = subgraphSchemaExtensions?.transport;
-    if (transportDirectives?.length) {
-      url = transportDirectives[0].location;
+    const transportDirective = transportDirectives?.[0];
+    let removeTransportDirective = false;
+    if (transportDirective) {
+      url = transportDirective.location;
+      if (
+        transportDirective.kind === 'http' &&
+        !transportDirective.headers &&
+        isEmptyObject(transportDirective.options)
+      ) {
+        removeTransportDirective = true;
+      }
     }
 
     let mergeDirectiveUsed = false;
     const sourceDirectiveUsed = transforms?.length > 0;
-    const annotatedSubgraph = mapSchema(normalizeDirectiveExtensions(schema), {
+    const normalizedSchema = normalizeDirectiveExtensions(schema);
+    if (removeTransportDirective && (normalizedSchema.extensions?.directives as any)?.transport) {
+      delete (normalizedSchema.extensions?.directives as any).transport;
+    }
+    const annotatedSubgraph = mapSchema(normalizedSchema, {
       [MapperKind.TYPE]: type => {
         if (!sourceDirectiveUsed || isSpecifiedScalarType(type)) {
           return type;
@@ -286,6 +311,11 @@ export function getAnnotatedSubgraphs(
           astNode: undefined,
         };
       },
+      [MapperKind.DIRECTIVE]: directive => {
+        if (directive.name === 'transport' && removeTransportDirective) {
+          return null;
+        }
+      },
     });
     let transformedSubgraph = annotatedSubgraph;
     if (transforms?.length) {
@@ -424,7 +454,10 @@ export function getAnnotatedSubgraphs(
     if (schemaDirectiveExtensions) {
       const schemaDirectiveExtensionsEntries = Object.entries(schemaDirectiveExtensions);
       const schemaDirectiveExtraEntries = schemaDirectiveExtensionsEntries.filter(
-        ([dirName]) => dirName !== 'link' && dirName !== 'composeDirective',
+        ([dirName]) =>
+          dirName !== 'link' &&
+          dirName !== 'composeDirective' &&
+          (removeTransportDirective ? dirName !== 'transport' : true),
       );
       if (schemaDirectiveExtraEntries.length) {
         transformedSubgraph = new GraphQLSchema({

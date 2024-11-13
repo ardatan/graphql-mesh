@@ -99,27 +99,24 @@ directive @httpOperation(
 ) repeatable on FIELD_DEFINITION
 
 directive @transport(
-  subgraph: String!
-  kind: String!
-  location: String!
+  subgraph: String
+  kind: String
+  location: String
   headers: [[String]]
   queryStringOptions: ObjMap
   queryParams: [[String]]
-  options: TransportOptions
 ) repeatable on SCHEMA
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 scalar ObjMap @join__type(graph: GREETINGS) 
 
-scalar _DirectiveExtensions @join__type(graph: GREETINGS)  @join__type(graph: HELLOER) 
+scalar _DirectiveExtensions @join__type(graph: GREETINGS) 
 
 scalar TransportOptions @join__type(graph: HELLOER) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "greetings", kind: "rest", location: "http://localhost:<greetings_port>"}]}
-) @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "http", subgraph: "helloer", location: "http://localhost:<helloer_port>/graphql", options: {}}]}
 ) @join__type(graph: GREETINGS)  @join__type(graph: HELLOER)  {
   greet(name: String!) : greet_200_response @httpOperation(
     subgraph: "greetings"
