@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`OpenAPI HATEOAS composes the schema 1`] = `
+exports[`OpenAPI HATEOAS should compose 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@httpOperation", "@transport", "@merge", "@extraSchemaDefinitionDirective"]) {
   query: Query
 }
@@ -45,15 +45,15 @@ enum link__Purpose {
 }
 
 enum join__Graph {
-  PRODUCTS @join__graph(name: "Products", url: "")
-  SUPPLIERS @join__graph(name: "Suppliers", url: "")
+  PRODUCTS @join__graph(name: "Products", url: "http://localhost:3000")
+  SUPPLIERS @join__graph(name: "Suppliers", url: "http://localhost:3000")
 }
 
 scalar ObjMap @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS)
 
 scalar _DirectiveExtensions @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS)
 
-type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Products", kind: "rest"}]}) @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Suppliers", kind: "rest"}]}) @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS) {
+type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Products", kind: "rest", location: "http://localhost:3000"}]}) @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Suppliers", kind: "rest", location: "http://localhost:3000"}]}) @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS) {
   """Get a product by ID"""
   getProductById(
     """The product ID"""
