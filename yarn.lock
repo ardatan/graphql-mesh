@@ -4438,7 +4438,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.12"
     "@omnigraph/json-schema": "npm:^0.107.6"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.86.1"
+    wrangler: "npm:3.87.0"
   languageName: unknown
   linkType: soft
 
@@ -4452,7 +4452,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.102.12"
     "@graphql-mesh/plugin-response-cache": "npm:^0.102.12"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.86.1"
+    wrangler: "npm:3.87.0"
   languageName: unknown
   linkType: soft
 
@@ -4590,7 +4590,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.107.6"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.12"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.86.1"
+    wrangler: "npm:3.87.0"
   languageName: unknown
   linkType: soft
 
@@ -5278,7 +5278,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.102.12"
     "@graphql-mesh/plugin-response-cache": "npm:0.102.12"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.86.1"
+    wrangler: "npm:3.87.0"
   languageName: unknown
   linkType: soft
 
@@ -17228,6 +17228,15 @@ __metadata:
     fsevents:
       optional: true
   checksum: 10c0/8361dcd013f2ddbe260eacb1f3cb2f2c6f2b0ad118708a343a5ed8158941a39cb8fb1d272e0f389712e74ee90ce8ba864eece9e0e62b9705cb468a2f6d917462
+  languageName: node
+  linkType: hard
+
+"chokidar@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "chokidar@npm:4.0.1"
+  dependencies:
+    readdirp: "npm:^4.0.1"
+  checksum: 10c0/4bb7a3adc304059810bb6c420c43261a15bb44f610d77c35547addc84faa0374265c3adc67f25d06f363d9a4571962b02679268c40de07676d260de1986efea9
   languageName: node
   linkType: hard
 
@@ -32642,6 +32651,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"readdirp@npm:^4.0.1":
+  version: 4.0.2
+  resolution: "readdirp@npm:4.0.2"
+  checksum: 10c0/a16ecd8ef3286dcd90648c3b103e3826db2b766cdb4a988752c43a83f683d01c7059158d623cbcd8bdfb39e65d302d285be2d208e7d9f34d022d912b929217dd
+  languageName: node
+  linkType: hard
+
 "readdirp@npm:~3.6.0":
   version: 3.6.0
   resolution: "readdirp@npm:3.6.0"
@@ -38173,16 +38189,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.86.1":
-  version: 3.86.1
-  resolution: "wrangler@npm:3.86.1"
+"wrangler@npm:3.87.0":
+  version: 3.87.0
+  resolution: "wrangler@npm:3.87.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@cloudflare/workers-shared": "npm:0.7.1"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     blake3-wasm: "npm:^2.1.5"
-    chokidar: "npm:^3.5.3"
+    chokidar: "npm:^4.0.1"
     date-fns: "npm:^4.1.0"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
@@ -38208,7 +38224,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/a77b6b39e8681013ef402a95de117ba80255df9598dd68f117d81792b0d7c5b0fe1a82653e3fa2df65074f020140db212168024bfc8454f0a11da8575f732406
+  checksum: 10c0/9c9b768046e579e898dfd2ca73e0fb25eedd95cb729797871972d5101bbed2f186283d479d2f87459462c0486eed7462d2ad036449eeb01577f55b4731246073
   languageName: node
   linkType: hard
 
