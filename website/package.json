@@ -24,7 +24,7 @@
     "cross-env": "7.0.3",
     "eslint-config-next": "15.0.3",
     "postcss-import": "16.1.0",
-    "tailwindcss": "3.4.14",
+    "tailwindcss": "3.4.15",
     "typescript": "^5.4.2"
   },
   "browserslist": {
