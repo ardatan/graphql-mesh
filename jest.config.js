@@ -93,6 +93,11 @@ module.exports = {
     '@graphql-mesh/transport-ws': '<rootDir>/node_modules/@graphql-mesh/transport-ws/cjs/index.js',
     '@graphql-mesh/transport-http-callback':
       '<rootDir>/node_modules/transport-http-callback/cjs/index.js',
+    '@graphql-mesh/hmac-upstream-signature':
+      '<rootDir>/node_modules/@graphql-mesh/hmac-upstream-signature',
+    '@graphql-mesh/plugin-opentelemetry':
+      '<rootDir>/node_modules/@graphql-mesh/plugin-opentelemetry',
+    '@graphql-mesh/plugin-prometheus': '<rootDir>/node_modules/@graphql-mesh/plugin-prometheus',
 
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
