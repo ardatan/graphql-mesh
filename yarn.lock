@@ -3709,7 +3709,7 @@ __metadata:
   resolution: "@e2e/manual-transport-def@workspace:e2e/manual-transport-def"
   dependencies:
     "@graphql-hive/gateway": "npm:^1.4.8"
-    fets: "npm:0.8.3"
+    fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
@@ -4512,7 +4512,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.44.3"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
-    fets: "npm:0.8.3"
+    fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
@@ -4916,7 +4916,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.107.6"
     "@types/node": "npm:22.9.0"
     concurrently: "npm:9.1.0"
-    fets: "npm:0.8.3"
+    fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
@@ -4932,7 +4932,7 @@ __metadata:
     "@graphql-mesh/plugin-live-query": "npm:0.102.12"
     "@whatwg-node/fetch": "npm:^0.10.0"
     concurrently: "npm:9.1.0"
-    fets: "npm:0.8.3"
+    fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -5218,7 +5218,7 @@ __metadata:
     "@graphql-mesh/openapi": "npm:0.107.6"
     "@sinclair/typebox": "npm:0.34.0"
     concurrently: "npm:9.1.0"
-    fets: "npm:0.8.3"
+    fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
     ts-node: "npm:^10.9.2"
@@ -10236,7 +10236,7 @@ __metadata:
     "@omnigraph/json-schema": "npm:^0.107.6"
     "@whatwg-node/fetch": "npm:0.10.1"
     change-case: "npm:^4.1.2"
-    fets: "npm:0.8.3"
+    fets: "npm:0.8.4"
     graphql-yoga: "npm:5.10.2"
     json-bigint-patch: "npm:0.0.8"
     json-machete: "npm:^0.97.4"
@@ -12052,7 +12052,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.0":
+"@sinclair/typebox@npm:0.34.0, @sinclair/typebox@npm:^0.34.0":
   version: 0.34.0
   resolution: "@sinclair/typebox@npm:0.34.0"
   checksum: 10c0/6ec50495583c87f8e7718b87081ce5af627c4aac180f6a08d04743aac7df745e9dc9216e0a27002dc5b41e34fba63e5407d2db34aac2d66b58348627623e104d
@@ -12070,13 +12070,6 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
-  languageName: node
-  linkType: hard
-
-"@sinclair/typebox@npm:^0.33.0":
-  version: 0.33.22
-  resolution: "@sinclair/typebox@npm:0.33.22"
-  checksum: 10c0/8c50b8295e0af8477e6cb5102c18a9d37d890ce08600b72d21273f5ed85183e1d9e83bb4b49aab7ff5e85e9c4b40605c1110ff6f99a08e562d6b10b38ea214a5
   languageName: node
   linkType: hard
 
@@ -21615,20 +21608,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fets@npm:0.8.3, fets@npm:^0.8.0, fets@npm:^0.8.1":
-  version: 0.8.3
-  resolution: "fets@npm:0.8.3"
+"fets@npm:0.8.4, fets@npm:^0.8.0, fets@npm:^0.8.1":
+  version: 0.8.4
+  resolution: "fets@npm:0.8.4"
   dependencies:
-    "@sinclair/typebox": "npm:^0.33.0"
+    "@sinclair/typebox": "npm:^0.34.0"
     "@whatwg-node/cookie-store": "npm:^0.2.0"
-    "@whatwg-node/fetch": "npm:^0.9.4"
-    "@whatwg-node/server": "npm:^0.9.15"
+    "@whatwg-node/fetch": "npm:^0.10.0"
+    "@whatwg-node/server": "npm:^0.9.55"
     hotscript: "npm:^1.0.11"
     json-schema-to-ts: "npm:^3.0.0"
     qs: "npm:^6.11.2"
     ts-toolbelt: "npm:^9.6.0"
     tslib: "npm:^2.3.1"
-  checksum: 10c0/fef1f9139557ac4a45cecd319b9b9bc77a9bc174252cba45fe397bb9de816ce68283c9a1c3ca574cef41e763a3221026065f8814356de3d7519940a84431d479
+  checksum: 10c0/6a044d98e9bb826c16310e7b78a81af6cb18e5aed436d4882239ef5b4ad20b0d01d32898105647eb68c188938b6f73c78f155137b815097561d5ca86686a8972
   languageName: node
   linkType: hard
 
