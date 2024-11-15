@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-localforage
 
+## 0.102.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.13
+  - @graphql-mesh/utils@0.102.13
+
 ## 0.102.12
 
 ### Patch Changes

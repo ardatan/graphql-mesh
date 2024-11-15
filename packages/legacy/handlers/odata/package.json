@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/odata",
-  "version": "0.104.12",
+  "version": "0.104.13",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,13 +32,13 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/store": "^0.102.12",
-    "@graphql-mesh/types": "^0.102.12",
+    "@graphql-mesh/store": "^0.102.13",
+    "@graphql-mesh/types": "^0.102.13",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/odata": "^0.0.12"
+    "@omnigraph/odata": "^0.0.13"
   },
   "publishConfig": {
     "access": "public",

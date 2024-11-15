@@ -1,5 +1,14 @@
 # @omnigraph/raml
 
+## 0.107.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.13
+  - @graphql-mesh/utils@0.102.13
+  - @omnigraph/json-schema@0.107.7
+
 ## 0.107.6
 
 ### Patch Changes

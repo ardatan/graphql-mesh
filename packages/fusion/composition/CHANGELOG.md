@@ -1,5 +1,17 @@
 # @graphql-mesh/fusion-composition
 
+## 0.6.7
+
+### Patch Changes
+
+- [#7936](https://github.com/ardatan/graphql-mesh/pull/7936)
+  [`4236099`](https://github.com/ardatan/graphql-mesh/commit/423609963b72000d2954fcb55606bd8e8b679db3)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not create extra \`@transport\` annotation if
+  the subgraph is a regular HTTP subgraph
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.102.13
+
 ## 0.6.6
 
 ### Patch Changes
