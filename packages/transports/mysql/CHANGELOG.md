@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-mysql
 
+## 0.7.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.13
+  - @graphql-mesh/utils@0.102.13
+
 ## 0.7.13
 
 ### Patch Changes

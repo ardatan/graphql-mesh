@@ -1,5 +1,21 @@
 # @graphql-mesh/compose-cli
 
+## 1.1.9
+
+### Patch Changes
+
+- [#7937](https://github.com/ardatan/graphql-mesh/pull/7937)
+  [`53b6870`](https://github.com/ardatan/graphql-mesh/commit/53b687064a8decec5a7458d73f9852c0629ae79f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/graphql-file-loader@8.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.3)
+    (from `8.0.2`, in `dependencies`)
+- Updated dependencies
+  [[`4236099`](https://github.com/ardatan/graphql-mesh/commit/423609963b72000d2954fcb55606bd8e8b679db3)]:
+  - @graphql-mesh/fusion-composition@0.6.7
+  - @graphql-mesh/types@0.102.13
+  - @graphql-mesh/utils@0.102.13
+
 ## 1.1.8
 
 ### Patch Changes

@@ -8,8 +8,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.97.1",
-    "@graphql-mesh/graphql": "0.102.15",
+    "@graphql-mesh/cli": "0.97.2",
+    "@graphql-mesh/graphql": "0.102.16",
     "concurrently": "9.1.0",
     "graphql": "16.9.0",
     "graphql-yoga": "5.10.2",
