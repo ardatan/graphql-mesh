@@ -91,6 +91,7 @@ export function getAnnotatedSubgraphs(
     if (transportDirective) {
       url = transportDirective.location;
       if (
+        !options.alwaysAddTransportDirective &&
         transportDirective.kind === 'http' &&
         !transportDirective.headers &&
         isEmptyObject(transportDirective.options)
@@ -551,6 +552,8 @@ export interface GetAnnotatedSubgraphsOptions {
    * @default false
    */
   ignoreSemanticConventions?: boolean;
+
+  alwaysAddTransportDirective?: boolean;
 }
 
 export type ComposeSubgraphsOptions = GetAnnotatedSubgraphsOptions;

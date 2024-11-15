@@ -553,9 +553,6 @@
         "operationFieldPermissions": {
           "$ref": "#/definitions/OperationFieldPermissionsConfig"
         },
-        "prometheus": {
-          "$ref": "#/definitions/PrometheusConfig"
-        },
         "rateLimit": {
           "$ref": "#/definitions/RateLimitPluginConfig",
           "description": "RateLimit plugin"
@@ -569,6 +566,9 @@
         },
         "statsd": {
           "$ref": "#/definitions/StatsdPlugin"
+        },
+        "prometheus": {
+          "$ref": "#/definitions/PrometheusConfig"
         }
       }
     },
@@ -2587,191 +2587,6 @@
         }
       }
     },
-    "PrometheusConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PrometheusConfig",
-      "properties": {
-        "requestCount": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "requestTotalDuration": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "requestSummary": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "parse": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "validate": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "contextBuilding": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "execute": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "errors": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "deprecatedFields": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "skipIntrospection": {
-          "type": "boolean"
-        },
-        "registry": {
-          "type": "string"
-        },
-        "delegation": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "delegationArgs": {
-          "type": "boolean"
-        },
-        "delegationKey": {
-          "type": "boolean"
-        },
-        "subgraphExecute": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "fetchMetrics": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "fetchRequestHeaders": {
-          "type": "boolean"
-        },
-        "fetchResponseHeaders": {
-          "type": "boolean"
-        },
-        "http": {
-          "description": "Any of: Boolean, String",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "httpRequestHeaders": {
-          "type": "boolean"
-        },
-        "httpResponseHeaders": {
-          "type": "boolean"
-        },
-        "endpoint": {
-          "description": "The path to the metrics endpoint\ndefault: `/metrics` (Any of: Boolean, String)",
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        }
-      }
-    },
     "RateLimitPluginConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -4306,6 +4121,191 @@
         "infile": {
           "type": "string",
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
+        }
+      }
+    },
+    "PrometheusConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PrometheusConfig",
+      "properties": {
+        "requestCount": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "requestTotalDuration": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "requestSummary": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "parse": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "validate": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "contextBuilding": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "execute": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "errors": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "deprecatedFields": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "skipIntrospection": {
+          "type": "boolean"
+        },
+        "registry": {
+          "type": "string"
+        },
+        "delegation": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "delegationArgs": {
+          "type": "boolean"
+        },
+        "delegationKey": {
+          "type": "boolean"
+        },
+        "subgraphExecute": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetchMetrics": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetchRequestHeaders": {
+          "type": "boolean"
+        },
+        "fetchResponseHeaders": {
+          "type": "boolean"
+        },
+        "http": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "httpRequestHeaders": {
+          "type": "boolean"
+        },
+        "httpResponseHeaders": {
+          "type": "boolean"
+        },
+        "endpoint": {
+          "description": "The path to the metrics endpoint\ndefault: `/metrics` (Any of: Boolean, String)",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
       }
     }
