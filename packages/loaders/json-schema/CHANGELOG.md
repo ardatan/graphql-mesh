@@ -1,5 +1,14 @@
 # @omnigraph/json-schema
 
+## 0.107.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.13
+  - @graphql-mesh/utils@0.102.13
+  - @graphql-mesh/transport-rest@0.7.14
+
 ## 0.107.6
 
 ### Patch Changes

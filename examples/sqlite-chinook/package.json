@@ -6,8 +6,8 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.97.1",
-    "@graphql-mesh/tuql": "0.103.12",
+    "@graphql-mesh/cli": "0.97.2",
+    "@graphql-mesh/tuql": "0.103.13",
     "graphql": "16.9.0"
   },
   "resolutions": {

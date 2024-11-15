@@ -1,5 +1,15 @@
 # @graphql-mesh/postgraphile
 
+## 0.102.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fcf18fb`](https://github.com/ardatan/graphql-mesh/commit/fcf18fb79cc5091c15d5d0fd37e7519dbd069c56)]:
+  - @graphql-mesh/store@0.102.13
+  - @graphql-mesh/types@0.102.13
+  - @graphql-mesh/utils@0.102.13
+
 ## 0.102.12
 
 ### Patch Changes
