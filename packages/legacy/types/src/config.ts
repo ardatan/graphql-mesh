@@ -1858,11 +1858,11 @@ export interface Plugin {
   mock?: MockingConfig;
   newrelic?: NewrelicConfig;
   operationFieldPermissions?: OperationFieldPermissionsConfig;
-  prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
   snapshot?: SnapshotPluginConfig;
   statsd?: StatsdPlugin;
+  prometheus?: PrometheusConfig;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {
@@ -2210,73 +2210,6 @@ export interface OperationFieldPermission {
   if?: string;
   allow?: string[];
 }
-export interface PrometheusConfig {
-  /**
-   * Any of: Boolean, String
-   */
-  requestCount?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  requestTotalDuration?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  requestSummary?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  parse?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  validate?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  contextBuilding?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  execute?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  errors?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  deprecatedFields?: boolean | string;
-  skipIntrospection?: boolean;
-  registry?: string;
-  /**
-   * Any of: Boolean, String
-   */
-  delegation?: boolean | string;
-  delegationArgs?: boolean;
-  delegationKey?: boolean;
-  /**
-   * Any of: Boolean, String
-   */
-  subgraphExecute?: boolean | string;
-  /**
-   * Any of: Boolean, String
-   */
-  fetchMetrics?: boolean | string;
-  fetchRequestHeaders?: boolean;
-  fetchResponseHeaders?: boolean;
-  /**
-   * Any of: Boolean, String
-   */
-  http?: boolean | string;
-  httpRequestHeaders?: boolean;
-  httpResponseHeaders?: boolean;
-  /**
-   * The path to the metrics endpoint
-   * default: `/metrics` (Any of: Boolean, String)
-   */
-  endpoint?: boolean | string;
-}
 /**
  * RateLimit plugin
  */
@@ -2429,4 +2362,71 @@ export interface StatsdClientConfiguration {
 }
 export interface StatsdClientBufferHolder {
   buffer: string;
+}
+export interface PrometheusConfig {
+  /**
+   * Any of: Boolean, String
+   */
+  requestCount?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  requestTotalDuration?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  requestSummary?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  parse?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  validate?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  contextBuilding?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  execute?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  errors?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  deprecatedFields?: boolean | string;
+  skipIntrospection?: boolean;
+  registry?: string;
+  /**
+   * Any of: Boolean, String
+   */
+  delegation?: boolean | string;
+  delegationArgs?: boolean;
+  delegationKey?: boolean;
+  /**
+   * Any of: Boolean, String
+   */
+  subgraphExecute?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  fetchMetrics?: boolean | string;
+  fetchRequestHeaders?: boolean;
+  fetchResponseHeaders?: boolean;
+  /**
+   * Any of: Boolean, String
+   */
+  http?: boolean | string;
+  httpRequestHeaders?: boolean;
+  httpResponseHeaders?: boolean;
+  /**
+   * The path to the metrics endpoint
+   * default: `/metrics` (Any of: Boolean, String)
+   */
+  endpoint?: boolean | string;
 }
