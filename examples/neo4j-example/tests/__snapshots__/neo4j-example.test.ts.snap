@@ -35,9 +35,10 @@ input ActedInPropertiesSort {
 }
 
 input ActedInPropertiesUpdateInput {
-  roles: [String]
+  roles: [String] @deprecated(reason: "Please use the explicit _SET field")
   roles_POP: Int
   roles_PUSH: [String]
+  roles_SET: [String]
 }
 
 input ActedInPropertiesWhere {
@@ -217,7 +218,7 @@ input MoviePeopleActedInConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: PersonConnectWhere
 }
 
@@ -339,7 +340,7 @@ input MoviePeopleDirectedConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: PersonConnectWhere
 }
 
@@ -456,7 +457,7 @@ input MoviePeopleProducedConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: PersonConnectWhere
 }
 
@@ -575,7 +576,7 @@ input MoviePeopleReviewedConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: PersonConnectWhere
 }
 
@@ -697,7 +698,7 @@ input MoviePeopleWroteConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: PersonConnectWhere
 }
 
@@ -900,14 +901,18 @@ input MovieUpdateInput {
   peopleProduced: [MoviePeopleProducedUpdateFieldInput!]
   peopleReviewed: [MoviePeopleReviewedUpdateFieldInput!]
   peopleWrote: [MoviePeopleWroteUpdateFieldInput!]
-  released: BigInt
+  released: BigInt @deprecated(reason: "Please use the explicit _SET field")
   released_DECREMENT: BigInt
   released_INCREMENT: BigInt
-  tagline: String
-  title: String
-  votes: BigInt
+  released_SET: BigInt
+  tagline: String @deprecated(reason: "Please use the explicit _SET field")
+  tagline_SET: String
+  title: String @deprecated(reason: "Please use the explicit _SET field")
+  title_SET: String
+  votes: BigInt @deprecated(reason: "Please use the explicit _SET field")
   votes_DECREMENT: BigInt
   votes_INCREMENT: BigInt
+  votes_SET: BigInt
 }
 
 type MovieUpdatedEvent {
@@ -1148,7 +1153,7 @@ input PersonActedInMoviesConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: MovieConnectWhere
 }
 
@@ -1359,7 +1364,7 @@ input PersonDirectedMoviesConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: MovieConnectWhere
 }
 
@@ -1531,7 +1536,7 @@ input PersonFollowsPeopleConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: PersonConnectWhere
 }
 
@@ -1723,7 +1728,7 @@ input PersonPeopleFollowsConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: PersonConnectWhere
 }
 
@@ -1860,7 +1865,7 @@ input PersonProducedMoviesConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: MovieConnectWhere
 }
 
@@ -2014,7 +2019,7 @@ input PersonReviewedMoviesConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: MovieConnectWhere
 }
 
@@ -2182,12 +2187,14 @@ input PersonSubscriptionWhere {
 
 input PersonUpdateInput {
   actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
-  born: BigInt
+  born: BigInt @deprecated(reason: "Please use the explicit _SET field")
   born_DECREMENT: BigInt
   born_INCREMENT: BigInt
+  born_SET: BigInt
   directedMovies: [PersonDirectedMoviesUpdateFieldInput!]
   followsPeople: [PersonFollowsPeopleUpdateFieldInput!]
-  name: String
+  name: String @deprecated(reason: "Please use the explicit _SET field")
+  name_SET: String
   peopleFollows: [PersonPeopleFollowsUpdateFieldInput!]
   producedMovies: [PersonProducedMoviesUpdateFieldInput!]
   reviewedMovies: [PersonReviewedMoviesUpdateFieldInput!]
@@ -2413,7 +2420,7 @@ input PersonWroteMoviesConnectFieldInput {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed")
   where: MovieConnectWhere
 }
 
@@ -2618,10 +2625,12 @@ input ReviewedPropertiesSort {
 }
 
 input ReviewedPropertiesUpdateInput {
-  rating: BigInt
+  rating: BigInt @deprecated(reason: "Please use the explicit _SET field")
   rating_DECREMENT: BigInt
   rating_INCREMENT: BigInt
-  summary: String
+  rating_SET: BigInt
+  summary: String @deprecated(reason: "Please use the explicit _SET field")
+  summary_SET: String
 }
 
 input ReviewedPropertiesWhere {
