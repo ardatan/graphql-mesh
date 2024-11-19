@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions -- simply more convenient to do `this.stderr(m) || console.log(m)` */
 import { process, util } from '@graphql-mesh/cross-helpers';
 import type { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
