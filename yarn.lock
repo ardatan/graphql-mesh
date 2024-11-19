@@ -4911,7 +4911,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.102.14"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
-    mongoose: "npm:8.8.1"
+    mongoose: "npm:8.8.2"
   languageName: unknown
   linkType: soft
 
@@ -5179,7 +5179,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.97.2"
     "@graphql-mesh/openapi": "npm:0.107.7"
-    "@sinclair/typebox": "npm:0.34.3"
+    "@sinclair/typebox": "npm:0.34.4"
     concurrently: "npm:9.1.0"
     fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
@@ -6293,7 +6293,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.8.1"
+    mongoose: "npm:8.8.2"
   peerDependencies:
     "@graphql-mesh/types": ^0.102.13
     "@graphql-mesh/utils": ^0.102.13
@@ -12022,10 +12022,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.3, @sinclair/typebox@npm:^0.34.0":
-  version: 0.34.3
-  resolution: "@sinclair/typebox@npm:0.34.3"
-  checksum: 10c0/726084c0cc7775334457727db70d48d5a69eead6a5b291b8f22a0da3d802dd8bb50a8ae0e0524a886407f9f9aefa34ccf32eec245e2d98223dd505df2ab36896
+"@sinclair/typebox@npm:0.34.4":
+  version: 0.34.4
+  resolution: "@sinclair/typebox@npm:0.34.4"
+  checksum: 10c0/0f519282b1371deec90d71bc9a29970e9756cfabf0b8506797a3f009407e31e551fc871038a4633e5039a045987c457fb34e47ae73dc06d24cd3c969406bf4fd
   languageName: node
   linkType: hard
 
@@ -12040,6 +12040,13 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+  languageName: node
+  linkType: hard
+
+"@sinclair/typebox@npm:^0.34.0":
+  version: 0.34.3
+  resolution: "@sinclair/typebox@npm:0.34.3"
+  checksum: 10c0/726084c0cc7775334457727db70d48d5a69eead6a5b291b8f22a0da3d802dd8bb50a8ae0e0524a886407f9f9aefa34ccf32eec245e2d98223dd505df2ab36896
   languageName: node
   linkType: hard
 
@@ -28573,9 +28580,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.8.1":
-  version: 8.8.1
-  resolution: "mongoose@npm:8.8.1"
+"mongoose@npm:8.8.2":
+  version: 8.8.2
+  resolution: "mongoose@npm:8.8.2"
   dependencies:
     bson: "npm:^6.7.0"
     kareem: "npm:2.6.3"
@@ -28584,7 +28591,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/b9888738826025eced38e90a172901148cc58ad475c32d053006eab4945687413cd2681cfbdf917c3902604d30f5545cfc53716bed7ab25fccdd8a2a1565a4ef
+  checksum: 10c0/0f1cff992b2df0f24e27a49a15e19cbf356cc6d8de4f070215562ed520f0e712589a4e247e0d7e69778f18cd0d075fedb4b86807adeb3cf90d536c8b58b030e3
   languageName: node
   linkType: hard
 
