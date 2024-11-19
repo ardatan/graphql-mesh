@@ -345,9 +345,9 @@ create many network requests sent to the same service.
 ## Hiding internal fields
 
 Let's say if you don't want to expose `usersByIds`, you can use
-[Filter Transform](/v1/transforms/filter-schema) to hide it from the final schema. This is helpful when you
-want to stitch subgraphs but you don't want to expose some extra fields that should not be exposed
-to the client.
+[Filter Transform](/v1/transforms/filter-schema) to hide it from the final schema. This is helpful
+when you want to stitch subgraphs but you don't want to expose some extra fields that should not be
+exposed to the client.
 
 ```ts filename="mesh.config.ts"
 import { createFilterTransform, defineConfig } from '@graphql-mesh/compose-cli'
