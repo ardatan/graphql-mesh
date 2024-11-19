@@ -99,8 +99,8 @@ export class DefaultLogger implements Logger {
     return (
       this.logLevel <= LogLevel.debug ||
       truthy(process.env.DEBUG) ||
-      truthy((globalThis as any).DEBUG) ||
-      this.name.includes(process.env.DEBUG || (globalThis as any).DEBUG)
+      truthy(globalThis['DEBUG']) ||
+      this.name?.includes(process.env.DEBUG || globalThis['DEBUG'])
     );
   }
 
