@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.97.2",
-    "@graphql-mesh/openapi": "0.107.7",
+    "@graphql-mesh/openapi": "0.107.8",
     "@graphql-mesh/plugin-hive": "0.102.16",
     "@graphql-mesh/transform-hive": "0.102.16",
     "graphql": "16.9.0"

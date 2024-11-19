@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@envelop/depth-limit": "4.0.0",
-    "@graphql-mesh/cache-cfw-kv": "0.102.13",
+    "@graphql-mesh/cache-cfw-kv": "0.103.0",
     "@graphql-mesh/cli": "0.97.2",
     "@graphql-mesh/graphql": "0.102.16",
     "@graphql-mesh/plugin-rate-limit": "0.102.13",

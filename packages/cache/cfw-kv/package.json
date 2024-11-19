@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-cfw-kv",
-  "version": "0.102.13",
+  "version": "0.103.0",
   "type": "module",
   "repository": {
     "type": "git",

@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.97.2",
-    "@graphql-mesh/openapi": "0.107.7",
+    "@graphql-mesh/openapi": "0.107.8",
     "@graphql-mesh/transform-resolvers-composition": "0.102.13",
     "graphql": "16.9.0",
     "graphql-fields": "2.0.3"
