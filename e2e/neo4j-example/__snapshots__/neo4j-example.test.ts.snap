@@ -899,7 +899,8 @@ input ActedInPropertiesSort @join__type(graph: MOVIES)  {
 }
 
 input ActedInPropertiesUpdateInput @join__type(graph: MOVIES)  {
-  roles: [String]
+  roles: [String] @deprecated(reason: "Please use the explicit _SET field") 
+  roles_SET: [String]
   roles_POP: Int
   roles_PUSH: [String]
 }
@@ -980,7 +981,7 @@ input MoviePeopleActedInConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [PersonConnectInput!]
 }
 
@@ -1090,7 +1091,7 @@ input MoviePeopleDirectedConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [PersonConnectInput!]
 }
 
@@ -1196,7 +1197,7 @@ input MoviePeopleProducedConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [PersonConnectInput!]
 }
 
@@ -1304,7 +1305,7 @@ input MoviePeopleReviewedConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [PersonConnectInput!]
 }
 
@@ -1414,7 +1415,7 @@ input MoviePeopleWroteConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [PersonConnectInput!]
 }
 
@@ -1512,11 +1513,14 @@ input MovieSort @join__type(graph: MOVIES)  {
 }
 
 input MovieUpdateInput @join__type(graph: MOVIES)  {
-  released: BigInt
+  released: BigInt @deprecated(reason: "Please use the explicit _SET field") 
+  released_SET: BigInt
   released_INCREMENT: BigInt
   released_DECREMENT: BigInt
-  tagline: String
-  title: String
+  tagline: String @deprecated(reason: "Please use the explicit _SET field") 
+  tagline_SET: String
+  title: String @deprecated(reason: "Please use the explicit _SET field") 
+  title_SET: String
   peopleActedIn: [MoviePeopleActedInUpdateFieldInput!]
   peopleDirected: [MoviePeopleDirectedUpdateFieldInput!]
   peopleProduced: [MoviePeopleProducedUpdateFieldInput!]
@@ -1733,7 +1737,7 @@ input PersonActedInMoviesConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [MovieConnectInput!]
 }
 
@@ -1894,7 +1898,7 @@ input PersonDirectedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [MovieConnectInput!]
 }
 
@@ -2025,7 +2029,7 @@ input PersonFollowsPeopleConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [PersonConnectInput!]
 }
 
@@ -2140,7 +2144,7 @@ input PersonPeopleFollowsConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [PersonConnectInput!]
 }
 
@@ -2246,7 +2250,7 @@ input PersonProducedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [MovieConnectInput!]
 }
 
@@ -2369,7 +2373,7 @@ input PersonReviewedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [MovieConnectInput!]
 }
 
@@ -2485,10 +2489,12 @@ input PersonSort @join__type(graph: MOVIES)  {
 }
 
 input PersonUpdateInput @join__type(graph: MOVIES)  {
-  born: BigInt
+  born: BigInt @deprecated(reason: "Please use the explicit _SET field") 
+  born_SET: BigInt
   born_INCREMENT: BigInt
   born_DECREMENT: BigInt
-  name: String
+  name: String @deprecated(reason: "Please use the explicit _SET field") 
+  name_SET: String
   actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
   directedMovies: [PersonDirectedMoviesUpdateFieldInput!]
   followsPeople: [PersonFollowsPeopleUpdateFieldInput!]
@@ -2766,7 +2772,7 @@ input PersonWroteMoviesConnectFieldInput @join__type(graph: MOVIES)  {
   """
   Whether or not to overwrite any matching relationship with the new properties.
   """
-  overwrite: Boolean! = true
+  overwrite: Boolean! = true @deprecated(reason: "The overwrite argument is deprecated and will be removed") 
   connect: [MovieConnectInput!]
 }
 
@@ -2921,10 +2927,12 @@ input ReviewedPropertiesSort @join__type(graph: MOVIES)  {
 }
 
 input ReviewedPropertiesUpdateInput @join__type(graph: MOVIES)  {
-  rating: BigInt
+  rating: BigInt @deprecated(reason: "Please use the explicit _SET field") 
+  rating_SET: BigInt
   rating_INCREMENT: BigInt
   rating_DECREMENT: BigInt
-  summary: String
+  summary: String @deprecated(reason: "Please use the explicit _SET field") 
+  summary_SET: String
 }
 
 input ReviewedPropertiesWhere @join__type(graph: MOVIES)  {
