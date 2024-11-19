@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.97.2",
-    "@graphql-mesh/json-schema": "0.107.7",
+    "@graphql-mesh/json-schema": "0.107.8",
     "@graphql-mesh/plugin-mock": "0.102.14",
     "graphql": "16.9.0"
   },
