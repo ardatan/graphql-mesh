@@ -44,7 +44,7 @@ export class DefaultLogger implements Logger {
     public name?: string,
     public logLevel = truthy(process.env.DEBUG) ||
     truthy(globalThis.DEBUG) ||
-    this.name?.includes(process.env.DEBUG || globalThis.DEBUG)
+    (this.name && String(process.env.DEBUG || globalThis.DEBUG || '').includes(this.name))
       ? LogLevel.debug
       : LogLevel.info,
     private trim?: number,
