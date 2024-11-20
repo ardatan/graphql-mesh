@@ -74,7 +74,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    console.log(
+    this.console.log(
       `[${getTimestamp()}] ${this.prefix}`.trim() /* trim in case prefix is empty */,
       ...args,
     );
@@ -129,7 +129,12 @@ export class DefaultLogger implements Logger {
     if (this.name?.includes(name)) {
       return this;
     }
-    return new DefaultLogger(this.name ? `${this.name} - ${name}` : name, this.logLevel);
+    return new DefaultLogger(
+      this.name ? `${this.name} - ${name}` : name,
+      this.logLevel,
+      undefined,
+      this.console,
+    );
   }
 
   addPrefix(prefix: string): Logger {
