@@ -6,9 +6,9 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.97.2",
-    "@graphql-mesh/plugin-snapshot": "0.102.13",
-    "@graphql-mesh/soap": "0.104.14",
+    "@graphql-mesh/cli": "0.98.0",
+    "@graphql-mesh/plugin-snapshot": "0.103.0",
+    "@graphql-mesh/soap": "0.105.0",
     "graphql": "16.9.0"
   }
 }
