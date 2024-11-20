@@ -2,4 +2,4 @@
 '@graphql-mesh/utils': minor
 ---
 
-Write logs to console always
+DefaultLogger writes logs to console always
