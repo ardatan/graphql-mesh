@@ -1,6 +1,6 @@
 import type { ExecutionResult } from 'graphql';
 import { createSchema, createYoga } from 'graphql-yoga';
-import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway-runtime';
 import { getUnifiedGraphGracefully } from '@graphql-mesh/fusion-composition';
 
 describe('JIT', () => {

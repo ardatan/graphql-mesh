@@ -1,6 +1,7 @@
 import { setTimeout } from 'timers/promises';
 import { parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -11,7 +12,14 @@ import RateLimitTransform from '../src/index.js';
 describe('Rate Limit Transform', () => {
   let pubsub: PubSub;
   let cache: InMemoryLRUCache;
-  const logger = new DefaultLogger('test');
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
 
   beforeEach(() => {
     pubsub = new PubSub();

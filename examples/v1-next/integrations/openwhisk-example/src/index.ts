@@ -1,4 +1,4 @@
-import { createGatewayRuntime } from '@graphql-hive/gateway';
+import { createGatewayRuntime } from '@graphql-hive/gateway-runtime';
 
 const httpHandler = createGatewayRuntime({
   http: {

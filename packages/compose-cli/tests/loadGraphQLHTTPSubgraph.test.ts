@@ -5,10 +5,17 @@ import {
   introspectionFromSchema,
   printSchema,
 } from 'graphql';
-import type { MeshFetch } from '@graphql-mesh/types';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import { loadGraphQLHTTPSubgraph } from '../src/loadGraphQLHTTPSubgraph';
 
+const logger: Logger = {
+  log: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+  child: () => logger,
+};
 describe('loadGraphQLHTTPSubgraph', () => {
   it('respects schemaHeaders in introspection query', async () => {
     const fetchFn = jest.fn<Promise<Response>, Parameters<MeshFetch>>(() =>
@@ -35,7 +42,7 @@ describe('loadGraphQLHTTPSubgraph', () => {
         'x-token': 'reallysafe',
       },
     });
-    const { schema$ } = loader({ fetch: fetchFn, cwd: __dirname, logger: new DefaultLogger() });
+    const { schema$ } = loader({ fetch: fetchFn, cwd: __dirname, logger });
     const schema = await schema$;
     expect(printSchema(schema)).toContain(
       /* GraphQL */ `

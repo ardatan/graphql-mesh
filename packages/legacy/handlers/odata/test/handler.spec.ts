@@ -39,7 +39,14 @@ describe('odata', () => {
   let pubsub: MeshPubSub;
   let cache: KeyValueCache;
   let store: MeshStore;
-  let logger: Logger;
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
   beforeEach(() => {
     pubsub = new PubSub();
     cache = new InMemoryLRUCache();
@@ -47,7 +54,6 @@ describe('odata', () => {
       readonly: false,
       validate: false,
     });
-    logger = new DefaultLogger('ODataTest');
     resetMocks();
   });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {

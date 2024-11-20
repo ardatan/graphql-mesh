@@ -1,11 +1,19 @@
 import { buildSchema, GraphQLObjectType, printSchema, type GraphQLField } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import type { MeshPubSub } from '@graphql-mesh/types';
+import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import HoistFieldTransform from '../src/index.js';
 
 describe('hoist', () => {
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
   const importFn = defaultImportFn;
   const schema = buildSchema(/* GraphQL */ `
     type Query {
@@ -48,7 +56,8 @@ describe('hoist', () => {
           pubsub,
           baseDir,
           importFn,
-          logger: new DefaultLogger(),
+
+          logger,
         }),
       ],
     });
@@ -98,7 +107,8 @@ type User {
           pubsub,
           baseDir,
           importFn,
-          logger: new DefaultLogger(),
+
+          logger,
         }),
       ],
     });
@@ -143,7 +153,8 @@ type User {
           pubsub,
           baseDir,
           importFn,
-          logger: new DefaultLogger(),
+
+          logger,
         }),
       ],
     });
@@ -196,7 +207,8 @@ type User {
           pubsub,
           baseDir,
           importFn,
-          logger: new DefaultLogger(),
+
+          logger,
         }),
       ],
     });
@@ -251,7 +263,8 @@ type User {
           pubsub,
           baseDir,
           importFn,
-          logger: new DefaultLogger(),
+
+          logger,
         }),
       ],
     });
@@ -298,7 +311,8 @@ type User {
           pubsub,
           baseDir,
           importFn,
-          logger: new DefaultLogger(),
+
+          logger,
         }),
       ],
     });
