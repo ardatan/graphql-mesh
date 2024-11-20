@@ -6,7 +6,8 @@ it('should write serve logs to stderr', async () => {
   await using serveInstance = await serve({
     supergraph: await fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
   });
-  expect(serveInstance.getStd('err')).toContain('Serving local supergraph from');
+  // stdout from serve because it uses the default logger that uses console.log
+  expect(serveInstance.getStd('out')).toContain('Serving local supergraph from');
 });
 
 it('should write compose output to stdout and logs to stderr', async () => {

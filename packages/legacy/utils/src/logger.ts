@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions -- simply more convenient to do `this.stderr(m) || console.log(m)` */
-import { process, util } from '@graphql-mesh/cross-helpers';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
 type MessageTransformer = (msg: string) => string;
@@ -34,134 +33,108 @@ export enum LogLevel {
 
 const noop: VoidFunction = () => {};
 
-function truthy(str: unknown) {
-  return str === true || str === 1 || ['1', 't', 'true', 'y', 'yes'].includes(String(str));
+function truthy(val: unknown) {
+  return val === true || val === 1 || ['1', 't', 'true', 'y', 'yes'].includes(String(val));
 }
 
 function getTimestamp() {
   return new Date().toISOString();
 }
 
+function handleLazyMessage(lazyArgs: LazyLoggerMessage[]) {
+  return lazyArgs.flat(Infinity).flatMap(arg => {
+    if (typeof arg === 'function') {
+      return arg();
+    }
+    return arg;
+  });
+}
+
 export class DefaultLogger implements Logger {
   constructor(
     public name?: string,
-    public logLevel = truthy(process.env.DEBUG) ? LogLevel.debug : LogLevel.info,
-    private trim?: number,
+    public logLevel = truthy(process.env.DEBUG) ||
+    truthy(globalThis.DEBUG) ||
+    (this.name && String(process.env.DEBUG || globalThis.DEBUG || '').includes(this.name))
+      ? LogLevel.debug
+      : LogLevel.info,
+    /** @deprecated Trimming messages is no longer supported. This argument is unused and will be removed in future versions. */
+    _trim?: number | undefined,
+    private console = globalThis.console,
   ) {}
 
-  private getLoggerMessage({ args = [] }: { args: any[] }) {
-    return args
-      .flat(Infinity)
-      .map(arg => {
-        if (typeof arg === 'string') {
-          if (this.trim && arg.length > this.trim) {
-            return (
-              arg.slice(0, this.trim) +
-              '...' +
-              '<Message is trimmed. Enable DEBUG=1 to see the full message.>'
-            );
-          }
-          return arg;
-        } else if (typeof arg === 'object' && arg?.stack != null) {
-          return arg.stack;
-        }
-        return util.inspect(arg);
-      })
-      .join(' ');
-  }
-
-  private handleLazyMessage({ lazyArgs }: { lazyArgs: LazyLoggerMessage[] }) {
-    const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
-      if (typeof arg === 'function') {
-        return arg();
-      }
-      return arg;
-    });
-    return this.getLoggerMessage({ args: flattenedArgs });
-  }
-
-  /**
-   * Tries writing to the process stderr. If unable, will return
-   * false so that the logger falls back to using the console.
-   *
-   * If process stderr is used, a new line is automatically appended
-   * after the {@link msg}.
-   */
-  private stderr(msg: string) {
-    if (typeof process?.stderr?.write === 'function') {
-      process.stderr.write(msg + '\n');
-      return true;
-    }
-    return false;
-  }
-
-  private get isDebug() {
-    return (
-      this.logLevel <= LogLevel.debug ||
-      truthy(process.env.DEBUG) ||
-      truthy(globalThis.DEBUG) ||
-      this.name?.includes(process.env.DEBUG || globalThis.DEBUG)
-    );
-  }
-
   private get prefix() {
-    return this.name ? titleBold(this.name) : ``;
+    return this.name
+      ? `${titleBold(this.name.trim())} ` /* trailing space because prefix is directly used in logged message */
+      : ``;
   }
 
+  /** Logs a message at {@link LogLevel.info} but without the "INFO" prefix. */
   log(...args: any[]) {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    const message = this.getLoggerMessage({ args });
-    const fullMessage = `[${getTimestamp()}] ${this.prefix} ${message}`;
-    this.stderr(fullMessage) || console.log(fullMessage);
+    this.console.log(
+      `[${getTimestamp()}] ${this.prefix}`.trim() /* trim in case prefix is empty */,
+      ...args,
+    );
   }
 
   warn(...args: any[]) {
     if (this.logLevel > LogLevel.warn) {
       return noop;
     }
-    const message = this.getLoggerMessage({ args });
-    const fullMessage = `[${getTimestamp()}] WARN  ${this.prefix} ${warnColor(message)}`;
-    this.stderr(fullMessage) || console.warn(fullMessage);
+    this.console.warn(
+      `[${getTimestamp()}] WARN  ${this.prefix}${ANSI_CODES.orange}`,
+      ...args,
+      ANSI_CODES.reset,
+    );
   }
 
   info(...args: any[]) {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    const message = this.getLoggerMessage({
-      args,
-    });
-    const fullMessage = `[${getTimestamp()}] INFO  ${this.prefix} ${infoColor(message)}`;
-    this.stderr(fullMessage) || console.info(fullMessage);
+    this.console.info(
+      `[${getTimestamp()}] INFO  ${this.prefix}${ANSI_CODES.cyan}`,
+      ...args,
+      ANSI_CODES.reset,
+    );
   }
 
   error(...args: any[]) {
     if (this.logLevel > LogLevel.error) {
       return noop;
     }
-    const message = this.getLoggerMessage({ args });
-    const fullMessage = `[${getTimestamp()}] ERROR ${this.prefix} ${errorColor(message)}`;
-    this.stderr(fullMessage) || console.error(fullMessage);
+    this.console.error(
+      `[${getTimestamp()}] ERROR ${this.prefix}${ANSI_CODES.red}`,
+      ...args,
+      ANSI_CODES.reset,
+    );
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
-    if (!this.isDebug /** also checks whether the loglevel is at least debug */) {
+    if (this.logLevel > LogLevel.debug) {
       return noop;
     }
-    const message = this.handleLazyMessage({
-      lazyArgs,
-    });
-    const fullMessage = `[${getTimestamp()}] DEBUG ${this.prefix} ${debugColor(message)}`;
-    this.stderr(fullMessage) || console.debug(fullMessage);
+    const flattenedArgs = handleLazyMessage(lazyArgs);
+    this.console.debug(
+      `[${getTimestamp()}] DEBUG ${this.prefix}${ANSI_CODES.magenta}`,
+      ...flattenedArgs,
+      ANSI_CODES.reset,
+    );
   }
 
   child(name: string): Logger {
     if (this.name?.includes(name)) {
       return this;
     }
-    return new DefaultLogger(this.name ? `${this.name} - ${name}` : name, this.logLevel);
+    return new DefaultLogger(
+      this.name ? `${this.name} - ${name}` : name,
+      this.logLevel,
+      undefined,
+      this.console,
+    );
   }
 
   addPrefix(prefix: string): Logger {

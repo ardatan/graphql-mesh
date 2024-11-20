@@ -1,6 +1,8 @@
 import 'dotenv/config'; // inject dotenv options to process.env
 
 // eslint-disable-next-line import/no-nodejs-modules
+import { Console } from 'node:console';
+// eslint-disable-next-line import/no-nodejs-modules
 import { promises as fsPromises } from 'node:fs';
 // eslint-disable-next-line import/no-nodejs-modules
 import module from 'node:module';
@@ -49,7 +51,7 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
 }
 
 export async function run({
-  log: rootLog = new DefaultLogger(),
+  log: rootLog = new DefaultLogger(undefined, undefined, undefined, new Console(process.stderr)),
   productName = 'Mesh Compose',
   productDescription = 'compose a GraphQL federated schema from any API service(s)',
   binName = 'mesh-compose',
