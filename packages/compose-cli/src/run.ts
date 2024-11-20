@@ -11,7 +11,7 @@ import { pathToFileURL } from 'node:url';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { DefaultLogger } from './defaultLogger.js';
 import { getComposedSchemaFromConfig } from './getComposedSchemaFromConfig.js';
 import type { MeshComposeCLIConfig } from './types.js';
 

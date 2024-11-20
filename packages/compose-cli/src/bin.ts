@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { DefaultLogger } from './defaultLogger.js';
 import { run } from './run.js';
 
 const log = new DefaultLogger();
