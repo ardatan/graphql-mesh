@@ -59,6 +59,7 @@ export class DefaultLogger implements Logger {
       ? LogLevel.debug
       : LogLevel.info,
     _trim?: number,
+    private console = globalThis.console,
   ) {}
 
   private get prefix() {
@@ -68,17 +69,17 @@ export class DefaultLogger implements Logger {
   }
 
   log(...args: any[]) {
-    console.log(
-      `[${getTimestamp()}] ${this.prefix}`.trim() /* trim in case prefix is empty */,
-      ...args,
-    );
+    if (this.logLevel > LogLevel.info) {
+      return noop;
+    }
+    this.console.log(`[${getTimestamp()}] ${this.prefix}`.trim(), ...args);
   }
 
   warn(...args: any[]) {
     if (this.logLevel > LogLevel.warn) {
       return noop;
     }
-    console.warn(
+    this.console.warn(
       `[${getTimestamp()}] WARN  ${this.prefix}${ANSI_CODES.orange}`,
       ...args,
       ANSI_CODES.reset,
@@ -89,7 +90,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    console.info(
+    this.console.info(
       `[${getTimestamp()}] INFO  ${this.prefix}${ANSI_CODES.cyan}`,
       ...args,
       ANSI_CODES.reset,
@@ -100,7 +101,7 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.error) {
       return noop;
     }
-    console.error(
+    this.console.error(
       `[${getTimestamp()}] ERROR ${this.prefix}${ANSI_CODES.red}`,
       ...args,
       ANSI_CODES.reset,
@@ -112,7 +113,7 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     const flattenedArgs = handleLazyMessage(lazyArgs);
-    console.debug(
+    this.console.debug(
       `[${getTimestamp()}] DEBUG ${this.prefix}${ANSI_CODES.magenta}`,
       ...flattenedArgs,
       ANSI_CODES.reset,
