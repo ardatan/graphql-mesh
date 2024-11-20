@@ -32,7 +32,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-hive/gateway": "^1.4.8",
+    "@graphql-hive/gateway-runtime": "^1.1.7",
     "@graphql-mesh/types": "^0.102.13",
     "@graphql-mesh/utils": "^0.102.13",
     "graphql": "*",

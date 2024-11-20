@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { GraphQLObjectType, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import type { ImportFn, Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -15,6 +15,14 @@ const importFn: ImportFn = m =>
   });
 
 describe('replace-field', () => {
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
   const mockQueryBooks = jest
     .fn()
     .mockImplementation(() => ({ books: [{ title: 'abc' }, { title: 'def' }] }));
@@ -79,7 +87,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -137,7 +146,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -203,7 +213,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -270,7 +281,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -349,7 +361,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -422,7 +435,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -490,7 +504,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -562,7 +577,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -630,7 +646,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -703,7 +720,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -774,7 +792,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -852,7 +871,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -917,7 +937,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -1016,7 +1037,8 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,

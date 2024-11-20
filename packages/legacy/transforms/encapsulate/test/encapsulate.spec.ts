@@ -1,7 +1,7 @@
 import { getIntrospectionQuery, parse } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import type { ImportFn, Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { Subschema } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
@@ -12,6 +12,14 @@ import { Repeater } from '@repeaterjs/repeater';
 import Transform from '../src/index.js';
 
 describe('encapsulate', () => {
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
   const baseDir: string = undefined;
   const importFn: ImportFn = m => import(m);
   const schema = makeExecutableSchema({
@@ -73,7 +81,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -94,7 +102,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -117,7 +125,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -147,7 +155,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -184,7 +192,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -222,7 +230,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -284,7 +292,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: undefined,
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -331,7 +339,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -361,7 +369,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
-          logger: new DefaultLogger(),
+          logger,
         }),
       ],
     });
@@ -412,7 +420,8 @@ describe('encapsulate', () => {
                 baseDir,
                 apiName: 'test',
                 importFn,
-                logger: new DefaultLogger(),
+
+                logger,
               }),
             ],
           }),

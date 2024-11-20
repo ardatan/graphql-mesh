@@ -85,19 +85,20 @@ module.exports = {
     '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
     // Packages outside this repo
     '@graphql-mesh/fusion-runtime':
-      '<rootDir>/node_modules/@graphql-mesh/fusion-runtime/cjs/index.js',
+      '<rootDir>/node_modules/@graphql-mesh/fusion-runtime/dist/index.cjs',
     '@graphql-mesh/transport-common':
-      '<rootDir>/node_modules/@graphql-mesh/transport-common/cjs/index.js',
+      '<rootDir>/node_modules/@graphql-mesh/transport-common/dist/index.cjs',
     '@graphql-mesh/transport-http':
-      '<rootDir>/node_modules/@graphql-mesh/transport-http/cjs/index.js',
-    '@graphql-mesh/transport-ws': '<rootDir>/node_modules/@graphql-mesh/transport-ws/cjs/index.js',
+      '<rootDir>/node_modules/@graphql-mesh/transport-http/dist/index.cjs',
+    '@graphql-mesh/transport-ws':
+      '<rootDir>/node_modules/@graphql-mesh/transport-ws/dist/index.cjs',
     '@graphql-mesh/transport-http-callback':
-      '<rootDir>/node_modules/transport-http-callback/cjs/index.js',
+      '<rootDir>/node_modules/transport-http-callback/dist/index.cjs',
     '@graphql-mesh/hmac-upstream-signature':
-      '<rootDir>/node_modules/@graphql-mesh/hmac-upstream-signature',
-    '@graphql-mesh/plugin-opentelemetry':
-      '<rootDir>/node_modules/@graphql-mesh/plugin-opentelemetry',
-    '@graphql-mesh/plugin-prometheus': '<rootDir>/node_modules/@graphql-mesh/plugin-prometheus',
+      '<rootDir>/node_modules/@graphql-mesh/hmac-upstream-signature/dist/index.cjs',
+    '@graphql-mesh/opentelemetry':
+      '<rootDir>/node_modules/@graphql-mesh/opentelemetry/dist/index.cjs',
+    '@graphql-mesh/prometheus': '<rootDir>/node_modules/@graphql-mesh/prometheus/dist/index.cjs',
 
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {

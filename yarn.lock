@@ -3583,17 +3583,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/federation-batching-plan@workspace:e2e/federation-batching-plan":
-  version: 0.0.0-use.local
-  resolution: "@e2e/federation-batching-plan@workspace:e2e/federation-batching-plan"
-  dependencies:
-    "@apollo/server": "npm:^4.10.3"
-    "@apollo/subgraph": "npm:^2.7.2"
-    "@graphql-hive/gateway": "npm:^1.4.8"
-    graphql: "npm:^16.9.0"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/federation-mixed@workspace:e2e/federation-mixed":
   version: 0.0.0-use.local
   resolution: "@e2e/federation-mixed@workspace:e2e/federation-mixed"
@@ -6093,7 +6082,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-composition@workspace:packages/fusion/composition"
   dependencies:
-    "@graphql-hive/gateway": "npm:^1.4.8"
+    "@graphql-hive/gateway-runtime": "npm:^1.1.7"
     "@graphql-mesh/fusion-runtime": "npm:^0.10.2"
     "@graphql-mesh/utils": "npm:^0.102.13"
     "@graphql-tools/schema": "npm:^10.0.5"
@@ -6438,7 +6427,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-jit@workspace:packages/plugins/jit"
   dependencies:
-    "@graphql-hive/gateway": "npm:^1.4.8"
+    "@graphql-hive/gateway-runtime": "npm:^1.1.7"
     graphql-jit: "npm:^0.8.7"
   peerDependencies:
     "@envelop/core": ^5.0.2
@@ -6454,7 +6443,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth"
   dependencies:
     "@envelop/generic-auth": "npm:8.0.0"
-    "@graphql-hive/gateway": "npm:^1.4.8"
+    "@graphql-hive/gateway-runtime": "npm:^1.1.7"
     "@graphql-yoga/plugin-jwt": "npm:^3.0.2"
     graphql-yoga: "npm:^5.7.0"
     jsonwebtoken: "npm:9.0.2"
@@ -6574,7 +6563,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-operation-headers@workspace:packages/plugins/operation-headers"
   peerDependencies:
-    "@graphql-hive/gateway": ^1.4.8
+    "@graphql-hive/gateway-runtime": ^1.1.7
     "@graphql-mesh/types": ^0.102.13
     "@graphql-mesh/utils": ^0.102.13
     graphql: "*"

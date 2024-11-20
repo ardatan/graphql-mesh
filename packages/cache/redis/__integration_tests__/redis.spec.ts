@@ -1,8 +1,15 @@
 import RedisCache from '@graphql-mesh/cache-redis';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import type { Logger } from '@graphql-mesh/types';
 
 describe('Redis', () => {
-  const logger = new DefaultLogger('test');
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
   it('works', async () => {
     using redisCache = new RedisCache<any>({
       host: '{env.REDIS_HOST}',

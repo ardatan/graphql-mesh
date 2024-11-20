@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -8,6 +9,14 @@ import { isAsyncIterable } from '@graphql-tools/utils';
 import ResolversCompositionTransform, { type ResolversComposition } from '../src/index.js';
 
 describe('transform', () => {
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
   const baseDir: string = undefined;
 
   it('should handle composition functions from external modules', async () => {
@@ -23,7 +32,8 @@ describe('transform', () => {
       baseDir,
       apiName: '',
       importFn: m => import(m),
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -65,7 +75,8 @@ describe('transform', () => {
       baseDir,
       apiName: '',
       importFn: m => import(m),
-      logger: new DefaultLogger(),
+
+      logger,
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

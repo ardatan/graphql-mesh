@@ -7,13 +7,21 @@ import {
   parse,
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import type { ImportFn, Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import NamingConventionTransform from '../src/index.js';
 
+const logger: Logger = {
+  log: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+  child: () => logger,
+};
 describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
   const schema = buildSchema(/* GraphQL */ `
     type Query {
@@ -64,7 +72,8 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         baseDir,
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -189,7 +198,8 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
           fieldArgumentNames: 'pascalCase',
         },
         baseDir,
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
     const result = await execute({
@@ -299,7 +309,8 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
           fieldNames: 'camelCase',
         },
         baseDir,
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
     const { data } = await execute({
@@ -329,7 +340,8 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         baseDir,
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -392,7 +404,8 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         baseDir,
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
     const { data }: any = await execute({
