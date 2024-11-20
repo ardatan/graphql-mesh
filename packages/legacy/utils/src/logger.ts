@@ -1,6 +1,8 @@
 import { process } from '@graphql-mesh/cross-helpers';
 import type { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
+type MessageTransformer = (msg: string) => string;
+
 const ANSI_CODES = {
   black: '\x1b[30m',
   red: '\x1b[31m',
@@ -15,11 +17,11 @@ const ANSI_CODES = {
   orange: '\x1b[48:5:166m',
 };
 
-export const warnColor = (msg: string) => ANSI_CODES.orange + msg + ANSI_CODES.reset;
-export const infoColor = (msg: string) => ANSI_CODES.cyan + msg + ANSI_CODES.reset;
-export const errorColor = (msg: string) => ANSI_CODES.red + msg + ANSI_CODES.reset;
-export const debugColor = (msg: string) => ANSI_CODES.magenta + msg + ANSI_CODES.reset;
-export const titleBold = (msg: string) => ANSI_CODES.bold + msg + ANSI_CODES.reset;
+export const warnColor: MessageTransformer = msg => ANSI_CODES.orange + msg + ANSI_CODES.reset;
+export const infoColor: MessageTransformer = msg => ANSI_CODES.cyan + msg + ANSI_CODES.reset;
+export const errorColor: MessageTransformer = msg => ANSI_CODES.red + msg + ANSI_CODES.reset;
+export const debugColor: MessageTransformer = msg => ANSI_CODES.magenta + msg + ANSI_CODES.reset;
+export const titleBold: MessageTransformer = msg => ANSI_CODES.bold + msg + ANSI_CODES.reset;
 
 export enum LogLevel {
   debug = 0,
@@ -39,6 +41,15 @@ function getTimestamp() {
   return new Date().toISOString();
 }
 
+function handleLazyMessage(lazyArgs: LazyLoggerMessage[]) {
+  return lazyArgs.flat(Infinity).flatMap(arg => {
+    if (typeof arg === 'function') {
+      return arg();
+    }
+    return arg;
+  });
+}
+
 export class DefaultLogger implements Logger {
   constructor(
     public name?: string,
@@ -47,39 +58,8 @@ export class DefaultLogger implements Logger {
     (this.name && String(process.env.DEBUG || globalThis.DEBUG || '').includes(this.name))
       ? LogLevel.debug
       : LogLevel.info,
-    private trim?: number,
+    _trim?: number,
   ) {}
-
-  private getLoggerMessage({ args = [] }: { args: any[] }) {
-    return args
-      .flat(Infinity)
-      .map(arg => {
-        if (typeof arg === 'string') {
-          if (this.trim && arg.length > this.trim) {
-            return (
-              arg.slice(0, this.trim) +
-              '...' +
-              '<Message is trimmed. Set DEBUG=1 to see the full message.>'
-            );
-          }
-          return arg;
-        } else if (typeof arg === 'object' && arg?.stack != null) {
-          return arg.stack;
-        }
-        return JSON.stringify(arg);
-      })
-      .join(' ');
-  }
-
-  private handleLazyMessage({ lazyArgs }: { lazyArgs: LazyLoggerMessage[] }) {
-    const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
-      if (typeof arg === 'function') {
-        return arg();
-      }
-      return arg;
-    });
-    return this.getLoggerMessage({ args: flattenedArgs });
-  }
 
   private get prefix() {
     return this.name
@@ -91,40 +71,52 @@ export class DefaultLogger implements Logger {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    const message = this.getLoggerMessage({ args });
-    console.log(`[${getTimestamp()}]${this.prefix}${message}`);
+    console.log(`[${getTimestamp()}] ${this.prefix}`, ...args);
   }
 
   warn(...args: any[]) {
     if (this.logLevel > LogLevel.warn) {
       return noop;
     }
-    const message = this.getLoggerMessage({ args });
-    console.warn(`[${getTimestamp()}] WARN  ${this.prefix}${warnColor(message)}`);
+    console.warn(
+      `[${getTimestamp()}] WARN  ${this.prefix}${ANSI_CODES.orange}`,
+      ...args,
+      ANSI_CODES.reset,
+    );
   }
 
   info(...args: any[]) {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    const message = this.getLoggerMessage({ args });
-    console.info(`[${getTimestamp()}] INFO  ${this.prefix}${infoColor(message)}`);
+    console.info(
+      `[${getTimestamp()}] INFO  ${this.prefix}${ANSI_CODES.cyan}`,
+      ...args,
+      ANSI_CODES.reset,
+    );
   }
 
   error(...args: any[]) {
     if (this.logLevel > LogLevel.error) {
       return noop;
     }
-    const message = this.getLoggerMessage({ args });
-    console.error(`[${getTimestamp()}] ERROR ${this.prefix}${errorColor(message)}`);
+    console.error(
+      `[${getTimestamp()}] ERROR ${this.prefix}${ANSI_CODES.red}`,
+      ...args,
+      ANSI_CODES.reset,
+    );
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
     if (this.logLevel > LogLevel.debug) {
       return noop;
     }
-    const message = this.handleLazyMessage({ lazyArgs });
-    console.debug(`[${getTimestamp()}] DEBUG ${this.prefix}${debugColor(message)}`);
+    const flattenedArgs = handleLazyMessage(lazyArgs);
+    console.debug(
+      `[${getTimestamp()}] DEBUG ${this.prefix}${ANSI_CODES.magenta}`,
+      ...flattenedArgs,
+      ANSI_CODES.reset,
+    );
   }
 
   child(name: string): Logger {
