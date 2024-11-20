@@ -68,11 +68,15 @@ export class DefaultLogger implements Logger {
       : ``;
   }
 
+  /** Logs a message at {@link LogLevel.info} but without the "INFO" prefix. */
   log(...args: any[]) {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    this.console.log(`[${getTimestamp()}] ${this.prefix}`.trim(), ...args);
+    console.log(
+      `[${getTimestamp()}] ${this.prefix}`.trim() /* trim in case prefix is empty */,
+      ...args,
+    );
   }
 
   warn(...args: any[]) {
