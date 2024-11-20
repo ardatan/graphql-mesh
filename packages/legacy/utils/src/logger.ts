@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions -- simply more convenient to do `this.stderr(m) || console.log(m)` */
 import { process, util } from '@graphql-mesh/cross-helpers';
 import type { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
@@ -79,15 +80,28 @@ export class DefaultLogger implements Logger {
     return this.getLoggerMessage({ args: flattenedArgs });
   }
 
-  private get isDebug() {
-    if (process.env.DEBUG) {
-      return (
-        truthy(process.env.DEBUG) ||
-        truthy((globalThis as any).DEBUG) ||
-        this.name.includes(process.env.DEBUG || (globalThis as any).DEBUG)
-      );
+  /**
+   * Tries writing to the process stderr. If unable, will return
+   * false so that the logger falls back to using the console.
+   *
+   * If process stderr is used, a new line is automatically appended
+   * after the {@link msg}.
+   */
+  private stderr(msg: string) {
+    if (typeof process?.stderr?.write === 'function') {
+      process.stderr.write(msg + '\n');
+      return true;
     }
     return false;
+  }
+
+  private get isDebug() {
+    return (
+      this.logLevel <= LogLevel.debug ||
+      truthy(process.env.DEBUG) ||
+      truthy(globalThis.DEBUG) ||
+      this.name?.includes(process.env.DEBUG || globalThis.DEBUG)
+    );
   }
 
   private get prefix() {
@@ -100,10 +114,7 @@ export class DefaultLogger implements Logger {
     }
     const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] ${this.prefix} ${message}`;
-    if (process?.stderr?.write(fullMessage + '\n')) {
-      return;
-    }
-    console.log(fullMessage);
+    this.stderr(fullMessage) || console.log(fullMessage);
   }
 
   warn(...args: any[]) {
@@ -112,10 +123,7 @@ export class DefaultLogger implements Logger {
     }
     const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] WARN  ${this.prefix} ${warnColor(message)}`;
-    if (process?.stderr?.write(fullMessage + '\n')) {
-      return;
-    }
-    console.warn(fullMessage);
+    this.stderr(fullMessage) || console.warn(fullMessage);
   }
 
   info(...args: any[]) {
@@ -126,11 +134,7 @@ export class DefaultLogger implements Logger {
       args,
     });
     const fullMessage = `[${getTimestamp()}] INFO  ${this.prefix} ${infoColor(message)}`;
-    if (typeof process?.stderr?.write === 'function') {
-      process.stderr.write(fullMessage + '\n');
-      return;
-    }
-    console.info(fullMessage);
+    this.stderr(fullMessage) || console.info(fullMessage);
   }
 
   error(...args: any[]) {
@@ -139,28 +143,18 @@ export class DefaultLogger implements Logger {
     }
     const message = this.getLoggerMessage({ args });
     const fullMessage = `[${getTimestamp()}] ERROR ${this.prefix} ${errorColor(message)}`;
-    if (typeof process?.stderr?.write === 'function') {
-      process.stderr.write(fullMessage + '\n');
-      return;
-    }
-    console.error(fullMessage);
+    this.stderr(fullMessage) || console.error(fullMessage);
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
-    if (this.logLevel > LogLevel.debug) {
+    if (!this.isDebug /** also checks whether the loglevel is at least debug */) {
       return noop;
     }
-    if (this.isDebug) {
-      const message = this.handleLazyMessage({
-        lazyArgs,
-      });
-      const fullMessage = `[${getTimestamp()}] DEBUG ${this.prefix} ${debugColor(message)}`;
-      if (typeof process?.stderr?.write === 'function') {
-        process.stderr.write(fullMessage + '\n');
-        return;
-      }
-      console.debug(fullMessage);
-    }
+    const message = this.handleLazyMessage({
+      lazyArgs,
+    });
+    const fullMessage = `[${getTimestamp()}] DEBUG ${this.prefix} ${debugColor(message)}`;
+    this.stderr(fullMessage) || console.debug(fullMessage);
   }
 
   child(name: string): Logger {
