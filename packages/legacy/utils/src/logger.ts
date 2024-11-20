@@ -68,10 +68,10 @@ export class DefaultLogger implements Logger {
   }
 
   log(...args: any[]) {
-    if (this.logLevel > LogLevel.info) {
-      return noop;
-    }
-    console.log(`[${getTimestamp()}] ${this.prefix}`, ...args);
+    console.log(
+      `[${getTimestamp()}] ${this.prefix}`.trim() /* trim in case prefix is empty */,
+      ...args,
+    );
   }
 
   warn(...args: any[]) {
