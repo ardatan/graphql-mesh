@@ -6083,7 +6083,7 @@ __metadata:
   resolution: "@graphql-mesh/fusion-composition@workspace:packages/fusion/composition"
   dependencies:
     "@graphql-hive/gateway-runtime": "npm:^1.1.7"
-    "@graphql-mesh/fusion-runtime": "npm:^0.10.2"
+    "@graphql-mesh/fusion-runtime": "npm:^0.10.3"
     "@graphql-mesh/utils": "npm:^0.102.13"
     "@graphql-tools/schema": "npm:^10.0.5"
     "@graphql-tools/stitching-directives": "npm:^3.1.9"
@@ -6102,7 +6102,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/fusion-runtime@npm:^0.10.2, @graphql-mesh/fusion-runtime@npm:^0.10.3":
+"@graphql-mesh/fusion-runtime@npm:^0.10.3":
   version: 0.10.3
   resolution: "@graphql-mesh/fusion-runtime@npm:0.10.3"
   dependencies:
