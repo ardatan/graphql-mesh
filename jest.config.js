@@ -96,8 +96,9 @@ module.exports = {
     '@graphql-mesh/hmac-upstream-signature':
       '<rootDir>/node_modules/@graphql-mesh/hmac-upstream-signature',
     '@graphql-mesh/plugin-opentelemetry':
-      '<rootDir>/node_modules/@graphql-mesh/plugin-opentelemetry',
-    '@graphql-mesh/plugin-prometheus': '<rootDir>/node_modules/@graphql-mesh/plugin-prometheus',
+      '<rootDir>/node_modules/@graphql-mesh/plugin-opentelemetry/cjs/index.js',
+    '@graphql-mesh/plugin-prometheus':
+      '<rootDir>/node_modules/@graphql-mesh/plugin-prometheus/cjs/index.js',
 
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {

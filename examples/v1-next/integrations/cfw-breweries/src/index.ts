@@ -1,4 +1,4 @@
-import { createGatewayRuntime } from '@graphql-hive/gateway';
+import { createGatewayRuntime } from '@graphql-hive/gateway-runtime';
 import CFWorkerKVCache from '@graphql-mesh/cache-cfw-kv';
 import useResponseCache from '@graphql-mesh/plugin-response-cache';
 import * as rest from '@omnigraph/json-schema';
