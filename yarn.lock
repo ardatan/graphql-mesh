@@ -4023,19 +4023,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/rate-limiter@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "@envelop/rate-limiter@npm:6.2.0"
+"@envelop/rate-limiter@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "@envelop/rate-limiter@npm:6.2.1"
   dependencies:
     "@envelop/on-resolve": "npm:^4.1.0"
     "@graphql-tools/utils": "npm:^10.5.4"
+    graphql-middleware: "npm:^6.1.35"
     graphql-rate-limit: "npm:^3.3.0"
     minimatch: "npm:^10.0.1"
     tslib: "npm:^2.5.0"
   peerDependencies:
     "@envelop/core": ^5.0.2
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/69497c8d8ead32159cf2972c36c3e432b31422b8d5192ada316cd9b01cb87fbf655d2b98c3ff8a4ca118aeab1be0652829a49b2827abcf4d506a8e4747d46294
+  checksum: 10c0/55786066d1af0987c0247e8154970629fa673b4a0c0c5122967be0d27002c8d0e5f4ca21da6f9e6aa546a252ba40493c78bf2eda51154af75c5c323bd2e18315
   languageName: node
   linkType: hard
 
@@ -6597,9 +6598,8 @@ __metadata:
   resolution: "@graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit"
   dependencies:
     "@envelop/core": "npm:5.0.2"
-    "@envelop/rate-limiter": "npm:^6.2.0"
+    "@envelop/rate-limiter": "npm:^6.2.1"
     "@graphql-mesh/string-interpolation": "npm:0.5.6"
-    graphql-middleware: "npm:6.1.35"
   peerDependencies:
     "@graphql-mesh/cross-helpers": ^0.4.7
     "@graphql-mesh/types": ^0.102.13
@@ -22817,7 +22817,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"graphql-middleware@npm:6.1.35":
+"graphql-middleware@npm:^6.1.35":
   version: 6.1.35
   resolution: "graphql-middleware@npm:6.1.35"
   dependencies:
