@@ -82,7 +82,9 @@ export class DefaultLogger implements Logger {
   }
 
   private get prefix() {
-    return this.name ? titleBold(this.name) : ``;
+    return this.name
+      ? `${titleBold(this.name.trim())} ` /* trailing space because prefix is directly used in logged message */
+      : ``;
   }
 
   log(...args: any[]) {
@@ -90,8 +92,7 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     const message = this.getLoggerMessage({ args });
-    const fullMessage = `[${getTimestamp()}] ${this.prefix} ${message}`;
-    console.log(fullMessage);
+    console.log(`[${getTimestamp()}]${this.prefix}${message}`);
   }
 
   warn(...args: any[]) {
@@ -99,19 +100,15 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     const message = this.getLoggerMessage({ args });
-    const fullMessage = `[${getTimestamp()}] WARN  ${this.prefix} ${warnColor(message)}`;
-    console.warn(fullMessage);
+    console.warn(`[${getTimestamp()}] WARN  ${this.prefix}${warnColor(message)}`);
   }
 
   info(...args: any[]) {
     if (this.logLevel > LogLevel.info) {
       return noop;
     }
-    const message = this.getLoggerMessage({
-      args,
-    });
-    const fullMessage = `[${getTimestamp()}] INFO  ${this.prefix} ${infoColor(message)}`;
-    console.info(fullMessage);
+    const message = this.getLoggerMessage({ args });
+    console.info(`[${getTimestamp()}] INFO  ${this.prefix}${infoColor(message)}`);
   }
 
   error(...args: any[]) {
@@ -119,19 +116,15 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     const message = this.getLoggerMessage({ args });
-    const fullMessage = `[${getTimestamp()}] ERROR ${this.prefix} ${errorColor(message)}`;
-    console.error(fullMessage);
+    console.error(`[${getTimestamp()}] ERROR ${this.prefix}${errorColor(message)}`);
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
     if (this.logLevel > LogLevel.debug) {
       return noop;
     }
-    const message = this.handleLazyMessage({
-      lazyArgs,
-    });
-    const fullMessage = `[${getTimestamp()}] DEBUG ${this.prefix} ${debugColor(message)}`;
-    console.debug(fullMessage);
+    const message = this.handleLazyMessage({ lazyArgs });
+    console.debug(`[${getTimestamp()}] DEBUG ${this.prefix}${debugColor(message)}`);
   }
 
   child(name: string): Logger {
