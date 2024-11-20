@@ -58,7 +58,8 @@ export class DefaultLogger implements Logger {
     (this.name && String(process.env.DEBUG || globalThis.DEBUG || '').includes(this.name))
       ? LogLevel.debug
       : LogLevel.info,
-    _trim?: number,
+    /** @deprecated Trimming messages is no longer supported. This argument is unused and will be removed in future versions. */
+    _trim?: number | undefined,
     private console = globalThis.console,
   ) {}
 
