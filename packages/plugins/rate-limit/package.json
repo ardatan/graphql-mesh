@@ -40,12 +40,11 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/rate-limiter": "^6.2.0",
+    "@envelop/rate-limiter": "^6.2.1",
     "@graphql-mesh/string-interpolation": "0.5.6"
   },
   "devDependencies": {
-    "@envelop/core": "5.0.2",
-    "graphql-middleware": "6.1.35"
+    "@envelop/core": "5.0.2"
   },
   "publishConfig": {
     "access": "public",
