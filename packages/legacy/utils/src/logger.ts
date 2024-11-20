@@ -1,7 +1,5 @@
-import { process, util } from '@graphql-mesh/cross-helpers';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
-
-type MessageTransformer = (msg: string) => string;
 
 const ANSI_CODES = {
   black: '\x1b[30m',
@@ -17,11 +15,11 @@ const ANSI_CODES = {
   orange: '\x1b[48:5:166m',
 };
 
-export const warnColor: MessageTransformer = msg => ANSI_CODES.orange + msg + ANSI_CODES.reset;
-export const infoColor: MessageTransformer = msg => ANSI_CODES.cyan + msg + ANSI_CODES.reset;
-export const errorColor: MessageTransformer = msg => ANSI_CODES.red + msg + ANSI_CODES.reset;
-export const debugColor: MessageTransformer = msg => ANSI_CODES.magenta + msg + ANSI_CODES.reset;
-export const titleBold: MessageTransformer = msg => ANSI_CODES.bold + msg + ANSI_CODES.reset;
+export const warnColor = (msg: string) => ANSI_CODES.orange + msg + ANSI_CODES.reset;
+export const infoColor = (msg: string) => ANSI_CODES.cyan + msg + ANSI_CODES.reset;
+export const errorColor = (msg: string) => ANSI_CODES.red + msg + ANSI_CODES.reset;
+export const debugColor = (msg: string) => ANSI_CODES.magenta + msg + ANSI_CODES.reset;
+export const titleBold = (msg: string) => ANSI_CODES.bold + msg + ANSI_CODES.reset;
 
 export enum LogLevel {
   debug = 0,
@@ -33,8 +31,8 @@ export enum LogLevel {
 
 const noop: VoidFunction = () => {};
 
-function truthy(str: unknown) {
-  return str === true || str === 1 || ['1', 't', 'true', 'y', 'yes'].includes(String(str));
+function truthy(val: unknown) {
+  return val === true || val === 1 || ['1', 't', 'true', 'y', 'yes'].includes(String(val));
 }
 
 function getTimestamp() {
@@ -44,7 +42,11 @@ function getTimestamp() {
 export class DefaultLogger implements Logger {
   constructor(
     public name?: string,
-    public logLevel = truthy(process.env.DEBUG) ? LogLevel.debug : LogLevel.info,
+    public logLevel = truthy(process.env.DEBUG) ||
+    truthy(globalThis.DEBUG) ||
+    this.name?.includes(process.env.DEBUG || globalThis.DEBUG)
+      ? LogLevel.debug
+      : LogLevel.info,
     private trim?: number,
   ) {}
 
@@ -57,14 +59,14 @@ export class DefaultLogger implements Logger {
             return (
               arg.slice(0, this.trim) +
               '...' +
-              '<Message is trimmed. Enable DEBUG=1 to see the full message.>'
+              '<Message is trimmed. Set DEBUG=1 to see the full message.>'
             );
           }
           return arg;
         } else if (typeof arg === 'object' && arg?.stack != null) {
           return arg.stack;
         }
-        return util.inspect(arg);
+        return JSON.stringify(arg);
       })
       .join(' ');
   }
@@ -77,15 +79,6 @@ export class DefaultLogger implements Logger {
       return arg;
     });
     return this.getLoggerMessage({ args: flattenedArgs });
-  }
-
-  private get isDebug() {
-    return (
-      this.logLevel <= LogLevel.debug ||
-      truthy(process.env.DEBUG) ||
-      truthy(globalThis.DEBUG) ||
-      this.name?.includes(process.env.DEBUG || globalThis.DEBUG)
-    );
   }
 
   private get prefix() {
@@ -131,7 +124,7 @@ export class DefaultLogger implements Logger {
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
-    if (!this.isDebug /** also checks whether the loglevel is at least debug */) {
+    if (this.logLevel > LogLevel.debug) {
       return noop;
     }
     const message = this.handleLazyMessage({
