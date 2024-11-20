@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-hive
 
+## 0.103.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.0
+
 ## 0.102.16
 
 ### Patch Changes

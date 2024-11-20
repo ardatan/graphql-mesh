@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-jit
 
+## 0.1.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0e49907`](https://github.com/ardatan/graphql-mesh/commit/0e49907cf19d91fe40c28237aa79bd55742b371f),
+  [`9873b33`](https://github.com/ardatan/graphql-mesh/commit/9873b33f0cc6c3b3a3c3dc1a0a1cb18c827b8722)]:
+  - @graphql-mesh/utils@0.103.0
+
 ## 0.0.7
 
 ### Patch Changes

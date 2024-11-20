@@ -1,5 +1,22 @@
 # @graphql-mesh/utils
 
+## 0.103.0
+
+### Minor Changes
+
+- [#7971](https://github.com/ardatan/graphql-mesh/pull/7971)
+  [`9873b33`](https://github.com/ardatan/graphql-mesh/commit/9873b33f0cc6c3b3a3c3dc1a0a1cb18c827b8722)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - DefaultLogger writes logs to console always
+
+### Patch Changes
+
+- [#7966](https://github.com/ardatan/graphql-mesh/pull/7966)
+  [`0e49907`](https://github.com/ardatan/graphql-mesh/commit/0e49907cf19d91fe40c28237aa79bd55742b371f)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - DefaultLogger respects the LogLevel.debug
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.0
+
 ## 0.102.13
 
 ### Patch Changes
