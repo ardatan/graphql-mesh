@@ -14,15 +14,24 @@ import { hashObject } from '@graphql-mesh/string-interpolation';
 import type {
   ImportFn,
   KeyValueCache,
+  Logger,
   MeshPubSub,
   MeshTransformOptions,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { PubSub } from '@graphql-mesh/utils';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { computeCacheKey } from '../src/compute-cache-key.js';
 import CacheTransform from '../src/index.js';
 
+const logger: Logger = {
+  log: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+  child: () => logger,
+};
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 const importFn: ImportFn = m => import(m);
 
@@ -181,7 +190,7 @@ describe('cache', () => {
         ],
         pubsub,
         baseDir,
-        logger: new DefaultLogger(),
+        logger,
       });
       const modifiedSchema = transform.transformSchema(schema);
 
@@ -212,7 +221,7 @@ describe('cache', () => {
         ],
         pubsub,
         baseDir,
-        logger: new DefaultLogger(),
+        logger,
       });
 
       const modifiedSchema = transform.transformSchema(schema);
@@ -238,7 +247,7 @@ describe('cache', () => {
         config,
         pubsub,
         baseDir,
-        logger: new DefaultLogger(),
+        logger,
       });
 
       const modifiedSchema = transform.transformSchema(schema);
@@ -465,7 +474,7 @@ describe('cache', () => {
         cache,
         pubsub,
         baseDir,
-        logger: new DefaultLogger(),
+        logger,
       });
 
       const schemaWithCache = transform.transformSchema(schema);
@@ -525,7 +534,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
-          logger: new DefaultLogger(),
+          logger,
         });
         const schemaWithCache = transform.transformSchema(schema);
 
@@ -586,7 +595,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
-          logger: new DefaultLogger(),
+          logger,
         };
 
         let callCount = 0;
@@ -633,7 +642,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
-          logger: new DefaultLogger(),
+          logger,
         };
         function getNewSchema() {
           return makeExecutableSchema({
@@ -690,7 +699,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
-          logger: new DefaultLogger(),
+          logger,
         };
         function getNewSchema() {
           return makeExecutableSchema({

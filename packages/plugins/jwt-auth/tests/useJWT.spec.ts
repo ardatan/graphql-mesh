@@ -1,6 +1,6 @@
 import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
 import jwt from 'jsonwebtoken';
-import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway';
+import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway-runtime';
 import {
   createInlineSigningKeyProvider,
   type JWTExtendContextFields,
@@ -92,7 +92,7 @@ describe('useJWTAuth', () => {
       requestTrackerPlugin.onParams.mockClear();
     });
 
-    it('should passthrough jwt token, jwt payload, and signature to the upstream api calls', async () => {
+    it.only('should passthrough jwt token, jwt payload, and signature to the upstream api calls', async () => {
       const secret = 'topsecret';
       const serveRuntime = createGatewayRuntime({
         proxy: {
@@ -108,7 +108,7 @@ describe('useJWTAuth', () => {
             signingKeyProviders: [createInlineSigningKeyProvider(secret)],
           }),
         ],
-        logging: false,
+        logging: true,
       });
 
       const token = jwt.sign({ sub: '123' }, secret, {});

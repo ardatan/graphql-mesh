@@ -1,5 +1,5 @@
 import { type Plugin as YogaPlugin } from 'graphql-yoga';
-import type { GatewayPlugin } from '@graphql-hive/gateway';
+import type { GatewayPlugin } from '@graphql-hive/gateway-runtime';
 import {
   useJWT as useYogaJWT,
   type JWTExtendContextFields,

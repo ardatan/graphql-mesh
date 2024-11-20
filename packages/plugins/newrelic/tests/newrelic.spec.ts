@@ -3,6 +3,7 @@
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { createMeshHTTPHandler, type MeshHTTPHandler } from '@graphql-mesh/http';
 import type { MeshInstance } from '@graphql-mesh/runtime';
+import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { TestAgent } from '@newrelic/test-utilities';
 import { getTestMesh } from '../../../legacy/testing/getTestMesh.js';
@@ -13,7 +14,14 @@ describe('New Relic', () => {
   let helper: any;
   let httpHandler: MeshHTTPHandler;
   beforeAll(async () => {
-    const logger = new DefaultLogger('New Relic Test');
+    const logger: Logger = {
+      log: jest.fn(),
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      child: () => logger,
+    };
     const cache = new LocalforageCache();
     const pubsub = new PubSub();
     const baseDir = __dirname;

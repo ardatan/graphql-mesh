@@ -1,12 +1,20 @@
 import { GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import type { MeshPubSub } from '@graphql-mesh/types';
+import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import PrefixTransform from '../src/index.js';
 
+const logger: Logger = {
+  log: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+  child: () => logger,
+};
 describeTransformerTests('prefix', ({ mode, transformSchema }) => {
   let schema: GraphQLSchema;
   let cache: InMemoryLRUCache;
@@ -68,7 +76,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -93,7 +102,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -114,7 +124,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -135,7 +146,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -158,7 +170,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -180,7 +193,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -204,7 +218,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -233,7 +248,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 
@@ -262,7 +278,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
     expect(newSchema.getType('Query')).toBeDefined();
@@ -284,7 +301,8 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger: new DefaultLogger(),
+
+        logger,
       }),
     );
 

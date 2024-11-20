@@ -2,7 +2,7 @@ import { join } from 'path';
 import { buildSchema, GraphQLSchema, validateSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import type { KeyValueCache, Logger, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as fetchFn } from '@whatwg-node/fetch';
@@ -12,7 +12,14 @@ describe('gRPC Handler', () => {
   let cache: KeyValueCache;
   let pubsub: PubSub;
   let store: MeshStore;
-  let logger: DefaultLogger;
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
   beforeEach(() => {
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
@@ -20,7 +27,6 @@ describe('gRPC Handler', () => {
       readonly: false,
       validate: false,
     });
-    logger = new DefaultLogger('grpc-test');
   });
   afterEach(() => {
     pubsub.publish('destroy', undefined);
