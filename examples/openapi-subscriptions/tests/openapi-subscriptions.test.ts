@@ -27,7 +27,7 @@ describe('OpenAPI Subscriptions', () => {
     };
     const mesh$ = getMesh({
       ...config,
-      fetchFn: appWrapper.app.fetch,
+      fetchFn: (...args) => appWrapper.app.fetch(...args),
     });
     meshHandler = createMeshHTTPHandler({
       baseDir: join(__dirname, '..'),
