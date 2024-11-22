@@ -8,7 +8,7 @@ import { Callout, Cards } from '@theguild/components'
 # Getting Started
 
 Mesh Compose is a tool for composing non-GraphQL and GraphQL sources into a supergraph, that can be
-served by [Hive Gateway](https://graphql-hive.com/docs/gateway) or other gateways such as
+served by [Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway) or other gateways such as
 [Apollo Gateway, Apollo Router or Cosmo Router](/v1/consume-in-other-gateways).
 
 Mesh Compose can also be used for transforming non-federation GraphQL sources into a Apollo
@@ -23,8 +23,8 @@ Full overview of Mesh Compose features:
 - Adding an authentication layer using [auth directives](/v1/auth)
 - Adding a security layer for rate limiting using [`@rateLimit` directives](/v1/rate-limit)
 - Generate a subgraph that is fully compatible with Federation tools so you can use it with any
-  schema registry such as [Hive](https://graphql-hive.com/docs/gateway/supergraph-proxy-source) or
-  [GraphOS](https://graphql-hive.com/docs/gateway/supergraph-proxy-source)
+  schema registry such as [Hive](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source) or
+  [GraphOS](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source)
 
 ## Installation
 
@@ -209,8 +209,8 @@ npx mesh-compose > supergraph.graphql
 ## Generating the individual subgraphs for Schema Registry
 
 If you want to publish the subgraphs to a schema registry such as
-[Hive](https://graphql-hive.com/docs/gateway/supergraph-proxy-source) or
-[GraphOS](https://graphql-hive.com/docs/gateway/supergraph-proxy-source), you can generate the
+[Hive](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source) or
+[GraphOS](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source), you can generate the
 subgraphs by running the following command:
 
 ```sh
@@ -234,7 +234,7 @@ hive schema:publish \
 
 ## Run the Supergraph / Subgraph
 
-Easiest way to run the supergraph is to use [Hive Gateway](https://graphql-hive.com/docs/gateway).
+Easiest way to run the supergraph is to use [Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway).
 
 ```sh
 npm i @graphql-hive/gateway
@@ -252,7 +252,7 @@ Learn more;
   <Cards.Card
     arrow
     title="Serve the generated API with Hive Gateway"
-    href="https://graphql-hive.com/docs/gateway"
+    href="https://the-guild.dev/graphql/hive/docs/gateway"
   />
   <Cards.Card
     arrow
