@@ -33,7 +33,7 @@
       "e2e/*"
     ]
   },
-  "packageManager": "yarn@4.5.1",
+  "packageManager": "yarn@4.5.2",
   "scripts": {
     "build": "yarn prebuild && bob build && yarn postbuild",
     "build-test-artifacts": "yarn workspace @examples/json-schema-example build && yarn workspace @examples-v1-next/fastify compose && yarn workspace @examples/fastify build && yarn workspace @examples/persisted-operations build && yarn workspace example-response-cache build",
@@ -90,7 +90,7 @@
     "eslint-config-prettier": "9.1.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-n": "17.13.2",
+    "eslint-plugin-n": "17.14.0",
     "eslint-plugin-promise": "7.1.0",
     "eslint-plugin-standard": "5.0.0",
     "globby": "11.1.0",
