@@ -33,11 +33,11 @@ type Query {
 
 And you want to add `@key` directive to the `Product` type. Then you can add the following
 configuration to your `mesh.config.ts` file. But you need `resolveReference` to be able to resolve
-the reference, which is equivalent of `__resolveReference` resolver in regular ation.
+the reference, which is equivalent of `__resolveReference` resolver in regular Federation.
 
 ```ts filename="mesh.config.ts" {13-17}
 import {
-  createationTransform,
+  createFederationTransform,
   defineConfig,
   loadGraphQLHTTPSubgraph
 } from '@graphql-mesh/compose-cli'
@@ -49,7 +49,7 @@ export const composeConfig = defineConfig({
         endpoint: 'http://localhost:4001/my-api'
       }),
       transforms: [
-        createationTransform({
+        createFederationTransform({
           // Schema Coordinates
           Product: {
             // Directive name
