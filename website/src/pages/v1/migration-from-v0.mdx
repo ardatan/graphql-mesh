@@ -15,13 +15,13 @@ If you are migrating from GraphQL Mesh v0, you should be aware of the following 
   using Hive Gateway.
 - If you deploy GraphQL Mesh v0 by using the http handler provided in the artifacts under `.mesh`,
   now you should take a look at
-  [Hive Gateway's Deployment Guide](https://graphql-hive.com/docs/gateway/deployment) to deploy your
-  gateway.
+  [Hive Gateway's Deployment Guide](https://the-guild.dev/graphql/hive/docs/gateway/deployment) to
+  deploy your gateway.
 - GraphQL Mesh no longer [GraphQL Code Generator](https://graphql-codegen.com) internally. You
   should use it separately if you need to generate types or documents.
 - GraphQL Mesh no longer generates Persisted Operations store. You should setup your gateway based
-  on your needs. [See here](https://graphql-hive.com/docs/gateway/persisted-documents) for more
-  information.
+  on your needs. [See here](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents) for
+  more information.
 
 GraphQL Mesh is now only responsible of generating a GraphQL SDL file `supergraph.graphql` or
 `subgraph.graphql` that you can use with Hive Gateway, it is not responsible for serving the
@@ -74,7 +74,8 @@ Source handler packages are also changed, now we have `@omnigraph/*` packages in
 GraphQL Mesh no longer generates artifacts with `execute` or `createBuiltMeshHTTPHandler` functions.
 Instead, it generates a GraphQL SDL file that you can use with Hive Gateway.
 
-Read more about [Hive Gateway's Deployment Guide](https://graphql-hive.com/docs/gateway/deployment)
-to setup your gateway with the new artifacts.
+Read more about
+[Hive Gateway's Deployment Guide](https://the-guild.dev/graphql/hive/docs/gateway/deployment) to
+setup your gateway with the new artifacts.
 
 If you need local execution, refer to the local execution guide [here](/v1/local-execution).

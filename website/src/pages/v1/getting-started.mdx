@@ -23,7 +23,8 @@ Full overview of Mesh Compose features:
 - Adding an authentication layer using [auth directives](/v1/auth)
 - Adding a security layer for rate limiting using [`@rateLimit` directives](/v1/rate-limit)
 - Generate a subgraph that is fully compatible with Federation tools so you can use it with any
-  schema registry such as [Hive](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source) or
+  schema registry such as
+  [Hive](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source) or
   [GraphOS](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source)
 
 ## Installation
@@ -203,15 +204,15 @@ npx mesh-compose > supergraph.graphql
 
 <Callout>
   [In order to serve the supergraph, you need to setup Hive
-  Gateway](https://graphql-hive.com/docs/gateway).
+  Gateway](https://the-guild.dev/graphql/hive/docs/gateway).
 </Callout>
 
 ## Generating the individual subgraphs for Schema Registry
 
 If you want to publish the subgraphs to a schema registry such as
 [Hive](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source) or
-[GraphOS](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source), you can generate the
-subgraphs by running the following command:
+[GraphOS](https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source), you can generate
+the subgraphs by running the following command:
 
 ```sh
 npx mesh-compose --subgraph SUBGRAPH_NAME > subgraph.graphql
@@ -234,7 +235,8 @@ hive schema:publish \
 
 ## Run the Supergraph / Subgraph
 
-Easiest way to run the supergraph is to use [Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway).
+Easiest way to run the supergraph is to use
+[Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway).
 
 ```sh
 npm i @graphql-hive/gateway
