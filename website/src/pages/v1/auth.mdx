@@ -9,11 +9,11 @@ rules on your supergraph.
 <Callout>
   You need to configure your gateway to use specific authentication rules in order to use these directives.
 
-[See here to configure authentication for Hive Gateway](https://graphql-hive.com/docs/gateway/authorization-authentication)
+[See here to configure authentication for Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway/authorization-authentication)
 
 </Callout>
 
-## Granular field access by Federation auth directives (`@authenticated`, `@requiresScopes`, `@policy`)
+## Granular field access by [Federation](https://the-guild.dev/graphql/hive/federation) auth directives (`@authenticated`, `@requiresScopes`, `@policy`)
 
 You can use the `authenticated` directive to enforce authentication rules on specific fields. This
 directive can be used to restrict access to certain fields based on the viewer's session.
@@ -34,7 +34,7 @@ type Query {
 
 <Callout>
   You can learn more about the auth directives in the gateway docs here. [Auth in Hive
-  Gateway](https://graphql-hive.com/docs/gateway/authorization-authentication)
+  Gateway](https://the-guild.dev/graphql/hive/docs/gateway/authorization-authentication)
 </Callout>
 
 ## Exclude fields from authentication by using schema field directive `@skipAuth`
@@ -67,6 +67,6 @@ type Query {
 
 <Callout>
   In order to use this directive, you need to configure [Generic
-  Auth](https://graphql-hive.com/docs/gateway/authorization-authentication) plugin to use **Complete
-  Protection** in your GraphQL Mesh Gateway.
+  Auth](https://the-guild.dev/graphql/hive/docs/gateway/authorization-authentication) plugin to use
+  **Complete Protection** in your GraphQL Mesh Gateway.
 </Callout>
