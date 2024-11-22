@@ -1,5 +1,4 @@
-import { type MaybePromise } from '@graphql-tools/utils';
-import { mapMaybePromise } from './map-maybe-promise.js';
+import { mapMaybePromise, type MaybePromise } from '@graphql-tools/utils';
 
 export function iterateAsync<TInput, TOutput>(
   iterable: Iterable<TInput>,

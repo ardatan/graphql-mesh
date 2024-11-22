@@ -1,5 +1,5 @@
 import { graphql } from 'graphql';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fakePromise, printSchemaWithDirectives } from '@graphql-tools/utils';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Calendly', () => {
@@ -20,9 +20,9 @@ describe('Calendly', () => {
       }
     `;
     const fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve({}),
-        text: () => Promise.resolve(''),
+      fakePromise({
+        json: () => fakePromise({}),
+        text: () => fakePromise(''),
 
         ok: true,
       } as Response),
@@ -48,9 +48,9 @@ describe('Calendly', () => {
       }
     `;
     const fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve({}),
-        text: () => Promise.resolve(''),
+      fakePromise({
+        json: () => fakePromise({}),
+        text: () => fakePromise(''),
 
         ok: true,
       } as Response),

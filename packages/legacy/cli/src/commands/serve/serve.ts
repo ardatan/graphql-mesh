@@ -8,7 +8,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-mesh/utils';
+import { mapMaybePromise } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../../index.js';
 import { getMaxConcurrency } from './getMaxConcurency.js';
 import { startNodeHttpServer } from './node-http.js';

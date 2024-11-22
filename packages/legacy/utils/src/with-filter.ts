@@ -1,3 +1,5 @@
+import { fakePromise } from '@graphql-tools/utils';
+
 export type FilterFn<TSource = any, TArgs = any, TContext = any> = (
   rootValue?: TSource,
   args?: TArgs,
@@ -42,7 +44,7 @@ export function withFilter<TSource = any, TArgs = any, TContext = any>(
                 resolve(payload);
                 return;
               }
-              Promise.resolve(filterFn(payload.value, args, context, info))
+              fakePromise(filterFn(payload.value, args, context, info))
                 .catch(() => false) // We ignore errors from filter function
                 .then(filterResult => {
                   if (filterResult === true) {

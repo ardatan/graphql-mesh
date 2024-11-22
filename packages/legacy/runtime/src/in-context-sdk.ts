@@ -18,7 +18,7 @@ import type {
   SelectionSetParam,
   SelectionSetParamOrFactory,
 } from '@graphql-mesh/types';
-import { iterateAsync, mapMaybePromise, parseWithCache } from '@graphql-mesh/utils';
+import { iterateAsync, parseWithCache } from '@graphql-mesh/utils';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import type {
@@ -27,7 +27,12 @@ import type {
   SubschemaConfig,
 } from '@graphql-tools/delegate';
 import { delegateToSchema } from '@graphql-tools/delegate';
-import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-tools/utils';
+import {
+  buildOperationNodeForField,
+  isDocumentNode,
+  mapMaybePromise,
+  memoize1,
+} from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { MESH_API_CONTEXT_SYMBOL } from './constants.js';
 

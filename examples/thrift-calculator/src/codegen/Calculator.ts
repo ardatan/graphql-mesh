@@ -7,6 +7,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  */
 import * as thrift from '@creditkarma/thrift-server-core';
+import { fakePromise } from '@graphql-tools/utils';
 import * as AddRequest from './AddRequest';
 
 export const serviceName: string = 'Calculator';
@@ -422,7 +423,7 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
             const result: IAdd__Result = Add__ResultCodec.decode(input);
             input.readMessageEnd();
             if (result.success != null) {
-              return Promise.resolve(result.success);
+              return fakePromise(result.success);
             } else {
               return Promise.reject(
                 new thrift.TApplicationException(
@@ -468,7 +469,7 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
             const result: ISubtract__Result = Subtract__ResultCodec.decode(input);
             input.readMessageEnd();
             if (result.success != null) {
-              return Promise.resolve(result.success);
+              return fakePromise(result.success);
             } else {
               return Promise.reject(
                 new thrift.TApplicationException(

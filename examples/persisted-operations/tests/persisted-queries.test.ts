@@ -3,6 +3,7 @@ import { ExecutionResult } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
+import { fakePromise } from '@graphql-tools/utils';
 
 const baseDir = join(__dirname, '..');
 
@@ -26,7 +27,7 @@ describe('Persisted Queries', () => {
       mesh = await getMeshInstance();
       meshHttp = createMeshHTTPHandler({
         baseDir,
-        getBuiltMesh: () => Promise.resolve(mesh),
+        getBuiltMesh: () => fakePromise(mesh),
       });
     });
 

@@ -1,7 +1,7 @@
 import { getOperationAST } from 'graphql';
 import * as apolloClient from '@apollo/client';
 import type { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
-import { isAsyncIterable } from '@graphql-tools/utils';
+import { isAsyncIterable, mapMaybePromise } from '@graphql-tools/utils';
 
 export interface MeshApolloRequestHandlerOptions {
   execute: ExecuteMeshFn;
@@ -22,15 +22,15 @@ function createMeshApolloRequestHandler(
     const operationFn =
       operationAst.operation === 'subscription' ? options.subscribe : options.execute;
     return new apolloClient.Observable(observer => {
-      Promise.resolve()
-        .then(async () => {
-          const results = await operationFn(
-            operation.query,
-            operation.variables,
-            operation.getContext(),
-            ROOT_VALUE,
-            operation.operationName,
-          );
+      mapMaybePromise(
+        operationFn(
+          operation.query,
+          operation.variables,
+          operation.getContext(),
+          ROOT_VALUE,
+          operation.operationName,
+        ),
+        async results => {
           if (isAsyncIterable(results)) {
             for await (const result of results) {
               if (observer.closed) {
@@ -45,12 +45,13 @@ function createMeshApolloRequestHandler(
               observer.complete();
             }
           }
-        })
-        .catch(error => {
+        },
+        error => {
           if (!observer.closed) {
             observer.error(error);
           }
-        });
+        },
+      );
     });
   };
 }

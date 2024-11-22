@@ -2,7 +2,7 @@ import { Store, useRateLimiter, type Identity } from '@envelop/rate-limiter';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-mesh/utils';
+import { mapMaybePromise } from '@graphql-tools/utils';
 
 class RateLimitMeshStore extends Store {
   constructor(private cache: KeyValueCache) {

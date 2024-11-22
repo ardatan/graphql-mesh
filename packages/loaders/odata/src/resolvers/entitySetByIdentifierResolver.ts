@@ -1,7 +1,7 @@
 import type { GraphQLFieldResolver } from 'graphql';
 import { parseResolveInfo, type ResolveTree } from 'graphql-parse-resolve-info';
 import urljoin from 'url-join';
-import { mapMaybePromise } from '@graphql-mesh/utils';
+import { mapMaybePromise } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';
 import { addIdentifierToUrl } from '../utils/addIdentifierToUrl.js';
