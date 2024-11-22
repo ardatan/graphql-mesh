@@ -15,8 +15,13 @@ import {
   type Transport,
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-mesh/utils';
-import { getDirective, getDirectives, getRootTypes, type MaybePromise } from '@graphql-tools/utils';
+import {
+  getDirective,
+  getDirectives,
+  getRootTypes,
+  mapMaybePromise,
+  type MaybePromise,
+} from '@graphql-tools/utils';
 import type { ChannelCredentials } from '@grpc/grpc-js';
 import { credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import type { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';

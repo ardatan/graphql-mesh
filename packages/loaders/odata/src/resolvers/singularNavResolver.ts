@@ -1,8 +1,7 @@
 import type { GraphQLFieldResolver, GraphQLObjectType } from 'graphql';
 import { parseResolveInfo, type ResolveTree } from 'graphql-parse-resolve-info';
 import urljoin from 'url-join';
-import { mapMaybePromise } from '@graphql-mesh/utils';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
+import { getDirectiveExtensions, mapMaybePromise } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
 import type { DirectiveArgsMap } from '../directives.js';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';

@@ -14,7 +14,7 @@ import {
   rmdirs,
   writeFile,
 } from '@graphql-mesh/utils';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fakePromise, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
@@ -203,7 +203,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
                 .then(newMeshInstance =>
                   meshInstance$.then(oldMeshInstance => {
                     oldMeshInstance.destroy();
-                    meshInstance$ = Promise.resolve(newMeshInstance);
+                    meshInstance$ = fakePromise(newMeshInstance);
                   }),
                 )
                 .catch(e => {
@@ -476,7 +476,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
               .then(newMeshInstance =>
                 meshInstance$.then(oldMeshInstance => {
                   oldMeshInstance.destroy();
-                  meshInstance$ = Promise.resolve(newMeshInstance);
+                  meshInstance$ = fakePromise(newMeshInstance);
                 }),
               )
               .catch(e => {

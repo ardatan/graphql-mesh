@@ -6,6 +6,7 @@ import {
   printSchema,
 } from 'graphql';
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
+import { fakePromise } from '@graphql-tools/utils';
 import { loadGraphQLHTTPSubgraph } from '../src/loadGraphQLHTTPSubgraph';
 
 const logger: Logger = {
@@ -19,7 +20,7 @@ const logger: Logger = {
 describe('loadGraphQLHTTPSubgraph', () => {
   it('respects schemaHeaders in introspection query', async () => {
     const fetchFn = jest.fn<Promise<Response>, Parameters<MeshFetch>>(() =>
-      Promise.resolve(
+      fakePromise(
         Response.json({
           data: introspectionFromSchema(
             new GraphQLSchema({

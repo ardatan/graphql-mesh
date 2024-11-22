@@ -1,5 +1,5 @@
 import type { MeshPlugin } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-mesh/utils';
+import { mapMaybePromise } from '@graphql-tools/utils';
 
 export default function useDeduplicateRequest(): MeshPlugin<any> {
   const reqResMapByContext = new WeakMap<any, Map<string, PromiseLike<Response> | Response>>();

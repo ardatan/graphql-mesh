@@ -3,7 +3,7 @@ import {
   type Executor,
   type Transport,
 } from '@graphql-mesh/transport-common';
-import { mapMaybePromise } from '@graphql-mesh/utils';
+import { mapMaybePromise } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOptions, type GraphQLSQLiteLoaderOpts } from '@omnigraph/sqlite';
 
 export interface SQLiteTransportOptions {

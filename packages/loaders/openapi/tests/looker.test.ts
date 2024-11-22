@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { Response } from 'fets';
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fakePromise, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Looker.4.0.oas', () => {
@@ -15,40 +15,24 @@ describe('Looker.4.0.oas', () => {
       endpoint,
       fetch: (url): Promise<Response> => {
         if (url.includes('query_tasks/multi_results')) {
-          return Promise.resolve(
-            new Response(
-              JSON.stringify({
-                url: url,
-              }),
-              {
-                status: 200,
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              },
-            ),
+          return fakePromise(
+            Response.json({
+              url: url,
+            }),
           );
         }
         if (url.includes('/queries/slug')) {
-          return Promise.resolve(
-            new Response(
-              JSON.stringify({
-                can: { url },
-                id: '1',
-                model: 'model',
-                view: 'view',
-              }),
-              {
-                status: 200,
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              },
-            ),
+          return fakePromise(
+            Response.json({
+              can: { url },
+              id: '1',
+              model: 'model',
+              view: 'view',
+            }),
           );
         }
 
-        return Promise.resolve(undefined);
+        return fakePromise(undefined);
       },
     });
   });

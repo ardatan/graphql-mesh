@@ -6,6 +6,8 @@
 */
 import * as thrift from "@creditkarma/thrift-server-core";
 import * as AddRequest from "./AddRequest";
+import { fakePromise } from '@graphql-tools/utils';
+
 export const serviceName: string = "Calculator";
 export const annotations: thrift.IThriftAnnotations = {};
 export const methodAnnotations: thrift.IMethodAnnotations = {
@@ -406,7 +408,7 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
                         const result: IAdd__Result = Add__ResultCodec.decode(input);
                         input.readMessageEnd();
                         if (result.success != null) {
-                            return Promise.resolve(result.success);
+                            return fakePromise(result.success);
                         }
                         else {
                             return Promise.reject(new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN, "add failed: unknown result"));
@@ -444,7 +446,7 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
                         const result: ISubtract__Result = Subtract__ResultCodec.decode(input);
                         input.readMessageEnd();
                         if (result.success != null) {
-                            return Promise.resolve(result.success);
+                            return fakePromise(result.success);
                         }
                         else {
                             return Promise.reject(new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN, "subtract failed: unknown result"));

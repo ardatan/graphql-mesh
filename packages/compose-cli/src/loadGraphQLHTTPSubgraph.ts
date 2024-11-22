@@ -13,10 +13,11 @@ import {
   isObjectType,
   type IntrospectionQuery,
 } from 'graphql';
-import { isUrl, mapMaybePromise, readFile } from '@graphql-mesh/utils';
+import { isUrl, readFile } from '@graphql-mesh/utils';
 import {
   createGraphQLError,
   isValidPath,
+  mapMaybePromise,
   type ExecutionResult,
   type MaybePromise,
 } from '@graphql-tools/utils';
