@@ -43,7 +43,7 @@
     "@graphql-mesh/fusion-composition": "^0.7.0",
     "@graphql-mesh/include": "^0.2.3",
     "@graphql-mesh/utils": "^0.103.0",
-    "@graphql-tools/graphql-file-loader": "8.0.3",
+    "@graphql-tools/graphql-file-loader": "8.0.4",
     "@graphql-tools/load": "^8.0.1",
     "@graphql-tools/schema": "^10.0.5",
     "@graphql-tools/utils": "^10.6.0",
