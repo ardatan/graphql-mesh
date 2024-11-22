@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "@graphql-hive/gateway": "^1.4.8",
-    "@graphql-mesh/cache-localforage": "^0.103.0",
-    "@graphql-mesh/compose-cli": "^1.2.0",
-    "@omnigraph/openapi": "^0.108.0",
+    "@graphql-mesh/cache-localforage": "^0.103.1",
+    "@graphql-mesh/compose-cli": "^1.2.1",
+    "@omnigraph/openapi": "^0.108.1",
     "graphql": "^16.9.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-hive",
-  "version": "0.103.0",
+  "version": "0.103.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,9 +32,9 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.7",
-    "@graphql-mesh/types": "^0.103.0",
-    "@graphql-mesh/utils": "^0.103.0",
+    "@graphql-mesh/cross-helpers": "^0.4.8",
+    "@graphql-mesh/types": "^0.103.1",
+    "@graphql-mesh/utils": "^0.103.1",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
