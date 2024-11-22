@@ -52,7 +52,7 @@
     "graphql-jit": "^0.8.7"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "10.0.8"
+    "@graphql-tools/schema": "10.0.9"
   },
   "publishConfig": {
     "access": "public",
