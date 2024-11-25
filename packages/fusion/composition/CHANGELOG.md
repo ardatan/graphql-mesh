@@ -1,5 +1,14 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.3
+
+### Patch Changes
+
+- [#7993](https://github.com/ardatan/graphql-mesh/pull/7993)
+  [`8154187`](https://github.com/ardatan/graphql-mesh/commit/815418727abae8a283aa19644f17bb210812611e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not apply semantic conventions if there is
+  already defined some federation annotations
+
 ## 0.7.2
 
 ### Patch Changes
