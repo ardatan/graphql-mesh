@@ -7,11 +7,11 @@
   },
   "dependencies": {
     "@graphql-hive/gateway": "^1.4.8",
-    "@graphql-mesh/cache-cfw-kv": "^0.104.3",
-    "@graphql-mesh/cache-localforage": "^0.103.3",
-    "@graphql-mesh/compose-cli": "^1.2.5",
-    "@graphql-mesh/plugin-response-cache": "^0.103.3",
-    "@omnigraph/json-schema": "^0.108.3",
+    "@graphql-mesh/cache-cfw-kv": "^0.104.4",
+    "@graphql-mesh/cache-localforage": "^0.103.4",
+    "@graphql-mesh/compose-cli": "^1.2.6",
+    "@graphql-mesh/plugin-response-cache": "^0.103.4",
+    "@omnigraph/json-schema": "^0.108.4",
     "graphql": "16.9.0"
   },
   "devDependencies": {
