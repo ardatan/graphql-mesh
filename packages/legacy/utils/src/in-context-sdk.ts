@@ -33,9 +33,10 @@ import {
   memoize1,
 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
-import { MESH_API_CONTEXT_SYMBOL } from '../../runtime/src/constants.js';
 import { iterateAsync } from './iterateAsync.js';
 import { parseWithCache } from './parseAndPrintWithCache.js';
+
+export const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');
 
 export function getInContextSDK(
   unifiedSchema: GraphQLSchema,
