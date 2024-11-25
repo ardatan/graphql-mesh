@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.103.4
+
+### Patch Changes
+
+- [`8fcfe3f`](https://github.com/ardatan/graphql-mesh/commit/8fcfe3f78a0be53e3b474231bfe7ee0594e54f91)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix compatibility between MeshPlugin and
+  GatewayPlugin
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.103.4
+
 ## 0.103.3
 
 ### Patch Changes
