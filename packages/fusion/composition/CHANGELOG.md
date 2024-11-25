@@ -1,5 +1,12 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.2
+
+### Patch Changes
+
+- [`6ea841c`](https://github.com/ardatan/graphql-mesh/commit/6ea841c6e6b666a9f19d1f09d883d8ff77d00160)
+  Thanks [@ardatan](https://github.com/ardatan)! - More strict checks
+
 ## 0.7.1
 
 ### Patch Changes

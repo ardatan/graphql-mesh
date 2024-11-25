@@ -1,5 +1,12 @@
 # @graphql-mesh/migrate-config-cli
 
+## 1.3.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/compose-cli@1.2.2
+
 ## 1.3.1
 
 ### Patch Changes
