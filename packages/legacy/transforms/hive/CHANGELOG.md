@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-hive
 
+## 0.103.2
+
+### Patch Changes
+
+- [`4e04754`](https://github.com/ardatan/graphql-mesh/commit/4e04754b4aec3543449cbfef47ae333a1f4d4dcf)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not break the request if the usage reporting
+  fails
+
 ## 0.103.1
 
 ### Patch Changes
