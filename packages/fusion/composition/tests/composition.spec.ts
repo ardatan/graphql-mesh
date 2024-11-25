@@ -152,6 +152,18 @@ describe('Composition', () => {
         id: ID!
       }
     `);
+    // Should ignore semantic conventions
+    const baz = buildSchema(
+      /* GraphQL */ `
+        type Query {
+          foo(id: ID!): Foo!
+        }
+        type Foo @key(fields: "id") {
+          id: ID!
+        }
+      `,
+      { assumeValid: true, assumeValidSDL: true },
+    );
     const { supergraphSdl, errors } = composeSubgraphs([
       {
         name: 'Foo',
@@ -160,6 +172,10 @@ describe('Composition', () => {
       {
         name: 'Bar',
         schema: bar,
+      },
+      {
+        name: 'Baz',
+        schema: baz,
       },
     ]);
     if (errors?.length) {
@@ -247,6 +263,7 @@ schema
 
 enum join__Graph {
   BAR @join__graph(name: "Bar", url: "") 
+  BAZ @join__graph(name: "Baz", url: "") 
   FOO @join__graph(name: "Foo", url: "") 
 }
 
@@ -259,12 +276,12 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
+type Query @join__type(graph: BAR)  @join__type(graph: BAZ)  @join__type(graph: FOO)  {
   foo(id: ID!) : Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @merge(subgraph: "Foo", keyField: "id", keyArg: "id") 
   bar(id: ID!) : Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @join__field(graph: BAR) 
 }
 
-type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: BAZ, key: "id")  @join__type(graph: FOO, key: "id")  {
   id: ID!
   bar: Bar! @join__field(graph: BAR) 
   barId: ID! @join__field(graph: FOO) 
