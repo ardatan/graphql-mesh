@@ -318,9 +318,11 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 const arg = fieldConfig.args[argName];
                 const argType = getNamedType(arg.type);
                 const returnField = returnFields[argName];
-                const returnFieldType = getNamedType(returnField.type);
-                if (argType.name === returnFieldType.name) {
-                  argsExprElems.push(`${argName}: $key.${argName}`);
+                if (returnField) {
+                  const returnFieldType = getNamedType(returnField.type);
+                  if (argType.name === returnFieldType.name) {
+                    argsExprElems.push(`${argName}: $key.${argName}`);
+                  }
                 }
               }
               argsExpr = argsExprElems.join(', ');
