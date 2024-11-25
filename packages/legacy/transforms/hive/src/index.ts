@@ -14,7 +14,9 @@ interface TransformationContext {
 
 export default class HiveTransform implements MeshTransform {
   private hiveClient: HiveClient;
+  private logger: MeshTransformOptions<YamlConfig.HivePlugin>['logger'];
   constructor({ config, pubsub, logger }: MeshTransformOptions<YamlConfig.HivePlugin>) {
+    this.logger = logger;
     const enabled =
       // eslint-disable-next-line no-new-func
       config != null && 'enabled' in config ? new Function(`return ${config.enabled}`)() : true;
@@ -106,17 +108,25 @@ export default class HiveTransform implements MeshTransform {
     transformationContext: TransformationContext,
   ) {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises -- we dont really care about usage reporting result
-    transformationContext.collectUsageCallback(
-      {
-        schema: delegationContext.transformedSchema,
-        document: transformationContext.request.document,
-        rootValue: transformationContext.request.rootValue,
-        contextValue: transformationContext.request.context,
-        variableValues: transformationContext.request.variables,
-        operationName: transformationContext.request.operationName,
-      },
-      result,
-    );
+    try {
+      transformationContext
+        .collectUsageCallback(
+          {
+            schema: delegationContext.transformedSchema,
+            document: transformationContext.request.document,
+            rootValue: transformationContext.request.rootValue,
+            contextValue: transformationContext.request.context,
+            variableValues: transformationContext.request.variables,
+            operationName: transformationContext.request.operationName,
+          },
+          result,
+        )
+        .catch(e => {
+          this.logger.error(`Failed to report usage`, e);
+        });
+    } catch (e) {
+      this.logger.error(`Failed to report usage`, e);
+    }
     return result;
   }
 }
