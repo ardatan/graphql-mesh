@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.103.3
+
+### Patch Changes
+
+- [`6360755`](https://github.com/ardatan/graphql-mesh/commit/63607552017ed462c0555ad2e2ec6466c10d7ae4)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix missing import
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.3
+
 ## 0.103.2
 
 ### Patch Changes

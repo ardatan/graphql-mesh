@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-mock
 
+## 0.103.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6360755`](https://github.com/ardatan/graphql-mesh/commit/63607552017ed462c0555ad2e2ec6466c10d7ae4)]:
+  - @graphql-mesh/utils@0.103.3
+  - @graphql-mesh/types@0.103.3
+
 ## 0.103.2
 
 ### Patch Changes
