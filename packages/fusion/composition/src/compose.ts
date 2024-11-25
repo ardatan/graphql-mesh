@@ -1,4 +1,5 @@
 import type {
+  DirectiveNode,
   GraphQLArgumentConfig,
   GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
@@ -593,6 +594,11 @@ function addAnnotationsForSemanticConventions({
     return;
   }
   const type = getNamedType(queryFieldConfig.type);
+  if (
+    type.astNode?.directives?.some((directive: DirectiveNode) => directive.name.value === 'key')
+  ) {
+    return;
+  }
   if (isObjectType(type)) {
     const fieldMap = type.getFields();
     let fieldNames = Object.keys(fieldMap) as string[];
