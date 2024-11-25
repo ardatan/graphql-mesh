@@ -40,8 +40,8 @@ import {
 } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
+import { getInContextSDK } from '../../utils/src/in-context-sdk.js';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
-import { getInContextSDK } from './in-context-sdk.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { getOriginalError } from './utils.js';
 

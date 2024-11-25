@@ -7323,7 +7323,9 @@ __metadata:
   dependencies:
     "@apollo/server": "npm:4.11.2"
     "@graphql-mesh/string-interpolation": "npm:^0.5.6"
+    "@graphql-tools/batch-delegate": "npm:^9.0.16"
     "@graphql-tools/delegate": "npm:^10.0.28"
+    "@graphql-tools/wrap": "npm:^10.0.18"
     "@types/js-yaml": "npm:4.0.9"
     "@types/lodash.topath": "npm:4.5.9"
     "@types/object-hash": "npm:3.0.6"
