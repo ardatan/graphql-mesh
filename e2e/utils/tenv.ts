@@ -5,9 +5,7 @@ import type { AddressInfo } from 'net';
 import os from 'os';
 import path, { isAbsolute } from 'path';
 import type { Readable } from 'stream';
-import { setTimeout } from 'timers/promises';
 import Dockerode from 'dockerode';
-import { glob } from 'glob';
 import type { ExecutionResult } from 'graphql';
 import {
   IntrospectAndCompose,
@@ -543,14 +541,17 @@ export function createTenv(cwd: string): Tenv {
       leftoverStack.use(container);
 
       // verify that the container has started
-      await setTimeout(interval);
-      try {
-        await ctr.inspect();
-      } catch (err) {
-        if (Object(err).statusCode === 404) {
-          throw new DockerError('Container was not started', container);
+      const startTimeout = AbortSignal.timeout(interval * 2);
+      while (!startTimeout.aborted) {
+        try {
+          await ctr.inspect({ abortSignal: ctrl.signal });
+          break;
+        } catch (err) {
+          if (Object(err).statusCode === 404) {
+            throw new DockerError('Container was not started', container);
+          }
+          throw err;
         }
-        throw err;
       }
 
       // wait for healthy
@@ -581,7 +582,7 @@ export function createTenv(cwd: string): Tenv {
           } else if (status === 'healthy') {
             break;
           } else if (status === 'starting') {
-            await setTimeout(interval);
+            continue;
           } else {
             throw new DockerError(`Unknown health status "${status}"`, container);
           }
@@ -759,7 +760,6 @@ async function waitForPort(port: number, signal: AbortSignal) {
     }
     // no need to track retries, jest will time out aborting the signal
     signal.throwIfAborted();
-    await setTimeout(interval);
   }
 }
 

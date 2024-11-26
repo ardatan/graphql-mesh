@@ -14205,13 +14205,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/server@npm:0.9.56":
-  version: 0.9.56
-  resolution: "@whatwg-node/server@npm:0.9.56"
+"@whatwg-node/server@npm:0.9.60":
+  version: 0.9.60
+  resolution: "@whatwg-node/server@npm:0.9.60"
   dependencies:
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
     "@whatwg-node/fetch": "npm:^0.10.0"
     tslib: "npm:^2.6.3"
-  checksum: 10c0/3de6bea3ef5821a3543f23ea487cedd2c919c84187c9737f3f69bb239db80c8e98553f02d744834242fb1f88dde47a527889d6f37ccba5e8d01297593afa9cd6
+  checksum: 10c0/455bded356d3d442ec74881d1d5470653fb0b3c0207b6c4fddb9ca2d912587be1c5e790412b4084de7d83347bd771a3f72f274542346b1c537e874abd4162fab
   languageName: node
   linkType: hard
 
