@@ -23,7 +23,9 @@
         "@whatwg-node/*",
         "graphql-jit",
         "husky",
-        "@opentelemetry/*"
+        "@opentelemetry/*",
+        "@graphql-hive/*",
+        "@graphql-mesh/*"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
