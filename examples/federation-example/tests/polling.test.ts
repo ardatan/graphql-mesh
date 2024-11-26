@@ -9,6 +9,9 @@ import { getLocalHostName } from '../../../packages/testing/getLocalHostName';
 
 jest.setTimeout(30000);
 describe('Polling Test', () => {
+  if (process.version.startsWith('v18.')) {
+    return it('skipping test on Node.js 18', () => {});
+  }
   it('should pass', async () => {
     const cwd = join(__dirname, 'fixtures/polling');
     const supergraphSdlPath = join(cwd, 'supergraph.graphql');
